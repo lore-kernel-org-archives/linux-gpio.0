@@ -1,236 +1,79 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Fri, 13 Jan 2017 12:01:38 +0100
-Message-ID: <11509256.sASrU01HFQ@amdc3058>
-References: <CGME20170112164013epcas5p41425c343028efaff169f1a9ed38b4365@epcas5p4.samsung.com>
- <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: [PATCH RFC 0/5] mvebu cleanups and preparation for Armada 7k/8k
+Date: Fri, 13 Jan 2017 11:02:40 +0000
+Message-ID: <20170113110240.GA29164@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-reply-to: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:43770 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751556AbdAMLCv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2017 06:02:51 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org
 
+(Resend including linux-arm-kernel)
 
-Hi,
+This patch series cleans up the mvebu pin controller implementation
+such that we can support multiple pin controllers as found in Armada
+7k and 8k SoCs.
 
-On Thursday, January 12, 2017 05:39:24 PM Alexander Stein wrote:
-> Currently all users of fwnode_get_named_gpiod() have no way to specify a
-> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
-> With this change a proper label is used.
-> Also adjust all users so they can pass a label, properly retrieved from
-> device tree properties.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> ---
-> v2:
-> * Non-RFC
-> * This patch is rebased on gpio/for-next branch and cherry-picked commit
-> 2715bbe from https://bitbucket.org/andy-shev/linux.git
-> 
->  drivers/gpio/devres.c                     |  5 +++--
->  drivers/gpio/gpiolib.c                    |  5 +++--
->  drivers/input/keyboard/gpio_keys.c        |  3 ++-
->  drivers/input/keyboard/gpio_keys_polled.c |  3 ++-
->  drivers/leds/leds-gpio.c                  | 13 +++++++------
->  drivers/video/fbdev/amba-clcd-nomadik.c   | 12 ++++++++----
+Currently, in order to do that, we would have to have static variables
+and multiple implementations of functions whose only purpose is to
+read from the correct static variable.  This is caused by a lack of
+driver private data passed into the mvebu pin controller's methods.
 
-For fbdev part:
+Most mvebu pin controllers methods are performing exactly the same
+action, so it makes sense to generalise the methods, which in turn
+lets us come up with a fairly standardised set of methods.
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Another important side effect of these changes is that the structures
+with function pointers are now marked const - as they should be in
+today's security concious kernel programming environment.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+I've included everything except the 7k and 8k drivers, which, before
+Thomas went away, he suggested changes to these, so they aren't ready
+for submission yet.  However, the rest of the ground work is, and I'd
+like users of this code to test it - I don't have all these platforms!
 
->  include/linux/gpio/consumer.h             | 12 ++++++++----
->  7 files changed, 33 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-> index 6d77b60..d196be7 100644
-> --- a/drivers/gpio/devres.c
-> +++ b/drivers/gpio/devres.c
-> @@ -140,7 +140,8 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags)
-> +					    enum gpiod_flags flags,
-> +					    const char *label)
->  {
->  	char prop_name[32]; /* 32 is max size of property name */
->  	struct gpio_desc **dr;
-> @@ -160,7 +161,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  			snprintf(prop_name, sizeof(prop_name), "%s",
->  					    gpio_suffixes[i]);
->  
-> -		desc = fwnode_get_named_gpiod(child, prop_name, flags);
-> +		desc = fwnode_get_named_gpiod(child, prop_name, flags, label);
->  		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
->  			break;
->  	}
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 46a4334..59d3d96 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -3317,7 +3317,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
->   */
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags)
-> +					 enum gpiod_flags dflags,
-> +					 const char *label)
->  {
->  	struct gpio_desc *desc = ERR_PTR(-ENODEV);
->  	unsigned long lflags = 0;
-> @@ -3348,7 +3349,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  	if (IS_ERR(desc))
->  		return desc;
->  
-> -	ret = gpiod_request(desc, NULL);
-> +	ret = gpiod_request(desc, label);
->  	if (ret)
->  		return ERR_PTR(ret);
->  
-> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-> index 9de4b87..2ec74d9 100644
-> --- a/drivers/input/keyboard/gpio_keys.c
-> +++ b/drivers/input/keyboard/gpio_keys.c
-> @@ -481,7 +481,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
->  	spin_lock_init(&bdata->lock);
->  
->  	if (child) {
-> -		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_IN);
-> +		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-> +							 GPIOD_IN, desc);
->  		if (IS_ERR(bdata->gpiod)) {
->  			error = PTR_ERR(bdata->gpiod);
->  			if (error == -ENOENT) {
-> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-> index fd7ab4d..5e35c56 100644
-> --- a/drivers/input/keyboard/gpio_keys_polled.c
-> +++ b/drivers/input/keyboard/gpio_keys_polled.c
-> @@ -305,7 +305,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
->  
->  			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
->  								 child,
-> -								 GPIOD_IN);
-> +								 GPIOD_IN,
-> +								 button->desc);
->  			if (IS_ERR(bdata->gpiod)) {
->  				error = PTR_ERR(bdata->gpiod);
->  				if (error != -EPROBE_DEFER)
-> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-> index 00cc671..6c4825d 100644
-> --- a/drivers/leds/leds-gpio.c
-> +++ b/drivers/leds/leds-gpio.c
-> @@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  		const char *state = NULL;
->  		struct device_node *np = to_of_node(child);
->  
-> -		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_ASIS);
-> -		if (IS_ERR(led.gpiod)) {
-> -			fwnode_handle_put(child);
-> -			return ERR_CAST(led.gpiod);
-> -		}
-> -
->  		ret = fwnode_property_read_string(child, "label", &led.name);
->  		if (ret && IS_ENABLED(CONFIG_OF) && np)
->  			led.name = np->name;
-> @@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
->  			return ERR_PTR(-EINVAL);
->  		}
->  
-> +		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
-> +						      GPIOD_ASIS, led.name);
-> +		if (IS_ERR(led.gpiod)) {
-> +			fwnode_handle_put(child);
-> +			return ERR_CAST(led.gpiod);
-> +		}
-> +
->  		fwnode_property_read_string(child, "linux,default-trigger",
->  					    &led.default_trigger);
->  
-> diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-> index 2e800d7..9175ad9 100644
-> --- a/drivers/video/fbdev/amba-clcd-nomadik.c
-> +++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-> @@ -185,22 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
->  	dev_info(dev, "TPG110 display init\n");
->  
->  	/* This asserts the GRESTB signal, putting the display into reset */
-> -	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode, GPIOD_OUT_HIGH);
-> +	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-> +					   GPIOD_OUT_HIGH, "grestb");
->  	if (IS_ERR(grestb)) {
->  		dev_err(dev, "no GRESTB GPIO\n");
->  		return;
->  	}
-> -	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, GPIOD_OUT_LOW);
-> +	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
-> +					 GPIOD_OUT_LOW, "scen");
->  	if (IS_ERR(scen)) {
->  		dev_err(dev, "no SCEN GPIO\n");
->  		return;
->  	}
-> -	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW);
-> +	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
-> +					"scl");
->  	if (IS_ERR(scl)) {
->  		dev_err(dev, "no SCL GPIO\n");
->  		return;
->  	}
-> -	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW);
-> +	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
-> +					"sda");
->  	if (IS_ERR(sda)) {
->  		dev_err(dev, "no SDA GPIO\n");
->  		return;
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index 930d100..80bad7e 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -136,11 +136,13 @@ struct fwnode_handle;
->  
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags);
-> +					 enum gpiod_flags dflags,
-> +					 const char *label);
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags);
-> +					    enum gpiod_flags flags,
-> +					    const char *label);
->  #else /* CONFIG_GPIOLIB */
->  
->  static inline int gpiod_count(struct device *dev, const char *con_id)
-> @@ -416,7 +418,8 @@ struct fwnode_handle;
->  static inline
->  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
->  					 const char *propname,
-> -					 enum gpiod_flags dflags)
-> +					 enum gpiod_flags dflags,
-> +					 const char *label)
->  {
->  	return ERR_PTR(-ENOSYS);
->  }
-> @@ -425,7 +428,8 @@ static inline
->  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
->  					    const char *con_id,
->  					    struct fwnode_handle *child,
-> -					    enum gpiod_flags flags)
-> +					    enum gpiod_flags flags,
-> +					    const char *label)
->  {
->  	return ERR_PTR(-ENOSYS);
->  }
+I'm aware of other mvebu SoC support, so I think it's probably a good
+idea to get these patches out there and known about, so folk can
+consider how they'd like to order merging the changes - obviously new
+SoCs with new pinctrl files will need updates somewhere...
+
+The cleanup side of these patches (without the last adding the regmap
+support) shows a reduction in code size:
+
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c  | 35 +++--------
+ drivers/pinctrl/mvebu/pinctrl-dove.c       | 96 +++++++++++++++++-------------
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c   | 32 +++-------
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c      | 77 +++++++++++++++++++++---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.h      | 51 +++++++---------
+ drivers/pinctrl/mvebu/pinctrl-orion.c      |  8 ++-
+ 10 files changed, 183 insertions(+), 212 deletions(-)
+
+Adding regmap support increases the code size again:
+
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c  |  35 ++------
+ drivers/pinctrl/mvebu/pinctrl-dove.c       |  96 +++++++++++---------
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c   |  32 ++-----
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c      | 137 +++++++++++++++++++++++++++--
+ drivers/pinctrl/mvebu/pinctrl-mvebu.h      |  65 ++++++++------
+ drivers/pinctrl/mvebu/pinctrl-orion.c      |   8 +-
+ 10 files changed, 257 insertions(+), 212 deletions(-)
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
