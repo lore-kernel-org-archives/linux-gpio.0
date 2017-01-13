@@ -1,70 +1,36 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.11
-Date: Fri, 13 Jan 2017 15:00:18 +0100
-Message-ID: <1484316018-25170-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Fri, 13 Jan 2017 16:22:19 +0100
+Message-ID: <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com> <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-	Hi Linus,
+On Thu, Jan 12, 2017 at 3:57 AM, Jacky Bai <ping.bai@nxp.com> wrote:
 
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+> Another thing is that we can use a pins-tool program developed by NXP to
+>  generate the pinctrl configuration code that can be used directly in dts. This
+> tiny program can avoid pin function conflict. As on i.MX, there are so may pins,
+> each pin can be used for up 8  function. Configuring the pins is a time-consuming
+> work.  This tools is very useful for customer to generate the dts code.
 
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+I understand, but every silicon vendor has such a tool, all are different,
+proprietary and unfriendly to programmers and open source developers, who
+need to understand how the hardware is working without magic tools
+and secret data sheets to fix bugs.
 
-are available in the git repository at:
+For the people working with maintaining the code it is paramount that
+DTS files are self-descriptive.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.11-tag1
-
-for you to fetch changes up to 0e4e4999aac16641f47699e8929693b83a7a4d64:
-
-  pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions (2016-12-27 10:57:39 +0100)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.11
-
-  - Add bias handling for non-GPIO pins for R-Car H3,
-  - Add drive-strength and bias handling for R-Car M3-W,
-  - Add CAN, CAN FD, MSIOF, and HSCIF pin groups for R-Car M3-W,
-  - Add SDHI voltage switching for R-Car M2-N.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Chris Paterson (2):
-      pinctrl: sh-pfc: r8a7796: Add CAN support
-      pinctrl: sh-pfc: r8a7796: Add CAN FD support
-
-Niklas Söderlund (3):
-      pinctrl: sh-pfc: r8a7796: Add drive strength support
-      pinctrl: sh-pfc: r8a7796: Add bias pinconf support
-      pinctrl: sh-pfc: r8a7795: Support none GPIO pins bias setting
-
-Simon Horman (1):
-      pinctrl: sh-pfc: r8a7793: Implement voltage switching for SDHI
-
-Takeshi Kihara (1):
-      pinctrl: sh-pfc: r8a7796: Add MSIOF pins, groups and functions
-
-Ulrich Hecht (1):
-      pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    1 +
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c |  450 ++++----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 1920 +++++++++++++++++++++++++++++++++-
- 3 files changed, 2158 insertions(+), 213 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Yours,
+Linus Walleij
