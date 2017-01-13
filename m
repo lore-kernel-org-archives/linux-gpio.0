@@ -1,31 +1,45 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH RFC 0/5] mvebu cleanups and preparation for Armada 7k/8k
-Date: Fri, 13 Jan 2017 11:28:29 +0000
-Message-ID: <20170113112829.GP14217@n2100.armlinux.org.uk>
-References: <20170113110240.GA29164@n2100.armlinux.org.uk>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: remove redundant pin < 0 check on unsigned int
+Date: Fri, 13 Jan 2017 13:20:39 +0000
+Message-ID: <20170113132039.19830-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:44204 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751419AbdAML2j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2017 06:28:39 -0500
-Content-Disposition: inline
-In-Reply-To: <20170113110240.GA29164@n2100.armlinux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Fri, Jan 13, 2017 at 11:02:40AM +0000, Russell King - ARM Linux wrote:
-> (Resend including linux-arm-kernel)
+From: Colin Ian King <colin.king@canonical.com>
 
-BTW, would be useful if MAINTAINERS could list maintainers for both
-this code and the mvebu gpio code too.  At the moment, it seems Linus
-is the person responsible for both of those - but I suspect the mvebu
-people want to be copied on patches...
+pin is an unsigned int and therefore can never be < 0 so
+this check is redudant. Remove the check and the associated
+dev_err error message.
 
+Fixes CoverityScan CID#1396438 ("Unsigned compared against 0")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 3b86d3d..a345166 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -665,12 +665,6 @@ static void ti_iodelay_pin_dbg_show(struct pinctrl_dev *pctldev,
+ 	r = iod->reg_data;
+ 
+ 	offset = ti_iodelay_pin_to_offset(iod, pin);
+-	if (pin < 0) {
+-		dev_err(iod->dev, "invalid pin offset for pin%i\n", pin);
+-
+-		return;
+-	}
+-
+ 	pd = &iod->pa[pin];
+ 	cfg = pd->drv_data;
+ 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+2.10.2
