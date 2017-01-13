@@ -1,74 +1,77 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCHv4 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Fri, 13 Jan 2017 10:54:17 +0100
-Message-ID: <2fca7ac2-9a88-19b1-28c5-5192b9c4a2bc@gmail.com>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-4-chris.packham@alliedtelesis.co.nz>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: [PATCH RFC 0/5] mvebu cleanups and preparation for Armada 7k/8k
+Date: Fri, 13 Jan 2017 10:28:38 +0000
+Message-ID: <20170113102838.GO14217@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170113091222.7132-4-chris.packham@alliedtelesis.co.nz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:43250 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751454AbdAMK2v (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2017 05:28:51 -0500
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, linux-gpio@vger.kernel.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-On 13.01.2017 10:12, Chris Packham wrote:
-> From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
->
-> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
-> from Marvell.
->
-> Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> ---
->
-> Notes:
->     Changes in v2:
->     - include sdio support for the 98DX4251
->     Changes in v3:
->     - None
->     Changes in v4:
->     - Correct some discrepencies between binding and driver.
+This patch series cleans up the mvebu pin controller implementation
+such that we can support multiple pin controllers as found in Armada
+7k and 8k SoCs.
 
-Well, unfortunately I still see differences between the "gpio" in
-the binding and "gpo" in the driver.
+Currently, in order to do that, we would have to have static variables
+and multiple implementations of functions whose only purpose is to
+read from the correct static variable.  This is caused by a lack of
+driver private data passed into the mvebu pin controller's methods.
 
-Please go back to that list I sent you yesterday and fix them all.
+Most mvebu pin controllers methods are performing exactly the same
+action, so it makes sense to generalise the methods, which in turn
+lets us come up with a fairly standardised set of methods.
 
-[...]
-> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
-> new file mode 100644
-> index 000000000000..b5bd23992fdf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
-> @@ -0,0 +1,46 @@
-[...]
-> +mpp6          6        gpio, sd0(clk), dev(a2)
+Another important side effect of these changes is that the structures
+with function pointers are now marked const - as they should be in
+today's security concious kernel programming environment.
 
-e.g. this is "gpio" ...
+I've included everything except the 7k and 8k drivers, which, before
+Thomas went away, he suggested changes to these, so they aren't ready
+for submission yet.  However, the rest of the ground work is, and I'd
+like users of this code to test it - I don't have all these platforms!
 
-[...]
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-> index e4ea71a9d985..9601d662c7f5 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-> @@ -49,6 +49,10 @@ enum armada_xp_variant {
-[...]
-> +	MPP_MODE(6,
-> +		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
+I'm aware of other mvebu SoC support, so I think it's probably a good
+idea to get these patches out there and known about, so folk can
+consider how they'd like to order merging the changes - obviously new
+SoCs with new pinctrl files will need updates somewhere...
 
-... but here it is "gpo".
+The cleanup side of these patches (without the last adding the regmap
+support) shows a reduction in code size:
 
-Sebastian
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c | 24 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c  | 35 +++--------
+ drivers/pinctrl/mvebu/pinctrl-dove.c       | 96 +++++++++++++++++-------------
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c   | 32 +++-------
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c      | 77 +++++++++++++++++++++---
+ drivers/pinctrl/mvebu/pinctrl-mvebu.h      | 51 +++++++---------
+ drivers/pinctrl/mvebu/pinctrl-orion.c      |  8 ++-
+ 10 files changed, 183 insertions(+), 212 deletions(-)
+
+Adding regmap support increases the code size again:
+
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c |  24 +----
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c  |  35 ++------
+ drivers/pinctrl/mvebu/pinctrl-dove.c       |  96 +++++++++++---------
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c   |  32 ++-----
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c      | 137 +++++++++++++++++++++++++++--
+ drivers/pinctrl/mvebu/pinctrl-mvebu.h      |  65 ++++++++------
+ drivers/pinctrl/mvebu/pinctrl-orion.c      |   8 +-
+ 10 files changed, 257 insertions(+), 212 deletions(-)
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
