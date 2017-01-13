@@ -1,36 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-Date: Fri, 13 Jan 2017 16:22:19 +0100
-Message-ID: <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com> <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH] pinctrl: core: Fix regression caused by delayed work for hogs
+Date: Fri, 13 Jan 2017 16:26:23 +0100
+Message-ID: <CACRpkdaWo54ByCa=1Mr1v_O4ANR=OXehsR0Hg65pj9M9jzMDtg@mail.gmail.com>
+References: <20170111221334.26194-1-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170111221334.26194-1-tony@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Gary Bisson <gary.bisson@boundarydevices.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 3:57 AM, Jacky Bai <ping.bai@nxp.com> wrote:
+On Wed, Jan 11, 2017 at 11:13 PM, Tony Lindgren <tony@atomide.com> wrote:
 
-> Another thing is that we can use a pins-tool program developed by NXP to
->  generate the pinctrl configuration code that can be used directly in dts. This
-> tiny program can avoid pin function conflict. As on i.MX, there are so may pins,
-> each pin can be used for up 8  function. Configuring the pins is a time-consuming
-> work.  This tools is very useful for customer to generate the dts code.
+> Commit df61b366af26 ("pinctrl: core: Use delayed work for hogs") caused a
+> regression at least with sh-pfc that is also a GPIO controller as
+> noted by Geert Uytterhoeven <geert@linux-m68k.org>.
+>
+> As the original pinctrl_register() has issues calling pin controller
+> driver functions early before the controller has finished registering,
+> we can't just revert commit df61b366af26. That would break the drivers
+> using GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS.
+>
+> So let's fix the issue with the following steps as a single patch:
+>
+> 1. Revert the late_init parts of commit df61b366af26.
+>
+>    The late_init clearly won't work and we have to just give up
+>    on fixing pinctrl_register() for GENERIC_PINCTRL_GROUPS and
+>    GENERIC_PINMUX_FUNCTIONS.
+>
+> 2. Split pinctrl_register() into two parts
+>
+>    By splitting pinctrl_register() into pinctrl_init_controller()
+>    and pinctrl_create_and_start() we have better control over when
+>    it's safe to call pinctrl_create().
+>
+> 3. Introduce a new pinctrl_register_and_init() function
+>
+>    As suggested by Linus Walleij <linus.walleij@linaro.org>, we
+>    can just introduce a new function for the controllers that need
+>    pinctrl_create() called later.
+>
+> 4. Convert the four known problem cases to use new function
+>
+>    Let's convert pinctrl-imx, pinctrl-single, sh-pfc and ti-iodelay
+>    to use the new function to fix the issues. The rest of the drivers
+>    can be converted later. Let's also update Documentation/pinctrl.txt
+>    accordingly because of the known issues with pinctrl_register().
+>
+> Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Gary Bisson <gary.bisson@boundarydevices.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-I understand, but every silicon vendor has such a tool, all are different,
-proprietary and unfriendly to programmers and open source developers, who
-need to understand how the hardware is working without magic tools
-and secret data sheets to fix bugs.
-
-For the people working with maintaining the code it is paramount that
-DTS files are self-descriptive.
+OK patch applied.
 
 Yours,
 Linus Walleij
