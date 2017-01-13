@@ -1,599 +1,236 @@
-From: Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH RFC 4/5] pinctrl: mvebu: switch drivers to generic simple mmio
-Date: Fri, 13 Jan 2017 10:29:31 +0000
-Message-ID: <E1cRz6x-0002MQ-0R@rmk-PC.armlinux.org.uk>
-References: <20170113102838.GO14217@n2100.armlinux.org.uk>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Fri, 13 Jan 2017 12:01:38 +0100
+Message-ID: <11509256.sASrU01HFQ@amdc3058>
+References: <CGME20170112164013epcas5p41425c343028efaff169f1a9ed38b4365@epcas5p4.samsung.com>
+ <20170112163924.4414-1-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:43334 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbdAMK34 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2017 05:29:56 -0500
-In-Reply-To: <20170113102838.GO14217@n2100.armlinux.org.uk>
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-reply-to: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Sender: linux-leds-owner@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-fbdev@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-gpio@vger.kernel.org
 
-Move the mvebu pinctrl drivers over to the generic simple mmio
-implementation, saving a substantial number of lines of code in
-the process.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
----
- drivers/pinctrl/mvebu/pinctrl-armada-370.c | 24 ++------------
- drivers/pinctrl/mvebu/pinctrl-armada-375.c | 24 ++------------
- drivers/pinctrl/mvebu/pinctrl-armada-38x.c | 24 ++------------
- drivers/pinctrl/mvebu/pinctrl-armada-39x.c | 24 ++------------
- drivers/pinctrl/mvebu/pinctrl-armada-xp.c  | 31 ++++--------------
- drivers/pinctrl/mvebu/pinctrl-dove.c       | 52 +++++++++++++++---------------
- drivers/pinctrl/mvebu/pinctrl-kirkwood.c   | 28 +++-------------
- drivers/pinctrl/mvebu/pinctrl-mvebu.h      | 24 --------------
- 8 files changed, 45 insertions(+), 186 deletions(-)
+Hi,
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-370.c b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
-index 4dc083ffd561..c2de4f8ee488 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-370.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-370.c
-@@ -23,20 +23,6 @@
- 
- #include "pinctrl-mvebu.h"
- 
--static void __iomem *mpp_base;
--
--static int armada_370_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int armada_370_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- static struct mvebu_mpp_mode mv88f6710_mpp_modes[] = {
- 	MPP_MODE(0,
- 	   MPP_FUNCTION(0x0, "gpio", NULL),
-@@ -387,7 +373,7 @@ static const struct of_device_id armada_370_pinctrl_of_match[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv88f6710_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 65, NULL, armada_370_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 65, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv88f6710_mpp_gpio_ranges[] = {
-@@ -399,12 +385,6 @@ static struct pinctrl_gpio_range mv88f6710_mpp_gpio_ranges[] = {
- static int armada_370_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct mvebu_pinctrl_soc_info *soc = &armada_370_pinctrl_info;
--	struct resource *res;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
- 
- 	soc->variant = 0; /* no variants for Armada 370 */
- 	soc->controls = mv88f6710_mpp_controls;
-@@ -416,7 +396,7 @@ static int armada_370_pinctrl_probe(struct platform_device *pdev)
- 
- 	pdev->dev.platform_data = soc;
- 
--	return mvebu_pinctrl_probe(pdev);
-+	return mvebu_pinctrl_simple_mmio_probe(pdev);
- }
- 
- static struct platform_driver armada_370_pinctrl_driver = {
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-375.c b/drivers/pinctrl/mvebu/pinctrl-armada-375.c
-index c6168102bd17..30cbf23b0b03 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-375.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-375.c
-@@ -23,20 +23,6 @@
- 
- #include "pinctrl-mvebu.h"
- 
--static void __iomem *mpp_base;
--
--static int armada_375_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int armada_375_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- static struct mvebu_mpp_mode mv88f6720_mpp_modes[] = {
- 	MPP_MODE(0,
- 		 MPP_FUNCTION(0x0, "gpio", NULL),
-@@ -405,7 +391,7 @@ static const struct of_device_id armada_375_pinctrl_of_match[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv88f6720_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 69, NULL, armada_375_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 69, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv88f6720_mpp_gpio_ranges[] = {
-@@ -417,12 +403,6 @@ static struct pinctrl_gpio_range mv88f6720_mpp_gpio_ranges[] = {
- static int armada_375_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct mvebu_pinctrl_soc_info *soc = &armada_375_pinctrl_info;
--	struct resource *res;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
- 
- 	soc->variant = 0; /* no variants for Armada 375 */
- 	soc->controls = mv88f6720_mpp_controls;
-@@ -434,7 +414,7 @@ static int armada_375_pinctrl_probe(struct platform_device *pdev)
- 
- 	pdev->dev.platform_data = soc;
- 
--	return mvebu_pinctrl_probe(pdev);
-+	return mvebu_pinctrl_simple_mmio_probe(pdev);
- }
- 
- static struct platform_driver armada_375_pinctrl_driver = {
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
-index 98aee37effef..e66ed239522e 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-38x.c
-@@ -22,20 +22,6 @@
- 
- #include "pinctrl-mvebu.h"
- 
--static void __iomem *mpp_base;
--
--static int armada_38x_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int armada_38x_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- enum {
- 	V_88F6810 = BIT(0),
- 	V_88F6820 = BIT(1),
-@@ -412,7 +398,7 @@ static const struct of_device_id armada_38x_pinctrl_of_match[] = {
- };
- 
- static const struct mvebu_mpp_ctrl armada_38x_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 59, NULL, armada_38x_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 59, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range armada_38x_mpp_gpio_ranges[] = {
-@@ -425,16 +411,10 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
- 	struct mvebu_pinctrl_soc_info *soc = &armada_38x_pinctrl_info;
- 	const struct of_device_id *match =
- 		of_match_device(armada_38x_pinctrl_of_match, &pdev->dev);
--	struct resource *res;
- 
- 	if (!match)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
--
- 	soc->variant = (unsigned) match->data & 0xff;
- 	soc->controls = armada_38x_mpp_controls;
- 	soc->ncontrols = ARRAY_SIZE(armada_38x_mpp_controls);
-@@ -445,7 +425,7 @@ static int armada_38x_pinctrl_probe(struct platform_device *pdev)
- 
- 	pdev->dev.platform_data = soc;
- 
--	return mvebu_pinctrl_probe(pdev);
-+	return mvebu_pinctrl_simple_mmio_probe(pdev);
- }
- 
- static struct platform_driver armada_38x_pinctrl_driver = {
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-39x.c b/drivers/pinctrl/mvebu/pinctrl-armada-39x.c
-index 4b1ba4424e0a..697c8774a4da 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-39x.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-39x.c
-@@ -22,20 +22,6 @@
- 
- #include "pinctrl-mvebu.h"
- 
--static void __iomem *mpp_base;
--
--static int armada_39x_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int armada_39x_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
--				   unsigned pid, unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- enum {
- 	V_88F6920 = BIT(0),
- 	V_88F6925 = BIT(1),
-@@ -394,7 +380,7 @@ static const struct of_device_id armada_39x_pinctrl_of_match[] = {
- };
- 
- static const struct mvebu_mpp_ctrl armada_39x_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 59, NULL, armada_39x_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 59, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range armada_39x_mpp_gpio_ranges[] = {
-@@ -407,16 +393,10 @@ static int armada_39x_pinctrl_probe(struct platform_device *pdev)
- 	struct mvebu_pinctrl_soc_info *soc = &armada_39x_pinctrl_info;
- 	const struct of_device_id *match =
- 		of_match_device(armada_39x_pinctrl_of_match, &pdev->dev);
--	struct resource *res;
- 
- 	if (!match)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
--
- 	soc->variant = (unsigned) match->data & 0xff;
- 	soc->controls = armada_39x_mpp_controls;
- 	soc->ncontrols = ARRAY_SIZE(armada_39x_mpp_controls);
-@@ -427,7 +407,7 @@ static int armada_39x_pinctrl_probe(struct platform_device *pdev)
- 
- 	pdev->dev.platform_data = soc;
- 
--	return mvebu_pinctrl_probe(pdev);
-+	return mvebu_pinctrl_simple_mmio_probe(pdev);
- }
- 
- static struct platform_driver armada_39x_pinctrl_driver = {
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-index a777925e0f34..63e1bd506983 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-@@ -30,21 +30,8 @@
- 
- #include "pinctrl-mvebu.h"
- 
--static void __iomem *mpp_base;
- static u32 *mpp_saved_regs;
- 
--static int armada_xp_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
--				  unsigned pid, unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int armada_xp_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
--				  unsigned pid, unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- enum armada_xp_variant {
- 	V_MV78230	= BIT(0),
- 	V_MV78260	= BIT(1),
-@@ -381,7 +368,7 @@ static const struct of_device_id armada_xp_pinctrl_of_match[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv78230_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 48, NULL, armada_xp_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 48, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv78230_mpp_gpio_ranges[] = {
-@@ -390,7 +377,7 @@ static struct pinctrl_gpio_range mv78230_mpp_gpio_ranges[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv78260_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 66, NULL, armada_xp_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 66, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv78260_mpp_gpio_ranges[] = {
-@@ -400,7 +387,7 @@ static struct pinctrl_gpio_range mv78260_mpp_gpio_ranges[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv78460_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 66, NULL, armada_xp_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 66, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv78460_mpp_gpio_ranges[] = {
-@@ -419,7 +406,7 @@ static int armada_xp_pinctrl_suspend(struct platform_device *pdev,
- 	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
- 
- 	for (i = 0; i < nregs; i++)
--		mpp_saved_regs[i] = readl(mpp_base + i * 4);
-+		mpp_saved_regs[i] = readl(soc->control_data[0].base + i * 4);
- 
- 	return 0;
- }
-@@ -433,7 +420,7 @@ static int armada_xp_pinctrl_resume(struct platform_device *pdev)
- 	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
- 
- 	for (i = 0; i < nregs; i++)
--		writel(mpp_saved_regs[i], mpp_base + i * 4);
-+		writel(mpp_saved_regs[i], soc->control_data[0].base + i * 4);
- 
- 	return 0;
- }
-@@ -443,17 +430,11 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
- 	struct mvebu_pinctrl_soc_info *soc = &armada_xp_pinctrl_info;
- 	const struct of_device_id *match =
- 		of_match_device(armada_xp_pinctrl_of_match, &pdev->dev);
--	struct resource *res;
- 	int nregs;
- 
- 	if (!match)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
--
- 	soc->variant = (unsigned) match->data & 0xff;
- 
- 	switch (soc->variant) {
-@@ -501,7 +482,7 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
- 
- 	pdev->dev.platform_data = soc;
- 
--	return mvebu_pinctrl_probe(pdev);
-+	return mvebu_pinctrl_simple_mmio_probe(pdev);
- }
- 
- static struct platform_driver armada_xp_pinctrl_driver = {
-diff --git a/drivers/pinctrl/mvebu/pinctrl-dove.c b/drivers/pinctrl/mvebu/pinctrl-dove.c
-index fb0b42c24405..89ae93c49f2f 100644
---- a/drivers/pinctrl/mvebu/pinctrl-dove.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-dove.c
-@@ -61,33 +61,20 @@
- 
- #define CONFIG_PMU	BIT(4)
- 
--static void __iomem *mpp_base;
- static void __iomem *mpp4_base;
- static void __iomem *pmu_base;
- static struct regmap *gconfmap;
- 
--static int dove_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data, unsigned pid,
--			     unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int dove_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data, unsigned pid,
--			     unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- static int dove_pmu_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
- 				 unsigned pid, unsigned long *config)
- {
- 	unsigned off = (pid / MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
- 	unsigned shift = (pid % MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
--	unsigned long pmu = readl(mpp_base + PMU_MPP_GENERAL_CTRL);
-+	unsigned long pmu = readl(data->base + PMU_MPP_GENERAL_CTRL);
- 	unsigned long func;
- 
- 	if ((pmu & BIT(pid)) == 0)
--		return default_mpp_ctrl_get(mpp_base, pid, config);
-+		return mvebu_mmio_mpp_ctrl_get(data, pid, config);
- 
- 	func = readl(pmu_base + PMU_SIGNAL_SELECT_0 + off);
- 	*config = (func >> shift) & MVEBU_MPP_MASK;
-@@ -101,15 +88,15 @@ static int dove_pmu_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
- {
- 	unsigned off = (pid / MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
- 	unsigned shift = (pid % MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
--	unsigned long pmu = readl(mpp_base + PMU_MPP_GENERAL_CTRL);
-+	unsigned long pmu = readl(data->base + PMU_MPP_GENERAL_CTRL);
- 	unsigned long func;
- 
- 	if ((config & CONFIG_PMU) == 0) {
--		writel(pmu & ~BIT(pid), mpp_base + PMU_MPP_GENERAL_CTRL);
--		return default_mpp_ctrl_set(mpp_base, pid, config);
-+		writel(pmu & ~BIT(pid), data->base + PMU_MPP_GENERAL_CTRL);
-+		return mvebu_mmio_mpp_ctrl_set(data, pid, config);
- 	}
- 
--	writel(pmu | BIT(pid), mpp_base + PMU_MPP_GENERAL_CTRL);
-+	writel(pmu | BIT(pid), data->base + PMU_MPP_GENERAL_CTRL);
- 	func = readl(pmu_base + PMU_SIGNAL_SELECT_0 + off);
- 	func &= ~(MVEBU_MPP_MASK << shift);
- 	func |= (config & MVEBU_MPP_MASK) << shift;
-@@ -207,7 +194,7 @@ static int dove_nand_ctrl_set(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- static int dove_audio0_ctrl_get(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- 				unsigned long *config)
- {
--	unsigned long pmu = readl(mpp_base + PMU_MPP_GENERAL_CTRL);
-+	unsigned long pmu = readl(data->base + PMU_MPP_GENERAL_CTRL);
- 
- 	*config = ((pmu & AU0_AC97_SEL) != 0);
- 
-@@ -217,12 +204,12 @@ static int dove_audio0_ctrl_get(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- static int dove_audio0_ctrl_set(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- 				unsigned long config)
- {
--	unsigned long pmu = readl(mpp_base + PMU_MPP_GENERAL_CTRL);
-+	unsigned long pmu = readl(data->base + PMU_MPP_GENERAL_CTRL);
- 
- 	pmu &= ~AU0_AC97_SEL;
- 	if (config)
- 		pmu |= AU0_AC97_SEL;
--	writel(pmu, mpp_base + PMU_MPP_GENERAL_CTRL);
-+	writel(pmu, data->base + PMU_MPP_GENERAL_CTRL);
- 
- 	return 0;
- }
-@@ -372,7 +359,7 @@ static int dove_twsi_ctrl_set(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- 
- static const struct mvebu_mpp_ctrl dove_mpp_controls[] = {
- 	MPP_FUNC_CTRL(0, 15, NULL, dove_pmu_mpp_ctrl),
--	MPP_FUNC_CTRL(16, 23, NULL, dove_mpp_ctrl),
-+	MPP_FUNC_CTRL(16, 23, NULL, mvebu_mmio_mpp_ctrl),
- 	MPP_FUNC_CTRL(24, 39, "mpp_camera", dove_mpp4_ctrl),
- 	MPP_FUNC_CTRL(40, 45, "mpp_sdio0", dove_mpp4_ctrl),
- 	MPP_FUNC_CTRL(46, 51, "mpp_sdio1", dove_mpp4_ctrl),
-@@ -785,6 +772,10 @@ static int dove_pinctrl_probe(struct platform_device *pdev)
- 	struct resource fb_res;
- 	const struct of_device_id *match =
- 		of_match_device(dove_pinctrl_of_match, &pdev->dev);
-+	struct mvebu_mpp_ctrl_data *mpp_data;
-+	void __iomem *base;
-+	int i;
-+
- 	pdev->dev.platform_data = (void *)match->data;
- 
- 	/*
-@@ -799,9 +790,18 @@ static int dove_pinctrl_probe(struct platform_device *pdev)
- 	clk_prepare_enable(clk);
- 
- 	mpp_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, mpp_res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
-+	base = devm_ioremap_resource(&pdev->dev, mpp_res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	mpp_data = devm_kcalloc(&pdev->dev, dove_pinctrl_info.ncontrols,
-+				sizeof(*mpp_data), GFP_KERNEL);
-+	if (!mpp_data)
-+		return -ENOMEM;
-+
-+	dove_pinctrl_info.control_data = mpp_data;
-+	for (i = 0; i < ARRAY_SIZE(dove_mpp_controls); i++)
-+		mpp_data[i].base = base;
- 
- 	/* prepare fallback resource */
- 	memcpy(&fb_res, mpp_res, sizeof(struct resource));
-diff --git a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
-index 89101f36f5d0..dad38d6dc646 100644
---- a/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-kirkwood.c
-@@ -21,20 +21,6 @@
- 
- #include "pinctrl-mvebu.h"
- 
--static void __iomem *mpp_base;
--
--static int kirkwood_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data,
--				 unsigned pid, unsigned long *config)
--{
--	return default_mpp_ctrl_get(mpp_base, pid, config);
--}
--
--static int kirkwood_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
--				 unsigned pid, unsigned long config)
--{
--	return default_mpp_ctrl_set(mpp_base, pid, config);
--}
--
- #define V(f6180, f6190, f6192, f6281, f6282, dx4122)	\
- 	((f6180 << 0) | (f6190 << 1) | (f6192 << 2) |	\
- 	 (f6281 << 3) | (f6282 << 4) | (dx4122 << 5))
-@@ -373,7 +359,7 @@ static struct mvebu_mpp_mode mv88f6xxx_mpp_modes[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv88f6180_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 44, NULL, kirkwood_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 44, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv88f6180_gpio_ranges[] = {
-@@ -382,7 +368,7 @@ static struct pinctrl_gpio_range mv88f6180_gpio_ranges[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv88f619x_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 35, NULL, kirkwood_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 35, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv88f619x_gpio_ranges[] = {
-@@ -391,7 +377,7 @@ static struct pinctrl_gpio_range mv88f619x_gpio_ranges[] = {
- };
- 
- static const struct mvebu_mpp_ctrl mv88f628x_mpp_controls[] = {
--	MPP_FUNC_CTRL(0, 49, NULL, kirkwood_mpp_ctrl),
-+	MPP_FUNC_CTRL(0, 49, NULL, mvebu_mmio_mpp_ctrl),
- };
- 
- static struct pinctrl_gpio_range mv88f628x_gpio_ranges[] = {
-@@ -474,14 +460,10 @@ static int kirkwood_pinctrl_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	const struct of_device_id *match =
- 		of_match_device(kirkwood_pinctrl_of_match, &pdev->dev);
--	pdev->dev.platform_data = (void *)match->data;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	mpp_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mpp_base))
--		return PTR_ERR(mpp_base);
-+	pdev->dev.platform_data = (void *)match->data;
- 
--	return mvebu_pinctrl_probe(pdev);
-+	return mvebu_pinctrl_simple_mmio_probe(pdev);
- }
- 
- static struct platform_driver kirkwood_pinctrl_driver = {
-diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.h b/drivers/pinctrl/mvebu/pinctrl-mvebu.h
-index c055581cf887..a9304cdc23e2 100644
---- a/drivers/pinctrl/mvebu/pinctrl-mvebu.h
-+++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.h
-@@ -190,30 +190,6 @@ struct mvebu_pinctrl_soc_info {
- #define MVEBU_MPP_BITS		4
- #define MVEBU_MPP_MASK		0xf
- 
--static inline int default_mpp_ctrl_get(void __iomem *base, unsigned int pid,
--				       unsigned long *config)
--{
--	unsigned off = (pid / MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
--	unsigned shift = (pid % MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
--
--	*config = (readl(base + off) >> shift) & MVEBU_MPP_MASK;
--
--	return 0;
--}
--
--static inline int default_mpp_ctrl_set(void __iomem *base, unsigned int pid,
--				       unsigned long config)
--{
--	unsigned off = (pid / MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
--	unsigned shift = (pid % MVEBU_MPPS_PER_REG) * MVEBU_MPP_BITS;
--	unsigned long reg;
--
--	reg = readl(base + off) & ~(MVEBU_MPP_MASK << shift);
--	writel(reg | (config << shift), base + off);
--
--	return 0;
--}
--
- int mvebu_mmio_mpp_ctrl_get(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- 			       unsigned long *config);
- int mvebu_mmio_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data, unsigned pid,
--- 
-2.7.4
+On Thursday, January 12, 2017 05:39:24 PM Alexander Stein wrote:
+> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+> With this change a proper label is used.
+> Also adjust all users so they can pass a label, properly retrieved from
+> device tree properties.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> ---
+> v2:
+> * Non-RFC
+> * This patch is rebased on gpio/for-next branch and cherry-picked commit
+> 2715bbe from https://bitbucket.org/andy-shev/linux.git
+> 
+>  drivers/gpio/devres.c                     |  5 +++--
+>  drivers/gpio/gpiolib.c                    |  5 +++--
+>  drivers/input/keyboard/gpio_keys.c        |  3 ++-
+>  drivers/input/keyboard/gpio_keys_polled.c |  3 ++-
+>  drivers/leds/leds-gpio.c                  | 13 +++++++------
+>  drivers/video/fbdev/amba-clcd-nomadik.c   | 12 ++++++++----
 
+For fbdev part:
+
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+>  include/linux/gpio/consumer.h             | 12 ++++++++----
+>  7 files changed, 33 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+> index 6d77b60..d196be7 100644
+> --- a/drivers/gpio/devres.c
+> +++ b/drivers/gpio/devres.c
+> @@ -140,7 +140,8 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
+>  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  					    const char *con_id,
+>  					    struct fwnode_handle *child,
+> -					    enum gpiod_flags flags)
+> +					    enum gpiod_flags flags,
+> +					    const char *label)
+>  {
+>  	char prop_name[32]; /* 32 is max size of property name */
+>  	struct gpio_desc **dr;
+> @@ -160,7 +161,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  			snprintf(prop_name, sizeof(prop_name), "%s",
+>  					    gpio_suffixes[i]);
+>  
+> -		desc = fwnode_get_named_gpiod(child, prop_name, flags);
+> +		desc = fwnode_get_named_gpiod(child, prop_name, flags, label);
+>  		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
+>  			break;
+>  	}
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 46a4334..59d3d96 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -3317,7 +3317,8 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+>   */
+>  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  					 const char *propname,
+> -					 enum gpiod_flags dflags)
+> +					 enum gpiod_flags dflags,
+> +					 const char *label)
+>  {
+>  	struct gpio_desc *desc = ERR_PTR(-ENODEV);
+>  	unsigned long lflags = 0;
+> @@ -3348,7 +3349,7 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  	if (IS_ERR(desc))
+>  		return desc;
+>  
+> -	ret = gpiod_request(desc, NULL);
+> +	ret = gpiod_request(desc, label);
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+> index 9de4b87..2ec74d9 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -481,7 +481,8 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+>  	spin_lock_init(&bdata->lock);
+>  
+>  	if (child) {
+> -		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_IN);
+> +		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
+> +							 GPIOD_IN, desc);
+>  		if (IS_ERR(bdata->gpiod)) {
+>  			error = PTR_ERR(bdata->gpiod);
+>  			if (error == -ENOENT) {
+> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+> index fd7ab4d..5e35c56 100644
+> --- a/drivers/input/keyboard/gpio_keys_polled.c
+> +++ b/drivers/input/keyboard/gpio_keys_polled.c
+> @@ -305,7 +305,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+>  
+>  			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
+>  								 child,
+> -								 GPIOD_IN);
+> +								 GPIOD_IN,
+> +								 button->desc);
+>  			if (IS_ERR(bdata->gpiod)) {
+>  				error = PTR_ERR(bdata->gpiod);
+>  				if (error != -EPROBE_DEFER)
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 00cc671..6c4825d 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -174,12 +174,6 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>  		const char *state = NULL;
+>  		struct device_node *np = to_of_node(child);
+>  
+> -		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child, GPIOD_ASIS);
+> -		if (IS_ERR(led.gpiod)) {
+> -			fwnode_handle_put(child);
+> -			return ERR_CAST(led.gpiod);
+> -		}
+> -
+>  		ret = fwnode_property_read_string(child, "label", &led.name);
+>  		if (ret && IS_ENABLED(CONFIG_OF) && np)
+>  			led.name = np->name;
+> @@ -188,6 +182,13 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
+>  			return ERR_PTR(-EINVAL);
+>  		}
+>  
+> +		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
+> +						      GPIOD_ASIS, led.name);
+> +		if (IS_ERR(led.gpiod)) {
+> +			fwnode_handle_put(child);
+> +			return ERR_CAST(led.gpiod);
+> +		}
+> +
+>  		fwnode_property_read_string(child, "linux,default-trigger",
+>  					    &led.default_trigger);
+>  
+> diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
+> index 2e800d7..9175ad9 100644
+> --- a/drivers/video/fbdev/amba-clcd-nomadik.c
+> +++ b/drivers/video/fbdev/amba-clcd-nomadik.c
+> @@ -185,22 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
+>  	dev_info(dev, "TPG110 display init\n");
+>  
+>  	/* This asserts the GRESTB signal, putting the display into reset */
+> -	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode, GPIOD_OUT_HIGH);
+> +	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
+> +					   GPIOD_OUT_HIGH, "grestb");
+>  	if (IS_ERR(grestb)) {
+>  		dev_err(dev, "no GRESTB GPIO\n");
+>  		return;
+>  	}
+> -	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode, GPIOD_OUT_LOW);
+> +	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
+> +					 GPIOD_OUT_LOW, "scen");
+>  	if (IS_ERR(scen)) {
+>  		dev_err(dev, "no SCEN GPIO\n");
+>  		return;
+>  	}
+> -	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW);
+> +	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
+> +					"scl");
+>  	if (IS_ERR(scl)) {
+>  		dev_err(dev, "no SCL GPIO\n");
+>  		return;
+>  	}
+> -	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW);
+> +	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
+> +					"sda");
+>  	if (IS_ERR(sda)) {
+>  		dev_err(dev, "no SDA GPIO\n");
+>  		return;
+> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+> index 930d100..80bad7e 100644
+> --- a/include/linux/gpio/consumer.h
+> +++ b/include/linux/gpio/consumer.h
+> @@ -136,11 +136,13 @@ struct fwnode_handle;
+>  
+>  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  					 const char *propname,
+> -					 enum gpiod_flags dflags);
+> +					 enum gpiod_flags dflags,
+> +					 const char *label);
+>  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  					    const char *con_id,
+>  					    struct fwnode_handle *child,
+> -					    enum gpiod_flags flags);
+> +					    enum gpiod_flags flags,
+> +					    const char *label);
+>  #else /* CONFIG_GPIOLIB */
+>  
+>  static inline int gpiod_count(struct device *dev, const char *con_id)
+> @@ -416,7 +418,8 @@ struct fwnode_handle;
+>  static inline
+>  struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
+>  					 const char *propname,
+> -					 enum gpiod_flags dflags)
+> +					 enum gpiod_flags dflags,
+> +					 const char *label)
+>  {
+>  	return ERR_PTR(-ENOSYS);
+>  }
+> @@ -425,7 +428,8 @@ static inline
+>  struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
+>  					    const char *con_id,
+>  					    struct fwnode_handle *child,
+> -					    enum gpiod_flags flags)
+> +					    enum gpiod_flags flags,
+> +					    const char *label)
+>  {
+>  	return ERR_PTR(-ENOSYS);
+>  }
