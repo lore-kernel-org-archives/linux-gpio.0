@@ -1,61 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: core: Fix regression caused by delayed work for hogs
-Date: Fri, 13 Jan 2017 16:26:23 +0100
-Message-ID: <CACRpkdaWo54ByCa=1Mr1v_O4ANR=OXehsR0Hg65pj9M9jzMDtg@mail.gmail.com>
-References: <20170111221334.26194-1-tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: Initialize pinctrl_dev.node
+Date: Fri, 13 Jan 2017 16:32:13 +0100
+Message-ID: <CACRpkdadZoDMmUbwM-AxAsrr5QsmA5en2Cj-xghvEsak+mq-eQ@mail.gmail.com>
+References: <20170112160334.22943-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170111221334.26194-1-tony@atomide.com>
+In-Reply-To: <20170112160334.22943-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Gary Bisson <gary.bisson@boundarydevices.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 11, 2017 at 11:13 PM, Tony Lindgren <tony@atomide.com> wrote:
+On Thu, Jan 12, 2017 at 5:03 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-> Commit df61b366af26 ("pinctrl: core: Use delayed work for hogs") caused a
-> regression at least with sh-pfc that is also a GPIO controller as
-> noted by Geert Uytterhoeven <geert@linux-m68k.org>.
+> From: Thierry Reding <treding@nvidia.com>
 >
-> As the original pinctrl_register() has issues calling pin controller
-> driver functions early before the controller has finished registering,
-> we can't just revert commit df61b366af26. That would break the drivers
-> using GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS.
+> The struct pinctrl_dev's node field is not properly set up, which means
+> the .prev and .next fields will be NULL. That's not something that the
+> linked list code can deal with, so extra care must be taken when using
+> these fields. An example of this is introduced in commit 3429fb3cda34
+> ("pinctrl: Fix panic when pinctrl devices with hogs are unregistered")
+> where list_del() is made conditional on the pinctrl device being part
+> of the pinctrl device list. This is to ensure that list_del() won't
+> crash upon encountering a NULL pointer in .prev and/or .next.
 >
-> So let's fix the issue with the following steps as a single patch:
+> After initializing the list head there's no need to jump through these
+> extra hoops and list_del() will work unconditionally. This is because
+> the initialized list head points to itself and therefore the .prev and
+> .next fields can be properly dereferenced.
 >
-> 1. Revert the late_init parts of commit df61b366af26.
->
->    The late_init clearly won't work and we have to just give up
->    on fixing pinctrl_register() for GENERIC_PINCTRL_GROUPS and
->    GENERIC_PINMUX_FUNCTIONS.
->
-> 2. Split pinctrl_register() into two parts
->
->    By splitting pinctrl_register() into pinctrl_init_controller()
->    and pinctrl_create_and_start() we have better control over when
->    it's safe to call pinctrl_create().
->
-> 3. Introduce a new pinctrl_register_and_init() function
->
->    As suggested by Linus Walleij <linus.walleij@linaro.org>, we
->    can just introduce a new function for the controllers that need
->    pinctrl_create() called later.
->
-> 4. Convert the four known problem cases to use new function
->
->    Let's convert pinctrl-imx, pinctrl-single, sh-pfc and ti-iodelay
->    to use the new function to fix the issues. The rest of the drivers
->    can be converted later. Let's also update Documentation/pinctrl.txt
->    accordingly because of the known issues with pinctrl_register().
->
-> Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Gary Bisson <gary.bisson@boundarydevices.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-OK patch applied.
+Nice catch!
+
+Sorry for my sloppy semantics...
+
+Patch applied, had to rebase it with patch -p1 < foo.patch
+so check the result on my devel branch or linux-next
+soon-ish.
 
 Yours,
 Linus Walleij
