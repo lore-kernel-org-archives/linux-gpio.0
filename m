@@ -1,112 +1,188 @@
-From: Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
-Date: Fri, 13 Jan 2017 03:04:37 +0000
-Message-ID: <AM3PR04MB53027B627AE8CEC6D7D0D1B87780@AM3PR04MB530.eurprd04.prod.outlook.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
- <20170110003753.GM17126@codeaurora.org>
- <AM3PR04MB5307CB38AA904535AF8D80D87670@AM3PR04MB530.eurprd04.prod.outlook.com>
- <20170112220536.GP17126@codeaurora.org>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH 2/3] gpio: davinci: Redesign driver to accommodate ngpios
+ in one gpio chip
+Date: Fri, 13 Jan 2017 09:12:57 +0530
+Message-ID: <ddba9b96-c740-1976-a4ab-fac02c51d0b0@ti.com>
+References: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
+ <1484110841-2391-3-git-send-email-j-keerthy@ti.com>
+ <e2b903a2-24e2-43ef-ef08-d50c0748d046@ti.com>
+ <3a017847-abad-f215-30d9-764a0cb07041@ti.com>
+ <fd6a1bc4-bcb1-a2ed-4058-35514d114211@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170112220536.GP17126@codeaurora.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:24733 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbdAMDnC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Jan 2017 22:43:02 -0500
+In-Reply-To: <fd6a1bc4-bcb1-a2ed-4058-35514d114211@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, linus.walleij@linaro.org, t-kristo@ti.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 
-> Subject: Re: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
-> 
-> > > > +
-> > > > +static const char *pll_bypass_src_sels[] = { "osc", "dummy", };
-> > >
-> > > All these should be const char * const unless something is wrong.
-> >
-> > If changed to 'const char * const', it vill has argument type mismatch
-> > error, as imx_clk_* wrapper function has argument type 'const char *'.
-> 
-> Hmm that's unfortunate.
-> 
-> >
-> > >
-> > > > +
-> > > > +	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
-> > > > +		clk_prepare_enable(clks[clks_init_on[i]]);
-> > >
-> > > Critical clocks?
-> >
-> > Yes, these clocks must be always on.
-> >
-> > >
-> > > > +
-> > > > +	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
-> > > > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY1_GATE]);
-> > > > +		clk_prepare_enable(clks[IMX6SLL_CLK_USBPHY2_GATE]);
-> > >
-> > > The phy driver can't enable these?
-> >
-> > The reason why we enable these two clks here is in below commit commit
-> > a5120e89e7e187a91852896f586876c7a2030804
-> > Author: Peter Chen <peter.chen@freescale.com>
-> > Date:   Fri Jan 18 10:38:05 2013 +0800
-> >       ARM i.MX6: change mxs usbphy clock usage
-> >
-> 
-> So can we mark these clks with CLK_IS_CRITICAL flag then instead?
-> Or are they disabled out of the bootloader?
-> 
 
-Sure, using 'CLK_IS_CRITICAL'  should be ok for clks_init_on clocks.  But for  USBPHY*_GATE, it is
-only enabled when CONIG_USB_MXC_PHY is true.  And another concern is if we need to add CLK_IS_CRITICAL
-flag to clks_init_on clocks, we may need to add new wrapper function to register these critical clock. It is not very good.
 
- > >
-> > > > +	}
-> > > > +
-> > > > +	/* Lower the AHB clock rate before changing the clock source. */
-> > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
-> > > > +
-> > > > +	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL],
-> > > clks[IMX6SLL_CLK_PLL3_USB_OTG]);
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
-> > > clks[IMX6SLL_CLK_PERIPH_CLK2]);
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE],
-> > > clks[IMX6SLL_CLK_PLL2_BUS]);
-> > > > +	clk_set_parent(clks[IMX6SLL_CLK_PERIPH],
-> > > > +clks[IMX6SLL_CLK_PERIPH_PRE]);
-> > > > +
-> > > > +	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
-> > >
-> > > assigned-clocks for rates now? Or perhaps we shouldn't be exposing
-> > > these as clks if they have some sort of complicated rate sequence
-> > > switch that we can't guarantee with the clk_ops we have today.
-> >
-> > These clks will be used by some peripherals, so we need to expose these
-> clocks.
-> > And the above parent and rate swith sequence is not very easy to be
-> > handled in assigned-clocks, So we leave it in this place.
-> >
-> 
-> How do we guarantee that the rate switch doesn't happen later on, requiring
-> this coordinated sequence of clk operations?
-> 
+On Friday 13 January 2017 12:36 AM, Grygorii Strashko wrote:
+>
+>
+> On 01/11/2017 08:00 PM, Keerthy wrote:
+>>
+>>
+>> On Wednesday 11 January 2017 11:23 PM, Grygorii Strashko wrote:
+>>>
+>>>
+>>> On 01/10/2017 11:00 PM, Keerthy wrote:
+>>>> The Davinci GPIO driver is implemented to work with one monolithic
+>>>> Davinci GPIO platform device which may have up to Y(144) gpios.
+>>>> The Davinci GPIO driver instantiates number of GPIO chips with
+>>>> max 32 gpio pins per each during initialization and one IRQ domain.
+>>>> So, the current GPIO's  opjects structure is:
+>>>>
+>>>> <platform device> Davinci GPIO controller
+>>>>  |- <gpio0_chip0> ------|
+>>>>  ...                    |--- irq_domain (hwirq [0..143])
+>>>>  |- <gpio0_chipN> ------|
+>>>>
+>>>> Current driver creates one chip for every 32 GPIOs in a controller.
+>>>> This was a limitation earlier now there is no need for that. Hence
+>>>> redesigning the driver to create one gpio chip for all the ngpio
+>>>> in the controller.
+>>>>
+>>>> |- <gpio0_chip0> ------|--- irq_domain (hwirq [0..143]).
+>>>>
+>>>> The previous discussion on this can be found here:
+>>>> https://www.spinics.net/lists/linux-omap/msg132869.html
+>>>
+>>> nice rework.
+>>
+>> Thanks!
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>>> ---
+>>>>
+>>>> Boot tested on Davinci platform.
+>>>>
+>>>>  drivers/gpio/gpio-davinci.c                | 127
+>>>> +++++++++++++++++------------
+>
+> [...]
+>
+>>>>
+>>>>  #ifdef CONFIG_OF_GPIO
+>>>> -        chips[i].chip.of_gpio_n_cells = 2;
+>>>> -        chips[i].chip.of_xlate = davinci_gpio_of_xlate;
+>>>> -        chips[i].chip.parent = dev;
+>>>> -        chips[i].chip.of_node = dev->of_node;
+>>>> +    chips->chip.of_gpio_n_cells = 2;
+>>>> +    chips->chip.of_xlate = davinci_gpio_of_xlate;
+>>>
+>>> I think It's not necessary to have custom .xlate() and
+>>> it can be removed, then gpiolib will assign default one
+>>> of_gpio_simple_xlate().
+>>
+>> Okay. Can i do that as a separate patch?
+>
+> I think it's ok.
+>
+>>
+>>>
+>>>> +    chips->chip.parent = dev;
+>>>> +    chips->chip.of_node = dev->of_node;
+>>>>  #endif
+>>>> -        spin_lock_init(&chips[i].lock);
+>>>> -
+>
+> [...]
+>
+>>>>
+>>>>      irq_set_chip_and_handler_name(irq, &gpio_irqchip,
+>>>> handle_simple_irq,
+>>>>                  "davinci_gpio");
+>>>> @@ -459,6 +468,7 @@ static int davinci_gpio_irq_setup(struct
+>>>> platform_device *pdev)
+>>>>      struct irq_domain    *irq_domain = NULL;
+>>>>      const struct of_device_id *match;
+>>>>      struct irq_chip *irq_chip;
+>>>> +    struct davinci_gpio_irq_data *irqdata[MAX_BANKED_IRQS];
+>>>
+>>> You declare irqdata as array here but it has not been used anywhere
+>>> except for assignment. Could you remove this array and MAX_BANKED_IRQS
+>>> define?
+>>
+>> irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
+>>                          &chips[gpio / 32]);
+>>                          irqdata[bank]);
+>>
+>> That is hooked as data for each bank. As there is only one controller
+>> now and the differentiating parameters per bank is the irqdata data
+>> structure with the registers pointer and the bank number.
+>> This structure makes it very easy in the irq handler to identify the
+>> register sets that need to be modified and the bank irqs.
+>
+> That I understood, but why do you need array here?
+>
+>>
+>>>
+>>> Seems you can just use struct davinci_gpio_irq_data *irqdata;
+>
+> why can't you use (see below):
+>     struct davinci_gpio_irq_data *irqdata;
 
-This clock sequence is used for increasing the AXI and AHB bus clock rate. In normal
-use, it is very rarely that we need to change them again. If we really need to change
-AXI and AHB bus clock later, a similar sequence must be used to do this.
+Understood your comment now thanks for clarifying. I will do like you 
+have suggested.
 
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
-> Foundation Collaborative Project
+>>>
+>>>>      gpio_get_irq_chip_cb_t gpio_get_irq_chip;
+>>>>
+>>>>      /*
+>>>> @@ -514,10 +524,8 @@ static int davinci_gpio_irq_setup(struct
+>>>> platform_device *pdev)
+>>>>       * IRQs, while the others use banked IRQs, would need some setup
+>>>>       * tweaks to recognize hardware which can do that.
+>>>>       */
+>
+> [...]
+>
+>>>>
+>>>> @@ -567,8 +575,19 @@ static int davinci_gpio_irq_setup(struct
+>>>> platform_device *pdev)
+>>>>           * gpio irqs. Pass the irq bank's corresponding controller to
+>>>>           * the chained irq handler.
+>>>>           */
+>>>> +        irqdata[bank] = devm_kzalloc(&pdev->dev,
+>>>> +                         sizeof(struct
+>>>> +                            davinci_gpio_irq_data),
+>>>> +                         GFP_KERNEL);
+>
+> irqdata = devm_kzalloc(&pdev->dev,
+>                         sizeof(struct
+>                             davinci_gpio_irq_data),
+>                          GFP_KERNEL);
+>
+
+Okay.
+
+>>>> +        if (!irqdata[bank])
+>>>> +            return -ENOMEM;
+>>>> +
+>>>> +        irqdata[bank]->regs = g;
+>>>> +        irqdata[bank]->bank_num = bank;
+>>>> +        irqdata[bank]->chip = chips;
+>>>> +
+>>>>          irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
+>>>> -                         &chips[gpio / 32]);
+>>>> +                         irqdata[bank]);
+>
+>          irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
+>                          irqdata);
+>
+
+I will post the new set with the above changes.
+
+>
+> [...]
+>
