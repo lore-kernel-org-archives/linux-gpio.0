@@ -1,46 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Initialize pinctrl_dev.node
-Date: Fri, 13 Jan 2017 16:32:13 +0100
-Message-ID: <CACRpkdadZoDMmUbwM-AxAsrr5QsmA5en2Cj-xghvEsak+mq-eQ@mail.gmail.com>
-References: <20170112160334.22943-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 3/6] pinctrl: Add a possibility to configure pins from
+ a gpiolib based drivers
+Date: Fri, 13 Jan 2017 16:36:42 +0100
+Message-ID: <CACRpkdZjQipUkPxGTzJBF_L0EK8dg4wiW5DSCTft15aJ0UiLxQ@mail.gmail.com>
+References: <20170110143201.53539-1-mika.westerberg@linux.intel.com>
+ <20170110143201.53539-4-mika.westerberg@linux.intel.com> <CACRpkdbFotEknW2dK0ouc2HWLLhL-MERJS_BvCm5ux5hrEsQsg@mail.gmail.com>
+ <20170111133304.GQ2330@lahna.fi.intel.com> <20170112092255.GX2330@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170112160334.22943-1-thierry.reding@gmail.com>
+In-Reply-To: <20170112092255.GX2330@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 5:03 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Thu, Jan 12, 2017 at 10:22 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-> From: Thierry Reding <treding@nvidia.com>
+> Hmm, looking at users of .set_debounce() I can see that the debounce
+> time can be quite large. For example some signals which are connected to
+> physical push-buttons may need > 64ms debounce time.
 >
-> The struct pinctrl_dev's node field is not properly set up, which means
-> the .prev and .next fields will be NULL. That's not something that the
-> linked list code can deal with, so extra care must be taken when using
-> these fields. An example of this is introduced in commit 3429fb3cda34
-> ("pinctrl: Fix panic when pinctrl devices with hogs are unregistered")
-> where list_del() is made conditional on the pinctrl device being part
-> of the pinctrl device list. This is to ensure that list_del() won't
-> crash upon encountering a NULL pointer in .prev and/or .next.
+> However, the current pinconfig value is defined to be unsigned long
+> which on 32-bit architecture is 32-bits. From that the higher 16-bits
+> are used as config leaving the value to be 16-bits. This gives maximum
+> debounce time of 65535us. I don't think it can cover all the uses of
+> .set_debounce(). This could also be problematic when specifying values
+> for pull resistors.
 >
-> After initializing the list head there's no need to jump through these
-> extra hoops and list_del() will work unconditionally. This is because
-> the initialized list head points to itself and therefore the .prev and
-> .next fields can be properly dereferenced.
->
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> One solution is to convert the packed value to be u64 instead, leaving
+> up to 48-bits for the value. Alternatively we could provide a scale
+> field with the packed format.
 
-Nice catch!
+Hm yeah as long as all in-kernel users survive I don't see why we
+couldn't just make it 64bit. Is it a big deal?
 
-Sorry for my sloppy semantics...
-
-Patch applied, had to rebase it with patch -p1 < foo.patch
-so check the result on my devel branch or linux-next
-soon-ish.
+A scale field (multiplier) can also work, I don't know which is most
+elegant.
 
 Yours,
 Linus Walleij
