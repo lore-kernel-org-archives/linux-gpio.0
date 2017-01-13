@@ -1,64 +1,63 @@
 From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH] pinctrl: remove redundant pin < 0 check on unsigned int
-Date: Fri, 13 Jan 2017 14:41:50 -0600
-Message-ID: <081d1a28-9324-7e61-e667-3bd1bc443a04@ti.com>
-References: <20170113132039.19830-1-colin.king@canonical.com>
+Subject: Re: [bug report] pinctrl: Introduce TI IOdelay configuration driver
+Date: Fri, 13 Jan 2017 14:44:20 -0600
+Message-ID: <83f91b7e-078b-3e9d-e09e-d8480811e6c6@ti.com>
+References: <20170112191425.GA15070@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:10867 "EHLO
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:10921 "EHLO
         fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbdAMUmk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2017 15:42:40 -0500
-In-Reply-To: <20170113132039.19830-1-colin.king@canonical.com>
+        with ESMTP id S1750805AbdAMUqE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Jan 2017 15:46:04 -0500
+In-Reply-To: <20170112191425.GA15070@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>, Linus Walleij <linus.walleij@linaro.org>, Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-gpio@vger.kernel.org, Colin Ian King <colin.king@canonical.com>, "tony@atomide.com" <tony@atomide.com>
 
-On 01/13/2017 07:20 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 01/12/2017 01:14 PM, Dan Carpenter wrote:
+> Hello Nishanth Menon,
 >
-> pin is an unsigned int and therefore can never be < 0 so
-> this check is redudant. Remove the check and the associated
-s/redudant/redundant/
+> The patch 003910ebc83b: "pinctrl: Introduce TI IOdelay configuration
+> driver" from Jan 5, 2017, leads to the following static checker
+> warning:
+>
+> 	drivers/pinctrl/ti/pinctrl-ti-iodelay.c:668 ti_iodelay_pin_dbg_show()
+> 	warn: unsigned 'pin' is never less than zero.
+>
+> drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+>    653  static void ti_iodelay_pin_dbg_show(struct pinctrl_dev *pctldev,
+>    654                                      struct seq_file *s,
+>    655                                      unsigned int pin)
+>                                             ^^^^^^^^^^^^^^^^
+>    656  {
+>    657          struct ti_iodelay_device *iod;
+>    658          struct pinctrl_pin_desc *pd;
+>    659          struct ti_iodelay_cfg *cfg;
+>    660          const struct ti_iodelay_reg_data *r;
+>    661          unsigned long offset;
+>    662          u32 in, oen, out;
+>    663
+>    664          iod = pinctrl_dev_get_drvdata(pctldev);
+>    665          r = iod->reg_data;
+>    666
+>    667          offset = ti_iodelay_pin_to_offset(iod, pin);
+>                                                        ^^^
+>    668          if (pin < 0) {
+>                     ^^^^^^^
+>    669                  dev_err(iod->dev, "invalid pin offset for pin%i\n", pin);
+>    670
+>    671                  return;
+>    672          }
+>
+> It looks to me like probably this code coulde be safely deleted?
 
-> dev_err error message.
->
-> Fixes CoverityScan CID#1396438 ("Unsigned compared against 0")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> index 3b86d3d..a345166 100644
-> --- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> +++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> @@ -665,12 +665,6 @@ static void ti_iodelay_pin_dbg_show(struct pinctrl_dev *pctldev,
->  	r = iod->reg_data;
->
->  	offset = ti_iodelay_pin_to_offset(iod, pin);
-> -	if (pin < 0) {
-> -		dev_err(iod->dev, "invalid pin offset for pin%i\n", pin);
-> -
-> -		return;
-> -	}
-> -
->  	pd = &iod->pa[pin];
->  	cfg = pd->drv_data;
->
->
+yeah it is valid to be removed - had missed your note. Colin also 
+noticed and provided a patch 
+https://patchwork.kernel.org/patch/9515653/ for the same.
 
-Thanks.
-
-just the $subject could probably be "pinctrl: ti-iodelay:..."
-
-Other than these:
-
-Acked-by: Nishanth Menon <nm@ti.com>
 
 -- 
 Regards,
