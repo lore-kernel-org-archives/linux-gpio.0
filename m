@@ -1,51 +1,52 @@
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Subject: Re: [PATCHv4 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Sat, 14 Jan 2017 07:50:13 +0000
-Message-ID: <9996b6a215f944e1a47fa6239d8de21f@svr-chch-ex1.atlnz.lc>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-4-chris.packham@alliedtelesis.co.nz>
- <2fca7ac2-9a88-19b1-28c5-5192b9c4a2bc@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 0/4] Drop drivers for Exynos4415
+Date: Sat, 14 Jan 2017 14:36:38 +0200
+Message-ID: <20170114123642.15581-1-krzk@kernel.org>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, dri-deve
 List-Id: linux-gpio@vger.kernel.org
 
-On 13/01/17 22:54, Sebastian Hesselbarth wrote:=0A=
-> On 13.01.2017 10:12, Chris Packham wrote:=0A=
->> From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>=0A=
->>=0A=
->> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs=0A=
->> from Marvell.=0A=
->>=0A=
->> Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>=0A=
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
->> Acked-by: Rob Herring <robh@kernel.org>=0A=
->> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>=0A=
->> ---=0A=
->>=0A=
->> Notes:=0A=
->>     Changes in v2:=0A=
->>     - include sdio support for the 98DX4251=0A=
->>     Changes in v3:=0A=
->>     - None=0A=
->>     Changes in v4:=0A=
->>     - Correct some discrepencies between binding and driver.=0A=
->=0A=
-> Well, unfortunately I still see differences between the "gpio" in=0A=
-> the binding and "gpo" in the driver.=0A=
->=0A=
-> Please go back to that list I sent you yesterday and fix them all.=0A=
->=0A=
-=0A=
-I think you may have missed my initial reply [1]. Or I have missed your =0A=
-response to it. Long story short "gpo" is intentional because some of =0A=
-those pins can't be used as inputs. But if you still want me to change =0A=
-it I will.=0A=
-=0A=
-[1] - https://lkml.org/lkml/2017/1/12/117=0A=
-=0A=
+Hi,
+
+Support for Exynos4415 is being removed because:
+1. There are no upstream users,
+2. There are no known downstream users,
+3. Except compile testing, you cannot build working kernel
+   for Exynos4415 anymore.
+
+Patches are rebased on current next and are independent.
+Please pick up as you wish.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (4):
+  ARM: EXYNOS: Remove Exynos4415 driver (SoC not supported anymore)
+  clk: samsung: Remove Exynos4415 driver (SoC not supported anymore)
+  pinctrl: samsung: Remove support for Exynos4415 (SoC not supported
+    anymore)
+  drm: exynos: Remove support for Exynos4415 (SoC not supported anymore)
+
+ .../devicetree/bindings/clock/exynos4415-clock.txt |   38 -
+ .../bindings/display/exynos/exynos_dsim.txt        |    1 -
+ .../bindings/display/exynos/samsung-fimd.txt       |    1 -
+ arch/arm/mach-exynos/Kconfig                       |    5 -
+ arch/arm/mach-exynos/exynos.c                      |    1 -
+ arch/arm/mach-exynos/suspend.c                     |    1 -
+ drivers/clk/samsung/Makefile                       |    1 -
+ drivers/clk/samsung/clk-exynos4415.c               | 1022 --------------------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   15 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   18 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   75 --
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 -
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |    1 -
+ include/dt-bindings/clock/exynos4415.h             |  360 -------
+ 14 files changed, 3 insertions(+), 1538 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
+ delete mode 100644 drivers/clk/samsung/clk-exynos4415.c
+ delete mode 100644 include/dt-bindings/clock/exynos4415.h
+
+-- 
+2.9.3
+
