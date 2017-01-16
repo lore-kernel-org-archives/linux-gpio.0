@@ -1,7 +1,7 @@
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v3 5/8] arm: dts: r7s72100-genmai: SCIF2 PINCTRL configuration
-Date: Mon, 16 Jan 2017 13:12:49 +0100
-Message-ID: <1484568772-18137-6-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v3 6/8] arm: dts: r7s72100-genmai: LED1 and LED2 support
+Date: Mon, 16 Jan 2017 13:12:50 +0100
+Message-ID: <1484568772-18137-7-git-send-email-jacopo+renesas@jmondi.org>
 References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -12,36 +12,42 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Magnus Damm <damm@opensource.se>
 
-Configure the r7s72100 PINCTRL hardware and select pin function
-for the SCIF2 serial console.
+Add support for Genmai board LED1 and LED2 via gpio-leds.
 
 Signed-off-by: Magnus Damm <damm@opensource.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- arch/arm/boot/dts/r7s72100-genmai.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r7s72100-genmai.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 118a8e2..336716b 100644
+index 336716b..10f1d8b 100644
 --- a/arch/arm/boot/dts/r7s72100-genmai.dts
 +++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -59,6 +59,16 @@
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "r7s72100.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Genmai";
+@@ -34,6 +35,16 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
  	};
++
++	leds {
++		compatible = "gpio-leds";
++		led1 {
++			gpios = <&port4 10 GPIO_ACTIVE_LOW>;
++		};
++		led2 {
++			gpios = <&port4 11 GPIO_ACTIVE_LOW>;
++		};
++	};
  };
  
-+&pfc {
-+	pinctrl-0 = <&scif2_pins>;
-+	pinctrl-names = "default";
-+
-+	scif2_pins: serial2 {
-+		groups = "scif2_txd_p3_0", "scif2_rxd_p3_2";
-+		function = "scif2";
-+	};
-+};
-+
- &scif2 {
- 	status = "okay";
- };
+ &extal_clk {
 -- 
 2.7.4
