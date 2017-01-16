@@ -1,156 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 09/12] pinctrl: samsung: Add infrastructure for pin-bank
- retention control
-Date: Mon, 16 Jan 2017 07:45:04 +0100
-Message-ID: <1484549107-5957-10-git-send-email-m.szyprowski@samsung.com>
-References: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170116064527eucas1p1f0f78e9420e7d9d60d94b6e7381caeb1@eucas1p1.samsung.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH V2 6/6] gpio: davinci: Remove redundant macros
+Date: Mon, 16 Jan 2017 12:27:12 +0530
+Message-ID: <e38d4a3f-1f48-142b-b5c5-b45da9c55b0d@ti.com>
+References: <1484281215-24576-1-git-send-email-j-keerthy@ti.com>
+ <1484281215-24576-7-git-send-email-j-keerthy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19939 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751358AbdAPGpc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2017 01:45:32 -0500
-In-reply-to: <1484549107-5957-1-git-send-email-m.szyprowski@samsung.com>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:43556 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbdAPG5R (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Jan 2017 01:57:17 -0500
+In-Reply-To: <1484281215-24576-7-git-send-email-j-keerthy@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linus.walleij@linaro.org, t-kristo@ti.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, grygorii.strashko@ti.com
 
-Pad retention control after suspend/resume cycle should be done from pin
-controller driver instead of PMU (power management unit) driver to avoid
-possible ordering and logical dependencies. Till now it worked fine only
-because PMU driver registered its sys_ops after pin controller.
+Linus,
 
-This patch adds infrastructure to handle pad retention during pin control
-driver resume.
+On Friday 13 January 2017 09:50 AM, Keerthy wrote:
+> Some of the macros were needed as per old driver design.
+> With the current implementation they are unwanted. Hence remove
+> them.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 12 ++++++---
- drivers/pinctrl/samsung/pinctrl-samsung.h | 42 +++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 3 deletions(-)
+Seems like Macros are being used in:
+arch/arm/mach-davinci/board-neuros-osd2.c
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 86f23842f681..95a84086a2e9 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1075,6 +1075,9 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 		ctrl->eint_gpio_init(drvdata);
- 	if (ctrl->eint_wkup_init)
- 		ctrl->eint_wkup_init(drvdata);
-+	if (ctrl->retention_data && ctrl->retention_data->init)
-+		drvdata->retention_ctrl = ctrl->retention_data->init(drvdata,
-+							  ctrl->retention_data);
- 
- 	platform_set_drvdata(pdev, drvdata);
- 
-@@ -1127,15 +1130,15 @@ static void samsung_pinctrl_suspend_dev(
- 
- 	if (drvdata->suspend)
- 		drvdata->suspend(drvdata);
-+	if (drvdata->retention_ctrl && drvdata->retention_ctrl->on)
-+		drvdata->retention_ctrl->on(drvdata);
-+
- }
- 
- /**
-  * samsung_pinctrl_resume_dev - restore pinctrl state from suspend for a device
-  *
-  * Restore one of the banks that was saved during suspend.
-- *
-- * We don't bother doing anything complicated to avoid glitching lines since
-- * we're called before pad retention is turned off.
-  */
- static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- {
-@@ -1174,6 +1177,9 @@ static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- 			if (widths[type])
- 				writel(bank->pm_save[type], reg + offs[type]);
- 	}
-+
-+	if (drvdata->retention_ctrl && drvdata->retention_ctrl->off)
-+		drvdata->retention_ctrl->off(drvdata);
- }
- 
- /**
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 6f7ce7539a00..6079142422f8 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -185,10 +185,48 @@ struct samsung_pin_bank {
- };
- 
- /**
-+ * struct samsung_retention_data: runtime pin-bank retention control data.
-+ * @regs: array of PMU registers to control pad retention.
-+ * @nr_regs: number of registers in @regs array.
-+ * @value: value to store to registers to turn off retention.
-+ * @refcnt: atomic counter if retention control affects more than one bank.
-+ * @priv: retention control code private data
-+ * @on: platform specific callback to enter retention mode.
-+ * @off: platform specific callback to exit retention mode.
-+ **/
-+struct samsung_retention_ctrl {
-+	const u32	*regs;
-+	int		nr_regs;
-+	u32		value;
-+	atomic_t	*refcnt;
-+	void		*priv;
-+	void		(*on)(struct samsung_pinctrl_drv_data *);
-+	void		(*off)(struct samsung_pinctrl_drv_data *);
-+};
-+
-+/**
-+ * struct samsung_retention_data: represent a pin-bank retention control data.
-+ * @regs: array of PMU registers to control pad retention.
-+ * @nr_regs: number of registers in @regs array.
-+ * @value: value to store to registers to turn off retention.
-+ * @refcnt: atomic counter if retention control affects more than one bank.
-+ * @init: platform specific callback to initialize retention control.
-+ **/
-+struct samsung_retention_data {
-+	const u32	*regs;
-+	int		nr_regs;
-+	u32		value;
-+	atomic_t	*refcnt;
-+	struct samsung_retention_ctrl *(*init)(struct samsung_pinctrl_drv_data *,
-+					const struct samsung_retention_data *);
-+};
-+
-+/**
-  * struct samsung_pin_ctrl: represent a pin controller.
-  * @pin_banks: list of pin banks included in this controller.
-  * @nr_banks: number of pin banks.
-  * @nr_ext_resources: number of the extra base address for pin banks.
-+ * @retention_data: configuration data for retention control.
-  * @eint_gpio_init: platform specific callback to setup the external gpio
-  *	interrupts for the controller.
-  * @eint_wkup_init: platform specific callback to setup the external wakeup
-@@ -198,6 +236,7 @@ struct samsung_pin_ctrl {
- 	const struct samsung_pin_bank_data *pin_banks;
- 	u32		nr_banks;
- 	int		nr_ext_resources;
-+	const struct samsung_retention_data *retention_data;
- 
- 	int		(*eint_gpio_init)(struct samsung_pinctrl_drv_data *);
- 	int		(*eint_wkup_init)(struct samsung_pinctrl_drv_data *);
-@@ -219,6 +258,7 @@ struct samsung_pin_ctrl {
-  * @nr_function: number of such pin functions.
-  * @pin_base: starting system wide pin number.
-  * @nr_pins: number of pins supported by the controller.
-+ * @retention_ctrl: retention control runtime data.
-  */
- struct samsung_pinctrl_drv_data {
- 	struct list_head		node;
-@@ -238,6 +278,8 @@ struct samsung_pinctrl_drv_data {
- 	unsigned int			pin_base;
- 	unsigned int			nr_pins;
- 
-+	const struct samsung_retention_ctrl *retention_ctrl;
-+
- 	void (*suspend)(struct samsung_pinctrl_drv_data *);
- 	void (*resume)(struct samsung_pinctrl_drv_data *);
- };
--- 
-1.9.1
+So this patch can be dropped from the series.
 
+>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  include/linux/platform_data/gpio-davinci.h | 8 --------
+>  1 file changed, 8 deletions(-)
+>
+> diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
+> index 90ae19c..f922601 100644
+> --- a/include/linux/platform_data/gpio-davinci.h
+> +++ b/include/linux/platform_data/gpio-davinci.h
+> @@ -45,14 +45,6 @@ struct davinci_gpio_controller {
+>  	unsigned int		base;
+>  };
+>
+> -/*
+> - * basic gpio routines
+> - */
+> -#define	GPIO(X)		(X)	/* 0 <= X <= (DAVINCI_N_GPIO - 1) */
+> -
+> -/* Convert GPIO signal to GPIO pin number */
+> -#define GPIO_TO_PIN(bank, gpio)	(16 * (bank) + (gpio))
+> -
+>  static inline u32 __gpio_mask(unsigned gpio)
+>  {
+>  	return 1 << (gpio % 32);
+>
