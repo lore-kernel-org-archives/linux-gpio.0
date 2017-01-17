@@ -1,37 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpiolib: Convert fwnode_get_named_gpiod() to
- configure GPIO
-Date: Tue, 17 Jan 2017 16:05:13 +0100
-Message-ID: <CACRpkdY+FLXj9RCDMfki7=OBfwzwib7N+cbnPfXAmoiz+mPn_w@mail.gmail.com>
-References: <20170109140228.47613-1-andriy.shevchenko@linux.intel.com> <20170109140228.47613-4-andriy.shevchenko@linux.intel.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next] pinctrl/amd: Drop pinctrl_unregister for devm_ registered device
+Date: Tue, 17 Jan 2017 15:55:32 +0000
+Message-ID: <20170117155532.28879-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:35840 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbdAQPNe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 10:13:34 -0500
-Received: by mail-qt0-f181.google.com with SMTP id k15so162319073qtg.3
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2017 07:13:34 -0800 (PST)
-In-Reply-To: <20170109140228.47613-4-andriy.shevchenko@linux.intel.com>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36863 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751152AbdAQQC2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 11:02:28 -0500
+Received: by mail-pg0-f68.google.com with SMTP id 75so8351381pgf.3
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2017 08:02:28 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
 
-On Mon, Jan 9, 2017 at 3:02 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-> Make fwnode_get_named_gpiod() consistent with the rest of gpiod_get() like API,
-> i.e. configure GPIO pin immediately after request.
->
-> Besides obvious clean up it will help to configure pins based on firmware
-> provided resources.
->
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+It's not necessary to unregister pin controller device registered
+with devm_pinctrl_register() and using pinctrl_unregister() leads
+to a double free.
 
-Patch applied. Will apply Alex' patch on top.
+Fixes: 3bfd44306c65 ("pinctrl: amd: Add support for additional GPIO")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index c64ea8f..586001c 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -831,7 +831,6 @@ static int amd_gpio_remove(struct platform_device *pdev)
+ 	gpio_dev = platform_get_drvdata(pdev);
+ 
+ 	gpiochip_remove(&gpio_dev->gc);
+-	pinctrl_unregister(gpio_dev->pctrl);
+ 
+ 	return 0;
+ }
+
