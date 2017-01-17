@@ -1,64 +1,70 @@
 From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH V3 5/5] gpio: davinci: Remove custom .xlate
-Date: Tue, 17 Jan 2017 21:59:14 +0530
-Message-ID: <1484670554-6392-1-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH V3 0/5] gpio: davinci: Redesign driver to accommodate
+ ngpios in one gpio chip
+Date: Tue, 17 Jan 2017 22:02:41 +0530
+Message-ID: <8e91ed3d-6b60-606c-790f-cc5b6cf5ea41@ti.com>
+References: <1484669955-5349-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1484669955-5349-1-git-send-email-j-keerthy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, grygorii.strashko@ti.com, j-keerthy@ti.com, t-kristo@ti.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, grygorii.strashko@ti.com, t-kristo@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-With the current redesign of driver it's not necessary to have
-custom .xlate() as the gpiolib will assign default of_gpio_simple_xlate().
 
-Suggested-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpio-davinci.c | 22 ----------------------
- 1 file changed, 22 deletions(-)
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 2a5ae04..86b4950 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -163,27 +163,6 @@ static int davinci_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return NULL;
- }
- 
--#ifdef CONFIG_OF_GPIO
--static int davinci_gpio_of_xlate(struct gpio_chip *gc,
--			     const struct of_phandle_args *gpiospec,
--			     u32 *flags)
--{
--	struct davinci_gpio_controller *chips = dev_get_drvdata(gc->parent);
--	struct davinci_gpio_platform_data *pdata = dev_get_platdata(gc->parent);
--
--	if (gpiospec->args[0] > pdata->ngpio)
--		return -EINVAL;
--
--	if (gc != &chips->chip)
--		return -EINVAL;
--
--	if (flags)
--		*flags = gpiospec->args[1];
--
--	return gpiospec->args[0] % 32;
--}
--#endif
--
- static int davinci_gpio_probe(struct platform_device *pdev)
- {
- 	static int ctrl_num, bank_base;
-@@ -244,7 +223,6 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 
- #ifdef CONFIG_OF_GPIO
- 	chips->chip.of_gpio_n_cells = 2;
--	chips->chip.of_xlate = davinci_gpio_of_xlate;
- 	chips->chip.parent = dev;
- 	chips->chip.of_node = dev->of_node;
- #endif
--- 
-1.9.1
+On Tuesday 17 January 2017 09:49 PM, Keerthy wrote:
+> The Davinci GPIO driver is implemented to work with one monolithic
+> Davinci GPIO platform device which may have up to Y(144) gpios.
+> The Davinci GPIO driver instantiates number of GPIO chips with
+> max 32 gpio pins per each during initialization and one IRQ domain.
+> So, the current GPIO's  opjects structure is:
+>
+> <platform device> Davinci GPIO controller
+>  |- <gpio0_chip0> ------|
+>  ...                    |--- irq_domain (hwirq [0..143])
+>  |- <gpio0_chipN> ------|
+>
+> Current driver creates one chip for every 32 GPIOs in a controller.
+> This was a limitation earlier now there is no need for that. Hence
+> redesigning the driver to create one gpio chip for all the ngpio
+> in the controller.
+>
+> |- <gpio0_chip0> ------|--- irq_domain (hwirq [0..143]).
+>
+> The previous discussion on this can be found here:
+> https://www.spinics.net/lists/linux-omap/msg132869.html
+>
+> The series is posted on top of:
+>
+> https://lkml.org/lkml/2017/1/4/94
+
+This is based on "devel" branch of the gpio tree.
+
+>
+> Changes in v2:
+>
+>   * Optimized the re-design patch.
+>   * Added couple of code clean ups after the re-design.
+>   * Included v2 of https://patchwork.ozlabs.org/patch/710855/
+>
+> Changes in v3:
+>
+>   * Removed one of the clean up patches. As the macros were needed.
+>
+> Keerthy (5):
+>   gpio: davinci: Remove gpio2regs function to accommodate multi
+>     instances
+>   gpio: davinci: Remove unwanted blank line
+>   gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip
+>   gpio: davinci: Add support for multiple GPIO controllers
+>   gpio: davinci: Remove custom .xlate
+>   gpio: davinci: Remove redundant macros
+>
+>  drivers/gpio/gpio-davinci.c                | 174 +++++++++++++----------------
+>  include/linux/platform_data/gpio-davinci.h |  20 ++--
+>  2 files changed, 90 insertions(+), 104 deletions(-)
+>
