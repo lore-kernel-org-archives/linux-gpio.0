@@ -1,39 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Tue, 17 Jan 2017 16:07:07 +0100
-Message-ID: <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
-References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Subject: Re: [PATCH] gpio: intel-mid: Fix build warning when !CONFIG_PM
+Date: Tue, 17 Jan 2017 16:09:46 +0100
+Message-ID: <CACRpkdYUBNHQfF7V_A+zDLrcUBFuUg1R1DjgtXLdqYRZe4CEGw@mail.gmail.com>
+References: <1484577077-13418-1-git-send-email-augustocaringi@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1484577077-13418-1-git-send-email-augustocaringi@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Augusto Mecking Caringi <augustocaringi@gmail.com>
+Cc: David Cohen <david.a.cohen@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 5:39 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+On Mon, Jan 16, 2017 at 3:30 PM, Augusto Mecking Caringi
+<augustocaringi@gmail.com> wrote:
 
-> Currently all users of fwnode_get_named_gpiod() have no way to specify a
-> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
-> With this change a proper label is used.
-> Also adjust all users so they can pass a label, properly retrieved from
-> device tree properties.
+> The only usage of function intel_gpio_runtime_idle() is here (in the
+> same file):
 >
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> ---
-> v2:
-> * Non-RFC
-> * This patch is rebased on gpio/for-next branch and cherry-picked commit
-> 2715bbe from https://bitbucket.org/andy-shev/linux.git
+> static const struct dev_pm_ops intel_gpio_pm_ops =3D {
+>         SET_RUNTIME_PM_OPS(NULL, NULL, intel_gpio_runtime_idle)
+> };
+>
+> And when CONFIG_PM is not set, the macro SET_RUNTIME_PM_OPS expands to
+> nothing, causing the following compiler warning:
+>
+> drivers/gpio/gpio-intel-mid.c:324:12: warning: =E2=80=98intel_gpio_runtim=
+e_idle=E2=80=99
+> defined but not used [-Wunused-function]
+> static int intel_gpio_runtime_idle(struct device *dev)
+>
+> Fix it by annotating the function with __maybe_unused.
+>
+> Signed-off-by: Augusto Mecking Caringi <augustocaringi@gmail.com>
 
-Patch applied on top of Andy's patch.
-
-Let's see if this all builds and works :)
+Patch applied with Andy's ACK.
 
 Yours,
 Linus Walleij
