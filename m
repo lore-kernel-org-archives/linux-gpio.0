@@ -1,70 +1,41 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH V3 0/5] gpio: davinci: Redesign driver to accommodate
- ngpios in one gpio chip
-Date: Tue, 17 Jan 2017 22:02:41 +0530
-Message-ID: <8e91ed3d-6b60-606c-790f-cc5b6cf5ea41@ti.com>
-References: <1484669955-5349-1-git-send-email-j-keerthy@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 06/13] pinctrl: samsung: Fix
+ samsung_pinctrl_create_functions return value
+Date: Tue, 17 Jan 2017 19:36:38 +0200
+Message-ID: <20170117173638.hcnzpcsxtz4dlpjk@kozik-lap>
+References: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170117124459eucas1p1ead13705d84054c1d69b5d7a9795f0e9@eucas1p1.samsung.com>
+ <1484657084-26227-7-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1484669955-5349-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, grygorii.strashko@ti.com, t-kristo@ti.com
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1484657084-26227-7-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+On Tue, Jan 17, 2017 at 01:44:37PM +0100, Marek Szyprowski wrote:
+> Return proper error code in case of memory allocation failure.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
+Thanks for fixing.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Tuesday 17 January 2017 09:49 PM, Keerthy wrote:
-> The Davinci GPIO driver is implemented to work with one monolithic
-> Davinci GPIO platform device which may have up to Y(144) gpios.
-> The Davinci GPIO driver instantiates number of GPIO chips with
-> max 32 gpio pins per each during initialization and one IRQ domain.
-> So, the current GPIO's  opjects structure is:
->
-> <platform device> Davinci GPIO controller
->  |- <gpio0_chip0> ------|
->  ...                    |--- irq_domain (hwirq [0..143])
->  |- <gpio0_chipN> ------|
->
-> Current driver creates one chip for every 32 GPIOs in a controller.
-> This was a limitation earlier now there is no need for that. Hence
-> redesigning the driver to create one gpio chip for all the ngpio
-> in the controller.
->
-> |- <gpio0_chip0> ------|--- irq_domain (hwirq [0..143]).
->
-> The previous discussion on this can be found here:
-> https://www.spinics.net/lists/linux-omap/msg132869.html
->
-> The series is posted on top of:
->
-> https://lkml.org/lkml/2017/1/4/94
-
-This is based on "devel" branch of the gpio tree.
-
->
-> Changes in v2:
->
->   * Optimized the re-design patch.
->   * Added couple of code clean ups after the re-design.
->   * Included v2 of https://patchwork.ozlabs.org/patch/710855/
->
-> Changes in v3:
->
->   * Removed one of the clean up patches. As the macros were needed.
->
-> Keerthy (5):
->   gpio: davinci: Remove gpio2regs function to accommodate multi
->     instances
->   gpio: davinci: Remove unwanted blank line
->   gpio: davinci: Redesign driver to accommodate ngpios in one gpio chip
->   gpio: davinci: Add support for multiple GPIO controllers
->   gpio: davinci: Remove custom .xlate
->   gpio: davinci: Remove redundant macros
->
->  drivers/gpio/gpio-davinci.c                | 174 +++++++++++++----------------
->  include/linux/platform_data/gpio-davinci.h |  20 ++--
->  2 files changed, 90 insertions(+), 104 deletions(-)
->
+Best regards,
+Krzysztof
