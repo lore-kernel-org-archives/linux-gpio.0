@@ -1,62 +1,47 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 08/13] pinctrl: samsung: Remove dead code
-Date: Tue, 17 Jan 2017 13:44:39 +0100
-Message-ID: <1484657084-26227-9-git-send-email-m.szyprowski@samsung.com>
-References: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170117124500eucas1p265447c459ad0ac0a79dc3d3c833d09f6@eucas1p2.samsung.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next] pinctrl: ti-iodelay: Fix return value check in ti_iodelay_probe()
+Date: Tue, 17 Jan 2017 14:41:47 +0000
+Message-ID: <20170117144147.18540-1-weiyj.lk@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:63732 "EHLO
-        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751186AbdAQMqH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 07:46:07 -0500
-In-reply-to: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:32955 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751081AbdAQOl4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 09:41:56 -0500
+Received: by mail-pg0-f66.google.com with SMTP id 194so8200017pgd.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2017 06:41:56 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
 
-'enable' parameter has been removed a while ago, so all code for handling
-it can be simply removed.
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+In case of error, the function pinctrl_register() returns
+NULL not ERR_PTR(). The IS_ERR() test in the return value
+check should be replaced with NULL test.
+
+Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/pinctrl/samsung/pinctrl-samsung.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 10b3fd826231..2803ae57f373 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -350,7 +350,7 @@ static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 3b86d3d..8899f5e 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -892,9 +892,9 @@ static int ti_iodelay_probe(struct platform_device *pdev)
+ 	iod->desc.owner = THIS_MODULE;
  
- /* enable or disable a pinmux function */
- static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
--					unsigned group, bool enable)
-+					unsigned group)
- {
- 	struct samsung_pinctrl_drv_data *drvdata;
- 	const struct samsung_pin_bank_type *type;
-@@ -380,8 +380,7 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 	data &= ~(mask << shift);
--	if (enable)
--		data |= func->val << shift;
-+	data |= func->val << shift;
- 	writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
-@@ -392,7 +391,7 @@ static int samsung_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 				  unsigned selector,
- 				  unsigned group)
- {
--	samsung_pinmux_setup(pctldev, selector, group, true);
-+	samsung_pinmux_setup(pctldev, selector, group);
- 	return 0;
- }
- 
--- 
-1.9.1
+ 	iod->pctl = pinctrl_register(&iod->desc, dev, iod);
+-	if (!iod->pctl) {
++	if (IS_ERR(iod->pctl)) {
+ 		dev_err(dev, "Failed to register pinctrl\n");
+-		ret = -ENODEV;
++		ret = PTR_ERR(iod->pctl);
+ 		goto exit_out;
+ 	}
 
