@@ -1,41 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] gpio: davinci: Redesign driver to accommodate ngpios
- in one gpio chip
-Date: Tue, 17 Jan 2017 15:52:40 +0100
-Message-ID: <CACRpkdbXZ3ZCLAUz-2WfVvMx5H2kaDVCOoJAX=zHhNFv5z-zpQ@mail.gmail.com>
-References: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH 1/5] pinctrl: mvebu: Use kmalloc_array() in mvebu_pinctrl_dt_node_to_map()
+Date: Tue, 17 Jan 2017 15:54:17 +0100
+Message-ID: <CACRpkdZomMeQ4miW9nC=oUVGkHsKEgZCoWQM9Bzce7PVq5Pjwg@mail.gmail.com>
+References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net> <c4b535ba-be93-5b61-43e0-dcf5018609ee@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:33016 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbdAQOwl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 09:52:41 -0500
-Received: by mail-qt0-f176.google.com with SMTP id v23so160948431qtb.0
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2017 06:52:41 -0800 (PST)
-In-Reply-To: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c4b535ba-be93-5b61-43e0-dcf5018609ee@users.sourceforge.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Wed, Jan 11, 2017 at 6:00 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Thu, Jan 12, 2017 at 5:31 PM, SF Markus Elfring
+<elfring@users.sourceforge.net> wrote:
 
-> The Davinci GPIO driver is implemented to work with one monolithic
-> Davinci GPIO platform device which may have up to Y(144) gpios.
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 12 Jan 2017 16:00:15 +0100
+>
+> * A multiplication for the size determination of a memory allocation
+>   indicated that an array data structure should be processed.
+>   Thus use the corresponding function "kmalloc_array".
+>
+>   This issue was detected by using the Coccinelle software.
+>
+> * Replace the specification of a data structure by a pointer dereference
+>   to make the corresponding size determination a bit safer according to
+>   the Linux coding style convention.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-I'm a bit confused by the different DaVinci series since there seem
-to be different series floating and I don't know what order to apply them,
-it fails for me.
-
-Can you:
-
-- Rebase *ALL* your DaVinci work on top of the "devel" branch in the
-  GPIO tree.
-
-- Repost *ALL* patches that should be applied, in one batch.
-
-- Include any accumulated ACKs etc.
+Patch applied.
 
 Yours,
 Linus Walleij
