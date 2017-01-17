@@ -1,31 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] pinctrl: mvebu: Use seq_putc() in mvebu_pinconf_group_dbg_show()
-Date: Tue, 17 Jan 2017 15:57:46 +0100
-Message-ID: <CACRpkdbS4jqy-stVPAPnzKGdH=fRW=6k6FbemadnLpkZNb726Q@mail.gmail.com>
-References: <12880bc6-1695-074a-788b-dd936f6f795a@users.sourceforge.net> <c35b1329-a197-c20c-dc3a-2fa8af2e2f35@users.sourceforge.net>
+Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Tue, 17 Jan 2017 16:07:07 +0100
+Message-ID: <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
+References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <c35b1329-a197-c20c-dc3a-2fa8af2e2f35@users.sourceforge.net>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 5:37 PM, SF Markus Elfring
-<elfring@users.sourceforge.net> wrote:
+On Thu, Jan 12, 2017 at 5:39 PM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 12 Jan 2017 17:12:30 +0100
+> Currently all users of fwnode_get_named_gpiod() have no way to specify a
+> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
+> With this change a proper label is used.
+> Also adjust all users so they can pass a label, properly retrieved from
+> device tree properties.
 >
-> Single characters should be put into a sequence.
-> Thus use the corresponding function "seq_putc".
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> ---
+> v2:
+> * Non-RFC
+> * This patch is rebased on gpio/for-next branch and cherry-picked commit
+> 2715bbe from https://bitbucket.org/andy-shev/linux.git
 
-Patch applied.
+Patch applied on top of Andy's patch.
+
+Let's see if this all builds and works :)
 
 Yours,
 Linus Walleij
