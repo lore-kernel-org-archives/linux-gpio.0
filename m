@@ -1,13 +1,13 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 1/2] pinctrl: meson: Add HDMI HPD/DDC pins functions
-Date: Tue, 17 Jan 2017 13:05:37 +0100
-Message-ID: <1484654738-5496-2-git-send-email-narmstrong@baylibre.com>
-References: <1484654738-5496-1-git-send-email-narmstrong@baylibre.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 00/13] Move pad retention control to Exynos pin controller
+ driver
+Date: Tue, 17 Jan 2017 13:44:31 +0100
+Message-ID: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170117124453eucas1p1b812596939db4c4f3298b941555eb05a@eucas1p1.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1484654738-5496-1-git-send-email-narmstrong@baylibre.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,120 +17,90 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
-Cc: devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add pinctrl functions for HDMI HPD pin and DDC pins on Amlogic Meson
-GXL and GXBB SoCs.
+Hello,
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 19 +++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 19 +++++++++++++++++++
- 2 files changed, 38 insertions(+)
+This patchset is a follow-up of my work on adding runtime PM support
+to Exynos pin controller driver:
+http://www.spinics.net/lists/arm-kernel/msg550161.html
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index c3928aa..0d9ad36 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -232,6 +232,10 @@
- static const unsigned int pwm_f_x_pins[]	= { PIN(GPIOX_7, EE_OFF) };
- static const unsigned int pwm_f_y_pins[]	= { PIN(GPIOY_15, EE_OFF) };
- 
-+static const unsigned int hdmi_hpd_pins[]	= { PIN(GPIOH_0, EE_OFF) };
-+static const unsigned int hdmi_sda_pins[]	= { PIN(GPIOH_1, EE_OFF) };
-+static const unsigned int hdmi_scl_pins[]	= { PIN(GPIOH_2, EE_OFF) };
-+
- static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0, 0),
- 	MESON_PIN(GPIOAO_1, 0),
-@@ -440,6 +444,11 @@
- 	GROUP(eth_txd2,		6,	3),
- 	GROUP(eth_txd3,		6,	2),
- 
-+	/* Bank H */
-+	GROUP(hdmi_hpd,		1,	26),
-+	GROUP(hdmi_sda,		1,	25),
-+	GROUP(hdmi_scl,		1,	24),
-+
- 	/* Bank DV */
- 	GROUP(uart_tx_b,	2,	29),
- 	GROUP(uart_rx_b,	2,	28),
-@@ -636,6 +645,14 @@
- 	"pwm_f_y",
- };
- 
-+static const char * const hdmi_hpd_groups[] = {
-+	"hdmi_hpd",
-+};
-+
-+static const char * const hdmi_i2c_groups[] = {
-+	"hdmi_sda", "hdmi_scl",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -699,6 +716,8 @@
- 	FUNCTION(pwm_e),
- 	FUNCTION(pwm_f_x),
- 	FUNCTION(pwm_f_y),
-+	FUNCTION(hdmi_hpd),
-+	FUNCTION(hdmi_i2c),
- };
- 
- static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 25694f7..7703a46 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -197,6 +197,10 @@
- 
- static const unsigned int pwm_e_pins[]		= { PIN(GPIOX_16, EE_OFF) };
- 
-+static const unsigned int hdmi_hpd_pins[]	= { PIN(GPIOH_0, EE_OFF) };
-+static const unsigned int hdmi_sda_pins[]	= { PIN(GPIOH_1, EE_OFF) };
-+static const unsigned int hdmi_scl_pins[]	= { PIN(GPIOH_2, EE_OFF) };
-+
- static const struct pinctrl_pin_desc meson_gxl_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0, 0),
- 	MESON_PIN(GPIOAO_1, 0),
-@@ -363,6 +367,11 @@
- 	GROUP(eth_txd2,		4,	11),
- 	GROUP(eth_txd3,		4,	10),
- 
-+	/* Bank H */
-+	GROUP(hdmi_hpd,		6,	31),
-+	GROUP(hdmi_sda,		6,	30),
-+	GROUP(hdmi_scl,		6,	29),
-+
- 	/* Bank DV */
- 	GROUP(uart_tx_b,	2,	16),
- 	GROUP(uart_rx_b,	2,	15),
-@@ -506,6 +515,14 @@
- 	"pwm_e",
- };
- 
-+static const char * const hdmi_hpd_groups[] = {
-+	"hdmi_hpd",
-+};
-+
-+static const char * const hdmi_i2c_groups[] = {
-+	"hdmi_sda", "hdmi_scl",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -537,6 +554,8 @@
- 	FUNCTION(i2c_c),
- 	FUNCTION(eth),
- 	FUNCTION(pwm_e),
-+	FUNCTION(hdmi_hpd),
-+	FUNCTION(hdmi_i2c),
- };
- 
- static struct meson_pmx_func meson_gxl_aobus_functions[] = {
+Runtime PM support itself needs a bit more discussion, so lets first focus on
+the prerequisites.
+
+In case of Exynos pin controller driver it is a pad retention control. In
+current code it was handled by machine and PMU code and had no relation to
+what pin controller driver does. This patch series moves pad retention
+control to pin controller driver. While implementing it, I also did a little
+cleanup of both Exynos PMU and pin controller drivers. Exynos PMU driver
+now provides a convenient function to get PMU regmap from other Exynos drivers.
+
+Patch #1 provides a new interface to get Exynos PMU regmap, which is used
+by the patch #11. Patches 2-10 are additional cleanups to the code I was
+modyfying. Patches 10-12 implements the move of retention control and patch #13
+is another cleanup, which is possible after removing dependency to platform
+PM code.
+
+Patches are based on linux-next from 2017.01.16 with Exynos4415 support
+removal patch applied: https://lkml.org/lkml/2017/1/14/137
+
+
+Changelog:
+
+v2:
+- reworked exynos_get_pmu_regmap() function and moved to Exynos PMU driver,
+  now it doesn't depend on driver probe order thus doesn't need to defer probing
+  of pinctrl driver if PMU has not yet been probed
+- collected Acks, minor fixes according to review comments
+
+v1: https://www.spinics.net/lists/arm-kernel/msg554487.html
+- removed the need to add PMU phandles to all pin controller nodes, so old DTBs
+  are properly supported. This has been achieved by getting PMU regmap from
+  the "exynos-pmu" device of fixed name.
+- more cleanup in Exynos pin controller driver: added missing entries in DT
+  documentation, removed "memory allocation failed" messages and added
+  initconst annotations.
+- added support for s5pv210.
+- reworked retention control code to be simpler and ready for adding Exynos5433
+  support.
+
+v0: http://www.spinics.net/lists/arm-kernel/msg550161.html
+- initial version
+- part of "Runtime PM for Exynos pin controller driver" patchset
+
+Patch summary:
+
+Marek Szyprowski (13):
+  soc: samsung: pmu: Provide global function to get PMU regmap
+  soc: samsung: pmu: Use of_device_get_match_data helper
+  soc: samsung: pmu: Remove messages for failed memory allocation
+  pinctrl: samsung: Document Exynos3250 SoC support
+  pinctrl: samsung: Remove messages for failed memory allocation
+  pinctrl: samsung: Fix samsung_pinctrl_create_functions return value
+  pinctrl: samsung: Add missing initconst annotation
+  pinctrl: samsung: Remove dead code
+  pinctrl: samsung: Use generic of_device_get_match_data helper
+  pinctrl: samsung: Add infrastructure for pin-bank retention control
+  pinctrl: samsung: Move retention control from mach-exynos to the
+    pinctrl driver
+  pinctrl: samsung: Move retention control from mach-s5pv210 to the
+    pinctrl driver
+  pinctrl: samsung: Replace syscore ops with standard platform device
+    pm_ops
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           |   1 +
+ arch/arm/mach-exynos/suspend.c                     |  64 ------
+ arch/arm/mach-s5pv210/pm.c                         |   7 -
+ arch/arm/mach-s5pv210/regs-clock.h                 |   4 -
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 232 +++++++++++++++++++--
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c          |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          | 123 ++++-------
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |  42 ++++
+ drivers/soc/samsung/exynos-pmu.c                   |  22 +-
+ include/linux/soc/samsung/exynos-pmu.h             |   7 +
+ 10 files changed, 320 insertions(+), 194 deletions(-)
+
 -- 
 1.9.1
