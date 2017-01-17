@@ -1,47 +1,41 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] pinctrl: ti-iodelay: Fix return value check in ti_iodelay_probe()
-Date: Tue, 17 Jan 2017 14:41:47 +0000
-Message-ID: <20170117144147.18540-1-weiyj.lk@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] gpio: davinci: Redesign driver to accommodate ngpios
+ in one gpio chip
+Date: Tue, 17 Jan 2017 15:52:40 +0100
+Message-ID: <CACRpkdbXZ3ZCLAUz-2WfVvMx5H2kaDVCOoJAX=zHhNFv5z-zpQ@mail.gmail.com>
+References: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:32955 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751081AbdAQOl4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 09:41:56 -0500
-Received: by mail-pg0-f66.google.com with SMTP id 194so8200017pgd.0
-        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2017 06:41:56 -0800 (PST)
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:33016 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751183AbdAQOwl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Jan 2017 09:52:41 -0500
+Received: by mail-qt0-f176.google.com with SMTP id v23so160948431qtb.0
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Jan 2017 06:52:41 -0800 (PST)
+In-Reply-To: <1484110841-2391-1-git-send-email-j-keerthy@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Wed, Jan 11, 2017 at 6:00 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-In case of error, the function pinctrl_register() returns
-NULL not ERR_PTR(). The IS_ERR() test in the return value
-check should be replaced with NULL test.
+> The Davinci GPIO driver is implemented to work with one monolithic
+> Davinci GPIO platform device which may have up to Y(144) gpios.
 
-Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm a bit confused by the different DaVinci series since there seem
+to be different series floating and I don't know what order to apply them,
+it fails for me.
 
-diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-index 3b86d3d..8899f5e 100644
---- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-+++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-@@ -892,9 +892,9 @@ static int ti_iodelay_probe(struct platform_device *pdev)
- 	iod->desc.owner = THIS_MODULE;
- 
- 	iod->pctl = pinctrl_register(&iod->desc, dev, iod);
--	if (!iod->pctl) {
-+	if (IS_ERR(iod->pctl)) {
- 		dev_err(dev, "Failed to register pinctrl\n");
--		ret = -ENODEV;
-+		ret = PTR_ERR(iod->pctl);
- 		goto exit_out;
- 	}
+Can you:
 
+- Rebase *ALL* your DaVinci work on top of the "devel" branch in the
+  GPIO tree.
+
+- Repost *ALL* patches that should be applied, in one batch.
+
+- Include any accumulated ACKs etc.
+
+Yours,
+Linus Walleij
