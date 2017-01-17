@@ -1,52 +1,59 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH -next] pinctrl: ti-iodelay: Fix return value check in
- ti_iodelay_probe()
-Date: Tue, 17 Jan 2017 15:02:01 -0800
-Message-ID: <20170117230201.GH7399@atomide.com>
-References: <20170117144147.18540-1-weiyj.lk@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:58224 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751142AbdAQXCF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 17 Jan 2017 18:02:05 -0500
-Content-Disposition: inline
-In-Reply-To: <20170117144147.18540-1-weiyj.lk@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 00/13] Ingenic JZ4740 / JZ4780 pinctrl driver
+Date: Wed, 18 Jan 2017 00:14:08 +0100
+Message-ID: <20170117231421.16310-1-paul@crapouillou.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
 
-* Wei Yongjun <weiyj.lk@gmail.com> [170117 06:42]:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
-> 
-> In case of error, the function pinctrl_register() returns
-> NULL not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test.
-> 
-> Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Hi,
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+This set of patches introduces a new pinctrl driver for the Ingenic
+JZ4740 and JZ4780, which handles pin configuration, pin muxing and
+GPIO config for those MIPS SoCs.
 
-> ---
->  drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> index 3b86d3d..8899f5e 100644
-> --- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> +++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> @@ -892,9 +892,9 @@ static int ti_iodelay_probe(struct platform_device *pdev)
->  	iod->desc.owner = THIS_MODULE;
->  
->  	iod->pctl = pinctrl_register(&iod->desc, dev, iod);
-> -	if (!iod->pctl) {
-> +	if (IS_ERR(iod->pctl)) {
->  		dev_err(dev, "Failed to register pinctrl\n");
-> -		ret = -ENODEV;
-> +		ret = PTR_ERR(iod->pctl);
->  		goto exit_out;
->  	}
-> 
+The initial driver was developed by to Paul Burton, so I'll expect his
+Signed-Off-By to be added to each patch. It has been severely modified
+and improved by myself, notably to add support for the JZ4740 (the
+initial non-upstream driver only handled the JZ4780).
+
+I successfully tested it on Imagination Technologies' CI20 board (JZ4780),
+as well as on the Dingoo A320 chinese handheld console (JZ4740).
+
+One patch in this series add a pinctrl configuration for some drivers
+instanciated in the QI LB60 devicetree. Since I don't own this device,
+this one patch was not tested.
+
+Some words about the driver itself:
+- pinctrl-ingenic.c contains the core functions that can be shared
+  across all Ingenic SoCs,
+- pinctrl-jz4740.c contains the JZ4740-specific low-level functions and
+  the jz4740-pinctrl driver,
+- pinctrl-jz4780.c contains the JZ4780-specific low-level functions and
+  the jz4780-pinctrl driver.
+
+The reason behind using a common file sharing core functions and backend
+ops for each SoC version, is that the pin/GPIO controllers of the Ingenic
+SoCs are extremely similar across SoC versions, except that some have the
+registers shuffled around. Making a distinct separation permits the reuse
+of large parts of the driver to support the two SoC versions.
+
+One problem still unresolved: the pinctrl framework does not allow us to
+configure each pin on demand (someone please prove me wrong), when the
+various PWM channels are requested or released. For instance, the PWM
+channels can be configured from sysfs, which would require all PWM pins
+to be configured properly beforehand for the PWM function, eventually
+causing conflicts with other platform or board drivers.
+
+The proper solution here would be to modify the pwm-jz4740 driver to
+handle only one PWM channel, and create an instance of this driver
+for each one of the 8 PWM channels. Then, it could use the pinctrl
+framework to dynamically configure the PWM pin it controls.
+
+Until this can be done, the only jz4740 board supported upstream
+(Qi lb60) could configure all of its connected PWM pins in PWM function
+mode, if those are not used by other drivers nor by GPIOs on the
+board. The only jz4780 board upstream (CI20) does not yet support the
+PWM driver.
