@@ -1,44 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 3/6] gpio: davinci: Redesign driver to accommodate
- ngpios in one gpio chip
-Date: Thu, 19 Jan 2017 00:22:19 +0100
-Message-ID: <CACRpkdaEx-XyMXz4WwzQ08_vhAqhA0R29wY0Cv=u9eXTiHmBvQ@mail.gmail.com>
-References: <1484281215-24576-1-git-send-email-j-keerthy@ti.com> <1484281215-24576-4-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH -next] pinctrl: ti-iodelay: Fix return value check in ti_iodelay_probe()
+Date: Thu, 19 Jan 2017 00:29:25 +0100
+Message-ID: <CACRpkdYZ0g5ZA-exhAOLRmbq2LQ52OY9=tcW=L2p0ZNpHQWfug@mail.gmail.com>
+References: <20170117144147.18540-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1484281215-24576-4-git-send-email-j-keerthy@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:35236 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751276AbdARXaE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 18:30:04 -0500
+Received: by mail-qt0-f181.google.com with SMTP id x49so37515794qtc.2
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 15:29:26 -0800 (PST)
+In-Reply-To: <20170117144147.18540-1-weiyj.lk@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jan 13, 2017 at 5:20 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Tue, Jan 17, 2017 at 3:41 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
 
-> The Davinci GPIO driver is implemented to work with one monolithic
-> Davinci GPIO platform device which may have up to Y(144) gpios.
-> The Davinci GPIO driver instantiates number of GPIO chips with
-> max 32 gpio pins per each during initialization and one IRQ domain.
-> So, the current GPIO's  opjects structure is:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 >
-> <platform device> Davinci GPIO controller
->  |- <gpio0_chip0> ------|
->  ...                    |--- irq_domain (hwirq [0..143])
->  |- <gpio0_chipN> ------|
+> In case of error, the function pinctrl_register() returns
+> NULL not ERR_PTR(). The IS_ERR() test in the return value
+> check should be replaced with NULL test.
 >
-> Current driver creates one chip for every 32 GPIOs in a controller.
-> This was a limitation earlier now there is no need for that. Hence
-> redesigning the driver to create one gpio chip for all the ngpio
-> in the controller.
->
-> |- <gpio0_chip0> ------|--- irq_domain (hwirq [0..143]).
->
-> The previous discussion on this can be found here:
-> https://www.spinics.net/lists/linux-omap/msg132869.html
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Fixes: 003910ebc83b ("pinctrl: Introduce TI IOdelay configuration driver")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Patch applied.
+This does not apply on the devel branch of the pin control
+tree. Please rebase it and resend. Include Tony's ACK.
 
 Yours,
 Linus Walleij
