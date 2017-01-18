@@ -1,34 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next] pinctrl/amd: Drop pinctrl_unregister for devm_
- registered device
-Date: Thu, 19 Jan 2017 00:15:34 +0100
-Message-ID: <CACRpkdb_k56=86hgY+dDuMN-aMgiGhWMicbYbiEGqUbiiC2QMw@mail.gmail.com>
-References: <20170117155532.28879-1-weiyj.lk@gmail.com>
+Subject: Re: [PATCH V3 4/5] gpio: davinci: Add support for multiple GPIO controllers
+Date: Thu, 19 Jan 2017 00:23:27 +0100
+Message-ID: <CACRpkdY_n-Ak-v+wYzk-+4KxytrLqZb767Y=OwGupwwFhnztEA@mail.gmail.com>
+References: <1484669955-5349-1-git-send-email-j-keerthy@ti.com> <1484669955-5349-5-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f170.google.com ([209.85.216.170]:35106 "EHLO
-        mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbdARXPk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 18:15:40 -0500
-Received: by mail-qt0-f170.google.com with SMTP id x49so36969138qtc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 15:15:35 -0800 (PST)
-In-Reply-To: <20170117155532.28879-1-weiyj.lk@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1484669955-5349-5-git-send-email-j-keerthy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: "Shah, Nehal-bakulchandra" <Nehal-Bakulchandra.shah@amd.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jan 17, 2017 at 4:55 PM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
+On Tue, Jan 17, 2017 at 5:19 PM, Keerthy <j-keerthy@ti.com> wrote:
 
-> From: Wei Yongjun <weiyongjun1@huawei.com>
+> Update GPIO driver to support Multiple GPIO controllers by updating
+> the base of subsequent GPIO chips with total of previous chips
+> gpio count so that gpio_add_chip gets unique numbers.
 >
-> It's not necessary to unregister pin controller device registered
-> with devm_pinctrl_register() and using pinctrl_unregister() leads
-> to a double free.
->
-> Fixes: 3bfd44306c65 ("pinctrl: amd: Add support for additional GPIO")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
 Patch applied.
 
