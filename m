@@ -1,40 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Crash in kernel/locking/rtmutex.c
-Date: Wed, 18 Jan 2017 09:49:34 +0100
-Message-ID: <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
-References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
- <20170117201906.GB1335@jcartwri.amer.corp.natinst.com>
+Subject: Re: [PATCH RFC 0/5] mvebu cleanups and preparation for Armada 7k/8k
+Date: Wed, 18 Jan 2017 09:52:31 +0100
+Message-ID: <CACRpkdYWV2N7JxyJiLNpygOSw308qTzdtv+5f6Ej-fU4pvM6ew@mail.gmail.com>
+References: <20170113110240.GA29164@n2100.armlinux.org.uk> <20170113112829.GP14217@n2100.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:34170 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751790AbdARItf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 03:49:35 -0500
-Received: by mail-qt0-f174.google.com with SMTP id l7so5642386qtd.1
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 00:49:35 -0800 (PST)
-In-Reply-To: <20170117201906.GB1335@jcartwri.amer.corp.natinst.com>
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:36780 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbdARIwc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 03:52:32 -0500
+Received: by mail-qt0-f180.google.com with SMTP id k15so5639617qtg.3
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 00:52:32 -0800 (PST)
+In-Reply-To: <20170113112829.GP14217@n2100.armlinux.org.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Cartwright <julia@ni.com>
-Cc: Brian Wrenn <dcbrianw@gmail.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Jan 17, 2017 at 9:19 PM, Julia Cartwright <julia@ni.com> wrote:
+On Fri, Jan 13, 2017 at 12:28 PM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Fri, Jan 13, 2017 at 11:02:40AM +0000, Russell King - ARM Linux wrote:
+>> (Resend including linux-arm-kernel)
+>
+> BTW, would be useful if MAINTAINERS could list maintainers for both
+> this code and the mvebu gpio code too.  At the moment, it seems Linus
+> is the person responsible for both of those - but I suspect the mvebu
+> people want to be copied on patches...
 
-> Can you give the following patch a try?  Even though this problem is
-> only observable on -rt kernels, the below patch is suitable for
-> inclusion in mainline.  (The below is ontop of -next, you may have to
-> finnagle it a bit to work on the linaro frankenkernel).
-
-This looks like one of the RT cases pointed out by Grygorii i
-Documentation/gpio/driver.txt
-and the patch looks fine.
-
-Once you have confirmation that it solves the problem, add
-a Tested-by: tag and send to the GPIO mailinglist & me and
-make sure to get Bj=C3=B6rn Andersson on the CC so he can review
-it swiftly.
+Agreed. Since they are silent I will likely simply apply the patches,
+they certainly look good to me.
 
 Yours,
 Linus Walleij
