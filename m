@@ -1,41 +1,40 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 00/13] Move pad retention control to Exynos pin
- controller driver
-Date: Wed, 18 Jan 2017 17:40:47 +0900
-Message-ID: <CA+Ln22EpeAu59Yp0x7Ph_Z06xP4WY7KMJypwQ9x6Wkpf2yEhgg@mail.gmail.com>
-References: <CGME20170117124453eucas1p1b812596939db4c4f3298b941555eb05a@eucas1p1.samsung.com>
- <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Crash in kernel/locking/rtmutex.c
+Date: Wed, 18 Jan 2017 09:49:34 +0100
+Message-ID: <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
+References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
+ <20170117201906.GB1335@jcartwri.amer.corp.natinst.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:35053 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbdARIkt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 03:40:49 -0500
-In-Reply-To: <1484657084-26227-1-git-send-email-m.szyprowski@samsung.com>
+Received: from mail-qt0-f174.google.com ([209.85.216.174]:34170 "EHLO
+        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751790AbdARItf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 03:49:35 -0500
+Received: by mail-qt0-f174.google.com with SMTP id l7so5642386qtd.1
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 00:49:35 -0800 (PST)
+In-Reply-To: <20170117201906.GB1335@jcartwri.amer.corp.natinst.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Julia Cartwright <julia@ni.com>
+Cc: Brian Wrenn <dcbrianw@gmail.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Hi Marek,
+On Tue, Jan 17, 2017 at 9:19 PM, Julia Cartwright <julia@ni.com> wrote:
 
-2017-01-17 21:44 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Changelog:
->
-> v2:
-> - reworked exynos_get_pmu_regmap() function and moved to Exynos PMU driver,
->   now it doesn't depend on driver probe order thus doesn't need to defer probing
->   of pinctrl driver if PMU has not yet been probed
-> - collected Acks, minor fixes according to review comments
+> Can you give the following patch a try?  Even though this problem is
+> only observable on -rt kernels, the below patch is suitable for
+> inclusion in mainline.  (The below is ontop of -next, you may have to
+> finnagle it a bit to work on the linaro frankenkernel).
 
-After fixing remaining nits in patch 1 and 10, for all pinctrl patches (4-13):
+This looks like one of the RT cases pointed out by Grygorii i
+Documentation/gpio/driver.txt
+and the patch looks fine.
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Once you have confirmation that it solves the problem, add
+a Tested-by: tag and send to the GPIO mailinglist & me and
+make sure to get Bj=C3=B6rn Andersson on the CC so he can review
+it swiftly.
 
-and for other patches (1-3):
-
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Best regards,
-Tomasz
+Yours,
+Linus Walleij
