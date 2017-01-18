@@ -1,32 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RFC 5/5] pinctrl: mvebu: add simple regmap based pinctrl implementation
-Date: Wed, 18 Jan 2017 09:58:30 +0100
-Message-ID: <CACRpkdZU63MGGWVS2eqdphWncUTmyZ4fiodKXk1xUPuF7PK-pg@mail.gmail.com>
-References: <20170113110240.GA29164@n2100.armlinux.org.uk> <E1cRzdv-0002Ys-Pe@rmk-PC.armlinux.org.uk>
+Subject: Re: [PATCH] pinctrl: remove redundant pin < 0 check on unsigned int
+Date: Wed, 18 Jan 2017 10:24:52 +0100
+Message-ID: <CACRpkdYk=LSKzzQuVfLSsoxPtoOy5tHqFZ-gce_CUXjqOiawKQ@mail.gmail.com>
+References: <20170113132039.19830-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:35640 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbdARI6b (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 03:58:31 -0500
-Received: by mail-qt0-f178.google.com with SMTP id x49so5758063qtc.2
-        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 00:58:31 -0800 (PST)
-In-Reply-To: <E1cRzdv-0002Ys-Pe@rmk-PC.armlinux.org.uk>
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:36383 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751659AbdARJYx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 18 Jan 2017 04:24:53 -0500
+Received: by mail-qt0-f179.google.com with SMTP id k15so6232507qtg.3
+        for <linux-gpio@vger.kernel.org>; Wed, 18 Jan 2017 01:24:53 -0800 (PST)
+In-Reply-To: <20170113132039.19830-1-colin.king@canonical.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory Clement <gregory.clement@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Lokesh Vutla <lokeshvutla@ti.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jan 13, 2017 at 12:03 PM, Russell King
-<rmk+kernel@armlinux.org.uk> wrote:
+On Fri, Jan 13, 2017 at 2:20 PM, Colin King <colin.king@canonical.com> wrote:
 
-> Add a simple regmap based pinctrl implementation for mvebu, for syscon
-> based regmap drivers.
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> pin is an unsigned int and therefore can never be < 0 so
+> this check is redudant. Remove the check and the associated
+> dev_err error message.
+>
+> Fixes CoverityScan CID#1396438 ("Unsigned compared against 0")
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Patch applied.
+Fixed up speling & commit topic and applied with
+Nishanth's ACK!
 
 Yours,
 Linus Walleij
