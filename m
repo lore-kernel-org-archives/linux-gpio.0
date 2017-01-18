@@ -1,24 +1,43 @@
-From: Bartosz Golaszewski <bgolaszewski-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: libgpiod v0.1: C library and command-line tools for controlling GPIOs
-Date: Wed, 18 Jan 2017 16:48:08 +0100
-Message-ID: <CAMpxmJUHfo7FRzzx7MxdADyVMYZiSLEPCtCSDLkq540M1fZTkg@mail.gmail.com>
+From: Brian Wrenn <dcbrianw@gmail.com>
+Subject: Re: Crash in kernel/locking/rtmutex.c
+Date: Wed, 18 Jan 2017 11:39:14 -0500
+Message-ID: <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
+References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
+ <20170117201906.GB1335@jcartwri.amer.corp.natinst.com> <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-rt-users-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
+Sender: linux-rt-users-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Julia Cartwright <julia@ni.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-I'd like to announce the first release of libgpiod. The project
-consists of a C library and a set of command-line tools for
-controlling GPIOs over the new character device interface.
+Hi Julia and Linus,
 
-The tools support reading & setting values, keeping the lines
-exported, finding GPIO lines by name, monitoring events etc.
+we haven't gotten to testing with the patch, but I will report back
+when we have done so.
 
-The source code can be found at: https://github.com/brgl/libgpiod
+Thank you very much for the help.
 
-I also submitted a patch for the project to be included in buildroot.
-
-Best regards,
-Bartosz Golaszewski
+On Wed, Jan 18, 2017 at 3:49 AM, Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+> On Tue, Jan 17, 2017 at 9:19 PM, Julia Cartwright <julia@ni.com> wrote:
+>
+>> Can you give the following patch a try?  Even though this problem is
+>> only observable on -rt kernels, the below patch is suitable for
+>> inclusion in mainline.  (The below is ontop of -next, you may have to
+>> finnagle it a bit to work on the linaro frankenkernel).
+>
+> This looks like one of the RT cases pointed out by Grygorii i
+> Documentation/gpio/driver.txt
+> and the patch looks fine.
+>
+> Once you have confirmation that it solves the problem, add
+> a Tested-by: tag and send to the GPIO mailinglist & me and
+> make sure to get Bj=C3=B6rn Andersson on the CC so he can review
+> it swiftly.
+>
+> Yours,
+> Linus Walleij
