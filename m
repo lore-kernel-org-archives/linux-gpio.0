@@ -1,62 +1,69 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 2/5] gpio: 104-idio-16: Add set_multiple callback function support
-Date: Thu, 19 Jan 2017 10:05:37 -0500
-Message-ID: <d8301960672e52f7f157e050f5c8be63810ff34e.1484838095.git.vilhelm.gray@gmail.com>
+From: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 5/5] iio: stx104: Add GPIO set_multiple callback function support
+Date: Thu, 19 Jan 2017 10:06:16 -0500
+Message-ID: <53039e49d1421a6f070c691988eb22ef0987eba4.1484838095.git.vilhelm.gray@gmail.com>
 References: <cover.1484838095.git.vilhelm.gray@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1484838095.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1484838095.git.vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The ACCES 104-IDIO-16 series provides registers where 8 lines of GPIO
-may be set at a time. This patch add support for the set_multiple
-callback function, thus allowing multiple GPIO output lines to be set
-more efficiently in groups.
+The Apex Embedded Systems STX104 series provides a digital output
+register where 4 lines may be set at a time. This patch add support for
+the set_multiple callback function, thus allowing multiple digital
+output lines to be set more efficiently in groups.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>
+Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>
+Signed-off-by: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpio/gpio-104-idio-16.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/iio/adc/stx104.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
-index 6787b8fcf0d8..a57900fd0dc7 100644
---- a/drivers/gpio/gpio-104-idio-16.c
-+++ b/drivers/gpio/gpio-104-idio-16.c
-@@ -116,6 +116,25 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	spin_unlock_irqrestore(&idio16gpio->lock, flags);
+diff --git a/drivers/iio/adc/stx104.c b/drivers/iio/adc/stx104.c
+index 7e3645749eaf..6971293909f7 100644
+--- a/drivers/iio/adc/stx104.c
++++ b/drivers/iio/adc/stx104.c
+@@ -266,6 +266,28 @@ static void stx104_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	spin_unlock_irqrestore(&stx104gpio->lock, flags);
  }
  
-+static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
++static void stx104_gpio_set_multiple(struct gpio_chip *chip,
 +	unsigned long *mask, unsigned long *bits)
 +{
-+	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
++	struct stx104_gpio *const stx104gpio = gpiochip_get_data(chip);
 +	unsigned long flags;
 +
-+	spin_lock_irqsave(&idio16gpio->lock, flags);
++	/* verify masked GPIO are output */
++	if (!(*mask & 0xF0))
++		return;
 +
-+	idio16gpio->out_state &= ~*mask;
-+	idio16gpio->out_state |= *mask & *bits;
++	*mask >>= 4;
++	*bits >>= 4;
 +
-+	if (*mask & 0xFF)
-+		outb(idio16gpio->out_state, idio16gpio->base);
-+	if ((*mask >> 8) & 0xFF)
-+		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
++	spin_lock_irqsave(&stx104gpio->lock, flags);
 +
-+	spin_unlock_irqrestore(&idio16gpio->lock, flags);
++	stx104gpio->out_state &= ~*mask;
++	stx104gpio->out_state |= *mask & *bits;
++	outb(stx104gpio->out_state, stx104gpio->base);
++
++	spin_unlock_irqrestore(&stx104gpio->lock, flags);
 +}
 +
- static void idio_16_irq_ack(struct irq_data *data)
+ static int stx104_probe(struct device *dev, unsigned int id)
  {
- }
-@@ -219,6 +238,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
- 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
- 	idio16gpio->chip.get = idio_16_gpio_get;
- 	idio16gpio->chip.set = idio_16_gpio_set;
-+	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
- 	idio16gpio->base = base[id];
- 	idio16gpio->irq = irq[id];
- 	idio16gpio->out_state = 0xFFFF;
+ 	struct iio_dev *indio_dev;
+@@ -330,6 +352,7 @@ static int stx104_probe(struct device *dev, unsigned int id)
+ 	stx104gpio->chip.direction_output = stx104_gpio_direction_output;
+ 	stx104gpio->chip.get = stx104_gpio_get;
+ 	stx104gpio->chip.set = stx104_gpio_set;
++	stx104gpio->chip.set_multiple = stx104_gpio_set_multiple;
+ 	stx104gpio->base = base[id] + 3;
+ 	stx104gpio->out_state = 0x0;
+ 
 -- 
 2.11.0
