@@ -1,45 +1,74 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 09/13] mmc: jz4740: Let the pinctrl driver configure the pins
-Date: Thu, 19 Jan 2017 11:55:41 +0100
-Message-ID: <CAPDyKFp4idZx+ynQByz22zwsiK+reBcvt3OdHm1kR2QUy+sUhw@mail.gmail.com>
-References: <20170117231421.16310-1-paul@crapouillou.net> <20170117231421.16310-10-paul@crapouillou.net>
+From: Angelo Compagnucci <angelo.compagnucci@gmail.com>
+Subject: Re: libgpiod v0.1: C library and command-line tools for controlling GPIOs
+Date: Thu, 19 Jan 2017 11:58:13 +0100
+Message-ID: <CA+TH9VmGzZY1x+O9vFvQzdZGhtVhDme2-GmPj+0OdF1xarPtkw@mail.gmail.com>
+References: <CAMpxmJUHfo7FRzzx7MxdADyVMYZiSLEPCtCSDLkq540M1fZTkg@mail.gmail.com>
+ <CACRpkdbq5aFZZfNN1UxjrxTzsHQBdkLcz9LCx3BSp-JoirXR6A@mail.gmail.com> <CAMpxmJUFW6Sy=xd_qLPiwTk5CwQMWp-N1k6xxDwoZaz6qYeMcA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20170117231421.16310-10-paul@crapouillou.net>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mips@linux-mips.org, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, Linux
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35139 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751410AbdASLBD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 06:01:03 -0500
+In-Reply-To: <CAMpxmJUFW6Sy=xd_qLPiwTk5CwQMWp-N1k6xxDwoZaz6qYeMcA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio <linux-gpio@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
 
-[...]
+Bartosz Golaszewski,
+
+2017-01-19 11:10 GMT+01:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
+> 2017-01-19 10:34 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
+>> On Wed, Jan 18, 2017 at 4:48 PM, Bartosz Golaszewski
+>> <bgolaszewski@baylibre.com> wrote:
+>>
+>>> I'd like to announce the first release of libgpiod. The project
+>>> consists of a C library and a set of command-line tools for
+>>> controlling GPIOs over the new character device interface.
+>>
+>> Nice!
+>>
+>> Have you thought about adding bindings for higher order
+>> languages etc that I think can make GPIO programming a bliss?
+>>
+>
+> I have thought about soooo many things I could do, but the problem is
+> - as usual - time I can devote to this project. ;) Anyways: I'll
+> welcome any contribution, so if you'll happen to have some time to do
+> it, I'll surely include it.
+>
+>> I created some for Control Groups at a point, using ctypes:
+>> https://sourceforge.net/p/cgfreak/code/ci/master/tree/pylibcgroup.py
+>>
+>
+> FYI check out libsigrok - it generates python bindings from C++ using
+> swig - maybe this would be a good approach to decrease the amount of
+> work needed.
+
+I'd really like to help here, I have a bit of previous experience with
+python bindings to c and I don't think it's a tremendous amount of
+work.
+I'm planning to fork your project next weeks and trying to do something!
 
 >
-> -#ifdef CONFIG_PM_SLEEP
-> -
-> -static int jz4740_mmc_suspend(struct device *dev)
-> -{
-> -       struct jz4740_mmc_host *host = dev_get_drvdata(dev);
-> -
-> -       jz_gpio_bulk_suspend(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
-> -
+>> The point is not that Python would be so great (some think
+>> so) more that this kind of stuff makes GPIOs so much more
+>> accessible, apart from good old C.
+>>
+>
+> Yep, certainly agree. This is definitely a feature I'd like to have in
+> the future.
+>
+> Best regards,
+> Bartosz Golaszewski
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Shouldn't this be replaced with a call to:
-pinctrl_pm_select_sleep_state();
 
-> -       return 0;
-> -}
-> -
-> -static int jz4740_mmc_resume(struct device *dev)
-> -{
-> -       struct jz4740_mmc_host *host = dev_get_drvdata(dev);
-> -
-> -       jz_gpio_bulk_resume(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
 
-Shouldn't this be replaced with a call to:
-pinctrl_pm_select_default_state();
-
-[...]
-
-Kind regards
-Uffe
+-- 
+Profile: http://it.linkedin.com/in/compagnucciangelo
