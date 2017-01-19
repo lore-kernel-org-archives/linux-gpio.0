@@ -1,48 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpio: Support gpio nexus dt bindings
-Date: Thu, 19 Jan 2017 10:02:08 +0100
-Message-ID: <CACRpkdbU4hjZvK0tOETJe34F1zJ9TBRB4wR9_C+CbHJCJa7s0A@mail.gmail.com>
-References: <20170118005038.9216-1-stephen.boyd@linaro.org> <20170118005038.9216-4-stephen.boyd@linaro.org>
+Subject: Re: [PATCH 13/13] MIPS: jz4740: Remove custom GPIO code
+Date: Thu, 19 Jan 2017 10:07:03 +0100
+Message-ID: <CACRpkdYMm0iWxmEGyQyEz4JfWukXNyGXO1rqw1dSiABgHdA1tQ@mail.gmail.com>
+References: <20170117231421.16310-1-paul@crapouillou.net> <20170117231421.16310-14-paul@crapouillou.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:34361 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751275AbdASJCK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 04:02:10 -0500
-Received: by mail-qt0-f172.google.com with SMTP id l7so57383438qtd.1
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Jan 2017 01:02:10 -0800 (PST)
-In-Reply-To: <20170118005038.9216-4-stephen.boyd@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170117231421.16310-14-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <stephen.boyd@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Mark Brown <broonie@kernel.org>
 
-On Wed, Jan 18, 2017 at 1:50 AM, Stephen Boyd <stephen.boyd@linaro.org> wrote:
+On Wed, Jan 18, 2017 at 12:14 AM, Paul Cercueil <paul@crapouillou.net> wrote:
 
-> Platforms like 96boards have a standardized connector/expansion
-> slot that exposes signals like GPIOs to expansion boards in an
-> SoC agnostic way. We'd like the DT overlays for the expansion
-> boards to be written once without knowledge of the SoC on the
-> other side of the connector. This avoids the unscalable
-> combinatorial explosion of a different DT overlay for each
-> expansion board and SoC pair.
+> All the drivers for the various hardware elements of the jz4740 SoC have
+> been modified to use the pinctrl framework for their pin configuration
+> needs.
+> As such, this platform code is now unused and can be deleted.
 >
-> Now that we have nexus support in the OF core let's change the
-> function call here that parses the phandle lists of gpios to use
-> the nexus variant. This allows us to remap phandles and their
-> arguments through any number of nexus nodes and end up with the
-> actual gpio provider being used.
->
-> Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I feel I might have come across as a bit harsh in the previous review of the
+patches leading up to this one. In that case I'm sorry.
 
-Provided that patches 1 & 2 go in reviewed and merged
-by DT/device core people, they can merge this on top as well.
+I can clearly see that the intent of the series is to remove this hopelessly
+idiomatic code from the MIPS hurdle, and move these systems over
+to standard frameworks.
+
+In a way, if I look at the kernel as a whole, it would likely look better
+after these patches were merged, than before. Even with the
+shortcomings I painted out in the previous review comments.
+
+A very complicated piece of messy code is cut from MIPS.
+
+I think this is very valuable work and well worth persuing, so please
+go ahead and work with the series, your effort is very much appreciated!
 
 Yours,
 Linus Walleij
