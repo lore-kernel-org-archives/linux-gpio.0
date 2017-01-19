@@ -1,65 +1,466 @@
-From: Chris Packham <Chris.Packham-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>
-Subject: Re: [PATCHv4 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Thu, 19 Jan 2017 21:12:02 +0000
-Message-ID: <66c205acea6046978bf17e6d8fc1959f@svr-chch-ex1.atlnz.lc>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-4-chris.packham@alliedtelesis.co.nz>
- <2fca7ac2-9a88-19b1-28c5-5192b9c4a2bc@gmail.com>
- <9996b6a215f944e1a47fa6239d8de21f@svr-chch-ex1.atlnz.lc>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Cc: Kalyan Kinthada <Kalyan.Kinthada-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH v10 3/3] serial: 8250_pci: remove exar code
+Date: Thu, 19 Jan 2017 22:23:22 +0000
+Message-ID: <1484864602-5266-3-git-send-email-sudipm.mukherjee@gmail.com>
+References: <1484864602-5266-1-git-send-email-sudipm.mukherjee@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32805 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752636AbdASWXm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 17:23:42 -0500
+In-Reply-To: <1484864602-5266-1-git-send-email-sudipm.mukherjee@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, gnomes@lxorguk.ukuu.org.uk
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On 14/01/17 20:50, Chris Packham wrote:=0A=
-> On 13/01/17 22:54, Sebastian Hesselbarth wrote:=0A=
->> On 13.01.2017 10:12, Chris Packham wrote:=0A=
->>> From: Kalyan Kinthada <kalyan.kinthada-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>=0A=
->>>=0A=
->>> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs=
-=0A=
->>> from Marvell.=0A=
->>>=0A=
->>> Signed-off-by: Kalyan Kinthada <kalyan.kinthada-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>=0A=
->>> Signed-off-by: Chris Packham <chris.packham-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>=0A=
->>> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>=0A=
->>> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=0A=
->>> ---=0A=
->>>=0A=
->>> Notes:=0A=
->>>     Changes in v2:=0A=
->>>     - include sdio support for the 98DX4251=0A=
->>>     Changes in v3:=0A=
->>>     - None=0A=
->>>     Changes in v4:=0A=
->>>     - Correct some discrepencies between binding and driver.=0A=
->>=0A=
->> Well, unfortunately I still see differences between the "gpio" in=0A=
->> the binding and "gpo" in the driver.=0A=
->>=0A=
->> Please go back to that list I sent you yesterday and fix them all.=0A=
->>=0A=
->=0A=
-> I think you may have missed my initial reply [1]. Or I have missed your=
-=0A=
-> response to it. Long story short "gpo" is intentional because some of=0A=
-> those pins can't be used as inputs. But if you still want me to change=0A=
-> it I will.=0A=
->=0A=
-> [1] - https://lkml.org/lkml/2017/1/12/117=0A=
->=0A=
-=0A=
-Hi Sebastian,=0A=
-=0A=
-Did you get a chance to consider this. Do you still want me to change =0A=
-gpo -> gpio given the information above?=0A=
-=0A=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+
+Remove the Exar specific codes from 8250_pci and blacklist those chips
+so that the new Exar serial driver binds to the devices.
+
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+---
+
+patch4? but those are from different vendor. They are with
+PCI_VENDOR_ID_COMMTECH. Then we should not name the file as 8250_exar.
+But if needed I can send a separate patch for that after this series is
+complete.
+
+ drivers/tty/serial/8250/8250_pci.c | 336 +------------------------------------
+ drivers/tty/serial/8250/Kconfig    |   1 +
+ 2 files changed, 4 insertions(+), 333 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index b98c157..8a5b740 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -1580,9 +1580,6 @@ static int pci_eg20t_init(struct pci_dev *dev)
+ #endif
+ }
+ 
+-#define PCI_DEVICE_ID_EXAR_XR17V4358	0x4358
+-#define PCI_DEVICE_ID_EXAR_XR17V8358	0x8358
+-
+ #define UART_EXAR_MPIOINT_7_0	0x8f	/* MPIOINT[7:0] */
+ #define UART_EXAR_MPIOLVL_7_0	0x90	/* MPIOLVL[7:0] */
+ #define UART_EXAR_MPIO3T_7_0	0x91	/* MPIO3T[7:0] */
+@@ -1595,71 +1592,6 @@ static int pci_eg20t_init(struct pci_dev *dev)
+ #define UART_EXAR_MPIOINV_15_8	0x98	/* MPIOINV[15:8] */
+ #define UART_EXAR_MPIOSEL_15_8	0x99	/* MPIOSEL[15:8] */
+ #define UART_EXAR_MPIOOD_15_8	0x9a	/* MPIOOD[15:8] */
+-
+-static int
+-pci_xr17c154_setup(struct serial_private *priv,
+-		  const struct pciserial_board *board,
+-		  struct uart_8250_port *port, int idx)
+-{
+-	port->port.flags |= UPF_EXAR_EFR;
+-	return pci_default_setup(priv, board, port, idx);
+-}
+-
+-static inline int
+-xr17v35x_has_slave(struct serial_private *priv)
+-{
+-	const int dev_id = priv->dev->device;
+-
+-	return ((dev_id == PCI_DEVICE_ID_EXAR_XR17V4358) ||
+-		(dev_id == PCI_DEVICE_ID_EXAR_XR17V8358));
+-}
+-
+-static int
+-pci_xr17v35x_setup(struct serial_private *priv,
+-		  const struct pciserial_board *board,
+-		  struct uart_8250_port *port, int idx)
+-{
+-	u8 __iomem *p;
+-
+-	p = pci_ioremap_bar(priv->dev, 0);
+-	if (p == NULL)
+-		return -ENOMEM;
+-
+-	port->port.flags |= UPF_EXAR_EFR;
+-
+-	/*
+-	 * Setup the uart clock for the devices on expansion slot to
+-	 * half the clock speed of the main chip (which is 125MHz)
+-	 */
+-	if (xr17v35x_has_slave(priv) && idx >= 8)
+-		port->port.uartclk = (7812500 * 16 / 2);
+-
+-	/*
+-	 * Setup Multipurpose Input/Output pins.
+-	 */
+-	if (idx == 0) {
+-		writeb(0x00, p + UART_EXAR_MPIOINT_7_0);
+-		writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
+-		writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
+-		writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
+-		writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
+-		writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
+-		writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
+-		writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
+-		writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
+-		writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
+-		writeb(0x00, p + UART_EXAR_MPIOSEL_15_8);
+-		writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
+-	}
+-	writeb(0x00, p + UART_EXAR_8XMODE);
+-	writeb(UART_FCTR_EXAR_TRGD, p + UART_EXAR_FCTR);
+-	writeb(128, p + UART_EXAR_TXTRG);
+-	writeb(128, p + UART_EXAR_RXTRG);
+-	iounmap(p);
+-
+-	return pci_default_setup(priv, board, port, idx);
+-}
+-
+ #define PCI_DEVICE_ID_COMMTECH_4222PCI335 0x0004
+ #define PCI_DEVICE_ID_COMMTECH_4224PCI335 0x0002
+ #define PCI_DEVICE_ID_COMMTECH_2324PCI335 0x000a
+@@ -1784,9 +1716,6 @@ static int pci_eg20t_init(struct pci_dev *dev)
+ #define PCI_VENDOR_ID_AGESTAR		0x5372
+ #define PCI_DEVICE_ID_AGESTAR_9375	0x6872
+ #define PCI_VENDOR_ID_ASIX		0x9710
+-#define PCI_DEVICE_ID_COMMTECH_4224PCIE	0x0020
+-#define PCI_DEVICE_ID_COMMTECH_4228PCIE	0x0021
+-#define PCI_DEVICE_ID_COMMTECH_4222PCIE	0x0022
+ #define PCI_DEVICE_ID_BROADCOM_TRUMANAGE 0x160a
+ #define PCI_DEVICE_ID_AMCC_ADDIDATA_APCI7800 0x818e
+ 
+@@ -2238,65 +2167,6 @@ static int pci_eg20t_init(struct pci_dev *dev)
+ 		.setup		= pci_timedia_setup,
+ 	},
+ 	/*
+-	 * Exar cards
+-	 */
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17C152,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17c154_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17C154,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17c154_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17C158,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17c154_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17V352,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17V354,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17V358,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17V4358,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_EXAR,
+-		.device = PCI_DEVICE_ID_EXAR_XR17V8358,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	/*
+ 	 * Xircom cards
+ 	 */
+ 	{
+@@ -2552,27 +2422,6 @@ static int pci_eg20t_init(struct pci_dev *dev)
+ 		.subdevice	= PCI_ANY_ID,
+ 		.setup		= pci_fastcom335_setup,
+ 	},
+-	{
+-		.vendor = PCI_VENDOR_ID_COMMTECH,
+-		.device = PCI_DEVICE_ID_COMMTECH_4222PCIE,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_COMMTECH,
+-		.device = PCI_DEVICE_ID_COMMTECH_4224PCIE,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+-	{
+-		.vendor = PCI_VENDOR_ID_COMMTECH,
+-		.device = PCI_DEVICE_ID_COMMTECH_4228PCIE,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_xr17v35x_setup,
+-	},
+ 	/*
+ 	 * Broadcom TruManage (NetXtreme)
+ 	 */
+@@ -2785,15 +2634,6 @@ enum pci_board_num_t {
+ 	pbn_computone_6,
+ 	pbn_computone_8,
+ 	pbn_sbsxrsio,
+-	pbn_exar_XR17C152,
+-	pbn_exar_XR17C154,
+-	pbn_exar_XR17C158,
+-	pbn_exar_XR17V352,
+-	pbn_exar_XR17V354,
+-	pbn_exar_XR17V358,
+-	pbn_exar_XR17V4358,
+-	pbn_exar_XR17V8358,
+-	pbn_exar_ibm_saturn,
+ 	pbn_pasemi_1682M,
+ 	pbn_ni8430_2,
+ 	pbn_ni8430_4,
+@@ -3434,76 +3274,6 @@ enum pci_board_num_t {
+ 		.reg_shift	= 4,
+ 	},
+ 	/*
+-	 * Exar Corp. XR17C15[248] Dual/Quad/Octal UART
+-	 *  Only basic 16550A support.
+-	 *  XR17C15[24] are not tested, but they should work.
+-	 */
+-	[pbn_exar_XR17C152] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 2,
+-		.base_baud	= 921600,
+-		.uart_offset	= 0x200,
+-	},
+-	[pbn_exar_XR17C154] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 4,
+-		.base_baud	= 921600,
+-		.uart_offset	= 0x200,
+-	},
+-	[pbn_exar_XR17C158] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 8,
+-		.base_baud	= 921600,
+-		.uart_offset	= 0x200,
+-	},
+-	[pbn_exar_XR17V352] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 2,
+-		.base_baud	= 7812500,
+-		.uart_offset	= 0x400,
+-		.reg_shift	= 0,
+-		.first_offset	= 0,
+-	},
+-	[pbn_exar_XR17V354] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 4,
+-		.base_baud	= 7812500,
+-		.uart_offset	= 0x400,
+-		.reg_shift	= 0,
+-		.first_offset	= 0,
+-	},
+-	[pbn_exar_XR17V358] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 8,
+-		.base_baud	= 7812500,
+-		.uart_offset	= 0x400,
+-		.reg_shift	= 0,
+-		.first_offset	= 0,
+-	},
+-	[pbn_exar_XR17V4358] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 12,
+-		.base_baud	= 7812500,
+-		.uart_offset	= 0x400,
+-		.reg_shift	= 0,
+-		.first_offset	= 0,
+-	},
+-	[pbn_exar_XR17V8358] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 16,
+-		.base_baud	= 7812500,
+-		.uart_offset	= 0x400,
+-		.reg_shift	= 0,
+-		.first_offset	= 0,
+-	},
+-	[pbn_exar_ibm_saturn] = {
+-		.flags		= FL_BASE0,
+-		.num_ports	= 1,
+-		.base_baud	= 921600,
+-		.uart_offset	= 0x200,
+-	},
+-
+-	/*
+ 	 * PA Semi PWRficient PA6T-1682M on-chip UART
+ 	 */
+ 	[pbn_pasemi_1682M] = {
+@@ -3699,6 +3469,9 @@ enum pci_board_num_t {
+ 	{ PCI_VDEVICE(INTEL, 0x228c), },
+ 	{ PCI_VDEVICE(INTEL, 0x9ce3), },
+ 	{ PCI_VDEVICE(INTEL, 0x9ce4), },
++
++	/* Exar devices */
++	{ PCI_VDEVICE(EXAR, PCI_ANY_ID), },
+ };
+ 
+ /*
+@@ -4119,58 +3892,6 @@ static SIMPLE_DEV_PM_OPS(pciserial_pm_ops, pciserial_suspend_one,
+ 		PCI_VENDOR_ID_AFAVLAB,
+ 		PCI_SUBDEVICE_ID_AFAVLAB_P061, 0, 0,
+ 		pbn_b0_4_1152000 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_2_232, 0, 0,
+-		pbn_b0_2_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C154,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_4_232, 0, 0,
+-		pbn_b0_4_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C158,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_8_232, 0, 0,
+-		pbn_b0_8_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_1_1, 0, 0,
+-		pbn_b0_2_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C154,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_2_2, 0, 0,
+-		pbn_b0_4_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C158,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_4_4, 0, 0,
+-		pbn_b0_8_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_2, 0, 0,
+-		pbn_b0_2_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C154,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_4, 0, 0,
+-		pbn_b0_4_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C158,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_8, 0, 0,
+-		pbn_b0_8_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_2_485, 0, 0,
+-		pbn_b0_2_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C154,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_4_485, 0, 0,
+-		pbn_b0_4_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C158,
+-		PCI_SUBVENDOR_ID_CONNECT_TECH,
+-		PCI_SUBDEVICE_ID_CONNECT_TECH_PCI_UART_8_485, 0, 0,
+-		pbn_b0_8_1843200_200 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
+-		PCI_VENDOR_ID_IBM, PCI_SUBDEVICE_ID_IBM_SATURN_SERIAL_ONE_PORT,
+-		0, 0, pbn_exar_ibm_saturn },
+-
+ 	{	PCI_VENDOR_ID_SEALEVEL, PCI_DEVICE_ID_SEALEVEL_U530,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		pbn_b2_bt_1_115200 },
+@@ -4898,45 +4619,6 @@ static SIMPLE_DEV_PM_OPS(pciserial_pm_ops, pciserial_suspend_one,
+ 	{	PCI_VENDOR_ID_DCI, PCI_DEVICE_ID_DCI_PCCOM8,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		pbn_b3_8_115200 },
+-
+-	/*
+-	 * Exar Corp. XR17C15[248] Dual/Quad/Octal UART
+-	 */
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C152,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17C152 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C154,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17C154 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17C158,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17C158 },
+-	/*
+-	 * Exar Corp. XR17V[48]35[248] Dual/Quad/Octal/Hexa PCIe UARTs
+-	 */
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17V352,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V352 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17V354,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V354 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17V358,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V358 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17V4358,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V4358 },
+-	{	PCI_VENDOR_ID_EXAR, PCI_DEVICE_ID_EXAR_XR17V8358,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V8358 },
+ 	/*
+ 	 * Pericom PI7C9X795[1248] Uno/Dual/Quad/Octal UART
+ 	 */
+@@ -5531,18 +5213,6 @@ static SIMPLE_DEV_PM_OPS(pciserial_pm_ops, pciserial_suspend_one,
+ 		PCI_ANY_ID, PCI_ANY_ID,
+ 		0,
+ 		0, pbn_b0_8_1152000_200 },
+-	{	PCI_VENDOR_ID_COMMTECH, PCI_DEVICE_ID_COMMTECH_4222PCIE,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V352 },
+-	{	PCI_VENDOR_ID_COMMTECH, PCI_DEVICE_ID_COMMTECH_4224PCIE,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V354 },
+-	{	PCI_VENDOR_ID_COMMTECH, PCI_DEVICE_ID_COMMTECH_4228PCIE,
+-		PCI_ANY_ID, PCI_ANY_ID,
+-		0,
+-		0, pbn_exar_XR17V358 },
+ 
+ 	/* Fintek PCI serial cards */
+ 	{ PCI_DEVICE(0x1c29, 0x1104), .driver_data = pbn_fintek_4 },
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index 62a3766..9f8bd0a 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -130,6 +130,7 @@ config SERIAL_8250_PCI
+ config SERIAL_8250_EXAR
+         tristate "8250/16550 PCI device support"
+         depends on SERIAL_8250_PCI
++	default SERIAL_8250
+ 
+ config SERIAL_8250_HP300
+ 	tristate
+-- 
+1.9.1
+
