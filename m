@@ -1,41 +1,86 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 13/13] MIPS: jz4740: Remove custom GPIO code
-Date: Thu, 19 Jan 2017 10:07:03 +0100
-Message-ID: <CACRpkdYMm0iWxmEGyQyEz4JfWukXNyGXO1rqw1dSiABgHdA1tQ@mail.gmail.com>
-References: <20170117231421.16310-1-paul@crapouillou.net> <20170117231421.16310-14-paul@crapouillou.net>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] drivers: pinctrl: add driver for
+ Allwinner H5 SoC
+Date: Thu, 19 Jan 2017 10:23:16 +0100
+Message-ID: <CACRpkdaTVY7Of5bKyk81xA2kUnZVMQ8LnWEJosg7Ns3s5nAEYQ@mail.gmail.com>
+References: <20161223125001.1176-1-icenowy@aosc.xyz> <1280f095-ab03-93f8-14d2-99d13ba1ce55@arm.com>
+ <CACRpkdYQhfid3VRcaj=7as_+Zg=pX3Svp9FJ_W_Ft8nVuoZqKQ@mail.gmail.com>
+ <20170105224210.wfinfucbpkkd44om@lukather> <38fe3491-457a-f0c5-54fb-9defdcd45045@arm.com>
+ <20170116163124.c5gusyd3j3goivnf@lukather> <87a535d3-1170-c388-ce7d-4921e69f4cab@arm.com>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170117231421.16310-14-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBBMLQLCAKGQE64D5GLQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <87a535d3-1170-c388-ce7d-4921e69f4cab-5wv7dgnIgG8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jan 18, 2017 at 12:14 AM, Paul Cercueil <paul@crapouillou.net> wrote:
+On Wed, Jan 18, 2017 at 10:44 AM, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org> wrote:
 
-> All the drivers for the various hardware elements of the jz4740 SoC have
-> been modified to use the pinctrl framework for their pin configuration
-> needs.
-> As such, this platform code is now unused and can be deleted.
->
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Any future SoCs could then just use that compatible and would describe
+> the SoC details in the DT, like it's meant to be and like we do already,
+> but extended by putting the mux value in there as well.
+> So the only kernel contribution would then be the DT, really, (...)
 
-I feel I might have come across as a bit harsh in the previous review of the
-patches leading up to this one. In that case I'm sorry.
+Your different positions have existed since the inception of the
+pinctrl subsystem:
 
-I can clearly see that the intent of the series is to remove this hopelessly
-idiomatic code from the MIPS hurdle, and move these systems over
-to standard frameworks.
+- One camp (myself included) wanted to describe the hardware mostly
+  in the driver: functions, groups etc are tables in the driver file.
 
-In a way, if I look at the kernel as a whole, it would likely look better
-after these patches were merged, than before. Even with the
-shortcomings I painted out in the previous review comments.
+- Another camp (OMAP included) think that the device tree should take
+  store most things: groups functions, etc.
 
-A very complicated piece of messy code is cut from MIPS.
+What we know for sure should be described in DT is how different
+IP blocks are connected in an SoC (e.g. interrupts, clocks, DMA
+channels, regulators) and on the of course outside of the SoC, on
+the board.
 
-I think this is very valuable work and well worth persuing, so please
-go ahead and work with the series, your effort is very much appreciated!
+The question here is whether the way a hardware has instantiated
+a certain IP block when doing physical compilation in their
+Verilog, VHDL or SystemC files, is something that should be
+described in DT.
+
+Many companies have developed tools to
+extract this data from their hardware design files and provide
+it to developers as a blob och incomprehensible data, such was
+the situation for OMAP for example. So to them it made most
+sense to implement pinctrl-single, just parsing that data into
+DTS(I) files.
+
+Other companies (such as STMicroelectronics) instead put a
+team of people to write a datasheet with a special chapter
+on how pins etc are connected, and programmers are given
+this datasheet and need to again type in the data and define
+groups etc.
+
+Whether parametrization of a HW block should be done in the
+driver file from the compatible string or with custom attributes
+in the node is not a simple answer to the question. OF is vague
+on this kind of things: both solutions exist.
+
+Allwinner and Qualcomm authors faced a situation such as that
+they were given a code dump and no datasheet and no data
+tables either. That creates an especially complicated situation
+where none of the above scenarios apply.
+
+What we/you need to ask: what is most helpful for the Allwinner
+community? What makes the barrier low for new contributions,
+and makes it easiest to cooperate?
+
+I try to live by this motto from IETF:
+
+   "rough consensus and running code"
+
+Please do the same.
 
 Yours,
 Linus Walleij
