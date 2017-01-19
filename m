@@ -1,41 +1,37 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 3/5] gpio: gpio-mm: Add set_multiple callback function support
-Date: Thu, 19 Jan 2017 10:05:48 -0500
-Message-ID: <a8c5e07542db7c2e9a930b1a9658f74234184365.1484838095.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 1/5] gpio: 104-dio-48e: Add set_multiple callback function support
+Date: Thu, 19 Jan 2017 10:05:27 -0500
+Message-ID: <0f0f83b416aa42968e0cf66f5290a390d5fb2d8b.1484838095.git.vilhelm.gray@gmail.com>
 References: <cover.1484838095.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:34289 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752894AbdASPGI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 10:06:08 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1484838095.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
 Cc: linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-The Diamond Systems GPIO-MM series provides registers where 8 lines of
-GPIO may be set at a time. This patch add support for the set_multiple
+The ACCES 104-DIO-48E series provides registers where 8 lines of GPIO
+may be set at a time. This patch add support for the set_multiple
 callback function, thus allowing multiple GPIO output lines to be set
 more efficiently in groups.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-gpio-mm.c | 39 +++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-104-dio-48e.c | 39 +++++++++++++++++++++++++++++++++++++++
  1 file changed, 39 insertions(+)
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index 1e7def9449ce..093489556c54 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -192,6 +192,44 @@ static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	spin_unlock_irqrestore(&gpiommgpio->lock, flags);
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index fcf776971ca9..7bc891f1d11a 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -204,6 +204,44 @@ static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	spin_unlock_irqrestore(&dio48egpio->lock, flags);
  }
  
-+static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
++static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
 +	unsigned long *mask, unsigned long *bits)
 +{
-+	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
++	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
 +	unsigned int i;
 +	const unsigned int gpio_reg_size = 8;
 +	unsigned int port;
@@ -55,14 +51,14 @@ index 1e7def9449ce..093489556c54 100644
 +		out_port = (port > 2) ? port + 1 : port;
 +		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
 +
-+		spin_lock_irqsave(&gpiommgpio->lock, flags);
++		spin_lock_irqsave(&dio48egpio->lock, flags);
 +
 +		/* update output state data and set device gpio register */
-+		gpiommgpio->out_state[port] &= ~mask[BIT_WORD(i)];
-+		gpiommgpio->out_state[port] |= bitmask;
-+		outb(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
++		dio48egpio->out_state[port] &= ~mask[BIT_WORD(i)];
++		dio48egpio->out_state[port] |= bitmask;
++		outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
 +
-+		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
++		spin_unlock_irqrestore(&dio48egpio->lock, flags);
 +
 +		/* prepare for next gpio register set */
 +		mask[BIT_WORD(i)] >>= gpio_reg_size;
@@ -70,17 +66,16 @@ index 1e7def9449ce..093489556c54 100644
 +	}
 +}
 +
- static int gpiomm_probe(struct device *dev, unsigned int id)
+ static void dio48e_irq_ack(struct irq_data *data)
  {
- 	struct gpiomm_gpio *gpiommgpio;
-@@ -218,6 +256,7 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 	gpiommgpio->chip.direction_output = gpiomm_gpio_direction_output;
- 	gpiommgpio->chip.get = gpiomm_gpio_get;
- 	gpiommgpio->chip.set = gpiomm_gpio_set;
-+	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
- 	gpiommgpio->base = base[id];
+ }
+@@ -328,6 +366,7 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	dio48egpio->chip.direction_output = dio48e_gpio_direction_output;
+ 	dio48egpio->chip.get = dio48e_gpio_get;
+ 	dio48egpio->chip.set = dio48e_gpio_set;
++	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
+ 	dio48egpio->base = base[id];
+ 	dio48egpio->irq = irq[id];
  
- 	spin_lock_init(&gpiommgpio->lock);
 -- 
 2.11.0
-
