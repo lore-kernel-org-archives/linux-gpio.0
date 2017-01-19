@@ -1,122 +1,65 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 0/3] pinctrl / gpio: Allow GPIO chips to use generic
- pinconfig
-Date: Thu, 19 Jan 2017 14:17:43 +0200
-Message-ID: <1484828263.2133.233.camel@linux.intel.com>
-References: <20170119094820.83595-1-mika.westerberg@linux.intel.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v9 1/3] gpio: exar: add gpio for exar cards
+Date: Thu, 19 Jan 2017 14:22:01 +0100
+Message-ID: <20170119132201.GA29998@kroah.com>
+References: <1484434252-7663-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <CAHp75VfcUr-1sjh+xySHMaeNEi7QxHANvqbHGwt9=uWeOvMCJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:43991 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752402AbdASMSm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 19 Jan 2017 07:18:42 -0500
-In-Reply-To: <20170119094820.83595-1-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfcUr-1sjh+xySHMaeNEi7QxHANvqbHGwt9=uWeOvMCJQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2017-01-19 at 12:48 +0300, Mika Westerberg wrote:
-> This series makes it possible to configure pins from GPIO chip drivers
-> by
-> implementing a new callback .set_config(). This callback replaces the
-> existing .set_single_ended() and .set_debounce() simply because adding
-> new
-> callbacks for each possible configuration type does not scale. So
-> instead
-> we re-use the existing generic pinconf types and the packed format.
+On Sun, Jan 15, 2017 at 04:57:32PM +0200, Andy Shevchenko wrote:
+> On Sun, Jan 15, 2017 at 12:50 AM, Sudip Mukherjee
+> <sudipm.mukherjee@gmail.com> wrote:
+> > From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+> >
+> > Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
+> > can be controlled using gpio interface.
+> >
+> > Add the gpio specific code.
 > 
-> This is a follow up of discussion on:
+> Thanks for an updated code.
+> Briefly looking into first two patches v10 would be needed.
 > 
->   https://patchwork.ozlabs.org/patch/713289/
+> Here one important line is missed, nevertheless I'll go to comment
+> some minor stuff as well.
+> Overall looks good!
 > 
-> While doing that, it was found out that the current packed format does
-> not
-> support all realistic debounce time values. The limit is ~64ms which
-> does
-> not cover mechanical switches connected to GPIOs that migh require
-> values
-> up to hundreths of milliseconds.
+> > name[16] should be enough. Maximum of 12 char will be used.
 > 
-> To solve that we change the packed format so that the value takes 24
-> bits
-> instead of 16, and change the callers to use 32-bit integer instead.
+> Better to use enough space, otherwise there is a room for a bug.
+> So, you need to understand that kernel might crash in such cases,
+> though it's minor for now.
 > 
-> We also make it possible for GPIO chip driver to call pinctrl directly
-> by
-> providing a new function pinctrl_gpio_set_config() following
-> pinctrl_gpio_direction_output() and friends.
+> > +++ b/drivers/gpio/gpio-exar.c
+> > @@ -0,0 +1,199 @@
 > 
-> I've tested this on Intel Gemini Lake SoC. Non-Intel drivers are
-> compile
-> tested only because I do not have the hardware.
+> > +static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
+> > +                       unsigned int offset)
+> > +{
+> > +       struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
+> > +       int temp;
+> > +
+> > +       mutex_lock(&exar_gpio->lock);
+> > +       temp = readb(exar_gpio->regs + reg);
+> > +       temp &= ~BIT(offset);
 > 
+> > +       if (val)
+> > +               temp |= BIT(offset);
+> 
+> You would do this in one line, but I dunno which style Linus prefers more
+> 
+> temp |= val ? BIT(...) : 0;
 
-Some minor comments, and take my
+Use the if () format, it's easier to read and understand, which is more
+important overall.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+thanks,
 
-
-> Mika Westerberg (3):
->   pinctrl: Widen the generic pinconf argument from 16 to 24 bits
->   pinctrl: Allow configuration of pins from gpiolib based drivers
->   pinctrl / gpio: Introduce .set_config() callback for GPIO chips
-> 
->  Documentation/gpio/driver.txt                    |  9 ++--
->  drivers/gpio/gpio-bcm-kona.c                     | 14 +++++-
->  drivers/gpio/gpio-dln2.c                         | 12 ++++--
->  drivers/gpio/gpio-dwapb.c                        | 14 +++++-
->  drivers/gpio/gpio-ep93xx.c                       | 11 +++--
->  drivers/gpio/gpio-f7188x.c                       | 19 ++++----
->  drivers/gpio/gpio-lp873x.c                       | 14 +++---
->  drivers/gpio/gpio-max77620.c                     | 20 ++++-----
->  drivers/gpio/gpio-menz127.c                      | 34 +++++++++++----
->  drivers/gpio/gpio-merrifield.c                   | 14 +++++-
->  drivers/gpio/gpio-omap.c                         | 14 +++++-
->  drivers/gpio/gpio-tc3589x.c                      | 15 +++----
->  drivers/gpio/gpio-tegra.c                        | 14 +++++-
->  drivers/gpio/gpio-tps65218.c                     | 14 +++---
->  drivers/gpio/gpio-vx855.c                        | 13 +++---
->  drivers/gpio/gpio-wcove.c                        | 13 +++---
->  drivers/gpio/gpio-wm831x.c                       | 21 +++++----
->  drivers/gpio/gpio-wm8994.c                       | 13 +++---
->  drivers/gpio/gpiolib.c                           | 41 +++++++++----
-> -----
->  drivers/pinctrl/bcm/pinctrl-bcm281xx.c           |  6 +--
->  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c         |  2 +-
->  drivers/pinctrl/bcm/pinctrl-ns2-mux.c            |  6 +--
->  drivers/pinctrl/bcm/pinctrl-nsp-gpio.c           |  6 +--
->  drivers/pinctrl/core.c                           | 28 ++++++++++++
->  drivers/pinctrl/intel/pinctrl-cherryview.c       |  4 +-
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c    | 14 +++++-
->  drivers/pinctrl/meson/pinctrl-meson.c            |  2 -
->  drivers/pinctrl/pinconf.c                        | 12 ++++++
->  drivers/pinctrl/pinconf.h                        |  9 ++++
->  drivers/pinctrl/pinctrl-amd.c                    | 14 +++++-
->  drivers/pinctrl/pinctrl-da850-pupd.c             |  2 -
->  drivers/pinctrl/pinctrl-lpc18xx.c                | 10 ++---
->  drivers/pinctrl/pinctrl-max77620.c               |  2 +-
->  drivers/pinctrl/pinctrl-palmas.c                 |  2 +-
->  drivers/pinctrl/pinctrl-rockchip.c               |  2 +-
->  drivers/pinctrl/pinctrl-single.c                 |  2 +-
->  drivers/pinctrl/pinctrl-sx150x.c                 | 55 ++++++++-------
-> ---------
->  drivers/pinctrl/sirf/pinctrl-atlas7.c            |  3 +-
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c            |  2 +-
->  drivers/pinctrl/uniphier/pinctrl-uniphier-core.c |  4 +-
->  drivers/pinctrl/vt8500/pinctrl-wmt.c             |  2 +-
->  drivers/rtc/rtc-omap.c                           |  2 +-
->  drivers/staging/greybus/gpio.c                   | 15 ++++---
->  drivers/usb/serial/cp210x.c                      | 13 +++---
->  include/linux/gpio/driver.h                      | 35 +++------------
->  include/linux/pinctrl/consumer.h                 |  6 +++
->  include/linux/pinctrl/pinconf-generic.h          | 51 +++++++++++--
-> ---------
->  47 files changed, 376 insertions(+), 254 deletions(-)
-> 
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+greg k-h
