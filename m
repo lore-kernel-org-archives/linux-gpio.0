@@ -1,65 +1,116 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v9 1/3] gpio: exar: add gpio for exar cards
-Date: Thu, 19 Jan 2017 14:22:01 +0100
-Message-ID: <20170119132201.GA29998@kroah.com>
-References: <1484434252-7663-1-git-send-email-sudipm.mukherjee@gmail.com>
- <CAHp75VfcUr-1sjh+xySHMaeNEi7QxHANvqbHGwt9=uWeOvMCJQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfcUr-1sjh+xySHMaeNEi7QxHANvqbHGwt9=uWeOvMCJQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 07/13] pinctrl: samsung: Add missing initconst annotation
+Date: Thu, 19 Jan 2017 14:48:47 +0100
+Message-ID: <1484833733-16082-8-git-send-email-m.szyprowski@samsung.com>
+References: <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170119134907eucas1p14be6b994bddf37f8baca669a66acc1d4@eucas1p1.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41643 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752825AbdASNtv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 08:49:51 -0500
+In-reply-to: <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Sun, Jan 15, 2017 at 04:57:32PM +0200, Andy Shevchenko wrote:
-> On Sun, Jan 15, 2017 at 12:50 AM, Sudip Mukherjee
-> <sudipm.mukherjee@gmail.com> wrote:
-> > From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-> >
-> > Exar XR17V352/354/358 chips have 16 multi-purpose inputs/outputs which
-> > can be controlled using gpio interface.
-> >
-> > Add the gpio specific code.
-> 
-> Thanks for an updated code.
-> Briefly looking into first two patches v10 would be needed.
-> 
-> Here one important line is missed, nevertheless I'll go to comment
-> some minor stuff as well.
-> Overall looks good!
-> 
-> > name[16] should be enough. Maximum of 12 char will be used.
-> 
-> Better to use enough space, otherwise there is a room for a bug.
-> So, you need to understand that kernel might crash in such cases,
-> though it's minor for now.
-> 
-> > +++ b/drivers/gpio/gpio-exar.c
-> > @@ -0,0 +1,199 @@
-> 
-> > +static void exar_update(struct gpio_chip *chip, unsigned int reg, int val,
-> > +                       unsigned int offset)
-> > +{
-> > +       struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
-> > +       int temp;
-> > +
-> > +       mutex_lock(&exar_gpio->lock);
-> > +       temp = readb(exar_gpio->regs + reg);
-> > +       temp &= ~BIT(offset);
-> 
-> > +       if (val)
-> > +               temp |= BIT(offset);
-> 
-> You would do this in one line, but I dunno which style Linus prefers more
-> 
-> temp |= val ? BIT(...) : 0;
+Exynos5433 support has been added in parallel to adding initconst
+annotation to most of the init data structures, so add those
+annotations also to Exynos5433 structures.
 
-Use the if () format, it's easier to read and understand, which is more
-important overall.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-thanks,
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index bf753a596209..70b94ad10cc1 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1266,7 +1266,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - ALIVE */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks0[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+ 	EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+@@ -1279,28 +1279,28 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - AUD */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks1[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks1[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - CPIF */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks2[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks2[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - eSE */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks3[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks3[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - FINGER */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks4[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks4[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - FSYS */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks5[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks5[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
+ 	EXYNOS5433_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
+@@ -1310,17 +1310,17 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - IMEM */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks6[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks6[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - NFC */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks7[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks7[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - PERIC */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks8[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks8[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
+ 	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
+ 	EXYNOS5433_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
+@@ -1341,7 +1341,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ };
+ 
+ /* pin banks of exynos5433 pin-controller - TOUCH */
+-static const struct samsung_pin_bank_data exynos5433_pin_banks9[] = {
++static const struct samsung_pin_bank_data exynos5433_pin_banks9[] __initconst = {
+ 	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
+ };
+ 
+@@ -1349,7 +1349,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+  * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
+  * ten gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
++const struct samsung_pin_ctrl exynos5433_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5433_pin_banks0,
+-- 
+1.9.1
 
-greg k-h
