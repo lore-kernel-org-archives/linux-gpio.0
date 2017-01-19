@@ -1,72 +1,65 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 13/13] MIPS: jz4740: Remove custom GPIO code
-Date: Thu, 19 Jan 2017 12:24:54 +0100
-Message-ID: <b88d4818b42ae6b0853e5c01d4121c47@mail.crapouillou.net>
-References: <20170117231421.16310-1-paul@crapouillou.net>
- <20170117231421.16310-14-paul@crapouillou.net>
- <20170118072751.GC18989@ulmo.ba.sec>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 3/3] iio: pc104: Mask PC/104 drivers via the PC104
+ Kconfig option
+Date: Thu, 19 Jan 2017 12:42:01 +0100
+Message-ID: <20170119114201.GA31804@kroah.com>
+References: <cover.1484073324.git.vilhelm.gray@gmail.com>
+ <512f7f9909c9ff6964b34e0302eeb404e703f033.1484073325.git.vilhelm.gray@gmail.com>
+ <4236ccf5-1480-ea3c-fee6-35ea252e3756@kernel.org>
+ <20170110214535.GA21354@sophia>
+ <CACRpkdaXRHJXjujQDi2NhXpg+yYzDBmfoq+e9tiTkNNAyECs=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170118072751.GC18989@ulmo.ba.sec>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39716 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752332AbdASLlt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 06:41:49 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaXRHJXjujQDi2NhXpg+yYzDBmfoq+e9tiTkNNAyECs=w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-Le 2017-01-18 08:27, Thierry Reding a écrit :
+On Wed, Jan 11, 2017 at 04:45:26PM +0100, Linus Walleij wrote:
+> On Tue, Jan 10, 2017 at 10:45 PM, William Breathitt Gray
+> <vilhelm.gray@gmail.com> wrote:
+> > On Tue, Jan 10, 2017 at 09:13:02PM +0000, Jonathan Cameron wrote:
+> >>On 10/01/17 18:51, William Breathitt Gray wrote:
+> >>> PC/104 drivers should be hidden on machines which do not support PC/104
+> >>> devices. This patch adds the PC104 Kconfig option as a dependency for
+> >>> the relevant PC/104 device driver Kconfig options.
+> >>>
+> >>> Cc: Jonathan Cameron <jic23@kernel.org>
+> >>> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> >>> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> >>> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> >>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> >>Acked-by: Jonathan Cameron <jic23@kernel.org>
+> >>
+> >>Now the question is how to merge this one.  Let me know if you
+> >>want me to take this one via IIO after the first patch is in.
+> >>If you want to take it another route I'm fine with that.
+> >>
+> >>Jonathan
+> >
+> > This is such a simple patchset that I envision Greg K-H picking up all
+> > three patches via driver-core; however, I'm pretty indifferent about the
+> > ultimate path in the end. I'll leave it up to Greg K-H to decide.
+> 
+> As long as Greg merges the first patch we can merge the two
+> others orthogonally I think.
+> 
+> It's just Kconfig symbols, not things that break compile.
+> 
+> (But I bet someone will come with automated warnings about
+> unused symbols in the kernel...)
 
-> On Wed, Jan 18, 2017 at 12:14:21AM +0100, Paul Cercueil wrote:
-> 
->> All the drivers for the various hardware elements of the jz4740 SoC 
->> have been modified to use the pinctrl framework for their pin 
->> configuration needs. As such, this platform code is now unused and can 
->> be deleted. Signed-off-by: Paul Cercueil <paul@crapouillou.net> --- 
->> arch/mips/include/asm/mach-jz4740/gpio.h | 371 ---------------------- 
->> arch/mips/jz4740/Makefile | 2 - arch/mips/jz4740/gpio.c | 519 
->> ------------------------------- 3 files changed, 892 deletions(-) 
->> delete mode 100644 arch/mips/jz4740/gpio.c
-> 
-> Have you considered how this could best be merged? It's probably 
-> easiest
-> to take all of this through the MIPS tree because we have an addition 
-> of
-> the pinctrl that would be a replacement for the GPIO code, while at the
-> same time a bunch of drivers rely on the JZ4740 GPIO code for 
-> successful
-> compilation.
-> 
-> That's slightly complicated by the number of drivers, so needs a lot of
-> coordination, but it's not the worst I've seen.
-> 
-> Maybe one other solution that would make the transition easier would be
-> to stub out the GPIO functions if the pinctrl driver is enabled, and do
-> the removal of the mach-jz4740/gpio.h after all drivers have been 
-> merged
-> through their corresponding subsystem trees. That way all drivers 
-> should
-> remain compilable and functional at runtime, while still having the
-> possibility to merge through the subsystem trees.
-> 
-> That said, the whole series is fairly simple, so merging everything
-> through the MIPS tree sounds like the easiest way to go.
-> 
-> Thierry
+We already have that tool, scripts/checkkconfigsymbols.pl :)
 
-I think it would make sense to merge it through the MIPS tree, yes,
-considering that the patches for the drivers in the other subsystems are
-quite small, and that they just remove code (well, except the pinctrl
-driver itself). Besides, the files modified are not touched very often
-so the chances of breakage are pretty low.
+I'll go merge this first patch now.
 
--Paul
+thanks,
+
+greg k-h
