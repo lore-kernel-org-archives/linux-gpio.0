@@ -1,81 +1,63 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 1/5] gpio: 104-dio-48e: Add set_multiple callback function support
-Date: Thu, 19 Jan 2017 10:05:27 -0500
-Message-ID: <0f0f83b416aa42968e0cf66f5290a390d5fb2d8b.1484838095.git.vilhelm.gray@gmail.com>
-References: <cover.1484838095.git.vilhelm.gray@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1484838095.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: libgpiod v0.1: C library and command-line tools for controlling GPIOs
+Date: Thu, 19 Jan 2017 15:59:57 +0100
+Message-ID: <CAMpxmJWYCD-a1azG2sbHCFa8MQngsJdhTnOgCjnidO9zGVWp9Q@mail.gmail.com>
+References: <CAMpxmJUHfo7FRzzx7MxdADyVMYZiSLEPCtCSDLkq540M1fZTkg@mail.gmail.com>
+ <4449310.gRYbpx7f9x@ws-stein> <CAMpxmJUAKOqcBQ=p9Y=wrFk7Ms=dVGCRDWhmiijuUMQ2-MAHug@mail.gmail.com>
+ <3293536.XfDnNLEWhh@ws-stein>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:34157 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753115AbdASPGW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 10:06:22 -0500
+Received: by mail-io0-f178.google.com with SMTP id l66so39562295ioi.1
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Jan 2017 07:06:21 -0800 (PST)
+In-Reply-To: <3293536.XfDnNLEWhh@ws-stein>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio <linux-gpio@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, linux-iio@vger.kernel.org
 
-The ACCES 104-DIO-48E series provides registers where 8 lines of GPIO
-may be set at a time. This patch add support for the set_multiple
-callback function, thus allowing multiple GPIO output lines to be set
-more efficiently in groups.
+2017-01-19 15:30 GMT+01:00 Alexander Stein
+<alexander.stein@systec-electronic.com>:
+> On Thursday 19 January 2017 15:12:43, Bartosz Golaszewski wrote:
+>> 2017-01-19 15:05 GMT+01:00 Alexander Stein
+>>
+>> <alexander.stein@systec-electronic.com>:
+>> > Hi,
+>> >
+>> > On Wednesday 18 January 2017 16:48:08, Bartosz Golaszewski wrote:
+>> >> I'd like to announce the first release of libgpiod. The project
+>> >> consists of a C library and a set of command-line tools for
+>> >> controlling GPIOs over the new character device interface.
+>> >>
+>> >> The tools support reading & setting values, keeping the lines
+>> >> exported, finding GPIO lines by name, monitoring events etc.
+>> >>
+>> >> The source code can be found at: https://github.com/brgl/libgpiod
+>> >
+>> > Cool thing. thanks! One bug found:
+>> > https://github.com/brgl/libgpiod/blob/master/src/tools/gpiomon.c#L31
+>> >
+>> > shortopts is missing 's' so the following occurs:
+>> >> gpiomon -l -r -s --num-events=1 gpiochip2 1
+>> >> gpiomon: invalid option -- 's'
+>> >> gpiomon: try gpiomon --help
+>> >>
+>> >> gpiomon -l -r --silent --num-events=1 gpiochip2 1
+>> >
+>> > works as expected
+>>
+>> Thanks, fixed in git.
+>
+> Thanks, also for defines of GPIOHANDLE_REQUEST_INPUT and friends you actually
+> need kernel headers >=4.8. README.md says >=4.7
+>
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-dio-48e.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+Fixed as well. Would you mind opening a github issue in the future to
+keep track of issues?
 
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index fcf776971ca9..7bc891f1d11a 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -204,6 +204,44 @@ static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	spin_unlock_irqrestore(&dio48egpio->lock, flags);
- }
- 
-+static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
-+	unsigned int i;
-+	const unsigned int gpio_reg_size = 8;
-+	unsigned int port;
-+	unsigned int out_port;
-+	unsigned int bitmask;
-+	unsigned long flags;
-+
-+	/* set bits are evaluated a gpio register size at a time */
-+	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
-+		/* no more set bits in this mask word; skip to the next word */
-+		if (!mask[BIT_WORD(i)]) {
-+			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
-+			continue;
-+		}
-+
-+		port = i / gpio_reg_size;
-+		out_port = (port > 2) ? port + 1 : port;
-+		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
-+
-+		spin_lock_irqsave(&dio48egpio->lock, flags);
-+
-+		/* update output state data and set device gpio register */
-+		dio48egpio->out_state[port] &= ~mask[BIT_WORD(i)];
-+		dio48egpio->out_state[port] |= bitmask;
-+		outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
-+
-+		spin_unlock_irqrestore(&dio48egpio->lock, flags);
-+
-+		/* prepare for next gpio register set */
-+		mask[BIT_WORD(i)] >>= gpio_reg_size;
-+		bits[BIT_WORD(i)] >>= gpio_reg_size;
-+	}
-+}
-+
- static void dio48e_irq_ack(struct irq_data *data)
- {
- }
-@@ -328,6 +366,7 @@ static int dio48e_probe(struct device *dev, unsigned int id)
- 	dio48egpio->chip.direction_output = dio48e_gpio_direction_output;
- 	dio48egpio->chip.get = dio48e_gpio_get;
- 	dio48egpio->chip.set = dio48e_gpio_set;
-+	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
- 	dio48egpio->base = base[id];
- 	dio48egpio->irq = irq[id];
- 
--- 
-2.11.0
+Thanks,
+Bartosz Golaszewski
