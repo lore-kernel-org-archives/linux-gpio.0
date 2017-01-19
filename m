@@ -1,7 +1,7 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 4/5] gpio: ws16c48: Add set_multiple callback function support
-Date: Thu, 19 Jan 2017 10:05:59 -0500
-Message-ID: <2b5658acecdc3e8d922ea8e299bd488e6ee18e2d.1484838095.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 2/5] gpio: 104-idio-16: Add set_multiple callback function support
+Date: Thu, 19 Jan 2017 10:05:37 -0500
+Message-ID: <d8301960672e52f7f157e050f5c8be63810ff34e.1484838095.git.vilhelm.gray@gmail.com>
 References: <cover.1484838095.git.vilhelm.gray@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1484838095.git.vilhelm.gray@gmail.com>
@@ -10,74 +10,53 @@ To: linus.walleij@linaro.org, gnurou@gmail.com
 Cc: linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The WinSystems WS16C48 provides registers where 8 lines of GPIO may be
-set at a time. This patch add support for the set_multiple callback
-function, thus allowing multiple GPIO output lines to be set more
-efficiently in groups.
+The ACCES 104-IDIO-16 series provides registers where 8 lines of GPIO
+may be set at a time. This patch add support for the set_multiple
+callback function, thus allowing multiple GPIO output lines to be set
+more efficiently in groups.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-ws16c48.c | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/gpio/gpio-104-idio-16.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index eaa71d440ccf..25e539530c08 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -155,6 +155,46 @@ static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 6787b8fcf0d8..a57900fd0dc7 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -116,6 +116,25 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	spin_unlock_irqrestore(&idio16gpio->lock, flags);
  }
  
-+static void ws16c48_gpio_set_multiple(struct gpio_chip *chip,
++static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
 +	unsigned long *mask, unsigned long *bits)
 +{
-+	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-+	unsigned int i;
-+	const unsigned int gpio_reg_size = 8;
-+	unsigned int port;
-+	unsigned int iomask;
-+	unsigned int bitmask;
++	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
 +	unsigned long flags;
 +
-+	/* set bits are evaluated a gpio register size at a time */
-+	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
-+		/* no more set bits in this mask word; skip to the next word */
-+		if (!mask[BIT_WORD(i)]) {
-+			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
-+			continue;
-+		}
++	spin_lock_irqsave(&idio16gpio->lock, flags);
 +
-+		port = i / gpio_reg_size;
++	idio16gpio->out_state &= ~*mask;
++	idio16gpio->out_state |= *mask & *bits;
 +
-+		/* mask out GPIO configured for input */
-+		iomask = mask[BIT_WORD(i)] & ~ws16c48gpio->io_state[port];
-+		bitmask = iomask & bits[BIT_WORD(i)];
++	if (*mask & 0xFF)
++		outb(idio16gpio->out_state, idio16gpio->base);
++	if ((*mask >> 8) & 0xFF)
++		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
 +
-+		spin_lock_irqsave(&ws16c48gpio->lock, flags);
-+
-+		/* update output state data and set device gpio register */
-+		ws16c48gpio->out_state[port] &= ~iomask;
-+		ws16c48gpio->out_state[port] |= bitmask;
-+		outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-+
-+		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-+
-+		/* prepare for next gpio register set */
-+		mask[BIT_WORD(i)] >>= gpio_reg_size;
-+		bits[BIT_WORD(i)] >>= gpio_reg_size;
-+	}
++	spin_unlock_irqrestore(&idio16gpio->lock, flags);
 +}
 +
- static void ws16c48_irq_ack(struct irq_data *data)
+ static void idio_16_irq_ack(struct irq_data *data)
  {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-@@ -329,6 +369,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
-+	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
- 	ws16c48gpio->base = base[id];
- 	ws16c48gpio->irq = irq[id];
- 
+ }
+@@ -219,6 +238,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+ 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+ 	idio16gpio->chip.get = idio_16_gpio_get;
+ 	idio16gpio->chip.set = idio_16_gpio_set;
++	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+ 	idio16gpio->base = base[id];
+ 	idio16gpio->irq = irq[id];
+ 	idio16gpio->out_state = 0xFFFF;
 -- 
 2.11.0
