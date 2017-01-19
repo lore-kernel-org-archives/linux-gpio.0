@@ -1,52 +1,42 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 00/13] Ingenic JZ4740 / JZ4780 pinctrl driver
-Date: Thu, 19 Jan 2017 12:19:36 +0100
-Message-ID: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
-References: <20170117231421.16310-1-paul@crapouillou.net>
- <20170118071530.GA18989@ulmo.ba.sec>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 2/3] pinctrl: Allow configuration of pins from gpiolib
+ based drivers
+Date: Thu, 19 Jan 2017 14:11:22 +0200
+Message-ID: <1484827882.2133.229.camel@linux.intel.com>
+References: <20170119094820.83595-1-mika.westerberg@linux.intel.com>
+         <20170119094820.83595-3-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170118071530.GA18989@ulmo.ba.sec>
+In-Reply-To: <20170119094820.83595-3-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Le 2017-01-18 08:15, Thierry Reding a écrit :
-
-> On Wed, Jan 18, 2017 at 12:14:08AM +0100, Paul Cercueil wrote:
-> [...]
+On Thu, 2017-01-19 at 12:48 +0300, Mika Westerberg wrote:
+> When a GPIO driver is backed by a pinctrl driver the GPIO driver
+> sometimes needs to call the pinctrl driver to configure certain
+> things,
+> like whether the pin is used as input or output. In addition to this
+> there are other configurations applicable to GPIOs such as setting
+> debounce time of the GPIO.
 > 
->> One problem still unresolved: the pinctrl framework does not allow us 
->> to configure each pin on demand (someone please prove me wrong), when 
->> the various PWM channels are requested or released. For instance, the 
->> PWM channels can be configured from sysfs, which would require all PWM 
->> pins to be configured properly beforehand for the PWM function, 
->> eventually causing conflicts with other platform or board drivers.
-> 
-> Still catching up on a lot of email, so I haven't gone through the
-> entire series. But I don't think the above is true.
-> 
-> My understanding is that you can have separate pin groups for each
-> pin (provided the hardware supports that) and then control each of
-> these groups dynamically at runtime.
-> 
-> That is you could have the PWM driver's ->request() and ->free()
-> call into the pinctrl framework to select the correct pinmux
-> configuration as necessary.
+> To support this we introduce a new function pinctrl_gpio_set_config()
+> that can be used by gpiolib based driver to pass configuration
+> requests
+> to the backing pinctrl driver.
 
-Thanks for the feedback.
 
-The problem with pinctrl and PWM, is that the pinctrl API works by 
-"states".
-A default state, sleep state, and basically any custom state that the 
-devicetree
-provides. This works well until you need to control individually each 
-pin; with
-8 pins, you would need 2^8 states, each one corresponding to a given 
-configuration.
+> +	mutex_lock(&pctldev->mutex);
+> +	pin = gpio_to_pin(range, gpio);
+> +	ret = pinconf_set_config(pctldev, pin, configs,
+> ARRAY_SIZE(configs));
+> +	mutex_unlock(&pctldev->mutex);
 
--Paul
+Does gpio_to_pin() require to be under lock?
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
