@@ -1,63 +1,72 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: libgpiod v0.1: C library and command-line tools for controlling GPIOs
-Date: Thu, 19 Jan 2017 12:06:36 +0100
-Message-ID: <CAMpxmJUUbBbNTPiU=v-Yzz2TMeW4K2Grn-r4gQT7HVex+Qjixw@mail.gmail.com>
-References: <CAMpxmJUHfo7FRzzx7MxdADyVMYZiSLEPCtCSDLkq540M1fZTkg@mail.gmail.com>
- <CACRpkdbq5aFZZfNN1UxjrxTzsHQBdkLcz9LCx3BSp-JoirXR6A@mail.gmail.com>
- <CAMpxmJUFW6Sy=xd_qLPiwTk5CwQMWp-N1k6xxDwoZaz6qYeMcA@mail.gmail.com> <CA+TH9VmGzZY1x+O9vFvQzdZGhtVhDme2-GmPj+0OdF1xarPtkw@mail.gmail.com>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 13/13] MIPS: jz4740: Remove custom GPIO code
+Date: Thu, 19 Jan 2017 12:24:54 +0100
+Message-ID: <b88d4818b42ae6b0853e5c01d4121c47@mail.crapouillou.net>
+References: <20170117231421.16310-1-paul@crapouillou.net>
+ <20170117231421.16310-14-paul@crapouillou.net>
+ <20170118072751.GC18989@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:36347 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751926AbdASLIT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Jan 2017 06:08:19 -0500
-Received: by mail-io0-f178.google.com with SMTP id j13so34717983iod.3
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Jan 2017 03:06:37 -0800 (PST)
-In-Reply-To: <CA+TH9VmGzZY1x+O9vFvQzdZGhtVhDme2-GmPj+0OdF1xarPtkw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170118072751.GC18989@ulmo.ba.sec>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
 List-Id: linux-gpio@vger.kernel.org
-To: Angelo Compagnucci <angelo.compagnucci@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-gpio <linux-gpio@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
 
-2017-01-19 11:58 GMT+01:00 Angelo Compagnucci <angelo.compagnucci@gmail.com>:
-> Bartosz Golaszewski,
->
-> 2017-01-19 11:10 GMT+01:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
->> 2017-01-19 10:34 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
->>> On Wed, Jan 18, 2017 at 4:48 PM, Bartosz Golaszewski
->>> <bgolaszewski@baylibre.com> wrote:
->>>
->>>> I'd like to announce the first release of libgpiod. The project
->>>> consists of a C library and a set of command-line tools for
->>>> controlling GPIOs over the new character device interface.
->>>
->>> Nice!
->>>
->>> Have you thought about adding bindings for higher order
->>> languages etc that I think can make GPIO programming a bliss?
->>>
->>
->> I have thought about soooo many things I could do, but the problem is
->> - as usual - time I can devote to this project. ;) Anyways: I'll
->> welcome any contribution, so if you'll happen to have some time to do
->> it, I'll surely include it.
->>
->>> I created some for Control Groups at a point, using ctypes:
->>> https://sourceforge.net/p/cgfreak/code/ci/master/tree/pylibcgroup.py
->>>
->>
->> FYI check out libsigrok - it generates python bindings from C++ using
->> swig - maybe this would be a good approach to decrease the amount of
->> work needed.
->
-> I'd really like to help here, I have a bit of previous experience with
-> python bindings to c and I don't think it's a tremendous amount of
-> work.
-> I'm planning to fork your project next weeks and trying to do something!
->
+Le 2017-01-18 08:27, Thierry Reding a écrit :
 
-Great! I'll try to find some time to work on C++ bindings then.
+> On Wed, Jan 18, 2017 at 12:14:21AM +0100, Paul Cercueil wrote:
+> 
+>> All the drivers for the various hardware elements of the jz4740 SoC 
+>> have been modified to use the pinctrl framework for their pin 
+>> configuration needs. As such, this platform code is now unused and can 
+>> be deleted. Signed-off-by: Paul Cercueil <paul@crapouillou.net> --- 
+>> arch/mips/include/asm/mach-jz4740/gpio.h | 371 ---------------------- 
+>> arch/mips/jz4740/Makefile | 2 - arch/mips/jz4740/gpio.c | 519 
+>> ------------------------------- 3 files changed, 892 deletions(-) 
+>> delete mode 100644 arch/mips/jz4740/gpio.c
+> 
+> Have you considered how this could best be merged? It's probably 
+> easiest
+> to take all of this through the MIPS tree because we have an addition 
+> of
+> the pinctrl that would be a replacement for the GPIO code, while at the
+> same time a bunch of drivers rely on the JZ4740 GPIO code for 
+> successful
+> compilation.
+> 
+> That's slightly complicated by the number of drivers, so needs a lot of
+> coordination, but it's not the worst I've seen.
+> 
+> Maybe one other solution that would make the transition easier would be
+> to stub out the GPIO functions if the pinctrl driver is enabled, and do
+> the removal of the mach-jz4740/gpio.h after all drivers have been 
+> merged
+> through their corresponding subsystem trees. That way all drivers 
+> should
+> remain compilable and functional at runtime, while still having the
+> possibility to merge through the subsystem trees.
+> 
+> That said, the whole series is fairly simple, so merging everything
+> through the MIPS tree sounds like the easiest way to go.
+> 
+> Thierry
 
-Thanks,
-Bartosz
+I think it would make sense to merge it through the MIPS tree, yes,
+considering that the patches for the drivers in the other subsystems are
+quite small, and that they just remove code (well, except the pinctrl
+driver itself). Besides, the files modified are not touched very often
+so the chances of breakage are pretty low.
+
+-Paul
