@@ -1,31 +1,71 @@
-From: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
-Subject: Re: [PATCH 09/13] mmc: jz4740: Let the pinctrl driver configure the  pins
-Date: Fri, 20 Jan 2017 12:59:07 +0100
-Message-ID: <81c24244706ce24a678a3d05bbf6b17c@mail.crapouillou.net>
-References: <20170117231421.16310-1-paul@crapouillou.net>
- <20170117231421.16310-10-paul@crapouillou.net>
- <CAPDyKFp4idZx+ynQByz22zwsiK+reBcvt3OdHm1kR2QUy+sUhw@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 3/3] pinctrl / gpio: Introduce .set_config() callback for
+ GPIO chips
+Date: Fri, 20 Jan 2017 15:36:27 +0200
+Message-ID: <20170120133627.GK17297@lahna.fi.intel.com>
+References: <20170119094820.83595-1-mika.westerberg@linux.intel.com>
+ <20170119094820.83595-4-mika.westerberg@linux.intel.com>
+ <CACRpkdbsOvJkpNtjvCXRNWV6dA6onzomn-E+9n=xJabmcRGbEQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFp4idZx+ynQByz22zwsiK+reBcvt3OdHm1kR2QUy+sUhw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maarten ter Huurne <maarten-Ph2Y2OKCxY1M656bX5wj8A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Paul Burton <paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Fbdev development list <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbsOvJkpNtjvCXRNWV6dA6onzomn-E+9n=xJabmcRGbEQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Le 2017-01-19 11:55, Ulf Hansson a écrit :
+On Fri, Jan 20, 2017 at 10:13:05AM +0100, Linus Walleij wrote:
+> > +static int gpio_set_drive_mode(struct gpio_chip *gc, unsigned offset,
+> > +                              enum pin_config_param mode)
+> > +{
+> > +       unsigned long config = { PIN_CONF_PACKED(mode, 0) };
+> > +
+> > +       return gc->set_config ? gc->set_config(gc, offset, config) : -ENOTSUPP;
+> > +}
+> 
+> I would name it gpio_set_drive_single_ended() as the open source/open
+> drain is all we support here.
 
-> Shouldn't this be replaced with a call to:
-> pinctrl_pm_select_sleep_state();
+OK.
 
-You're totally right. I'll change it.
+> >         if (test_bit(FLAG_OPEN_DRAIN, &desc->flags)) {
+> >                 /* First see if we can enable open drain in hardware */
+> > -               if (gc->set_single_ended) {
+> > -                       ret = gc->set_single_ended(gc, gpio_chip_hwgpio(desc),
+> > -                                                  LINE_MODE_OPEN_DRAIN);
+> > -                       if (!ret)
+> > -                               goto set_output_value;
+> > -               }
+> > +               ret = gpio_set_drive_mode(gc, gpio_chip_hwgpio(desc),
+> > +                                         PIN_CONFIG_DRIVE_OPEN_DRAIN);
+> > +               if (!ret)
+> > +                       goto set_output_value;
+> 
+> Aha I see, so if we fail to set single ended we get to the next step.
+> Nice.
+> 
+> >                 /* Emulate open drain by not actively driving the line high */
+> >                 if (val)
+> >                         return gpiod_direction_input(desc);
+> >         }
+> 
+> (...)
+> 
+> > -               if (gc->set_single_ended) {
+> > -                       ret = gc->set_single_ended(gc, gpio_chip_hwgpio(desc),
+> > -                                                  LINE_MODE_OPEN_SOURCE);
+> > -                       if (!ret)
+> > -                               goto set_output_value;
+> > -               }
+> > +               ret = gpio_set_drive_mode(gc, gpio_chip_hwgpio(desc),
+> > +                                         PIN_CONFIG_DRIVE_OPEN_SOURCE);
+> >                 /* Emulate open source by not actively driving the line low */
+> >                 if (!val)
+> >                         return gpiod_direction_input(desc);
+> 
+> But here the handling seems to be wrong? You still need
+> the if (!ret) goto set_output_value?
 
-Thanks,
--Paul
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Good point. I'll fix that in the next version.
