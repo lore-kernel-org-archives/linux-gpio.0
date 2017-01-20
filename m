@@ -1,45 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl / gpio: Introduce .set_config() callback for
- GPIO chips
-Date: Fri, 20 Jan 2017 10:49:25 +0100
-Message-ID: <CACRpkdbju9yFxuNtn+GsjNc=PSH=dF6AOEZygujm+sJVdv-eWQ@mail.gmail.com>
-References: <20170119094820.83595-1-mika.westerberg@linux.intel.com>
- <20170119094820.83595-4-mika.westerberg@linux.intel.com> <CACRpkdbsOvJkpNtjvCXRNWV6dA6onzomn-E+9n=xJabmcRGbEQ@mail.gmail.com>
- <d4624a94-7a09-e28a-30bb-5d0e367722c0@baylibre.com>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 13/13] MIPS: jz4740: Remove custom GPIO code
+Date: Fri, 20 Jan 2017 11:01:35 +0100
+Message-ID: <8944dd20e8ae6ed705dcf69e9f0ed4fd@mail.crapouillou.net>
+References: <20170117231421.16310-1-paul@crapouillou.net>
+ <20170117231421.16310-14-paul@crapouillou.net>
+ <CACRpkdYMm0iWxmEGyQyEz4JfWukXNyGXO1rqw1dSiABgHdA1tQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:33524 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751549AbdATJu3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Jan 2017 04:50:29 -0500
-Received: by mail-io0-f169.google.com with SMTP id v96so58750401ioi.0
-        for <linux-gpio@vger.kernel.org>; Fri, 20 Jan 2017 01:49:26 -0800 (PST)
-In-Reply-To: <d4624a94-7a09-e28a-30bb-5d0e367722c0@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYMm0iWxmEGyQyEz4JfWukXNyGXO1rqw1dSiABgHdA1tQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MIPS <linux-mips@linux-mips.org>, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jan 20, 2017 at 10:24 AM, Neil Armstrong
-<narmstrong@baylibre.com> wrote:
+Le 2017-01-19 10:07, Linus Walleij a écrit :
 
->>> -       return ret;
->>> +       return pinctrl_gpio_set_config(chip->base + offset, config);
->>>  }
->>
->> This is the beauty of it all..
->
-> It would be even cooler it this becomes a generic helper !
+> On Wed, Jan 18, 2017 at 12:14 AM, Paul Cercueil <paul@crapouillou.net> 
+> wrote:
+> 
+>> All the drivers for the various hardware elements of the jz4740 SoC 
+>> have been modified to use the pinctrl framework for their pin 
+>> configuration needs. As such, this platform code is now unused and can 
+>> be deleted. Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> 
+> I feel I might have come across as a bit harsh in the previous review 
+> of the
+> patches leading up to this one. In that case I'm sorry.
+> 
+> I can clearly see that the intent of the series is to remove this 
+> hopelessly
+> idiomatic code from the MIPS hurdle, and move these systems over
+> to standard frameworks.
+> 
+> In a way, if I look at the kernel as a whole, it would likely look 
+> better
+> after these patches were merged, than before. Even with the
+> shortcomings I painted out in the previous review comments.
+> 
+> A very complicated piece of messy code is cut from MIPS.
+> 
+> I think this is very valuable work and well worth persuing, so please
+> go ahead and work with the series, your effort is very much 
+> appreciated!
+> 
+> Yours,
+> Linus Walleij
 
-It does, with this series we can push debounce and open source/drain
-back to the pinctrl back-end.
+Well thank you for your very constructive criticism ;) And for your 
+review.
+I'll submit a v2 very soon - I don't want to miss the 4.11 merge.
 
-Then the road is open to push any config this way, which I think will
-also be needed for userspace GPIO to set up not just this but also
-pull-ups etc. But we will add that step by step.
-
-This provides a piece of much-needed infrastructure for this.
-
-Yours,
-Linus Walleij
+Regards,
+-Paul
