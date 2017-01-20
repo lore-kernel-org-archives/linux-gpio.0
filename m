@@ -1,54 +1,43 @@
-From: Brian Wrenn <dcbrianw@gmail.com>
-Subject: Re: Crash in kernel/locking/rtmutex.c
-Date: Fri, 20 Jan 2017 01:45:32 -0500
-Message-ID: <CAEYdEeR1Z0RWkGJ1PUyMujZf3kHqxZE-B6yHpXcNkcXVJg75Mg@mail.gmail.com>
-References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
- <20170117201906.GB1335@jcartwri.amer.corp.natinst.com> <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
- <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/13] Ingenic JZ4740 / JZ4780 pinctrl driver
+Date: Fri, 20 Jan 2017 09:40:30 +0100
+Message-ID: <CACRpkdaeu9OxaSPeOrkKtKNQGUQh4puCFw8A2h=xhqVdDWgoow@mail.gmail.com>
+References: <20170117231421.16310-1-paul@crapouillou.net> <20170118071530.GA18989@ulmo.ba.sec>
+ <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-rt-users-owner@vger.kernel.org>
-In-Reply-To: <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
-Sender: linux-rt-users-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Julia Cartwright <julia@ni.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f54.google.com ([209.85.214.54]:37263 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751437AbdATIkc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 20 Jan 2017 03:40:32 -0500
+Received: by mail-it0-f54.google.com with SMTP id r185so15226983ita.0
+        for <linux-gpio@vger.kernel.org>; Fri, 20 Jan 2017 00:40:31 -0800 (PST)
+In-Reply-To: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
 
-Hi Julia, Linus, and others,
+On Thu, Jan 19, 2017 at 12:19 PM, Paul Cercueil <paul@crapouillou.net> wrote:
 
-we applied the patch and ran out setup for four hours continuously
-without encountering the crash.  That's the longest we've run it to
-date.  Thank you for your help and especially for your very speedy
-replies.
+> The problem with pinctrl and PWM, is that the pinctrl API works by "states".
+> A default state, sleep state, and basically any custom state that the
+> devicetree
+> provides. This works well until you need to control individually each pin;
+> with
+> 8 pins, you would need 2^8 states, each one corresponding to a given
+> configuration.
 
--Brian
+I do not really understand, do you really use all 2^8 states in a given
+system?
 
-On Wed, Jan 18, 2017 at 11:39 AM, Brian Wrenn <dcbrianw@gmail.com> wrote:
-> Hi Julia and Linus,
->
-> we haven't gotten to testing with the patch, but I will report back
-> when we have done so.
->
-> Thank you very much for the help.
->
-> On Wed, Jan 18, 2017 at 3:49 AM, Linus Walleij <linus.walleij@linaro.org>=
- wrote:
->> On Tue, Jan 17, 2017 at 9:19 PM, Julia Cartwright <julia@ni.com> wrote:
->>
->>> Can you give the following patch a try?  Even though this problem is
->>> only observable on -rt kernels, the below patch is suitable for
->>> inclusion in mainline.  (The below is ontop of -next, you may have to
->>> finnagle it a bit to work on the linaro frankenkernel).
->>
->> This looks like one of the RT cases pointed out by Grygorii i
->> Documentation/gpio/driver.txt
->> and the patch looks fine.
->>
->> Once you have confirmation that it solves the problem, add
->> a Tested-by: tag and send to the GPIO mailinglist & me and
->> make sure to get Bj=C3=B6rn Andersson on the CC so he can review
->> it swiftly.
->>
->> Yours,
->> Linus Walleij
+The pin control states are to be used for practical situations, not
+for all theoretical situations.
+
+You should define in your device tree the states that your
+particular system will use. Not all possible states on all possible
+systems.
+
+Yours,
+Linus Walleij
