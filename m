@@ -1,95 +1,54 @@
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Subject: Re: [PATCHv4 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Thu, 19 Jan 2017 23:36:43 +0000
-Message-ID: <6a047346b2994e99b96bb50a12c2e41c@svr-chch-ex1.atlnz.lc>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-4-chris.packham@alliedtelesis.co.nz>
- <2fca7ac2-9a88-19b1-28c5-5192b9c4a2bc@gmail.com>
- <9996b6a215f944e1a47fa6239d8de21f@svr-chch-ex1.atlnz.lc>
- <66c205acea6046978bf17e6d8fc1959f@svr-chch-ex1.atlnz.lc>
- <42aa88b1-4807-245b-6107-0f1db28679b8@gmail.com>
+From: Brian Wrenn <dcbrianw@gmail.com>
+Subject: Re: Crash in kernel/locking/rtmutex.c
+Date: Fri, 20 Jan 2017 01:45:32 -0500
+Message-ID: <CAEYdEeR1Z0RWkGJ1PUyMujZf3kHqxZE-B6yHpXcNkcXVJg75Mg@mail.gmail.com>
+References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
+ <20170117201906.GB1335@jcartwri.amer.corp.natinst.com> <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
+ <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-rt-users-owner@vger.kernel.org>
+In-Reply-To: <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
+Sender: linux-rt-users-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Julia Cartwright <julia@ni.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 20/01/17 12:19, Sebastian Hesselbarth wrote:
-> On 19.01.2017 22:12, Chris Packham wrote:
->> On 14/01/17 20:50, Chris Packham wrote:
->>> On 13/01/17 22:54, Sebastian Hesselbarth wrote:
->>>> On 13.01.2017 10:12, Chris Packham wrote:
->>>>> From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
->>>>>
->>>>> This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
->>>>> from Marvell.
->>>>>
->>>>> Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
->>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>>>> Acked-by: Rob Herring <robh@kernel.org>
->>>>> Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
->>>>> ---
->>>>>
->>>>> Notes:
->>>>>     Changes in v2:
->>>>>     - include sdio support for the 98DX4251
->>>>>     Changes in v3:
->>>>>     - None
->>>>>     Changes in v4:
->>>>>     - Correct some discrepencies between binding and driver.
->>>>
->>>> Well, unfortunately I still see differences between the "gpio" in
->>>> the binding and "gpo" in the driver.
->>>>
->>>> Please go back to that list I sent you yesterday and fix them all.
->>>>
->>>
->>> I think you may have missed my initial reply [1]. Or I have missed your
->>> response to it. Long story short "gpo" is intentional because some of
->>> those pins can't be used as inputs. But if you still want me to change
->>> it I will.
->>>
->>> [1] - https://lkml.org/lkml/2017/1/12/117
->>>
->>
->> Did you get a chance to consider this. Do you still want me to change
->> gpo -> gpio given the information above?
->
-> Chris,
->
-> sorry if I wasn't clear enough. I don't want you to change every gpo
-> into gpio. All I was referring to is the _difference_ between driver
-> implementation and device tree binding - and soley resolve that.
->
-> So, for the gpo's I see that the binding doc still says "gpio" for the
-> available functions where the driver expects "gpo".
->
-> e.g. the binding has this:
->
-> mpp6          6        gpio, sd0(clk), dev(a2)
->
-> if you change it to
->
-> mpp6          6        gpo, sd0(clk), dev(a2)
->
-> both binding and driver are the same, right?
->
-> I do understand that the hardware is gp-output only and you correctly
-> reflected that in the pinctrl driver - but the binding doc does not
-> reflect that for those mpps in the list.
->
+Hi Julia, Linus, and others,
 
-Ah OK thanks for clearing up my confusion. I'll make sure the binding 
-and the driver are consistent when I submit v5 (probably next week).
+we applied the patch and ran out setup for four hours continuously
+without encountering the crash.  That's the longest we've run it to
+date.  Thank you for your help and especially for your very speedy
+replies.
+
+-Brian
+
+On Wed, Jan 18, 2017 at 11:39 AM, Brian Wrenn <dcbrianw@gmail.com> wrote:
+> Hi Julia and Linus,
+>
+> we haven't gotten to testing with the patch, but I will report back
+> when we have done so.
+>
+> Thank you very much for the help.
+>
+> On Wed, Jan 18, 2017 at 3:49 AM, Linus Walleij <linus.walleij@linaro.org>=
+ wrote:
+>> On Tue, Jan 17, 2017 at 9:19 PM, Julia Cartwright <julia@ni.com> wrote:
+>>
+>>> Can you give the following patch a try?  Even though this problem is
+>>> only observable on -rt kernels, the below patch is suitable for
+>>> inclusion in mainline.  (The below is ontop of -next, you may have to
+>>> finnagle it a bit to work on the linaro frankenkernel).
+>>
+>> This looks like one of the RT cases pointed out by Grygorii i
+>> Documentation/gpio/driver.txt
+>> and the patch looks fine.
+>>
+>> Once you have confirmation that it solves the problem, add
+>> a Tested-by: tag and send to the GPIO mailinglist & me and
+>> make sure to get Bj=C3=B6rn Andersson on the CC so he can review
+>> it swiftly.
+>>
+>> Yours,
+>> Linus Walleij
