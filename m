@@ -1,65 +1,88 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: Use raw spinlock variants
-Date: Fri, 20 Jan 2017 10:04:40 -0800
-Message-ID: <20170120180440.GY10531@minitux>
-References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
- <20170117201906.GB1335@jcartwri.amer.corp.natinst.com>
- <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
- <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
- <CAEYdEeR1Z0RWkGJ1PUyMujZf3kHqxZE-B6yHpXcNkcXVJg75Mg@mail.gmail.com>
- <20170120161347.GI1335@jcartwri.amer.corp.natinst.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: add device tree binding for
+ Allwinner V3s pinctrl
+Date: Fri, 20 Jan 2017 21:24:10 +0100
+Message-ID: <20170120202410.nqesbntbxousxggq@lukather>
+References: <20170119175448.11445-1-icenowy@aosc.xyz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-rt-users-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170120161347.GI1335@jcartwri.amer.corp.natinst.com>
-Sender: linux-rt-users-owner@vger.kernel.org
-To: Julia Cartwright <julia@ni.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Wrenn <dcbrianw@gmail.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
+Content-Type: multipart/mixed; boundary="===============2028044968875360106=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170119175448.11445-1-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri 20 Jan 08:13 PST 2017, Julia Cartwright wrote:
 
-> The MSM pinctrl driver currently implements an irq_chip for handling
-> GPIO interrupts; due to how irq_chip handling is done, it's necessary
-> for the irq_chip methods to be invoked from hardirq context, even on a
-> a real-time kernel.  Because the spinlock_t type becomes a "sleeping"
-> spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
-> 
+--===============2028044968875360106==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bvvspr3z376jkvsv"
+Content-Disposition: inline
 
-Thanks for the explanation.
 
-> A quick audit of the operations under the lock reveal that they do only
-> minimal, bounded work, and are therefore safe to do under a raw
-> spinlock.
-> 
+--bvvspr3z376jkvsv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I agree with this conclusion.
+On Fri, Jan 20, 2017 at 01:54:43AM +0800, Icenowy Zheng wrote:
+> Allwinner V3s SoC has a pin controller like other Allwinner SoCs and got
+> supported by the sunxi-pinctrl driver now.
+>=20
+> Add a device tree binding for it.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
 
-> On real-time kernels, this fixes an OOPs which looks like the following,
-> as reported by Brian Wrenn:
-> 
->     kernel BUG at kernel/locking/rtmutex.c:1014!
->     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->     Modules linked in: spidev_irq(O) smsc75xx wcn36xx [last unloaded: spidev]
->     CPU: 0 PID: 1163 Comm: irq/144-mmc0 Tainted: G        W  O    4.4.9-linaro-lt-qcom #1
->     PC is at rt_spin_lock_slowlock+0x80/0x2d8
->     LR is at rt_spin_lock_slowlock+0x68/0x2d8
->     [..]
->   Call trace:
->     rt_spin_lock_slowlock
->     rt_spin_lock
->     msm_gpio_irq_ack
->     handle_edge_irq
->     generic_handle_irq
->     msm_gpio_irq_handler
->     generic_handle_irq
->     __handle_domain_irq
->     gic_handle_irq
-> 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Thanks,
+Maxime
 
-Regards,
-Bjorn
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--bvvspr3z376jkvsv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYgnHlAAoJEBx+YmzsjxAguuYQAIlIabIelXIosIUazlfIQ8oT
+aqCgeEefipH2Eyeakfi8XcCbyCd3d06umFJCAEjYvSClsXyBI1vsnsA1hcyEHYcF
+0YmHQzyAXhRW/H5VlVv+rg6S3/GoaIbk9hi1bnmftaRLj1zGpqsqoUBzKx0ITTbk
+7h73qVtRrH/9j5ZBV/vMyEsck8jx39P66mHgfL80rWrxiYI9Kqm8QDxuKbv8kCwg
+AnpSFXiMpepeB0j3/uzco7fHXBHuf29np/E/0ilpZsht1i2G6QG9DXVTr+usOCWd
+q4O6eDFPbQkQRSGuiDhNM4Kddm27Fm1tWb7AxYqtZFPmJ8+EvS8ggdjX6IzsVfmH
+h5DxEJgIkZl+WekHj8Su7Izq+y39kITE61OQe8T6KEujrOa+BBWHBpRJHjc9hE8S
+ua4oh49GvPVV5X97iAhEIr6HYdKIOr0i1CE4TKKIRc+t0ABmDmIFkemqIRK799lh
+B/u2/iVtWmvDjxgvQsN4aopa4y7rF268grFDSsIdAG5yVNcZqW6Vth+IgZhukJ9m
+Dy0+XXPJlGEILz3PQII3NfPiQz+p5Gc5tttQohgaZNJz3fZJuLgLvB+QmM16RDoz
+lzRnHsVLdiZJIlf/63N+VEWSANYvKzOQ6UOZM/gH79vkl2avfsI+rtl4cnhmcj9e
+iZRklQfC9u+OoL9wmrKq
+=mmsS
+-----END PGP SIGNATURE-----
+
+--bvvspr3z376jkvsv--
+
+
+--===============2028044968875360106==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============2028044968875360106==--
