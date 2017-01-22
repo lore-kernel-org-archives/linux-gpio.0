@@ -1,47 +1,58 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 2/4] clk: samsung: Remove Exynos4415 driver (SoC not
- supported anymore)
-Date: Sat, 21 Jan 2017 14:08:34 +0900
-Message-ID: <CAGTfZH2Eh67iMb7bBY2ostNUbxmOtQxy=P7ZRSEDzS4=enyMKg@mail.gmail.com>
-References: <20170114123642.15581-1-krzk@kernel.org>
- <CGME20170114123727epcas2p296aae6459c8575d7e5def74f18e5c64d@epcas2p2.samsung.com>
- <20170114123642.15581-3-krzk@kernel.org>
- <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
-Reply-To: cwchoi00@gmail.com
+From: Jacky Bai <ping.bai@nxp.com>
+Subject: RE: [PATCH v2 04/12] driver: clk: imx: Add clock driver for imx6sll
+Date: Sun, 22 Jan 2017 02:14:35 +0000
+Message-ID: <AM3PR04MB530CDCAC082173FDDDFEEFA87730@AM3PR04MB530.eurprd04.prod.outlook.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-5-git-send-email-ping.bai@nxp.com>
+ <20170110003753.GM17126@codeaurora.org>
+ <AM3PR04MB5307CB38AA904535AF8D80D87670@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <20170112220536.GP17126@codeaurora.org>
+ <AM3PR04MB53027B627AE8CEC6D7D0D1B87780@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <20170121010009.GC8801@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <c9b51cb6-f798-d41e-afff-f779b963345c@samsung.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170121010009.GC8801@codeaurora.org>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgU3lsd2VzdGVyLAoKSSBhZGQgcmV2ZWl3ZWQtYnkgdGFnIGZyb20gdGhpcyBwYXRjaC4gQnV0
-LCBvbiB5b3UgdHJlZSwgdGhpcyBwYXRjaFsxXSBkb2VzbuKAmXQKaW5jbHVkZSB0aGUgbXkgcmV2
-aWV3ZWQtYnkgdGFnLgoKWzFdIGh0dHBzOi8vZ2l0LmxpbnV4dHYub3JnL3NuYXdyb2NraS9zYW1z
-dW5nLmdpdC9jb21taXQvP2g9Zm9yLXY0LjExL2Nsay9uZXh0JmlkPWNiNGFjOTQ5ZWExNDQxNmEy
-ZDU3YjdhMzQzYmM0YjU3MTA3NGUzYmQKCjIwMTctMDEtMTYgMTk6MzIgR01UKzA5OjAwIFN5bHdl
-c3RlciBOYXdyb2NraSA8cy5uYXdyb2NraUBzYW1zdW5nLmNvbT46Cj4gT24gMDEvMTQvMjAxNyAw
-MTozNiBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPj4gU3VwcG9ydCBmb3IgRXh5bm9z
-NDQxNSBpcyBnb2luZyBhd2F5IGJlY2F1c2UgdGhlcmUgYXJlIG5vIGludGVybmFsIG5vcgo+PiBl
-eHRlcm5hbCB1c2Vycy4KPj4KPj4gU2luY2UgY29tbWl0IDQ2ZGNmMGZmMGRlMyAoIkFSTTogZHRz
-OiBleHlub3M6IFJlbW92ZSBleHlub3M0NDE1LmR0c2kiKSwKPj4gdGhlIHBsYXRmb3JtIGNhbm5v
-dCBiZSBpbnN0YW50aWF0ZWQgc28gcmVtb3ZlIGFsc28gdGhlIGRyaXZlcnMuCj4+Cj4+IFNpZ25l
-ZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVsLm9yZz4KPgo+IEFwcGxp
-ZWQsIHRoYW5rcy4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwKCgoKLS0gCkJlc3QgUmVnYXJkcywKQ2hhbndvbyBDaG9pClNhbXN1bmcgRWxlY3Ry
-b25pY3MKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+> > > > The reason why we enable these two clks here is in below commit
+> > > > commit
+> > > > a5120e89e7e187a91852896f586876c7a2030804
+> > > > Author: Peter Chen <peter.chen@freescale.com>
+> > > > Date:   Fri Jan 18 10:38:05 2013 +0800
+> > > >       ARM i.MX6: change mxs usbphy clock usage
+> > > >
+> > >
+> > > So can we mark these clks with CLK_IS_CRITICAL flag then instead?
+> > > Or are they disabled out of the bootloader?
+> > >
+> >
+> > Sure, using 'CLK_IS_CRITICAL'  should be ok for clks_init_on clocks.
+> > But for  USBPHY*_GATE, it is only enabled when CONIG_USB_MXC_PHY is
+> > true.  And another concern is if we need to add CLK_IS_CRITICAL flag to
+> clks_init_on clocks, we may need to add new wrapper function to register
+> these critical clock. It is not very good.
+> 
+> Ok so set the critical flag when CONFIG_USB_MXC_PHY is enabled?
+> That isn't too hard to do.
+> 
+
+Ok, thanks, I will address this in V3.
+
+> > 
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux
+> Foundation Collaborative Project
