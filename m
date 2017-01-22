@@ -1,32 +1,46 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 04/14] GPIO: Add gpio-ingenic driver
-Date: Mon, 23 Jan 2017 01:49:25 +0800
-Message-ID: <201701230130.T42P6EcW%fengguang.wu@intel.com>
-References: <20170122144947.16158-5-paul@crapouillou.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170122144947.16158-5-paul@crapouillou.net>
-Sender: linux-mmc-owner@vger.kernel.org
-Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com, Paul Cercueil <paul@crapouillou.net>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/3] ARM64: dts: meson-gxl: add the pwm_ao_b pin
+Date: Sun, 22 Jan 2017 22:05:28 +0100
+Message-ID: <20170122210528.892-4-martin.blumenstingl@googlemail.com>
+References: <20170122210528.892-1-martin.blumenstingl@googlemail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34588 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbdAVVFp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Jan 2017 16:05:45 -0500
+In-Reply-To: <20170122210528.892-1-martin.blumenstingl@googlemail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Hi Paul,
+This adds the pwm_ao_b pin to allow boards which have an LED connected
+to GPIOAO_9 to use the leds-pwm driver (by activating the pwm_AO_ab node
+and passing the pwm_ao_b_pin pinctrl-reference).
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.10-rc4 next-20170120]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Paul-Cercueil/Ingenic-JZ4740-JZ4780-pinctrl-driver/20170122-232326
-
-
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/gpio/gpio-ingenic.c:101:2-3: Unneeded semicolon
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index b0070489e179..20e98a0bfb6e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -117,6 +117,13 @@
+ 				function = "remote_input_ao";
+ 			};
+ 		};
++
++		pwm_ao_b_pins: pwm_ao_b {
++			mux {
++				groups = "pwm_ao_b";
++				function = "pwm_ao_b";
++			};
++		};
+ 	};
+ };
+ 
+-- 
+2.11.0
+
