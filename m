@@ -1,77 +1,60 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2 3/3] pinctrl / gpio: Introduce .set_config() callback
- for GPIO chips
-Date: Mon, 23 Jan 2017 18:11:07 +0100
-Message-ID: <20170123171107.GC32404@localhost>
-References: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
- <20170123123434.61972-4-mika.westerberg@linux.intel.com>
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 2/3] pinctrl: meson: meson-gxl: add the pwm_ao_b pin
+Date: Mon, 23 Jan 2017 11:10:18 -0800
+Message-ID: <m2sho91tk5.fsf@baylibre.com>
+References: <20170122210528.892-1-martin.blumenstingl@googlemail.com>
+        <20170122210528.892-3-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170123123434.61972-4-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170122210528.892-3-martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> (Martin
+        Blumenstingl's message of "Sun, 22 Jan 2017 22:05:27 +0100")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 23, 2017 at 03:34:34PM +0300, Mika Westerberg wrote:
-> Currently we already have two pin configuration related callbacks
-> available for GPIO chips .set_single_ended() and .set_debounce(). In
-> future we expect to have even more, which does not scale well if we need
-> to add yet another callback to the GPIO chip structure for each possible
-> configuration parameter.
-> 
-> Better solution is to reuse what we already have available in the
-> generic pinconf.
-> 
-> To support this, we introduce a new .set_config() callback for GPIO
-> chips. The callback takes a single packed pin configuration value as
-> parameter. This can then be extended easily beyond what is currently
-> supported by just adding new types to the generic pinconf enum.
-> 
-> If the GPIO driver is backed up by a pinctrl driver the GPIO driver can
-> just assign gpiochip_generic_config() (introduced in this patch) to
-> .set_config and that will take care configuration requests are directed
-> to the pinctrl driver.
-> 
-> We then convert the existing drivers over .set_config() and finally
-> remove the .set_single_ended() and .set_debounce() callbacks.
-> 
-> Suggested-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> writes:
+
+> This adds support for the pwm_ao_b pin. Unfortunately the registers for
+> the pwm_ao pins are not documented at all. The source for the pwm_ao_b
+> pin from this patch is the Khadas VIM GPL kernel source, which sets bit
+> 3 and unsets bits 4 and 31 to enable the PWM LEDs.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
 > ---
->  Documentation/gpio/driver.txt                 |  9 +++--
->  drivers/gpio/gpio-bcm-kona.c                  | 14 ++++++-
->  drivers/gpio/gpio-dln2.c                      | 12 ++++--
->  drivers/gpio/gpio-dwapb.c                     | 14 ++++++-
->  drivers/gpio/gpio-ep93xx.c                    | 11 ++++--
->  drivers/gpio/gpio-f7188x.c                    | 19 +++++----
->  drivers/gpio/gpio-lp873x.c                    | 14 +++----
->  drivers/gpio/gpio-max77620.c                  | 20 +++++-----
->  drivers/gpio/gpio-menz127.c                   | 34 +++++++++++-----
->  drivers/gpio/gpio-merrifield.c                | 14 ++++++-
->  drivers/gpio/gpio-omap.c                      | 14 ++++++-
->  drivers/gpio/gpio-tc3589x.c                   | 15 ++++---
->  drivers/gpio/gpio-tegra.c                     | 14 ++++++-
->  drivers/gpio/gpio-tps65218.c                  | 14 +++----
->  drivers/gpio/gpio-vx855.c                     | 13 ++++---
->  drivers/gpio/gpio-wcove.c                     | 13 +++----
->  drivers/gpio/gpio-wm831x.c                    | 21 +++++-----
->  drivers/gpio/gpio-wm8994.c                    | 13 +++----
->  drivers/gpio/gpiolib.c                        | 56 +++++++++++++++++----------
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++++++-
->  drivers/pinctrl/pinctrl-amd.c                 | 14 ++++++-
->  drivers/pinctrl/pinctrl-sx150x.c              | 55 +++++++-------------------
->  drivers/staging/greybus/gpio.c                | 15 ++++---
->  drivers/usb/serial/cp210x.c                   | 13 ++++---
+>  drivers/pinctrl/meson/pinctrl-meson-gxl.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> index 25694f7094c7..6ff321a7366d 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+> @@ -222,6 +222,8 @@ static const unsigned int uart_rts_ao_b_pins[]	= { PIN(GPIOAO_3, 0) };
+>  
+>  static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0) };
+>  
+> +static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_9, 0) };
+> +
 
-For greybus and USB serial:
+Hmm, the S905 public data sheet[1] shows this as GPIOAO_13.
 
-Acked-by: Johan Hovold <johan@kernel.org>
+>  static struct meson_pmx_group meson_gxl_periphs_groups[] = {
+>  	GPIO_GROUP(GPIOZ_0, EE_OFF),
+>  	GPIO_GROUP(GPIOZ_1, EE_OFF),
+> @@ -418,6 +420,7 @@ static struct meson_pmx_group meson_gxl_aobus_groups[] = {
+>  	GROUP(uart_cts_ao_b,	0,	8),
+>  	GROUP(uart_rts_ao_b,	0,	7),
+>  	GROUP(remote_input_ao,	0,	0),
+> +	GROUP(pwm_ao_b,		0,	3),
+>  };
 
-Note however that this patch fails to apply to linux-next (conflicts in
-pinctrl as well as staging).
+but it does show as ao_reg[3].
 
-Thanks,
-Johan
+Kevin
+
+[1] http://dn.odroid.com/S905/DataSheet/S905_Public_Datasheet_V1.1.4.pdf
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
