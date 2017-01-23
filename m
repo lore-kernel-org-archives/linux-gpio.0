@@ -1,112 +1,151 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 0/3] pinctrl / gpio: Allow GPIO chips to use generic pinconfig
-Date: Mon, 23 Jan 2017 15:34:31 +0300
-Message-ID: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 2/3] pinctrl: Allow configuration of pins from gpiolib based drivers
+Date: Mon, 23 Jan 2017 15:34:33 +0300
+Message-ID: <20170123123434.61972-3-mika.westerberg@linux.intel.com>
+References: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:40538 "EHLO mga05.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:60434 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750742AbdAWMej (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 23 Jan 2017 07:34:39 -0500
+        id S1750714AbdAWMfO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 23 Jan 2017 07:35:14 -0500
+In-Reply-To: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <narmstrong@baylibre.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This series makes it possible to configure pins from GPIO chip drivers by
-implementing a new callback .set_config(). This callback replaces the
-existing .set_single_ended() and .set_debounce() simply because adding new
-callbacks for each possible configuration type does not scale. So instead
-we re-use the existing generic pinconf types and the packed format.
+When a GPIO driver is backed by a pinctrl driver the GPIO driver
+sometimes needs to call the pinctrl driver to configure certain things,
+like whether the pin is used as input or output. In addition to this
+there are other configurations applicable to GPIOs such as setting
+debounce time of the GPIO.
 
-This is a follow up of discussion on:
+To support this we introduce a new function pinctrl_gpio_set_config()
+that can be used by gpiolib based driver to pass configuration requests
+to the backing pinctrl driver.
 
-  https://patchwork.ozlabs.org/patch/713289/
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/core.c           | 29 +++++++++++++++++++++++++++++
+ drivers/pinctrl/pinconf.c        | 12 ++++++++++++
+ drivers/pinctrl/pinconf.h        |  9 +++++++++
+ include/linux/pinctrl/consumer.h |  6 ++++++
+ 4 files changed, 56 insertions(+)
 
-While doing that, it was found out that the current packed format does not
-support all realistic debounce time values. The limit is ~64ms which does
-not cover mechanical switches connected to GPIOs that migh require values
-up to hundreths of milliseconds.
-
-To solve that we change the packed format so that the value takes 24 bits
-instead of 16, and change the callers to use 32-bit integer instead.
-
-We also make it possible for GPIO chip driver to call pinctrl directly by
-providing a new functions gpiochip_generic_config() and
-pinctrl_gpio_set_config().
-
-I've tested this on Intel Gemini Lake SoC. Non-Intel drivers are compile
-tested only because I do not have the hardware.
-
-Changes from v1:
-
-  * Change pinconf_to_config_argument() to cast the result to u32 instead
-    of enum pin_config_param (which was probably due to copy-paste).
-  
-  * Re-format PCONFDUMP() macro.
-
-  * Add gpiochip_generic_config() so that GPIO drivers can just assign
-    that to their struct gpio_chip if they would just pass the
-    .set_config() directly to their backing pinctrl driver.
-  
-  * Rename gpio_set_drive_mode() to gpio_set_drive_single_ended().
-
-  * Correct _gpiod_direction_output_raw() to jump to set_output_value()
-    when gpio_set_drive_single_ended() succeeds.
-
-Mika Westerberg (3):
-  pinctrl: Widen the generic pinconf argument from 16 to 24 bits
-  pinctrl: Allow configuration of pins from gpiolib based drivers
-  pinctrl / gpio: Introduce .set_config() callback for GPIO chips
-
- Documentation/gpio/driver.txt                    |  9 ++--
- drivers/gpio/gpio-bcm-kona.c                     | 14 +++++-
- drivers/gpio/gpio-dln2.c                         | 12 +++--
- drivers/gpio/gpio-dwapb.c                        | 14 +++++-
- drivers/gpio/gpio-ep93xx.c                       | 11 +++--
- drivers/gpio/gpio-f7188x.c                       | 19 ++++----
- drivers/gpio/gpio-lp873x.c                       | 14 +++---
- drivers/gpio/gpio-max77620.c                     | 20 ++++-----
- drivers/gpio/gpio-menz127.c                      | 34 ++++++++++----
- drivers/gpio/gpio-merrifield.c                   | 14 +++++-
- drivers/gpio/gpio-omap.c                         | 14 +++++-
- drivers/gpio/gpio-tc3589x.c                      | 15 +++----
- drivers/gpio/gpio-tegra.c                        | 14 +++++-
- drivers/gpio/gpio-tps65218.c                     | 14 +++---
- drivers/gpio/gpio-vx855.c                        | 13 +++---
- drivers/gpio/gpio-wcove.c                        | 13 +++---
- drivers/gpio/gpio-wm831x.c                       | 21 +++++----
- drivers/gpio/gpio-wm8994.c                       | 13 +++---
- drivers/gpio/gpiolib.c                           | 56 +++++++++++++++---------
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c           |  6 +--
- drivers/pinctrl/bcm/pinctrl-iproc-gpio.c         |  2 +-
- drivers/pinctrl/bcm/pinctrl-ns2-mux.c            |  6 +--
- drivers/pinctrl/bcm/pinctrl-nsp-gpio.c           |  6 +--
- drivers/pinctrl/core.c                           | 29 ++++++++++++
- drivers/pinctrl/intel/pinctrl-cherryview.c       |  4 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c    | 14 +++++-
- drivers/pinctrl/meson/pinctrl-meson.c            |  2 -
- drivers/pinctrl/pinconf.c                        | 12 +++++
- drivers/pinctrl/pinconf.h                        |  9 ++++
- drivers/pinctrl/pinctrl-amd.c                    | 14 +++++-
- drivers/pinctrl/pinctrl-da850-pupd.c             |  2 -
- drivers/pinctrl/pinctrl-lpc18xx.c                | 10 ++---
- drivers/pinctrl/pinctrl-max77620.c               |  2 +-
- drivers/pinctrl/pinctrl-palmas.c                 |  2 +-
- drivers/pinctrl/pinctrl-rockchip.c               |  2 +-
- drivers/pinctrl/pinctrl-single.c                 |  2 +-
- drivers/pinctrl/pinctrl-sx150x.c                 | 55 +++++++----------------
- drivers/pinctrl/sirf/pinctrl-atlas7.c            |  3 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c            |  2 +-
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c |  4 +-
- drivers/pinctrl/vt8500/pinctrl-wmt.c             |  2 +-
- drivers/rtc/rtc-omap.c                           |  2 +-
- drivers/staging/greybus/gpio.c                   | 15 ++++---
- drivers/usb/serial/cp210x.c                      | 13 +++---
- include/linux/gpio/driver.h                      | 37 ++++------------
- include/linux/pinctrl/consumer.h                 |  6 +++
- include/linux/pinctrl/pinconf-generic.h          | 52 +++++++++++-----------
- 47 files changed, 392 insertions(+), 257 deletions(-)
-
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index fb38e208f32d..597d4641e348 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -688,6 +688,35 @@ int pinctrl_gpio_direction_output(unsigned gpio)
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_gpio_direction_output);
+ 
++/**
++ * pinctrl_gpio_set_config() - Apply config to given GPIO pin
++ * @gpio: the GPIO pin number from the GPIO subsystem number space
++ * @config: the configuration to apply to the GPIO
++ *
++ * This function should *ONLY* be used from gpiolib-based GPIO drivers, if
++ * they need to call the underlying pin controller to change GPIO config
++ * (for example set debounce time).
++ */
++int pinctrl_gpio_set_config(unsigned gpio, unsigned long config)
++{
++	unsigned long configs[] = { config };
++	struct pinctrl_gpio_range *range;
++	struct pinctrl_dev *pctldev;
++	int ret, pin;
++
++	ret = pinctrl_get_device_gpio_range(gpio, &pctldev, &range);
++	if (ret)
++		return ret;
++
++	mutex_lock(&pctldev->mutex);
++	pin = gpio_to_pin(range, gpio);
++	ret = pinconf_set_config(pctldev, pin, configs, ARRAY_SIZE(configs));
++	mutex_unlock(&pctldev->mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pinctrl_gpio_set_config);
++
+ static struct pinctrl_state *find_state(struct pinctrl *p,
+ 					const char *name)
+ {
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 799048f3c8d4..c1c1ccc58267 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -200,6 +200,18 @@ int pinconf_apply_setting(struct pinctrl_setting const *setting)
+ 	return 0;
+ }
+ 
++int pinconf_set_config(struct pinctrl_dev *pctldev, unsigned pin,
++		       unsigned long *configs, size_t nconfigs)
++{
++	const struct pinconf_ops *ops;
++
++	ops = pctldev->desc->confops;
++	if (!ops)
++		return -ENOTSUPP;
++
++	return ops->pin_config_set(pctldev, pin, configs, nconfigs);
++}
++
+ #ifdef CONFIG_DEBUG_FS
+ 
+ static void pinconf_show_config(struct seq_file *s, struct pinctrl_dev *pctldev,
+diff --git a/drivers/pinctrl/pinconf.h b/drivers/pinctrl/pinconf.h
+index 55c75780b3b2..bf8aff9abf32 100644
+--- a/drivers/pinctrl/pinconf.h
++++ b/drivers/pinctrl/pinconf.h
+@@ -20,6 +20,9 @@ int pinconf_map_to_setting(struct pinctrl_map const *map,
+ void pinconf_free_setting(struct pinctrl_setting const *setting);
+ int pinconf_apply_setting(struct pinctrl_setting const *setting);
+ 
++int pinconf_set_config(struct pinctrl_dev *pctldev, unsigned pin,
++		       unsigned long *configs, size_t nconfigs);
++
+ /*
+  * You will only be interested in these if you're using PINCONF
+  * so don't supply any stubs for these.
+@@ -56,6 +59,12 @@ static inline int pinconf_apply_setting(struct pinctrl_setting const *setting)
+ 	return 0;
+ }
+ 
++static inline int pinconf_set_config(struct pinctrl_dev *pctldev, unsigned pin,
++				     unsigned long *configs, size_t nconfigs)
++{
++	return -ENOTSUPP;
++}
++
+ #endif
+ 
+ #if defined(CONFIG_PINCONF) && defined(CONFIG_DEBUG_FS)
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index d7e5d608faa7..a0f2aba72fa9 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -29,6 +29,7 @@ extern int pinctrl_request_gpio(unsigned gpio);
+ extern void pinctrl_free_gpio(unsigned gpio);
+ extern int pinctrl_gpio_direction_input(unsigned gpio);
+ extern int pinctrl_gpio_direction_output(unsigned gpio);
++extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
+ 
+ extern struct pinctrl * __must_check pinctrl_get(struct device *dev);
+ extern void pinctrl_put(struct pinctrl *p);
+@@ -80,6 +81,11 @@ static inline int pinctrl_gpio_direction_output(unsigned gpio)
+ 	return 0;
+ }
+ 
++static inline int pinctrl_gpio_set_config(unsigned gpio, unsigned long config)
++{
++	return 0;
++}
++
+ static inline struct pinctrl * __must_check pinctrl_get(struct device *dev)
+ {
+ 	return NULL;
 -- 
 2.11.0
 
