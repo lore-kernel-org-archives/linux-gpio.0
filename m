@@ -1,78 +1,148 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Don't enforce bias disable (for now)
-Date: Mon, 23 Jan 2017 17:59:23 +0800
-Message-ID: <CAGb2v66h8M+PwfO8kKL6AF5O5hW7FE77mGXNvt-5UH=CPWaAMQ@mail.gmail.com>
-References: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 10/14] mmc: jz4740: Let the pinctrl driver configure
+ the pins
+Date: Mon, 23 Jan 2017 11:40:12 +0100
+Message-ID: <CAPDyKFpqs+w4jsYNBeH3VuB08Yp72JPh7wcYZZHJKSKeuAGE2A@mail.gmail.com>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170122144947.16158-1-paul@crapouillou.net> <20170122144947.16158-11-paul@crapouillou.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36930 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbdAWJ7s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 04:59:48 -0500
-Received: from mail-it0-f45.google.com (mail-it0-f45.google.com [209.85.214.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: b93043)
-        by smtp.csie.ntu.edu.tw (Postfix) with ESMTPSA id BE226202E7
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2017 17:59:45 +0800 (CST)
-Received: by mail-it0-f45.google.com with SMTP id c7so59473862itd.1
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2017 01:59:45 -0800 (PST)
-In-Reply-To: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170122144947.16158-11-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-mips@linux-mips.org, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, Linux
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Priit Laes <plaes@plaes.org>
 
-On Mon, Jan 23, 2017 at 4:21 PM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Commit 07fe64ba213f ("pinctrl: sunxi: Handle bias disable") actually
-> enforced enforced the disabling of the pull up/down resistors instead of
-> ignoring it like it was done before.
+On 22 January 2017 at 15:49, Paul Cercueil <paul@crapouillou.net> wrote:
+> Now that the JZ4740 and similar SoCs have a pinctrl driver, we rely on
+> the pins being properly configured before the driver probes.
 >
-> This was part of a wider rework to switch to the generic pinconf bindings,
-> and was meant to be merged together with DT patches that were switching to
-> it, and removing what was considered default values by both the binding and
-> the boards. This included no bias on a pin.
->
-> However, those DT patches were delayed to 4.11, which would be fine only
-> for a significant number boards having the bias setup wrong, which in turns
-> break the MMC on those boards (and possibly other devices too).
->
-> In order to avoid conflicts as much as possible, bring back the old
-> behaviour for 4.10, and we'll revert that commit once all the DT bits will
-> have landed.
->
-> Tested-by: Priit Laes <plaes@plaes.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
 
 > ---
-> Hi Linus,
+>  drivers/mmc/host/jz4740_mmc.c | 45 +++++--------------------------------------
+>  1 file changed, 5 insertions(+), 40 deletions(-)
 >
-> This is intended as a fix for 4.10.
+> v2: Set pin sleep/default state in suspend/resume callbacks
 >
-> Thanks!
-> Maxime
+> diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
+> index 819ad32964fc..b5fec5b7ee7b 100644
+> --- a/drivers/mmc/host/jz4740_mmc.c
+> +++ b/drivers/mmc/host/jz4740_mmc.c
+> @@ -20,14 +20,13 @@
+>  #include <linux/irq.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/module.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/delay.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/clk.h>
 >
->  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  #include <linux/bitops.h>
+> -#include <linux/gpio.h>
+> -#include <asm/mach-jz4740/gpio.h>
+>  #include <asm/cacheflush.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/dmaengine.h>
+> @@ -906,15 +905,6 @@ static const struct mmc_host_ops jz4740_mmc_ops = {
+>         .enable_sdio_irq = jz4740_mmc_enable_sdio_irq,
+>  };
 >
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> index 0eb51e33cb1b..207a8de4e1ed 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-> @@ -564,8 +564,7 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
->                         val = arg / 10 - 1;
->                         break;
->                 case PIN_CONFIG_BIAS_DISABLE:
-> -                       val = 0;
-> -                       break;
-> +                       continue;
->                 case PIN_CONFIG_BIAS_PULL_UP:
->                         if (arg == 0)
->                                 return -EINVAL;
+> -static const struct jz_gpio_bulk_request jz4740_mmc_pins[] = {
+> -       JZ_GPIO_BULK_PIN(MSC_CMD),
+> -       JZ_GPIO_BULK_PIN(MSC_CLK),
+> -       JZ_GPIO_BULK_PIN(MSC_DATA0),
+> -       JZ_GPIO_BULK_PIN(MSC_DATA1),
+> -       JZ_GPIO_BULK_PIN(MSC_DATA2),
+> -       JZ_GPIO_BULK_PIN(MSC_DATA3),
+> -};
+> -
+>  static int jz4740_mmc_request_gpio(struct device *dev, int gpio,
+>         const char *name, bool output, int value)
+>  {
+> @@ -978,15 +968,6 @@ static void jz4740_mmc_free_gpios(struct platform_device *pdev)
+>                 gpio_free(pdata->gpio_power);
+>  }
+>
+> -static inline size_t jz4740_mmc_num_pins(struct jz4740_mmc_host *host)
+> -{
+> -       size_t num_pins = ARRAY_SIZE(jz4740_mmc_pins);
+> -       if (host->pdata && host->pdata->data_1bit)
+> -               num_pins -= 3;
+> -
+> -       return num_pins;
+> -}
+> -
+>  static int jz4740_mmc_probe(struct platform_device* pdev)
+>  {
+>         int ret;
+> @@ -1027,15 +1008,9 @@ static int jz4740_mmc_probe(struct platform_device* pdev)
+>                 goto err_free_host;
+>         }
+>
+> -       ret = jz_gpio_bulk_request(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
+> -       if (ret) {
+> -               dev_err(&pdev->dev, "Failed to request mmc pins: %d\n", ret);
+> -               goto err_free_host;
+> -       }
+> -
+>         ret = jz4740_mmc_request_gpios(mmc, pdev);
+>         if (ret)
+> -               goto err_gpio_bulk_free;
+> +               goto err_release_dma;
+>
+>         mmc->ops = &jz4740_mmc_ops;
+>         mmc->f_min = JZ_MMC_CLK_RATE / 128;
+> @@ -1091,10 +1066,9 @@ static int jz4740_mmc_probe(struct platform_device* pdev)
+>         free_irq(host->irq, host);
+>  err_free_gpios:
+>         jz4740_mmc_free_gpios(pdev);
+> -err_gpio_bulk_free:
+> +err_release_dma:
+>         if (host->use_dma)
+>                 jz4740_mmc_release_dma_channels(host);
+> -       jz_gpio_bulk_free(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
+>  err_free_host:
+>         mmc_free_host(mmc);
+>
+> @@ -1114,7 +1088,6 @@ static int jz4740_mmc_remove(struct platform_device *pdev)
+>         free_irq(host->irq, host);
+>
+>         jz4740_mmc_free_gpios(pdev);
+> -       jz_gpio_bulk_free(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
+>
+>         if (host->use_dma)
+>                 jz4740_mmc_release_dma_channels(host);
+> @@ -1128,20 +1101,12 @@ static int jz4740_mmc_remove(struct platform_device *pdev)
+>
+>  static int jz4740_mmc_suspend(struct device *dev)
+>  {
+> -       struct jz4740_mmc_host *host = dev_get_drvdata(dev);
+> -
+> -       jz_gpio_bulk_suspend(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
+> -
+> -       return 0;
+> +       return pinctrl_pm_select_sleep_state(dev);
+>  }
+>
+>  static int jz4740_mmc_resume(struct device *dev)
+>  {
+> -       struct jz4740_mmc_host *host = dev_get_drvdata(dev);
+> -
+> -       jz_gpio_bulk_resume(jz4740_mmc_pins, jz4740_mmc_num_pins(host));
+> -
+> -       return 0;
+> +       return pinctrl_pm_select_default_state(dev);
+>  }
+>
+>  static SIMPLE_DEV_PM_OPS(jz4740_mmc_pm_ops, jz4740_mmc_suspend,
 > --
 > 2.11.0
 >
