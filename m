@@ -1,41 +1,61 @@
-From: Chris Packham <Chris.Packham-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>
-Subject: Re: [PATCHv4 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
-Date: Mon, 23 Jan 2017 08:18:35 +0000
-Message-ID: <6eb30a9ec3cf4fc9971f33742f334980@svr-chch-ex1.atlnz.lc>
-References: <20170113091222.7132-1-chris.packham@alliedtelesis.co.nz>
- <20170113091222.7132-4-chris.packham@alliedtelesis.co.nz>
- <20170119100244.GX27312@n2100.armlinux.org.uk>
- <c873040cba1a4d5aa15dbaf3c5cc44e0@svr-chch-ex1.atlnz.lc>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kalyan Kinthada <Kalyan.Kinthada-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH] pinctrl: sunxi: Don't enforce bias disable (for now)
+Date: Mon, 23 Jan 2017 09:21:30 +0100
+Message-ID: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:53383 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbdAWIVq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 03:21:46 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Priit Laes <plaes@plaes.org>
 
-On 20/01/17 10:10, Chris Packham wrote:=0A=
-> On 19/01/17 23:03, Russell King - ARM Linux wrote:=0A=
->> On Fri, Jan 13, 2017 at 10:12:18PM +1300, Chris Packham wrote:=0A=
->>> +static struct mvebu_mpp_ctrl mv98dx3236_mpp_controls[] =3D {=0A=
->>> +	MPP_FUNC_CTRL(0, 32, NULL, armada_xp_mpp_ctrl),=0A=
->>> +};=0A=
->>=0A=
->> As Linus has taken my mvebu pinctrl series, this will need to be=0A=
->> changed to "mvebu_mmio_mpp_ctrl" rather than "armada_xp_mpp_ctrl"=0A=
->> when it's merged.=0A=
->>=0A=
->=0A=
-> OK I was thinking about rebasing my series so maybe it's time.=0A=
->=0A=
-=0A=
-I noticed the mvebu pinctrl series isn't in Linus's (Torvalds) tree. Is =0A=
-this on the cards for v4.10 or is it waiting for the next merge window? =0A=
-In other words should I send v5 or my series now or wait for this to be =0A=
-merged so I can rebase on top of it?=0A=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Commit 07fe64ba213f ("pinctrl: sunxi: Handle bias disable") actually
+enforced enforced the disabling of the pull up/down resistors instead of
+ignoring it like it was done before.
+
+This was part of a wider rework to switch to the generic pinconf bindings,
+and was meant to be merged together with DT patches that were switching to
+it, and removing what was considered default values by both the binding and
+the boards. This included no bias on a pin.
+
+However, those DT patches were delayed to 4.11, which would be fine only
+for a significant number boards having the bias setup wrong, which in turns
+break the MMC on those boards (and possibly other devices too).
+
+In order to avoid conflicts as much as possible, bring back the old
+behaviour for 4.10, and we'll revert that commit once all the DT bits will
+have landed.
+
+Tested-by: Priit Laes <plaes@plaes.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+---
+Hi Linus,
+
+This is intended as a fix for 4.10.
+
+Thanks!
+Maxime
+
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 0eb51e33cb1b..207a8de4e1ed 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -564,8 +564,7 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
+ 			val = arg / 10 - 1;
+ 			break;
+ 		case PIN_CONFIG_BIAS_DISABLE:
+-			val = 0;
+-			break;
++			continue;
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+ 			if (arg == 0)
+ 				return -EINVAL;
+-- 
+2.11.0
+
