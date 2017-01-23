@@ -1,61 +1,57 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH] pinctrl: sunxi: Don't enforce bias disable (for now)
-Date: Mon, 23 Jan 2017 09:21:30 +0100
-Message-ID: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for the v4.10 series
+Date: Mon, 23 Jan 2017 09:42:58 +0100
+Message-ID: <CACRpkdbbnnO3+SYSjzekyp0uCa3Nhggohs_CT5362Vn2xQcZow@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:53383 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbdAWIVq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 03:21:46 -0500
+Received: from mail-ot0-f176.google.com ([74.125.82.176]:33637 "EHLO
+        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbdAWInA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 03:43:00 -0500
+Received: by mail-ot0-f176.google.com with SMTP id 73so97645263otj.0
+        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2017 00:43:00 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Priit Laes <plaes@plaes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Commit 07fe64ba213f ("pinctrl: sunxi: Handle bias disable") actually
-enforced enforced the disabling of the pull up/down resistors instead of
-ignoring it like it was done before.
-
-This was part of a wider rework to switch to the generic pinconf bindings,
-and was meant to be merged together with DT patches that were switching to
-it, and removing what was considered default values by both the binding and
-the boards. This included no bias on a pin.
-
-However, those DT patches were delayed to 4.11, which would be fine only
-for a significant number boards having the bias setup wrong, which in turns
-break the MMC on those boards (and possibly other devices too).
-
-In order to avoid conflicts as much as possible, bring back the old
-behaviour for 4.10, and we'll revert that commit once all the DT bits will
-have landed.
-
-Tested-by: Priit Laes <plaes@plaes.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
----
 Hi Linus,
 
-This is intended as a fix for 4.10.
+a single lockdep fix, nothing else going on. This makes lockdep noiseless
+and work properly with threaded GPIO IRQchips.
 
-Thanks!
-Maxime
+Please pull it in!
 
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Yours,
+Linus Walleij
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 0eb51e33cb1b..207a8de4e1ed 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -564,8 +564,7 @@ static int sunxi_pconf_group_set(struct pinctrl_dev *pctldev,
- 			val = arg / 10 - 1;
- 			break;
- 		case PIN_CONFIG_BIAS_DISABLE:
--			val = 0;
--			break;
-+			continue;
- 		case PIN_CONFIG_BIAS_PULL_UP:
- 			if (arg == 0)
- 				return -EINVAL;
--- 
-2.11.0
 
+The following changes since commit 49def1853334396f948dcb4cedb9347abb318df5:
+
+  Linux 4.10-rc4 (2017-01-15 16:21:59 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.10-3
+
+for you to fetch changes up to 739e6f5945d88dcee01590913f6886132a10c215:
+
+  gpio: provide lockdep keys for nested/unnested irqchips (2017-01-19
+09:57:20 +0100)
+
+----------------------------------------------------------------
+GPIO fixes for v4.10:
+
+- Fix a lockdep issue: the threaded irqchips also need their unique
+  key, and take this opportunity to get rid of the horrible macro and
+  replace it with a static inline.
+
+----------------------------------------------------------------
+Linus Walleij (1):
+      gpio: provide lockdep keys for nested/unnested irqchips
+
+ drivers/gpio/gpiolib.c      | 18 ++++++------
+ include/linux/gpio/driver.h | 70 ++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 59 insertions(+), 29 deletions(-)
