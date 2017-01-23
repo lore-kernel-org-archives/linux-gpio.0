@@ -1,53 +1,37 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 2/3] pinctrl: meson: meson-gxl: add the pwm_ao_b pin
-Date: Mon, 23 Jan 2017 11:12:45 -0800
-Message-ID: <CAOi56cV1+2uAMfBe0XQnvwq711fMiXJ+kKRAv9vUO70ZGKhtPQ@mail.gmail.com>
-References: <20170122210528.892-1-martin.blumenstingl@googlemail.com>
- <20170122210528.892-3-martin.blumenstingl@googlemail.com> <m2sho91tk5.fsf@baylibre.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 06/22] gpio: add DT bindings for Cortina Gemini GPIO
+Date: Mon, 23 Jan 2017 14:04:14 -0600
+Message-ID: <20170123200414.vmwmcvutdy5goshs@rob-hp-laptop>
+References: <20170122121830.10336-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:34432 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbdAWTMq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 14:12:46 -0500
-Received: by mail-ot0-f175.google.com with SMTP id f9so110017337otd.1
-        for <linux-gpio@vger.kernel.org>; Mon, 23 Jan 2017 11:12:46 -0800 (PST)
-In-Reply-To: <m2sho91tk5.fsf@baylibre.com>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:35889 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751536AbdAWUER (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 15:04:17 -0500
+Content-Disposition: inline
+In-Reply-To: <20170122121830.10336-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-gpio@vger.kernel.org, linux-amlogic <linux-amlogic@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, Jan 23, 2017 at 11:10 AM, Kevin Hilman <khilman@baylibre.com> wrote:
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
->
->> This adds support for the pwm_ao_b pin. Unfortunately the registers for
->> the pwm_ao pins are not documented at all. The source for the pwm_ao_b
->> pin from this patch is the Khadas VIM GPL kernel source, which sets bit
->> 3 and unsets bits 4 and 31 to enable the PWM LEDs.
->>
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> ---
->>  drivers/pinctrl/meson/pinctrl-meson-gxl.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
->> index 25694f7094c7..6ff321a7366d 100644
->> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
->> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
->> @@ -222,6 +222,8 @@ static const unsigned int uart_rts_ao_b_pins[]    = { PIN(GPIOAO_3, 0) };
->>
->>  static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0) };
->>
->> +static const unsigned int pwm_ao_b_pins[]    = { PIN(GPIOAO_9, 0) };
->> +
->
-> Hmm, the S905 public data sheet[1] shows this as GPIOAO_13.
->
+On Sun, Jan 22, 2017 at 01:18:30PM +0100, Linus Walleij wrote:
+> This adds fairly standard DT bindings for the Cortina Systems
+> Gemini GPIO controller.
+> 
+> Cc: Janos Laube <janos.dev@gmail.com>
+> Cc: Paulius Zaleckas <paulius.zaleckas@gmail.com>
+> Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Note to self: just apply this to the GPIO tree when discussion is over.
+> ---
+>  .../bindings/gpio/cortina,gemini-gpio.txt          | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/cortina,gemini-gpio.txt
 
-gack, nevermind.  I see now this is for GXL, not GXBB.  Ignore my comments.
-
-Linus, feel free to apply with:
-
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Acked-by: Rob Herring <robh@kernel.org>
