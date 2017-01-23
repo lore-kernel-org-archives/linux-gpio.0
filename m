@@ -1,98 +1,61 @@
 From: Jacky Bai <ping.bai@nxp.com>
-Subject: RE: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-Date: Mon, 23 Jan 2017 07:17:30 +0000
-Message-ID: <AM3PR04MB530E214A598B06ECFFE551487720@AM3PR04MB530.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH v2 00/12] Add basic code support for imx6sll
+Date: Mon, 23 Jan 2017 07:18:51 +0000
+Message-ID: <AM3PR04MB530E1929B64CEE28B3DFCE587720@AM3PR04MB530.eurprd04.prod.outlook.com>
 References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
- <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
- <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
- <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
- <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
- <20170123060454.GD5662@dragon>
+ <20170123061034.GE5662@dragon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-eopbgr20059.outbound.protection.outlook.com ([40.107.2.59]:51036
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750703AbdAWHRe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 23 Jan 2017 02:17:34 -0500
-In-Reply-To: <20170123060454.GD5662@dragon>
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20170123061034.GE5662@dragon>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infrad>
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>, Anson Huang <anson.huang@nxp.com>
 
 > From: Shawn Guo [mailto:shawnguo@kernel.org]
-> > >>
-> > >> > Another thing is that we can use a pins-tool program developed by
-> > >> > NXP to  generate the pinctrl configuration code that can be used
-> > >> > directly in dts. This tiny program can avoid pin function
-> > >> > conflict. As on i.MX, there are so may pins, each pin can be used =
-for up 8
-> function.
-> > >> > Configuring the pins is a time-consuming work.  This tools is
-> > >> > very useful for
-> > >> customer to generate the dts code.
-> > >>
-> > >> I understand, but every silicon vendor has such a tool, all are
-> > >> different, proprietary and unfriendly to programmers and open
-> > >> source developers, who need to understand how the hardware is
-> > >> working without magic tools and secret data sheets to fix bugs.
-> > >>
-> > >> For the people working with maintaining the code it is paramount
-> > >> that DTS files are self-descriptive.
-> > >
-> > > OK.  Thanks for your comments.  Adding generic-pinconf in imx
-> > > pinctrl needs some time to finish and the legacy method still need be=
- here
-> even if generic-pinconf is added.
-> > > Do you plan to pick this legacy binding patch for now?
+>=20
+> On Tue, Dec 27, 2016 at 05:47:38PM +0800, Bai Ping wrote:
+> > The i.MX 6SoloLiteLite application processors are NXP's latest
+> > additions to a growing family of multimedia-focused products offering
+> > high-performance processing optimized for lowest power consumption.
+> > The i.MX 6SoloLiteLite processors feature NXP's advanced
+> > implementation of the ARM Cortex-A9 core, which can be interfaced with
+> > LPDDR3 and LPDDR2 DRAM memory devices.
 > >
-> > As I said earlier:
+> > i.MX6SLL is a new SOC of the i.MX6 family, shares many common modules,
+> > so most of the MSL code can be resued from i.MX6 serious SOC.
 > >
-> > > atleast I need an indication from one of the i.MX maintainers how
-> > > they want to proceed.
+> >
+> > change for V2:
+> >     -  address comments in dts and dtsi from Fabio.
+> >     -  split the doc update into two patch, fix typo.
+> >     -  address comments in clock driver, add necessary 'const'qualifier=
+.
+> >
+> > Bai Ping (12):
+> >   ARM: imx: Add basic msl support for imx6sll
+> >   driver: clocksource: add gpt timer for imx6sll
+> >   Document: dt: binding: imx: update clock doc for imx6sll
+> >   driver: clk: imx: Add clock driver for imx6sll
+> >   Document: dt: binding: imx: update pinctrl doc for imx6sll
+> >   driver: pinctrl: imx: Add pinctrl driver support for imx6sll
+> >   ARM: dts: imx: Add basic dtsi for imx6sll
+> >   ARM: dts: imx: Add imx6sll EVK board dts support
+> >   ARM: debug: Add low level debug support for imx6sll
+> >   ARM: imx: Add suspend/resume support for imx6sll
+> >   ARM: imx: correct i.mx6sll dram io low power mode
+> >   ARM: configs: enable imx6sll support in defconfig
 >=20
-> Sorry for being late for the discussion.
->=20
-> To be honest, I did not really expect so many i.MX6 variants coming to us=
-.  Just
-> out of curiosity, are there any more in the pipeline to come, or is this =
-the last
-> known one?
->=20
+> I do not think you need to necessarily put them into a series, since they=
+ will go
+> through different sub-system maintainers.  If there are dependencies
+> between them, you should manage to get the prerequisite parts get merged
+> first.
 
-AFAIK, this should be the last variant of i.MX6. But not the last one of i.=
-MX family.
+ok, got it.=20
 
-> I understand that there are now more generic support available at pinctrl=
- core
-> level for us to use than the time we initial designed i.MX pinctrl driver=
-.  But I
-> intend to agree with Jacky that imx6sll can be supported by the existing =
-driver,
-> since it doesn't require any additional driver changes.
->=20
-> If any new generation of i.MX family require changes on the existing pinc=
-trl
-> driver, we should probably push back for a redesign to use generic suppor=
-t as
-> much as possible.  @Jacky, how does i.MX8 pinctrl look like?  How same or
-> different as/from i.MX6 pinctrl?
->=20
-
-i.MX8 kernel support is in development stage. The code has not been finaliz=
-ed.
-For now, i.MX8 shares most of the pinctrl code with i.MX6 and use the same =
-pinconfig method.
-
-> Just my opinion.
 >=20
 > Shawn
