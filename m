@@ -1,69 +1,32 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/3] pinctrl: meson: meson-gxl: add the pwm_ao_b pin
-Date: Sun, 22 Jan 2017 22:05:27 +0100
-Message-ID: <20170122210528.892-3-martin.blumenstingl@googlemail.com>
-References: <20170122210528.892-1-martin.blumenstingl@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33141 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751855AbdAVVFo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 22 Jan 2017 16:05:44 -0500
-In-Reply-To: <20170122210528.892-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH 0/2] gpio: aspeed: Implement banks Y, Z, AA, AB and AC
+Date: Mon, 23 Jan 2017 15:56:05 +1030
+Message-ID: <20170123052607.9424-1-andrew@aj.id.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-This adds support for the pwm_ao_b pin. Unfortunately the registers for
-the pwm_ao pins are not documented at all. The source for the pwm_ao_b
-pin from this patch is the Khadas VIM GPL kernel source, which sets bit
-3 and unsets bits 4 and 31 to enable the PWM LEDs.
+Hi Linus,
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxl.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This short series resolves a TODO comment in the Aspeed GPIO driver regarding
+banks Y, Z, AA, AB and AC by implementing their support. It's a little involved
+given some of the characteristics of these banks, but hopefully nothing too
+controversial.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 25694f7094c7..6ff321a7366d 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -222,6 +222,8 @@ static const unsigned int uart_rts_ao_b_pins[]	= { PIN(GPIOAO_3, 0) };
- 
- static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0) };
- 
-+static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_9, 0) };
-+
- static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0, EE_OFF),
- 	GPIO_GROUP(GPIOZ_1, EE_OFF),
-@@ -418,6 +420,7 @@ static struct meson_pmx_group meson_gxl_aobus_groups[] = {
- 	GROUP(uart_cts_ao_b,	0,	8),
- 	GROUP(uart_rts_ao_b,	0,	7),
- 	GROUP(remote_input_ao,	0,	0),
-+	GROUP(pwm_ao_b,		0,	3),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -523,6 +526,10 @@ static const char * const remote_input_ao_groups[] = {
- 	"remote_input_ao",
- };
- 
-+static const char * const pwm_ao_b_groups[] = {
-+	"pwm_ao_b",
-+};
-+
- static struct meson_pmx_func meson_gxl_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
-@@ -544,6 +551,7 @@ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
- 	FUNCTION(remote_input_ao),
-+	FUNCTION(pwm_ao_b),
- };
- 
- static struct meson_bank meson_gxl_periphs_banks[] = {
+Cheers,
+
+Andrew
+
+Andrew Jeffery (1):
+  gpio: aspeed: Add banks Y, Z, AA, AB and AC
+
+Joel Stanley (1):
+  gpio: aspeed: Make bank names strings
+
+ drivers/gpio/gpio-aspeed.c | 187 ++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 166 insertions(+), 21 deletions(-)
+
 -- 
-2.11.0
-
+2.9.3
