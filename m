@@ -1,122 +1,77 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] pinctrl: aspeed: g4: Fix mux configuration for GPIOs AA[4-7], AB[0-7]
-Date: Mon, 23 Jan 2017 15:57:17 +1030
-Message-ID: <20170123052717.9528-1-andrew@aj.id.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Mon, 23 Jan 2017 14:04:57 +0800
+Message-ID: <20170123060454.GD5662@dragon>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
+ <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
+ <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
+ <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:57512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750703AbdAWGFS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 23 Jan 2017 01:05:18 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacky Bai <ping.bai@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>
 
-Incorrect video output configuration bits were being tested on pins in
-GPIO banks AA and AB for the ROM{8,16} mux functions. The ROM{8,16}
-functions are the highest priority for the relevant pins and also the
-default function, so we require the relevant video output configuration
-be disabled to mux GPIO functionality. As the wrong bits were being
-tested a GPIO export would succeed but leave the pin in an unresponsive
-state (i.e. value updates were ignored).
+On Wed, Jan 18, 2017 at 01:24:30PM +0100, Linus Walleij wrote:
+> On Tue, Jan 17, 2017 at 7:35 AM, Jacky Bai <ping.bai@nxp.com> wrote:
+> >> Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+> >> On Thu, Jan 12, 2017 at 3:57 AM, Jacky Bai <ping.bai@nxp.com> wrote:
+> >>
+> >> > Another thing is that we can use a pins-tool program developed by NXP
+> >> > to  generate the pinctrl configuration code that can be used directly
+> >> > in dts. This tiny program can avoid pin function conflict. As on i.MX,
+> >> > there are so may pins, each pin can be used for up 8  function.
+> >> > Configuring the pins is a time-consuming work.  This tools is very useful for
+> >> customer to generate the dts code.
+> >>
+> >> I understand, but every silicon vendor has such a tool, all are different,
+> >> proprietary and unfriendly to programmers and open source developers, who
+> >> need to understand how the hardware is working without magic tools and
+> >> secret data sheets to fix bugs.
+> >>
+> >> For the people working with maintaining the code it is paramount that DTS files
+> >> are self-descriptive.
+> >
+> > OK.  Thanks for your comments.  Adding generic-pinconf in imx pinctrl needs some time
+> > to finish and the legacy method still need be here even if generic-pinconf is added.
+> > Do you plan to pick this legacy binding patch for now?
+> 
+> As I said earlier:
+> 
+> > atleast I need an indication from one of the i.MX maintainers how they
+> > want to proceed.
 
-This misbehaviour was discovered as part of extending the GPIO
-controller's support to cover banks Y, Z, AA, AB and AC (AC in the case
-of the g5 SoC).
+Sorry for being late for the discussion.
 
-Fixes: 6d329f14a75f ("pinctrl: aspeed-g4: Add mux configuration for all pins")
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c | 32 +++++++++++++++---------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+To be honest, I did not really expect so many i.MX6 variants coming to
+us.  Just out of curiosity, are there any more in the pipeline to come,
+or is this the last known one?
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-index 09b668415c56..7de596e2b9d4 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-@@ -1615,8 +1615,8 @@ MS_PIN_DECL(L19, GPIOAA3, ROMA13, VPOG3);
- 
- #define L20 212
- #define L20_DESC	SIG_DESC_SET(SCUA4, 28)
--SIG_EXPR_DECL(ROMA14, ROM8, L20_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA14, ROM16, L20_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA14, ROM8, L20_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA14, ROM16, L20_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA14, ROM8, ROM16);
- SIG_EXPR_DECL(VPOG4, VPO24, L20_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOG4, VPOOFF1, L20_DESC, VPOOFF1_DESC);
-@@ -1625,8 +1625,8 @@ MS_PIN_DECL(L20, GPIOAA4, ROMA14, VPOG4);
- 
- #define L21 213
- #define L21_DESC	SIG_DESC_SET(SCUA4, 29)
--SIG_EXPR_DECL(ROMA15, ROM8, L21_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA15, ROM16, L21_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA15, ROM8, L21_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA15, ROM16, L21_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA15, ROM8, ROM16);
- SIG_EXPR_DECL(VPOG5, VPO24, L21_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOG5, VPOOFF1, L21_DESC, VPOOFF1_DESC);
-@@ -1635,8 +1635,8 @@ MS_PIN_DECL(L21, GPIOAA5, ROMA15, VPOG5);
- 
- #define T18 214
- #define T18_DESC	SIG_DESC_SET(SCUA4, 30)
--SIG_EXPR_DECL(ROMA16, ROM8, T18_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA16, ROM16, T18_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA16, ROM8, T18_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA16, ROM16, T18_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA16, ROM8, ROM16);
- SIG_EXPR_DECL(VPOG6, VPO24, T18_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOG6, VPOOFF1, T18_DESC, VPOOFF1_DESC);
-@@ -1645,8 +1645,8 @@ MS_PIN_DECL(T18, GPIOAA6, ROMA16, VPOG6);
- 
- #define N18 215
- #define N18_DESC	SIG_DESC_SET(SCUA4, 31)
--SIG_EXPR_DECL(ROMA17, ROM8, N18_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA17, ROM16, N18_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA17, ROM8, N18_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA17, ROM16, N18_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA17, ROM8, ROM16);
- SIG_EXPR_DECL(VPOG7, VPO24, N18_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOG7, VPOOFF1, N18_DESC, VPOOFF1_DESC);
-@@ -1655,8 +1655,8 @@ MS_PIN_DECL(N18, GPIOAA7, ROMA17, VPOG7);
- 
- #define N19 216
- #define N19_DESC	SIG_DESC_SET(SCUA8, 0)
--SIG_EXPR_DECL(ROMA18, ROM8, N19_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA18, ROM16, N19_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA18, ROM8, N19_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA18, ROM16, N19_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA18, ROM8, ROM16);
- SIG_EXPR_DECL(VPOR0, VPO24, N19_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOR0, VPOOFF1, N19_DESC, VPOOFF1_DESC);
-@@ -1665,8 +1665,8 @@ MS_PIN_DECL(N19, GPIOAB0, ROMA18, VPOR0);
- 
- #define M18 217
- #define M18_DESC	SIG_DESC_SET(SCUA8, 1)
--SIG_EXPR_DECL(ROMA19, ROM8, M18_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA19, ROM16, M18_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA19, ROM8, M18_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA19, ROM16, M18_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA19, ROM8, ROM16);
- SIG_EXPR_DECL(VPOR1, VPO24, M18_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOR1, VPOOFF1, M18_DESC, VPOOFF1_DESC);
-@@ -1675,8 +1675,8 @@ MS_PIN_DECL(M18, GPIOAB1, ROMA19, VPOR1);
- 
- #define N22 218
- #define N22_DESC	SIG_DESC_SET(SCUA8, 2)
--SIG_EXPR_DECL(ROMA20, ROM8, N22_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA20, ROM16, N22_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA20, ROM8, N22_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA20, ROM16, N22_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA20, ROM8, ROM16);
- SIG_EXPR_DECL(VPOR2, VPO24, N22_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOR2, VPOOFF1, N22_DESC, VPOOFF1_DESC);
-@@ -1685,8 +1685,8 @@ MS_PIN_DECL(N22, GPIOAB2, ROMA20, VPOR2);
- 
- #define N20 219
- #define N20_DESC	SIG_DESC_SET(SCUA8, 3)
--SIG_EXPR_DECL(ROMA21, ROM8, N20_DESC, VPO_24_OFF);
--SIG_EXPR_DECL(ROMA21, ROM16, N20_DESC, VPO_24_OFF);
-+SIG_EXPR_DECL(ROMA21, ROM8, N20_DESC, VPO_OFF_12);
-+SIG_EXPR_DECL(ROMA21, ROM16, N20_DESC, VPO_OFF_12);
- SIG_EXPR_LIST_DECL_DUAL(ROMA21, ROM8, ROM16);
- SIG_EXPR_DECL(VPOR3, VPO24, N20_DESC, VPO24_DESC);
- SIG_EXPR_DECL(VPOR3, VPOOFF1, N20_DESC, VPOOFF1_DESC);
--- 
-2.9.3
+I understand that there are now more generic support available at
+pinctrl core level for us to use than the time we initial designed i.MX
+pinctrl driver.  But I intend to agree with Jacky that imx6sll can be
+supported by the existing driver, since it doesn't require any
+additional driver changes.
+
+If any new generation of i.MX family require changes on the existing
+pinctrl driver, we should probably push back for a redesign to use
+generic support as much as possible.  @Jacky, how does i.MX8 pinctrl
+look like?  How same or different as/from i.MX6 pinctrl?
+
+Just my opinion.
+
+Shawn
