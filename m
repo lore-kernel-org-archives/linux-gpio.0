@@ -1,37 +1,50 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 06/22] gpio: add DT bindings for Cortina Gemini GPIO
-Date: Mon, 23 Jan 2017 14:04:14 -0600
-Message-ID: <20170123200414.vmwmcvutdy5goshs@rob-hp-laptop>
-References: <20170122121830.10336-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:35889 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751536AbdAWUER (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 23 Jan 2017 15:04:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20170122121830.10336-1-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [PATCH v3 0/3] OF phandle nexus support + GPIO nexus
+Date: Mon, 23 Jan 2017 12:48:48 -0800
+Message-ID: <20170123204851.12808-1-stephen.boyd@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Sun, Jan 22, 2017 at 01:18:30PM +0100, Linus Walleij wrote:
-> This adds fairly standard DT bindings for the Cortina Systems
-> Gemini GPIO controller.
-> 
-> Cc: Janos Laube <janos.dev@gmail.com>
-> Cc: Paulius Zaleckas <paulius.zaleckas@gmail.com>
-> Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> Note to self: just apply this to the GPIO tree when discussion is over.
-> ---
->  .../bindings/gpio/cortina,gemini-gpio.txt          | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/cortina,gemini-gpio.txt
+This is one small chunk of work related to DT overlays for expansion
+boards. It would be good to have a way to expose #<list>-cells types of
+providers through a connector in a standard way. So we introduce a way
+to make "nexus" nodes for these types of properties to remap the consumer
+number space to the other side of the connector's number space. It's
+basically a copy of the interrupt nexus implementation, but without
+the address space matching design and interrupt-parent walking.
 
-Acked-by: Rob Herring <robh@kernel.org>
+The first patch implements a generic method to do this, and the second patch
+adds a unit test for it. The third patch is more of an example than anything
+else. It shows how we would modify frameworks to use the new API.
+
+Changes since v2:
+ * Picked up Linus' ack on the gpio core patch
+ * Made const stack arrays static (Rob Herring)
+ * Used of_property_read_u32() instead of open coding (Rob Herring)
+
+Changes since v1:
+ * Addition of optional pass-thru parameter
+ * Reduction of strings passed to 1 instead of 3 (or 4 now)
+ * Updated gpio patch for the new function signature
+ * Updated test-case for new funciton signature and pass-thru parameter
+ * Updated kernel-doc to be correct and highlighted difference between
+   this API and of_parse_phandle_with_args()
+
+Stephen Boyd (3):
+  of: Support parsing phandle argument lists through a nexus node
+  of: unittest: Add phandle remapping test
+  gpio: Support gpio nexus dt bindings
+
+ drivers/gpio/gpiolib-of.c                   |   4 +-
+ drivers/of/base.c                           | 184 ++++++++++++++++++++++++++++
+ drivers/of/unittest-data/testcases.dts      |  11 ++
+ drivers/of/unittest-data/tests-phandle.dtsi |  25 ++++
+ drivers/of/unittest.c                       | 120 ++++++++++++++++++
+ include/linux/of.h                          |  12 ++
+ 6 files changed, 354 insertions(+), 2 deletions(-)
+
+-- 
+2.10.0.297.gf6727b0
