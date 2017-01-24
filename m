@@ -1,69 +1,192 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: controlling pinctrl GPIOs from userspace on x86
-Date: Tue, 24 Jan 2017 14:08:15 +0100
-Message-ID: <CACRpkdaNBiyEqRYgoD-k+TEC90_fq-LAnfH3uJ6Ar8OqjWooZg@mail.gmail.com>
-References: <9201895.LkQO1ovFfJ@rdx.n.i2n>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 2/2] pinctrl: intel: merrifield: Distinguish
+ protected and readonly families
+Date: Tue, 24 Jan 2017 15:23:11 +0200
+Message-ID: <1485264191.2133.304.camel@linux.intel.com>
+References: <20170124104432.16477-1-andriy.shevchenko@linux.intel.com>
+         <20170124104432.16477-2-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:35465 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbdAXNIR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2017 08:08:17 -0500
-Received: by mail-io0-f177.google.com with SMTP id j18so134433212ioe.2
-        for <linux-gpio@vger.kernel.org>; Tue, 24 Jan 2017 05:08:17 -0800 (PST)
-In-Reply-To: <9201895.LkQO1ovFfJ@rdx.n.i2n>
+Received: from mga07.intel.com ([134.134.136.100]:53592 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750918AbdAXNXQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 24 Jan 2017 08:23:16 -0500
+In-Reply-To: <20170124104432.16477-2-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Gerd v. Egidy" <lists@egidy.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Tue, Dec 6, 2016 at 11:34 PM, Gerd v. Egidy <lists@egidy.de> wrote:
+On Tue, 2017-01-24 at 12:44 +0200, Andy Shevchenko wrote:
+> Family 7 (I2C) is a special read only area. We can't write any values
+> there, though read is possible.
+> 
+> Introduce readonly flag and distinguish such families from fully
+> protected ones. Allow read the configuration back and make it visible
+> to
+> users.
 
-> I have a x86 mainboard with a Intel Sunrise Point chipset.
+While first patch is okay this one needs more testing and understanding
+(something odd is going on on those pins).
+So, please ignore patch 2/2 for now. If needed I can resend new version
+with only first patch included. 
 
-I think you should address Mika Westerberg, he know all stuff Intel GPIO.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-merrifield.c | 46
+> +++++++++++++++++++++++-------
+>  1 file changed, 36 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c
+> b/drivers/pinctrl/intel/pinctrl-merrifield.c
+> index 4d4ef42a39b5..4c2be847b0bb 100644
+> --- a/drivers/pinctrl/intel/pinctrl-merrifield.c
+> +++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
+> @@ -60,7 +60,8 @@
+>   * @barno: MMIO BAR number where registers for this family reside
+>   * @pin_base: Starting pin of pins in this family
+>   * @npins: Number of pins in this family
+> - * @protected: True if family is protected by access
+> + * @protected: True if family is protected
+> + * @readonly: True if family is read-only
+>   * @regs: family specific common registers
+>   */
+>  struct mrfld_family {
+> @@ -68,6 +69,7 @@ struct mrfld_family {
+>  	unsigned int pin_base;
+>  	size_t npins;
+>  	bool protected;
+> +	bool readonly;
+>  	void __iomem *regs;
+>  };
+>  
+> @@ -86,6 +88,14 @@ struct mrfld_family {
+>  		.protected = true,			\
+>  	}
+>  
+> +#define MRFLD_FAMILY_READONLY(b, s, e)			\
+> +	{						\
+> +		.barno = (b),				\
+> +		.pin_base = (s),			\
+> +		.npins = (e) - (s) + 1,			\
+> +		.readonly = true,			\
+> +	}
+> +
+>  static const struct pinctrl_pin_desc mrfld_pins[] = {
+>  	/* Family 0: OCP2SSC (0 pins) */
+>  	/* Family 1: ULPI (13 pins) */
+> @@ -392,7 +402,7 @@ static const struct mrfld_family mrfld_families[]
+> = {
+>  	MRFLD_FAMILY(4, 57, 64),
+>  	MRFLD_FAMILY(5, 65, 78),
+>  	MRFLD_FAMILY(6, 79, 100),
+> -	MRFLD_FAMILY_PROTECTED(7, 101, 114),
+> +	MRFLD_FAMILY_READONLY(7, 101, 114),
+>  	MRFLD_FAMILY(8, 115, 126),
+>  	MRFLD_FAMILY(9, 127, 145),
+>  	MRFLD_FAMILY(10, 146, 157),
+> @@ -454,15 +464,18 @@ static const struct mrfld_family
+> *mrfld_get_family(struct mrfld_pinctrl *mp,
+>  	return NULL;
+>  }
+>  
+> -static bool mrfld_buf_available(struct mrfld_pinctrl *mp, unsigned
+> int pin)
+> +static int mrfld_buf_available(struct mrfld_pinctrl *mp, unsigned int
+> pin)
+>  {
+>  	const struct mrfld_family *family;
+>  
+>  	family = mrfld_get_family(mp, pin);
+>  	if (!family)
+> -		return false;
+> +		return -EINVAL;
+> +
+> +	if (family->protected)
+> +		return -EACCES;
+>  
+> -	return !family->protected;
+> +	return family->readonly;
+>  }
+>  
+>  static void __iomem *mrfld_get_bufcfg(struct mrfld_pinctrl *mp,
+> unsigned int pin)
+> @@ -509,8 +522,10 @@ static void mrfld_pin_dbg_show(struct pinctrl_dev
+> *pctldev, struct seq_file *s,
+>  	struct mrfld_pinctrl *mp = pinctrl_dev_get_drvdata(pctldev);
+>  	void __iomem *bufcfg;
+>  	u32 value, mode;
+> +	int ret;
+>  
+> -	if (!mrfld_buf_available(mp, pin)) {
+> +	ret = mrfld_buf_available(mp, pin);
+> +	if (ret < 0) {
+>  		seq_puts(s, "not available");
+>  		return;
+>  	}
+> @@ -586,13 +601,17 @@ static int mrfld_pinmux_set_mux(struct
+> pinctrl_dev *pctldev,
+>  	u32 mask = BUFCFG_PINMODE_MASK;
+>  	unsigned long flags;
+>  	unsigned int i;
+> +	int ret;
+>  
+>  	/*
+>  	 * All pins in the groups needs to be accessible and writable
+>  	 * before we can enable the mux for this group.
+>  	 */
+>  	for (i = 0; i < grp->npins; i++) {
+> -		if (!mrfld_buf_available(mp, grp->pins[i]))
+> +		ret = mrfld_buf_available(mp, grp->pins[i]);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (ret > 0)
+>  			return -EBUSY;
+>  	}
+>  
+> @@ -613,8 +632,12 @@ static int mrfld_gpio_request_enable(struct
+> pinctrl_dev *pctldev,
+>  	u32 bits = BUFCFG_PINMODE_GPIO << BUFCFG_PINMODE_SHIFT;
+>  	u32 mask = BUFCFG_PINMODE_MASK;
+>  	unsigned long flags;
+> +	int ret;
+>  
+> -	if (!mrfld_buf_available(mp, pin))
+> +	ret = mrfld_buf_available(mp, pin);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret > 0)
+>  		return -EBUSY;
+>  
+>  	raw_spin_lock_irqsave(&mp->lock, flags);
+> @@ -639,8 +662,10 @@ static int mrfld_config_get(struct pinctrl_dev
+> *pctldev, unsigned int pin,
+>  	enum pin_config_param param =
+> pinconf_to_config_param(*config);
+>  	u32 value, term;
+>  	u16 arg = 0;
+> +	int ret;
+>  
+> -	if (!mrfld_buf_available(mp, pin))
+> +	ret = mrfld_buf_available(mp, pin);
+> +	if (ret < 0)
+>  		return -ENOTSUPP;
+>  
+>  	value = readl(mrfld_get_bufcfg(mp, pin));
+> @@ -794,7 +819,8 @@ static int mrfld_config_set(struct pinctrl_dev
+> *pctldev, unsigned int pin,
+>  	unsigned int i;
+>  	int ret;
+>  
+> -	if (!mrfld_buf_available(mp, pin))
+> +	ret = mrfld_buf_available(mp, pin);
+> +	if (ret)
+>  		return -ENOTSUPP;
+>  
+>  	for (i = 0; i < nconfigs; i++) {
 
-> One function I want
-> to control is tied to a specific GPIO on the chipset (GPP_E1 / SATAXPCIE_1).
-> There seems to be a driver for this in the kernel:
-> pinctrl/intel/pinctrl-sunrisepoint.c
->
-> The easiest solution for me would be if I could control this GPIO from
-> userspace.
-
-- What kernel version are you running?
-
-- Have you tried compiling tools/gpio/* and running "lsgpio"?
-  https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/tools/gpio
-
-> I have seen examples where a pin from pinctrl is made available to the "gpio"
-> driver with a devicetree setting on arm devices. But I have a x86 system with
-> a classic BIOS, so no devicetree here to help me.
-
-Pin control per se is not available from userspace, only GPIO.
-We only expose GPIO lines to userspace from the GPIO
-subsystem.
-
-That said, GPIO can use pin control as a back-end and pin control
-drivers are often "dual devices" registering both pin control and GPIO.
-
-> I have seen that there is pinconf which should give some info and control over
-> pinctrl through debugfs, correct?.
-
-Nope. debugfs is for debugging, development, not for proper use.
-We always thought the name "debugfs" would strike a chord :D
-
-Use the GPIO character device as exemplified with tools/gpio/*
-
-> So I enabled CONFIG_PINCONF, but after
-> loading the pinctrl-sunrisepoint module I could not see anything relating to
-> this show up in /sys/kernel/debug.
-
-That is probably because you need to:
-
-- Enable CONFIG_DEBUGFS
-- mount debugfs on /sys/kernel/debug
-
-Yours,
-Linus Walleij
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
