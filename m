@@ -1,61 +1,24 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Tue, 24 Jan 2017 12:18:05 +0100
-Message-ID: <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com>
-References: <20170112163924.4414-1-alexander.stein@systec-electronic.com> <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Subject: Re: [PATCHv3 2/2] gpio: xilinx: Add clock support
+Date: Tue, 24 Jan 2017 17:19:23 +0530
+Message-ID: <CAKfKVtFuQOnEZiioavCH5tLpMw2dSVNNChCFe6QTT0MSLmA5mA@mail.gmail.com>
+References: <1478757365-3311-1-git-send-email-shubhrajyoti.datta@xilinx.com> <1478757365-3311-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36612 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbdAXLSH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2017 06:18:07 -0500
-In-Reply-To: <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:32904 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750843AbdAXLtZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2017 06:49:25 -0500
+In-Reply-To: <1478757365-3311-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
 
-Hi Linus,
-
-On Tue, Jan 17, 2017 at 4:07 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jan 12, 2017 at 5:39 PM, Alexander Stein
-> <alexander.stein@systec-electronic.com> wrote:
+On Thu, Nov 10, 2016 at 11:26 AM, Shubhrajyoti Datta
+<shubhrajyoti.datta@xilinx.com> wrote:
+> Add basic clock support for xilinx gpio.
 >
->> Currently all users of fwnode_get_named_gpiod() have no way to specify a
->> label for the GPIO. So GPIOs listed in debugfs are shown with label "?".
->> With this change a proper label is used.
->> Also adjust all users so they can pass a label, properly retrieved from
->> device tree properties.
->>
->> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
->> CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->> ---
->> v2:
->> * Non-RFC
->> * This patch is rebased on gpio/for-next branch and cherry-picked commit
->> 2715bbe from https://bitbucket.org/andy-shev/linux.git
->
-> Patch applied on top of Andy's patch.
->
-> Let's see if this all builds and works :)
-
-Yes it does, thanks!
-
--gpio-780 (?): gpiod_set_debounce: missing set() or set_debounce() operations
-+gpio-780 (SW30): gpiod_set_debounce: missing set() or set_debounce() operations
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Ping
