@@ -1,68 +1,65 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 5/5] gpio: ws16c48: Utilize devm_ functions in driver probe callback
-Date: Tue, 24 Jan 2017 15:01:15 -0500
-Message-ID: <ba4aa1f760d413470204e4c4a4d9d9a80788397b.1485287208.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 2/5] gpio: 104-idi-48: Utilize devm_ functions in driver probe callback
+Date: Tue, 24 Jan 2017 15:00:43 -0500
+Message-ID: <9867e73be56728749f123534b6ef144269cdac9c.1485287208.git.vilhelm.gray@gmail.com>
 References: <cover.1485287208.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34516 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751085AbdAXUBW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2017 15:01:22 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1485287208.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 The devm_ resource manager functions allow memory to be automatically
 released when a device is unbound. This patch takes advantage of the
 resource manager functions and replaces the gpiochip_add_data call and
 request_irq call with the devm_gpiochip_add_data call and
-devm_request_irq call respectively. In addition, the ws16c48_remove
+devm_request_irq call respectively. In addition, the idi_48_remove
 function has been removed as no longer necessary due to the use of the
 relevant devm_ resource manager functions.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-ws16c48.c | 28 +++++-----------------------
+ drivers/gpio/gpio-104-idi-48.c | 28 +++++-----------------------
  1 file changed, 5 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index eaa71d440ccf..66129355e3a3 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -46,7 +46,6 @@ MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
-  * @irq_mask:	I/O bits affected by interrupts
-  * @flow_mask:	IRQ flow type mask for the respective I/O bits
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 2d2763ea1a68..eafbf053f3e8 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -47,7 +47,6 @@ MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
+  * @ack_lock:	synchronization lock to prevent IRQ handler race conditions
+  * @irq_mask:	input bits affected by interrupts
   * @base:	base port address of the GPIO device
 - * @irq:	Interrupt line number
+  * @cos_enb:	Change-Of-State IRQ enable boundaries mask
   */
- struct ws16c48_gpio {
- 	struct gpio_chip chip;
-@@ -56,7 +55,6 @@ struct ws16c48_gpio {
- 	unsigned long irq_mask;
- 	unsigned long flow_mask;
+ struct idi_48_gpio {
+@@ -56,7 +55,6 @@ struct idi_48_gpio {
+ 	spinlock_t ack_lock;
+ 	unsigned char irq_mask[6];
  	unsigned base;
 -	unsigned irq;
+ 	unsigned char cos_enb;
  };
  
- static int ws16c48_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-@@ -330,13 +328,12 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
- 	ws16c48gpio->base = base[id];
--	ws16c48gpio->irq = irq[id];
+@@ -244,14 +242,13 @@ static int idi_48_probe(struct device *dev, unsigned int id)
+ 	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
+ 	idi48gpio->chip.get = idi_48_gpio_get;
+ 	idi48gpio->base = base[id];
+-	idi48gpio->irq = irq[id];
  
- 	spin_lock_init(&ws16c48gpio->lock);
+ 	spin_lock_init(&idi48gpio->lock);
+ 	spin_lock_init(&idi48gpio->ack_lock);
  
- 	dev_set_drvdata(dev, ws16c48gpio);
+ 	dev_set_drvdata(dev, idi48gpio);
  
--	err = gpiochip_add_data(&ws16c48gpio->chip, ws16c48gpio);
-+	err = devm_gpiochip_add_data(dev, &ws16c48gpio->chip, ws16c48gpio);
+-	err = gpiochip_add_data(&idi48gpio->chip, idi48gpio);
++	err = devm_gpiochip_add_data(dev, &idi48gpio->chip, idi48gpio);
  	if (err) {
  		dev_err(dev, "GPIO registering failed (%d)\n", err);
  		return err;
-@@ -353,31 +350,17 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
+@@ -265,31 +262,17 @@ static int idi_48_probe(struct device *dev, unsigned int id)
  		handle_edge_irq, IRQ_TYPE_NONE);
  	if (err) {
  		dev_err(dev, "Could not add irqchip (%d)\n", err);
@@ -70,10 +67,10 @@ index eaa71d440ccf..66129355e3a3 100644
 +		return err;
  	}
  
--	err = request_irq(irq[id], ws16c48_irq_handler, IRQF_SHARED, name,
--		ws16c48gpio);
-+	err = devm_request_irq(dev, irq[id], ws16c48_irq_handler, IRQF_SHARED,
-+		name, ws16c48gpio);
+-	err = request_irq(irq[id], idi_48_irq_handler, IRQF_SHARED, name,
+-		idi48gpio);
++	err = devm_request_irq(dev, irq[id], idi_48_irq_handler, IRQF_SHARED,
++		name, idi48gpio);
  	if (err) {
  		dev_err(dev, "IRQ handler registering failed (%d)\n", err);
 -		goto err_gpiochip_remove;
@@ -83,29 +80,28 @@ index eaa71d440ccf..66129355e3a3 100644
  	return 0;
 -
 -err_gpiochip_remove:
--	gpiochip_remove(&ws16c48gpio->chip);
+-	gpiochip_remove(&idi48gpio->chip);
 -	return err;
 -}
 -
--static int ws16c48_remove(struct device *dev, unsigned int id)
+-static int idi_48_remove(struct device *dev, unsigned int id)
 -{
--	struct ws16c48_gpio *const ws16c48gpio = dev_get_drvdata(dev);
+-	struct idi_48_gpio *const idi48gpio = dev_get_drvdata(dev);
 -
--	free_irq(ws16c48gpio->irq, ws16c48gpio);
--	gpiochip_remove(&ws16c48gpio->chip);
+-	free_irq(idi48gpio->irq, idi48gpio);
+-	gpiochip_remove(&idi48gpio->chip);
 -
 -	return 0;
  }
  
- static struct isa_driver ws16c48_driver = {
-@@ -385,7 +368,6 @@ static struct isa_driver ws16c48_driver = {
+ static struct isa_driver idi_48_driver = {
+@@ -297,7 +280,6 @@ static struct isa_driver idi_48_driver = {
  	.driver = {
- 		.name = "ws16c48"
+ 		.name = "104-idi-48"
  	},
--	.remove = ws16c48_remove
+-	.remove = idi_48_remove
  };
+ module_isa_driver(idi_48_driver, num_idi_48);
  
- module_isa_driver(ws16c48_driver, num_ws16c48);
 -- 
 2.11.0
-
