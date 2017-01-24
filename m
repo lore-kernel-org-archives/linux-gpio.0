@@ -1,121 +1,42 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
- a nexus node
-Date: Tue, 24 Jan 2017 12:05:20 -0600
-Message-ID: <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
-References: <20170123204851.12808-1-stephen.boyd@linaro.org>
- <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5886F5ED.3030509@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Stephen Boyd <stephen.boyd@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/5] gpio: Utilize devm_ functions in driver probe callbacks
+Date: Tue, 24 Jan 2017 15:00:21 -0500
+Message-ID: <cover.1485287208.git.vilhelm.gray@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34530 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750718AbdAXUAb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 24 Jan 2017 15:00:31 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 
-On Tue, Jan 24, 2017 at 12:36 AM, Frank Rowand <frowand.list@gmail.com> wrote:
-> Hi Stephen,
->
-> Sorry I did not get to v1 and v2 in a timely manner.
->
->
-> On 01/23/17 12:48, Stephen Boyd wrote:
->> Platforms like 96boards have a standardized connector/expansion
->> slot that exposes signals like GPIOs to expansion boards in an
->> SoC agnostic way. We'd like the DT overlays for the expansion
->> boards to be written once without knowledge of the SoC on the
->> other side of the connector. This avoids the unscalable
->> combinatorial explosion of a different DT overlay for each
->> expansion board and SoC pair.
->>
->> We need a way to describe the GPIOs routed through the connector
->> in an SoC agnostic way. Let's introduce nexus property parsing
->> into the OF core to do this. This is largely based on the
->> interrupt nexus support we already have. This allows us to remap
->> a phandle list in a consumer node (e.g. reset-gpios) through a
->> connector in a generic way (e.g. via gpio-map). Do this in a
->> generic routine so that we can remap any sort of variable length
->> phandle list.
->>
->> Taking GPIOs as an example, the connector would be a GPIO nexus,
->> supporting the remapping of a GPIO specifier space to multiple
->> GPIO providers on the SoC. DT would look as shown below, where
->> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
->> expansion port where boards can be plugged in, and
->> 'expansion_device' is a device on the expansion board.
->>
->>       soc {
->>               soc_gpio1: gpio-controller1 {
->>                       #gpio-cells = <2>;
->>               };
->>
->>               soc_gpio2: gpio-controller2 {
->>                       #gpio-cells = <2>;
->>               };
->>       };
->>
->>       connector: connector {
->>               #gpio-cells = <2>;
->>               gpio-map = <0 0 &soc_gpio1 1 0>,
->>                          <1 0 &soc_gpio2 4 0>,
->>                          <2 0 &soc_gpio1 3 0>,
->>                          <3 0 &soc_gpio2 2 0>;
->>               gpio-map-mask = <0xf 0x0>;
->>               gpio-map-pass-thru = <0x0 0x1>
->>       };
->>
->>       expansion_device {
->>               reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
->>       };
->
-> The how to architect connectors and plugs threads fell asleep before
-> coming to a resolution.  We need to revive that discussion.
->
-> One of the concepts of the plug and connector architecture is that
-> a main board may contain multiple connectors of the same type (or
-> different types, but the same type is sufficient for this discussion).
->
-> The node describing the card that plugs into one of the connectors
-> does not know the phandle of the connector it is going to be
-> connected to.  Some other mechanism is provided to allow a card
-> to be plugged into any of the available connectors.  If there are
-> two identical cards plugged into two connectors, then both cards
-> have the same exact device tree node.  But some mechanism will
-> exist to resolve (or "link") the two card nodes to the different
-> connector nodes.
->
-> As a result of this, in the above example the reset-gpios property
-> in the node 'expansion_device' can not contain '&connector'.  The
-> concept of &connector belongs to the entire expansion_device node,
-> not to individual properties within the node.
+The devm_ resource manager functions allow memory to be automatically
+released when a device is unbound. This patchset takes advantage of the
+resource manager functions and replaces gpiochip_add_data calls and
+request_irq calls with devm_gpiochip_add_data calls and devm_request_irq
+calls respectively.
 
-I think this is easily solved with a connector having 2 halves and
-that we need to search parents for *-map properties. Inheriting from
-parents is a common pattern in DT though perhaps not walking the
-parents of a phandle. So we'd have something like this:
+A convenient outcome of these changes is the removal of the respective
+driver remove callback functions for these drivers; now that clean-up is
+handled automatically when devices are unbound, custom driver remove
+functions are no longer necessary for these drivers.
 
-base-connector-1 {
-  gpio-map = ...
-  connector {
-    child {
-      some-gpios = <&connector 1>;
-    };
-  };
-};
+William Breathitt Gray (5):
+  gpio: 104-dio-48e: Utilize devm_ functions in driver probe callback
+  gpio: 104-idi-48: Utilize devm_ functions in driver probe callback
+  gpio: 104-idio-16: Utilize devm_ functions in driver probe callback
+  gpio: gpio-mm: Utilize devm_ functions in driver probe callback
+  gpio: ws16c48: Utilize devm_ functions in driver probe callback
 
-base-connector-2 {
-  gpio-map = ...
-  connector {
-    child {
-      some-gpios = <&connector 1>;
-    };
-  };
-};
+ drivers/gpio/gpio-104-dio-48e.c | 27 +++++----------------------
+ drivers/gpio/gpio-104-idi-48.c  | 28 +++++-----------------------
+ drivers/gpio/gpio-104-idio-16.c | 27 +++++----------------------
+ drivers/gpio/gpio-gpio-mm.c     | 12 +-----------
+ drivers/gpio/gpio-ws16c48.c     | 28 +++++-----------------------
+ 5 files changed, 21 insertions(+), 101 deletions(-)
 
-Now, how we resolve that /connector from an overlay targets
-/base-connector-1 and /base-connector-2 is an orthogonal issue and one
-that's going to be connector specific (at least for probe-able
-connectors).
+-- 
+2.11.0
 
-Rob
