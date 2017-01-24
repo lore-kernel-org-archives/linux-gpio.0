@@ -1,64 +1,121 @@
-From: Ian Pilcher <arequipeno@gmail.com>
-Subject: Re: How to ensure other module/driver is initialized?
-Date: Tue, 24 Jan 2017 10:40:59 -0600
-Message-ID: <6a8fe8d3-024b-1cf7-0e2e-1421042036da@gmail.com>
-References: <180b9075-7db0-1708-50f4-622333de2049@gmail.com>
- <CACRpkdYjUKimX+R0nZv5v+rhdUxAUtKv4pPu0dtGAYhEP1Ri7Q@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
+ a nexus node
+Date: Tue, 24 Jan 2017 12:05:20 -0600
+Message-ID: <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
+References: <20170123204851.12808-1-stephen.boyd@linaro.org>
+ <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYjUKimX+R0nZv5v+rhdUxAUtKv4pPu0dtGAYhEP1Ri7Q@mail.gmail.com>
+In-Reply-To: <5886F5ED.3030509@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/24/2017 07:02 AM, Linus Walleij wrote:
-> On Thu, Dec 15, 2016 at 8:50 PM, Ian Pilcher <arequipeno@gmail.com> wrote:
+On Tue, Jan 24, 2017 at 12:36 AM, Frank Rowand <frowand.list@gmail.com> wrote:
+> Hi Stephen,
 >
->> I maintain an out-of-tree kernel module that enables the front-panel
->> LEDs on the Thecus N5550 NAS.
+> Sorry I did not get to v1 and v2 in a timely manner.
+>
+>
+> On 01/23/17 12:48, Stephen Boyd wrote:
+>> Platforms like 96boards have a standardized connector/expansion
+>> slot that exposes signals like GPIOs to expansion boards in an
+>> SoC agnostic way. We'd like the DT overlays for the expansion
+>> boards to be written once without knowledge of the SoC on the
+>> other side of the connector. This avoids the unscalable
+>> combinatorial explosion of a different DT overlay for each
+>> expansion board and SoC pair.
 >>
->>   https://github.com/ipilcher/n5550/blob/master/modules/n5550_board.c
+>> We need a way to describe the GPIOs routed through the connector
+>> in an SoC agnostic way. Let's introduce nexus property parsing
+>> into the OF core to do this. This is largely based on the
+>> interrupt nexus support we already have. This allows us to remap
+>> a phandle list in a consumer node (e.g. reset-gpios) through a
+>> connector in a generic way (e.g. via gpio-map). Do this in a
+>> generic routine so that we can remap any sort of variable length
+>> phandle list.
+>>
+>> Taking GPIOs as an example, the connector would be a GPIO nexus,
+>> supporting the remapping of a GPIO specifier space to multiple
+>> GPIO providers on the SoC. DT would look as shown below, where
+>> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
+>> expansion port where boards can be plugged in, and
+>> 'expansion_device' is a device on the expansion board.
+>>
+>>       soc {
+>>               soc_gpio1: gpio-controller1 {
+>>                       #gpio-cells = <2>;
+>>               };
+>>
+>>               soc_gpio2: gpio-controller2 {
+>>                       #gpio-cells = <2>;
+>>               };
+>>       };
+>>
+>>       connector: connector {
+>>               #gpio-cells = <2>;
+>>               gpio-map = <0 0 &soc_gpio1 1 0>,
+>>                          <1 0 &soc_gpio2 4 0>,
+>>                          <2 0 &soc_gpio1 3 0>,
+>>                          <3 0 &soc_gpio2 2 0>;
+>>               gpio-map-mask = <0xf 0x0>;
+>>               gpio-map-pass-thru = <0x0 0x1>
+>>       };
+>>
+>>       expansion_device {
+>>               reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
+>>       };
 >
-> Generally I'm not very happy about boardfiles and such stuff being
-> maintained out-of-tree.
+> The how to architect connectors and plugs threads fell asleep before
+> coming to a resolution.  We need to revive that discussion.
 >
-> Is there work ongoing to:
+> One of the concepts of the plug and connector architecture is that
+> a main board may contain multiple connectors of the same type (or
+> different types, but the same type is sufficient for this discussion).
 >
-> (A) work upstream with this stuff
-> (B) convert the whole platform to use device tree
+> The node describing the card that plugs into one of the connectors
+> does not know the phandle of the connector it is going to be
+> connected to.  Some other mechanism is provided to allow a card
+> to be plugged into any of the available connectors.  If there are
+> two identical cards plugged into two connectors, then both cards
+> have the same exact device tree node.  But some mechanism will
+> exist to resolve (or "link") the two card nodes to the different
+> connector nodes.
 >
-> Because that is what is needed for long-term maintenance.
+> As a result of this, in the above example the reset-gpios property
+> in the node 'expansion_device' can not contain '&connector'.  The
+> concept of &connector belongs to the entire expansion_device node,
+> not to individual properties within the node.
 
-In general, I completely agree with you.  In this case, however, I
-don't think that moving the module upstream and/or converting to device
-tree is realistic.
+I think this is easily solved with a connector having 2 halves and
+that we need to search parents for *-map properties. Inheriting from
+parents is a common pattern in DT though perhaps not walking the
+parents of a phandle. So we'd have something like this:
 
-I say this because the purpose of my module is to enable the LEDs and
-GPIOs in the Thecus N5550 NAS for "generic" x86_64 distributions --
-CentOS, Fedora, Debian, Ubuntu, etc.  It has nothing to do with the
-Linux-based "firmware" provided by Thecus.  To the best of my knowledge,
-the worldwide number of users of this module is in the single digits.
+base-connector-1 {
+  gpio-map = ...
+  connector {
+    child {
+      some-gpios = <&connector 1>;
+    };
+  };
+};
 
-So even if the module were to be accepted upstream (which I tend to
-doubt), it's extremely unlikely that any of the aforementioned
-distributions would include it in their kernel configuration.
+base-connector-2 {
+  gpio-map = ...
+  connector {
+    child {
+      some-gpios = <&connector 1>;
+    };
+  };
+};
 
-Device tree presents even greater problems.  It's not clear to me that
-device tree even works with x86_64, and even if it does, I'm almost
-positive that none of the "generic" distributions are going to support
-it.
+Now, how we resolve that /connector from an overlay targets
+/base-connector-1 and /base-connector-2 is an orthogonal issue and one
+that's going to be connector specific (at least for probe-able
+connectors).
 
-If my understanding of device tree is inaccurate, please do let me
-know.  I'd definitely like to replace the "board" module with a
-device tree description if it's possible.
-
-Thanks!
-
--- 
-========================================================================
-Ian Pilcher                                         arequipeno@gmail.com
--------- "I grew up before Mark Zuckerberg invented friendship" --------
-========================================================================
+Rob
