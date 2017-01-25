@@ -1,108 +1,92 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 7/7] gpio: mockup: readability tweaks
-Date: Wed, 25 Jan 2017 16:34:21 +0100
-Message-ID: <1485358461-24070-8-git-send-email-bgolaszewski@baylibre.com>
+Subject: [PATCH 6/7] gpio: mockup: implement naming the GPIO lines
+Date: Wed, 25 Jan 2017 16:34:20 +0100
+Message-ID: <1485358461-24070-7-git-send-email-bgolaszewski@baylibre.com>
 References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:34192 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbdAYPeq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 10:34:46 -0500
+Received: by mail-wm0-f54.google.com with SMTP id f73so52862232wmf.1
+        for <linux-gpio@vger.kernel.org>; Wed, 25 Jan 2017 07:34:40 -0800 (PST)
 In-Reply-To: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-List-Id: linux-gpio@vger.kernel.org
 
-Add some newlines and use a temporary pointer in mockup_gpio_add().
+Implement a new boolean module argument that indicates that the mockup
+lines should be named. The names are created by appending the line
+offset to the chip label.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/gpio/gpio-mockup.c | 38 ++++++++++++++++++++------------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ drivers/gpio/gpio-mockup.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index dabf3ec..4289bbd 100644
+index c5eb530..dabf3ec 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -78,6 +78,7 @@ static int mockup_gpio_dirout(struct gpio_chip *gc, unsigned int offset,
+@@ -17,6 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/debugfs.h>
+ #include <linux/uaccess.h>
++#include <linux/slab.h>
  
- 	mockup_gpio_set(gc, offset, value);
- 	cntr->stats[offset].dir = OUT;
+ #include "gpiolib.h"
+ 
+@@ -48,6 +49,10 @@ static int gpio_mockup_ranges[MAX_GC << 1];
+ static int gpio_mockup_params_nr;
+ module_param_array(gpio_mockup_ranges, int, &gpio_mockup_params_nr, 0400);
+ 
++static bool gpio_mockup_named_lines;
++module_param_named(gpio_mockup_named_lines,
++		   gpio_mockup_named_lines, bool, 0400);
 +
- 	return 0;
- }
+ static const char pins_name_start = 'A';
+ static struct dentry *dbg_dir;
  
-@@ -86,6 +87,7 @@ static int mockup_gpio_dirin(struct gpio_chip *gc, unsigned int offset)
- 	struct mockup_gpio_controller *cntr = gpiochip_get_data(gc);
- 
- 	cntr->stats[offset].dir = IN;
-+
- 	return 0;
- }
- 
-@@ -174,21 +176,22 @@ static int mockup_gpio_add(struct device *dev,
+@@ -169,7 +174,8 @@ static int mockup_gpio_add(struct device *dev,
  			   struct mockup_gpio_controller *cntr,
  			   const char *name, int base, int ngpio)
  {
-+	struct gpio_chip *gc = &cntr->gc;
- 	char **names;
- 	int ret, i;
+-	int ret;
++	char **names;
++	int ret, i;
  
--	cntr->gc.base = base;
--	cntr->gc.ngpio = ngpio;
--	cntr->gc.label = name;
--	cntr->gc.owner = THIS_MODULE;
--	cntr->gc.parent = dev;
--	cntr->gc.get = mockup_gpio_get;
--	cntr->gc.set = mockup_gpio_set;
--	cntr->gc.direction_output = mockup_gpio_dirout;
--	cntr->gc.direction_input = mockup_gpio_dirin;
--	cntr->gc.get_direction = mockup_gpio_get_direction;
--	cntr->gc.mockup = true;
--	cntr->stats = devm_kzalloc(dev, sizeof(*cntr->stats) * cntr->gc.ngpio,
-+	gc->base = base;
-+	gc->ngpio = ngpio;
-+	gc->label = name;
-+	gc->owner = THIS_MODULE;
-+	gc->parent = dev;
-+	gc->get = mockup_gpio_get;
-+	gc->set = mockup_gpio_set;
-+	gc->direction_output = mockup_gpio_dirout;
-+	gc->direction_input = mockup_gpio_dirin;
-+	gc->get_direction = mockup_gpio_get_direction;
-+	gc->mockup = true;
-+	cntr->stats = devm_kzalloc(dev, sizeof(*cntr->stats) * gc->ngpio,
- 				   GFP_KERNEL);
- 	if (!cntr->stats) {
+ 	cntr->gc.base = base;
+ 	cntr->gc.ngpio = ngpio;
+@@ -188,6 +194,28 @@ static int mockup_gpio_add(struct device *dev,
  		ret = -ENOMEM;
-@@ -197,26 +200,25 @@ static int mockup_gpio_add(struct device *dev,
- 
- 	if (gpio_mockup_named_lines) {
- 		names = devm_kzalloc(dev,
--				     sizeof(char *) * cntr->gc.ngpio,
--				     GFP_KERNEL);
-+				     sizeof(char *) * gc->ngpio, GFP_KERNEL);
- 		if (!names) {
- 			ret = -ENOMEM;
- 			goto err;
- 		}
- 
--		for (i = 0; i < cntr->gc.ngpio; i++) {
-+		for (i = 0; i < gc->ngpio; i++) {
- 			names[i] = devm_kasprintf(dev, GFP_KERNEL,
--						  "%s-%d", cntr->gc.label, i);
-+						  "%s-%d", gc->label, i);
- 			if (!names[i]) {
- 				ret = -ENOMEM;
- 				goto err;
- 			}
- 		}
- 
--		cntr->gc.names = (const char *const*)names;
-+		gc->names = (const char *const*)names;
+ 		goto err;
  	}
- 
--	ret = devm_gpiochip_add_data(dev, &cntr->gc, cntr);
-+	ret = devm_gpiochip_add_data(dev, gc, cntr);
++
++	if (gpio_mockup_named_lines) {
++		names = devm_kzalloc(dev,
++				     sizeof(char *) * cntr->gc.ngpio,
++				     GFP_KERNEL);
++		if (!names) {
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		for (i = 0; i < cntr->gc.ngpio; i++) {
++			names[i] = devm_kasprintf(dev, GFP_KERNEL,
++						  "%s-%d", cntr->gc.label, i);
++			if (!names[i]) {
++				ret = -ENOMEM;
++				goto err;
++			}
++		}
++
++		cntr->gc.names = (const char *const*)names;
++	}
++
+ 	ret = devm_gpiochip_add_data(dev, &cntr->gc, cntr);
  	if (ret)
  		goto err;
- 
 -- 
 2.9.3
+
