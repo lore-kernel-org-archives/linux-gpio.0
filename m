@@ -1,53 +1,61 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 0/7] gpio: mockup: extensions for testing purposes
-Date: Wed, 25 Jan 2017 16:34:14 +0100
-Message-ID: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
+Date: Wed, 25 Jan 2017 18:15:10 +0200
+Message-ID: <CAHp75VfaX=WLc-tLCXOwcs2t5fHfoYHZpeL6CMLKU1xQyBjMRw@mail.gmail.com>
+References: <20170125162608.58bfbfb1@endymion>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33638 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbdAYQPL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 11:15:11 -0500
+In-Reply-To: <20170125162608.58bfbfb1@endymion>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>
 
-I would like to create an automated test-suite for libgpiod, but
-the gpio-mockup driver is quite limited when it comes to current
-user space functionality - I can't test neither line event
-notifications nor finding GPIO lines by name.
+On Wed, Jan 25, 2017 at 5:26 PM, Jean Delvare <jdelvare@suse.de> wrote:
+> The pinctrl-baytrail driver builds just fine as a module so give
+> users this option.
+>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 
-This series proposes to extend the gpio framework by allowing to
-inject line events from the kernel code and by providing a debugfs
-interface for that to the gpio-mockup driver. We also allow the
-user to request that the mockup driver name the lines.
+Looks okay to me.
+FWIW:
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-The first patch contains only minor clean-ups. Patches 2/7-4/7
-implement the in-kernel mechanism for injecting events, while patch
-5/7 extends the mockup driver to provide a relevant debugfs interface.
+> ---
+> This was discussed almost one year ago, with no clear conclusion, but
+> also no evidence that the driver can't be built as a module. Is there
+> any way to push this forward?
+>
+>  drivers/pinctrl/intel/Kconfig |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-4.7-rc7.orig/drivers/pinctrl/intel/Kconfig    2016-07-12 14:35:36.024835842 +0200
+> +++ linux-4.7-rc7/drivers/pinctrl/intel/Kconfig 2016-07-12 14:35:44.735904433 +0200
+> @@ -3,7 +3,7 @@
+>  #
+>
+>  config PINCTRL_BAYTRAIL
+> -       bool "Intel Baytrail GPIO pin control"
+> +       tristate "Intel Baytrail GPIO pin control"
+>         depends on GPIOLIB && ACPI
+>         select GPIOLIB_IRQCHIP
+>         select PINMUX
+>
+>
+> --
+> Jean Delvare
+> SUSE L3 Support
 
-Patch 6/7 adds a new module param allowing to request naming of the
-lines.
 
-The last patch contains some coding style tweaks.
-
-Bartosz Golaszewski (7):
-  gpiolib: clean up includes
-  gpiolib: support monitoring mockup devices
-  gpio: mockup: set the mockup flag in struct gpio_chip
-  gpiolib: allow injecting line events
-  gpio: mockup: implement injecting events over debugfs
-  gpio: mockup: implement naming the GPIO lines
-  gpio: mockup: readability tweaks
-
- drivers/gpio/gpio-dwapb.c      |   1 -
- drivers/gpio/gpio-mockup.c     | 147 +++++++++++++++++++++++++++++++++++++----
- drivers/gpio/gpio-xgene-sb.c   |   1 -
- drivers/gpio/gpiolib-acpi.c    |   2 -
- drivers/gpio/gpiolib-devprop.c |   2 -
- drivers/gpio/gpiolib-legacy.c  |   3 -
- drivers/gpio/gpiolib-of.c      |   1 -
- drivers/gpio/gpiolib-sysfs.c   |   2 -
- drivers/gpio/gpiolib.c         |  44 +++++++++---
- drivers/gpio/gpiolib.h         |   5 ++
- include/linux/gpio/driver.h    |   4 ++
- 11 files changed, 175 insertions(+), 37 deletions(-)
 
 -- 
-2.9.3
+With Best Regards,
+Andy Shevchenko
