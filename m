@@ -1,39 +1,43 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 0/7] Implement generic regulator constraints parsing for
- ACPI and OF
-Date: Wed, 25 Jan 2017 13:55:21 +0100
-Message-ID: <CAJZ5v0hHSadH1KLOGg029VU2qrY900ak0=NnH5HPBKZ=FpB7HQ@mail.gmail.com>
-References: <20170125000641.25520-1-furquan@chromium.org> <20170125124911.dxveow7bo3zw5jcc@sirena.org.uk>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
+Date: Wed, 25 Jan 2017 14:03:21 +0000
+Message-ID: <20170125140321.23911-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:33152 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751386AbdAYMzX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 07:55:23 -0500
-In-Reply-To: <20170125124911.dxveow7bo3zw5jcc@sirena.org.uk>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36499 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751576AbdAYOD2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 09:03:28 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Furquan Shaikh <furquan@chromium.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, Jan 25, 2017 at 1:49 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Jan 24, 2017 at 04:06:34PM -0800, Furquan Shaikh wrote:
->
->> Since regulator properties remain the same across OF and ACPI
->> regulators, this series of patches provides common routine for
->> obtaining regulation constraints from device tree and ACPI nodes. In
->
-> As Lorenzo explained this is really not a good idea, ACPI has a power
-> management model which is just being ignored here.  If you're producing
-> systems using ACPI you really need to use ACPI in a joined up fashion
-> rather than just blindly importing all DT bindings into ACPI.  While
-> there are many areas where ACPI just doesn't do anything and as a result
-> it does make sense to reuse existing DT bindings there are also plenty
-> of areas where work has been done on the ACPI side.  Regulators and
-> power management are definitely one of those areas.
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-This is exactly right. :-)
+In case of error, the function devm_ioremap() returns NULL pointer
+not ERR_PTR(). The IS_ERR() test in the return value check should
+be replaced with NULL test.
 
-Thanks,
-Rafael
+Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
+IORESOURCE_MEM for one pin-bank")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 3bc925f..9c03eab 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1009,7 +1009,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+ 		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
+ 						resource_size(res));
+-		if (IS_ERR(virt_base[i]))
++		if (!virt_base[i])
+ 			return ERR_PTR(-EIO);
+ 	}
+
