@@ -1,89 +1,68 @@
-From: Furquan Shaikh <furquan@chromium.org>
-Subject: [PATCH 2/7] ACPI / property: have acpi_get_next_subnode take fwnode_handle
-Date: Tue, 24 Jan 2017 16:06:36 -0800
-Message-ID: <20170125000641.25520-3-furquan@chromium.org>
-References: <20170125000641.25520-1-furquan@chromium.org>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170125000641.25520-1-furquan@chromium.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Dmitry Torokhov <dtor@chromium.org>, Furquan Shaikh <furquan@>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: controlling pinctrl GPIOs from userspace on x86
+Date: Wed, 25 Jan 2017 11:25:22 +0200
+Message-ID: <20170125092522.GN17297@lahna.fi.intel.com>
+References: <9201895.LkQO1ovFfJ@rdx.n.i2n>
+ <CACRpkdaNBiyEqRYgoD-k+TEC90_fq-LAnfH3uJ6Ar8OqjWooZg@mail.gmail.com>
+ <4151584.CJCGa0bWPQ@rdx.n.i2n>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:12656 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751381AbdAYJZy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 25 Jan 2017 04:25:54 -0500
+Content-Disposition: inline
+In-Reply-To: <4151584.CJCGa0bWPQ@rdx.n.i2n>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Gerd v. Egidy" <lists@egidy.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Dmitry Torokhov <dtor@chromium.org>
+On Wed, Jan 25, 2017 at 12:25:20AM +0100, Gerd v. Egidy wrote:
+> Hi Linus,
+> 
+> thank you for answering after such a long time.
+> 
+> > - What kernel version are you running?
+> 
+> I tried it with a 4.8.12 which was reasonably current when I tried it in 
+> december.
+> 
+> > - Have you tried compiling tools/gpio/* and running "lsgpio"?
+> 
+> nope.
+> 
+> > That said, GPIO can use pin control as a back-end and pin control
+> > drivers are often "dual devices" registering both pin control and GPIO.
+> 
+> The pinctrl-sunrisepoint driver does not seem to be such a dual device.
 
-In preparation to introducing fwnode_for_each_chil() iterator we need
-acpi_get_next_subnode take fwnode_handle argument instead of dev.
+It does actually.
 
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Signed-off-by: Furquan Shaikh <furquan@chromium.org>
----
- drivers/acpi/property.c | 8 +++++---
- drivers/base/property.c | 2 +-
- include/linux/acpi.h    | 5 +++--
- 3 files changed, 9 insertions(+), 6 deletions(-)
+> What other ways instead of a dual device driver are there to expose pin 
+> control pins through the GPIO subsystem?
+> 
+> Is there some kind of translation driver which takes a pinctrl pin with some 
+> extra information (like push-pull vs. open drain etc.) and creates a user 
+> accessible entry in the gpio subsystem from it?
+> 
+> If not, wouldn't it make sense to have such a thing?
 
-diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-index 3afddcd834ef..b87e822e3a51 100644
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -866,15 +866,17 @@ int acpi_node_prop_read(struct fwnode_handle *fwnode,  const char *propname,
- 
- /**
-  * acpi_get_next_subnode - Return the next child node handle for a device.
-- * @dev: Device to find the next child node for.
-+ * @node: node to find the next child node for. Must be ACPI device node,
-+ *	not data node.
-  * @child: Handle to one of the device's child nodes or a null handle.
-  */
--struct fwnode_handle *acpi_get_next_subnode(struct device *dev,
-+struct fwnode_handle *acpi_get_next_subnode(struct fwnode_handle *node,
- 					    struct fwnode_handle *child)
- {
--	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	struct acpi_device *adev;
- 	struct list_head *head, *next;
- 
-+	adev = to_acpi_device_node(node);
- 	if (!adev)
- 		return NULL;
- 
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 43a36d68c3fd..f2f8220534c4 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -881,7 +881,7 @@ struct fwnode_handle *device_get_next_child_node(struct device *dev,
- 		if (node)
- 			return &node->fwnode;
- 	} else if (IS_ENABLED(CONFIG_ACPI)) {
--		return acpi_get_next_subnode(dev, child);
-+		return acpi_get_next_subnode(dev->fwnode, child);
- 	}
- 	return NULL;
- }
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 5b36974ed60a..0331a9dbe4f2 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -999,7 +999,7 @@ int acpi_node_prop_read(struct fwnode_handle *fwnode, const char *propname,
- int acpi_dev_prop_read(struct acpi_device *adev, const char *propname,
- 		       enum dev_prop_type proptype, void *val, size_t nval);
- 
--struct fwnode_handle *acpi_get_next_subnode(struct device *dev,
-+struct fwnode_handle *acpi_get_next_subnode(struct fwnode_handle *node,
- 					    struct fwnode_handle *subnode);
- 
- struct acpi_probe_entry;
-@@ -1117,7 +1117,8 @@ static inline int acpi_dev_prop_read(struct acpi_device *adev,
- 	return -ENXIO;
- }
- 
--static inline struct fwnode_handle *acpi_get_next_subnode(struct device *dev,
-+static inline struct fwnode_handle *acpi_get_next_subnode(
-+						struct fwnode_handle *node,
- 						struct fwnode_handle *subnode)
- {
- 	return NULL;
--- 
-2.11.0.483.g087da7b7c-goog
+So you can use the older sysfs ABI also to access the pin:
 
+# grep SATAXPCIE_1 /sys/kernel/debug/pinctrl/INT344B\:00/pins                 
+pin 97 (SATAXPCIE_1) mode 1 0x44000700 0x00000019
+
+# cat /sys/kernel/debug/pinctrl/INT344B\:00/gpio-ranges 
+GPIO ranges handled:
+0: INT344B:00 GPIOS [360 - 511] PINS [0 - 151]
+
+# echo $((360+97)) > /sys/class/gpio/export 
+[   86.778304] sunrisepoint-pinctrl INT344B:00: request pin 97 (SATAXPCIE_1) for INT344B:00:457
+
+This will change the pin SATAXPCIE_1 to a GPIO and makes it accessible
+from userspace via /sys/class/gpio/gpio457/*.
+
+Note you should really know what you are doing if you are going to
+toggle random GPIOS.
