@@ -1,52 +1,48 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH -next] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
-Date: Wed, 25 Jan 2017 23:25:43 +0900
-Message-ID: <CA+Ln22Gs62a2+YTCUBoWdv95=oUWoW_W_+pP59U+z8T668fQtA@mail.gmail.com>
-References: <20170125140321.23911-1-weiyj.lk@gmail.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
+Date: Wed, 25 Jan 2017 16:26:08 +0100
+Message-ID: <20170125162608.58bfbfb1@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34131 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752074AbdAYOZp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 09:25:45 -0500
-In-Reply-To: <20170125140321.23911-1-weiyj.lk@gmail.com>
+Received: from mx2.suse.de ([195.135.220.15]:46756 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750744AbdAYP0P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 25 Jan 2017 10:26:15 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>
 
-Hi Wei,
+The pinctrl-baytrail driver builds just fine as a module so give
+users this option.
 
-2017-01-25 23:03 GMT+09:00 Wei Yongjun <weiyj.lk@gmail.com>:
-> From: Wei Yongjun <weiyongjun1@huawei.com>
->
-> In case of error, the function devm_ioremap() returns NULL pointer
-> not ERR_PTR(). The IS_ERR() test in the return value check should
-> be replaced with NULL test.
->
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
-> IORESOURCE_MEM for one pin-bank")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 3bc925f..9c03eab 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1009,7 +1009,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
->                 res = platform_get_resource(pdev, IORESOURCE_MEM, i);
->                 virt_base[i] = devm_ioremap(&pdev->dev, res->start,
->                                                 resource_size(res));
-> -               if (IS_ERR(virt_base[i]))
-> +               if (!virt_base[i])
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
+This was discussed almost one year ago, with no clear conclusion, but
+also no evidence that the driver can't be built as a module. Is there
+any way to push this forward?
 
-I'd rather replace devm_ioremap() (and explicit resource struct
-dereferencing, without any checks by the way), with
-devm_ioremap_resource() (which actually returns ERR_PTR()s, so no need
-to change the condition with it).
+ drivers/pinctrl/intel/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Tomasz
+--- linux-4.7-rc7.orig/drivers/pinctrl/intel/Kconfig	2016-07-12 14:35:36.024835842 +0200
++++ linux-4.7-rc7/drivers/pinctrl/intel/Kconfig	2016-07-12 14:35:44.735904433 +0200
+@@ -3,7 +3,7 @@
+ #
+ 
+ config PINCTRL_BAYTRAIL
+-	bool "Intel Baytrail GPIO pin control"
++	tristate "Intel Baytrail GPIO pin control"
+ 	depends on GPIOLIB && ACPI
+ 	select GPIOLIB_IRQCHIP
+ 	select PINMUX
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
