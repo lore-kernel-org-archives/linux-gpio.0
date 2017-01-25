@@ -1,43 +1,52 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
-Date: Wed, 25 Jan 2017 14:03:21 +0000
-Message-ID: <20170125140321.23911-1-weiyj.lk@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH -next] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
+Date: Wed, 25 Jan 2017 23:25:43 +0900
+Message-ID: <CA+Ln22Gs62a2+YTCUBoWdv95=oUWoW_W_+pP59U+z8T668fQtA@mail.gmail.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36499 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751576AbdAYOD2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 09:03:28 -0500
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34131 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752074AbdAYOZp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 09:25:45 -0500
+In-Reply-To: <20170125140321.23911-1-weiyj.lk@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Hi Wei,
 
-In case of error, the function devm_ioremap() returns NULL pointer
-not ERR_PTR(). The IS_ERR() test in the return value check should
-be replaced with NULL test.
+2017-01-25 23:03 GMT+09:00 Wei Yongjun <weiyj.lk@gmail.com>:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+>
+> In case of error, the function devm_ioremap() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should
+> be replaced with NULL test.
+>
+> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
+> IORESOURCE_MEM for one pin-bank")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 3bc925f..9c03eab 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1009,7 +1009,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+>                 res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+>                 virt_base[i] = devm_ioremap(&pdev->dev, res->start,
+>                                                 resource_size(res));
+> -               if (IS_ERR(virt_base[i]))
+> +               if (!virt_base[i])
 
-Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
-IORESOURCE_MEM for one pin-bank")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'd rather replace devm_ioremap() (and explicit resource struct
+dereferencing, without any checks by the way), with
+devm_ioremap_resource() (which actually returns ERR_PTR()s, so no need
+to change the condition with it).
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 3bc925f..9c03eab 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1009,7 +1009,7 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
- 		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
- 						resource_size(res));
--		if (IS_ERR(virt_base[i]))
-+		if (!virt_base[i])
- 			return ERR_PTR(-EIO);
- 	}
-
+Best regards,
+Tomasz
