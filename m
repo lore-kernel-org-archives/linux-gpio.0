@@ -1,48 +1,33 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
-Date: Wed, 25 Jan 2017 16:26:08 +0100
-Message-ID: <20170125162608.58bfbfb1@endymion>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:46756 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750744AbdAYP0P (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 25 Jan 2017 10:26:15 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 3/7] gpio: mockup: set the mockup flag in struct gpio_chip
+Date: Wed, 25 Jan 2017 16:34:17 +0100
+Message-ID: <1485358461-24070-4-git-send-email-bgolaszewski@baylibre.com>
+References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>
 
-The pinctrl-baytrail driver builds just fine as a module so give
-users this option.
+gpio-mockup creates dummy devices, so indicate it.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-This was discussed almost one year ago, with no clear conclusion, but
-also no evidence that the driver can't be built as a module. Is there
-any way to push this forward?
+ drivers/gpio/gpio-mockup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/pinctrl/intel/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-4.7-rc7.orig/drivers/pinctrl/intel/Kconfig	2016-07-12 14:35:36.024835842 +0200
-+++ linux-4.7-rc7/drivers/pinctrl/intel/Kconfig	2016-07-12 14:35:44.735904433 +0200
-@@ -3,7 +3,7 @@
- #
- 
- config PINCTRL_BAYTRAIL
--	bool "Intel Baytrail GPIO pin control"
-+	tristate "Intel Baytrail GPIO pin control"
- 	depends on GPIOLIB && ACPI
- 	select GPIOLIB_IRQCHIP
- 	select PINMUX
-
-
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 82a9efd..cf8b1b2 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -101,6 +101,7 @@ static int mockup_gpio_add(struct device *dev,
+ 	cntr->gc.direction_output = mockup_gpio_dirout;
+ 	cntr->gc.direction_input = mockup_gpio_dirin;
+ 	cntr->gc.get_direction = mockup_gpio_get_direction;
++	cntr->gc.mockup = true;
+ 	cntr->stats = devm_kzalloc(dev, sizeof(*cntr->stats) * cntr->gc.ngpio,
+ 				   GFP_KERNEL);
+ 	if (!cntr->stats) {
 -- 
-Jean Delvare
-SUSE L3 Support
+2.9.3
