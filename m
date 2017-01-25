@@ -1,71 +1,206 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/7] Implement generic regulator constraints parsing for
- ACPI and OF
-Date: Wed, 25 Jan 2017 18:49:49 +0000
-Message-ID: <20170125184949.x2wkoo7kbaaajkjk@sirena.org.uk>
-References: <20170125000641.25520-1-furquan@chromium.org>
- <20170125124911.dxveow7bo3zw5jcc@sirena.org.uk>
- <CAJZ5v0hHSadH1KLOGg029VU2qrY900ak0=NnH5HPBKZ=FpB7HQ@mail.gmail.com>
- <CAEGmHFG1d24k3+qT_aoqRmPFzciAbNObCnzY1d8pQWjEW+3HxA@mail.gmail.com>
- <20170125182319.GB25470@leverpostej>
- <20170125182955.uznr5ehpx4dabcon@sirena.org.uk>
- <20170125183420.GC25470@leverpostej>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 3/7] pinctrl: samsung: Add support for pad retention
+ control for Exynos5433 SoCs
+Date: Wed, 25 Jan 2017 20:51:52 +0200
+Message-ID: <20170125185152.6wedhwibl2q3mlp5@kozik-lap>
+References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115103eucas1p1b37096286fb65c64acf8f74222d473af@eucas1p1.samsung.com>
+ <1485345031-2948-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="m2wbrdgsmguypckw"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36017 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752005AbdAYSwD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 25 Jan 2017 13:52:03 -0500
 Content-Disposition: inline
-In-Reply-To: <20170125183420.GC25470@leverpostej>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Furquan Shaikh <furquan@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, ACPI
+In-Reply-To: <1485345031-2948-4-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+On Wed, Jan 25, 2017 at 12:50:27PM +0100, Marek Szyprowski wrote:
+> This patch adds support for retention control for Exynos5433 SoCs. Three
+> groups of pins has been defined for retention control: common shared group
+> for ALIVE, CPIF, eSE, FINGER, IMEM, NFC, PERIC, TOUCH pin banks and
+> separate control for FSYS and AUD pin banks, for which PMU retention
+> registers match whole banks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c    | 58 +++++++++++++++++++++++++++++
+>  include/linux/soc/samsung/exynos-regs-pmu.h | 19 ++++++++++
+>  2 files changed, 77 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index fa3802970570..f854c92209e1 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -1551,6 +1551,54 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
+>  };
+>  
+> +/* PMU pin retention groups registers for Exynos5433 (without audio & fsys) */
+> +static const u32 exynos5433_retention_regs[] = {
+> +	EXYNOS5433_PAD_RETENTION_TOP_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_UART_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_EBIA_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_EBIB_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_SPI_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_MIF_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_USBXTI_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_BOOTLDO_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_UFS_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION,
+> +};
+> +
+> +static const struct samsung_retention_data exynos5433_retention_data __initconst = {
+> +	.regs	 = exynos5433_retention_regs,
+> +	.nr_regs = ARRAY_SIZE(exynos5433_retention_regs),
+> +	.value	 = PAD_INITIATE_WAKEUP,
+> +	.refcnt	 = &exynos_shared_retention_refcnt,
+> +	.init	 = exynos_retention_init,
+> +};
+> +
+> +/* PMU retention control for audio pins can be tied to audio pin bank */
+> +static const u32 exynos5433_audio_retention_regs[] = {
+> +	EXYNOS5433_PAD_RETENTION_AUD_OPTION,
+> +};
+> +
+> +static const struct samsung_retention_data exynos5433_audio_retention_data __initconst = {
+> +	.regs	 = exynos5433_audio_retention_regs,
+> +	.nr_regs = ARRAY_SIZE(exynos5433_audio_retention_regs),
+> +	.value	 = PAD_INITIATE_WAKEUP,
+> +	.init	 = exynos_retention_init,
+> +};
+> +
+> +/* PMU retention control for mmc pins can be tied to fsys pin bank */
+> +static const u32 exynos5433_fsys_retention_regs[] = {
+> +	EXYNOS5433_PAD_RETENTION_MMC0_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_MMC1_OPTION,
+> +	EXYNOS5433_PAD_RETENTION_MMC2_OPTION,
+> +};
+> +
+> +static const struct samsung_retention_data exynos5433_fsys_retention_data __initconst = {
+> +	.regs	 = exynos5433_fsys_retention_regs,
+> +	.nr_regs = ARRAY_SIZE(exynos5433_fsys_retention_regs),
+> +	.value	 = PAD_INITIATE_WAKEUP,
+> +	.init	 = exynos_retention_init,
+> +};
+> +
+>  /*
+>   * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
+>   * ten gpio/pin-mux/pinconfig controllers.
+> @@ -1564,6 +1612,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+>  		.nr_ext_resources = 1,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 1 data */
+>  		.pin_banks	= exynos5433_pin_banks1,
+> @@ -1571,6 +1620,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_audio_retention_data,
+>  	}, {
+>  		/* pin-controller instance 2 data */
+>  		.pin_banks	= exynos5433_pin_banks2,
+> @@ -1578,6 +1628,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 3 data */
+>  		.pin_banks	= exynos5433_pin_banks3,
+> @@ -1585,6 +1636,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 4 data */
+>  		.pin_banks	= exynos5433_pin_banks4,
+> @@ -1592,6 +1644,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 5 data */
+>  		.pin_banks	= exynos5433_pin_banks5,
+> @@ -1599,6 +1652,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_fsys_retention_data,
+>  	}, {
+>  		/* pin-controller instance 6 data */
+>  		.pin_banks	= exynos5433_pin_banks6,
+> @@ -1606,6 +1660,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 7 data */
+>  		.pin_banks	= exynos5433_pin_banks7,
+> @@ -1613,6 +1668,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 8 data */
+>  		.pin_banks	= exynos5433_pin_banks8,
+> @@ -1620,6 +1676,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	}, {
+>  		/* pin-controller instance 9 data */
+>  		.pin_banks	= exynos5433_pin_banks9,
+> @@ -1627,6 +1684,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
+>  		.suspend	= exynos_pinctrl_suspend,
+>  		.resume		= exynos_pinctrl_resume,
+> +		.retention_data	= &exynos5433_retention_data,
+>  	},
+>  };
+>  
+> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+> index d30186e2b609..6a160e2ef4f0 100644
+> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+> @@ -690,4 +690,23 @@
+>  					 | EXYNOS5420_KFC_USE_STANDBY_WFI2  \
+>  					 | EXYNOS5420_KFC_USE_STANDBY_WFI3)
+>  
+> +/* For EXYNOS5433 */
+> +#define EXYNOS5433_PAD_RETENTION_AUD_OPTION			(0x3028)
+> +#define EXYNOS5433_PAD_RETENTION_MMC2_OPTION			(0x30C8)
+> +#define EXYNOS5433_PAD_RETENTION_TOP_OPTION			(0x3108)
+> +#define EXYNOS5433_PAD_RETENTION_UART_OPTION			(0x3128)
+> +#define EXYNOS5433_PAD_RETENTION_MMC0_OPTION			(0x3148)
+> +#define EXYNOS5433_PAD_RETENTION_MMC1_OPTION			(0x3168)
+> +#define EXYNOS5433_PAD_RETENTION_EBIA_OPTION			(0x3188)
+> +#define EXYNOS5433_PAD_RETENTION_EBIB_OPTION			(0x31A8)
+> +#define EXYNOS5433_PAD_RETENTION_SPI_OPTION			(0x31C8)
+> +#define EXYNOS5433_PAD_RETENTION_MIF_OPTION			(0x31E8)
+> +#define EXYNOS5433_PAD_RETENTION_USBXTI_OPTION			(0x3228)
+> +#define EXYNOS5433_PAD_RETENTION_BOOTLDO_OPTION			(0x3248)
+> +#define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
+> +#define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
+> +
+> +/* EXYNOS5433_PAD_RETENTION_*_OPTION */
+> +#define PAD_INITIATE_WAKEUP					(0x1 << 28)
 
---m2wbrdgsmguypckw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Use existing EXYNOS_WAKEUP_FROM_LOWPWR unless there is a reason not to
+use it?
 
-On Wed, Jan 25, 2017 at 06:34:20PM +0000, Mark Rutland wrote:
-> On Wed, Jan 25, 2017 at 06:29:55PM +0000, Mark Brown wrote:
-
-> > > Mark, this was added in this cycle; can we please rip that out for now?
-
-> > If it's instantiated directly we probably should.
-
-> I think that given the larger problem that needs to be addressed here,
-> and how the us of DSD properties muddies the water, it would be
-> preferable to remove it until we have some consensus.
-
-Can you send a patch with a writeup please?
-
-> > I think there's a reasonable chance that any ACPI specs could be written
-> > in such a way as to allow transparent support in Linux, the main thing
-> > I'd worry about is naming issues.
-
-> I think it's certainly possible to handle this so that drivers don't
-> largely have to care. I also think there is some massaging the needs to
-> be done (e.g. tables of names or some indirection for ACPI/DT
-> differences), and a unified API that tries to completely hide that is
-> not truly possible.
-
-Given how little consumers can assume about what they'll be allowed/able
-to do on a given system the naming should be about it - if anything else
-leaks through I'd be a bit worried.
-
---m2wbrdgsmguypckw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliI80wACgkQJNaLcl1U
-h9BWHAf/chblqjRrhy7ISRo+p8FnYmmOXh2WvjIeJfrJdeK3R8er0Q/Ig66UTU/t
-bMfB4/P2RSyc8rhoyg2InpjhQYzTkBOt/r+XVROCHs0qLQppyUYzlWH8OXcTGG8M
-kQ+LwJl77KNkGbCCFFmRxii4+0rpNaeKJHJidR+W5ffSUb/v60A3n2OhKGRIuOaV
-N/cdDUIPH1e4W1k9IWAlZWUmxIcVoqkZVZ5Lqoz0REfuqXLJPE8Iy3osk2iipDcd
-UYxZrbE43m0zxUBb74Pb4V7ff5Kaqst3zXVeHqXPjxv8/gzbMg2IfXUGRNHdBEbV
-pu14fLSXYIjU+gqarybtSDQjfNzE8w==
-=LoTK
------END PGP SIGNATURE-----
-
---m2wbrdgsmguypckw--
+Best regards,
+Krzysztof
