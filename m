@@ -1,68 +1,82 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: controlling pinctrl GPIOs from userspace on x86
-Date: Wed, 25 Jan 2017 11:25:22 +0200
-Message-ID: <20170125092522.GN17297@lahna.fi.intel.com>
-References: <9201895.LkQO1ovFfJ@rdx.n.i2n>
- <CACRpkdaNBiyEqRYgoD-k+TEC90_fq-LAnfH3uJ6Ar8OqjWooZg@mail.gmail.com>
- <4151584.CJCGa0bWPQ@rdx.n.i2n>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH] pinctrl: mediatek: Use real dependencies
+Date: Wed, 25 Jan 2017 10:32:09 +0100
+Message-ID: <20170125103209.1d97b0bd@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:12656 "EHLO mga11.intel.com"
+Received: from mx2.suse.de ([195.135.220.15]:45498 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751381AbdAYJZy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 25 Jan 2017 04:25:54 -0500
-Content-Disposition: inline
-In-Reply-To: <4151584.CJCGa0bWPQ@rdx.n.i2n>
+        id S1751565AbdAYJcP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 25 Jan 2017 04:32:15 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Gerd v. Egidy" <lists@egidy.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Biao Huang <biao.huang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, Andreas =?UTF-8?B?RsOkcmJlcg==?= <afaerber@suse.de>
 
-On Wed, Jan 25, 2017 at 12:25:20AM +0100, Gerd v. Egidy wrote:
-> Hi Linus,
-> 
-> thank you for answering after such a long time.
-> 
-> > - What kernel version are you running?
-> 
-> I tried it with a 4.8.12 which was reasonably current when I tried it in 
-> december.
-> 
-> > - Have you tried compiling tools/gpio/* and running "lsgpio"?
-> 
-> nope.
-> 
-> > That said, GPIO can use pin control as a back-end and pin control
-> > drivers are often "dual devices" registering both pin control and GPIO.
-> 
-> The pinctrl-sunrisepoint driver does not seem to be such a dual device.
+Do not hide pinctrl drivers for Mediatek platforms using
+conditionals. Doing so actually leaves the symbols present (but
+always disabled) on all other platforms, which is confusing and
+inefficient. Better use real dependencies so that the symbols do not
+exist at all on platforms where they are not relevant.
 
-It does actually.
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Reported-by: Andreas Färber <afaerber@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/pinctrl/mediatek/Kconfig |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-> What other ways instead of a dual device driver are there to expose pin 
-> control pins through the GPIO subsystem?
-> 
-> Is there some kind of translation driver which takes a pinctrl pin with some 
-> extra information (like push-pull vs. open drain etc.) and creates a user 
-> accessible entry in the gpio subsystem from it?
-> 
-> If not, wouldn't it make sense to have such a thing?
+--- linux-4.10-rc4.orig/drivers/pinctrl/mediatek/Kconfig	2017-01-01 23:31:53.000000000 +0100
++++ linux-4.10-rc4/drivers/pinctrl/mediatek/Kconfig	2017-01-25 10:29:00.465436987 +0100
+@@ -10,25 +10,29 @@ config PINCTRL_MTK
+ 
+ # For ARMv7 SoCs
+ config PINCTRL_MT2701
+-	bool "Mediatek MT2701 pin control" if COMPILE_TEST && !MACH_MT2701
++	bool "Mediatek MT2701 pin control"
++	depends on MACH_MT2701 || COMPILE_TEST
+ 	depends on OF
+ 	default MACH_MT2701
+ 	select PINCTRL_MTK
+ 
+ config PINCTRL_MT7623
+-	bool "Mediatek MT7623 pin control" if COMPILE_TEST && !MACH_MT7623
++	bool "Mediatek MT7623 pin control"
++	depends on MACH_MT7623 || COMPILE_TEST
+ 	depends on OF
+ 	default MACH_MT7623
+ 	select PINCTRL_MTK_COMMON
+ 
+ config PINCTRL_MT8135
+-	bool "Mediatek MT8135 pin control" if COMPILE_TEST && !MACH_MT8135
++	bool "Mediatek MT8135 pin control"
++	depends on MACH_MT8135 || COMPILE_TEST
+ 	depends on OF
+ 	default MACH_MT8135
+ 	select PINCTRL_MTK
+ 
+ config PINCTRL_MT8127
+-	bool "Mediatek MT8127 pin control" if COMPILE_TEST && !MACH_MT8127
++	bool "Mediatek MT8127 pin control"
++	depends on MACH_MT8127 || COMPILE_TEST
+ 	depends on OF
+ 	default MACH_MT8127
+ 	select PINCTRL_MTK
+@@ -43,7 +47,8 @@ config PINCTRL_MT8173
+ 
+ # For PMIC
+ config PINCTRL_MT6397
+-	bool "Mediatek MT6397 pin control" if COMPILE_TEST && !MFD_MT6397
++	bool "Mediatek MT6397 pin control"
++	depends on MFD_MT6397 || COMPILE_TEST
+ 	depends on OF
+ 	default MFD_MT6397
+ 	select PINCTRL_MTK
 
-So you can use the older sysfs ABI also to access the pin:
 
-# grep SATAXPCIE_1 /sys/kernel/debug/pinctrl/INT344B\:00/pins                 
-pin 97 (SATAXPCIE_1) mode 1 0x44000700 0x00000019
-
-# cat /sys/kernel/debug/pinctrl/INT344B\:00/gpio-ranges 
-GPIO ranges handled:
-0: INT344B:00 GPIOS [360 - 511] PINS [0 - 151]
-
-# echo $((360+97)) > /sys/class/gpio/export 
-[   86.778304] sunrisepoint-pinctrl INT344B:00: request pin 97 (SATAXPCIE_1) for INT344B:00:457
-
-This will change the pin SATAXPCIE_1 to a GPIO and makes it accessible
-from userspace via /sys/class/gpio/gpio457/*.
-
-Note you should really know what you are doing if you are going to
-toggle random GPIOS.
+-- 
+Jean Delvare
+SUSE L3 Support
