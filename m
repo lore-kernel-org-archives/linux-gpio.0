@@ -1,42 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: How to ensure other module/driver is initialized?
-Date: Thu, 26 Jan 2017 15:51:12 +0100
-Message-ID: <CACRpkdZFBCv_vHn2pH7b-Ue-hA6bQw7QTbVZ8zi3W_3xBymBuA@mail.gmail.com>
-References: <180b9075-7db0-1708-50f4-622333de2049@gmail.com>
- <CACRpkdYjUKimX+R0nZv5v+rhdUxAUtKv4pPu0dtGAYhEP1Ri7Q@mail.gmail.com> <6a8fe8d3-024b-1cf7-0e2e-1421042036da@gmail.com>
+Subject: Re: [PATCH 1/5] gpio: 104-dio-48e: Utilize devm_ functions in driver
+ probe callback
+Date: Thu, 26 Jan 2017 15:53:02 +0100
+Message-ID: <CACRpkdbK86RoXFXOM8MHi=U=DafF8A5Hi+jmnVcSbQeOFL6MKg@mail.gmail.com>
+References: <cover.1485287208.git.vilhelm.gray@gmail.com> <282c88e9bee6c5edc16637e37cecb4b4b4c80898.1485287208.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6a8fe8d3-024b-1cf7-0e2e-1421042036da@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ian Pilcher <arequipeno@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:35539 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752396AbdAZOxE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 09:53:04 -0500
+Received: by mail-io0-f170.google.com with SMTP id j18so38151054ioe.2
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 06:53:04 -0800 (PST)
+In-Reply-To: <282c88e9bee6c5edc16637e37cecb4b4b4c80898.1485287208.git.vilhelm.gray@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jan 24, 2017 at 5:40 PM, Ian Pilcher <arequipeno@gmail.com> wrote:
+On Tue, Jan 24, 2017 at 9:00 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-> Device tree presents even greater problems.  It's not clear to me that
-> device tree even works with x86_64, and even if it does, I'm almost
-> positive that none of the "generic" distributions are going to support
-> it.
+> The devm_ resource manager functions allow memory to be automatically
+> released when a device is unbound. This patch takes advantage of the
+> resource manager functions and replaces the gpiochip_add_data call and
+> request_irq call with the devm_gpiochip_add_data call and
+> devm_request_irq call respectively. In addition, the dio48e_remove
+> function has been removed as no longer necessary due to the use of the
+> relevant devm_ resource manager functions.
 >
-> If my understanding of device tree is inaccurate, please do let me
-> know.  I'd definitely like to replace the "board" module with a
-> device tree description if it's possible.
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Sorry for my ignorance. I thought this was some ARM or MIPS thing.
-
-It should indeed come in as a board file for x86 systems,
-unless they have ACPI to do what DT does on other platforms,
-which modern systems do.
-
-The way on these systems is to put a file in
-drivers/platform/x86/* I think, but I know too little about
-x86 for that.
-
-I do think it'll be accepted upstream nevertheless, we do not
-really count users but rather check whether the code is nice
-and maintainable.
+Patch applied.
 
 Yours,
 Linus Walleij
