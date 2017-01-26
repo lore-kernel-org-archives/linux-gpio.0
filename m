@@ -1,31 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mvebu: remove unused variable
-Date: Thu, 26 Jan 2017 15:18:02 +0100
-Message-ID: <CACRpkdb3ULOZL=6FquLtJgARjPEg8o2PdxJPK-o=JOAqnyETXQ@mail.gmail.com>
-References: <20170123121751.3218467-1-arnd@arndb.de>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
+Date: Thu, 26 Jan 2017 14:19:40 +0000
+Message-ID: <SG2PR06MB1165815FB376075BC9B7406F8A770@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB1165F5A3E97EF8381288EDC18A770@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <718c2f23-c627-628a-dd27-a52a32afaee4@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170123121751.3218467-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <718c2f23-c627-628a-dd27-a52a32afaee4@jmondi.org>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 23, 2017 at 1:17 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+Hi Jacopo,
 
-> A cleanup caused a harmless warning:
->
-> drivers/pinctrl/mvebu/pinctrl-kirkwood.c: In function 'kirkwood_pinctrl_probe':
-> drivers/pinctrl/mvebu/pinctrl-kirkwood.c:460:19: error: unused variable 'res' [-Werror=unused-variable]
->
-> The obvious fix is to remove the declaration of the now unused
-> variable.
->
-> Fixes: ad9ec4ecee68 ("pinctrl: mvebu: switch drivers to generic simple mmio")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Thursday, January 26, 2017, jacopo mondi wrote:
+> > I think we should try to avoid the rz naming as much as possible since
+> > this driver will hopefully be useful for other future Renesas devices
+> > if they move to a similar pin-control type method. Maybe future "R-car"
+> SoCs?
+> > Or, maybe Renesas Marketing decides to come up with a new name for SoCs=
+.
+> >
+> > Otherwise, you could end up with a directly like "mach-shmobile"
+> > filled with a bunch of...well...not SH-Mobile parts.
+> >
+> > Maybe just
+> >   drivers/pinctrl/renesas/pinctrl-renesas.c
+> >
+>=20
+> Wouldn't this be confusing, as most of renesas SoC are supported through
+> drivers/pinctrl/sh-pfc instead?
 
-Patch applied.
+It's already confusing that a bunch of ARM parts use a "sh" pin controller.
 
-Yours,
-Linus Walleij
+In reality, any Renesas device could be a peripheral mix of ex-Mitsubishi,
+ex-Hitachi, ex-NEC or Renesas original. Or, some IP was licensed from a 3rd
+party (ie, the SDHI/TMIO controller).
+The only thing consistent is "Renesas".
+
+> I agree on dropping the rz name, if more SoC will come and join the pin-
+> based PFC realm...
+
+I will suggest it for the next generation of SoCs, so we'll see what happen=
+s...
+
+Thanks,
+Chris
