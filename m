@@ -1,74 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.10
-Date: Thu, 26 Jan 2017 14:42:24 +0100
-Message-ID: <CACRpkdZjLtDWbVLr70RibYe4YUjo7hWXPZ0kAPM_5ujH01d+Lg@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
+Date: Thu, 26 Jan 2017 15:43:41 +0200
+Message-ID: <20170126134341.GI17297@lahna.fi.intel.com>
+References: <20170126142020.7bfd1229@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:65066 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751733AbdAZNnp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 08:43:45 -0500
+Content-Disposition: inline
+In-Reply-To: <20170126142020.7bfd1229@endymion>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Cristina Ciocan <cristina.ciocan@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
 
-Hi Linus,
+On Thu, Jan 26, 2017 at 02:20:20PM +0100, Jean Delvare wrote:
+> Hi Cristina,
+> 
+> In this commit:
+> 
+> commit 658b476c742fe379e7020309fd590a27b457a4c1
+> Date:   Fri Apr 1 14:00:07 2016 +0300
+> 
+>     pinctrl: baytrail: Add debounce configuration
+> 
+> you added support for getting and setting debounce configuration for
+> the Baytrail pins. Now gcc complains about the following:
+> 
+>   CC [M]  drivers/pinctrl/intel/pinctrl-baytrail.o
+> drivers/pinctrl/intel/pinctrl-baytrail.c: In function ‘byt_pin_config_set’:
+> drivers/pinctrl/intel/pinctrl-baytrail.c:1181:17: warning: variable ‘debounce’ set but not used [-Wunused-but-set-variable]
+>   u32 conf, val, debounce;
+>                  ^
+> 
+> I looked at the code, and it indeed looks wrong. You are reading the
+> BYT_DEBOUNCE_REG register, clearing the debounce time bits from it, and
+> then writing the debounce time bits to the *BYT_CONF0_REG* register.
+> This is certainly corrupting the chip configuration, as the
+> configuration register bits 2-0 have a completely different meaning
+> (mux configuration.)
 
-here is a bunch of pin control fixes for v4.10 that didn't get
-sent off until now, sorry for the delay.
+Yes, you are right.
 
-Please pull them in, it's only driver fixes.
+This is fixed by following commit from Andy:
 
-Yours,
-Linus Walleij
-
-The following changes since commit a121103c922847ba5010819a3f250f1f7fc84ab8:
-
-  Linux 4.10-rc3 (2017-01-08 14:18:17 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.10-3
-
-for you to fetch changes up to df1539c25cce98e2ac69881958850c6535240707:
-
-  pinctrl: uniphier: fix Ethernet (RMII) pin-mux setting for LD20
-(2017-01-19 10:36:40 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for v4.10:
-
-- A bunch of fixes to the Intel drivers: broxton, baytrail.
-  Bugs related to register offsets, IRQ, debounce functionality.
-
-- Fix a conflict amongst UART settings on the meson.
-
-- Fix the ethernet setting on the Uniphier.
-
-- A compilation warning squelched.
-
-----------------------------------------------------------------
-Andy Shevchenko (3):
-      pinctrl: intel: Set pin direction properly
-      pinctrl: baytrail: Rectify debounce support
-      pinctrl: baytrail: Do not add all GPIOs to IRQ domain
-
-Arnd Bergmann (1):
-      pinctrl: amd: avoid maybe-uninitalized warning
-
-Martin Blumenstingl (1):
-      pinctrl: meson: fix uart_ao_b for GXBB and GXL/GXM
-
-Masahiro Yamada (1):
-      pinctrl: uniphier: fix Ethernet (RMII) pin-mux setting for LD20
-
-Mika Westerberg (1):
-      pinctrl: broxton: Use correct PADCFGLOCK offset
-
- drivers/pinctrl/intel/pinctrl-baytrail.c         | 39 +++++++++++++++---------
- drivers/pinctrl/intel/pinctrl-broxton.c          |  2 +-
- drivers/pinctrl/intel/pinctrl-intel.c            | 30 +++++++++++-------
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c       |  7 ++---
- drivers/pinctrl/meson/pinctrl-meson-gxl.c        |  7 ++---
- drivers/pinctrl/pinctrl-amd.c                    |  2 ++
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c |  2 +-
- 7 files changed, 54 insertions(+), 35 deletions(-)
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=fixes&id=04ff5a095d662e0879f0eb04b9247e092210aeff
