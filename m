@@ -1,56 +1,36 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to
- tristate
-Date: Thu, 26 Jan 2017 10:05:06 +0100
-Message-ID: <20170126100506.5edf26e3@endymion>
-References: <20170125162608.58bfbfb1@endymion>
-        <20170125161651.GX17297@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 05/13] pinctrl: samsung: Remove messages for failed
+ memory allocation
+Date: Thu, 26 Jan 2017 10:05:29 +0100
+Message-ID: <CACRpkdb+YYC3+JjspvP5b1Tb4_v7RVpL91ZTiHNZ5iaWJa-jDw@mail.gmail.com>
+References: <CGME20170119134906eucas1p1561fd3b8174bfcf148d4f1f417bc6223@eucas1p1.samsung.com>
+ <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com> <1484833733-16082-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:36868 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752207AbdAZJFL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 04:05:11 -0500
-In-Reply-To: <20170125161651.GX17297@lahna.fi.intel.com>
+Received: from mail-it0-f54.google.com ([209.85.214.54]:36918 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753082AbdAZJFb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 04:05:31 -0500
+Received: by mail-it0-f54.google.com with SMTP id r185so30453552ita.0
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 01:05:31 -0800 (PST)
+In-Reply-To: <1484833733-16082-6-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Mika and all,
+On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-On Wed, 25 Jan 2017 18:16:51 +0200, Mika Westerberg wrote:
-> On Wed, Jan 25, 2017 at 04:26:08PM +0100, Jean Delvare wrote:
-> > The pinctrl-baytrail driver builds just fine as a module so give
-> > users this option.
-> > 
-> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> Assuming you have checked that nothing breaks in Baytrail, I'm fine with
-> this change,
+> Memory subsystem already prints message about failed memory
+> allocation, there is no need to do it in the drivers.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-I have not, as I do not have access to any Baytrail hardware. This is
-the very reason why I'd like this code to be buildable as a module: I'm
-not happy with a useless 50 kB driver being loaded on all my systems. I
-was hopping someone at Intel would have access to the hardware to
-perform the test.
+Patch applied.
 
-Meanwhile I have found that my patch is not good, because since I wrote
-it, Paul Gortmaker remove the module glue code from the driver itself:
-
-commit 360943a8d26265825025b88da32961bd9ad4f7c6
-Author: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date:   Mon Jun 6 22:43:01 2016 -0400
-
-    pinctrl: baytrail: make it explicitly non-modular
-
-This would have to be reverted first. Paul, do I understand it
-correctly that the commit above was generated automatically and was not
-specific to the pinctrl-baytrail driver?
-
--- 
-Jean Delvare
-SUSE L3 Support
+Yours,
+Linus Walleij
