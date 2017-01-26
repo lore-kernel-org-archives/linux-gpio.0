@@ -1,51 +1,40 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 01/13] soc: samsung: pmu: Provide global function to
- get PMU regmap
-Date: Thu, 26 Jan 2017 16:41:55 +0200
-Message-ID: <CAJKOXPefwmNwqV1=PkWrbU6Tj4AgK78Z2qo2DqJ8v4jMJH=8=Q@mail.gmail.com>
-References: <CGME20170119134904eucas1p153a1d5b2ff9826c88293b6a8fe5140bc@eucas1p1.samsung.com>
- <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
- <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com> <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
+ using get_gpiod_from_child
+Date: Thu, 26 Jan 2017 15:44:42 +0100
+Message-ID: <CACRpkdbe2x3q2cqQ0EqaAU-Be0-FXa8q-oUd5XCYdKMnB15gyg@mail.gmail.com>
+References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
+ <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com> <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752788AbdAZOmG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:42:06 -0500
-In-Reply-To: <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:38118 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753050AbdAZOon (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 09:44:43 -0500
+Received: by mail-it0-f51.google.com with SMTP id c7so34590182itd.1
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 06:44:43 -0800 (PST)
+In-Reply-To: <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, Jan 26, 2017 at 11:43 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->
->> PMU is something like a SoC wide service, so add a helper function to get
->> PMU regmap. This will be used by other Exynos device drivers. This way it
->> can be avoided to model this dependency in device tree (as phandles to PMU
->> node) for almost every device in the SoC.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
->
-> But why? I could understand it as a local header in
-> drivers/soc/samsung/*.h for those files.
+On Tue, Jan 24, 2017 at 12:18 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-Marek gave quite detailed answer... so let me just add minor note.
-Apparently we cannot satisfy everyone. When break the DT ABI, DT
-people are not happy. When we try to avoid ABI break, we create such
-dependency.
+> -gpio-780 (?): gpiod_set_debounce: missing set() or set_debounce() operations
+> +gpio-780 (SW30): gpiod_set_debounce: missing set() or set_debounce() operations
 
-In fact, such compile and runtime dependency is not unusual. Our
-drivers are coupled because our hardware modules are coupled. When
-they were put in arch/arm/mach-exynos, no one cared because everything
-was contained in mach-exynos. We try to move the code out of there
-thus we need to model such dependencies in a new way... or break the
-DT ABI.
+And there is a special problem.
 
-Best regards,
-Krzysztof
+I wanted, at one point, to take the timer-based debouncing code out of
+the GPIO keys input driver and make it into a generic fallback in
+gpiolib so that *any* GPIO controller could be made to provide
+debounce.
+
+I ran into some obstacle feelin it was impossible IIRC but do not
+remember what it was.
+
+Yours,
+Linus Walleij
