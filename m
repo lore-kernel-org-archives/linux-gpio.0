@@ -1,85 +1,32 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
-Date: Thu, 26 Jan 2017 15:00:46 +0100
-Message-ID: <20170126150046.2ca78ed6@endymion>
-References: <20170126142020.7bfd1229@endymion>
-        <20170126134341.GI17297@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Thu, 26 Jan 2017 15:05:20 +0100
+Message-ID: <CACRpkdY_dvUDytrwwPv9CXNu1wXEKFHKyjQQKR-Acu6=WAHZnA@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <AM3PR04MB5304992095753B761E66A9A87640@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdYTpEHyzBY-mA4YUsj=xt46Pibka3-4VHwUXosfgbgp1Q@mail.gmail.com>
+ <AM3PR04MB530A88C5C0E7C6AD2C59B9E87790@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkda1a4+yOrzBnKs6J84PS0StwQ68gHxDub_u7i5ofU9s7w@mail.gmail.com>
+ <AM3PR04MB530F532D867C08824DADDC9877C0@AM3PR04MB530.eurprd04.prod.outlook.com>
+ <CACRpkdaxvf6eHujfvKuOsRb69aL8+4jTE-aR3a6ywhytTEu6Hw@mail.gmail.com>
+ <20170123060454.GD5662@dragon> <AM3PR04MB530E214A598B06ECFFE551487720@AM3PR04MB530.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:53387 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751733AbdAZOAx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:00:53 -0500
-In-Reply-To: <20170126134341.GI17297@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <AM3PR04MB530E214A598B06ECFFE551487720@AM3PR04MB530.eurprd04.prod.outlook.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jacky.baip@gmail.com" <jacky.baip@gmail.com>, Anson Huang <anson.huang@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Cristina Ciocan <cristina.ciocan@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
 
-Hi Mika, hello Andy,
+On Mon, Jan 23, 2017 at 8:17 AM, Jacky Bai <ping.bai@nxp.com> wrote:
 
-On Thu, 26 Jan 2017 15:43:41 +0200, Mika Westerberg wrote:
-> On Thu, Jan 26, 2017 at 02:20:20PM +0100, Jean Delvare wrote:
-> > Hi Cristina,
-> > 
-> > In this commit:
-> > 
-> > commit 658b476c742fe379e7020309fd590a27b457a4c1
-> > Date:   Fri Apr 1 14:00:07 2016 +0300
-> > 
-> >     pinctrl: baytrail: Add debounce configuration
-> > 
-> > you added support for getting and setting debounce configuration for
-> > the Baytrail pins. Now gcc complains about the following:
-> > 
-> >   CC [M]  drivers/pinctrl/intel/pinctrl-baytrail.o
-> > drivers/pinctrl/intel/pinctrl-baytrail.c: In function ‘byt_pin_config_set’:
-> > drivers/pinctrl/intel/pinctrl-baytrail.c:1181:17: warning: variable ‘debounce’ set but not used [-Wunused-but-set-variable]
-> >   u32 conf, val, debounce;
-> >                  ^
-> > 
-> > I looked at the code, and it indeed looks wrong. You are reading the
-> > BYT_DEBOUNCE_REG register, clearing the debounce time bits from it, and
-> > then writing the debounce time bits to the *BYT_CONF0_REG* register.
-> > This is certainly corrupting the chip configuration, as the
-> > configuration register bits 2-0 have a completely different meaning
-> > (mux configuration.)
-> 
-> Yes, you are right.
-> 
-> This is fixed by following commit from Andy:
-> 
-> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=fixes&id=04ff5a095d662e0879f0eb04b9247e092210aeff
+> i.MX8 kernel support is in development stage. The code has not been finalized.
+> For now, i.MX8 shares most of the pinctrl code with i.MX6 and use the same pinconfig method.
 
-Thanks for the pointer, I wasn't aware of that patch. Looks overall
-good, but:
+Please switch to generic bindings already.
 
-+			case 0:
-+				conf &= BYT_DEBOUNCE_EN;
-+				break;
-
-looks suspicious to me. I think ~BYT_DEBOUNCE_EN was intended?
-Furthermore I would expect conf |= BYT_DEBOUNCE_EN in the other cases,
-otherwise disabling debounce once will prevent you from enabling it
-forever.
-
-Also Andy's patch doesn't seem to address my second point:
-
-> Additionally, I suspect that in the "get" path, the following is wrong:
-> 
-> 	case PIN_CONFIG_INPUT_DEBOUNCE:
-> 		if (!(conf & BYT_DEBOUNCE_EN))
-> 			return -EINVAL;
-> 
-> I'm not familiar with the pinctrl interface but my understanding of
-> the PIN_CONFIG_INPUT_DEBOUNCE documentation is that the driver must
-> return 0 if debouncing is disabled.
-
-?
-
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+Yours,
+Linus Walleij
