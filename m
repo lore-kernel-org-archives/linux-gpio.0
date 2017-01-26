@@ -1,34 +1,36 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
-Date: Thu, 26 Jan 2017 15:24:25 +0100
-Message-ID: <20170126152425.403374d7@endymion>
-References: <20170126142020.7bfd1229@endymion>
-        <20170126134341.GI17297@lahna.fi.intel.com>
-        <20170126150046.2ca78ed6@endymion>
-        <20170126140811.GJ17297@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 0/3] pinctrl / gpio: Allow GPIO chips to use generic pinconfig
+Date: Thu, 26 Jan 2017 15:25:05 +0100
+Message-ID: <CACRpkdYWT1yq9XNNxjS3=i0eYS6+DKQQ_sC00duhZLT9fm4JXw@mail.gmail.com>
+References: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:60739 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752685AbdAZOYe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:24:34 -0500
-In-Reply-To: <20170126140811.GJ17297@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Cristina Ciocan <cristina.ciocan@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 26 Jan 2017 16:08:11 +0200, Mika Westerberg wrote:
-> We will fix this, thanks!
+On Mon, Jan 23, 2017 at 1:34 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 
-Great, thanks.
+> This series makes it possible to configure pins from GPIO chip drivers by
+> implementing a new callback .set_config(). This callback replaces the
+> existing .set_single_ended() and .set_debounce() simply because adding new
+> callbacks for each possible configuration type does not scale. So instead
+> we re-use the existing generic pinconf types and the packed format.
+>
+> This is a follow up of discussion on:
+>
+>   https://patchwork.ozlabs.org/patch/713289/
 
-BTW I think that Andy's patch which fixes a bug that "even might break
-something physically" would deserve to be Cc'd to stable@ (once the fix
-itself is fixed, that is.)
+As you already know I'm a big fan of the series.
 
--- 
-Jean Delvare
-SUSE L3 Support
+I applied the two patches to an immutable branch in the pin control
+tree and pulled it into both pin control and GPIO devel branches.
+
+Thanks a lot for your efforts!!
+
+Yours,
+Linus Walleij
