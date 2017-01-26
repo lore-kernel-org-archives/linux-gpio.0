@@ -1,41 +1,44 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
-Date: Thu, 26 Jan 2017 11:29:11 +0200
-Message-ID: <20170126092911.GF17297@lahna.fi.intel.com>
-References: <20170125162608.58bfbfb1@endymion>
- <20170125161651.GX17297@lahna.fi.intel.com>
- <20170126100506.5edf26e3@endymion>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170126100506.5edf26e3@endymion>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 REBASED 04/13] pinctrl: samsung: Document Exynos3250 SoC
+ support
+Date: Thu, 26 Jan 2017 10:29:18 +0100
+Message-ID: <1485422967-30643-1-git-send-email-m.szyprowski@samsung.com>
+References: <CACRpkdY_SpqfyTTqSP5+a1k1LDf_5w77UXo=EognmOzWBz2c-Q@mail.gmail.com>
+ <CGME20170126092958eucas1p283f0ac46709ec4e72ecc6fc09735aade@eucas1p2.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:23716 "EHLO
+        mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753088AbdAZJaD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 04:30:03 -0500
+In-reply-to: <CACRpkdY_SpqfyTTqSP5+a1k1LDf_5w77UXo=EognmOzWBz2c-Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Thu, Jan 26, 2017 at 10:05:06AM +0100, Jean Delvare wrote:
-> Hi Mika and all,
-> 
-> On Wed, 25 Jan 2017 18:16:51 +0200, Mika Westerberg wrote:
-> > On Wed, Jan 25, 2017 at 04:26:08PM +0100, Jean Delvare wrote:
-> > > The pinctrl-baytrail driver builds just fine as a module so give
-> > > users this option.
-> > > 
-> > > Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > 
-> > Assuming you have checked that nothing breaks in Baytrail, I'm fine with
-> > this change,
-> 
-> I have not, as I do not have access to any Baytrail hardware. This is
-> the very reason why I'd like this code to be buildable as a module: I'm
-> not happy with a useless 50 kB driver being loaded on all my systems. I
-> was hopping someone at Intel would have access to the hardware to
-> perform the test.
+Add missing compatible id for Exynos3250 SoC to device tree docs.
+Exynos pin control driver supports it since commit d97f5b9804bfcdc1
+("pinctrl: exynos: Add driver data for Exynos3250").
 
-We do not have all the possible hardware here. I have one Minnowboard
-MAX which I can test this on (like I commented in the other email) but
-it does not have any ACPI GPIO OpRegion stuff that is present in many
-Baytrail based laptops out there.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+index 1baf19eecabf..5e00a21de2bf 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+@@ -13,6 +13,7 @@ Required Properties:
+   - "samsung,s3c2450-pinctrl": for S3C2450-compatible pin-controller,
+   - "samsung,s3c64xx-pinctrl": for S3C64xx-compatible pin-controller,
+   - "samsung,s5pv210-pinctrl": for S5PV210-compatible pin-controller,
++  - "samsung,exynos3250-pinctrl": for Exynos3250 compatible pin-controller.
+   - "samsung,exynos4210-pinctrl": for Exynos4210 compatible pin-controller.
+   - "samsung,exynos4x12-pinctrl": for Exynos4x12 compatible pin-controller.
+   - "samsung,exynos5250-pinctrl": for Exynos5250 compatible pin-controller.
+-- 
+1.9.1
+
