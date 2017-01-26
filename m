@@ -1,25 +1,41 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 5/7] mfd: exynos-lpass: Remove pad retention control
-Date: Thu, 26 Jan 2017 10:27:43 +0100
-Message-ID: <fc87bf0b-b746-8ad8-ade9-fbebec1acb19@samsung.com>
-References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115104eucas1p219f763cea7fdb2dfea092d1f2a28fc31@eucas1p2.samsung.com>
- <1485345031-2948-6-git-send-email-m.szyprowski@samsung.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
+Date: Thu, 26 Jan 2017 11:29:11 +0200
+Message-ID: <20170126092911.GF17297@lahna.fi.intel.com>
+References: <20170125162608.58bfbfb1@endymion>
+ <20170125161651.GX17297@lahna.fi.intel.com>
+ <20170126100506.5edf26e3@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1485345031-2948-6-git-send-email-m.szyprowski@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <20170126100506.5edf26e3@endymion>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 01/25/2017 12:50 PM, Marek Szyprowski wrote:
-> Pad retention should be controlled from pin control driver, so remove it
-> from Exynos LPASS driver. After this change, no more access to PMU regmap
-> is needed, so remove also the code for handling PMU regmap.
+On Thu, Jan 26, 2017 at 10:05:06AM +0100, Jean Delvare wrote:
+> Hi Mika and all,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> On Wed, 25 Jan 2017 18:16:51 +0200, Mika Westerberg wrote:
+> > On Wed, Jan 25, 2017 at 04:26:08PM +0100, Jean Delvare wrote:
+> > > The pinctrl-baytrail driver builds just fine as a module so give
+> > > users this option.
+> > > 
+> > > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > 
+> > Assuming you have checked that nothing breaks in Baytrail, I'm fine with
+> > this change,
+> 
+> I have not, as I do not have access to any Baytrail hardware. This is
+> the very reason why I'd like this code to be buildable as a module: I'm
+> not happy with a useless 50 kB driver being loaded on all my systems. I
+> was hopping someone at Intel would have access to the hardware to
+> perform the test.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+We do not have all the possible hardware here. I have one Minnowboard
+MAX which I can test this on (like I commented in the other email) but
+it does not have any ACPI GPIO OpRegion stuff that is present in many
+Baytrail based laptops out there.
