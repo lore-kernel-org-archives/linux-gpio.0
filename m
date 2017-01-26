@@ -1,32 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio-hammer: fix make consumer_label suitable to work on gpio-nails
-Date: Thu, 26 Jan 2017 16:29:01 +0100
-Message-ID: <CACRpkdY+aQrUWPd0T2Mmu-9+a8xeMYXYPxf0f6PLpU89Q6hVVg@mail.gmail.com>
-References: <20170125210144.26831-1-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v3 REBASED 07/13] pinctrl: samsung: Add missing initconst annotation
+Date: Thu, 26 Jan 2017 16:33:08 +0100
+Message-ID: <CACRpkdYfZ8bjJCnT949eGKaavdHW1D4RjMbsEgYbf3jwhHveQA@mail.gmail.com>
+References: <CACRpkdY_SpqfyTTqSP5+a1k1LDf_5w77UXo=EognmOzWBz2c-Q@mail.gmail.com>
+ <CGME20170126093000eucas1p249774814b7dd40bc6e90488fd2a11445@eucas1p2.samsung.com>
+ <1485422967-30643-1-git-send-email-m.szyprowski@samsung.com> <1485422967-30643-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:33537 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753406AbdAZP3C (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 10:29:02 -0500
-Received: by mail-it0-f52.google.com with SMTP id d9so3683976itc.0
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 07:29:02 -0800 (PST)
-In-Reply-To: <20170125210144.26831-1-u.kleine-koenig@pengutronix.de>
+Received: from mail-io0-f176.google.com ([209.85.223.176]:32831 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753585AbdAZPdU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 10:33:20 -0500
+Received: by mail-io0-f176.google.com with SMTP id v96so39227699ioi.0
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 07:33:14 -0800 (PST)
+In-Reply-To: <1485422967-30643-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Mason <slash.tmp@free.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Jan 25, 2017 at 10:01 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Thu, Jan 26, 2017 at 10:29 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-> There are no gpio-nalils, so fix label accordingly.
+> Exynos5433 support has been added in parallel to adding initconst
+> annotation to most of the init data structures, so add those
+> annotations also to Exynos5433 structures.
 >
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Patch applied! :)
+Patch applied.
 
 Yours,
 Linus Walleij
