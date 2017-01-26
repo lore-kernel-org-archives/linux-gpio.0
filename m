@@ -1,51 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Don't enforce bias disable (for now)
-Date: Thu, 26 Jan 2017 15:16:52 +0100
-Message-ID: <CACRpkdbx7nYUKasAGQS8Hc0DZ_oeSbTc3sXnsUVGga8MyvuMFA@mail.gmail.com>
-References: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH] pinctrl: mvebu: remove unused variable
+Date: Thu, 26 Jan 2017 15:18:02 +0100
+Message-ID: <CACRpkdb3ULOZL=6FquLtJgARjPEg8o2PdxJPK-o=JOAqnyETXQ@mail.gmail.com>
+References: <20170123121751.3218467-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f48.google.com ([209.85.214.48]:38269 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752236AbdAZOQy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 09:16:54 -0500
-Received: by mail-it0-f48.google.com with SMTP id c7so34012446itd.1
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 06:16:53 -0800 (PST)
-In-Reply-To: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170123121751.3218467-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Priit Laes <plaes@plaes.org>
 
-On Mon, Jan 23, 2017 at 9:21 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
+On Mon, Jan 23, 2017 at 1:17 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> Commit 07fe64ba213f ("pinctrl: sunxi: Handle bias disable") actually
-> enforced enforced the disabling of the pull up/down resistors instead of
-> ignoring it like it was done before.
+> A cleanup caused a harmless warning:
 >
-> This was part of a wider rework to switch to the generic pinconf bindings,
-> and was meant to be merged together with DT patches that were switching to
-> it, and removing what was considered default values by both the binding and
-> the boards. This included no bias on a pin.
+> drivers/pinctrl/mvebu/pinctrl-kirkwood.c: In function 'kirkwood_pinctrl_probe':
+> drivers/pinctrl/mvebu/pinctrl-kirkwood.c:460:19: error: unused variable 'res' [-Werror=unused-variable]
 >
-> However, those DT patches were delayed to 4.11, which would be fine only
-> for a significant number boards having the bias setup wrong, which in turns
-> break the MMC on those boards (and possibly other devices too).
+> The obvious fix is to remove the declaration of the now unused
+> variable.
 >
-> In order to avoid conflicts as much as possible, bring back the old
-> behaviour for 4.10, and we'll revert that commit once all the DT bits will
-> have landed.
->
-> Tested-by: Priit Laes <plaes@plaes.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> ---
-> Hi Linus,
->
-> This is intended as a fix for 4.10.
+> Fixes: ad9ec4ecee68 ("pinctrl: mvebu: switch drivers to generic simple mmio")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied for fixes with Chen-Yu's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
