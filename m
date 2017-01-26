@@ -1,71 +1,41 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per community
-Date: Thu, 26 Jan 2017 19:24:08 +0200
-Message-ID: <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
-References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/8] pinctrl: samsung: Add support for pad retention
+ control for Exynos5433 SoCs
+Date: Thu, 26 Jan 2017 21:48:11 +0200
+Message-ID: <20170126194811.rori5j5hmclniqig@kozik-lap>
+References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170126083402eucas1p187d3d31f62544fc46fae99fc5f74dbfe@eucas1p1.samsung.com>
+ <1485419634-28331-4-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:62202 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752838AbdAZRh0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 12:37:26 -0500
-In-Reply-To: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
+Received: from mail-wj0-f195.google.com ([209.85.210.195]:34208 "EHLO
+        mail-wj0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753437AbdAZTsR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 14:48:17 -0500
+Content-Disposition: inline
+In-Reply-To: <1485419634-28331-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Cristina Ciocan <cristina.ciocan@intel.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Debounce value is set globally per community. Otherwise user will easily
-get a kernel crash when they start using the feature:
+On Thu, Jan 26, 2017 at 09:33:49AM +0100, Marek Szyprowski wrote:
+> This patch adds support for retention control for Exynos5433 SoCs. Three
+> groups of pins has been defined for retention control: common shared group
+> for ALIVE, CPIF, eSE, FINGER, IMEM, NFC, PERIC, TOUCH pin banks and
+> separate control for FSYS and AUD pin banks, for which PMU retention
+> registers match whole banks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c    | 58 +++++++++++++++++++++++++++++
+>  include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++
+>  2 files changed, 74 insertions(+)
+>  		.eint_gpio_init = exynos_eint_gpio_init,
 
-BUG: unable to handle kernel paging request at ffffc900003be000
-IP: byt_gpio_dbg_show+0xa9/0x430
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Make it clear in byt_gpio_reg().
-
-Note that this fix just prevents kernel to crash, but doesn't make any
-difference to the existing logic. It means the last caller will win the
-trade and debounce value will be configured accordingly. The actual
-logic fix needs to be thought about and it's not as important as crash
-fix. That's why the latter goes separately and right now.
-
-Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
-Cc: Cristina Ciocan <cristina.ciocan@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 958db4f5ee9b..a1f85a79f186 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -731,16 +731,23 @@ static void __iomem *byt_gpio_reg(struct byt_gpio *vg, unsigned int offset,
- 				  int reg)
- {
- 	struct byt_community *comm = byt_get_community(vg, offset);
--	u32 reg_offset = 0;
-+	u32 reg_offset;
- 
- 	if (!comm)
- 		return NULL;
- 
- 	offset -= comm->pin_base;
--	if (reg == BYT_INT_STAT_REG)
-+	switch (reg) {
-+	case BYT_INT_STAT_REG:
- 		reg_offset = (offset / 32) * 4;
--	else
-+		break;
-+	case BYT_DEBOUNCE_REG:
-+		reg_offset = 0;
-+		break;
-+	default:
- 		reg_offset = comm->pad_map[offset] * 16;
-+		break;
-+	}
- 
- 	return comm->reg_base + reg_offset + reg;
- }
--- 
-2.11.0
+Best regards,
+Krzysztof
 
