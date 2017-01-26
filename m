@@ -1,51 +1,36 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
-Date: Thu, 26 Jan 2017 15:43:41 +0200
-Message-ID: <20170126134341.GI17297@lahna.fi.intel.com>
-References: <20170126142020.7bfd1229@endymion>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: aspeed: g4: Fix mux configuration for GPIOs
+ AA[4-7], AB[0-7]
+Date: Thu, 26 Jan 2017 14:43:11 +0100
+Message-ID: <CACRpkdZvgOGqNMArExNoc3EJLSnydpF6TAXsvWD5ubPLA12dNA@mail.gmail.com>
+References: <20170123052717.9528-1-andrew@aj.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:65066 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751733AbdAZNnp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 08:43:45 -0500
-Content-Disposition: inline
-In-Reply-To: <20170126142020.7bfd1229@endymion>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170123052717.9528-1-andrew@aj.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Cristina Ciocan <cristina.ciocan@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
 
-On Thu, Jan 26, 2017 at 02:20:20PM +0100, Jean Delvare wrote:
-> Hi Cristina,
-> 
-> In this commit:
-> 
-> commit 658b476c742fe379e7020309fd590a27b457a4c1
-> Date:   Fri Apr 1 14:00:07 2016 +0300
-> 
->     pinctrl: baytrail: Add debounce configuration
-> 
-> you added support for getting and setting debounce configuration for
-> the Baytrail pins. Now gcc complains about the following:
-> 
->   CC [M]  drivers/pinctrl/intel/pinctrl-baytrail.o
-> drivers/pinctrl/intel/pinctrl-baytrail.c: In function ‘byt_pin_config_set’:
-> drivers/pinctrl/intel/pinctrl-baytrail.c:1181:17: warning: variable ‘debounce’ set but not used [-Wunused-but-set-variable]
->   u32 conf, val, debounce;
->                  ^
-> 
-> I looked at the code, and it indeed looks wrong. You are reading the
-> BYT_DEBOUNCE_REG register, clearing the debounce time bits from it, and
-> then writing the debounce time bits to the *BYT_CONF0_REG* register.
-> This is certainly corrupting the chip configuration, as the
-> configuration register bits 2-0 have a completely different meaning
-> (mux configuration.)
+On Mon, Jan 23, 2017 at 6:27 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-Yes, you are right.
+> Incorrect video output configuration bits were being tested on pins in
+> GPIO banks AA and AB for the ROM{8,16} mux functions. The ROM{8,16}
+> functions are the highest priority for the relevant pins and also the
+> default function, so we require the relevant video output configuration
+> be disabled to mux GPIO functionality. As the wrong bits were being
+> tested a GPIO export would succeed but leave the pin in an unresponsive
+> state (i.e. value updates were ignored).
+>
+> This misbehaviour was discovered as part of extending the GPIO
+> controller's support to cover banks Y, Z, AA, AB and AC (AC in the case
+> of the g5 SoC).
+>
+> Fixes: 6d329f14a75f ("pinctrl: aspeed-g4: Add mux configuration for all pins")
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-This is fixed by following commit from Andy:
+Patch applied.
 
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=fixes&id=04ff5a095d662e0879f0eb04b9247e092210aeff
+Yours,
+Linus Walleij
