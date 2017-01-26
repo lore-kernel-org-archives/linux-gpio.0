@@ -1,46 +1,121 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
-Date: Thu, 26 Jan 2017 14:13:11 +0000
-Message-ID: <1485439990.2133.343.camel@intel.com>
-References: <20170126142020.7bfd1229@endymion>
-         <20170126134341.GI17297@lahna.fi.intel.com>
-         <20170126150046.2ca78ed6@endymion>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Alexander Stein <alexander.stein@systec-electronic.com>
+Subject: [PATCH 1/1] pinctrl: baytrail: Add spinlock usage to all read/write access
+Date: Thu, 26 Jan 2017 15:14:18 +0100
+Message-ID: <20170126141418.5624-1-alexander.stein@systec-electronic.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:9876 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752531AbdAZONa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:13:30 -0500
-In-Reply-To: <20170126150046.2ca78ed6@endymion>
-Content-Language: en-US
-Content-ID: <9F66BEFE3CB29B49A649D10198BDFD27@intel.com>
+Received: from webbox1416.server-home.net ([77.236.96.61]:43528 "EHLO
+        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752181AbdAZOOi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 09:14:38 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "jdelvare@suse.de" <jdelvare@suse.de>
-Cc: "Ciocan, Cristina" <cristina.ciocan@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-T24gVGh1LCAyMDE3LTAxLTI2IGF0IDE1OjAwICswMTAwLCBKZWFuIERlbHZhcmUgd3JvdGU6DQo+
-IEhpIE1pa2EsIGhlbGxvIEFuZHksDQo+IA0KPiBPbiBUaHUsIDI2IEphbiAyMDE3IDE1OjQzOjQx
-ICswMjAwLCBNaWthIFdlc3RlcmJlcmcgd3JvdGU6DQo+ID4gT24gVGh1LCBKYW4gMjYsIDIwMTcg
-YXQgMDI6MjA6MjBQTSArMDEwMCwgSmVhbiBEZWx2YXJlIHdyb3RlOg0KDQo+IFRoYW5rcyBmb3Ig
-dGhlIHBvaW50ZXIsIEkgd2Fzbid0IGF3YXJlIG9mIHRoYXQgcGF0Y2guIExvb2tzIG92ZXJhbGwN
-Cj4gZ29vZCwgYnV0Og0KPiANCj4gKwkJCWNhc2UgMDoNCj4gKwkJCQljb25mICY9IEJZVF9ERUJP
-VU5DRV9FTjsNCj4gKwkJCQlicmVhazsNCj4gDQo+IGxvb2tzIHN1c3BpY2lvdXMgdG8gbWUuIEkg
-dGhpbmsgfkJZVF9ERUJPVU5DRV9FTiB3YXMgaW50ZW5kZWQ/DQoNClllcyENCg0KPiBGdXJ0aGVy
-bW9yZSBJIHdvdWxkIGV4cGVjdCBjb25mIHw9IEJZVF9ERUJPVU5DRV9FTiBpbiB0aGUgb3RoZXIg
-Y2FzZXMsDQo+IG90aGVyd2lzZSBkaXNhYmxpbmcgZGVib3VuY2Ugb25jZSB3aWxsIHByZXZlbnQg
-eW91IGZyb20gZW5hYmxpbmcgaXQNCj4gZm9yZXZlci4NCg0KWWVzLg0KDQo+IEFsc28gQW5keSdz
-IHBhdGNoIGRvZXNuJ3Qgc2VlbSB0byBhZGRyZXNzIG15IHNlY29uZCBwb2ludDoNCj4gDQo+ID4g
-QWRkaXRpb25hbGx5LCBJIHN1c3BlY3QgdGhhdCBpbiB0aGUgImdldCIgcGF0aCwgdGhlIGZvbGxv
-d2luZyBpcw0KPiA+IHdyb25nOg0KPiA+IA0KPiA+IAljYXNlIFBJTl9DT05GSUdfSU5QVVRfREVC
-T1VOQ0U6DQo+ID4gCQlpZiAoIShjb25mICYgQllUX0RFQk9VTkNFX0VOKSkNCj4gPiAJCQlyZXR1
-cm4gLUVJTlZBTDsNCj4gPiANCj4gPiBJJ20gbm90IGZhbWlsaWFyIHdpdGggdGhlIHBpbmN0cmwg
-aW50ZXJmYWNlIGJ1dCBteSB1bmRlcnN0YW5kaW5nIG9mDQo+ID4gdGhlIFBJTl9DT05GSUdfSU5Q
-VVRfREVCT1VOQ0UgZG9jdW1lbnRhdGlvbiBpcyB0aGF0IHRoZSBkcml2ZXIgbXVzdA0KPiA+IHJl
-dHVybiAwIGlmIGRlYm91bmNpbmcgaXMgZGlzYWJsZWQuDQo+IA0KPiA/DQoNCkkgbmVlZCB0byBj
-aGVjayB0aGlzLg0KDQpJIHdpbGwgYWRkcmVzcyB5b3VyIGNvbW1lbnRzLiBUaGFua3MgZm9yIHJl
-cG9ydCENCg0KLS0gDQpBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNv
-bT4NCkludGVsIEZpbmxhbmQgT3kgLSBCSUMgMDM1NzYwNi00IC0gV2VzdGVuZGlua2F0dSA3LCAw
-MjE2MCBFc3Bvbw==
+According to VLI64 Intel Atom E3800 Specification Update (#329901)
+concurrent read accesses may result in returning 0xffffffff and write
+accesses may be dropped silently.
+To workaround all accesses must be protected by locks.
+
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+I actually had the case where the read access in byt_irq_unmask returned
+0xffffffff. After OR'ing the trigger bits and writing 0xffffffff back to
+BYT_CONF0_REG things started to act strange.
+
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index 6cce314..7294c88 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1594,6 +1594,7 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ 	void __iomem *reg;
+ 	unsigned long pending;
+ 	unsigned int virq;
++	unsigned long flags;
+ 
+ 	/* check from GPIO controller which pin triggered the interrupt */
+ 	for (base = 0; base < vg->chip.ngpio; base += 32) {
+@@ -1606,7 +1607,9 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
+ 			continue;
+ 		}
+ 
++		raw_spin_lock_irqsave(&vg->lock, flags);
+ 		pending = readl(reg);
++		raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 		for_each_set_bit(pin, &pending, 32) {
+ 			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
+ 			generic_handle_irq(virq);
+@@ -1620,6 +1623,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 	void __iomem *reg;
+ 	u32 base, value;
+ 	int i;
++	unsigned long flags;
+ 
+ 	/*
+ 	 * Clear interrupt triggers for all pins that are GPIOs and
+@@ -1637,7 +1641,9 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 			continue;
+ 		}
+ 
++		raw_spin_lock_irqsave(&vg->lock, flags);
+ 		value = readl(reg);
++		raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
+ 		    !(value & BYT_DIRECT_IRQ_EN)) {
+ 			byt_gpio_clear_triggering(vg, i);
+@@ -1656,10 +1662,12 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
+ 			continue;
+ 		}
+ 
++		raw_spin_lock_irqsave(&vg->lock, flags);
+ 		writel(0xffffffff, reg);
+ 		/* make sure trigger bits are cleared, if not then a pin
+ 		   might be misconfigured in bios */
+ 		value = readl(reg);
++		raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 		if (value)
+ 			dev_err(&vg->pdev->dev,
+ 				"GPIO interrupt error, pins misconfigured\n");
+@@ -1828,7 +1836,9 @@ static int byt_gpio_suspend(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct byt_gpio *vg = platform_get_drvdata(pdev);
+ 	int i;
++	unsigned long flags;
+ 
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	for (i = 0; i < vg->soc_data->npins; i++) {
+ 		void __iomem *reg;
+ 		u32 value;
+@@ -1848,6 +1858,7 @@ static int byt_gpio_suspend(struct device *dev)
+ 		value = readl(reg) & BYT_VAL_RESTORE_MASK;
+ 		vg->saved_context[i].val = value;
+ 	}
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -1857,7 +1868,9 @@ static int byt_gpio_resume(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct byt_gpio *vg = platform_get_drvdata(pdev);
+ 	int i;
++	unsigned long flags;
+ 
++	raw_spin_lock_irqsave(&vg->lock, flags);
+ 	for (i = 0; i < vg->soc_data->npins; i++) {
+ 		void __iomem *reg;
+ 		u32 value;
+@@ -1894,6 +1907,7 @@ static int byt_gpio_resume(struct device *dev)
+ 			}
+ 		}
+ 	}
++	raw_spin_unlock_irqrestore(&vg->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.10.2
+
