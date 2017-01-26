@@ -1,37 +1,51 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
-Date: Thu, 26 Jan 2017 14:15:21 +0000
-Message-ID: <1485440121.2133.344.camel@intel.com>
-References: <20170126142020.7bfd1229@endymion>
-         <20170126134341.GI17297@lahna.fi.intel.com>
-         <20170126150046.2ca78ed6@endymion> <1485439990.2133.343.camel@intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: sunxi: Don't enforce bias disable (for now)
+Date: Thu, 26 Jan 2017 15:16:52 +0100
+Message-ID: <CACRpkdbx7nYUKasAGQS8Hc0DZ_oeSbTc3sXnsUVGga8MyvuMFA@mail.gmail.com>
+References: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:32586 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752030AbdAZOPY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 09:15:24 -0500
-In-Reply-To: <1485439990.2133.343.camel@intel.com>
-Content-Language: en-US
-Content-ID: <6D3B3B9E3745B042BD9C11FF5A8EBE5C@intel.com>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:38269 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752236AbdAZOQy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 09:16:54 -0500
+Received: by mail-it0-f48.google.com with SMTP id c7so34012446itd.1
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 06:16:53 -0800 (PST)
+In-Reply-To: <20170123082130.15558-1-maxime.ripard@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>, "jdelvare@suse.de" <jdelvare@suse.de>
-Cc: "Ciocan, Cristina" <cristina.ciocan@intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Priit Laes <plaes@plaes.org>
 
-T24gVGh1LCAyMDE3LTAxLTI2IGF0IDE2OjEzICswMjAwLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
-DQo+IE9uIFRodSwgMjAxNy0wMS0yNiBhdCAxNTowMCArMDEwMCwgSmVhbiBEZWx2YXJlIHdyb3Rl
-Og0KPiA+IEhpIE1pa2EsIGhlbGxvIEFuZHksDQo+ID4gDQoNCj4gPiBBZGRpdGlvbmFsbHksIEkg
-c3VzcGVjdCB0aGF0IGluIHRoZSAiZ2V0IiBwYXRoLCB0aGUgZm9sbG93aW5nIGlzDQo+ID4gPiB3
-cm9uZzoNCj4gPiA+IA0KPiA+ID4gCWNhc2UgUElOX0NPTkZJR19JTlBVVF9ERUJPVU5DRToNCj4g
-PiA+IAkJaWYgKCEoY29uZiAmIEJZVF9ERUJPVU5DRV9FTikpDQo+ID4gPiAJCQlyZXR1cm4gLUVJ
-TlZBTDsNCj4gPiA+IA0KPiA+ID4gSSdtIG5vdCBmYW1pbGlhciB3aXRoIHRoZSBwaW5jdHJsIGlu
-dGVyZmFjZSBidXQgbXkgdW5kZXJzdGFuZGluZw0KPiA+ID4gb2YNCj4gPiA+IHRoZSBQSU5fQ09O
-RklHX0lOUFVUX0RFQk9VTkNFIGRvY3VtZW50YXRpb24gaXMgdGhhdCB0aGUgZHJpdmVyDQo+ID4g
-PiBtdXN0DQo+ID4gPiByZXR1cm4gMCBpZiBkZWJvdW5jaW5nIGlzIGRpc2FibGVkLg0KPiA+IA0K
-PiA+ID8NCg0KTm8sIHRoaXMgaXMgY29ycmVjdC4NCiIuLi5pZiBpdCBpcyBhdmFpbGFibGUgYnV0
-IGRpc2FibGVkIGl0IHNob3VsZCByZXR1cm4gLUVJTlZBTCINCg0KLS0gDQpBbmR5IFNoZXZjaGVu
-a28gPGFuZHJpeS5zaGV2Y2hlbmtvQGludGVsLmNvbT4NCkludGVsIEZpbmxhbmQgT3kgLSBCSUMg
-MDM1NzYwNi00IC0gV2VzdGVuZGlua2F0dSA3LCAwMjE2MCBFc3Bvbw==
+On Mon, Jan 23, 2017 at 9:21 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+
+> Commit 07fe64ba213f ("pinctrl: sunxi: Handle bias disable") actually
+> enforced enforced the disabling of the pull up/down resistors instead of
+> ignoring it like it was done before.
+>
+> This was part of a wider rework to switch to the generic pinconf bindings,
+> and was meant to be merged together with DT patches that were switching to
+> it, and removing what was considered default values by both the binding and
+> the boards. This included no bias on a pin.
+>
+> However, those DT patches were delayed to 4.11, which would be fine only
+> for a significant number boards having the bias setup wrong, which in turns
+> break the MMC on those boards (and possibly other devices too).
+>
+> In order to avoid conflicts as much as possible, bring back the old
+> behaviour for 4.10, and we'll revert that commit once all the DT bits will
+> have landed.
+>
+> Tested-by: Priit Laes <plaes@plaes.org>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+> Hi Linus,
+>
+> This is intended as a fix for 4.10.
+
+Patch applied for fixes with Chen-Yu's ACK.
+
+Yours,
+Linus Walleij
