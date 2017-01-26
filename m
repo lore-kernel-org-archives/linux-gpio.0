@@ -1,45 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/8] Pad retentions support for Exynos5433
-Date: Thu, 26 Jan 2017 10:50:57 +0100
-Message-ID: <CACRpkdawiAp3xqVd7J5ZAd2dQ=X09DGybyw0EVp=07w8-ccKfA@mail.gmail.com>
-References: <CGME20170126083401eucas1p20b4794fe46ccf2189bf734f0d8e3c536@eucas1p2.samsung.com>
- <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [RFC 5/5] arm: dts: genmai: Add SCIF2 pin group
+Date: Thu, 26 Jan 2017 12:51:03 +0300
+Message-ID: <4c60f795-d8af-5b3d-f632-a013a9a33be1@cogentembedded.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-6-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:32930 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753429AbdAZJvE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 04:51:04 -0500
+Received: by mail-lf0-f44.google.com with SMTP id x1so56047631lff.0
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 01:51:03 -0800 (PST)
+In-Reply-To: <1485367787-8109-6-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Thu, Jan 26, 2017 at 9:33 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On 1/25/2017 9:09 PM, Jacopo Mondi wrote:
 
-> Patches in this patchset depends on each other. They are order in such a
-> way to make the changes bisectable.
+> Add  TxD and RxD pin configuration for SCIF2 serial communication
+> interface on r7s72100 Genmai board.
 >
-> Patch #3 has runtime dependency on #1.
-> Patch #5 has runtime dependency on #3.
-> Patch #6 has runtime dependency on #4.
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r7s72100-genmai.dts | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 >
-> This patchset also directly depends on the "Move pad retention control to
-> Exynos pin controller driver" patchset:
-> https://www.spinics.net/lists/arm-kernel/msg556074.html
+> diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
+> index 118a8e2..ea649c7 100644
+> --- a/arch/arm/boot/dts/r7s72100-genmai.dts
+> +++ b/arch/arm/boot/dts/r7s72100-genmai.dts
+[...]
+> @@ -34,6 +35,18 @@
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+>  	};
+> +
+> +};
+> +
+> +&pinctrl {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&scif2_pins>;
+> +
+> +	scif2_pins: serial2 {
+> +		/* P3_0 as TxD2; P3_2 as RxD2 */
+> +		renesas-rz,pins = <RZ_PIN(3, 0) ALTERNATE_FUNC_6>,
 
-Do we *have* to merge it runtime-bisectably?
+    The comma should be after the vendor prefix ("renesas").
 
-I'm asking because we need a huge immutable branch
-(I guess in the MFD subsystem) to deal with that.
+MBR, Sergei
 
-It'd be great if I could just apply the pinctrl patches in
-isolation, then Lee applies the MFD patches in isolation,
-everything compiles in isolation but maye just work once both
-pinctrl and MFD are merged upstream, as in linux-next
-or Torvalds' tree.
-
-That is one of the reasons why using a system-agnostic
-syscon regmap lookup is so good, BTW.
-
-Yours,
-Linus Walleij
