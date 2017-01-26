@@ -1,32 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 5/5] gpio: ws16c48: Utilize devm_ functions in driver
- probe callback
-Date: Thu, 26 Jan 2017 15:57:00 +0100
-Message-ID: <CACRpkdZbOnzNyr-X1sO+TSCxKPoYawAx1YQiROVLNxnO4_FO7g@mail.gmail.com>
-References: <cover.1485287208.git.vilhelm.gray@gmail.com> <ba4aa1f760d413470204e4c4a4d9d9a80788397b.1485287208.git.vilhelm.gray@gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] pinctrl: rockchip: Add rk3328 pinctrl support
+Date: Thu, 26 Jan 2017 16:07:46 +0100
+Message-ID: <24353895.ALOnc7lYnh@diego>
+References: <1485074286-7863-1-git-send-email-david.wu@rock-chips.com> <CACRpkdaJEEGFnfX0_eBtwLMqYtSTShB5u6WCaA-YZG53OMnk+w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ba4aa1f760d413470204e4c4a4d9d9a80788397b.1485287208.git.vilhelm.gray@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:38776 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752281AbdAZPIB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 10:08:01 -0500
+In-Reply-To: <CACRpkdaJEEGFnfX0_eBtwLMqYtSTShB5u6WCaA-YZG53OMnk+w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Wu <david.wu@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jan 24, 2017 at 9:01 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+Am Donnerstag, 26. Januar 2017, 14:29:17 CET schrieb Linus Walleij:
+> On Sun, Jan 22, 2017 at 9:38 AM, David Wu <david.wu@rock-chips.com> wrote:
+> > From: "david.wu" <david.wu@rock-chips.com>
+> > 
+> > This patch supports 3bit width iomux type.
+> > Note, the iomux of following pins are special, need to
+> > be handled specially.
+> > 
+> >  - gpio2_b0 ~ gpio2_b6
+> >  - gpio2_b7
+> >  - gpio2_c7
+> >  - gpio3_b0
+> >  - gpio3_b1 ~ gpio3_b7
+> > 
+> > And therefore add IOMUX_RECALCED_FLAG to indicate which
+> > iomux source of the bank need to be recalced. If the mux
+> > recalced callback and IOMUX_RECALCED_FLAG were set, recalc
+> > the related pins' iomux.
+> > 
+> > Signed-off-by: david.wu <david.wu@rock-chips.com>
+> 
+> Heiko, could you review this?
 
-> The devm_ resource manager functions allow memory to be automatically
-> released when a device is unbound. This patch takes advantage of the
-> resource manager functions and replaces the gpiochip_add_data call and
-> request_irq call with the devm_gpiochip_add_data call and
-> devm_request_irq call respectively. In addition, the ws16c48_remove
-> function has been removed as no longer necessary due to the use of the
-> relevant devm_ resource manager functions.
->
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+it's on my todo list, I just didn't have the time this week so far.
 
-Patch applied.
 
-Yours,
-Linus Walleij
+Heiko
