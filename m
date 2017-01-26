@@ -1,36 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/3] pinctrl / gpio: Allow GPIO chips to use generic pinconfig
-Date: Thu, 26 Jan 2017 15:25:05 +0100
-Message-ID: <CACRpkdYWT1yq9XNNxjS3=i0eYS6+DKQQ_sC00duhZLT9fm4JXw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pinctrl / gpio: Introduce .set_config() callback
+ for GPIO chips
+Date: Thu, 26 Jan 2017 15:29:55 +0100
+Message-ID: <CACRpkda1MVNimpSaCvgjTzTRGMWqtmQ8DwPExzJYeKZCN5Jj_Q@mail.gmail.com>
 References: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
+ <20170123123434.61972-4-mika.westerberg@linux.intel.com> <20170123171107.GC32404@localhost>
+ <20170124111130.GE17297@lahna.fi.intel.com> <CACRpkdYW9fe39w3KkdLgiiJLr_rQcX2rTrN=54pzP+zqFoLXZQ@mail.gmail.com>
+ <20170124125756.GG17297@lahna.fi.intel.com> <20170124134504.GA20261@localhost>
+ <20170124142220.GK17297@lahna.fi.intel.com> <20170125100944.GR17297@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
+In-Reply-To: <20170125100944.GR17297@lahna.fi.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 23, 2017 at 1:34 PM, Mika Westerberg
+On Wed, Jan 25, 2017 at 11:09 AM, Mika Westerberg
 <mika.westerberg@linux.intel.com> wrote:
-
-> This series makes it possible to configure pins from GPIO chip drivers by
-> implementing a new callback .set_config(). This callback replaces the
-> existing .set_single_ended() and .set_debounce() simply because adding new
-> callbacks for each possible configuration type does not scale. So instead
-> we re-use the existing generic pinconf types and the packed format.
+> On Tue, Jan 24, 2017 at 04:22:20PM +0200, Mika Westerberg wrote:
+>> On Tue, Jan 24, 2017 at 02:45:04PM +0100, Johan Hovold wrote:
+>> > Good, that's the one I knew about. But I also got another conflict
+>> > against pinctrl when applying on top of f9dd6f6cc63c ("Add linux-next
+>> > specific files for 20170123"):
+>> >
+>> > Applying: pinctrl / gpio: Introduce .set_config() callback for GPIO chips
+>> > error: patch failed: drivers/pinctrl/pinctrl-amd.c:756
+>> > error: drivers/pinctrl/pinctrl-amd.c: patch does not apply
+>> > error: patch failed: drivers/staging/greybus/gpio.c:474
+>> > error: drivers/staging/greybus/gpio.c: patch does not apply
+>> > Patch failed at 0001 pinctrl / gpio: Introduce .set_config() callback for GPIO chips
+>>
+>> I tried today's linux-next 766074e7818 ("Add linux-next specific files
+>> for 20170124") but only saw that GPIO conflict.
+>>
+>> In any case I'm going to rebase my series on top of linux-gpio.git/devel
+>> and submit it as v3.
 >
-> This is a follow up of discussion on:
->
->   https://patchwork.ozlabs.org/patch/713289/
+> That said, it seems this v2 series applies cleanly to
+> linux-gpio.git/devel. There will be trivial conflict with the staging
+> tree because of 7f2e9de736e7 ("staging: greybus: fix checkpatch unsigned
+> warnings") but that's it.
 
-As you already know I'm a big fan of the series.
+We'll see. If there are internal conflicts in GPIO and pin control
+I will get it in my face and deal with it when trying to create for-next
+branches.
 
-I applied the two patches to an immutable branch in the pin control
-tree and pulled it into both pin control and GPIO devel branches.
-
-Thanks a lot for your efforts!!
+The conflict with staging is business as usual in linux-next.
 
 Yours,
 Linus Walleij
