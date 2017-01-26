@@ -1,12 +1,12 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC 2/5] pinctrl: rz-pfc: Add Renesas RZ/A1 pinctrl driver
-Date: Thu, 26 Jan 2017 20:49:09 +0100
-Message-ID: <CAMuHMdVShqXeZU+g1jz4adBqEoGvJRY2TUMrefm7KK+VUAgRfA@mail.gmail.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [RFC 3/5] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+Date: Thu, 26 Jan 2017 20:52:33 +0100
+Message-ID: <CAMuHMdUmy2QkvRomf8euzB0QNkeCA=N8=rhY0GkObz8qn-UvMQ@mail.gmail.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
@@ -15,53 +15,48 @@ List-Id: linux-gpio@vger.kernel.org
 Hi Jacopo,
 
 On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add pin controller driver for Renesas RZ/A1 SoC.
-> The SoC driver registers to rz-pfc core module and provides pin
-> description array and SoC specific pin mux operation.
+> Add dt-bindings header for Renesas RZ pincontroller.
+> The header defines macros for pin description and alternate function
+> numbers.
 >
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-> --- a/drivers/pinctrl/rz-pfc/Makefile
-> +++ b/drivers/pinctrl/rz-pfc/Makefile
-> @@ -1 +1,2 @@
->  obj-$(CONFIG_PINCTRL_RZ_PINCTRL)               += pinctrl-rz.o
-> +obj-$(CONFIG_PINCTRL_RZA1_PINCTRL)             += pinctrl-rza1.o
-> diff --git a/drivers/pinctrl/rz-pfc/pinctrl-rza1.c b/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
+> ---
+>  include/dt-bindings/pinctrl/pinctrl-renesas-rz.h | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
+>
+> diff --git a/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
 > new file mode 100644
-> index 0000000..221f048
+> index 0000000..92816d4
 > --- /dev/null
-> +++ b/drivers/pinctrl/rz-pfc/pinctrl-rza1.c
-
-> +
-> +/* ----------------------------------------------------------------------------
-> + * SoC operations
+> +++ b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
+> @@ -0,0 +1,19 @@
+> +/*
+> + * Defines macros and constants for Renesas RZ pin controller and muxer
 > + */
 > +
-> +static inline void rza1_set_bit(struct rz_pinctrl_res *res, int reg,
-> +                               int bank, int pin, int set)
-> +{
-> +       void __iomem *mem = RZA1_ADDR(res->base, reg, bank);
-> +       u16 val = set ? ioread16(mem) | 1 << pin :
-> +                       ioread16(mem) & ~(1 << pin);
-> +#ifdef RZA1_REG_DBG
-> +       u16 temp = ioread16(mem);
+> +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
+> +#define __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
 > +
-> +       pr_err("%p %p %p - %4x %4x\n",
-> +              (void *)res->start, res->base, mem, temp, val);
+> +#define RZ_PIN(b, p) b p
 
-Please drop the cast, take the address, and use %pa to format a
-resource_size_t, cfr. Documentation/printk-formats.txt.
+And the advantage of this macro is?
 
-> + static struct rz_pinctrl_ops rza1_pinctrl_ops = {
+> +#define ALTERNATE_FUNC_1       0
+> +#define ALTERNATE_FUNC_2       1
+> +#define ALTERNATE_FUNC_3       2
+> +#define ALTERNATE_FUNC_4       3
+> +#define ALTERNATE_FUNC_5       4
+> +#define ALTERNATE_FUNC_6       5
+> +#define ALTERNATE_FUNC_7       6
+> +#define ALTERNATE_FUNC_8       7
 
-const
+I have mixed feelings about these macros:
+  1. They're long to type,
+  2. They just map from n to n-1.
 
-> +       .set_mux = rza1_set_mux,
-> +};
-> +
-> +static struct rz_pinctrl_info rza1_info = {
-
-const
+Why not use plain numbers 1..8 (the alternate function numbering in the
+datasheet is 1-based), and subtract 1 in the C code?
 
 Gr{oetje,eeting}s,
 
