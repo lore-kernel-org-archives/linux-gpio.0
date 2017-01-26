@@ -1,51 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
-Date: Thu, 26 Jan 2017 09:55:36 +0100
-Message-ID: <CACRpkdb9npDaMe07+v-ZzntD1Z_U2Swstk6bv=7uhHLmpM5LVA@mail.gmail.com>
-References: <20170125162608.58bfbfb1@endymion>
+Subject: Re: [PATCH v3 04/13] pinctrl: samsung: Document Exynos3250 SoC support
+Date: Thu, 26 Jan 2017 10:04:25 +0100
+Message-ID: <CACRpkdY1F-DyKmi0T0wdUG7xdqt134mWvUj+UMYtY6jJF1knbQ@mail.gmail.com>
+References: <CGME20170119134906eucas1p28eaf30c782d33b5a36afe31a89613123@eucas1p2.samsung.com>
+ <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com> <1484833733-16082-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:38766 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752863AbdAZIzi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 03:55:38 -0500
-Received: by mail-it0-f52.google.com with SMTP id c7so30227784itd.1
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 00:55:37 -0800 (PST)
-In-Reply-To: <20170125162608.58bfbfb1@endymion>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1484833733-16082-5-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>
 
-On Wed, Jan 25, 2017 at 4:26 PM, Jean Delvare <jdelvare@suse.de> wrote:
+On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-> The pinctrl-baytrail driver builds just fine as a module so give
-> users this option.
+> Add missing compatible id for Exynos3250 SoC to device tree docs.
+> Exynos pin control driver supports it since commit d97f5b9804bfcdc1
+> ("pinctrl: exynos: Add driver data for Exynos3250").
 >
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> This was discussed almost one year ago, with no clear conclusion, but
-> also no evidence that the driver can't be built as a module. Is there
-> any way to push this forward?
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-I see ACKs for this patch, but in my git I also have:
-
-commit 360943a8d26265825025b88da32961bd9ad4f7c6
-pinctrl: baytrail: make it explicitly non-modular
-
-Acked by Mika.
-
-So which one is it going to be?
-
-If this should be applied, the previous patch from Paul Gortmaker
-should be reverted first. Especially the runtime PM parts seem
-important to get back.
-
-Then I want a patch reverting that and adding this tristate in one.
+Patch applied.
 
 Yours,
 Linus Walleij
