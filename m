@@ -1,81 +1,70 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 0/7] Implement generic regulator constraints parsing for
- ACPI and OF
-Date: Wed, 25 Jan 2017 16:33:42 -0800
-Message-ID: <20170126003342.GF36291@dtor-ws>
-References: <20170125124911.dxveow7bo3zw5jcc@sirena.org.uk>
- <CAJZ5v0hHSadH1KLOGg029VU2qrY900ak0=NnH5HPBKZ=FpB7HQ@mail.gmail.com>
- <CAEGmHFG1d24k3+qT_aoqRmPFzciAbNObCnzY1d8pQWjEW+3HxA@mail.gmail.com>
- <20170125182319.GB25470@leverpostej>
- <20170125182955.uznr5ehpx4dabcon@sirena.org.uk>
- <20170125184432.GA27255@dtor-ws>
- <20170125192711.GB27255@dtor-ws>
- <572bcaff-7b17-0614-0cd2-0887ae33eb65@redhat.com>
- <20170125232755.GC36291@dtor-ws>
- <8e10714e-1795-d5df-630e-8303bf36abfd@redhat.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [RFC 0/5] Renesas RZ series pinctrl driver
+Date: Thu, 26 Jan 2017 02:57:54 +0000
+Message-ID: <SG2PR06MB11653912C75B587A742FB0518A770@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8e10714e-1795-d5df-630e-8303bf36abfd@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Stone <ahs3@redhat.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Furquan Shaikh <furquan@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>, Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:62478 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752453AbdAZC57 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 25 Jan 2017 21:57:59 -0500
+In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 05:15:52PM -0700, Al Stone wrote:
-> On 01/25/2017 04:27 PM, Dmitry Torokhov wrote:
-> > On Wed, Jan 25, 2017 at 02:44:10PM -0700, Al Stone wrote:
-> >>
-> >> But, to the point of some of the other discussion on the thread, this ACPI sort
-> >> of power management is a very, very different model than DT so that intertwining
-> >> the two models is highly unlikely to work, IMHO.
-> > 
-> > And yet this is something that is sorely needed. If you look, for
-> > example, at drivers in drivers/input/*, then all non-SOC-specific
-> > devices can easily find their way onto both ACPI-based and DT-based
-> > systems (not mentioning legacy-style boards). Having two distinct power
-> > schemes implemented in drivers will lead to many problems.
-> 
-> I really can't speak to those sorts of systems; where I deal with ACPI
-> is on enterprise-class server systems which seldom have a graphics card,
-> much less input devices other than a keyboard. 
+Hi Jacopo,
 
-Yeah, so basically no power management except for CPU states ;)
+Thanks for the patches.
 
-> And in general, those
-> systems are required to use only ACPI.  If a vendor wants their device to
-> work on such a system, they need to provide a driver that works with ACPI.
-> It may also work with DT, but in this environment it doesn't matter.
-> 
-> Whether or not there are two power schemes is a moot point.  We have DT
-> and we have ACPI, and they have very different schemes for power management,
-> so we're already there.  And so far, my experience has been that as long as
-> the ACPI and DT parts of the driver are kept disjoint when the models diverge,
-> and share code when they are semantically absolutely identical, things work
-> pretty well.
+On Wednesday, January 25, 2017, Jacopo Mondi wrote:
+> Right now, the only "SoC" module support implemented is for RZ/A1H (Genma=
+i
+> and GR-Peach boards).
 
-As someone who's actually shipping both ACPI and DT-based devices
-reusing the same peripherals I can assure you that it is really PITA to
-have different PM behavior in a single driver and if we can converge on
-something sane that would be great.
+I'm going to give it a try on the RZ/A1 RSK board.
 
-> 
-> > Having unified way of describing hardware is how _DSD came about, right?
-> > Nobody wanted to write and maintain and test two separate ways of
-> > describing properties when one was already implemented and working.
-> 
-> I can't speak for those that proposed _DSD to be part of the ACPI spec,
-> but no, it was not meant as a unified way of describing hardware, as far
-> as I can remember from the ASWG discussions I was part of.  The intent,
-> as I recall it, was to provide some of the same flexibility to ASL that
-> was available in DT.  At the time, power managment was even discussed as
-> one of the areas where the DT model and the ACPI model clashed.
 
-That's not what I remember from discussions at Plumbers/KS... Binding
-compatibility, even if for simplest properties, was one of the points.
+> I have tested the correctness of mux settings printing out register value=
+s,
+> and enabling/disabling the SCIF2 module connected to serial debug
+> interface.
 
-Thanks.
+I can give it a try on things like Eth, I2C, SPI, SDHI, MMC.
 
--- 
-Dmitry
+
+> One note on the current DT ABI:
+> right now a pin configuration is specified in DTS using utility macros
+> defined in the (currently undocumented) arch/arm/boot/dts/include/dt-
+> bindings/pinctrl/pinctrl-renesas-rz.h header file.
+> Each pin configuration is a triplet of u32 in the form of
+>=20
+> <BANK PIN ALTERNATE_FUNC_#>
+>=20
+> It should be fairly easy adding additional parameters to configure what
+> was missing in the original group-based PFC driver for RZ devices (I'm
+> thinking of IO mode control, input buffer configuration, bi-directional
+> configuration etc).
+
+SDHI is one that will need another parameter. Half the pins need Bidirectio=
+n
+(PBDC) enabled, and the other half need PBDC disabled.
+SDHI data pins are PBDC=3D1, the others are PBDC=3D0.
+
+
+> The series makes use of newly introduced pin[ctrl|mux]_generic functions,
+> currently only available in Linus Walleij's linux-pinctrl.git tree.
+
+Hmmm, I was hoping to 'easily' back port this to 4.9.
+I guess if it's the best way forward, then maybe I can back port those new
+generic functions for the LTSI tree.
+
+
+Chris
+
