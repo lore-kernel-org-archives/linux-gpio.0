@@ -1,38 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: mediatek: Use real dependencies
-Date: Thu, 26 Jan 2017 16:26:29 +0100
-Message-ID: <CACRpkdah+XHgyePTEFU0t4x8C_VkViNKNFWbCJLNne5LOWToog@mail.gmail.com>
-References: <20170125103209.1d97b0bd@endymion>
+Subject: Re: [PATCH] gpio-hammer: fix make consumer_label suitable to work on gpio-nails
+Date: Thu, 26 Jan 2017 16:29:01 +0100
+Message-ID: <CACRpkdY+aQrUWPd0T2Mmu-9+a8xeMYXYPxf0f6PLpU89Q6hVVg@mail.gmail.com>
+References: <20170125210144.26831-1-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:37595 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753200AbdAZP0b (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 10:26:31 -0500
-Received: by mail-it0-f49.google.com with SMTP id r185so35620891ita.0
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 07:26:31 -0800 (PST)
-In-Reply-To: <20170125103209.1d97b0bd@endymion>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:33537 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753406AbdAZP3C (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 10:29:02 -0500
+Received: by mail-it0-f52.google.com with SMTP id d9so3683976itc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 07:29:02 -0800 (PST)
+In-Reply-To: <20170125210144.26831-1-u.kleine-koenig@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, Matthias Brugger <matthias.bgg@gmail.com>, Biao Huang <biao.huang@mediatek.com>, James Liao <jamesjj.liao@mediatek.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Mason <slash.tmp@free.fr>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Wed, Jan 25, 2017 at 10:32 AM, Jean Delvare <jdelvare@suse.de> wrote:
+On Wed, Jan 25, 2017 at 10:01 PM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-> Do not hide pinctrl drivers for Mediatek platforms using
-> conditionals. Doing so actually leaves the symbols present (but
-> always disabled) on all other platforms, which is confusing and
-> inefficient. Better use real dependencies so that the symbols do not
-> exist at all on platforms where they are not relevant.
+> There are no gpio-nalils, so fix label accordingly.
 >
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Reported-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-Patch applied with Matthias' review tag.
+Patch applied! :)
 
 Yours,
 Linus Walleij
