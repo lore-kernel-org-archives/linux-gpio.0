@@ -1,53 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] pinctrl / gpio: Introduce .set_config() callback
- for GPIO chips
-Date: Thu, 26 Jan 2017 15:29:55 +0100
-Message-ID: <CACRpkda1MVNimpSaCvgjTzTRGMWqtmQ8DwPExzJYeKZCN5Jj_Q@mail.gmail.com>
-References: <20170123123434.61972-1-mika.westerberg@linux.intel.com>
- <20170123123434.61972-4-mika.westerberg@linux.intel.com> <20170123171107.GC32404@localhost>
- <20170124111130.GE17297@lahna.fi.intel.com> <CACRpkdYW9fe39w3KkdLgiiJLr_rQcX2rTrN=54pzP+zqFoLXZQ@mail.gmail.com>
- <20170124125756.GG17297@lahna.fi.intel.com> <20170124134504.GA20261@localhost>
- <20170124142220.GK17297@lahna.fi.intel.com> <20170125100944.GR17297@lahna.fi.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 11/13] pinctrl: samsung: Move retention control from
+ mach-exynos to the pinctrl driver
+Date: Thu, 26 Jan 2017 16:30:19 +0200
+Message-ID: <CAJKOXPfrUKtfP0B5mDY7SYM6Of4gGe0F4C95hvYZotTNn4a32Q@mail.gmail.com>
+References: <CGME20170119134909eucas1p11a7638a4b9bf69b00458189ba9c1bb90@eucas1p1.samsung.com>
+ <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+ <1484833733-16082-12-git-send-email-m.szyprowski@samsung.com>
+ <CACRpkdYc7u6Q4CW7a2ECsDkfUkiDJq_zk--RvKwz2i-XW0xHLQ@mail.gmail.com>
+ <2d9ad2d4-c2f8-ef6b-2504-1337db0da178@samsung.com> <CACRpkdapMKpsGVbbvJvXBtYGJCANYUOqMox=083+Lf6LkApmTw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170125100944.GR17297@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Johan Hovold <johan@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong <narmstrong@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:37584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753160AbdAZOaj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 09:30:39 -0500
+In-Reply-To: <CACRpkdapMKpsGVbbvJvXBtYGJCANYUOqMox=083+Lf6LkApmTw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "arm@kernel.org" <arm@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Jan 25, 2017 at 11:09 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Tue, Jan 24, 2017 at 04:22:20PM +0200, Mika Westerberg wrote:
->> On Tue, Jan 24, 2017 at 02:45:04PM +0100, Johan Hovold wrote:
->> > Good, that's the one I knew about. But I also got another conflict
->> > against pinctrl when applying on top of f9dd6f6cc63c ("Add linux-next
->> > specific files for 20170123"):
->> >
->> > Applying: pinctrl / gpio: Introduce .set_config() callback for GPIO chips
->> > error: patch failed: drivers/pinctrl/pinctrl-amd.c:756
->> > error: drivers/pinctrl/pinctrl-amd.c: patch does not apply
->> > error: patch failed: drivers/staging/greybus/gpio.c:474
->> > error: drivers/staging/greybus/gpio.c: patch does not apply
->> > Patch failed at 0001 pinctrl / gpio: Introduce .set_config() callback for GPIO chips
+On Thu, Jan 26, 2017 at 11:46 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Jan 26, 2017 at 10:13 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 2017-01-26 10:10, Linus Walleij wrote:
+>>> On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
+>>> <m.szyprowski@samsung.com> wrote:
+>>>>
+>>>> This patch moves pad retention control from PMU driver to Exynos pin
+>>>> controller driver. This helps to avoid possible ordering and logical
+>>>> dependencies between machine, PMU and pin control code. Till now it
+>>>> worked fine only because sys_ops for PMU and pin controller were called
+>>>> in registration order.
+>>>> This is also a preparation for adding new features to Exynos pin
+>>>> controller driver, like runtime power management and suspending
+>>>> individual pin controllers, which might be a part of some power domain.
+>>>>
+>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+>>>> ---
+>>>>   arch/arm/mach-exynos/suspend.c           |  64 --------------
+>>>>   drivers/pinctrl/samsung/pinctrl-exynos.c | 145
+>>>> +++++++++++++++++++++++++++++++
+>>>
+>>> This makes all kind of sense, but I would ideally like an ACK
+>>> from the ARM SoC maintainer(s): Arnd, Olof, are you OK with
+>>> this?
 >>
->> I tried today's linux-next 766074e7818 ("Add linux-next specific files
->> for 20170124") but only saw that GPIO conflict.
 >>
->> In any case I'm going to rebase my series on top of linux-gpio.git/devel
->> and submit it as v3.
+>> Isn't enough to have Krzysztof's (Exynos SoC maintainer) 'reviewed-by' tag?
+>> I assume that 'reviewed-by' also includes 'acked-by'.
 >
-> That said, it seems this v2 series applies cleanly to
-> linux-gpio.git/devel. There will be trivial conflict with the staging
-> tree because of 7f2e9de736e7 ("staging: greybus: fix checkpatch unsigned
-> warnings") but that's it.
+> If the SoC maintainers are too stressed to answer in reasonable time
+> or I just get randomly bored of waiting yes, I usually apply it anyway.
+>
+> Just want to give them a heads-up essentially.
 
-We'll see. If there are internal conflicts in GPIO and pin control
-I will get it in my face and deal with it when trying to create for-next
-branches.
+My Reviewed-by is also acked-by, so please go ahead and take this
+patch through pinctrl tree.
 
-The conflict with staging is business as usual in linux-next.
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
