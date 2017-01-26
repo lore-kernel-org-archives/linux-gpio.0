@@ -1,82 +1,109 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v3 1/8] pinctrl: sh-pfc: Add r7s72100 PFC driver
-Date: Thu, 26 Jan 2017 18:14:31 +0100
-Message-ID: <20170126171431.inq5xf36ltllfrlr@ninjato>
-References: <1484568772-18137-1-git-send-email-jacopo+renesas@jmondi.org>
- <1484568772-18137-2-git-send-email-jacopo+renesas@jmondi.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3sbfgq4hwkz5bwxt"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1484568772-18137-2-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: magnus.damm@gmail.com, laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, chris.brandt@renesas.com, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] pinctrl: baytrail: Add debounce to debug output
+Date: Thu, 26 Jan 2017 19:24:09 +0200
+Message-ID: <20170126172409.132136-4-andriy.shevchenko@linux.intel.com>
+References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:42089 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753906AbdAZRYP (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 12:24:15 -0500
+In-Reply-To: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+When debug pin configuration is printed out debounce setting is missed.
+Add it here.
 
---3sbfgq4hwkz5bwxt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-baytrail.c | 46 ++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+index a1f85a79f186..6bdb6e5879f8 100644
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -1391,11 +1391,12 @@ static int byt_gpio_direction_output(struct gpio_chip *chip,
+ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ {
+ 	struct byt_gpio *vg = gpiochip_get_data(chip);
++	u32 conf0, debounce, val;
+ 	int i;
+-	u32 conf0, val;
+ 
+ 	for (i = 0; i < vg->soc_data->npins; i++) {
+ 		const struct byt_community *comm;
++		const char *db_str = NULL;
+ 		const char *pull_str = NULL;
+ 		const char *pull = NULL;
+ 		void __iomem *reg;
+@@ -1415,6 +1416,16 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		}
+ 		conf0 = readl(reg);
+ 
++		reg = byt_gpio_reg(vg, pin, BYT_DEBOUNCE_REG);
++		if (!reg) {
++			seq_printf(s,
++				   "Could not retrieve pin %i debounce reg\n",
++				   pin);
++			raw_spin_unlock_irqrestore(&vg->lock, flags);
++			continue;
++		}
++		debounce = readl(reg);
++
+ 		reg = byt_gpio_reg(vg, pin, BYT_VAL_REG);
+ 		if (!reg) {
+ 			seq_printf(s,
+@@ -1459,6 +1470,32 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 			break;
+ 		}
+ 
++		if (conf0 & BYT_DEBOUNCE_EN) {
++			switch (debounce & BYT_DEBOUNCE_PULSE_MASK) {
++			case BYT_DEBOUNCE_PULSE_375US:
++				db_str = "375us";
++				break;
++			case BYT_DEBOUNCE_PULSE_750US:
++				db_str = "750us";
++				break;
++			case BYT_DEBOUNCE_PULSE_1500US:
++				db_str = "1500us";
++				break;
++			case BYT_DEBOUNCE_PULSE_3MS:
++				db_str = "3ms";
++				break;
++			case BYT_DEBOUNCE_PULSE_6MS:
++				db_str = "6ms";
++				break;
++			case BYT_DEBOUNCE_PULSE_12MS:
++				db_str = "12ms";
++				break;
++			case BYT_DEBOUNCE_PULSE_24MS:
++				db_str = "24ms";
++				break;
++			}
++		}
++
+ 		seq_printf(s,
+ 			   " gpio-%-3d (%-20.20s) %s %s %s pad-%-3d offset:0x%03x mux:%d %s%s%s",
+ 			   pin,
+@@ -1475,7 +1512,12 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 		if (pull && pull_str)
+ 			seq_printf(s, " %-4s %-3s", pull, pull_str);
+ 		else
+-			seq_puts(s, "          ");
++			seq_puts(s, "         ");
++
++		if (db_str)
++			seq_printf(s, " %-6s", db_str);
++		else
++			seq_puts(s, "        ");
+ 
+ 		if (conf0 & BYT_IODEN)
+ 			seq_puts(s, " open-drain");
+-- 
+2.11.0
 
-Just some very minor nits... Probably not worth the resend.
-
-On Mon, Jan 16, 2017 at 01:12:45PM +0100, Jacopo Mondi wrote:
-> From: Magnus Damm <damm@opensource.se>
->=20
-> Squash commits in Geert's renesas-driver/genmai-gpio-and-pfc branch that
-> add support for r7s72100 PFC.
-> This squash combines commits for Magnus' original driver, several
-> "groups" definitions and minor fixes on top to forward-port it to a more
-> recent kernel (v4.10)
->=20
-> Signed-off-by: Magnus Damm <damm@opensource.se>
-> Signed-off-by: Wolfram Sang <wsa@sang-engineering.com>
-
-I'd prefer the "wsa+renesas@..." address here, too.
-
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-=2E..
-
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r7s72100.c b/drivers/pinctrl/sh-p=
-fc/pfc-r7s72100.c
-> new file mode 100644
-> index 0000000..72e1dff
-> --- /dev/null
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r7s72100.c
-> @@ -0,0 +1,529 @@
-> +/*
-> + * R7S72100 processor support
-> + *
-> + * Copyright (C) 2013  Renesas Electronics Corporation
-
-2013-2017?
-
-
---3sbfgq4hwkz5bwxt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAliKLncACgkQFA3kzBSg
-KbZ7VxAAkrAfG1RVFASWYKJSoIKiU4YdapIRJsDFWaJkWEd2eDxCF+PxZ6PuLoqm
-KKD5OmXMKY2wiAK+JTgg9ri6e3sUVeZ2G2AIrgAEzXnFw0RahmiRlna8pJHLHw89
-bMeaoZLtiVUVngbXtclXkPy/vymIPNOiUsmKYFlo7+JL663bLIQmghFw9sYYosGA
-PMeGUcGXxyg2Na33q9DBjt00nT8Pe9qPl3NVwujSlWOJvCdv/3AoPy8Mlya3wXAP
-x6CofGmvucJyJpfzFnpydSUV7y2SEVxLnp+ZkEYhE0xmeEKl3EDUsxMrYOj61Dlr
-oq12EETEDsAjh1Fl0YgsWA8UhNyEPjrY+Pbl84989z8++TguyhxqtT+MHPY7rYmk
-e3NenycjF1Kf6I9riH6h/z2HOSRMqPCmDY5xYjENL12WFhwlyHNhLoJ8FGEB1XCy
-XJ6YITfi2a3QPGWPnZvH9PZoR//vrWSGMmNd786frzbWY135nU4x0XxXrronlt73
-6W8D+yNoOCsfWzKwudiKTuYt/+mwo2PpifEK+6A2GWiIje9WuNoFGSqT/85c20r4
-4FvdxS6cgNHRC054Ak3S/e43AQpCtd4CXVuZn1Jnf0fJkIGFEbNUhzoq0IC/5QlR
-CnvxR1APD7hm1tNYeetxpxrMyRkDq3Q6F2GoR4mUoTmrWKN/iX8=
-=FDRq
------END PGP SIGNATURE-----
-
---3sbfgq4hwkz5bwxt--
