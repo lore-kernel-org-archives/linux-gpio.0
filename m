@@ -1,62 +1,85 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC 3/5] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-Date: Thu, 26 Jan 2017 20:52:33 +0100
-Message-ID: <CAMuHMdUmy2QkvRomf8euzB0QNkeCA=N8=rhY0GkObz8qn-UvMQ@mail.gmail.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
+Date: Thu, 26 Jan 2017 20:43:06 +0100
+Message-ID: <CAMuHMdUmOAW5kPacMskVT_7R+T4qMmbPiaZV2z51sn1EELG4SQ@mail.gmail.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35956 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753407AbdAZTzn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 14:55:43 -0500
+In-Reply-To: <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-List-Id: linux-gpio@vger.kernel.org
 
 Hi Jacopo,
 
 On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add dt-bindings header for Renesas RZ pincontroller.
-> The header defines macros for pin description and alternate function
-> numbers.
+> Add core module for per-pin Renesas RZ series pin controller.
+> The core module allows SoC driver to register their pins and SoC
+> specific operations and interfaces with pinctrl and pinmux core on their
+> behalf.
 >
 > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  include/dt-bindings/pinctrl/pinctrl-renesas-rz.h | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
->
-> diff --git a/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
-> new file mode 100644
-> index 0000000..92816d4
+
+I believe nothing besides the DT property "renesas-rz,pins" and the value
+of the RZ_PIN_ARGS_COUNT macro is really specific to Renesas or RZ(A)?
+So this could become something really generic, and part of core pinctrl?
+
 > --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
-> @@ -0,0 +1,19 @@
-> +/*
-> + * Defines macros and constants for Renesas RZ pin controller and muxer
+> +++ b/drivers/pinctrl/rz-pfc/pinctrl-rz.c
+> @@ -0,0 +1,447 @@
+
+> +#define RZ_PIN_ARGS_COUNT      3
+
+This should be a parameter in the SoC-specific subdriver.
+
+> +/**
+> + * rz_pinctrl_pos_to_index() - Retrieve the index of pin at position [bank:pin]
+> + *
+> + * This can be improved, as it walks all the pins reported by the SoC driver
+> + *
+> + * @return: pin number between [0 - npins]; -1 if not found
 > + */
-> +
-> +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
-> +#define __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
-> +
-> +#define RZ_PIN(b, p) b p
+> +static int rz_pinctrl_pos_to_index(struct rz_pinctrl_dev *rz_pinctrl,
+> +                                  unsigned int bank, unsigned int pin)
+> +{
+> +       struct rz_pinctrl_info *info;
+> +       struct rz_pin_desc *rz_pin;
 
-And the advantage of this macro is?
+const
 
-> +#define ALTERNATE_FUNC_1       0
-> +#define ALTERNATE_FUNC_2       1
-> +#define ALTERNATE_FUNC_3       2
-> +#define ALTERNATE_FUNC_4       3
-> +#define ALTERNATE_FUNC_5       4
-> +#define ALTERNATE_FUNC_6       5
-> +#define ALTERNATE_FUNC_7       6
-> +#define ALTERNATE_FUNC_8       7
+> +       int i, npins;
 
-I have mixed feelings about these macros:
-  1. They're long to type,
-  2. They just map from n to n-1.
+unsigned int
 
-Why not use plain numbers 1..8 (the alternate function numbering in the
-datasheet is 1-based), and subtract 1 in the C code?
+> +/* ----------------------------------------------------------------------------
+> + * pinctrl operations
+> + */
+> +static void rz_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
+
+const ... pctldev
+
+> +                           unsigned int pin)
+> +{
+> +       struct rz_pinctrl_dev *rz_pinctrl;
+> +       struct rz_pinctrl_info *info;
+
+const
+
+> +static int rz_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +                            struct device_node *np_config,
+> +                            struct pinctrl_map **map, unsigned int *num_maps)
+> +{
+
+> +       fngrps = devm_kzalloc(rz_pinctrl->dev, sizeof(*fngrps), GFP_KERNEL);
+> +       if (unlikely(!fngrps)) {
+
+Please don't use unlikely.
 
 Gr{oetje,eeting}s,
 
