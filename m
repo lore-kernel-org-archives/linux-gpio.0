@@ -1,40 +1,59 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH 1/1] pinctrl: baytrail: Fix debugfs offset output
-Date: Thu, 26 Jan 2017 14:17:54 +0100
-Message-ID: <20170126131754.29630-1-alexander.stein@systec-electronic.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Suspicious debounce handling code in pintctrl-baytrail
+Date: Thu, 26 Jan 2017 14:20:20 +0100
+Message-ID: <20170126142020.7bfd1229@endymion>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:54495 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750877AbdAZNST (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 08:18:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42504 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752140AbdAZNUr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 08:20:47 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
+To: Cristina Ciocan <cristina.ciocan@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Apparently each GPIO pad's register are 16 bytes, so multiply the pad_map
-by that. The same is done in byt_gpio_reg the only other place where
-pad_map is used.
+Hi Cristina,
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
----
- drivers/pinctrl/intel/pinctrl-baytrail.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In this commit:
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 3730063..6cce314 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1449,7 +1449,7 @@ static void byt_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 			   val & BYT_INPUT_EN ? "  " : "in",
- 			   val & BYT_OUTPUT_EN ? "   " : "out",
- 			   val & BYT_LEVEL ? "hi" : "lo",
--			   comm->pad_map[i], comm->pad_map[i] * 32,
-+			   comm->pad_map[i], comm->pad_map[i] * 16,
- 			   conf0 & 0x7,
- 			   conf0 & BYT_TRIG_NEG ? " fall" : "     ",
- 			   conf0 & BYT_TRIG_POS ? " rise" : "     ",
+commit 658b476c742fe379e7020309fd590a27b457a4c1
+Date:   Fri Apr 1 14:00:07 2016 +0300
+
+    pinctrl: baytrail: Add debounce configuration
+
+you added support for getting and setting debounce configuration for
+the Baytrail pins. Now gcc complains about the following:
+
+  CC [M]  drivers/pinctrl/intel/pinctrl-baytrail.o
+drivers/pinctrl/intel/pinctrl-baytrail.c: In function ‘byt_pin_config_set’:
+drivers/pinctrl/intel/pinctrl-baytrail.c:1181:17: warning: variable ‘debounce’ set but not used [-Wunused-but-set-variable]
+  u32 conf, val, debounce;
+                 ^
+
+I looked at the code, and it indeed looks wrong. You are reading the
+BYT_DEBOUNCE_REG register, clearing the debounce time bits from it, and
+then writing the debounce time bits to the *BYT_CONF0_REG* register.
+This is certainly corrupting the chip configuration, as the
+configuration register bits 2-0 have a completely different meaning
+(mux configuration.)
+
+Did you ever test that code?
+
+Additionally, I suspect that in the "get" path, the following is wrong:
+
+	case PIN_CONFIG_INPUT_DEBOUNCE:
+		if (!(conf & BYT_DEBOUNCE_EN))
+			return -EINVAL;
+
+I'm not familiar with the pinctrl interface but my understanding of
+the PIN_CONFIG_INPUT_DEBOUNCE documentation is that the driver must
+return 0 if debouncing is disabled. The "set" path would also need to
+handle this case properly (setting BYT_DEBOUNCE_EN if debounce timing is
+non-zero, clearing it if value is zero.)
+
 -- 
-2.10.2
-
+Jean Delvare
+SUSE L3 Support
