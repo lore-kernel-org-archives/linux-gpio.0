@@ -1,73 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: Use raw spinlock variants
-Date: Thu, 26 Jan 2017 11:08:50 +0100
-Message-ID: <CACRpkdbdZ8KnrYvgMJ2BoLkccSB0YPwmWm5jgeggUB8FRGjNZw@mail.gmail.com>
-References: <CAEYdEeQ63HZzi8yJk4eAAa=XeEeOFR_wqnL_PW3d6Nt5N955pQ@mail.gmail.com>
- <20170117201906.GB1335@jcartwri.amer.corp.natinst.com> <CACRpkdbxZw6QLKA0A8b=VuHmtkSHFywDT19pFZ3ioQ0kA=3VNg@mail.gmail.com>
- <CAEYdEeQ00axyXD0noFJDsPxHeMb0qhC6jTG4Lee7En+cOqHkXw@mail.gmail.com>
- <CAEYdEeR1Z0RWkGJ1PUyMujZf3kHqxZE-B6yHpXcNkcXVJg75Mg@mail.gmail.com> <20170120161347.GI1335@jcartwri.amer.corp.natinst.com>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v3 10/14] mmc: jz4740: Let the pinctrl driver configure  the pins
+Date: Thu, 26 Jan 2017 11:10:37 +0100
+Message-ID: <0e03c853297688e19a9ddca239aaa583@mail.crapouillou.net>
+References: <201701261459.cfXHvGfn%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-rt-users-owner@vger.kernel.org>
-In-Reply-To: <20170120161347.GI1335@jcartwri.amer.corp.natinst.com>
-Sender: linux-rt-users-owner@vger.kernel.org
-To: Julia Cartwright <julia@ni.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Brian Wrenn <dcbrianw@gmail.com>, linux-rt-users@vger.kernel.org, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <201701261459.cfXHvGfn%fengguang.wu@intel.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jan 20, 2017 at 5:13 PM, Julia Cartwright <julia@ni.com> wrote:
+Hi Kbuild Test Robot,
 
-> The MSM pinctrl driver currently implements an irq_chip for handling
-> GPIO interrupts; due to how irq_chip handling is done, it's necessary
-> for the irq_chip methods to be invoked from hardirq context, even on a
-> a real-time kernel.  Because the spinlock_t type becomes a "sleeping"
-> spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
->
-> A quick audit of the operations under the lock reveal that they do only
-> minimal, bounded work, and are therefore safe to do under a raw
-> spinlock.
->
-> On real-time kernels, this fixes an OOPs which looks like the following,
-> as reported by Brian Wrenn:
->
->     kernel BUG at kernel/locking/rtmutex.c:1014!
->     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->     Modules linked in: spidev_irq(O) smsc75xx wcn36xx [last unloaded: spi=
-dev]
->     CPU: 0 PID: 1163 Comm: irq/144-mmc0 Tainted: G        W  O    4.4.9-l=
-inaro-lt-qcom #1
->     PC is at rt_spin_lock_slowlock+0x80/0x2d8
->     LR is at rt_spin_lock_slowlock+0x68/0x2d8
->     [..]
->   Call trace:
->     rt_spin_lock_slowlock
->     rt_spin_lock
->     msm_gpio_irq_ack
->     handle_edge_irq
->     generic_handle_irq
->     msm_gpio_irq_handler
->     generic_handle_irq
->     __handle_domain_irq
->     gic_handle_irq
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reported-by: Brian Wrenn <dcbrianw@gmail.com>
-> Tested-by: Brian Wrenn <dcbrianw@gmail.com>
-> Signed-off-by: Julia Cartwright <julia@ni.com>
+> 
+> drivers/mmc/host/jz4740_mmc.c: In function 'jz4740_mmc_set_ios':
+> drivers/mmc/host/jz4740_mmc.c:864:7: error: implicit declaration of 
+> function 'gpio_is_valid' [-Werror=implicit-function-declaration]
 
-Patch applied with Bj=C3=B6rn's ACK.
-Thanks for a very nice patch!
+  if (gpio_is_valid(host->pdata->gpio_power))
+  ^~~~~~~~~~~~~
 
-> Linus-  on quick glance, this is but one of many drivers which suffer
-> the same class of problem :(.  I'm wondering if we can do some
-> coccinelle magic to check specifically drivers which implement irq_chip
-> callbacks and use spin_locks...
+Uuh, I'm sorry about that. Looks like I removed one header too much 
+(<linux/gpio.h>).
+My fault, lately I was testing with ci20_defconfig which doesn't enable 
+this driver.
 
-That would be awesome. I'm aware of the problem, but irqchips
-are kind of fragile, so patches definately need to be tested on
-hardware. If we get some patches and good example into the
-kernel, hopefully we can get the situation a bit better.
+Should I send a v4?
 
-Yours,
-Linus Walleij
+Apologies,
+-Paul
