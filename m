@@ -1,36 +1,61 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
-Date: Thu, 26 Jan 2017 10:37:08 +0200
-Message-ID: <20170126083708.GH27921@kuha.fi.intel.com>
-References: <20170125162608.58bfbfb1@endymion>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 4/7] arm64: dts: exynos: Add clocks to Exynos5433 LPASS module
+Date: Thu, 26 Jan 2017 10:40:03 +0200
+Message-ID: <CAJKOXPdb4vBP_kZDgy1CJ-6WHdpU5+NKygoCNZuiCyh3MvpR9Q@mail.gmail.com>
+References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170125115103eucas1p1d0e446fa6e998da257e3c17922a00d7f@eucas1p1.samsung.com>
+ <1485345031-2948-5-git-send-email-m.szyprowski@samsung.com>
+ <20170125195022.yiqxnfted2vw4owh@kozik-lap> <2eabe488-1e58-4320-6d6f-f7844ee06998@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:36881 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753011AbdAZIhM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 03:37:12 -0500
-Content-Disposition: inline
-In-Reply-To: <20170125162608.58bfbfb1@endymion>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2eabe488-1e58-4320-6d6f-f7844ee06998@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>
 
-On Wed, Jan 25, 2017 at 04:26:08PM +0100, Jean Delvare wrote:
-> The pinctrl-baytrail driver builds just fine as a module so give
-> users this option.
-> 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Thu, Jan 26, 2017 at 9:18 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hi Krzysztof,
+>
+>
+> On 2017-01-25 20:50, Krzysztof Kozlowski wrote:
+>>
+>> On Wed, Jan 25, 2017 at 12:50:28PM +0100, Marek Szyprowski wrote:
+>>>
+>>> Exynos5433 LPASS module requires some clocks for proper operation with
+>>> power domain.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>> b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>> index 57c7bbeb65a7..16072c1c3ed3 100644
+>>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+>>> @@ -1494,6 +1494,8 @@
+>>>                 audio-subsystem@11400000 {
+>>>                         compatible = "samsung,exynos5433-lpass";
+>>>                         reg = <0x11400000 0x100>, <0x11500000 0x08>;
+>>> +                       clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
+>>> +                       clock-names = "sfr0_ctrl";
+>>
+>> You wrote that 6/7 depends on this. I prefer not to take DTS changes if
+>> the corresponding user (driver) is still under discussion because the
+>> bindings might change. I'll take it when bindings got acked or accepted.
+>
+>
+> Well, audio support in 4.9 is still not functional due to missing other
+> patches to ALSA SoC, so nothing will break as for now if we manage to get
+> this into v4.10.
 
-OK by me. FWIW.
+Get this into v4.10? So this needs some additional explanation in the
+commit message why this is a fix. Probably one more sentence would be
+enough. Or did you mean v4.11?
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-
-Thanks,
-
--- 
-heikki
+Best regards,
+Krzysztof
