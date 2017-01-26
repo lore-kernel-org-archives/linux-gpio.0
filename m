@@ -1,64 +1,51 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 4/7] arm64: dts: exynos: Add clocks to Exynos5433 LPASS
- module
-Date: Thu, 26 Jan 2017 09:44:03 +0100
-Message-ID: <627ea264-535d-2c89-3987-02b8620d9328@samsung.com>
-References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115103eucas1p1d0e446fa6e998da257e3c17922a00d7f@eucas1p1.samsung.com>
- <1485345031-2948-5-git-send-email-m.szyprowski@samsung.com>
- <20170125195022.yiqxnfted2vw4owh@kozik-lap>
- <2eabe488-1e58-4320-6d6f-f7844ee06998@samsung.com>
- <CAJKOXPdb4vBP_kZDgy1CJ-6WHdpU5+NKygoCNZuiCyh3MvpR9Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to tristate
+Date: Thu, 26 Jan 2017 09:55:36 +0100
+Message-ID: <CACRpkdb9npDaMe07+v-ZzntD1Z_U2Swstk6bv=7uhHLmpM5LVA@mail.gmail.com>
+References: <20170125162608.58bfbfb1@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAJKOXPdb4vBP_kZDgy1CJ-6WHdpU5+NKygoCNZuiCyh3MvpR9Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:38766 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752863AbdAZIzi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 03:55:38 -0500
+Received: by mail-it0-f52.google.com with SMTP id c7so30227784itd.1
+        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 00:55:37 -0800 (PST)
+In-Reply-To: <20170125162608.58bfbfb1@endymion>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.de>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@linux.intel.com>, Takashi Iwai <tiwai@suse.de>
 
-Hi Krzysztof,
+On Wed, Jan 25, 2017 at 4:26 PM, Jean Delvare <jdelvare@suse.de> wrote:
 
-On 2017-01-26 09:40, Krzysztof Kozlowski wrote:
-> On Thu, Jan 26, 2017 at 9:18 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> On 2017-01-25 20:50, Krzysztof Kozlowski wrote:
->>> On Wed, Jan 25, 2017 at 12:50:28PM +0100, Marek Szyprowski wrote:
->>>> Exynos5433 LPASS module requires some clocks for proper operation with
->>>> power domain.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>>    arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 ++
->>>>    1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>>> b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>>> index 57c7bbeb65a7..16072c1c3ed3 100644
->>>> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>>> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->>>> @@ -1494,6 +1494,8 @@
->>>>                  audio-subsystem@11400000 {
->>>>                          compatible = "samsung,exynos5433-lpass";
->>>>                          reg = <0x11400000 0x100>, <0x11500000 0x08>;
->>>> +                       clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
->>>> +                       clock-names = "sfr0_ctrl";
->>> You wrote that 6/7 depends on this. I prefer not to take DTS changes if
->>> the corresponding user (driver) is still under discussion because the
->>> bindings might change. I'll take it when bindings got acked or accepted.
->>
->> Well, audio support in 4.9 is still not functional due to missing other
->> patches to ALSA SoC, so nothing will break as for now if we manage to get
->> this into v4.10.
-> Get this into v4.10? So this needs some additional explanation in the
-> commit message why this is a fix. Probably one more sentence would be
-> enough. Or did you mean v4.11?
+> The pinctrl-baytrail driver builds just fine as a module so give
+> users this option.
+>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> This was discussed almost one year ago, with no clear conclusion, but
+> also no evidence that the driver can't be built as a module. Is there
+> any way to push this forward?
 
-Yes, I meant v4.11.
+I see ACKs for this patch, but in my git I also have:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+commit 360943a8d26265825025b88da32961bd9ad4f7c6
+pinctrl: baytrail: make it explicitly non-modular
+
+Acked by Mika.
+
+So which one is it going to be?
+
+If this should be applied, the previous patch from Paul Gortmaker
+should be reverted first. Especially the runtime PM parts seem
+important to get back.
+
+Then I want a patch reverting that and adding this tristate in one.
+
+Yours,
+Linus Walleij
