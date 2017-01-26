@@ -1,61 +1,77 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 4/7] arm64: dts: exynos: Add clocks to Exynos5433 LPASS
- module
-Date: Thu, 26 Jan 2017 08:18:50 +0100
-Message-ID: <2eabe488-1e58-4320-6d6f-f7844ee06998@samsung.com>
-References: <1485345031-2948-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170125115103eucas1p1d0e446fa6e998da257e3c17922a00d7f@eucas1p1.samsung.com>
- <1485345031-2948-5-git-send-email-m.szyprowski@samsung.com>
- <20170125195022.yiqxnfted2vw4owh@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 0/8] Pad retentions support for Exynos5433
+Date: Thu, 26 Jan 2017 09:33:46 +0100
+Message-ID: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+References: <CGME20170126083401eucas1p20b4794fe46ccf2189bf734f0d8e3c536@eucas1p2.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20170125195022.yiqxnfted2vw4owh@kozik-lap>
 Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Krzysztof,
+Hello,
 
+This patchset is a first step to add support for all power domains on
+Exynos5433 SoCs. This patchset contains patches for Exynos pin control
+driver and Exynos LPASS MFD driver, which are needed to make the
+platform ready for adding power domains support.
 
-On 2017-01-25 20:50, Krzysztof Kozlowski wrote:
-> On Wed, Jan 25, 2017 at 12:50:28PM +0100, Marek Szyprowski wrote:
->> Exynos5433 LPASS module requires some clocks for proper operation with
->> power domain.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> index 57c7bbeb65a7..16072c1c3ed3 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
->> @@ -1494,6 +1494,8 @@
->>   		audio-subsystem@11400000 {
->>   			compatible = "samsung,exynos5433-lpass";
->>   			reg = <0x11400000 0x100>, <0x11500000 0x08>;
->> +			clocks = <&cmu_aud CLK_PCLK_SFR0_CTRL>;
->> +			clock-names = "sfr0_ctrl";
-> You wrote that 6/7 depends on this. I prefer not to take DTS changes if
-> the corresponding user (driver) is still under discussion because the
-> bindings might change. I'll take it when bindings got acked or accepted.
+Patches in this patchset depends on each other. They are order in such a
+way to make the changes bisectable.
 
-Well, audio support in 4.9 is still not functional due to missing other
-patches to ALSA SoC, so nothing will break as for now if we manage to get
-this into v4.10.
+Patch #3 has runtime dependency on #1.
+Patch #5 has runtime dependency on #3.
+Patch #6 has runtime dependency on #4.
 
-> BTW, the 6/7 is a quite reasonable ABI break, but for the sake of
-> documentation - why you did not continue with the patch for marking
-> bidings as experimental/under-development?
+This patchset also directly depends on the "Move pad retention control to
+Exynos pin controller driver" patchset:
+https://www.spinics.net/lists/arm-kernel/msg556074.html
 
-Because I had no time to list all breaks, what was requested by Rob.
+Patches have been generated on top of linux-next from 25th January 2017.
 
+This is a part of a larger task, which goal is to add support for power
+domains on Exynos5433 SoCs / TM2 boards. All patches needed to get it
+working have been pushed to the following git repo:
+https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.10-next-tm2-pd
 
 Best regards
--- 
-Marek Szyprowski, PhD
+Marek Szyprowski
 Samsung R&D Institute Poland
+
+
+Changelog:
+v2:
+- fixed issues pointed by Krzysztof Kozlowski:
+  1. added more checks to Exynos PMU driver for NULL drvdata
+  2. reused EXYNOS_WAKEUP_FROM_LOWPWR in retention data for Exynos5433
+  3. converted lpass driver to devm_clk_get
+  4. added missing ->remove callback to lpass driver
+
+v1: https://lkml.org/lkml/2017/1/25/214
+- initial version
+
+
+Patch summary:
+
+Marek Szyprowski (8):
+  soc: samsung: pmu: Add dummy support for Exynos5433 SoC
+  pinctrl: samsung: Ensure that pad retention is disabled on driver init
+  pinctrl: samsung: Add support for pad retention control for Exynos5433
+    SoCs
+  arm64: dts: exynos: Add clocks to Exynos5433 LPASS module
+  mfd: exynos-lpass: Remove pad retention control
+  mfd: exynos-lpass: Add support for clocks
+  mfd: exynos-lpass: Add missing remove() function
+  mfd: exynos-lpass: Add runtime PM support
+
+ .../bindings/mfd/samsung,exynos5433-lpass.txt      |  8 ++-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  2 +
+ drivers/mfd/exynos-lpass.c                         | 48 ++++++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 63 ++++++++++++++++++++++
+ drivers/soc/samsung/exynos-pmu.c                   |  6 ++-
+ include/linux/mfd/syscon/exynos5-pmu.h             |  3 --
+ include/linux/soc/samsung/exynos-regs-pmu.h        | 16 ++++++
+ 7 files changed, 121 insertions(+), 25 deletions(-)
+
+-- 
+1.9.1
