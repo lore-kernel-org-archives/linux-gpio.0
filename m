@@ -1,109 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/2] gpio: aspeed: Add banks Y, Z, AA, AB and AC
-Date: Thu, 26 Jan 2017 14:51:41 +0100
-Message-ID: <CACRpkdZ4hZY1j5U1xfn=trnDJMG1A=K2DbMWxD=79MzmEgouaw@mail.gmail.com>
-References: <20170124061646.9317-1-andrew@aj.id.au> <20170124061646.9317-3-andrew@aj.id.au>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: Suspicious debounce handling code in pintctrl-baytrail
+Date: Thu, 26 Jan 2017 15:00:46 +0100
+Message-ID: <20170126150046.2ca78ed6@endymion>
+References: <20170126142020.7bfd1229@endymion>
+        <20170126134341.GI17297@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170124061646.9317-3-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:53387 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751733AbdAZOAx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 09:00:53 -0500
+In-Reply-To: <20170126134341.GI17297@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Cristina Ciocan <cristina.ciocan@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
 
-On Tue, Jan 24, 2017 at 7:16 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+Hi Mika, hello Andy,
 
-> This is less straight-forward than one would hope, as some banks only
-> have 4 pins rather than 8, others are output only, yet more (W and
-> X, already supported) are input-only, and in the case of the g4 SoC bank
-> AC doesn't exist.
->
-> Add some structs to describe the varying properties of different banks
-> and integrate mechanisms to deny requests for unsupported
-> configurations.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+On Thu, 26 Jan 2017 15:43:41 +0200, Mika Westerberg wrote:
+> On Thu, Jan 26, 2017 at 02:20:20PM +0100, Jean Delvare wrote:
+> > Hi Cristina,
+> > 
+> > In this commit:
+> > 
+> > commit 658b476c742fe379e7020309fd590a27b457a4c1
+> > Date:   Fri Apr 1 14:00:07 2016 +0300
+> > 
+> >     pinctrl: baytrail: Add debounce configuration
+> > 
+> > you added support for getting and setting debounce configuration for
+> > the Baytrail pins. Now gcc complains about the following:
+> > 
+> >   CC [M]  drivers/pinctrl/intel/pinctrl-baytrail.o
+> > drivers/pinctrl/intel/pinctrl-baytrail.c: In function ‘byt_pin_config_set’:
+> > drivers/pinctrl/intel/pinctrl-baytrail.c:1181:17: warning: variable ‘debounce’ set but not used [-Wunused-but-set-variable]
+> >   u32 conf, val, debounce;
+> >                  ^
+> > 
+> > I looked at the code, and it indeed looks wrong. You are reading the
+> > BYT_DEBOUNCE_REG register, clearing the debounce time bits from it, and
+> > then writing the debounce time bits to the *BYT_CONF0_REG* register.
+> > This is certainly corrupting the chip configuration, as the
+> > configuration register bits 2-0 have a completely different meaning
+> > (mux configuration.)
+> 
+> Yes, you are right.
+> 
+> This is fixed by following commit from Andy:
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=fixes&id=04ff5a095d662e0879f0eb04b9247e092210aeff
 
-(...)
-> +#include <linux/gpio.h>
+Thanks for the pointer, I wasn't aware of that patch. Looks overall
+good, but:
 
-NAK don't do that. (I will explain below...)
++			case 0:
++				conf &= BYT_DEBOUNCE_EN;
++				break;
 
-(...)
+looks suspicious to me. I think ~BYT_DEBOUNCE_EN was intended?
+Furthermore I would expect conf |= BYT_DEBOUNCE_EN in the other cases,
+otherwise disabling debounce once will prevent you from enabling it
+forever.
 
-> @@ -189,6 +258,12 @@ static int aspeed_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
->         unsigned long flags;
->         u32 val;
->
-> +       if (!have_input(gpio, offset))
-> +               return GPIOF_DIR_OUT;
-> +
-> +       if (!have_output(gpio, offset))
-> +               return GPIOF_DIR_IN;
+Also Andy's patch doesn't seem to address my second point:
 
-Please refrain from using GPIOF_* in drivers like this.
+> Additionally, I suspect that in the "get" path, the following is wrong:
+> 
+> 	case PIN_CONFIG_INPUT_DEBOUNCE:
+> 		if (!(conf & BYT_DEBOUNCE_EN))
+> 			return -EINVAL;
+> 
+> I'm not familiar with the pinctrl interface but my understanding of
+> the PIN_CONFIG_INPUT_DEBOUNCE documentation is that the driver must
+> return 0 if debouncing is disabled.
 
-These flags are part of the consumer API, not the driver API.
+?
 
-Make sure the only header you include in your driver is
-<linux/gpio/driver.h> and just return 0/1 instead of these
-constants.
-
-> +static void set_irq_valid_mask(struct aspeed_gpio *gpio)
-> +{
-> +       const struct aspeed_bank_props *props = gpio->config->props;
-> +
-> +       while (!is_bank_props_sentinel(props)) {
-> +               unsigned int offset;
-> +               const unsigned long int input = props->input;
-> +
-> +               /* Pretty crummy approach, but similar to GPIO core */
-> +               for_each_clear_bit(offset, &input, 32) {
-> +                       unsigned int i = props->bank * 32 + offset;
-> +
-> +                       if (i >= gpio->config->nr_gpios)
-> +                               break;
-> +
-> +                       clear_bit(i, gpio->chip.irq_valid_mask);
-> +               }
-> +
-> +               props++;
-> +       }
-> +}
-
-Nice that you use this feature!
-
-> +/*
-> + * Any banks not specified in a struct aspeed_bank_props array are assumed to
-> + * have the properties:
-> + *
-> + *     { .input = 0xffffffff, .output = 0xffffffff }
-> + */
-> +
-> +static const struct aspeed_bank_props ast2400_bank_props[] = {
-> +       /*     input      output   */
-> +       { 5, 0xffffffff, 0x0000ffff }, /* U/V/W/X */
-> +       { 6, 0x0000000f, 0x0fffff0f }, /* Y/Z/AA/AB, two 4-GPIO holes */
-> +       { },
-> +};
-> +
-> +static const struct aspeed_gpio_config ast2400_config =
-> +       /* 220 for simplicity, really 216 with two 4-GPIO holes, four at end */
-> +       { .nr_gpios = 220, .props = ast2400_bank_props, };
-> +
-> +static const struct aspeed_bank_props ast2500_bank_props[] = {
-> +       /*     input      output   */
-> +       { 5, 0xffffffff, 0x0000ffff }, /* U/V/W/X */
-> +       { 6, 0x0fffffff, 0x0fffffff }, /* Y/Z/AA/AB, 4-GPIO hole */
-> +       { 7, 0x000000ff, 0x000000ff }, /* AC */
-> +       { },
-> +};
-
-A bit of magic values but there are comments to explain it so OK.
-
-You could consider using the GENMASK() macro from <linux/bitops.h>
-to indicate the bits here but no big deal.
-
-Yours,
-Linus Walleij
+Thanks,
+-- 
+Jean Delvare
+SUSE L3 Support
