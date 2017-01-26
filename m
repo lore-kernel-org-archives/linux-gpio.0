@@ -1,41 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 1/1] of: Pass GPIO label down to gpiod_request when
- using get_gpiod_from_child
-Date: Thu, 26 Jan 2017 16:10:30 +0100
-Message-ID: <CAMuHMdVP+wmv0yWQsB589eWWHxCU=q=VMj6FuqPBAzt_VfNdew@mail.gmail.com>
-References: <20170112163924.4414-1-alexander.stein@systec-electronic.com>
- <CACRpkdbbRcKvYuE4_oA2pPQsCpEhb_JbPDyvrcuJvK5y1BD6Og@mail.gmail.com>
- <CAMuHMdXUM8dCPwWjXmUP4gefB-_Apw7-LBENxjq7AqimEc+EXQ@mail.gmail.com> <CACRpkdbe2x3q2cqQ0EqaAU-Be0-FXa8q-oUd5XCYdKMnB15gyg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbe2x3q2cqQ0EqaAU-Be0-FXa8q-oUd5XCYdKMnB15gyg@mail.gmail.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] pinctrl: broxton: No need to take pointer of a pointer
+Date: Thu, 26 Jan 2017 17:10:38 +0200
+Message-ID: <20170126151038.37977-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:28921 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752786AbdAZPLM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 10:11:12 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Hi Linus,
+There is no need to take pointer of a pointer to an array of SoC data in
+platform driver.
 
-On Thu, Jan 26, 2017 at 3:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Jan 24, 2017 at 12:18 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->
->> -gpio-780 (?): gpiod_set_debounce: missing set() or set_debounce() operations
->> +gpio-780 (SW30): gpiod_set_debounce: missing set() or set_debounce() operations
->
-> And there is a special problem.
->
-> I wanted, at one point, to take the timer-based debouncing code out of
-> the GPIO keys input driver and make it into a generic fallback in
-> gpiolib so that *any* GPIO controller could be made to provide
-> debounce.
->
-> I ran into some obstacle feelin it was impossible IIRC but do not
-> remember what it was.
+Do it in the same way as it's done for ACPI.
 
-Are these real problems? They are debug prints.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-broxton.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/pinctrl/intel/pinctrl-broxton.c b/drivers/pinctrl/intel/pinctrl-broxton.c
+index 21bff8cca3ed..e6e6fd112585 100644
+--- a/drivers/pinctrl/intel/pinctrl-broxton.c
++++ b/drivers/pinctrl/intel/pinctrl-broxton.c
+@@ -1004,8 +1004,8 @@ static const struct acpi_device_id bxt_pinctrl_acpi_match[] = {
+ MODULE_DEVICE_TABLE(acpi, bxt_pinctrl_acpi_match);
+ 
+ static const struct platform_device_id bxt_pinctrl_platform_ids[] = {
+-	{ "apollolake-pinctrl", (kernel_ulong_t)&apl_pinctrl_soc_data },
+-	{ "broxton-pinctrl", (kernel_ulong_t)&bxt_pinctrl_soc_data },
++	{ "apollolake-pinctrl", (kernel_ulong_t)apl_pinctrl_soc_data },
++	{ "broxton-pinctrl", (kernel_ulong_t)bxt_pinctrl_soc_data },
+ 	{ },
+ };
+ 
+-- 
+2.11.0
 
-                        Geert
