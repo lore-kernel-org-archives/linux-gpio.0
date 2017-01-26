@@ -1,37 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rockchip: Add rk3328 pinctrl support
-Date: Thu, 26 Jan 2017 14:29:17 +0100
-Message-ID: <CACRpkdaJEEGFnfX0_eBtwLMqYtSTShB5u6WCaA-YZG53OMnk+w@mail.gmail.com>
-References: <1485074286-7863-1-git-send-email-david.wu@rock-chips.com>
+Subject: Re: [PATCH 1/2] gpio: aspeed: Make bank names strings
+Date: Thu, 26 Jan 2017 14:32:13 +0100
+Message-ID: <CACRpkdbhtbcJWQ5kA-iyjMfUdDnGDr2DyH_sZBon19T1rWryPw@mail.gmail.com>
+References: <20170123052607.9424-1-andrew@aj.id.au> <20170123052607.9424-2-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1485074286-7863-1-git-send-email-david.wu@rock-chips.com>
+In-Reply-To: <20170123052607.9424-2-andrew@aj.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Wu <david.wu@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Tao Huang <huangtao@rock-chips.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jan 22, 2017 at 9:38 AM, David Wu <david.wu@rock-chips.com> wrote:
+On Mon, Jan 23, 2017 at 6:26 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> From: "david.wu" <david.wu@rock-chips.com>
+> From: Joel Stanley <joel@jms.id.au>
 >
-> This patch supports 3bit width iomux type.
-> Note, the iomux of following pins are special, need to
-> be handled specially.
->  - gpio2_b0 ~ gpio2_b6
->  - gpio2_b7
->  - gpio2_c7
->  - gpio3_b0
->  - gpio3_b1 ~ gpio3_b7
-> And therefore add IOMUX_RECALCED_FLAG to indicate which
-> iomux source of the bank need to be recalced. If the mux
-> recalced callback and IOMUX_RECALCED_FLAG were set, recalc
-> the related pins' iomux.
+> The Aspeed SoCs have more GPIOs than can be represented with A-Z. The
+> documentation uses two letter names such as AA and AB, so make the names
+> a three-character array in the bank struct to accommodate this.
 >
-> Signed-off-by: david.wu <david.wu@rock-chips.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-Heiko, could you review this?
+Patch applied.
 
 Yours,
 Linus Walleij
