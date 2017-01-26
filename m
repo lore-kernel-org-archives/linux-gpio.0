@@ -1,39 +1,40 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC 0/5] Renesas RZ series pinctrl driver
-Date: Thu, 26 Jan 2017 20:56:47 +0100
-Message-ID: <CAMuHMdVw=--dc2N=58fOWZo6Kv=APPWzXvN-YO3Do36Er5mP=w@mail.gmail.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/8] soc: samsung: pmu: Add dummy support for
+ Exynos5433 SoC
+Date: Thu, 26 Jan 2017 21:57:06 +0200
+Message-ID: <20170126195706.an4ykk3bamvews6d@kozik-lap>
+References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170126083401eucas1p24b0f04c62332e0b6e446ecca83145bc5@eucas1p2.samsung.com>
+ <1485419634-28331-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33017 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752658AbdAZT4t (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 14:56:49 -0500
-In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35939 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752658AbdAZT6B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 14:58:01 -0500
+Content-Disposition: inline
+In-Reply-To: <1485419634-28331-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Jacopo,
+On Thu, Jan 26, 2017 at 09:33:47AM +0100, Marek Szyprowski wrote:
+> Add compatible for Exynos5433 SoC, so the driver will bind and let other
+> drivers to use PMU regmap.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
 
-On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->    after having discussed in great detail the RZ series per-pin PFC hardware
-> peculiarities, this is a proposal for a possible pin-based pin controller
-> driver for SoC devices of Renesas RZ family.
+Thanks, applied.
 
-"RZ" is a bad name, as there are (currently) 3 RZ subfamilies, and they
-differ a lot. So it's better to use "RZ/A".
-Or perhaps even "RZ/A1", as you never know what's going to happen with "2"...
+I already have some PMU patches on separate branch (and tag), so this
+lands on top of it.
 
-Gr{oetje,eeting}s,
+Best regards,
+Krzysztof
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
