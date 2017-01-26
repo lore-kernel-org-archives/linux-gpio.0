@@ -1,45 +1,45 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
-Date: Thu, 26 Jan 2017 12:49:41 +0300
-Message-ID: <9acf3e80-2e9b-10e0-2491-5157cc714f6c@cogentembedded.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 0/8] Pad retentions support for Exynos5433
+Date: Thu, 26 Jan 2017 10:50:57 +0100
+Message-ID: <CACRpkdawiAp3xqVd7J5ZAd2dQ=X09DGybyw0EVp=07w8-ccKfA@mail.gmail.com>
+References: <CGME20170126083401eucas1p20b4794fe46ccf2189bf734f0d8e3c536@eucas1p2.samsung.com>
+ <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello!
+On Thu, Jan 26, 2017 at 9:33 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-    s/r7s1000/r7s72100/ in the subject.
-
-On 1/25/2017 9:09 PM, Jacopo Mondi wrote:
-
-> Add pincontroller node compatible with the new Renesas RZ/A1
-> pincontroller driver.
-
-    Pin controller.
-
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> Patches in this patchset depends on each other. They are order in such a
+> way to make the changes bisectable.
 >
-> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-> index 3dd427d..764006d 100644
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -171,6 +171,18 @@
->  		};
->  	};
+> Patch #3 has runtime dependency on #1.
+> Patch #5 has runtime dependency on #3.
+> Patch #6 has runtime dependency on #4.
 >
-> +	pinctrl: pinctrl@fcfe3000 {
+> This patchset also directly depends on the "Move pad retention control to
+> Exynos pin controller driver" patchset:
+> https://www.spinics.net/lists/arm-kernel/msg556074.html
 
-    I'd call the node "pin-controller@...".
+Do we *have* to merge it runtime-bisectably?
 
-MBR, Sergei
+I'm asking because we need a huge immutable branch
+(I guess in the MFD subsystem) to deal with that.
+
+It'd be great if I could just apply the pinctrl patches in
+isolation, then Lee applies the MFD patches in isolation,
+everything compiles in isolation but maye just work once both
+pinctrl and MFD are merged upstream, as in linux-next
+or Torvalds' tree.
+
+That is one of the reasons why using a system-agnostic
+syscon regmap lookup is so good, BTW.
+
+Yours,
+Linus Walleij
