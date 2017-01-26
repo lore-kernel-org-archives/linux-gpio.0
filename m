@@ -1,34 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: meson: meson-gxl: add the pwm_ao_b pin
-Date: Thu, 26 Jan 2017 15:41:33 +0100
-Message-ID: <CACRpkdbt5anOFUgw9C_H6Q0rvMxuyH2q1p+EeX+sf1Ei8HR==w@mail.gmail.com>
-References: <20170122210528.892-1-martin.blumenstingl@googlemail.com> <20170122210528.892-3-martin.blumenstingl@googlemail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 01/13] soc: samsung: pmu: Provide global function to
+ get PMU regmap
+Date: Thu, 26 Jan 2017 16:41:55 +0200
+Message-ID: <CAJKOXPefwmNwqV1=PkWrbU6Tj4AgK78Z2qo2DqJ8v4jMJH=8=Q@mail.gmail.com>
+References: <CGME20170119134904eucas1p153a1d5b2ff9826c88293b6a8fe5140bc@eucas1p1.samsung.com>
+ <1484833733-16082-1-git-send-email-m.szyprowski@samsung.com>
+ <1484833733-16082-2-git-send-email-m.szyprowski@samsung.com> <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:37115 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752781AbdAZOlf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 09:41:35 -0500
-Received: by mail-it0-f46.google.com with SMTP id r185so34624157ita.0
-        for <linux-gpio@vger.kernel.org>; Thu, 26 Jan 2017 06:41:34 -0800 (PST)
-In-Reply-To: <20170122210528.892-3-martin.blumenstingl@googlemail.com>
+Received: from mail.kernel.org ([198.145.29.136]:40188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752788AbdAZOmG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 26 Jan 2017 09:42:06 -0500
+In-Reply-To: <CACRpkdYyOgpAhAY=7QrXiEB2oDgs0azt_Tb80iO4vjzk1obemQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Sun, Jan 22, 2017 at 10:05 PM, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
-
-> This adds support for the pwm_ao_b pin. Unfortunately the registers for
-> the pwm_ao pins are not documented at all. The source for the pwm_ao_b
-> pin from this patch is the Khadas VIM GPL kernel source, which sets bit
-> 3 and unsets bits 4 and 31 to enable the PWM LEDs.
+On Thu, Jan 26, 2017 at 11:43 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
 >
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> PMU is something like a SoC wide service, so add a helper function to get
+>> PMU regmap. This will be used by other Exynos device drivers. This way it
+>> can be avoided to model this dependency in device tree (as phandles to PMU
+>> node) for almost every device in the SoC.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+>
+> But why? I could understand it as a local header in
+> drivers/soc/samsung/*.h for those files.
 
-This patch applied to the pin control tree with Kevin's ACK.
+Marek gave quite detailed answer... so let me just add minor note.
+Apparently we cannot satisfy everyone. When break the DT ABI, DT
+people are not happy. When we try to avoid ABI break, we create such
+dependency.
 
-Yours,
-Linus Walleij
+In fact, such compile and runtime dependency is not unusual. Our
+drivers are coupled because our hardware modules are coupled. When
+they were put in arch/arm/mach-exynos, no one cared because everything
+was contained in mach-exynos. We try to move the code out of there
+thus we need to model such dependencies in a new way... or break the
+DT ABI.
+
+Best regards,
+Krzysztof
