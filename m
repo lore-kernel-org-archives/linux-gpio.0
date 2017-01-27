@@ -1,89 +1,98 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: Re: Re: [PATCH v2 6/9] arm64: dts: allwinner: add
- Allwinner H5 .dtsi
-Date: Sat, 28 Jan 2017 00:03:27 +0800
-Message-ID: <20170127190350.3aiSkR8d@smtp2m.mail.yandex.net>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Subject: [PATCH 3/8] Documentation: dt: Add bindings for STM32 pinctrl
+Date: Fri, 27 Jan 2017 17:15:16 +0100
+Message-ID: <1485533721-9019-4-git-send-email-alexandre.torgue@st.com>
+References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBB366VXCAKGQE3GFLTPA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1485533721-9019-1-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+Adds "ngpios" and "gpio-ranges" bindings definition.
 
-2017=E5=B9=B41=E6=9C=8827=E6=97=A5 23:58=E4=BA=8E Maxime Ripard <maxime.rip=
-ard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Jan 26, 2017 at 11:48:56PM +0800, Icenowy Zheng wrote:=20
-> > + mmc@01c0f000 {=20
->
-> Please use a label based syntax here too.=20
->
-> > + compatible =3D "allwinner,sun50i-a64-mmc",=20
-> > + =C2=A0=C2=A0=C2=A0=C2=A0 "allwinner,sun5i-a13-mmc";=20
->
-> The compatibility with the A13 has never been true, and the compatible=20
-> should be "allwinner,sun50i-h5-mmc", "allwinner,sun50i-a64-mmc".=20
->
-> > + clocks =3D <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;=20
-> > + clock-names =3D "ahb", "mmc";=20
-> > + };=20
-> > +=20
-> > + mmc@01c10000 {=20
-> > + compatible =3D "allwinner,sun50i-a64-mmc",=20
-> > + =C2=A0=C2=A0=C2=A0=C2=A0 "allwinner,sun5i-a13-mmc";=20
-> > + clocks =3D <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;=20
-> > + clock-names =3D "ahb", "mmc";=20
-> > + };=20
-> > +=20
-> > + mmc@01c11000 {=20
-> > + compatible =3D "allwinner,sun50i-a64-mmc",=20
->
-> And this is very likely to use the emmc compatible.=20
->
-> > + =C2=A0=C2=A0=C2=A0=C2=A0 "allwinner,sun5i-a13-mmc";=20
-> > + clocks =3D <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;=20
-> > + clock-names =3D "ahb", "mmc";=20
-> > + };=20
-> > +=20
-> > + clock@01c20000 {=20
-> > + compatible =3D "allwinner,sun50i-h5-ccu",=20
-> > + =C2=A0=C2=A0=C2=A0=C2=A0 "allwinner,sun8i-h3-ccu";=20
-> > + };=20
->
-> If it doesn't have the same clocks, it's not compatible with the H3.=20
+Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
 
-I'll drop it.
+diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+index b24583a..25d9809 100644
+--- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+@@ -37,8 +37,23 @@ Optional properties:
+  - st,syscfg: Should be phandle/offset pair. The phandle to the syscon node
+    which includes IRQ mux selection register, and the offset of the IRQ mux
+    selection register.
++ - ngpios: Number of gpios in a bank (to use if bank gpio numbers is less
++   than 16).
++ - gpio-ranges: Define a dedicated mapping between a pin-controller and
++   a gpio controller. Format is <&phandle a b c> with:
++	-(phandle): phandle of pin-controller.
++	-(a): gpio base offset in range.
++	-(b): pin base offset in range.
++	-(c): gpio count in range
++   This entry has to be used either if there are holes inside a bank:
++	GPIOB0/B1/B2/B14/B15 (see example 2)
++   or if banks are not contiguous:
++	GPIOA/B/C/E...
++   NOTE: If "gpio-ranges" is used for a gpio controller, all gpio-controller
++   have to use a "gpio-ranges" entry.
++   More details in Documentation/devicetree/bindings/gpio/gpio.txt.
+ 
+-Example:
++Example 1:
+ #include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
+ ...
+ 
+@@ -60,6 +75,43 @@ Example:
+ 		pin-functions nodes follow...
+ 	};
+ 
++Example 2:
++#include <dt-bindings/pinctrl/stm32f429-pinfunc.h>
++...
++
++	pinctrl: pin-controller {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,stm32f429-pinctrl";
++		ranges = <0 0x40020000 0x3000>;
++		pins-are-numbered;
++
++		gpioa: gpio@40020000 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			reg = <0x0 0x400>;
++			resets = <&reset_ahb1 0>;
++			st,bank-name = "GPIOA";
++			gpio-ranges = <&pinctrl 0 0 16>;
++		};
++
++		gpiob: gpio@40020400 {
++			gpio-controller;
++			#gpio-cells = <2>;
++			reg = <0x0 0x400>;
++			resets = <&reset_ahb1 0>;
++			st,bank-name = "GPIOB";
++			ngpios = 4;
++			gpio-ranges = <&pinctrl 0 16 3>,
++				      <&pinctrl 14 30 2>;
++		};
++
++
++		...
++		pin-functions nodes follow...
++	};
++
++
+ Contents of function subnode node:
+ ----------------------------------
+ Subnode format
+-- 
+1.9.1
 
-It's from the original patch from Andre.
-
->
-> Maxime=20
->
-> --=20
-> Maxime Ripard, Free Electrons=20
-> Embedded Linux and Kernel engineering=20
-> http://free-electrons.com=20
->
-> --=20
-> You received this message because you are subscribed to the Google Groups=
- "linux-sunxi" group.=20
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org=20
-> For more options, visit https://groups.google.com/d/optout.=20
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
