@@ -1,37 +1,85 @@
 From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH RESEND] pinctrl: intel: Turn Baytrail support to
- tristate
-Date: Fri, 27 Jan 2017 09:55:53 +0100
-Message-ID: <20170127095553.02cbd9ad@endymion>
-References: <20170125162608.58bfbfb1@endymion>
-        <20170125161651.GX17297@lahna.fi.intel.com>
-        <20170126100506.5edf26e3@endymion>
-        <20170126092911.GF17297@lahna.fi.intel.com>
+Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per
+ community
+Date: Fri, 27 Jan 2017 10:21:09 +0100
+Message-ID: <20170127102109.3fb3d018@endymion>
+References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
+        <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170126092911.GF17297@lahna.fi.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mathias Nyman <mathias.nyman@linux.intel.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:60801 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754570AbdA0JVQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 27 Jan 2017 04:21:16 -0500
+In-Reply-To: <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Cristina Ciocan <cristina.ciocan@intel.com>
 
-On Thu, 26 Jan 2017 11:29:11 +0200, Mika Westerberg wrote:
-> On Thu, Jan 26, 2017 at 10:05:06AM +0100, Jean Delvare wrote:
-> > I have not, as I do not have access to any Baytrail hardware. This is
-> > the very reason why I'd like this code to be buildable as a module: I'm
-> > not happy with a useless 50 kB driver being loaded on all my systems. I
-> > was hopping someone at Intel would have access to the hardware to
-> > perform the test.
+On Thu, 26 Jan 2017 19:24:08 +0200, Andy Shevchenko wrote:
+> Debounce value is set globally per community. Otherwise user will easily
+> get a kernel crash when they start using the feature:
 > 
-> We do not have all the possible hardware here. I have one Minnowboard
-> MAX which I can test this on (like I commented in the other email) but
-> it does not have any ACPI GPIO OpRegion stuff that is present in many
-> Baytrail based laptops out there.
+> BUG: unable to handle kernel paging request at ffffc900003be000
+> IP: byt_gpio_dbg_show+0xa9/0x430
+> 
+> Make it clear in byt_gpio_reg().
+> 
+> Note that this fix just prevents kernel to crash, but doesn't make any
+> difference to the existing logic. It means the last caller will win the
+> trade and debounce value will be configured accordingly. The actual
+> logic fix needs to be thought about and it's not as important as crash
+> fix. That's why the latter goes separately and right now.
+> 
+> Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
+> Cc: Cristina Ciocan <cristina.ciocan@intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-baytrail.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> index 958db4f5ee9b..a1f85a79f186 100644
+> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
+> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+> @@ -731,16 +731,23 @@ static void __iomem *byt_gpio_reg(struct byt_gpio *vg, unsigned int offset,
+>  				  int reg)
+>  {
+>  	struct byt_community *comm = byt_get_community(vg, offset);
+> -	u32 reg_offset = 0;
+> +	u32 reg_offset;
+>  
+>  	if (!comm)
+>  		return NULL;
+>  
+>  	offset -= comm->pin_base;
+> -	if (reg == BYT_INT_STAT_REG)
+> +	switch (reg) {
+> +	case BYT_INT_STAT_REG:
+>  		reg_offset = (offset / 32) * 4;
+> -	else
+> +		break;
+> +	case BYT_DEBOUNCE_REG:
+> +		reg_offset = 0;
+> +		break;
+> +	default:
+>  		reg_offset = comm->pad_map[offset] * 16;
+> +		break;
 
-Takashi, do you have any such laptop or know anyone at SUSE who does
-and could test?
+That break isn't needed ;-)
+
+> +	}
+>  
+>  	return comm->reg_base + reg_offset + reg;
+>  }
+
+The code looks sane to me, although I can't verify its correctness
+without a datasheet.
+
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
 -- 
 Jean Delvare
