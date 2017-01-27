@@ -1,312 +1,112 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 1/3] pinctrl: intel: Add support for hardware debouncer
-Date: Fri, 27 Jan 2017 13:07:14 +0300
-Message-ID: <20170127100716.194910-2-mika.westerberg@linux.intel.com>
+Subject: [PATCH 2/3] pinctrl: intel: Add support for 1k additional pull-down
+Date: Fri, 27 Jan 2017 13:07:15 +0300
+Message-ID: <20170127100716.194910-3-mika.westerberg@linux.intel.com>
 References: <20170127100716.194910-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:39228 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754801AbdA0KHZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 27 Jan 2017 05:07:25 -0500
 In-Reply-To: <20170127100716.194910-1-mika.westerberg@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
-The next generation Intel GPIO hardware has two additional registers
-PADCFG2 and PADCFG3. The latter is marked as reserved but the former
-includes configuration for per-pad hardware debouncer.
-
-This patch adds support for that in the Intel pinctrl core driver. Since
-these are additional features on top of the current generation hardware,
-we use revision number and feature flags to enable this if detected.
+The next generation Intel GPIO hardware supports additional 1k pull-down
+per-pad. Add support for this to the Intel core pinctrl driver.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 130 +++++++++++++++++++++++++++++++++-
- drivers/pinctrl/intel/pinctrl-intel.h |   5 ++
- 2 files changed, 133 insertions(+), 2 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 18 +++++++++++++++++-
+ drivers/pinctrl/intel/pinctrl-intel.h |  1 +
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 447405809340..012d2a8879a2 100644
+index 012d2a8879a2..e4a0757ff46b 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.c
 +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/interrupt.h>
- #include <linux/gpio/driver.h>
-+#include <linux/log2.h>
- #include <linux/platform_device.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinmux.h>
-@@ -23,6 +24,10 @@
- #include "pinctrl-intel.h"
- 
- /* Offset from regs */
-+#define REVID				0x000
-+#define REVID_SHIFT			16
-+#define REVID_MASK			GENMASK(31, 16)
-+
- #define PADBAR				0x00c
- #define GPI_IS				0x100
- #define GPI_GPE_STS			0x140
-@@ -41,6 +46,7 @@
- #define PADCFG0_RXEVCFG_EDGE		1
- #define PADCFG0_RXEVCFG_DISABLED	2
- #define PADCFG0_RXEVCFG_EDGE_BOTH	3
-+#define PADCFG0_PREGFRXSEL		BIT(24)
- #define PADCFG0_RXINV			BIT(23)
- #define PADCFG0_GPIROUTIOXAPIC		BIT(20)
- #define PADCFG0_GPIROUTSCI		BIT(19)
-@@ -62,9 +68,17 @@
- #define PADCFG1_TERM_5K			2
- #define PADCFG1_TERM_1K			1
- 
-+#define PADCFG2				0x008
-+#define PADCFG2_DEBEN			BIT(0)
-+#define PADCFG2_DEBOUNCE_SHIFT		1
-+#define PADCFG2_DEBOUNCE_MASK		GENMASK(4, 1)
-+
-+#define DEBOUNCE_PERIOD			31250 /* ns */
-+
- struct intel_pad_context {
- 	u32 padcfg0;
- 	u32 padcfg1;
-+	u32 padcfg2;
- };
- 
- struct intel_community_context {
-@@ -126,13 +140,19 @@ static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl, unsigned pin,
+@@ -450,12 +450,14 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
  {
- 	const struct intel_community *community;
- 	unsigned padno;
-+	size_t nregs;
- 
- 	community = intel_get_community(pctrl, pin);
- 	if (!community)
- 		return NULL;
- 
- 	padno = pin_to_padno(community, pin);
--	return community->pad_regs + reg + padno * 8;
-+	nregs = (community->features & PINCTRL_FEATURE_DEBOUNCE) ? 4 : 2;
-+
-+	if (reg == PADCFG2 && !(community->features & PINCTRL_FEATURE_DEBOUNCE))
-+		return NULL;
-+
-+	return community->pad_regs + reg + padno * nregs * 4;
- }
- 
- static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
-@@ -244,6 +264,7 @@ static void intel_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
- 			       unsigned pin)
- {
- 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	void __iomem *padcfg;
- 	u32 cfg0, cfg1, mode;
- 	bool locked, acpi;
- 
-@@ -263,6 +284,11 @@ static void intel_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
- 
- 	seq_printf(s, "0x%08x 0x%08x", cfg0, cfg1);
- 
-+	/* Dump the additional PADCFG registers if available */
-+	padcfg = intel_get_padcfg(pctrl, pin, PADCFG2);
-+	if (padcfg)
-+		seq_printf(s, " 0x%08x", readl(padcfg));
-+
- 	locked = intel_pad_locked(pctrl, pin);
- 	acpi = intel_pad_acpi_mode(pctrl, pin);
- 
-@@ -425,7 +451,7 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
  	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
  	enum pin_config_param param = pinconf_to_config_param(*config);
++	const struct intel_community *community;
  	u32 value, term;
--	u16 arg = 0;
-+	u32 arg = 0;
+ 	u32 arg = 0;
  
  	if (!intel_pad_owned_by_host(pctrl, pin))
  		return -ENOTSUPP;
-@@ -475,6 +501,24 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
  
- 		break;
++	community = intel_get_community(pctrl, pin);
+ 	value = readl(intel_get_padcfg(pctrl, pin, PADCFG1));
+ 	term = (value & PADCFG1_TERM_MASK) >> PADCFG1_TERM_SHIFT;
  
-+	case PIN_CONFIG_INPUT_DEBOUNCE: {
-+		void __iomem *padcfg2;
-+		u32 v;
-+
-+		padcfg2 = intel_get_padcfg(pctrl, pin, PADCFG2);
-+		if (!padcfg2)
-+			return -ENOTSUPP;
-+
-+		v = readl(padcfg2);
-+		if (!(v & PADCFG2_DEBEN))
-+			return -EINVAL;
-+
-+		v = (v & PADCFG2_DEBOUNCE_MASK) >> PADCFG2_DEBOUNCE_SHIFT;
-+		arg = BIT(v) * DEBOUNCE_PERIOD / 1000;
-+
-+		break;
-+	}
-+
- 	default:
- 		return -ENOTSUPP;
- 	}
-@@ -552,6 +596,53 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
- 	return ret;
- }
+@@ -491,6 +493,11 @@ static int intel_config_get(struct pinctrl_dev *pctldev, unsigned pin,
+ 			return -EINVAL;
  
-+static int intel_config_set_debounce(struct intel_pinctrl *pctrl, unsigned pin,
-+				     unsigned debounce)
-+{
-+	void __iomem *padcfg0, *padcfg2;
-+	unsigned long flags;
-+	u32 value0, value2;
-+	int ret = 0;
-+
-+	padcfg2 = intel_get_padcfg(pctrl, pin, PADCFG2);
-+	if (!padcfg2)
-+		return -ENOTSUPP;
-+
-+	padcfg0 = intel_get_padcfg(pctrl, pin, PADCFG0);
-+
-+	raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+	value0 = readl(padcfg0);
-+	value2 = readl(padcfg2);
-+
-+	/* Disable glitch filter and debouncer */
-+	value0 &= ~PADCFG0_PREGFRXSEL;
-+	value2 &= ~(PADCFG2_DEBEN | PADCFG2_DEBOUNCE_MASK);
-+
-+	if (debounce) {
-+		unsigned long v;
-+
-+		v = order_base_2(debounce * 1000 / DEBOUNCE_PERIOD);
-+		if (v < 3 || v > 15) {
-+			ret = -EINVAL;
-+			goto exit_unlock;
-+		} else {
-+			/* Enable glitch filter and debouncer */
-+			value0 |= PADCFG0_PREGFRXSEL;
-+			value2 |= v << PADCFG2_DEBOUNCE_SHIFT;
-+			value2 |= PADCFG2_DEBEN;
-+		}
-+	}
-+
-+	writel(value0, padcfg0);
-+	writel(value2, padcfg2);
-+
-+exit_unlock:
-+	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+	return ret;
-+}
-+
- static int intel_config_set(struct pinctrl_dev *pctldev, unsigned pin,
- 			  unsigned long *configs, unsigned nconfigs)
- {
-@@ -571,6 +662,13 @@ static int intel_config_set(struct pinctrl_dev *pctldev, unsigned pin,
- 				return ret;
- 			break;
- 
-+		case PIN_CONFIG_INPUT_DEBOUNCE:
-+			ret = intel_config_set_debounce(pctrl, pin,
-+				pinconf_to_config_argument(configs[i]));
-+			if (ret)
-+				return ret;
+ 		switch (term) {
++		case PADCFG1_TERM_1K:
++			if (!(community->features & PINCTRL_FEATURE_1K_PD))
++				return -EINVAL;
++			arg = 1000;
 +			break;
-+
+ 		case PADCFG1_TERM_5K:
+ 			arg = 5000;
+ 			break;
+@@ -532,6 +539,7 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ {
+ 	unsigned param = pinconf_to_config_param(config);
+ 	unsigned arg = pinconf_to_config_argument(config);
++	const struct intel_community *community;
+ 	void __iomem *padcfg1;
+ 	unsigned long flags;
+ 	int ret = 0;
+@@ -539,6 +547,7 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
++	community = intel_get_community(pctrl, pin);
+ 	padcfg1 = intel_get_padcfg(pctrl, pin, PADCFG1);
+ 	value = readl(padcfg1);
+ 
+@@ -581,6 +590,11 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
+ 		case 5000:
+ 			value |= PADCFG1_TERM_5K << PADCFG1_TERM_SHIFT;
+ 			break;
++		case 1000:
++			if (!(community->features & PINCTRL_FEATURE_1K_PD))
++				return -EINVAL;
++			value |= PADCFG1_TERM_1K << PADCFG1_TERM_SHIFT;
++			break;
  		default:
- 			return -ENOTSUPP;
+ 			ret = -EINVAL;
  		}
-@@ -645,6 +743,7 @@ static const struct gpio_chip intel_gpio_chip = {
- 	.direction_output = intel_gpio_direction_output,
- 	.get = intel_gpio_get,
- 	.set = intel_gpio_set,
-+	.set_config = gpiochip_generic_config,
- };
+@@ -1107,8 +1121,10 @@ int intel_pinctrl_probe(struct platform_device *pdev,
+ 			u32 rev;
  
- static void intel_gpio_irq_ack(struct irq_data *d)
-@@ -1000,6 +1099,18 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 		if (IS_ERR(regs))
- 			return PTR_ERR(regs);
- 
-+		/*
-+		 * Determine community features based on the revision if
-+		 * not specified already.
-+		 */
-+		if (!community->features) {
-+			u32 rev;
-+
-+			rev = (readl(regs + REVID) & REVID_MASK) >> REVID_SHIFT;
-+			if (rev >= 0x94)
-+				community->features |= PINCTRL_FEATURE_DEBOUNCE;
-+		}
-+
- 		/* Read offset of the pad configuration registers */
- 		padbar = readl(regs + PADBAR);
- 
-@@ -1073,6 +1184,7 @@ int intel_pinctrl_suspend(struct device *dev)
- 	pads = pctrl->context.pads;
- 	for (i = 0; i < pctrl->soc->npins; i++) {
- 		const struct pinctrl_pin_desc *desc = &pctrl->soc->pins[i];
-+		void __iomem *padcfg;
- 		u32 val;
- 
- 		if (!intel_pinctrl_should_save(pctrl, desc->number))
-@@ -1082,6 +1194,10 @@ int intel_pinctrl_suspend(struct device *dev)
- 		pads[i].padcfg0 = val & ~PADCFG0_GPIORXSTATE;
- 		val = readl(intel_get_padcfg(pctrl, desc->number, PADCFG1));
- 		pads[i].padcfg1 = val;
-+
-+		padcfg = intel_get_padcfg(pctrl, desc->number, PADCFG2);
-+		if (padcfg)
-+			pads[i].padcfg2 = readl(padcfg);
- 	}
- 
- 	communities = pctrl->context.communities;
-@@ -1154,6 +1270,16 @@ int intel_pinctrl_resume(struct device *dev)
- 			dev_dbg(dev, "restored pin %u padcfg1 %#08x\n",
- 				desc->number, readl(padcfg));
- 		}
-+
-+		padcfg = intel_get_padcfg(pctrl, desc->number, PADCFG2);
-+		if (padcfg) {
-+			val = readl(padcfg);
-+			if (val != pads[i].padcfg2) {
-+				writel(pads[i].padcfg2, padcfg);
-+				dev_dbg(dev, "restored pin %u padcfg2 %#08x\n",
-+					desc->number, readl(padcfg));
+ 			rev = (readl(regs + REVID) & REVID_MASK) >> REVID_SHIFT;
+-			if (rev >= 0x94)
++			if (rev >= 0x94) {
+ 				community->features |= PINCTRL_FEATURE_DEBOUNCE;
++				community->features |= PINCTRL_FEATURE_1K_PD;
 +			}
-+		}
- 	}
+ 		}
  
- 	communities = pctrl->context.communities;
+ 		/* Read offset of the pad configuration registers */
 diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index c22c44485c5d..1ff5abf309e3 100644
+index 1ff5abf309e3..fe9521f345b5 100644
 --- a/drivers/pinctrl/intel/pinctrl-intel.h
 +++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -58,6 +58,7 @@ struct intel_function {
-  * @gpp_size: Maximum number of pads in each group, such as PADCFGLOCK,
-  *            HOSTSW_OWN,  GPI_IS, GPI_IE, etc.
-  * @npins: Number of pins in this community
-+ * @features: Additional features supported by the hardware
-  * @regs: Community specific common registers (reserved for core driver)
-  * @pad_regs: Community specific pad registers (reserved for core driver)
-  * @ngpps: Number of groups (hw groups) in this community (reserved for
-@@ -72,11 +73,15 @@ struct intel_community {
- 	unsigned pin_base;
- 	unsigned gpp_size;
- 	size_t npins;
-+	unsigned features;
- 	void __iomem *regs;
- 	void __iomem *pad_regs;
- 	size_t ngpps;
- };
+@@ -81,6 +81,7 @@ struct intel_community {
  
-+/* Additional features supported by the hardware */
-+#define PINCTRL_FEATURE_DEBOUNCE	BIT(0)
-+
+ /* Additional features supported by the hardware */
+ #define PINCTRL_FEATURE_DEBOUNCE	BIT(0)
++#define PINCTRL_FEATURE_1K_PD		BIT(1)
+ 
  #define PIN_GROUP(n, p, m)			\
  	{					\
- 		.name = (n),			\
 -- 
 2.11.0
+
