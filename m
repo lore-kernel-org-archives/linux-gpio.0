@@ -1,47 +1,49 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 8/9] ASoC: sunxi: allow the analog codec
- driver to be built on ARM64
-Date: Fri, 27 Jan 2017 21:05:32 +0100
-Message-ID: <20170127200532.pemk36hwyzkun3i5@lukather>
-References: <20170126154859.55855-1-icenowy@aosc.xyz>
- <20170126154859.55855-9-icenowy@aosc.xyz>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/3] pinctrl: intel: Add support for hardware debouncer
+Date: Fri, 27 Jan 2017 22:49:05 +0200
+Message-ID: <20170127204905.GZ17297@lahna.fi.intel.com>
+References: <20170127100716.194910-2-mika.westerberg@linux.intel.com>
+ <201701271939.n1zsFVXi%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xfdin3uw722yn6qj"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBFOQV3CAKGQERTXHKAY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:43962 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751075AbdA0VEC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 27 Jan 2017 16:04:02 -0500
 Content-Disposition: inline
-In-Reply-To: <20170126154859.55855-9-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <201701271939.n1zsFVXi%fengguang.wu@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
---xfdin3uw722yn6qj
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-
-On Thu, Jan 26, 2017 at 11:48:58PM +0800, Icenowy Zheng wrote:
-> As the 64-bit Allwinner H5 SoC has the same analog codec part (also the
-> same digital part) as H3, enable the driver to be built on ARM64
-> Allwinner platform, so that it can be used on H5.
+On Fri, Jan 27, 2017 at 07:51:03PM +0800, kbuild test robot wrote:
+> Hi Mika,
 > 
-> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+> [auto build test ERROR on pinctrl/for-next]
+> [also build test ERROR on v4.10-rc5 next-20170125]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Mika-Westerberg/pinctrl-intel-Add-support-for-hardware-debouncer/20170127-181144
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git for-next
+> config: x86_64-randconfig-s5-01271855 (attached as .config)
+> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> drivers/pinctrl/intel/pinctrl-intel.c:754:2: error: unknown field 'set_config' specified in initializer
+>      .set_config = gpiochip_generic_config,
+>      ^
+> >> drivers/pinctrl/intel/pinctrl-intel.c:754:16: error: 'gpiochip_generic_config' undeclared here (not in a function)
+>      .set_config = gpiochip_generic_config,
+>                    ^~~~~~~~~~~~~~~~~~~~~~~
 
-Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Dear kbuild robot, thanks for spotting this. However, in this case the
+series is based on top of linux-pinctrl.git/devel branch which should
+include the missing changes.
 
-Thanks,
-Maxime
-
--- 
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---xfdin3uw722yn6qj--
+Keep up the good work, though :)
