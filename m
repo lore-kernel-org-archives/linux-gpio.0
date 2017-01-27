@@ -1,66 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 01/14] Documentation: dt/bindings: Document pinctrl-ingenic
-Date: Fri, 27 Jan 2017 12:18:39 +0100
-Message-ID: <CACRpkdZFRH84c4x7HBwgmY3fH+=Qq4q167c9oPhvrJ70MQkjaA@mail.gmail.com>
-References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
- <20170122144947.16158-1-paul@crapouillou.net> <20170122144947.16158-2-paul@crapouillou.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170122144947.16158-2-paul@crapouillou.net>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
+From: Shailendra Verma <shailendra.v@samsung.com>
+Subject: [PATCH] Pinctrl : berlin - Fix possible NULL derefrence.
+Date: Fri, 27 Jan 2017 16:40:18 +0530
+Message-ID: <1485515418-3006-1-git-send-email-shailendra.v@samsung.com>
+References: <CGME20170127111027epcas4p2218cc1e0f62b5312eda5e1ccf667cc31@epcas4p2.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49715 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933965AbdA0LWK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jan 2017 06:22:10 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, vidushi.koul@samsung.com, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
 
-On Sun, Jan 22, 2017 at 3:49 PM, Paul Cercueil <paul@crapouillou.net> wrote:
+of_match_device could return NULL, and so can cause a NULL
+pointer dereference later.
 
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
+---
+ drivers/pinctrl/berlin/berlin-bg2.c   |    5 +++++
+ drivers/pinctrl/berlin/berlin-bg2cd.c |    5 +++++
+ drivers/pinctrl/berlin/berlin-bg2q.c  |    5 +++++
+ drivers/pinctrl/berlin/berlin-bg4ct.c |    5 +++++
+ 4 files changed, 20 insertions(+)
 
-> +Required properties:
-> +- compatible: One of:
-> +  - "ingenic,jz4740-pinctrl"
-> +  - "ingenic,jz4780-pinctrl"
-> +
-> +Optional properties:
-> +- ingenic,pull-ups: A list of 32-bit bit fields, where each bit set tells the
-> +  driver that a pull-up resistor is available for this pin.
-> +  By default, the driver considers that all pins feature a pull-up resistor.
-> +- ingenic,pull-downs: A list of 32-bit bit fields, where each bit set tells
-> +  the driver that a pull-down resistor is available for this pin.
-> +  By default, the driver considers that all pins feature a pull-down
-> +  resistor.
+diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
+index fabe728..3bdd078 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2.c
++++ b/drivers/pinctrl/berlin/berlin-bg2.c
+@@ -234,6 +234,11 @@ static int berlin2_pinctrl_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match =
+ 		of_match_device(berlin2_pinctrl_match, &pdev->dev);
+ 
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
++	}
++
+ 	return berlin_pinctrl_probe(pdev, match->data);
+ }
+ 
+diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
+index ad8c758..e04133d 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2cd.c
++++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
+@@ -179,6 +179,11 @@ static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match =
+ 		of_match_device(berlin2cd_pinctrl_match, &pdev->dev);
+ 
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
++	}
++
+ 	return berlin_pinctrl_probe(pdev, match->data);
+ }
+ 
+diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
+index cd171ae..3257b22 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2q.c
++++ b/drivers/pinctrl/berlin/berlin-bg2q.c
+@@ -396,6 +396,11 @@ static int berlin2q_pinctrl_probe(struct platform_device *pdev)
+ 	const struct of_device_id *match =
+ 		of_match_device(berlin2q_pinctrl_match, &pdev->dev);
+ 
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
++	}
++
+ 	return berlin_pinctrl_probe(pdev, match->data);
+ }
+ 
+diff --git a/drivers/pinctrl/berlin/berlin-bg4ct.c b/drivers/pinctrl/berlin/berlin-bg4ct.c
+index 0917204..867f3c3 100644
+--- a/drivers/pinctrl/berlin/berlin-bg4ct.c
++++ b/drivers/pinctrl/berlin/berlin-bg4ct.c
+@@ -468,6 +468,11 @@ static int berlin4ct_pinctrl_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	void __iomem *base;
+ 
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
++	}
++
+ 	rmconfig = devm_kzalloc(&pdev->dev, sizeof(*rmconfig), GFP_KERNEL);
+ 	if (!rmconfig)
+ 		return -ENOMEM;
+-- 
+1.7.9.5
 
-So I still don't understand these properties.
-
-Does this mean that there is a pull-up *inside* the SoC or *outside*
-on the board where it is mounted?
-
-If it is *outside* the SoC, on the board, the pulls should be set on
-the consumers, not on the controller.
-
-In the former case, if this pertains to the *inside* of the SoC:
-is it just different between jz4740 and jz4780?
-In that case, just code this into the driver as .data to the .compatible
-in the DT match. No special DT properties needed.
-
-If it is different between e.g. different versions of jz4740, why not
-make different compatible-properties? If there are different versions
-of the circuit, with different hard-wired hardware configuration, they
-are different devices and should have different compatible strings.
-
-> +                               /* CLK, CMD, D0 */
-> +                               ingenic,pins = <0x69 0 0x68 0 0x6a 0>;
-
-Standard bindings use just "pins". Why the custom ingenic,
-prefix?
-
-Yours,
-Linus Walleij
