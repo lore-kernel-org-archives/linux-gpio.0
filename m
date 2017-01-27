@@ -1,78 +1,86 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [RFC fixes 0/2] FIX: Renesas RZ series pinctrl driver
-Date: Fri, 27 Jan 2017 21:09:36 +0000
-Message-ID: <SG2PR06MB1165AE0403810D368E508C5F8A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: Re: [PATCH v2 4/9] arm: dts: sun8i: split Allwinner
+ H3 .dtsi
+Date: Fri, 27 Jan 2017 22:10:29 +0100
+Message-ID: <20170127211029.k5ylfhrreqfdn2iz@lukather>
+References: <20170127190239.2MQaUuKh@smtp2o.mail.yandex.net>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:48463 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750839AbdA0VK1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 27 Jan 2017 16:10:27 -0500
-In-Reply-To: <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7qkvjbcap2tkdxtz"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBRXOV3CAKGQEZT5YZCY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20170127190239.2MQaUuKh-ZlSS+R3Zzis0PDqKvflMoHmW9unr2Ajn@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "wsa@the-dreams.de" <wsa@the-dreams.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Jacopo,
 
-On Friday, January 27, 2017, Jacopo Mondi wrote:
-> Hello,
->    sorry if I'm sending 2 patches on top of an RFC series with comments
-> still pending, but these patches enabled me to properly test pin
-> configuration sequence in order to access the internal EEPROM through
-> RIIC2 interface on pins 1_4 and 1_5.
+--7qkvjbcap2tkdxtz
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Jan 28, 2017 at 12:02:20AM +0800, Icenowy Zheng wrote:
 >=20
-> The outcome is a bugfix to RZ/A1 pincontroller driver which [2/2] applies
-> on.
+> 2017=E5=B9=B41=E6=9C=8827=E6=97=A5 23:55=E4=BA=8E Maxime Ripard <maxime.r=
+ipard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Thu, Jan 26, 2017 at 11:48:54PM +0800, Icenowy Zheng wrote:=20
+> > > - mmc0: mmc@01c0f000 {=20
+> > > + mmc@01c0f000 {=20
+> >
+> > There's no point in removing the labels, and you can even use the=20
+> > label-based syntax to reference them, instead of using the path.=20
 >=20
-> When sending v2 of the whole series I'll probably squash these, but if
-> someone is testing the RFC series I wanted to make sure he does not waste
-> his time with a broken driver.
->=20
-> Thanks
->    j
->=20
-> Jacopo Mondi (2):
->   arm: dts: genmai: Configure RIIC2 pins
->   pinctrl: rz-pfc: Fix RZ/A1 pin function configuration
->=20
->  arch/arm/boot/dts/r7s72100-genmai.dts |  8 ++++-  drivers/pinctrl/rz-
-> pfc/pinctrl-rza1.c | 55 +++++++++++++++++++++++------------
->  2 files changed, 43 insertions(+), 20 deletions(-)
+> I think keeping a tree structure in sub dtsi file will make it more
+> pretty and easy to use :-)
 
+We're already using that syntax for all the DTS, so it won't be less
+pretty than those.
 
-Preliminary testing shows that I2C pin muxing works. Nice job!
+And keeping a tree structure valid is not easier to use than, well,
+not having to keep it.
 
-Testing:
-- RZ/A1H RSK board
-- u-boot modified to make sure pins are put back to GPIO-IN
-- RIIC ch3 is connected to a I2C port expander that has 3 LEDs attached
-- using a heartbeat kernel thread that blinks the LEDs
+Maxime
 
-Of course, more testing is needed to make sure there is no "smoke and mirro=
-rs"
-going on like there was with the MSTP clock driver ;)
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
 
-Note that the I2C pin need to be configured at "bi-directional" but there i=
-s
-no way to specify that from DT, so that has to be added as a parameter.
+--7qkvjbcap2tkdxtz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I am very happy about how easy it is to set the pins up! It almost matches
-what I do in our BSP code today, so I didn't even have to look at the HW sc=
-hematic.
+-----BEGIN PGP SIGNATURE-----
 
-I'll give Ethernet and SDHI a try. For RSPI, I have to go manually wire up =
-a
-SPI flash again.
+iQIcBAEBCAAGBQJYi7dBAAoJEBx+YmzsjxAg2QUP/38ftxITIFgoKnTha63G7UyF
+KWtervmBniGEWkJfekz6M97NmwQvd6Mk2xx0XCHrOpMsSprHAuBRdRIXc40JmcxI
+TYg51vFnEZPKrJ9u89hLdqls99unJr4bJKl5Zjvn4c84VLBnClQNi8e/EU6wBJnc
+BhvAvm3+NuoL/dK2mJos0K4rGY7Y+i6EldKQ2DqmfgRCrnOCs7d/uxpEkLfu2UK8
+ltPCmAZyWXZdqa5EbqJVSMKSSZVvnIOCAQ8objjQuIb4V1k2vXiodVr/Zm/Ziv5S
+kOc/KTgHy7YP2dODlybs5eYvke+oQ/QbomL3i1RxLedJEku9vRz75jnHyTonKLLy
+oPTvZaoG3KNkipkPPyJVHxiA/WmTXUflqhk2gxnxjl7PSFlJelkRkTYu/l51vUwh
+8B4caEI3mWsgmNOJy0NWWv7TfwkKEZ1eUrfSRWIENlrIRQE0rnAZ966h5RCNTGWq
+NIGhSZ4/XlkOODGrCr0pwsA6duhT9ZecXbcHZHIAjt9tEgy1cGwdQbSjUOpFah/e
+TKzO7AxHXF0OVXeCixtPg3RNMpfrPa7qmh7XF2X7RmHaNfuELnqPECCzc3vI952+
+ZMGGjzZqJVckqyPiafTrv7WK+yytfN+7LEixcfcIdq8pGFeJhYxWgRx2AHKx6c5Y
+pj/1bhisw8RGlDJgP3/r
+=BJIC
+-----END PGP SIGNATURE-----
 
-
-Chris
-
+--7qkvjbcap2tkdxtz--
