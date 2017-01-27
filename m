@@ -1,57 +1,49 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 01/14] Documentation: dt/bindings: Document  pinctrl-ingenic
-Date: Fri, 27 Jan 2017 16:27:56 +0100
-Message-ID: <08e9505d2d366557950f8e6a4e81f57a@mail.crapouillou.net>
-References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
- <20170122144947.16158-1-paul@crapouillou.net>
- <20170122144947.16158-2-paul@crapouillou.net>
- <CACRpkdZFRH84c4x7HBwgmY3fH+=Qq4q167c9oPhvrJ70MQkjaA@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 1/9] drivers: pinctrl: add driver for
+ Allwinner H5 SoC
+Date: Fri, 27 Jan 2017 16:51:59 +0100
+Message-ID: <20170127155159.3e3j6xwf7nis6vtp@lukather>
+References: <20170126154859.55855-1-icenowy@aosc.xyz>
+ <20170126154859.55855-2-icenowy@aosc.xyz>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <CACRpkdZFRH84c4x7HBwgmY3fH+=Qq4q167c9oPhvrJ70MQkjaA@mail.gmail.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MIPS <linux-mips@linux-mips.org>, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bleo7dtcochkw3y2"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBKWZVXCAKGQEMNZ3RZA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20170126154859.55855-2-icenowy-ymACFijhrKM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
 
-> So I still don't understand these properties.
+--bleo7dtcochkw3y2
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+
+On Thu, Jan 26, 2017 at 11:48:51PM +0800, Icenowy Zheng wrote:
+> Based on the Allwinner H5 datasheet and the pinctrl driver of the
+> backward-compatible H3 this introduces the pin multiplex assignments for
+> the H5 SoC.
 > 
-> Does this mean that there is a pull-up *inside* the SoC or *outside*
-> on the board where it is mounted?
+> H5 introduced some more pin functions (e.g. three more groups of TS
+> pins, and one more groups of SIM pins) than H3.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 
-The pull-up resistors are inside the SoCs.
+Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
-> In the former case, if this pertains to the *inside* of the SoC:
-> is it just different between jz4740 and jz4780?
-> In that case, just code this into the driver as .data to the 
-> .compatible
-> in the DT match. No special DT properties needed.
+Maxime
 
-Well, I've been taught that devicetree is for describing the hardware, 
-and
-the driver code is for functionality. So that's why I put it in 
-devicetree.
-
-That's also the reason why I put the list of functions and groups in
-devicetree and not in the driver code.
-
-> Standard bindings use just "pins". Why the custom ingenic,
-> prefix?
-
-I can change that.
-
-Regards,
--Paul
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--bleo7dtcochkw3y2--
