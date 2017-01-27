@@ -1,50 +1,34 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per
- community
-Date: Fri, 27 Jan 2017 15:06:06 +0100
-Message-ID: <20170127150606.0dcc6c6a@endymion>
-References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
-        <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
-        <20170127102109.3fb3d018@endymion>
-        <1485523639.2133.355.camel@linux.intel.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 0/2] mcp23s08 pinconf support
+Date: Fri, 27 Jan 2017 15:47:36 +0100
+Message-ID: <20170127144738.21107-1-sre@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:42846 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754409AbdA0OHb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 27 Jan 2017 09:07:31 -0500
-In-Reply-To: <1485523639.2133.355.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Cristina Ciocan <cristina.ciocan@intel.com>
 
-On Fri, 27 Jan 2017 15:27:19 +0200, Andy Shevchenko wrote:
-> On Fri, 2017-01-27 at 10:21 +0100, Jean Delvare wrote:
-> > That break isn't needed ;-)
-> 
-> Would be better to have in my opinion. I already did myself some
-> mistakes regarding to missed break.
+Hi,
 
-OK, fine with me.
+Here are two patches for the mcp23s08 driver adding proper support for the
+pull-up resistors. The regmap conversion was mainly done to improve the
+debugging capabilities, but is also a nice cleanup. Further cleanups could
+be done by using regmap's caching instead of the open-coded one.
 
-> > The code looks sane to me, although I can't verify its correctness
-> > without a datasheet.
-> 
-> Datasheet is public.
-> 
-> Intel® Atom™ Processor Z3600 and Z3700 Series Datasheet (Volume 2 of 2)
-> Number: 329518-002
+The patches were tested with a couple of mcp23017 connected to the I²C bus of
+an RPi (and modified DT).
 
-Apparently it was removed in December 2014 and replaced by a more
-concise document...
+-- Sebastian
 
-https://communities.intel.com/thread/57313
+Sebastian Reichel (2):
+  gpio: mcp23s08: use regmap
+  gpio: mcp23s08: add pinconf support
 
-But no big deal, I trust your fix is correct.
+ drivers/gpio/gpio-mcp23s08.c | 430 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 261 insertions(+), 169 deletions(-)
 
 -- 
-Jean Delvare
-SUSE L3 Support
+2.11.0
