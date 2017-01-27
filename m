@@ -1,86 +1,47 @@
-From: Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per
- community
-Date: Fri, 27 Jan 2017 10:21:09 +0100
-Message-ID: <20170127102109.3fb3d018@endymion>
-References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
-        <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:60801 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754570AbdA0JVQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 27 Jan 2017 04:21:16 -0500
-In-Reply-To: <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.11 (take two)
+Date: Fri, 27 Jan 2017 10:21:58 +0100
+Message-ID: <1485508918-22980-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Cristina Ciocan <cristina.ciocan@intel.com>
 
-On Thu, 26 Jan 2017 19:24:08 +0200, Andy Shevchenko wrote:
-> Debounce value is set globally per community. Otherwise user will easily
-> get a kernel crash when they start using the feature:
-> 
-> BUG: unable to handle kernel paging request at ffffc900003be000
-> IP: byt_gpio_dbg_show+0xa9/0x430
-> 
-> Make it clear in byt_gpio_reg().
-> 
-> Note that this fix just prevents kernel to crash, but doesn't make any
-> difference to the existing logic. It means the last caller will win the
-> trade and debounce value will be configured accordingly. The actual
-> logic fix needs to be thought about and it's not as important as crash
-> fix. That's why the latter goes separately and right now.
-> 
-> Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
-> Cc: Cristina Ciocan <cristina.ciocan@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index 958db4f5ee9b..a1f85a79f186 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -731,16 +731,23 @@ static void __iomem *byt_gpio_reg(struct byt_gpio *vg, unsigned int offset,
->  				  int reg)
->  {
->  	struct byt_community *comm = byt_get_community(vg, offset);
-> -	u32 reg_offset = 0;
-> +	u32 reg_offset;
->  
->  	if (!comm)
->  		return NULL;
->  
->  	offset -= comm->pin_base;
-> -	if (reg == BYT_INT_STAT_REG)
-> +	switch (reg) {
-> +	case BYT_INT_STAT_REG:
->  		reg_offset = (offset / 32) * 4;
-> -	else
-> +		break;
-> +	case BYT_DEBOUNCE_REG:
-> +		reg_offset = 0;
-> +		break;
-> +	default:
->  		reg_offset = comm->pad_map[offset] * 16;
-> +		break;
+	Hi Linus,
 
-That break isn't needed ;-)
+The following changes since commit 0e4e4999aac16641f47699e8929693b83a7a4d64:
 
-> +	}
->  
->  	return comm->reg_base + reg_offset + reg;
->  }
+  pinctrl: sh-pfc: r8a7796: Add HSCIF pins, groups, and functions (2016-12-27 10:57:39 +0100)
 
-The code looks sane to me, although I can't verify its correctness
-without a datasheet.
+are available in the git repository at:
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.11-tag2
 
--- 
-Jean Delvare
-SUSE L3 Support
+for you to fetch changes up to 07254d835dfc1e06a8cdfb565e7371176a4b93f9:
+
+  pinctrl: sh-pfc: r8a7791: Add ADI pinconf support (2017-01-20 14:23:40 +0100)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.11 (take two)
+
+  - Add Gyro-ADC pin groups for R-Car M2-W.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Jacopo Mondi (1):
+      pinctrl: sh-pfc: r8a7791: Add ADI pinconf support
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 86 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
