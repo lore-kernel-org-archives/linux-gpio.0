@@ -1,118 +1,295 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v2 2/2] gpio: aspeed: Add banks Y, Z, AA, AB and AC
-Date: Fri, 27 Jan 2017 12:19:44 +1030
-Message-ID: <1485481784.4137.15.camel@aj.id.au>
-References: <20170124061646.9317-1-andrew@aj.id.au>
-         <20170124061646.9317-3-andrew@aj.id.au>
-         <CACRpkdZ4hZY1j5U1xfn=trnDJMG1A=K2DbMWxD=79MzmEgouaw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-2TmwVu2AM6AQRVgHp+ox"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ4hZY1j5U1xfn=trnDJMG1A=K2DbMWxD=79MzmEgouaw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCHv5 3/5] pinctrl: mvebu: pinctrl driver for 98DX3236 SoC
+Date: Fri, 27 Jan 2017 16:25:44 +1300
+Message-ID: <20170127032546.14657-4-chris.packham@alliedtelesis.co.nz>
+References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:53252 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753712AbdA0D0L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 26 Jan 2017 22:26:11 -0500
+In-Reply-To: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org
+Cc: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Chris Packham <chris.packham@alliedtelesis.co.nz>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
+From: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
 
---=-2TmwVu2AM6AQRVgHp+ox
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+This pinctrl driver supports the 98DX3236, 98DX3336 and 98DX4251 SoCs
+from Marvell.
 
-T24gVGh1LCAyMDE3LTAxLTI2IGF0IDE0OjUxICswMTAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOgo+
-ID4gT24gVHVlLCBKYW4gMjQsIDIwMTcgYXQgNzoxNiBBTSwgQW5kcmV3IEplZmZlcnkgPGFuZHJl
-d0Bhai5pZC5hdT4gd3JvdGU6Cj4gCj4gPiBUaGlzIGlzIGxlc3Mgc3RyYWlnaHQtZm9yd2FyZCB0
-aGFuIG9uZSB3b3VsZCBob3BlLCBhcyBzb21lIGJhbmtzIG9ubHkKPiA+IGhhdmUgNCBwaW5zIHJh
-dGhlciB0aGFuIDgsIG90aGVycyBhcmUgb3V0cHV0IG9ubHksIHlldCBtb3JlIChXIGFuZAo+ID4g
-WCwgYWxyZWFkeSBzdXBwb3J0ZWQpIGFyZSBpbnB1dC1vbmx5LCBhbmQgaW4gdGhlIGNhc2Ugb2Yg
-dGhlIGc0IFNvQyBiYW5rCj4gPiBBQyBkb2Vzbid0IGV4aXN0Lgo+ID4gCj4gPiBBZGQgc29tZSBz
-dHJ1Y3RzIHRvIGRlc2NyaWJlIHRoZSB2YXJ5aW5nIHByb3BlcnRpZXMgb2YgZGlmZmVyZW50IGJh
-bmtzCj4gPiBhbmQgaW50ZWdyYXRlIG1lY2hhbmlzbXMgdG8gZGVueSByZXF1ZXN0cyBmb3IgdW5z
-dXBwb3J0ZWQKPiA+IGNvbmZpZ3VyYXRpb25zLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRy
-ZXcgSmVmZmVyeSA8YW5kcmV3QGFqLmlkLmF1Pgo+IAo+ICguLi4pCj4gPiArI2luY2x1ZGUgPGxp
-bnV4L2dwaW8uaD4KPiAKPiBOQUsgZG9uJ3QgZG8gdGhhdC4gKEkgd2lsbCBleHBsYWluIGJlbG93
-Li4uKQo+IAo+ICguLi4pCj4gCj4gPiBAQCAtMTg5LDYgKzI1OCwxMiBAQCBzdGF0aWMgaW50IGFz
-cGVlZF9ncGlvX2dldF9kaXJlY3Rpb24oc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGlu
-dCBvZmZzZXQpCj4gPiDCoMKgwqDCoMKgwqDCoMKgdW5zaWduZWQgbG9uZyBmbGFnczsKPiA+IMKg
-wqDCoMKgwqDCoMKgwqB1MzIgdmFsOwo+ID4gCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAoIWhhdmVf
-aW5wdXQoZ3Bpbywgb2Zmc2V0KSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBy
-ZXR1cm4gR1BJT0ZfRElSX09VVDsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghaGF2ZV9v
-dXRwdXQoZ3Bpbywgb2Zmc2V0KSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBy
-ZXR1cm4gR1BJT0ZfRElSX0lOOwo+IAo+IFBsZWFzZSByZWZyYWluIGZyb20gdXNpbmcgR1BJT0Zf
-KiBpbiBkcml2ZXJzIGxpa2UgdGhpcy4KPiAKPiBUaGVzZSBmbGFncyBhcmUgcGFydCBvZiB0aGUg
-Y29uc3VtZXIgQVBJLCBub3QgdGhlIGRyaXZlciBBUEkuCj4gCj4gTWFrZSBzdXJlIHRoZSBvbmx5
-IGhlYWRlciB5b3UgaW5jbHVkZSBpbiB5b3VyIGRyaXZlciBpcwo+IDxsaW51eC9ncGlvL2RyaXZl
-ci5oPiBhbmQganVzdCByZXR1cm4gMC8xIGluc3RlYWQgb2YgdGhlc2UKPiBjb25zdGFudHMuCgpO
-byB3b3JyaWVzLCBJJ2xsIHNlbmQgYSBmb2xsb3ctdXAgZml4aW5nIHRoYXQuIEkgd2FzIGhlc2l0
-YW50LCBidXQgdGhlbgpmaWd1cmVkIHRoZXJlIHdhcyBhIHJlYXNvbmFibGUgY2hhbmNlIEknZCBn
-ZXQgdGhlIHZhbHVlcyBhcm91bmQgdGhlCndyb25nIHdheSBhbmQgd2VudCBsb29raW5nIGZvciBt
-YWNyb3MgdGhhdCBtYWRlIGl0IG9idmlvdXNseSBjb3JyZWN0LgoKPiAKPiA+ICtzdGF0aWMgdm9p
-ZCBzZXRfaXJxX3ZhbGlkX21hc2soc3RydWN0IGFzcGVlZF9ncGlvICpncGlvKQo+ID4gK3sKPiA+
-ICvCoMKgwqDCoMKgwqDCoGNvbnN0IHN0cnVjdCBhc3BlZWRfYmFua19wcm9wcyAqcHJvcHMgPSBn
-cGlvLT5jb25maWctPnByb3BzOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgd2hpbGUgKCFpc19i
-YW5rX3Byb3BzX3NlbnRpbmVsKHByb3BzKSkgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHVuc2lnbmVkIGludCBvZmZzZXQ7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgY29uc3QgdW5zaWduZWQgbG9uZyBpbnQgaW5wdXQgPSBwcm9wcy0+aW5wdXQ7Cj4gPiAr
-Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyogUHJldHR5IGNydW1teSBhcHBy
-b2FjaCwgYnV0IHNpbWlsYXIgdG8gR1BJTyBjb3JlICovCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgZm9yX2VhY2hfY2xlYXJfYml0KG9mZnNldCwgJmlucHV0LCAzMikgewo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBp
-bnQgaSA9IHByb3BzLT5iYW5rICogMzIgKyBvZmZzZXQ7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChpID49IGdwaW8tPmNvbmZpZy0+
-bnJfZ3Bpb3MpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBicmVhazsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgY2xlYXJfYml0KGksIGdwaW8tPmNoaXAuaXJxX3Zh
-bGlkX21hc2spOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiA+ICsKPiA+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwcm9wcysrOwo+ID4gK8KgwqDCoMKgwqDC
-oMKgfQo+ID4gK30KPiAKPiBOaWNlIHRoYXQgeW91IHVzZSB0aGlzIGZlYXR1cmUhCj4gCj4gPiAr
-LyoKPiA+ICsgKiBBbnkgYmFua3Mgbm90IHNwZWNpZmllZCBpbiBhIHN0cnVjdCBhc3BlZWRfYmFu
-a19wcm9wcyBhcnJheSBhcmUgYXNzdW1lZCB0bwo+ID4gKyAqIGhhdmUgdGhlIHByb3BlcnRpZXM6
-Cj4gPiArICoKPiA+ICsgKsKgwqDCoMKgwqB7IC5pbnB1dCA9IDB4ZmZmZmZmZmYsIC5vdXRwdXQg
-PSAweGZmZmZmZmZmIH0KPiA+ICsgKi8KPiA+ICsKPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGFz
-cGVlZF9iYW5rX3Byb3BzIGFzdDI0MDBfYmFua19wcm9wc1tdID0gewo+ID4gK8KgwqDCoMKgwqDC
-oMKgLyrCoMKgwqDCoMKgaW5wdXTCoMKgwqDCoMKgwqBvdXRwdXTCoMKgwqAqLwo+ID4gK8KgwqDC
-oMKgwqDCoMKgeyA1LCAweGZmZmZmZmZmLCAweDAwMDBmZmZmIH0sIC8qIFUvVi9XL1ggKi8KPiA+
-ICvCoMKgwqDCoMKgwqDCoHsgNiwgMHgwMDAwMDAwZiwgMHgwZmZmZmYwZiB9LCAvKiBZL1ovQUEv
-QUIsIHR3byA0LUdQSU8gaG9sZXMgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoHsgfSwKPiA+ICt9Owo+
-ID4gKwo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgYXNwZWVkX2dwaW9fY29uZmlnIGFzdDI0MDBf
-Y29uZmlnID0KPiA+ICvCoMKgwqDCoMKgwqDCoC8qIDIyMCBmb3Igc2ltcGxpY2l0eSwgcmVhbGx5
-IDIxNiB3aXRoIHR3byA0LUdQSU8gaG9sZXMsIGZvdXIgYXQgZW5kICovCj4gPiArwqDCoMKgwqDC
-oMKgwqB7IC5ucl9ncGlvcyA9IDIyMCwgLnByb3BzID0gYXN0MjQwMF9iYW5rX3Byb3BzLCB9Owo+
-ID4gKwo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgYXNwZWVkX2JhbmtfcHJvcHMgYXN0MjUwMF9i
-YW5rX3Byb3BzW10gPSB7Cj4gPiArwqDCoMKgwqDCoMKgwqAvKsKgwqDCoMKgwqBpbnB1dMKgwqDC
-oMKgwqDCoG91dHB1dMKgwqDCoCovCj4gPiArwqDCoMKgwqDCoMKgwqB7IDUsIDB4ZmZmZmZmZmYs
-IDB4MDAwMGZmZmYgfSwgLyogVS9WL1cvWCAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgeyA2LCAweDBm
-ZmZmZmZmLCAweDBmZmZmZmZmIH0sIC8qIFkvWi9BQS9BQiwgNC1HUElPIGhvbGUgKi8KPiA+ICvC
-oMKgwqDCoMKgwqDCoHsgNywgMHgwMDAwMDBmZiwgMHgwMDAwMDBmZiB9LCAvKiBBQyAqLwo+ID4g
-K8KgwqDCoMKgwqDCoMKgeyB9LAo+ID4gK307Cj4gCj4gQSBiaXQgb2YgbWFnaWMgdmFsdWVzIGJ1
-dCB0aGVyZSBhcmUgY29tbWVudHMgdG8gZXhwbGFpbiBpdCBzbyBPSy4KPiAKPiBZb3UgY291bGQg
-Y29uc2lkZXIgdXNpbmcgdGhlIEdFTk1BU0soKSBtYWNybyBmcm9tIDxsaW51eC9iaXRvcHMuaD4K
-PiB0byBpbmRpY2F0ZSB0aGUgYml0cyBoZXJlIGJ1dCBubyBiaWcgZGVhbC4KCkknbSBnb2luZyB0
-byBsZWF2ZSBpdCBhcyBpcyBpZiB5b3UncmUgbm90IGJvdGhlcmVkLCB1bmxlc3MgdGhlcmUgYXJl
-CnN0cm9uZyBvYmplY3Rpb25zIGZyb20gb3RoZXJzLgoKVGhhbmtzLAoKQW5kcmV3
+Signed-off-by: Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+---
 
+Notes:
+    Changes in v2:
+    - include sdio support for the 98DX4251
+    Changes in v3:
+    - None
+    Changes in v4:
+    - Correct some discrepencies between binding and driver.
+    - Collect acks from Rob and Sebastian
+    Changes in v5:
+    - Update bindings to reflect "gpo" pins
+    - Use mvebu_mmio_mpp_ctrl instead of armada_xp_mpp_ctrl (note this is reliant
+      on changes queued in linux-pinctrl)
 
---=-2TmwVu2AM6AQRVgHp+ox
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+ .../pinctrl/marvell,armada-98dx3236-pinctrl.txt    |  46 ++++++
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c          | 156 +++++++++++++++++++++
+ 2 files changed, 202 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
 
------BEGIN PGP SIGNATURE-----
+diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+new file mode 100644
+index 000000000000..97aef67ee769
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-98dx3236-pinctrl.txt
+@@ -0,0 +1,46 @@
++* Marvell 98dx3236 pinctrl driver for mpp
++
++Please refer to marvell,mvebu-pinctrl.txt in this directory for common binding
++part and usage
++
++Required properties:
++- compatible: "marvell,98dx3236-pinctrl" or "marvell,98dx4251-pinctrl"
++- reg: register specifier of MPP registers
++
++This driver supports all 98dx3236, 98dx3336 and 98dx4251 variants
++
++name          pins     functions
++================================================================================
++mpp0          0        gpo, spi0(mosi), dev(ad8)
++mpp1          1        gpio, spi0(miso), dev(ad9)
++mpp2          2        gpo, spi0(sck), dev(ad10)
++mpp3          3        gpio, spi0(cs0), dev(ad11)
++mpp4          4        gpio, spi0(cs1), smi(mdc), dev(cs0)
++mpp5          5        gpio, pex(rsto), sd0(cmd), dev(bootcs)
++mpp6          6        gpo, sd0(clk), dev(a2)
++mpp7          7        gpio, sd0(d0), dev(ale0)
++mpp8          8        gpio, sd0(d1), dev(ale1)
++mpp9          9        gpio, sd0(d2), dev(ready0)
++mpp10         10       gpio, sd0(d3), dev(ad12)
++mpp11         11       gpio, uart1(rxd), uart0(cts), dev(ad13)
++mpp12         12       gpo, uart1(txd), uart0(rts), dev(ad14)
++mpp13         13       gpio, intr(out), dev(ad15)
++mpp14         14       gpio, i2c0(sck)
++mpp15         15       gpio, i2c0(sda)
++mpp16         16       gpo, dev(oe)
++mpp17         17       gpo, dev(clkout)
++mpp18         18       gpio, uart1(txd)
++mpp19         19       gpio, uart1(rxd), dev(rb)
++mpp20         20       gpo, dev(we0)
++mpp21         21       gpo, dev(ad0)
++mpp22         22       gpo, dev(ad1)
++mpp23         23       gpo, dev(ad2)
++mpp24         24       gpo, dev(ad3)
++mpp25         25       gpo, dev(ad4)
++mpp26         26       gpo, dev(ad5)
++mpp27         27       gpo, dev(ad6)
++mpp28         28       gpo, dev(ad7)
++mpp29         29       gpo, dev(a0)
++mpp30         30       gpo, dev(a1)
++mpp31         31       gpio, slv_smi(mdc), smi(mdc), dev(we1)
++mpp32         32       gpio, slv_smi(mdio), smi(mdio), dev(cs1)
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+index 63e1bd506983..61cbc138703e 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
+@@ -38,6 +38,10 @@ enum armada_xp_variant {
+ 	V_MV78460	= BIT(2),
+ 	V_MV78230_PLUS	= (V_MV78230 | V_MV78260 | V_MV78460),
+ 	V_MV78260_PLUS	= (V_MV78260 | V_MV78460),
++	V_98DX3236	= BIT(3),
++	V_98DX3336	= BIT(4),
++	V_98DX4251	= BIT(5),
++	V_98DX3236_PLUS	= (V_98DX3236 | V_98DX3336 | V_98DX4251),
+ };
+ 
+ static struct mvebu_mpp_mode armada_xp_mpp_modes[] = {
+@@ -349,6 +353,131 @@ static struct mvebu_mpp_mode armada_xp_mpp_modes[] = {
+ 		 MPP_VAR_FUNCTION(0x1, "dev", "ad31",       V_MV78260_PLUS)),
+ };
+ 
++static struct mvebu_mpp_mode mv98dx3236_mpp_modes[] = {
++	MPP_MODE(0,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "mosi",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad8",         V_98DX3236_PLUS)),
++	MPP_MODE(1,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "miso",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad9",         V_98DX3236_PLUS)),
++	MPP_MODE(2,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "sck",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad10",        V_98DX3236_PLUS)),
++	MPP_MODE(3,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "cs0",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad11",        V_98DX3236_PLUS)),
++	MPP_MODE(4,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "spi0", "cs1",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "smi", "mdc",         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "cs0",         V_98DX3236_PLUS)),
++	MPP_MODE(5,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "pex", "rsto",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "sd0", "cmd",         V_98DX4251),
++		 MPP_VAR_FUNCTION(0x4, "dev", "bootcs",      V_98DX3236_PLUS)),
++	MPP_MODE(6,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "sd0", "clk",         V_98DX4251),
++		 MPP_VAR_FUNCTION(0x4, "dev", "a2",          V_98DX3236_PLUS)),
++	MPP_MODE(7,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "sd0", "d0",          V_98DX4251),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ale0",        V_98DX3236_PLUS)),
++	MPP_MODE(8,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "sd0", "d1",          V_98DX4251),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ale1",        V_98DX3236_PLUS)),
++	MPP_MODE(9,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "sd0", "d2",          V_98DX4251),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ready0",      V_98DX3236_PLUS)),
++	MPP_MODE(10,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "sd0", "d3",          V_98DX4251),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad12",        V_98DX3236_PLUS)),
++	MPP_MODE(11,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "uart1", "rxd",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart0", "cts",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad13",        V_98DX3236_PLUS)),
++	MPP_MODE(12,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x2, "uart1", "txd",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart0", "rts",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad14",        V_98DX3236_PLUS)),
++	MPP_MODE(13,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "intr", "out",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "ad15",        V_98DX3236_PLUS)),
++	MPP_MODE(14,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "i2c0", "sck",        V_98DX3236_PLUS)),
++	MPP_MODE(15,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "i2c0", "sda",        V_98DX3236_PLUS)),
++	MPP_MODE(16,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "oe",          V_98DX3236_PLUS)),
++	MPP_MODE(17,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "clkout",      V_98DX3236_PLUS)),
++	MPP_MODE(18,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart1", "txd",       V_98DX3236_PLUS)),
++	MPP_MODE(19,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "uart1", "rxd",       V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "rb",          V_98DX3236_PLUS)),
++	MPP_MODE(20,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "we0",         V_98DX3236_PLUS)),
++	MPP_MODE(21,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad0",         V_98DX3236_PLUS)),
++	MPP_MODE(22,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad1",         V_98DX3236_PLUS)),
++	MPP_MODE(23,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad2",         V_98DX3236_PLUS)),
++	MPP_MODE(24,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad3",         V_98DX3236_PLUS)),
++	MPP_MODE(25,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad4",         V_98DX3236_PLUS)),
++	MPP_MODE(26,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad5",         V_98DX3236_PLUS)),
++	MPP_MODE(27,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad6",         V_98DX3236_PLUS)),
++	MPP_MODE(28,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "ad7",         V_98DX3236_PLUS)),
++	MPP_MODE(29,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "a0",          V_98DX3236_PLUS)),
++	MPP_MODE(30,
++		 MPP_VAR_FUNCTION(0x0, "gpo", NULL,          V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "dev", "a1",          V_98DX3236_PLUS)),
++	MPP_MODE(31,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "slv_smi", "mdc",     V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "smi", "mdc",         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "we1",         V_98DX3236_PLUS)),
++	MPP_MODE(32,
++		 MPP_VAR_FUNCTION(0x0, "gpio", NULL,         V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x1, "slv_smi", "mdio",    V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x3, "smi", "mdio",        V_98DX3236_PLUS),
++		 MPP_VAR_FUNCTION(0x4, "dev", "cs1",         V_98DX3236_PLUS)),
++};
++
+ static struct mvebu_pinctrl_soc_info armada_xp_pinctrl_info;
+ 
+ static const struct of_device_id armada_xp_pinctrl_of_match[] = {
+@@ -364,6 +493,14 @@ static const struct of_device_id armada_xp_pinctrl_of_match[] = {
+ 		.compatible = "marvell,mv78460-pinctrl",
+ 		.data       = (void *) V_MV78460,
+ 	},
++	{
++		.compatible = "marvell,98dx3236-pinctrl",
++		.data       = (void *) V_98DX3236,
++	},
++	{
++		.compatible = "marvell,98dx4251-pinctrl",
++		.data       = (void *) V_98DX4251,
++	},
+ 	{ },
+ };
+ 
+@@ -396,6 +533,14 @@ static struct pinctrl_gpio_range mv78460_mpp_gpio_ranges[] = {
+ 	MPP_GPIO_RANGE(2,  64, 64,  3),
+ };
+ 
++static struct mvebu_mpp_ctrl mv98dx3236_mpp_controls[] = {
++	MPP_FUNC_CTRL(0, 32, NULL, mvebu_mmio_mpp_ctrl),
++};
++
++static struct pinctrl_gpio_range mv98dx3236_mpp_gpio_ranges[] = {
++	MPP_GPIO_RANGE(0, 0, 0, 32),
++};
++
+ static int armada_xp_pinctrl_suspend(struct platform_device *pdev,
+ 				     pm_message_t state)
+ {
+@@ -471,6 +616,17 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
+ 		soc->gpioranges = mv78460_mpp_gpio_ranges;
+ 		soc->ngpioranges = ARRAY_SIZE(mv78460_mpp_gpio_ranges);
+ 		break;
++	case V_98DX3236:
++	case V_98DX3336:
++	case V_98DX4251:
++		/* fall-through */
++		soc->controls = mv98dx3236_mpp_controls;
++		soc->ncontrols = ARRAY_SIZE(mv98dx3236_mpp_controls);
++		soc->modes = mv98dx3236_mpp_modes;
++		soc->nmodes = mv98dx3236_mpp_controls[0].npins;
++		soc->gpioranges = mv98dx3236_mpp_gpio_ranges;
++		soc->ngpioranges = ARRAY_SIZE(mv98dx3236_mpp_gpio_ranges);
++		break;
+ 	}
+ 
+ 	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
+-- 
+2.11.0.24.ge6920cf
 
-iQIcBAABCgAGBQJYiqc4AAoJEJ0dnzgO5LT5DzQP/0bjBM7XPPp1T7FRLytpTu3B
-AT0KzF3E92XkLewuUmHX9EsMg83UwNjcFpWVB7nzidSmopE3kDfbr3Z1igySrOwn
-lMHjIrGAuNDqlvmWA3qmA/9FoRE1Bj8CJHQw6wIlFesNJcUcvT3/S8yFQktPWncG
-P9mBJH0NLlT5D3pGJRbJ1MathvEWbYBxQc6RzTwjnY6khhzyHKTmFuXLdLjzW/Jf
-aRwD3MdPEAHNZ8lgf2ryS9spclTzyyNWW+kElQJ+5oAZtTV1H/BfJB2Te48zAZIM
-Be7wa9e/DzIwmvUsON/6J+nFGQIX6x9la/FWuLfHR6QtUrO0Fp2HK3hUvgRABKxA
-Ynqvkv7KvRJM2zQTJXAawfgqLjXNtgt+YWLLnJGm48IhzlzDb7sxY31rSvmVHcvs
-nPHn4MiOphV/NFVsj0tNagbiFAG+qOc62jjO87xWd7EOssI4nx5RbdGqJJjFz8j0
-ymMLQuFPkuXZPe9/EiJ2NK7VVP6sRsptU1baK5m6JgH8T1yGrpeHMEHN55jkBN5W
-9Zcc7f/w3qndnLL3WZ0L+v2dpHn9GhJjpV6yGMwTmZ3aHIkXBscOgTkbfty4YST9
-Gqd7RnBQ3KtLAJrtIzRSpWNnv2SqLNJkEPosGuQY1RWBzo0xV21wDyr0jT5Hkrgb
-oEunrTPUtAesn/PQb2rz
-=637r
------END PGP SIGNATURE-----
-
---=-2TmwVu2AM6AQRVgHp+ox--
