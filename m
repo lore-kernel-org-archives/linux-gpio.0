@@ -1,119 +1,40 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 10/13] mtd: nand: jz4740: Let the pinctrl driver
- configure the pins
-Date: Fri, 27 Jan 2017 18:33:11 +0100
-Message-ID: <20170127183311.132b5661@bbrezillon>
-References: <20170117231421.16310-1-paul@crapouillou.net>
-        <20170117231421.16310-11-paul@crapouillou.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/8] pinctrl: samsung: Add support for pad retention
+ control for Exynos5433 SoCs
+Date: Fri, 27 Jan 2017 20:02:03 +0200
+Message-ID: <20170127180203.eacwbyb2noqjpmgw@kozik-lap>
+References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170126083402eucas1p187d3d31f62544fc46fae99fc5f74dbfe@eucas1p1.samsung.com>
+ <1485419634-28331-4-git-send-email-m.szyprowski@samsung.com>
+ <20170126194811.rori5j5hmclniqig@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170117231421.16310-11-paul@crapouillou.net>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170126194811.rori5j5hmclniqig@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 18 Jan 2017 00:14:18 +0100
-Paul Cercueil <paul@crapouillou.net> wrote:
+On Thu, Jan 26, 2017 at 09:48:11PM +0200, Krzysztof Kozlowski wrote:
+> On Thu, Jan 26, 2017 at 09:33:49AM +0100, Marek Szyprowski wrote:
+> > This patch adds support for retention control for Exynos5433 SoCs. Three
+> > groups of pins has been defined for retention control: common shared group
+> > for ALIVE, CPIF, eSE, FINGER, IMEM, NFC, PERIC, TOUCH pin banks and
+> > separate control for FSYS and AUD pin banks, for which PMU retention
+> > registers match whole banks.
+> > 
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >  drivers/pinctrl/samsung/pinctrl-exynos.c    | 58 +++++++++++++++++++++++++++++
+> >  include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++
 
-> Before, this NAND driver would set itself the configuration of the
-> chip-select pins for the various NAND banks.
-> 
-> Now that the JZ4740 and similar SoCs have a pinctrl driver, we rely on
-> the pins being properly configured before the driver probes.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+I already have some non-conflicting changes to exynos-regs-pmu.h in my
+branch. Now I want to add some more which will create conflicts.
 
-Acked-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+How about splitting the header to separate patch, so I will take it to
+my exynos-pmu branch?
 
-> ---
->  drivers/mtd/nand/jz4740_nand.c | 23 +----------------------
->  1 file changed, 1 insertion(+), 22 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/jz4740_nand.c b/drivers/mtd/nand/jz4740_nand.c
-> index 5551c36adbdf..0d06a1f07d82 100644
-> --- a/drivers/mtd/nand/jz4740_nand.c
-> +++ b/drivers/mtd/nand/jz4740_nand.c
-> @@ -25,7 +25,6 @@
->  
->  #include <linux/gpio.h>
->  
-> -#include <asm/mach-jz4740/gpio.h>
->  #include <asm/mach-jz4740/jz4740_nand.h>
->  
->  #define JZ_REG_NAND_CTRL	0x50
-> @@ -310,34 +309,20 @@ static int jz_nand_detect_bank(struct platform_device *pdev,
->  			       uint8_t *nand_dev_id)
->  {
->  	int ret;
-> -	int gpio;
-> -	char gpio_name[9];
->  	char res_name[6];
->  	uint32_t ctrl;
->  	struct nand_chip *chip = &nand->chip;
->  	struct mtd_info *mtd = nand_to_mtd(chip);
->  
-> -	/* Request GPIO port. */
-> -	gpio = JZ_GPIO_MEM_CS0 + bank - 1;
-> -	sprintf(gpio_name, "NAND CS%d", bank);
-> -	ret = gpio_request(gpio, gpio_name);
-> -	if (ret) {
-> -		dev_warn(&pdev->dev,
-> -			"Failed to request %s gpio %d: %d\n",
-> -			gpio_name, gpio, ret);
-> -		goto notfound_gpio;
-> -	}
-> -
->  	/* Request I/O resource. */
->  	sprintf(res_name, "bank%d", bank);
->  	ret = jz_nand_ioremap_resource(pdev, res_name,
->  					&nand->bank_mem[bank - 1],
->  					&nand->bank_base[bank - 1]);
->  	if (ret)
-> -		goto notfound_resource;
-> +		return ret;
->  
->  	/* Enable chip in bank. */
-> -	jz_gpio_set_function(gpio, JZ_GPIO_FUNC_MEM_CS0);
->  	ctrl = readl(nand->base + JZ_REG_NAND_CTRL);
->  	ctrl |= JZ_NAND_CTRL_ENABLE_CHIP(bank - 1);
->  	writel(ctrl, nand->base + JZ_REG_NAND_CTRL);
-> @@ -377,12 +362,8 @@ static int jz_nand_detect_bank(struct platform_device *pdev,
->  	dev_info(&pdev->dev, "No chip found on bank %i\n", bank);
->  	ctrl &= ~(JZ_NAND_CTRL_ENABLE_CHIP(bank - 1));
->  	writel(ctrl, nand->base + JZ_REG_NAND_CTRL);
-> -	jz_gpio_set_function(gpio, JZ_GPIO_FUNC_NONE);
->  	jz_nand_iounmap_resource(nand->bank_mem[bank - 1],
->  				 nand->bank_base[bank - 1]);
-> -notfound_resource:
-> -	gpio_free(gpio);
-> -notfound_gpio:
->  	return ret;
->  }
->  
-> @@ -503,7 +484,6 @@ static int jz_nand_probe(struct platform_device *pdev)
->  err_unclaim_banks:
->  	while (chipnr--) {
->  		unsigned char bank = nand->banks[chipnr];
-> -		gpio_free(JZ_GPIO_MEM_CS0 + bank - 1);
->  		jz_nand_iounmap_resource(nand->bank_mem[bank - 1],
->  					 nand->bank_base[bank - 1]);
->  	}
-> @@ -530,7 +510,6 @@ static int jz_nand_remove(struct platform_device *pdev)
->  		if (bank != 0) {
->  			jz_nand_iounmap_resource(nand->bank_mem[bank - 1],
->  						 nand->bank_base[bank - 1]);
-> -			gpio_free(JZ_GPIO_MEM_CS0 + bank - 1);
->  		}
->  	}
->  
+Best regards,
+Krzysztof
