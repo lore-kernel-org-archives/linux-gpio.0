@@ -1,98 +1,50 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/3] pinctrl: baytrail: Rectify debounce support
- (part 2)
-Date: Fri, 27 Jan 2017 15:28:26 +0200
-Message-ID: <1485523706.2133.357.camel@linux.intel.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per
+ community
+Date: Fri, 27 Jan 2017 15:06:06 +0100
+Message-ID: <20170127150606.0dcc6c6a@endymion>
 References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
-         <20170126172409.132136-2-andriy.shevchenko@linux.intel.com>
-         <20170127101405.5dd1a40c@endymion>
+        <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
+        <20170127102109.3fb3d018@endymion>
+        <1485523639.2133.355.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:59707 "EHLO mga02.intel.com"
+Received: from mx2.suse.de ([195.135.220.15]:42846 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932304AbdA0NdZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 27 Jan 2017 08:33:25 -0500
-In-Reply-To: <20170127101405.5dd1a40c@endymion>
+        id S1754409AbdA0OHb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 27 Jan 2017 09:07:31 -0500
+In-Reply-To: <1485523639.2133.355.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, Cristina Ciocan <cristina.ciocan@intel.com>
 
-On Fri, 2017-01-27 at 10:14 +0100, Jean Delvare wrote:
-> Hi Andy,
+On Fri, 27 Jan 2017 15:27:19 +0200, Andy Shevchenko wrote:
+> On Fri, 2017-01-27 at 10:21 +0100, Jean Delvare wrote:
+> > That break isn't needed ;-)
 > 
-> On Thu, 26 Jan 2017 19:24:07 +0200, Andy Shevchenko wrote:
-> > The commit 04ff5a095d66 ("pinctrl: baytrail: Rectify debounce
-> > support")
-> > almost fixes the logic of debuonce but missed couple of things, i.e.
-> > typo in mask when disabling debounce and lack of enabling it back.
-> > 
-> > This patch addresses above issues.
-> > 
-> > Reported-by: Jean Delvare <jdelvare@suse.de>
-> > Fixes: 04ff5a095d66 ("pinctrl: baytrail: Rectify debounce support")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  drivers/pinctrl/intel/pinctrl-baytrail.c | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > index e696a01365cb..958db4f5ee9b 100644
-> > --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > @@ -1243,10 +1243,12 @@ static int byt_pin_config_set(struct
-> > pinctrl_dev *pctl_dev,
-> >  			debounce = readl(db_reg);
-> >  			debounce &= ~BYT_DEBOUNCE_PULSE_MASK;
-> >  
-> > +			if (arg)
-> > +				conf |= BYT_DEBOUNCE_EN;
-> > +			else
-> > +				conf &= ~BYT_DEBOUNCE_EN;
-> > +
-> >  			switch (arg) {
-> > -			case 0:
-> > -				conf &= BYT_DEBOUNCE_EN;
-> > -				break;
-> >  			case 375:
-> >  				debounce |=
-> > BYT_DEBOUNCE_PULSE_375US;
-> >  				break;
-> > @@ -1269,7 +1271,9 @@ static int byt_pin_config_set(struct
-> > pinctrl_dev *pctl_dev,
-> >  				debounce |=
-> > BYT_DEBOUNCE_PULSE_24MS;
-> >  				break;
-> >  			default:
-> > -				ret = -EINVAL;
-> > +				if (arg)
-> > +					ret = -EINVAL;
-> 
-> Or you could keep the case 0: above. Makes the patch even smaller.
+> Would be better to have in my opinion. I already did myself some
+> mistakes regarding to missed break.
 
-I would keep the way I put it here.
+OK, fine with me.
 
+> > The code looks sane to me, although I can't verify its correctness
+> > without a datasheet.
 > 
-> > +				break;
+> Datasheet is public.
 > 
-> That break isn't needed.
+> Intel® Atom™ Processor Z3600 and Z3700 Series Datasheet (Volume 2 of 2)
+> Number: 329518-002
 
-Same explanation as in patch 2.
+Apparently it was removed in December 2014 and replaced by a more
+concise document...
 
-> 
-> >  			}
-> >  
-> >  			if (!ret)
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Jean Delvare <jdelvare@suse.de>
+https://communities.intel.com/thread/57313
 
-Thanks!
+But no big deal, I trust your fix is correct.
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Jean Delvare
+SUSE L3 Support
