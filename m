@@ -1,149 +1,118 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/1] pinctrl: baytrail: Add spinlock usage to all
- read/write access
-Date: Thu, 26 Jan 2017 22:52:19 +0200
-Message-ID: <20170126205219.GO17297@lahna.fi.intel.com>
-References: <20170126141418.5624-1-alexander.stein@systec-electronic.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH v2 2/2] gpio: aspeed: Add banks Y, Z, AA, AB and AC
+Date: Fri, 27 Jan 2017 12:19:44 +1030
+Message-ID: <1485481784.4137.15.camel@aj.id.au>
+References: <20170124061646.9317-1-andrew@aj.id.au>
+         <20170124061646.9317-3-andrew@aj.id.au>
+         <CACRpkdZ4hZY1j5U1xfn=trnDJMG1A=K2DbMWxD=79MzmEgouaw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:58612 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751933AbdAZVHR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 26 Jan 2017 16:07:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20170126141418.5624-1-alexander.stein@systec-electronic.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-2TmwVu2AM6AQRVgHp+ox"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZ4hZY1j5U1xfn=trnDJMG1A=K2DbMWxD=79MzmEgouaw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thu, Jan 26, 2017 at 03:14:18PM +0100, Alexander Stein wrote:
-> According to VLI64 Intel Atom E3800 Specification Update (#329901)
-> concurrent read accesses may result in returning 0xffffffff and write
-> accesses may be dropped silently.
-> To workaround all accesses must be protected by locks.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> ---
-> I actually had the case where the read access in byt_irq_unmask returned
-> 0xffffffff. After OR'ing the trigger bits and writing 0xffffffff back to
-> BYT_CONF0_REG things started to act strange.
-> 
->  drivers/pinctrl/intel/pinctrl-baytrail.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> index 6cce314..7294c88 100644
-> --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> @@ -1594,6 +1594,7 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
->  	void __iomem *reg;
->  	unsigned long pending;
->  	unsigned int virq;
-> +	unsigned long flags;
 
-Can you move this variable after "pending" like:
+--=-2TmwVu2AM6AQRVgHp+ox
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-  	unsigned long pending;
-	unsigned long flags;
-  	unsigned int virq;
+T24gVGh1LCAyMDE3LTAxLTI2IGF0IDE0OjUxICswMTAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOgo+
+ID4gT24gVHVlLCBKYW4gMjQsIDIwMTcgYXQgNzoxNiBBTSwgQW5kcmV3IEplZmZlcnkgPGFuZHJl
+d0Bhai5pZC5hdT4gd3JvdGU6Cj4gCj4gPiBUaGlzIGlzIGxlc3Mgc3RyYWlnaHQtZm9yd2FyZCB0
+aGFuIG9uZSB3b3VsZCBob3BlLCBhcyBzb21lIGJhbmtzIG9ubHkKPiA+IGhhdmUgNCBwaW5zIHJh
+dGhlciB0aGFuIDgsIG90aGVycyBhcmUgb3V0cHV0IG9ubHksIHlldCBtb3JlIChXIGFuZAo+ID4g
+WCwgYWxyZWFkeSBzdXBwb3J0ZWQpIGFyZSBpbnB1dC1vbmx5LCBhbmQgaW4gdGhlIGNhc2Ugb2Yg
+dGhlIGc0IFNvQyBiYW5rCj4gPiBBQyBkb2Vzbid0IGV4aXN0Lgo+ID4gCj4gPiBBZGQgc29tZSBz
+dHJ1Y3RzIHRvIGRlc2NyaWJlIHRoZSB2YXJ5aW5nIHByb3BlcnRpZXMgb2YgZGlmZmVyZW50IGJh
+bmtzCj4gPiBhbmQgaW50ZWdyYXRlIG1lY2hhbmlzbXMgdG8gZGVueSByZXF1ZXN0cyBmb3IgdW5z
+dXBwb3J0ZWQKPiA+IGNvbmZpZ3VyYXRpb25zLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRy
+ZXcgSmVmZmVyeSA8YW5kcmV3QGFqLmlkLmF1Pgo+IAo+ICguLi4pCj4gPiArI2luY2x1ZGUgPGxp
+bnV4L2dwaW8uaD4KPiAKPiBOQUsgZG9uJ3QgZG8gdGhhdC4gKEkgd2lsbCBleHBsYWluIGJlbG93
+Li4uKQo+IAo+ICguLi4pCj4gCj4gPiBAQCAtMTg5LDYgKzI1OCwxMiBAQCBzdGF0aWMgaW50IGFz
+cGVlZF9ncGlvX2dldF9kaXJlY3Rpb24oc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGlu
+dCBvZmZzZXQpCj4gPiDCoMKgwqDCoMKgwqDCoMKgdW5zaWduZWQgbG9uZyBmbGFnczsKPiA+IMKg
+wqDCoMKgwqDCoMKgwqB1MzIgdmFsOwo+ID4gCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAoIWhhdmVf
+aW5wdXQoZ3Bpbywgb2Zmc2V0KSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBy
+ZXR1cm4gR1BJT0ZfRElSX09VVDsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghaGF2ZV9v
+dXRwdXQoZ3Bpbywgb2Zmc2V0KSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBy
+ZXR1cm4gR1BJT0ZfRElSX0lOOwo+IAo+IFBsZWFzZSByZWZyYWluIGZyb20gdXNpbmcgR1BJT0Zf
+KiBpbiBkcml2ZXJzIGxpa2UgdGhpcy4KPiAKPiBUaGVzZSBmbGFncyBhcmUgcGFydCBvZiB0aGUg
+Y29uc3VtZXIgQVBJLCBub3QgdGhlIGRyaXZlciBBUEkuCj4gCj4gTWFrZSBzdXJlIHRoZSBvbmx5
+IGhlYWRlciB5b3UgaW5jbHVkZSBpbiB5b3VyIGRyaXZlciBpcwo+IDxsaW51eC9ncGlvL2RyaXZl
+ci5oPiBhbmQganVzdCByZXR1cm4gMC8xIGluc3RlYWQgb2YgdGhlc2UKPiBjb25zdGFudHMuCgpO
+byB3b3JyaWVzLCBJJ2xsIHNlbmQgYSBmb2xsb3ctdXAgZml4aW5nIHRoYXQuIEkgd2FzIGhlc2l0
+YW50LCBidXQgdGhlbgpmaWd1cmVkIHRoZXJlIHdhcyBhIHJlYXNvbmFibGUgY2hhbmNlIEknZCBn
+ZXQgdGhlIHZhbHVlcyBhcm91bmQgdGhlCndyb25nIHdheSBhbmQgd2VudCBsb29raW5nIGZvciBt
+YWNyb3MgdGhhdCBtYWRlIGl0IG9idmlvdXNseSBjb3JyZWN0LgoKPiAKPiA+ICtzdGF0aWMgdm9p
+ZCBzZXRfaXJxX3ZhbGlkX21hc2soc3RydWN0IGFzcGVlZF9ncGlvICpncGlvKQo+ID4gK3sKPiA+
+ICvCoMKgwqDCoMKgwqDCoGNvbnN0IHN0cnVjdCBhc3BlZWRfYmFua19wcm9wcyAqcHJvcHMgPSBn
+cGlvLT5jb25maWctPnByb3BzOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgd2hpbGUgKCFpc19i
+YW5rX3Byb3BzX3NlbnRpbmVsKHByb3BzKSkgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHVuc2lnbmVkIGludCBvZmZzZXQ7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgY29uc3QgdW5zaWduZWQgbG9uZyBpbnQgaW5wdXQgPSBwcm9wcy0+aW5wdXQ7Cj4gPiAr
+Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyogUHJldHR5IGNydW1teSBhcHBy
+b2FjaCwgYnV0IHNpbWlsYXIgdG8gR1BJTyBjb3JlICovCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgZm9yX2VhY2hfY2xlYXJfYml0KG9mZnNldCwgJmlucHV0LCAzMikgewo+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1bnNpZ25lZCBp
+bnQgaSA9IHByb3BzLT5iYW5rICogMzIgKyBvZmZzZXQ7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChpID49IGdwaW8tPmNvbmZpZy0+
+bnJfZ3Bpb3MpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBicmVhazsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgY2xlYXJfYml0KGksIGdwaW8tPmNoaXAuaXJxX3Zh
+bGlkX21hc2spOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiA+ICsKPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwcm9wcysrOwo+ID4gK8KgwqDCoMKgwqDC
+oMKgfQo+ID4gK30KPiAKPiBOaWNlIHRoYXQgeW91IHVzZSB0aGlzIGZlYXR1cmUhCj4gCj4gPiAr
+LyoKPiA+ICsgKiBBbnkgYmFua3Mgbm90IHNwZWNpZmllZCBpbiBhIHN0cnVjdCBhc3BlZWRfYmFu
+a19wcm9wcyBhcnJheSBhcmUgYXNzdW1lZCB0bwo+ID4gKyAqIGhhdmUgdGhlIHByb3BlcnRpZXM6
+Cj4gPiArICoKPiA+ICsgKsKgwqDCoMKgwqB7IC5pbnB1dCA9IDB4ZmZmZmZmZmYsIC5vdXRwdXQg
+PSAweGZmZmZmZmZmIH0KPiA+ICsgKi8KPiA+ICsKPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGFz
+cGVlZF9iYW5rX3Byb3BzIGFzdDI0MDBfYmFua19wcm9wc1tdID0gewo+ID4gK8KgwqDCoMKgwqDC
+oMKgLyrCoMKgwqDCoMKgaW5wdXTCoMKgwqDCoMKgwqBvdXRwdXTCoMKgwqAqLwo+ID4gK8KgwqDC
+oMKgwqDCoMKgeyA1LCAweGZmZmZmZmZmLCAweDAwMDBmZmZmIH0sIC8qIFUvVi9XL1ggKi8KPiA+
+ICvCoMKgwqDCoMKgwqDCoHsgNiwgMHgwMDAwMDAwZiwgMHgwZmZmZmYwZiB9LCAvKiBZL1ovQUEv
+QUIsIHR3byA0LUdQSU8gaG9sZXMgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoHsgfSwKPiA+ICt9Owo+
+ID4gKwo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgYXNwZWVkX2dwaW9fY29uZmlnIGFzdDI0MDBf
+Y29uZmlnID0KPiA+ICvCoMKgwqDCoMKgwqDCoC8qIDIyMCBmb3Igc2ltcGxpY2l0eSwgcmVhbGx5
+IDIxNiB3aXRoIHR3byA0LUdQSU8gaG9sZXMsIGZvdXIgYXQgZW5kICovCj4gPiArwqDCoMKgwqDC
+oMKgwqB7IC5ucl9ncGlvcyA9IDIyMCwgLnByb3BzID0gYXN0MjQwMF9iYW5rX3Byb3BzLCB9Owo+
+ID4gKwo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgYXNwZWVkX2JhbmtfcHJvcHMgYXN0MjUwMF9i
+YW5rX3Byb3BzW10gPSB7Cj4gPiArwqDCoMKgwqDCoMKgwqAvKsKgwqDCoMKgwqBpbnB1dMKgwqDC
+oMKgwqDCoG91dHB1dMKgwqDCoCovCj4gPiArwqDCoMKgwqDCoMKgwqB7IDUsIDB4ZmZmZmZmZmYs
+IDB4MDAwMGZmZmYgfSwgLyogVS9WL1cvWCAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgeyA2LCAweDBm
+ZmZmZmZmLCAweDBmZmZmZmZmIH0sIC8qIFkvWi9BQS9BQiwgNC1HUElPIGhvbGUgKi8KPiA+ICvC
+oMKgwqDCoMKgwqDCoHsgNywgMHgwMDAwMDBmZiwgMHgwMDAwMDBmZiB9LCAvKiBBQyAqLwo+ID4g
+K8KgwqDCoMKgwqDCoMKgeyB9LAo+ID4gK307Cj4gCj4gQSBiaXQgb2YgbWFnaWMgdmFsdWVzIGJ1
+dCB0aGVyZSBhcmUgY29tbWVudHMgdG8gZXhwbGFpbiBpdCBzbyBPSy4KPiAKPiBZb3UgY291bGQg
+Y29uc2lkZXIgdXNpbmcgdGhlIEdFTk1BU0soKSBtYWNybyBmcm9tIDxsaW51eC9iaXRvcHMuaD4K
+PiB0byBpbmRpY2F0ZSB0aGUgYml0cyBoZXJlIGJ1dCBubyBiaWcgZGVhbC4KCkknbSBnb2luZyB0
+byBsZWF2ZSBpdCBhcyBpcyBpZiB5b3UncmUgbm90IGJvdGhlcmVkLCB1bmxlc3MgdGhlcmUgYXJl
+CnN0cm9uZyBvYmplY3Rpb25zIGZyb20gb3RoZXJzLgoKVGhhbmtzLAoKQW5kcmV3
 
->  
->  	/* check from GPIO controller which pin triggered the interrupt */
->  	for (base = 0; base < vg->chip.ngpio; base += 32) {
-> @@ -1606,7 +1607,9 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
->  			continue;
->  		}
->  
-> +		raw_spin_lock_irqsave(&vg->lock, flags);
->  		pending = readl(reg);
-> +		raw_spin_unlock_irqrestore(&vg->lock, flags);
->  		for_each_set_bit(pin, &pending, 32) {
->  			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
->  			generic_handle_irq(virq);
-> @@ -1620,6 +1623,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
->  	void __iomem *reg;
->  	u32 base, value;
->  	int i;
-> +	unsigned long flags;
 
-Here also arrange it like
+--=-2TmwVu2AM6AQRVgHp+ox
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-	unsigned long flags;
-  	void __iomem *reg;
-  	u32 base, value;
-  	int i;
+-----BEGIN PGP SIGNATURE-----
 
->  
->  	/*
->  	 * Clear interrupt triggers for all pins that are GPIOs and
-> @@ -1637,7 +1641,9 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
->  			continue;
->  		}
->  
-> +		raw_spin_lock_irqsave(&vg->lock, flags);
+iQIcBAABCgAGBQJYiqc4AAoJEJ0dnzgO5LT5DzQP/0bjBM7XPPp1T7FRLytpTu3B
+AT0KzF3E92XkLewuUmHX9EsMg83UwNjcFpWVB7nzidSmopE3kDfbr3Z1igySrOwn
+lMHjIrGAuNDqlvmWA3qmA/9FoRE1Bj8CJHQw6wIlFesNJcUcvT3/S8yFQktPWncG
+P9mBJH0NLlT5D3pGJRbJ1MathvEWbYBxQc6RzTwjnY6khhzyHKTmFuXLdLjzW/Jf
+aRwD3MdPEAHNZ8lgf2ryS9spclTzyyNWW+kElQJ+5oAZtTV1H/BfJB2Te48zAZIM
+Be7wa9e/DzIwmvUsON/6J+nFGQIX6x9la/FWuLfHR6QtUrO0Fp2HK3hUvgRABKxA
+Ynqvkv7KvRJM2zQTJXAawfgqLjXNtgt+YWLLnJGm48IhzlzDb7sxY31rSvmVHcvs
+nPHn4MiOphV/NFVsj0tNagbiFAG+qOc62jjO87xWd7EOssI4nx5RbdGqJJjFz8j0
+ymMLQuFPkuXZPe9/EiJ2NK7VVP6sRsptU1baK5m6JgH8T1yGrpeHMEHN55jkBN5W
+9Zcc7f/w3qndnLL3WZ0L+v2dpHn9GhJjpV6yGMwTmZ3aHIkXBscOgTkbfty4YST9
+Gqd7RnBQ3KtLAJrtIzRSpWNnv2SqLNJkEPosGuQY1RWBzo0xV21wDyr0jT5Hkrgb
+oEunrTPUtAesn/PQb2rz
+=637r
+-----END PGP SIGNATURE-----
 
-Is this really necessary as we are initializing the driver?
-
->  		value = readl(reg);
-> +		raw_spin_unlock_irqrestore(&vg->lock, flags);
->  		if ((value & BYT_PIN_MUX) == byt_get_gpio_mux(vg, i) &&
->  		    !(value & BYT_DIRECT_IRQ_EN)) {
->  			byt_gpio_clear_triggering(vg, i);
-> @@ -1656,10 +1662,12 @@ static void byt_gpio_irq_init_hw(struct byt_gpio *vg)
->  			continue;
->  		}
->  
-> +		raw_spin_lock_irqsave(&vg->lock, flags);
->  		writel(0xffffffff, reg);
->  		/* make sure trigger bits are cleared, if not then a pin
->  		   might be misconfigured in bios */
->  		value = readl(reg);
-> +		raw_spin_unlock_irqrestore(&vg->lock, flags);
->  		if (value)
->  			dev_err(&vg->pdev->dev,
->  				"GPIO interrupt error, pins misconfigured\n");
-> @@ -1828,7 +1836,9 @@ static int byt_gpio_suspend(struct device *dev)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct byt_gpio *vg = platform_get_drvdata(pdev);
->  	int i;
-> +	unsigned long flags;
-
-Here also, please make it look like:
-
-	unsigned long flags;
-  	int i;
-
-> +	raw_spin_lock_irqsave(&vg->lock, flags);
->  	for (i = 0; i < vg->soc_data->npins; i++) {
->  		void __iomem *reg;
->  		u32 value;
-> @@ -1848,6 +1858,7 @@ static int byt_gpio_suspend(struct device *dev)
->  		value = readl(reg) & BYT_VAL_RESTORE_MASK;
->  		vg->saved_context[i].val = value;
->  	}
-> +	raw_spin_unlock_irqrestore(&vg->lock, flags);
->  
->  	return 0;
->  }
-> @@ -1857,7 +1868,9 @@ static int byt_gpio_resume(struct device *dev)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct byt_gpio *vg = platform_get_drvdata(pdev);
->  	int i;
-> +	unsigned long flags;
->  
-> +	raw_spin_lock_irqsave(&vg->lock, flags);
->  	for (i = 0; i < vg->soc_data->npins; i++) {
->  		void __iomem *reg;
->  		u32 value;
-> @@ -1894,6 +1907,7 @@ static int byt_gpio_resume(struct device *dev)
->  			}
->  		}
->  	}
-> +	raw_spin_unlock_irqrestore(&vg->lock, flags);
->  
->  	return 0;
->  }
-> -- 
-> 2.10.2
+--=-2TmwVu2AM6AQRVgHp+ox--
