@@ -1,58 +1,66 @@
-From: Shailendra Verma <shailendra.v@samsung.com>
-Subject: [PATCH] Gpio - Fix possible NULL derefrence.
-Date: Fri, 27 Jan 2017 16:44:02 +0530
-Message-ID: <1485515642-3310-1-git-send-email-shailendra.v@samsung.com>
-References: <CGME20170127111411epcas4p19f0ff2dc9c16dfa5346d1770338da8eb@epcas4p1.samsung.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47135 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934053AbdA0LOO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 27 Jan 2017 06:14:14 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 01/14] Documentation: dt/bindings: Document pinctrl-ingenic
+Date: Fri, 27 Jan 2017 12:18:39 +0100
+Message-ID: <CACRpkdZFRH84c4x7HBwgmY3fH+=Qq4q167c9oPhvrJ70MQkjaA@mail.gmail.com>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170122144947.16158-1-paul@crapouillou.net> <20170122144947.16158-2-paul@crapouillou.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170122144947.16158-2-paul@crapouillou.net>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.v@samsung.com>, Shailendra Verma <shailendra.capricorn@gmail.com>
 
-of_match_device could return NULL, and so can cause a NULL
-pointer dereference later.
+On Sun, Jan 22, 2017 at 3:49 PM, Paul Cercueil <paul@crapouillou.net> wrote:
 
-Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
----
- drivers/gpio/gpio-ge.c  |    5 +++++
- drivers/gpio/gpio-mxs.c |    5 +++++
- 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
-index 8650b29..395a85d 100644
---- a/drivers/gpio/gpio-ge.c
-+++ b/drivers/gpio/gpio-ge.c
-@@ -59,6 +59,11 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
- 	void __iomem *regs;
- 	int ret;
- 
-+	if (!of_id) {
-+		dev_err(&pdev->dev, "Error: No device match found\n");
-+		return -ENODEV;
-+	}
-+
- 	gc = devm_kzalloc(&pdev->dev, sizeof(*gc), GFP_KERNEL);
- 	if (!gc)
- 		return -ENOMEM;
-diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
-index ee17248..e28097f 100644
---- a/drivers/gpio/gpio-mxs.c
-+++ b/drivers/gpio/gpio-mxs.c
-@@ -272,6 +272,11 @@ static int mxs_gpio_probe(struct platform_device *pdev)
- 	int irq_base;
- 	int err;
- 
-+	if (!of_id) {
-+		dev_err(&pdev->dev, "Error: No device match found\n");
-+		return -ENODEV;
-+	}
-+
- 	port = devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
- 	if (!port)
- 		return -ENOMEM;
--- 
-1.7.9.5
+> +Required properties:
+> +- compatible: One of:
+> +  - "ingenic,jz4740-pinctrl"
+> +  - "ingenic,jz4780-pinctrl"
+> +
+> +Optional properties:
+> +- ingenic,pull-ups: A list of 32-bit bit fields, where each bit set tells the
+> +  driver that a pull-up resistor is available for this pin.
+> +  By default, the driver considers that all pins feature a pull-up resistor.
+> +- ingenic,pull-downs: A list of 32-bit bit fields, where each bit set tells
+> +  the driver that a pull-down resistor is available for this pin.
+> +  By default, the driver considers that all pins feature a pull-down
+> +  resistor.
 
+So I still don't understand these properties.
+
+Does this mean that there is a pull-up *inside* the SoC or *outside*
+on the board where it is mounted?
+
+If it is *outside* the SoC, on the board, the pulls should be set on
+the consumers, not on the controller.
+
+In the former case, if this pertains to the *inside* of the SoC:
+is it just different between jz4740 and jz4780?
+In that case, just code this into the driver as .data to the .compatible
+in the DT match. No special DT properties needed.
+
+If it is different between e.g. different versions of jz4740, why not
+make different compatible-properties? If there are different versions
+of the circuit, with different hard-wired hardware configuration, they
+are different devices and should have different compatible strings.
+
+> +                               /* CLK, CMD, D0 */
+> +                               ingenic,pins = <0x69 0 0x68 0 0x6a 0>;
+
+Standard bindings use just "pins". Why the custom ingenic,
+prefix?
+
+Yours,
+Linus Walleij
