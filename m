@@ -1,49 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 12/13] pinctrl: samsung: Move retention control from
- mach-s5pv210 to the pinctrl driver
-Date: Fri, 27 Jan 2017 17:20:41 +0100
-Message-ID: <7931853.ZcRrqCbIhv@wuerfel>
-References: <CGME20170119134910eucas1p2d401df77ccc1ef8e7b05f4cdb2ffc8d3@eucas1p2.samsung.com>
- <1484833733-16082-13-git-send-email-m.szyprowski@samsung.com>
- <CACRpkdYSVvGPoJ-gLiyGuHrqz=GYHCmmFv_bD9HpAywPD5Yzzg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYSVvGPoJ-gLiyGuHrqz=GYHCmmFv_bD9HpAywPD5Yzzg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH 2/5] dmaengine: Provide a wrapper for memcpy operations
+Date: Fri, 27 Jan 2017 17:34:03 +0100
+Message-ID: <1485534846-28111-3-git-send-email-boris.brezillon@free-electrons.com>
+References: <1485534846-28111-1-git-send-email-boris.brezillon@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485534846-28111-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, linux-kernel@vger.kernel.org
+Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday, January 26, 2017 10:11:33 AM CET Linus Walleij wrote:
-> On Thu, Jan 19, 2017 at 2:48 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> 
-> > This patch moves pad retention control from S5PV210 machine code to
-> > Exynos pin controller driver. This helps to avoid possible ordering
-> > and logical dependencies between machine and pin control code. Till
-> > now it worked fine only because sys_ops for machine code and pin
-> > controller were called in registration order.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > For mach-s5pv210:
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  arch/arm/mach-s5pv210/pm.c               |  7 ----
-> >  arch/arm/mach-s5pv210/regs-clock.h       |  4 ---
-> >  drivers/pinctrl/samsung/pinctrl-exynos.c | 56 ++++++++++++++++++++++++++++++++
-> 
-> Same here, can I have an ARM SoC ACK?
-> 
+Almost all ->device_prep_dma_xx() methods have a wrapper defined in
+dmaengine.h. Add one for  ->device_prep_dma_memcpy().
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ include/linux/dmaengine.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index feee6ec6a13b..533680860865 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -894,6 +894,17 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memset(
+ 						    len, flags);
+ }
+ 
++static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
++		struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
++		size_t len, unsigned long flags)
++{
++	if (!chan || !chan->device || !chan->device->device_prep_dma_memcpy)
++		return NULL;
++
++	return chan->device->device_prep_dma_memcpy(chan, dest, src,
++						    len, flags);
++}
++
+ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_sg(
+ 		struct dma_chan *chan,
+ 		struct scatterlist *dst_sg, unsigned int dst_nents,
+-- 
+2.7.4
