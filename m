@@ -1,66 +1,57 @@
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 5/5] gpio: ws16c48: Add support for GPIO names
-Date: Mon, 30 Jan 2017 12:05:55 -0500
-Message-ID: <edb689aac0bd4bb2b119dc8216da7cfb6af5243b.1485795642.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 4/5] gpio: gpio-mm: Add support for GPIO names
+Date: Mon, 30 Jan 2017 12:05:46 -0500
+Message-ID: <3b487a6dcdc075d7fc0414911ec8133cdff46eb1.1485795642.git.vilhelm.gray@gmail.com>
 References: <cover.1485795642.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:34604 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751571AbdA3ROx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 12:14:53 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1485795642.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 This patch sets the gpio_chip names option with an array of GPIO line
-names that match the manual documentation for the WinSystems WS16C48.
-This should make it easier for users to identify which GPIO line
-corresponds to a respective GPIO pin on the device.
+names that match the manual documentation for the Diamond Systems
+GPIO-MM. This should make it easier for users to identify which GPIO
+line corresponds to a respective GPIO pin on the device.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-ws16c48.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-gpio-mm.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 65de20dfbe7a..a49377cf36fd 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -341,6 +341,22 @@ static irqreturn_t ws16c48_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index 393c8f9cf30d..bf74cc55ab44 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -230,6 +230,18 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
+ 	}
  }
  
-+#define WS16C48_NGPIO 48
-+static const char *ws14c48_names[WS16C48_NGPIO] = {
-+	"Port 0 Bit 0", "Port 0 Bit 1", "Port 0 Bit 2", "Port 0 Bit 3",
-+	"Port 0 Bit 4", "Port 0 Bit 5", "Port 0 Bit 6", "Port 0 Bit 7",
-+	"Port 1 Bit 0", "Port 1 Bit 1", "Port 1 Bit 2", "Port 1 Bit 3",
-+	"Port 1 Bit 4", "Port 1 Bit 5", "Port 1 Bit 6", "Port 1 Bit 7",
-+	"Port 2 Bit 0", "Port 2 Bit 1", "Port 2 Bit 2", "Port 2 Bit 3",
-+	"Port 2 Bit 4", "Port 2 Bit 5", "Port 2 Bit 6", "Port 2 Bit 7",
-+	"Port 3 Bit 0", "Port 3 Bit 1", "Port 3 Bit 2", "Port 3 Bit 3",
-+	"Port 3 Bit 4", "Port 3 Bit 5", "Port 3 Bit 6", "Port 3 Bit 7",
-+	"Port 4 Bit 0", "Port 4 Bit 1", "Port 4 Bit 2", "Port 4 Bit 3",
-+	"Port 4 Bit 4", "Port 4 Bit 5", "Port 4 Bit 6", "Port 4 Bit 7",
-+	"Port 5 Bit 0", "Port 5 Bit 1", "Port 5 Bit 2", "Port 5 Bit 3",
-+	"Port 5 Bit 4", "Port 5 Bit 5", "Port 5 Bit 6", "Port 5 Bit 7"
++#define GPIOMM_NGPIO 48
++static const char *gpiomm_names[GPIOMM_NGPIO] = {
++	"Port 1A0", "Port 1A1", "Port 1A2", "Port 1A3", "Port 1A4", "Port 1A5",
++	"Port 1A6", "Port 1A7", "Port 1B0", "Port 1B1", "Port 1B2", "Port 1B3",
++	"Port 1B4", "Port 1B5", "Port 1B6", "Port 1B7", "Port 1C0", "Port 1C1",
++	"Port 1C2", "Port 1C3", "Port 1C4", "Port 1C5", "Port 1C6", "Port 1C7",
++	"Port 2A0", "Port 2A1", "Port 2A2", "Port 2A3", "Port 2A4", "Port 2A5",
++	"Port 2A6", "Port 2A7", "Port 2B0", "Port 2B1", "Port 2B2", "Port 2B3",
++	"Port 2B4", "Port 2B5", "Port 2B6", "Port 2B7", "Port 2C0", "Port 2C1",
++	"Port 2C2", "Port 2C3", "Port 2C4", "Port 2C5", "Port 2C6", "Port 2C7",
 +};
 +
- static int ws16c48_probe(struct device *dev, unsigned int id)
+ static int gpiomm_probe(struct device *dev, unsigned int id)
  {
- 	struct ws16c48_gpio *ws16c48gpio;
-@@ -361,7 +377,8 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.parent = dev;
- 	ws16c48gpio->chip.owner = THIS_MODULE;
- 	ws16c48gpio->chip.base = -1;
--	ws16c48gpio->chip.ngpio = 48;
-+	ws16c48gpio->chip.ngpio = WS16C48_NGPIO;
-+	ws16c48gpio->chip.names = ws16c48_names;
- 	ws16c48gpio->chip.get_direction = ws16c48_gpio_get_direction;
- 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
+ 	struct gpiomm_gpio *gpiommgpio;
+@@ -250,7 +262,8 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
+ 	gpiommgpio->chip.parent = dev;
+ 	gpiommgpio->chip.owner = THIS_MODULE;
+ 	gpiommgpio->chip.base = -1;
+-	gpiommgpio->chip.ngpio = 48;
++	gpiommgpio->chip.ngpio = GPIOMM_NGPIO;
++	gpiommgpio->chip.names = gpiomm_names;
+ 	gpiommgpio->chip.get_direction = gpiomm_gpio_get_direction;
+ 	gpiommgpio->chip.direction_input = gpiomm_gpio_direction_input;
+ 	gpiommgpio->chip.direction_output = gpiomm_gpio_direction_output;
 -- 
 2.11.0
-
