@@ -1,34 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/1] pinctrl: baytrail: Add missing spinlock usage in byt_gpio_irq_handler
-Date: Mon, 30 Jan 2017 15:53:48 +0100
-Message-ID: <CACRpkdbNFO2QDd2Pc9ULkUDK6ikFT1V+L-xGfw6z2hAbR7w6rg@mail.gmail.com>
-References: <20170130113528.17838-1-alexander.stein@systec-electronic.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/9] drivers: pinctrl: add driver for
+ Allwinner H5 SoC
+Date: Mon, 30 Jan 2017 16:13:50 +0100
+Message-ID: <CACRpkdY=+wAVZtWjeW+jKq_s+YX17L7xUeZ14_sAyd8KCm6+kg@mail.gmail.com>
+References: <20170126154859.55855-1-icenowy@aosc.xyz> <20170126154859.55855-2-icenowy@aosc.xyz>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:36152 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751467AbdA3PBu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 10:01:50 -0500
-Received: by mail-it0-f49.google.com with SMTP id c7so194842121itd.1
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 07:01:49 -0800 (PST)
-In-Reply-To: <20170130113528.17838-1-alexander.stein@systec-electronic.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBL5QXXCAKGQERY2WB4I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170126154859.55855-2-icenowy-ymACFijhrKM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Stein <alexander.stein@systec-electronic.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jan 30, 2017 at 12:35 PM, Alexander Stein
-<alexander.stein@systec-electronic.com> wrote:
+On Thu, Jan 26, 2017 at 4:48 PM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
 
-> According to VLI64 Intel Atom E3800 Specification Update (#329901)
-> concurrent read accesses may result in returning 0xffffffff and write
-> accesses may be dropped silently.
-> To workaround all accesses must be protected by locks.
+> Based on the Allwinner H5 datasheet and the pinctrl driver of the
+> backward-compatible H3 this introduces the pin multiplex assignments for
+> the H5 SoC.
 >
-> Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+> H5 introduced some more pin functions (e.g. three more groups of TS
+> pins, and one more groups of SIM pins) than H3.
+>
+> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+> ---
+> Changes in v2:
+> - Fixed interrupt banks. (There's one more GPIO banks (PF) that can do
+>   interrupt handling on H5)
 
-Patch applied for fixes and tagged for stable with Mika's ACK.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
