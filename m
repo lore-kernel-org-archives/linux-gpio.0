@@ -1,41 +1,85 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 2/5] gpio: 104-idi-48: Remove unnecessary driver_data set
-Date: Mon, 30 Jan 2017 09:39:47 -0500
-Message-ID: <a3c84725727c68514768b52d003b6b3ef2ce6558.1485786703.git.vilhelm.gray@gmail.com>
-References: <cover.1485786703.git.vilhelm.gray@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:35298 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753611AbdA3Oj5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 09:39:57 -0500
-In-Reply-To: <cover.1485786703.git.vilhelm.gray@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
+Date: Mon, 30 Jan 2017 15:40:31 +0100
+Message-ID: <87o9yotxuo.fsf@free-electrons.com>
+References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
+ <87wpdgwj72.fsf@free-electrons.com>
+ <20170127184745.GD8801@codeaurora.org>
+ <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc> (Chris
+ Packham's message of "Sun, 29 Jan 2017 20:30:34 +0000")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Juri Lelli <juri.lelli@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Thierry Reding <treding@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Arnd Bergmann <arnd@arndb.de>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>, Rob Herring <robh+dt@kernel.org>, Chris Brand <chris.brand@broadcom.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzo>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Setting driver_data was necessary to access private data in the
-idi_48_remove function. Now that the idi_48_remove function is gone,
-driver_data is no longer used. This patch removes the relevant code.
-
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-idi-48.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index eafbf053f3e8..dc100dff6e13 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -246,8 +246,6 @@ static int idi_48_probe(struct device *dev, unsigned int id)
- 	spin_lock_init(&idi48gpio->lock);
- 	spin_lock_init(&idi48gpio->ack_lock);
+Hi Chris,
  
--	dev_set_drvdata(dev, idi48gpio);
--
- 	err = devm_gpiochip_add_data(dev, &idi48gpio->chip, idi48gpio);
- 	if (err) {
- 		dev_err(dev, "GPIO registering failed (%d)\n", err);
--- 
-2.11.0
+ On dim., janv. 29 2017, Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
 
+> On 28/01/17 07:47, Stephen Boyd wrote:
+>> On 01/27, Gregory CLEMENT wrote:
+>>> Hi all,
+>>>
+>>>  On ven., janv. 27 2017, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+>>>
+>>>> The 98DX3236, 98DX3336 and 98DX4251 are a set of switch ASICs with
+>>>> integrated CPUs. They CPU block is common within these product lines and
+>>>> (as far as I can tell/have been told) is based on the Armada XP. There
+>>>> are a few differences due to the fact they have to squeeze the CPU into
+>>>> the same package as the switch.
+>>>>
+>>>> I've rebased this series against linux-pinctrl/devel to get access to
+>>>> mvebu_mmio_mpp_ctrl. Everything else still applies cleanly to
+>>>> v4.10.0-rc5.
+>>>
+>>> Just to let you know that I plan to apply the 3 arm patch once Chris
+>>> will have sent the new series with the minor fixes I asked on patch 3.
+>>>
+>>> I already applied them in the for-next branch to benefit of some build
+>>> test coverage.
+>>>
+>>> Stephen,
+>>>
+>>> you gave your Acked-by on the first patch, but don't you plan to apply
+>>> it on the clk branch?
+>>
+>> It must have not been clear if I should apply it, hence the ack.
+>> I'll apply it now.
+>>
+>
+> Sorry my bad. I need all 5 together in one place to actually test the 
+> series.
+
+The 5 patches should be available soon (if it is not already the case),
+in the linux-next branch.
+
+The clk patch is already there, the 3 arm patch have been merged in my
+mvebu/for-next branch, and the pinctrl patch is about to be merged in
+the pinctrl/for-next branch.
+
+Gregory
+
+>
+> I wasn't sure whether the series should go through mvebu with Acks from 
+> clk and pinctrl or if things should go to the separate maintainers and 
+> come together when they hit the main linux repo. Up until the latest 
+> pinctrl change either approach would have worked.
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
