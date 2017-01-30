@@ -1,62 +1,50 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
-Date: Mon, 30 Jan 2017 20:29:18 +0200
-Message-ID: <3913852.YsQFAgHAs5@avalon>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [RFC 0/5] Renesas RZ series pinctrl driver
+Date: Mon, 30 Jan 2017 20:59:58 +0200
+Message-ID: <1834948.XJ6SzFDPBZ@avalon>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <CACRpkdYzbquN_5eFepT6BhNgfM2FxwrjvYsMRD4o2NN4-O4kfw@mail.gmail.com> <CAMuHMdV=MAy5m99za=31k+81kGYmNyXuTPdYu0APcpj0SfCY_A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <CAMuHMdV=MAy5m99za=31k+81kGYmNyXuTPdYu0APcpj0SfCY_A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert+renesas@glider.be, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, ext Tony Lindgren <tony@atomide.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jacopo,
+Hi Geert,
 
-Thank you for the patch.
-
-On Wednesday 25 Jan 2017 19:09:46 Jacopo Mondi wrote:
-> Add pincontroller node compatible with the new Renesas RZ/A1
-> pincontroller driver.
+On Monday 30 Jan 2017 17:08:11 Geert Uytterhoeven wrote:
+> On Mon, Jan 30, 2017 at 2:51 PM, Linus Walleij wrote:
+> > On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi wrote:
+> >> after having discussed in great detail the RZ series per-pin PFC
+> >> hardware peculiarities, this is a proposal for a possible pin-based pin
+> >> controller driver for SoC devices of Renesas RZ family.
+> >> 
+> >> This RFC series adds a minimal driver infrastructure which supports pin
+> >> multiplexing via explicit per-pin settings performed in device tree
+> >> sources.
+> >
+> > I think this is what Laurent had in mind when he said something about
+> > that he should have taken the per-pin approach from day 1.
+> > 
+> > I would especially like to see Laurent's review and ACK on this series
+> > for that reason so we don't create something less than what he is
+> > expecting for the future of Renesas pin control.
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> It depends on the actual hardware: while per-pin settings are suitable for
+> SoCs that have per-pin hardware configuration (e.g. RZ/A1), it's not
+> suitable for SoCs where that's not the case, and where the hardware has
+> group-wise configuration (e.g. on R-Car).
 > 
-> diff --git a/arch/arm/boot/dts/r7s72100.dtsi
-> b/arch/arm/boot/dts/r7s72100.dtsi index 3dd427d..764006d 100644
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -171,6 +171,18 @@
->  		};
->  	};
+> Hence IMHO "the future of Renesas pin control" will remain a split
+> personality for a while ;-)
 > 
-> +	pinctrl: pinctrl@fcfe3000 {
-> +		compatible = "renesas,rza1-pinctrl";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		#pinctrl-cells = <2>;
-> +
-> +		reg = <0xfcfe3000 0xa30>, /* Pn, ..., PFCAEn */
-> +		      <0xfcfe7000 0x230>, /* PIBCn, ..., PIPCn */
+> Laurent: please kick me if you disagree...
 
-What's the reason for splitting those registers in two sets ? Maybe you can 
-explain that in the DT bindings documentation that this patch series is 
-missing ;-)
-
-> +		      <0xfcfe7B00 0x430>; /* JPPR0, ..., JPIBC0 */
-
-s/B/b/
-
-> +	};
-> +
->  	scif0: serial@e8007000 {
->  		compatible = "renesas,scif-r7s72100", "renesas,scif";
->  		reg = <0xe8007000 64>;
+I unfortunately agree. Maybe we could try to speed up the process by providing 
+feedback to the hardware engineers ?
 
 -- 
 Regards,
