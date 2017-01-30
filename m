@@ -1,37 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 0/5] Renesas RZ series pinctrl driver
-Date: Mon, 30 Jan 2017 14:51:42 +0100
-Message-ID: <CACRpkdYzbquN_5eFepT6BhNgfM2FxwrjvYsMRD4o2NN4-O4kfw@mail.gmail.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v1] pinctrl: broxton: No need to take pointer of a pointer
+Date: Mon, 30 Jan 2017 14:45:58 +0100
+Message-ID: <CACRpkdaqz26bW-vCacJgN3t45ikFbXeOAemZ3--VmuJ+19a29w@mail.gmail.com>
+References: <20170126151038.37977-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, ext Tony Lindgren <tony@atomide.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f175.google.com ([209.85.223.175]:34052 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbdA3NyY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 08:54:24 -0500
+Received: by mail-io0-f175.google.com with SMTP id l66so107346223ioi.1
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 05:54:23 -0800 (PST)
+In-Reply-To: <20170126151038.37977-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+On Thu, Jan 26, 2017 at 4:10 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
->    after having discussed in great detail the RZ series per-pin PFC hardware
-> peculiarities, this is a proposal for a possible pin-based pin controller
-> driver for SoC devices of Renesas RZ family.
+> There is no need to take pointer of a pointer to an array of SoC data in
+> platform driver.
 >
-> This RFC series adds a minimal driver infrastructure which supports pin
-> multiplexing via explicit per-pin settings performed in device tree sources.
+> Do it in the same way as it's done for ACPI.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I think this is what Laurent had in mind when he said something about
-that he should have taken the per-pin approach from day 1.
-
-I would especially like to see Laurent's review and ACK on this series
-for that reason so we don't create something less than what he is
-expecting for the future of Renesas pin control.
-
-The series as such seems fine and is reusing Tony's work to generalize
-pin controllers putting functions and groups into the device tree in a nice
-way, which makes it relevant for him to have a look as well, if he has
-time.
+Patch applied with Mika's ACK.
 
 Yours,
 Linus Walleij
