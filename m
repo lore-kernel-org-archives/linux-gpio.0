@@ -1,93 +1,99 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [RFC 0/5] Renesas RZ series pinctrl driver
-Date: Mon, 30 Jan 2017 17:18:17 +0100
-Message-ID: <1e309179-26d1-392d-efdd-2c6ccf815da5@jmondi.org>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [RFC fixes 0/2] FIX: Renesas RZ series pinctrl driver
+Date: Mon, 30 Jan 2017 16:29:29 +0000
+Message-ID: <SG2PR06MB116503FA052D0C2A96D5CE3B8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdYzbquN_5eFepT6BhNgfM2FxwrjvYsMRD4o2NN4-O4kfw@mail.gmail.com>
- <20170130155356.GD7399@atomide.com>
+ <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB1165AE0403810D368E508C5F8A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <a8578e24-e142-aad6-a170-d682ee3b24d2@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from slow1-d.mail.gandi.net ([217.70.178.86]:41906 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932523AbdA3Q0d (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 11:26:33 -0500
-In-Reply-To: <20170130155356.GD7399@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <a8578e24-e142-aad6-a170-d682ee3b24d2@jmondi.org>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "wsa@the-dreams.de" <wsa@the-dreams.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Tony,
+Hi Jacopo,
 
-On 30/01/2017 16:53, Tony Lindgren wrote:
-> * Linus Walleij <linus.walleij@linaro.org> [170130 05:53]:
->> On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->>
->>>    after having discussed in great detail the RZ series per-pin PFC hardware
->>> peculiarities, this is a proposal for a possible pin-based pin controller
->>> driver for SoC devices of Renesas RZ family.
->>>
->>> This RFC series adds a minimal driver infrastructure which supports pin
->>> multiplexing via explicit per-pin settings performed in device tree sources.
->>
->> I think this is what Laurent had in mind when he said something about
->> that he should have taken the per-pin approach from day 1.
->>
->> I would especially like to see Laurent's review and ACK on this series
->> for that reason so we don't create something less than what he is
->> expecting for the future of Renesas pin control.
->>
->> The series as such seems fine and is reusing Tony's work to generalize
->> pin controllers putting functions and groups into the device tree in a nice
->> way, which makes it relevant for him to have a look as well, if he has
->> time.
->
-> Well I don't have the series in my inbox, but browsing through
-> the patchwork seems OK. The things to check would be:
+On Monday, January 30, 2017, Jacopo Mondi wrote:
+> > Note that the I2C pin need to be configured at "bi-directional" but
+> > there is no way to specify that from DT, so that has to be added as a
+> parameter.
+>=20
+> That's something I would like to discuss quite soon.
+> One general thing I would like is having the so-called "additional
+> parameters" part of the SoC driver module, as my gut feeling is that
+> different PFC hw requires different configuration options.
 
-Sorry about this, I thought sending to linux-gpio was enough.
-We'll keep you in the loop now...
-
->
-> 1. Do you guys really need RZ_PIN_DESC? Just let pinctrl
->    framework generate the names, then do some simple user
->    space tool that decodes the debugfs output. If you really
->    need names, allow the consumer to set the name like we do
->    for GPIOs and interrupts when requesting the resource.
->
-
-Well, more than names I have used the RZ_PIN_DESC macro as an extended 
-version of the PINCTRL_PIN one, to set bank and pin fields of the 
-rz_pin_desc structure that describes a pin.
-
-The proposed DTS syntax identifies pins by their position (bank:pin) 
-instead that by index, so I need to have those information available in 
-pin description to identify them.
-
-> 2. Make sure you're using hardware offsets for any indexing
->    to avoid adding artificial mapping tables between the driver
->    and the the dts file. Many times new features are enabled
->    between SoC revisions and a numbered index gets out of sync
->    and needs constant patching just like we have for interrupt
->    numbers earlier.. I don't think that's an issue with this
->    series, but please check one more time for easy maintenance :)
->
-
-As we describe pins "by position", if I got your comment properly, we 
-should be safe, as indexes are purely incremental values from [0-npins].
-
-I know pinctrl-single (and other drivers such as imx one if I'm not 
-wrong) uses pin indexes to calculate register offsets. This series 
-doesn't but uses the [bank:pin] couple for that purpose instead.
-
-Thanks
-    j
+In the API I used for the current RZ/A1 BSP, I used an extra parameter
+to pass in any non-normal settings.
 
 
-> Regards,
->
-> Tony
->
+> In example, the RZ/A1 SoC requires the input/output direction of the pin
+> to be specified even when the alternate function is supposed to drive it
+> (in order to enable/disable input buffer). The same applies to bi-
+> directional port control as you pointed out in your example (bi-
+> directional enables input buffer, but that's a consequence of how hw work=
+s
+> there).
+>=20
+> I'm almost sure the same won't be required by all existing and forth-
+> coming Renesas SoCs with a pin-based PFC hardware, but maybe other
+> parameters I cannot think of right now will have to be specified instead.
 
+I would guess for one reason or another, there is always some exception
+in the hardware manual when it comes to pins settings. Meaning, there are
+restrictions in the I/O pad circuits that the HW designers find it easier
+to tell the SW guys to deal with it instead of trying to make it 'automatic=
+'
+in HW.
+So...you'll always have the need for an extra parameter.
+
+
+> If we want to keep the configuration flags SoC-specific, the most easy wa=
+y
+> to pass them down from core module to SoC module would be compressing the
+> alternate function number and other configurations in a single u32.
+>=20
+> In that case the dts will look like:
+>=20
+> renesasa,rz-pins =3D <BANK PORT (ALTERNATE_FUNC_# | IO_MODE | DIRECTION)>=
+;
+>=20
+> We could even add a parameter to separate ALTERNATE_FUNCTION from the
+> additional configurations, but I don't see any advantage in doing this at
+> the moment.
+
+As I said, I made "additional configs" a separate parameter, but combining
+it with ALTERNATE_FUNC_# is fine with me. I have not seen an SoC that allow=
+ed
+any more than 8 different functions per pin, so you have lots of bits
+in u32 in order to set flags bits.
+
+However, as already mentioned by Geert, "ALTERNATE_FUNC_#" is too long of
+a name. Just "ALT_#" is fine.
+
+    renesasa,rz-pins =3D <BANK PORT (ALT_# | IO_MODE | DIRECTION)>;
+
+Geert's suggestion was to just use the actual number (1-8), ALT_# might mak=
+e
+it easier to decode if you are combining multiple things into a single u32.
+
+There is one more idea....but I heist to suggest it.
+You just pass in the port and alternate function number, and you do a looku=
+p
+table for settings such as bi-direction or port direction register.
+You only put into the table the pin settings that are "not normal".
+
+The benefit is that the user doesn't have to know what pins needs what spec=
+ial
+tweak/flag/setting....but of course it start to make the driver more comple=
+x.
+
+
+
+Chris
