@@ -1,66 +1,75 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC 5/5] arm: dts: genmai: Add SCIF2 pin group
-Date: Mon, 30 Jan 2017 20:17:41 +0200
-Message-ID: <1534890.LugBLSd3dc@avalon>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-6-git-send-email-jacopo+renesas@jmondi.org> <4c60f795-d8af-5b3d-f632-a013a9a33be1@cogentembedded.com>
+From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Subject: Re: [PATCH v3 08/10] dmaengine: sun6i: allow build on
+ ARM64 platforms (sun50i)
+Date: Tue, 31 Jan 2017 02:23:55 +0800
+Message-ID: <3729521485800635@web23g.yandex.ru>
+References: <20170129023331.62106-1-icenowy@aosc.xyz>
+	 <20170129023331.62106-9-icenowy@aosc.xyz> <20170130164210.GD19244@localhost>
+Reply-To: icenowy-ymACFijhrKM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:33166 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753460AbdA3SRb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 13:17:31 -0500
-In-Reply-To: <4c60f795-d8af-5b3d-f632-a013a9a33be1@cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBPMJX3CAKGQEBKTZOOQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170130164210.GD19244@localhost>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, "linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hello,
 
-On Thursday 26 Jan 2017 12:51:03 Sergei Shtylyov wrote:
-> On 1/25/2017 9:09 PM, Jacopo Mondi wrote:
-> > Add  TxD and RxD pin configuration for SCIF2 serial communication
-> > interface on r7s72100 Genmai board.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> > 
-> >  arch/arm/boot/dts/r7s72100-genmai.dts | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts
-> > b/arch/arm/boot/dts/r7s72100-genmai.dts index 118a8e2..ea649c7 100644
-> > --- a/arch/arm/boot/dts/r7s72100-genmai.dts
-> > +++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-> 
-> [...]
-> 
-> > @@ -34,6 +35,18 @@
-> >  		#address-cells = <1>;
-> >  		#size-cells = <1>;
-> >  	};
-> > +
 
-That's not needed.
+31.01.2017, 00:41, "Vinod Koul" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>:
+> On Sun, Jan 29, 2017 at 10:33:29AM +0800, Icenowy Zheng wrote:
+>> =C2=A0As 64-bit Allwinner H5 SoC has the same DMA engine with H3, the DM=
+A
+>> =C2=A0driver should be allowed to be built for ARM64, in order to make i=
+t work on H5.
+>>
+>> =C2=A0Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+>> =C2=A0Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+>> =C2=A0Acked-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+>> =C2=A0---
+>> =C2=A0Patch introduced between v1 and v2, to satisfy the newly added H3/=
+H5 audio
+>> =C2=A0codec support.
+>>
+>> =C2=A0=C2=A0drivers/dma/Kconfig | 2 +-
+>> =C2=A0=C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> =C2=A0diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+>> =C2=A0index 0d6a96ee9fc7..d01d59812cf3 100644
+>> =C2=A0--- a/drivers/dma/Kconfig
+>> =C2=A0+++ b/drivers/dma/Kconfig
+>> =C2=A0@@ -157,7 +157,7 @@ config DMA_SUN4I
+>>
+>> =C2=A0=C2=A0config DMA_SUN6I
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "Al=
+lwinner A31 SoCs DMA support"
+>> =C2=A0- depends on MACH_SUN6I || MACH_SUN8I || COMPILE_TEST
+>> =C2=A0+ depends on MACH_SUN6I || MACH_SUN8I || (ARM64 && ARCH_SUNXI) || =
+COMPILE_TEST
+>
+> Do we really need ARM64 here? also looking at others I wonder why isn't
+> this MACH_SUNXI...?
 
-> > +};
-> > +
-> > +&pinctrl {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&scif2_pins>;
-> > +
-> > +	scif2_pins: serial2 {
-> > +		/* P3_0 as TxD2; P3_2 as RxD2 */
-> > +		renesas-rz,pins = <RZ_PIN(3, 0) ALTERNATE_FUNC_6>,
-> 
-> The comma should be after the vendor prefix ("renesas").
+You mean directly place "ARCH_SUNXI" here?
 
-And the "-rz" suffix isn't needed, "renesas,pins" will do.
+SUN4I/SUN5I/SUN7I do not use DMA_SUN6I, they have different DMA
+controllers.
 
--- 
-Regards,
+>
+> --
+> ~Vinod
 
-Laurent Pinchart
-
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
