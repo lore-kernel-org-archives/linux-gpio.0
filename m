@@ -1,103 +1,37 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: Re: [PATCH 1/1] pinctrl: baytrail: Add spinlock usage to all read/write access
-Date: Mon, 30 Jan 2017 07:50:18 +0100
-Message-ID: <2074921.aDOmsAzkmM@ws-stein>
-References: <20170126141418.5624-1-alexander.stein@systec-electronic.com> <20170126205219.GO17297@lahna.fi.intel.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH] Pinctrl: mvebu - Fix possible NULL derefrence.
+Date: Mon, 30 Jan 2017 09:24:00 +0100
+Message-ID: <20170130092400.589f6a93@free-electrons.com>
+References: <CGME20170130045153epcas3p37f0c1815f13d6701dd4da3c50c54b35a@epcas3p3.samsung.com>
+        <1485751903-29284-1-git-send-email-shailendra.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:60010 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752128AbdA3Gup (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 30 Jan 2017 01:50:45 -0500
-In-Reply-To: <20170126205219.GO17297@lahna.fi.intel.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:42175 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751988AbdA3Ib4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 03:31:56 -0500
+In-Reply-To: <1485751903-29284-1-git-send-email-shailendra.v@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Shailendra Verma <shailendra.v@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Andreas Klinger <ak@it-klinger.de>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Jamie Lentin <jm@lentin.co.uk>, Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, p.shailesh@samsung.com, ashish.kalra@samsung.com, Shailendra Verma <shailendra.capricorn@gmail.com>
 
-Hi,
+Hello,
 
-On Thursday 26 January 2017 22:52:19, Mika Westerberg wrote:
-> On Thu, Jan 26, 2017 at 03:14:18PM +0100, Alexander Stein wrote:
-> > According to VLI64 Intel Atom E3800 Specification Update (#329901)
-> > concurrent read accesses may result in returning 0xffffffff and write
-> > accesses may be dropped silently.
-> > To workaround all accesses must be protected by locks.
-> > 
-> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
-> > ---
-> > I actually had the case where the read access in byt_irq_unmask returned
-> > 0xffffffff. After OR'ing the trigger bits and writing 0xffffffff back to
-> > BYT_CONF0_REG things started to act strange.
-> > 
-> >  drivers/pinctrl/intel/pinctrl-baytrail.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > b/drivers/pinctrl/intel/pinctrl-baytrail.c index 6cce314..7294c88 100644
-> > --- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > +++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-> > @@ -1594,6 +1594,7 @@ static void byt_gpio_irq_handler(struct irq_desc
-> > *desc)> 
-> >  	void __iomem *reg;
-> >  	unsigned long pending;
-> >  	unsigned int virq;
-> > 
-> > +	unsigned long flags;
+On Mon, 30 Jan 2017 10:21:43 +0530, Shailendra Verma wrote:
+> of_match_device could return NULL, and so can cause a NULL
+> pointer dereference later.
 > 
-> Can you move this variable after "pending" like:
-> 
->   	unsigned long pending;
-> 	unsigned long flags;
->   	unsigned int virq;
+> Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
 
-Sure, I understand why both unsigned longs are put together here...
+In practice, I don't see how of_match_device() can return NULL here.
+Indeed, those drivers only support Device Tree based probing, so
+of_match_device() will always return a non-NULL value.
 
-> >  	/* check from GPIO controller which pin triggered the interrupt */
-> >  	for (base = 0; base < vg->chip.ngpio; base += 32) {
-> > 
-> [...]
-> > @@ -1620,6 +1623,7 @@ static void byt_gpio_irq_init_hw(struct byt_gpio
-> > *vg)
-> > 
-> >  	void __iomem *reg;
-> >  	u32 base, value;
-> >  	int i;
-> > 
-> > +	unsigned long flags;
-> 
-> Here also arrange it like
-> 
-> 	unsigned long flags;
->   	void __iomem *reg;
->   	u32 base, value;
->   	int i;
-
-but here I'm not so sure. What are the rules for variable declaration order?
-
-> >  	/*
-> >  	
-> >  	 * Clear interrupt triggers for all pins that are GPIOs and
-> > 
-> > @@ -1637,7 +1641,9 @@ static void byt_gpio_irq_init_hw(struct byt_gpio
-> > *vg)
-> > 
-> >  			continue;
-> >  		
-> >  		}
-> > 
-> > +		raw_spin_lock_irqsave(&vg->lock, flags);
-> 
-> Is this really necessary as we are initializing the driver?
-
-I don't know. I guess this also depends if the previous call to 
-pinctrl_register (in byt_pinctrl_probe) could cause a call into that driver.
-In the end I just wrapped _all_ accesses with locks, even suspend/resume 
-although I don't know if that would be necessary.
-
-Best regards,
-Alexander
-
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
