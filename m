@@ -1,99 +1,81 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [RFC fixes 0/2] FIX: Renesas RZ series pinctrl driver
-Date: Mon, 30 Jan 2017 16:29:29 +0000
-Message-ID: <SG2PR06MB116503FA052D0C2A96D5CE3B8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485535628-17097-1-git-send-email-jacopo+renesas@jmondi.org>
- <SG2PR06MB1165AE0403810D368E508C5F8A760@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <a8578e24-e142-aad6-a170-d682ee3b24d2@jmondi.org>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 2/8] pinctrl: stm32: use gpio-ranges to declare bank range
+Date: Mon, 30 Jan 2017 17:29:55 +0100
+Message-ID: <2d0cd144-9a72-52d5-b2c9-c6c9e09ac494@st.com>
+References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
+ <1485533721-9019-3-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdYtZCJVrZhXOPXd-MNMX0Ry_H1dLQopKwsj9HnO03BtKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <a8578e24-e142-aad6-a170-d682ee3b24d2@jmondi.org>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "wsa@the-dreams.de" <wsa@the-dreams.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdYtZCJVrZhXOPXd-MNMX0Ry_H1dLQopKwsj9HnO03BtKg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Patrice Chotard <patrice.chotard@st.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jacopo,
+Hi Linus,
 
-On Monday, January 30, 2017, Jacopo Mondi wrote:
-> > Note that the I2C pin need to be configured at "bi-directional" but
-> > there is no way to specify that from DT, so that has to be added as a
-> parameter.
->=20
-> That's something I would like to discuss quite soon.
-> One general thing I would like is having the so-called "additional
-> parameters" part of the SoC driver module, as my gut feeling is that
-> different PFC hw requires different configuration options.
+On 01/30/2017 04:19 PM, Linus Walleij wrote:
+> On Fri, Jan 27, 2017 at 5:15 PM, Alexandre TORGUE
+> <alexandre.torgue@st.com> wrote:
+>
+>> Use device tree entries to declare gpio range. It will allow to use
+>> no contiguous gpio bank and holes inside a bank.
+>>
+>> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>
+> (...)
+>> +       of_property_read_string(np, "st,bank-name", &bank->gpio_chip.label);
+>> +
+>> +       if (!of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args))
+>> +               bank_nr = args.args[1] / STM32_GPIO_PINS_PER_BANK;
+>> +       else {
+>> +               range->name = bank->gpio_chip.label;
+>> +               range->id = bank_nr;
+>> +               range->pin_base = range->id * STM32_GPIO_PINS_PER_BANK;
+>> +               range->base = range->id * STM32_GPIO_PINS_PER_BANK;
+>> +               range->npins = npins;
+>> +               range->gc = &bank->gpio_chip;
+>> +               pinctrl_add_gpio_range(pctl->pctl_dev,
+>> +                                      &pctl->banks[bank_nr].range);
+>> +       }
 
-In the API I used for the current RZ/A1 BSP, I used an extra parameter
-to pass in any non-normal settings.
+I Keep the old way to get range in order to keep compatibility with 
+older device tree (if no gpio ranges are defined).
 
+>
+> Why are you doing this?
+>
+> There is already code in drivers/gpio/gpiolib-of.c to pick ranges
+> from the device tree and add when you're adding the GPIO chips.
 
-> In example, the RZ/A1 SoC requires the input/output direction of the pin
-> to be specified even when the alternate function is supposed to drive it
-> (in order to enable/disable input buffer). The same applies to bi-
-> directional port control as you pointed out in your example (bi-
-> directional enables input buffer, but that's a consequence of how hw work=
-s
-> there).
->=20
-> I'm almost sure the same won't be required by all existing and forth-
-> coming Renesas SoCs with a pin-based PFC hardware, but maybe other
-> parameters I cannot think of right now will have to be specified instead.
+Yes, If I declare gpio-ranges inside DT node, the range is well handled 
+by the gpiolib. But in this condition I use gpio-ranges entry to get the 
+pin base offset for the bank we are registering. For example, if there 
+an hole between 2 banks (GPIOA, GPIOD, ...) I need to know at which pin 
+offset the bank D starts. It is the only way I found.
 
-I would guess for one reason or another, there is always some exception
-in the hardware manual when it comes to pins settings. Meaning, there are
-restrictions in the I/O pad circuits that the HW designers find it easier
-to tell the SW guys to deal with it instead of trying to make it 'automatic=
-'
-in HW.
-So...you'll always have the need for an extra parameter.
+The "else" statement is here to get compatibility with older device tree 
+(which don't use gpio-ranges entry).
 
-
-> If we want to keep the configuration flags SoC-specific, the most easy wa=
-y
-> to pass them down from core module to SoC module would be compressing the
-> alternate function number and other configurations in a single u32.
->=20
-> In that case the dts will look like:
->=20
-> renesasa,rz-pins =3D <BANK PORT (ALTERNATE_FUNC_# | IO_MODE | DIRECTION)>=
-;
->=20
-> We could even add a parameter to separate ALTERNATE_FUNCTION from the
-> additional configurations, but I don't see any advantage in doing this at
-> the moment.
-
-As I said, I made "additional configs" a separate parameter, but combining
-it with ALTERNATE_FUNC_# is fine with me. I have not seen an SoC that allow=
-ed
-any more than 8 different functions per pin, so you have lots of bits
-in u32 in order to set flags bits.
-
-However, as already mentioned by Geert, "ALTERNATE_FUNC_#" is too long of
-a name. Just "ALT_#" is fine.
-
-    renesasa,rz-pins =3D <BANK PORT (ALT_# | IO_MODE | DIRECTION)>;
-
-Geert's suggestion was to just use the actual number (1-8), ALT_# might mak=
-e
-it easier to decode if you are combining multiple things into a single u32.
-
-There is one more idea....but I heist to suggest it.
-You just pass in the port and alternate function number, and you do a looku=
-p
-table for settings such as bi-direction or port direction register.
-You only put into the table the pin settings that are "not normal".
-
-The benefit is that the user doesn't have to know what pins needs what spec=
-ial
-tweak/flag/setting....but of course it start to make the driver more comple=
-x.
+Regards
+Alex
 
 
-
-Chris
+>
+> Please use that or figure out what is needed to make it work for
+> you instead of reimplementing it.
+>
+> Yours,
+> Linus Walleij
+>
