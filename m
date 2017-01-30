@@ -1,45 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per community
-Date: Mon, 30 Jan 2017 15:49:11 +0100
-Message-ID: <CACRpkda2r-r1CcBJNY=jPHZ-oG2SLe0Kp_zdhW=LtFhi49Zj5A@mail.gmail.com>
-References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com> <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/2] gpio: mcp23s08: use regmap
+Date: Mon, 30 Jan 2017 15:58:59 +0100
+Message-ID: <CACRpkdar1cCVOTzxjH5u9L=-gqX107hAcP1GLqzVZ2fG-2k7+Q@mail.gmail.com>
+References: <20170127144738.21107-1-sre@kernel.org> <20170127144738.21107-2-sre@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:36451 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753586AbdA3O6v (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 09:58:51 -0500
-Received: by mail-io0-f170.google.com with SMTP id j13so108473099iod.3
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 06:57:41 -0800 (PST)
-In-Reply-To: <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170127144738.21107-2-sre@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, Cristina Ciocan <cristina.ciocan@intel.com>
 
-On Thu, Jan 26, 2017 at 6:24 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Fri, Jan 27, 2017 at 3:47 PM, Sebastian Reichel <sre@kernel.org> wrote:
 
-> Debounce value is set globally per community. Otherwise user will easily
-> get a kernel crash when they start using the feature:
+> Use regmap API to save some lines of codes and have
+> debugfs support for all of the MCP's registers.
 >
-> BUG: unable to handle kernel paging request at ffffc900003be000
-> IP: byt_gpio_dbg_show+0xa9/0x430
->
-> Make it clear in byt_gpio_reg().
->
-> Note that this fix just prevents kernel to crash, but doesn't make any
-> difference to the existing logic. It means the last caller will win the
-> trade and debounce value will be configured accordingly. The actual
-> logic fix needs to be thought about and it's not as important as crash
-> fix. That's why the latter goes separately and right now.
->
-> Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
-> Cc: Cristina Ciocan <cristina.ciocan@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
 
-Patch applied for fixes.
+Patch applied. Irresistible cleanup!
 
 Yours,
 Linus Walleij
