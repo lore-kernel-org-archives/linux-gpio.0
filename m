@@ -1,66 +1,62 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC 3/5] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-Date: Mon, 30 Jan 2017 20:30:26 +0200
-Message-ID: <5227448.uVg4OnCqZq@avalon>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdUmy2QkvRomf8euzB0QNkeCA=N8=rhY0GkObz8qn-UvMQ@mail.gmail.com>
+Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
+Date: Mon, 30 Jan 2017 20:29:18 +0200
+Message-ID: <3913852.YsQFAgHAs5@avalon>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdUmy2QkvRomf8euzB0QNkeCA=N8=rhY0GkObz8qn-UvMQ@mail.gmail.com>
+In-Reply-To: <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert+renesas@glider.be, linus.walleij@linaro.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thursday 26 Jan 2017 20:52:33 Geert Uytterhoeven wrote:
-> On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi wrote:
-> > Add dt-bindings header for Renesas RZ pincontroller.
-> > The header defines macros for pin description and alternate function
-> > numbers.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> > 
-> >  include/dt-bindings/pinctrl/pinctrl-renesas-rz.h | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100644 include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
-> > 
-> > diff --git a/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
-> > b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h new file mode 100644
-> > index 0000000..92816d4
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
-> > @@ -0,0 +1,19 @@
-> > +/*
-> > + * Defines macros and constants for Renesas RZ pin controller and muxer
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
-> > +#define __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
-> > +
-> > +#define RZ_PIN(b, p) b p
-> 
-> And the advantage of this macro is?
-> 
-> > +#define ALTERNATE_FUNC_1       0
-> > +#define ALTERNATE_FUNC_2       1
-> > +#define ALTERNATE_FUNC_3       2
-> > +#define ALTERNATE_FUNC_4       3
-> > +#define ALTERNATE_FUNC_5       4
-> > +#define ALTERNATE_FUNC_6       5
-> > +#define ALTERNATE_FUNC_7       6
-> > +#define ALTERNATE_FUNC_8       7
-> 
-> I have mixed feelings about these macros:
->   1. They're long to type,
->   2. They just map from n to n-1.
-> 
-> Why not use plain numbers 1..8 (the alternate function numbering in the
-> datasheet is 1-based), and subtract 1 in the C code?
+Hi Jacopo,
 
-I was about to mention the same. I think you can drop this patch and use the 
-numbers directly.
+Thank you for the patch.
+
+On Wednesday 25 Jan 2017 19:09:46 Jacopo Mondi wrote:
+> Add pincontroller node compatible with the new Renesas RZ/A1
+> pincontroller driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi
+> b/arch/arm/boot/dts/r7s72100.dtsi index 3dd427d..764006d 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -171,6 +171,18 @@
+>  		};
+>  	};
+> 
+> +	pinctrl: pinctrl@fcfe3000 {
+> +		compatible = "renesas,rza1-pinctrl";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		#pinctrl-cells = <2>;
+> +
+> +		reg = <0xfcfe3000 0xa30>, /* Pn, ..., PFCAEn */
+> +		      <0xfcfe7000 0x230>, /* PIBCn, ..., PIPCn */
+
+What's the reason for splitting those registers in two sets ? Maybe you can 
+explain that in the DT bindings documentation that this patch series is 
+missing ;-)
+
+> +		      <0xfcfe7B00 0x430>; /* JPPR0, ..., JPIBC0 */
+
+s/B/b/
+
+> +	};
+> +
+>  	scif0: serial@e8007000 {
+>  		compatible = "renesas,scif-r7s72100", "renesas,scif";
+>  		reg = <0xe8007000 64>;
 
 -- 
 Regards,
