@@ -1,49 +1,40 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 0/7] Pad retentions support for Exynos5433
-Date: Mon, 30 Jan 2017 21:46:56 +0200
-Message-ID: <20170130194656.mfyvq3bxzjnbkxg5@kozik-lap>
-References: <CGME20170130123837eucas1p13c607f81a1775a805740dccc87fe8b87@eucas1p1.samsung.com>
- <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [RFC 0/5] Renesas RZ series pinctrl driver
+Date: Mon, 30 Jan 2017 19:49:03 +0000
+Message-ID: <SG2PR06MB1165CB4BFE1A58D9FC3B43948A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdYzbquN_5eFepT6BhNgfM2FxwrjvYsMRD4o2NN4-O4kfw@mail.gmail.com>
+ <CAMuHMdV=MAy5m99za=31k+81kGYmNyXuTPdYu0APcpj0SfCY_A@mail.gmail.com>
+ <1834948.XJ6SzFDPBZ@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35536 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751033AbdA3TrY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 14:47:24 -0500
-Content-Disposition: inline
-In-Reply-To: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1834948.XJ6SzFDPBZ@avalon>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, ext Tony Lindgren <tony@atomide.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Mon, Jan 30, 2017 at 01:38:21PM +0100, Marek Szyprowski wrote:
-> Hello,
-> 
-> This patchset is a first step to add support for all power domains on
-> Exynos5433 SoCs. This patchset contains patches for Exynos pin control
-> driver and Exynos LPASS MFD driver, which are needed to make the
-> platform ready for adding power domains support.
-> 
-> Patches in this patchset depends on each other. They are order in such a
-> way to make the changes bisectable.
-> 
-> Patch #2 has compile dependency on #1.
-> Patch #3 has runtime dependency on commit fa59aa70907b2 ("soc: samsung:
-> 	pmu: Add dummy support for Exynos5433 SoC",
-> 	for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends branch).
-> Patch #4 has runtime dependency on #3.
-> Patch #5 has runtime dependency on commit 7547162ac3514 ("arm64: dts:
-> 	exynos: Add clocks to Exynos5433 LPASS module, next/dt64 branch).
-> 
+On Monday, January 30, 2017, Laurent Pinchart wrote:
+> > It depends on the actual hardware: while per-pin settings are suitable
+> > for SoCs that have per-pin hardware configuration (e.g. RZ/A1), it's
+> > not suitable for SoCs where that's not the case, and where the
+> > hardware has group-wise configuration (e.g. on R-Car).
+> >
+> > Hence IMHO "the future of Renesas pin control" will remain a split
+> > personality for a while ;-)
+> >
+> > Laurent: please kick me if you disagree...
+>=20
+> I unfortunately agree. Maybe we could try to speed up the process by
+> providing feedback to the hardware engineers ?
 
-Dependencies in samsung-soc tree, for those who need them, are:
- - tags/samsung-drivers-soc-pmu-4.11-2
- - tags/samsung-dt64-4.11-2
+For what it's worth, I fired off my 'rant and rave' last week about the
+current R-Car PFC block so I'll be curious to see what they say. Of
+course, I'm on the RZ side of the company, so maybe someone on the R-Car
+side might have better luck.
 
-Repo: git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
 
-Best regards,
-Krzysztof
-
+Chris
