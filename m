@@ -1,47 +1,40 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
-Date: Mon, 30 Jan 2017 19:39:33 +0000
-Message-ID: <SG2PR06MB11651F027332E4A764567CF68A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
- <3913852.YsQFAgHAs5@avalon>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/7] soc: smasung: pmu: Add register defines for pad
+ retention control
+Date: Mon, 30 Jan 2017 21:43:29 +0200
+Message-ID: <20170130194329.duudcv5oxu2q2td4@kozik-lap>
+References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170130123837eucas1p1056a57f23b1e3bf089e5bc55bb2cf2d4@eucas1p1.samsung.com>
+ <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <3913852.YsQFAgHAs5@avalon>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jacopo,
+On Mon, Jan 30, 2017 at 01:38:22PM +0100, Marek Szyprowski wrote:
+> Add PMU defines related to pad retention control. Will be later used
+> by the Exynos pin controller driver.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
 
-On Monday, January 30, 2017, Laurent Pinchart wrote:
-> > +	pinctrl: pinctrl@fcfe3000 {
-> > +		compatible =3D "renesas,rza1-pinctrl";
-> > +		#address-cells =3D <1>;
-> > +		#size-cells =3D <0>;
-> > +
-> > +		#pinctrl-cells =3D <2>;
-> > +
-> > +		reg =3D <0xfcfe3000 0xa30>, /* Pn, ..., PFCAEn */
-> > +		      <0xfcfe7000 0x230>, /* PIBCn, ..., PIPCn */
->=20
-> What's the reason for splitting those registers in two sets ? Maybe you
-> can explain that in the DT bindings documentation that this patch series
-> is missing ;-)
+Thanks Marek.
 
+Initially I thought that this should go through samsung-soc to limit
+conflicts but I sent already my pull requests and I am not sure if I
+will be getting more patches for next cycle. We'll see.
 
-I left this out of my review comments, but even though the chip designers l=
-eft
-a BIG HOLE in the memory map of the PFC controller, I don't think it will
-'cost' you anything by just mapping the whole area (dead space and all) and
-getting rid of the "high and low" memory indexing thing that you are doing
-in the driver.
-There is nothing mapped in that dead area anyway.
+However, the point is, I do not want to block this patchset, so if
+someone would like to take it before me, feel free:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-
-
-Chris
+Best regards,
+Krzysztof
