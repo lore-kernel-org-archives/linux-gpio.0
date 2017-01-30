@@ -1,67 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: mcp23s08: add pinconf support
-Date: Mon, 30 Jan 2017 16:08:01 +0100
-Message-ID: <CACRpkdZyUq+v756vBhM=eu1i3ccsOrkMkEJObrt4HttmVXFkYQ@mail.gmail.com>
-References: <20170127144738.21107-1-sre@kernel.org> <20170127144738.21107-3-sre@kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 3/3] pinctrl: baytrail: Add debounce to debug output
+Date: Mon, 30 Jan 2017 17:13:29 +0200
+Message-ID: <1485789209.2133.361.camel@linux.intel.com>
+References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com>
+         <20170126172409.132136-4-andriy.shevchenko@linux.intel.com>
+         <CACRpkdbevRV9rfJwZo_S2k6WTErNeK17HtHyyORdt6dERE_KGw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:35080 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932348AbdA3PR6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 10:17:58 -0500
-Received: by mail-it0-f42.google.com with SMTP id 203so195829017ith.0
-        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 07:17:58 -0800 (PST)
-In-Reply-To: <20170127144738.21107-3-sre@kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:1518 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932348AbdA3PSD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 30 Jan 2017 10:18:03 -0500
+In-Reply-To: <CACRpkdbevRV9rfJwZo_S2k6WTErNeK17HtHyyORdt6dERE_KGw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>
 
-On Fri, Jan 27, 2017 at 3:47 PM, Sebastian Reichel <sre@kernel.org> wrote:
+On Mon, 2017-01-30 at 15:51 +0100, Linus Walleij wrote:
+> On Thu, Jan 26, 2017 at 6:24 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > When debug pin configuration is printed out debounce setting is
+> > missed.
+> > Add it here.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> I have dropped this patch for now due to Mika's skepticism.
 
-> mcp23xxx device have configurable 100k pullup resistors. This adds
-> support for enabling them using pinctrl's pinconf interface.
->
-> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+Thank you, that what I was expecting.
 
-That's the right approach!
-
-> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-
-Can we move the patch to drivers/pinctrl/* like all other mixed drivers
-doing combined pinctrl and GPIO?
-
-Also: no Kconfig changes? Surely you must select the right pinctrl
-things, I guess you're just lucky that some other pin controller on your
-system selects your infrastructure. I think that is why the build robot
-is complaining.
-
-> +static int mcp_update_cache(struct mcp23s08 *mcp)
-> +{
-> +       int ret, reg, i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(mcp->cache); i++) {
-> +               ret = mcp_read(mcp, i, &reg);
-> +               if (ret < 0)
-> +                       return ret;
-> +               mcp->cache[i] = reg;
-> +       }
-> +
-> +       return 0;
-> +}
-
-Why do you need a cache of register values when regmap already
-supports this?
-
-Instead I suggest: exploit the .volatile_reg() callback from
-struct regmap_config and use regmap to maintain the cache.
-
-Apart from this is is nice!
-
-With the recent changes from Mika Westerberg scheduled for v4.11
-the road is open to expose pullups all the way to userspace from
-GPIOs chardev if we want to (some patches would be needed).
-
-Yours,
-Linus Walleij
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
