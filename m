@@ -1,44 +1,33 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 01/10] drivers: pinctrl: add driver for
- Allwinner H5 SoC
-Date: Mon, 30 Jan 2017 16:23:15 +0100
-Message-ID: <CACRpkdaj7tnd=anx2npYSKGm5EjmXtBCTvLeCbBk4nsCWrEZTA@mail.gmail.com>
-References: <20170129023331.62106-1-icenowy@aosc.xyz> <20170129023331.62106-2-icenowy@aosc.xyz>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] Pinctrl : berlin - Fix possible NULL derefrence.
+Date: Mon, 30 Jan 2017 15:55:48 +0100
+Message-ID: <CACRpkdYkNP0Wo70Fw+hiDzBe=O2g=iB5ZBMWcY6i+cEMr57WsQ@mail.gmail.com>
+References: <CGME20170127111027epcas4p2218cc1e0f62b5312eda5e1ccf667cc31@epcas4p2.samsung.com>
+ <1485515418-3006-1-git-send-email-shailendra.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBZFUXXCAKGQEZ4GWSOQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170129023331.62106-2-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:37843 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753702AbdA3P27 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 10:28:59 -0500
+Received: by mail-it0-f42.google.com with SMTP id r185so103656773ita.0
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 07:28:57 -0800 (PST)
+In-Reply-To: <1485515418-3006-1-git-send-email-shailendra.v@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shailendra Verma <shailendra.v@samsung.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, p.shailesh@samsung.com, ashish.kalra@samsung.com, vidushi.koul@samsung.com, Shailendra Verma <shailendra.capricorn@gmail.com>
 
-On Sun, Jan 29, 2017 at 3:33 AM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
+On Fri, Jan 27, 2017 at 12:10 PM, Shailendra Verma
+<shailendra.v@samsung.com> wrote:
 
-> Based on the Allwinner H5 datasheet and the pinctrl driver of the
-> backward-compatible H3 this introduces the pin multiplex assignments for
-> the H5 SoC.
+> of_match_device could return NULL, and so can cause a NULL
+> pointer dereference later.
 >
-> H5 introduced some more pin functions (e.g. three more groups of TS
-> pins, and one more groups of SIM pins) than H3.
->
-> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-> Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
-> Changes in v3:
-> - Add Maxime's ACK.
-> Changes in v2:
-> - Fixed interrupt banks. (There's one more GPIO banks (PF) that can do
->   interrupt handling on H5)
+> Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
 
-I already applied V2 with Maximes' ACK and all.
+Patch applied.
 
 Yours,
 Linus Walleij
