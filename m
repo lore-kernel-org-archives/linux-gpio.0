@@ -1,39 +1,103 @@
-From: Chris Packham <Chris.Packham-6g8wRflRTwXFdCa3tKVlE6U/zSkkHjvu@public.gmane.org>
-Subject: Re: [PATCHv5 0/5] Support for Marvell switches with integrated CPUs
-Date: Mon, 30 Jan 2017 20:27:58 +0000
-Message-ID: <3e0e797ad5bd4747b33f631fcecd3933@svr-chch-ex1.atlnz.lc>
-References: <20170127032546.14657-1-chris.packham@alliedtelesis.co.nz>
- <87wpdgwj72.fsf@free-electrons.com> <20170127184745.GD8801@codeaurora.org>
- <f8f6e8db585147d3adb025bed29694ab@svr-chch-ex1.atlnz.lc>
- <87o9yotxuo.fsf@free-electrons.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 02/14] Documentation: dt/bindings: Document
+ pinctrl-gpio
+Date: Mon, 30 Jan 2017 14:33:12 -0600
+Message-ID: <20170130203312.xsvu6rk2sz66m43a@rob-hp-laptop>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170125185207.23902-1-paul@crapouillou.net>
+ <20170125185207.23902-3-paul@crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org" <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Chris Brand <chris.brand-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Juri Lelli <juri.lelli-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni@fr>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170125185207.23902-3-paul@crapouillou.net>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, james.hogan@imgtec.com
 List-Id: linux-gpio@vger.kernel.org
 
-On 31/01/17 03:40, Gregory CLEMENT wrote:=0A=
-> Hi Chris,=0A=
->=0A=
-> The 5 patches should be available soon (if it is not already the case),=
-=0A=
-> in the linux-next branch.=0A=
->=0A=
-> The clk patch is already there, the 3 arm patch have been merged in my=0A=
-> mvebu/for-next branch, and the pinctrl patch is about to be merged in=0A=
-> the pinctrl/for-next branch.=0A=
->=0A=
-> Gregory=0A=
->=0A=
-=0A=
-Gregory, Stephen, Linus W, thanks for applying the patches. Numerous =0A=
-reviewers thanks for your feedback.=0A=
-=0A=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed, Jan 25, 2017 at 07:51:55PM +0100, Paul Cercueil wrote:
+> This commit adds documentation for the devicetree bidings of the
+
+s/biding/bindings/
+
+> pinctrl-gpio driver, which handles GPIOs of the Ingenic SoCs
+> currently supported by the Linux kernel.
+
+The subject makes no reference that this binding is for Ingenic GPIO. 
+Also, drop the "Documentation: " part. It's redundant.
+
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../devicetree/bindings/gpio/ingenic,gpio.txt      | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+> 
+> v2: New patch
+> v3: No changes
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/ingenic,gpio.txt b/Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+> new file mode 100644
+> index 000000000000..b2eb20494365
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+> @@ -0,0 +1,45 @@
+> +Ingenic jz47xx GPIO controller
+> +
+> +Required properties:
+> +  - compatible:
+> +    - "ingenic,jz4740-gpio" for the JZ4740 SoC
+> +    - "ingenic,jz4780-gpio" for the JZ4780 SoC
+> +
+> +  - reg: Base address and length of each memory resource used by the GPIO
+> +    controller hardware module.
+> +
+> +  - gpio-controller: Marks the device node as a GPIO controller.
+> +  - #gpio-cells: Should be 2. The first cell is the GPIO number and the second
+> +    cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>. Only the
+> +    GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
+> +  - gpio-ranges: Range of pins managed by the GPIO controller.
+> +
+> +Optional properties:
+> +  - base: The GPIO number to use as the base for this driver.
+
+Drop this please. This is a Linuxism.
+
+> +  - interrupt-controller: Marks the device node as an interrupt controller.
+> +  - interrupts: Interrupt specifier for the controllers interrupt.
+> +    Required if 'interrupt-controller' is specified.
+
+Some h/w doesn't have interrupt capability? If not, this should not be 
+optional.
+
+> +
+> +Please refer to gpio.txt in this directory for details of gpio-ranges property
+> +and the common GPIO bindings used by client devices.
+> +
+> +The GPIO controller also acts as an interrupt controller. It uses the default
+> +two cells specifier as described in Documentation/devicetree/bindings/
+> +interrupt-controller/interrupts.txt.
+
+Just document #interrupt-cells and its value and drop this paragraph.
+
+> +
+> +Example:
+> +
+> +gpa: gpio-controller@10010000 {
+> +	compatible = "ingenic,jz4740-gpio";
+> +	reg = <0x10010000 0x100>;
+> +
+> +	gpio-controller;
+> +	gpio-ranges = <&pinctrl 0 0 32>;
+> +	#gpio-cells = <2>;
+> +
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +
+> +	interrupt-parent = <&intc>;
+> +	interrupts = <28>;
+> +};
+> -- 
+> 2.11.0
+> 
