@@ -1,37 +1,67 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/8] pinctrl: stm32: fix bad location of
- gpiochip_lock_as_irq
-Date: Mon, 30 Jan 2017 16:15:45 +0100
-Message-ID: <CACRpkda5ezDkN2rGOZLHepLJQu4qW9ZJ5W3s0APpvtp9SN6jGw@mail.gmail.com>
-References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
- <1485533721-9019-2-git-send-email-alexandre.torgue@st.com>
+Subject: Re: [PATCH 2/2] gpio: mcp23s08: add pinconf support
+Date: Mon, 30 Jan 2017 16:08:01 +0100
+Message-ID: <CACRpkdZyUq+v756vBhM=eu1i3ccsOrkMkEJObrt4HttmVXFkYQ@mail.gmail.com>
+References: <20170127144738.21107-1-sre@kernel.org> <20170127144738.21107-3-sre@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1485533721-9019-2-git-send-email-alexandre.torgue@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alexandre TORGUE <alexandre.torgue@st.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Patrice Chotard <patrice.chotard@st.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:35080 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932348AbdA3PR6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 10:17:58 -0500
+Received: by mail-it0-f42.google.com with SMTP id 203so195829017ith.0
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 07:17:58 -0800 (PST)
+In-Reply-To: <20170127144738.21107-3-sre@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jan 27, 2017 at 5:15 PM, Alexandre TORGUE
-<alexandre.torgue@st.com> wrote:
+On Fri, Jan 27, 2017 at 3:47 PM, Sebastian Reichel <sre@kernel.org> wrote:
 
-> Move gpio lock as irq from "domain alloc" callback to "domain activate"
-> callback. It will allow to use gpiolib sysfs correctly.
+> mcp23xxx device have configurable 100k pullup resistors. This adds
+> support for enabling them using pinctrl's pinconf interface.
 >
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
 
-Patch applied.
+That's the right approach!
+
+> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+
+Can we move the patch to drivers/pinctrl/* like all other mixed drivers
+doing combined pinctrl and GPIO?
+
+Also: no Kconfig changes? Surely you must select the right pinctrl
+things, I guess you're just lucky that some other pin controller on your
+system selects your infrastructure. I think that is why the build robot
+is complaining.
+
+> +static int mcp_update_cache(struct mcp23s08 *mcp)
+> +{
+> +       int ret, reg, i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(mcp->cache); i++) {
+> +               ret = mcp_read(mcp, i, &reg);
+> +               if (ret < 0)
+> +                       return ret;
+> +               mcp->cache[i] = reg;
+> +       }
+> +
+> +       return 0;
+> +}
+
+Why do you need a cache of register values when regmap already
+supports this?
+
+Instead I suggest: exploit the .volatile_reg() callback from
+struct regmap_config and use regmap to maintain the cache.
+
+Apart from this is is nice!
+
+With the recent changes from Mika Westerberg scheduled for v4.11
+the road is open to expose pullups all the way to userspace from
+GPIOs chardev if we want to (some patches would be needed).
 
 Yours,
 Linus Walleij
