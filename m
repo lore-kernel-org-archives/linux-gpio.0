@@ -1,52 +1,60 @@
-From: Alexander Stein <alexander.stein@systec-electronic.com>
-Subject: [PATCH v2 1/1] pinctrl: baytrail: Add missing spinlock usage in byt_gpio_irq_handler
-Date: Mon, 30 Jan 2017 12:35:28 +0100
-Message-ID: <20170130113528.17838-1-alexander.stein@systec-electronic.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from webbox1416.server-home.net ([77.236.96.61]:40422 "EHLO
-        webbox1416.server-home.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753247AbdA3L7D (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 30 Jan 2017 06:59:03 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 1/7] soc: smasung: pmu: Add register defines for pad
+ retention control
+Date: Mon, 30 Jan 2017 13:38:22 +0100
+Message-ID: <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
+References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170130123837eucas1p1056a57f23b1e3bf089e5bc55bb2cf2d4@eucas1p1.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Stein <alexander.stein@systec-electronic.com>, linux-gpio@vger.kernel.org
 
-According to VLI64 Intel Atom E3800 Specification Update (#329901)
-concurrent read accesses may result in returning 0xffffffff and write
-accesses may be dropped silently.
-To workaround all accesses must be protected by locks.
+Add PMU defines related to pad retention control. Will be later used
+by the Exynos pin controller driver.
 
-Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-I actually had the case where the read access in byt_irq_unmask returned
-0xffffffff. After OR'ing the trigger bits and writing 0xffffffff back to
-BYT_CONF0_REG things started to act strange.
+ include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Changes in v2:
-* Adjusted commit message
-* Remove locks in initializiation and suspend/resume functions
-  namely: byt_gpio_irq_init_hw, byt_gpio_suspend and byt_gpio_resume
-* Simply use raw_spin_lock instead of raw_spin_lock_irqsave inside IRQ handler
-
- drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index 9a1bbc1..6c7eed8 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1612,7 +1612,9 @@ static void byt_gpio_irq_handler(struct irq_desc *desc)
- 			continue;
- 		}
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index 9786c62d7159..49df0a01a2cc 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -631,4 +631,20 @@
+ 					 | EXYNOS5420_KFC_USE_STANDBY_WFI2  \
+ 					 | EXYNOS5420_KFC_USE_STANDBY_WFI3)
  
-+		raw_spin_lock(&vg->lock);
- 		pending = readl(reg);
-+		raw_spin_unlock(&vg->lock);
- 		for_each_set_bit(pin, &pending, 32) {
- 			virq = irq_find_mapping(vg->chip.irqdomain, base + pin);
- 			generic_handle_irq(virq);
++/* For EXYNOS5433 */
++#define EXYNOS5433_PAD_RETENTION_AUD_OPTION			(0x3028)
++#define EXYNOS5433_PAD_RETENTION_MMC2_OPTION			(0x30C8)
++#define EXYNOS5433_PAD_RETENTION_TOP_OPTION			(0x3108)
++#define EXYNOS5433_PAD_RETENTION_UART_OPTION			(0x3128)
++#define EXYNOS5433_PAD_RETENTION_MMC0_OPTION			(0x3148)
++#define EXYNOS5433_PAD_RETENTION_MMC1_OPTION			(0x3168)
++#define EXYNOS5433_PAD_RETENTION_EBIA_OPTION			(0x3188)
++#define EXYNOS5433_PAD_RETENTION_EBIB_OPTION			(0x31A8)
++#define EXYNOS5433_PAD_RETENTION_SPI_OPTION			(0x31C8)
++#define EXYNOS5433_PAD_RETENTION_MIF_OPTION			(0x31E8)
++#define EXYNOS5433_PAD_RETENTION_USBXTI_OPTION			(0x3228)
++#define EXYNOS5433_PAD_RETENTION_BOOTLDO_OPTION			(0x3248)
++#define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
++#define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
++
+ #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
 -- 
-2.10.2
-
+1.9.1
