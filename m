@@ -1,58 +1,39 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 3/5] gpio: 104-idio-16: Add support for GPIO names
-Date: Mon, 30 Jan 2017 12:05:36 -0500
-Message-ID: <5ab304050d7a9b849bd2585df8718f6d16aa6096.1485795642.git.vilhelm.gray@gmail.com>
-References: <cover.1485795642.git.vilhelm.gray@gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH RESEND 2/5] dmaengine: Provide a wrapper for memcpy
+ operations
+Date: Mon, 30 Jan 2017 18:47:21 +0100
+Message-ID: <20170130184721.072c0de1@bbrezillon>
+References: <1485535324-28393-1-git-send-email-boris.brezillon@free-electrons.com>
+        <1485535324-28393-3-git-send-email-boris.brezillon@free-electrons.com>
+        <20170130165417.GF19244@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:33110 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752530AbdA3ROy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 12:14:54 -0500
-In-Reply-To: <cover.1485795642.git.vilhelm.gray@gmail.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:58866 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753587AbdA3Rrl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 12:47:41 -0500
+In-Reply-To: <20170130165417.GF19244@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Wenyou Yang <wenyou.yang@atmel.com>, Josh Wu <rainyfeeling@outlook.com>, Haavard Skinnemoen <hskinnemoen@gmail.com>, Hans-Christian Egtvedt <egtvedt@samfundet.no>, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt>
 
-This patch sets the gpio_chip names option with an array of GPIO line
-names that match the manual documentation for the ACCES 104-IDIO-16.
-This should make it easier for users to identify which GPIO line
-corresponds to a respective GPIO pin on the device.
+Hi Vinod,
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-idio-16.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+On Mon, 30 Jan 2017 22:24:17 +0530
+Vinod Koul <vinod.koul@intel.com> wrote:
 
-diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
-index 01a091e17614..96e740551976 100644
---- a/drivers/gpio/gpio-104-idio-16.c
-+++ b/drivers/gpio/gpio-104-idio-16.c
-@@ -210,6 +210,14 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+#define IDIO_16_NGPIO 32
-+static const char *idio_16_names[IDIO_16_NGPIO] = {
-+	"OUT0", "OUT1", "OUT2", "OUT3", "OUT4", "OUT5", "OUT6", "OUT7",
-+	"OUT8", "OUT9", "OUT10", "OUT11", "OUT12", "OUT13", "OUT14", "OUT15",
-+	"IIN0", "IIN1", "IIN2", "IIN3", "IIN4", "IIN5", "IIN6", "IIN7",
-+	"IIN8", "IIN9", "IIN10", "IIN11", "IIN12", "IIN13", "IIN14", "IIN15"
-+};
-+
- static int idio_16_probe(struct device *dev, unsigned int id)
- {
- 	struct idio_16_gpio *idio16gpio;
-@@ -230,7 +238,8 @@ static int idio_16_probe(struct device *dev, unsigned int id)
- 	idio16gpio->chip.parent = dev;
- 	idio16gpio->chip.owner = THIS_MODULE;
- 	idio16gpio->chip.base = -1;
--	idio16gpio->chip.ngpio = 32;
-+	idio16gpio->chip.ngpio = IDIO_16_NGPIO;
-+	idio16gpio->chip.names = idio_16_names;
- 	idio16gpio->chip.get_direction = idio_16_gpio_get_direction;
- 	idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
- 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
--- 
-2.11.0
+> On Fri, Jan 27, 2017 at 05:42:01PM +0100, Boris Brezillon wrote:
+> > Almost all ->device_prep_dma_xx() methods have a wrapper defined in
+> > dmaengine.h. Add one for  ->device_prep_dma_memcpy().  
+> 
+> Looks good to me.
+> 
+> Acked-by: Vinod Koul <vinod.koul@intel.com>
+> 
+> 
 
+Maybe you can take this patch directly (the NAND related bits are for
+4.12).
