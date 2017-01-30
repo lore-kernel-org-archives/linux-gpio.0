@@ -1,81 +1,129 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 2/8] pinctrl: stm32: use gpio-ranges to declare bank range
-Date: Mon, 30 Jan 2017 17:29:55 +0100
-Message-ID: <2d0cd144-9a72-52d5-b2c9-c6c9e09ac494@st.com>
-References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
- <1485533721-9019-3-git-send-email-alexandre.torgue@st.com>
- <CACRpkdYtZCJVrZhXOPXd-MNMX0Ry_H1dLQopKwsj9HnO03BtKg@mail.gmail.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 2/2] gpio: mcp23s08: add pinconf support
+Date: Mon, 30 Jan 2017 17:40:56 +0100
+Message-ID: <20170130164055.vuae4tesfepiwikd@earth>
+References: <20170127144738.21107-1-sre@kernel.org>
+ <20170127144738.21107-3-sre@kernel.org>
+ <CACRpkdZyUq+v756vBhM=eu1i3ccsOrkMkEJObrt4HttmVXFkYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYtZCJVrZhXOPXd-MNMX0Ry_H1dLQopKwsj9HnO03BtKg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Patrice Chotard <patrice.chotard@st.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7gvgrintceai6wpm"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:35842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752345AbdA3QlG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 30 Jan 2017 11:41:06 -0500
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZyUq+v756vBhM=eu1i3ccsOrkMkEJObrt4HttmVXFkYQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+
+
+--7gvgrintceai6wpm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
 
-On 01/30/2017 04:19 PM, Linus Walleij wrote:
-> On Fri, Jan 27, 2017 at 5:15 PM, Alexandre TORGUE
-> <alexandre.torgue@st.com> wrote:
+On Mon, Jan 30, 2017 at 04:08:01PM +0100, Linus Walleij wrote:
+> On Fri, Jan 27, 2017 at 3:47 PM, Sebastian Reichel <sre@kernel.org> wrote:
+>=20
+> > mcp23xxx device have configurable 100k pullup resistors. This adds
+> > support for enabling them using pinctrl's pinconf interface.
+> >
+> > Signed-off-by: Sebastian Reichel <sre@kernel.org>
+>=20
+> That's the right approach!
 >
->> Use device tree entries to declare gpio range. It will allow to use
->> no contiguous gpio bank and holes inside a bank.
->>
->> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> > diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+>=20
+> Can we move the patch to drivers/pinctrl/* like all other mixed drivers
+> doing combined pinctrl and GPIO?
+
+Sure. Two questions:
+
+ * Should the config name change to PINCTRL_MCP23s08 (or PINCTRL_MCP23XXX)?
+   This will mean people will have to fix their .config
+ * Should there be a "SPI or I2C GPIO expanders" sub-menu for it as in the
+   gpio Kconfig?
+
+> Also: no Kconfig changes? Surely you must select the right pinctrl
+> things, I guess you're just lucky that some other pin controller on your
+> system selects your infrastructure. I think that is why the build robot
+> is complaining.
+
+Yes, it should select GENERIC_PINCONF as far as I can see.
+
+> > +static int mcp_update_cache(struct mcp23s08 *mcp)
+> > +{
+> > +       int ret, reg, i;
+> > +
+> > +       for (i =3D 0; i < ARRAY_SIZE(mcp->cache); i++) {
+> > +               ret =3D mcp_read(mcp, i, &reg);
+> > +               if (ret < 0)
+> > +                       return ret;
+> > +               mcp->cache[i] =3D reg;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+>=20
+> Why do you need a cache of register values when regmap already
+> supports this?
 >
-> (...)
->> +       of_property_read_string(np, "st,bank-name", &bank->gpio_chip.label);
->> +
->> +       if (!of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args))
->> +               bank_nr = args.args[1] / STM32_GPIO_PINS_PER_BANK;
->> +       else {
->> +               range->name = bank->gpio_chip.label;
->> +               range->id = bank_nr;
->> +               range->pin_base = range->id * STM32_GPIO_PINS_PER_BANK;
->> +               range->base = range->id * STM32_GPIO_PINS_PER_BANK;
->> +               range->npins = npins;
->> +               range->gc = &bank->gpio_chip;
->> +               pinctrl_add_gpio_range(pctl->pctl_dev,
->> +                                      &pctl->banks[bank_nr].range);
->> +       }
+> Instead I suggest: exploit the .volatile_reg() callback from
+> struct regmap_config and use regmap to maintain the cache.
 
-I Keep the old way to get range in order to keep compatibility with 
-older device tree (if no gpio ranges are defined).
+The mcp_update_cache method is just moved in this patch. I do not
+need it, but the existing code uses it. Actually I only moved it, so
+that it sticks together with the mcp_read and mcp_write functions,
+which must be placed a bit earlier to be usable by the pinctrl stuff.
 
->
-> Why are you doing this?
->
-> There is already code in drivers/gpio/gpiolib-of.c to pick ranges
-> from the device tree and add when you're adding the GPIO chips.
+I did not convert the custom caching in the regmap patch, since it
+should be done in its own cleanup patch. Introducing basic regmap
+was much more straight forward than removing the open-coded caching.
 
-Yes, If I declare gpio-ranges inside DT node, the range is well handled 
-by the gpiolib. But in this condition I use gpio-ranges entry to get the 
-pin base offset for the bank we are registering. For example, if there 
-an hole between 2 banks (GPIOA, GPIOD, ...) I need to know at which pin 
-offset the bank D starts. It is the only way I found.
+> Apart from this is is nice!
 
-The "else" statement is here to get compatibility with older device tree 
-(which don't use gpio-ranges entry).
+I guess the custom platform data based pullup config could also
+be removed. I just checked and there are not many users of the
+platform data:
 
-Regards
-Alex
+linux/arch $ git grep -l mcp23 | grep -v "/dts/"        =20
+blackfin/mach-bf527/boards/tll6527m.c
+blackfin/mach-bf609/boards/ezkit.c
 
+None of them seems to use the pullups variable.
 
->
-> Please use that or figure out what is needed to make it work for
-> you instead of reimplementing it.
->
-> Yours,
-> Linus Walleij
->
+> With the recent changes from Mika Westerberg scheduled for v4.11
+> the road is open to expose pullups all the way to userspace from
+> GPIOs chardev if we want to (some patches would be needed).
+
+I just added the pinctrl config to DT, but that sounds useful.
+
+-- Sebastian
+
+--7gvgrintceai6wpm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAliPbJIACgkQ2O7X88g7
++pp+yA//ZjkoFeFXhn0E6rKZ0GzpbinrfD/m1qqyiRCD55qP8Ut5NEH5EijijuZ4
+SDaFmaaZJZZy/CTH7kKlJu1VV4W+W4fI8PNXfegPZ22QeY5ENr6oJ8FH+qn4/kYO
+wHtolcMDukFCZGmmA5y5xR6nxSv4QmwWRuvHiYAWn73S2f9RvXfCcTeES5U885+r
+5GPND8od7CEM08CoENEjIej3v3dIMqOZ0GvUWoAz/lfPKUTnOwB61AqZ4Bo174oX
+8LTf13NYqLtK9OC7jMN0Rb8B3dTivtJXp0zAqnOMxExhP8m6DLYXIbCjfxukaQg1
+8oKIRnpXC0AYh5j/LAsz8sRm4nj97bIKoyn3RcHbwBMexhyDYPIwRUF/sug9lGTV
+yaxU7vBdQkTcRgnLIspDxRNMchZe/MYUqSwCqryWtZenWvrQo6paw8mrpFpE0Ole
+hK5eJcsKJcZ7tFki6F1mjXz/k85VyRp/RwUxYZfzC04zoPK7e43XG4DWsMR7Woqf
+cSl3i2MdX8ZoSvkpRf9+AtlOuOunD8H44zcR0JX5TkM+1fFqTA9iSnnHDq/BHM3f
+aEV11oFTPvj1u9xqPyfhGIBVhxD6I4OyQHj2WMnvAAnuj2TljyDxs6Qmwao5x8PD
+zl1txbrPHQHuk2XypE4BH+1KsJYiP0DPdIvHJcxtz4O/x9u35fk=
+=5Hll
+-----END PGP SIGNATURE-----
+
+--7gvgrintceai6wpm--
