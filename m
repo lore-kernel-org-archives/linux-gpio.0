@@ -1,45 +1,40 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 0/2] gpio: Add the devm_fwnode_get_index_gpiod_from_child() helper
-Date: Mon, 30 Jan 2017 16:41:47 +0100
-Message-ID: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 1/3] pinctrl: intel: Add support for hardware debouncer
+Date: Mon, 30 Jan 2017 17:38:57 +0200
+Message-ID: <20170130153857.GN17297@lahna.fi.intel.com>
+References: <20170127100716.194910-1-mika.westerberg@linux.intel.com>
+ <20170127100716.194910-2-mika.westerberg@linux.intel.com>
+ <CACRpkdbDuOOzsOBYC+oqogQ3QQU-0EFft9KjkvvbTE9kt4VjCg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbDuOOzsOBYC+oqogQ3QQU-0EFft9KjkvvbTE9kt4VjCg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "David E . Box" <david.e.box@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello Linus,
+On Mon, Jan 30, 2017 at 03:03:32PM +0100, Linus Walleij wrote:
+> On Fri, Jan 27, 2017 at 11:07 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> 
+> > The next generation Intel GPIO hardware has two additional registers
+> > PADCFG2 and PADCFG3. The latter is marked as reserved but the former
+> > includes configuration for per-pad hardware debouncer.
+> >
+> > This patch adds support for that in the Intel pinctrl core driver. Since
+> > these are additional features on top of the current generation hardware,
+> > we use revision number and feature flags to enable this if detected.
+> >
+> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> 
+> Patch applied no matter what the build robot says.
+> Days like these it is like C-3PO.
 
-I send these 2 patches separately from the Atmel NAND driver rework
-since these are self-contained and do not have any external
-dependencies.
+Thanks!
 
-Feel free to apply them in your tree if you are happy with this
-version and once other subsystem maintainers have acked patch 1.
+> This ended up really pretty I think, didn't it? :)
 
-Thanks,
-
-Boris
-
----
-Changes since v1:
-- Rename the devm_get_gpiod_from_child() helper into
-  devm_fwnode_get_gpiod_from_child()
-- Define as a static inline wrapper around
-  devm_fwnode_get_gpiod_from_child()
-
-Boris Brezillon (2):
-  gpio: Rename devm_get_gpiod_from_child()
-  gpio: Add the devm_fwnode_get_index_gpiod_from_child() helper
-
- drivers/gpio/devres.c                     | 14 ++++++++------
- drivers/gpio/gpiolib.c                    |  9 +++++----
- drivers/input/keyboard/gpio_keys.c        |  3 ++-
- drivers/input/keyboard/gpio_keys_polled.c |  5 +++--
- drivers/leds/leds-gpio.c                  |  2 +-
- drivers/video/fbdev/amba-clcd-nomadik.c   |  8 ++++----
- include/linux/gpio/consumer.h             | 23 ++++++++++++++++-------
- 7 files changed, 39 insertions(+), 25 deletions(-)
-
--- 
-2.7.4
+Totally agree. Thanks for the suggestion :)
