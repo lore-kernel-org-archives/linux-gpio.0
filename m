@@ -1,54 +1,47 @@
 From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
-Date: Mon, 30 Jan 2017 19:19:15 +0000
-Message-ID: <SG2PR06MB11651AE84528322CB29B33FF8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: RE: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
+Date: Mon, 30 Jan 2017 19:39:33 +0000
+Message-ID: <SG2PR06MB11651F027332E4A764567CF68A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
+ <3913852.YsQFAgHAs5@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <3913852.YsQFAgHAs5@avalon>
 Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Jacopo,
 
-On Wednesday, January 25, 2017, Jacopo Mondi wrote:
-> +
-> +	return 0;
-> +
-> +free_map:
-> +	devm_kfree(rz_pinctrl->dev, *map);
-> +free_fngrps:
-> +	devm_kfree(rz_pinctrl->dev, fngrps);
-> +free_pins:
-> +	devm_kfree(rz_pinctrl->dev, mux_modes);
-> +	devm_kfree(rz_pinctrl->dev, grpins);
-> +	return ret;
-> +}
-
-Since one of the benefits of using devm_kzalloc is that if
-the probe fails and returns an error, all the memory associated with
-that device will automatically get freed, you 'might' not
-need this code to free memory.
-
-I say might because I'm not sure if returning an error here will
-kill the driver or not. But, might be interesting to look into.
+On Monday, January 30, 2017, Laurent Pinchart wrote:
+> > +	pinctrl: pinctrl@fcfe3000 {
+> > +		compatible =3D "renesas,rza1-pinctrl";
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +
+> > +		#pinctrl-cells =3D <2>;
+> > +
+> > +		reg =3D <0xfcfe3000 0xa30>, /* Pn, ..., PFCAEn */
+> > +		      <0xfcfe7000 0x230>, /* PIBCn, ..., PIPCn */
+>=20
+> What's the reason for splitting those registers in two sets ? Maybe you
+> can explain that in the DT bindings documentation that this patch series
+> is missing ;-)
 
 
-> +#define RZ_PIN_NAME(bank, pin)						\
-> +	PIN_##bank##_##pin
-> +
-> +#define RZ_PIN_DESC(b, p)						\
-> +	{ .number =3D RZ_PIN_NAME(b, p),					\
-> +	  .name =3D __stringify(RZ_PIN_NAME(b, p)),			\
+I left this out of my review comments, but even though the chip designers l=
+eft
+a BIG HOLE in the memory map of the PFC controller, I don't think it will
+'cost' you anything by just mapping the whole area (dead space and all) and
+getting rid of the "high and low" memory indexing thing that you are doing
+in the driver.
+There is nothing mapped in that dead area anyway.
 
-The hardware manual uses the names "P1_0" for ports, so it might
-be better to match that format for consistency.
 
 
 Chris
