@@ -1,61 +1,37 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 2/7] pinctrl: samsung: Ensure that pad retention is disabled
- on driver init
-Date: Mon, 30 Jan 2017 13:38:23 +0100
-Message-ID: <1485779908-32147-3-git-send-email-m.szyprowski@samsung.com>
-References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170130123838eucas1p12953af1e9af22e17ed9ca9c49dbd1e9d@eucas1p1.samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC 0/5] Renesas RZ series pinctrl driver
+Date: Mon, 30 Jan 2017 14:51:42 +0100
+Message-ID: <CACRpkdYzbquN_5eFepT6BhNgfM2FxwrjvYsMRD4o2NN4-O4kfw@mail.gmail.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, ext Tony Lindgren <tony@atomide.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-When pin controller device is a part of power domain, there is no guarantee
-that the power domain was not turned off and then on during boot process
-before probing of the pin control driver. If it happened, then pin control
-driver should ensure that pad retention is turned off during its probe call.
+On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 5 +++++
- 1 file changed, 5 insertions(+)
+>    after having discussed in great detail the RZ series per-pin PFC hardware
+> peculiarities, this is a proposal for a possible pin-based pin controller
+> driver for SoC devices of Renesas RZ family.
+>
+> This RFC series adds a minimal driver infrastructure which supports pin
+> multiplexing via explicit per-pin settings performed in device tree sources.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 63e51b56a22a..fa3802970570 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -777,6 +777,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- {
- 	struct samsung_retention_ctrl *ctrl;
- 	struct regmap *pmu_regs;
-+	int i;
- 
- 	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
-@@ -794,6 +795,10 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- 	ctrl->enable = exynos_retention_enable;
- 	ctrl->disable = exynos_retention_disable;
- 
-+	/* Ensure that retention is disabled on driver init */
-+	for (i = 0; i < ctrl->nr_regs; i++)
-+		regmap_write(pmu_regs, ctrl->regs[i], ctrl->value);
-+
- 	return ctrl;
- }
- 
--- 
-1.9.1
+I think this is what Laurent had in mind when he said something about
+that he should have taken the per-pin approach from day 1.
+
+I would especially like to see Laurent's review and ACK on this series
+for that reason so we don't create something less than what he is
+expecting for the future of Renesas pin control.
+
+The series as such seems fine and is reusing Tony's work to generalize
+pin controllers putting functions and groups into the device tree in a nice
+way, which makes it relevant for him to have a look as well, if he has
+time.
+
+Yours,
+Linus Walleij
