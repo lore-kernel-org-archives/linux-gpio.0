@@ -1,97 +1,45 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 0/8] Add STM32F469 pinctrl and fix issues in STM32 pinctrl
-Date: Mon, 30 Jan 2017 15:55:02 +0100
-Message-ID: <0df054a3-a0bf-7691-4546-4710bc8f32ce@st.com>
-References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 2/3] pinctrl: baytrail: Debounce register is one per community
+Date: Mon, 30 Jan 2017 15:49:11 +0100
+Message-ID: <CACRpkda2r-r1CcBJNY=jPHZ-oG2SLe0Kp_zdhW=LtFhi49Zj5A@mail.gmail.com>
+References: <20170126172409.132136-1-andriy.shevchenko@linux.intel.com> <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, Patrice Chotard <patrice.chotard@st.com>, lee.jones@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:36451 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753586AbdA3O6v (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 30 Jan 2017 09:58:51 -0500
+Received: by mail-io0-f170.google.com with SMTP id j13so108473099iod.3
+        for <linux-gpio@vger.kernel.org>; Mon, 30 Jan 2017 06:57:41 -0800 (PST)
+In-Reply-To: <20170126172409.132136-3-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, Cristina Ciocan <cristina.ciocan@intel.com>
 
-Hi,
+On Thu, Jan 26, 2017 at 6:24 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-On 01/27/2017 05:15 PM, Alexandre TORGUE wrote:
-> This series adds support of a dedicated driver for STM32F469 MCU pinctroller.
-> This add generates some changes inside STM32 pinctrl driver and inside STM32
-> device tree.
+> Debounce value is set globally per community. Otherwise user will easily
+> get a kernel crash when they start using the feature:
 >
-> Changes in STM32 pinctrl driver:
-> -------------------------------
-> 	
-> 	- Add STM32F469 driver.
-> 	
-> 	- Change STM32 pinctrl core in order to use "gpio-ranges" devicetree definitions.
-> 	  Indeed, on STM32F469 there an hole in BANK J. We need to declare a gpio-ranges
-> 	  in gpioj controller node to handle this hole.
+> BUG: unable to handle kernel paging request at ffffc900003be000
+> IP: byt_gpio_dbg_show+0xa9/0x430
 >
-> Changes in STM32 device tree:
-> ----------------------------
-> I propose a new architecture (a new file split) for pinmux definition:
-> 	
-> 	- Create a common stm32f4-pinctrl.dtsi for pinmuxing definitions
-> 	  which are common between STM32F429 and STM32F469 MCU.
-> 	
-> 	- Create dedicated stm32fxxx-pinctrl.dtsi file for each MCU
-> 	  (stm32f429-pinctrl.dtsi and stm32f469-pinctrl.dtsi) each one will
-> 	  include stm32f4-pinctrl.dtsi. All differences (pinmuxing or GPIO
-> 	  bank holes) will be put inside the dedicated files.
+> Make it clear in byt_gpio_reg().
 >
-> This series fix a locking issue when a gpio is used as IRQ.
+> Note that this fix just prevents kernel to crash, but doesn't make any
+> difference to the existing logic. It means the last caller will win the
+> trade and debounce value will be configured accordingly. The actual
+> logic fix needs to be thought about and it's not as important as crash
+> fix. That's why the latter goes separately and right now.
 >
-> Regards
-> Alex
->
-> Alexandre TORGUE (8):
->   pinctrl: stm32: fix bad location of gpiochip_lock_as_irq
->   pinctrl: stm32: use gpio-ranges to declare bank range
+> Fixes: 658b476c742f ("pinctrl: baytrail: Add debounce configuration")
+> Cc: Cristina Ciocan <cristina.ciocan@intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I just see typo issue in patch 1&2. I will send a V2 when more review 
-will be done.
+Patch applied for fixes.
 
-Regards
-Alex
-
-
->   Documentation: dt: Add bindings for STM32 pinctrl
->   includes: dt-bindings: Rename STM32F429 pinctrl DT bindings
->   pinctrl: stm32: Add STM32F469 MCU support
->   Documentation: dt: Add new compatible to STM32 pinctrl driver bindings
->   ARM: Kconfig: Introduce MACH_STM32F469 flag
->   ARM: dts: stm32: create dedicated files for pinctrl definitions
->
->  .../bindings/pinctrl/st,stm32-pinctrl.txt          |   57 +-
->  arch/arm/Kconfig                                   |    5 +
->  arch/arm/boot/dts/stm32429i-eval.dts               |    1 +
->  arch/arm/boot/dts/stm32f4-pinctrl.dtsi             |  196 +++
->  arch/arm/boot/dts/stm32f429-disco.dts              |    1 +
->  arch/arm/boot/dts/stm32f429-pinctrl.dtsi           |  106 ++
->  arch/arm/boot/dts/stm32f429.dtsi                   |  153 --
->  arch/arm/boot/dts/stm32f469-disco.dts              |    1 +
->  arch/arm/boot/dts/stm32f469-pinctrl.dtsi           |  107 ++
->  drivers/pinctrl/stm32/Kconfig                      |    6 +
->  drivers/pinctrl/stm32/Makefile                     |    1 +
->  drivers/pinctrl/stm32/pinctrl-stm32.c              |  129 +-
->  drivers/pinctrl/stm32/pinctrl-stm32f469.c          | 1574 ++++++++++++++++++++
->  include/dt-bindings/pinctrl/stm32f4-pinfunc.h      | 1302 ++++++++++++++++
->  include/dt-bindings/pinctrl/stm32f429-pinfunc.h    | 1239 ---------------
->  15 files changed, 3414 insertions(+), 1464 deletions(-)
->  create mode 100644 arch/arm/boot/dts/stm32f4-pinctrl.dtsi
->  create mode 100644 arch/arm/boot/dts/stm32f429-pinctrl.dtsi
->  create mode 100644 arch/arm/boot/dts/stm32f469-pinctrl.dtsi
->  create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f469.c
->  create mode 100644 include/dt-bindings/pinctrl/stm32f4-pinfunc.h
->  delete mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
->
+Yours,
+Linus Walleij
