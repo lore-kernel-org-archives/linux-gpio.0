@@ -1,62 +1,62 @@
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 0/7] gpio: mockup: extensions for testing purposes
-Date: Tue, 31 Jan 2017 15:05:41 +0100
-Message-ID: <CAMpxmJU4GJ43fSU1SPFgN6e5pNw3zr4CQmmB_kq81ZtUHS-MYQ@mail.gmail.com>
-References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com> <CACRpkdZfnJABCOOsDYap=3OLdLHTMFZdg5EV5g3fMNt+erL3zQ@mail.gmail.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
+Date: Tue, 31 Jan 2017 14:08:25 +0000
+Message-ID: <SG2PR06MB11653BA310528FDBC90EF4F98A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <3913852.YsQFAgHAs5@avalon>
+ <SG2PR06MB11651F027332E4A764567CF68A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <1875374.id8cHbqMxX@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:38388 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbdAaOGi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2017 09:06:38 -0500
-Received: by mail-it0-f42.google.com with SMTP id c7so125603961itd.1
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2017 06:05:42 -0800 (PST)
-In-Reply-To: <CACRpkdZfnJABCOOsDYap=3OLdLHTMFZdg5EV5g3fMNt+erL3zQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1875374.id8cHbqMxX@avalon>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2017-01-31 14:28 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Wed, Jan 25, 2017 at 4:34 PM, Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
->
->> This series proposes to extend the gpio framework by allowing to
->> inject line events from the kernel code and by providing a debugfs
->> interface for that to the gpio-mockup driver. We also allow the
->> user to request that the mockup driver name the lines.
->
-> I sympathize fully with the goal and intentions of the series, I
-> agree: this is awesome to have for testing and validation of
-> GPIO.
->
-> I'm reluctant about the changes to gpiolib and want to make that
-> code as optional as possible, definately #ifdef if nothing else
-> works. Otherwise the memory footprint people will get me for this,
-> haha. ;)
->
-> The absolutely best would be if the driver could inject "real"
-> irqs and also exercise the gpiolib irqchip helpers. I have been
-> vaguely thinking that sofware interrupts should be able to do this
-> but I'm not very versed in that kind of stuff.
->
+Hi Laurent (and Jacopo)
 
-This was my initial idea, but I thought it's not very likely that
-Thomas Gleixner would allow me to allocate a new software interrupt
-just for the sake of testing gpiolib. Also: the handling of softirqs
-seems to be a bit different than regular IRQs, but I'm too not an
-expert.
+On Tuesday, January 31, 2017, Laurent Pinchart wrote:
+> On Monday 30 Jan 2017 19:39:33 Chris Brandt wrote:
+> > On Monday, January 30, 2017, Laurent Pinchart wrote:
+> > >> +	pinctrl: pinctrl@fcfe3000 {
+> > >> +		compatible =3D "renesas,rza1-pinctrl";
+> > >> +		#address-cells =3D <1>;
+> > >> +		#size-cells =3D <0>;
+> > >> +
+> > >> +		#pinctrl-cells =3D <2>;
+> > >> +
+> > >> +		reg =3D <0xfcfe3000 0xa30>, /* Pn, ..., PFCAEn */
+> > >> +		      <0xfcfe7000 0x230>, /* PIBCn, ..., PIPCn */
+> > >
+> > > What's the reason for splitting those registers in two sets ? Maybe
+> > > you can explain that in the DT bindings documentation that this
+> > > patch series is missing ;-)
+> >
+> > I left this out of my review comments, but even though the chip
+> > designers left a BIG HOLE in the memory map of the PFC controller, I
+> > don't think it will 'cost' you anything by just mapping the whole area
+> > (dead space and
+> > all) and getting rid of the "high and low" memory indexing thing that
+> > you are doing in the driver.
+> > There is nothing mapped in that dead area anyway.
+>=20
+> For the first two areas, I agree. The third area is a separate pin
+> controller for the JTAG port, not multiplexed with the GPIO ports. I even
+> wonder whether it should be split in a separate DT node.
 
-> The changes to gpio-mockup.c are entirely uncontroversial, it
-> is for testing so I'm willing to accept almost anything if it looks
-> maintainable and helps in testing.
->
 
-How about creating a new config option GPIOLIB_LINE_EVENT_DEBUG that
-would be selected by GPIO_MOCKUP and enclosing the relevant gpiolib
-code with ifdefs (+ potentially comments explaining what's being done
-and why)?
+I think we should just forget about the JTAG pins completely.
+Honestly, they are 2 pins that can only be configured as JTAG or a GPIO inp=
+ut
+(not even output).
+No one is using those pins for anything other than JTAG.
 
-Thanks,
-Bartosz
+IMHO, adding extra support just for those 2 pins is basically a waste of co=
+de.
+
+
+Chris
