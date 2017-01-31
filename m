@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/7] gpiolib: allow injecting line events
-Date: Tue, 31 Jan 2017 14:24:44 +0100
-Message-ID: <CACRpkdZZCAhjXrv=GT+t+bLXHi4jd5c1eOvw=POzEPKopQD4VQ@mail.gmail.com>
-References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com> <1485358461-24070-5-git-send-email-bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 0/7] gpio: mockup: extensions for testing purposes
+Date: Tue, 31 Jan 2017 14:28:44 +0100
+Message-ID: <CACRpkdZfnJABCOOsDYap=3OLdLHTMFZdg5EV5g3fMNt+erL3zQ@mail.gmail.com>
+References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:36795 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752090AbdAaNb5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2017 08:31:57 -0500
-Received: by mail-oi0-f45.google.com with SMTP id u143so213920062oif.3
-        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2017 05:31:49 -0800 (PST)
-In-Reply-To: <1485358461-24070-5-git-send-email-bgolaszewski@baylibre.com>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:36167 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752156AbdAaNib (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2017 08:38:31 -0500
+Received: by mail-it0-f50.google.com with SMTP id c7so215917195itd.1
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2017 05:36:52 -0800 (PST)
+In-Reply-To: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
@@ -21,15 +21,28 @@ Cc: Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@li
 On Wed, Jan 25, 2017 at 4:34 PM, Bartosz Golaszewski
 <bgolaszewski@baylibre.com> wrote:
 
-> Implement a routine visible inside the drivers/gpio directory, that
-> allows to inject line events for testing/debugging purposes.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> This series proposes to extend the gpio framework by allowing to
+> inject line events from the kernel code and by providing a debugfs
+> interface for that to the gpio-mockup driver. We also allow the
+> user to request that the mockup driver name the lines.
 
-Hm OK it is clever, but would also need #ifdef.
+I sympathize fully with the goal and intentions of the series, I
+agree: this is awesome to have for testing and validation of
+GPIO.
 
-Also this kludge would go away if we had a real mockup
-irqchip...
+I'm reluctant about the changes to gpiolib and want to make that
+code as optional as possible, definately #ifdef if nothing else
+works. Otherwise the memory footprint people will get me for this,
+haha. ;)
+
+The absolutely best would be if the driver could inject "real"
+irqs and also exercise the gpiolib irqchip helpers. I have been
+vaguely thinking that sofware interrupts should be able to do this
+but I'm not very versed in that kind of stuff.
+
+The changes to gpio-mockup.c are entirely uncontroversial, it
+is for testing so I'm willing to accept almost anything if it looks
+maintainable and helps in testing.
 
 Yours,
 Linus Walleij
