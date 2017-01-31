@@ -1,58 +1,78 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: PROBLEM: Baytrail tablet touchscreen fails after pinctrl commit
- [3ae02c14d964499da76b5ef4d8912710902e64f8]
-Date: Tue, 31 Jan 2017 12:21:13 +0200
-Message-ID: <20170131102113.GR17297@lahna.fi.intel.com>
-References: <6306d18a-d5d3-3e89-5f41-2a45d3de1398@uwyo.edu>
- <1483812841.26691.7.camel@linux.intel.com>
- <CAKdAkRRHJ+FVKV3o38gpZQ5R2Q6uuV+TPnuwHLvGJ7QehNHWuQ@mail.gmail.com>
+From: jacopo mondi <jacopo@jmondi.org>
+Subject: Re: [RFC 4/5] arm: dts: r7s1000: Add pincontroller node
+Date: Tue, 31 Jan 2017 11:24:56 +0100
+Message-ID: <61bdee6b-2573-35f8-f08b-2ff6cbc200de@jmondi.org>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-5-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdW3WtBp=cLpqFuuLxQq-=by3wwE1mQtwKJN4znDVrF6LQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:32931 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751349AbdAaKYm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 31 Jan 2017 05:24:42 -0500
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRRHJ+FVKV3o38gpZQ5R2Q6uuV+TPnuwHLvGJ7QehNHWuQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdW3WtBp=cLpqFuuLxQq-=by3wwE1mQtwKJN4znDVrF6LQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Robert R. Howell" <rhowell@uwyo.edu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, Jan 30, 2017 at 04:52:27PM -0800, Dmitry Torokhov wrote:
-> On Sat, Jan 7, 2017 at 10:14 AM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, 2017-01-06 at 02:30 -0700, Robert R. Howell wrote:
-> >> [1.]  Baytrail tablet touchscreen fails after pinctrl commit
-> >> [3ae02c14d964499da76b5ef4d8912710902e64f8]
-> >>
-> >> [2.]  Beginning with kernel 4.10-rc1 (and continuing with 4.10-rc2)
-> >> the
-> >> touchscreen on two Baytrail devices, an ASUS T100TA and a Toshiba
-> >> Encore
-> >> 8, no longer works.  They did work properly up though at least 4.9.0.
-> >> As
-> >> indicated in the DMESG output appended below, the ATML1000
-> >> touchscreen
-> >> controller fails to reset and initialize properly on boot. The reset
-> >> command issued through i2c_hid appears to time out after its 5 second
-> >> wait for completion.  (There are similar problems with an i2c
-> >> orientation sensor.)  Using git bisect I've found that the problem
-> >> begins with commit [3ae02c14d964499da76b5ef4d8912710902e64f8]
-> >> pinctrl: intel: set default handler to be handle_bad_irq()
-> >>
-> >> I've appended the git bisect log output at the end.  Reverting that
-> >> single commit (tested with 4.10-rc2) fixes the problem.
-> >
-> > Thanks for the report. For me it looks like that commit actually
-> > discovers other problems we have in the code somewhere.
-> >
-> > Yeah, I confirm the issue on T100TA. I will investigate this next week.
-> 
-> This still happens on chromeOS Baytrail devices with -rc6 here as
-> well. Can we revert this and try again in 4.11 timeframe?
+Hi Geert,
 
-Are you sure you have commit 49c030962638 ("pinctrl: baytrail: Do not
-add all GPIOs to IRQ domain")? That is supposed to fix the issue if I
-understand correctly.
+On 26/01/2017 20:54, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>> Add pincontroller node compatible with the new Renesas RZ/A1
+>> pincontroller driver.
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> ---
+>>  arch/arm/boot/dts/r7s72100.dtsi | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+>> index 3dd427d..764006d 100644
+>> --- a/arch/arm/boot/dts/r7s72100.dtsi
+>> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+>> @@ -171,6 +171,18 @@
+>>                 };
+>>         };
+>>
+>> +       pinctrl: pinctrl@fcfe3000 {
+>> +               compatible = "renesas,rza1-pinctrl";
+>> +               #address-cells = <1>;
+>> +               #size-cells = <0>;
+>> +
+>> +               #pinctrl-cells = <2>;
+>
+> Souldn't that be <3>?
+> E.g. <RZ_PIN(3, 0) ALTERNATE_FUNC_6> expands to <3 0 5>, i.e. 3 numbers.
+>
+
+ From pinctrl-bindings.txt:
+
+#pinctrl-cells:	Number of pin control cells in addition to the index 
+within the pin controller device instance
+
+So here it's (2 + 1) as at least the pin index (first parameter) is 
+mandatory.
+
+We're twisting the assumption of having "index" as first, single, 
+parameter, as we have <bank pin mode> and the <bank, pin> pair 
+identifies a pin.
+
+Hope this is ok, and we can re-use existing bindings even if our 
+semantic is a bit different.
+
+
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+>
