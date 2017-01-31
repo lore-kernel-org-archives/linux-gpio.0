@@ -1,87 +1,106 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Tue, 31 Jan 2017 01:11:55 -0800
-Message-ID: <20170131091155.GH8311@dtor-ws>
-References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
- <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
- <20170131010607.GC35974@dtor-ws>
- <20170131090432.72a1b1b8@bbrezillon>
- <20170131084447.GD8311@dtor-ws>
- <20170131100721.22c2388d@bbrezillon>
+From: jacopo mondi <jacopo@jmondi.org>
+Subject: Re: [RFC 3/5] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+Date: Tue, 31 Jan 2017 10:12:16 +0100
+Message-ID: <b315cc0c-a9f3-6287-8443-56e866a32924@jmondi.org>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1485367787-8109-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdUmy2QkvRomf8euzB0QNkeCA=N8=rhY0GkObz8qn-UvMQ@mail.gmail.com>
+ <5227448.uVg4OnCqZq@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-leds-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170131100721.22c2388d@bbrezillon>
-Sender: linux-leds-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <5227448.uVg4OnCqZq@avalon>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 31, 2017 at 10:07:21AM +0100, Boris Brezillon wrote:
-> On Tue, 31 Jan 2017 00:44:47 -0800
-> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> 
-> > On Tue, Jan 31, 2017 at 09:04:32AM +0100, Boris Brezillon wrote:
-> > > On Mon, 30 Jan 2017 17:06:07 -0800
-> > > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > >   
-> > > > On Mon, Jan 30, 2017 at 04:41:48PM +0100, Boris Brezillon wrote:  
-> > > > > Rename devm_get_gpiod_from_child() into
-> > > > > devm_fwnode_get_gpiod_from_child() to reflect the fact that this
-> > > > > function is operating on a fwnode object.    
-> > > > 
-> > > > I believe this is completely pointless rename. Are you planning on
-> > > > adding devm_of_get_gpiod_from_child()? Or
-> > > > devm_acpt_get_gpiod_from_child()? (I sure hope not).  
-> > > 
-> > > Of course not.
-> > >   
-> > > > 
-> > > > Also, on what object? Does it take fwnode as first argument? Or maybe we
-> > > > should call it devm_dev_const_charp_fwnode_get_gpiod_from_child() so we
-> > > > know types of all arguments?  
-> > > 
-> > > Linus suggested to rename this function [1]. I personally don't care
-> > > much about the name, though I agree with Linus that names should be
-> > > consistent and descriptive. Moreover, he's the maintainer, and I tend
-> > > to follow maintainers suggestion when I contribute to a specific
-> > > subsystem.  
-> > 
-> > OK, I did not know that that was Linus' request, my objection still
-> > stands.
-> > 
-> > > 
-> > > IIUC, you're concerned about the length of this function name. If I had
-> > > to drop something it would be the _from_child() suffix, because the
-> > > function is not even checking that the child parameter is actually a
-> > > direct child (or a descendant) of device->fwnode.  
-> > 
-> > OK, that sounds better. Actually, we already have
-> > fwnode_get_named_gpiod(), unfortunately it does not do suffixes
-> > permutations. There are also no users, except
-> > devm_get_gpiod_from_child(). So I would:
-> > 
-> > - rename fwnode_get_named_gpiod() -> static __fwnode_get_named_gpiod()
-> > - made new fwnode_get_named_gpiod() that did suffix permutation and
-> >   called __fwnode_get_named_gpiod() (or pulled its implementation
-> >   inline)
-> 
-> Sorry but I don't follow you. Why do you need
-> __fwnode_get_named_gpiod(),
+Hi Geert, Laurent,
 
-You do not need it, it will just reduce size of the patch if you use
-it. I'd be perfectly fine not with having it and have everything in
-fwnode_get_named_gpiod().
+On 30/01/2017 19:30, Laurent Pinchart wrote:
+> On Thursday 26 Jan 2017 20:52:33 Geert Uytterhoeven wrote:
+>> On Wed, Jan 25, 2017 at 7:09 PM, Jacopo Mondi wrote:
+>>> Add dt-bindings header for Renesas RZ pincontroller.
+>>> The header defines macros for pin description and alternate function
+>>> numbers.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> ---
+>>>
+>>>  include/dt-bindings/pinctrl/pinctrl-renesas-rz.h | 19 +++++++++++++++++++
+>>>  1 file changed, 19 insertions(+)
+>>>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
+>>>
+>>> diff --git a/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
+>>> b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h new file mode 100644
+>>> index 0000000..92816d4
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/pinctrl/pinctrl-renesas-rz.h
+>>> @@ -0,0 +1,19 @@
+>>> +/*
+>>> + * Defines macros and constants for Renesas RZ pin controller and muxer
+>>> + */
+>>> +
+>>> +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
+>>> +#define __DT_BINDINGS_PINCTRL_RENESAS_RZ_H
+>>> +
+>>> +#define RZ_PIN(b, p) b p
+>>
+>> And the advantage of this macro is?
+>>
 
-> and what is the suffix permutation you're
-> mentioning here?
+Nothing beside being cute
 
-devm_get_gpiod_from_child() tries to apply "-gpio" and "-gpios" suffixes
-to the supplied GPIO ID while current fwnode_get_named_gpiod() takes
-property name literally.
+>>> +#define ALTERNATE_FUNC_1       0
+>>> +#define ALTERNATE_FUNC_2       1
+>>> +#define ALTERNATE_FUNC_3       2
+>>> +#define ALTERNATE_FUNC_4       3
+>>> +#define ALTERNATE_FUNC_5       4
+>>> +#define ALTERNATE_FUNC_6       5
+>>> +#define ALTERNATE_FUNC_7       6
+>>> +#define ALTERNATE_FUNC_8       7
+>>
+>> I have mixed feelings about these macros:
+>>   1. They're long to type,
+>>   2. They just map from n to n-1.
+>>
+>> Why not use plain numbers 1..8 (the alternate function numbering in the
+>> datasheet is 1-based), and subtract 1 in the C code?
+>
+> I was about to mention the same. I think you can drop this patch and use the
+> numbers directly.
+>
 
-Thanks.
+Please be aware there are values we'll have to define here, such as the 
+additional configurations we're talking about in some other part of this 
+email thread.
 
--- 
-Dmitry
+This may become something like:
+
+#define ALT_FUNC_1       0
+#define ALT_FUNC_2       1
+#define ALT_FUNC_3       2
+#define ALT_FUNC_4       3
+#define ALT_FUNC_5       4
+#define ALT_FUNC_6       5
+#define ALT_FUNC_7       6
+#define ALT_FUNC_8       7
+
+#define INPUT_MODE	1
+#define BIDRECTIONAL	2
+#define ...
+
+#define PIN(b, p) b p
+#define PIN_MUX(func, conf)	\
+	((func & 0xf) | ((conf) << 16))
+
+and in DTS sources you would describe a pin as
+
+pins = <PIN(bank, pin) PIN_MUX(ALT_FUNC_1, INPUT | BIDIRECTIONAL)>;
+
+We can drop the PIN macro as it does not bring anything I agree, but 
+it's nicer to see imho
+
+Thanks
+    j
