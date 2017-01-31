@@ -1,115 +1,180 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Tue, 31 Jan 2017 20:42:02 +0100
-Message-ID: <20170131204202.7b589ca6@bbrezillon>
-References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
-        <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
-        <20170131010607.GC35974@dtor-ws>
-        <20170131090432.72a1b1b8@bbrezillon>
-        <20170131084447.GD8311@dtor-ws>
-        <20170131100721.22c2388d@bbrezillon>
-        <20170131091155.GH8311@dtor-ws>
-        <20170131102424.7b68c0d4@bbrezillon>
-        <20170131183936.GB13642@dtor-ws>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <20170131183936.GB13642@dtor-ws>
-Sender: linux-leds-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+From: Hoan Tran <hotran@apm.com>
+Subject: [PATCH] gpio: dwapb: Add support for next generation of X-Gene SoC
+Date: Tue, 31 Jan 2017 11:43:58 -0800
+Message-ID: <1485891838-27093-1-git-send-email-hotran@apm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, lho@apm.com, Duc Dang <dhdang@apm.com>, Hoan Tran <hotran@apm.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 31 Jan 2017 10:39:36 -0800
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+Next generation of X-Gene SoC's GPIO hardware register map is very
+similar to DW GPIO. It only differs by a few register addresses.
+This patch modifies DW GPIO driver to accommodate the difference
+in a few register addresses.
 
-> On Tue, Jan 31, 2017 at 10:24:24AM +0100, Boris Brezillon wrote:
-> > On Tue, 31 Jan 2017 01:11:55 -0800
-> > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> >   
-> > > On Tue, Jan 31, 2017 at 10:07:21AM +0100, Boris Brezillon wrote:  
-> > > > On Tue, 31 Jan 2017 00:44:47 -0800
-> > > > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > > >     
-> > > > > On Tue, Jan 31, 2017 at 09:04:32AM +0100, Boris Brezillon wrote:    
-> > > > > > On Mon, 30 Jan 2017 17:06:07 -0800
-> > > > > > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> > > > > >       
-> > > > > > > On Mon, Jan 30, 2017 at 04:41:48PM +0100, Boris Brezillon wrote:      
-> > > > > > > > Rename devm_get_gpiod_from_child() into
-> > > > > > > > devm_fwnode_get_gpiod_from_child() to reflect the fact that this
-> > > > > > > > function is operating on a fwnode object.        
-> > > > > > > 
-> > > > > > > I believe this is completely pointless rename. Are you planning on
-> > > > > > > adding devm_of_get_gpiod_from_child()? Or
-> > > > > > > devm_acpt_get_gpiod_from_child()? (I sure hope not).      
-> > > > > > 
-> > > > > > Of course not.
-> > > > > >       
-> > > > > > > 
-> > > > > > > Also, on what object? Does it take fwnode as first argument? Or maybe we
-> > > > > > > should call it devm_dev_const_charp_fwnode_get_gpiod_from_child() so we
-> > > > > > > know types of all arguments?      
-> > > > > > 
-> > > > > > Linus suggested to rename this function [1]. I personally don't care
-> > > > > > much about the name, though I agree with Linus that names should be
-> > > > > > consistent and descriptive. Moreover, he's the maintainer, and I tend
-> > > > > > to follow maintainers suggestion when I contribute to a specific
-> > > > > > subsystem.      
-> > > > > 
-> > > > > OK, I did not know that that was Linus' request, my objection still
-> > > > > stands.
-> > > > >     
-> > > > > > 
-> > > > > > IIUC, you're concerned about the length of this function name. If I had
-> > > > > > to drop something it would be the _from_child() suffix, because the
-> > > > > > function is not even checking that the child parameter is actually a
-> > > > > > direct child (or a descendant) of device->fwnode.      
-> > > > > 
-> > > > > OK, that sounds better. Actually, we already have
-> > > > > fwnode_get_named_gpiod(), unfortunately it does not do suffixes
-> > > > > permutations. There are also no users, except
-> > > > > devm_get_gpiod_from_child(). So I would:
-> > > > > 
-> > > > > - rename fwnode_get_named_gpiod() -> static __fwnode_get_named_gpiod()
-> > > > > - made new fwnode_get_named_gpiod() that did suffix permutation and
-> > > > >   called __fwnode_get_named_gpiod() (or pulled its implementation
-> > > > >   inline)    
-> > > > 
-> > > > Sorry but I don't follow you. Why do you need
-> > > > __fwnode_get_named_gpiod(),    
-> > > 
-> > > You do not need it, it will just reduce size of the patch if you use
-> > > it. I'd be perfectly fine not with having it and have everything in
-> > > fwnode_get_named_gpiod().  
-> > 
-> > Okay.
-> >   
-> > >   
-> > > > and what is the suffix permutation you're
-> > > > mentioning here?    
-> > > 
-> > > devm_get_gpiod_from_child() tries to apply "-gpio" and "-gpios" suffixes
-> > > to the supplied GPIO ID while current fwnode_get_named_gpiod() takes
-> > > property name literally.  
-> > 
-> > fwnode_get_named_gpiod() just mimics what of_get_named_gpiod_flags(),
-> > acpi_node_get_gpiod(), of_find_gpio() and acpi_find_gpio() do. It would
-> > be weird/inconsistent to have the con_id suffixing logic moved in the
-> > fwnode_get_named_gpiod() (if that's what you're suggesting, but I'm not
-> > sure it is).  
-> 
-> Hmm, yeah, I agree, that would be weird. Then let's leave
-> devm_get_gpiod_from_child() as is ;)
+Signed-off-by: Hoan Tran <hotran@apm.com>
+---
+ drivers/gpio/gpio-dwapb.c | 84 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 67 insertions(+), 17 deletions(-)
 
-Changing the internal implementation has never been the goal of this
-patch. As explained in the commit log, I'm just renaming the function
-to make it consistent with other fwnode functions (as suggested by
-Linus).
-What's happening here is exactly the kind of discussion I wanted to
-avoid, and the reason I decided to not change the
-devm_get_gpiod_from_child() prototype/name in the first place.
-
-Linus, is this something you really care about? If that's the case, can
-you step in?
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 6193f62..5f21751 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -21,6 +21,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+@@ -55,6 +56,13 @@
+ #define GPIO_SWPORT_DR_SIZE	(GPIO_SWPORTB_DR - GPIO_SWPORTA_DR)
+ #define GPIO_SWPORT_DDR_SIZE	(GPIO_SWPORTB_DDR - GPIO_SWPORTA_DDR)
+ 
++#define GPIO_REG_OFFSET_V2	1
++#define GPIO_INTMASK_V2		0x44
++#define GPIO_INTTYPE_LEVEL_V2	0x34
++#define GPIO_INT_POLARITY_V2	0x38
++#define GPIO_INTSTATUS_V2	0x3c
++#define GPIO_PORTA_EOI_V2	0x40
++
+ struct dwapb_gpio;
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -87,14 +95,36 @@ struct dwapb_gpio {
+ 	struct dwapb_gpio_port	*ports;
+ 	unsigned int		nr_ports;
+ 	struct irq_domain	*domain;
++	unsigned int		flags;
+ };
+ 
++static inline u32 gpio_reg_convert(struct dwapb_gpio *gpio, unsigned int offset)
++{
++	if (!(gpio->flags & GPIO_REG_OFFSET_V2))
++		return offset;
++
++	switch (offset) {
++	case GPIO_INTMASK:
++		return GPIO_INTMASK_V2;
++	case GPIO_INTTYPE_LEVEL:
++		return GPIO_INTTYPE_LEVEL_V2;
++	case GPIO_INT_POLARITY:
++		return GPIO_INT_POLARITY_V2;
++	case GPIO_INTSTATUS:
++		return GPIO_INTSTATUS_V2;
++	case GPIO_PORTA_EOI:
++		return GPIO_PORTA_EOI_V2;
++	}
++
++	return offset;
++}
++
+ static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
+ {
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	void __iomem *reg_base	= gpio->regs;
+ 
+-	return gc->read_reg(reg_base + offset);
++	return gc->read_reg(reg_base + gpio_reg_convert(gpio, offset));
+ }
+ 
+ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+@@ -103,7 +133,7 @@ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	void __iomem *reg_base	= gpio->regs;
+ 
+-	gc->write_reg(reg_base + offset, val);
++	gc->write_reg(reg_base + gpio_reg_convert(gpio, offset), val);
+ }
+ 
+ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -336,8 +366,8 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		ct->chip.irq_disable = dwapb_irq_disable;
+ 		ct->chip.irq_request_resources = dwapb_irq_reqres;
+ 		ct->chip.irq_release_resources = dwapb_irq_relres;
+-		ct->regs.ack = GPIO_PORTA_EOI;
+-		ct->regs.mask = GPIO_INTMASK;
++		ct->regs.ack = gpio_reg_convert(gpio, GPIO_PORTA_EOI);
++		ct->regs.mask = gpio_reg_convert(gpio, GPIO_INTMASK);
+ 		ct->type = IRQ_TYPE_LEVEL_MASK;
+ 	}
+ 
+@@ -520,6 +550,21 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
+ 	return pdata;
+ }
+ 
++static const struct of_device_id dwapb_of_match[] = {
++	{ .compatible = "snps,dw-apb-gpio", .data = (void *)0},
++	{ .compatible = "apm,xgene-gpio-v2", .data = (void *)GPIO_REG_OFFSET_V2},
++	{ /* Sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dwapb_of_match);
++
++static const struct acpi_device_id dwapb_acpi_match[] = {
++	{"HISI0181", 0},
++	{"APMC0D07", 0},
++	{"APMC0D81", GPIO_REG_OFFSET_V2},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
++
+ static int dwapb_gpio_probe(struct platform_device *pdev)
+ {
+ 	unsigned int i;
+@@ -528,6 +573,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	int err;
+ 	struct device *dev = &pdev->dev;
+ 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
++	const struct of_device_id *of_devid;
+ 
+ 	if (!pdata) {
+ 		pdata = dwapb_gpio_get_pdata(dev);
+@@ -555,6 +601,23 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio->regs))
+ 		return PTR_ERR(gpio->regs);
+ 
++	gpio->flags = 0;
++	of_devid = of_match_device(dwapb_of_match, dev);
++	if (of_devid) {
++		if (of_devid->data)
++			gpio->flags = (uintptr_t)of_devid->data;
++	}
++#ifdef CONFIG_ACPI
++	else {
++		const struct acpi_device_id *acpi_id;
++
++		acpi_id = acpi_match_device(dwapb_acpi_match, &pdev->dev);
++		if (acpi_id) {
++			if (acpi_id->driver_data)
++				gpio->flags = acpi_id->driver_data;
++		}
++	}
++#endif
+ 	for (i = 0; i < gpio->nr_ports; i++) {
+ 		err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
+ 		if (err)
+@@ -581,19 +644,6 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id dwapb_of_match[] = {
+-	{ .compatible = "snps,dw-apb-gpio" },
+-	{ /* Sentinel */ }
+-};
+-MODULE_DEVICE_TABLE(of, dwapb_of_match);
+-
+-static const struct acpi_device_id dwapb_acpi_match[] = {
+-	{"HISI0181", 0},
+-	{"APMC0D07", 0},
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int dwapb_gpio_suspend(struct device *dev)
+ {
+-- 
+1.9.1
