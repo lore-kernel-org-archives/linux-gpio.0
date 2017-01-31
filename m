@@ -1,98 +1,62 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 03/14] pinctrl-ingenic: add a pinctrl driver for the
- Ingenic jz47xx SoCs
-Date: Tue, 31 Jan 2017 15:05:43 +0100
-Message-ID: <CACRpkdZKNACkOYJtUcYavriSxSDMy0iLt2SUX+d8DcKPXofXyw@mail.gmail.com>
-References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
- <20170125185207.23902-1-paul@crapouillou.net> <20170125185207.23902-4-paul@crapouillou.net>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 0/7] gpio: mockup: extensions for testing purposes
+Date: Tue, 31 Jan 2017 15:05:41 +0100
+Message-ID: <CAMpxmJU4GJ43fSU1SPFgN6e5pNw3zr4CQmmB_kq81ZtUHS-MYQ@mail.gmail.com>
+References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com> <CACRpkdZfnJABCOOsDYap=3OLdLHTMFZdg5EV5g3fMNt+erL3zQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170125185207.23902-4-paul@crapouillou.net>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:38388 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751964AbdAaOGi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2017 09:06:38 -0500
+Received: by mail-it0-f42.google.com with SMTP id c7so125603961itd.1
+        for <linux-gpio@vger.kernel.org>; Tue, 31 Jan 2017 06:05:42 -0800 (PST)
+In-Reply-To: <CACRpkdZfnJABCOOsDYap=3OLdLHTMFZdg5EV5g3fMNt+erL3zQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jan 25, 2017 at 7:51 PM, Paul Cercueil <paul@crapouillou.net> wrote:
-
-> This driver handles pin configuration and pin muxing for the
-> JZ4740 and JZ4780 SoCs from Ingenic.
+2017-01-31 14:28 GMT+01:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Wed, Jan 25, 2017 at 4:34 PM, Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
 >
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> This series proposes to extend the gpio framework by allowing to
+>> inject line events from the kernel code and by providing a debugfs
+>> interface for that to the gpio-mockup driver. We also allow the
+>> user to request that the mockup driver name the lines.
+>
+> I sympathize fully with the goal and intentions of the series, I
+> agree: this is awesome to have for testing and validation of
+> GPIO.
+>
+> I'm reluctant about the changes to gpiolib and want to make that
+> code as optional as possible, definately #ifdef if nothing else
+> works. Otherwise the memory footprint people will get me for this,
+> haha. ;)
+>
+> The absolutely best would be if the driver could inject "real"
+> irqs and also exercise the gpiolib irqchip helpers. I have been
+> vaguely thinking that sofware interrupts should be able to do this
+> but I'm not very versed in that kind of stuff.
+>
 
-This is starting to look very nice.
+This was my initial idea, but I thought it's not very likely that
+Thomas Gleixner would allow me to allocate a new software interrupt
+just for the sake of testing gpiolib. Also: the handling of softirqs
+seems to be a bit different than regular IRQs, but I'm too not an
+expert.
 
-> +#include <linux/compiler.h>
-> +#include <linux/gpio.h>
+> The changes to gpio-mockup.c are entirely uncontroversial, it
+> is for testing so I'm willing to accept almost anything if it looks
+> maintainable and helps in testing.
+>
 
-Use <linux/gpio/driver.h> if it is a GPIO driver. I should
-be enough ... I think.
+How about creating a new config option GPIOLIB_LINE_EVENT_DEBUG that
+would be selected by GPIO_MOCKUP and enclosing the relevant gpiolib
+code with ifdefs (+ potentially comments explaining what's being done
+and why)?
 
-> +static int ingenic_pinctrl_parse_dt_func(struct ingenic_pinctrl *jzpc,
-> +               struct device_node *np)
-> +{
-> +       unsigned int num_groups;
-> +       struct device_node *group_node;
-> +       unsigned int i, j;
-> +       int err, npins, *pins, *confs;
-> +       const char **groups;
-> +
-> +       num_groups = of_get_child_count(np);
-> +       groups = devm_kzalloc(jzpc->dev,
-> +                       sizeof(*groups) * num_groups, GFP_KERNEL);
-> +       if (!groups)
-> +               return -ENOMEM;
-> +
-> +       i = 0;
-> +       for_each_child_of_node(np, group_node) {
-> +               groups[i++] = group_node->name;
-> +
-> +               npins = of_property_count_elems_of_size(group_node,
-> +                               "ingenic,pins", 8);
-> +               if (npins < 0)
-> +                       return npins;
-> +
-> +               pins = devm_kzalloc(jzpc->dev,
-> +                               sizeof(*pins) * npins, GFP_KERNEL);
-> +               confs = devm_kzalloc(jzpc->dev,
-> +                               sizeof(*confs) * npins, GFP_KERNEL);
-> +               if (!pins || !confs)
-> +                       return -ENOMEM;
-> +
-> +               for (j = 0; j < npins; j++) {
-> +                       of_property_read_u32_index(group_node,
-> +                                       "ingenic,pins", j * 2, &pins[j]);
-> +
-> +                       of_property_read_u32_index(group_node,
-> +                                       "ingenic,pins", j * 2 + 1, &confs[j]);
-
-If I didn't mention before this could pperhaps just use "pins"?
-
-Or does these DT entries not match the generic bindings?
-
-> +               }
-> +
-> +               err = pinctrl_generic_add_group(jzpc->pctl, group_node->name,
-> +                               pins, npins, confs);
-> +               if (err)
-> +                       return err;
-> +       }
-> +
-> +       return pinmux_generic_add_function(jzpc->pctl, np->name,
-> +                       groups, num_groups, NULL);
-> +}
-
-If you just use "pins" can this even be parsed by a generic parser function
-pinconf_generic_dt_subnode_to_map()?
-
-Yours,
-Linus Walleij
+Thanks,
+Bartosz
