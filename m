@@ -1,62 +1,130 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [RFC 2/5] pinctrl: rz-pfc: Add Renesas RZ/A1 pinctrl driver
-Date: Tue, 31 Jan 2017 14:11:21 +0000
-Message-ID: <SG2PR06MB11659F7F6F4164565032D9A28A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-3-git-send-email-jacopo+renesas@jmondi.org>
- <SG2PR06MB1165C49393EAA4027B020B448A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <5091561.JdaHPde81y@avalon>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 04/14] GPIO: Add gpio-ingenic driver
+Date: Tue, 31 Jan 2017 15:13:50 +0100
+Message-ID: <CACRpkdaqQ2==B1_o-Ru81Nbu_kUF+Kxn=XFYms-1e=nAtHiJ4A@mail.gmail.com>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170125185207.23902-1-paul@crapouillou.net> <20170125185207.23902-5-paul@crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:61849 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751994AbdAaOM1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 31 Jan 2017 09:12:27 -0500
-In-Reply-To: <5091561.JdaHPde81y@avalon>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170125185207.23902-5-paul@crapouillou.net>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Laurent,
+On Wed, Jan 25, 2017 at 7:51 PM, Paul Cercueil <paul@crapouillou.net> wrote:
 
-On Tuesday, January 31, 2017, Laurent Pinchart wrote:
-> On Monday 30 Jan 2017 19:19:18 Chris Brandt wrote:
-> > On Wednesday, January 25, 2017, Jacopo Mondi wrote:
-> > > +	/* Port 5 */
-> > > +	RZ_PIN_NAME(5, 0), RZ_PIN_NAME(5, 1), RZ_PIN_NAME(5, 2),
-> > > +	RZ_PIN_NAME(5, 3), RZ_PIN_NAME(5, 4), RZ_PIN_NAME(5, 5),
-> > > +	RZ_PIN_NAME(5, 6), RZ_PIN_NAME(5, 7), RZ_PIN_NAME(5, 8),
-> > > +	RZ_PIN_NAME(5, 9), RZ_PIN_NAME(5, 10),
-> >
-> > The RZ/A1L (basically a subset of RZ/A1H to reduce cost) uses all 16
-> > port pins on "port 5" so I'd like to include them as well.
-> >
-> > > +static const struct of_device_id rza1_pinctrl_of_match[] =3D {
-> > > +	{ .compatible =3D "renesas,rza1-pinctrl", },
-> > > +	{ }
-> > > +};
-> >
-> > Since this PFC driver file is specifically for RZ/A1, I think a better
-> > compatible string would be:
-> >
-> >   .compatible =3D "renesas,r7s72100-renesas-pinctrl",
->=20
-> Do we need to repeat "renesas" in the name ? And given that the datasheet
-> names the hardware "ports", how about "renesas,r7s72100-ports" ? The IP
-> core handles both pinctrl and GPIO, so "pinctrl" is a bit restrictive.
+> This driver handles the GPIOs of all the Ingenic JZ47xx SoCs
+> currently supported by the upsteam Linux kernel.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
+Looking nice.
 
-Personally, I do not like "renesas,r7s72100-renesas-pinctrl". I was simply
-trying to follow the naming guidelines for DT.
+> +#define JZ4740_GPIO_DATA       0x10
+> +#define JZ4740_GPIO_SELECT     0x50
+> +#define JZ4740_GPIO_DIR                0x60
+> +#define JZ4740_GPIO_TRIG       0x70
+> +#define JZ4740_GPIO_FLAG       0x80
+> +
+> +#define JZ4780_GPIO_INT                0x10
+> +#define JZ4780_GPIO_PAT1       0x30
+> +#define JZ4780_GPIO_PAT0       0x40
+> +#define JZ4780_GPIO_FLAG       0x50
+> +
+> +#define REG_SET(x) ((x) + 0x4)
+> +#define REG_CLEAR(x) ((x) + 0x8)
+(...)
+> +enum jz_version {
+> +       ID_JZ4740,
+> +       ID_JZ4780,
+> +};
+(...)
+> +static inline bool gpio_get_value(struct ingenic_gpio_chip *jzgc, u8 offset)
+> +{
+> +       if (jzgc->version >= ID_JZ4780)
+> +               return readl(jzgc->base + GPIO_PIN) & BIT(offset);
+> +       else
+> +               return readl(jzgc->base + JZ4740_GPIO_DATA) & BIT(offset);
+> +}
 
-I like your suggestion of "renesas,r7s72100-ports" better.
+This works for me, for sure.
 
+What some people do, is to put the right virtual address in to the state
+container.
 
-Cheers
+So it would be just:
 
-Chris
+return !!readl(jzgc->datareg) & BIT(offset));
+
+Notice also the double-bang that clamps the value to a bool. I know
+the core does it too but I like to see it in drivers just to be sure.
+
+> +static void gpio_set_value(struct ingenic_gpio_chip *jzgc, u8 offset, int value)
+> +{
+> +       u8 reg;
+> +
+> +       if (jzgc->version >= ID_JZ4780)
+> +               reg = JZ4780_GPIO_PAT0;
+> +       else
+> +               reg = JZ4740_GPIO_DATA;
+> +
+> +       if (value)
+> +               writel(BIT(offset), jzgc->base + REG_SET(reg));
+> +       else
+> +               writel(BIT(offset), jzgc->base + REG_CLEAR(reg));
+> +}
+
+Same comment.
+
+What some drivers do when they just get/set a bit in a register
+to get/set or set the direction of a GPIO, is to select GPIO_GENERIC
+and just bgpio_init() with the right iomem pointers, then the core
+will register handlers for get, set, set_direcition callback and
+get_direction and your driver can just focus on the remainders.
+
+> +static void ingenic_gpio_set(struct gpio_chip *gc,
+> +               unsigned int offset, int value)
+> +{
+> +       struct ingenic_gpio_chip *jzgc = gpiochip_get_data(gc);
+> +
+> +       gpio_set_value(jzgc, offset, value);
+> +}
+> +
+> +static int ingenic_gpio_get(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +       struct ingenic_gpio_chip *jzgc = gpiochip_get_data(gc);
+> +
+> +       return (int) gpio_get_value(jzgc, offset);
+> +}
+> +
+> +static int ingenic_gpio_direction_input(struct gpio_chip *gc,
+> +               unsigned int offset)
+> +{
+> +       return pinctrl_gpio_direction_input(gc->base + offset);
+> +}
+> +
+> +static int ingenic_gpio_direction_output(struct gpio_chip *gc,
+> +               unsigned int offset, int value)
+> +{
+> +       ingenic_gpio_set(gc, offset, value);
+> +       return pinctrl_gpio_direction_output(gc->base + offset);
+> +}
+
+If you're not just replacing these with GPIO_GENERIC, please also
+include a .get_direction() callback.
+
+It's especially nice as it reads out the state at probe and "lsgpio"
+lists if pins are inputs or outputs.
+
+Yours,
+Linus Walleij
