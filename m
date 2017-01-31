@@ -1,95 +1,32 @@
-From: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Subject: [PATCH 4/8] ARM: stm32: create dedicated kconfig for STM32 machine
-Date: Tue, 31 Jan 2017 14:14:21 +0100
-Message-ID: <1485868465-30446-5-git-send-email-alexandre.torgue@st.com>
-References: <1485868465-30446-1-git-send-email-alexandre.torgue@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/7] gpiolib: clean up includes
+Date: Tue, 31 Jan 2017 14:20:02 +0100
+Message-ID: <CACRpkdZonYwVJKJi+Z9Vpj=F1VO5cAXBJ_+Nw6WGQN2AFkAdFA@mail.gmail.com>
+References: <1485358461-24070-1-git-send-email-bgolaszewski@baylibre.com> <1485358461-24070-2-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1485868465-30446-1-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485358461-24070-2-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Create a dedicated Kconfig file in mach-stm32/ and move existing stm32
-configs inside.
+On Wed, Jan 25, 2017 at 4:34 PM, Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
 
-Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+> gpiolib.h uses enum gpiod_flags, but doesn't pull in gpio/consumer.h.
+> Include it in gpiolib.h and don't include neither consumer.h nor
+> driver.h from modules that already include gpiolib.h.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 5fab553..e84936c 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -813,6 +813,8 @@ source "arch/arm/mach-spear/Kconfig"
- 
- source "arch/arm/mach-sti/Kconfig"
- 
-+source "arch/arm/mach-stm32/Kconfig"
-+
- source "arch/arm/mach-s3c24xx/Kconfig"
- 
- source "arch/arm/mach-s3c64xx/Kconfig"
-@@ -871,28 +873,6 @@ config ARCH_LPC18XX
- 	  Support for NXP's LPC18xx Cortex-M3 and LPC43xx Cortex-M4
- 	  high performance microcontrollers.
- 
--config ARCH_STM32
--	bool "STMicrolectronics STM32"
--	depends on ARM_SINGLE_ARMV7M
--	select ARCH_HAS_RESET_CONTROLLER
--	select ARMV7M_SYSTICK
--	select CLKSRC_STM32
--	select PINCTRL
--	select RESET_CONTROLLER
--	select STM32_EXTI
--	help
--	  Support for STMicroelectronics STM32 processors.
--
--config MACH_STM32F429
--	bool "STMicrolectronics STM32F429"
--	depends on ARCH_STM32
--	default y
--
--config MACH_STM32F746
--	bool "STMicrolectronics STM32F746"
--	depends on ARCH_STM32
--	default y
--
- config ARCH_MPS2
- 	bool "ARM MPS2 platform"
- 	depends on ARM_SINGLE_ARMV7M
-diff --git a/arch/arm/mach-stm32/Kconfig b/arch/arm/mach-stm32/Kconfig
-new file mode 100644
-index 0000000..40115fa
---- /dev/null
-+++ b/arch/arm/mach-stm32/Kconfig
-@@ -0,0 +1,21 @@
-+config ARCH_STM32
-+	bool "STMicrolectronics STM32"
-+	depends on ARM_SINGLE_ARMV7M
-+	select ARCH_HAS_RESET_CONTROLLER
-+	select ARMV7M_SYSTICK
-+	select CLKSRC_STM32
-+	select PINCTRL
-+	select RESET_CONTROLLER
-+	select STM32_EXTI
-+	help
-+	  Support for STMicroelectronics STM32 processors.
-+
-+config MACH_STM32F429
-+	bool "STMicrolectronics STM32F429"
-+	depends on ARCH_STM32
-+	default y
-+
-+config MACH_STM32F746
-+	bool "STMicrolectronics STM32F746"
-+	depends on ARCH_STM32
-+	default y
--- 
-1.9.1
+Nah.... .c files should include the headers representing the
+symbols they use. Not rely on secondary inclusions.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Drivers should ideally *always* and *only*
+include <linux/gpio/driver.h>. If they include other stuff,
+that is just tautological icing on the cake.
+
+So, I'm gonna drop this.
+
+Yours,
+Linus Walleij
