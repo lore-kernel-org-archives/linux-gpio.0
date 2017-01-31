@@ -1,82 +1,88 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
-Date: Tue, 31 Jan 2017 10:00:49 +0100
-Message-ID: <fd107367-caf5-0817-6a02-352f5af0dbb8@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
- <SG2PR06MB11651AE84528322CB29B33FF8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
+Date: Tue, 31 Jan 2017 10:07:21 +0100
+Message-ID: <20170131100721.22c2388d@bbrezillon>
+References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+        <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
+        <20170131010607.GC35974@dtor-ws>
+        <20170131090432.72a1b1b8@bbrezillon>
+        <20170131084447.GD8311@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60731 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750792AbdAaJBF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2017 04:01:05 -0500
-In-Reply-To: <SG2PR06MB11651AE84528322CB29B33FF8A4B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:44973 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750726AbdAaJHi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 31 Jan 2017 04:07:38 -0500
+In-Reply-To: <20170131084447.GD8311@dtor-ws>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>
 
-Hi Chris,
+On Tue, 31 Jan 2017 00:44:47 -0800
+Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
-On 30/01/2017 20:19, Chris Brandt wrote:
-> Hi Jacopo,
->
-> On Wednesday, January 25, 2017, Jacopo Mondi wrote:
->> +
->> +	return 0;
->> +
->> +free_map:
->> +	devm_kfree(rz_pinctrl->dev, *map);
->> +free_fngrps:
->> +	devm_kfree(rz_pinctrl->dev, fngrps);
->> +free_pins:
->> +	devm_kfree(rz_pinctrl->dev, mux_modes);
->> +	devm_kfree(rz_pinctrl->dev, grpins);
->> +	return ret;
->> +}
->
-> Since one of the benefits of using devm_kzalloc is that if
-> the probe fails and returns an error, all the memory associated with
-> that device will automatically get freed, you 'might' not
-> need this code to free memory.
->
-> I say might because I'm not sure if returning an error here will
-> kill the driver or not. But, might be interesting to look into.
->
+> On Tue, Jan 31, 2017 at 09:04:32AM +0100, Boris Brezillon wrote:
+> > On Mon, 30 Jan 2017 17:06:07 -0800
+> > Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> >   
+> > > On Mon, Jan 30, 2017 at 04:41:48PM +0100, Boris Brezillon wrote:  
+> > > > Rename devm_get_gpiod_from_child() into
+> > > > devm_fwnode_get_gpiod_from_child() to reflect the fact that this
+> > > > function is operating on a fwnode object.    
+> > > 
+> > > I believe this is completely pointless rename. Are you planning on
+> > > adding devm_of_get_gpiod_from_child()? Or
+> > > devm_acpt_get_gpiod_from_child()? (I sure hope not).  
+> > 
+> > Of course not.
+> >   
+> > > 
+> > > Also, on what object? Does it take fwnode as first argument? Or maybe we
+> > > should call it devm_dev_const_charp_fwnode_get_gpiod_from_child() so we
+> > > know types of all arguments?  
+> > 
+> > Linus suggested to rename this function [1]. I personally don't care
+> > much about the name, though I agree with Linus that names should be
+> > consistent and descriptive. Moreover, he's the maintainer, and I tend
+> > to follow maintainers suggestion when I contribute to a specific
+> > subsystem.  
+> 
+> OK, I did not know that that was Linus' request, my objection still
+> stands.
+> 
+> > 
+> > IIUC, you're concerned about the length of this function name. If I had
+> > to drop something it would be the _from_child() suffix, because the
+> > function is not even checking that the child parameter is actually a
+> > direct child (or a descendant) of device->fwnode.  
+> 
+> OK, that sounds better. Actually, we already have
+> fwnode_get_named_gpiod(), unfortunately it does not do suffixes
+> permutations. There are also no users, except
+> devm_get_gpiod_from_child(). So I would:
+> 
+> - rename fwnode_get_named_gpiod() -> static __fwnode_get_named_gpiod()
+> - made new fwnode_get_named_gpiod() that did suffix permutation and
+>   called __fwnode_get_named_gpiod() (or pulled its implementation
+>   inline)
 
-No, returning an error here would not kill the driver BUT if 
-dt_node_to_map fails, dt_free_map is called immediately later [1]
+Sorry but I don't follow you. Why do you need
+__fwnode_get_named_gpiod(), and what is the suffix permutation you're
+mentioning here?
 
-So here we maybe should not use device managed memory as it does not 
-bring anything, do not free *map as it is freed later in dt_free_map, 
-but release fngrps mux_modes and grpins, as we lose reference to them 
-outside the scope of this function.
+> - renamed devm_get_gpiod_from_child() ->
+>   devm_fwnode_get_named_gpiod(dev, fwnode, con_id)
+>   and called fwnode_get_named_gpiod().
 
-Do you agree?
+Okay. I'm fine with this name, let's see what Linus says.
 
->
-
->> +#define RZ_PIN_NAME(bank, pin)						\
->> +	PIN_##bank##_##pin
->> +
->> +#define RZ_PIN_DESC(b, p)						\
->> +	{ .number = RZ_PIN_NAME(b, p),					\
->> +	  .name = __stringify(RZ_PIN_NAME(b, p)),			\
->
-> The hardware manual uses the names "P1_0" for ports, so it might
-> be better to match that format for consistency.
->
->
-
-Noted
-
-Thanks
-    j
-
-
-[1] http://lxr.free-electrons.com/source/drivers/pinctrl/devicetree.c#L236
-
+> 
+> This would indeed match the pattern with other fwnode/property handling
+> APIs.
+> 
+> Thanks.
+> 
 
