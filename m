@@ -1,82 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.10
-Date: Wed, 1 Feb 2017 09:56:05 +0100
-Message-ID: <CACRpkdbBJpzsDJ6BkLnu3YAr+1CHWFemctMhNDpt=T9dTgBs_A@mail.gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
+Date: Wed, 01 Feb 2017 14:47:29 +0200
+Message-ID: <2049686.qZKl7DmctL@avalon>
+References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <fd107367-caf5-0817-6a02-352f5af0dbb8@jmondi.org> <SG2PR06MB1165749A38E25572B7B548D18A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:35231 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751839AbdBAI4G (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 03:56:06 -0500
-Received: by mail-it0-f41.google.com with SMTP id 203so12388276ith.0
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Feb 2017 00:56:06 -0800 (PST)
+Received: from galahad.ideasonboard.com ([185.26.127.97]:42766 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751352AbdBAMrK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 07:47:10 -0500
+In-Reply-To: <SG2PR06MB1165749A38E25572B7B548D18A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+Hi Chris,
 
-another week another set of pin control fixes. The subsystem has seen
-high patch-spot activity recently.
+On Tuesday 31 Jan 2017 13:48:57 Chris Brandt wrote:
+> On  Tuesday, January 31, 2017, Jacopo Mondi wrote:
+> >> Since one of the benefits of using devm_kzalloc is that if the probe
+> >> fails and returns an error, all the memory associated with that device
+> >> will automatically get freed, you 'might' not need this code to free
+> >> memory.
+> >> 
+> >> I say might because I'm not sure if returning an error here will kill
+> >> the driver or not. But, might be interesting to look into.
+> > 
+> > No, returning an error here would not kill the driver BUT if
+> > dt_node_to_map fails, dt_free_map is called immediately later [1]
+> > 
+> > So here we maybe should not use device managed memory as it does not bring
+> > anything, do not free *map as it is freed later in dt_free_map, but
+> > release fngrps mux_modes and grpins, as we lose reference to them outside
+> > the scope of this function.
+> > 
+> > Do you agree?
+> 
+> Like you said, there is no benefit one way of the other.
+> 
+> But, doing a grep of the pinctrl directory, devm_kzalloc is used more by
+> the other drivers than kzalloc, so maybe we just stick with devm_kzalloc
+> 
+>    (baah goes the sheep)
 
-The majority of the patches are for Intel, I vaguely think it mostly concern
-phones, tablets and maybe chromebooks and even laptops with this Intel
-Atom family chips.
+Given that the devm_*() functions incur an overhead, let's use kzalloc/kfree 
+directly.
 
-Please pull them in!
+-- 
+Regards,
 
-Yours,
-Linus Walleij
+Laurent Pinchart
 
-
-The following changes since commit 566cf877a1fcb6d6dc0126b076aad062054c2637:
-
-  Linux 4.10-rc6 (2017-01-29 14:25:17 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.10-4
-
-for you to fetch changes up to cdca06e4e85974d8a3503ab15709dbbaf90d3dd1:
-
-  pinctrl: baytrail: Add missing spinlock usage in
-byt_gpio_irq_handler (2017-01-30 15:53:57 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.10 series.
-
-Driver fixes only:
-
-- One fix to the Berlin driver making the SD card work fully
-  again.
-
-- One fix to the Allwinner/sunxi bias function: one premature
-  change needs to be partially reverted.
-
-- The remaining four patches are to Intel embedded SoCs: baytrail
-  (three patches) and merrifield (one patch): register access
-  debounce fixes and a missing spinlock.
-
-----------------------------------------------------------------
-Alexander Stein (1):
-      pinctrl: baytrail: Add missing spinlock usage in byt_gpio_irq_handler
-
-Andy Shevchenko (3):
-      pinctrl: intel: merrifield: Add missed check in mrfld_config_set()
-      pinctrl: baytrail: Rectify debounce support (part 2)
-      pinctrl: baytrail: Debounce register is one per community
-
-Jisheng Zhang (1):
-      pinctrl: berlin-bg4ct: fix the value for "sd1a" of pin SCRD0_CRD_PRES
-
-Maxime Ripard (1):
-      pinctrl: sunxi: Don't enforce bias disable (for now)
-
- drivers/pinctrl/berlin/berlin-bg4ct.c      |  2 +-
- drivers/pinctrl/intel/pinctrl-baytrail.c   | 27 ++++++++++++++++++++-------
- drivers/pinctrl/intel/pinctrl-merrifield.c |  3 +++
- drivers/pinctrl/sunxi/pinctrl-sunxi.c      |  3 +--
- 4 files changed, 25 insertions(+), 10 deletions(-)
