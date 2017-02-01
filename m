@@ -1,56 +1,51 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
-Date: Wed, 01 Feb 2017 14:47:29 +0200
-Message-ID: <2049686.qZKl7DmctL@avalon>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org> <fd107367-caf5-0817-6a02-352f5af0dbb8@jmondi.org> <SG2PR06MB1165749A38E25572B7B548D18A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
+Date: Wed, 1 Feb 2017 14:05:43 +0100
+Message-ID: <CACRpkdbr6BGm3mJ_2XOAuootK-ruibiGsG8=LvKhrz1cpUrnhA@mail.gmail.com>
+References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
+ <20170131010607.GC35974@dtor-ws> <20170131090432.72a1b1b8@bbrezillon>
+ <20170131084447.GD8311@dtor-ws> <20170131100721.22c2388d@bbrezillon>
+ <20170131091155.GH8311@dtor-ws> <20170131102424.7b68c0d4@bbrezillon>
+ <20170131183936.GB13642@dtor-ws> <20170131204202.7b589ca6@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:42766 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751352AbdBAMrK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 07:47:10 -0500
-In-Reply-To: <SG2PR06MB1165749A38E25572B7B548D18A4A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170131204202.7b589ca6@bbrezillon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Chris,
+On Tue, Jan 31, 2017 at 8:42 PM, Boris Brezillon
+<boris.brezillon@free-electrons.com> wrote:
+> On Tue, 31 Jan 2017 10:39:36 -0800
+> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
-On Tuesday 31 Jan 2017 13:48:57 Chris Brandt wrote:
-> On  Tuesday, January 31, 2017, Jacopo Mondi wrote:
-> >> Since one of the benefits of using devm_kzalloc is that if the probe
-> >> fails and returns an error, all the memory associated with that device
-> >> will automatically get freed, you 'might' not need this code to free
-> >> memory.
-> >> 
-> >> I say might because I'm not sure if returning an error here will kill
-> >> the driver or not. But, might be interesting to look into.
-> > 
-> > No, returning an error here would not kill the driver BUT if
-> > dt_node_to_map fails, dt_free_map is called immediately later [1]
-> > 
-> > So here we maybe should not use device managed memory as it does not bring
-> > anything, do not free *map as it is freed later in dt_free_map, but
-> > release fngrps mux_modes and grpins, as we lose reference to them outside
-> > the scope of this function.
-> > 
-> > Do you agree?
-> 
-> Like you said, there is no benefit one way of the other.
-> 
-> But, doing a grep of the pinctrl directory, devm_kzalloc is used more by
-> the other drivers than kzalloc, so maybe we just stick with devm_kzalloc
-> 
->    (baah goes the sheep)
+>> Hmm, yeah, I agree, that would be weird. Then let's leave
+>> devm_get_gpiod_from_child() as is ;)
+>
+> Changing the internal implementation has never been the goal of this
+> patch. As explained in the commit log, I'm just renaming the function
+> to make it consistent with other fwnode functions (as suggested by
+> Linus).
+> What's happening here is exactly the kind of discussion I wanted to
+> avoid, and the reason I decided to not change the
+> devm_get_gpiod_from_child() prototype/name in the first place.
+>
+> Linus, is this something you really care about? If that's the case, can
+> you step in?
 
-Given that the devm_*() functions incur an overhead, let's use kzalloc/kfree 
-directly.
+I can only throw up my hands... The way I percieved it, a new function
+was added, but I guess it could be that the diffstat was so
+convoluted in the other patch (by the way that diff sometimes give
+very confusing stuff unless you use the right fuzz) so I misunderstood
+some other renaming as introducing a new function.
 
--- 
-Regards,
+Please drop the patch if it is controversial.
 
-Laurent Pinchart
+The name of the function *is* confusing though but maybe it's not
+the biggest problem in the world.
 
+Yours,
+Linus Walleij
