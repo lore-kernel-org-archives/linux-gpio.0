@@ -1,35 +1,63 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH] pinctrl: sunxi: Remove stray printk call in sun5i driver's probe function
-Date: Thu,  2 Feb 2017 00:02:09 +0800
-Message-ID: <20170201160209.9261-1-wens@csie.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: samsung: mark PM functions as __maybe_unused
+Date: Wed,  1 Feb 2017 17:16:24 +0100
+Message-ID: <20170201161636.2109091-1-arnd@arndb.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-There is a stray printk call in the new sun5i pinctrl driver's probe
-function.
+The rework of the suspend/resume handling uses the wrong #ifdef check, leading
+to a build warning without CONFIG_PM_SLEEP:
 
-Remove it.
+drivers/pinctrl/samsung/pinctrl-samsung.c:1142:12: error: 'samsung_pinctrl_resume' defined but not used [-Werror=unused-function]
+drivers/pinctrl/samsung/pinctrl-samsung.c:1092:12: error: 'samsung_pinctrl_suspend' defined but not used [-Werror=unused-function]
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Using a __maybe_unused annotation instead of the #ifdef is a simple way to
+avoid this problem class.
+
+Fixes: 2b24efa8e5c5 ("pinctrl: samsung: Replace syscore ops with standard platform device pm_ops")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pinctrl/sunxi/pinctrl-sun5i.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun5i.c b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-index c8a94323ce8b..c7d44eeae704 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-@@ -719,8 +719,6 @@ static int sun5i_pinctrl_probe(struct platform_device *pdev)
- {
- 	unsigned long variant = (unsigned long)of_device_get_match_data(&pdev->dev);
- 
--	printk("prout\n");
--
- 	return sunxi_pinctrl_init_with_variant(pdev, &sun5i_pinctrl_data,
- 					       variant);
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index d79eadad6c5f..d601b5303e73 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1083,13 +1083,12 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
  }
+ 
+-#ifdef CONFIG_PM
+ /**
+  * samsung_pinctrl_suspend - save pinctrl state for suspend
+  *
+  * Save data for all banks handled by this device.
+  */
+-static int samsung_pinctrl_suspend(struct device *dev)
++static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
+ {
+ 	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
+ 	int i;
+@@ -1139,7 +1138,7 @@ static int samsung_pinctrl_suspend(struct device *dev)
+  * We don't bother doing anything complicated to avoid glitching lines since
+  * we're called before pad retention is turned off.
+  */
+-static int samsung_pinctrl_resume(struct device *dev)
++static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
+ {
+ 	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
+ 	int i;
+@@ -1183,7 +1182,6 @@ static int samsung_pinctrl_resume(struct device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ #ifdef CONFIG_PINCTRL_EXYNOS
 -- 
-2.11.0
+2.9.0
