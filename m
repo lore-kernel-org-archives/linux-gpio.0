@@ -1,105 +1,40 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Wed, 1 Feb 2017 09:18:46 -0800
-Message-ID: <20170201171846.GC40045@dtor-ws>
-References: <20170131090432.72a1b1b8@bbrezillon>
- <20170131084447.GD8311@dtor-ws>
- <20170131100721.22c2388d@bbrezillon>
- <20170131091155.GH8311@dtor-ws>
- <20170131102424.7b68c0d4@bbrezillon>
- <20170131183936.GB13642@dtor-ws>
- <20170131204202.7b589ca6@bbrezillon>
- <CACRpkdbr6BGm3mJ_2XOAuootK-ruibiGsG8=LvKhrz1cpUrnhA@mail.gmail.com>
- <20170201142228.053e2041@bbrezillon>
- <CACRpkdaO=1+JHs2qtVULyN1B1pfajc=UF-V_N+Ej_i5SMv-pPQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/8] Documentation: dt-bindings: Add STM32 pinctrl driver
+ DT bindings
+Date: Wed, 1 Feb 2017 11:31:50 -0600
+Message-ID: <20170201173150.lri7qgq52oflm2m7@rob-hp-laptop>
+References: <1485868465-30446-1-git-send-email-alexandre.torgue@st.com>
+ <1485868465-30446-4-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdaO=1+JHs2qtVULyN1B1pfajc=UF-V_N+Ej_i5SMv-pPQ@mail.gmail.com>
+In-Reply-To: <1485868465-30446-4-git-send-email-alexandre.torgue@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
+To: Alexandre TORGUE <alexandre.torgue@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, lee.jones@linaro.org, Jonathan Corbet <corbet@lwn.net>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 01, 2017 at 03:51:06PM +0100, Linus Walleij wrote:
-> On Wed, Feb 1, 2017 at 2:22 PM, Boris Brezillon
-> <boris.brezillon@free-electrons.com> wrote:
-> > On Wed, 1 Feb 2017 14:05:43 +0100
-> > Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tue, Jan 31, 2017 at 02:14:20PM +0100, Alexandre TORGUE wrote:
+> Add compatible sting for stm32h743 MCU.
 > 
-> >> > Linus, is this something you really care about? If that's the case, can
-> >> > you step in?
-> >>
-> >> I can only throw up my hands...
-> >
-> > Sorry for forcing your hand like this, but this is the kind of
-> > discussion I'm not comfortable with (when I need to argue on something
-> > I'm not completely convinced of, or I don't have opinion on).
+> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
 > 
-> Sorry, I'm just too stressed by all patches. I now read back on the
-> context below.
-> 
-> >> The way I percieved it, a new function
-> >> was added, but I guess it could be that the diffstat was so
-> >> convoluted in the other patch (by the way that diff sometimes give
-> >> very confusing stuff unless you use the right fuzz) so I misunderstood
-> >> some other renaming as introducing a new function.
-> >
-> > Indeed, a new function is added (see patch 2), and this new function is
-> > taking an additional 'index' parameter. If that's a problem, I can also
-> > change the prototype of devm_get_gpiod_from_child() and patch all
-> > existing users of this function, but I fear we'll end up with pretty
-> > much the same discussion :-/.
-> 
-> Yeah.
-> 
-> >> Please drop the patch if it is controversial.
-> >>
-> >> The name of the function *is* confusing though but maybe it's not
-> >> the biggest problem in the world.
-> >
-> > I can still name the new function as you suggested
-> > (devm_fwnode_get_index_gpiod_from_child()), and keep the existing one
-> > unchanged if you want.
-> 
-> But that is just insane. Then it is just better to apply this and the
-> other patch making the situation manageable.
-> 
-> This is a good time to do it too since I'm anyways patching around
-> in all the consumers this merge window.
-> 
-> Dmitry: is this such a big deal to you?
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> index b24583a..ac8dcb7 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+> @@ -10,6 +10,7 @@ Required properies:
+>   - compatible: value should be one of the following:
+>     (a) "st,stm32f429-pinctrl"
+>     (b) "st,stm32f746-pinctrl"
+> +   (c) "st,stm32h743-pinctrl"
 
-No, not really. But sometimes it is soooo hard to pass on some
-bikeshedding opportunity ;)
+Drop the a,b,c.
 
+>   - #address-cells: The value of this property must be 1
+>   - #size-cells	: The value of this property must be 1
+>   - ranges	: defines mapping between pin controller node (parent) to
+> -- 
+> 1.9.1
 > 
-> commit 40b7318319281b1bdec804f6435f26cadd329c13
-> "gpio: Support for unified device properties interface"
-> 
-> by Mika Westerberg introduced
-> 
-> fwnode_get_named_gpiod()
-> devm_get_gpiod_from_child()
-> 
-> Both are taking a fwnode as argument and the naming is as
-> inconsistent as it can be.
-> 
-> Some more churn should be expected as a side
-> effect of naming this function wrong in the first place.
-> The fwnode API change was on fast-forward and mistakes
-> were made, also by me, mea culpa.
-> 
-> When I write kernel code, I usually intuitively look for a function doing
-> what I want, this naming is unintuitive, and it has confused me so
-> it will confuse others.
-> 
-> Can I please apply these two patches?
-
-You have my ack for the input bits.
-
-Thanks.
-
--- 
-Dmitry
