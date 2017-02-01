@@ -1,72 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: mcp23s08: add pinconf support
-Date: Wed, 1 Feb 2017 16:12:24 +0100
-Message-ID: <CACRpkdZ6Dh9wf8FXnHO5t8WnLfhLyTzNED_oRUzx=+3a0N8fQQ@mail.gmail.com>
-References: <20170127144738.21107-1-sre@kernel.org> <20170127144738.21107-3-sre@kernel.org>
- <CACRpkdZyUq+v756vBhM=eu1i3ccsOrkMkEJObrt4HttmVXFkYQ@mail.gmail.com> <20170130164055.vuae4tesfepiwikd@earth>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/8] ADD STM32H743 MCU and STM32H743i-Eval board supports
+Date: Wed, 1 Feb 2017 16:16:53 +0100
+Message-ID: <CACRpkdb35JdbE5bPMU_NeVehnA-qs3aAxCgE0==L=Z9vmq1yWQ@mail.gmail.com>
+References: <1485868465-30446-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:35277 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750873AbdBAPM0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 10:12:26 -0500
-Received: by mail-io0-f177.google.com with SMTP id j18so158428713ioe.2
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Feb 2017 07:12:25 -0800 (PST)
-In-Reply-To: <20170130164055.vuae4tesfepiwikd@earth>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1485868465-30446-1-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jan 30, 2017 at 5:40 PM, Sebastian Reichel <sre@kernel.org> wrote:
+On Tue, Jan 31, 2017 at 2:14 PM, Alexandre TORGUE
+<alexandre.torgue-qxv4g6HH51o@public.gmane.org> wrote:
 
->> Can we move the patch to drivers/pinctrl/* like all other mixed drivers
->> doing combined pinctrl and GPIO?
->
-> Sure. Two questions:
->
->  * Should the config name change to PINCTRL_MCP23s08 (or PINCTRL_MCP23XXX)?
->    This will mean people will have to fix their .config
+> This series adds basic support for STM32H743 MCU and stm32h743i-eval board.
+> With it, you can boot stm32h743i-eval board successfully.
 
-I never understood what the right way is to deal with this.
+Patch 1 & 2 look fine to me.
 
-What happens actually when you run "make oldconfig"?
-
-Is there a way to supply a replacement Kconfig symbol in a good
-way?
-
-Else I guess we can keep a dangling GPIO_MCP23S08 bool
-that just selects the new PINCTRL_MCP23XXX for now?
-With a comment that it got moved?
-
-(Please verify that it works though...)
-
->  * Should there be a "SPI or I2C GPIO expanders" sub-menu for it as in the
->    gpio Kconfig?
-
-Maybe, that would be a separate refactoring thing for later.
-I think it is this one and SX150X that use I2C right now.
-
-> I did not convert the custom caching in the regmap patch, since it
-> should be done in its own cleanup patch. Introducing basic regmap
-> was much more straight forward than removing the open-coded caching.
-
-OK I take it that it will be fixed later then, that's fine.
-
-> I guess the custom platform data based pullup config could also
-> be removed. I just checked and there are not many users of the
-> platform data:
->
-> linux/arch $ git grep -l mcp23 | grep -v "/dts/"
-> blackfin/mach-bf527/boards/tll6527m.c
-> blackfin/mach-bf609/boards/ezkit.c
->
-> None of them seems to use the pullups variable.
-
-Just kill it off, good riddance!
-
-As separate patch before/after moving it I guess.
+Shall I just apply them and offer them on an immutable branch based
+on v4.10 so you can pull that into ARM SoC if you want to get this in
+for v4.11?
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
