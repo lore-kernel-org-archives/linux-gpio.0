@@ -1,40 +1,33 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 6/8] mfd: exynos-lpass: Add support for clocks
-Date: Wed, 1 Feb 2017 07:24:56 -0600
-Message-ID: <20170201132456.3dcprep7hwbii46n@rob-hp-laptop>
-References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170126083404eucas1p132ce7a0792505367f6a001f21e9d1632@eucas1p1.samsung.com>
- <1485419634-28331-7-git-send-email-m.szyprowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/5] gpio: gpio-mm: Remove unnecessary driver_data set
+Date: Wed, 1 Feb 2017 14:44:18 +0100
+Message-ID: <CACRpkdZzRMtTv-WOasd4feamqigSfPsfs3rR31RfCn+vGqpAiw@mail.gmail.com>
+References: <cover.1485786703.git.vilhelm.gray@gmail.com> <3c48d9bd3035ba5e983e520518e7a310342d9d30.1485786703.git.vilhelm.gray@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:34550 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbdBANY6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 08:24:58 -0500
-Content-Disposition: inline
-In-Reply-To: <1485419634-28331-7-git-send-email-m.szyprowski@samsung.com>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:32922 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbdBANoU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 08:44:20 -0500
+Received: by mail-io0-f174.google.com with SMTP id v96so60222122ioi.0
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Feb 2017 05:44:19 -0800 (PST)
+In-Reply-To: <3c48d9bd3035ba5e983e520518e7a310342d9d30.1485786703.git.vilhelm.gray@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jan 26, 2017 at 09:33:52AM +0100, Marek Szyprowski wrote:
-> Exynos LPASS requires some clocks to be enabled to make any access to its
-> registers. This patch adds code for handling such clocks. For current set
-> of registers it is enough to keep sfr0_ctrl clock enabled. Till now it
-> worked only because those clocks were enabled by bootloader and driver
-> probe() happened before they were disabled by clock core because of lack
-> of users. Handling those clocks is also needed to make it possible to
-> enable support for audio power domain.
-> 
-> This patch requires adding sfr0_ctrl clock to device tree.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../devicetree/bindings/mfd/samsung,exynos5433-lpass.txt       |  6 ++++++
+On Mon, Jan 30, 2017 at 3:40 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> Setting driver_data was necessary to access private data in the
+> gpiomm_remove function. Now that the gpiomm_remove function is gone,
+> driver_data is no longer used. This patch removes the relevant code.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
->  drivers/mfd/exynos-lpass.c                                     | 10 ++++++++++
->  2 files changed, 16 insertions(+)
+Patch applied.
+
+Yours,
+Linus Walleij
