@@ -1,27 +1,32 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/5] gpio: 104-idio-16: Remove unnecessary driver_data set
-Date: Wed, 1 Feb 2017 14:23:59 +0100
-Message-ID: <CACRpkdZBctbHV2+8LJVO0eku-nFGa6R+92h-Eg_7S6FxTAOThw@mail.gmail.com>
-References: <cover.1485786703.git.vilhelm.gray@gmail.com> <2c89ad9a9c55346e1187c05bca5eac62ce0df0ac.1485786703.git.vilhelm.gray@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 5/8] mfd: exynos-lpass: Remove pad retention control
+Date: Wed, 1 Feb 2017 07:24:04 -0600
+Message-ID: <20170201132404.wxwcai7qbvcumaic@rob-hp-laptop>
+References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170126083403eucas1p2328ed884334b453ffb1faac3c745cec3@eucas1p2.samsung.com>
+ <1485419634-28331-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2c89ad9a9c55346e1187c05bca5eac62ce0df0ac.1485786703.git.vilhelm.gray@gmail.com>
+Content-Disposition: inline
+In-Reply-To: <1485419634-28331-6-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 3:39 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Thu, Jan 26, 2017 at 09:33:51AM +0100, Marek Szyprowski wrote:
+> Pad retention should be controlled from pin control driver, so remove it
+> from Exynos LPASS driver. After this change, no more access to PMU regmap
+> is needed, so remove also the code for handling PMU regmap.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../bindings/mfd/samsung,exynos5433-lpass.txt           |  2 --
 
-> Setting driver_data was necessary to access private data in the
-> idio_16_remove function. Now that the idio_16_remove function is gone,
-> driver_data is no longer used. This patch removes the relevant code.
->
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+>  drivers/mfd/exynos-lpass.c                              | 17 -----------------
+>  include/linux/mfd/syscon/exynos5-pmu.h                  |  3 ---
+>  3 files changed, 22 deletions(-)
