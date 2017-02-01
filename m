@@ -1,43 +1,64 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH RESEND 4/5] mtd: nand: atmel: Document the new DT
- bindings
-Date: Wed, 1 Feb 2017 16:47:11 +0100
-Message-ID: <20170201164711.27e4b600@bbrezillon>
-References: <1485535324-28393-1-git-send-email-boris.brezillon@free-electrons.com>
-        <1485535324-28393-5-git-send-email-boris.brezillon@free-electrons.com>
-        <20170201153920.g26erfzxnxrmsu4z@rob-hp-laptop>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 6/8] Documentation: dt: Add new compatible to STM32
+ pinctrl driver bindings
+Date: Wed, 1 Feb 2017 16:58:23 +0100
+Message-ID: <abee01c1-da4f-97b4-258a-3ab937f620eb@st.com>
+References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
+ <1485533721-9019-7-git-send-email-alexandre.torgue@st.com>
+ <20170201150609.cbhwon76m6igmhyh@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170201153920.g26erfzxnxrmsu4z@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Wenyou Yang <wenyou.yang-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Josh Wu <rainyfeeling-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>, Haavard Skinnemoen <hskinnemoen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans-Christian Egtvedt <egtvedt-BrfabpQBY5qlHtIdYg32fQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cyrille Pitchen <cyrille.pitchen-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM9gwCICpdfJQ@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170201150609.cbhwon76m6igmhyh@rob-hp-laptop>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, Patrice Chotard <patrice.chotard@st.com>, linux-gpio@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 1 Feb 2017 09:39:20 -0600
-Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 
-> On Fri, Jan 27, 2017 at 05:42:03PM +0100, Boris Brezillon wrote:
-> > Document the new DT bindings for the Atmel NAND controller and
-> > deprecate the old ones.  
-> 
-> Why?
+On 02/01/2017 04:06 PM, Rob Herring wrote:
+> On Fri, Jan 27, 2017 at 05:15:19PM +0100, Alexandre TORGUE wrote:
+>> Add new compatible for stm32f469 MCU.
+>>
+>> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+>> index 25d9809..4f0487d 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
+>> @@ -9,7 +9,8 @@ Pin controller node:
+>>  Required properies:
+>>   - compatible: value should be one of the following:
+>>     (a) "st,stm32f429-pinctrl"
+>> -   (b) "st,stm32f746-pinctrl"
+>> +   (b) "st,stm32f469-pinctrl"
+>> +   (c) "st,stm32f746-pinctrl"
+>
+> Drop the a,b,c. Otherwise, you'll be changing a bunch of lines every
+> time.
 
-Because the existing representation is not only wrong, it also causes
-pinmux conflicts between the NAND controller and other devices present
-on the EBI bus.
-It's explained in the cover letter, but maybe you want me to put that
-in the commit message.
+I completely agree.
 
-> 
-> > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/mtd/atmel-nand.txt         | 106 ++++++++++++++++++++-
-> >  1 file changed, 105 insertions(+), 1 deletion(-)  
+Linus, Do i need to send a v2 for this patch ?
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> With that,
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+>
+>
+>>   - #address-cells: The value of this property must be 1
+>>   - #size-cells	: The value of this property must be 1
+>>   - ranges	: defines mapping between pin controller node (parent) to
+>> --
+>> 1.9.1
+>>
