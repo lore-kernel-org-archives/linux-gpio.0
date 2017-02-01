@@ -1,34 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/5] gpio: 104-idi-48: Add support for GPIO names
-Date: Wed, 1 Feb 2017 16:04:19 +0100
-Message-ID: <CACRpkdbk-7mY-Zo0pJKfvo+BjrHdF_WhMe9sSbhb22b0_JmhUw@mail.gmail.com>
-References: <cover.1485800977.git.vilhelm.gray@gmail.com> <eee939f965371621d2803a6292c006d5355c372e.1485800977.git.vilhelm.gray@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/8] Documentation: dt: Add bindings for STM32 pinctrl
+Date: Wed, 1 Feb 2017 09:04:33 -0600
+Message-ID: <20170201150433.lfuv5w7szgfvn35c@rob-hp-laptop>
+References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
+ <1485533721-9019-4-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:32930 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751087AbdBAPEV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 10:04:21 -0500
-Received: by mail-io0-f173.google.com with SMTP id v96so62097563ioi.0
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Feb 2017 07:04:21 -0800 (PST)
-In-Reply-To: <eee939f965371621d2803a6292c006d5355c372e.1485800977.git.vilhelm.gray@gmail.com>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36781 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752244AbdBAPEf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Feb 2017 10:04:35 -0500
+Content-Disposition: inline
+In-Reply-To: <1485533721-9019-4-git-send-email-alexandre.torgue@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Alexandre TORGUE <alexandre.torgue@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, Patrice Chotard <patrice.chotard@st.com>, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 7:33 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Fri, Jan 27, 2017 at 05:15:16PM +0100, Alexandre TORGUE wrote:
+> Adds "ngpios" and "gpio-ranges" bindings definition.
+> 
+> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
-> This patch sets the gpio_chip names option with an array of GPIO line
-> names that match the manual documentation for the ACCES 104-IDI-48.
-> This should make it easier for users to identify which GPIO line
-> corresponds to a respective GPIO pin on the device.
->
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-
-Patch applied.
-
-Yours,
-Linus Walleij
+Acked-by: Rob Herring <robh@kernel.org>
