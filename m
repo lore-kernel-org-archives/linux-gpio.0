@@ -1,199 +1,78 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v3 1/2] gpio: Rename devm_get_gpiod_from_child()
-Date: Thu,  2 Feb 2017 14:53:10 +0100
-Message-ID: <1486043591-6278-2-git-send-email-boris.brezillon@free-electrons.com>
-References: <1486043591-6278-1-git-send-email-boris.brezillon@free-electrons.com>
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <1486043591-6278-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-leds-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH] gpio: mcp23s08: Select REGMAP/REGMAP_I2C to fix build
+ error
+Date: Thu, 2 Feb 2017 14:56:35 +0100
+Message-ID: <20170202135634.p7lebviiadcfagvy@earth>
+References: <20170202101306.24976-1-axel.lin@ingics.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d3avsknhrbelroam"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:40544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750851AbdBBN4m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 2 Feb 2017 08:56:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20170202101306.24976-1-axel.lin@ingics.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Rename devm_get_gpiod_from_child() into
-devm_fwnode_get_gpiod_from_child() to reflect the fact that this
-function is operating on a fwnode object.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/gpio/devres.c                     | 15 ++++++++-------
- drivers/input/keyboard/gpio_keys.c        |  6 ++++--
- drivers/input/keyboard/gpio_keys_polled.c |  8 ++++----
- drivers/leds/leds-gpio.c                  |  5 +++--
- drivers/video/fbdev/amba-clcd-nomadik.c   | 16 ++++++++--------
- include/linux/gpio/consumer.h             | 20 ++++++++++----------
- 6 files changed, 37 insertions(+), 33 deletions(-)
+--d3avsknhrbelroam
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
-index 89969e887e5d..cd1bd1c3d2c0 100644
---- a/drivers/gpio/devres.c
-+++ b/drivers/gpio/devres.c
-@@ -123,7 +123,8 @@ struct gpio_desc *__must_check devm_gpiod_get_index(struct device *dev,
- EXPORT_SYMBOL(devm_gpiod_get_index);
- 
- /**
-- * devm_get_gpiod_from_child - get a GPIO descriptor from a device's child node
-+ * devm_fwnode_get_gpiod_from_child - get a GPIO descriptor from a device's
-+ *				      child node
-  * @dev:	GPIO consumer
-  * @con_id:	function within the GPIO consumer
-  * @child:	firmware node (child of @dev)
-@@ -135,11 +136,11 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
-  * On successfull request the GPIO pin is configured in accordance with
-  * provided @flags.
-  */
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child,
--					    enum gpiod_flags flags,
--					    const char *label)
-+struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
-+						   const char *con_id,
-+						   struct fwnode_handle *child,
-+						   enum gpiod_flags flags,
-+						   const char *label)
- {
- 	static const char * const suffixes[] = { "gpios", "gpio" };
- 	char prop_name[32]; /* 32 is max size of property name */
-@@ -174,7 +175,7 @@ struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
- 
- 	return desc;
- }
--EXPORT_SYMBOL(devm_get_gpiod_from_child);
-+EXPORT_SYMBOL(devm_fwnode_get_gpiod_from_child);
- 
- /**
-  * devm_gpiod_get_index_optional - Resource-managed gpiod_get_index_optional()
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 2ec74d90ef78..13372782dffe 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -481,8 +481,10 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
- 	spin_lock_init(&bdata->lock);
- 
- 	if (child) {
--		bdata->gpiod = devm_get_gpiod_from_child(dev, NULL, child,
--							 GPIOD_IN, desc);
-+		bdata->gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL,
-+								child,
-+								GPIOD_IN,
-+								desc);
- 		if (IS_ERR(bdata->gpiod)) {
- 			error = PTR_ERR(bdata->gpiod);
- 			if (error == -ENOENT) {
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index 5e35c565e341..b3c8d5e7985c 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -303,10 +303,10 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
- 				return -EINVAL;
- 			}
- 
--			bdata->gpiod = devm_get_gpiod_from_child(dev, NULL,
--								 child,
--								 GPIOD_IN,
--								 button->desc);
-+			bdata->gpiod = devm_fwnode_get_gpiod_from_child(dev,
-+								NULL, child,
-+								GPIOD_IN,
-+								button->desc);
- 			if (IS_ERR(bdata->gpiod)) {
- 				error = PTR_ERR(bdata->gpiod);
- 				if (error != -EPROBE_DEFER)
-diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index 6c4825d96693..066fc7590729 100644
---- a/drivers/leds/leds-gpio.c
-+++ b/drivers/leds/leds-gpio.c
-@@ -182,8 +182,9 @@ static struct gpio_leds_priv *gpio_leds_create(struct platform_device *pdev)
- 			return ERR_PTR(-EINVAL);
- 		}
- 
--		led.gpiod = devm_get_gpiod_from_child(dev, NULL, child,
--						      GPIOD_ASIS, led.name);
-+		led.gpiod = devm_fwnode_get_gpiod_from_child(dev, NULL, child,
-+							     GPIOD_ASIS,
-+							     led.name);
- 		if (IS_ERR(led.gpiod)) {
- 			fwnode_handle_put(child);
- 			return ERR_CAST(led.gpiod);
-diff --git a/drivers/video/fbdev/amba-clcd-nomadik.c b/drivers/video/fbdev/amba-clcd-nomadik.c
-index 9175ad9034e1..476ff3f4d466 100644
---- a/drivers/video/fbdev/amba-clcd-nomadik.c
-+++ b/drivers/video/fbdev/amba-clcd-nomadik.c
-@@ -185,26 +185,26 @@ static void tpg110_init(struct device *dev, struct device_node *np,
- 	dev_info(dev, "TPG110 display init\n");
- 
- 	/* This asserts the GRESTB signal, putting the display into reset */
--	grestb = devm_get_gpiod_from_child(dev, "grestb", &np->fwnode,
--					   GPIOD_OUT_HIGH, "grestb");
-+	grestb = devm_fwnode_get_gpiod_from_child(dev, "grestb", &np->fwnode,
-+						  GPIOD_OUT_HIGH, "grestb");
- 	if (IS_ERR(grestb)) {
- 		dev_err(dev, "no GRESTB GPIO\n");
- 		return;
- 	}
--	scen = devm_get_gpiod_from_child(dev, "scen", &np->fwnode,
--					 GPIOD_OUT_LOW, "scen");
-+	scen = devm_fwnode_get_gpiod_from_child(dev, "scen", &np->fwnode,
-+						GPIOD_OUT_LOW, "scen");
- 	if (IS_ERR(scen)) {
- 		dev_err(dev, "no SCEN GPIO\n");
- 		return;
- 	}
--	scl = devm_get_gpiod_from_child(dev, "scl", &np->fwnode, GPIOD_OUT_LOW,
--					"scl");
-+	scl = devm_fwnode_get_gpiod_from_child(dev, "scl", &np->fwnode,
-+					       GPIOD_OUT_LOW, "scl");
- 	if (IS_ERR(scl)) {
- 		dev_err(dev, "no SCL GPIO\n");
- 		return;
- 	}
--	sda = devm_get_gpiod_from_child(dev, "sda", &np->fwnode, GPIOD_OUT_LOW,
--					"sda");
-+	sda = devm_fwnode_get_gpiod_from_child(dev, "sda", &np->fwnode,
-+					       GPIOD_OUT_LOW, "sda");
- 	if (IS_ERR(sda)) {
- 		dev_err(dev, "no SDA GPIO\n");
- 		return;
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 80bad7ebde04..f32f49e96c0b 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -138,11 +138,11 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- 					 const char *propname,
- 					 enum gpiod_flags dflags,
- 					 const char *label);
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child,
--					    enum gpiod_flags flags,
--					    const char *label);
-+struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
-+						   const char *con_id,
-+						   struct fwnode_handle *child,
-+						   enum gpiod_flags flags,
-+						   const char *label);
- #else /* CONFIG_GPIOLIB */
- 
- static inline int gpiod_count(struct device *dev, const char *con_id)
-@@ -425,11 +425,11 @@ struct gpio_desc *fwnode_get_named_gpiod(struct fwnode_handle *fwnode,
- }
- 
- static inline
--struct gpio_desc *devm_get_gpiod_from_child(struct device *dev,
--					    const char *con_id,
--					    struct fwnode_handle *child,
--					    enum gpiod_flags flags,
--					    const char *label)
-+struct gpio_desc *devm_fwnode_get_gpiod_from_child(struct device *dev,
-+						   const char *con_id,
-+						   struct fwnode_handle *child,
-+						   enum gpiod_flags flags,
-+						   const char *label)
- {
- 	return ERR_PTR(-ENOSYS);
- }
--- 
-2.7.4
+Hi,
+
+On Thu, Feb 02, 2017 at 06:13:06PM +0800, Axel Lin wrote:
+> This driver now using devm_regmap_init/devm_regmap_init_i2c, so it needs
+> to select REGMAP/REGMAP_I2C accordingly.
+>=20
+> Fixes: ("3d84fdb3f0b5 gpio: mcp23s08: use regmap")
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/gpio/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 2d77392..28e6219 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1213,6 +1213,8 @@ config GPIO_MCP23S08
+>  	tristate "Microchip MCP23xxx I/O expander"
+>  	depends on OF_GPIO
+>  	select GPIOLIB_IRQCHIP
+> +	select REGMAP_I2C if I2C
+> +	select REGMAP if SPI_MASTER
+>  	help
+>  	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
+>  	  I/O expanders.
+
+Acked-By: Sebastian Reichel <sre@kernel.org>
+
+-- Sebastian
+
+--d3avsknhrbelroam
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAliTOo8ACgkQ2O7X88g7
++pqOVg/5AQcMca4698UAWl0kH+EvRZZ/tMN1P0y1GDILid4RDiIcuJdQRY5cD9RJ
+M/QQ9J/OL6FntIQcehutuhCIRfFpZm6tFPWoar5mHXaq4seLMC8bpSOuyQ/pWZNL
+Be+0ayNo1vhX5xyk9sM+2zOR7O60jVeX+xOjZTGJh7B0CEqXGGvoRUoGpitknyjH
+BHLgg2m1t8SEzDq/tHg3ZLAhV0W2pce1f6mS1oVtObXl6pYu9zSqj75RS0n59B+/
+2ysHw4V1vXRh0av96gWtbDa9134EwyOR8elYZHegqJurRQBmHMLNB6Omn+p1WZRt
+HOgsRkPbKsY9OQGG87wAJHI54b1u9LOtcieHdnWO9Q8leJrCQuA1SdpC9OlGdjqm
+NaktGZoNLLMXXy9Hn2bKvOC8UeAs91YYKQwvKmVJ8N4K4PKsWattsXMut9Nq5Uxq
+vlQWVWqz9fV4siuGKt1MhsQiooxyCi6BzlluQw1JjW+nWN6M2Pmk3w/EyQg7H/dl
+zMEdOkp2Ez5hqyUaJtvzFTufV/FUHqH82+s7OK50dGK2OHvSl1kRYGSEeCjGHTbf
+581bUMofyNChy0F5RjDOCHW9eQTNPXUmDJD/vJap9PArXsxwKCRkJqiEppak5MPE
++eRR7QBOGkEJknBMTMMOgMAvxbjHC9Vgwy7ZaU08UYOssv1lklw=
+=2nfT
+-----END PGP SIGNATURE-----
+
+--d3avsknhrbelroam--
