@@ -1,85 +1,71 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] pinctrl: samsung: mark PM functions as __maybe_unused
-Date: Thu, 02 Feb 2017 07:57:19 +0100
-Message-ID: <8385d3c5-2da6-e39e-de8c-e10fde820e43@samsung.com>
-References: <CGME20170201161645epcas3p235bc144eb1f03127d707371f7cf963e1@epcas3p2.samsung.com>
- <20170201161636.2109091-1-arnd@arndb.de>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: Merge A31s pinctrl driver with A31
+Date: Thu, 2 Feb 2017 09:13:32 +0100
+Message-ID: <20170202081332.okjxo4ogm2kp3abh@lukather>
+References: <20170201162547.24232-1-wens@csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fypj3jkhyguueo63"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37769 "EHLO
-        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750808AbdBBG5Z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 01:57:25 -0500
-In-reply-to: <20170201161636.2109091-1-arnd@arndb.de>
+Received: from mail.free-electrons.com ([62.4.15.54]:44315 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750903AbdBBINf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 03:13:35 -0500
+Content-Disposition: inline
+In-Reply-To: <20170201162547.24232-1-wens@csie.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Arnd,
 
-On 2017-02-01 17:16, Arnd Bergmann wrote:
-> The rework of the suspend/resume handling uses the wrong #ifdef check, leading
-> to a build warning without CONFIG_PM_SLEEP:
->
-> drivers/pinctrl/samsung/pinctrl-samsung.c:1142:12: error: 'samsung_pinctrl_resume' defined but not used [-Werror=unused-function]
-> drivers/pinctrl/samsung/pinctrl-samsung.c:1092:12: error: 'samsung_pinctrl_suspend' defined but not used [-Werror=unused-function]
->
-> Using a __maybe_unused annotation instead of the #ifdef is a simple way to
-> avoid this problem class.
->
-> Fixes: 2b24efa8e5c5 ("pinctrl: samsung: Replace syscore ops with standard platform device pm_ops")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--fypj3jkhyguueo63
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the fix!
+On Thu, Feb 02, 2017 at 12:25:45AM +0800, Chen-Yu Tsai wrote:
+> Hi everyone,
+>=20
+> This series merges support for the A31s' pin controller into the A31
+> driver, using the new sunxi variants support code. The A31s is a trimmed
+> down version of the A31, with some hardware blocks removed, and some
+> pin functions or pins removed. Thus it is easy to support the A31s
+> using the A31 driver by marking the extra pins/functions as A31 only.
+>=20
+> Patch 1 does exactly this.
+>=20
+> Patch 2 removes the original A31s driver, which is now redundant.
+>=20
+> I opted not to rename sun6i-a31 to sun6i in various places.
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-> ---
->   drivers/pinctrl/samsung/pinctrl-samsung.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index d79eadad6c5f..d601b5303e73 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1083,13 +1083,12 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> -#ifdef CONFIG_PM
->   /**
->    * samsung_pinctrl_suspend - save pinctrl state for suspend
->    *
->    * Save data for all banks handled by this device.
->    */
-> -static int samsung_pinctrl_suspend(struct device *dev)
-> +static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
->   {
->   	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
->   	int i;
-> @@ -1139,7 +1138,7 @@ static int samsung_pinctrl_suspend(struct device *dev)
->    * We don't bother doing anything complicated to avoid glitching lines since
->    * we're called before pad retention is turned off.
->    */
-> -static int samsung_pinctrl_resume(struct device *dev)
-> +static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
->   {
->   	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
->   	int i;
-> @@ -1183,7 +1182,6 @@ static int samsung_pinctrl_resume(struct device *dev)
->   
->   	return 0;
->   }
-> -#endif
->   
->   static const struct of_device_id samsung_pinctrl_dt_match[] = {
->   #ifdef CONFIG_PINCTRL_EXYNOS
+Maxime
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--fypj3jkhyguueo63
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYkuooAAoJEBx+YmzsjxAg+lsP/A1a8juoleGsXDyFH5l4/SR4
+rv4DYmZvloP9YvThiFm/1wtf+QRZrkX67Fg61xU58t7hSk1N1RId+G/jjbDwTW6z
+vzbeTMp1TqhuRwpMm1oywUQWgVG65bsLKc5yLZoNfhp8Ls9/oHU66lqDjcMT/ash
+KTzFWfM8BeEiuMoWAi9aFr9moNW2jfFkRlOgD39TH4zeSRMXUYXukFhFAhAtlrnL
+eF4y99pN5nWvoUUNImYVLR3qMqUrodlltdE6fmGOEFxZyXf1964sAJOGFnQZa180
+H8YQr0mQdZqwoXxo208x+aF9yCzfI305gcGOdTj8VF+nVEXn/0oknraStd2i5TlK
+KRt+0wsqMLekcISAFSCWlNUe/a3mAXLrqArLPAosUIh5P31HUFGTkqY4qHXyYe0n
+8faI7hD8uTW3uShHMXLaR2Y3GRz6dO0FK3IwoMFvCwyDS6nyb57GRLV/y1u22MX8
+euo1HzLRBT60JTQ54PDtzA6jm3ZH9yyt3APJAGtR9+ph7KnMoCQftfuCBoeHtvw7
+uV0KljVa8S06iQSjO76s2MpzQh1Xwems2OHBRjMqEnJzBZXqSxiovkv0pb//4MaK
+hGBw+PYr8bT/rhAUH3ElDs4n2LWVtPYXxVUTpDTB3bKwetYqNl0pMsxumnzzLTm/
++ye9RK1YvwviLuKnmZvG
+=kMRS
+-----END PGP SIGNATURE-----
+
+--fypj3jkhyguueo63--
