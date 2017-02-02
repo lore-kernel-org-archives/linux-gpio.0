@@ -1,72 +1,85 @@
-From: Joel Stanley <joel@jms.id.au>
-Subject: Re: [PATCH] gpio: aspeed: Remove dependence on GPIOF_* macros
-Date: Thu, 2 Feb 2017 16:03:56 +1030
-Message-ID: <CACPK8XcwRc__FscVSS9N3MOpyjigNFo4MiFQn0_qqxxE=q46oA@mail.gmail.com>
-References: <20170202042817.8033-1-andrew@aj.id.au>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: mark PM functions as __maybe_unused
+Date: Thu, 02 Feb 2017 07:57:19 +0100
+Message-ID: <8385d3c5-2da6-e39e-de8c-e10fde820e43@samsung.com>
+References: <CGME20170201161645epcas3p235bc144eb1f03127d707371f7cf963e1@epcas3p2.samsung.com>
+ <20170201161636.2109091-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35115 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750808AbdBBFeS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 00:34:18 -0500
-In-Reply-To: <20170202042817.8033-1-andrew@aj.id.au>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37769 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750808AbdBBG5Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 01:57:25 -0500
+In-reply-to: <20170201161636.2109091-1-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 2, 2017 at 2:58 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
-> 1736f75d35e47409ad776273133d0f558a4c8253 is a (v2) patch which had
-> unresolved review comments[1]. Address the comments by removing the use
-> of macros from the consumer header (this patch represents the diff
-> between v2 and v3[2]).
+Hi Arnd,
+
+On 2017-02-01 17:16, Arnd Bergmann wrote:
+> The rework of the suspend/resume handling uses the wrong #ifdef check, leading
+> to a build warning without CONFIG_PM_SLEEP:
 >
-> [1] https://lkml.org/lkml/2017/1/26/337
-> [2] https://lkml.org/lkml/2017/1/26/786
+> drivers/pinctrl/samsung/pinctrl-samsung.c:1142:12: error: 'samsung_pinctrl_resume' defined but not used [-Werror=unused-function]
+> drivers/pinctrl/samsung/pinctrl-samsung.c:1092:12: error: 'samsung_pinctrl_suspend' defined but not used [-Werror=unused-function]
 >
-> Fixes: 1736f75d35e4 ("gpio: aspeed: Add banks Y, Z, AA, AB and AC")
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Using a __maybe_unused annotation instead of the #ifdef is a simple way to
+> avoid this problem class.
+>
+> Fixes: 2b24efa8e5c5 ("pinctrl: samsung: Replace syscore ops with standard platform device pm_ops")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+Thanks for the fix!
 
-Cheers,
-
-Joel
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 > ---
+>   drivers/pinctrl/samsung/pinctrl-samsung.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
 >
-> Note: This should be applied to pinctrl/devel where the linked GPIO patches
-> have landed. See discussion at https://lkml.org/lkml/2017/2/1/390
->
->  drivers/gpio/gpio-aspeed.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-> index 6e4b278a82f1..fb16cc771c0d 100644
-> --- a/drivers/gpio/gpio-aspeed.c
-> +++ b/drivers/gpio/gpio-aspeed.c
-> @@ -15,7 +15,6 @@
->  #include <linux/io.h>
->  #include <linux/spinlock.h>
->  #include <linux/platform_device.h>
-> -#include <linux/gpio.h>
->  #include <linux/gpio/driver.h>
->  #include <linux/pinctrl/consumer.h>
->
-> @@ -259,10 +258,10 @@ static int aspeed_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
->         u32 val;
->
->         if (!have_input(gpio, offset))
-> -               return GPIOF_DIR_OUT;
-> +               return 0;
->
->         if (!have_output(gpio, offset))
-> -               return GPIOF_DIR_IN;
-> +               return 1;
->
->         spin_lock_irqsave(&gpio->lock, flags);
->
-> --
-> 2.9.3
->
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index d79eadad6c5f..d601b5303e73 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1083,13 +1083,12 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> -#ifdef CONFIG_PM
+>   /**
+>    * samsung_pinctrl_suspend - save pinctrl state for suspend
+>    *
+>    * Save data for all banks handled by this device.
+>    */
+> -static int samsung_pinctrl_suspend(struct device *dev)
+> +static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
+>   {
+>   	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
+>   	int i;
+> @@ -1139,7 +1138,7 @@ static int samsung_pinctrl_suspend(struct device *dev)
+>    * We don't bother doing anything complicated to avoid glitching lines since
+>    * we're called before pad retention is turned off.
+>    */
+> -static int samsung_pinctrl_resume(struct device *dev)
+> +static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
+>   {
+>   	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
+>   	int i;
+> @@ -1183,7 +1182,6 @@ static int samsung_pinctrl_resume(struct device *dev)
+>   
+>   	return 0;
+>   }
+> -#endif
+>   
+>   static const struct of_device_id samsung_pinctrl_dt_match[] = {
+>   #ifdef CONFIG_PINCTRL_EXYNOS
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
