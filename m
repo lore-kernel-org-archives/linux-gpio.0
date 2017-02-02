@@ -1,78 +1,43 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH] gpio: mcp23s08: Select REGMAP/REGMAP_I2C to fix build
- error
-Date: Thu, 2 Feb 2017 14:56:35 +0100
-Message-ID: <20170202135634.p7lebviiadcfagvy@earth>
-References: <20170202101306.24976-1-axel.lin@ingics.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] pinctrl: baytrail: Add missing spinlock usage in byt_gpio_irq_handler
+Date: Thu, 2 Feb 2017 15:48:41 +0100
+Message-ID: <CACRpkdb6HVr3azhwJmF3bA=6TazRP4mfhA5oNQ_Z7vA53b1PzQ@mail.gmail.com>
+References: <20170130113528.17838-1-alexander.stein@systec-electronic.com>
+ <20170130115149.GM17297@lahna.fi.intel.com> <1572471.RPgeE8YS6g@ws-stein>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d3avsknhrbelroam"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:40544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750851AbdBBN4m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 2 Feb 2017 08:56:42 -0500
-Content-Disposition: inline
-In-Reply-To: <20170202101306.24976-1-axel.lin@ingics.com>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:36302 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751045AbdBBOsr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 09:48:47 -0500
+Received: by mail-io0-f180.google.com with SMTP id j13so182935888iod.3
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Feb 2017 06:48:47 -0800 (PST)
+In-Reply-To: <1572471.RPgeE8YS6g@ws-stein>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Wed, Feb 1, 2017 at 8:47 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
+> On Monday 30 January 2017 13:51:49, Mika Westerberg wrote:
+>> On Mon, Jan 30, 2017 at 12:35:28PM +0100, Alexander Stein wrote:
+>> > According to VLI64 Intel Atom E3800 Specification Update (#329901)
+>> > concurrent read accesses may result in returning 0xffffffff and write
+>> > accesses may be dropped silently.
+>> > To workaround all accesses must be protected by locks.
+>> >
+>> > Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+>>
+>> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>>
+>> Should probably go to stable as well.
+>
+> Sure, but I don't know which stable kernels this should go in.
 
---d3avsknhrbelroam
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+More often than not, I *think* Greg will figure that out by:
+"does it apply?" "then yes"
 
-Hi,
-
-On Thu, Feb 02, 2017 at 06:13:06PM +0800, Axel Lin wrote:
-> This driver now using devm_regmap_init/devm_regmap_init_i2c, so it needs
-> to select REGMAP/REGMAP_I2C accordingly.
->=20
-> Fixes: ("3d84fdb3f0b5 gpio: mcp23s08: use regmap")
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
->  drivers/gpio/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 2d77392..28e6219 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1213,6 +1213,8 @@ config GPIO_MCP23S08
->  	tristate "Microchip MCP23xxx I/O expander"
->  	depends on OF_GPIO
->  	select GPIOLIB_IRQCHIP
-> +	select REGMAP_I2C if I2C
-> +	select REGMAP if SPI_MASTER
->  	help
->  	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
->  	  I/O expanders.
-
-Acked-By: Sebastian Reichel <sre@kernel.org>
-
--- Sebastian
-
---d3avsknhrbelroam
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAliTOo8ACgkQ2O7X88g7
-+pqOVg/5AQcMca4698UAWl0kH+EvRZZ/tMN1P0y1GDILid4RDiIcuJdQRY5cD9RJ
-M/QQ9J/OL6FntIQcehutuhCIRfFpZm6tFPWoar5mHXaq4seLMC8bpSOuyQ/pWZNL
-Be+0ayNo1vhX5xyk9sM+2zOR7O60jVeX+xOjZTGJh7B0CEqXGGvoRUoGpitknyjH
-BHLgg2m1t8SEzDq/tHg3ZLAhV0W2pce1f6mS1oVtObXl6pYu9zSqj75RS0n59B+/
-2ysHw4V1vXRh0av96gWtbDa9134EwyOR8elYZHegqJurRQBmHMLNB6Omn+p1WZRt
-HOgsRkPbKsY9OQGG87wAJHI54b1u9LOtcieHdnWO9Q8leJrCQuA1SdpC9OlGdjqm
-NaktGZoNLLMXXy9Hn2bKvOC8UeAs91YYKQwvKmVJ8N4K4PKsWattsXMut9Nq5Uxq
-vlQWVWqz9fV4siuGKt1MhsQiooxyCi6BzlluQw1JjW+nWN6M2Pmk3w/EyQg7H/dl
-zMEdOkp2Ez5hqyUaJtvzFTufV/FUHqH82+s7OK50dGK2OHvSl1kRYGSEeCjGHTbf
-581bUMofyNChy0F5RjDOCHW9eQTNPXUmDJD/vJap9PArXsxwKCRkJqiEppak5MPE
-+eRR7QBOGkEJknBMTMMOgMAvxbjHC9Vgwy7ZaU08UYOssv1lklw=
-=2nfT
------END PGP SIGNATURE-----
-
---d3avsknhrbelroam--
+Yours,
+Linus Walleij
