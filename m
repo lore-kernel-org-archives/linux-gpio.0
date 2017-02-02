@@ -1,77 +1,38 @@
-From: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: Re: [PATCH v3 08/10] dmaengine: sun6i: allow build on
-	ARM64 platforms (sun50i)
-Date: Thu, 02 Feb 2017 23:50:42 +0800
-Message-ID: <5605761486050642@web3m.yandex.ru>
-References: <20170129023331.62106-1-icenowy@aosc.xyz>
- <20170129023331.62106-9-icenowy@aosc.xyz>
- <20170130164210.GD19244@localhost>
- <3729521485800635@web23g.yandex.ru> <20170131033236.GH19244@localhost>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/7] soc: smasung: pmu: Add register defines for pad
+ retention control
+Date: Thu, 2 Feb 2017 20:01:25 +0200
+Message-ID: <20170202180125.vhastfic3shs3wdl@kozik-lap>
+References: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170130123837eucas1p1056a57f23b1e3bf089e5bc55bb2cf2d4@eucas1p1.samsung.com>
+ <1485779908-32147-2-git-send-email-m.szyprowski@samsung.com>
+ <20170130194329.duudcv5oxu2q2td4@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20170131033236.GH19244@localhost>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170130194329.duudcv5oxu2q2td4@kozik-lap>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-CgozMS4wMS4yMDE3LCAxMTozMiwgIlZpbm9kIEtvdWwiIDx2aW5vZC5rb3VsQGludGVsLmNvbT46
-Cj4gT24gVHVlLCBKYW4gMzEsIDIwMTcgYXQgMDI6MjM6NTVBTSArMDgwMCwgSWNlbm93eSBaaGVu
-ZyB3cm90ZToKPj4gwqAzMS4wMS4yMDE3LCAwMDo0MSwgIlZpbm9kIEtvdWwiIDx2aW5vZC5rb3Vs
-QGludGVsLmNvbT46Cj4+IMKgPiBPbiBTdW4sIEphbiAyOSwgMjAxNyBhdCAxMDozMzoyOUFNICsw
-ODAwLCBJY2Vub3d5IFpoZW5nIHdyb3RlOgo+PiDCoD4+IMKgQXMgNjQtYml0IEFsbHdpbm5lciBI
-NSBTb0MgaGFzIHRoZSBzYW1lIERNQSBlbmdpbmUgd2l0aCBIMywgdGhlIERNQQo+PiDCoD4+IMKg
-ZHJpdmVyIHNob3VsZCBiZSBhbGxvd2VkIHRvIGJlIGJ1aWx0IGZvciBBUk02NCwgaW4gb3JkZXIg
-dG8gbWFrZSBpdCB3b3JrIG9uIEg1Lgo+PiDCoD4+Cj4+IMKgPj4gwqBTaWduZWQtb2ZmLWJ5OiBJ
-Y2Vub3d5IFpoZW5nIDxpY2Vub3d5QGFvc2MueHl6Pgo+PiDCoD4+IMKgQWNrZWQtYnk6IE1heGlt
-ZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAZnJlZS1lbGVjdHJvbnMuY29tPgo+PiDCoD4+IMKgQWNr
-ZWQtYnk6IENoZW4tWXUgVHNhaSA8d2Vuc0Bjc2llLm9yZz4KPj4gwqA+PiDCoC0tLQo+PiDCoD4+
-IMKgUGF0Y2ggaW50cm9kdWNlZCBiZXR3ZWVuIHYxIGFuZCB2MiwgdG8gc2F0aXNmeSB0aGUgbmV3
-bHkgYWRkZWQgSDMvSDUgYXVkaW8KPj4gwqA+PiDCoGNvZGVjIHN1cHBvcnQuCj4+IMKgPj4KPj4g
-wqA+PiDCoMKgZHJpdmVycy9kbWEvS2NvbmZpZyB8IDIgKy0KPj4gwqA+PiDCoMKgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4+IMKgPj4KPj4gwqA+PiDCoGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2RtYS9LY29uZmlnIGIvZHJpdmVycy9kbWEvS2NvbmZpZwo+PiDC
-oD4+IMKgaW5kZXggMGQ2YTk2ZWU5ZmM3Li5kMDFkNTk4MTJjZjMgMTAwNjQ0Cj4+IMKgPj4gwqAt
-LS0gYS9kcml2ZXJzL2RtYS9LY29uZmlnCj4+IMKgPj4gwqArKysgYi9kcml2ZXJzL2RtYS9LY29u
-ZmlnCj4+IMKgPj4gwqBAQCAtMTU3LDcgKzE1Nyw3IEBAIGNvbmZpZyBETUFfU1VONEkKPj4gwqA+
-Pgo+PiDCoD4+IMKgwqBjb25maWcgRE1BX1NVTjZJCj4+IMKgPj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqB0cmlzdGF0ZSAiQWxsd2lubmVyIEEzMSBTb0NzIERNQSBzdXBwb3J0Igo+PiDCoD4+IMKgLSBk
-ZXBlbmRzIG9uIE1BQ0hfU1VONkkgfHwgTUFDSF9TVU44SSB8fCBDT01QSUxFX1RFU1QKPj4gwqA+
-PiDCoCsgZGVwZW5kcyBvbiBNQUNIX1NVTjZJIHx8IE1BQ0hfU1VOOEkgfHwgKEFSTTY0ICYmIEFS
-Q0hfU1VOWEkpIHx8IENPTVBJTEVfVEVTVAo+PiDCoD4KPj4gwqA+IERvIHdlIHJlYWxseSBuZWVk
-IEFSTTY0IGhlcmU/IGFsc28gbG9va2luZyBhdCBvdGhlcnMgSSB3b25kZXIgd2h5IGlzbid0Cj4+
-IMKgPiB0aGlzIE1BQ0hfU1VOWEkuLi4/Cj4+Cj4+IMKgWW91IG1lYW4gZGlyZWN0bHkgcGxhY2Ug
-IkFSQ0hfU1VOWEkiIGhlcmU/Cj4+Cj4+IMKgU1VONEkvU1VONUkvU1VON0kgZG8gbm90IHVzZSBE
-TUFfU1VONkksIHRoZXkgaGF2ZSBkaWZmZXJlbnQgRE1BCj4+IMKgY29udHJvbGxlcnMuCj4KPiBO
-byBteSBxdWVzdGlvbiB3YXMgZGlmZmVyZW50Li4KPgo+IFdlIGhhdmUgTUFDSF9TVU54eCBmb3Ig
-NkkgYW5kIDhJLCBzbyB3aHkgZG8gd2UgaGF2ZSBBUkNIX1NVTlhJIGFuZCBpZiBpdHMgYW4KPiBh
-cmNoIFNVTlhJLCBYIG1lYW5zIGl0IGNhbiB0YWtlIGFueSB2YWx1ZS4uLgo+Cj4gVGhpcyBzY2hl
-bWEgbG9va3MgcHJldHR5IGNvbmZ1c2luZyB3aGlsZSByZWFkaW5nCgpJdCdzIGEgd2VpcmQgc2No
-ZW1hIG1hZGUgYnkgdGhlIHZlbmRvci4KCj4gQWxzbyBJIGhhZCBhIHF1ZXN0aW9uIG9uIHVzYWdl
-IG9mIEFSTTY0Li4KCkZvciBBUk02NCwgd2UgaGF2ZSBubyBNQUNIX1NVTjUwSSwgYXMgdGhlIG9u
-bHkgQVJNNjQtY2FwYWJsZSBzZXJpZXMgaW4gU1VOWEkKaXMgU1VONTBJLiBTbyBJIHVzZSAoQVJN
-NjQgJiYgQVJDSF9TVU5YSSkgaGVyZSB0byByZXByZXNlbnQgIk1BQ0hfU1VONTBJIi4KClAuUy4g
-QWxsd2lubmVyIGhhdmUgc3VuNGkoQTEwKSwgc3VuNWkoQTEzL0ExMHMvR1I4KSwgc3VuNmkoQTMx
-L0EzMXMpLCBzdW43aShBMjApLApzdW44aShBMjMvQTMzL0gzL1Yzcy9BODNUKSwgc3VuOWkoQTgw
-KSwgc3VuNTBpKEE2NC9INSkuIEZyb20gdGhlIHN1bjZpCmdlbmVyYXRpb24sIHRoaW5ncyBjaGFu
-Z2VkIGEgbG90OyBob3dldmVyLCBzdW43aSBpcyBhIGRlcml2YXRpb24gb2Ygc3VuNGkuIEluIFUt
-Qm9vdCwKZXZlcnkgU29DIGFmdGVyIHN1bjZpIChleGNlcHQgc3VuN2kpIGhhdmUgYW4gb3B0aW9u
-IENPTkZJR19HRU5fU1VONkkuCgpUaGlzIERNQWVuZ2luZSBkcml2ZXIgaXMgZm9yIHRoZSBuZXcg
-Z2VuZXJhdGlvbiBETUEgZW5naW5lLgoKU1VONEksIFNVTjVJIGFuZCBTVU43SSBoYXZlIG5vIGhh
-cmR3YXJlIHRoYXQgdXNlcyBzdWNoIGEgRE1BZW5naW5lLCBzbyBoZXJlJ3MKTUFDSF9TVU42SSB8
-fCBNQUNIX1NVTjhJIHx8IChBUk02NCAmJiBBUkNIX1NVTlhJKSwgdG8gcHJldmVudCBpdCB0byBi
-ZSBidWlsdAppbiBhIGtlcm5lbCB0aGF0IGRvIG5vdCBzdXBwb3J0IGFueSBzeXN0ZW0gd2l0aCBz
-dWNoIGEgRE1BZW5naW5lLgoKPgo+IC0tCj4gflZpbm9kCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2
-ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxt
-YW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+On Mon, Jan 30, 2017 at 09:43:29PM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Jan 30, 2017 at 01:38:22PM +0100, Marek Szyprowski wrote:
+> > Add PMU defines related to pad retention control. Will be later used
+> > by the Exynos pin controller driver.
+> > 
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >  include/linux/soc/samsung/exynos-regs-pmu.h | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> 
+> Thanks Marek.
+>
+
+I applied this one (with fix of typo) and I will provide a stable tag
+with the header.
+
+Best regards,
+Krzysztof
