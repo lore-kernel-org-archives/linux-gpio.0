@@ -1,41 +1,47 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] gpio: mcp23s08: Select REGMAP/REGMAP_I2C to fix build error
-Date: Thu,  2 Feb 2017 18:13:06 +0800
-Message-ID: <20170202101306.24976-1-axel.lin@ingics.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: Rename devm_get_gpiod_from_child()
+Date: Thu, 2 Feb 2017 11:53:17 +0100
+Message-ID: <CACRpkdbVFsKvUWisrxpSWu=C2c-BNMGcaaH0MfNfD3eY0_VNEA@mail.gmail.com>
+References: <1485790909-2915-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35308 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751002AbdBBKNV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 05:13:21 -0500
-Received: by mail-pg0-f66.google.com with SMTP id 204so1445968pge.2
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Feb 2017 02:13:20 -0800 (PST)
+Received: from mail-it0-f41.google.com ([209.85.214.41]:36605 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750984AbdBBKxT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 05:53:19 -0500
+Received: by mail-it0-f41.google.com with SMTP id c7so36700879itd.1
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Feb 2017 02:53:19 -0800 (PST)
+In-Reply-To: <1485790909-2915-2-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>
 
-This driver now using devm_regmap_init/devm_regmap_init_i2c, so it needs
-to select REGMAP/REGMAP_I2C accordingly.
+On Mon, Jan 30, 2017 at 4:41 PM, Boris Brezillon
+<boris.brezillon@free-electrons.com> wrote:
 
-Fixes: ("3d84fdb3f0b5 gpio: mcp23s08: use regmap")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/gpio/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> Rename devm_get_gpiod_from_child() into
+> devm_fwnode_get_gpiod_from_child() to reflect the fact that this
+> function is operating on a fwnode object.
+>
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 2d77392..28e6219 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1213,6 +1213,8 @@ config GPIO_MCP23S08
- 	tristate "Microchip MCP23xxx I/O expander"
- 	depends on OF_GPIO
- 	select GPIOLIB_IRQCHIP
-+	select REGMAP_I2C if I2C
-+	select REGMAP if SPI_MASTER
- 	help
- 	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
- 	  I/O expanders.
--- 
-2.9.3
+All right! So we settled we're gonna merge this and the other patch and
+we have the necessary ACKs.
 
+This is unfortunately not applying because I have a bunch of other patches
+touching the same files (that's why I think it's a good opportunity to
+rename it now, as mentioned IIRC).
+
+Could you rebase this on the following branch:
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-gpiod-flags
+
+Then I will apply it on top of that immutable branch and pull it into the
+devel branch of gpio so that we get it in and also have an immutable
+branch with all changes if some other subsystem maintainer needs it
+because of clashes.
+
+Yours,
+Linus Walleij
