@@ -1,88 +1,66 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] pinctrl: sunxi: make sun5i explicitly non-modular
-Date: Thu, 2 Feb 2017 15:17:40 -0500
-Message-ID: <20170202201740.9134-1-paul.gortmaker@windriver.com>
+From: Hoan Tran <hotran@apm.com>
+Subject: Re: [PATCH] gpio: dwapb: Add support for next generation of X-Gene SoC
+Date: Thu, 2 Feb 2017 17:18:30 -0800
+Message-ID: <CAFHUOYzxPGB4dDE72bq6=1S+NKVy7O5uCfshaZbZAr8w22PTKA@mail.gmail.com>
+References: <1485891838-27093-1-git-send-email-hotran@apm.com> <CAHp75VfA6rzobgyBWkuzzh0YVB29R=oid6AVMgt8h1seO_dLAQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:46614 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751298AbdBBUSc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 15:18:32 -0500
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:35406 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751570AbdBCBSb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Feb 2017 20:18:31 -0500
+Received: by mail-oi0-f53.google.com with SMTP id j15so3151682oih.2
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Feb 2017 17:18:31 -0800 (PST)
+In-Reply-To: <CAHp75VfA6rzobgyBWkuzzh0YVB29R=oid6AVMgt8h1seO_dLAQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
 
-We had all these corrected in commit 0c8c6ba00cbf ("pinctrl: sunxi:
-make bool drivers explicitly non-modular") but this new one recently
-crept in.
+Resend with plain text mode.
 
-The Kconfig currently controlling compilation of this code is:
+Hi Andy,
 
-   drivers/pinctrl/sunxi/Kconfig:config PINCTRL_SUN5I
-   drivers/pinctrl/sunxi/Kconfig:  def_bool MACH_SUN5I
+On Thu, Feb 2, 2017 at 11:47 AM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Jan 31, 2017 at 9:43 PM, Hoan Tran <hotran@apm.com> wrote:
+>> Next generation of X-Gene SoC's GPIO hardware register map is very
+>> similar to DW GPIO. It only differs by a few register addresses.
+>> This patch modifies DW GPIO driver to accommodate the difference
+>> in a few register addresses.
+>
+>> +#define GPIO_REG_OFFSET_V2     1
+>> +#define GPIO_INTMASK_V2                0x44
+>> +#define GPIO_INTTYPE_LEVEL_V2  0x34
+>> +#define GPIO_INT_POLARITY_V2   0x38
+>> +#define GPIO_INTSTATUS_V2      0x3c
+>> +#define GPIO_PORTA_EOI_V2      0x40
+>> +
+>
+>>  static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
+>>  {
+>>         struct gpio_chip *gc    = &gpio->ports[0].gc;
+>>         void __iomem *reg_base  = gpio->regs;
+>>
+>> -       return gc->read_reg(reg_base + offset);
+>> +       return gc->read_reg(reg_base + gpio_reg_convert(gpio, offset));
+>
+> And what prevents us to introduce special read_reg for that registers?
 
-...meaning that it currently is not being built as a module by anyone.
+How could we introduce a special read_reg here? If so, we also have to
+have another special write_reg.
 
-Lets remove the couple traces of modular infrastructure use, so that
-when reading the driver there is no doubt it is builtin-only.
+> Also what about to convert to regmap API?
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Could you guide more how to use regmap in this case? The
+gpio_reg_convert() is also used to send the GPIO_PORTA_EOI and
+GPIO_INTMASK register offsets to irq_chip.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+Thanks
+Hoan
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/pinctrl/sunxi/pinctrl-sun5i.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun5i.c b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-index c8a94323ce8b..7e8204482ecf 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun5i.c
-@@ -4,12 +4,12 @@
-  * Copyright (C) 2014-2016 Maxime Ripard <maxime.ripard@free-electrons.com>
-  * Copyright (C) 2016 Mylene Josserand <mylene.josserand@free-electrons.com>
-  *
--g * This file is licensed under the terms of the GNU General Public
-+ * This file is licensed under the terms of the GNU General Public
-  * License version 2.  This program is licensed "as is" without any
-  * warranty of any kind, whether express or implied.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-@@ -740,7 +740,6 @@ static const struct of_device_id sun5i_pinctrl_match[] = {
- 	},
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, sun5i_pinctrl_match);
- 
- static struct platform_driver sun5i_pinctrl_driver = {
- 	.probe	= sun5i_pinctrl_probe,
-@@ -749,8 +748,4 @@ static struct platform_driver sun5i_pinctrl_driver = {
- 		.of_match_table	= sun5i_pinctrl_match,
- 	},
- };
--module_platform_driver(sun5i_pinctrl_driver);
--
--MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com");
--MODULE_DESCRIPTION("Allwinner sun5i pinctrl driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(sun5i_pinctrl_driver);
--- 
-2.11.0
-
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
