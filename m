@@ -1,70 +1,56 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 04/14] GPIO: Add gpio-ingenic driver
-Date: Fri, 3 Feb 2017 14:58:50 +0100
-Message-ID: <CACRpkdZNodsRJ33wTJGgrAJpSs=_bXa0yv5ate_7XwjKR0xEnw@mail.gmail.com>
-References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
- <20170125185207.23902-1-paul@crapouillou.net> <20170125185207.23902-5-paul@crapouillou.net>
- <CACRpkdbcO+1c7izYpn0sb1mkE1ORFETMq=xtzVi1hKbJz0EWfw@mail.gmail.com> <699f0c63e95ecdafe6946fdcdbb97a37@mail.crapouillou.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/7] Implement generic regulator constraints parsing for
+ ACPI and OF
+Date: Sat, 4 Feb 2017 17:08:28 +0100
+Message-ID: <20170204160828.e5dqpqg5g3cd7rmy@sirena.org.uk>
+References: <20170125124911.dxveow7bo3zw5jcc@sirena.org.uk>
+ <8e10714e-1795-d5df-630e-8303bf36abfd@redhat.com>
+ <20170126003342.GF36291@dtor-ws>
+ <3026976.Qjk9AeF3Vr@aspire.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <699f0c63e95ecdafe6946fdcdbb97a37-p8hskv8pF7lEPksTRSfcJOTW4wlIGRCZ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maarten ter Huurne <maarten-Ph2Y2OKCxY1M656bX5wj8A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Paul Burton <paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-p
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nwc5loy6626yupv6"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <3026976.Qjk9AeF3Vr@aspire.rjw.lan>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Al Stone <ahs3@redhat.com>, Mark Rutland <mark.rutland@arm.com>, Furquan Shaikh <furquan@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>, Len Brown <lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, Sathyanarayana Nujella <sathyanarayana.nujella@intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 31, 2017 at 4:29 PM, Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org> wrote=
-:
-> Le 2017-01-31 15:20, Linus Walleij a =C3=A9crit :
->
->>> + of_property_read_u32(dev->of_node, "base", &jzgc->gc.base);
->>
->>
->> Remove this. Dynamic allocation should be fine, if you're using the
->> new userspace ABI like tools/gpio/* or libgpiod and only that and
->> in-kernel
->> consumers, dynamic numbers are just fine.
->
->
-> The problem is that the QI_LB60 board code still have a lot of references
-> to global GPIO numbers. Just grep for JZ_GPIO_PORT in
-> arch/mips/jz4740/board-qi_lb60.c to see what I mean...
 
-OK I understand we might need a compromise here to get the code moving.
+--nwc5loy6626yupv6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-But we need to keep it out of the device tree.
+On Thu, Jan 26, 2017 at 11:35:55AM +0100, Rafael J. Wysocki wrote:
 
-I think it's better to put a base table relative to the memory base in
-the driver in that case:
+> but that doesn't work if drivers expect to be able to control regulators directly
+> (which BTW isn't an good idea overall IMO, because that may need to be done
+> differently on different platforms even without ACPI AFAICS).
 
-unsigned int gpio_global_base;
+We've really not encountered anything that has any issues here outside
+of what's supported in the constraints already (basically what voltages
+can be set and if the supply can be turned on and off).  I'd be pretty
+surprised if we did TBH, it's hard to do something radically different
+with a single piece of silicon which is the abstraction level we tend to
+be operating at if we are controlling regulators.  AFAICT a higher level
+of abstraction is generally going to go along with physically hiding the
+regulators even in a DT world.
 
-switch (memory_base_address) {
-case 0x41000000:
-    gpio_global_base =3D 0x00;
-    break;
-case 0x42000000:
-    gpio_global_base =3D 0x20;
+--nwc5loy6626yupv6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(...)
+-----BEGIN PGP SIGNATURE-----
 
-etc. (Those are not your base addresses but you get the idea).
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliV/HgACgkQJNaLcl1U
+h9Cucgf9GkPk+LlttlegDpiUQeMql9oKwPjs56WKBkaww6NCQvdzmo0lxIEgO9bn
+OHmOcfLtNax8Yy9UAdK+1DO1yicNAf1QW7VAhJO+6Q4kGu6dC+1Z+G/848BFN9ii
+Mm1C/swxGekI1NhSckCUuk4QXnqApLv9XdeZ7UvX/6LY6hCQpHAGxxvBuUT/NEOe
+LNNRm95TMRAJYYuZmk0bkR9EKUS4CKgGacgj2VAhQtN5K09vZTqRIwdnkIdRzEOh
+QhHN/hnEDZbiR4OTr6/wVGEYEKrR6WYPPA9l9+MhR/GpOI2ZNZPRJcHAjvbqxeKX
+vTP/LZT1O6ehNve1Uza3l37/sPZeMA==
+=L5IL
+-----END PGP SIGNATURE-----
 
-Include a few comments like:
-
-/*
- * DO NOT EXPAND THIS: FOR BACKWARD GPIO NUMBERSPACE
- * COMPATIBIBILITY ONLY: WORK TO TRANSITION CONSUMERS TO
- * USE THE GPIO DESCRIPTOR API IN <linux/gpio/consumer.h> INSTEAD.
- */
-
-Then I'll be happy :)
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--nwc5loy6626yupv6--
