@@ -1,34 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/2] gpio: Add the devm_fwnode_get_index_gpiod_from_child()
- helper
-Date: Sat, 4 Feb 2017 21:29:50 +0100
-Message-ID: <CACRpkdYaLy8dNYEYKCocXf6jc0XPumQ6KoEnSkwaWvUs3m9Djw@mail.gmail.com>
-References: <1486043591-6278-1-git-send-email-boris.brezillon@free-electrons.com>
- <1486043591-6278-3-git-send-email-boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] gpio: aspeed: Remove dependence on GPIOF_* macros
+Date: Sat, 4 Feb 2017 21:35:55 +0100
+Message-ID: <CACRpkdbbXGuE2u3H0W7XLmaq1VLNnVrGCZYgCC=3_odkifvaaQ@mail.gmail.com>
+References: <20170202042817.8033-1-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1486043591-6278-3-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f43.google.com ([209.85.214.43]:35287 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750952AbdBDUgL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 4 Feb 2017 15:36:11 -0500
+Received: by mail-it0-f43.google.com with SMTP id 203so33132926ith.0
+        for <linux-gpio@vger.kernel.org>; Sat, 04 Feb 2017 12:35:56 -0800 (PST)
+In-Reply-To: <20170202042817.8033-1-andrew@aj.id.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Joel Stanley <joel@jms.id.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 
-On Thu, Feb 2, 2017 at 2:53 PM, Boris Brezillon
-<boris.brezillon@free-electrons.com> wrote:
+On Thu, Feb 2, 2017 at 5:28 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> devm_fwnode_get_gpiod_from_child() currently allows GPIO users to
-> request a GPIO that is defined in a child fwnode instead of directly in
-> the device fwnode.
-> Extend this API by adding the devm_fwnode_get_index_gpiod_from_child()
-> helper which does the same except you can also specify an index in case
-> the 'xx-gpios' property describe several GPIOs.
+> 1736f75d35e47409ad776273133d0f558a4c8253 is a (v2) patch which had
+> unresolved review comments[1]. Address the comments by removing the use
+> of macros from the consumer header (this patch represents the diff
+> between v2 and v3[2]).
 >
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> [1] https://lkml.org/lkml/2017/1/26/337
+> [2] https://lkml.org/lkml/2017/1/26/786
+>
+> Fixes: 1736f75d35e4 ("gpio: aspeed: Add banks Y, Z, AA, AB and AC")
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-Patch applied.
+Patch applied with Joel's ACK.
 
-Both are stacked on ib-gpiod-flags for now, going into test compile.
+Thank you for just tirelessly fixing my mistakes, I owe you one.
 
 Yours,
 Linus Walleij
