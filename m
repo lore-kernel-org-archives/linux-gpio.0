@@ -1,32 +1,51 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 08/10] dmaengine: sun6i: allow build on
- ARM64 platforms (sun50i)
-Date: Sun, 5 Feb 2017 12:49:44 +0530
-Message-ID: <20170205071944.GW19244@localhost>
-References: <20170129023331.62106-1-icenowy@aosc.xyz>
- <20170129023331.62106-9-icenowy@aosc.xyz>
-Reply-To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next v2] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
+Date: Sun,  5 Feb 2017 15:58:49 +0000
+Message-ID: <20170205155849.4362-1-weiyj.lk@gmail.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDLNNTP63EBBB5VD3PCAKGQEG5IBLTY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170129023331.62106-9-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34684 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751344AbdBEP64 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Feb 2017 10:58:56 -0500
+In-Reply-To: <20170125140321.23911-1-weiyj.lk@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Sun, Jan 29, 2017 at 10:33:29AM +0800, Icenowy Zheng wrote:
-> As 64-bit Allwinner H5 SoC has the same DMA engine with H3, the DMA
-> driver should be allowed to be built for ARM64, in order to make it work on H5.
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-Applied, thanks
+In case of error, the function devm_ioremap() returns NULL pointer not
+ERR_PTR(). Fix by using devm_ioremap_resource instead of devm_ioremap.
 
--- 
-~Vinod
+Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple
+IORESOURCE_MEM for one pin-bank")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: use devm_ioremap_resource instead of devm_ioremap
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index d79eada..6dec061 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -988,10 +988,9 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+ 
+ 	for (i = 0; i < ctrl->nr_ext_resources + 1; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
+-						resource_size(res));
++		virt_base[i] = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(virt_base[i]))
+-			return ERR_PTR(-EIO);
++			return ERR_CAST(virt_base[i]);
+ 	}
+ 
+ 	bank = d->pin_banks;
+
