@@ -1,38 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: mark PM functions as __maybe_unused
-Date: Mon, 6 Feb 2017 11:04:52 +0100
-Message-ID: <CACRpkdYBL_4caeSkD4aXqGCJ0XF=S_pQ24J8pBPCacDyzdow0g@mail.gmail.com>
-References: <20170201161636.2109091-1-arnd@arndb.de>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: Merge A31s pinctrl driver with A31
+Date: Mon, 6 Feb 2017 11:07:33 +0100
+Message-ID: <CACRpkdZUOszrqbPq4Ak+pUeYQB2qBnSrE2qWMkoNzvw+E74maw@mail.gmail.com>
+References: <20170201162547.24232-1-wens@csie.org> <20170202081332.okjxo4ogm2kp3abh@lukather>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:36503 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750950AbdBFKEy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 05:04:54 -0500
-Received: by mail-io0-f169.google.com with SMTP id j13so61783023iod.3
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 02:04:54 -0800 (PST)
-In-Reply-To: <20170201161636.2109091-1-arnd@arndb.de>
+Received: from mail-io0-f175.google.com ([209.85.223.175]:34596 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbdBFKHf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 05:07:35 -0500
+Received: by mail-io0-f175.google.com with SMTP id l66so61938623ioi.1
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 02:07:34 -0800 (PST)
+In-Reply-To: <20170202081332.okjxo4ogm2kp3abh@lukather>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Feb 1, 2017 at 5:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, Feb 2, 2017 at 9:13 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Thu, Feb 02, 2017 at 12:25:45AM +0800, Chen-Yu Tsai wrote:
+>> Hi everyone,
+>>
+>> This series merges support for the A31s' pin controller into the A31
+>> driver, using the new sunxi variants support code. The A31s is a trimmed
+>> down version of the A31, with some hardware blocks removed, and some
+>> pin functions or pins removed. Thus it is easy to support the A31s
+>> using the A31 driver by marking the extra pins/functions as A31 only.
+>>
+>> Patch 1 does exactly this.
+>>
+>> Patch 2 removes the original A31s driver, which is now redundant.
+>>
+>> I opted not to rename sun6i-a31 to sun6i in various places.
+>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-> The rework of the suspend/resume handling uses the wrong #ifdef check, leading
-> to a build warning without CONFIG_PM_SLEEP:
->
-> drivers/pinctrl/samsung/pinctrl-samsung.c:1142:12: error: 'samsung_pinctrl_resume' defined but not used [-Werror=unused-function]
-> drivers/pinctrl/samsung/pinctrl-samsung.c:1092:12: error: 'samsung_pinctrl_suspend' defined but not used [-Werror=unused-function]
->
-> Using a __maybe_unused annotation instead of the #ifdef is a simple way to
-> avoid this problem class.
->
-> Fixes: 2b24efa8e5c5 ("pinctrl: samsung: Replace syscore ops with standard platform device pm_ops")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Could you guys make a patch either adding these drivers as
+commonly maintained by you two in MAINTAINERS?
 
-Patch applied with Marek's ACK.
+It is commonly maintained right?
+
+Or if you prefer, just list the pinctrl dir under the Allwinner
+SoC support entry?
 
 Yours,
 Linus Walleij
