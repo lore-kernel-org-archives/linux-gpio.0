@@ -1,36 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Add GPIO support for the ACCES PCI-IDIO-16
-Date: Mon, 6 Feb 2017 11:01:51 +0100
-Message-ID: <CACRpkdYFvxaKstXTe0C=1szs5uips7Z9TSDLyrHzN4xQUppyZQ@mail.gmail.com>
-References: <20170201203755.GA5856@sophia>
+Subject: Re: [PATCH] pinctrl: samsung: mark PM functions as __maybe_unused
+Date: Mon, 6 Feb 2017 11:04:52 +0100
+Message-ID: <CACRpkdYBL_4caeSkD4aXqGCJ0XF=S_pQ24J8pBPCacDyzdow0g@mail.gmail.com>
+References: <20170201161636.2109091-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:34600 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751515AbdBFKBw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 05:01:52 -0500
-Received: by mail-io0-f182.google.com with SMTP id l66so61845987ioi.1
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 02:01:52 -0800 (PST)
-In-Reply-To: <20170201203755.GA5856@sophia>
+Received: from mail-io0-f169.google.com ([209.85.223.169]:36503 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbdBFKEy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 05:04:54 -0500
+Received: by mail-io0-f169.google.com with SMTP id j13so61783023iod.3
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 02:04:54 -0800 (PST)
+In-Reply-To: <20170201161636.2109091-1-arnd@arndb.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Feb 1, 2017 at 9:37 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
+On Wed, Feb 1, 2017 at 5:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> The ACCES PCI-IDIO-16 device provides 32 lines of digital I/O (16 lines
-> of optically-isolated digital inputs for AC and DC control signals, and
-> 16 lines of solid state switch digital outputs). An interrupt is
-> generated when any of the inputs change state (low to high or high to
-> low). Input filter control is not supported by this driver, and input
-> filters are deactivated by this driver.
+> The rework of the suspend/resume handling uses the wrong #ifdef check, leading
+> to a build warning without CONFIG_PM_SLEEP:
 >
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> drivers/pinctrl/samsung/pinctrl-samsung.c:1142:12: error: 'samsung_pinctrl_resume' defined but not used [-Werror=unused-function]
+> drivers/pinctrl/samsung/pinctrl-samsung.c:1092:12: error: 'samsung_pinctrl_suspend' defined but not used [-Werror=unused-function]
+>
+> Using a __maybe_unused annotation instead of the #ifdef is a simple way to
+> avoid this problem class.
+>
+> Fixes: 2b24efa8e5c5 ("pinctrl: samsung: Replace syscore ops with standard platform device pm_ops")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Patch applied.
+Patch applied with Marek's ACK.
 
 Yours,
 Linus Walleij
