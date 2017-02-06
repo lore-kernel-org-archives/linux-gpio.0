@@ -1,18 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/8] pinctrl: stm32: Add STM32H743 MCU support
-Date: Mon, 6 Feb 2017 09:40:27 +0100
-Message-ID: <CACRpkdYp-=fB7dhUK01m=9QUM6ToaLFGRfC7a9Dg2Ux-Lx1ExA@mail.gmail.com>
-References: <1485868465-30446-1-git-send-email-alexandre.torgue@st.com> <1485868465-30446-3-git-send-email-alexandre.torgue@st.com>
+Subject: Re: [PATCH 3/8] Documentation: dt-bindings: Add STM32 pinctrl driver
+ DT bindings
+Date: Mon, 6 Feb 2017 09:43:14 +0100
+Message-ID: <CACRpkdbbrWtJx4Dj1N6b5vifxaw4RLftohK1fVLE2vcpNu5bBA@mail.gmail.com>
+References: <1485868465-30446-1-git-send-email-alexandre.torgue@st.com> <1485868465-30446-4-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:33095 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750942AbdBFIk2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 03:40:28 -0500
-Received: by mail-io0-f182.google.com with SMTP id v96so60686114ioi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 00:40:28 -0800 (PST)
-In-Reply-To: <1485868465-30446-3-git-send-email-alexandre.torgue@st.com>
+Received: from mail-io0-f176.google.com ([209.85.223.176]:35835 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750934AbdBFInQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 03:43:16 -0500
+Received: by mail-io0-f176.google.com with SMTP id j18so60552879ioe.2
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 00:43:16 -0800 (PST)
+In-Reply-To: <1485868465-30446-4-git-send-email-alexandre.torgue@st.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Alexandre TORGUE <alexandre.torgue@st.com>
@@ -21,12 +22,12 @@ Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Rob Herring <robh+dt@kernel.org
 On Tue, Jan 31, 2017 at 2:14 PM, Alexandre TORGUE
 <alexandre.torgue@st.com> wrote:
 
-> This patch adds STM32H743 pinctrl and GPIO support, relies on the
-> generic STM32 pinctrl driver.
+> Add compatible sting for stm32h743 MCU.
 >
 > Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
-Patch applied.
+Patch applied, incorporating the changes suggested by Rob,
+amending subject and dropping (a,b,c).
 
 Yours,
 Linus Walleij
