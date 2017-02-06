@@ -1,34 +1,62 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sunxi: Remove stray printk call in sun5i
- driver's probe function
-Date: Mon, 6 Feb 2017 11:08:40 +0100
-Message-ID: <CACRpkdYYRY9bZtGiD6Kshd9Jpo3bVaV+pTR5vhnS4CZeZhe7hA@mail.gmail.com>
-References: <20170201160209.9261-1-wens@csie.org>
+Subject: Re: [PATCH] gpio: dwapb: Add support for next generation of X-Gene SoC
+Date: Mon, 6 Feb 2017 11:21:09 +0100
+Message-ID: <CACRpkdZw-QLOeiPqSRaEJ+mGGDwi5fh9B1uenPxQGBtTwj+cuw@mail.gmail.com>
+References: <1485891838-27093-1-git-send-email-hotran@apm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:34849 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750950AbdBFKIl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 05:08:41 -0500
-Received: by mail-it0-f41.google.com with SMTP id 203so51323964ith.0
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 02:08:41 -0800 (PST)
-In-Reply-To: <20170201160209.9261-1-wens@csie.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1485891838-27093-1-git-send-email-hotran@apm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hoan Tran <hotran@apm.com>, Jamie Iles <jamie@jamieiles.com>, Weike Chen <alvin.chen@intel.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Feb 1, 2017 at 5:02 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+On Tue, Jan 31, 2017 at 8:43 PM, Hoan Tran <hotran@apm.com> wrote:
 
-> There is a stray printk call in the new sun5i pinctrl driver's probe
-> function.
+> Next generation of X-Gene SoC's GPIO hardware register map is very
+> similar to DW GPIO. It only differs by a few register addresses.
+> This patch modifies DW GPIO driver to accommodate the difference
+> in a few register addresses.
 >
-> Remove it.
->
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Hoan Tran <hotran@apm.com>
 
-Patch applied.
+On next iteration please include Jamie Iles, Weike Chen and Sebastian
+Andrzej Siewior.
+They all provided substantial contributions to this driver.
+
+The dwapb needs a proper maintainer in MAINTAINERS actually, it is one of
+those that can't use GPIOLIB_IRQCHIP so it requires special attention.
+Jamie, interested in the job? Patches welcome :)
+
+Also I've been thinking about this:
+
+#define GPIO_SWPORTA_DR         0x00
+#define GPIO_SWPORTA_DDR        0x04
+#define GPIO_SWPORTB_DR         0x0c
+#define GPIO_SWPORTB_DDR        0x10
+#define GPIO_SWPORTC_DR         0x18
+#define GPIO_SWPORTC_DDR        0x1c
+#define GPIO_SWPORTD_DR         0x24
+#define GPIO_SWPORTD_DDR        0x28
+#define GPIO_INTEN              0x30
+#define GPIO_INTMASK            0x34
+#define GPIO_INTTYPE_LEVEL      0x38
+#define GPIO_INT_POLARITY       0x3c
+#define GPIO_INTSTATUS          0x40
+#define GPIO_PORTA_DEBOUNCE     0x48
+#define GPIO_PORTA_EOI          0x4c
+#define GPIO_EXT_PORTA          0x50
+#define GPIO_EXT_PORTB          0x54
+#define GPIO_EXT_PORTC          0x58
+#define GPIO_EXT_PORTD          0x5c
+
+I wonder what is at addresses 0x08, 0x14, 0x20, 0x2c, 0x44?
+
+Anything interesting we should know about? I bet they are not just
+dead address space.
+
+Is there a public datasheet for this thing that I can look at?
 
 Yours,
 Linus Walleij
