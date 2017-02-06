@@ -1,69 +1,288 @@
-From: Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH 6/8] Documentation: dt: Add new compatible to STM32
- pinctrl driver bindings
-Date: Mon, 6 Feb 2017 12:21:44 +0100
-Message-ID: <c1c5ca2b-3fc1-6077-87b3-4c815b7469d0@st.com>
-References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
- <1485533721-9019-7-git-send-email-alexandre.torgue@st.com>
- <20170201150609.cbhwon76m6igmhyh@rob-hp-laptop>
- <abee01c1-da4f-97b4-258a-3ab937f620eb@st.com>
- <CACRpkdb=U+UMRqR2GKGwDzk9X_nLv0tf2dZ8LhDGceAD83LKag@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdb=U+UMRqR2GKGwDzk9X_nLv0tf2dZ8LhDGceAD83LKag-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 1/7] gpio: mockup: readability tweaks
+Date: Mon,  6 Feb 2017 13:10:35 +0100
+Message-ID: <1486383041-16758-2-git-send-email-bgolaszewski@baylibre.com>
+References: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:36503 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751911AbdBFMKs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 07:10:48 -0500
+Received: by mail-wm0-f47.google.com with SMTP id c85so117353730wmi.1
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 04:10:48 -0800 (PST)
+In-Reply-To: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+The following patch tries to improve the readability of the mockup
+driver.
 
+The driver is called gpio-mockup, so add the same prefix to all
+functions and structures.
 
-On 02/06/2017 09:46 AM, Linus Walleij wrote:
-> On Wed, Feb 1, 2017 at 4:58 PM, Alexandre Torgue
-> <alexandre.torgue-qxv4g6HH51o@public.gmane.org> wrote:
->> On 02/01/2017 04:06 PM, Rob Herring wrote:
->>>
->>> On Fri, Jan 27, 2017 at 05:15:19PM +0100, Alexandre TORGUE wrote:
->>>>
->>>> Add new compatible for stm32f469 MCU.
->>>>
->>>> Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>>> b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>>> index 25d9809..4f0487d 100644
->>>> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>>> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>>> @@ -9,7 +9,8 @@ Pin controller node:
->>>>  Required properies:
->>>>   - compatible: value should be one of the following:
->>>>     (a) "st,stm32f429-pinctrl"
->>>> -   (b) "st,stm32f746-pinctrl"
->>>> +   (b) "st,stm32f469-pinctrl"
->>>> +   (c) "st,stm32f746-pinctrl"
->>>
->>>
->>> Drop the a,b,c. Otherwise, you'll be changing a bunch of lines every
->>> time.
->>
->>
->> I completely agree.
->>
->> Linus, Do i need to send a v2 for this patch ?
->
-> Nopes, applied the amended v1 patch already with these
-> changes, check the result.
+Add some newlines and use a temporary pointer in gpio_mockup_add().
 
-Thanks Linus!
+Drop the name of the direction enum and rename the enum values to
+better reflect their purpose.
 
->
-> Yours,
-> Linus Walleij
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-mockup.c | 123 ++++++++++++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 57 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 82a9efd..5f6ed4b 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -16,12 +16,12 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/platform_device.h>
+ 
+-#define GPIO_NAME	"gpio-mockup"
+-#define	MAX_GC		10
++#define GPIO_MOCKUP_NAME	"gpio-mockup"
++#define	GPIO_MOCKUP_MAX_GC	10
+ 
+-enum direction {
+-	OUT,
+-	IN
++enum {
++	DIR_IN = 0,
++	DIR_OUT,
+ };
+ 
+ /*
+@@ -29,98 +29,104 @@ enum direction {
+  * @dir:       Configures direction of gpio as "in" or "out", 0=in, 1=out
+  * @value:     Configures status of the gpio as 0(low) or 1(high)
+  */
+-struct gpio_pin_status {
+-	enum direction dir;
++struct gpio_mockup_line_status {
++	int dir;
+ 	bool value;
+ };
+ 
+-struct mockup_gpio_controller {
++struct gpio_mockup_chip {
+ 	struct gpio_chip gc;
+-	struct gpio_pin_status *stats;
++	struct gpio_mockup_line_status *lines;
+ };
+ 
+-static int gpio_mockup_ranges[MAX_GC << 1];
++static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_GC << 1];
+ static int gpio_mockup_params_nr;
+ module_param_array(gpio_mockup_ranges, int, &gpio_mockup_params_nr, 0400);
+ 
+-static const char pins_name_start = 'A';
++static const char gpio_mockup_name_start = 'A';
+ 
+-static int mockup_gpio_get(struct gpio_chip *gc, unsigned int offset)
++static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ {
+-	struct mockup_gpio_controller *cntr = gpiochip_get_data(gc);
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	return cntr->stats[offset].value;
++	return chip->lines[offset].value;
+ }
+ 
+-static void mockup_gpio_set(struct gpio_chip *gc, unsigned int offset,
++static void gpio_mockup_set(struct gpio_chip *gc, unsigned int offset,
+ 			    int value)
+ {
+-	struct mockup_gpio_controller *cntr = gpiochip_get_data(gc);
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	cntr->stats[offset].value = !!value;
++	chip->lines[offset].value = !!value;
+ }
+ 
+-static int mockup_gpio_dirout(struct gpio_chip *gc, unsigned int offset,
++static int gpio_mockup_dirout(struct gpio_chip *gc, unsigned int offset,
+ 			      int value)
+ {
+-	struct mockup_gpio_controller *cntr = gpiochip_get_data(gc);
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++
++	gpio_mockup_set(gc, offset, value);
++	chip->lines[offset].dir = DIR_OUT;
+ 
+-	mockup_gpio_set(gc, offset, value);
+-	cntr->stats[offset].dir = OUT;
+ 	return 0;
+ }
+ 
+-static int mockup_gpio_dirin(struct gpio_chip *gc, unsigned int offset)
++static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
+ {
+-	struct mockup_gpio_controller *cntr = gpiochip_get_data(gc);
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++
++	chip->lines[offset].dir = DIR_IN;
+ 
+-	cntr->stats[offset].dir = IN;
+ 	return 0;
+ }
+ 
+-static int mockup_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
++static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ {
+-	struct mockup_gpio_controller *cntr = gpiochip_get_data(gc);
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	return cntr->stats[offset].dir;
++	return chip->lines[offset].dir;
+ }
+ 
+-static int mockup_gpio_add(struct device *dev,
+-			   struct mockup_gpio_controller *cntr,
++static int gpio_mockup_add(struct device *dev,
++			   struct gpio_mockup_chip *chip,
+ 			   const char *name, int base, int ngpio)
+ {
++	struct gpio_chip *gc = &chip->gc;
+ 	int ret;
+ 
+-	cntr->gc.base = base;
+-	cntr->gc.ngpio = ngpio;
+-	cntr->gc.label = name;
+-	cntr->gc.owner = THIS_MODULE;
+-	cntr->gc.parent = dev;
+-	cntr->gc.get = mockup_gpio_get;
+-	cntr->gc.set = mockup_gpio_set;
+-	cntr->gc.direction_output = mockup_gpio_dirout;
+-	cntr->gc.direction_input = mockup_gpio_dirin;
+-	cntr->gc.get_direction = mockup_gpio_get_direction;
+-	cntr->stats = devm_kzalloc(dev, sizeof(*cntr->stats) * cntr->gc.ngpio,
++	gc->base = base;
++	gc->ngpio = ngpio;
++	gc->label = name;
++	gc->owner = THIS_MODULE;
++	gc->parent = dev;
++	gc->get = gpio_mockup_get;
++	gc->set = gpio_mockup_set;
++	gc->direction_output = gpio_mockup_dirout;
++	gc->direction_input = gpio_mockup_dirin;
++	gc->get_direction = gpio_mockup_get_direction;
++
++	chip->lines = devm_kzalloc(dev, sizeof(*chip->lines) * gc->ngpio,
+ 				   GFP_KERNEL);
+-	if (!cntr->stats) {
++	if (!chip->lines) {
+ 		ret = -ENOMEM;
+ 		goto err;
+ 	}
+-	ret = devm_gpiochip_add_data(dev, &cntr->gc, cntr);
++
++	ret = devm_gpiochip_add_data(dev, &chip->gc, chip);
+ 	if (ret)
+ 		goto err;
+ 
+ 	dev_info(dev, "gpio<%d..%d> add successful!", base, base + ngpio);
+ 	return 0;
++
+ err:
+ 	dev_err(dev, "gpio<%d..%d> add failed!", base, base + ngpio);
+ 	return ret;
+ }
+ 
+-static int mockup_gpio_probe(struct platform_device *pdev)
++static int gpio_mockup_probe(struct platform_device *pdev)
+ {
+-	struct mockup_gpio_controller *cntr;
++	struct gpio_mockup_chip *chips;
+ 	struct device *dev = &pdev->dev;
+ 	int ret, i, base, ngpio;
+ 	char *chip_name;
+@@ -128,15 +134,17 @@ static int mockup_gpio_probe(struct platform_device *pdev)
+ 	if (gpio_mockup_params_nr < 2)
+ 		return -EINVAL;
+ 
+-	cntr = devm_kzalloc(dev, sizeof(*cntr) * (gpio_mockup_params_nr >> 1),
+-			    GFP_KERNEL);
+-	if (!cntr)
++	chips = devm_kzalloc(dev,
++			     sizeof(*chips) * (gpio_mockup_params_nr >> 1),
++			     GFP_KERNEL);
++	if (!chips)
+ 		return -ENOMEM;
+ 
+-	platform_set_drvdata(pdev, cntr);
++	platform_set_drvdata(pdev, chips);
+ 
+ 	for (i = 0; i < gpio_mockup_params_nr >> 1; i++) {
+ 		base = gpio_mockup_ranges[i * 2];
++
+ 		if (base == -1)
+ 			ngpio = gpio_mockup_ranges[i * 2 + 1];
+ 		else
+@@ -144,16 +152,17 @@ static int mockup_gpio_probe(struct platform_device *pdev)
+ 
+ 		if (ngpio >= 0) {
+ 			chip_name = devm_kasprintf(dev, GFP_KERNEL,
+-						   "%s-%c", GPIO_NAME,
+-						   pins_name_start + i);
++						   "%s-%c", GPIO_MOCKUP_NAME,
++						   gpio_mockup_name_start + i);
+ 			if (!chip_name)
+ 				return -ENOMEM;
+ 
+-			ret = mockup_gpio_add(dev, &cntr[i],
++			ret = gpio_mockup_add(dev, &chips[i],
+ 					      chip_name, base, ngpio);
+ 		} else {
+ 			ret = -1;
+ 		}
++
+ 		if (ret) {
+ 			if (base < 0)
+ 				dev_err(dev, "gpio<%d..%d> add failed\n",
+@@ -169,11 +178,11 @@ static int mockup_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct platform_driver mockup_gpio_driver = {
++static struct platform_driver gpio_mockup_driver = {
+ 	.driver = {
+-		.name = GPIO_NAME,
++		.name = GPIO_MOCKUP_NAME,
+ 	},
+-	.probe = mockup_gpio_probe,
++	.probe = gpio_mockup_probe,
+ };
+ 
+ static struct platform_device *pdev;
+@@ -181,7 +190,7 @@ static int __init mock_device_init(void)
+ {
+ 	int err;
+ 
+-	pdev = platform_device_alloc(GPIO_NAME, -1);
++	pdev = platform_device_alloc(GPIO_MOCKUP_NAME, -1);
+ 	if (!pdev)
+ 		return -ENOMEM;
+ 
+@@ -191,7 +200,7 @@ static int __init mock_device_init(void)
+ 		return err;
+ 	}
+ 
+-	err = platform_driver_register(&mockup_gpio_driver);
++	err = platform_driver_register(&gpio_mockup_driver);
+ 	if (err) {
+ 		platform_device_unregister(pdev);
+ 		return err;
+@@ -202,7 +211,7 @@ static int __init mock_device_init(void)
+ 
+ static void __exit mock_device_exit(void)
+ {
+-	platform_driver_unregister(&mockup_gpio_driver);
++	platform_driver_unregister(&gpio_mockup_driver);
+ 	platform_device_unregister(pdev);
+ }
+ 
+-- 
+2.9.3
+
