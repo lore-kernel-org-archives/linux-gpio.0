@@ -1,26 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 6/7] gpiolib: include <gpio/consumer.h> from gpiolib.h
-Date: Mon, 6 Feb 2017 14:30:40 +0100
-Message-ID: <CACRpkdZPMY_sxvgMNFYOW_zwvWRNC8SW2s0VVHsvrkJd9P2iHw@mail.gmail.com>
-References: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com> <1486383041-16758-7-git-send-email-bgolaszewski@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 0/2] gpio: mockup: extensions for testing purposes
+Date: Mon,  6 Feb 2017 15:11:06 +0100
+Message-ID: <1486390268-31362-1-git-send-email-bgolaszewski@baylibre.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1486383041-16758-7-git-send-email-bgolaszewski@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Feb 6, 2017 at 1:10 PM, Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
+Hi Linus,
 
-> We want pull gpiolib.h in from the gpio mockup driver, but gpiod_flags
-> is defined in consumer.h, so we need that too indirectly.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+this is a follow-up to the gpio-mockup series. I dropped the resource
+managed version of irq_alloc_descs() to avoid needing an ack from the
+irq subsystem maintainers. I omitted all the already applied patches
+too.
 
-Can't you just add the include to the mockup driver...?
+Rebased on top of gpio/devel and retested.
 
-Yours,
-Linus Walleij
+v2 -> v3:
+- dropped the resource managed irq allocation and added a remove
+  function instead
+- also selected IRQ_WORK in gpio Kconfig
+- included <gpio/consumer.h> from gpio-mockup.c instead of indirectly
+  from gpiolib.h
+
+Bartosz Golaszewski (2):
+  gpio: mockup: add a dummy irqchip
+  gpio: mockup: implement event injecting over debugfs
+
+ drivers/gpio/Kconfig       |   2 +
+ drivers/gpio/gpio-mockup.c | 195 ++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 196 insertions(+), 1 deletion(-)
+
+-- 
+2.9.3
