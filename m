@@ -1,80 +1,52 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 2/7] gpio: mockup: code shrink
-Date: Mon,  6 Feb 2017 13:10:36 +0100
-Message-ID: <1486383041-16758-3-git-send-email-bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 0/7] gpio: mockup: extensions for testing purposes
+Date: Mon, 6 Feb 2017 13:12:40 +0100
+Message-ID: <CAMpxmJUiyYz_38hf=X66cm0f5ZB0sKvk2j9p0Zhe6ff+r+wGZg@mail.gmail.com>
 References: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:34684 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbdBFMMl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 07:12:41 -0500
+Received: by mail-io0-f182.google.com with SMTP id l66so63908971ioi.1
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 04:12:41 -0800 (PST)
 In-Reply-To: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Moving a couple of lines around allows us to shrink the code a bit
-while keeping the same functionality.
+2017-02-06 13:10 GMT+01:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
+> I would like to create an automated test-suite for libgpiod, but
+> the gpio-mockup driver is quite limited when it comes to current
+> user space functionality - I can't test neither line event
+> notifications nor finding GPIO lines by name.
+>
+> This series proposes to extend the gpio framework by allowing to
+> inject line events from the kernel code and by providing a debugfs
+> interface for that to the gpio-mockup driver. We also allow the
+> user to request that the mockup driver name the lines.
+>
+> The first two patches only contain coding style changes which, I
+> believe, will make the driver easier to maintain.
+>
+> The third patch adds the option to have the lines named.
+>
+> The fourth patch adds a devres flavor of irq_alloc_descs() to be used
+> in patch 5, which actually adds the dummy irqchip.
+>
+> The last two patches implement the debugfs directory structure that
+> can be used by the user space to inject line events.
+>
+> v1 -> v2:
+> - made the event injection self-contained within the driver by using
+>   the irq_work as suggested by Lars-Peter Clauses
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-mockup.c | 29 ++++++++---------------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
+s/ Lars-Peter Clauses/ Lars-Peter Clausen/
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 5f6ed4b..d425601 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -92,7 +92,6 @@ static int gpio_mockup_add(struct device *dev,
- 			   const char *name, int base, int ngpio)
- {
- 	struct gpio_chip *gc = &chip->gc;
--	int ret;
- 
- 	gc->base = base;
- 	gc->ngpio = ngpio;
-@@ -107,21 +106,10 @@ static int gpio_mockup_add(struct device *dev,
- 
- 	chip->lines = devm_kzalloc(dev, sizeof(*chip->lines) * gc->ngpio,
- 				   GFP_KERNEL);
--	if (!chip->lines) {
--		ret = -ENOMEM;
--		goto err;
--	}
--
--	ret = devm_gpiochip_add_data(dev, &chip->gc, chip);
--	if (ret)
--		goto err;
--
--	dev_info(dev, "gpio<%d..%d> add successful!", base, base + ngpio);
--	return 0;
-+	if (!chip->lines)
-+		return -ENOMEM;
- 
--err:
--	dev_err(dev, "gpio<%d..%d> add failed!", base, base + ngpio);
--	return ret;
-+	return devm_gpiochip_add_data(dev, &chip->gc, chip);
- }
- 
- static int gpio_mockup_probe(struct platform_device *pdev)
-@@ -164,15 +152,14 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 		}
- 
- 		if (ret) {
--			if (base < 0)
--				dev_err(dev, "gpio<%d..%d> add failed\n",
--					base, ngpio);
--			else
--				dev_err(dev, "gpio<%d..%d> add failed\n",
--					base, base + ngpio);
-+			dev_err(dev, "gpio<%d..%d> add failed\n",
-+				base, base < 0 ? ngpio : base + ngpio);
- 
- 			return ret;
- 		}
-+
-+		dev_info(dev, "gpio<%d..%d> add successful!",
-+			 base, base + ngpio);
- 	}
- 
- 	return 0;
--- 
-2.9.3
+sorry!
+
+Thanks,
+Bartosz
