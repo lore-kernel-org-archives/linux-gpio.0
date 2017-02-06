@@ -1,177 +1,151 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/3] pinctrl: berlin: make bool drivers explicitly non-modular
-Date: Mon, 6 Feb 2017 03:03:52 -0500
-Message-ID: <20170206080352.17808-4-paul.gortmaker@windriver.com>
-References: <20170206080352.17808-1-paul.gortmaker@windriver.com>
+Subject: [PATCH 0/3] pinctrl: berlin/mvebu/spear: make bool code non-modular
+Date: Mon, 6 Feb 2017 03:03:49 -0500
+Message-ID: <20170206080352.17808-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:57061 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbdBFIEU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 03:04:20 -0500
-In-Reply-To: <20170206080352.17808-1-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Antoine=20T=C3=A9nart?= <antoine.tenart@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jisheng Zhang <jszhang@marvell.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Thomas Hebb <tommyhebb@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?q?Antoine=20T=C3=A9nart?= <antoine.tenart@free-electrons.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Jisheng Zhang <jszhang@marvell.com>, Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Hebb <tommyhebb@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Viresh Kumar <vireshk@kernel.org>, spear-devel@list.st.com, linux-gpio@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-None of the Kconfigs for any of these drivers are tristate,
-meaning that they currently are not being built as a module by anyone.
+Nothing really new here -- if the Kconfig and/or the Makefile does
+not allow building the code as modular, then we don't need to be
+using module_xyz() functions and/or MODULE_XYZ macros.
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
+Here we audit and remove such instances in three subdirectories of
+the pinctrl subsystem: berlin, mvebu, and spear, which allows us
+to have a good net removal of unused code as per the diffstat.
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Rather than do one commit per driver, we take advantage of the
+fact that the drivers are grouped already and bundle the changes
+per family, since the changes are not really deeply technical.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+Build tested for allmodconfig on linux-next for arm, arm64, i386
+and x86_64.
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+An automated mapping from the object file to the Makefile and then
+finally to the Kconfig variable (unless obj-y) and type follows as
+a double check; run on the current code base in linux-next today.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Antoine Ténart" <antoine.tenart@free-electrons.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Jisheng Zhang <jszhang@marvell.com>
-Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-Cc: Thomas Hebb <tommyhebb@gmail.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Paul.
+--
+
+drivers/pinctrl/berlin/Makefile:obj-$(CONFIG_PINCTRL_BERLIN_BG2) += berlin-bg2.o
+drivers/pinctrl/berlin/Kconfig:config PINCTRL_BERLIN_BG2
+drivers/pinctrl/berlin/Kconfig:	def_bool MACH_BERLIN_BG2
+
+drivers/pinctrl/berlin/Makefile:obj-$(CONFIG_PINCTRL_BERLIN_BG2CD) += berlin-bg2cd.o
+drivers/pinctrl/berlin/Kconfig:config PINCTRL_BERLIN_BG2CD
+drivers/pinctrl/berlin/Kconfig:	def_bool MACH_BERLIN_BG2CD
+
+drivers/pinctrl/berlin/Makefile:obj-$(CONFIG_PINCTRL_BERLIN_BG2Q) += berlin-bg2q.o
+drivers/pinctrl/berlin/Kconfig:config PINCTRL_BERLIN_BG2Q
+drivers/pinctrl/berlin/Kconfig:	def_bool MACH_BERLIN_BG2Q
+
+drivers/pinctrl/berlin/Makefile:obj-$(CONFIG_PINCTRL_BERLIN_BG4CT) += berlin-bg4ct.o
+drivers/pinctrl/berlin/Kconfig:config PINCTRL_BERLIN_BG4CT
+drivers/pinctrl/berlin/Kconfig:	bool "Marvell berlin4ct pin controller driver"
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_ARMADA_370) += pinctrl-armada-370.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_ARMADA_370
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_ARMADA_375) += pinctrl-armada-375.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_ARMADA_375
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_ARMADA_38X) += pinctrl-armada-38x.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_ARMADA_38X
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_ARMADA_39X) += pinctrl-armada-39x.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_ARMADA_39X
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_ARMADA_XP) += pinctrl-armada-xp.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_ARMADA_XP
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_DOVE) += pinctrl-dove.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_DOVE
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_KIRKWOOD) += pinctrl-kirkwood.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_KIRKWOOD
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/mvebu/Makefile:obj-y += pinctrl-mvebu.o
+
+drivers/pinctrl/mvebu/Makefile:obj-$(CONFIG_PINCTRL_ORION) += pinctrl-orion.o
+drivers/pinctrl/mvebu/Kconfig:config PINCTRL_ORION
+drivers/pinctrl/mvebu/Kconfig:	bool
+
+drivers/pinctrl/spear/Makefile:obj-$(CONFIG_PINCTRL_SPEAR_PLGPIO) += pinctrl-plgpio.o
+drivers/pinctrl/spear/Kconfig:config PINCTRL_SPEAR_PLGPIO
+drivers/pinctrl/spear/Kconfig:	bool "SPEAr SoC PLGPIO Controller"
+
+drivers/pinctrl/spear/Makefile:obj-$(CONFIG_PINCTRL_SPEAR1310) += pinctrl-spear1310.o
+drivers/pinctrl/spear/Kconfig:config PINCTRL_SPEAR1310
+drivers/pinctrl/spear/Kconfig:	bool "ST Microelectronics SPEAr1310 SoC pin controller driver"
+
+drivers/pinctrl/spear/Makefile:obj-$(CONFIG_PINCTRL_SPEAR1340) += pinctrl-spear1340.o
+drivers/pinctrl/spear/Kconfig:config PINCTRL_SPEAR1340
+drivers/pinctrl/spear/Kconfig:	bool "ST Microelectronics SPEAr1340 SoC pin controller driver"
+
+drivers/pinctrl/spear/Makefile:obj-$(CONFIG_PINCTRL_SPEAR300) += pinctrl-spear300.o
+drivers/pinctrl/spear/Kconfig:config PINCTRL_SPEAR300
+drivers/pinctrl/spear/Kconfig:	bool "ST Microelectronics SPEAr300 SoC pin controller driver"
+
+drivers/pinctrl/spear/Makefile:obj-$(CONFIG_PINCTRL_SPEAR310) += pinctrl-spear310.o
+drivers/pinctrl/spear/Kconfig:config PINCTRL_SPEAR310
+drivers/pinctrl/spear/Kconfig:	bool "ST Microelectronics SPEAr310 SoC pin controller driver"
+
+drivers/pinctrl/spear/Makefile:obj-$(CONFIG_PINCTRL_SPEAR320) += pinctrl-spear320.o
+drivers/pinctrl/spear/Kconfig:config PINCTRL_SPEAR320
+drivers/pinctrl/spear/Kconfig:	bool "ST Microelectronics SPEAr320 SoC pin controller driver"
+
 ---
- drivers/pinctrl/berlin/berlin-bg2.c   | 9 ++-------
- drivers/pinctrl/berlin/berlin-bg2cd.c | 9 ++-------
- drivers/pinctrl/berlin/berlin-bg2q.c  | 9 ++-------
- drivers/pinctrl/berlin/berlin-bg4ct.c | 9 ++-------
- 4 files changed, 8 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
-index fabe728ae268..bf2e17d0d6e4 100644
---- a/drivers/pinctrl/berlin/berlin-bg2.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2.c
-@@ -10,7 +10,7 @@
-  * warranty of any kind, whether express or implied.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -227,7 +227,6 @@ static const struct of_device_id berlin2_pinctrl_match[] = {
- 	},
- 	{}
- };
--MODULE_DEVICE_TABLE(of, berlin2_pinctrl_match);
- 
- static int berlin2_pinctrl_probe(struct platform_device *pdev)
- {
-@@ -244,8 +243,4 @@ static struct platform_driver berlin2_pinctrl_driver = {
- 		.of_match_table = berlin2_pinctrl_match,
- 	},
- };
--module_platform_driver(berlin2_pinctrl_driver);
--
--MODULE_AUTHOR("Antoine Ténart <antoine.tenart@free-electrons.com>");
--MODULE_DESCRIPTION("Marvell Berlin BG2 pinctrl driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(berlin2_pinctrl_driver);
-diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
-index ad8c75861373..9bee7bd1650f 100644
---- a/drivers/pinctrl/berlin/berlin-bg2cd.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
-@@ -10,7 +10,7 @@
-  * warranty of any kind, whether express or implied.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -172,7 +172,6 @@ static const struct of_device_id berlin2cd_pinctrl_match[] = {
- 	},
- 	{}
- };
--MODULE_DEVICE_TABLE(of, berlin2cd_pinctrl_match);
- 
- static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
- {
-@@ -189,8 +188,4 @@ static struct platform_driver berlin2cd_pinctrl_driver = {
- 		.of_match_table = berlin2cd_pinctrl_match,
- 	},
- };
--module_platform_driver(berlin2cd_pinctrl_driver);
--
--MODULE_AUTHOR("Antoine Ténart <antoine.tenart@free-electrons.com>");
--MODULE_DESCRIPTION("Marvell Berlin BG2CD pinctrl driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(berlin2cd_pinctrl_driver);
-diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
-index cd171aea8ca8..eee6763f114c 100644
---- a/drivers/pinctrl/berlin/berlin-bg2q.c
-+++ b/drivers/pinctrl/berlin/berlin-bg2q.c
-@@ -10,7 +10,7 @@
-  * warranty of any kind, whether express or implied.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -389,7 +389,6 @@ static const struct of_device_id berlin2q_pinctrl_match[] = {
- 	},
- 	{}
- };
--MODULE_DEVICE_TABLE(of, berlin2q_pinctrl_match);
- 
- static int berlin2q_pinctrl_probe(struct platform_device *pdev)
- {
-@@ -406,8 +405,4 @@ static struct platform_driver berlin2q_pinctrl_driver = {
- 		.of_match_table = berlin2q_pinctrl_match,
- 	},
- };
--module_platform_driver(berlin2q_pinctrl_driver);
--
--MODULE_AUTHOR("Antoine Ténart <antoine.tenart@free-electrons.com>");
--MODULE_DESCRIPTION("Marvell Berlin BG2Q pinctrl driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(berlin2q_pinctrl_driver);
-diff --git a/drivers/pinctrl/berlin/berlin-bg4ct.c b/drivers/pinctrl/berlin/berlin-bg4ct.c
-index c617ec49e9ed..e6740656ee7c 100644
---- a/drivers/pinctrl/berlin/berlin-bg4ct.c
-+++ b/drivers/pinctrl/berlin/berlin-bg4ct.c
-@@ -18,7 +18,7 @@
-  * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -457,7 +457,6 @@ static const struct of_device_id berlin4ct_pinctrl_match[] = {
- 	},
- 	{}
- };
--MODULE_DEVICE_TABLE(of, berlin4ct_pinctrl_match);
- 
- static int berlin4ct_pinctrl_probe(struct platform_device *pdev)
- {
-@@ -496,8 +495,4 @@ static struct platform_driver berlin4ct_pinctrl_driver = {
- 		.of_match_table = berlin4ct_pinctrl_match,
- 	},
- };
--module_platform_driver(berlin4ct_pinctrl_driver);
--
--MODULE_AUTHOR("Jisheng Zhang <jszhang@marvell.com>");
--MODULE_DESCRIPTION("Marvell berlin4ct pinctrl driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(berlin4ct_pinctrl_driver);
+Cc: "Antoine Ténart" <antoine.tenart@free-electrons.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Jisheng Zhang <jszhang@marvell.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Thomas Hebb <tommyhebb@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Viresh Kumar <vireshk@kernel.org>
+Cc: spear-devel@list.st.com
+Cc: linux-gpio@vger.kernel.org
+
+Paul Gortmaker (3):
+  pinctrl: mvebu: make bool drivers explicitly non-modular
+  pinctrl: spear: make bool drivers explicitly non-modular
+  pinctrl: berlin: make bool drivers explicitly non-modular
+
+ drivers/pinctrl/berlin/berlin-bg2.c        |  9 ++-------
+ drivers/pinctrl/berlin/berlin-bg2cd.c      |  9 ++-------
+ drivers/pinctrl/berlin/berlin-bg2q.c       |  9 ++-------
+ drivers/pinctrl/berlin/berlin-bg4ct.c      |  9 ++-------
+ drivers/pinctrl/mvebu/pinctrl-armada-370.c |  8 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-375.c |  8 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-38x.c |  8 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-39x.c |  8 +-------
+ drivers/pinctrl/mvebu/pinctrl-armada-xp.c  |  8 +-------
+ drivers/pinctrl/mvebu/pinctrl-dove.c       | 17 ++---------------
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c   |  8 +-------
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c      |  1 -
+ drivers/pinctrl/mvebu/pinctrl-orion.c      |  8 +-------
+ drivers/pinctrl/spear/pinctrl-plgpio.c     |  7 +------
+ drivers/pinctrl/spear/pinctrl-spear1310.c  | 12 ------------
+ drivers/pinctrl/spear/pinctrl-spear1340.c  | 12 ------------
+ drivers/pinctrl/spear/pinctrl-spear300.c   | 12 ------------
+ drivers/pinctrl/spear/pinctrl-spear310.c   | 12 ------------
+ drivers/pinctrl/spear/pinctrl-spear320.c   | 12 ------------
+ 19 files changed, 18 insertions(+), 159 deletions(-)
+
 -- 
 2.11.0
-
