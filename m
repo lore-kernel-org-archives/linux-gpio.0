@@ -1,41 +1,53 @@
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 6/7] gpiolib: include <gpio/consumer.h> from gpiolib.h
-Date: Mon,  6 Feb 2017 13:10:40 +0100
-Message-ID: <1486383041-16758-7-git-send-email-bgolaszewski@baylibre.com>
-References: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:36568 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751980AbdBFMKx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 07:10:53 -0500
-Received: by mail-wm0-f44.google.com with SMTP id c85so117356699wmi.1
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 04:10:52 -0800 (PST)
-In-Reply-To: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v2 0/7] gpio: mockup: extensions for testing purposes
+Date: Mon,  6 Feb 2017 13:10:34 +0100
+Message-ID: <1486383041-16758-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+List-Id: linux-gpio@vger.kernel.org
 
-We want pull gpiolib.h in from the gpio mockup driver, but gpiod_flags
-is defined in consumer.h, so we need that too indirectly.
+I would like to create an automated test-suite for libgpiod, but
+the gpio-mockup driver is quite limited when it comes to current
+user space functionality - I can't test neither line event
+notifications nor finding GPIO lines by name.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpiolib.h | 1 +
- 1 file changed, 1 insertion(+)
+This series proposes to extend the gpio framework by allowing to
+inject line events from the kernel code and by providing a debugfs
+interface for that to the gpio-mockup driver. We also allow the
+user to request that the mockup driver name the lines.
 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 2495b7e..067e5e5 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -13,6 +13,7 @@
- #define GPIOLIB_H
- 
- #include <linux/gpio/driver.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/err.h>
- #include <linux/device.h>
- #include <linux/module.h>
+The first two patches only contain coding style changes which, I
+believe, will make the driver easier to maintain.
+
+The third patch adds the option to have the lines named.
+
+The fourth patch adds a devres flavor of irq_alloc_descs() to be used
+in patch 5, which actually adds the dummy irqchip.
+
+The last two patches implement the debugfs directory structure that
+can be used by the user space to inject line events.
+
+v1 -> v2:
+- made the event injection self-contained within the driver by using
+  the irq_work as suggested by Lars-Peter Clauses
+
+Bartosz Golaszewski (7):
+  gpio: mockup: readability tweaks
+  gpio: mockup: code shrink
+  gpio: mockup: implement naming the lines
+  irqdesc: add memory managed version of irq_alloc_descs()
+  gpio: mockup: add a dummy irqchip
+  gpiolib: include <gpio/consumer.h> from gpiolib.h
+  gpio: mockup: implement event injecting over debugfs
+
+ drivers/gpio/Kconfig       |   1 +
+ drivers/gpio/gpio-mockup.c | 349 ++++++++++++++++++++++++++++++++++++---------
+ drivers/gpio/gpiolib.h     |   1 +
+ include/linux/irq.h        |  19 +++
+ kernel/irq/devres.c        |  38 +++++
+ 5 files changed, 338 insertions(+), 70 deletions(-)
+
 -- 
 2.9.3
-
