@@ -1,213 +1,177 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 2/3] pinctrl: spear: make bool drivers explicitly non-modular
-Date: Mon, 6 Feb 2017 03:03:51 -0500
-Message-ID: <20170206080352.17808-3-paul.gortmaker@windriver.com>
+Subject: [PATCH 3/3] pinctrl: berlin: make bool drivers explicitly non-modular
+Date: Mon, 6 Feb 2017 03:03:52 -0500
+Message-ID: <20170206080352.17808-4-paul.gortmaker@windriver.com>
 References: <20170206080352.17808-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail1.windriver.com ([147.11.146.13]:57061 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbdBFIEU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 03:04:20 -0500
 In-Reply-To: <20170206080352.17808-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Viresh Kumar <vireshk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, spear-devel@list.st.com, linux-gpio@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?q?Antoine=20T=C3=A9nart?= <antoine.tenart@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jisheng Zhang <jszhang@marvell.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Thomas Hebb <tommyhebb@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org
 
 None of the Kconfigs for any of these drivers are tristate,
 meaning that they currently are not being built as a module by anyone.
 
 Lets remove the modular code that is essentially orphaned, so that
-when reading the drivers there is no doubt they are builtin-only.  All
-drivers get the exact same change, so they are handled in batch.
+when reading the driver there is no doubt it is builtin-only.
 
-Changes are (1) use init.h header in place of module.h header,
-(2) delete module_exit related code, (3) delete MODULE_DEVICE_TABLE,
-and (4) delete MODULE_LICENCE/MODULE_AUTHOR and associated tags.
-
-None of these drivers were using module_init() so we don't have to
-worry about the init ordering getting changed with this commit.
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
-We also delete the MODULE_LICENSE etc. tags since all that information
-is already contained at the top of each file in the comments.
+We also delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
 
-Cc: Viresh Kumar <vireshk@kernel.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: spear-devel@list.st.com
+Cc: "Antoine Ténart" <antoine.tenart@free-electrons.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Jisheng Zhang <jszhang@marvell.com>
+Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
+Cc: Thomas Hebb <tommyhebb@gmail.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/pinctrl/spear/pinctrl-plgpio.c    |  7 +------
- drivers/pinctrl/spear/pinctrl-spear1310.c | 12 ------------
- drivers/pinctrl/spear/pinctrl-spear1340.c | 12 ------------
- drivers/pinctrl/spear/pinctrl-spear300.c  | 12 ------------
- drivers/pinctrl/spear/pinctrl-spear310.c  | 12 ------------
- drivers/pinctrl/spear/pinctrl-spear320.c  | 12 ------------
- 6 files changed, 1 insertion(+), 66 deletions(-)
+ drivers/pinctrl/berlin/berlin-bg2.c   | 9 ++-------
+ drivers/pinctrl/berlin/berlin-bg2cd.c | 9 ++-------
+ drivers/pinctrl/berlin/berlin-bg2q.c  | 9 ++-------
+ drivers/pinctrl/berlin/berlin-bg4ct.c | 9 ++-------
+ 4 files changed, 8 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
-index 4c9b863f8267..cf6d68c7345b 100644
---- a/drivers/pinctrl/spear/pinctrl-plgpio.c
-+++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
-@@ -13,7 +13,7 @@
- #include <linux/err.h>
- #include <linux/gpio/driver.h>
- #include <linux/io.h>
+diff --git a/drivers/pinctrl/berlin/berlin-bg2.c b/drivers/pinctrl/berlin/berlin-bg2.c
+index fabe728ae268..bf2e17d0d6e4 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2.c
++++ b/drivers/pinctrl/berlin/berlin-bg2.c
+@@ -10,7 +10,7 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/pinctrl/consumer.h>
-@@ -705,7 +705,6 @@ static const struct of_device_id plgpio_of_match[] = {
- 	{ .compatible = "st,spear-plgpio" },
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -227,7 +227,6 @@ static const struct of_device_id berlin2_pinctrl_match[] = {
+ 	},
  	{}
  };
--MODULE_DEVICE_TABLE(of, plgpio_of_match);
+-MODULE_DEVICE_TABLE(of, berlin2_pinctrl_match);
  
- static struct platform_driver plgpio_driver = {
- 	.probe = plgpio_probe,
-@@ -721,7 +720,3 @@ static int __init plgpio_init(void)
- 	return platform_driver_register(&plgpio_driver);
- }
- subsys_initcall(plgpio_init);
+ static int berlin2_pinctrl_probe(struct platform_device *pdev)
+ {
+@@ -244,8 +243,4 @@ static struct platform_driver berlin2_pinctrl_driver = {
+ 		.of_match_table = berlin2_pinctrl_match,
+ 	},
+ };
+-module_platform_driver(berlin2_pinctrl_driver);
 -
--MODULE_AUTHOR("Viresh Kumar <viresh.kumar@linaro.org>");
--MODULE_DESCRIPTION("STMicroelectronics SPEAr PLGPIO driver");
+-MODULE_AUTHOR("Antoine Ténart <antoine.tenart@free-electrons.com>");
+-MODULE_DESCRIPTION("Marvell Berlin BG2 pinctrl driver");
 -MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/spear/pinctrl-spear1310.c b/drivers/pinctrl/spear/pinctrl-spear1310.c
-index 18210681c737..0180eb544f02 100644
---- a/drivers/pinctrl/spear/pinctrl-spear1310.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear1310.c
-@@ -11,7 +11,6 @@
++builtin_platform_driver(berlin2_pinctrl_driver);
+diff --git a/drivers/pinctrl/berlin/berlin-bg2cd.c b/drivers/pinctrl/berlin/berlin-bg2cd.c
+index ad8c75861373..9bee7bd1650f 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2cd.c
++++ b/drivers/pinctrl/berlin/berlin-bg2cd.c
+@@ -10,7 +10,7 @@
+  * warranty of any kind, whether express or implied.
+  */
  
- #include <linux/err.h>
- #include <linux/init.h>
 -#include <linux/module.h>
++#include <linux/init.h>
  #include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include "pinctrl-spear.h"
-@@ -2717,14 +2716,3 @@ static int __init spear1310_pinctrl_init(void)
- 	return platform_driver_register(&spear1310_pinctrl_driver);
- }
- arch_initcall(spear1310_pinctrl_init);
--
--static void __exit spear1310_pinctrl_exit(void)
--{
--	platform_driver_unregister(&spear1310_pinctrl_driver);
--}
--module_exit(spear1310_pinctrl_exit);
--
--MODULE_AUTHOR("Viresh Kumar <vireshk@kernel.org>");
--MODULE_DESCRIPTION("ST Microelectronics SPEAr1310 pinctrl driver");
--MODULE_LICENSE("GPL v2");
--MODULE_DEVICE_TABLE(of, spear1310_pinctrl_of_match);
-diff --git a/drivers/pinctrl/spear/pinctrl-spear1340.c b/drivers/pinctrl/spear/pinctrl-spear1340.c
-index c01fb23ee636..0ca961219b3b 100644
---- a/drivers/pinctrl/spear/pinctrl-spear1340.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear1340.c
-@@ -11,7 +11,6 @@
+ #include <linux/regmap.h>
+@@ -172,7 +172,6 @@ static const struct of_device_id berlin2cd_pinctrl_match[] = {
+ 	},
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, berlin2cd_pinctrl_match);
  
- #include <linux/err.h>
- #include <linux/init.h>
+ static int berlin2cd_pinctrl_probe(struct platform_device *pdev)
+ {
+@@ -189,8 +188,4 @@ static struct platform_driver berlin2cd_pinctrl_driver = {
+ 		.of_match_table = berlin2cd_pinctrl_match,
+ 	},
+ };
+-module_platform_driver(berlin2cd_pinctrl_driver);
+-
+-MODULE_AUTHOR("Antoine Ténart <antoine.tenart@free-electrons.com>");
+-MODULE_DESCRIPTION("Marvell Berlin BG2CD pinctrl driver");
+-MODULE_LICENSE("GPL");
++builtin_platform_driver(berlin2cd_pinctrl_driver);
+diff --git a/drivers/pinctrl/berlin/berlin-bg2q.c b/drivers/pinctrl/berlin/berlin-bg2q.c
+index cd171aea8ca8..eee6763f114c 100644
+--- a/drivers/pinctrl/berlin/berlin-bg2q.c
++++ b/drivers/pinctrl/berlin/berlin-bg2q.c
+@@ -10,7 +10,7 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
 -#include <linux/module.h>
++#include <linux/init.h>
  #include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include "pinctrl-spear.h"
-@@ -2033,14 +2032,3 @@ static int __init spear1340_pinctrl_init(void)
- 	return platform_driver_register(&spear1340_pinctrl_driver);
- }
- arch_initcall(spear1340_pinctrl_init);
--
--static void __exit spear1340_pinctrl_exit(void)
--{
--	platform_driver_unregister(&spear1340_pinctrl_driver);
--}
--module_exit(spear1340_pinctrl_exit);
--
--MODULE_AUTHOR("Viresh Kumar <vireshk@kernel.org>");
--MODULE_DESCRIPTION("ST Microelectronics SPEAr1340 pinctrl driver");
--MODULE_LICENSE("GPL v2");
--MODULE_DEVICE_TABLE(of, spear1340_pinctrl_of_match);
-diff --git a/drivers/pinctrl/spear/pinctrl-spear300.c b/drivers/pinctrl/spear/pinctrl-spear300.c
-index 111148daa3f1..e39913a18139 100644
---- a/drivers/pinctrl/spear/pinctrl-spear300.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear300.c
-@@ -11,7 +11,6 @@
+ #include <linux/regmap.h>
+@@ -389,7 +389,6 @@ static const struct of_device_id berlin2q_pinctrl_match[] = {
+ 	},
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, berlin2q_pinctrl_match);
  
- #include <linux/err.h>
- #include <linux/init.h>
+ static int berlin2q_pinctrl_probe(struct platform_device *pdev)
+ {
+@@ -406,8 +405,4 @@ static struct platform_driver berlin2q_pinctrl_driver = {
+ 		.of_match_table = berlin2q_pinctrl_match,
+ 	},
+ };
+-module_platform_driver(berlin2q_pinctrl_driver);
+-
+-MODULE_AUTHOR("Antoine Ténart <antoine.tenart@free-electrons.com>");
+-MODULE_DESCRIPTION("Marvell Berlin BG2Q pinctrl driver");
+-MODULE_LICENSE("GPL");
++builtin_platform_driver(berlin2q_pinctrl_driver);
+diff --git a/drivers/pinctrl/berlin/berlin-bg4ct.c b/drivers/pinctrl/berlin/berlin-bg4ct.c
+index c617ec49e9ed..e6740656ee7c 100644
+--- a/drivers/pinctrl/berlin/berlin-bg4ct.c
++++ b/drivers/pinctrl/berlin/berlin-bg4ct.c
+@@ -18,7 +18,7 @@
+  * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
 -#include <linux/module.h>
++#include <linux/init.h>
  #include <linux/of_device.h>
  #include <linux/platform_device.h>
- #include "pinctrl-spear3xx.h"
-@@ -690,14 +689,3 @@ static int __init spear300_pinctrl_init(void)
- 	return platform_driver_register(&spear300_pinctrl_driver);
- }
- arch_initcall(spear300_pinctrl_init);
--
--static void __exit spear300_pinctrl_exit(void)
--{
--	platform_driver_unregister(&spear300_pinctrl_driver);
--}
--module_exit(spear300_pinctrl_exit);
--
--MODULE_AUTHOR("Viresh Kumar <vireshk@kernel.org>");
--MODULE_DESCRIPTION("ST Microelectronics SPEAr300 pinctrl driver");
--MODULE_LICENSE("GPL v2");
--MODULE_DEVICE_TABLE(of, spear300_pinctrl_of_match);
-diff --git a/drivers/pinctrl/spear/pinctrl-spear310.c b/drivers/pinctrl/spear/pinctrl-spear310.c
-index a7b000062985..393b2b97d527 100644
---- a/drivers/pinctrl/spear/pinctrl-spear310.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear310.c
-@@ -11,7 +11,6 @@
+ #include <linux/regmap.h>
+@@ -457,7 +457,6 @@ static const struct of_device_id berlin4ct_pinctrl_match[] = {
+ 	},
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, berlin4ct_pinctrl_match);
  
- #include <linux/err.h>
- #include <linux/init.h>
--#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include "pinctrl-spear3xx.h"
-@@ -413,14 +412,3 @@ static int __init spear310_pinctrl_init(void)
- 	return platform_driver_register(&spear310_pinctrl_driver);
- }
- arch_initcall(spear310_pinctrl_init);
+ static int berlin4ct_pinctrl_probe(struct platform_device *pdev)
+ {
+@@ -496,8 +495,4 @@ static struct platform_driver berlin4ct_pinctrl_driver = {
+ 		.of_match_table = berlin4ct_pinctrl_match,
+ 	},
+ };
+-module_platform_driver(berlin4ct_pinctrl_driver);
 -
--static void __exit spear310_pinctrl_exit(void)
--{
--	platform_driver_unregister(&spear310_pinctrl_driver);
--}
--module_exit(spear310_pinctrl_exit);
--
--MODULE_AUTHOR("Viresh Kumar <vireshk@kernel.org>");
--MODULE_DESCRIPTION("ST Microelectronics SPEAr310 pinctrl driver");
--MODULE_LICENSE("GPL v2");
--MODULE_DEVICE_TABLE(of, spear310_pinctrl_of_match);
-diff --git a/drivers/pinctrl/spear/pinctrl-spear320.c b/drivers/pinctrl/spear/pinctrl-spear320.c
-index e2b3817701dc..99c10fc3d9b5 100644
---- a/drivers/pinctrl/spear/pinctrl-spear320.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear320.c
-@@ -11,7 +11,6 @@
- 
- #include <linux/err.h>
- #include <linux/init.h>
--#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include "pinctrl-spear3xx.h"
-@@ -3454,14 +3453,3 @@ static int __init spear320_pinctrl_init(void)
- 	return platform_driver_register(&spear320_pinctrl_driver);
- }
- arch_initcall(spear320_pinctrl_init);
--
--static void __exit spear320_pinctrl_exit(void)
--{
--	platform_driver_unregister(&spear320_pinctrl_driver);
--}
--module_exit(spear320_pinctrl_exit);
--
--MODULE_AUTHOR("Viresh Kumar <vireshk@kernel.org>");
--MODULE_DESCRIPTION("ST Microelectronics SPEAr320 pinctrl driver");
--MODULE_LICENSE("GPL v2");
--MODULE_DEVICE_TABLE(of, spear320_pinctrl_of_match);
+-MODULE_AUTHOR("Jisheng Zhang <jszhang@marvell.com>");
+-MODULE_DESCRIPTION("Marvell berlin4ct pinctrl driver");
+-MODULE_LICENSE("GPL");
++builtin_platform_driver(berlin4ct_pinctrl_driver);
 -- 
 2.11.0
+
