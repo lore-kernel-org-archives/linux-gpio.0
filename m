@@ -1,59 +1,156 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 6/8] Documentation: dt: Add new compatible to STM32
- pinctrl driver bindings
-Date: Mon, 6 Feb 2017 09:46:53 +0100
-Message-ID: <CACRpkdb=U+UMRqR2GKGwDzk9X_nLv0tf2dZ8LhDGceAD83LKag@mail.gmail.com>
-References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
- <1485533721-9019-7-git-send-email-alexandre.torgue@st.com>
- <20170201150609.cbhwon76m6igmhyh@rob-hp-laptop> <abee01c1-da4f-97b4-258a-3ab937f620eb@st.com>
+From: "David.Wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: rockchip: Add rk3328 pinctrl support
+Date: Mon, 6 Feb 2017 16:50:33 +0800
+Message-ID: <339f2b10-9810-017f-a240-a558bdc69431@rock-chips.com>
+References: <1485074286-7863-1-git-send-email-david.wu@rock-chips.com>
+ <1512819.Zr7BpdjdZU@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <abee01c1-da4f-97b4-258a-3ab937f620eb-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Torgue <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1512819.Zr7BpdjdZU@phil>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 1, 2017 at 4:58 PM, Alexandre Torgue
-<alexandre.torgue-qxv4g6HH51o@public.gmane.org> wrote:
-> On 02/01/2017 04:06 PM, Rob Herring wrote:
->>
->> On Fri, Jan 27, 2017 at 05:15:19PM +0100, Alexandre TORGUE wrote:
->>>
->>> Add new compatible for stm32f469 MCU.
->>>
->>> Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>> b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>> index 25d9809..4f0487d 100644
->>> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->>> @@ -9,7 +9,8 @@ Pin controller node:
->>>  Required properies:
->>>   - compatible: value should be one of the following:
->>>     (a) "st,stm32f429-pinctrl"
->>> -   (b) "st,stm32f746-pinctrl"
->>> +   (b) "st,stm32f469-pinctrl"
->>> +   (c) "st,stm32f746-pinctrl"
->>
->>
->> Drop the a,b,c. Otherwise, you'll be changing a bunch of lines every
->> time.
->
->
-> I completely agree.
->
-> Linus, Do i need to send a v2 for this patch ?
+Hi Heiko,
 
-Nopes, applied the amended v1 patch already with these
-changes, check the result.
+Sorry for late reply because of the holiday.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> @@ -355,6 +359,24 @@ struct rockchip_pinctrl {
+>>  	unsigned int			nfunctions;
+>>  };
+>>
+>> +/**
+>> + * struct rockchip_mux_recalced_data: represent a pin iomux data.
+>> + * @num: bank num.
+>> + * @bit: index at register or used to calc index.
+>> + * @min_pin: the min pin.
+>> + * @max_pin: the max pin.
+>> + * @reg: the register offset.
+>> + * @mask: mask bit
+>> + */
+>> +struct rockchip_mux_recalced_data {
+>> +	u8 num;
+>> +	u8 bit;
+>> +	int min_pin;
+>> +	int max_pin;
+>> +	int reg;
+>> +	int mask;
+>
+> please reorganize
+> 	num, min_pin, max_pin are the queried values
+> while
+> 	reg, bit, mask are the result values
+>
+> Mixing these makes it hard to understand. Same for the table below.
+>
+
+How about this struct?
+struct rockchip_mux_recalced_data {
+	struct {
+		u8 num;
+		int pin;
+	} querie;
+	struct {
+		u8 reg;
+		u8 bit;
+		u8 mask;
+	} result;
+};
+
+>
+>> +};
+>> +
+>>  static struct regmap_config rockchip_regmap_config = {
+>>  	.reg_bits = 32,
+>>  	.val_bits = 32,
+>> @@ -514,13 +536,83 @@ static void rockchip_dt_free_map(struct pinctrl_dev
+>> *pctldev, * Hardware access
+>>   */
+>>
+>> +static const struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] =
+>> { +	{
+>> +		.num = 2,
+>> +		.bit = 0x2,
+>> +		.min_pin = 8,
+>> +		.max_pin = 14,
+>> +		.reg = 0x24,
+>> +		.mask = 0x3
+>> +	},
+>> +	{
+>> +		.num = 2,
+>> +		.bit = 0,
+>> +		.min_pin = 15,
+>> +		.max_pin = 15,
+>> +		.reg = 0x28,
+>> +		.mask = 0x7
+>> +	},
+>> +	{
+>
+> nit: coding style, "}, {"
+>
+>
+>> +		.num = 2,
+>> +		.bit = 14,
+>> +		.min_pin = 23,
+>> +		.max_pin = 23,
+>> +		.reg = 0x30,
+>> +		.mask = 0x3
+>> +	},
+>> +	{
+>> +		.num = 3,
+>> +		.bit = 0,
+>> +		.min_pin = 8,
+>> +		.max_pin = 8,
+>> +		.reg = 0x40,
+>> +		.mask = 0x7
+>> +	},
+>> +	{
+>> +		.num = 3,
+>> +		.bit = 0x2,
+>> +		.min_pin = 9,
+>> +		.max_pin = 15,
+>> +		.reg = 0x44,
+>> +		.mask = 0x3
+>
+> I think I don't fully understand what this is supposed to do. In the TRM you
+> send me at 0x44 all bits are marked as reserved and the other registers also
+> look very strange.
+
+Sorry, there is a wrong description in my patch.
+The reserved pins are not opened at rk3328 soc, could not be used, but 
+they appear in my code, this makes you confused.
+
+There are three pins need to be recalculated from the the latest GRF i 
+sent to you just now.
+  - gpio2_b4
+  - gpio2_b7
+  - gpio2_c7
+
+So, the max_pin and min_pin changes to pin in the 
+"rockchip_mux_recalced_data" struct, because there are no serial pins to 
+be recalculated, but three single pins.
+
+>
+> I guess GPIO2CH_IOMUX shows the thing you're trying solve, with gpio2_c6 being
+> at [5:3] but gpio2_c7 got moved to [15:14] out of its natural position.
+> Chip designers have strange ideas it seems.
+
+Yes, it is very strange here, not so well-regulated.
+
+>
+>
+> Heiko
+>
+>
+>
