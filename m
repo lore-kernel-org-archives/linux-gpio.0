@@ -1,62 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: dwapb: Add support for next generation of X-Gene SoC
-Date: Mon, 6 Feb 2017 11:21:09 +0100
-Message-ID: <CACRpkdZw-QLOeiPqSRaEJ+mGGDwi5fh9B1uenPxQGBtTwj+cuw@mail.gmail.com>
-References: <1485891838-27093-1-git-send-email-hotran@apm.com>
+Subject: Re: [PATCH] pinctrl: sunxi: make sun5i explicitly non-modular
+Date: Mon, 6 Feb 2017 11:29:07 +0100
+Message-ID: <CACRpkda-3MbF1025sCku5XkUF7ebmwrWYk+sS12eidpi0=4nZQ@mail.gmail.com>
+References: <20170202201740.9134-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1485891838-27093-1-git-send-email-hotran@apm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hoan Tran <hotran@apm.com>, Jamie Iles <jamie@jamieiles.com>, Weike Chen <alvin.chen@intel.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:33540 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbdBFK3J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Feb 2017 05:29:09 -0500
+Received: by mail-io0-f178.google.com with SMTP id v96so62344091ioi.0
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Feb 2017 02:29:09 -0800 (PST)
+In-Reply-To: <20170202201740.9134-1-paul.gortmaker@windriver.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jan 31, 2017 at 8:43 PM, Hoan Tran <hotran@apm.com> wrote:
+On Thu, Feb 2, 2017 at 9:17 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-> Next generation of X-Gene SoC's GPIO hardware register map is very
-> similar to DW GPIO. It only differs by a few register addresses.
-> This patch modifies DW GPIO driver to accommodate the difference
-> in a few register addresses.
+> We had all these corrected in commit 0c8c6ba00cbf ("pinctrl: sunxi:
+> make bool drivers explicitly non-modular") but this new one recently
+> crept in.
 >
-> Signed-off-by: Hoan Tran <hotran@apm.com>
+> The Kconfig currently controlling compilation of this code is:
+>
+>    drivers/pinctrl/sunxi/Kconfig:config PINCTRL_SUN5I
+>    drivers/pinctrl/sunxi/Kconfig:  def_bool MACH_SUN5I
+>
+> ...meaning that it currently is not being built as a module by anyone.
+>
+> Lets remove the couple traces of modular infrastructure use, so that
+> when reading the driver there is no doubt it is builtin-only.
+>
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On next iteration please include Jamie Iles, Weike Chen and Sebastian
-Andrzej Siewior.
-They all provided substantial contributions to this driver.
-
-The dwapb needs a proper maintainer in MAINTAINERS actually, it is one of
-those that can't use GPIOLIB_IRQCHIP so it requires special attention.
-Jamie, interested in the job? Patches welcome :)
-
-Also I've been thinking about this:
-
-#define GPIO_SWPORTA_DR         0x00
-#define GPIO_SWPORTA_DDR        0x04
-#define GPIO_SWPORTB_DR         0x0c
-#define GPIO_SWPORTB_DDR        0x10
-#define GPIO_SWPORTC_DR         0x18
-#define GPIO_SWPORTC_DDR        0x1c
-#define GPIO_SWPORTD_DR         0x24
-#define GPIO_SWPORTD_DDR        0x28
-#define GPIO_INTEN              0x30
-#define GPIO_INTMASK            0x34
-#define GPIO_INTTYPE_LEVEL      0x38
-#define GPIO_INT_POLARITY       0x3c
-#define GPIO_INTSTATUS          0x40
-#define GPIO_PORTA_DEBOUNCE     0x48
-#define GPIO_PORTA_EOI          0x4c
-#define GPIO_EXT_PORTA          0x50
-#define GPIO_EXT_PORTB          0x54
-#define GPIO_EXT_PORTC          0x58
-#define GPIO_EXT_PORTD          0x5c
-
-I wonder what is at addresses 0x08, 0x14, 0x20, 0x2c, 0x44?
-
-Anything interesting we should know about? I bet they are not just
-dead address space.
-
-Is there a public datasheet for this thing that I can look at?
+Patch applied.
 
 Yours,
 Linus Walleij
