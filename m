@@ -1,105 +1,92 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
-Date: Tue, 7 Feb 2017 15:57:36 +0100
-Message-ID: <20170207145736.vtwkzovmxjcgwncq@pengutronix.de>
-References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
- <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
- <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
- <20170207143031.4700300a@ipc1.ka-ro>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 0/2] pinctrl: sunxi: Merge A31s pinctrl driver with A31
+Date: Tue, 7 Feb 2017 16:04:37 +0100
+Message-ID: <20170207150437.ob77nbtanmsijoeh@lukather>
+References: <20170201162547.24232-1-wens@csie.org>
+ <20170202081332.okjxo4ogm2kp3abh@lukather>
+ <CACRpkdZUOszrqbPq4Ak+pUeYQB2qBnSrE2qWMkoNzvw+E74maw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uybiboa4zmsn6hyi"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:52887 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754007AbdBGO5q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 09:57:46 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:48084 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753587AbdBGPEk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 10:04:40 -0500
 Content-Disposition: inline
-In-Reply-To: <20170207143031.4700300a@ipc1.ka-ro>
+In-Reply-To: <CACRpkdZUOszrqbPq4Ak+pUeYQB2qBnSrE2qWMkoNzvw+E74maw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, chrisrfq@gmail.com, Arun Bharadwaj <arun@gumstix.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Lothar,
 
-On Tue, Feb 07, 2017 at 02:30:31PM +0100, Lothar Waßmann wrote:
-> On Tue, 7 Feb 2017 12:09:50 +0100 Uwe Kleine-König wrote:
-> >  a)
-> >  	/*
-> > 	 * initially configured as low output. Consumer can do
-> > 	 * gpio_set_value(..., 1); but not gpio_direction_input(...);
-> > 	 */
-> >  	nodename {
-> > 		gpio-hog;
-> > 		gpios = <...>;
-> > 		output-low-init;
-> > 	};
-> > 
-> >  b)
-> >  	/*
-> > 	 * initially configured as low output. Consumer can do
-> > 	 * gpio_set_value(..., 1); and gpio_direction_input(...);
-> > 	 */
-> >  	nodename {
-> > 		gpio-hog;
-> > 		gpios = <...>;
-> > 		output-init-low;
-> > 	};
-> > 
-> >  c)
-> >  	/*
-> > 	 * initially configured as input. Consumer can do
-> > 	 * gpio_direction_output(..., ...) and then set the value
-> > 	 * freely.
-> > 	 */
-> > 	 nodename {
-> > 	 	gpio-hog;
-> > 		gpios = <...>;
-> > 		input-init;
-> > 	};
-> > 
-> > I don't like that "output-low-init" and "output-init-low" are so
-> > similar, so if someone suggests a better naming scheme, that would be
-> > great.
-> > 
-> The position of the 'output' or 'input' within the word could
-> imply whether the direction can be changed lateron or not. E.g.:
-> output-init-low => an output whose state is initially low, but can be
->                    reconfigured to high lateron.
+--uybiboa4zmsn6hyi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That's your a) which I called output-low-init
+Hi Linus,
 
-> init-low-output => a gpio that is initially configured as output low,  
->                    but can subsequently be reconfigured as input or to
->                    a different state
+On Mon, Feb 06, 2017 at 11:07:33AM +0100, Linus Walleij wrote:
+> On Thu, Feb 2, 2017 at 9:13 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Thu, Feb 02, 2017 at 12:25:45AM +0800, Chen-Yu Tsai wrote:
+> >> Hi everyone,
+> >>
+> >> This series merges support for the A31s' pin controller into the A31
+> >> driver, using the new sunxi variants support code. The A31s is a trimm=
+ed
+> >> down version of the A31, with some hardware blocks removed, and some
+> >> pin functions or pins removed. Thus it is easy to support the A31s
+> >> using the A31 driver by marking the extra pins/functions as A31 only.
+> >>
+> >> Patch 1 does exactly this.
+> >>
+> >> Patch 2 removes the original A31s driver, which is now redundant.
+> >>
+> >> I opted not to rename sun6i-a31 to sun6i in various places.
+> >
+> > Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+>=20
+> Could you guys make a patch either adding these drivers as
+> commonly maintained by you two in MAINTAINERS?
+>=20
+> It is commonly maintained right?
+>=20
+> Or if you prefer, just list the pinctrl dir under the Allwinner
+> SoC support entry?
 
-That's your b) which I called output-init-low.
- 
-> init-input      => your case c)
-... which I called input-init.
+I'm not sure what you mean. We already have a wildcard matching sun*i
+in our maintainer entry, so the pinctrl driver is definitely covered.
 
-> input           => a GPIO input that cannot be reconfigured
+Or do you want us to add an explicit one?
 
-This is just a permutation of words, and so doesn't fix the problem that
-a) and b) use similar words. For you it's "init" before the stuff
-that can be changed. For me it's "init" is after the stuff that can be
-changed. 
-I slightly prefer my naming here because we already have "output-low"
-and "output-high" and my names also use direction-before-value.
+Maxime
 
-But I interpret your reply as interest and general confirmation that the
-idea is fine.
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-> This would also allow an 'output-low' as a GPIO that is permanently
-> grounded...
+--uybiboa4zmsn6hyi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That works already today.
+-----BEGIN PGP SIGNATURE-----
 
-Best regards
-Uwe
+iQIcBAEBCAAGBQJYmeIAAAoJEBx+YmzsjxAgP3wP/0XYpAjGNjqBe9tUHI4nzLVM
+87DlXhlN+/+hNoXMU9I2bgAAMBLAOOyCjl7BXSDFfc5zeCI6A5Fv1sAavwEnrUIi
+ZbrLUJtMzaykjX6u+jA3Yko/mEmO2/QBgQ6FPrLkaxZmscc/WxYlWcc+9K+XCuVl
+sDtkGXt3PVXy+6l0U0MFeutRlF+28+mokTQwwXXsNeTrlGNHveEnVfQv0IrqufSq
+zHGnjLgrbyQFF2xFzPPDzJkAtn1vU6Vb2+6FsmGM3pNA+Eai45aR71e7Lgq1RIBJ
+iTMlyQqNu7OWvK02eC9ZoZ89s/kg8sBJJ4C+Oz6eZO7LP66jED0nYjvRa7msz6UC
+GTjhLVa2fnU8+ORud0P6fKs4Cgq+NYhJE7t7/9LFJM0agy/FETYDBkHCDkVZ4k+T
+FLE/ylaDg0xIR7LmCYDTtTWUdTf3mgNQRN4mL56p86qUOy7FrVJBmUhuEeS0inmD
+bGcHCuQ8BcUsEgZQLwyHYbwp7yN9d0kwLtkPAgOtBaflSL2els025ghP5MZJ86oX
+EjhqJhBxUNotaeyGsjb64GW3W6eYXgM+WRdiBLc6ItdZ2NoH9U9cfRCtatdL8glt
+GFJzMDIYsgnkdTGtUAv2aEbQ9h0zKIFFCIckOQw+LMJQajUFv+a8NAiHfaQ9TzEM
+6KywRtkZ6CDQMFXGj3lP
+=PBwX
+-----END PGP SIGNATURE-----
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--uybiboa4zmsn6hyi--
