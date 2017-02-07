@@ -1,50 +1,106 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [RFC 1/5] pinctrl: rz-pfc: Add Renesas RZ pinctrl core module
-Date: Tue, 7 Feb 2017 11:27:17 +0100
-Message-ID: <064eba3d-40a3-5def-0947-7c57c11517d8@jmondi.org>
-References: <1485367787-8109-1-git-send-email-jacopo+renesas@jmondi.org>
- <1485367787-8109-2-git-send-email-jacopo+renesas@jmondi.org>
- <2041391.79UjQ7DgUt@avalon> <83c749f8-4eee-96e7-9c91-8a350d2a7498@jmondi.org>
- <20170206182813.GI3897@atomide.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
+Date: Tue, 7 Feb 2017 12:09:50 +0100
+Message-ID: <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
+References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
+ <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170206182813.GI3897@atomide.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linus.walleij@linaro.org, geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:56131 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753230AbdBGLJ5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 06:09:57 -0500
+Content-Disposition: inline
+In-Reply-To: <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, chrisrfq@gmail.com, Arun Bharadwaj <arun@gumstix.com>, devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-Hi Tony,
+Hello,
 
-On 06/02/2017 19:28, Tony Lindgren wrote:
-> * jacopo mondi <jacopo@jmondi.org> [170206 10:16]:
->> Currently there is no generic pinctrl and pinmux function to retrieve a
->> group or function by name, but only by their id (selector).
->> It would take 10minutes to add them, but I wonder if that's desirable or
->> there are other ways to do so I haven't found out yet.
->>
->> Linus, Tony and gpio people: do you have opinions on this? I can add those
->> functions to core/pinmux in my next patch series if I get your ack here.
->
-> I would just get rid of the names and allow optionally configuring them
-> from the consumer. Just like we do for interrupts and GPIOs.
->
+(Markus left Pengutronix, so I dropped his non-working address from the
+recipients and pick up his discussion.)
 
-Mostly, I wonder why so far nobody had to remove function and groups and 
-release their associated data when deleting a map. It makes me think 
-this is not required or I didn't fully get dt_free_map() purpose :/
-Or, put it in another way, I see lot of code releasing memory associated 
-with PIN_MAP_TYPE_CONFIGS_GROUP map types (as map.data.configs.configs 
-it's easy accessible), but none releasing data associated to 
-PIN_MAP_TYPE_MUX_GROUP map types...
+as far as I see, this topic isn't closed yet. I want something similar,
+maybe even a bit more than this patch achieves:
 
-Thanks
-    j
+Some gpios should get a fixed direction. If such a gpio is configured as
+output, a value should be specified. This is already working today with
+gpio-hogs.
 
+Now additionally I want to initialize some gpios but allow them to be
+grabbed later. IMHO there are the following new cases:
 
-> Regards,
->
-> Tony
->
+It should be possible to:
+
+ a) change the value of a gpio initially configured as output
+ b) change the direction of a gpio initially configured as output
+ c) change the direction of a gpio initially configured as input
+
+IMHO the dts should describe which case should be applied to a given
+gpio.
+
+Is it a valid assumption that a gpio that can change direction is also
+allowed to change value when configured as output? I assume this in the
+following discussion, some details need to change if this shouldn't be
+implied. (I think we need a d) then, not sure how this should look
+though.)
+
+I'd suggest the following description for these cases:
+
+ a)
+ 	/*
+	 * initially configured as low output. Consumer can do
+	 * gpio_set_value(..., 1); but not gpio_direction_input(...);
+	 */
+ 	nodename {
+		gpio-hog;
+		gpios = <...>;
+		output-low-init;
+	};
+
+ b)
+ 	/*
+	 * initially configured as low output. Consumer can do
+	 * gpio_set_value(..., 1); and gpio_direction_input(...);
+	 */
+ 	nodename {
+		gpio-hog;
+		gpios = <...>;
+		output-init-low;
+	};
+
+ c)
+ 	/*
+	 * initially configured as input. Consumer can do
+	 * gpio_direction_output(..., ...) and then set the value
+	 * freely.
+	 */
+	 nodename {
+	 	gpio-hog;
+		gpios = <...>;
+		input-init;
+	};
+
+I don't like that "output-low-init" and "output-init-low" are so
+similar, so if someone suggests a better naming scheme, that would be
+great.
+
+Does the idea (maybe apart from the naming) look good in general and/or
+compared to Markus' suggestion?
+
+(For those not having Markus' suggestion in mind any more. There we
+could use "gpio-initval" instead of "gpio-hog" and then this had the
+semantic of b) or c) using "input", "output-low" and "output-high". a)
+wasn't possible to formalize.)
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
