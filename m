@@ -1,24 +1,1459 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/4] soc: samsung: pmu for v4.11, third round
-Date: Tue, 07 Feb 2017 17:23:39 +0100
-Message-ID: <2663174.01hSumXrum@wuerfel>
-References: <20170202183008.23500-1-krzk@kernel.org> <20170202183008.23500-3-krzk@kernel.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.8.x
+Date: Tue, 7 Feb 2017 18:30:46 +0200
+Message-ID: <20170207163046.GP19313@lahna.fi.intel.com>
+References: <CACPiFC+zgmZkE3RDEHQfEFEq21zF9xz1_uoO9NQ7k=EU+rPJgg@mail.gmail.com>
+ <20170207145201.GL19313@lahna.fi.intel.com>
+ <CACPiFC+9bw0+Sw5yoQ6STdDE08Mg9fCH_iDTT4bYWkYTG=fAjQ@mail.gmail.com>
+ <CACPiFC+rvpBj7NGd78uRbrGMpPA=YCGw4XaQ9=YqESeXqOXqLQ@mail.gmail.com>
+ <20170207154800.GM19313@lahna.fi.intel.com>
+ <CACPiFCKjAnttp8_kibxNjzhSsAiRsVjR0xutqmBn=1b9zNCEgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <20170202183008.23500-3-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier@osg.samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Content-Type: multipart/mixed; boundary="BOKacYhQ+x31HxR3"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:61870 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755107AbdBGQax (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 7 Feb 2017 11:30:53 -0500
+Content-Disposition: inline
+In-Reply-To: <CACPiFCKjAnttp8_kibxNjzhSsAiRsVjR0xutqmBn=1b9zNCEgw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Martin Langhoff <martin.langhoff@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thursday, February 2, 2017 8:30:06 PM CET Krzysztof Kozlowski wrote:
-> 3rd round of improvements for Exynos PMU driver for v4.11:
-> 1. Add defines in header for future patches changing the pad
->    retention control.
+
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Feb 07, 2017 at 11:11:55AM -0500, Martin Langhoff wrote:
+> On Tue, Feb 7, 2017 at 10:48 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> > So if you have disable pinctrl-cherryview and you have nothing special
+> > in the command line, everything works in v4.10-rc7?
 > 
+> I can try that, it'll take a kernel rebuild. Fedora builds
+> pinctrl-cherryview=y and I haven't been able to convince them
+> otherwise :-/
 
-Pulled into next/drivers, thanks!
+I just booted the machine with the attached config. No problems found.
+I've attached also dmesg of the boot (you can compare it to yours).
 
-	Arnd
+--BOKacYhQ+x31HxR3
+Content-Type: application/gzip
+Content-Disposition: attachment; filename="config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="dmesg.out"
+Content-Transfer-Encoding: quoted-printable
+
+[    0.000000] Linux version 4.10.0-rc7+ (westeri@lahna) (gcc version 6.3.1=
+ 20161221 (Red Hat 6.3.1-1) (GCC) ) #281 SMP PREEMPT Tue Feb 7 18:20:32 EET=
+ 2017
+[    0.000000] Command line: vmlinuz.efi initrd=3Dinitrd console=3Dtty1 con=
+sole=3DttyS0,115200n8
+[    0.000000] x86/fpu: Legacy x87 FPU detected.
+[    0.000000] e820: BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000006efff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000006f000-0x000000000006ffff] ACPI =
+NVS
+[    0.000000] BIOS-e820: [mem 0x0000000000070000-0x0000000000085fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000000086000-0x000000000009ffff] reser=
+ved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000001fffffff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000020000000-0x00000000201fffff] reser=
+ved
+[    0.000000] BIOS-e820: [mem 0x0000000020200000-0x0000000079b78fff] usable
+[    0.000000] BIOS-e820: [mem 0x0000000079b79000-0x000000007a578fff] reser=
+ved
+[    0.000000] BIOS-e820: [mem 0x000000007a579000-0x000000007a778fff] ACPI =
+NVS
+[    0.000000] BIOS-e820: [mem 0x000000007a779000-0x000000007a7b8fff] ACPI =
+data
+[    0.000000] BIOS-e820: [mem 0x000000007a7b9000-0x000000007b441fff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007b442000-0x000000007bd41fff] reser=
+ved
+[    0.000000] BIOS-e820: [mem 0x000000007bd42000-0x000000007bffffff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000e00f8000-0x00000000e00f8fff] reser=
+ved
+[    0.000000] BIOS-e820: [mem 0x00000000fed01000-0x00000000fed01fff] reser=
+ved
+[    0.000000] BIOS-e820: [mem 0x00000000ffa00000-0x00000000ffffffff] reser=
+ved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] e820: update [mem 0x736a0018-0x736b0057] usable =3D=3D> usab=
+le
+[    0.000000] extended physical RAM map:
+[    0.000000] reserve setup_data: [mem 0x0000000000000000-0x000000000006ef=
+ff] usable
+[    0.000000] reserve setup_data: [mem 0x000000000006f000-0x000000000006ff=
+ff] ACPI NVS
+[    0.000000] reserve setup_data: [mem 0x0000000000070000-0x0000000000085f=
+ff] usable
+[    0.000000] reserve setup_data: [mem 0x0000000000086000-0x000000000009ff=
+ff] reserved
+[    0.000000] reserve setup_data: [mem 0x0000000000100000-0x000000001fffff=
+ff] usable
+[    0.000000] reserve setup_data: [mem 0x0000000020000000-0x00000000201fff=
+ff] reserved
+[    0.000000] reserve setup_data: [mem 0x0000000020200000-0x00000000736a00=
+17] usable
+[    0.000000] reserve setup_data: [mem 0x00000000736a0018-0x00000000736b00=
+57] usable
+[    0.000000] reserve setup_data: [mem 0x00000000736b0058-0x0000000079b78f=
+ff] usable
+[    0.000000] reserve setup_data: [mem 0x0000000079b79000-0x000000007a578f=
+ff] reserved
+[    0.000000] reserve setup_data: [mem 0x000000007a579000-0x000000007a778f=
+ff] ACPI NVS
+[    0.000000] reserve setup_data: [mem 0x000000007a779000-0x000000007a7b8f=
+ff] ACPI data
+[    0.000000] reserve setup_data: [mem 0x000000007a7b9000-0x000000007b441f=
+ff] usable
+[    0.000000] reserve setup_data: [mem 0x000000007b442000-0x000000007bd41f=
+ff] reserved
+[    0.000000] reserve setup_data: [mem 0x000000007bd42000-0x000000007bffff=
+ff] usable
+[    0.000000] reserve setup_data: [mem 0x00000000e00f8000-0x00000000e00f8f=
+ff] reserved
+[    0.000000] reserve setup_data: [mem 0x00000000fed01000-0x00000000fed01f=
+ff] reserved
+[    0.000000] reserve setup_data: [mem 0x00000000ffa00000-0x00000000ffffff=
+ff] reserved
+[    0.000000] efi: EFI v2.40 by INSYDE Corp.
+[    0.000000] efi:  ACPI 2.0=3D0x7a7b8014  ESRT=3D0x79f0c718  SMBIOS=3D0x7=
+9f08000=20
+[    0.000000] SMBIOS 2.8 present.
+[    0.000000] DMI: Acer Aspire one 1-131/Caltech, BIOS V1.06 07/30/2015
+[    0.000000] e820: update [mem 0x00000000-0x00000fff] usable =3D=3D> rese=
+rved
+[    0.000000] e820: remove [mem 0x000a0000-0x000fffff] usable
+[    0.000000] e820: last_pfn =3D 0x7c000 max_arch_pfn =3D 0x400000000
+[    0.000000] MTRR default type: uncachable
+[    0.000000] MTRR fixed ranges enabled:
+[    0.000000]   00000-9FFFF write-back
+[    0.000000]   A0000-FFFFF write-protect
+[    0.000000] MTRR variable ranges enabled:
+[    0.000000]   0 base 0FFC00000 mask FFFC00000 write-protect
+[    0.000000]   1 base 0FFA00000 mask FFFE00000 write-protect
+[    0.000000]   2 base 000000000 mask F80000000 write-back
+[    0.000000]   3 base 07C000000 mask FFC000000 uncachable
+[    0.000000]   4 disabled
+[    0.000000]   5 disabled
+[    0.000000]   6 disabled
+[    0.000000]   7 disabled
+[    0.000000] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WC  UC- WT=
+ =20
+[    0.000000] esrt: Reserving ESRT space from 0x0000000079f0c718 to 0x0000=
+000079f0c750.
+[    0.000000] Scanning 1 areas for low memory corruption
+[    0.000000] Base memory trampoline at [ffff88000007f000] 7f000 size 24576
+[    0.000000] BRK [0x01f45000, 0x01f45fff] PGTABLE
+[    0.000000] BRK [0x01f46000, 0x01f46fff] PGTABLE
+[    0.000000] BRK [0x01f47000, 0x01f47fff] PGTABLE
+[    0.000000] BRK [0x01f48000, 0x01f48fff] PGTABLE
+[    0.000000] BRK [0x01f49000, 0x01f49fff] PGTABLE
+[    0.000000] BRK [0x01f4a000, 0x01f4afff] PGTABLE
+[    0.000000] RAMDISK: [mem 0x79179000-0x797cffff]
+[    0.000000] ACPI: Early table checksum verification disabled
+[    0.000000] ACPI: RSDP 0x000000007A7B8014 000024 (v02 ACRSYS)
+[    0.000000] ACPI: XSDT 0x000000007A7B8120 0000BC (v01 ACRSYS ACRPRDCT 00=
+000003      01000013)
+[    0.000000] ACPI: FACP 0x000000007A7AF000 00010C (v05 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: DSDT 0x000000007A79E000 00B7A7 (v02 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: FACS 0x000000007A774000 000040
+[    0.000000] ACPI: UEFI 0x000000007A7B7000 000236 (v01 ACRSYS ACRPRDCT 00=
+000001 1025 00040000)
+[    0.000000] ACPI: TCPA 0x000000007A7B6000 000032 (v02 ACRSYS ACRPRDCT 00=
+000000 1025 00040000)
+[    0.000000] ACPI: MSDM 0x000000007A7B5000 000055 (v03 ACRSYS ACRPRDCT 00=
+000001 1025 00040000)
+[    0.000000] ACPI: UEFI 0x000000007A7B4000 000042 (v01 ACRSYS ACRPRDCT 00=
+000000 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A7B0000 003A2A (v01 ACRSYS ACRPRDCT 00=
+001000 1025 00040000)
+[    0.000000] ACPI: HPET 0x000000007A7AE000 000038 (v01 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: MCFG 0x000000007A7AC000 00003C (v01 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A7AB000 00052C (v01 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A7AA000 000898 (v01 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A79D000 000763 (v01 ACRSYS ACRPRDCT 00=
+003000 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A79C000 000290 (v01 ACRSYS ACRPRDCT 00=
+003000 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A79B000 00017A (v01 ACRSYS ACRPRDCT 00=
+003000 1025 00040000)
+[    0.000000] ACPI: APIC 0x000000007A7AD000 000084 (v03 ACRSYS ACRPRDCT 00=
+000003 1025 00040000)
+[    0.000000] ACPI: SSDT 0x000000007A79A000 000432 (v01 ACRSYS ACRPRDCT 00=
+001000 1025 00040000)
+[    0.000000] ACPI: TPM2 0x000000007A799000 000034 (v03 ACRSYS ACRPRDCT 00=
+000000 1025 00040000)
+[    0.000000] ACPI: CSRT 0x000000007A798000 00014C (v00 ACRSYS ACRPRDCT 00=
+000005 1025 00040000)
+[    0.000000] ACPI: FPDT 0x000000007A797000 000044 (v01 ACRSYS ACRPRDCT 00=
+000002 1025 00040000)
+[    0.000000] ACPI: BGRT 0x000000007A796000 000038 (v01 ACRSYS ACRPRDCT 00=
+000001 1025 00040000)
+[    0.000000] ACPI: Local APIC address 0xfee00000
+[    0.000000] No NUMA configuration found
+[    0.000000] Faking a node at [mem 0x0000000000000000-0x000000007bffffff]
+[    0.000000] NODE_DATA(0) allocated [mem 0x79174000-0x79177fff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.000000]   DMA32    [mem 0x0000000001000000-0x000000007bffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000001000-0x000000000006efff]
+[    0.000000]   node   0: [mem 0x0000000000070000-0x0000000000085fff]
+[    0.000000]   node   0: [mem 0x0000000000100000-0x000000001fffffff]
+[    0.000000]   node   0: [mem 0x0000000020200000-0x0000000079b78fff]
+[    0.000000]   node   0: [mem 0x000000007a7b9000-0x000000007b441fff]
+[    0.000000]   node   0: [mem 0x000000007bd42000-0x000000007bffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000001000-0x000000007bfff=
+fff]
+[    0.000000] On node 0 totalpages: 501828
+[    0.000000]   DMA zone: 64 pages used for memmap
+[    0.000000]   DMA zone: 22 pages reserved
+[    0.000000]   DMA zone: 3972 pages, LIFO batch:0
+[    0.000000]   DMA32 zone: 7872 pages used for memmap
+[    0.000000]   DMA32 zone: 497856 pages, LIFO batch:31
+[    0.000000] Reserving Intel graphics memory at 0x000000007ce00000-0x0000=
+00007edfffff
+[    0.000000] ACPI: PM-Timer IO Port: 0x408
+[    0.000000] ACPI: Local APIC address 0xfee00000
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x01] high level lint[0x1])
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x02] high level lint[0x1])
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x03] high level lint[0x1])
+[    0.000000] ACPI: LAPIC_NMI (acpi_id[0x04] high level lint[0x1])
+[    0.000000] IOAPIC[0]: apic_id 1, version 32, address 0xfec00000, GSI 0-=
+114
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.000000] ACPI: IRQ0 used by override.
+[    0.000000] ACPI: IRQ9 used by override.
+[    0.000000] Using ACPI (MADT) for SMP configuration information
+[    0.000000] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.000000] smpboot: Allowing 4 CPUs, 2 hotplug CPUs
+[    0.000000] PM: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x0006f000-0x0006ffff]
+[    0.000000] PM: Registered nosave memory: [mem 0x00086000-0x0009ffff]
+[    0.000000] PM: Registered nosave memory: [mem 0x000a0000-0x000fffff]
+[    0.000000] PM: Registered nosave memory: [mem 0x20000000-0x201fffff]
+[    0.000000] PM: Registered nosave memory: [mem 0x736a0000-0x736a0fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x736b0000-0x736b0fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x79b79000-0x7a578fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x7a579000-0x7a778fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x7a779000-0x7a7b8fff]
+[    0.000000] PM: Registered nosave memory: [mem 0x7b442000-0x7bd41fff]
+[    0.000000] e820: [mem 0x7ee00000-0xe00f7fff] available for PCI devices
+[    0.000000] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0=
+xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.000000] setup_percpu: NR_CPUS:64 nr_cpumask_bits:64 nr_cpu_ids:4 nr_=
+node_ids:1
+[    0.000000] percpu: Embedded 34 pages/cpu @ffff880078e00000 s100888 r819=
+2 d30184 u524288
+[    0.000000] pcpu-alloc: s100888 r8192 d30184 u524288 alloc=3D1*2097152
+[    0.000000] pcpu-alloc: [0] 0 1 2 3=20
+[    0.000000] Built 1 zonelists in Node order, mobility grouping on.  Tota=
+l pages: 493870
+[    0.000000] Policy zone: DMA32
+[    0.000000] Kernel command line: vmlinuz.efi initrd=3Dinitrd console=3Dt=
+ty1 console=3DttyS0,115200n8
+[    0.000000] PID hash table entries: 4096 (order: 3, 32768 bytes)
+[    0.000000] Calgary: detecting Calgary via BIOS EBDA area
+[    0.000000] Calgary: Unable to locate Rio Grande table in EBDA - bailing!
+[    0.000000] Memory: 1911468K/2007312K available (7618K kernel code, 871K=
+ rwdata, 2508K rodata, 1716K init, 720K bss, 95844K reserved, 0K cma-reserv=
+ed)
+[    0.000000] SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D4, N=
+odes=3D1
+[    0.000000] Preemptible hierarchical RCU implementation.
+[    0.000000] 	Build-time adjustment of leaf fanout to 64.
+[    0.000000] 	RCU restricting CPUs from NR_CPUS=3D64 to nr_cpu_ids=3D4.
+[    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=3D64, nr_cpu_ids=
+=3D4
+[    0.000000] NR_IRQS:4352 nr_irqs:1024 16
+[    0.000000] Console: colour dummy device 80x25
+[    0.000000] console [tty1] enabled
+[    0.000000] console [ttyS0] enabled
+[    0.000000] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, =
+max_idle_ns: 133484882848 ns
+[    0.000000] hpet clockevent registered
+[    0.000000] tsc: Detected 1600.000 MHz processor
+[    0.000006] Calibrating delay loop (skipped), value calculated using tim=
+er frequency.. 3200.00 BogoMIPS (lpj=3D1600000)
+[    0.011899] pid_max: default: 32768 minimum: 301
+[    0.017104] ACPI: Core revision 20160930
+[    0.128100] ACPI: 8 ACPI AML tables successfully acquired and loaded
+[    0.136587] Dentry cache hash table entries: 262144 (order: 9, 2097152 b=
+ytes)
+[    0.145855] Inode-cache hash table entries: 131072 (order: 8, 1048576 by=
+tes)
+[    0.154354] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes)
+[    0.161912] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 b=
+ytes)
+[    0.171164] CPU: Physical Processor ID: 0
+[    0.175673] CPU: Processor Core ID: 0
+[    0.179804] ENERGY_PERF_BIAS: Set to 'normal', was 'performance'
+[    0.186540] ENERGY_PERF_BIAS: View and update with x86_energy_perf_polic=
+y(8)
+[    0.194446] mce: CPU supports 6 MCE banks
+[    0.198962] CPU0: Thermal monitoring enabled (TM1)
+[    0.204343] process: using mwait in idle threads
+[    0.209527] Last level iTLB entries: 4KB 48, 2MB 0, 4MB 0
+[    0.215581] Last level dTLB entries: 4KB 256, 2MB 16, 4MB 16, 1GB 0
+[    0.222965] Freeing SMP alternatives memory: 28K
+[    0.234050] smpboot: Max logical packages: 2
+[    0.240867] ..TIMER: vector=3D0x30 apic1=3D0 pin1=3D2 apic2=3D-1 pin2=3D=
+-1
+[    0.257601] TSC deadline timer enabled
+[    0.257609] smpboot: CPU0: Intel(R) Celeron(R) CPU  N3050  @ 1.60GHz (fa=
+mily: 0x6, model: 0x4c, stepping: 0x3)
+[    0.271854] Performance Events: PEBS fmt2+, 8-deep LBR, Silvermont event=
+s, 8-deep LBR, full-width counters, Intel PMU driver.
+[    0.284551] ... version:                3
+[    0.289045] ... bit width:              40
+[    0.293634] ... generic registers:      2
+[    0.298116] ... value mask:             000000ffffffffff
+[    0.304063] ... max period:             0000007fffffffff
+[    0.310009] ... fixed-purpose events:   3
+[    0.314497] ... event mask:             0000000700000003
+[    0.332582] smp: Bringing up secondary CPUs ...
+[    0.344810] x86: Booting SMP configuration:
+[    0.349519] .... node  #0, CPUs:      #1
+[    0.409843] smp: Brought up 1 node, 2 CPUs
+[    0.418829] smpboot: Total of 2 processors activated (6411.10 BogoMIPS)
+[    0.427478] devtmpfs: initialized
+[    0.432626] PM: Registering ACPI NVS region [mem 0x0006f000-0x0006ffff] =
+(4096 bytes)
+[    0.441328] PM: Registering ACPI NVS region [mem 0x7a579000-0x7a778fff] =
+(2097152 bytes)
+[    0.451596] kworker/u8:0 (21) used greatest stack depth: 14424 bytes left
+[    0.451872] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xfffffff=
+f, max_idle_ns: 1911260446275000 ns
+[    0.452003] pinctrl core: initialized pinctrl subsystem
+[    0.452339] RTC time:  2:26:08, date: 02/08/17
+[    0.452833] NET: Registered protocol family 16
+[    0.486081] kworker/u8:0 (29) used greatest stack depth: 14160 bytes left
+[    0.493691] kworker/u8:0 (36) used greatest stack depth: 13952 bytes left
+[    0.501577] cpuidle: using governor menu
+[    0.505984] PCCT header not found.
+[    0.510100] ACPI: bus type PCI registered
+[    0.514599] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+[    0.522534] PCI: MMCONFIG for domain 0000 [bus 00-3f] at [mem 0xe0000000=
+-0xe3ffffff] (base 0xe0000000)
+[    0.533014] PCI: not using MMCONFIG
+[    0.536932] PCI: Using configuration type 1 for base access
+[    0.594833] ACPI: Added _OSI(Module Device)
+[    0.599537] ACPI: Added _OSI(Processor Device)
+[    0.604520] ACPI: Added _OSI(3.0 _SCP Extensions)
+[    0.609816] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.665825] ACPI: Dynamic OEM Table Load:
+[    0.670353] ACPI: SSDT 0xFFFF8800741B2800 000634 (v01 PmRef  Cpu0Ist  00=
+003000 INTL 20120913)
+[    0.681697] ACPI: Dynamic OEM Table Load:
+[    0.686227] ACPI: SSDT 0xFFFF880074073000 0003A5 (v01 PmRef  Cpu0Cst  00=
+003001 INTL 20120913)
+[    0.700731] ACPI: Dynamic OEM Table Load:
+[    0.705341] ACPI: SSDT 0xFFFF880074056E00 00015F (v01 PmRef  ApIst    00=
+003000 INTL 20120913)
+[    0.716976] ACPI: Dynamic OEM Table Load:
+[    0.721493] ACPI: SSDT 0xFFFF8800746AB6C0 00008D (v01 PmRef  ApCst    00=
+003000 INTL 20120913)
+[    0.740439] ACPI: Interpreter enabled
+[    0.744661] ACPI: (supports S0 S3 S4 S5)
+[    0.749064] ACPI: Using IOAPIC for interrupt routing
+[    0.755142] PCI: MMCONFIG for domain 0000 [bus 00-3f] at [mem 0xe0000000=
+-0xe3ffffff] (base 0xe0000000)
+[    0.779468] PCI: MMCONFIG at [mem 0xe0000000-0xe3ffffff] reserved in ACP=
+I motherboard resources
+[    0.789380] PCI: Using host bridge windows from ACPI; if necessary, use =
+"pci=3Dnocrs" and report a bug
+[    0.813426] ACPI: Power Resource [USBC] (on)
+[    0.860150] ACPI: Power Resource [CLK0] (on)
+[    0.874637] ACPI: Power Resource [CLK0] (on)
+[    0.879863] ACPI: Power Resource [CLK1] (on)
+[    0.919761] ACPI: Power Resource [ID3C] (off)
+[    0.957476] ACPI: Power Resource [FN00] (on)
+[    0.965599] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    0.972552] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM Cloc=
+kPM Segments MSI]
+[    0.982323] acpi PNP0A08:00: _OSC failed (AE_ERROR); disabling ASPM
+[    0.989425] acpi PNP0A08:00: [Firmware Info]: MMCONFIG for domain 0000 [=
+bus 00-3f] only partially covers this bridge
+[    1.004079] PCI host bridge to bus 0000:00
+[    1.008738] pci_bus 0000:00: root bus resource [io  0x0070-0x0077]
+[    1.015820] pci_bus 0000:00: root bus resource [io  0x0000-0x006f window]
+[    1.023434] pci_bus 0000:00: root bus resource [io  0x0078-0x0cf7 window]
+[    1.031043] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    1.038653] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bfff=
+f window]
+[    1.047046] pci_bus 0000:00: root bus resource [mem 0x000c0000-0x000dfff=
+f window]
+[    1.055436] pci_bus 0000:00: root bus resource [mem 0x000e0000-0x000ffff=
+f window]
+[    1.063827] pci_bus 0000:00: root bus resource [mem 0x80000000-0xdffffff=
+f window]
+[    1.072221] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    1.078390] pci 0000:00:00.0: [8086:2280] type 00 class 0x060000
+[    1.079674] pci 0000:00:02.0: [8086:22b1] type 00 class 0x030000
+[    1.079706] pci 0000:00:02.0: reg 0x10: [mem 0x90000000-0x90ffffff 64bit]
+[    1.079721] pci 0000:00:02.0: reg 0x18: [mem 0x80000000-0x8fffffff 64bit=
+ pref]
+[    1.079731] pci 0000:00:02.0: reg 0x20: [io  0x1000-0x103f]
+[    1.080813] pci 0000:00:0b.0: [8086:22dc] type 00 class 0x118000
+[    1.080849] pci 0000:00:0b.0: reg 0x10: [mem 0x9131c000-0x9131cfff 64bit]
+[    1.081973] pci 0000:00:14.0: [8086:22b5] type 00 class 0x0c0330
+[    1.082008] pci 0000:00:14.0: reg 0x10: [mem 0x91300000-0x9130ffff 64bit]
+[    1.082146] pci 0000:00:14.0: PME# supported from D3hot D3cold
+[    1.083149] pci 0000:00:14.0: System wakeup disabled by ACPI
+[    1.090043] pci 0000:00:1a.0: [8086:2298] type 00 class 0x108000
+[    1.090072] pci 0000:00:1a.0: reg 0x10: [mem 0x91200000-0x912fffff]
+[    1.090087] pci 0000:00:1a.0: reg 0x14: [mem 0x91100000-0x911fffff]
+[    1.090216] pci 0000:00:1a.0: PME# supported from D0 D3hot
+[    1.091605] pci 0000:00:1b.0: [8086:2284] type 00 class 0x040300
+[    1.091650] pci 0000:00:1b.0: reg 0x10: [mem 0x91310000-0x91313fff 64bit]
+[    1.091798] pci 0000:00:1b.0: PME# supported from D0 D3hot D3cold
+[    1.092471] pci 0000:00:1b.0: System wakeup disabled by ACPI
+[    1.099432] pci 0000:00:1c.0: [8086:22c8] type 01 class 0x060400
+[    1.101037] pci 0000:00:1c.0: PME# supported from D0 D3hot D3cold
+[    1.101947] pci 0000:00:1c.0: System wakeup disabled by ACPI
+[    1.108885] pci 0000:00:1c.2: [8086:22cc] type 01 class 0x060400
+[    1.110483] pci 0000:00:1c.2: PME# supported from D0 D3hot D3cold
+[    1.111309] pci 0000:00:1c.2: System wakeup disabled by ACPI
+[    1.118115] pci 0000:00:1f.0: [8086:229c] type 00 class 0x060100
+[    1.119260] pci 0000:00:1f.3: [8086:2292] type 00 class 0x0c0500
+[    1.119320] pci 0000:00:1f.3: reg 0x10: [mem 0x9131d000-0x9131d01f]
+[    1.119440] pci 0000:00:1f.3: reg 0x20: [io  0x1040-0x105f]
+[    1.121443] pci 0000:00:1c.0: PCI bridge to [bus 01]
+[    1.127340] pci 0000:00:1c.0: bridge has subordinate 01 but max busn 05
+[    1.135784] pci 0000:02:00.0: [8086:08b3] type 00 class 0x028000
+[    1.135966] pci 0000:02:00.0: reg 0x10: [mem 0x91000000-0x91001fff 64bit]
+[    1.136445] pci 0000:02:00.0: PME# supported from D0 D3hot D3cold
+[    1.136798] pci 0000:02:00.0: System wakeup disabled by ACPI
+[    1.146288] pci 0000:00:1c.2: PCI bridge to [bus 02]
+[    1.151954] pci 0000:00:1c.2:   bridge window [mem 0x91000000-0x910fffff]
+[    1.170906] ACPI: PCI Interrupt Link [LNKA] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.180611] ACPI: PCI Interrupt Link [LNKB] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.190436] ACPI: PCI Interrupt Link [LNKC] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.200180] ACPI: PCI Interrupt Link [LNKD] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.209857] ACPI: PCI Interrupt Link [LNKE] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.219536] ACPI: PCI Interrupt Link [LNKF] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.229345] ACPI: PCI Interrupt Link [LNKG] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.239006] ACPI: PCI Interrupt Link [LNKH] (IRQs 3 4 5 6 10 11 12 14 15=
+) *0, disabled.
+[    1.251002] cherryview-pinctrl INT33FF:00: try to register 56 pins ...
+[    1.251022] pinctrl core: registered pin 0 (FST_SPI_D2) on INT33FF:00
+[    1.251032] pinctrl core: registered pin 1 (FST_SPI_D0) on INT33FF:00
+[    1.251037] pinctrl core: registered pin 2 (FST_SPI_CLK) on INT33FF:00
+[    1.251041] pinctrl core: registered pin 3 (FST_SPI_D3) on INT33FF:00
+[    1.251046] pinctrl core: registered pin 4 (FST_SPI_CS1_B) on INT33FF:00
+[    1.251050] pinctrl core: registered pin 5 (FST_SPI_D1) on INT33FF:00
+[    1.251054] pinctrl core: registered pin 6 (FST_SPI_CS0_B) on INT33FF:00
+[    1.251058] pinctrl core: registered pin 7 (FST_SPI_CS2_B) on INT33FF:00
+[    1.251063] pinctrl core: registered pin 15 (UART1_RTS_B) on INT33FF:00
+[    1.251068] pinctrl core: registered pin 16 (UART1_RXD) on INT33FF:00
+[    1.251072] pinctrl core: registered pin 17 (UART2_RXD) on INT33FF:00
+[    1.251076] pinctrl core: registered pin 18 (UART1_CTS_B) on INT33FF:00
+[    1.251081] pinctrl core: registered pin 19 (UART2_RTS_B) on INT33FF:00
+[    1.251085] pinctrl core: registered pin 20 (UART1_TXD) on INT33FF:00
+[    1.251089] pinctrl core: registered pin 21 (UART2_TXD) on INT33FF:00
+[    1.251093] pinctrl core: registered pin 22 (UART2_CTS_B) on INT33FF:00
+[    1.251097] pinctrl core: registered pin 30 (MF_HDA_CLK) on INT33FF:00
+[    1.251101] pinctrl core: registered pin 31 (MF_HDA_RSTB) on INT33FF:00
+[    1.251106] pinctrl core: registered pin 32 (MF_HDA_SDIO) on INT33FF:00
+[    1.251110] pinctrl core: registered pin 33 (MF_HDA_SDO) on INT33FF:00
+[    1.251114] pinctrl core: registered pin 34 (MF_HDA_DOCKRSTB) on INT33FF=
+:00
+[    1.251120] pinctrl core: registered pin 35 (MF_HDA_SYNC) on INT33FF:00
+[    1.251125] pinctrl core: registered pin 36 (MF_HDA_SDI1) on INT33FF:00
+[    1.251129] pinctrl core: registered pin 37 (MF_HDA_DOCKENB) on INT33FF:=
+00
+[    1.251134] pinctrl core: registered pin 45 (I2C5_SDA) on INT33FF:00
+[    1.251138] pinctrl core: registered pin 46 (I2C4_SDA) on INT33FF:00
+[    1.251142] pinctrl core: registered pin 47 (I2C6_SDA) on INT33FF:00
+[    1.251146] pinctrl core: registered pin 48 (I2C5_SCL) on INT33FF:00
+[    1.251150] pinctrl core: registered pin 49 (I2C_NFC_SDA) on INT33FF:00
+[    1.251155] pinctrl core: registered pin 50 (I2C4_SCL) on INT33FF:00
+[    1.251160] pinctrl core: registered pin 51 (I2C6_SCL) on INT33FF:00
+[    1.251164] pinctrl core: registered pin 52 (I2C_NFC_SCL) on INT33FF:00
+[    1.251168] pinctrl core: registered pin 60 (I2C1_SDA) on INT33FF:00
+[    1.251174] pinctrl core: registered pin 61 (I2C0_SDA) on INT33FF:00
+[    1.251178] pinctrl core: registered pin 62 (I2C2_SDA) on INT33FF:00
+[    1.251182] pinctrl core: registered pin 63 (I2C1_SCL) on INT33FF:00
+[    1.251194] pinctrl core: registered pin 64 (I2C3_SDA) on INT33FF:00
+[    1.251198] pinctrl core: registered pin 65 (I2C0_SCL) on INT33FF:00
+[    1.251202] pinctrl core: registered pin 66 (I2C2_SCL) on INT33FF:00
+[    1.251207] pinctrl core: registered pin 67 (I2C3_SCL) on INT33FF:00
+[    1.251212] pinctrl core: registered pin 75 (SATA_GP0) on INT33FF:00
+[    1.251216] pinctrl core: registered pin 76 (SATA_GP1) on INT33FF:00
+[    1.251222] pinctrl core: registered pin 77 (SATA_LEDN) on INT33FF:00
+[    1.251226] pinctrl core: registered pin 78 (SATA_GP2) on INT33FF:00
+[    1.251231] pinctrl core: registered pin 79 (MF_SMB_ALERTB) on INT33FF:00
+[    1.251235] pinctrl core: registered pin 80 (SATA_GP3) on INT33FF:00
+[    1.251240] pinctrl core: registered pin 81 (MF_SMB_CLK) on INT33FF:00
+[    1.251244] pinctrl core: registered pin 82 (MF_SMB_DATA) on INT33FF:00
+[    1.251248] pinctrl core: registered pin 90 (PCIE_CLKREQ0B) on INT33FF:00
+[    1.251254] pinctrl core: registered pin 91 (PCIE_CLKREQ1B) on INT33FF:00
+[    1.251259] pinctrl core: registered pin 92 (GP_SSP_2_CLK) on INT33FF:00
+[    1.251264] pinctrl core: registered pin 93 (PCIE_CLKREQ2B) on INT33FF:00
+[    1.251268] pinctrl core: registered pin 94 (GP_SSP_2_RXD) on INT33FF:00
+[    1.251272] pinctrl core: registered pin 95 (PCIE_CLKREQ3B) on INT33FF:00
+[    1.251276] pinctrl core: registered pin 96 (GP_SSP_2_FS) on INT33FF:00
+[    1.251280] pinctrl core: registered pin 97 (GP_SSP_2_TXD) on INT33FF:00
+[    1.251289] cherryview-pinctrl INT33FF:00: failed to lookup the default =
+state
+[    1.251291] cherryview-pinctrl INT33FF:00: failed to lookup the sleep st=
+ate
+[    1.261171] cherryview-pinctrl INT33FF:01: try to register 59 pins ...
+[    1.261179] pinctrl core: registered pin 0 (GPIO_DFX_0) on INT33FF:01
+[    1.261189] pinctrl core: registered pin 1 (GPIO_DFX_3) on INT33FF:01
+[    1.261193] pinctrl core: registered pin 2 (GPIO_DFX_7) on INT33FF:01
+[    1.261198] pinctrl core: registered pin 3 (GPIO_DFX_1) on INT33FF:01
+[    1.261202] pinctrl core: registered pin 4 (GPIO_DFX_5) on INT33FF:01
+[    1.261206] pinctrl core: registered pin 5 (GPIO_DFX_4) on INT33FF:01
+[    1.261210] pinctrl core: registered pin 6 (GPIO_DFX_8) on INT33FF:01
+[    1.261214] pinctrl core: registered pin 7 (GPIO_DFX_2) on INT33FF:01
+[    1.261218] pinctrl core: registered pin 8 (GPIO_DFX_6) on INT33FF:01
+[    1.261222] pinctrl core: registered pin 15 (GPIO_SUS0) on INT33FF:01
+[    1.261227] pinctrl core: registered pin 16 (SEC_GPIO_SUS10) on INT33FF:=
+01
+[    1.261232] pinctrl core: registered pin 17 (GPIO_SUS3) on INT33FF:01
+[    1.261237] pinctrl core: registered pin 18 (GPIO_SUS7) on INT33FF:01
+[    1.261241] pinctrl core: registered pin 19 (GPIO_SUS1) on INT33FF:01
+[    1.261246] pinctrl core: registered pin 20 (GPIO_SUS5) on INT33FF:01
+[    1.261250] pinctrl core: registered pin 21 (SEC_GPIO_SUS11) on INT33FF:=
+01
+[    1.261254] pinctrl core: registered pin 22 (GPIO_SUS4) on INT33FF:01
+[    1.261258] pinctrl core: registered pin 23 (SEC_GPIO_SUS8) on INT33FF:01
+[    1.261263] pinctrl core: registered pin 24 (GPIO_SUS2) on INT33FF:01
+[    1.261267] pinctrl core: registered pin 25 (GPIO_SUS6) on INT33FF:01
+[    1.261272] pinctrl core: registered pin 26 (CX_PREQ_B) on INT33FF:01
+[    1.261277] pinctrl core: registered pin 27 (SEC_GPIO_SUS9) on INT33FF:01
+[    1.261281] pinctrl core: registered pin 30 (TRST_B) on INT33FF:01
+[    1.261285] pinctrl core: registered pin 31 (TCK) on INT33FF:01
+[    1.261291] pinctrl core: registered pin 32 (PROCHOT_B) on INT33FF:01
+[    1.261295] pinctrl core: registered pin 33 (SVIDO_DATA) on INT33FF:01
+[    1.261299] pinctrl core: registered pin 34 (TMS) on INT33FF:01
+[    1.261303] pinctrl core: registered pin 35 (CX_PRDY_B_2) on INT33FF:01
+[    1.261307] pinctrl core: registered pin 36 (TDO_2) on INT33FF:01
+[    1.261313] pinctrl core: registered pin 37 (CX_PRDY_B) on INT33FF:01
+[    1.261319] pinctrl core: registered pin 38 (SVIDO_ALERT_B) on INT33FF:01
+[    1.261323] pinctrl core: registered pin 39 (TDO) on INT33FF:01
+[    1.261327] pinctrl core: registered pin 40 (SVIDO_CLK) on INT33FF:01
+[    1.261331] pinctrl core: registered pin 41 (TDI) on INT33FF:01
+[    1.261336] pinctrl core: registered pin 45 (GP_CAMERASB_05) on INT33FF:=
+01
+[    1.261340] pinctrl core: registered pin 46 (GP_CAMERASB_02) on INT33FF:=
+01
+[    1.261344] pinctrl core: registered pin 47 (GP_CAMERASB_08) on INT33FF:=
+01
+[    1.261348] pinctrl core: registered pin 48 (GP_CAMERASB_00) on INT33FF:=
+01
+[    1.261352] pinctrl core: registered pin 49 (GP_CAMERASB_06) on INT33FF:=
+01
+[    1.261357] pinctrl core: registered pin 50 (GP_CAMERASB_10) on INT33FF:=
+01
+[    1.261361] pinctrl core: registered pin 51 (GP_CAMERASB_03) on INT33FF:=
+01
+[    1.261365] pinctrl core: registered pin 52 (GP_CAMERASB_09) on INT33FF:=
+01
+[    1.261369] pinctrl core: registered pin 53 (GP_CAMERASB_01) on INT33FF:=
+01
+[    1.261373] pinctrl core: registered pin 54 (GP_CAMERASB_07) on INT33FF:=
+01
+[    1.261378] pinctrl core: registered pin 55 (GP_CAMERASB_11) on INT33FF:=
+01
+[    1.261383] pinctrl core: registered pin 56 (GP_CAMERASB_04) on INT33FF:=
+01
+[    1.261387] pinctrl core: registered pin 60 (PANEL0_BKLTEN) on INT33FF:01
+[    1.261391] pinctrl core: registered pin 61 (HV_DDI0_HPD) on INT33FF:01
+[    1.261395] pinctrl core: registered pin 62 (HV_DDI2_DDC_SDA) on INT33FF=
+:01
+[    1.261399] pinctrl core: registered pin 63 (PANEL1_BKLTCTL) on INT33FF:=
+01
+[    1.261411] pinctrl core: registered pin 64 (HV_DDI1_HPD) on INT33FF:01
+[    1.261415] pinctrl core: registered pin 65 (PANEL0_BKLTCTL) on INT33FF:=
+01
+[    1.261420] pinctrl core: registered pin 66 (HV_DDI0_DDC_SDA) on INT33FF=
+:01
+[    1.261424] pinctrl core: registered pin 67 (HV_DDI2_DDC_SCL) on INT33FF=
+:01
+[    1.261428] pinctrl core: registered pin 68 (HV_DDI2_HPD) on INT33FF:01
+[    1.261432] pinctrl core: registered pin 69 (PANEL1_VDDEN) on INT33FF:01
+[    1.261437] pinctrl core: registered pin 70 (PANEL1_BKLTEN) on INT33FF:01
+[    1.261442] pinctrl core: registered pin 71 (HV_DDI0_DDC_SCL) on INT33FF=
+:01
+[    1.261452] pinctrl core: registered pin 72 (PANEL0_VDDEN) on INT33FF:01
+[    1.261458] cherryview-pinctrl INT33FF:01: failed to lookup the default =
+state
+[    1.261461] cherryview-pinctrl INT33FF:01: failed to lookup the sleep st=
+ate
+[    1.270163] cherryview-pinctrl INT33FF:02: try to register 24 pins ...
+[    1.270170] pinctrl core: registered pin 0 (PMU_SLP_S3_B) on INT33FF:02
+[    1.270180] pinctrl core: registered pin 1 (PMU_BATLOW_B) on INT33FF:02
+[    1.270184] pinctrl core: registered pin 2 (SUS_STAT_B) on INT33FF:02
+[    1.270229] pinctrl core: registered pin 3 (PMU_SLP_S0IX_B) on INT33FF:02
+[    1.270233] pinctrl core: registered pin 4 (PMU_AC_PRESENT) on INT33FF:02
+[    1.270237] pinctrl core: registered pin 5 (PMU_PLTRST_B) on INT33FF:02
+[    1.270242] pinctrl core: registered pin 6 (PMU_SUSCLK) on INT33FF:02
+[    1.270246] pinctrl core: registered pin 7 (PMU_SLP_LAN_B) on INT33FF:02
+[    1.270250] pinctrl core: registered pin 8 (PMU_PWRBTN_B) on INT33FF:02
+[    1.270254] pinctrl core: registered pin 9 (PMU_SLP_S4_B) on INT33FF:02
+[    1.270258] pinctrl core: registered pin 10 (PMU_WAKE_B) on INT33FF:02
+[    1.270263] pinctrl core: registered pin 11 (PMU_WAKE_LAN_B) on INT33FF:=
+02
+[    1.270267] pinctrl core: registered pin 15 (MF_ISH_GPIO_3) on INT33FF:02
+[    1.270271] pinctrl core: registered pin 16 (MF_ISH_GPIO_7) on INT33FF:02
+[    1.270275] pinctrl core: registered pin 17 (MF_ISH_I2C1_SCL) on INT33FF=
+:02
+[    1.270279] pinctrl core: registered pin 18 (MF_ISH_GPIO_1) on INT33FF:02
+[    1.270284] pinctrl core: registered pin 19 (MF_ISH_GPIO_5) on INT33FF:02
+[    1.270288] pinctrl core: registered pin 20 (MF_ISH_GPIO_9) on INT33FF:02
+[    1.270293] pinctrl core: registered pin 21 (MF_ISH_GPIO_0) on INT33FF:02
+[    1.270297] pinctrl core: registered pin 22 (MF_ISH_GPIO_4) on INT33FF:02
+[    1.270301] pinctrl core: registered pin 23 (MF_ISH_GPIO_8) on INT33FF:02
+[    1.270305] pinctrl core: registered pin 24 (MF_ISH_GPIO_2) on INT33FF:02
+[    1.270310] pinctrl core: registered pin 25 (MF_ISH_GPIO_6) on INT33FF:02
+[    1.270315] pinctrl core: registered pin 26 (MF_ISH_I2C1_SDA) on INT33FF=
+:02
+[    1.270322] cherryview-pinctrl INT33FF:02: failed to lookup the default =
+state
+[    1.270325] cherryview-pinctrl INT33FF:02: failed to lookup the sleep st=
+ate
+[    1.274471] cherryview-pinctrl INT33FF:03: try to register 55 pins ...
+[    1.274480] pinctrl core: registered pin 0 (MF_PLT_CLK0) on INT33FF:03
+[    1.274488] pinctrl core: registered pin 1 (PWM1) on INT33FF:03
+[    1.274493] pinctrl core: registered pin 2 (MF_PLT_CLK1) on INT33FF:03
+[    1.274497] pinctrl core: registered pin 3 (MF_PLT_CLK4) on INT33FF:03
+[    1.274504] pinctrl core: registered pin 4 (MF_PLT_CLK3) on INT33FF:03
+[    1.274511] pinctrl core: registered pin 5 (PWM0) on INT33FF:03
+[    1.274515] pinctrl core: registered pin 6 (MF_PLT_CLK5) on INT33FF:03
+[    1.274520] pinctrl core: registered pin 7 (MF_PLT_CLK2) on INT33FF:03
+[    1.274524] pinctrl core: registered pin 15 (SDMMC2_D3_CD_B) on INT33FF:=
+03
+[    1.274528] pinctrl core: registered pin 16 (SDMMC1_CLK) on INT33FF:03
+[    1.274532] pinctrl core: registered pin 17 (SDMMC1_D0) on INT33FF:03
+[    1.274537] pinctrl core: registered pin 18 (SDMMC2_D1) on INT33FF:03
+[    1.274542] pinctrl core: registered pin 19 (SDMMC2_CLK) on INT33FF:03
+[    1.274546] pinctrl core: registered pin 20 (SDMMC1_D2) on INT33FF:03
+[    1.274550] pinctrl core: registered pin 21 (SDMMC2_D2) on INT33FF:03
+[    1.274557] pinctrl core: registered pin 22 (SDMMC2_CMD) on INT33FF:03
+[    1.274566] pinctrl core: registered pin 23 (SDMMC1_CMD) on INT33FF:03
+[    1.274570] pinctrl core: registered pin 24 (SDMMC1_D1) on INT33FF:03
+[    1.274574] pinctrl core: registered pin 25 (SDMMC2_D0) on INT33FF:03
+[    1.274580] pinctrl core: registered pin 26 (SDMMC1_D3_CD_B) on INT33FF:=
+03
+[    1.274584] pinctrl core: registered pin 30 (SDMMC3_D1) on INT33FF:03
+[    1.274588] pinctrl core: registered pin 31 (SDMMC3_CLK) on INT33FF:03
+[    1.274593] pinctrl core: registered pin 32 (SDMMC3_D3) on INT33FF:03
+[    1.274597] pinctrl core: registered pin 33 (SDMMC3_D2) on INT33FF:03
+[    1.274601] pinctrl core: registered pin 34 (SDMMC3_CMD) on INT33FF:03
+[    1.274606] pinctrl core: registered pin 35 (SDMMC3_D0) on INT33FF:03
+[    1.274610] pinctrl core: registered pin 45 (MF_LPC_AD2) on INT33FF:03
+[    1.274615] pinctrl core: registered pin 46 (LPC_CLKRUNB) on INT33FF:03
+[    1.274620] pinctrl core: registered pin 47 (MF_LPC_AD0) on INT33FF:03
+[    1.274625] pinctrl core: registered pin 48 (LPC_FRAMEB) on INT33FF:03
+[    1.274629] pinctrl core: registered pin 49 (MF_LPC_CLKOUT1) on INT33FF:=
+03
+[    1.274633] pinctrl core: registered pin 50 (MF_LPC_AD3) on INT33FF:03
+[    1.274639] pinctrl core: registered pin 51 (MF_LPC_CLKOUT0) on INT33FF:=
+03
+[    1.274643] pinctrl core: registered pin 52 (MF_LPC_AD1) on INT33FF:03
+[    1.274649] pinctrl core: registered pin 60 (SPI1_MISO) on INT33FF:03
+[    1.274653] pinctrl core: registered pin 61 (SPI1_CSO_B) on INT33FF:03
+[    1.274658] pinctrl core: registered pin 62 (SPI1_CLK) on INT33FF:03
+[    1.274663] pinctrl core: registered pin 63 (MMC1_D6) on INT33FF:03
+[    1.274674] pinctrl core: registered pin 64 (SPI1_MOSI) on INT33FF:03
+[    1.274678] pinctrl core: registered pin 65 (MMC1_D5) on INT33FF:03
+[    1.274683] pinctrl core: registered pin 66 (SPI1_CS1_B) on INT33FF:03
+[    1.274687] pinctrl core: registered pin 67 (MMC1_D4_SD_WE) on INT33FF:03
+[    1.274693] pinctrl core: registered pin 68 (MMC1_D7) on INT33FF:03
+[    1.274698] pinctrl core: registered pin 69 (MMC1_RCLK) on INT33FF:03
+[    1.274702] pinctrl core: registered pin 75 (USB_OC1_B) on INT33FF:03
+[    1.274707] pinctrl core: registered pin 76 (PMU_RESETBUTTON_B) on INT33=
+FF:03
+[    1.274711] pinctrl core: registered pin 77 (GPIO_ALERT) on INT33FF:03
+[    1.274717] pinctrl core: registered pin 78 (SDMMC3_PWR_EN_B) on INT33FF=
+:03
+[    1.274722] pinctrl core: registered pin 79 (ILB_SERIRQ) on INT33FF:03
+[    1.274726] pinctrl core: registered pin 80 (USB_OC0_B) on INT33FF:03
+[    1.274732] pinctrl core: registered pin 81 (SDMMC3_CD_B) on INT33FF:03
+[    1.274736] pinctrl core: registered pin 82 (SPKR) on INT33FF:03
+[    1.274742] pinctrl core: registered pin 83 (SUSPWRDNACK) on INT33FF:03
+[    1.274746] pinctrl core: registered pin 84 (SPARE_PIN) on INT33FF:03
+[    1.274750] pinctrl core: registered pin 85 (SDMMC3_1P8_EN) on INT33FF:03
+[    1.274757] cherryview-pinctrl INT33FF:03: failed to lookup the default =
+state
+[    1.274760] cherryview-pinctrl INT33FF:03: failed to lookup the sleep st=
+ate
+[    1.281817] kworker/u8:0 (536) used greatest stack depth: 13944 bytes le=
+ft
+[    1.283955] ACPI: Enabled 9 GPEs in block 00 to 3F
+[    1.309950] dw_dmac INTL9C60:00: DesignWare DMA Controller, 8 channels
+[    1.342891] dw_dmac INTL9C60:01: DesignWare DMA Controller, 8 channels
+[    1.351229] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    1.357953] pci 0000:00:02.0: vgaarb: VGA device added: decodes=3Dio+mem=
+,owns=3Dio+mem,locks=3Dnone
+[    1.367511] pci 0000:00:02.0: vgaarb: bridge control possible
+[    1.373999] vgaarb: loaded
+[    1.377734] SCSI subsystem initialized
+[    1.382169] libata version 3.00 loaded.
+[    1.382317] ACPI: bus type USB registered
+[    1.387023] usbcore: registered new interface driver usbfs
+[    1.393276] usbcore: registered new interface driver hub
+[    1.399323] usbcore: registered new device driver usb
+[    1.465161] pps_core: LinuxPPS API ver. 1 registered
+[    1.470751] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo =
+Giometti <giometti@linux.it>
+[    1.481232] PTP clock support registered
+[    1.486645] Registered efivars operations
+[    1.514771] PCI: Using ACPI for IRQ routing
+[    1.522156] PCI: pci_cache_line_size set to 64 bytes
+[    1.522365] e820: reserve RAM buffer [mem 0x0006f000-0x0006ffff]
+[    1.522376] e820: reserve RAM buffer [mem 0x00086000-0x0008ffff]
+[    1.522381] e820: reserve RAM buffer [mem 0x736a0018-0x73ffffff]
+[    1.522386] e820: reserve RAM buffer [mem 0x79b79000-0x7bffffff]
+[    1.522391] e820: reserve RAM buffer [mem 0x7b442000-0x7bffffff]
+[    1.524358] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    1.529844] hpet0: 3 comparators, 64-bit 14.318180 MHz counter
+[    1.538490] clocksource: Switched to clocksource hpet
+[    1.576281] VFS: Disk quotas dquot_6.6.0
+[    1.580829] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 byte=
+s)
+[    1.589210] pnp: PnP ACPI init
+[    1.593351] system 00:00: [io  0x0680-0x069f] has been reserved
+[    1.600023] system 00:00: [io  0x0400-0x047f] has been reserved
+[    1.606679] system 00:00: [io  0x0500-0x05fe] has been reserved
+[    1.613343] system 00:00: Plug and Play ACPI device, IDs PNP0c02 (active)
+[    1.614070] pnp 00:01: Plug and Play ACPI device, IDs PNP0501 (active)
+[    1.614460] pnp 00:02: Plug and Play ACPI device, IDs PNP0303 (active)
+[    1.614556] kworker/u8:0 (601) used greatest stack depth: 13784 bytes le=
+ft
+[    1.627466] system 00:03: [mem 0x91325000-0x91325fff] has been reserved
+[    1.635007] system 00:03: [mem 0x91320000-0x91320fff] has been reserved
+[    1.642531] system 00:03: [mem 0x9131e000-0x9131efff] has been reserved
+[    1.649962] system 00:03: [mem 0x91323000-0x91323fff] has been reserved
+[    1.657387] system 00:03: [mem 0x91321000-0x91321fff] has been reserved
+[    1.664812] system 00:03: Plug and Play ACPI device, IDs PNP0c02 (active)
+[    1.665671] system 00:04: [mem 0xe0000000-0xefffffff] could not be reser=
+ved
+[    1.673514] system 00:04: [mem 0xfea00000-0xfeafffff] has been reserved
+[    1.680984] system 00:04: [mem 0xfed01000-0xfed01fff] has been reserved
+[    1.688416] system 00:04: [mem 0xfed03000-0xfed03fff] has been reserved
+[    1.695848] system 00:04: [mem 0xfed06000-0xfed06fff] has been reserved
+[    1.703282] system 00:04: [mem 0xfed08000-0xfed09fff] has been reserved
+[    1.710718] system 00:04: [mem 0xfed80000-0xfedbffff] could not be reser=
+ved
+[    1.718536] system 00:04: [mem 0xfed1c000-0xfed1cfff] has been reserved
+[    1.725970] system 00:04: [mem 0xfee00000-0xfeefffff] has been reserved
+[    1.733402] system 00:04: Plug and Play ACPI device, IDs PNP0c02 (active)
+[    1.735035] pnp 00:05: Plug and Play ACPI device, IDs PNP0b00 (active)
+[    1.736322] pnp: PnP ACPI: found 6 devices
+[    1.764426] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, m=
+ax_idle_ns: 2085701024 ns
+[    1.774548] pci 0000:00:1c.0: bridge window [io  0x1000-0x0fff] to [bus =
+01] add_size 1000
+[    1.774560] pci 0000:00:1c.0: bridge window [mem 0x00100000-0x000fffff 6=
+4bit pref] to [bus 01] add_size 200000 add_align 100000
+[    1.774569] pci 0000:00:1c.0: bridge window [mem 0x00100000-0x000fffff] =
+to [bus 01] add_size 200000 add_align 100000
+[    1.774735] pci 0000:00:1c.0: res[8]=3D[mem 0x00100000-0x000fffff] res_t=
+o_dev_res add_size 200000 min_align 100000
+[    1.774741] pci 0000:00:1c.0: res[8]=3D[mem 0x00100000-0x002fffff] res_t=
+o_dev_res add_size 200000 min_align 100000
+[    1.774745] pci 0000:00:1c.0: res[9]=3D[mem 0x00100000-0x000fffff 64bit =
+pref] res_to_dev_res add_size 200000 min_align 100000
+[    1.774749] pci 0000:00:1c.0: res[9]=3D[mem 0x00100000-0x002fffff 64bit =
+pref] res_to_dev_res add_size 200000 min_align 100000
+[    1.774753] pci 0000:00:1c.0: res[7]=3D[io  0x1000-0x0fff] res_to_dev_re=
+s add_size 1000 min_align 1000
+[    1.774757] pci 0000:00:1c.0: res[7]=3D[io  0x1000-0x1fff] res_to_dev_re=
+s add_size 1000 min_align 1000
+[    1.774771] pci 0000:00:1c.0: BAR 8: assigned [mem 0x91400000-0x915fffff]
+[    1.782396] pci 0000:00:1c.0: BAR 9: assigned [mem 0x91600000-0x917fffff=
+ 64bit pref]
+[    1.791091] pci 0000:00:1c.0: BAR 7: assigned [io  0x2000-0x2fff]
+[    1.797941] pci 0000:00:1c.0: PCI bridge to [bus 01]
+[    1.803535] pci 0000:00:1c.0:   bridge window [io  0x2000-0x2fff]
+[    1.810439] pci 0000:00:1c.0:   bridge window [mem 0x91400000-0x915fffff]
+[    1.818101] pci 0000:00:1c.0:   bridge window [mem 0x91600000-0x917fffff=
+ 64bit pref]
+[    1.826885] pci 0000:00:1c.2: PCI bridge to [bus 02]
+[    1.832543] pci 0000:00:1c.2:   bridge window [mem 0x91000000-0x910fffff]
+[    1.840288] pci_bus 0000:00: resource 4 [io  0x0070-0x0077]
+[    1.840292] pci_bus 0000:00: resource 5 [io  0x0000-0x006f window]
+[    1.840295] pci_bus 0000:00: resource 6 [io  0x0078-0x0cf7 window]
+[    1.840299] pci_bus 0000:00: resource 7 [io  0x0d00-0xffff window]
+[    1.840303] pci_bus 0000:00: resource 8 [mem 0x000a0000-0x000bffff windo=
+w]
+[    1.840306] pci_bus 0000:00: resource 9 [mem 0x000c0000-0x000dffff windo=
+w]
+[    1.840309] pci_bus 0000:00: resource 10 [mem 0x000e0000-0x000fffff wind=
+ow]
+[    1.840313] pci_bus 0000:00: resource 11 [mem 0x80000000-0xdfffffff wind=
+ow]
+[    1.840316] pci_bus 0000:01: resource 0 [io  0x2000-0x2fff]
+[    1.840319] pci_bus 0000:01: resource 1 [mem 0x91400000-0x915fffff]
+[    1.840322] pci_bus 0000:01: resource 2 [mem 0x91600000-0x917fffff 64bit=
+ pref]
+[    1.840325] pci_bus 0000:02: resource 1 [mem 0x91000000-0x910fffff]
+[    1.841094] NET: Registered protocol family 2
+[    1.846782] TCP established hash table entries: 16384 (order: 5, 131072 =
+bytes)
+[    1.855006] TCP bind hash table entries: 16384 (order: 6, 262144 bytes)
+[    1.862569] TCP: Hash tables configured (established 16384 bind 16384)
+[    1.870000] UDP hash table entries: 1024 (order: 3, 32768 bytes)
+[    1.876784] UDP-Lite hash table entries: 1024 (order: 3, 32768 bytes)
+[    1.884349] NET: Registered protocol family 1
+[    1.889312] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x0=
+00c0000-0x000dffff]
+[    1.902090] PCI: CLS 64 bytes, default 64
+[    1.902364] Unpacking initramfs...
+[    4.730042] Freeing initrd memory: 6492K
+[    4.734882] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x171=
+024fa93b, max_idle_ns: 440795253189 ns
+[    4.746149] clocksource: Switched to clocksource tsc
+[    4.753586] Scanning for low memory corruption every 60 seconds
+[    4.763654] futex hash table entries: 1024 (order: 4, 65536 bytes)
+[    4.770758] audit: initializing netlink subsys (disabled)
+[    4.777026] audit: type=3D2000 audit(1486520770.124:1): initialized
+[    4.785149] workingset: timestamp_bits=3D56 max_order=3D19 bucket_order=
+=3D0
+[    4.828208] Block layer SCSI generic (bsg) driver version 0.4 loaded (ma=
+jor 249)
+[    4.836608] io scheduler noop registered
+[    4.841010] io scheduler deadline registered
+[    4.846199] io scheduler cfq registered (default)
+[    4.855537] efifb: probing for efifb
+[    4.859635] efifb: framebuffer at 0x80000000, using 4128k, total 4128k
+[    4.866954] efifb: mode is 1366x768x32, linelength=3D5504, pages=3D1
+[    4.873739] efifb: scrolling: redraw
+[    4.877748] efifb: Truecolor: size=3D8:8:8:8, shift=3D24:16:8:0
+[    4.893140] Console: switching to colour frame buffer device 170x48
+[    4.907601] fb0: EFI VGA frame buffer device
+[    4.913208] ACPI: AC Adapter [ADP0] (off-line)
+[    4.918972] input: Power Button as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0=
+C0C:00/input/input0
+[    4.929082] ACPI: Power Button [PWRB]
+[    4.934110] input: Lid Switch as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0=
+D:00/input/input1
+[    4.943634] ACPI: Lid Switch [LID0]
+[    4.948095] input: Sleep Button as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0=
+C0E:00/input/input2
+[    4.957590] ACPI: Sleep Button [SLPB]
+[    4.962197] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/inpu=
+t/input3
+[    4.970588] ACPI: Power Button [PWRF]
+[    4.976194] Monitor-Mwait will be used to enter C-1 state
+[    4.976219] Monitor-Mwait will be used to enter C-2 state
+[    4.995301] ACPI Error: [TCNT] Namespace lookup failure, AE_NOT_FOUND (2=
+0160930/psargs-359)
+[    5.004793] ACPI Error: Method parse/execution failed [\_TZ.TZ00._PSL] (=
+Node ffff880074e6f730), AE_NOT_FOUND (20160930/psparse-543)
+[    5.018210] ACPI: Invalid passive threshold
+[    5.023135] ACPI: Invalid active0 threshold
+[    5.029008] (NULL device *): hwmon_device_register() is deprecated. Plea=
+se convert the driver to use hwmon_device_register_with_info().
+[    5.043346] thermal LNXTHERM:01: registered as thermal_zone0
+[    5.049765] ACPI: Thermal Zone [TZ01] (60 C)
+[    5.055966] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    5.070280] ACPI: Battery Slot [BAT0] (battery present)
+[    5.086595] 00:01: ttyS0 at I/O 0x3f8 (irq =3D 4, base_baud =3D 115200) =
+is a 16550A
+[    5.095784] 8086228A:01: ttyS1 at MMIO 0x9131f000 (irq =3D 40, base_baud=
+ =3D 2764800) is a 16550A
+[    5.097597] Non-volatile memory driver v1.3
+[    5.097856] [drm] Initialized
+[    5.099507] [drm] Memory usable by graphics device =3D 2048M
+[    5.099516] checking generic (80000000 408000) vs hw (80000000 10000000)
+[    5.099518] fb: switching to inteldrmfb from EFI VGA
+[    5.152444] Console: switching to colour dummy device 80x25
+[    5.159013] [drm] Replacing VGA console driver
+[    5.164528] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    5.171957] [drm] Driver supports precise vblank timestamp query.
+[    5.200860] i915 0000:00:02.0: vgaarb: changed VGA decodes: olddecodes=
+=3Dio+mem,decodes=3Dio+mem:owns=3Dio+mem
+[    5.259789] ACPI: Video Device [GFX0] (multi-head: yes  rom: no  post: n=
+o)
+[    5.269659] input: Video Bus as /devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08=
+:00/LNXVIDEO:00/input/input4
+[    5.280093] [drm] Initialized i915 1.6.0 20161121 for 0000:00:02.0 on mi=
+nor 0
+[    5.306070] loop: module loaded
+[    5.312398] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    5.319890] ehci-pci: EHCI PCI platform driver
+[    5.326008] xhci_hcd 0000:00:14.0: xHCI Host Controller
+[    5.331941] xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus =
+number 1
+[    5.341648] xhci_hcd 0000:00:14.0: hcc params 0x200077c1 hci version 0x1=
+00 quirks 0x01509810
+[    5.351138] xhci_hcd 0000:00:14.0: cache line size of 64 is not supported
+[    5.351738] usb usb1: New USB device found, idVendor=3D1d6b, idProduct=
+=3D0002
+[    5.359367] usb usb1: New USB device strings: Mfr=3D3, Product=3D2, Seri=
+alNumber=3D1
+[    5.367481] usb usb1: Product: xHCI Host Controller
+[    5.372970] usb usb1: Manufacturer: Linux 4.10.0-rc7+ xhci-hcd
+[    5.379537] usb usb1: SerialNumber: 0000:00:14.0
+[    5.385768] hub 1-0:1.0: USB hub found
+[    5.390040] hub 1-0:1.0: 7 ports detected
+[    5.399723] xhci_hcd 0000:00:14.0: xHCI Host Controller
+[    5.405827] xhci_hcd 0000:00:14.0: new USB bus registered, assigned bus =
+number 2
+[    5.414481] usb usb2: New USB device found, idVendor=3D1d6b, idProduct=
+=3D0003
+[    5.422118] usb usb2: New USB device strings: Mfr=3D3, Product=3D2, Seri=
+alNumber=3D1
+[    5.430243] usb usb2: Product: xHCI Host Controller
+[    5.430723] random: fast init done
+[    5.439570] usb usb2: Manufacturer: Linux 4.10.0-rc7+ xhci-hcd
+[    5.446125] usb usb2: SerialNumber: 0000:00:14.0
+[    5.452286] hub 2-0:1.0: USB hub found
+[    5.456568] hub 2-0:1.0: 6 ports detected
+[    5.466850] usbcore: registered new interface driver usb-storage
+[    5.473829] usbcore: registered new interface driver usbserial
+[    5.480443] usbcore: registered new interface driver usbserial_generic
+[    5.487847] usbserial: USB Serial support registered for generic
+[    5.494670] usbcore: registered new interface driver ftdi_sio
+[    5.501524] usbserial: USB Serial support registered for FTDI USB Serial=
+ Device
+[    5.509839] usbcore: registered new interface driver pl2303
+[    5.516170] usbserial: USB Serial support registered for pl2303
+[    5.523023] i8042: PNP: PS/2 Controller [PNP0303:PS2K] at 0x60,0x64 irq 1
+[    5.530647] i8042: PNP: PS/2 appears to have AUX port disabled, if this =
+is incorrect please boot with i8042.nopnp
+[    5.543165] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    5.549370] mousedev: PS/2 mouse device common for all mice
+[    5.557169] rtc_cmos 00:05: RTC can wake from S4
+[    5.563009] rtc_cmos 00:05: rtc core: registered rtc_cmos as rtc0
+[    5.569966] rtc_cmos 00:05: alarms up to one month, y3k, 242 bytes nvram=
+, hpet irqs
+[    5.579136] i2c /dev entries driver
+[    5.586448] i801_smbus 0000:00:1f.3: SMBus using PCI interrupt
+[    5.598753] input: AT Translated Set 2 keyboard as /devices/platform/i80=
+42/serio0/input/input5
+[    5.619960] fbcon: inteldrmfb (fb0) is primary device
+[    5.627289] iTCO_wdt: Intel TCO WatchDog Timer Driver v1.11
+[    5.627431] iTCO_wdt: unable to reset NO_REBOOT flag, device disabled by=
+ hardware/BIOS
+[    5.627619] iTCO_vendor_support: vendor-support=3D0
+[    5.628655] device-mapper: ioctl: 4.35.0-ioctl (2016-06-23) initialised:=
+ dm-devel@redhat.com
+[    5.628666] intel_pstate: Intel P-state driver initializing
+[    5.629821] sdhci: Secure Digital Host Controller Interface driver
+[    5.629827] sdhci: Copyright(c) Pierre Ossman
+[    5.646638] mmc0: SDHCI controller on ACPI [80860F14:00] using ADMA
+[    5.646784] EFI Variables Facility v0.08 2004-May-17
+[    5.695084] hidraw: raw HID events driver (C) Jiri Kosina
+[    5.696092] usbcore: registered new interface driver usbhid
+[    5.696093] usbhid: USB HID core driver
+[    5.719897] Initializing XFRM netlink socket
+[    5.720916] NET: Registered protocol family 10
+[    5.722865] Segment Routing with IPv6
+[    5.722909] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    5.723672] NET: Registered protocol family 17
+[    5.724770] microcode: sig=3D0x406c3, pf=3D0x1, revision=3D0x34f
+[    5.724947] microcode: Microcode Update Driver: v2.2.
+[    5.725674] registered taskstats version 1
+[    5.725747] kmemleak: Kernel memory leak detector initialized
+[    5.725753] kmemleak: Automatic memory scanning thread started
+[    5.727477]   Magic number: 5:159:409
+[    5.728123] PM: Hibernation image not present or could not be loaded.
+[    5.766527] usb 1-1: new high-speed USB device number 2 using xhci_hcd
+[    5.803071] mmc0: new HS200 MMC card at address 0001
+[    5.806090] mmcblk0: mmc0:0001 HBG4e=05 29.1 GiB=20
+[    5.807008] mmcblk0boot0: mmc0:0001 HBG4e=05 partition 1 4.00 MiB
+[    5.807317] mmcblk0boot1: mmc0:0001 HBG4e=05 partition 2 4.00 MiB
+[    5.807641] mmcblk0rpmb: mmc0:0001 HBG4e=05 partition 3 4.00 MiB
+[    5.810611]  mmcblk0: p1 p2 p3 p4
+[    5.935896] usb 1-1: New USB device found, idVendor=3D0781, idProduct=3D=
+5575
+[    5.935909] usb 1-1: New USB device strings: Mfr=3D1, Product=3D2, Seria=
+lNumber=3D3
+[    5.935918] usb 1-1: Product: Cruzer Glide
+[    5.935927] usb 1-1: Manufacturer: SanDisk
+[    5.935935] usb 1-1: SerialNumber: 20043514620CF171959A
+[    5.939016] usb-storage 1-1:1.0: USB Mass Storage device detected
+[    5.941209] scsi host0: usb-storage 1-1:1.0
+[    6.100566] usb 1-3: new high-speed USB device number 3 using xhci_hcd
+[    6.269834] usb 1-3: New USB device found, idVendor=3D0bda, idProduct=3D=
+0129
+[    6.269848] usb 1-3: New USB device strings: Mfr=3D1, Product=3D2, Seria=
+lNumber=3D3
+[    6.269859] usb 1-3: Product: USB2.0-CRW
+[    6.269866] usb 1-3: Manufacturer: Generic
+[    6.269874] usb 1-3: SerialNumber: 20100201396000000
+[    6.431650] usb 1-4: new high-speed USB device number 4 using xhci_hcd
+[    6.622974] usb 1-4: New USB device found, idVendor=3D064e, idProduct=3D=
+9404
+[    6.622988] usb 1-4: New USB device strings: Mfr=3D3, Product=3D1, Seria=
+lNumber=3D2
+[    6.622998] usb 1-4: Product: VGA Webcam
+[    6.623005] usb 1-4: Manufacturer: SuYin
+[    6.623013] usb 1-4: SerialNumber: HF031A-T803-SE02-REV0100
+[    6.786568] usb 1-5: new full-speed USB device number 5 using xhci_hcd
+[    6.956827] usb 1-5: New USB device found, idVendor=3D8087, idProduct=3D=
+07dc
+[    6.956841] usb 1-5: New USB device strings: Mfr=3D0, Product=3D0, Seria=
+lNumber=3D0
+[    6.959932] scsi 0:0:0:0: Direct-Access     SanDisk  Cruzer Glide     1.=
+27 PQ: 0 ANSI: 6
+[    6.964191] sd 0:0:0:0: [sda] 15223808 512-byte logical blocks: (7.79 GB=
+/7.26 GiB)
+[    6.964416] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[    6.966049] sd 0:0:0:0: [sda] Write Protect is off
+[    6.966062] sd 0:0:0:0: [sda] Mode Sense: 43 00 00 00
+[    6.966781] sd 0:0:0:0: [sda] Write cache: disabled, read cache: enabled=
+, doesn't support DPO or FUA
+[    6.972888]  sda: sda1
+[    6.974630] sd 0:0:0:0: [sda] Attached SCSI removable disk
+[    7.122581] Console: switching to colour frame buffer device 170x48
+[    7.585944] i915 0000:00:02.0: fb0: inteldrmfb frame buffer device
+[    7.604736] Freeing unused kernel memory: 1716K
+[    7.611938] Write protecting the kernel read-only data: 12288k
+[    7.621064] Freeing unused kernel memory: 552K
+[    7.635443] Freeing unused kernel memory: 1588K
+[    7.821389] mdev (1216) used greatest stack depth: 13640 bytes left
+[    8.305775] ip (1237) used greatest stack depth: 13456 bytes left
+[   13.974178] random: crng init done
+[   15.855852] cat (1245) used greatest stack depth: 13392 bytes left
+
+--BOKacYhQ+x31HxR3--
