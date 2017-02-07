@@ -1,35 +1,80 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] pinctrl: intel: unlock on error in intel_config_set_pull()
-Date: Tue, 7 Feb 2017 16:20:08 +0300
-Message-ID: <20170207132008.GD31552@mwanda>
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
+Date: Tue, 7 Feb 2017 14:30:31 +0100
+Message-ID: <20170207143031.4700300a@ipc1.ka-ro>
+References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
+ <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
+ <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, chrisrfq@gmail.com, Arun Bharadwaj <arun@gumstix.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-We need to unlock before returning -EINVAL on this error path.
-
-Fixes: 04cc058f0c52 ("pinctrl: intel: Add support for 1k additional pull-down")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 523264463d35..592b465e981e 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -599,8 +599,10 @@ static int intel_config_set_pull(struct intel_pinctrl *pctrl, unsigned pin,
- 			value |= PADCFG1_TERM_5K << PADCFG1_TERM_SHIFT;
- 			break;
- 		case 1000:
--			if (!(community->features & PINCTRL_FEATURE_1K_PD))
--				return -EINVAL;
-+			if (!(community->features & PINCTRL_FEATURE_1K_PD)) {
-+				ret = -EINVAL;
-+				break;
-+			}
- 			value |= PADCFG1_TERM_1K << PADCFG1_TERM_SHIFT;
- 			break;
- 		default:
+SGksCgpPbiBUdWUsIDcgRmViIDIwMTcgMTI6MDk6NTAgKzAxMDAgVXdlIEtsZWluZS1Lw7ZuaWcg
+d3JvdGU6Cj4gSGVsbG8sCj4gCj4gKE1hcmt1cyBsZWZ0IFBlbmd1dHJvbml4LCBzbyBJIGRyb3Bw
+ZWQgaGlzIG5vbi13b3JraW5nIGFkZHJlc3MgZnJvbSB0aGUKPiByZWNpcGllbnRzIGFuZCBwaWNr
+IHVwIGhpcyBkaXNjdXNzaW9uLikKPiAKPiBhcyBmYXIgYXMgSSBzZWUsIHRoaXMgdG9waWMgaXNu
+J3QgY2xvc2VkIHlldC4gSSB3YW50IHNvbWV0aGluZyBzaW1pbGFyLAo+IG1heWJlIGV2ZW4gYSBi
+aXQgbW9yZSB0aGFuIHRoaXMgcGF0Y2ggYWNoaWV2ZXM6Cj4gCj4gU29tZSBncGlvcyBzaG91bGQg
+Z2V0IGEgZml4ZWQgZGlyZWN0aW9uLiBJZiBzdWNoIGEgZ3BpbyBpcyBjb25maWd1cmVkIGFzCj4g
+b3V0cHV0LCBhIHZhbHVlIHNob3VsZCBiZSBzcGVjaWZpZWQuIFRoaXMgaXMgYWxyZWFkeSB3b3Jr
+aW5nIHRvZGF5IHdpdGgKPiBncGlvLWhvZ3MuCj4gCj4gTm93IGFkZGl0aW9uYWxseSBJIHdhbnQg
+dG8gaW5pdGlhbGl6ZSBzb21lIGdwaW9zIGJ1dCBhbGxvdyB0aGVtIHRvIGJlCj4gZ3JhYmJlZCBs
+YXRlci4gSU1ITyB0aGVyZSBhcmUgdGhlIGZvbGxvd2luZyBuZXcgY2FzZXM6Cj4gCj4gSXQgc2hv
+dWxkIGJlIHBvc3NpYmxlIHRvOgo+IAo+ICBhKSBjaGFuZ2UgdGhlIHZhbHVlIG9mIGEgZ3BpbyBp
+bml0aWFsbHkgY29uZmlndXJlZCBhcyBvdXRwdXQKPiAgYikgY2hhbmdlIHRoZSBkaXJlY3Rpb24g
+b2YgYSBncGlvIGluaXRpYWxseSBjb25maWd1cmVkIGFzIG91dHB1dAo+ICBjKSBjaGFuZ2UgdGhl
+IGRpcmVjdGlvbiBvZiBhIGdwaW8gaW5pdGlhbGx5IGNvbmZpZ3VyZWQgYXMgaW5wdXQKPiAKPiBJ
+TUhPIHRoZSBkdHMgc2hvdWxkIGRlc2NyaWJlIHdoaWNoIGNhc2Ugc2hvdWxkIGJlIGFwcGxpZWQg
+dG8gYSBnaXZlbgo+IGdwaW8uCj4gCj4gSXMgaXQgYSB2YWxpZCBhc3N1bXB0aW9uIHRoYXQgYSBn
+cGlvIHRoYXQgY2FuIGNoYW5nZSBkaXJlY3Rpb24gaXMgYWxzbwo+IGFsbG93ZWQgdG8gY2hhbmdl
+IHZhbHVlIHdoZW4gY29uZmlndXJlZCBhcyBvdXRwdXQ/IEkgYXNzdW1lIHRoaXMgaW4gdGhlCj4g
+Zm9sbG93aW5nIGRpc2N1c3Npb24sIHNvbWUgZGV0YWlscyBuZWVkIHRvIGNoYW5nZSBpZiB0aGlz
+IHNob3VsZG4ndCBiZQo+IGltcGxpZWQuIChJIHRoaW5rIHdlIG5lZWQgYSBkKSB0aGVuLCBub3Qg
+c3VyZSBob3cgdGhpcyBzaG91bGQgbG9vawo+IHRob3VnaC4pCj4gCj4gSSdkIHN1Z2dlc3QgdGhl
+IGZvbGxvd2luZyBkZXNjcmlwdGlvbiBmb3IgdGhlc2UgY2FzZXM6Cj4gCj4gIGEpCj4gIAkvKgo+
+IAkgKiBpbml0aWFsbHkgY29uZmlndXJlZCBhcyBsb3cgb3V0cHV0LiBDb25zdW1lciBjYW4gZG8K
+PiAJICogZ3Bpb19zZXRfdmFsdWUoLi4uLCAxKTsgYnV0IG5vdCBncGlvX2RpcmVjdGlvbl9pbnB1
+dCguLi4pOwo+IAkgKi8KPiAgCW5vZGVuYW1lIHsKPiAJCWdwaW8taG9nOwo+IAkJZ3Bpb3MgPSA8
+Li4uPjsKPiAJCW91dHB1dC1sb3ctaW5pdDsKPiAJfTsKPiAKPiAgYikKPiAgCS8qCj4gCSAqIGlu
+aXRpYWxseSBjb25maWd1cmVkIGFzIGxvdyBvdXRwdXQuIENvbnN1bWVyIGNhbiBkbwo+IAkgKiBn
+cGlvX3NldF92YWx1ZSguLi4sIDEpOyBhbmQgZ3Bpb19kaXJlY3Rpb25faW5wdXQoLi4uKTsKPiAJ
+ICovCj4gIAlub2RlbmFtZSB7Cj4gCQlncGlvLWhvZzsKPiAJCWdwaW9zID0gPC4uLj47Cj4gCQlv
+dXRwdXQtaW5pdC1sb3c7Cj4gCX07Cj4gCj4gIGMpCj4gIAkvKgo+IAkgKiBpbml0aWFsbHkgY29u
+ZmlndXJlZCBhcyBpbnB1dC4gQ29uc3VtZXIgY2FuIGRvCj4gCSAqIGdwaW9fZGlyZWN0aW9uX291
+dHB1dCguLi4sIC4uLikgYW5kIHRoZW4gc2V0IHRoZSB2YWx1ZQo+IAkgKiBmcmVlbHkuCj4gCSAq
+Lwo+IAkgbm9kZW5hbWUgewo+IAkgCWdwaW8taG9nOwo+IAkJZ3Bpb3MgPSA8Li4uPjsKPiAJCWlu
+cHV0LWluaXQ7Cj4gCX07Cj4gCj4gSSBkb24ndCBsaWtlIHRoYXQgIm91dHB1dC1sb3ctaW5pdCIg
+YW5kICJvdXRwdXQtaW5pdC1sb3ciIGFyZSBzbwo+IHNpbWlsYXIsIHNvIGlmIHNvbWVvbmUgc3Vn
+Z2VzdHMgYSBiZXR0ZXIgbmFtaW5nIHNjaGVtZSwgdGhhdCB3b3VsZCBiZQo+IGdyZWF0Lgo+IApU
+aGUgcG9zaXRpb24gb2YgdGhlICdvdXRwdXQnIG9yICdpbnB1dCcgd2l0aGluIHRoZSB3b3JkIGNv
+dWxkCmltcGx5IHdoZXRoZXIgdGhlIGRpcmVjdGlvbiBjYW4gYmUgY2hhbmdlZCBsYXRlcm9uIG9y
+IG5vdC4gRS5nLjoKb3V0cHV0LWluaXQtbG93ID0+IGFuIG91dHB1dCB3aG9zZSBzdGF0ZSBpcyBp
+bml0aWFsbHkgbG93LCBidXQgY2FuIGJlCiAgICAgICAgICAgICAgICAgICByZWNvbmZpZ3VyZWQg
+dG8gaGlnaCBsYXRlcm9uLgoKaW5pdC1sb3ctb3V0cHV0ID0+IGEgZ3BpbyB0aGF0IGlzIGluaXRp
+YWxseSBjb25maWd1cmVkIGFzIG91dHB1dCBsb3csICAKICAgICAgICAgICAgICAgICAgIGJ1dCBj
+YW4gc3Vic2VxdWVudGx5IGJlIHJlY29uZmlndXJlZCBhcyBpbnB1dCBvciB0bwogICAgICAgICAg
+ICAgICAgICAgYSBkaWZmZXJlbnQgc3RhdGUKCmluaXQtaW5wdXQgICAgICA9PiB5b3VyIGNhc2Ug
+YykKaW5wdXQgICAgICAgICAgID0+IGEgR1BJTyBpbnB1dCB0aGF0IGNhbm5vdCBiZSByZWNvbmZp
+Z3VyZWQKCklPVzogaWYgdGhlIHBpbiBkaXJlY3Rpb24gaXMgbWVudGlvbmVkIGluIGZyb250IG9m
+IHRoZSAnaW5pdCcsIGl0CmNhbm5vdCBiZSBjaGFuZ2VkIGxhdGVyb24sIGlmIGl0IGlzIG1lbnRp
+b25lZCBhZnRlciB0aGUgJ2luaXQnIGl0IGNhbgpiZSBjaGFuZ2VkLiBJZiBub3RoaW5nIGZvbGxv
+d3MgJ2luaXQnLCB0aGUgJ2luaXQnIGNhbiBiZSBvbWl0dGVkLgpUaGlzIHdvdWxkIGFsc28gYWxs
+b3cgYW4gJ291dHB1dC1sb3cnIGFzIGEgR1BJTyB0aGF0IGlzIHBlcm1hbmVudGx5Cmdyb3VuZGVk
+Li4uCgpMb3RoYXIgV2HDn21hbm4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
