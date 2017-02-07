@@ -1,40 +1,105 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.8.x
-Date: Tue, 7 Feb 2017 16:52:01 +0200
-Message-ID: <20170207145201.GL19313@lahna.fi.intel.com>
-References: <CACPiFC+zgmZkE3RDEHQfEFEq21zF9xz1_uoO9NQ7k=EU+rPJgg@mail.gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
+Date: Tue, 7 Feb 2017 15:57:36 +0100
+Message-ID: <20170207145736.vtwkzovmxjcgwncq@pengutronix.de>
+References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
+ <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
+ <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
+ <20170207143031.4700300a@ipc1.ka-ro>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:7395 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754625AbdBGOwQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 7 Feb 2017 09:52:16 -0500
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:52887 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754007AbdBGO5q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 09:57:46 -0500
 Content-Disposition: inline
-In-Reply-To: <CACPiFC+zgmZkE3RDEHQfEFEq21zF9xz1_uoO9NQ7k=EU+rPJgg@mail.gmail.com>
+In-Reply-To: <20170207143031.4700300a@ipc1.ka-ro>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Langhoff <martin.langhoff@gmail.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, chrisrfq@gmail.com, Arun Bharadwaj <arun@gumstix.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-On Tue, Feb 07, 2017 at 09:37:52AM -0500, Martin Langhoff wrote:
-> About a year ago, I tried to get this laptop going with Fedora's 4.4
-> kernel, and we had this thread -
-> http://www.spinics.net/lists/linux-gpio/msg13139.html
-> 
-> Now I have that laptop back, and it only boots with the custom-built
-> 4.4 I prepared back then.
-> 
-> The exact same behaviour is observed with 4.8.x (4.8.15 from latest
-> Fedora at the moment). Won't boot. Disabling ACPI won't do it.
-> 
-> Has there been any progress on pinctrl_cherryview, is there perhaps a
-> branch/tree with new configs I should test?
+Hello Lothar,
 
-I remember this and I ordered the same Acer Aspire One 11 Cloudbook here
-but I did not see any issues with it. I still have the machine here so I
-can debug if any problems are found.
+On Tue, Feb 07, 2017 at 02:30:31PM +0100, Lothar Waßmann wrote:
+> On Tue, 7 Feb 2017 12:09:50 +0100 Uwe Kleine-König wrote:
+> >  a)
+> >  	/*
+> > 	 * initially configured as low output. Consumer can do
+> > 	 * gpio_set_value(..., 1); but not gpio_direction_input(...);
+> > 	 */
+> >  	nodename {
+> > 		gpio-hog;
+> > 		gpios = <...>;
+> > 		output-low-init;
+> > 	};
+> > 
+> >  b)
+> >  	/*
+> > 	 * initially configured as low output. Consumer can do
+> > 	 * gpio_set_value(..., 1); and gpio_direction_input(...);
+> > 	 */
+> >  	nodename {
+> > 		gpio-hog;
+> > 		gpios = <...>;
+> > 		output-init-low;
+> > 	};
+> > 
+> >  c)
+> >  	/*
+> > 	 * initially configured as input. Consumer can do
+> > 	 * gpio_direction_output(..., ...) and then set the value
+> > 	 * freely.
+> > 	 */
+> > 	 nodename {
+> > 	 	gpio-hog;
+> > 		gpios = <...>;
+> > 		input-init;
+> > 	};
+> > 
+> > I don't like that "output-low-init" and "output-init-low" are so
+> > similar, so if someone suggests a better naming scheme, that would be
+> > great.
+> > 
+> The position of the 'output' or 'input' within the word could
+> imply whether the direction can be changed lateron or not. E.g.:
+> output-init-low => an output whose state is initially low, but can be
+>                    reconfigured to high lateron.
 
-Just to be sure, can you first boot the mainline kernel v4.10-rc7 (or
-close) and let me know how it fails (including dmesg if you can extract
-one)?
+That's your a) which I called output-low-init
+
+> init-low-output => a gpio that is initially configured as output low,  
+>                    but can subsequently be reconfigured as input or to
+>                    a different state
+
+That's your b) which I called output-init-low.
+ 
+> init-input      => your case c)
+... which I called input-init.
+
+> input           => a GPIO input that cannot be reconfigured
+
+This is just a permutation of words, and so doesn't fix the problem that
+a) and b) use similar words. For you it's "init" before the stuff
+that can be changed. For me it's "init" is after the stuff that can be
+changed. 
+I slightly prefer my naming here because we already have "output-low"
+and "output-high" and my names also use direction-before-value.
+
+But I interpret your reply as interest and general confirmation that the
+idea is fine.
+
+> This would also allow an 'output-low' as a GPIO that is permanently
+> grounded...
+
+That works already today.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
