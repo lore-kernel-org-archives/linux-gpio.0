@@ -1,80 +1,67 @@
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
-Date: Tue, 7 Feb 2017 14:30:31 +0100
-Message-ID: <20170207143031.4700300a@ipc1.ka-ro>
-References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
- <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
- <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
+From: Martin Langhoff <martin.langhoff@gmail.com>
+Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.8.x
+Date: Tue, 7 Feb 2017 09:37:52 -0500
+Message-ID: <CACPiFC+zgmZkE3RDEHQfEFEq21zF9xz1_uoO9NQ7k=EU+rPJgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, chrisrfq@gmail.com, Arun Bharadwaj <arun@gumstix.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Johan Hovold <johan@kernel.org>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:33730 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbdBGOiN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 09:38:13 -0500
+Received: by mail-yw0-f196.google.com with SMTP id u68so9562359ywg.0
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Feb 2017 06:38:13 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-SGksCgpPbiBUdWUsIDcgRmViIDIwMTcgMTI6MDk6NTAgKzAxMDAgVXdlIEtsZWluZS1Lw7ZuaWcg
-d3JvdGU6Cj4gSGVsbG8sCj4gCj4gKE1hcmt1cyBsZWZ0IFBlbmd1dHJvbml4LCBzbyBJIGRyb3Bw
-ZWQgaGlzIG5vbi13b3JraW5nIGFkZHJlc3MgZnJvbSB0aGUKPiByZWNpcGllbnRzIGFuZCBwaWNr
-IHVwIGhpcyBkaXNjdXNzaW9uLikKPiAKPiBhcyBmYXIgYXMgSSBzZWUsIHRoaXMgdG9waWMgaXNu
-J3QgY2xvc2VkIHlldC4gSSB3YW50IHNvbWV0aGluZyBzaW1pbGFyLAo+IG1heWJlIGV2ZW4gYSBi
-aXQgbW9yZSB0aGFuIHRoaXMgcGF0Y2ggYWNoaWV2ZXM6Cj4gCj4gU29tZSBncGlvcyBzaG91bGQg
-Z2V0IGEgZml4ZWQgZGlyZWN0aW9uLiBJZiBzdWNoIGEgZ3BpbyBpcyBjb25maWd1cmVkIGFzCj4g
-b3V0cHV0LCBhIHZhbHVlIHNob3VsZCBiZSBzcGVjaWZpZWQuIFRoaXMgaXMgYWxyZWFkeSB3b3Jr
-aW5nIHRvZGF5IHdpdGgKPiBncGlvLWhvZ3MuCj4gCj4gTm93IGFkZGl0aW9uYWxseSBJIHdhbnQg
-dG8gaW5pdGlhbGl6ZSBzb21lIGdwaW9zIGJ1dCBhbGxvdyB0aGVtIHRvIGJlCj4gZ3JhYmJlZCBs
-YXRlci4gSU1ITyB0aGVyZSBhcmUgdGhlIGZvbGxvd2luZyBuZXcgY2FzZXM6Cj4gCj4gSXQgc2hv
-dWxkIGJlIHBvc3NpYmxlIHRvOgo+IAo+ICBhKSBjaGFuZ2UgdGhlIHZhbHVlIG9mIGEgZ3BpbyBp
-bml0aWFsbHkgY29uZmlndXJlZCBhcyBvdXRwdXQKPiAgYikgY2hhbmdlIHRoZSBkaXJlY3Rpb24g
-b2YgYSBncGlvIGluaXRpYWxseSBjb25maWd1cmVkIGFzIG91dHB1dAo+ICBjKSBjaGFuZ2UgdGhl
-IGRpcmVjdGlvbiBvZiBhIGdwaW8gaW5pdGlhbGx5IGNvbmZpZ3VyZWQgYXMgaW5wdXQKPiAKPiBJ
-TUhPIHRoZSBkdHMgc2hvdWxkIGRlc2NyaWJlIHdoaWNoIGNhc2Ugc2hvdWxkIGJlIGFwcGxpZWQg
-dG8gYSBnaXZlbgo+IGdwaW8uCj4gCj4gSXMgaXQgYSB2YWxpZCBhc3N1bXB0aW9uIHRoYXQgYSBn
-cGlvIHRoYXQgY2FuIGNoYW5nZSBkaXJlY3Rpb24gaXMgYWxzbwo+IGFsbG93ZWQgdG8gY2hhbmdl
-IHZhbHVlIHdoZW4gY29uZmlndXJlZCBhcyBvdXRwdXQ/IEkgYXNzdW1lIHRoaXMgaW4gdGhlCj4g
-Zm9sbG93aW5nIGRpc2N1c3Npb24sIHNvbWUgZGV0YWlscyBuZWVkIHRvIGNoYW5nZSBpZiB0aGlz
-IHNob3VsZG4ndCBiZQo+IGltcGxpZWQuIChJIHRoaW5rIHdlIG5lZWQgYSBkKSB0aGVuLCBub3Qg
-c3VyZSBob3cgdGhpcyBzaG91bGQgbG9vawo+IHRob3VnaC4pCj4gCj4gSSdkIHN1Z2dlc3QgdGhl
-IGZvbGxvd2luZyBkZXNjcmlwdGlvbiBmb3IgdGhlc2UgY2FzZXM6Cj4gCj4gIGEpCj4gIAkvKgo+
-IAkgKiBpbml0aWFsbHkgY29uZmlndXJlZCBhcyBsb3cgb3V0cHV0LiBDb25zdW1lciBjYW4gZG8K
-PiAJICogZ3Bpb19zZXRfdmFsdWUoLi4uLCAxKTsgYnV0IG5vdCBncGlvX2RpcmVjdGlvbl9pbnB1
-dCguLi4pOwo+IAkgKi8KPiAgCW5vZGVuYW1lIHsKPiAJCWdwaW8taG9nOwo+IAkJZ3Bpb3MgPSA8
-Li4uPjsKPiAJCW91dHB1dC1sb3ctaW5pdDsKPiAJfTsKPiAKPiAgYikKPiAgCS8qCj4gCSAqIGlu
-aXRpYWxseSBjb25maWd1cmVkIGFzIGxvdyBvdXRwdXQuIENvbnN1bWVyIGNhbiBkbwo+IAkgKiBn
-cGlvX3NldF92YWx1ZSguLi4sIDEpOyBhbmQgZ3Bpb19kaXJlY3Rpb25faW5wdXQoLi4uKTsKPiAJ
-ICovCj4gIAlub2RlbmFtZSB7Cj4gCQlncGlvLWhvZzsKPiAJCWdwaW9zID0gPC4uLj47Cj4gCQlv
-dXRwdXQtaW5pdC1sb3c7Cj4gCX07Cj4gCj4gIGMpCj4gIAkvKgo+IAkgKiBpbml0aWFsbHkgY29u
-ZmlndXJlZCBhcyBpbnB1dC4gQ29uc3VtZXIgY2FuIGRvCj4gCSAqIGdwaW9fZGlyZWN0aW9uX291
-dHB1dCguLi4sIC4uLikgYW5kIHRoZW4gc2V0IHRoZSB2YWx1ZQo+IAkgKiBmcmVlbHkuCj4gCSAq
-Lwo+IAkgbm9kZW5hbWUgewo+IAkgCWdwaW8taG9nOwo+IAkJZ3Bpb3MgPSA8Li4uPjsKPiAJCWlu
-cHV0LWluaXQ7Cj4gCX07Cj4gCj4gSSBkb24ndCBsaWtlIHRoYXQgIm91dHB1dC1sb3ctaW5pdCIg
-YW5kICJvdXRwdXQtaW5pdC1sb3ciIGFyZSBzbwo+IHNpbWlsYXIsIHNvIGlmIHNvbWVvbmUgc3Vn
-Z2VzdHMgYSBiZXR0ZXIgbmFtaW5nIHNjaGVtZSwgdGhhdCB3b3VsZCBiZQo+IGdyZWF0Lgo+IApU
-aGUgcG9zaXRpb24gb2YgdGhlICdvdXRwdXQnIG9yICdpbnB1dCcgd2l0aGluIHRoZSB3b3JkIGNv
-dWxkCmltcGx5IHdoZXRoZXIgdGhlIGRpcmVjdGlvbiBjYW4gYmUgY2hhbmdlZCBsYXRlcm9uIG9y
-IG5vdC4gRS5nLjoKb3V0cHV0LWluaXQtbG93ID0+IGFuIG91dHB1dCB3aG9zZSBzdGF0ZSBpcyBp
-bml0aWFsbHkgbG93LCBidXQgY2FuIGJlCiAgICAgICAgICAgICAgICAgICByZWNvbmZpZ3VyZWQg
-dG8gaGlnaCBsYXRlcm9uLgoKaW5pdC1sb3ctb3V0cHV0ID0+IGEgZ3BpbyB0aGF0IGlzIGluaXRp
-YWxseSBjb25maWd1cmVkIGFzIG91dHB1dCBsb3csICAKICAgICAgICAgICAgICAgICAgIGJ1dCBj
-YW4gc3Vic2VxdWVudGx5IGJlIHJlY29uZmlndXJlZCBhcyBpbnB1dCBvciB0bwogICAgICAgICAg
-ICAgICAgICAgYSBkaWZmZXJlbnQgc3RhdGUKCmluaXQtaW5wdXQgICAgICA9PiB5b3VyIGNhc2Ug
-YykKaW5wdXQgICAgICAgICAgID0+IGEgR1BJTyBpbnB1dCB0aGF0IGNhbm5vdCBiZSByZWNvbmZp
-Z3VyZWQKCklPVzogaWYgdGhlIHBpbiBkaXJlY3Rpb24gaXMgbWVudGlvbmVkIGluIGZyb250IG9m
-IHRoZSAnaW5pdCcsIGl0CmNhbm5vdCBiZSBjaGFuZ2VkIGxhdGVyb24sIGlmIGl0IGlzIG1lbnRp
-b25lZCBhZnRlciB0aGUgJ2luaXQnIGl0IGNhbgpiZSBjaGFuZ2VkLiBJZiBub3RoaW5nIGZvbGxv
-d3MgJ2luaXQnLCB0aGUgJ2luaXQnIGNhbiBiZSBvbWl0dGVkLgpUaGlzIHdvdWxkIGFsc28gYWxs
-b3cgYW4gJ291dHB1dC1sb3cnIGFzIGEgR1BJTyB0aGF0IGlzIHBlcm1hbmVudGx5Cmdyb3VuZGVk
-Li4uCgpMb3RoYXIgV2HDn21hbm4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJu
-ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+About a year ago, I tried to get this laptop going with Fedora's 4.4
+kernel, and we had this thread -
+http://www.spinics.net/lists/linux-gpio/msg13139.html
+
+Now I have that laptop back, and it only boots with the custom-built
+4.4 I prepared back then.
+
+The exact same behaviour is observed with 4.8.x (4.8.15 from latest
+Fedora at the moment). Won't boot. Disabling ACPI won't do it.
+
+Has there been any progress on pinctrl_cherryview, is there perhaps a
+branch/tree with new configs I should test?
+
+cheers,
+
+
+martin
+
+
+
+On Tue, Mar 22, 2016 at 11:09 AM, Martin Langhoff
+<martin.langhoff@gmail.com> wrote:
+>
+> Hi pinctrl_cherryview maintainers.
+>
+> I unsuspectingly bought a laptop for a family member which hits trouble with pinctrl_cherryview; it only boots with the module blacklisted or acpi=off .
+>
+> System is (trying) to run Fedora 23 -- made more difficult by recent Fedora kernels having the module built-in.
+>
+> Are there any useful debugging steps I can follow to narrow this down? Already tried the acpi diagnostics steps (acpi=ht, etc) to no avail.
+>
+> thank you!
+>
+>
+>
+> m
+> --
+>  martin.langhoff@gmail.com
+>  -  ask interesting questions
+>  - don't get distracted with shiny stuff  - working code first
+>  ~ http://docs.moodle.org/en/User:Martin_Langhoff
+
+
+
+
+-- 
+ martin.langhoff@gmail.com
+ - ask interesting questions  ~  http://linkedin.com/in/martinlanghoff
+ - don't be distracted        ~  http://github.com/martin-langhoff
+   by shiny stuff
