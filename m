@@ -1,41 +1,38 @@
 From: Martin Langhoff <martin.langhoff@gmail.com>
 Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.8.x
-Date: Tue, 7 Feb 2017 10:13:50 -0500
-Message-ID: <CACPiFC+9bw0+Sw5yoQ6STdDE08Mg9fCH_iDTT4bYWkYTG=fAjQ@mail.gmail.com>
+Date: Tue, 7 Feb 2017 10:29:25 -0500
+Message-ID: <CACPiFC+rvpBj7NGd78uRbrGMpPA=YCGw4XaQ9=YqESeXqOXqLQ@mail.gmail.com>
 References: <CACPiFC+zgmZkE3RDEHQfEFEq21zF9xz1_uoO9NQ7k=EU+rPJgg@mail.gmail.com>
- <20170207145201.GL19313@lahna.fi.intel.com>
+ <20170207145201.GL19313@lahna.fi.intel.com> <CACPiFC+9bw0+Sw5yoQ6STdDE08Mg9fCH_iDTT4bYWkYTG=fAjQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f175.google.com ([209.85.161.175]:34223 "EHLO
-        mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932077AbdBGPOL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 10:14:11 -0500
-Received: by mail-yw0-f175.google.com with SMTP id w75so68408928ywg.1
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Feb 2017 07:14:11 -0800 (PST)
-In-Reply-To: <20170207145201.GL19313@lahna.fi.intel.com>
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:34896 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754525AbdBGP3q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 10:29:46 -0500
+Received: by mail-yw0-f196.google.com with SMTP id l16so9682633ywb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Feb 2017 07:29:45 -0800 (PST)
+In-Reply-To: <CACPiFC+9bw0+Sw5yoQ6STdDE08Mg9fCH_iDTT4bYWkYTG=fAjQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
 Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Tue, Feb 7, 2017 at 9:52 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> I remember this and I ordered the same Acer Aspire One 11 Cloudbook here
-> but I did not see any issues with it. I still have the machine here so I
-> can debug if any problems are found.
+On Tue, Feb 7, 2017 at 10:13 AM, Martin Langhoff
+<martin.langhoff@gmail.com> wrote:
+> Installing 4.10-rc7 from fedora rawhide repos.
 
-Oh wow that did happen! Thank you! Odd that found no issues at all.
+4.10-rc7 from rawhide gets past these issues with 'noapic', removing
+'noapic' from the cmdline hits a panic in native_smp_prepare_cpus.
 
-Can you tell me about the relevant kernel module configs? (not built / m / y).
+With 'noapic' I get to an emergency shell because systemd can't mount
+the root fs. Perhaps the mmcblk enumeration has changed between 4.4
+and 4.10?
 
-> Just to be sure, can you first boot the mainline kernel v4.10-rc7 (or
-> close) and let me know how it fails (including dmesg if you can extract
-> one)?
+What debug info should I get you?
 
-Installing 4.10-rc7 from fedora rawhide repos.
-
-This may well be a problem with how Fedora is configuring the kernels.
+cheers,
 
 
 m
