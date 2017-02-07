@@ -1,86 +1,40 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: Re: [PATCH v3 04/10] clk: sunxi-ng: add support for
- Allwinner H5 SoC
-Date: Tue, 7 Feb 2017 16:56:05 +0100
-Message-ID: <20170207155605.f2k44gr56ywehz3t@lukather>
-References: <20170207000838.8UJeKISe@smtp2p.mail.yandex.net>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Martin Langhoff <martin.langhoff@gmail.com>
+Subject: Re: Diagnosing ACPI trouble related to pinctr_cherryview on 4.8.x
+Date: Tue, 7 Feb 2017 11:11:55 -0500
+Message-ID: <CACPiFCKjAnttp8_kibxNjzhSsAiRsVjR0xutqmBn=1b9zNCEgw@mail.gmail.com>
+References: <CACPiFC+zgmZkE3RDEHQfEFEq21zF9xz1_uoO9NQ7k=EU+rPJgg@mail.gmail.com>
+ <20170207145201.GL19313@lahna.fi.intel.com> <CACPiFC+9bw0+Sw5yoQ6STdDE08Mg9fCH_iDTT4bYWkYTG=fAjQ@mail.gmail.com>
+ <CACPiFC+rvpBj7NGd78uRbrGMpPA=YCGw4XaQ9=YqESeXqOXqLQ@mail.gmail.com> <20170207154800.GM19313@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ncoqq3u2mcjsuyi5"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBFW447CAKGQETS7HC5Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170207000838.8UJeKISe-8ttnI0T0xQU0PDqKvflMoHmW9unr2Ajn@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Id: linux-gpio@vger.kernel.org
-
-
---ncoqq3u2mcjsuyi5
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yb0-f178.google.com ([209.85.213.178]:36063 "EHLO
+        mail-yb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755101AbdBGQMQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Feb 2017 11:12:16 -0500
+Received: by mail-yb0-f178.google.com with SMTP id 123so36580857ybe.3
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Feb 2017 08:12:16 -0800 (PST)
+In-Reply-To: <20170207154800.GM19313@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Mon, Jan 30, 2017 at 10:02:04PM +0800, Icenowy Zheng wrote:
-> > >=C2=A0 static struct ccu_reset_map sunxi_h3_h5_ccu_resets[] =3D {=20
-> > >=C2=A0 [RST_USB_PHY0] =3D=C2=A0 { 0x0cc, BIT(0) },=20
-> > >=C2=A0 [RST_USB_PHY1] =3D=C2=A0 { 0x0cc, BIT(1) },=20
-> > > @@ -791,6 +910,7 @@ static struct ccu_reset_map sunxi_h3_h5_ccu_reset=
-s[] =3D {=20
-> > >=C2=A0 [RST_BUS_UART2] =3D=C2=A0 { 0x2d8, BIT(18) },=20
-> > >=C2=A0 [RST_BUS_UART3] =3D=C2=A0 { 0x2d8, BIT(19) },=20
-> > >=C2=A0 [RST_BUS_SCR0] =3D=C2=A0 { 0x2d8, BIT(20) },=20
-> > > + [RST_BUS_SCR1] =3D=C2=A0 { 0x2d8, BIT(21) },=20
-> >
-> > That reset line is not valid on the H3.=20
->=20
-> So I should split a H3 reset array and a H5 one?
+On Tue, Feb 7, 2017 at 10:48 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> So if you have disable pinctrl-cherryview and you have nothing special
+> in the command line, everything works in v4.10-rc7?
 
-Ideally, yes.
+I can try that, it'll take a kernel rebuild. Fedora builds
+pinctrl-cherryview=y and I haven't been able to convince them
+otherwise :-/
 
-> (I modelled after ccu-sun5i.c, which shares one reset array)
+cheers,
 
-They all share the same reset lines.
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
-
---ncoqq3u2mcjsuyi5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYme4VAAoJEBx+YmzsjxAgMQ0QAJ6jQL66cPjxo42RqrezKJnY
-hX5LcNeVppi/6innzyewHL04c+w7w8df5f/yj8s+DPu3EMo4Bl/mgaWaUROENvOV
-bINqyZTyUCEzoI5EuIEcBfjeNJMluE/u6k/2pAl5f8EqeywfaJutnrVOxVy2JnfS
-rYesN2fk6839XS6alMojcgAaPjV2nqO10e+OhYpaLgRY1bl6D23qpiGO4126aJW+
-Q5GtWfPwMUnkNmbGcvNtmm0PwvH4Bo1B/27d372PEI9V2IiRgp3gyT8Nm+UIRPEd
-eeevL8MEtWrbhcoKeWwR4T5sf1tgoKMBN0cNjiWwbTgXr71cUNJ9gVzV+tuZHcnn
-FSRpTe3B8bxI0M43IBjOzKxri4V9cN/2t1jCu6dMBI6i54q/vrbNLHb1OskgJe6P
-A+Lt24psQ7YC66EqgKJzpZx2yVdQ7xDCC6ZGRSNA0XA6WC4jZfYGZvZEF5wMz5HS
-XUdspVIeYkSvZetQufG40a1Fvq6AARE8rH8Mvd/LOuwaxz29xfxlFfc+MKSvPkW/
-54jIxkSgZGaJbm4NYD2IUfBJAvxiq5UUi2Mq04urMBKmqWdT1XIRgEl4TEWxa4E1
-TCcgd+wf8OVAFtnXj5/EyjWUNJslcFnPH+SYWjqkUtzE1DvP6Yikzmzp9IeGTcdR
-v6Ik84G2gvLX5P/g5SN3
-=usYJ
------END PGP SIGNATURE-----
-
---ncoqq3u2mcjsuyi5--
+m
+-- 
+ martin.langhoff@gmail.com
+ - ask interesting questions  ~  http://linkedin.com/in/martinlanghoff
+ - don't be distracted        ~  http://github.com/martin-langhoff
+   by shiny stuff
