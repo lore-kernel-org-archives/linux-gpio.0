@@ -1,117 +1,89 @@
-From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Subject: Re: [PATCH 5/8] arm64: dts: allwinner: add R_PIO node
-Date: Wed, 08 Feb 2017 19:08:46 +0800
-Message-ID: <39431486552126@web41j.yandex.ru>
-References: <20170208100009.29362-1-icenowy@aosc.xyz>
-	 <20170208100009.29362-5-icenowy@aosc.xyz> <20170208101458.du6ybqsw52ypzhzw@lukather>
-Reply-To: icenowy-ymACFijhrKM@public.gmane.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 0/7] Pad retentions support for Exynos5433
+Date: Wed, 8 Feb 2017 11:46:15 +0000
+Message-ID: <20170208114615.c4wszjmnuackgzvx@dell>
+References: <CGME20170130123837eucas1p13c607f81a1775a805740dccc87fe8b87@eucas1p1.samsung.com>
+ <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBQPY5PCAKGQE56KCKDQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170208101458.du6ybqsw52ypzhzw@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-
-
-08.02.2017, 18:15, "Maxime Ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>:
-> On Wed, Feb 08, 2017 at 06:00:06PM +0800, Icenowy Zheng wrote:
->> =C2=A0Allwinner A64 SoC has a R_PIO node like the one in H3.
->>
->> =C2=A0Add the node as well as needed clocks and resets.
->>
->> =C2=A0As there's no document for apb0_gates, I only added the R_PIO bit =
-here.
->>
->> =C2=A0Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
->> =C2=A0---
->> =C2=A0=C2=A0arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 40 +++++++++=
-++++++++++++++++++
->> =C2=A0=C2=A01 file changed, 40 insertions(+)
->>
->> =C2=A0diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/=
-arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> =C2=A0index 1c64ea2d23f9..4b0baa79554c 100644
->> =C2=A0--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> =C2=A0+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> =C2=A0@@ -98,6 +98,15 @@
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clock-output-names =3D "osc32k";
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
->>
->> =C2=A0+ apb0: apb0_clk {
->> =C2=A0+ compatible =3D "fixed-factor-clock";
->> =C2=A0+ #clock-cells =3D <0>;
->> =C2=A0+ clock-div =3D <1>;
->> =C2=A0+ clock-mult =3D <1>;
->> =C2=A0+ clocks =3D <&osc24M>;
->> =C2=A0+ clock-output-names =3D "apb0";
->> =C2=A0+ };
->> =C2=A0+
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0psci {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "arm,psci-0.2";
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0method =3D "smc";
->> =C2=A0@@ -392,5 +401,36 @@
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0<GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
->> =C2=A0+
->> =C2=A0+ apb0_gates: clk@1f01428 {
->> =C2=A0+ compatible =3D "allwinner,sun50i-a64-apb0-gates-clk",
->> =C2=A0+ "allwinner,sun4i-a10-gates-clk";
->> =C2=A0+ reg =3D <0x01f01428 0x4>;
->> =C2=A0+ #clock-cells =3D <1>;
->> =C2=A0+ clocks =3D <&apb0>;
->> =C2=A0+ clock-indices =3D <0>;
->> =C2=A0+ clock-output-names =3D "apb0_pio";
->> =C2=A0+ };
->> =C2=A0+
->> =C2=A0+ apb0_rst: reset@1f014b0 {
->> =C2=A0+ reg =3D <0x01f014b0 0x4>;
->> =C2=A0+ compatible =3D "allwinner,sun6i-a31-clock-reset";
->> =C2=A0+ #reset-cells =3D <1>;
->> =C2=A0+ };
->
-> Please make a sunxi-ng driver for those clocks.
-
-We have no enough materials to make such a CCU driver.
-
-Clocks in CPUs are usually undocumented, and difficult to
-be collected -- even the clk-sun50iw1.c in BSP do not have
-all clocks in CPUs.
-
-We should only make it sunxi-ng until it's fully discovered
-(all functions in CPUs are functional).
-
->
-> Thanks,
-> Maxime
->
-> --
-> Maxime Ripard, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+T24gTW9uLCAzMCBKYW4gMjAxNywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKCj4gSGVsbG8sCj4g
+Cj4gVGhpcyBwYXRjaHNldCBpcyBhIGZpcnN0IHN0ZXAgdG8gYWRkIHN1cHBvcnQgZm9yIGFsbCBw
+b3dlciBkb21haW5zIG9uCj4gRXh5bm9zNTQzMyBTb0NzLiBUaGlzIHBhdGNoc2V0IGNvbnRhaW5z
+IHBhdGNoZXMgZm9yIEV4eW5vcyBwaW4gY29udHJvbAo+IGRyaXZlciBhbmQgRXh5bm9zIExQQVNT
+IE1GRCBkcml2ZXIsIHdoaWNoIGFyZSBuZWVkZWQgdG8gbWFrZSB0aGUKPiBwbGF0Zm9ybSByZWFk
+eSBmb3IgYWRkaW5nIHBvd2VyIGRvbWFpbnMgc3VwcG9ydC4KPiAKPiBQYXRjaGVzIGluIHRoaXMg
+cGF0Y2hzZXQgZGVwZW5kcyBvbiBlYWNoIG90aGVyLiBUaGV5IGFyZSBvcmRlciBpbiBzdWNoIGEK
+PiB3YXkgdG8gbWFrZSB0aGUgY2hhbmdlcyBiaXNlY3RhYmxlLgo+IAo+IFBhdGNoICMyIGhhcyBj
+b21waWxlIGRlcGVuZGVuY3kgb24gIzEuCj4gUGF0Y2ggIzMgaGFzIHJ1bnRpbWUgZGVwZW5kZW5j
+eSBvbiBjb21taXQgZmE1OWFhNzA5MDdiMiAoInNvYzogc2Ftc3VuZzoKPiAJcG11OiBBZGQgZHVt
+bXkgc3VwcG9ydCBmb3IgRXh5bm9zNTQzMyBTb0MiLAo+IAlmb3ItdjQuMTEvZHJpdmVycy1zb2Mt
+ZXh5bm9zLXBtdS10aGUtam95LW5ldmVyLWVuZHMgYnJhbmNoKS4KPiBQYXRjaCAjNCBoYXMgcnVu
+dGltZSBkZXBlbmRlbmN5IG9uICMzLgo+IFBhdGNoICM1IGhhcyBydW50aW1lIGRlcGVuZGVuY3kg
+b24gY29tbWl0IDc1NDcxNjJhYzM1MTQgKCJhcm02NDogZHRzOgo+IAlleHlub3M6IEFkZCBjbG9j
+a3MgdG8gRXh5bm9zNTQzMyBMUEFTUyBtb2R1bGUsIG5leHQvZHQ2NCBicmFuY2gpLgo+IAo+IFRo
+aXMgcGF0Y2hzZXQgYWxzbyBkaXJlY3RseSBkZXBlbmRzIG9uIHRoZSAiTW92ZSBwYWQgcmV0ZW50
+aW9uIGNvbnRyb2wgdG8KPiBFeHlub3MgcGluIGNvbnRyb2xsZXIgZHJpdmVyIiBwYXRjaHNldDoK
+PiBodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzU1NjA3NC5odG1s
+Cj4gCj4gUGF0Y2hlcyBoYXZlIGJlZW4gZ2VuZXJhdGVkIG9uIHRvcCBvZiBsaW51eC1uZXh0IGZy
+b20gMzB0aCBKYW51YXJ5IDIwMTcKPiB3aXRoIHRoZSBhYm92ZSBtZW50aW9uZWQgcGF0Y2hzZXQg
+YXBwbGllZC4KPiAKPiBUaGlzIGlzIGEgcGFydCBvZiBhIGxhcmdlciB0YXNrLCB3aGljaCBnb2Fs
+IGlzIHRvIGFkZCBzdXBwb3J0IGZvciBwb3dlcgo+IGRvbWFpbnMgb24gRXh5bm9zNTQzMyBTb0Nz
+IC8gVE0yIGJvYXJkcy4gRmlyc3QgdmVyc2lvbiBvZiB0aGUgYWxsIHBhdGNoZXMKPiBuZWVkZWQg
+dG8gZ2V0IGl0IHdvcmtpbmcgaGF2ZSBiZWVuIHB1c2hlZCB0byB0aGUgZm9sbG93aW5nIGdpdCBy
+ZXBvOgo+IGh0dHBzOi8vZ2l0LmxpbmFyby5vcmcvcGVvcGxlL21hcmVrLnN6eXByb3dza2kvbGlu
+dXgtc3Jwb2wuZ2l0IHY0LjEwLW5leHQtdG0yLXBkCj4gCj4gQmVzdCByZWdhcmRzCj4gTWFyZWsg
+U3p5cHJvd3NraQo+IFNhbXN1bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCkxvb2tzIGxpa2UgSSBy
+ZXZpZXdlZCB2Mi4KCklmIHRoZSBwYXRjaGVzIGhhdmVuJ3QgY2hhbmdlZCB0aGF0IG11Y2gsIHBs
+ZWFzZSBhcHBseSBteSBBY2tzIHRvIHRoaXMKc2V0IGluc3RlYWQuICBBbnl0aGluZyB0aGF0IGhh
+cyBjaGFuZ2VkLCBwbGVhc2UgbGVhdmUgdGhlbSBvZmYgYW5kCnJlcG9zdC4KCj4gQ2hhbmdlbG9n
+Ogo+IHYzOgo+IC0gbW92ZWQgYWRkaW5nIG5ldyBQTVUgcmVnaXN0ZXIgZGVmaW5lcyB0byBzZXBh
+cmF0ZSBwYXRjaCAocmVxdWVzdGVkIGJ5Cj4gICBLcnp5c3p0b2YgS296bG93c2tpKQo+IC0gcmVi
+YXNlZCBvbnRvIExpbnV4IG5leHQtMjAxNzAxMzAgKHJlbW92ZWQgInNvYzogc2Ftc3VuZzogcG11
+OiBBZGQgZHVtbXkKPiAgIHN1cHBvcnQgZm9yIEV4eW5vczU0MzMgU29DIiBhbmQgImFybTY0OiBk
+dHM6IGV4eW5vczogQWRkIGNsb2NrcyB0bwo+ICAgRXh5bm9zNTQzMyBMUEFTUyBtb2R1bGUiIHBh
+dGNoZXMsIHdoaWNoIGFyZSBhbHJlYWR5IG1lcmdlZCkKPiAKPiB2MjoKPiAtIGZpeGVkIGlzc3Vl
+cyBwb2ludGVkIGJ5IEtyenlzenRvZiBLb3psb3dza2k6Cj4gICAxLiBhZGRlZCBtb3JlIGNoZWNr
+cyB0byBFeHlub3MgUE1VIGRyaXZlciBmb3IgTlVMTCBkcnZkYXRhCj4gICAyLiByZXVzZWQgRVhZ
+Tk9TX1dBS0VVUF9GUk9NX0xPV1BXUiBpbiByZXRlbnRpb24gZGF0YSBmb3IgRXh5bm9zNTQzMwo+
+ICAgMy4gY29udmVydGVkIGxwYXNzIGRyaXZlciB0byBkZXZtX2Nsa19nZXQKPiAgIDQuIGFkZGVk
+IG1pc3NpbmcgLT5yZW1vdmUgY2FsbGJhY2sgdG8gbHBhc3MgZHJpdmVyCj4gCj4gdjE6IGh0dHBz
+Oi8vbGttbC5vcmcvbGttbC8yMDE3LzEvMjUvMjE0Cj4gLSBpbml0aWFsIHZlcnNpb24KPiAKPiAK
+PiBQYXRjaCBzdW1tYXJ5Ogo+IAo+IE1hcmVrIFN6eXByb3dza2kgKDcpOgo+ICAgc29jOiBzbWFz
+dW5nOiBwbXU6IEFkZCByZWdpc3RlciBkZWZpbmVzIGZvciBwYWQgcmV0ZW50aW9uIGNvbnRyb2wK
+PiAgIHBpbmN0cmw6IHNhbXN1bmc6IEVuc3VyZSB0aGF0IHBhZCByZXRlbnRpb24gaXMgZGlzYWJs
+ZWQgb24gZHJpdmVyIGluaXQKPiAgIHBpbmN0cmw6IHNhbXN1bmc6IEFkZCBzdXBwb3J0IGZvciBw
+YWQgcmV0ZW50aW9uIGNvbnRyb2wgZm9yIEV4eW5vczU0MzMKPiAgICAgU29Dcwo+ICAgbWZkOiBl
+eHlub3MtbHBhc3M6IFJlbW92ZSBwYWQgcmV0ZW50aW9uIGNvbnRyb2wKPiAgIG1mZDogZXh5bm9z
+LWxwYXNzOiBBZGQgc3VwcG9ydCBmb3IgY2xvY2tzCj4gICBtZmQ6IGV4eW5vcy1scGFzczogQWRk
+IG1pc3NpbmcgcmVtb3ZlKCkgZnVuY3Rpb24KPiAgIG1mZDogZXh5bm9zLWxwYXNzOiBBZGQgcnVu
+dGltZSBQTSBzdXBwb3J0Cj4gCj4gIC4uLi9iaW5kaW5ncy9tZmQvc2Ftc3VuZyxleHlub3M1NDMz
+LWxwYXNzLnR4dCAgICAgIHwgIDggKystCj4gIGRyaXZlcnMvbWZkL2V4eW5vcy1scGFzcy5jICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgNDggKysrKysrKysrKy0tLS0tLS0KPiAgZHJpdmVycy9w
+aW5jdHJsL3NhbXN1bmcvcGluY3RybC1leHlub3MuYyAgICAgICAgICAgfCA2MyArKysrKysrKysr
+KysrKysrKysrKysrCj4gIGluY2x1ZGUvbGludXgvbWZkL3N5c2Nvbi9leHlub3M1LXBtdS5oICAg
+ICAgICAgICAgIHwgIDMgLS0KPiAgaW5jbHVkZS9saW51eC9zb2Mvc2Ftc3VuZy9leHlub3MtcmVn
+cy1wbXUuaCAgICAgICAgfCAxNiArKysrKysKPiAgNSBmaWxlcyBjaGFuZ2VkLCAxMTUgaW5zZXJ0
+aW9ucygrKSwgMjMgZGVsZXRpb25zKC0pCj4gCgotLSAKTGVlIEpvbmVzCkxpbmFybyBTVE1pY3Jv
+ZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ug
+c29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8
+IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxp
+bnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4
+LWFybS1rZXJuZWwK
