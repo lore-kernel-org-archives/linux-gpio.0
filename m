@@ -1,72 +1,54 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 0/7] Pad retentions support for Exynos5433
-Date: Wed, 08 Feb 2017 13:35:48 +0100
-Message-ID: <b29e922c-4435-c9e8-2ab4-e4441eac3a09@samsung.com>
-References: <CGME20170130123837eucas1p13c607f81a1775a805740dccc87fe8b87@eucas1p1.samsung.com>
- <1485779908-32147-1-git-send-email-m.szyprowski@samsung.com>
- <20170208114615.c4wszjmnuackgzvx@dell>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH] gpio: pci-idio-16: Fix PCI BAR index
+Date: Wed, 8 Feb 2017 08:32:46 -0500
+Message-ID: <20170208133246.GA16610@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20170208114615.c4wszjmnuackgzvx@dell>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi All,
+The PCI BAR0 and BAR1 for the PCI-IDIO-16 hold information for the PLX
+9052 bridge chip on the device. The PCI BAR2 holds the necessary base
+address for I/O control of the PCI-IDIO-16. This patch corrects the PCI
+BAR index mismatch for the PCI-IDIO-16 GPIO driver.
 
-On 2017-02-08 12:46, Lee Jones wrote:
-> On Mon, 30 Jan 2017, Marek Szyprowski wrote:
->> This patchset is a first step to add support for all power domains on
->> Exynos5433 SoCs. This patchset contains patches for Exynos pin control
->> driver and Exynos LPASS MFD driver, which are needed to make the
->> platform ready for adding power domains support.
->>
->> Patches in this patchset depends on each other. They are order in such a
->> way to make the changes bisectable.
->>
->> Patch #2 has compile dependency on #1.
->> Patch #3 has runtime dependency on commit fa59aa70907b2 ("soc: samsung:
->> 	pmu: Add dummy support for Exynos5433 SoC",
->> 	for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends branch).
->> Patch #4 has runtime dependency on #3.
->> Patch #5 has runtime dependency on commit 7547162ac3514 ("arm64: dts:
->> 	exynos: Add clocks to Exynos5433 LPASS module, next/dt64 branch).
->>
->> This patchset also directly depends on the "Move pad retention control to
->> Exynos pin controller driver" patchset:
->> https://www.spinics.net/lists/arm-kernel/msg556074.html
->>
->> Patches have been generated on top of linux-next from 30th January 2017
->> with the above mentioned patchset applied.
->>
->> This is a part of a larger task, which goal is to add support for power
->> domains on Exynos5433 SoCs / TM2 boards. First version of the all patches
->> needed to get it working have been pushed to the following git repo:
->> https://git.linaro.org/people/marek.szyprowski/linux-srpol.git v4.10-next-tm2-pd
->>
->> Best regards
->> Marek Szyprowski
->> Samsung R&D Institute Poland
-> Looks like I reviewed v2.
->
-> If the patches haven't changed that much, please apply my Acks to this
-> set instead.  Anything that has changed, please leave them off and
-> repost.
+Fixes: 02e74fc0401a ("gpio: Add GPIO support for the ACCES PCI-IDIO-16")
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-pci-idio-16.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-MFD related patches were not changed between v2 and v3.
-
-Best regards
+diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
+index 0220787240ce..f510672c9c6e 100644
+--- a/drivers/gpio/gpio-pci-idio-16.c
++++ b/drivers/gpio/gpio-pci-idio-16.c
+@@ -265,6 +265,7 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	struct device *const dev = &pdev->dev;
+ 	struct idio_16_gpio *idio16gpio;
+ 	int err;
++	const size_t pci_bar_index = 2;
+ 	const char *const name = pci_name(pdev);
+ 
+ 	idio16gpio = devm_kzalloc(dev, sizeof(*idio16gpio), GFP_KERNEL);
+@@ -277,13 +278,13 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return err;
+ 	}
+ 
+-	err = pcim_iomap_regions(pdev, 0x1, name);
++	err = pcim_iomap_regions(pdev, BIT(pci_bar_index), name);
+ 	if (err) {
+ 		dev_err(dev, "Unable to map PCI I/O addresses (%d)\n", err);
+ 		return err;
+ 	}
+ 
+-	idio16gpio->reg = pcim_iomap_table(pdev)[0];
++	idio16gpio->reg = pcim_iomap_table(pdev)[pci_bar_index];
+ 
+ 	/* Deactivate input filters */
+ 	iowrite8(0, &idio16gpio->reg->filter_ctl);
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.11.1
