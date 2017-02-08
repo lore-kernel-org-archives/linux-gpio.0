@@ -1,13 +1,14 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: i.MX7 pinctrl driver writing to non existent registers
-Date: Wed, 8 Feb 2017 23:28:33 +0800
-Message-ID: <9D4713C3-26F1-4041-A227-51A8A2EEB3C1@jcrosoft.com>
-References: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: sunxi: allow the analog codec driver to be built on
+ ARM64" to the asoc tree
+Date: Wed, 08 Feb 2017 18:34:03 +0000
+Message-ID: <E1cbX47-0000ia-Ks@debutante>
+References: <20170126154859.55855-9-icenowy@aosc.xyz>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
+In-Reply-To: <20170126154859.55855-9-icenowy@aosc.xyz>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,37 +18,67 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Vinod Koul <vinod.koul@intel.com>, Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linus.walleij@linaro.org>, linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+The patch
 
-> On Feb 8, 2017, at 5:08 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> 
-> Hi All,
-> 
-> The i.MX7 has two pinmux controllers, the LPSR and the regular one. We
-> instantiate a driver for each one. Now the driver assumes that the pins
-> are completely configured with one iomux controller, but for the LPSR
-> pins this is not true: The MUX_CTL and PAD_CTL registers are indeed
-> in the LPSR controller, but the SELECT_INPUT registers for the same
-> pin are found in the regular controller.
-> 
-> The result is that with this pin for example:
-> 
-> #define MX7D_PAD_GPIO1_IO06__UART5_DCE_RX                         0x0018 0x0048 0x0714 0x3 0x4
-> 
-> The LPSR controller writes to LPSR_BASE + 0x714 where it should really
-> be IOMUX_BASE + 0x714.
-> 
-> I have no idea how to fix this. We could split the LPSR pins into two
-> pins, one for each controller. Another possibility would be to create
-> some kind of shortcut from one controller to control the other one. Also
-> not nice. Also we could simply do nothing, as long as the bootloader
-> configures everything correctly we won't even notice ;)
-Always expect a bootloader is wrong and do it properly in the kernel
-as if you have 2 bootloader they may do different configuration and as the end
-found the problem in the kernel on one board and not the other.
+   ASoC: sunxi: allow the analog codec driver to be built on ARM64
 
-Best Regards,
-J.
+has been applied to the asoc tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e5028a259733ec2324893cb481023ed6cf7e9723 Mon Sep 17 00:00:00 2001
+From: Icenowy Zheng <icenowy@aosc.xyz>
+Date: Wed, 8 Feb 2017 02:30:40 +0800
+Subject: [PATCH] ASoC: sunxi: allow the analog codec driver to be built on
+ ARM64
+
+As the 64-bit Allwinner H5 SoC has the same analog codec part (also the
+same digital part) as H3, enable the driver to be built on ARM64
+Allwinner platform, so that it can be used on H5.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sunxi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sunxi/Kconfig b/sound/soc/sunxi/Kconfig
+index 13a8267f17c7..22408bc2d6ec 100644
+--- a/sound/soc/sunxi/Kconfig
++++ b/sound/soc/sunxi/Kconfig
+@@ -22,7 +22,7 @@ config SND_SUN8I_CODEC
+ 
+ config SND_SUN8I_CODEC_ANALOG
+ 	tristate "Allwinner sun8i Codec Analog Controls Support"
+-	depends on MACH_SUN8I || COMPILE_TEST
++	depends on MACH_SUN8I || (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 	select REGMAP
+ 	help
+ 	  Say Y or M if you want to add support for the analog controls for
+-- 
+2.11.0
