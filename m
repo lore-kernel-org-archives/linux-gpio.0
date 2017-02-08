@@ -1,55 +1,117 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 7/8] mfd: exynos-lpass: Add missing remove() function
-Date: Wed, 8 Feb 2017 10:57:43 +0000
-Message-ID: <20170208105743.wgq4o6ev6ybvwbgz@dell>
-References: <1485419634-28331-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170126083405eucas1p29a888fa3896e2bd131e23585f7d033d9@eucas1p2.samsung.com>
- <1485419634-28331-8-git-send-email-m.szyprowski@samsung.com>
+From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Subject: Re: [PATCH 5/8] arm64: dts: allwinner: add R_PIO node
+Date: Wed, 08 Feb 2017 19:08:46 +0800
+Message-ID: <39431486552126@web41j.yandex.ru>
+References: <20170208100009.29362-1-icenowy@aosc.xyz>
+	 <20170208100009.29362-5-icenowy@aosc.xyz> <20170208101458.du6ybqsw52ypzhzw@lukather>
+Reply-To: icenowy-ymACFijhrKM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1485419634-28331-8-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBCZLPFN5Q4OBBQPY5PCAKGQE56KCKDQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170208101458.du6ybqsw52ypzhzw@lukather>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gVGh1LCAyNiBKYW4gMjAxNywgTWFyZWsgU3p5cHJvd3NraSB3cm90ZToKCj4gRGlzYWJsZSBk
-ZXZpY2Ugb24gZHJpdmVyIHJlbW92ZSBhbmQgcmVsZWFzZSBhbGxvY2F0ZWQgcmVnbWFwLgo+IAo+
-IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBzYW1zdW5nLmNv
-bT4KPiAtLS0KPiAgZHJpdmVycy9tZmQvZXh5bm9zLWxwYXNzLmMgfCAxMSArKysrKysrKysrKwo+
-ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQoKRm9yIG15IG93biByZWZlcmVuY2U6
-CiAgQWNrZWQtZm9yLU1GRC1ieTogTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KICAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvZXh5bm9zLWxwYXNzLmMgYi9kcml2ZXJzL21mZC9l
-eHlub3MtbHBhc3MuYwo+IGluZGV4IGJlMjY0OTg4YmRjOS4uOWRiYmVkYWQ5MTZmIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvbWZkL2V4eW5vcy1scGFzcy5jCj4gKysrIGIvZHJpdmVycy9tZmQvZXh5
-bm9zLWxwYXNzLmMKPiBAQCAtMTM3LDYgKzEzNywxNiBAQCBzdGF0aWMgaW50IGV4eW5vc19scGFz
-c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJcmV0dXJuIG9mX3BsYXRm
-b3JtX3BvcHVsYXRlKGRldi0+b2Zfbm9kZSwgTlVMTCwgTlVMTCwgZGV2KTsKPiAgfQo+ICAKPiAr
-c3RhdGljIGludCBleHlub3NfbHBhc3NfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
-ZXYpCj4gK3sKPiArCXN0cnVjdCBleHlub3NfbHBhc3MgKmxwYXNzID0gcGxhdGZvcm1fZ2V0X2Ry
-dmRhdGEocGRldik7Cj4gKwo+ICsJZXh5bm9zX2xwYXNzX2Rpc2FibGUobHBhc3MpOwo+ICsJcmVn
-bWFwX2V4aXQobHBhc3MtPnRvcCk7Cj4gKwo+ICsJcmV0dXJuIDA7Cj4gK30KPiArCj4gIHN0YXRp
-YyBpbnQgX19tYXliZV91bnVzZWQgZXh5bm9zX2xwYXNzX3N1c3BlbmQoc3RydWN0IGRldmljZSAq
-ZGV2KQo+ICB7Cj4gIAlzdHJ1Y3QgZXh5bm9zX2xwYXNzICpscGFzcyA9IGRldl9nZXRfZHJ2ZGF0
-YShkZXYpOwo+IEBAIC0xNzEsNiArMTgxLDcgQEAgc3RhdGljIFNJTVBMRV9ERVZfUE1fT1BTKGxw
-YXNzX3BtX29wcywgZXh5bm9zX2xwYXNzX3N1c3BlbmQsCj4gIAkJLm9mX21hdGNoX3RhYmxlCT0g
-ZXh5bm9zX2xwYXNzX29mX21hdGNoLAo+ICAJfSwKPiAgCS5wcm9iZQk9IGV4eW5vc19scGFzc19w
-cm9iZSwKPiArCS5yZW1vdmUJPSBleHlub3NfbHBhc3NfcmVtb3ZlLAo+ICB9Owo+ICBtb2R1bGVf
-cGxhdGZvcm1fZHJpdmVyKGV4eW5vc19scGFzc19kcml2ZXIpOwo+ICAKCi0tIApMZWUgSm9uZXMK
-TGluYXJvIFNUTWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKU
-giBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJv
-b2sgfCBUd2l0dGVyIHwgQmxvZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
-bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+
+
+08.02.2017, 18:15, "Maxime Ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>:
+> On Wed, Feb 08, 2017 at 06:00:06PM +0800, Icenowy Zheng wrote:
+>> =C2=A0Allwinner A64 SoC has a R_PIO node like the one in H3.
+>>
+>> =C2=A0Add the node as well as needed clocks and resets.
+>>
+>> =C2=A0As there's no document for apb0_gates, I only added the R_PIO bit =
+here.
+>>
+>> =C2=A0Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+>> =C2=A0---
+>> =C2=A0=C2=A0arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 40 +++++++++=
+++++++++++++++++++
+>> =C2=A0=C2=A01 file changed, 40 insertions(+)
+>>
+>> =C2=A0diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/=
+arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> =C2=A0index 1c64ea2d23f9..4b0baa79554c 100644
+>> =C2=A0--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> =C2=A0+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> =C2=A0@@ -98,6 +98,15 @@
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clock-output-names =3D "osc32k";
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
+>>
+>> =C2=A0+ apb0: apb0_clk {
+>> =C2=A0+ compatible =3D "fixed-factor-clock";
+>> =C2=A0+ #clock-cells =3D <0>;
+>> =C2=A0+ clock-div =3D <1>;
+>> =C2=A0+ clock-mult =3D <1>;
+>> =C2=A0+ clocks =3D <&osc24M>;
+>> =C2=A0+ clock-output-names =3D "apb0";
+>> =C2=A0+ };
+>> =C2=A0+
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0psci {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "arm,psci-0.2";
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0method =3D "smc";
+>> =C2=A0@@ -392,5 +401,36 @@
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0<GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
+>> =C2=A0+
+>> =C2=A0+ apb0_gates: clk@1f01428 {
+>> =C2=A0+ compatible =3D "allwinner,sun50i-a64-apb0-gates-clk",
+>> =C2=A0+ "allwinner,sun4i-a10-gates-clk";
+>> =C2=A0+ reg =3D <0x01f01428 0x4>;
+>> =C2=A0+ #clock-cells =3D <1>;
+>> =C2=A0+ clocks =3D <&apb0>;
+>> =C2=A0+ clock-indices =3D <0>;
+>> =C2=A0+ clock-output-names =3D "apb0_pio";
+>> =C2=A0+ };
+>> =C2=A0+
+>> =C2=A0+ apb0_rst: reset@1f014b0 {
+>> =C2=A0+ reg =3D <0x01f014b0 0x4>;
+>> =C2=A0+ compatible =3D "allwinner,sun6i-a31-clock-reset";
+>> =C2=A0+ #reset-cells =3D <1>;
+>> =C2=A0+ };
+>
+> Please make a sunxi-ng driver for those clocks.
+
+We have no enough materials to make such a CCU driver.
+
+Clocks in CPUs are usually undocumented, and difficult to
+be collected -- even the clk-sun50iw1.c in BSP do not have
+all clocks in CPUs.
+
+We should only make it sunxi-ng until it's fully discovered
+(all functions in CPUs are functional).
+
+>
+> Thanks,
+> Maxime
+>
+> --
+> Maxime Ripard, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
+
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
