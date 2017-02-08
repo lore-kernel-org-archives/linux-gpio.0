@@ -1,54 +1,53 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH] gpio: pci-idio-16: Fix PCI BAR index
-Date: Wed, 8 Feb 2017 08:32:46 -0500
-Message-ID: <20170208133246.GA16610@sophia>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: i.MX7 pinctrl driver writing to non existent registers
+Date: Wed, 8 Feb 2017 23:28:33 +0800
+Message-ID: <9D4713C3-26F1-4041-A227-51A8A2EEB3C1@jcrosoft.com>
+References: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-The PCI BAR0 and BAR1 for the PCI-IDIO-16 hold information for the PLX
-9052 bridge chip on the device. The PCI BAR2 holds the necessary base
-address for I/O control of the PCI-IDIO-16. This patch corrects the PCI
-BAR index mismatch for the PCI-IDIO-16 GPIO driver.
 
-Fixes: 02e74fc0401a ("gpio: Add GPIO support for the ACCES PCI-IDIO-16")
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pci-idio-16.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> On Feb 8, 2017, at 5:08 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> 
+> Hi All,
+> 
+> The i.MX7 has two pinmux controllers, the LPSR and the regular one. We
+> instantiate a driver for each one. Now the driver assumes that the pins
+> are completely configured with one iomux controller, but for the LPSR
+> pins this is not true: The MUX_CTL and PAD_CTL registers are indeed
+> in the LPSR controller, but the SELECT_INPUT registers for the same
+> pin are found in the regular controller.
+> 
+> The result is that with this pin for example:
+> 
+> #define MX7D_PAD_GPIO1_IO06__UART5_DCE_RX                         0x0018 0x0048 0x0714 0x3 0x4
+> 
+> The LPSR controller writes to LPSR_BASE + 0x714 where it should really
+> be IOMUX_BASE + 0x714.
+> 
+> I have no idea how to fix this. We could split the LPSR pins into two
+> pins, one for each controller. Another possibility would be to create
+> some kind of shortcut from one controller to control the other one. Also
+> not nice. Also we could simply do nothing, as long as the bootloader
+> configures everything correctly we won't even notice ;)
+Always expect a bootloader is wrong and do it properly in the kernel
+as if you have 2 bootloader they may do different configuration and as the end
+found the problem in the kernel on one board and not the other.
 
-diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
-index 0220787240ce..f510672c9c6e 100644
---- a/drivers/gpio/gpio-pci-idio-16.c
-+++ b/drivers/gpio/gpio-pci-idio-16.c
-@@ -265,6 +265,7 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	struct device *const dev = &pdev->dev;
- 	struct idio_16_gpio *idio16gpio;
- 	int err;
-+	const size_t pci_bar_index = 2;
- 	const char *const name = pci_name(pdev);
- 
- 	idio16gpio = devm_kzalloc(dev, sizeof(*idio16gpio), GFP_KERNEL);
-@@ -277,13 +278,13 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return err;
- 	}
- 
--	err = pcim_iomap_regions(pdev, 0x1, name);
-+	err = pcim_iomap_regions(pdev, BIT(pci_bar_index), name);
- 	if (err) {
- 		dev_err(dev, "Unable to map PCI I/O addresses (%d)\n", err);
- 		return err;
- 	}
- 
--	idio16gpio->reg = pcim_iomap_table(pdev)[0];
-+	idio16gpio->reg = pcim_iomap_table(pdev)[pci_bar_index];
- 
- 	/* Deactivate input filters */
- 	iowrite8(0, &idio16gpio->reg->filter_ctl);
--- 
-2.11.1
+Best Regards,
+J.
