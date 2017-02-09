@@ -1,72 +1,50 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
- a nexus node
-Date: Thu, 9 Feb 2017 10:00:05 -0600
-Message-ID: <CAL_JsqKmkkPobGGzOOcbt2Nbx1=y=+C_167dVKHqrP0UgHBe_Q@mail.gmail.com>
-References: <20170123204851.12808-1-stephen.boyd@linaro.org>
- <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
- <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
- <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
- <20170209153526.GF27312@n2100.armlinux.org.uk>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v3 04/14] GPIO: Add gpio-ingenic driver
+Date: Thu, 09 Feb 2017 18:14:32 +0100
+Message-ID: <b032ad924ae905ce4fd11535d08c29a8@mail.crapouillou.net>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170125185207.23902-1-paul@crapouillou.net>
+ <20170125185207.23902-5-paul@crapouillou.net>
+ <CACRpkdaqQ2==B1_o-Ru81Nbu_kUF+Kxn=XFYms-1e=nAtHiJ4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170209153526.GF27312@n2100.armlinux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Frank Rowand <frowand.list@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <CACRpkdaqQ2==B1_o-Ru81Nbu_kUF+Kxn=XFYms-1e=nAtHiJ4A@mail.gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MIPS <linux-mips@linux-mips.org>, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 9, 2017 at 9:35 AM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Thu, Feb 09, 2017 at 09:17:58AM -0600, Rob Herring wrote:
->> Frank, any more comments on this? If not, I plan to apply this series.
->
-> Well, I find that a little annoying, because DT has the requirement
-> that new bindings are properly documented in Documentation, and it
-> appears that this comes with no documentation what so ever, despite
-> introducing new properties (like the -map-mask-passthru thing).
->
-> So I'm NAKing it until there's some documentation of how this
-> mechanism is supposed to work.
->
-> Merely providing an example in a commit log is (IMHO) insufficient.
-> An example doesn't explain how it was created, or how to create an
-> implementation.
+Hi,
 
-Yes, you are right.
+> What some drivers do when they just get/set a bit in a register
+> to get/set or set the direction of a GPIO, is to select GPIO_GENERIC
+> and just bgpio_init() with the right iomem pointers, then the core
+> will register handlers for get, set, set_direcition callback and
+> get_direction and your driver can just focus on the remainders.
 
-However, I'd like to see this documented in the DT spec, rather than
-kernel Documentation/ as this is a core binding. Though that would
-also imply first moving the GPIO bindings there. Perhaps just how this
-works generically could be in the spec, but the GPIO specifics can
-live with the rest of the GPIO bindings for now. This is intended to
-extend to other bindings.
+GPIO_GENERIC and bgpio_init() would work for my .set() / .get() 
+callbacks,
+not for my .direction_input() / .direction_output() callbacks which need
+to set more than one register.
 
-> Remember, we expect people to do exactly that, so we need to give
-> them this information so that they can make use of it.
->
-> I did try to work out from the code how the -map-mask thing worked,
-> but eventually gave up.
+> If you're not just replacing these with GPIO_GENERIC, please also
+> include a .get_direction() callback.
 
-The code is definitely hard to follow and I've not come up with any
-ways to make it easier to read. It's largely copied from the
-interrupt-map version, but different enough that sharing isn't really
-possible either.
+My .direction_input() and .direction_output() callbacks just call into
+the pinctrl driver, using pinctrl_gpio_direction_[in,out]put().
+I didn't find a way to get the direction info from the pinctrl driver,
+is that something that the core should provide?
 
-For interrupts, it's documented in the DT spec. The best (only?)
-explanation for how interrupt-map works is here[1] (used to be at
-devicetree.org).
-
-Rob
-
-[1] http://elinux.org/Device_Tree_Usage#Advanced_Interrupt_Mapping
+Thanks,
+-Paul
