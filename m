@@ -1,100 +1,149 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v3 01/14] Documentation: dt/bindings: Document  pinctrl-ingenic
-Date: Thu, 09 Feb 2017 18:28:25 +0100
-Message-ID: <fd3c507484a9ee34a08c9f92e60624db@mail.crapouillou.net>
-References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
- <20170125185207.23902-1-paul@crapouillou.net>
- <20170125185207.23902-2-paul@crapouillou.net>
- <20170130203617.hpljtcmzava3rq2n@rob-hp-laptop>
- <12dc62a7255bd453ff4e5e89f93ebc58@mail.crapouillou.net>
- <CACRpkdbAgy4sh6NT5DdQD6EQtOZEwevohEA6OGRcVz98yqS52Q@mail.gmail.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
+ a nexus node
+Date: Thu, 9 Feb 2017 10:52:15 -0800
+Message-ID: <589CBA5F.9000101@gmail.com>
+References: <20170123204851.12808-1-stephen.boyd@linaro.org>
+ <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
+ <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
+ <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:35360 "EHLO
-        outils.crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753588AbdBIR2f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Feb 2017 12:28:35 -0500
-In-Reply-To: <CACRpkdbAgy4sh6NT5DdQD6EQtOZEwevohEA6OGRcVz98yqS52Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MIPS <linux-mips@linux-mips.org>, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
 
-Le 2017-01-31 14:09, Linus Walleij a écrit :
-> On Tue, Jan 31, 2017 at 11:31 AM, Paul Cercueil <paul@crapouillou.net> 
-> wrote:
->> [Rob]:
->>> From the overlapping register addresses in the examples and this
->>> description, it looks like the pinctrlr and gpio controller are 1 
->>> block.
->>> If so, then there should only be 1 node.
->> 
->> Well, that's what I had until Linus W. just told me to do the 
->> opposite:
->> 
->>> Just pull all these down two levels and make them one device
->>> each instead of having them inside the pin controller node
->>> like this.
+On 02/09/17 07:17, Rob Herring wrote:
+> On Tue, Jan 24, 2017 at 12:05 PM, Rob Herring <robh+dt@kernel.org> wrote:
+>> On Tue, Jan 24, 2017 at 12:36 AM, Frank Rowand <frowand.list@gmail.com> wrote:
+>>> Hi Stephen,
+>>>
+>>> Sorry I did not get to v1 and v2 in a timely manner.
+>>>
+>>>
+>>> On 01/23/17 12:48, Stephen Boyd wrote:
+>>>> Platforms like 96boards have a standardized connector/expansion
+>>>> slot that exposes signals like GPIOs to expansion boards in an
+>>>> SoC agnostic way. We'd like the DT overlays for the expansion
+>>>> boards to be written once without knowledge of the SoC on the
+>>>> other side of the connector. This avoids the unscalable
+>>>> combinatorial explosion of a different DT overlay for each
+>>>> expansion board and SoC pair.
+>>>>
+>>>> We need a way to describe the GPIOs routed through the connector
+>>>> in an SoC agnostic way. Let's introduce nexus property parsing
+>>>> into the OF core to do this. This is largely based on the
+>>>> interrupt nexus support we already have. This allows us to remap
+>>>> a phandle list in a consumer node (e.g. reset-gpios) through a
+>>>> connector in a generic way (e.g. via gpio-map). Do this in a
+>>>> generic routine so that we can remap any sort of variable length
+>>>> phandle list.
+>>>>
+>>>> Taking GPIOs as an example, the connector would be a GPIO nexus,
+>>>> supporting the remapping of a GPIO specifier space to multiple
+>>>> GPIO providers on the SoC. DT would look as shown below, where
+>>>> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
+>>>> expansion port where boards can be plugged in, and
+>>>> 'expansion_device' is a device on the expansion board.
+>>>>
+>>>>       soc {
+>>>>               soc_gpio1: gpio-controller1 {
+>>>>                       #gpio-cells = <2>;
+>>>>               };
+>>>>
+>>>>               soc_gpio2: gpio-controller2 {
+>>>>                       #gpio-cells = <2>;
+>>>>               };
+>>>>       };
+>>>>
+>>>>       connector: connector {
+>>>>               #gpio-cells = <2>;
+>>>>               gpio-map = <0 0 &soc_gpio1 1 0>,
+>>>>                          <1 0 &soc_gpio2 4 0>,
+>>>>                          <2 0 &soc_gpio1 3 0>,
+>>>>                          <3 0 &soc_gpio2 2 0>;
+>>>>               gpio-map-mask = <0xf 0x0>;
+>>>>               gpio-map-pass-thru = <0x0 0x1>
+>>>>       };
+>>>>
+>>>>       expansion_device {
+>>>>               reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
+>>>>       };
+>>>
+>>> The how to architect connectors and plugs threads fell asleep before
+>>> coming to a resolution.  We need to revive that discussion.
+>>>
+>>> One of the concepts of the plug and connector architecture is that
+>>> a main board may contain multiple connectors of the same type (or
+>>> different types, but the same type is sufficient for this discussion).
+>>>
+>>> The node describing the card that plugs into one of the connectors
+>>> does not know the phandle of the connector it is going to be
+>>> connected to.  Some other mechanism is provided to allow a card
+>>> to be plugged into any of the available connectors.  If there are
+>>> two identical cards plugged into two connectors, then both cards
+>>> have the same exact device tree node.  But some mechanism will
+>>> exist to resolve (or "link") the two card nodes to the different
+>>> connector nodes.
+>>>
+>>> As a result of this, in the above example the reset-gpios property
+>>> in the node 'expansion_device' can not contain '&connector'.  The
+>>> concept of &connector belongs to the entire expansion_device node,
+>>> not to individual properties within the node.
+>>
+>> I think this is easily solved with a connector having 2 halves and
+>> that we need to search parents for *-map properties. Inheriting from
+>> parents is a common pattern in DT though perhaps not walking the
+>> parents of a phandle. So we'd have something like this:
+>>
+>> base-connector-1 {
+>>   gpio-map = ...
+>>   connector {
+>>     child {
+>>       some-gpios = <&connector 1>;
+>>     };
+>>   };
+>> };
+>>
+>> base-connector-2 {
+>>   gpio-map = ...
+>>   connector {
+>>     child {
+>>       some-gpios = <&connector 1>;
+>>     };
+>>   };
+>> };
+>>
+>> Now, how we resolve that /connector from an overlay targets
+>> /base-connector-1 and /base-connector-2 is an orthogonal issue and one
+>> that's going to be connector specific (at least for probe-able
+>> connectors).
 > 
-> I guess the argument is that they are in the same coherent memory
-> range so they should be one device node. That is how we handle
-> e.g. system controllers so it makes some sense.
+> Frank, any more comments on this? If not, I plan to apply this series.
 > 
-> So can the two GPIO controllers be modeled as two subnodes of
-> the pin controller then?
-> 
-> Subnodes are certainly OK, we have that for many other devices
-> such as interrupt controllers on PCI bridges and what not.
-> 
-> So when the probing of the pin controller is ready it can just
-> walk down and populate the GPIO subdevices with
-> of_platform_default_populate() or simply by registering the
-> device directly with platform_device_add_data() just like an
-> MFD device does?
-> 
-> This is nice because we want to use the standard gpio ranges
-> to map pins to GPIO lines.
-> 
-> I'm sorry about the unclarities here, but it's essentially an intrinsic
-> problem with GPIO that has been with us for years: do we model
-> each "bank" as a device or do we just register each bank as a
-> gpiochip, or do we even make one gpiochip to cover all the banks.
-> All solutions can be found in the kernel... also the different DT 
-> bindings:
-> one node for a whole slew of GPIO controllers, or seveal nodes
-> and I bet also several nodes for memory ranges in close proximity.
-> 
-> I don't know for sure what is the most elegant solution, we might
-> need to build some consensus here for the future so it doesn't
-> get to heterogeneous.
-> 
-> Yours,
-> Linus Walleij
+> Rob
 
-I was thinking that instead of having one pinctrl-ingenic instance 
-covering
-0x600 of register space, and 6 instances of gpio-ingenic having 0x100 
-each,
-I could just have 6 instances of pinctrl-ingenic, each one with an 
-instance
-of gpio-ingenic declared as a sub-node, each handling just 0x100 of 
-memory space.
+Yes, how we resolve which connector a plug goes into is orthogonal.
 
-Then I can make pinctrl-ingenic and gpio-ingenic share a regmap (through 
-syscon),
-which would be a good idea anyway since the two drivers poke to the very 
-same
-registers (in theory not at the same time, but it's never safe to assume 
-things
-like this).
+My objection is that the original example has a property in the
+plug node (that is, on the expansion board), directly referencing
+the connector node, instead of referencing a resource inside the
+connector node.
 
-Problem is, that in that case the pin functions/groups (and 
-ingenic,pull-ups)
-would have to be in DTS because we would have 6 instances with different 
-pin
-groups, and I know you hate that.
+In the original example, it would make more sense for the first
+item in the reset-gpios property to be &gpio-map or "gpio-map"
+instead of &connector.
 
-Thoughts?
+-Frank
