@@ -1,45 +1,72 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists
- through a nexus node
-Date: Thu, 9 Feb 2017 15:35:26 +0000
-Message-ID: <20170209153526.GF27312@n2100.armlinux.org.uk>
+From: Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
+ a nexus node
+Date: Thu, 9 Feb 2017 10:00:05 -0600
+Message-ID: <CAL_JsqKmkkPobGGzOOcbt2Nbx1=y=+C_167dVKHqrP0UgHBe_Q@mail.gmail.com>
 References: <20170123204851.12808-1-stephen.boyd@linaro.org>
- <20170123204851.12808-2-stephen.boyd@linaro.org>
- <5886F5ED.3030509@gmail.com>
+ <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
  <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
  <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
+ <20170209153526.GF27312@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170209153526.GF27312@n2100.armlinux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Frank Rowand <frowand.list@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 09, 2017 at 09:17:58AM -0600, Rob Herring wrote:
-> Frank, any more comments on this? If not, I plan to apply this series.
+On Thu, Feb 9, 2017 at 9:35 AM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Thu, Feb 09, 2017 at 09:17:58AM -0600, Rob Herring wrote:
+>> Frank, any more comments on this? If not, I plan to apply this series.
+>
+> Well, I find that a little annoying, because DT has the requirement
+> that new bindings are properly documented in Documentation, and it
+> appears that this comes with no documentation what so ever, despite
+> introducing new properties (like the -map-mask-passthru thing).
+>
+> So I'm NAKing it until there's some documentation of how this
+> mechanism is supposed to work.
+>
+> Merely providing an example in a commit log is (IMHO) insufficient.
+> An example doesn't explain how it was created, or how to create an
+> implementation.
 
-Well, I find that a little annoying, because DT has the requirement
-that new bindings are properly documented in Documentation, and it
-appears that this comes with no documentation what so ever, despite
-introducing new properties (like the -map-mask-passthru thing).
+Yes, you are right.
 
-So I'm NAKing it until there's some documentation of how this
-mechanism is supposed to work.
+However, I'd like to see this documented in the DT spec, rather than
+kernel Documentation/ as this is a core binding. Though that would
+also imply first moving the GPIO bindings there. Perhaps just how this
+works generically could be in the spec, but the GPIO specifics can
+live with the rest of the GPIO bindings for now. This is intended to
+extend to other bindings.
 
-Merely providing an example in a commit log is (IMHO) insufficient.
-An example doesn't explain how it was created, or how to create an
-implementation.
+> Remember, we expect people to do exactly that, so we need to give
+> them this information so that they can make use of it.
+>
+> I did try to work out from the code how the -map-mask thing worked,
+> but eventually gave up.
 
-Remember, we expect people to do exactly that, so we need to give
-them this information so that they can make use of it.
+The code is definitely hard to follow and I've not come up with any
+ways to make it easier to read. It's largely copied from the
+interrupt-map version, but different enough that sharing isn't really
+possible either.
 
-I did try to work out from the code how the -map-mask thing worked,
-but eventually gave up.
+For interrupts, it's documented in the DT spec. The best (only?)
+explanation for how interrupt-map works is here[1] (used to be at
+devicetree.org).
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Rob
+
+[1] http://elinux.org/Device_Tree_Usage#Advanced_Interrupt_Mapping
