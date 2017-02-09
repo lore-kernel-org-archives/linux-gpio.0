@@ -1,134 +1,45 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
- a nexus node
-Date: Thu, 9 Feb 2017 09:17:58 -0600
-Message-ID: <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists
+ through a nexus node
+Date: Thu, 9 Feb 2017 15:31:01 +0000
+Message-ID: <20170209153101.GE27312@n2100.armlinux.org.uk>
 References: <20170123204851.12808-1-stephen.boyd@linaro.org>
- <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
- <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
+ <20170123204851.12808-2-stephen.boyd@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170123204851.12808-2-stephen.boyd@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jan 24, 2017 at 12:05 PM, Rob Herring <robh+dt@kernel.org> wrote:
-> On Tue, Jan 24, 2017 at 12:36 AM, Frank Rowand <frowand.list@gmail.com> wrote:
->> Hi Stephen,
->>
->> Sorry I did not get to v1 and v2 in a timely manner.
->>
->>
->> On 01/23/17 12:48, Stephen Boyd wrote:
->>> Platforms like 96boards have a standardized connector/expansion
->>> slot that exposes signals like GPIOs to expansion boards in an
->>> SoC agnostic way. We'd like the DT overlays for the expansion
->>> boards to be written once without knowledge of the SoC on the
->>> other side of the connector. This avoids the unscalable
->>> combinatorial explosion of a different DT overlay for each
->>> expansion board and SoC pair.
->>>
->>> We need a way to describe the GPIOs routed through the connector
->>> in an SoC agnostic way. Let's introduce nexus property parsing
->>> into the OF core to do this. This is largely based on the
->>> interrupt nexus support we already have. This allows us to remap
->>> a phandle list in a consumer node (e.g. reset-gpios) through a
->>> connector in a generic way (e.g. via gpio-map). Do this in a
->>> generic routine so that we can remap any sort of variable length
->>> phandle list.
->>>
->>> Taking GPIOs as an example, the connector would be a GPIO nexus,
->>> supporting the remapping of a GPIO specifier space to multiple
->>> GPIO providers on the SoC. DT would look as shown below, where
->>> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
->>> expansion port where boards can be plugged in, and
->>> 'expansion_device' is a device on the expansion board.
->>>
->>>       soc {
->>>               soc_gpio1: gpio-controller1 {
->>>                       #gpio-cells = <2>;
->>>               };
->>>
->>>               soc_gpio2: gpio-controller2 {
->>>                       #gpio-cells = <2>;
->>>               };
->>>       };
->>>
->>>       connector: connector {
->>>               #gpio-cells = <2>;
->>>               gpio-map = <0 0 &soc_gpio1 1 0>,
->>>                          <1 0 &soc_gpio2 4 0>,
->>>                          <2 0 &soc_gpio1 3 0>,
->>>                          <3 0 &soc_gpio2 2 0>;
->>>               gpio-map-mask = <0xf 0x0>;
->>>               gpio-map-pass-thru = <0x0 0x1>
->>>       };
->>>
->>>       expansion_device {
->>>               reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
->>>       };
->>
->> The how to architect connectors and plugs threads fell asleep before
->> coming to a resolution.  We need to revive that discussion.
->>
->> One of the concepts of the plug and connector architecture is that
->> a main board may contain multiple connectors of the same type (or
->> different types, but the same type is sufficient for this discussion).
->>
->> The node describing the card that plugs into one of the connectors
->> does not know the phandle of the connector it is going to be
->> connected to.  Some other mechanism is provided to allow a card
->> to be plugged into any of the available connectors.  If there are
->> two identical cards plugged into two connectors, then both cards
->> have the same exact device tree node.  But some mechanism will
->> exist to resolve (or "link") the two card nodes to the different
->> connector nodes.
->>
->> As a result of this, in the above example the reset-gpios property
->> in the node 'expansion_device' can not contain '&connector'.  The
->> concept of &connector belongs to the entire expansion_device node,
->> not to individual properties within the node.
->
-> I think this is easily solved with a connector having 2 halves and
-> that we need to search parents for *-map properties. Inheriting from
-> parents is a common pattern in DT though perhaps not walking the
-> parents of a phandle. So we'd have something like this:
->
-> base-connector-1 {
->   gpio-map = ...
->   connector {
->     child {
->       some-gpios = <&connector 1>;
->     };
->   };
-> };
->
-> base-connector-2 {
->   gpio-map = ...
->   connector {
->     child {
->       some-gpios = <&connector 1>;
->     };
->   };
-> };
->
-> Now, how we resolve that /connector from an overlay targets
-> /base-connector-1 and /base-connector-2 is an orthogonal issue and one
-> that's going to be connector specific (at least for probe-able
-> connectors).
+On Mon, Jan 23, 2017 at 12:48:49PM -0800, Stephen Boyd wrote:
+> 	connector: connector {
+> 		#gpio-cells = <2>;
+> 		gpio-map = <0 0 &soc_gpio1 1 0>,
+> 			   <1 0 &soc_gpio2 4 0>,
+> 			   <2 0 &soc_gpio1 3 0>,
+> 			   <3 0 &soc_gpio2 2 0>;
+> 		gpio-map-mask = <0xf 0x0>;
+> 		gpio-map-pass-thru = <0x0 0x1>
 
-Frank, any more comments on this? If not, I plan to apply this series.
+This -map-mask and -map-pass-thru mechanism needs documentation in
+Documentation/devicetree.  There's a bunch of users of -map-mask
+(eg, interrupt-map-mask) but there's nothing that actually describes
+how this works.
 
-Rob
+The "-map-pass-thru" thing also seems to be a new, undocumented idea.
+
+So, NAK until this stuff goes through the same level of review WRT
+DT documentation as other bindings are required to.
+
+I'm not saying that it's a bad idea, but it's important for consistency
+that this stuff is well documented, and people don't end up having to
+interpret the code when writing their DT descriptions.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
