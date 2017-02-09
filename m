@@ -1,83 +1,57 @@
-From: Stephen Boyd <stephen.boyd-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through a
- nexus node
-Date: Thu, 09 Feb 2017 11:55:21 -0800
-Message-ID: <148667012126.1039.3552258235157685937@sboyd-linaro>
-References: <20170123204851.12808-1-stephen.boyd@linaro.org>
- <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
- <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
- <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
- <20170209153526.GF27312@n2100.armlinux.org.uk>
- <CAL_JsqKmkkPobGGzOOcbt2Nbx1=y=+C_167dVKHqrP0UgHBe_Q@mail.gmail.com>
+From: Robert Middleton <robert.middleton@rm5248.com>
+Subject: MCP23S08 driver bug - multiple inputs changing
+Date: Thu, 9 Feb 2017 15:11:33 -0500
+Message-ID: <CAKpcJVYw9MzWU6HUtZ35GXakMfRxS1U0fzu7SO-8bExgsEAtzQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL_JsqKmkkPobGGzOOcbt2Nbx1=y=+C_167dVKHqrP0UgHBe_Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sub5.mail.dreamhost.com ([208.113.200.129]:56378 "EHLO
+        homiemail-a59.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752060AbdBIUMF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Feb 2017 15:12:05 -0500
+Received: from homiemail-a59.g.dreamhost.com (localhost [127.0.0.1])
+        by homiemail-a59.g.dreamhost.com (Postfix) with ESMTP id 2FA32600270C
+        for <linux-gpio@vger.kernel.org>; Thu,  9 Feb 2017 12:11:34 -0800 (PST)
+Received: from mail-ot0-f177.google.com (mail-ot0-f177.google.com [74.125.82.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: robert.middleton@rm5248.com)
+        by homiemail-a59.g.dreamhost.com (Postfix) with ESMTPSA id 1BD57600270B
+        for <linux-gpio@vger.kernel.org>; Thu,  9 Feb 2017 12:11:34 -0800 (PST)
+Received: by mail-ot0-f177.google.com with SMTP id 65so12031929otq.2
+        for <linux-gpio@vger.kernel.org>; Thu, 09 Feb 2017 12:11:34 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-Quoting Rob Herring (2017-02-09 08:00:05)
-> On Thu, Feb 9, 2017 at 9:35 AM, Russell King - ARM Linux
-> <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org> wrote:
-> > On Thu, Feb 09, 2017 at 09:17:58AM -0600, Rob Herring wrote:
-> >> Frank, any more comments on this? If not, I plan to apply this series.
-> >
-> > Well, I find that a little annoying, because DT has the requirement
-> > that new bindings are properly documented in Documentation, and it
-> > appears that this comes with no documentation what so ever, despite
-> > introducing new properties (like the -map-mask-passthru thing).
-> >
-> > So I'm NAKing it until there's some documentation of how this
-> > mechanism is supposed to work.
-> >
-> > Merely providing an example in a commit log is (IMHO) insufficient.
-> > An example doesn't explain how it was created, or how to create an
-> > implementation.
-> =
+Hi,
 
-> Yes, you are right.
-> =
+I'm using Microchip's MCP23S17 as a GPIO expander on a board of mine
+and I've run into an issue with the driver.  One of my coworkers today
+discovered that if you switch on two inputs on the GPIO expander at
+once, only one will show up as changed from poll()(the code waits for
+the GPIO change as described in the documentation:
+https://www.kernel.org/doc/Documentation/gpio/sysfs.txt).  Looking at
+the driver, I eventually tracked it down to the fact that the MCP23S17
+seems to only set 1 bit in the INTF register, so if multiple inputs
+are changed at the same time the kernel will only process the first
+one.
 
-> However, I'd like to see this documented in the DT spec, rather than
-> kernel Documentation/ as this is a core binding. Though that would
-> also imply first moving the GPIO bindings there. Perhaps just how this
-> works generically could be in the spec, but the GPIO specifics can
-> live with the rest of the GPIO bindings for now. This is intended to
-> extend to other bindings.
+I fixed this on my side by reading the MCP_GPIO register when the
+interrupt comes in, but this changes the logic slightly for how the
+IRQ is handled(in mcp23s08_irq).  In my particular case, it doesn't
+seem to matter but I'm also running an older kernel(4.4.11).
 
-I will make a patch against the devicetree spec and send it as a reply
-to this series.
+Two questions with this:
 
-> =
+1. Is the IRQ handler the correct place to handle this?  It seems like
+it to me, but one of the comments in mcp23s08_get says "REVISIT
+reading this clears any IRQ ..." when reading the GPIO register.
+2. If that is the right place to fix it, where is the correct place to
+send a patch/what is the process?  My understanding is that I would do
+a git send-email to this list, but I wanted to make sure my
+understanding is correct.
 
-> > Remember, we expect people to do exactly that, so we need to give
-> > them this information so that they can make use of it.
-> >
-> > I did try to work out from the code how the -map-mask thing worked,
-> > but eventually gave up.
-> =
+My current patch is on github, if that's easy for people to look at.
 
-> The code is definitely hard to follow and I've not come up with any
-> ways to make it easier to read. It's largely copied from the
-> interrupt-map version, but different enough that sharing isn't really
-> possible either.
-> =
-
-> For interrupts, it's documented in the DT spec. The best (only?)
-> explanation for how interrupt-map works is here[1] (used to be at
-> devicetree.org).
-> =
-
-
-interrupt-map is also documented in the latest DT spec[2]. I can add
-another section for "Generic Nexus Properties" and describe how this
-code works.
-
-[2] http://www.devicetree.org/specifications-pdf
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Robert Middleton
