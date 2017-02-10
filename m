@@ -1,238 +1,64 @@
-From: Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v3 1/3] of: Support parsing phandle argument lists through
- a nexus node
-Date: Thu, 9 Feb 2017 14:54:57 -0800
-Message-ID: <589CF341.70403@gmail.com>
-References: <20170123204851.12808-1-stephen.boyd@linaro.org>
- <20170123204851.12808-2-stephen.boyd@linaro.org> <5886F5ED.3030509@gmail.com>
- <CAL_JsqKS3Q2mg0aSubB3TV6LPQjCx+hqBu4TqbsqyfBvWrwctg@mail.gmail.com>
- <CAL_JsqKbkynNmCrXbi=VJ5wqYtRrYbC+00qSm_uyZFBLFOUz0w@mail.gmail.com>
- <589CBA5F.9000101@gmail.com>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: MCP23S08 driver bug - multiple inputs changing
+Date: Fri, 10 Feb 2017 09:21:19 +0800
+Message-ID: <d2c6dce1-f7d1-3cb2-046b-46d68774a18c@electromag.com.au>
+References: <CAKpcJVYw9MzWU6HUtZ35GXakMfRxS1U0fzu7SO-8bExgsEAtzQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <589CBA5F.9000101@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <stephen.boyd@linaro.org>, Pantelis Antoniou <pantelis.antoniou@konsulko.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:56463 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750946AbdBJBWY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Feb 2017 20:22:24 -0500
+In-Reply-To: <CAKpcJVYw9MzWU6HUtZ35GXakMfRxS1U0fzu7SO-8bExgsEAtzQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Robert Middleton <robert.middleton@rm5248.com>, linux-gpio@vger.kernel.org
 
-On 02/09/17 10:52, Frank Rowand wrote:
-> On 02/09/17 07:17, Rob Herring wrote:
->> On Tue, Jan 24, 2017 at 12:05 PM, Rob Herring <robh+dt@kernel.org> wrote:
->>> On Tue, Jan 24, 2017 at 12:36 AM, Frank Rowand <frowand.list@gmail.com> wrote:
->>>> Hi Stephen,
->>>>
->>>> Sorry I did not get to v1 and v2 in a timely manner.
->>>>
->>>>
->>>> On 01/23/17 12:48, Stephen Boyd wrote:
->>>>> Platforms like 96boards have a standardized connector/expansion
->>>>> slot that exposes signals like GPIOs to expansion boards in an
->>>>> SoC agnostic way. We'd like the DT overlays for the expansion
->>>>> boards to be written once without knowledge of the SoC on the
->>>>> other side of the connector. This avoids the unscalable
->>>>> combinatorial explosion of a different DT overlay for each
->>>>> expansion board and SoC pair.
->>>>>
->>>>> We need a way to describe the GPIOs routed through the connector
->>>>> in an SoC agnostic way. Let's introduce nexus property parsing
->>>>> into the OF core to do this. This is largely based on the
->>>>> interrupt nexus support we already have. This allows us to remap
->>>>> a phandle list in a consumer node (e.g. reset-gpios) through a
->>>>> connector in a generic way (e.g. via gpio-map). Do this in a
->>>>> generic routine so that we can remap any sort of variable length
->>>>> phandle list.
->>>>>
->>>>> Taking GPIOs as an example, the connector would be a GPIO nexus,
->>>>> supporting the remapping of a GPIO specifier space to multiple
->>>>> GPIO providers on the SoC. DT would look as shown below, where
->>>>> 'soc_gpio1' and 'soc_gpio2' are inside the SoC, 'connector' is an
->>>>> expansion port where boards can be plugged in, and
->>>>> 'expansion_device' is a device on the expansion board.
->>>>>
->>>>>       soc {
->>>>>               soc_gpio1: gpio-controller1 {
->>>>>                       #gpio-cells = <2>;
->>>>>               };
->>>>>
->>>>>               soc_gpio2: gpio-controller2 {
->>>>>                       #gpio-cells = <2>;
->>>>>               };
->>>>>       };
->>>>>
->>>>>       connector: connector {
->>>>>               #gpio-cells = <2>;
->>>>>               gpio-map = <0 0 &soc_gpio1 1 0>,
->>>>>                          <1 0 &soc_gpio2 4 0>,
->>>>>                          <2 0 &soc_gpio1 3 0>,
->>>>>                          <3 0 &soc_gpio2 2 0>;
->>>>>               gpio-map-mask = <0xf 0x0>;
->>>>>               gpio-map-pass-thru = <0x0 0x1>
->>>>>       };
->>>>>
->>>>>       expansion_device {
->>>>>               reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
->>>>>       };
->>>>
->>>> The how to architect connectors and plugs threads fell asleep before
->>>> coming to a resolution.  We need to revive that discussion.
->>>>
->>>> One of the concepts of the plug and connector architecture is that
->>>> a main board may contain multiple connectors of the same type (or
->>>> different types, but the same type is sufficient for this discussion).
->>>>
->>>> The node describing the card that plugs into one of the connectors
->>>> does not know the phandle of the connector it is going to be
->>>> connected to.  Some other mechanism is provided to allow a card
->>>> to be plugged into any of the available connectors.  If there are
->>>> two identical cards plugged into two connectors, then both cards
->>>> have the same exact device tree node.  But some mechanism will
->>>> exist to resolve (or "link") the two card nodes to the different
->>>> connector nodes.
->>>>
->>>> As a result of this, in the above example the reset-gpios property
->>>> in the node 'expansion_device' can not contain '&connector'.  The
->>>> concept of &connector belongs to the entire expansion_device node,
->>>> not to individual properties within the node.
->>>
->>> I think this is easily solved with a connector having 2 halves and
->>> that we need to search parents for *-map properties. Inheriting from
->>> parents is a common pattern in DT though perhaps not walking the
->>> parents of a phandle. So we'd have something like this:
->>>
->>> base-connector-1 {
->>>   gpio-map = ...
->>>   connector {
->>>     child {
->>>       some-gpios = <&connector 1>;
->>>     };
->>>   };
->>> };
->>>
->>> base-connector-2 {
->>>   gpio-map = ...
->>>   connector {
->>>     child {
->>>       some-gpios = <&connector 1>;
->>>     };
->>>   };
->>> };
->>>
->>> Now, how we resolve that /connector from an overlay targets
->>> /base-connector-1 and /base-connector-2 is an orthogonal issue and one
->>> that's going to be connector specific (at least for probe-able
->>> connectors).
->>
->> Frank, any more comments on this? If not, I plan to apply this series.
->>
->> Rob
-> 
-> Yes, how we resolve which connector a plug goes into is orthogonal.
-> 
-> My objection is that the original example has a property in the
-> plug node (that is, on the expansion board), directly referencing
-> the connector node, instead of referencing a resource inside the
-> connector node.
-> 
-> In the original example, it would make more sense for the first
-> item in the reset-gpios property to be &gpio-map or "gpio-map"
-> instead of &connector.
+On 10/02/2017 04:11, Robert Middleton wrote:
+> Hi,
+>
+> I'm using Microchip's MCP23S17 as a GPIO expander on a board of mine
+> and I've run into an issue with the driver.  One of my coworkers today
+> discovered that if you switch on two inputs on the GPIO expander at
+> once, only one will show up as changed from poll()(the code waits for
+> the GPIO change as described in the documentation:
+> https://www.kernel.org/doc/Documentation/gpio/sysfs.txt).  Looking at
+> the driver, I eventually tracked it down to the fact that the MCP23S17
+> seems to only set 1 bit in the INTF register, so if multiple inputs
+> are changed at the same time the kernel will only process the first
+> one.
+>
+> I fixed this on my side by reading the MCP_GPIO register when the
+> interrupt comes in, but this changes the logic slightly for how the
+> IRQ is handled(in mcp23s08_irq).  In my particular case, it doesn't
+> seem to matter but I'm also running an older kernel(4.4.11).
+>
+> Two questions with this:
+>
+> 1. Is the IRQ handler the correct place to handle this?  It seems like
+> it to me, but one of the comments in mcp23s08_get says "REVISIT
+> reading this clears any IRQ ..." when reading the GPIO register.
 
-My suggestion of &gpio-map or "gpio-map" was just shooting from
-the hip.  After going back to the DT connector thread, I have
-a different answer of &gpio1 instead of &connector:
+Would need to see the patch to see what effect it may have.
+I'm using the s18 variant for some interrupt driver keypad inputs so can test
+your changes.
 
-    reset-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
+This is true for the mcp32s17, but the mcp23s18 is configurable with respect
+to which register clears the interrupt.
 
-The full answer in more than changing &connector to &gpio1, see
-below for the fuller dts.
+> 2. If that is the right place to fix it, where is the correct place to
+> send a patch/what is the process?  My understanding is that I would do
+> a git send-email to this list, but I wanted to make sure my
+> understanding is correct.
+
+Yes.
+ From memory the driver was recently updated to use regmap so you patch will need to apply against
+those changes (if it doesn't already).
 
 
-I took David Gibson's initial socket / plug proposal[1], and added
-in the gpios from Stephen's proposal.
+-- 
+Regards
+Phil Reid
 
-[1] https://lkml.org/lkml/2016/7/18/332
-
-
------  Socket:
-
-/dts-v1/;
-
-/ {
-	compatible = "foo,oldboard";
-	ranges;
-	soc@... {
-		ranges;
-		mmio: mmio-bus@... {
-			#address-cells = <2>;
-			#size-cells = <2>;
-			ranges;
-		};
-		i2c: i2c@... {
-		};
-		intc: intc@... {
-			#interrupt-cells = <2>;
-		};
-	};
-
-	connectors {
-		widget1 {
-			compatible = "foo,widget-socket";
-			w1_irqs: irqs {
-				interrupt-controller;
-				#address-cells = <0>;
-				#interrupt-cells = <1>;
-				interrupt-map-mask = <0xffffffff>;
-				interrupt-map = <
-					0 &intc 7 0
-					1 &intc 8 0
-				>;
-			};
-			w1_gpio1: gpio1 {
-				#gpio-cells = <1>;
-				gpio-map = <0 &soc_gpio1 1 0>,
-				<1 &soc_gpio2 4 0>,
-				<2 &soc_gpio1 3 0>,
-				<3 &soc_gpio2 2 0>;
-				gpio-map-mask = <0xf>;
-			};
-			aliases = {
-				i2c = &i2c;
-				intc = &w1_irqs;
-				mmio = &mmio;
-				gpio1 = &w1_gpios1;
-			};
-		};
-	};
-};
-
-
------  Expansion board:
-
-/dts-v1/;
-
-/plugin/ foo,widget-socket {
-	compatible = "foo,whirligig-widget";
-};
-
-expansion_device {
-	reset-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
-};
-
-&i2c {
-	whirligig-controller@... {
-		...
-		interrupt-parent = <&widget-irqs>;
-		interrupts = <0>;
-	};
-};
