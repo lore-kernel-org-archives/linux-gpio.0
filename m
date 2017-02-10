@@ -1,157 +1,165 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: Re: [PATCH 5/8] arm64: dts: allwinner: add R_PIO node
-Date: Fri, 10 Feb 2017 17:59:45 +0800
-Message-ID: <CAGb2v65L4TBGZo8r=wo_U6grTtutupaoCmZQkNGcyRQoM2EUzw@mail.gmail.com>
-References: <20170210113215.W9Rqn4js@smtp2m.mail.yandex.net>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: [PATCH v2 2/3] pinctrl: rockchip: Add mux recalculation support
+Date: Fri, 10 Feb 2017 18:23:48 +0800
+Message-ID: <1486722229-5451-3-git-send-email-david.wu@rock-chips.com>
+References: <1486722229-5451-1-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBKM663CAKGQEUNJXYSQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170210113215.W9Rqn4js-/T50SzA6+Nc0PDqKvflMoHmW9unr2Ajn@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1486722229-5451-1-git-send-email-david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "david.wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 10, 2017 at 4:32 PM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
->
-> 2017=E5=B9=B42=E6=9C=8810=E6=97=A5 16:07=E4=BA=8E Maxime Ripard <maxime.r=
-ipard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
->>
->> On Wed, Feb 08, 2017 at 07:08:46PM +0800, Icenowy Zheng wrote:
->> > 08.02.2017, 18:15, "Maxime Ripard" <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>:
->> > > On Wed, Feb 08, 2017 at 06:00:06PM +0800, Icenowy Zheng wrote:
->> > >>  Allwinner A64 SoC has a R_PIO node like the one in H3.
->> > >>
->> > >>  Add the node as well as needed clocks and resets.
->> > >>
->> > >>  As there's no document for apb0_gates, I only added the R_PIO bit =
-here.
->> > >>
->> > >>  Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
->> > >>  ---
->> > >>   arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 40 ++++++++++++++=
-+++++++++++++
->> > >>   1 file changed, 40 insertions(+)
->> > >>
->> > >>  diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/=
-arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> > >>  index 1c64ea2d23f9..4b0baa79554c 100644
->> > >>  --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> > >>  +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->> > >>  @@ -98,6 +98,15 @@
->> > >>                   clock-output-names =3D "osc32k";
->> > >>           };
->> > >>
->> > >>  + apb0: apb0_clk {
->> > >>  + compatible =3D "fixed-factor-clock";
->> > >>  + #clock-cells =3D <0>;
->> > >>  + clock-div =3D <1>;
->> > >>  + clock-mult =3D <1>;
->> > >>  + clocks =3D <&osc24M>;
->> > >>  + clock-output-names =3D "apb0";
->> > >>  + };
->> > >>  +
->> > >>           psci {
->> > >>                   compatible =3D "arm,psci-0.2";
->> > >>                   method =3D "smc";
->> > >>  @@ -392,5 +401,36 @@
->> > >>                           interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL=
-_HIGH>,
->> > >>                                        <GIC_SPI 41 IRQ_TYPE_LEVEL_H=
-IGH>;
->> > >>                   };
->> > >>  +
->> > >>  + apb0_gates: clk@1f01428 {
->> > >>  + compatible =3D "allwinner,sun50i-a64-apb0-gates-clk",
->> > >>  + "allwinner,sun4i-a10-gates-clk";
->> > >>  + reg =3D <0x01f01428 0x4>;
->> > >>  + #clock-cells =3D <1>;
->> > >>  + clocks =3D <&apb0>;
->> > >>  + clock-indices =3D <0>;
->> > >>  + clock-output-names =3D "apb0_pio";
->> > >>  + };
->> > >>  +
->> > >>  + apb0_rst: reset@1f014b0 {
->> > >>  + reg =3D <0x01f014b0 0x4>;
->> > >>  + compatible =3D "allwinner,sun6i-a31-clock-reset";
->> > >>  + #reset-cells =3D <1>;
->> > >>  + };
->> > >
->> > > Please make a sunxi-ng driver for those clocks.
->> >
->> > We have no enough materials to make such a CCU driver.
->> >
->> > Clocks in CPUs are usually undocumented, and difficult to
->> > be collected -- even the clk-sun50iw1.c in BSP do not have
->> > all clocks in CPUs.
->>
->> That's unfortunate, but we can deal with that by simply extending the
->> clocks we have. Nothing too complicated or unconvenient to deal with.
->
-> I did a WIP R_CCU driver based on the info on the wiki -- https://github.=
-com/Icenowy/linux/commit/8d215986f4d33ded68c705d4bb152bbb863446c9
->
-> Only infomation about H3 and A64 is included, because A31 and A23 PRCM is=
- a MFD, and I have no hackable device with A83T.
+From: "david.wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
-The most complex PRCMs (that we know of) are the A80 and the A83T.
-Some code can be found for A33 and A64. I cannot find where I got
-the information for the A23. I probably assumed it was similar to
-the A31.
+Some pins are special at a bank so that add
+IOMUX_RECALCED type to indicate which iomux source
+of the bank need to be recalculated. If the mux
+recalculateed callback and IOMUX_RECALCED type
+were set, recalculate the pins' iomux by using
+mux recalculated data struct.
 
-The parts we know that are constant across SoCs are the register
-offsets for the CPUS, APBS, APBS bus gates and reset controls.
-The APBS divider is slightly different. Offsets for the gates
-and reset controls are fairly standardized, except for the trusted
-watchdog on the A80. We can treat the A80 as the canonical source
-of possible peripheral gates if you want to do a single driver
-for all SoCs.
+Signed-off-by: david.wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+---
+change in v2:
+ - reorder the entries of the recalced data struct
 
-Also the A8X chips have extra muxes for osc24M not available on
-other chips. This should be made available for the main CCU on
-them.
+ drivers/pinctrl/pinctrl-rockchip.c | 41 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 35 insertions(+), 6 deletions(-)
 
-As for the ones that already have an MFD binding, it is possible
-to support it even with the new driver. It's just going to be
-messy as hell.
-
-
-Regards
-ChenYu
-
->
->>
->> > We should only make it sunxi-ng until it's fully discovered (all
->> > functions in CPUs are functional).
->>
->> No, I expect that by 4.12 we have converted every users to sunxi-ng,
->> PRCM included.
->>
->> Maxime
->>
->> --
->> Maxime Ripard, Free Electrons
->> Embedded Linux and Kernel engineering
->> http://free-electrons.com
->>
->> --
->> You received this message because you are subscribed to the Google Group=
-s "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it, send a=
-n email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
->> For more options, visit https://groups.google.com/d/optout.
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 96fdb86..191a2f9 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -76,6 +76,7 @@ enum rockchip_pinctrl_type {
+ #define IOMUX_SOURCE_PMU	BIT(2)
+ #define IOMUX_UNROUTED		BIT(3)
+ #define IOMUX_WIDTH_3BIT	BIT(4)
++#define IOMUX_RECALCED		BIT(5)
+ 
+ /**
+  * @type: iomux variant using IOMUX_* constants
+@@ -305,6 +306,8 @@ struct rockchip_pin_ctrl {
+ 	void	(*drv_calc_reg)(struct rockchip_pin_bank *bank,
+ 				    int pin_num, struct regmap **regmap,
+ 				    int *reg, u8 *bit);
++	void	(*iomux_recalc)(u8 bank_num, int pin, int *reg,
++				u8 *bit, int *mask);
+ };
+ 
+ struct rockchip_pin_config {
+@@ -356,6 +359,22 @@ struct rockchip_pinctrl {
+ 	unsigned int			nfunctions;
+ };
+ 
++/**
++ * struct rockchip_mux_recalced_data: represent a pin iomux data.
++ * @num: bank number.
++ * @pin: pin number.
++ * @bit: index at register.
++ * @reg: register offset.
++ * @mask: mask bit
++ */
++struct rockchip_mux_recalced_data {
++	u8 num;
++	u8 pin;
++	u8 reg;
++	u8 bit;
++	u8 mask;
++};
++
+ static struct regmap_config rockchip_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+@@ -518,10 +537,11 @@ static void rockchip_dt_free_map(struct pinctrl_dev *pctldev,
+ static int rockchip_get_mux(struct rockchip_pin_bank *bank, int pin)
+ {
+ 	struct rockchip_pinctrl *info = bank->drvdata;
++	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+ 	int iomux_num = (pin / 8);
+ 	struct regmap *regmap;
+ 	unsigned int val;
+-	int reg, ret, mask;
++	int reg, ret, mask, mux_type;
+ 	u8 bit;
+ 
+ 	if (iomux_num > 3)
+@@ -539,13 +559,14 @@ static int rockchip_get_mux(struct rockchip_pin_bank *bank, int pin)
+ 				? info->regmap_pmu : info->regmap_base;
+ 
+ 	/* get basic quadrupel of mux registers and the correct reg inside */
++	mux_type = bank->iomux[iomux_num].type;
+ 	reg = bank->iomux[iomux_num].offset;
+-	if (bank->iomux[iomux_num].type & IOMUX_WIDTH_4BIT) {
++	if (mux_type & IOMUX_WIDTH_4BIT) {
+ 		if ((pin % 8) >= 4)
+ 			reg += 0x4;
+ 		bit = (pin % 4) * 4;
+ 		mask = 0xf;
+-	} else if (bank->iomux[iomux_num].type & IOMUX_WIDTH_3BIT) {
++	} else if (mux_type & IOMUX_WIDTH_3BIT) {
+ 		if ((pin % 8) >= 5)
+ 			reg += 0x4;
+ 		bit = (pin % 8 % 5) * 3;
+@@ -555,6 +576,9 @@ static int rockchip_get_mux(struct rockchip_pin_bank *bank, int pin)
+ 		mask = 0x3;
+ 	}
+ 
++	if (ctrl->iomux_recalc && (mux_type & IOMUX_RECALCED))
++		ctrl->iomux_recalc(bank->bank_num, pin, &reg, &bit, &mask);
++
+ 	ret = regmap_read(regmap, reg, &val);
+ 	if (ret)
+ 		return ret;
+@@ -578,9 +602,10 @@ static int rockchip_get_mux(struct rockchip_pin_bank *bank, int pin)
+ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
+ {
+ 	struct rockchip_pinctrl *info = bank->drvdata;
++	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+ 	int iomux_num = (pin / 8);
+ 	struct regmap *regmap;
+-	int reg, ret, mask;
++	int reg, ret, mask, mux_type;
+ 	unsigned long flags;
+ 	u8 bit;
+ 	u32 data, rmask;
+@@ -610,13 +635,14 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
+ 				? info->regmap_pmu : info->regmap_base;
+ 
+ 	/* get basic quadrupel of mux registers and the correct reg inside */
++	mux_type = bank->iomux[iomux_num].type;
+ 	reg = bank->iomux[iomux_num].offset;
+-	if (bank->iomux[iomux_num].type & IOMUX_WIDTH_4BIT) {
++	if (mux_type & IOMUX_WIDTH_4BIT) {
+ 		if ((pin % 8) >= 4)
+ 			reg += 0x4;
+ 		bit = (pin % 4) * 4;
+ 		mask = 0xf;
+-	} else if (bank->iomux[iomux_num].type & IOMUX_WIDTH_3BIT) {
++	} else if (mux_type & IOMUX_WIDTH_3BIT) {
+ 		if ((pin % 8) >= 5)
+ 			reg += 0x4;
+ 		bit = (pin % 8 % 5) * 3;
+@@ -626,6 +652,9 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
+ 		mask = 0x3;
+ 	}
+ 
++	if (ctrl->iomux_recalc && (mux_type & IOMUX_RECALCED))
++		ctrl->iomux_recalc(bank->bank_num, pin, &reg, &bit, &mask);
++
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	data = (mask << (bit + 16));
+-- 
+1.9.1
