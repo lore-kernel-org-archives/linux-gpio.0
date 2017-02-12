@@ -1,33 +1,57 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: add get_direction function
-Date: Sat, 11 Feb 2017 15:32:15 -0600
-Message-ID: <51200db0-552b-221d-1e81-f1a3ee286c6c@codeaurora.org>
-References: <1486768860-18237-1-git-send-email-timur@codeaurora.org>
- <8652c018-4051-5c77-3126-2d41d150518a@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 04/14] GPIO: Add gpio-ingenic driver
+Date: Sun, 12 Feb 2017 21:48:59 +0100
+Message-ID: <CACRpkdbusY=gsZ=a9yGfRMi5t=+539OwKt0i5FNczxNyEVPHwg@mail.gmail.com>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170125185207.23902-1-paul@crapouillou.net> <20170125185207.23902-5-paul@crapouillou.net>
+ <CACRpkdaqQ2==B1_o-Ru81Nbu_kUF+Kxn=XFYms-1e=nAtHiJ4A@mail.gmail.com> <b032ad924ae905ce4fd11535d08c29a8@mail.crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:57012 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750940AbdBKVcM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 11 Feb 2017 16:32:12 -0500
-In-Reply-To: <8652c018-4051-5c77-3126-2d41d150518a@codeaurora.org>
+Received: from mail-it0-f47.google.com ([209.85.214.47]:35167 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbdBLUtB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Feb 2017 15:49:01 -0500
+Received: by mail-it0-f47.google.com with SMTP id 203so167592263ith.0
+        for <linux-gpio@vger.kernel.org>; Sun, 12 Feb 2017 12:49:01 -0800 (PST)
+In-Reply-To: <b032ad924ae905ce4fd11535d08c29a8@mail.crapouillou.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Paul Cercueil <paul@crapouillou.net>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-p
 
-Stephen Boyd wrote:
->> > +	/* 0 = output, 1 = input */
->> > +	return val & BIT(g->oe_bit) ? 0 : 1;
-> Maybe we can use the macros GPIOF_DIR_IN and GPIOF_DIR_OUT here instead?
+On Thu, Feb 9, 2017 at 6:14 PM, Paul Cercueil <paul@crapouillou.net> wrote:
 
-Ok, I posted a v2.
+>> If you're not just replacing these with GPIO_GENERIC, please also
+>> include a .get_direction() callback.
+>
+> My .direction_input() and .direction_output() callbacks just call into
+> the pinctrl driver, using pinctrl_gpio_direction_[in,out]put().
+> I didn't find a way to get the direction info from the pinctrl driver,
+> is that something that the core should provide?
 
-Is it too late for this patch to make the 4.11 merge window, or maybe 4.11-rc2? 
- From the perspective of our server platform, it's a bug fix.
+Hm OK you have a clear point there, there is no such callback.
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the
-Code Aurora Forum, hosted by The Linux Foundation.
+OK I do not require you to fix that at this time.
+
+I am hesitant about providing ever more callbacks from GPIO
+to pin control, I might need some help for consolidation here.
+
+With Mika's patches we have a .set_config() call to
+pinctrl_gpio_set_config() so essentially
+we *could* actually refactor all pin control drivers providing
+a GPIO back-end to use:
+
+pinctrl_gpio_set_config(gpio, PIN_CONF_PACKED(PIN_CONFIG_INPUT_ENABLE, 0));
+pinctrl_gpio_set_config(gpio, PIN_CONF_PACKED(PIN_CONFIG_OUTPUT, val));
+
+And replace the calls to pinctrl_gpio_direction_input()
+and pinctrl_gpio_direction_output() with this throughout.
+
+It makes things a bit simpler. If we need to figure things
+out the reverse direction then pinctrl_gpio_get_config()
+should be implemented and used as back-end for
+figuring out direction.
+
+Yours,
+Linus Walleij
