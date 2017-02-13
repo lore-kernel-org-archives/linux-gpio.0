@@ -1,137 +1,124 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpio: return NULL from gpiod_get_optional when
- GPIOLIB is disabled
-Date: Sun, 12 Feb 2017 17:15:01 -0800
-Message-ID: <20170213011501.GB528@dtor-ws>
-References: <20170213011355.GA13075@dtor-ws>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH] gpio:mcp23s08 Fixed missing interrupts
+Date: Mon, 13 Feb 2017 13:15:16 +0800
+Message-ID: <8aa3227c-c55c-6319-42ac-97e90c9098dd@electromag.com.au>
+References: <1486843355-2386-1-git-send-email-robert.middleton@rm5248.com>
+ <1486843355-2386-2-git-send-email-robert.middleton@rm5248.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33452 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbdBMBPF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Feb 2017 20:15:05 -0500
-Content-Disposition: inline
-In-Reply-To: <20170213011355.GA13075@dtor-ws>
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:57456 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750711AbdBMFPZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2017 00:15:25 -0500
+In-Reply-To: <1486843355-2386-2-git-send-email-robert.middleton@rm5248.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: robert.middleton@rm5248.com
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-[ Forgot to add Uwe to the CC ]
+G'day Rob,
 
-On Sun, Feb 12, 2017 at 05:13:55PM -0800, Dmitry Torokhov wrote:
-> Given the intent behind gpiod_get_optional() and friends it does not make
-> sense to return -ENOSYS when GPIOLIB is disabled: the driver is expected to
-> work just fine without gpio so let's behave as if gpio was not found.
-> Otherwise we have to special-case -ENOSYS in drivers.
-> 
-> Note that there was objection that someone might forget to enable GPIOLIB
-> when dealing with a platform that has device that actually specifies
-> optional gpio and we'll break it. I find this unconvincing as that would
-> have to be the *only GPIO* in the system, which is extremely unlikely.
-> 
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+I've tested this and it works for my use case.
+Which has rising & falling irqs and not very fast inputs.
+
+A couple of comment below. I'm no expert on the kernel standards thou.
+
+I've also cc-dd the gpio maintainers. See MAINTAINERS file for a list people to copy for different subfolder etc.
+
+
+On 12/02/2017 04:02, robert.middleton@rm5248.com wrote:
+> From: Robert Middleton <robert.middleton@rm5248.com>
+>
+> When an interrupt occurs on an MCP23S08 chip, the INTF register will only contain one bit as causing the interrupt.  If more than two pins change at the same time on the chip, this causes one of the pins to not be reported.  This patch fixes the logic for checking if a pin has changed, so that multiple pins will always cause more than one change.
+
+Comments need to be wrapped to 75 chars.
+Also needs signed-by. "git format-patch -s" will do it for you.
+
+
 > ---
-> 
-> This is a resend of a similar patch from a couple years ago.
-> 
-> V2:
-> 
-> - added paragraph to Documentation/gpio/consumer.txt at request of
->   Alexandre Courbot
-> - added Suggested-by: Uwe Kleine-König at request of Alexandre Courbot
-> - hopefully addressed Uwe's concern about gpiolib being disabled in the
->   patch description: I find it extremely unlikely that the optional GPIO
->   would happen to be the only GPIO in the whole system.
-> - added handling for more _optional() calls appeared since V1 was
->   posted.
-> 
->  Documentation/gpio/consumer.txt |  6 ++++++
->  include/linux/gpio/consumer.h   | 12 ++++++------
->  2 files changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
-> index 05676fdacfe3..912568baabb9 100644
-> --- a/Documentation/gpio/consumer.txt
-> +++ b/Documentation/gpio/consumer.txt
-> @@ -70,6 +70,12 @@ instead of -ENOENT if no GPIO has been assigned to the requested function:
->  						   unsigned int index,
->  						   enum gpiod_flags flags)
->  
-> +Note that gpio_get*_optional() functions (and their managed variants), unlike
-> +the rest of gpiolib API, also return NULL when gpiolib support is disabled.
-> +This is helpful to driver authors, since they do not need to special case
-> +-ENOSYS return codes.  System integrators should however be careful to enable
-> +gpiolib on systems that need it.
+>  drivers/gpio/gpio-mcp23s08.c | 26 +++++++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+> index 99d37b5..b7ceee3 100644
+> --- a/drivers/gpio/gpio-mcp23s08.c
+> +++ b/drivers/gpio/gpio-mcp23s08.c
+> @@ -337,7 +337,7 @@ mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
+>  static irqreturn_t mcp23s08_irq(int irq, void *data)
+>  {
+>  	struct mcp23s08 *mcp = data;
+> -	int intcap, intf, i;
+> +	int intcap, intf, i, gpio, gpio_cache;
+>  	unsigned int child_irq;
+>
+>  	mutex_lock(&mcp->lock);
+> @@ -356,14 +356,30 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+>  	}
+>
+>  	mcp->cache[MCP_INTCAP] = intcap;
 > +
->  For a function using multiple GPIOs all of those can be obtained with one call:
->  
->  	struct gpio_descs *gpiod_get_array(struct device *dev,
-> diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-> index fb0fde686cb1..a0431f4aa6cc 100644
-> --- a/include/linux/gpio/consumer.h
-> +++ b/include/linux/gpio/consumer.h
-> @@ -165,14 +165,14 @@ static inline struct gpio_desc *__must_check
->  gpiod_get_optional(struct device *dev, const char *con_id,
->  		   enum gpiod_flags flags)
->  {
-> -	return ERR_PTR(-ENOSYS);
-> +	return NULL;
->  }
->  
->  static inline struct gpio_desc *__must_check
->  gpiod_get_index_optional(struct device *dev, const char *con_id,
->  			 unsigned int index, enum gpiod_flags flags)
->  {
-> -	return ERR_PTR(-ENOSYS);
-> +	return NULL;
->  }
->  
->  static inline struct gpio_descs *__must_check
-> @@ -186,7 +186,7 @@ static inline struct gpio_descs *__must_check
->  gpiod_get_array_optional(struct device *dev, const char *con_id,
->  			 enum gpiod_flags flags)
->  {
-> -	return ERR_PTR(-ENOSYS);
-> +	return NULL;
->  }
->  
->  static inline void gpiod_put(struct gpio_desc *desc)
-> @@ -226,14 +226,14 @@ static inline struct gpio_desc *__must_check
->  devm_gpiod_get_optional(struct device *dev, const char *con_id,
->  			  enum gpiod_flags flags)
->  {
-> -	return ERR_PTR(-ENOSYS);
-> +	return NULL;
->  }
->  
->  static inline struct gpio_desc *__must_check
->  devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
->  				unsigned int index, enum gpiod_flags flags)
->  {
-> -	return ERR_PTR(-ENOSYS);
-> +	return NULL;
->  }
->  
->  static inline struct gpio_descs *__must_check
-> @@ -247,7 +247,7 @@ static inline struct gpio_descs *__must_check
->  devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
->  			      enum gpiod_flags flags)
->  {
-> -	return ERR_PTR(-ENOSYS);
-> +	return NULL;
->  }
->  
->  static inline void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
-> -- 
-> 2.11.0.483.g087da7b7c-goog
-> 
-> 
-> -- 
-> Dmitry
+> +	/* This clears the interrupt */
+Only for no s18 chips. But it should matter for them.
+
+
+> +	gpio = mcp->ops->read(mcp, MCP_GPIO);
+> +	if (gpio < 0) {
+> +		mutex_unlock(&mcp->lock);
+> +		return IRQ_HANDLED;
+> +	}
+> +	gpio_cache = mcp->cache[MCP_GPIO];
+> +	mcp->cache[MCP_GPIO] = gpio;
+>  	mutex_unlock(&mcp->lock);
+>
+>
+>  	for (i = 0; i < mcp->chip.ngpio; i++) {
+> -		if ((BIT(i) & mcp->cache[MCP_INTF]) &&
+> -		    ((BIT(i) & intcap & mcp->irq_rise) ||
+> -		     (mcp->irq_fall & ~intcap & BIT(i)) ||
+> -		     (BIT(i) & mcp->cache[MCP_INTCON]))) {
+> +		/* We must check all of the inputs on the chip,
+> +		 * otherwise we may not notice a change on >=2 pins
+> +		 */
+> +		int bit_changed = (BIT(i) & gpio_cache) !=
+> +			(BIT(i) & mcp->cache[MCP_GPIO]);
+> +		int defval_changed = (BIT(i) & mcp->cache[MCP_GPIO]) !=
+> +			(BIT(i) & mcp->cache[MCP_DEFVAL]);
+> +		if ((bit_changed && (BIT(i) & mcp->irq_rise)) ||
+> +			(bit_changed && (~BIT(i) & mcp->irq_fall)) ||
+> +			((BIT(i) & mcp->cache[MCP_INTCON]) &&
+trailing space on this line.
+I'm not sure what the formatting should be here, but most other kernel code I've looked
+using space to align to the open bracket of the if statement when the condition exceeds
+one line.
+
+> +			defval_changed)) {
+>  			child_irq = irq_find_mapping(mcp->chip.irqdomain, i);
+>  			handle_nested_irq(child_irq);
+>  		}
+>
+
+bit_changed / defval_changed could be of type bool to be clearer that it's meant to
+be a bool result. These should also be defined at the top of the function I believe.
+
+I pretty sure the logic will trigger a interrupt on both a rising and falling edge of the input
+even if only falling edge is requested. But I may be missing something obvious.
+
+Also what is the impact to short interrupt events. Should the INTCAP / INTF flags still be consider as well.
+ie. A short pulse on input which may happen before GPIO input register be read, but captured by INTCAP
+be consider as well. This change may break systems relying on that behaviour.
+
+FYI: You can run scripts/checkpatch.pl against you patch to identify some of the problems highlighted above.
+
+not related to your changes: this function always returns IRQ_HANDLED in all cases.
+Other GPIO drivers return IRQ_NONE if no handler was called or in some case if an error occurred
+in reading the state. I'm not sure what the correct behaviour is supposed to be.
+Docs suggest IRQ_NONE helps the kernel detect bad irq.
+Someone more knowledgeable may be able to offer a hint on that one.
+I can do a patch if this needs changing.
 
 -- 
-Dmitry
+Regards
+Phil Reid
+
