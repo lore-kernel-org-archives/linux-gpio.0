@@ -1,70 +1,124 @@
-From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 3/3] mfd: wm831x: Add device tree binding document
-Date: Mon, 13 Feb 2017 08:58:03 +0000
-Message-ID: <20170213085803.GW1754@localhost.localdomain>
-References: <1486734800-10141-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1486734800-10141-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20170213083158.j5l2jxkem2xlbrq7@dell>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2] gpio: return NULL from gpiod_get_optional when
+ GPIOLIB is disabled
+Date: Mon, 13 Feb 2017 09:59:35 +0100
+Message-ID: <20170213085935.76rlb6pwarejpmlh@pengutronix.de>
+References: <20170213011355.GA13075@dtor-ws>
+ <20170213011501.GB528@dtor-ws>
+ <20170213074506.cf2zrjp2lmhtyoo5@pengutronix.de>
+ <20170213082008.GA22252@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:40283 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750853AbdBMI7j (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Feb 2017 03:59:39 -0500
 Content-Disposition: inline
-In-Reply-To: <20170213083158.j5l2jxkem2xlbrq7@dell>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+In-Reply-To: <20170213082008.GA22252@dtor-ws>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 13, 2017 at 08:31:58AM +0000, Lee Jones wrote:
-> On Fri, 10 Feb 2017, Charles Keepax wrote:
+Hello Dmitry,
+
+On Mon, Feb 13, 2017 at 12:20:08AM -0800, Dmitry Torokhov wrote:
+> On Mon, Feb 13, 2017 at 08:45:06AM +0100, Uwe Kleine-König wrote:
+> > My concern is still there. This might break some setups. IMHO it's not
+> > ok to request that a device in a certain configuration only works when
+> > the (optional) Kconfig option GPIOLIB is enabled and silently breaks if
+> > it's not. And you cannot rely on the person who configured the kernel.
 > 
-> > This is just a very simple initial binding, supporting only registering
-> > the chip and the GPIOs. More features will be added as support for
-> > device tree in the driver is expanded.
+> Really? So I guess we can tell people do just do "make randconfig"
+> and start reporting bugs when that kernel would not work on their
+> hardware?
+
+No, but if randconfig enabled a driver for your temperature sensor and
+that driver manages to try binding to that device, it should fail if the
+temperature sensor might have a GPIO that must be taken into account for
+proper functioning if it's there and the driver cannot find out if it's
+there.
+
+If your driver can handle a GPIO that can also safely be ignored, then
+sure, this function's semantic is a nuisance. But then given that this
+semantic is what most drivers should use AFAICT the right thing is to
+introduce another function with the semantic:
+
+	if there is a gpio and GPIOLIB is enabled:
+		return gpio
+	else:
+		return NULL
+
+> > When accepting this you will burn debug time of others who see their
+> > device breaking with no or unrelated error messages.
 > > 
-> > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/wm831x.txt | 31 ++++++++++++++++++++++++
-> >  1 file changed, 31 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mfd/wm831x.txt
+> > The only reliable way out here is to enable enough of GPIOLIB to only
+> > return NULL in ..._optional when there is no gpio required. You can have
+> > a suggested-by for that.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/wm831x.txt b/Documentation/devicetree/bindings/mfd/wm831x.txt
-> > new file mode 100644
-> > index 0000000..9771022
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mfd/wm831x.txt
-> > @@ -0,0 +1,31 @@
-> > +Cirrus Logic/Wolfson Microelectronics wm831x PMICs
-> > +
-> > +System PMICs with a wide range of additional features.
-> > +
-> > +Required properties:
-> > +
-> > +  - compatible : One of the following chip-specific strings:
-> > +        "wlf,wm8310"
-> > +        "wlf,wm8311"
-> > +        "wlf,wm8312"
-> > +        "wlf,wm8320"
-> > +        "wlf,wm8321"
-> > +        "wlf,wm8325"
-> > +        "wlf,wm8326"
-> > +
-> > +  - reg : I2C slave address when connected using I2C, chip select number when
-> > +    using SPI.
-> > +
-> > +  - gpio-controller : Indicates this device is a GPIO controller.
-> > +  - #gpio-cells : Must be 2. The first cell is the pin number and the
-> > +    second cell is used to specify optional parameters (currently unused).
+> > The semantic of gpiod_get_optional is:
+> > 
+> > 	if there is a gpio:
+> > 		give it to me
+> > 	else:
+> > 		give me a dummy
+> > 
+> > If the kernel is configured to be unable to answer the question "is
+> > there a gpio?" that is worth a -ENOSYS.
 > 
-> Will it ever be used?
-> 
+> You know what every single driver for peripherals that are used on
+> variety of systems using has to do for gpios that are truly optional?
 
-Hopefully, it is used on some hardware that we supply which I am hoping to
-upstream support for shortly.
+What is the difference between "truly optional" and the meaning of
+optional in gpiod_get_optional?
 
-Thanks,
-Charles
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 	gpio = gpio_get_optional();
+> 	if (IS_ERR(gpio)) {
+> 		error = PTR_ERR(gpio);
+> 		if (error == -ENOSYS) {
+> 			/*
+> 			 * - It's OK, we said it's optional GPIO so
+> 			 * if GPIOLIB is not there we should not fail
+> 			 * to enable the device, because this gpio is
+> 			 * *OPTIONAL*.
+> 			 * - But what if it is actually there? What if the
+> 			 * kernel is misconfigured?
+> 			 * - And what if it is not? How would we know?
+> 			 * - Let's parse device tree by hand! And check
+> 			 * ACPI. And if ACPI is disabled reimplement it
+> 			 * because we should not silently break users!
+> 			 * - ... no, let's not.
+> 			 */
+> 			gpio = NULL;
+> 		} else {
+> 			return error;
+> 		}
+> 	}
+
+I don't know a good name, but implementing a separate helper function
+with this semantic is great. It simplifies all these drivers, makes them
+easily greppable for, and lets the drivers that want the reliable
+semantic just continue to use gpiod_get_optional().
+
+Can you list a few drivers that should make use of this new function
+instead of gpiod_get_optional()?
+
+Or alternatively (if "truly optional" means: I don't need to do anything
+even if it's available) just do the following instead:
+
+	/*
+	 * There might be a gpio but to not make the driver depend
+	 * on GPIOLIB we don't make use of it.
+	 */
+	gpio = NULL;
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
