@@ -1,138 +1,83 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2] gpio: return NULL from gpiod_get_optional when
- GPIOLIB is disabled
-Date: Mon, 13 Feb 2017 00:20:08 -0800
-Message-ID: <20170213082008.GA22252@dtor-ws>
-References: <20170213011355.GA13075@dtor-ws>
- <20170213011501.GB528@dtor-ws>
- <20170213074506.cf2zrjp2lmhtyoo5@pengutronix.de>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/3] mfd: wm831x: Add device tree binding document
+Date: Mon, 13 Feb 2017 08:31:58 +0000
+Message-ID: <20170213083158.j5l2jxkem2xlbrq7@dell>
+References: <1486734800-10141-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1486734800-10141-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35579 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751876AbdBMIUM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2017 03:20:12 -0500
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170213074506.cf2zrjp2lmhtyoo5@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1486734800-10141-3-git-send-email-ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 13, 2017 at 08:45:06AM +0100, Uwe Kleine-König wrote:
-> Hello,
+On Fri, 10 Feb 2017, Charles Keepax wrote:
+
+> This is just a very simple initial binding, supporting only registering
+> the chip and the GPIOs. More features will be added as support for
+> device tree in the driver is expanded.
 > 
-> On Sun, Feb 12, 2017 at 05:15:01PM -0800, Dmitry Torokhov wrote:
-> > On Sun, Feb 12, 2017 at 05:13:55PM -0800, Dmitry Torokhov wrote:
-> > > Given the intent behind gpiod_get_optional() and friends it does not make
-> > > sense to return -ENOSYS when GPIOLIB is disabled: the driver is expected to
-> > > work just fine without gpio so let's behave as if gpio was not found.
-> > > Otherwise we have to special-case -ENOSYS in drivers.
-> > > 
-> > > Note that there was objection that someone might forget to enable GPIOLIB
-> > > when dealing with a platform that has device that actually specifies
-> > > optional gpio and we'll break it. I find this unconvincing as that would
-> > > have to be the *only GPIO* in the system, which is extremely unlikely.
-> > > 
-> > > Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/wm831x.txt | 31 ++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/wm831x.txt
 > 
-> I don't like this patch and so I wonder what I wrote that could be
-> interpreted as suggesting this patch.
+> diff --git a/Documentation/devicetree/bindings/mfd/wm831x.txt b/Documentation/devicetree/bindings/mfd/wm831x.txt
+> new file mode 100644
+> index 0000000..9771022
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/wm831x.txt
+> @@ -0,0 +1,31 @@
+> +Cirrus Logic/Wolfson Microelectronics wm831x PMICs
+> +
+> +System PMICs with a wide range of additional features.
+> +
+> +Required properties:
+> +
+> +  - compatible : One of the following chip-specific strings:
+> +        "wlf,wm8310"
+> +        "wlf,wm8311"
+> +        "wlf,wm8312"
+> +        "wlf,wm8320"
+> +        "wlf,wm8321"
+> +        "wlf,wm8325"
+> +        "wlf,wm8326"
+> +
+> +  - reg : I2C slave address when connected using I2C, chip select number when
+> +    using SPI.
+> +
+> +  - gpio-controller : Indicates this device is a GPIO controller.
+> +  - #gpio-cells : Must be 2. The first cell is the pin number and the
+> +    second cell is used to specify optional parameters (currently unused).
 
-It came from my exchange with Alexandre:
+Will it ever be used?
 
-On Fri, Feb 20, 2015 at 01:59:43PM +0900, Alexandre Courbot wrote:
-> On Fri, Feb 20, 2015 at 9:30 AM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> > Given the intent behind gpiod_get_optional() and friends it does not
-> > make
-> > sense to return -ENOSYS when GPIOLIB is disabled: the driver is
-> > expected to
-> > work just fine without gpio so let's behave as if gpio was not
-> > found.
-> > Otherwise we have to special-case -ENOSYS in drivers.
->
-> Interestingly Uwe sent a RFC for this one week ago:
->
-> http://patchwork.ozlabs.org/patch/439135/
->
-> Maybe credit him with a Suggested-by.?
+Apart from that, looks okay.
 
-If you check out that patchwork entry you indeed suggested doing exactly
-what this patch is doing. But if you insist I can certainly remove the
-"suggested-by".
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-> For now I'd say only
-> 
-> 	Nacked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> is justified.
-> 
-> My concern is still there. This might break some setups. IMHO it's not
-> ok to request that a device in a certain configuration only works when
-> the (optional) Kconfig option GPIOLIB is enabled and silently breaks if
-> it's not. And you cannot rely on the person who configured the kernel.
-
-Really? So I guess we can tell people do just do "make randconfig"
-and start reporting bugs when that kernel would not work on their
-hardware?
-
-> 
-> When accepting this you will burn debug time of others who see their
-> device breaking with no or unrelated error messages.
-> 
-> The only reliable way out here is to enable enough of GPIOLIB to only
-> return NULL in ..._optional when there is no gpio required. You can have
-> a suggested-by for that.
-> 
-> The semantic of gpiod_get_optional is:
-> 
-> 	if there is a gpio:
-> 		give it to me
-> 	else:
-> 		give me a dummy
-> 
-> If the kernel is configured to be unable to answer the question "is
-> there a gpio?" that is worth a -ENOSYS.
-
-You know what every single driver for peripherals that are used on
-variety of systems using has to do for gpios that are truly optional?
-
-	gpio = gpio_get_optional();
-	if (IS_ERR(gpio)) {
-		error = PTR_ERR(gpio);
-		if (error == -ENOSYS) {
-			/*
-			 * - It's OK, we said it's optional GPIO so
-			 * if GPIOLIB is not there we should not fail
-			 * to enable the device, because this gpio is
-			 * *OPTIONAL*.
-			 * - But what if it is actually there? What if the
-			 * kernel is misconfigured?
-			 * - And what if it is not? How would we know?
-			 * - Let's parse device tree by hand! And check
-			 * ACPI. And if ACPI is disabled reimplement it
-			 * because we should not silently break users!
-			 * - ... no, let's not.
-			 */
-			gpio = NULL;
-		} else {
-			return error;
-		}
-	}
-
-Really, the argument that there is a *single* GPIO in the whole system,
-that GPIO happens to be optional, but critical for the deice operation
-and a random person is confused when enabling random options and
-forgetting gpiolib? And to "save" this scenario you prefer to fail
-loading drivers on perfectly configured systems that do not need gpiolib
-and do not use gpios? Or to add -ENOSYS checks (that actually break
-the scenario you described and make the driver code ugly)? I think you
-have your priorities wrong.
-
-Thanks.
+> +Example:
+> +
+> +wm8310: wm8310@36 {
+> +	compatible = "wlf,wm8310";
+> +	reg = <0x36>;
+> +
+> +	gpio-controller;
+> +	#gpio-cells = <2>;
+> +};
 
 -- 
-Dmitry
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org â”‚ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
