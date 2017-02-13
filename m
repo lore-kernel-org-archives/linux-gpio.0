@@ -1,15 +1,15 @@
 From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH 1/8] dt-bindings: fix for Allwinner H5
- pinctrl's compatible
-Date: Mon, 13 Feb 2017 23:04:22 +0800
-Message-ID: <CAGb2v65DEiE7wGqFiUqte_zvQEu+KGwLFc6GxG0RE4pRBo7mTg@mail.gmail.com>
-References: <20170208100009.29362-1-icenowy@aosc.xyz>
+Subject: Re: [PATCH 2/8] dt: bindings: add binding for Allwinner
+ A64 R_PIO pinctrl
+Date: Mon, 13 Feb 2017 23:06:35 +0800
+Message-ID: <CAGb2v64T_3oSep8UCQtrjFpZNbJBbt85ByzywF+VBN-7qtRqJw@mail.gmail.com>
+References: <20170208100009.29362-1-icenowy@aosc.xyz> <20170208100009.29362-2-icenowy@aosc.xyz>
 Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBDUWQ7CQKGQECTDC4WA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBE4XQ7CQKGQEDSQKN6Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170208100009.29362-1-icenowy-ymACFijhrKM@public.gmane.org>
+In-Reply-To: <20170208100009.29362-2-icenowy-ymACFijhrKM@public.gmane.org>
 List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Archive: <https://groups.google.com/group/linux-sunxi
@@ -21,11 +21,10 @@ Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob H
 List-Id: linux-gpio@vger.kernel.org
 
 On Wed, Feb 8, 2017 at 6:00 PM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
-> The compatible for Allwinner H5 pin controller is wrong written as
-> allwinner,sun50i-h5-r-pinctrl, however, it's really a generic pinctrl
-> rather than a "r" one.
+> Allwinner A64 SoC has also a dedicated pin controller for Port L GPIOs,
+> which is called "Port Controller (CPUs-PORT)" in SoC User Manual.
 >
-> Fix this compatible string.
+> Add a binding for this pin controller, like the ones in A23/33 and H3.
 >
 > Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 
