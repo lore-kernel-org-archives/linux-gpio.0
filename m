@@ -1,41 +1,48 @@
-From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/3] mfd: wm831x: Add basic device tree binding
-Date: Mon, 13 Feb 2017 09:19:58 +0000
-Message-ID: <20170213091958.GX1754@localhost.localdomain>
-References: <1486734800-10141-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20170213091603.njdtz43mllwpu6qc@dell>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: [PATCH] gpio: dwapb: Add support for next generation of X-Gene
+ SoC
+Date: Mon, 13 Feb 2017 09:38:34 +0000
+Message-ID: <20170213093834.GA16603@page>
+References: <1485891838-27093-1-git-send-email-hotran@apm.com>
+ <CACRpkdZw-QLOeiPqSRaEJ+mGGDwi5fh9B1uenPxQGBtTwj+cuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34921 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbdBMJih (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2017 04:38:37 -0500
+Received: by mail-wm0-f65.google.com with SMTP id u63so18298458wmu.2
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Feb 2017 01:38:36 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20170213091603.njdtz43mllwpu6qc@dell>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+In-Reply-To: <CACRpkdZw-QLOeiPqSRaEJ+mGGDwi5fh9B1uenPxQGBtTwj+cuw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hoan Tran <hotran@apm.com>, Jamie Iles <jamie@jamieiles.com>, Weike Chen <alvin.chen@intel.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
 
-On Mon, Feb 13, 2017 at 09:16:03AM +0000, Lee Jones wrote:
-> On Fri, 10 Feb 2017, Charles Keepax wrote:
-> 
-> > Add the basic ability to register the device through device tree, more
-> > work is needed to get each individual sub-driver functioning correctly
-> > but this is enough to get the device to probe from device tree.
-> > 
-> > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-> > ---
-> >  MAINTAINERS                     |  1 +
-> 
-> Irrelevant change.
-> 
-> Either submit it with patch that introduces the file or on its own.
-> 
+Hi Linus,
 
-Cool I will move it into the binding patch, also will fix up that
-warning from the build bot for v2 as well.
+On Mon, Feb 06, 2017 at 11:21:09AM +0100, Linus Walleij wrote:
+> On Tue, Jan 31, 2017 at 8:43 PM, Hoan Tran <hotran@apm.com> wrote:
+> 
+> > Next generation of X-Gene SoC's GPIO hardware register map is very
+> > similar to DW GPIO. It only differs by a few register addresses.
+> > This patch modifies DW GPIO driver to accommodate the difference
+> > in a few register addresses.
+> >
+> > Signed-off-by: Hoan Tran <hotran@apm.com>
+> 
+> On next iteration please include Jamie Iles, Weike Chen and Sebastian
+> Andrzej Siewior.
+> They all provided substantial contributions to this driver.
+> 
+> The dwapb needs a proper maintainer in MAINTAINERS actually, it is one of
+> those that can't use GPIOLIB_IRQCHIP so it requires special attention.
+> Jamie, interested in the job? Patches welcome :)
 
-Thanks,
-Charles
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I actually don't have access to hardware using this driver anymore so 
+I'm probably not the right person for the job, but still happy to review 
+patches!
+
+Jamie
