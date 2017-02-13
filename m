@@ -1,47 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] pinctrl: berlin: make bool drivers explicitly non-modular
-Date: Mon, 13 Feb 2017 14:25:35 +0100
-Message-ID: <CACRpkdYU=eJU7Gs9QL34XduKPbNw9WtOW7b0x=DFHv2VQhN=3w@mail.gmail.com>
-References: <20170206080352.17808-1-paul.gortmaker@windriver.com> <20170206080352.17808-4-paul.gortmaker@windriver.com>
+Subject: Re: [patch] pinctrl: intel: unlock on error in intel_config_set_pull()
+Date: Mon, 13 Feb 2017 15:42:56 +0100
+Message-ID: <CACRpkda2EDT6TC96jBVBTmWjRg04TroVtuhb6w+Rw42V3wa=6A@mail.gmail.com>
+References: <20170207132008.GD31552@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170206080352.17808-4-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Antoine_T=C3=A9nart?= <antoine.tenart@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jisheng Zhang <jszhang@marvell.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Thomas Hebb <tommyhebb@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f54.google.com ([209.85.214.54]:37866 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751703AbdBMOnA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2017 09:43:00 -0500
+Received: by mail-it0-f54.google.com with SMTP id x75so7458638itb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Feb 2017 06:42:59 -0800 (PST)
+In-Reply-To: <20170207132008.GD31552@mwanda>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Mon, Feb 6, 2017 at 9:03 AM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On Tue, Feb 7, 2017 at 2:20 PM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-> None of the Kconfigs for any of these drivers are tristate,
-> meaning that they currently are not being built as a module by anyone.
+> We need to unlock before returning -EINVAL on this error path.
 >
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: "Antoine T=C3=A9nart" <antoine.tenart@free-electrons.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Jisheng Zhang <jszhang@marvell.com>
-> Cc: Hongzhou Yang <hongzhou.yang@mediatek.com>
-> Cc: Thomas Hebb <tommyhebb@gmail.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Fixes: 04cc058f0c52 ("pinctrl: intel: Add support for 1k additional pull-down")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Patch applied.
+Patch applied as obviously correct.
 
 Yours,
 Linus Walleij
