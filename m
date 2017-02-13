@@ -1,103 +1,41 @@
-From: Lee Jones <lee.jones@linaro.org>
+From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Subject: Re: [PATCH 1/3] mfd: wm831x: Add basic device tree binding
-Date: Mon, 13 Feb 2017 09:16:03 +0000
-Message-ID: <20170213091603.njdtz43mllwpu6qc@dell>
+Date: Mon, 13 Feb 2017 09:19:58 +0000
+Message-ID: <20170213091958.GX1754@localhost.localdomain>
 References: <1486734800-10141-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20170213091603.njdtz43mllwpu6qc@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:37622 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbdBMJQH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Feb 2017 04:16:07 -0500
-Received: by mail-wm0-f43.google.com with SMTP id v77so88580056wmv.0
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Feb 2017 01:16:07 -0800 (PST)
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1486734800-10141-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20170213091603.njdtz43mllwpu6qc@dell>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-On Fri, 10 Feb 2017, Charles Keepax wrote:
-
-> Add the basic ability to register the device through device tree, more
-> work is needed to get each individual sub-driver functioning correctly
-> but this is enough to get the device to probe from device tree.
+On Mon, Feb 13, 2017 at 09:16:03AM +0000, Lee Jones wrote:
+> On Fri, 10 Feb 2017, Charles Keepax wrote:
 > 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
->  MAINTAINERS                     |  1 +
-
-Irrelevant change.
-
-Either submit it with patch that introduces the file or on its own.
-
->  drivers/mfd/wm831x-core.c       | 32 +++++++++++++++++++++++++++++++-
->  drivers/mfd/wm831x-i2c.c        |  9 ++++++++-
->  drivers/mfd/wm831x-irq.c        |  6 +++---
->  drivers/mfd/wm831x-spi.c        |  6 +++++-
->  include/linux/mfd/wm831x/core.h | 15 +++++++++++++++
->  6 files changed, 63 insertions(+), 6 deletions(-)
+> > Add the basic ability to register the device through device tree, more
+> > work is needed to get each individual sub-driver functioning correctly
+> > but this is enough to get the device to probe from device tree.
+> > 
+> > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> > ---
+> >  MAINTAINERS                     |  1 +
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2d8ca28..48fdc82 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13363,6 +13363,7 @@ F:	Documentation/hwmon/wm83??
->  F:	Documentation/devicetree/bindings/extcon/extcon-arizona.txt
->  F:	Documentation/devicetree/bindings/regulator/arizona-regulator.txt
->  F:	Documentation/devicetree/bindings/mfd/arizona.txt
-> +F:	Documentation/devicetree/bindings/mfd/wm831x.txt
->  F:	arch/arm/mach-s3c64xx/mach-crag6410*
->  F:	drivers/clk/clk-wm83*.c
->  F:	drivers/extcon/extcon-arizona.c
-> diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
-> index 3e0e99e..57ff456 100644
-> --- a/drivers/mfd/wm831x-core.c
-> +++ b/drivers/mfd/wm831x-core.c
-> @@ -19,6 +19,8 @@
->  #include <linux/mfd/core.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
->  
->  #include <linux/mfd/wm831x/core.h>
->  #include <linux/mfd/wm831x/pdata.h>
-> @@ -1613,6 +1615,31 @@ struct regmap_config wm831x_regmap_config = {
->  };
->  EXPORT_SYMBOL_GPL(wm831x_regmap_config);
->  
-> +#ifdef CONFIG_OF
-> +const struct of_device_id wm831x_of_match[] = {
-> +	{ .compatible = "wlf,wm8310", .data = (void *)WM8310 },
-> +	{ .compatible = "wlf,wm8311", .data = (void *)WM8311 },
-> +	{ .compatible = "wlf,wm8312", .data = (void *)WM8312 },
-> +	{ .compatible = "wlf,wm8320", .data = (void *)WM8320 },
-> +	{ .compatible = "wlf,wm8321", .data = (void *)WM8321 },
-> +	{ .compatible = "wlf,wm8325", .data = (void *)WM8325 },
-> +	{ .compatible = "wlf,wm8326", .data = (void *)WM8326 },
-> +	{ },
-> +};
-> +EXPORT_SYMBOL_GPL(wm831x_of_match);
-> +
-> +int wm831x_of_get_type(struct device *dev)
-> +{
-> +	const struct of_device_id *id = of_match_device(wm831x_of_match, dev);
-> +
-> +	if (id)
-> +		return (int)id->data;
+> Irrelevant change.
+> 
+> Either submit it with patch that introduces the file or on its own.
+> 
 
-I've seen a warning about this.
+Cool I will move it into the binding patch, also will fix up that
+warning from the build bot for v2 as well.
 
-Please fix.
-
-[...]
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Charles
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
