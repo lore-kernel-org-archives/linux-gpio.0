@@ -1,114 +1,67 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] pinctrl: Really force states during suspend/resume
-Date: Tue, 14 Feb 2017 06:46:11 -0800
-Message-ID: <a97915f5-20a9-b174-087f-e5a6b3d6cb40@gmail.com>
-References: <20170208011759.15478-1-f.fainelli@gmail.com>
+From: David Daney <david.daney@cavium.com>
+Subject: [PATCH v3 0/6] genirq/gpio: Add driver for ThunderX and OCTEON-TX SoCs
+Date: Tue, 14 Feb 2017 09:49:30 -0800
+Message-ID: <1487094576-229208-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170208011759.15478-1-f.fainelli@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: alcooperx@gmail.com, swarren@nvidia.com, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-cys01nam02on0075.outbound.protection.outlook.com ([104.47.37.75]:26048
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752250AbdBNRtr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 14 Feb 2017 12:49:47 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
+
+Per the Subject: Add driver for ThunderX and OCTEON-TX SoCs
+
+This GPIO hardware looks like a PCIe device, with the interrupt signal
+from each GPIO line being routed to a dedicated MSI-X.  This interrupt
+routing requires that we add some custom processing to the beginning
+of the MSI-X irqdomain hierarchy.
 
 
+Changes from v2:
 
-On 02/07/2017 05:17 PM, Florian Fainelli wrote:
-> In case a platform only defaults a "default" set of pins, but not a
-> "sleep" set of pins, and this particular platform suspends and resumes
-> in a way that the pin states are not preserved by the hardware, when we
-> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
-> -> pinctrl_select_state() and the first thing we do is check that the
-> pins state is the same as before, and do nothing.
-> 
-> In order to fix this, decouple pinctrl_select_state and make it become
-> __pinctrl_select_state(), taking an additional ignore_state_check
-> boolean which allows us to bypass the state check during suspend/resume,
-> since we really want to re-apply the previous pin states in these case.
-> 
-> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
-> Linus,
-> 
-> This is against your "fixes" branch, thank you!
+ - in 4/6: Added Rob Harring's Acked-by
 
-Linus, can you provide some feedback here so I know whether this should
-be addressed differently? Thanks
+ - Added three patches to genirq/irqdomain to support interrupt code
+   in the driver.
 
-> 
->  drivers/pinctrl/core.c | 26 +++++++++++++++++++++-----
->  1 file changed, 21 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-> index fb38e208f32d..8b8017dc9e15 100644
-> --- a/drivers/pinctrl/core.c
-> +++ b/drivers/pinctrl/core.c
-> @@ -992,17 +992,21 @@ struct pinctrl_state *pinctrl_lookup_state(struct pinctrl *p,
->  EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
->  
->  /**
-> - * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-> + * __pinctrl_select_state() - select/activate/program a pinctrl state to HW
->   * @p: the pinctrl handle for the device that requests configuration
->   * @state: the state handle to select/activate/program
-> + * @force: ignore the state check (e.g: to re-apply default state during
-> + * suspend/resume)
->   */
-> -int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-> +static int __pinctrl_select_state(struct pinctrl *p,
-> +				  struct pinctrl_state *state,
-> +				  bool ignore_state_check)
->  {
->  	struct pinctrl_setting *setting, *setting2;
->  	struct pinctrl_state *old_state = p->state;
->  	int ret;
->  
-> -	if (p->state == state)
-> +	if (p->state == state && !ignore_state_check)
->  		return 0;
->  
->  	if (p->state) {
-> @@ -1068,6 +1072,16 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
->  
->  	return ret;
->  }
-> +
-> +/**
-> + * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-> + * @p: the pinctrl handle for the device that requests configuration
-> + * @state: the state handle to select/activate/program
-> + */
-> +int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-> +{
-> +	return __pinctrl_select_state(p, state, false);
-> +}
->  EXPORT_SYMBOL_GPL(pinctrl_select_state);
->  
->  static void devm_pinctrl_release(struct device *dev, void *res)
-> @@ -1236,7 +1250,8 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
->  int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
->  {
->  	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
-> -		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-> +		return __pinctrl_select_state(pctldev->p,
-> +					      pctldev->hog_sleep, true);
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-> @@ -1248,7 +1263,8 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
->  int pinctrl_force_default(struct pinctrl_dev *pctldev)
->  {
->  	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
-> -		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-> +		return __pinctrl_select_state(pctldev->p,
-> +					      pctldev->hog_default, true);
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pinctrl_force_default);
-> 
+ - Rewrite irq code in driver to use irqdomain hierarchy.
+
+ - Other naming and style changes as recommended by Linus Walleij.
+
+Changes from v1:
+
+ - in 1/3: Addressed Rob Harring's comments.
+
+ - in 2/3: Trivial cleanups found in internal review + add some
+   comments.
+
+David Daney (6):
+  genirq: Export more irq_chip_*_parent() functions.
+  genirq: Add handle_fasteoi_{level,edge}_irq flow handlers.
+  irqdomain: Add irq_domain_{push,pop}_irq() functions.
+  dt-bindings: gpio: Add binding documentation for gpio-thunderx
+  gpio: Add gpio driver support for ThunderX and OCTEON-TX
+  MAINTAINERS: Add entry for THUNDERX GPIO Driver.
+
+ .../devicetree/bindings/gpio/gpio-thunderx.txt     |  27 ++
+ MAINTAINERS                                        |   5 +
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-thunderx.c                       | 490 +++++++++++++++++++++
+ include/linux/irq.h                                |   2 +
+ include/linux/irqdomain.h                          |   3 +
+ kernel/irq/chip.c                                  | 105 +++++
+ kernel/irq/irqdomain.c                             | 137 ++++++
+ 9 files changed, 777 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+ create mode 100644 drivers/gpio/gpio-thunderx.c
 
 -- 
-Florian
+1.8.3.1
+
