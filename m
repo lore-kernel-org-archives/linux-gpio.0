@@ -1,63 +1,56 @@
-From: Rick Altherr <raltherr@google.com>
-Subject: [RESEND PATCH linux] aspeed: pinctrl: Allow disabling Port D and Port E loopback mode
-Date: Tue, 14 Feb 2017 22:55:14 -0800
-Message-ID: <20170215065514.16673-1-raltherr@google.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [patch] gpio: mockup: return -EFAULT if copy_from_user() fails
+Date: Wed, 15 Feb 2017 10:16:21 +0100
+Message-ID: <CAMpxmJU16zrxT-RLPp_GPO_wtd-aqDtw=M0bSmEwpYT+0z-phA@mail.gmail.com>
+References: <20170214230206.GA4048@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:34908 "EHLO
-        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbdBOGzR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Feb 2017 01:55:17 -0500
-Received: by mail-pf0-f182.google.com with SMTP id 202so26201366pfx.2
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Feb 2017 22:55:17 -0800 (PST)
+Received: from mail-io0-f174.google.com ([209.85.223.174]:36306 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751523AbdBOJQW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Feb 2017 04:16:22 -0500
+Received: by mail-io0-f174.google.com with SMTP id j13so85445766iod.3
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Feb 2017 01:16:22 -0800 (PST)
+In-Reply-To: <20170214230206.GA4048@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, andrew@aj.id.au, joel@jms.id.au, arnd@arndb.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-Port D and port E GPIO loopback modes are commonly enabled via hardware
-straps for use with front-panel buttons.  When the BMC is powered
-off or fails to boot, the front-panel buttons are directly connected to
-the host chipset via the loopback to allow direct power-on and reset
-control. Once the BMC has booted, the loopback mode must be disabled for
-the BMC to take over control of host power-on and reset.
+2017-02-15 0:02 GMT+01:00 Dan Carpenter <dan.carpenter@oracle.com>:
+> copy_from_user() returns the number of bytes remaining to be copied but
+> we want to return negative error codes on failue.
+>
+> Fixes: 9202ba2397d1 ("gpio: mockup: implement event injecting over debugfs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index 06dac72cb69c..d99338689213 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -197,7 +197,7 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+>         struct seq_file *sfile;
+>         struct gpio_desc *desc;
+>         struct gpio_chip *gc;
+> -       int status, val;
+> +       int val;
+>         char buf;
+>
+>         sfile = file->private_data;
+> @@ -206,9 +206,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+>         chip = priv->chip;
+>         gc = &chip->gc;
+>
+> -       status = copy_from_user(&buf, usr_buf, 1);
+> -       if (status)
+> -               return status;
+> +       if (copy_from_user(&buf, usr_buf, 1))
+> +               return -EFAULT;
+>
+>         if (buf == '0')
+>                 val = 0;
 
-Disabling these loopback modes requires writing to the hardware strap
-register which violates the current design of assuming the system
-designer chose the strap settings for a specific reason and they should
-be treated as read-only. Only the two bits of the strap register related
-to these loopback modes are allowed to be written and comments have been
-added to explain why.
+Oops my bad.
 
-Signed-off-by: Rick Altherr <raltherr@google.com>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-index 76f62bd45f02..5b49952e5fad 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-@@ -198,9 +198,19 @@ static int aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
- 		 * them. This may mean that certain functions cannot be
- 		 * deconfigured and is the reason we re-evaluate after writing
- 		 * all descriptor bits.
-+		 *
-+		 * Port D and port E GPIO loopback modes are the only exception
-+		 * as those are commonly used with front-panel buttons to allow
-+		 * normal operation of the host when the BMC is powered off or
-+		 * fails to boot. Once the BMC has booted, the loopback mode
-+		 * must be disabled for the BMC to control host power-on and
-+		 * reset.
- 		 */
--		if ((desc->reg == HW_STRAP1 || desc->reg == HW_STRAP2) &&
--				desc->ip == ASPEED_IP_SCU)
-+		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP1 &&
-+		    !(desc->mask & (BIT(21) | BIT(22))))
-+			continue;
-+
-+		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP2)
- 			continue;
- 
- 		ret = regmap_update_bits(maps[desc->ip], desc->reg,
--- 
-2.11.0.483.g087da7b7c-goog
-
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
