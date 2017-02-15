@@ -1,48 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] gpio: mockup: return -EFAULT if copy_from_user() fails
-Date: Wed, 15 Feb 2017 02:02:06 +0300
-Message-ID: <20170214230206.GA4048@mwanda>
+From: Hoan Tran <hotran@apm.com>
+Subject: Re: [PATCH] gpio: dwapb: Add support for next generation of X-Gene SoC
+Date: Tue, 14 Feb 2017 17:22:09 -0800
+Message-ID: <CAFHUOYxxygE4ouZySwvLr3=xBPSATk0XqpMDVL=EZcciV7FNRA@mail.gmail.com>
+References: <1485891838-27093-1-git-send-email-hotran@apm.com>
+ <CACRpkdZw-QLOeiPqSRaEJ+mGGDwi5fh9B1uenPxQGBtTwj+cuw@mail.gmail.com> <20170213093834.GA16603@page>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:22904 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750731AbdBNXCW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Feb 2017 18:02:22 -0500
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170213093834.GA16603@page>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jamie Iles <jamie@jamieiles.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Weike Chen <alvin.chen@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>, Duc Dang <dhdang@apm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-copy_from_user() returns the number of bytes remaining to be copied but
-we want to return negative error codes on failue.
+Hi Linus, Jamie and all,
 
-Fixes: 9202ba2397d1 ("gpio: mockup: implement event injecting over debugfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Do you have any comments on this patch?
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 06dac72cb69c..d99338689213 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -197,7 +197,7 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	struct seq_file *sfile;
- 	struct gpio_desc *desc;
- 	struct gpio_chip *gc;
--	int status, val;
-+	int val;
- 	char buf;
- 
- 	sfile = file->private_data;
-@@ -206,9 +206,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	chip = priv->chip;
- 	gc = &chip->gc;
- 
--	status = copy_from_user(&buf, usr_buf, 1);
--	if (status)
--		return status;
-+	if (copy_from_user(&buf, usr_buf, 1))
-+		return -EFAULT;
- 
- 	if (buf == '0')
- 		val = 0;
+Thanks
+Hoan
+
+On Mon, Feb 13, 2017 at 1:38 AM, Jamie Iles <jamie@jamieiles.com> wrote:
+> Hi Linus,
+>
+> On Mon, Feb 06, 2017 at 11:21:09AM +0100, Linus Walleij wrote:
+>> On Tue, Jan 31, 2017 at 8:43 PM, Hoan Tran <hotran@apm.com> wrote:
+>>
+>> > Next generation of X-Gene SoC's GPIO hardware register map is very
+>> > similar to DW GPIO. It only differs by a few register addresses.
+>> > This patch modifies DW GPIO driver to accommodate the difference
+>> > in a few register addresses.
+>> >
+>> > Signed-off-by: Hoan Tran <hotran@apm.com>
+>>
+>> On next iteration please include Jamie Iles, Weike Chen and Sebastian
+>> Andrzej Siewior.
+>> They all provided substantial contributions to this driver.
+>>
+>> The dwapb needs a proper maintainer in MAINTAINERS actually, it is one of
+>> those that can't use GPIOLIB_IRQCHIP so it requires special attention.
+>> Jamie, interested in the job? Patches welcome :)
+>
+> I actually don't have access to hardware using this driver anymore so
+> I'm probably not the right person for the job, but still happy to review
+> patches!
+>
+> Jamie
