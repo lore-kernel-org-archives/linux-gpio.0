@@ -1,110 +1,178 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [RESEND PATCH linux] aspeed: pinctrl: Allow disabling Port D
- and Port E loopback mode
-Date: Thu, 16 Feb 2017 12:02:30 +1030
-Message-ID: <1487208750.3661.34.camel@aj.id.au>
-References: <20170215065514.16673-1-raltherr@google.com>
+From: Dong Aisheng <dongas86@gmail.com>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Thu, 16 Feb 2017 15:51:40 +0800
+Message-ID: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-s7ddElXhuJh8TxBf6Zs0"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58958 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752044AbdBPBci (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Feb 2017 20:32:38 -0500
-In-Reply-To: <20170215065514.16673-1-raltherr@google.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Rick Altherr <raltherr@google.com>, linus.walleij@linaro.org, joel@jms.id.au, arnd@arndb.de, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-
-
---=-s7ddElXhuJh8TxBf6Zs0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, jacky.baip@gmail.com
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2017-02-14 at 22:55 -0800, Rick Altherr wrote:
-> Port D and port E GPIO loopback modes are commonly enabled via hardware
-> straps for use with front-panel buttons.=C2=A0=C2=A0When the BMC is power=
-ed
-> off or fails to boot, the front-panel buttons are directly connected to
-> the host chipset via the loopback to allow direct power-on and reset
-> control. Once the BMC has booted, the loopback mode must be disabled for
-> the BMC to take over control of host power-on and reset.
->=20
-> Disabling these loopback modes requires writing to the hardware strap
-> register which violates the current design of assuming the system
-> designer chose the strap settings for a specific reason and they should
-> be treated as read-only. Only the two bits of the strap register related
-> to these loopback modes are allowed to be written and comments have been
-> added to explain why.
->=20
-> Signed-off-by: Rick Altherr <raltherr@google.com>
+Hi Linus,
 
-For the record this is one of at least two awkward cases. The other is
-runtime switching between the using the SoC as an SPI master, and
-simply performing SPI pass-through for an external controller (e.g. to
-allow either the BMC or the host to reprogram the host BIOS image).
+On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> w=
+rote:
+> On Tue, Dec 27, 2016 at 10:47 AM, Bai Ping <ping.bai@nxp.com> wrote:
+>
+>> Add pinctrl binding doc update for imx6sll.
+>>
+>> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+>
+> I have to push back on this a bit.
+>
+>> +Please refer to fsl,imx-pinctrl.txt in this directory for common bindin=
+g part
+>> +and usage.
+>
+> I understand that it is building on top of the old i.MX bindings and that
+> it has some kind of "tradition" coming with it.
+>
+> At the same time, the i.MX bindings came about before we had the
+> generic pin control bindings defined.
+>
+>> +CONFIG bits definition:
+>> +PAD_CTL_LVE                    (1 << 22)
+>> +PAD_CTL_HYS                     (1 << 16)
+>> +PAD_CTL_PUS_100K_DOWN           (0 << 14)
+>> +PAD_CTL_PUS_47K_UP              (1 << 14)
+>> +PAD_CTL_PUS_100K_UP             (2 << 14)
+>> +PAD_CTL_PUS_22K_UP              (3 << 14)
+>> +PAD_CTL_PUE                     (1 << 13)
+>> +PAD_CTL_PKE                     (1 << 12)
+>> +PAD_CTL_ODE                     (1 << 11)
+>> +PAD_CTL_SPEED_LOW               (0 << 6)
+>> +PAD_CTL_SPEED_MED               (1 << 6)
+>> +PAD_CTL_SPEED_HIGH              (3 << 6)
+>> +PAD_CTL_DSE_DISABLE             (0 << 3)
+>> +PAD_CTL_DSE_260ohm              (1 << 3)
+>> +PAD_CTL_DSE_130ohm              (2 << 3)
+>> +PAD_CTL_DSE_87ohm               (3 << 3)
+>> +PAD_CTL_DSE_65ohm               (4 << 3)
+>> +PAD_CTL_DSE_52ohm               (5 << 3)
+>> +PAD_CTL_DSE_43ohm               (6 << 3)
+>> +PAD_CTL_DSE_37ohm               (7 << 3)
+>> +PAD_CTL_SRE_FAST                (1 << 0)
+>> +PAD_CTL_SRE_SLOW                (0 << 0)
+>
+> A whole slew of these if not all correspond to the generic bindings.
+>
+> I would consider augmenting the code in the driver to handle the generic
+> bindings *in addition* to the old legacy bindings, and use those over the=
+se
+> random custom bits.
+>
+> Read drivers using CONFIG_GENERIC_PINCONF as an inspiration.
+>
+> For example see commit
+> cefbf1a1b29531a970bc2908a50a75d6474fcc38
+> "pinctrl: sunxi: Support generic binding"
+> from Maxime Ripard, where he does a similar thing for sunxi.
+>
 
-If the list of exceptions continues to grow we should pull the tests
-out to a separate function so we can keep the condition readable.
+First thanks for your good suggestion!
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+All we realized that the raw data of IMX pad config in dts is not good.
+e.g.
+pinctrl_ecspi3: ecspi3grp {
+        fsl,pins =3D <
+                MX7D_PAD_SAI2_TX_SYNC__ECSPI3_MISO      0x17059
+        .........
 
-> ---
-> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c | 14 ++++++++++++--
-> =C2=A01 file changed, 12 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/as=
-peed/pinctrl-aspeed.c
-> index 76f62bd45f02..5b49952e5fad 100644
-> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> @@ -198,9 +198,19 @@ static int aspeed_sig_expr_set(const struct aspeed_s=
-ig_expr *expr,
-> > =C2=A0		=C2=A0* them. This may mean that certain functions cannot be
-> > =C2=A0		=C2=A0* deconfigured and is the reason we re-evaluate after wri=
-ting
-> > =C2=A0		=C2=A0* all descriptor bits.
-> > +		=C2=A0*
-> > +		=C2=A0* Port D and port E GPIO loopback modes are the only exception
-> > +		=C2=A0* as those are commonly used with front-panel buttons to allow
-> > +		=C2=A0* normal operation of the host when the BMC is powered off or
-> > +		=C2=A0* fails to boot. Once the BMC has booted, the loopback mode
-> > +		=C2=A0* must be disabled for the BMC to control host power-on and
-> > +		=C2=A0* reset.
-> > =C2=A0		=C2=A0*/
-> > -		if ((desc->reg =3D=3D HW_STRAP1 || desc->reg =3D=3D HW_STRAP2) &&
-> > -				desc->ip =3D=3D ASPEED_IP_SCU)
-> > +		if (desc->ip =3D=3D ASPEED_IP_SCU && desc->reg =3D=3D HW_STRAP1 &&
-> > +		=C2=A0=C2=A0=C2=A0=C2=A0!(desc->mask & (BIT(21) | BIT(22))))
-> > +			continue;
-> +
-> > +		if (desc->ip =3D=3D ASPEED_IP_SCU && desc->reg =3D=3D HW_STRAP2)
-> > =C2=A0			continue;
-> =C2=A0
-> > =C2=A0		ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
---=-s7ddElXhuJh8TxBf6Zs0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+I did a deep feasibility analysis these days on the migrating to generic
+pinctrl binding you referred. It is regrettably that it may not be so suita=
+ble
+for IMX to fully migrate right now.
 
------BEGIN PGP SIGNATURE-----
+Generic binding only supports parsing strings for pins and function
+from dts right now, that means we need back to the old way of hardcoding
+all register bits in driver which we actually chose to move out since
+the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
 
-iQIcBAABCgAGBQJYpQEuAAoJEJ0dnzgO5LT5XAsP/3fexO6vNuUV9WJRJWuAc6az
-TVz6UVyUZ3Wb+SZ0UQiLy8WhXOvGtR0lh0Yqsff/bDzJYzMPw4QvYMwH/a2uM7od
-ckxTXPuI2PytSbF5TdtuAjamSyyflVTWST5Cx3GV8wFcNF0dYZfskOGBspdiSVAA
-Ki/VHsE8NOfZ1SZbiNpWLeZimfvTWcZdFc8Y+9/IORlgKv4f+3eFTApk6ulwQDwm
-V5mORhy0H0D3534i/H2W6ofR/d05UqYrSVYlmT0aQjs3sAGwEpg9nPs5S4nfUDj8
-WMUZZZl4xSKbNoba9mn8IPPHTFQkCfGIeQ7VHN/4FDlxJqudWyfKxp0WSusI4tm2
-FwtaKPX5K8ORVx4RzAtNN6+4cu/1b1RetRg939aVqqxJQABRrLCse4gRjfcGaKdV
-kfHCZaxxCPQQr3IuxB9Sx+iCe+yY84RWnG9v2pfb+fwLqqWqnHJqwmctvLujvcaT
-T4tV9D9ff6j1ueW1ycbWuXYff3PNSJQmPjaO8MTP9IOI28TfEL95TBTczCFJADWP
-Y1DIKEWaj27rE9aAKQDr34SOVNMQPmM/1DuTwFG1ZaREhzPOd9UFKtN8BHUx59Ho
-iAuN/yw+SUeGUgamiREowEOPzy3NRKDp8Trw0El1lpSOwI6yPr/SQvi/pjcrJCN9
-SoItf5AguuOvNGvYxtNs
-=K6Y+
------END PGP SIGNATURE-----
+And IMX doesn't have PAD GROUP in HW, each pad theoretically can be muxed
+as 8 single functions.
+e.g.
+For IOMUXC_SW_MUX_CTL_PAD_CSI_DATA07
+MUX_MODE MUX Mode Select Field.
+Select 1 of 8 iomux modes to be used for pad: CSI_DATA07.
+000 ALT0 =E2=80=94 Select signal CSI1_DATA09.
+001 ALT1 =E2=80=94 Select signal ESAI_TX3_RX2.
+010 ALT2 =E2=80=94 Select signal I2C4_SDA.
+011 ALT3 =E2=80=94 Select signal KPP_ROW7.
+100 ALT4 =E2=80=94 Select signal UART6_CTS_B.
+101 ALT5 =E2=80=94 Select signal GPIO1_IO21.
+110 ALT6 =E2=80=94 Select signal EIM_DATA16.
+111 ALT7 =E2=80=94 Select signal DCIC1_OUT.
+By converting to generic binding, we need construct a huge function/group m=
+ap
+in driver for hundreds of pads for each SoC. That is a bit fear to us.
 
---=-s7ddElXhuJh8TxBf6Zs0--
+Current IMX method only generates the used function/groups dynamically
+by parsing board dts which is much a lighter way.
 
+But of course, we want to fix the raw config value issue as well which is
+un-maintainable and un-readable as you pointed out.
+
+I think there might be two options for us to go:
+One option is using macro definitions instead of raw data as pinctrl-single
+users as OMAP.
+e.g.
+art2_pins: pinmux_uart2_pins {
+        pinctrl-single,pins =3D <
+                OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
+ /* uart2_cts.uart2_cts */
+        ........
+
+For this way, no driver changes required, just replace the raw data by macr=
+o
+in device tree. But i wonder this may not be your original intention althou=
+gh
+it's the easiest way for us.
+Anyway, if you agree, we probably would prefer this way.
+
+Another option is partially convert to generic binding for only pad
+configuration
+part. e.g.
+pinctrl_usdhc1: usdhc1grp {
+        fsl,pins =3D <
+                MX7D_PAD_SD1_CMD__SD1_CMD
+                MX7D_PAD_SD1_CLK__SD1_CLK
+                MX7D_PAD_SD1_DATA0__SD1_DATA0
+                ...
+        >;
+        bias-pull-up =3D <47KOHM>;
+        drive-strength =3D <130OHM>;
+        slew-rate =3D <FAST>;
+        speed =3D <50MHZ>;
+        ....
+};
+(Some of the property still not supported or not the same as generic
+binding right now)
+
+This way requires no big drivers changes and only extend the driver
+to support the generic pinctrl dt configuration properties.
+
+And it also fix the raw data issues and looks like more applicable than the=
+ full
+migration.
+
+So would you be willing to accept it?
+
+Another potential benefits for this way is that we may can use PCONFDUMP
+to dump a more readable data from pinctrl debug system.
+
+> Yours,
+> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Regards
+Dong Aisheng
