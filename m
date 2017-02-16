@@ -1,52 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] gpio: xgene: mark PM functions as __maybe_unused
-Date: Wed, 15 Feb 2017 22:35:36 +0100
-Message-ID: <CAK8P3a0HV2GELVw_7HdqUYV3918bEb7Y4=jQycU5-APYbfO3hA@mail.gmail.com>
-References: <20170214212032.2676656-1-arnd@arndb.de>
+From: David Daney <david.daney@cavium.com>
+Subject: [PATCH v4 0/6] genirq/gpio: Add driver for ThunderX and OCTEON-TX SoCs
+Date: Wed, 15 Feb 2017 17:01:00 -0800
+Message-ID: <1487206866-4011-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36253 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbdBOVfh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Feb 2017 16:35:37 -0500
-In-Reply-To: <20170214212032.2676656-1-arnd@arndb.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexandre Courbot <gnurou@gmail.com>, Duc Dang <dhdang@apm.com>, linux-gpio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 14, 2017 at 10:20 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> When CONFIG_PM_SLEEP is disabled, we get a warning about unused functions:
->
-> drivers/gpio/gpio-xgene.c:155:12: warning: 'xgene_gpio_resume' defined but not used [-Wunused-function]
->  static int xgene_gpio_resume(struct device *dev)
->             ^~~~~~~~~~~~~~~~~
-> drivers/gpio/gpio-xgene.c:142:12: warning: 'xgene_gpio_suspend' defined but not used [-Wunused-function]
->  static int xgene_gpio_suspend(struct device *dev)
->
-> The warnings are harmless and can be avoided by simplifying the code and marking
-> the functions as __maybe_unused.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+The ThunderX/OCTEON-TX GPIO hardware looks like a PCIe device, with
+the interrupt signal from each GPIO line being routed to a dedicated
+MSI-X.  This interrupt routing requires that we add some custom
+processing to the beginning of the MSI-X irqdomain hierarchy.
 
-I ran into a problem with this version, please either add this trivial fixup:
+Changes from v3:
 
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index 1fd62bef562b..f1c6ec17b90a 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -42,9 +42,7 @@ struct xgene_gpio {
-  struct gpio_chip chip;
-  void __iomem *base;
-  spinlock_t lock;
--#ifdef CONFIG_PM
-  u32 set_dr_val[XGENE_MAX_GPIO_BANKS];
--#endif
- };
+ - Add some "depends on" to the driver Kconfig to avoid build errors
+   in some architectures when doing COMPILE_TEST builds.
 
- static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
+Changes from v2:
 
-or wait for a new version from me.
+ - in 4/6: Added Rob Harring's Acked-by
 
-     Arnd
+ - Added three patches to genirq/irqdomain to support interrupt code
+   in the driver.
+
+ - Rewrite irq code in driver to use irqdomain hierarchy.
+
+ - Other naming and style changes as recommended by Linus Walleij.
+
+Changes from v1:
+
+ - in 1/3: Addressed Rob Harring's comments.
+
+ - in 2/3: Trivial cleanups found in internal review + add some
+   comments.
+
+David Daney (6):
+  genirq: Export more irq_chip_*_parent() functions.
+  genirq: Add handle_fasteoi_{level,edge}_irq flow handlers.
+  irqdomain: Add irq_domain_{push,pop}_irq() functions.
+  dt-bindings: gpio: Add binding documentation for gpio-thunderx
+  gpio: Add gpio driver support for ThunderX and OCTEON-TX
+  MAINTAINERS: Add entry for THUNDERX GPIO Driver.
+
+ .../devicetree/bindings/gpio/gpio-thunderx.txt     |  27 ++
+ MAINTAINERS                                        |   5 +
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-thunderx.c                       | 490 +++++++++++++++++++++
+ include/linux/irq.h                                |   2 +
+ include/linux/irqdomain.h                          |   3 +
+ kernel/irq/chip.c                                  | 105 +++++
+ kernel/irq/irqdomain.c                             | 137 ++++++
+ 9 files changed, 778 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+ create mode 100644 drivers/gpio/gpio-thunderx.c
+
+-- 
+1.8.3.1
