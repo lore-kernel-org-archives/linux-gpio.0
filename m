@@ -1,77 +1,188 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH] ARM: dts: Add dra7 iodelay configuration and use it for
- MMC
-Date: Thu, 16 Feb 2017 19:28:39 +0530
-Message-ID: <58A5B00F.7050705@ti.com>
-References: <20161230183732.5595-1-tony@atomide.com>
- <20161230183732.5595-3-tony@atomide.com> <20161230184914.GC3940@atomide.com>
- <20170214185120.GL21809@atomide.com>
- <932aa035-27c9-0bb4-ffe2-81959aea6662@ti.com> <58A44B02.10204@ti.com>
- <20170215155002.GN21809@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Hoan Tran <hotran@apm.com>
+Subject: [PATCH v2] gpio: dwapb: Add support for next generation of X-Gene SoC
+Date: Thu, 16 Feb 2017 17:01:29 -0800
+Message-ID: <1487293289-9807-1-git-send-email-hotran@apm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:14662 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755066AbdBPN7x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2017 08:59:53 -0500
-In-Reply-To: <20170215155002.GN21809@atomide.com>
+Received: from mail-pg0-f48.google.com ([74.125.83.48]:35259 "EHLO
+        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754761AbdBQBBy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Feb 2017 20:01:54 -0500
+Received: by mail-pg0-f48.google.com with SMTP id t188so10505503pgt.2
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Feb 2017 17:01:54 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Nishanth Menon <nm@ti.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Lokesh Vutla <lokeshvutla@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jamie Iles <jamie@jamieiles.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Weike Chen <alvin.chen@intel.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, lho@apm.com, Duc Dang <dhdang@apm.com>, Hoan Tran <hotran@apm.com>
 
-Hi,
+Next generation of X-Gene SoC's GPIO hardware register map is very
+similar to DW GPIO. It only differs by a few register addresses.
+This patch modifies DW GPIO driver to accommodate the difference
+in a few register addresses.
 
-On Wednesday 15 February 2017 09:20 PM, Tony Lindgren wrote:
-> * Kishon Vijay Abraham I <kishon@ti.com> [170215 04:36]:
->> On Wednesday 15 February 2017 12:27 AM, Nishanth Menon wrote:
->>> On 02/14/2017 12:51 PM, Tony Lindgren wrote:
->>>> Nishanth,
->>>>
->>>> * Tony Lindgren <tony@atomide.com> [161230 10:50]:
->>>>> Add dra7 iodelay configuration and use it for MMC.
->>>>
->>>> I just noticed that this patch should probably be:
->>>>
->>>> From: Nishanth Menon <nm@ti.com>
->>>>
->>>> I think I just added the description to the patch.
->>>>
->>>> Can you please confirm and reply with your Signed-off-by
->>>> if that's the case?
->>>>
->>>
->>> Though I had introduced the node [
->>> http://git.ti.com/ti-linux-kernel/ti-linux-kernel/commit/34661cbccc679bb8d91768bc78495e94e6d40f1f
->>> ], the x15 values were first introduced by Kishon.
->>>
->>> http://git.ti.com/ti-linux-kernel/ti-linux-kernel/commit/1463b1e8facb7180f5679b373411b3fbeb1608fd
->>>
->>>
->>> personally, From or not really does'nt matter as long as we can get the
->>> solution in.
->>>
->>> So, as long as it helps..
->>> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ...
->> I had to remove the iodelay added here based on datasheet (patch [1]).
-> 
-> OK thanks for the info. So we have multiple authors and as Kishon added
-> the working values I suggest we credit the patch for Kishon.
-> 
->> I also wanted to confirm if "MODE_SELECT" should be added in pinctrl values
->> like [2] for adding manual mode iodelay because that seems to be missing in
->> this patch.
-> 
-> Oh OK. If it's needed then yeah let's update it for that too. Can you
-> please check it? And then send an updated version of this patch with
-> "From" credited to you? Just update the description to say "Based on
-> earlier patches in TI Linux kernel tree done by Nishanth Menon and
-> Kishon Vijay Abraham I".
+Signed-off-by: Hoan Tran <hotran@apm.com>
+---
+v2:
+ * Remove ifdef CONFIG_ACPI
+---
+ drivers/gpio/gpio-dwapb.c | 82 +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 65 insertions(+), 17 deletions(-)
 
-Sure, I'll send it along with adding UHS mode support patches.
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 6193f62..51b11c6 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -21,6 +21,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+@@ -55,6 +56,13 @@
+ #define GPIO_SWPORT_DR_SIZE	(GPIO_SWPORTB_DR - GPIO_SWPORTA_DR)
+ #define GPIO_SWPORT_DDR_SIZE	(GPIO_SWPORTB_DDR - GPIO_SWPORTA_DDR)
+ 
++#define GPIO_REG_OFFSET_V2	1
++#define GPIO_INTMASK_V2		0x44
++#define GPIO_INTTYPE_LEVEL_V2	0x34
++#define GPIO_INT_POLARITY_V2	0x38
++#define GPIO_INTSTATUS_V2	0x3c
++#define GPIO_PORTA_EOI_V2	0x40
++
+ struct dwapb_gpio;
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -87,14 +95,36 @@ struct dwapb_gpio {
+ 	struct dwapb_gpio_port	*ports;
+ 	unsigned int		nr_ports;
+ 	struct irq_domain	*domain;
++	unsigned int		flags;
+ };
+ 
++static inline u32 gpio_reg_convert(struct dwapb_gpio *gpio, unsigned int offset)
++{
++	if (!(gpio->flags & GPIO_REG_OFFSET_V2))
++		return offset;
++
++	switch (offset) {
++	case GPIO_INTMASK:
++		return GPIO_INTMASK_V2;
++	case GPIO_INTTYPE_LEVEL:
++		return GPIO_INTTYPE_LEVEL_V2;
++	case GPIO_INT_POLARITY:
++		return GPIO_INT_POLARITY_V2;
++	case GPIO_INTSTATUS:
++		return GPIO_INTSTATUS_V2;
++	case GPIO_PORTA_EOI:
++		return GPIO_PORTA_EOI_V2;
++	}
++
++	return offset;
++}
++
+ static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
+ {
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	void __iomem *reg_base	= gpio->regs;
+ 
+-	return gc->read_reg(reg_base + offset);
++	return gc->read_reg(reg_base + gpio_reg_convert(gpio, offset));
+ }
+ 
+ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+@@ -103,7 +133,7 @@ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	void __iomem *reg_base	= gpio->regs;
+ 
+-	gc->write_reg(reg_base + offset, val);
++	gc->write_reg(reg_base + gpio_reg_convert(gpio, offset), val);
+ }
+ 
+ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -336,8 +366,8 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		ct->chip.irq_disable = dwapb_irq_disable;
+ 		ct->chip.irq_request_resources = dwapb_irq_reqres;
+ 		ct->chip.irq_release_resources = dwapb_irq_relres;
+-		ct->regs.ack = GPIO_PORTA_EOI;
+-		ct->regs.mask = GPIO_INTMASK;
++		ct->regs.ack = gpio_reg_convert(gpio, GPIO_PORTA_EOI);
++		ct->regs.mask = gpio_reg_convert(gpio, GPIO_INTMASK);
+ 		ct->type = IRQ_TYPE_LEVEL_MASK;
+ 	}
+ 
+@@ -520,6 +550,21 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
+ 	return pdata;
+ }
+ 
++static const struct of_device_id dwapb_of_match[] = {
++	{ .compatible = "snps,dw-apb-gpio", .data = (void *)0},
++	{ .compatible = "apm,xgene-gpio-v2", .data = (void *)GPIO_REG_OFFSET_V2},
++	{ /* Sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dwapb_of_match);
++
++static const struct acpi_device_id dwapb_acpi_match[] = {
++	{"HISI0181", 0},
++	{"APMC0D07", 0},
++	{"APMC0D81", GPIO_REG_OFFSET_V2},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
++
+ static int dwapb_gpio_probe(struct platform_device *pdev)
+ {
+ 	unsigned int i;
+@@ -528,6 +573,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	int err;
+ 	struct device *dev = &pdev->dev;
+ 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
++	const struct of_device_id *of_devid;
+ 
+ 	if (!pdata) {
+ 		pdata = dwapb_gpio_get_pdata(dev);
+@@ -555,6 +601,21 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio->regs))
+ 		return PTR_ERR(gpio->regs);
+ 
++	gpio->flags = 0;
++	of_devid = of_match_device(dwapb_of_match, dev);
++	if (of_devid) {
++		if (of_devid->data)
++			gpio->flags = (uintptr_t)of_devid->data;
++	} else {
++		const struct acpi_device_id *acpi_id;
++
++		acpi_id = acpi_match_device(dwapb_acpi_match, &pdev->dev);
++		if (acpi_id) {
++			if (acpi_id->driver_data)
++				gpio->flags = acpi_id->driver_data;
++		}
++	}
++
+ 	for (i = 0; i < gpio->nr_ports; i++) {
+ 		err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
+ 		if (err)
+@@ -581,19 +642,6 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id dwapb_of_match[] = {
+-	{ .compatible = "snps,dw-apb-gpio" },
+-	{ /* Sentinel */ }
+-};
+-MODULE_DEVICE_TABLE(of, dwapb_of_match);
+-
+-static const struct acpi_device_id dwapb_acpi_match[] = {
+-	{"HISI0181", 0},
+-	{"APMC0D07", 0},
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int dwapb_gpio_suspend(struct device *dev)
+ {
+-- 
+1.9.1
 
-Thanks
-Kishon
