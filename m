@@ -1,657 +1,399 @@
 From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] pinctrl: aspeed: Add initial pinconf support
-Date: Tue, 21 Feb 2017 01:08:50 +1030
-Message-ID: <20170220143850.10723-1-andrew@aj.id.au>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44010 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753063AbdBTOjm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 20 Feb 2017 09:39:42 -0500
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: aspeed: Add debounce support
+Date: Tue, 21 Feb 2017 01:10:04 +1030
+Message-ID: <20170220144004.10809-1-andrew@aj.id.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+List-Id: linux-gpio@vger.kernel.org
 
-Several pinconf parameters have a fairly straight-forward mapping onto
-the Aspeed pin controller. These include management of pull-down bias,
-drive-strength, and some debounce configuration.
+Each GPIO in the Aspeed GPIO controller can choose one of four input
+debounce states: to not debounce an input or to select from one of three
+programmable debounce timer values. Each GPIO in a four-bank-set is
+assigned one bit in each of two debounce configuration registers
+dedicated to the set, and selects a debounce state by configuring the
+two bits to select one of the four options.
 
-Pin biasing largely is managed on a per-GPIO-bank basis, aside from the
-ADC and RMII/RGMII pins. As the bias configuration for each pin in a
-bank maps onto a single per-bank bit, configuration tables are
-introduced to describe the ranges of pins and the supported pinconf
-parameter. The use of tables also helps with the sparse support of
-pinconf properties, and the fact that not all GPIO banks support
-biasing or drive-strength configuration.
+The limitation on debounce timer values is managed by mapping offsets
+onto a configured timer value and keeping count of the number of users
+a timer has. Timer values are configured on a first-come-first-served
+basis.
 
-Further, as the pin controller uses a consistent approach for bias and
-drive strength configuration at the register level, a second table is
-defined for looking up the the bit-state required to enable or query the
-provided configuration.
+A small twist in the hardware design is that the debounce configuration
+register numbering is reversed with respect to the binary representation
+of the debounce timer of interest (i.e. debounce register 1 represents
+bit 1, and debounce register 2 represents bit 0 of the timer numbering).
 
-Testing for pinctrl-aspeed-g4 was performed on an OpenPOWER Palmetto
-system, and pinctrl-aspeed-g5 on an AST2500EVB. The test method was to
-set the appropriate bits via devmem and verify the result through the
-controller's pinconf-pins debugfs file. This simultaneously validates
-the get() path and half of the set() path. The remainder of the set()
-path was validated by configuring a handful of pins via the devicetree
-with the supported pinconf properties and verifying the appropriate
-registers were touched.
+Open-drain/open-source support also introduced, but merely by deferring
+to the gpiolib emulation (as per the datasheet).
+
+Tested on an AST2500EVB.
 
 Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 ---
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c | 117 +++++++++++++++-
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 153 ++++++++++++++++++++-
- drivers/pinctrl/aspeed/pinctrl-aspeed.c    | 207 +++++++++++++++++++++++++++++
- drivers/pinctrl/aspeed/pinctrl-aspeed.h    |  28 ++++
- 4 files changed, 503 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-aspeed.c | 244 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 239 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-index 7de596e2b9d4..3e8625110136 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-@@ -2234,6 +2234,110 @@ static const struct aspeed_pin_function aspeed_g4_functions[] = {
- 	ASPEED_PINCTRL_FUNC(WDTRST2),
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index fb16cc771c0d..164a75272151 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -9,14 +9,17 @@
+  * 2 of the License, or (at your option) any later version.
+  */
+ 
+-#include <linux/module.h>
+-#include <linux/kernel.h>
++#include <asm/div64.h>
++#include <linux/clk.h>
++#include <linux/gpio/driver.h>
++#include <linux/hashtable.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/spinlock.h>
+-#include <linux/platform_device.h>
+-#include <linux/gpio/driver.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
+ 
+ struct aspeed_bank_props {
+ 	unsigned int bank;
+@@ -29,59 +32,81 @@ struct aspeed_gpio_config {
+ 	const struct aspeed_bank_props *props;
  };
  
-+static struct aspeed_pin_config aspeed_g4_configs[] = {
-+	/* GPIO banks ranges [A, B], [D, J], [M, R] */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { D6,  D5  }, SCU8C, BIT(16) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { D6,  D5  }, SCU8C, BIT(16) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { J21, E18 }, SCU8C, BIT(17) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { J21, E18 }, SCU8C, BIT(17) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A18, E15 }, SCU8C, BIT(19) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A18, E15 }, SCU8C, BIT(19) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { D15, B14 }, SCU8C, BIT(20) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { D15, B14 }, SCU8C, BIT(20) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { D18, C17 }, SCU8C, BIT(21) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { D18, C17 }, SCU8C, BIT(21) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A14, U18 }, SCU8C, BIT(22) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A14, U18 }, SCU8C, BIT(22) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A8,  E7  }, SCU8C, BIT(23) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A8,  E7  }, SCU8C, BIT(23) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { C22, E20 }, SCU8C, BIT(24) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { C22, E20 }, SCU8C, BIT(24) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { J5,  T1  }, SCU8C, BIT(25) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { J5,  T1  }, SCU8C, BIT(25) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { U1,  U5  }, SCU8C, BIT(26) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { U1,  U5  }, SCU8C, BIT(26) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { V3,  V5  }, SCU8C, BIT(27) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { V3,  V5  }, SCU8C, BIT(27) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { W4,  AB2 }, SCU8C, BIT(28) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { W4,  AB2 }, SCU8C, BIT(28) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { V6,  V7  }, SCU8C, BIT(29) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { V6,  V7  }, SCU8C, BIT(29) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { Y6,  AB7 }, SCU8C, BIT(30) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { Y6,  AB7 }, SCU8C, BIT(30) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { V20, A5  }, SCU8C, BIT(31) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { V20, A5  }, SCU8C, BIT(31) },
-+
-+	/* GPIOs T[0-5] (RGMII1 Tx pins) */
-+	{ PIN_CONFIG_DRIVE_STRENGTH, { A12, A13 }, SCU90, BIT(9)  },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A12, A13 }, SCU90, BIT(12) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A12, A13 }, SCU90, BIT(12) },
-+
-+	/* GPIOs T[6-7], U[0-3] (RGMII2 TX pins) */
-+	{ PIN_CONFIG_DRIVE_STRENGTH, { D9,  D10 }, SCU90, BIT(11) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { D9,  D10 }, SCU90, BIT(14) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { D9,  D10 }, SCU90, BIT(14) },
-+
-+	/* GPIOs U[4-7], V[0-1] (RGMII1 Rx pins) */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { E11, E10 }, SCU90, BIT(13) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { E11, E10 }, SCU90, BIT(13) },
-+
-+	/* GPIOs V[2-7] (RGMII2 Rx pins) */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { C9,  C8  }, SCU90, BIT(15) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { C9,  C8  }, SCU90, BIT(15) },
-+
-+	/* ADC pull-downs (SCUA8[19:4]) */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { L5,  L5  }, SCUA8, BIT(4) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { L5,  L5  }, SCUA8, BIT(4) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { L4,  L4  }, SCUA8, BIT(5) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { L4,  L4  }, SCUA8, BIT(5) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { L3,  L3  }, SCUA8, BIT(6) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { L3,  L3  }, SCUA8, BIT(6) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { L2,  L2  }, SCUA8, BIT(7) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { L2,  L2  }, SCUA8, BIT(7) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { L1,  L1  }, SCUA8, BIT(8) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { L1,  L1  }, SCUA8, BIT(8) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { M5,  M5  }, SCUA8, BIT(9) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { M5,  M5  }, SCUA8, BIT(9) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { M4,  M4  }, SCUA8, BIT(10) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { M4,  M4  }, SCUA8, BIT(10) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { M3,  M3  }, SCUA8, BIT(11) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { M3,  M3  }, SCUA8, BIT(11) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { M2,  M2  }, SCUA8, BIT(12) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { M2,  M2  }, SCUA8, BIT(12) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { M1,  M1  }, SCUA8, BIT(13) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { M1,  M1  }, SCUA8, BIT(13) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { N5,  N5  }, SCUA8, BIT(14) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { N5,  N5  }, SCUA8, BIT(14) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { N4,  N4  }, SCUA8, BIT(15) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { N4,  N4  }, SCUA8, BIT(15) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { N3,  N3  }, SCUA8, BIT(16) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { N3,  N3  }, SCUA8, BIT(16) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { N2,  N2  }, SCUA8, BIT(17) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { N2,  N2  }, SCUA8, BIT(17) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { N1,  N1  }, SCUA8, BIT(18) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { N1,  N1  }, SCUA8, BIT(18) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { P5,  P5  }, SCUA8, BIT(19) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { P5,  P5  }, SCUA8, BIT(19) },
-+
-+	/*
-+	 * Debounce settings for GPIOs D and E passthrough mode are in
-+	 * SCUA8[27:20] and so are managed by pinctrl. Normal GPIO debounce for
-+	 * banks D and E is handled by the GPIO driver - GPIO passthrough is
-+	 * treated like any other non-GPIO mux function. There is a catch
-+	 * however, in that the debounce period is configured in the GPIO
-+	 * controller. Due to this tangle between GPIO and pinctrl we don't yet
-+	 * fully support pass-through debounce.
-+	 */
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { A18, D16 }, SCUA8, BIT(20) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { B17, A17 }, SCUA8, BIT(21) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { C16, B16 }, SCUA8, BIT(22) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { A16, E15 }, SCUA8, BIT(23) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { D15, C15 }, SCUA8, BIT(24) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { B15, A15 }, SCUA8, BIT(25) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { E14, D14 }, SCUA8, BIT(26) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { C14, B14 }, SCUA8, BIT(27) },
++struct aspeed_debounce_timer {
++	unsigned int offset;
++	unsigned int timer;
++	struct hlist_node node;
 +};
 +
- static struct aspeed_pinctrl_data aspeed_g4_pinctrl_data = {
- 	.pins = aspeed_g4_pins,
- 	.npins = ARRAY_SIZE(aspeed_g4_pins),
-@@ -2241,6 +2345,8 @@ static struct aspeed_pinctrl_data aspeed_g4_pinctrl_data = {
- 	.ngroups = ARRAY_SIZE(aspeed_g4_groups),
- 	.functions = aspeed_g4_functions,
- 	.nfunctions = ARRAY_SIZE(aspeed_g4_functions),
-+	.configs = aspeed_g4_configs,
-+	.nconfigs = ARRAY_SIZE(aspeed_g4_configs),
+ struct aspeed_gpio {
+ 	struct gpio_chip chip;
+ 	spinlock_t lock;
+ 	void __iomem *base;
+ 	int irq;
+ 	const struct aspeed_gpio_config *config;
++
++	/* Debouncing */
++	DECLARE_HASHTABLE(offset_timer, 5);
++	unsigned int timer_users[3];
++	struct clk *clk;
  };
  
- static struct pinmux_ops aspeed_g4_pinmux_ops = {
-@@ -2257,16 +2363,25 @@ static struct pinctrl_ops aspeed_g4_pinctrl_ops = {
- 	.get_group_name = aspeed_pinctrl_get_group_name,
- 	.get_group_pins = aspeed_pinctrl_get_group_pins,
- 	.pin_dbg_show = aspeed_pinctrl_pin_dbg_show,
--	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
- 	.dt_free_map = pinctrl_utils_free_map,
+ struct aspeed_gpio_bank {
+ 	uint16_t	val_regs;
+ 	uint16_t	irq_regs;
++	uint16_t	debounce_regs;
+ 	const char	names[4][3];
  };
  
-+static struct pinconf_ops aspeed_g4_conf_ops = {
-+	.is_generic = true,
-+	.pin_config_get = aspeed_pin_config_get,
-+	.pin_config_set = aspeed_pin_config_set,
-+	.pin_config_group_get = aspeed_pin_config_group_get,
-+	.pin_config_group_set = aspeed_pin_config_group_set,
-+};
++static const int debounce_timers[3] = { 0x50, 0x54, 0x58 };
 +
- static struct pinctrl_desc aspeed_g4_pinctrl_desc = {
- 	.name = "aspeed-g4-pinctrl",
- 	.pins = aspeed_g4_pins,
- 	.npins = ARRAY_SIZE(aspeed_g4_pins),
- 	.pctlops = &aspeed_g4_pinctrl_ops,
- 	.pmxops = &aspeed_g4_pinmux_ops,
-+	.confops = &aspeed_g4_conf_ops,
+ static const struct aspeed_gpio_bank aspeed_gpio_banks[] = {
+ 	{
+ 		.val_regs = 0x0000,
+ 		.irq_regs = 0x0008,
++		.debounce_regs = 0x0040,
+ 		.names = { "A", "B", "C", "D" },
+ 	},
+ 	{
+ 		.val_regs = 0x0020,
+ 		.irq_regs = 0x0028,
++		.debounce_regs = 0x0048,
+ 		.names = { "E", "F", "G", "H" },
+ 	},
+ 	{
+ 		.val_regs = 0x0070,
+ 		.irq_regs = 0x0098,
++		.debounce_regs = 0x00b0,
+ 		.names = { "I", "J", "K", "L" },
+ 	},
+ 	{
+ 		.val_regs = 0x0078,
+ 		.irq_regs = 0x00e8,
++		.debounce_regs = 0x0100,
+ 		.names = { "M", "N", "O", "P" },
+ 	},
+ 	{
+ 		.val_regs = 0x0080,
+ 		.irq_regs = 0x0118,
++		.debounce_regs = 0x0130,
+ 		.names = { "Q", "R", "S", "T" },
+ 	},
+ 	{
+ 		.val_regs = 0x0088,
+ 		.irq_regs = 0x0148,
++		.debounce_regs = 0x0160,
+ 		.names = { "U", "V", "W", "X" },
+ 	},
+ 	{
+ 		.val_regs = 0x01E0,
+ 		.irq_regs = 0x0178,
++		.debounce_regs = 0x0190,
+ 		.names = { "Y", "Z", "AA", "AB" },
+ 	},
+ 	{
+ 		.val_regs = 0x01E8,
+ 		.irq_regs = 0x01A8,
++		.debounce_regs = 0x01c0,
+ 		.names = { "AC", "", "", "" },
+ 	},
  };
+@@ -99,6 +124,13 @@ static const struct aspeed_gpio_bank aspeed_gpio_banks[] = {
+ #define GPIO_IRQ_TYPE2	0x0c
+ #define GPIO_IRQ_STATUS	0x10
  
- static int aspeed_g4_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-index 43221a3c7e23..b22523bdd79b 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-@@ -2285,6 +2285,146 @@ static const struct aspeed_pin_function aspeed_g5_functions[] = {
- 	ASPEED_PINCTRL_FUNC(WDTRST2),
- };
- 
-+static struct aspeed_pin_config aspeed_g5_configs[] = {
-+	/* GPIOA, GPIOQ */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { B14, B13 }, SCU8C, BIT(16) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { B14, B13 }, SCU8C, BIT(16) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A11, N20 }, SCU8C, BIT(16) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A11, N20 }, SCU8C, BIT(16) },
++#define GPIO_DEBOUNCE_SEL1 0x00
++#define GPIO_DEBOUNCE_SEL2 0x04
 +
-+	/* GPIOB, GPIOR */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { K19, H20 }, SCU8C, BIT(17) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { K19, H20 }, SCU8C, BIT(17) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { AA19, E10 }, SCU8C, BIT(17) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { AA19, E10 }, SCU8C, BIT(17) },
++#define _GPIO_SET_DEBOUNCE(t, o, i) ((!!((t + 1) & BIT(i))) << GPIO_OFFSET(o))
++#define GPIO_SET_DEBOUNCE1(t, o) _GPIO_SET_DEBOUNCE(t, o, 1)
++#define GPIO_SET_DEBOUNCE2(t, o) _GPIO_SET_DEBOUNCE(t, o, 0)
 +
-+	/* GPIOC, GPIOS*/
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { C12, B11 }, SCU8C, BIT(18) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { C12, B11 }, SCU8C, BIT(18) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { V20, AA20 }, SCU8C, BIT(18) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { V20, AA20 }, SCU8C, BIT(18) },
-+
-+	/* GPIOD, GPIOY */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { F19, C21 }, SCU8C, BIT(19) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { F19, C21 }, SCU8C, BIT(19) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { R22, P20 }, SCU8C, BIT(19) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { R22, P20 }, SCU8C, BIT(19) },
-+
-+	/* GPIOE, GPIOZ */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { B20, B19 }, SCU8C, BIT(20) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { B20, B19 }, SCU8C, BIT(20) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { Y20, W21 }, SCU8C, BIT(20) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { Y20, W21 }, SCU8C, BIT(20) },
-+
-+	/* GPIOF, GPIOAA */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { J19, H18 }, SCU8C, BIT(21) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { J19, H18 }, SCU8C, BIT(21) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { Y21, P19 }, SCU8C, BIT(21) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { Y21, P19 }, SCU8C, BIT(21) },
-+
-+	/* GPIOG, GPIOAB */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A19, E14 }, SCU8C, BIT(22) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A19, E14 }, SCU8C, BIT(22) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { N19, R20 }, SCU8C, BIT(22) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { N19, R20 }, SCU8C, BIT(22) },
-+
-+	/* GPIOH, GPIOAC */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { A18,  D18  }, SCU8C, BIT(23) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { A18,  D18  }, SCU8C, BIT(23) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { G21,  G22  }, SCU8C, BIT(23) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { G21,  G22  }, SCU8C, BIT(23) },
-+
-+	/* GPIOs [I, P] */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { C18, A15 }, SCU8C, BIT(24) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { C18, A15 }, SCU8C, BIT(24) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { R2,  T3  }, SCU8C, BIT(25) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { R2,  T3  }, SCU8C, BIT(25) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { L3,  R1  }, SCU8C, BIT(26) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { L3,  R1  }, SCU8C, BIT(26) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { T2,  W1  }, SCU8C, BIT(27) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { T2,  W1  }, SCU8C, BIT(27) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { Y1,  T5  }, SCU8C, BIT(28) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { Y1,  T5  }, SCU8C, BIT(28) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { V2,  T4  }, SCU8C, BIT(29) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { V2,  T4  }, SCU8C, BIT(29) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { U5,  W4  }, SCU8C, BIT(30) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { U5,  W4  }, SCU8C, BIT(30) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { V4,  V6  }, SCU8C, BIT(31) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { V4,  V6  }, SCU8C, BIT(31) },
-+
-+	/* GPIOs T[0-5] (RGMII1 Tx pins) */
-+	{ PIN_CONFIG_DRIVE_STRENGTH, { B5, B5 }, SCU90, BIT(8) },
-+	{ PIN_CONFIG_DRIVE_STRENGTH, { E9, A5 }, SCU90, BIT(9) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { B5, D7 }, SCU90, BIT(12) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { B5, D7 }, SCU90, BIT(12) },
-+
-+	/* GPIOs T[6-7], U[0-3] (RGMII2 TX pins) */
-+	{ PIN_CONFIG_DRIVE_STRENGTH, { B2, B2 }, SCU90, BIT(10) },
-+	{ PIN_CONFIG_DRIVE_STRENGTH, { B1, B3 }, SCU90, BIT(11) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { B2, D4 }, SCU90, BIT(14) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { B2, D4 }, SCU90, BIT(14) },
-+
-+	/* GPIOs U[4-7], V[0-1] (RGMII1 Rx pins) */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { B4, C4 }, SCU90, BIT(13) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { B4, C4 }, SCU90, BIT(13) },
-+
-+	/* GPIOs V[2-7] (RGMII2 Rx pins) */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { C2, E6 }, SCU90, BIT(15) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { C2, E6 }, SCU90, BIT(15) },
-+
-+	/* ADC pull-downs (SCUA8[19:4]) */
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { F4, F4 }, SCUA8, BIT(4) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { F4, F4 }, SCUA8, BIT(4) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { F5, F5 }, SCUA8, BIT(5) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { F5, F5 }, SCUA8, BIT(5) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { E2, E2 }, SCUA8, BIT(6) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { E2, E2 }, SCUA8, BIT(6) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { E1, E1 }, SCUA8, BIT(7) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { E1, E1 }, SCUA8, BIT(7) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { F3, F3 }, SCUA8, BIT(8) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { F3, F3 }, SCUA8, BIT(8) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { E3, E3 }, SCUA8, BIT(9) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { E3, E3 }, SCUA8, BIT(9) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { G5, G5 }, SCUA8, BIT(10) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { G5, G5 }, SCUA8, BIT(10) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { G4, G4 }, SCUA8, BIT(11) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { G4, G4 }, SCUA8, BIT(11) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { F2, F2 }, SCUA8, BIT(12) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { F2, F2 }, SCUA8, BIT(12) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { G3, G3 }, SCUA8, BIT(13) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { G3, G3 }, SCUA8, BIT(13) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { G2, G2 }, SCUA8, BIT(14) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { G2, G2 }, SCUA8, BIT(14) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { F1, F1 }, SCUA8, BIT(15) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { F1, F1 }, SCUA8, BIT(15) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { H5, H5 }, SCUA8, BIT(16) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { H5, H5 }, SCUA8, BIT(16) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { G1, G1 }, SCUA8, BIT(17) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { G1, G1 }, SCUA8, BIT(17) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { H3, H3 }, SCUA8, BIT(18) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { H3, H3 }, SCUA8, BIT(18) },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, { H4, H4 }, SCUA8, BIT(19) },
-+	{ PIN_CONFIG_BIAS_DISABLE,   { H4, H4 }, SCUA8, BIT(19) },
-+
-+	/*
-+	 * Debounce settings for GPIOs D and E passthrough mode are in
-+	 * SCUA8[27:20] and so are managed by pinctrl. Normal GPIO debounce for
-+	 * banks D and E is handled by the GPIO driver - GPIO passthrough is
-+	 * treated like any other non-GPIO mux function. There is a catch
-+	 * however, in that the debounce period is configured in the GPIO
-+	 * controller. Due to this tangle between GPIO and pinctrl we don't yet
-+	 * fully support pass-through debounce.
-+	 */
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { F19, E21 }, SCUA8, BIT(20) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { F20, D20 }, SCUA8, BIT(21) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { D21, E20 }, SCUA8, BIT(22) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { G18, C21 }, SCUA8, BIT(23) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { B20, C20 }, SCUA8, BIT(24) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { F18, F17 }, SCUA8, BIT(25) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { E18, D19 }, SCUA8, BIT(26) },
-+	{ PIN_CONFIG_INPUT_DEBOUNCE, { A20, B19 }, SCUA8, BIT(27) },
-+};
-+
- static struct aspeed_pinctrl_data aspeed_g5_pinctrl_data = {
- 	.pins = aspeed_g5_pins,
- 	.npins = ARRAY_SIZE(aspeed_g5_pins),
-@@ -2292,6 +2432,8 @@ static struct aspeed_pinctrl_data aspeed_g5_pinctrl_data = {
- 	.ngroups = ARRAY_SIZE(aspeed_g5_groups),
- 	.functions = aspeed_g5_functions,
- 	.nfunctions = ARRAY_SIZE(aspeed_g5_functions),
-+	.configs = aspeed_g5_configs,
-+	.nconfigs = ARRAY_SIZE(aspeed_g5_configs),
- };
- 
- static struct pinmux_ops aspeed_g5_pinmux_ops = {
-@@ -2308,16 +2450,25 @@ static struct pinctrl_ops aspeed_g5_pinctrl_ops = {
- 	.get_group_name = aspeed_pinctrl_get_group_name,
- 	.get_group_pins = aspeed_pinctrl_get_group_pins,
- 	.pin_dbg_show = aspeed_pinctrl_pin_dbg_show,
--	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_all,
- 	.dt_free_map = pinctrl_utils_free_map,
- };
- 
-+static struct pinconf_ops aspeed_g5_conf_ops = {
-+	.is_generic = true,
-+	.pin_config_get = aspeed_pin_config_get,
-+	.pin_config_set = aspeed_pin_config_set,
-+	.pin_config_group_get = aspeed_pin_config_group_get,
-+	.pin_config_group_set = aspeed_pin_config_group_set,
-+};
-+
- static struct pinctrl_desc aspeed_g5_pinctrl_desc = {
- 	.name = "aspeed-g5-pinctrl",
- 	.pins = aspeed_g5_pins,
- 	.npins = ARRAY_SIZE(aspeed_g5_pins),
- 	.pctlops = &aspeed_g5_pinctrl_ops,
- 	.pmxops = &aspeed_g5_pinmux_ops,
-+	.confops = &aspeed_g5_conf_ops,
- };
- 
- static int aspeed_g5_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-index 76f62bd45f02..b403059c249b 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-@@ -537,3 +537,210 @@ int aspeed_pinctrl_probe(struct platform_device *pdev,
- 
- 	return 0;
+ static const struct aspeed_gpio_bank *to_bank(unsigned int offset)
+ {
+ 	unsigned int bank = GPIO_BANK(offset);
+@@ -144,6 +176,7 @@ static inline bool have_input(struct aspeed_gpio *gpio, unsigned int offset)
  }
-+
-+static inline bool pin_in_config_range(unsigned int offset,
-+		const struct aspeed_pin_config *config)
+ 
+ #define have_irq(g, o) have_input((g), (o))
++#define have_debounce(g, o) have_input((g), (o))
+ 
+ static inline bool have_output(struct aspeed_gpio *gpio, unsigned int offset)
+ {
+@@ -506,6 +539,200 @@ static void aspeed_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ 	pinctrl_free_gpio(chip->base + offset);
+ }
+ 
++static inline void __iomem *bank_debounce_reg(struct aspeed_gpio *gpio,
++		const struct aspeed_gpio_bank *bank,
++		unsigned int reg)
 +{
-+	return offset >= config->pins[0] && offset <= config->pins[1];
++	return gpio->base + bank->debounce_regs + reg;
 +}
 +
-+static inline const struct aspeed_pin_config *find_pinconf_config(
-+		const struct aspeed_pinctrl_data *pdata,
-+		unsigned int offset,
-+		enum pin_config_param param)
++static inline int usecs_to_cycles(struct aspeed_gpio *gpio, unsigned long usecs,
++		u32 *cycles)
 +{
-+	unsigned int i;
++	u64 rate;
++	u64 n;
 +
-+	for (i = 0; i < pdata->nconfigs; i++) {
-+		if (param == pdata->configs[i].param &&
-+				pin_in_config_range(offset, &pdata->configs[i]))
-+			return &pdata->configs[i];
-+	}
-+
-+	return NULL;
-+}
-+
-+/**
-+ * @param: pinconf configuration parameter
-+ * @arg: The supported argument for @param, or -1 if any value is supported
-+ * @value: The register value to write to configure @arg for @param
-+ *
-+ * The map is to be used in conjunction with the configuration array supplied
-+ * by the driver implementation.
-+ */
-+struct aspeed_pin_config_map {
-+	enum pin_config_param param;
-+	s32 arg;
-+	u32 val;
-+};
-+
-+enum aspeed_pin_config_map_type { MAP_TYPE_ARG, MAP_TYPE_VAL };
-+
-+/* Aspeed consistently both:
-+ *
-+ * 1. Defines "disable bits" for internal pull-downs
-+ * 2. Uses 8mA or 16mA drive strengths
-+ */
-+static const struct aspeed_pin_config_map pin_config_map[] = {
-+	{ PIN_CONFIG_BIAS_PULL_DOWN,  0, 1 },
-+	{ PIN_CONFIG_BIAS_PULL_DOWN, -1, 0 },
-+	{ PIN_CONFIG_BIAS_DISABLE,   -1, 1 },
-+	{ PIN_CONFIG_DRIVE_STRENGTH,  8, 0 },
-+	{ PIN_CONFIG_DRIVE_STRENGTH, 16, 1 },
-+};
-+
-+static const struct aspeed_pin_config_map *find_pinconf_map(
-+		enum pin_config_param param,
-+		enum aspeed_pin_config_map_type type,
-+		s64 value)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pin_config_map); i++) {
-+		const struct aspeed_pin_config_map *elem;
-+		bool match;
-+
-+		elem = &pin_config_map[i];
-+
-+		switch (type) {
-+		case MAP_TYPE_ARG:
-+			match = (elem->arg == -1 || elem->arg == value);
-+			break;
-+		case MAP_TYPE_VAL:
-+			match = (elem->val == value);
-+			break;
-+		}
-+
-+		if (param == elem->param && match)
-+			return elem;
-+	}
-+
-+	return NULL;
-+}
-+
-+int aspeed_pin_config_get(struct pinctrl_dev *pctldev, unsigned int offset,
-+		unsigned long *config)
-+{
-+	const enum pin_config_param param = pinconf_to_config_param(*config);
-+	const struct aspeed_pin_config_map *pmap;
-+	const struct aspeed_pinctrl_data *pdata;
-+	const struct aspeed_pin_config *pconf;
-+	unsigned int val;
-+	int rc = 0;
-+	int shift;
-+	u32 arg;
-+
-+	pdata = pinctrl_dev_get_drvdata(pctldev);
-+	pconf = find_pinconf_config(pdata, offset, param);
-+	if (!pconf)
-+		return -ENOTSUPP;
-+
-+	shift = __ffs(pconf->mask);
-+
-+	rc = regmap_read(pdata->maps[ASPEED_IP_SCU], pconf->reg, &val);
-+	if (rc < 0)
-+		return rc;
-+
-+	pmap = find_pinconf_map(param, MAP_TYPE_VAL,
-+			(val & pconf->mask) >> shift);
-+
-+	if (!pmap)
-+		return -EINVAL;
-+
-+	if (param == PIN_CONFIG_DRIVE_STRENGTH)
-+		arg = (u32) pmap->arg;
-+	else if (param == PIN_CONFIG_BIAS_PULL_DOWN)
-+		arg = !!pmap->arg;
-+	else
-+		arg = 1;
-+
-+	if (!arg)
-+		return -EINVAL;
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+
-+	return 0;
-+}
-+
-+int aspeed_pin_config_set(struct pinctrl_dev *pctldev, unsigned int offset,
-+		unsigned long *configs, unsigned int num_configs)
-+{
-+	const struct aspeed_pinctrl_data *pdata;
-+	unsigned int i;
-+	int rc = 0;
-+
-+	pdata = pinctrl_dev_get_drvdata(pctldev);
-+
-+	for (i = 0; i < num_configs; i++) {
-+		const struct aspeed_pin_config_map *pmap;
-+		const struct aspeed_pin_config *pconf;
-+		enum pin_config_param param;
-+		unsigned int val;
-+		u32 arg;
-+
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		pconf = find_pinconf_config(pdata, offset, param);
-+		if (!pconf)
-+			return -ENOTSUPP;
-+
-+		pmap = find_pinconf_map(param, MAP_TYPE_ARG, arg);
-+
-+		if (unlikely(WARN_ON(!pmap)))
-+			return -EINVAL;
-+
-+		val = pmap->val << __ffs(pconf->mask);
-+
-+		rc = regmap_update_bits(pdata->maps[ASPEED_IP_SCU], pconf->reg,
-+				pconf->mask, val);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+int aspeed_pin_config_group_get(struct pinctrl_dev *pctldev,
-+		unsigned int selector,
-+		unsigned long *config)
-+{
-+	const unsigned int *pins;
-+	unsigned int npins;
-+	int rc;
-+
-+	rc = aspeed_pinctrl_get_group_pins(pctldev, selector, &pins, &npins);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (!npins)
++	rate = clk_get_rate(gpio->clk);
++	if (!rate)
 +		return -ENODEV;
 +
-+	rc = aspeed_pin_config_get(pctldev, pins[0], config);
++	n = rate * usecs;
++	do_div(n, 1000000);
++
++	if (n >= U32_MAX)
++		return -ERANGE;
++
++	/* At least as long as the requested time */
++	*cycles = n + 1;
++
++	return 0;
++}
++
++static int aspeed_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
++				    unsigned long usecs)
++{
++	const struct aspeed_gpio_bank *bank = to_bank(offset);
++	struct aspeed_gpio *gpio = gpiochip_get_data(chip);
++	const u32 mask = GPIO_BIT(offset);
++	unsigned long flags;
++	void __iomem *addr;
++	u32 val;
++	int rc;
++
++	if (!have_debounce(gpio, offset))
++		return -ENOTSUPP;
++
++	if (usecs) {
++		struct aspeed_debounce_timer *dt, *newdt;
++		u32 requested_cycles;
++		int i;
++
++		/*
++		 * TODO: Look at improving these:
++		 *
++		 * - we always delete users of timers even if the call is for a
++		 *   duplicate debounce period for an offset
++		 * - we don't reuse struct aspeed_debounce_timer allocations if
++		 *   the offset is already using a timer
++		 */
++
++		rc = usecs_to_cycles(gpio, usecs, &requested_cycles);
++		if (rc < 0)
++			return rc;
++
++		newdt = devm_kmalloc(chip->parent, sizeof(*dt), GFP_KERNEL);
++		if (!newdt)
++			return -ENOMEM;
++
++		spin_lock_irqsave(&gpio->lock, flags);
++
++		/* Check if the @offset is already using a timer */
++		hash_for_each_possible(gpio->offset_timer, dt, node, offset) {
++			if (offset == dt->offset) {
++				hash_del(&dt->node);
++				WARN_ON(!gpio->timer_users[dt->timer]);
++				gpio->timer_users[dt->timer]--;
++				devm_kfree(chip->parent, dt);
++				break;
++			}
++		}
++
++		/*
++		 * Check if a timer is already configured for the requested
++		 * debounce period. If so, just add @offset as a user of this
++		 * timer
++		 */
++		for (i = 0; i < ARRAY_SIZE(debounce_timers); i++) {
++			u32 cycles;
++
++			addr = gpio->base + debounce_timers[i];
++			cycles = ioread32(addr);
++
++			if (requested_cycles == cycles)
++				break;
++		}
++
++		/* Otherwise, allocate a timer */
++		if (i == ARRAY_SIZE(debounce_timers)) {
++			for (i = 0; i < ARRAY_SIZE(gpio->timer_users); i++) {
++				if (gpio->timer_users[i] == 0)
++					break;
++			}
++
++			/* We have run out of timers */
++			if (i == ARRAY_SIZE(gpio->timer_users)) {
++				dev_warn(chip->parent,
++						"Debounce timers exhausted, cannot debounce for period %luus\n",
++						usecs);
++				rc = -EPERM;
++				goto err;
++			}
++
++			/* Timer update */
++			addr = gpio->base + debounce_timers[i];
++			iowrite32(requested_cycles, addr);
++		}
++
++		/* Register @offset as a user of timer i */
++		newdt->offset = offset;
++		newdt->timer = i;
++		hash_add(gpio->offset_timer, &newdt->node, offset);
++
++		WARN_ON(gpio->timer_users[i] == UINT_MAX);
++		gpio->timer_users[i]++;
++
++		/* Configure @offset to use timer i */
++		addr = bank_debounce_reg(gpio, bank, GPIO_DEBOUNCE_SEL1);
++		val = ioread32(addr);
++		iowrite32((val & ~mask) | GPIO_SET_DEBOUNCE1(i, offset), addr);
++
++		addr = bank_debounce_reg(gpio, bank, GPIO_DEBOUNCE_SEL2);
++		val = ioread32(addr);
++		iowrite32((val & ~mask) | GPIO_SET_DEBOUNCE2(i, offset), addr);
++
++		spin_unlock_irqrestore(&gpio->lock, flags);
++	} else {
++		struct aspeed_debounce_timer *dt;
++
++		spin_lock_irqsave(&gpio->lock, flags);
++
++		/* Unregister any record of timer use by @offset */
++		hash_for_each_possible(gpio->offset_timer, dt, node, offset) {
++			if (offset == dt->offset) {
++				WARN_ON(!gpio->timer_users[dt->timer]);
++
++				gpio->timer_users[dt->timer]--;
++				hash_del(&dt->node);
++				devm_kfree(chip->parent, dt);
++				break;
++			}
++		}
++
++		addr = bank_debounce_reg(gpio, bank, GPIO_DEBOUNCE_SEL1);
++		val = ioread32(addr);
++		iowrite32((val & ~mask), addr);
++
++		addr = bank_debounce_reg(gpio, bank, GPIO_DEBOUNCE_SEL2);
++		val = ioread32(addr);
++		iowrite32((val & ~mask), addr);
++
++		spin_unlock_irqrestore(&gpio->lock, flags);
++	}
++
++	return rc;
++
++err:
++	spin_unlock_irqrestore(&gpio->lock, flags);
 +
 +	return rc;
 +}
 +
-+int aspeed_pin_config_group_set(struct pinctrl_dev *pctldev,
-+		unsigned int selector,
-+		unsigned long *configs,
-+		unsigned int num_configs)
++static int aspeed_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
++				  unsigned long config)
 +{
-+	const unsigned int *pins;
-+	unsigned int npins;
++	unsigned long param = pinconf_to_config_param(config);
++	u32 arg = pinconf_to_config_argument(config);
 +	int rc;
-+	int i;
 +
-+	rc = aspeed_pinctrl_get_group_pins(pctldev, selector, &pins, &npins);
-+	if (rc < 0)
-+		return rc;
-+
-+	for (i = 0; i < npins; i++) {
-+		rc = aspeed_pin_config_set(pctldev, pins[i], configs,
-+				num_configs);
-+		if (rc < 0)
-+			return rc;
++	switch (param) {
++	case PIN_CONFIG_INPUT_DEBOUNCE:
++		rc = aspeed_gpio_set_debounce(chip, offset, arg);
++		break;
++	case PIN_CONFIG_BIAS_DISABLE:
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		rc = pinctrl_gpio_set_config(offset, config);
++		break;
++	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++	case PIN_CONFIG_DRIVE_OPEN_SOURCE:
++		/* Fallthrough for emulation, as per datasheet */
++	default:
++		rc = -ENOTSUPP;
 +	}
 +
-+	return 0;
++	return rc;
 +}
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.h b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-index 08a10d4db229..6ba2724e4470 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-@@ -514,6 +514,20 @@ struct aspeed_pin_desc {
- 	SIG_EXPR_LIST_DECL_SINGLE(gpio, gpio); \
- 	MS_PIN_DECL_(pin, SIG_EXPR_LIST_PTR(gpio))
- 
-+/**
-+ * @param The pinconf parameter type
-+ * @pins The pin range this config struct covers, [low, high]
-+ * @reg The register housing the configuration bits
-+ * @mask The mask to select the bits of interest in @reg
-+ */
-+struct aspeed_pin_config {
-+	enum pin_config_param param;
-+	unsigned int pins[2];
-+	unsigned int reg;
-+	u32 mask;
-+	u32 value;
-+};
 +
- struct aspeed_pinctrl_data {
- 	struct regmap *maps[ASPEED_NR_PINMUX_IPS];
+ /*
+  * Any banks not specified in a struct aspeed_bank_props array are assumed to
+  * have the properties:
+@@ -560,13 +787,19 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(gpio->base);
  
-@@ -525,6 +539,9 @@ struct aspeed_pinctrl_data {
+ 	spin_lock_init(&gpio->lock);
++	hash_init(gpio->offset_timer);
  
- 	const struct aspeed_pin_function *functions;
- 	const unsigned int nfunctions;
+ 	gpio_id = of_match_node(aspeed_gpio_of_table, pdev->dev.of_node);
+ 	if (!gpio_id)
+ 		return -EINVAL;
+ 
++	gpio->clk = of_clk_get(pdev->dev.of_node, 0);
++	if (IS_ERR(gpio->clk))
++		return PTR_ERR(gpio->clk);
 +
-+	const struct aspeed_pin_config *configs;
-+	const unsigned int nconfigs;
- };
+ 	gpio->config = gpio_id->data;
  
- #define ASPEED_PINCTRL_PIN(name_) \
-@@ -580,5 +597,16 @@ int aspeed_gpio_request_enable(struct pinctrl_dev *pctldev,
- int aspeed_pinctrl_probe(struct platform_device *pdev,
- 		struct pinctrl_desc *pdesc,
- 		struct aspeed_pinctrl_data *pdata);
-+int aspeed_pin_config_get(struct pinctrl_dev *pctldev, unsigned int offset,
-+		unsigned long *config);
-+int aspeed_pin_config_set(struct pinctrl_dev *pctldev, unsigned int offset,
-+		unsigned long *configs, unsigned int num_configs);
-+int aspeed_pin_config_group_get(struct pinctrl_dev *pctldev,
-+		unsigned int selector,
-+		unsigned long *config);
-+int aspeed_pin_config_group_set(struct pinctrl_dev *pctldev,
-+		unsigned int selector,
-+		unsigned long *configs,
-+		unsigned int num_configs);
- 
- #endif /* PINCTRL_ASPEED */
++	gpio->chip.parent = &pdev->dev;
+ 	gpio->chip.ngpio = gpio->config->nr_gpios;
+ 	gpio->chip.parent = &pdev->dev;
+ 	gpio->chip.direction_input = aspeed_gpio_dir_in;
+@@ -576,6 +809,7 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
+ 	gpio->chip.free = aspeed_gpio_free;
+ 	gpio->chip.get = aspeed_gpio_get;
+ 	gpio->chip.set = aspeed_gpio_set;
++	gpio->chip.set_config = aspeed_gpio_set_config;
+ 	gpio->chip.label = dev_name(&pdev->dev);
+ 	gpio->chip.base = -1;
+ 	gpio->chip.irq_need_valid_mask = true;
 -- 
 2.9.3
-
