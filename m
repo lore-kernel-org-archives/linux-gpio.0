@@ -1,93 +1,67 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: [PATCH v2 1/1] gpio: altera: Use handle_level_irq when configured as a level_high
-Date: Mon, 20 Feb 2017 09:41:45 +0800
-Message-ID: <1487554905-24714-1-git-send-email-preid@electromag.com.au>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:35860 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751897AbdBTBm2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 19 Feb 2017 20:42:28 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: uniphier: change pin names of aio/xirq for LD11
+Date: Mon, 20 Feb 2017 20:58:31 +0900
+Message-ID: <1487591911-22658-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: thloh@altera.com, linus.walleij@linaro.org, gnurou@gmail.com, preid@electromag.com.au, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com
 
-When a threaded irq handler is chained attached to one of the gpio
-pins when configure for level irq the altera_gpio_irq_leveL_high_handler
-does not mask the interrupt while being handled by the chained irq.
-This resulting in the threaded irq not getting enough cycles to complete
-quickly enough before the irq was disabled as faulty. handle_level_irq
-should be used in this situation instead of handle_simple_irq.
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-In gpiochip_irqchip_add set default handler to handle_bad_irq as
-per Documentation/gpio/driver.txt. Then set the correct handler in
-the set_type callback.
+This patch changes pin names of AIO and XIRQ according to updated
+specification.
 
-Signed-off-by: Phil Reid <preid@electromag.com.au>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Notes:
-    Change from v1:
-    - As per hint from Andy.
-      Set handler to handle_bad_irq in gpiochip_irqchip_add
-      This is inline with documentation but not what most gpio drivers do.
-      So I'm guessing this is now the correct way to do things.
+Hi Linus,
 
- drivers/gpio/gpio-altera.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+If it is not too late, please queue up this patch
+for Linux 4.11-rc1.
 
-diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
-index 5bddbd5..3fe6a21 100644
---- a/drivers/gpio/gpio-altera.c
-+++ b/drivers/gpio/gpio-altera.c
-@@ -90,21 +90,18 @@ static int altera_gpio_irq_set_type(struct irq_data *d,
- 
- 	altera_gc = gpiochip_get_data(irq_data_get_irq_chip_data(d));
- 
--	if (type == IRQ_TYPE_NONE)
-+	if (type == IRQ_TYPE_NONE) {
-+		irq_set_handler_locked(d, handle_bad_irq);
- 		return 0;
--	if (type == IRQ_TYPE_LEVEL_HIGH &&
--		altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
--		return 0;
--	if (type == IRQ_TYPE_EDGE_RISING &&
--		altera_gc->interrupt_trigger == IRQ_TYPE_EDGE_RISING)
--		return 0;
--	if (type == IRQ_TYPE_EDGE_FALLING &&
--		altera_gc->interrupt_trigger == IRQ_TYPE_EDGE_FALLING)
--		return 0;
--	if (type == IRQ_TYPE_EDGE_BOTH &&
--		altera_gc->interrupt_trigger == IRQ_TYPE_EDGE_BOTH)
-+	}
-+	if (type == altera_gc->interrupt_trigger) {
-+		if (type == IRQ_TYPE_LEVEL_HIGH)
-+			irq_set_handler_locked(d, handle_level_irq);
-+		else
-+			irq_set_handler_locked(d, handle_simple_irq);
- 		return 0;
--
-+	}
-+	irq_set_handler_locked(d, handle_bad_irq);
- 	return -EINVAL;
- }
- 
-@@ -230,7 +227,6 @@ static void altera_gpio_irq_edge_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--
- static void altera_gpio_irq_leveL_high_handler(struct irq_desc *desc)
- {
- 	struct altera_gpio_chip *altera_gc;
-@@ -310,7 +306,7 @@ static int altera_gpio_probe(struct platform_device *pdev)
- 	altera_gc->interrupt_trigger = reg;
- 
- 	ret = gpiochip_irqchip_add(&altera_gc->mmchip.gc, &altera_irq_chip, 0,
--		handle_simple_irq, IRQ_TYPE_NONE);
-+		handle_bad_irq, IRQ_TYPE_NONE);
- 
- 	if (ret) {
- 		dev_err(&pdev->dev, "could not add irqchip\n");
+Thanks,
+Masahiro
+
+
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 77a0236..83f8864 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -390,22 +390,22 @@ static const struct pinctrl_pin_desc uniphier_ld11_pins[] = {
+ 	UNIPHIER_PINCTRL_PIN(140, "AO1D0", 140,
+ 			     140, UNIPHIER_PIN_DRV_1BIT,
+ 			     140, UNIPHIER_PIN_PULL_DOWN),
+-	UNIPHIER_PINCTRL_PIN(141, "TCON0", 141,
++	UNIPHIER_PINCTRL_PIN(141, "AO1D1", 141,
+ 			     141, UNIPHIER_PIN_DRV_1BIT,
+ 			     141, UNIPHIER_PIN_PULL_DOWN),
+-	UNIPHIER_PINCTRL_PIN(142, "TCON1", 142,
++	UNIPHIER_PINCTRL_PIN(142, "AO1D2", 142,
+ 			     142, UNIPHIER_PIN_DRV_1BIT,
+ 			     142, UNIPHIER_PIN_PULL_DOWN),
+-	UNIPHIER_PINCTRL_PIN(143, "TCON2", 143,
++	UNIPHIER_PINCTRL_PIN(143, "XIRQ9", 143,
+ 			     143, UNIPHIER_PIN_DRV_1BIT,
+ 			     143, UNIPHIER_PIN_PULL_DOWN),
+-	UNIPHIER_PINCTRL_PIN(144, "TCON3", 144,
++	UNIPHIER_PINCTRL_PIN(144, "XIRQ10", 144,
+ 			     144, UNIPHIER_PIN_DRV_1BIT,
+ 			     144, UNIPHIER_PIN_PULL_DOWN),
+-	UNIPHIER_PINCTRL_PIN(145, "TCON4", 145,
++	UNIPHIER_PINCTRL_PIN(145, "XIRQ11", 145,
+ 			     145, UNIPHIER_PIN_DRV_1BIT,
+ 			     145, UNIPHIER_PIN_PULL_DOWN),
+-	UNIPHIER_PINCTRL_PIN(146, "TCON5", 146,
++	UNIPHIER_PINCTRL_PIN(146, "XIRQ13", 146,
+ 			     146, UNIPHIER_PIN_DRV_1BIT,
+ 			     146, UNIPHIER_PIN_PULL_DOWN),
+ 	UNIPHIER_PINCTRL_PIN(147, "PWMA", 147,
 -- 
-1.8.3.1
-
+2.7.4
