@@ -1,11 +1,11 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: change pin names of aio/xirq for LD11
-Date: Mon, 20 Feb 2017 20:58:31 +0900
-Message-ID: <1487591911-22658-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [RESEND PATCH] pinctrl: uniphier: change pin names of aio/xirq for LD11
+Date: Mon, 20 Feb 2017 21:00:42 +0900
+Message-ID: <1487592042-22828-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
@@ -15,13 +15,15 @@ specification.
 
 Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
 Hi Linus,
 
 If it is not too late, please queue up this patch
 for Linux 4.11-rc1.
+
+(Please discard the previous one.)
+
 
 Thanks,
 Masahiro
