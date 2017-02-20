@@ -1,13 +1,13 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/4] gpio: acpi: Don't return 0 on acpi_gpio_count()
-Date: Mon, 20 Feb 2017 18:15:46 +0200
-Message-ID: <20170220161549.39490-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/4] gpio: of: Don't return 0 on dt_gpio_count()
+Date: Mon, 20 Feb 2017 18:15:47 +0200
+Message-ID: <20170220161549.39490-3-andriy.shevchenko@linux.intel.com>
 References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:64907 "EHLO mga04.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:33384 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754018AbdBTQQy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 20 Feb 2017 11:16:54 -0500
+        id S1752118AbdBTQRg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 20 Feb 2017 11:17:36 -0500
 In-Reply-To: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,31 +23,26 @@ gpiod_count().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 4 ++--
+ drivers/gpio/gpiolib.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 9b37a3692b3f..d7a22c470312 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1067,7 +1067,7 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
- 					break;
- 				}
- 		}
--		if (count >= 0)
-+		if (count > 0)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 8b4d721d6d63..f8ee417de0b7 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3122,10 +3122,10 @@ static int dt_gpio_count(struct device *dev, const char *con_id)
+ 				 gpio_suffixes[i]);
+ 
+ 		ret = of_gpio_named_count(dev->of_node, propname);
+-		if (ret >= 0)
++		if (ret > 0)
  			break;
  	}
- 
-@@ -1083,7 +1083,7 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
- 		if (crs_count > 0)
- 			count = crs_count;
- 	}
--	return count;
-+	return count ? count : -ENOENT;
+-	return ret;
++	return ret ? ret : -ENOENT;
  }
  
- struct acpi_crs_lookup {
+ static int platform_gpio_count(struct device *dev, const char *con_id)
 -- 
 2.11.0
 
