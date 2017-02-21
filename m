@@ -1,48 +1,194 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 02/14] device-dax: utilize new device_add_cdev
- helper function
-Date: Tue, 21 Feb 2017 11:26:33 -0800
-Message-ID: <CAPcyv4huQGQPSwvX9=iAVtzr1ga8RbN+e_q7DNaUMWGbWt_5mA@mail.gmail.com>
-References: <1487653253-11497-1-git-send-email-logang@deltatee.com>
- <1487653253-11497-3-git-send-email-logang@deltatee.com> <20170221113704.ibwkk2vuc5imkmae@piout.net>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBDZYPUPHYEJBB25IWLCQKGQECLBP32Y-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170221113704.ibwkk2vuc5imkmae-m++hUPXGwpdeoWH0uzbU5w@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan
+From: Hoan Tran <hotran@apm.com>
+Subject: [PATCH v3] gpio: dwapb: Add support for next generation of X-Gene SoC
+Date: Tue, 21 Feb 2017 11:32:43 -0800
+Message-ID: <1487705563-8054-1-git-send-email-hotran@apm.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:35249 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753088AbdBUTdP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Feb 2017 14:33:15 -0500
+Received: by mail-pg0-f47.google.com with SMTP id b129so40091843pgc.2
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Feb 2017 11:33:15 -0800 (PST)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jamie Iles <jamie@jamieiles.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, lho@apm.com, Hoan Tran <hotran@apm.com>
 
-On Tue, Feb 21, 2017 at 3:37 AM, Alexandre Belloni
-<alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> Hi,
->
-> A small comment, you must always have a commit message. Even if it is
-> small.
+Next generation of X-Gene SoC's GPIO hardware register map is very
+similar to DW GPIO. It only differs by a few register addresses.
+This patch modifies DW GPIO driver to accommodate the difference
+in a few register addresses.
 
-Yes, something like: "Replace the open coded initialization of the
-cdev with the new device_add_cdev() helper. The helper takes the
-proper reference against the parent device while the cdev object is
-alive."
+Signed-off-by: Hoan Tran <hotran@apm.com>
+---
+v3:
+* Add gpio_reg_v2_convert() function
+* Revise the register version parsing based on Andy's comment
 
-With that you can also add:
+v2:
+* Remove ifdef CONFIG_ACPI
+---
+ drivers/gpio/gpio-dwapb.c | 91 ++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 74 insertions(+), 17 deletions(-)
 
-Acked-by: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 6193f62..b80ccdb 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -21,6 +21,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+@@ -55,6 +56,14 @@
+ #define GPIO_SWPORT_DR_SIZE	(GPIO_SWPORTB_DR - GPIO_SWPORTA_DR)
+ #define GPIO_SWPORT_DDR_SIZE	(GPIO_SWPORTB_DDR - GPIO_SWPORTA_DDR)
+ 
++#define GPIO_REG_OFFSET_V2	1
++
++#define GPIO_INTMASK_V2		0x44
++#define GPIO_INTTYPE_LEVEL_V2	0x34
++#define GPIO_INT_POLARITY_V2	0x38
++#define GPIO_INTSTATUS_V2	0x3c
++#define GPIO_PORTA_EOI_V2	0x40
++
+ struct dwapb_gpio;
+ 
+ #ifdef CONFIG_PM_SLEEP
+@@ -87,14 +96,41 @@ struct dwapb_gpio {
+ 	struct dwapb_gpio_port	*ports;
+ 	unsigned int		nr_ports;
+ 	struct irq_domain	*domain;
++	unsigned int		flags;
+ };
+ 
++static inline u32 gpio_reg_v2_convert(unsigned int offset)
++{
++	switch (offset) {
++	case GPIO_INTMASK:
++		return GPIO_INTMASK_V2;
++	case GPIO_INTTYPE_LEVEL:
++		return GPIO_INTTYPE_LEVEL_V2;
++	case GPIO_INT_POLARITY:
++		return GPIO_INT_POLARITY_V2;
++	case GPIO_INTSTATUS:
++		return GPIO_INTSTATUS_V2;
++	case GPIO_PORTA_EOI:
++		return GPIO_PORTA_EOI_V2;
++	}
++
++	return offset;
++}
++
++static inline u32 gpio_reg_convert(struct dwapb_gpio *gpio, unsigned int offset)
++{
++	if (gpio->flags & GPIO_REG_OFFSET_V2)
++		return gpio_reg_v2_convert(offset);
++
++	return offset;
++}
++
+ static inline u32 dwapb_read(struct dwapb_gpio *gpio, unsigned int offset)
+ {
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	void __iomem *reg_base	= gpio->regs;
+ 
+-	return gc->read_reg(reg_base + offset);
++	return gc->read_reg(reg_base + gpio_reg_convert(gpio, offset));
+ }
+ 
+ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+@@ -103,7 +139,7 @@ static inline void dwapb_write(struct dwapb_gpio *gpio, unsigned int offset,
+ 	struct gpio_chip *gc	= &gpio->ports[0].gc;
+ 	void __iomem *reg_base	= gpio->regs;
+ 
+-	gc->write_reg(reg_base + offset, val);
++	gc->write_reg(reg_base + gpio_reg_convert(gpio, offset), val);
+ }
+ 
+ static int dwapb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -336,8 +372,8 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 		ct->chip.irq_disable = dwapb_irq_disable;
+ 		ct->chip.irq_request_resources = dwapb_irq_reqres;
+ 		ct->chip.irq_release_resources = dwapb_irq_relres;
+-		ct->regs.ack = GPIO_PORTA_EOI;
+-		ct->regs.mask = GPIO_INTMASK;
++		ct->regs.ack = gpio_reg_convert(gpio, GPIO_PORTA_EOI);
++		ct->regs.mask = gpio_reg_convert(gpio, GPIO_INTMASK);
+ 		ct->type = IRQ_TYPE_LEVEL_MASK;
+ 	}
+ 
+@@ -520,6 +556,21 @@ static void dwapb_gpio_unregister(struct dwapb_gpio *gpio)
+ 	return pdata;
+ }
+ 
++static const struct of_device_id dwapb_of_match[] = {
++	{ .compatible = "snps,dw-apb-gpio", .data = (void *)0},
++	{ .compatible = "apm,xgene-gpio-v2", .data = (void *)GPIO_REG_OFFSET_V2},
++	{ /* Sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dwapb_of_match);
++
++static const struct acpi_device_id dwapb_acpi_match[] = {
++	{"HISI0181", 0},
++	{"APMC0D07", 0},
++	{"APMC0D81", GPIO_REG_OFFSET_V2},
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
++
+ static int dwapb_gpio_probe(struct platform_device *pdev)
+ {
+ 	unsigned int i;
+@@ -555,6 +606,25 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio->regs))
+ 		return PTR_ERR(gpio->regs);
+ 
++	gpio->flags = 0;
++	if (dev->of_node) {
++		const struct of_device_id *of_devid;
++
++		of_devid = of_match_device(dwapb_of_match, dev);
++		if (of_devid) {
++			if (of_devid->data)
++				gpio->flags = (uintptr_t)of_devid->data;
++		}
++	} else if (has_acpi_companion(dev)) {
++		const struct acpi_device_id *acpi_id;
++
++		acpi_id = acpi_match_device(dwapb_acpi_match, dev);
++		if (acpi_id) {
++			if (acpi_id->driver_data)
++				gpio->flags = acpi_id->driver_data;
++		}
++	}
++
+ 	for (i = 0; i < gpio->nr_ports; i++) {
+ 		err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
+ 		if (err)
+@@ -581,19 +651,6 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id dwapb_of_match[] = {
+-	{ .compatible = "snps,dw-apb-gpio" },
+-	{ /* Sentinel */ }
+-};
+-MODULE_DEVICE_TABLE(of, dwapb_of_match);
+-
+-static const struct acpi_device_id dwapb_acpi_match[] = {
+-	{"HISI0181", 0},
+-	{"APMC0D07", 0},
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int dwapb_gpio_suspend(struct device *dev)
+ {
 -- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+1.9.1
+
