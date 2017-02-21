@@ -1,63 +1,74 @@
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Renesas RZ/A1 pin and gpio controller
-Date: Mon, 20 Feb 2017 18:13:01 +0100
-Message-ID: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from slow1-d.mail.gandi.net ([217.70.178.86]:60379 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752707AbdBTRTu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Feb 2017 12:19:50 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH 03/14] input: utilize new device_add_cdev helper function
+Date: Mon, 20 Feb 2017 22:00:42 -0700
+Message-ID: <1487653253-11497-4-git-send-email-logang@deltatee.com>
+References: <1487653253-11497-1-git-send-email-logang@deltatee.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1487653253-11497-1-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
+List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
+Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
+Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan
+Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tpmdd-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, osd-dev-yNzVSZO3znNg9hUCZPvPmw@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello,
-   this is the first submission of combined GPIO and pin controller driver
-for Renesas RZ/A1 SoC.
+Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+---
+ drivers/input/evdev.c    | 3 +--
+ drivers/input/joydev.c   | 3 +--
+ drivers/input/mousedev.c | 3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-Compared to my RFC series on the same subject, this new implementation
-supports a single SoC. If more devices with a similar pin controller will
-arrive later, we will consider supporting them through this driver.
-
-The series adds the driver itself and register the pincontroller in dtsi.
-The pin controller hardware supports 12 ports, each of them is also a gpio
-controller.
-
-The series makes use of pinctrl and pinmux generic function currently
-available in Linus Walleij's linux-pinctrl.git tree.
-
-Testing done veryfing functionalities of hardware modules enabled in device
-tree (SCIF2 for serial output, RIIC for accessing an internal eeprom chip and
-user visible leds).
-Gpio have been also verified using a i2c-gpio device in place of the native
-RIIC one to access the same eeprom device.
-
-Thanks
-   j
-
-Jacopo Mondi (7):
-  pinctrl: Renesas RZ/A1 pin and gpio controller
-  Documentation: devicetree: bindings: Add RZ/A1 pinctrl binding
-    documentation
-  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-  arm: dts: r7s72100: Add pin controller node
-  arm: dts: genmai: Add SCIF2 pin group
-  arm: dts: genmai: Add RIIC2 pin group
-  arm: dts: genmai: Add user led device nodes
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      |  114 +++
- arch/arm/boot/dts/r7s72100-genmai.dts              |   35 +
- arch/arm/boot/dts/r7s72100.dtsi                    |   81 ++
- drivers/pinctrl/Kconfig                            |   10 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/pinctrl-rza1.c                     | 1026 ++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |   30 +
- 7 files changed, 1297 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index e9ae3d5..a3407ea 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -1416,8 +1416,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+ 		goto err_free_evdev;
+ 
+ 	cdev_init(&evdev->cdev, &evdev_fops);
+-	evdev->cdev.kobj.parent = &evdev->dev.kobj;
+-	error = cdev_add(&evdev->cdev, evdev->dev.devt, 1);
++	error = device_add_cdev(&evdev->dev, &evdev->cdev);
+ 	if (error)
+ 		goto err_unregister_handle;
+ 
+diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
+index abd18f3..012e06f 100644
+--- a/drivers/input/joydev.c
++++ b/drivers/input/joydev.c
+@@ -905,8 +905,7 @@ static int joydev_connect(struct input_handler *handler, struct input_dev *dev,
+ 		goto err_free_joydev;
+ 
+ 	cdev_init(&joydev->cdev, &joydev_fops);
+-	joydev->cdev.kobj.parent = &joydev->dev.kobj;
+-	error = cdev_add(&joydev->cdev, joydev->dev.devt, 1);
++	error = device_add_cdev(&joydev->dev, &joydev->cdev);
+ 	if (error)
+ 		goto err_unregister_handle;
+ 
+diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
+index b604564..efd8666 100644
+--- a/drivers/input/mousedev.c
++++ b/drivers/input/mousedev.c
+@@ -901,8 +901,7 @@ static struct mousedev *mousedev_create(struct input_dev *dev,
+ 	}
+ 
+ 	cdev_init(&mousedev->cdev, &mousedev_fops);
+-	mousedev->cdev.kobj.parent = &mousedev->dev.kobj;
+-	error = cdev_add(&mousedev->cdev, mousedev->dev.devt, 1);
++	error = device_add_cdev(&mousedev->dev, &mousedev->cdev);
+ 	if (error)
+ 		goto err_unregister_handle;
+ 
 -- 
-2.7.4
-
+2.1.4
