@@ -1,149 +1,130 @@
 From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
-Date: Tue, 21 Feb 2017 11:46:03 +0100
-Message-ID: <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
+Subject: Re: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
+Date: Tue, 21 Feb 2017 11:49:08 +0100
+Message-ID: <5e5bb50b-2bfc-15fb-6047-8b94530bef54@jmondi.org>
 References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 Hello,
-     self-review to save you all some time
+     small self-review
 
 On 20/02/2017 18:13, Jacopo Mondi wrote:
-> Add pin controller node with 12 gpio controller sub-nodes to
-> r7s72100 dtsi.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  arch/arm/boot/dts/r7s72100.dtsi | 81 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-> index 3dd427d..a77a431b 100644
-> --- a/arch/arm/boot/dts/r7s72100.dtsi
-> +++ b/arch/arm/boot/dts/r7s72100.dtsi
-> @@ -12,6 +12,7 @@
->  #include <dt-bindings/clock/r7s72100-clock.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
 
-I should move this to the board specific .dts file.
-It's not needed here.
+[snip]
 
->
->  / {
->  	compatible = "renesas,r7s72100";
-> @@ -171,6 +172,86 @@
->  		};
->  	};
->
-> +	pinctrl: pinctrl@fcfe3000 {
-> +		compatible = "renesas,r7s72100-ports";
+> +/**
+> + * rza1_pinctrl_register() - Enumerate pins, ports, gpiochips and functions and
+> + *			     register to pinctrl and gpio cores
+> + *
+> + * @rza1_pctl: RZ/A1 pin controller device
+> + */
+> +static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
+> +{
+> +	int ret;
+> +	unsigned int i;
+> +	struct rza1_port *ports;
+> +	struct pinctrl_pin_desc *pins;
 > +
-> +		#pinctrl-cells = <1>;
+> +	pins = devm_kcalloc(rza1_pctl->dev, RZA1_NPINS, sizeof(*pins),
+> +			    GFP_KERNEL);
+> +	ports = devm_kcalloc(rza1_pctl->dev, RZA1_NPORTS, sizeof(*ports),
+> +			     GFP_KERNEL);
+> +	if (!pins || !ports)
+> +		return -ENOMEM;
 > +
-> +		reg = <0xfcfe3000 0x4248>;
+> +	rza1_pctl->pins		= pins;
+> +	rza1_pctl->desc.pins	= pins;
+> +	rza1_pctl->desc.npins	= RZA1_NPINS;
+> +	rza1_pctl->ports	= ports;
 > +
-> +		port0: gpio@0 {
+> +	for (i = 0; i < RZA1_NPINS; ++i) {
+> +		unsigned int port = RZA1_PIN_TO_PORT(i);
+> +		unsigned int offset = RZA1_PIN_TO_OFFSET(i);
+> +
+> +		pins[i].number = i;
+> +		pins[i].name = kasprintf(GFP_KERNEL, "P%u-%u", port, offset);
+> +
+> +		if (i % RZA1_PINS_PER_PORT == 0) {
+> +			/*
+> +			 * Setup ports;
+> +			 * they provide per-port lock and logical base address.
+> +			 */
+> +			unsigned int port_id = RZA1_PIN_TO_PORT(i);
+> +
+> +			ports[port_id].id = port_id;
+> +			ports[port_id].base = rza1_pctl->base;
+> +			ports[port_id].pins = &pins[i];
+> +			spin_lock_init(&ports[port_id].lock);
+> +		}
+> +	}
+> +
+> +	ret = devm_pinctrl_register_and_init(rza1_pctl->dev, &rza1_pctl->desc,
+> +					     rza1_pctl, &rza1_pctl->pctl);
+> +	if (ret) {
+> +		dev_err(rza1_pctl->dev,
+> +			"RZ/A1 pin controller registration failed\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = rza1_parse_dt(rza1_pctl);
+> +	if (ret) {
+> +		dev_err(rza1_pctl->dev, "RZ/A1 DT parsing failed\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rza1_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +	unsigned int i;
+> +	struct resource *res;
+> +	struct rza1_pinctrl *rza1_pctl;
+> +
+> +	rza1_pctl = devm_kzalloc(&pdev->dev, sizeof(*rza1_pctl), GFP_KERNEL);
+> +	if (!rza1_pctl)
+> +		return -ENOMEM;
+> +
+> +	rza1_pctl->dev = &pdev->dev;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (ret)
+> +		return -ENODEV;
+> +
+> +	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(rza1_pctl->base))
+> +		return PTR_ERR(rza1_pctl->base);
+> +
+> +	mutex_init(&rza1_pctl->mutex);
+> +
+> +	platform_set_drvdata(pdev, rza1_pctl);
+> +
+> +	rza1_pctl->desc.name	= DRIVER_NAME;
+> +	rza1_pctl->desc.pctlops	= &rza1_pinctrl_ops;
+> +	rza1_pctl->desc.pmxops	= &rza1_pinmux_ops;
+> +	rza1_pctl->desc.owner	= THIS_MODULE;
+> +
+> +	ret = rza1_pinctrl_register(rza1_pctl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* register pin control ranges collected while parsing device tree */
+> +	for (i = 0; i < rza1_pctl->ngpiochips; i++)
+> +		pinctrl_add_gpio_range(rza1_pctl->pctl,
+> +				       &rza1_pctl->gpio_ranges[i]);
 
-Geert pointed out offline the if the node has a unit address, it needs a 
-"reg" property.
-I'll change all of these to portX: gpio-X {
-
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 0 16>;
-
-Not all ports have 16 pins available.
-This is one of the differences between different RZ/A1 SoC versions 
-(RZ/A1H, RZ/A1L etc)
-
-I'll change the number of pins to the actual available ones on each port 
-for r7s72100 (RZ/A1H)
+On a second thought, since I do have a "register" function, I should 
+move this loop there.
 
 Thanks
     j
-
-
-> +		};
-> +
-> +		port1: gpio@1 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 16 16>;
-> +		};
-> +
-> +		port2: gpio@2 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 32 16>;
-> +		};
-> +
-> +		port3: gpio@3 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 48 16>;
-> +		};
-> +
-> +		port4: gpio@4 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 64 16>;
-> +		};
-> +
-> +		port5: gpio@5 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 80 16>;
-> +		};
-> +
-> +		port6: gpio@6 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 96 16>;
-> +		};
-> +
-> +		port7: gpio@7 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 112 16>;
-> +		};
-> +
-> +		port8: gpio@8 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 128 16>;
-> +		};
-> +
-> +		port9: gpio@9 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 144 16>;
-> +		};
-> +
-> +		port10: gpio@10 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 160 16>;
-> +		};
-> +
-> +		port11: gpio@11 {
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			gpio-ranges = <&pinctrl 0 176 16>;
-> +		};
-> +	};
-> +
->  	scif0: serial@e8007000 {
->  		compatible = "renesas,scif-r7s72100", "renesas,scif";
->  		reg = <0xe8007000 64>;
->
