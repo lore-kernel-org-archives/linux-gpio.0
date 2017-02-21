@@ -1,130 +1,58 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
-Date: Tue, 21 Feb 2017 11:49:08 +0100
-Message-ID: <5e5bb50b-2bfc-15fb-6047-8b94530bef54@jmondi.org>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v3 01/14] Documentation: dt/bindings: Document
+ pinctrl-ingenic
+Date: Tue, 21 Feb 2017 12:20:10 +0100
+Message-ID: <f19fea79c2616455f5f08070923428cc@crapouillou.net>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170125185207.23902-1-paul@crapouillou.net>
+ <20170125185207.23902-2-paul@crapouillou.net>
+ <20170130203617.hpljtcmzava3rq2n@rob-hp-laptop>
+ <12dc62a7255bd453ff4e5e89f93ebc58@mail.crapouillou.net>
+ <CACRpkdbAgy4sh6NT5DdQD6EQtOZEwevohEA6OGRcVz98yqS52Q@mail.gmail.com>
+ <fd3c507484a9ee34a08c9f92e60624db@mail.crapouillou.net>
+ <CACRpkdbAA33FFrMgx-eZPmpBBfQ_hF+=dSu0hANVthdbadicDg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbAA33FFrMgx-eZPmpBBfQ_hF+=dSu0hANVthdbadicDg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MIPS <linux-mips@linux-mips.org>, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, James Hogan <james.hogan@imgtec.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
-     small self-review
+Le 2017-02-20 14:56, Linus Walleij a écrit :
+> On Thu, Feb 9, 2017 at 6:28 PM, Paul Cercueil <paul@crapouillou.net> 
+> wrote:
+> 
+>> I was thinking that instead of having one pinctrl-ingenic instance 
+>> covering
+>> 0x600 of register space, and 6 instances of gpio-ingenic having 0x100 
+>> each,
+>> I could just have 6 instances of pinctrl-ingenic, each one with an 
+>> instance
+>> of gpio-ingenic declared as a sub-node, each handling just 0x100 of 
+>> memory
+>> space.
+> 
+> My head is spinning,  but I think I get it. What is wrong with the 
+> solution
+> I proposed with one pin control instance covering the whole 0x600 and 
+> with 6
+> subnodes of GPIO?
+> 
+> The GPIO nodes do not even have to have an address range associated 
+> with
+> them you know, that can be distributed out with regmap code accessing
+> the parent regmap.
 
-On 20/02/2017 18:13, Jacopo Mondi wrote:
+OK, but then each GPIO chip 'X' still need to know its offset in the 
+register
+area, which is (pinctrl_base + X * 0x100).
+What's the best way to pass that info to the driver? (I assume it's not 
+with
+a custom DT binding...).
 
-[snip]
-
-> +/**
-> + * rza1_pinctrl_register() - Enumerate pins, ports, gpiochips and functions and
-> + *			     register to pinctrl and gpio cores
-> + *
-> + * @rza1_pctl: RZ/A1 pin controller device
-> + */
-> +static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
-> +{
-> +	int ret;
-> +	unsigned int i;
-> +	struct rza1_port *ports;
-> +	struct pinctrl_pin_desc *pins;
-> +
-> +	pins = devm_kcalloc(rza1_pctl->dev, RZA1_NPINS, sizeof(*pins),
-> +			    GFP_KERNEL);
-> +	ports = devm_kcalloc(rza1_pctl->dev, RZA1_NPORTS, sizeof(*ports),
-> +			     GFP_KERNEL);
-> +	if (!pins || !ports)
-> +		return -ENOMEM;
-> +
-> +	rza1_pctl->pins		= pins;
-> +	rza1_pctl->desc.pins	= pins;
-> +	rza1_pctl->desc.npins	= RZA1_NPINS;
-> +	rza1_pctl->ports	= ports;
-> +
-> +	for (i = 0; i < RZA1_NPINS; ++i) {
-> +		unsigned int port = RZA1_PIN_TO_PORT(i);
-> +		unsigned int offset = RZA1_PIN_TO_OFFSET(i);
-> +
-> +		pins[i].number = i;
-> +		pins[i].name = kasprintf(GFP_KERNEL, "P%u-%u", port, offset);
-> +
-> +		if (i % RZA1_PINS_PER_PORT == 0) {
-> +			/*
-> +			 * Setup ports;
-> +			 * they provide per-port lock and logical base address.
-> +			 */
-> +			unsigned int port_id = RZA1_PIN_TO_PORT(i);
-> +
-> +			ports[port_id].id = port_id;
-> +			ports[port_id].base = rza1_pctl->base;
-> +			ports[port_id].pins = &pins[i];
-> +			spin_lock_init(&ports[port_id].lock);
-> +		}
-> +	}
-> +
-> +	ret = devm_pinctrl_register_and_init(rza1_pctl->dev, &rza1_pctl->desc,
-> +					     rza1_pctl, &rza1_pctl->pctl);
-> +	if (ret) {
-> +		dev_err(rza1_pctl->dev,
-> +			"RZ/A1 pin controller registration failed\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = rza1_parse_dt(rza1_pctl);
-> +	if (ret) {
-> +		dev_err(rza1_pctl->dev, "RZ/A1 DT parsing failed\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int rza1_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +	unsigned int i;
-> +	struct resource *res;
-> +	struct rza1_pinctrl *rza1_pctl;
-> +
-> +	rza1_pctl = devm_kzalloc(&pdev->dev, sizeof(*rza1_pctl), GFP_KERNEL);
-> +	if (!rza1_pctl)
-> +		return -ENOMEM;
-> +
-> +	rza1_pctl->dev = &pdev->dev;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (ret)
-> +		return -ENODEV;
-> +
-> +	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(rza1_pctl->base))
-> +		return PTR_ERR(rza1_pctl->base);
-> +
-> +	mutex_init(&rza1_pctl->mutex);
-> +
-> +	platform_set_drvdata(pdev, rza1_pctl);
-> +
-> +	rza1_pctl->desc.name	= DRIVER_NAME;
-> +	rza1_pctl->desc.pctlops	= &rza1_pinctrl_ops;
-> +	rza1_pctl->desc.pmxops	= &rza1_pinmux_ops;
-> +	rza1_pctl->desc.owner	= THIS_MODULE;
-> +
-> +	ret = rza1_pinctrl_register(rza1_pctl);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* register pin control ranges collected while parsing device tree */
-> +	for (i = 0; i < rza1_pctl->ngpiochips; i++)
-> +		pinctrl_add_gpio_range(rza1_pctl->pctl,
-> +				       &rza1_pctl->gpio_ranges[i]);
-
-On a second thought, since I do have a "register" function, I should 
-move this loop there.
-
-Thanks
-    j
+Regards,
+-Paul
