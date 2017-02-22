@@ -1,49 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2] gpio: return NULL from gpiod_get_optional when
- GPIOLIB is disabled
-Date: Wed, 22 Feb 2017 10:49:13 -0800
-Message-ID: <20170222184913.dvl5vdipm6vnqvw4@sirena.org.uk>
-References: <20170213011355.GA13075@dtor-ws>
- <CACRpkdb+KKKwZEBW0o24KRGmxgSEbf9Op5OL8JK1tVvfvR6pGw@mail.gmail.com>
- <20170222182725.GA24044@dtor-ws>
+From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Subject: Re: Re: [RFC PATCH 4/9] clk: sunxi-ng: support R40 SoC
+Date: Wed, 22 Feb 2017 13:54:58 +0800
+Message-ID: <20170222231738.HXRSmi86@smtp1o.mail.yandex.net>
+Reply-To: icenowy-ymACFijhrKM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sbdpuoyvmrxsn53a"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170222182725.GA24044@dtor-ws>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-sunxi+bncBCZLPFN5Q4OBB2XDW7CQKGQEAK775KA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
 
---sbdpuoyvmrxsn53a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+2017=E5=B9=B42=E6=9C=8822=E6=97=A5 07:03=E4=BA=8E Maxime Ripard <maxime.rip=
+ard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi,=20
+>
+> On Sat, Feb 18, 2017 at 01:37:17AM +0800, Icenowy Zheng wrote:=20
+> > Allwinner R40 SoC have a clock controller module in the style of the=20
+> > SoCs beyond sun6i, however, it's more rich and complex.=20
+> >=20
+> > Add support for it.=20
+> >=20
+> > As the user manual is still not available, this driver is made with=20
+> > knowledge from clk-sun8iw11.c in the BSP kernel source.=20
+>
+> Missing SoB.=20
+>
+> Why are some patches tagged as RFC and some don't?=20
 
-On Wed, Feb 22, 2017 at 10:27:25AM -0800, Dmitry Torokhov wrote:
+There's still no open User Manual for R40, so I tagged CCU-related drivers =
+RFC.
 
-> The point is that they return the same value when regulator is not
-> present and when regulator support is compiled out. GPIOLIB returns NULL
-> and -ENOSYS respectively, and I contend that this is wrong and needs to
-> be resolved first.
+Pinctrl driver can be written with the datasheet draft, which is available =
+now.
 
-FWIW this makes sense to me.
+For USB we have never user manual so everything is educated guess -- so it'=
+s not RFC.
 
---sbdpuoyvmrxsn53a
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Maxime=20
+>
+> --=20
+> Maxime Ripard, Free Electrons=20
+> Embedded Linux and Kernel engineering=20
+> http://free-electrons.com=20
+>
+> --=20
+> You received this message because you are subscribed to the Google Groups=
+ "linux-sunxi" group.=20
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org=20
+> For more options, visit https://groups.google.com/d/optout.=20
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlit3SgACgkQJNaLcl1U
-h9BFJQf/X6ERYY6iPGjZhSyfL9AcnmhrY9CVN0RS0rvCKehCwMlo6PE05n7G3aOV
-e2bGhLT85hQVnRRdYof7LGSPBtihfjYV0gohA+rQZHp+V/dEuAfsUIdtDK2JF+ah
-qo2Z/ynFUs2Pr6hiIn93rplvHeQ1hp190aM5pqaLiQG+Z5LGWSDVmqY6MpjO+y1F
-KNT31sQzCEQe0Fkm7nWuFpq6YmOoL2eNBYTR/O8n98gJ+CwemHDrJcU8gcdSMnQz
-AkGKokOib3A6CL/GoM+OxpLcnkrVVFZGMmgl1Ctqo0jCGy6X/Tq1CofAxV5inOgo
-XEf6rQDg1k2gfIsLkj76Xag3ZQsS2A==
-=OZjV
------END PGP SIGNATURE-----
-
---sbdpuoyvmrxsn53a--
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
