@@ -1,32 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: add get_direction function
-Date: Wed, 22 Feb 2017 16:51:03 +0100
-Message-ID: <CACRpkdbt5LhFMZv=2J_OTt+Y84xqEzS3ZKqOpPFn9ZYCGd1U2g@mail.gmail.com>
-References: <1486768860-18237-1-git-send-email-timur@codeaurora.org>
- <8652c018-4051-5c77-3126-2d41d150518a@codeaurora.org> <51200db0-552b-221d-1e81-f1a3ee286c6c@codeaurora.org>
+From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] gpio: wm831x: Add basic device tree support
+Date: Wed, 22 Feb 2017 16:05:51 +0000
+Message-ID: <20170222160551.GB2742@localhost.localdomain>
+References: <1486984514-29749-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1486984514-29749-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdaHrOTXxjHPHOh78ax7Jv1TuMzsruZfgdb3b+tOHrDhwA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:33944 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932452AbdBVPvF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2017 10:51:05 -0500
-Received: by mail-io0-f169.google.com with SMTP id l66so4660172ioi.1
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Feb 2017 07:51:05 -0800 (PST)
-In-Reply-To: <51200db0-552b-221d-1e81-f1a3ee286c6c@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaHrOTXxjHPHOh78ax7Jv1TuMzsruZfgdb3b+tOHrDhwA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sat, Feb 11, 2017 at 10:32 PM, Timur Tabi <timur@codeaurora.org> wrote:
+On Wed, Feb 22, 2017 at 03:35:26PM +0100, Linus Walleij wrote:
+> On Mon, Feb 13, 2017 at 12:15 PM, Charles Keepax
+> <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> 
+> > Now the wm831x-core has basic DT support we can update this driver to
+> > allow use of the GPIOs within a device tree system.
+> >
+> > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> > ---
+> >
+> > No changes since v1.
+> 
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Is it OK if I merge this separately from the first patch in the series?
+> 
+> Else you need to ask Lee to merge it with my ACK.
 
-> Is it too late for this patch to make the 4.11 merge window, or maybe
-> 4.11-rc2? From the perspective of our server platform, it's a bug fix.
+Afraid these two need to go in together because of a build
+dependency.
 
-Not too late when you put it like that :D
-
-I've merged it for fixes.
-
-Yours,
-Linus Walleij
+Thanks,
+Charles
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
