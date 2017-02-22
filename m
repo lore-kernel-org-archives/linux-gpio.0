@@ -1,49 +1,69 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 07/14] infiniband: utilize new device_add_cdev
- helper function
-Date: Wed, 22 Feb 2017 09:18:04 +0100
-Message-ID: <91c42195-a6a9-e525-43ea-7c44c0204c2c@metafoo.de>
-References: <1487653253-11497-1-git-send-email-logang@deltatee.com>
- <1487653253-11497-8-git-send-email-logang@deltatee.com>
- <20170221190905.GD13138@obsidianresearch.com>
- <c7d34394-a9e8-fc9f-92f5-42c56a73ad1f@deltatee.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Subject: [PATCH v2] gpio: pl061: use all specified IRQs for chained handler
+Date: Wed, 22 Feb 2017 13:30:49 +0100
+Message-ID: <20170222123049.17588-1-alexander.sverdlin@nokia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBCZ4DZNV3IDBB3EUWXCQKGQEB4CBP7Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <c7d34394-a9e8-fc9f-92f5-42c56a73ad1f-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-eopbgr00110.outbound.protection.outlook.com ([40.107.0.110]:28177
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932358AbdBVMbt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Feb 2017 07:31:49 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>, Krzysztof Adamski <krzysztof.adamski@nokia.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, =?UTF-8?q?S=C5=82awomir=20St=C4=99pie=C5=84?= <slawomir.stepien@nokia.com>
 
-On 02/22/2017 12:54 AM, Logan Gunthorpe wrote:
-[...]
->>
->> Ah, this needs more help. Once device_initialize is called put_device
->> should be the error-unwind, can you use something more like this?
-> 
-> Is that true? Once device_register or device_add is called then you need
-> to use put_device. [...]
+There are several implementations of PL061 which lack GPIOINTR signal in
+hardware and only have individual GPIOMIS[7:0] interrupts. It's possible
+to support these variants with minimal changes to the driver just
+requesting all these IRQs for the same chained handler. While the solution
+seems to be suboptimal, this is just a quirk for some particular IPs.
 
-device_initialize() documentation:
+Power Management (wakeup) is not expected to work with these IPs. Only the
+basic GPIO functionality.
 
-	NOTE: Use put_device() to give up your reference instead of freeing
-	@dev directly once you have called this function.
+One in-tree example is arch/arm/boot/dts/axm55xx.dtsi, pl061 instances have
+8 IRQs defined, but current driver supports only the first one, so only one
+pin would work as IRQ trigger.
 
+Reported-by: Sławomir Stępień <slawomir.stepien@nokia.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Cc: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: Sławomir Stępień <slawomir.stepien@nokia.com>
+---
+Changes since v1:
+- Added AMBA_NR_IRQS loop limit
 
+ drivers/gpio/gpio-pl061.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 0a6bfd2b06e5..0e5205a9a924 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -343,8 +343,15 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 		dev_info(&adev->dev, "could not add irqchip\n");
+ 		return ret;
+ 	}
+-	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
+-				     irq, pl061_irq_handler);
++
++	/*
++	 * There are some PL061 implementations which lack GPIOINTR in hardware
++	 * and only have individual GPIOMIS[7:0] signals. The loop below will
++	 * work for both cases, depending on the device tree.
++	 */
++	for (i = 0; adev->irq[i] && (i < AMBA_NR_IRQS); i++)
++		gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
++					     adev->irq[i], pl061_irq_handler);
+ 
+ 	amba_set_drvdata(adev, pl061);
+ 	dev_info(&adev->dev, "PL061 GPIO chip @%pa registered\n",
 -- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+2.11.0
+
