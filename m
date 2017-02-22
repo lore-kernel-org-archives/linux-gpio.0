@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/3] pinctrl: rockchip: Add mux recalculation support
-Date: Wed, 22 Feb 2017 16:02:09 +0100
-Message-ID: <CACRpkdZ0ixTixuBXOXjJjkVg7SKXKm2xzbfa1A_bU3DDNXPjtw@mail.gmail.com>
-References: <1486722229-5451-1-git-send-email-david.wu@rock-chips.com> <1486722229-5451-3-git-send-email-david.wu@rock-chips.com>
+Subject: Re: [PATCH v2 3/3] pinctrl: rockchip: Add rk3328 pinctrl support
+Date: Wed, 22 Feb 2017 16:03:43 +0100
+Message-ID: <CACRpkdawSW6TGtV-zSQdArJ4Z5sBjt6-ZiW3Xxf3KdmC6LL3XA@mail.gmail.com>
+References: <1486722229-5451-1-git-send-email-david.wu@rock-chips.com> <1486722229-5451-4-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f48.google.com ([209.85.214.48]:35192 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932797AbdBVPCL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2017 10:02:11 -0500
-Received: by mail-it0-f48.google.com with SMTP id 203so139793024ith.0
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Feb 2017 07:02:11 -0800 (PST)
-In-Reply-To: <1486722229-5451-3-git-send-email-david.wu@rock-chips.com>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:36489 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932684AbdBVPDp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2017 10:03:45 -0500
+Received: by mail-io0-f171.google.com with SMTP id j13so3569730iod.3
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Feb 2017 07:03:44 -0800 (PST)
+In-Reply-To: <1486722229-5451-4-git-send-email-david.wu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: David Wu <david.wu@rock-chips.com>
@@ -22,19 +22,18 @@ On Fri, Feb 10, 2017 at 11:23 AM, David Wu <david.wu@rock-chips.com> wrote:
 
 > From: "david.wu" <david.wu@rock-chips.com>
 >
-> Some pins are special at a bank so that add
-> IOMUX_RECALCED type to indicate which iomux source
-> of the bank need to be recalculated. If the mux
-> recalculateed callback and IOMUX_RECALCED type
-> were set, recalculate the pins' iomux by using
-> mux recalculated data struct.
+> Note, the iomux of following pins are special, need to
+> be recalculated specially.
+>  - gpio2_b4
+>  - gpio2_b7
+>  - gpio2_c7
 >
 > Signed-off-by: david.wu <david.wu@rock-chips.com>
 > ---
 > change in v2:
->  - reorder the entries of the recalced data struct
+>  - only 3 pins need to be recalculated
 
-Patch applied.
+Patch applied for v4.12.
 
 Yours,
 Linus Walleij
