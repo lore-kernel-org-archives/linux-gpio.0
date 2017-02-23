@@ -1,226 +1,251 @@
 From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH] pinctrl: aspeed: Add initial pinconf support
-Date: Thu, 23 Feb 2017 10:54:22 +1030
-Message-ID: <1487809462.21631.4.camel@aj.id.au>
-References: <20170220143850.10723-1-andrew@aj.id.au>
-         <CACPK8XeXW_YjGkV0S5OJj2b814DA1tT33o-_0ToNvJ7UM4sy7w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: aspeed: Add debounce support
+Date: Thu, 23 Feb 2017 11:28:06 +1030
+Message-ID: <1487811486.21631.6.camel@aj.id.au>
+References: <20170220144004.10809-1-andrew@aj.id.au>
+         <CACPK8XeJ0fgYZbBGcfGGaRsbqfeH5ZUbrHq3PvHE1DhM3fCQxA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-9SRg7tw9xCAtW/JLgjzO"
+        protocol="application/pgp-signature"; boundary="=-XBr89RAjZ9SUPFVBxyu2"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58028 "EHLO
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:47979 "EHLO
         out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932426AbdBWAYc (ORCPT
+        by vger.kernel.org with ESMTP id S932426AbdBWA6N (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Feb 2017 19:24:32 -0500
-In-Reply-To: <CACPK8XeXW_YjGkV0S5OJj2b814DA1tT33o-_0ToNvJ7UM4sy7w@mail.gmail.com>
+        Wed, 22 Feb 2017 19:58:13 -0500
+In-Reply-To: <CACPK8XeJ0fgYZbBGcfGGaRsbqfeH5ZUbrHq3PvHE1DhM3fCQxA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Joel Stanley <joel@jms.id.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 
 
---=-9SRg7tw9xCAtW/JLgjzO
+--=-XBr89RAjZ9SUPFVBxyu2
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-On Wed, 2017-02-22 at 14:09 +1030, Joel Stanley wrote:
-> > On Tue, Feb 21, 2017 at 1:08 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
-:
-> > Several pinconf parameters have a fairly straight-forward mapping onto
-> > the Aspeed pin controller. These include management of pull-down bias,
-> > drive-strength, and some debounce configuration.
-> >=20
-> > Pin biasing largely is managed on a per-GPIO-bank basis, aside from the
-> > ADC and RMII/RGMII pins. As the bias configuration for each pin in a
-> > bank maps onto a single per-bank bit, configuration tables are
-> > introduced to describe the ranges of pins and the supported pinconf
-> > parameter. The use of tables also helps with the sparse support of
-> > pinconf properties, and the fact that not all GPIO banks support
-> > biasing or drive-strength configuration.
-> >=20
-> > Further, as the pin controller uses a consistent approach for bias and
-> > drive strength configuration at the register level, a second table is
-> > defined for looking up the the bit-state required to enable or query th=
-e
-> > provided configuration.
-> >=20
-> > Testing for pinctrl-aspeed-g4 was performed on an OpenPOWER Palmetto
-> > system, and pinctrl-aspeed-g5 on an AST2500EVB. The test method was to
-> > set the appropriate bits via devmem and verify the result through the
-> > controller's pinconf-pins debugfs file. This simultaneously validates
-> > the get() path and half of the set() path. The remainder of the set()
-> > path was validated by configuring a handful of pins via the devicetree
-> > with the supported pinconf properties and verifying the appropriate
-> > registers were touched.
-> >=20
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
->=20
-> Looks good. I assume the bindings are generic and don't need any
-> update for this. Perhaps an update to the example would be helpful.
+T24gV2VkLCAyMDE3LTAyLTIyIGF0IDE0OjQ2ICsxMDMwLCBKb2VsIFN0YW5sZXkgd3JvdGU6Cj4g
+PiBPbiBUdWUsIEZlYiAyMSwgMjAxNyBhdCAxOjEwIEFNLCBBbmRyZXcgSmVmZmVyeSA8YW5kcmV3
+QGFqLmlkLmF1PiB3cm90ZToKPiA+IEVhY2ggR1BJTyBpbiB0aGUgQXNwZWVkIEdQSU8gY29udHJv
+bGxlciBjYW4gY2hvb3NlIG9uZSBvZiBmb3VyIGlucHV0Cj4gPiBkZWJvdW5jZSBzdGF0ZXM6IHRv
+IG5vdCBkZWJvdW5jZSBhbiBpbnB1dCBvciB0byBzZWxlY3QgZnJvbSBvbmUgb2YgdGhyZWUKPiA+
+IHByb2dyYW1tYWJsZSBkZWJvdW5jZSB0aW1lciB2YWx1ZXMuIEVhY2ggR1BJTyBpbiBhIGZvdXIt
+YmFuay1zZXQgaXMKPiA+IGFzc2lnbmVkIG9uZSBiaXQgaW4gZWFjaCBvZiB0d28gZGVib3VuY2Ug
+Y29uZmlndXJhdGlvbiByZWdpc3RlcnMKPiA+IGRlZGljYXRlZCB0byB0aGUgc2V0LCBhbmQgc2Vs
+ZWN0cyBhIGRlYm91bmNlIHN0YXRlIGJ5IGNvbmZpZ3VyaW5nIHRoZQo+ID4gdHdvIGJpdHMgdG8g
+c2VsZWN0IG9uZSBvZiB0aGUgZm91ciBvcHRpb25zLgo+ID4gCj4gPiBUaGUgbGltaXRhdGlvbiBv
+biBkZWJvdW5jZSB0aW1lciB2YWx1ZXMgaXMgbWFuYWdlZCBieSBtYXBwaW5nIG9mZnNldHMKPiA+
+IG9udG8gYSBjb25maWd1cmVkIHRpbWVyIHZhbHVlIGFuZCBrZWVwaW5nIGNvdW50IG9mIHRoZSBu
+dW1iZXIgb2YgdXNlcnMKPiA+IGEgdGltZXIgaGFzLiBUaW1lciB2YWx1ZXMgYXJlIGNvbmZpZ3Vy
+ZWQgb24gYSBmaXJzdC1jb21lLWZpcnN0LXNlcnZlZAo+ID4gYmFzaXMuCj4gPiAKPiA+IEEgc21h
+bGwgdHdpc3QgaW4gdGhlIGhhcmR3YXJlIGRlc2lnbiBpcyB0aGF0IHRoZSBkZWJvdW5jZSBjb25m
+aWd1cmF0aW9uCj4gPiByZWdpc3RlciBudW1iZXJpbmcgaXMgcmV2ZXJzZWQgd2l0aCByZXNwZWN0
+IHRvIHRoZSBiaW5hcnkgcmVwcmVzZW50YXRpb24KPiA+IG9mIHRoZSBkZWJvdW5jZSB0aW1lciBv
+ZiBpbnRlcmVzdCAoaS5lLiBkZWJvdW5jZSByZWdpc3RlciAxIHJlcHJlc2VudHMKPiA+IGJpdCAx
+LCBhbmQgZGVib3VuY2UgcmVnaXN0ZXIgMiByZXByZXNlbnRzIGJpdCAwIG9mIHRoZSB0aW1lciBu
+dW1iZXJpbmcpLgo+ID4gCj4gPiBPcGVuLWRyYWluL29wZW4tc291cmNlIHN1cHBvcnQgYWxzbyBp
+bnRyb2R1Y2VkLCBidXQgbWVyZWx5IGJ5IGRlZmVycmluZwo+ID4gdG8gdGhlIGdwaW9saWIgZW11
+bGF0aW9uIChhcyBwZXIgdGhlIGRhdGFzaGVldCkuCj4gPiAKPiA+IFRlc3RlZCBvbiBhbiBBU1Qy
+NTAwRVZCLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRyZXcgSmVmZmVyeSA8YW5kcmV3QGFq
+LmlkLmF1Pgo+IAo+IFNvbWUgcXVlc3Rpb25zIGJlbG93LiBMb29rcyBnb29kIG92ZXJhbGwuCj4g
+Cj4gPiAtLS0KPiA+IMKgZHJpdmVycy9ncGlvL2dwaW8tYXNwZWVkLmMgfCAyNDQgKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystCj4gPiDCoDEgZmlsZSBjaGFuZ2Vk
+LCAyMzkgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3Bpby9ncGlvLWFzcGVlZC5jIGIvZHJpdmVycy9ncGlvL2dwaW8tYXNwZWVkLmMK
+PiA+IGluZGV4IGZiMTZjYzc3MWMwZC4uMTY0YTc1MjcyMTUxIDEwMDY0NAo+ID4gLS0tIGEvZHJp
+dmVycy9ncGlvL2dwaW8tYXNwZWVkLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9ncGlvLWFzcGVl
+ZC5jCj4gCj4gCj4gPiDCoHN0cnVjdCBhc3BlZWRfZ3BpbyB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKg
+c3RydWN0IGdwaW9fY2hpcCBjaGlwOwo+ID4gwqDCoMKgwqDCoMKgwqDCoHNwaW5sb2NrX3QgbG9j
+azsKPiA+IMKgwqDCoMKgwqDCoMKgwqB2b2lkIF9faW9tZW0gKmJhc2U7Cj4gPiDCoMKgwqDCoMKg
+wqDCoMKgaW50IGlycTsKPiA+IMKgwqDCoMKgwqDCoMKgwqBjb25zdCBzdHJ1Y3QgYXNwZWVkX2dw
+aW9fY29uZmlnICpjb25maWc7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqAvKiBEZWJvdW5jaW5n
+ICovCj4gPiArwqDCoMKgwqDCoMKgwqBERUNMQVJFX0hBU0hUQUJMRShvZmZzZXRfdGltZXIsIDUp
+Owo+IAo+IE9oaCBhIGhhc2ggdGFibGUuIEkndmUgbm90IHNlZW4gb25lIG9mIHRoZXNlIGluIGEg
+ZHJpdmVyIGJlZm9yZSA6KQoKUmlnaHQgLSBzbyB3ZSBoYXZlIHVwIHRvIDIzMi1pc2ggR1BJT3Mg
+KEFTVDI1MDApLCBhbnkgb2Ygd2hpY2ggbWlnaHQKbmVlZCBkZWJvdW5jaW5nLiAgQ2hhbmNlcyBh
+cmUgb25seSBhIGZldyB3aWxsIGV2ZXIgY29uZmlndXJlIGRlYm91bmNpbmcKYW5kIEkgZGlkbid0
+IHdhbnQgdG8gYWxsb2NhdGUgYW4gYXJyYXkgdG8gbWFwIHRoZSBvZmZzZXQgdG8gdGhlIHRpbWVy
+CmluZGV4IGl0IHdhcyB1c2luZy4gCgpIb3dldmVyLCBJIHNob3VsZCBoYXZlIGFjdHVhbGx5IGRv
+bmUgdGhlIGNhbGN1bGF0aW9ucy4KCkFzc3VtaW5nIHdlIGp1c3QgdXNlIHU4cyBmb3IgdGhlIHRp
+bWVyIGluZGV4ZXMgdGhhdCB3b3VsZCBnaXZlIHVzIDIzMgpieXRlcyBpbiB0aGUgbmFpdmUgY2Fz
+ZSBvZiBqdXN0IGFsbG9jYXRpbmcgYSAyMzIgZWxlbWVudCBhcnJheS4KCkEgYnVja2V0IGV4cG9u
+ZW50IDUgb2YgaGVyZSB3aWxsIGdpdmUgdXMgMzIgYnVja2V0cywgd2hpY2ggd2luZCB1cApiZWlu
+ZyBwb2ludGVycyB0byBzdHJ1Y3QgaGxpc3Rfbm9kZS7CoCBUaGlzIHRoZW4gYWxyZWFkeSBjbGFp
+bXMgMTI4CmJ5dGVzIG9mIHNwYWNlIG9uIG91ciAzMmJpdCBBUk0gY2hpcCwgYW5kIGVhY2ggYnVj
+a2V0IGVudHJ5IHdlaWdocyAxNgpieXRlcyBhcyBpdCBzdGFuZHMuIFRoZXJlZm9yZSBpZiBkZWJv
+dW5jZSBpcyBjb25maWd1cmVkIGZvciBvbmx5IDgKZ3Bpb3Mgd2UgcmVhY2ggdGhlIHNwYWNlIHVz
+YWdlIG9mIHRoZSBuYWl2ZSBjYXNlIG9mIGFsbG9jYXRpbmcgMjMyIHU4cy4KCldlIGNvdWxkIGNv
+bXByZXNzIHN0cnVjdCBhc3BlZWRfZGVib3VuY2VfdGltZXIgYSBsaXR0bGUgYml0IGJ5IG1ha2lu
+Zwp0aW1lciBhbmQgb2Zmc2V0IHU4cywgd2hpY2ggZ2l2ZXMgMTAgYnl0ZXMgYW5kIGJ1eXMgdXMg
+YW5vdGhlciA0IGdwaW9zCmJlZm9yZSBoaXR0aW5nIHRoZSBuYWl2ZSBjYXNlIHNpemUsIGJ1dCBJ
+IGRvbid0IHRoaW5rIHRoYXQncyBhIGh1Z2UKd2luLgoKSSB0aGluayBJJ3ZlIHRhbGtlZCBteXNl
+bGYgaW50byBqdXN0IHVzaW5nIHRoZSBuYWl2ZSB1OCBhcnJheSBhcHByb2FjaC4KVGhvdWdodHM/
+Cgo+IAo+ID4gK8KgwqDCoMKgwqDCoMKgdW5zaWduZWQgaW50IHRpbWVyX3VzZXJzWzNdOwo+ID4g
+K8KgwqDCoMKgwqDCoMKgc3RydWN0IGNsayAqY2xrOwo+ID4gwqB9Owo+ID4gCj4gPiArc3RhdGlj
+IGludCBhc3BlZWRfZ3Bpb19zZXRfZGVib3VuY2Uoc3RydWN0IGdwaW9fY2hpcCAqY2hpcCwgdW5z
+aWduZWQgaW50IG9mZnNldCwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdW5zaWduZWQgbG9uZyB1c2VjcykK
+PiA+ICt7Cj4gPiArwqDCoMKgwqDCoMKgwqBjb25zdCBzdHJ1Y3QgYXNwZWVkX2dwaW9fYmFuayAq
+YmFuayA9IHRvX2Jhbmsob2Zmc2V0KTsKPiA+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBhc3BlZWRf
+Z3BpbyAqZ3BpbyA9IGdwaW9jaGlwX2dldF9kYXRhKGNoaXApOwo+ID4gK8KgwqDCoMKgwqDCoMKg
+Y29uc3QgdTMyIG1hc2sgPSBHUElPX0JJVChvZmZzZXQpOwo+ID4gK8KgwqDCoMKgwqDCoMKgdW5z
+aWduZWQgbG9uZyBmbGFnczsKPiA+ICvCoMKgwqDCoMKgwqDCoHZvaWQgX19pb21lbSAqYWRkcjsK
+PiA+ICvCoMKgwqDCoMKgwqDCoHUzMiB2YWw7Cj4gPiArwqDCoMKgwqDCoMKgwqBpbnQgcmM7Cj4g
+PiArCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAoIWhhdmVfZGVib3VuY2UoZ3Bpbywgb2Zmc2V0KSkK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVOT1RTVVBQOwo+ID4g
+Kwo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKHVzZWNzKSB7Cj4gCj4gaWYgKHVzZWNzKSBpcyB0aGUg
+InR1cm4gb24gZGVib3VuY2UiLCBhbmQgdGhlIGVsc2UgaXMgImRpc2FibGUgZGVib3VuY2UiPwoK
+WWVzLgoKPiAKPiBJdCB3b3VsZCBiZSBlYXNpZXIgdG8gcmVhZCBpZiB3ZSBoYWQgYSBlbmFibGVf
+ZGVib3VuY2UgYW5kIGRpc2FibGVfZGVib3VuY2UuCgpTbyB5b3Ugd2FudCBzb21ldGhpbmcgbGlr
+ZToKCiAgICBib29sIGRpc2FibGVfZGVib3VuY2UgPSAodXNlY3MgPT0gMCk7CiAgICBib29sIGVu
+YWJsZV9kZWJvdW5jZSA9ICFkaXNhYmxlX2RlYm91bmNlOwoKICAgIGlmIChlbmFibGVfZGVib3Vu
+Y2UpIHsKICAgICAgICAuLi47CiAgICB9CiAgICBpZiAoZGlzYWJsZV9kZWJvdW5jZSkgewogICAg
+ICAgIC4uLjsKICAgIH0KClRoYXQgc2VlbXMgYSBsaXR0bGUgdmVyYm9zZT8gV2hhdCBhYm91dCBq
+dXN0IGEgY29tbWVudD8gWmVybyBtZWFuaW5nCmRpc2FibGVkIGNhbWUgZnJvbSB0aGUgaW50ZXJm
+YWNlIGRvY3VtZW50YXRpb24uCgo+IAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oHN0cnVjdCBhc3BlZWRfZGVib3VuY2VfdGltZXIgKmR0LCAqbmV3ZHQ7Cj4gCj4gSSB0aG91Z2h0
+IHRoaXMgd2FzIGRldmljZSB0cmVlIGFuZCBnb3QgcmVhbGx5IGNvbmZ1c2VkLiBQZXJoYXBzICd0
+aW1lcicgaW5zdGVhZD8KClN1cmUKCj4gCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgdTMyIHJlcXVlc3RlZF9jeWNsZXM7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgaW50IGk7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyoKPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCogVE9ETzogTG9vayBhdCBpbXByb3Zp
+bmcgdGhlc2U6Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqCj4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIC0gd2UgYWx3YXlzIGRlbGV0ZSB1c2VycyBv
+ZiB0aW1lcnMgZXZlbiBpZiB0aGUgY2FsbCBpcyBmb3IgYQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgKsKgwqDCoGR1cGxpY2F0ZSBkZWJvdW5jZSBwZXJpb2QgZm9yIGFuIG9m
+ZnNldAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKiAtIHdlIGRvbid0IHJl
+dXNlIHN0cnVjdCBhc3BlZWRfZGVib3VuY2VfdGltZXIgYWxsb2NhdGlvbnMgaWYKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCrCoMKgwqB0aGUgb2Zmc2V0IGlzIGFscmVhZHkg
+dXNpbmcgYSB0aW1lcgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKi8KPiA+
+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByYyA9IHVzZWNzX3RvX2N5Y2xl
+cyhncGlvLCB1c2VjcywgJnJlcXVlc3RlZF9jeWNsZXMpOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoGlmIChyYyA8IDApCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiByYzsKPiAKPiBTaG91bGQgdGhpcyBwcm9kdWNlIGEg
+d2FybmluZyAoYXMgeW91IGRvIGJlbG93IHdoZW4gd2UncmUgb3V0IG9mIHRpbWVycyk/CgpBcyBp
+biBkZXZfd2FybigpPyBZZWFoLCB0aGF0IHdvdWxkIHByb2JhYmx5IGJlIGEgZ29vZCBpZGVhLgoK
+PiAKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBuZXdkdCA9IGRldm1f
+a21hbGxvYyhjaGlwLT5wYXJlbnQsIHNpemVvZigqZHQpLCBHRlBfS0VSTkVMKTsKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoIW5ld2R0KQo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVOT01FTTsKPiA+ICsKPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzcGluX2xvY2tfaXJxc2F2ZSgmZ3Bpby0+
+bG9jaywgZmxhZ3MpOwo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8q
+IENoZWNrIGlmIHRoZSBAb2Zmc2V0IGlzIGFscmVhZHkgdXNpbmcgYSB0aW1lciAqLwo+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGhhc2hfZm9yX2VhY2hfcG9zc2libGUoZ3Bpby0+
+b2Zmc2V0X3RpbWVyLCBkdCwgbm9kZSwgb2Zmc2V0KSB7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlmIChvZmZzZXQgPT0gZHQtPm9mZnNldCkgewo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgaGFzaF9kZWwoJmR0LT5ub2RlKTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFdBUk5fT04oIWdwaW8tPnRp
+bWVyX3VzZXJzW2R0LT50aW1lcl0pOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ3Bpby0+dGltZXJfdXNlcnNbZHQtPnRp
+bWVyXS0tOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgZGV2bV9rZnJlZShjaGlwLT5wYXJlbnQsIGR0KTsKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oGJyZWFrOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqB9Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+ID4gKwo+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAqIENoZWNrIGlmIGEgdGltZXIgaXMgYWxyZWFkeSBjb25maWd1cmVkIGZvciB0aGUg
+cmVxdWVzdGVkCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAqIGRlYm91bmNl
+IHBlcmlvZC4gSWYgc28sIGp1c3QgYWRkIEBvZmZzZXQgYXMgYSB1c2VyIG9mIHRoaXMKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCogdGltZXIKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCovCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+Zm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoZGVib3VuY2VfdGltZXJzKTsgaSsrKSB7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHUzMiBjeWNsZXM7
+Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oGFkZHIgPSBncGlvLT5iYXNlICsgZGVib3VuY2VfdGltZXJzW2ldOwo+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjeWNsZXMgPSBpb3JlYWQzMihhZGRy
+KTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgaWYgKHJlcXVlc3RlZF9jeWNsZXMgPT0gY3ljbGVzKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJlYWs7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoC8qIE90aGVyd2lzZSwgYWxsb2NhdGUgYSB0aW1lciAqLwo+IAo+IElz
+ICJvdGhlcndpc2UiIGluIHJlZmVyZW5jZSB0byB0aGUgY2hlY2sgYWJvdmU/IElzIHRoZSBicmVh
+ayBhYm92ZQo+IHN1cHBvc2VkIHRvIGJlIGEgZ290bz8KPiAKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqBpZiAoaSA9PSBBUlJBWV9TSVpFKGRlYm91bmNlX3RpbWVycykpIHsKPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZm9yIChpID0g
+MDsgaSA8IEFSUkFZX1NJWkUoZ3Bpby0+dGltZXJfdXNlcnMpOyBpKyspIHsKPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlm
+IChncGlvLT50aW1lcl91c2Vyc1tpXSA9PSAwKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJy
+ZWFrOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9
+Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oC8qIFdlIGhhdmUgcnVuIG91dCBvZiB0aW1lcnMgKi8KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKGkgPT0gQVJSQVlfU0laRShncGlvLT50aW1l
+cl91c2VycykpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRldl93YXJuKGNoaXAtPnBhcmVudCwKPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIkRlYm91bmNlIHRpbWVycyBleGhhdXN0ZWQs
+IGNhbm5vdCBkZWJvdW5jZSBmb3IgcGVyaW9kICVsdXVzXG4iLAo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1c2Vjcyk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByYyA9IC1FUEVSTTsKPiA+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGdvdG8gZXJyOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqB9Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoC8qIFRpbWVyIHVwZGF0ZSAqLwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBhZGRyID0gZ3Bpby0+YmFzZSArIGRlYm91bmNlX3Rp
+bWVyc1tpXTsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgaW93cml0ZTMyKHJlcXVlc3RlZF9jeWNsZXMsIGFkZHIpOwo+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoH0KPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAvKiBSZWdpc3RlciBAb2Zmc2V0IGFzIGEgdXNlciBvZiB0aW1lciBpICovCj4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgbmV3ZHQtPm9mZnNldCA9IG9mZnNldDsKPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBuZXdkdC0+dGltZXIgPSBpOwo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoGhhc2hfYWRkKGdwaW8tPm9mZnNldF90aW1lciwgJm5ld2R0
+LT5ub2RlLCBvZmZzZXQpOwo+IAo+IEkgZ290IGEgYml0IGxvc3Qgd2l0aCBncGlvLT5vZmZzZXRf
+dGltZXIgYW5kIG9mZnNldC4gSXMgb2Zmc2V0Cj4gcmVmZXJyaW5nIHRvIGEgR1BJTyBwaW4/CgpX
+ZWxsLCB0aGUgaW5kZXggb2YgYSBHUElPIHBpbiBpbiB0aGUgY29udGV4dCBvZiB0aGUgY3VycmVu
+dCBjb250cm9sbGVyLApidXQgeWVzLCBlZmZlY3RpdmVseSBhIEdQSU8gcGluLgoKPiAKPiA+ICsK
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBXQVJOX09OKGdwaW8tPnRpbWVyX3Vz
+ZXJzW2ldID09IFVJTlRfTUFYKTsKPiAKPiBTaG91bGQgd2UganVzdCBiYWlsIG91dCBoZXJlPyBB
+bHNvIHByaW50aW5nIGEgbWVzc2FnZSB0byBzYXkgRGFuZ2VyCj4gV2lsbCBSb2JpbnNvbiB3b3Vs
+ZCBiZSBtb3JlIGluZm9ybWF0aXZlLgoKWWVhaCwgYmFpbGluZyBvdXQgaXMgYSBiZXR0ZXIgbW92
+ZS4gSSdsbCBhbHNvIGFkZCBhIGZvcm1hdHRlZCBtZXNzYWdlLgoKPiAKPiA+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqBncGlvLT50aW1lcl91c2Vyc1tpXSsrOwo+ID4gKwo+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIENvbmZpZ3VyZSBAb2Zmc2V0IHRvIHVzZSB0
+aW1lciBpICovCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYWRkciA9IGJhbmtf
+ZGVib3VuY2VfcmVnKGdwaW8sIGJhbmssIEdQSU9fREVCT1VOQ0VfU0VMMSk7Cj4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdmFsID0gaW9yZWFkMzIoYWRkcik7Cj4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaW93cml0ZTMyKCh2YWwgJiB+bWFzaykgfCBHUElPX1NF
+VF9ERUJPVU5DRTEoaSwgb2Zmc2V0KSwgYWRkcik7Cj4gCj4gSXMgdGhlIG1hc2sgY2xlYXJpbmcg
+dGhlIGJpdCBhbmQgR1BJT19TRVRfREVCT1VOQ0UxIHNldHRpbmcgaXQgYWdhaW4/CgpXZWxsIGl0
+J3Mgbm90IG5lY2Vzc2FyaWx5IHNldHRpbmcgaXQgYWdhaW4uIFRoZSBiaXQgdmFsdWUgZGVwZW5k
+cyBvbgp3aGljaCB0aW1lciB3YXMgc2VsZWN0ZWQuCgo+IAo+IFdlJ3JlIHByZXR0eSBkZWVwIGlu
+IG1hY3JvIGxhbmQgYnkgbm93LgoKVGhlIG1hcHBpbmcgYmV0d2VlbiB0aGUgdGltZXIgaW5kZXgs
+IHRoZSB0aW1lcidzIGNvbmZpZ3VyYXRpb24gdmFsdWUKYW5kIHRoZSByZWdpc3RlciBiaXQgcGF0
+dGVybiBvZiB0aGUgY29uZmlndXJhdGlvbiB2YWx1ZSBpcyBwcmV0dHkKaG9ycmlkLiBCZXR0ZXIg
+dG8gaGlkZSB0aGUgdWdseSBjYWxjdWxhdGlvbiBpbiBhIG1hY3JvIHRoYW4gb3Blbi1jb2Rpbmcg
+Cml0IGhlcmUsIGVzcGVjaWFsbHkgYXMgd2UgbmVlZCB0byBkbyBpdCB0d2ljZSAoYWdhaW4gcmln
+aHQgYmVsb3cpLCBidXQKc2xpZ2h0bHkgZGlmZmVyZW50bHkgZWFjaCB0aW1lLgoKQ2hlZXJzLAoK
+QW5kcmV3Cgo+IAo+ID4gKwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGFkZHIg
+PSBiYW5rX2RlYm91bmNlX3JlZyhncGlvLCBiYW5rLCBHUElPX0RFQk9VTkNFX1NFTDIpOwo+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHZhbCA9IGlvcmVhZDMyKGFkZHIpOwo+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGlvd3JpdGUzMigodmFsICYgfm1hc2spIHwg
+R1BJT19TRVRfREVCT1VOQ0UyKGksIG9mZnNldCksIGFkZHIpOwo+ID4gKwo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmdwaW8tPmxvY2ss
+IGZsYWdzKTs=
 
-Yes, the code makes use of the generic pinconf bindings. It's probably
-best I update the aspeed pinctrl bindings document to explicitly call
-this out.
 
->=20
-> Some minor comments below.
->=20
-> > ---
-> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c | 117 +++++++++++++++-
-> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 153 ++++++++++++++++=
-++++-
-> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c=C2=A0=C2=A0=C2=A0=C2=A0| =
-207 +++++++++++++++++++++++++++++
-> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.h=C2=A0=C2=A0=C2=A0=C2=A0|=
-=C2=A0=C2=A028 ++++
-> > =C2=A04 files changed, 503 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinct=
-rl/aspeed/pinctrl-aspeed-g4.c
-> > index 7de596e2b9d4..3e8625110136 100644
-> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-> > @@ -2234,6 +2234,110 @@ static const struct aspeed_pin_function aspeed_=
-g4_functions[] =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ASPEED_PINCTRL_FUNC(WDT=
-RST2),
-> > =C2=A0};
-> >=20
-> > +static struct aspeed_pin_config aspeed_g4_configs[] =3D {
->=20
-> I think this could be const.
-
-Agreed.
-
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* GPIO banks ranges [A, B],=
- [D, J], [M, R] */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
- { D6,=C2=A0=C2=A0D5=C2=A0=C2=A0}, SCU8C, BIT(16) },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
-=C2=A0=C2=A0=C2=A0{ D6,=C2=A0=C2=A0D5=C2=A0=C2=A0}, SCU8C, BIT(16) },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
- { J21, E18 }, SCU8C, BIT(17) },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
-=C2=A0=C2=A0=C2=A0{ J21, E18 }, SCU8C, BIT(17) },
->=20
-> I didn't verify every definition is correct. I wondered why we skipped
-> bit 18, but it is reserved by the looks.
-
-Yes, 18 is reserved. Banks C, K and Q have Schmitt triggers and aren't
-internally biased.
-
-I don't blame you for not verifying every definition. Luckily enough I
-lost my sanity on the initial pinctrl effort so this was a breeze, but
-using ball numbers vs GPIO numbers does make things harder to verify
-than I'd like. But we already have the ball numbers defined, so that's
-what I chose to live with.
-
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
- { A18, E15 }, SCU8C, BIT(19) },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
-=C2=A0=C2=A0=C2=A0{ A18, E15 }, SCU8C, BIT(19) },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
- { D15, B14 }, SCU8C, BIT(20) },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
-=C2=A0=C2=A0=C2=A0{ D15, B14 }, SCU8C, BIT(20) },
-> > diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinct=
-rl/aspeed/pinctrl-aspeed-g5.c
-> > index 43221a3c7e23..b22523bdd79b 100644
-> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-> > =C2=A0static struct pinmux_ops aspeed_g5_pinmux_ops =3D {
-> > @@ -2308,16 +2450,25 @@ static struct pinctrl_ops aspeed_g5_pinctrl_ops=
- =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.get_group_name =3D asp=
-eed_pinctrl_get_group_name,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.get_group_pins =3D asp=
-eed_pinctrl_get_group_pins,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_dbg_show =3D aspee=
-d_pinctrl_pin_dbg_show,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.dt_node_to_map =3D pinconf_=
-generic_dt_node_to_map_pin,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.dt_node_to_map =3D pinconf_=
-generic_dt_node_to_map_all,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.dt_free_map =3D pinctr=
-l_utils_free_map,
-> > =C2=A0};
-> >=20
-> > +static struct pinconf_ops aspeed_g5_conf_ops =3D {
->=20
-> const here too?
-
-Yep.
-
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.is_generic =3D true,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_get =3D aspeed_p=
-in_config_get,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_set =3D aspeed_p=
-in_config_set,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_group_get =3D as=
-peed_pin_config_group_get,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_group_set =3D as=
-peed_pin_config_group_set,
-> > +};
-> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-> > @@ -514,6 +514,20 @@ struct aspeed_pin_desc {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SIG_EXPR_LIST_DECL_SING=
-LE(gpio, gpio); \
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0MS_PIN_DECL_(pin, SIG_E=
-XPR_LIST_PTR(gpio))
-> >=20
-> > +/**
-> > + * @param The pinconf parameter type
-> > + * @pins The pin range this config struct covers, [low, high]
-> > + * @reg The register housing the configuration bits
-> > + * @mask The mask to select the bits of interest in @reg
-> > + */
-> > +struct aspeed_pin_config {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0enum pin_config_param param;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int pins[2];
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int reg;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 mask;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 value;
->=20
-> Can we save some space by making these smaller types. pins could be
-> u16 at least.
-
-Yeah, no worries. Realistically value could also be smaller as the
-masks are all single bits. This also means we could rename 'mask' to
-'bit' and derive the mask, and make both mask and value a u8.
-
-Thanks for the review.
-
-Andrew
-
->=20
-> > +};
-> > +
---=-9SRg7tw9xCAtW/JLgjzO
+--=-XBr89RAjZ9SUPFVBxyu2
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCgAGBQJYriu2AAoJEJ0dnzgO5LT5M/sQAJIw7pzx0Sc6uWE1wXOaeOT7
-XIPXpvhDVEXdDNrQMSPbp0lYHEn9Mkrz3QrwSdtV+NADi1V1ahrSCFNPEV0urYwI
-hEmiT7rAyfUPuktK4TlAAmIgiz5TkQ8pyWfIF1rP9E5M9ytY+fEQniUgwqXZEH0o
-S1ihuZz8nxT5E+0TVp0kKJx29vHYqxMdCJCAvbx65LeCpsSPog0rFUX8lWi2g2mz
-LOwe3tDJ2qdmad/xkWd8EhN+SJPgg2TsGZPnvBPlNhz5VHeJXpksDKsHWgtne/pM
-siuicEyZHihD0R3Pqe888lz1CJI8MOHFrDSolZHPmFHtEiI4v9rgieMiwe3ifr0W
-w8+suUXXUPlXkSOZk/ORboWVOWzYmY42nymQsXv4KvPGbLwEoco9iHtr5SRvbnrf
-tvNfvvAB00YVrn6YfTS/0xatxdbeqRGOO8sNT257FnpjTdJb/E+4iskQtKVVJOoM
-oyNWKxpZVjIRNi9FFbbeC/E+/PMXH1D6Zcc9mOyw2Mem1WALIdJszmEAqvE31tAr
-AvTxuDJRPEVKXEoctVddaYW3nNWu+z4u6KmI9HLepnNfx7uc0kh8zwTK18vbFrEC
-P/992oC1IYfNywb9VniS/OdGxyY37Q8lFkP1UtBwNQdlLSnjIlKKkOeCAvmdrSWq
-Ip5PZ1Poya+MsI58CXDQ
-=ww1z
+iQIcBAABCgAGBQJYrjOeAAoJEJ0dnzgO5LT5by4P/3GqczREKDEbd04OmPZjr7U+
+10Q/C57aoaNgS8WWzD4oPJGGffSTfi666fvWrcQrMfTzcRCRxqxKatFsxTOPglXR
+4MONQ6tY7MYkfd90kLIg75qpRuW+1nDlK2XvXmLPj0+rUlbWEIhRMo19TlVcYKJE
+rtNy8P+AXmV7fIG0FF1hvx7RZFoeOByplh/hJFnMNFplVUJe4FeUz15JOz/tpCq9
+qNIHml5SC4S53i1gD3ONQpKmzo7Rm3E/ci4+thcAQ4nP5Ou6trkU2hcZjhhXc9u5
+53rDGiZX6bcaMtJWp66PZOdNqLh4A1tHhCM2P5gUcdj0kWcwMqBVKKaXCqSnChF1
+Fz/jNaNc1TwPv+OQBhQfjsqrx+hU38BUh3oYZtgAKgfoAq+X5zjEI1sbWL7QhBWX
+c9aGXuQdr9x6CHyIyTgP0VxPYuliDlblWxS1NkL4YhwAeEX8T+DEcVzicYxOJOkV
+XnUQ/rF/MFBMEOmifbrwLU8+qbcuNNRTHzRM5kopfuFxyDAaQkX2dbxYdZjxdrzH
+2himedV+qVHUrjYoJV3ObkcQQO9gLfGmN+MGbi+Dl1fer+dJoNACv+S9aVMQwF+C
+YK0flUV+h41pOiUxfahc4k284YKczIjpbP6RaMclAfAqIGdZa+uGEj5iXHYwD4BX
+W/N3o0qoS+U6zIaCfeD0
+=j/VH
 -----END PGP SIGNATURE-----
 
---=-9SRg7tw9xCAtW/JLgjzO--
+--=-XBr89RAjZ9SUPFVBxyu2--
 
