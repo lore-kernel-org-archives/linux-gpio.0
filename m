@@ -1,89 +1,59 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] pinctrl: Really force states during suspend/resume
-Date: Thu, 23 Feb 2017 11:23:09 +0100
-Message-ID: <CACRpkda=EhP9a7rGCJPz9fSjGcypxgXh2B-YWXbuCMcPRRwEEQ@mail.gmail.com>
-References: <20170208011759.15478-1-f.fainelli@gmail.com>
+Date: Thu, 23 Feb 2017 11:30:06 +0100
+Message-ID: <CACRpkdaUMGy1s24hsrs0wCr8s7Di_9WSmrsM8is784deChnr9g@mail.gmail.com>
+References: <20170208011759.15478-1-f.fainelli@gmail.com> <CAHp75VejE9ofBBSbKraon96pWDg7a00TJgViS-m6BGO4p0_E8A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:38234 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750891AbdBWKXv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 05:23:51 -0500
-Received: by mail-it0-f50.google.com with SMTP id y135so11075371itc.1
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Feb 2017 02:23:11 -0800 (PST)
-In-Reply-To: <20170208011759.15478-1-f.fainelli@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VejE9ofBBSbKraon96pWDg7a00TJgViS-m6BGO4p0_E8A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Al Cooper <alcooperx@gmail.com>, Stephen Warren <swarren@nvidia.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: alcooperx@gmail.com, Stephen Warren <swarren@nvidia.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Hi Florian, a big sorry for not looking into this earlier, I've been
-having a mess in my inbox... and too much fun with the Gemini
-hehe :)
+On Wed, Feb 8, 2017 at 10:46 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
-On Wed, Feb 8, 2017 at 2:17 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> Btw, I have got similar issue and thinking about those states they are
+> quite orthogonal to the pin states. Wouldn't be better to actually
+> differentiate PM related states and pin states?
 
-> In case a platform only defaults a "default" set of pins, but not a
-> "sleep" set of pins, and this particular platform suspends and resumes
-> in a way that the pin states are not preserved by the hardware, when we
-> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
-> -> pinctrl_select_state() and the first thing we do is check that the
-> pins state is the same as before, and do nothing.
+I don't fully understand what you mean here, but I like the sound
+of it.
+
+"sleep" and "default" were traditionally related to the system
+suspend/resume states. It was suggested that the core handle this
+automatically, but it doesn't work because of things like that
+userspace can disable a TTY/UART and then it should sleep,
+regardless of the state of the system.
+
+Runtime PM "sleep" and "resume" is closer to what we want to
+achieve here, and might be a good integration point.
+(CC:ing Ulf, he's looking into things like this.)
+
+> In my case I have a ->probe() function where device is requested GPIO
+> in order to make it wake capable source without using anywhere else.
+> So, this requires to have "init" state to be defined which is kinda
+> inconvenient.
 >
-> In order to fix this, decouple pinctrl_select_state and make it become
-> __pinctrl_select_state(), taking an additional ignore_state_check
-> boolean which allows us to bypass the state check during suspend/resume,
-> since we really want to re-apply the previous pin states in these case.
+> On resume/suspend it calls pinctrl_pm_state*() and requires "default"
+> and "sleep" states to be defined.
 >
-> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> I think GPIO case is quite generic and pin control framework lacks of
+> something like switching some pins of the group to GPIO state and back
+> whenever they defined as wake capable sources.
 
+I guess by "GPIO state" you are referring to what is discussed in
+Documentation/pinctrl.txt as "GPIO mode pitfalls", i.e. it is not really
+used as a GPIO, but as part of a device functionality it just happens
+that the TRM calls the asynchronous (low power mode) edge detector
+mode "GPIO".
 
->  /**
-> - * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-> + * __pinctrl_select_state() - select/activate/program a pinctrl state to HW
->   * @p: the pinctrl handle for the device that requests configuration
->   * @state: the state handle to select/activate/program
-> + * @force: ignore the state check (e.g: to re-apply default state during
-> + * suspend/resume)
->   */
-> -int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-> +static int __pinctrl_select_state(struct pinctrl *p,
-> +                                 struct pinctrl_state *state,
-> +                                 bool ignore_state_check)
+> I would work towards fixing this issue anyway (to get UART runtime PM
+> working on serial consoles).
 
-OMG no __prefix functions I'm allergic to that :D
-
-Just come up with a new name that describe what this function is
-really doing. I'm picky about syntax matching semantics.
-Name it pinctrl_commit_state() if nothing better comes to mind.
-
->  static void devm_pinctrl_release(struct device *dev, void *res)
-> @@ -1236,7 +1250,8 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
->  int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
->  {
->         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
-> -               return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-> +               return __pinctrl_select_state(pctldev->p,
-> +                                             pctldev->hog_sleep, true);
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-> @@ -1248,7 +1263,8 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
->  int pinctrl_force_default(struct pinctrl_dev *pctldev)
->  {
->         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
-> -               return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-> +               return __pinctrl_select_state(pctldev->p,
-> +                                             pctldev->hog_default, true);
-
-OK makes sense.
-
-If you respin with a better function name I will queue it for fixes.
-
-I guess also CC stable if you have problems with older kernels
-including v4.10 at this point... sorry if I created a mess.
+Everyone would be grateful for that.
 
 Yours,
 Linus Walleij
