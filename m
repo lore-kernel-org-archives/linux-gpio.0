@@ -1,59 +1,41 @@
-From: =?utf-8?B?U8WCYXdvbWlyIFN0xJlwaWXFhCAoTm9raWEgLSBQTC9Xcm9jbGF3KQ==?=
-        <slawomir.stepien@nokia.com>
-Subject: Re: [PATCH v2] gpio: pl061: use all specified IRQs for chained
- handler
-Date: Thu, 23 Feb 2017 13:58:01 +0100
-Message-ID: <20170223125801.GB1488@sstepien>
-References: <20170222123049.17588-1-alexander.sverdlin@nokia.com>
- <CACRpkdZpYzpMDWqJobSYH=JHgB74HbCQihOtexs+sVyo6SRJdA@mail.gmail.com>
- <7e183e70-50e0-61ed-6b33-e691046df725@nokia.com>
- <CACRpkdbO=2PzwFM4RRq4gLSb1OEmfgwkyEeoSRZcB5ya1HBRtg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 0/6] genirq/gpio: Add driver for ThunderX and OCTEON-TX SoCs
+Date: Thu, 23 Feb 2017 14:37:02 +0100
+Message-ID: <CACRpkdYBwnBLzpwjTTZhsC81YOS2DRJ=mJ3GyW3Nn_P5bcSN1A@mail.gmail.com>
+References: <1487206866-4011-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0131.outbound.protection.outlook.com ([104.47.2.131]:51009
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751041AbdBWNRu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Feb 2017 08:17:50 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbO=2PzwFM4RRq4gLSb1OEmfgwkyEeoSRZcB5ya1HBRtg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1487206866-4011-1-git-send-email-david.daney@cavium.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Daney <david.daney@cavium.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>, Marc Zyngier <marc.zyngier@arm.com>, Krzysztof Adamski <krzysztof.adamski@nokia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Feb 23, 2017 10:45, Linus Walleij wrote:
-> On Wed, Feb 22, 2017 at 1:57 PM, Alexander Sverdlin
-> <alexander.sverdlin@nokia.com> wrote:
-> 
-> >> - If the component has 8 IRQ lines, create a hierarchical IRQdomain
-> >>   and chip using a gpiolib core helper.
-> >
-> > This was an option of course, the only this is, PL061 spec says, there is
-> > GPIOINTR and if someone has forgot it, we can support it with a quirk.
-> 
-> I don't know about that. The PL061 manual says:
-> 
-> "The contents of this register are made available externally through the
-> intra-chip (or on-chip) GPIOMIS[7:0] signals."
-> 
-> They don't say why, but it is reasonable to assume that this is an
-> either-or not both-and integration point.
-> 
-> EITHER you route GPIOMIS[7:0] to individual IRQ lines to the CPU
-> OR you route GPIOINTR to the CPU.
+On Thu, Feb 16, 2017 at 2:01 AM, David Daney <david.daney@cavium.com> wrote:
 
-On page 2-10, 2.3.4 you can read:
+> The ThunderX/OCTEON-TX GPIO hardware looks like a PCIe device, with
+> the interrupt signal from each GPIO line being routed to a dedicated
+> MSI-X.  This interrupt routing requires that we add some custom
+> processing to the beginning of the MSI-X irqdomain hierarchy.
+>
+> Changes from v3:
 
-"a single interrupt output GPIOINTR and/or the individual interrupts can be 
-sent to the interrupt controller."
+Hats of for this series.
 
-Also see figure 2-1, 4-2.
+It's just a very genuinely well done piece of engineering.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Does it not says that there are two independent options available?
+For all of the patches.
 
--- 
-Best regards
-Sławomir Stępień
+Once the IRQ portions are fine with the maintainers:
+
+If Marc/Greg want to merge all of it (including the GPIO driver)
+I'm happy for them to do so with my ACK.
+
+Else I can take an immutable branch from the IRQ tree into the
+GPIO tree, or merge all the patches to the GPIO tree with their
+ACKs (if they feel safe about that).
+
+Yours,
+Linus Walleij
