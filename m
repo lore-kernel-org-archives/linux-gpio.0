@@ -1,35 +1,64 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
-Date: Thu, 23 Feb 2017 13:37:03 +0200
-Message-ID: <CAJKOXPdjGaA4yYBsby5pVENos2iQM_zaRxo_19sN2fHt9Jru2Q@mail.gmail.com>
-References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
- <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+From: Marc Pignat <marc@pignat.org>
+Subject: Re: [PATCH] gpio: add NCT5104D gpio driver
+Date: Thu, 23 Feb 2017 13:40:43 +0100
+Message-ID: <b9c62064-9fa3-0666-53ef-b6e1d505feff@pignat.org>
+References: <77f71974-541e-7e06-d37d-c52b9623ed25@pignat.org>
+ <CACRpkdbfOFCWQsytnf0f2ZvBsvHqQ85nk-aKK-zXpr8F=uJ3UQ@mail.gmail.com>
+ <20170222210420.GA15290@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:42531 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751126AbdBWMks (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 07:40:48 -0500
+In-Reply-To: <20170222210420.GA15290@sophia>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 23, 2017 at 12:12 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Some pinctrls share memory regions, and devm_ioremap_resource does not
-> allow to share resources, in opposition to devm_ioremap.
-> This patch restores back usage of devm_ioremap function, but with proper
-> error handling and logging.
->
-> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> v2:
-> - added platform_get_resource error check (thanks to Krzysztof)
->
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
+Dear all,
 
-Thanks for update. Looks good:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thank you for your feedback!
 
-Best regards,
-Krzysztof
+On 02/22/2017 10:04 PM, William Breathitt Gray wrote:
+> On Wed, Feb 22, 2017 at 03:52:05PM +0100, Linus Walleij wrote:
+>> On Thu, Feb 9, 2017 at 11:54 AM, Marc Pignat <marc@pignat.org> wrote:
+...
+>> Please look a bit at drivers/gpio/gpio-it87.c, and gpio-f7188x.c it seems to me
+>> that this is a simlar or identical chip to one of these. In that case,
+
+Looking at gpio-f7188x.c is probably the best feedback.
+
+In fact the patch I proposed is just a copy+modifications of an old version of 
+this file.
+
+So someone (who has put his name in the author field) has copied the gpio-f7188x.c,
+changed something like 20 lines (excluding identifiers renaming) and pushed it to
+github. I took it from github, tested it and passed it through checkpatch.pl and
+proposed it for inclusion into the mainline kernel.
+
+>> you should
+>> augment and extend an existing driver instead of writing a new one.
+
+Sure!
+
+>> But I haven't
+...
+> 
+> This plan would obviously require more time to get right, so if you
+> decide to merge this particular driver now, I suggest at least using the
+> isa_driver idioms for now to ease the transition to a possible future
+> super_io_driver.
+
+super_io_driver seems a good idea, in the meantime, I will try to merge the nct5104
+code into gpio-f7188x.c, without the isa_driver idiom.
+
+Best regards
+
+
+
+Marc
+
