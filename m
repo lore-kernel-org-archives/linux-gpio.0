@@ -1,41 +1,56 @@
-From: Hoan Tran <hotran@apm.com>
-Subject: Re: [PATCH v3] gpio: dwapb: Add support for next generation of X-Gene SoC
-Date: Thu, 23 Feb 2017 09:16:19 -0800
-Message-ID: <CAFHUOYxaqo+potzYFNqFM-sBKvOvapB_8L8MvqOK5xmq93X8Sw@mail.gmail.com>
-References: <1487705563-8054-1-git-send-email-hotran@apm.com> <CACRpkdYEg6gr_qzDPggfcS=qaLc25iQNXTH7Ziq5juBo3Xyq6Q@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
+Date: Thu, 23 Feb 2017 17:23:13 +0000
+Message-ID: <20170223172313.GF2742@localhost.localdomain>
+References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:35508 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751557AbdBWRQU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 12:16:20 -0500
-Received: by mail-ot0-f170.google.com with SMTP id w44so28306169otw.2
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Feb 2017 09:16:20 -0800 (PST)
-In-Reply-To: <CACRpkdYEg6gr_qzDPggfcS=qaLc25iQNXTH7Ziq5juBo3Xyq6Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jamie Iles <jamie@jamieiles.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Feb 23, 2017 at 7:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Feb 21, 2017 at 8:32 PM, Hoan Tran <hotran@apm.com> wrote:
->
->> Next generation of X-Gene SoC's GPIO hardware register map is very
->> similar to DW GPIO. It only differs by a few register addresses.
->> This patch modifies DW GPIO driver to accommodate the difference
->> in a few register addresses.
->>
->> Signed-off-by: Hoan Tran <hotran@apm.com>
->
-> Patch applied for v4.12 with Andy's review tag.
-> Will appear in linux-next after the merge window.
+On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
+> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
+> <ckeepax@opensource.wolfsonmicro.com> wrote:
+> 
+> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
+> > some of its own GPIOs. The driver also uses gpiochip_generic_request
+> > which means that for any GPIO request to succeed the pinctrl needs to be
+> > registered. Currently however the driver registers the GPIO and then the
+> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
+> > the whole driver to fail probe. Fix this up by ensuring we register the
+> > pinctrl first. Although currently there are no users of GPIO hogs in
+> > mainline there are plenty of Samsung based boards that are widely used
+> > for development purposes of other hardware. Indeed we hit this issue
+> > whilst attaching some additional hardware to an Arndale system.
+> >
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >
+> > Changes since v1:
+> >  - Updated commit message
+> 
+> Patch applied. Will not be visible in -next until after the merge window
+> though.
+> 
 
-Thanks, Linus!
+Apologies but I think you might be best to drop this patch for
+now, it seems this causes the ranges passed to
+pinctrl_add_gpio_range to have the wrong .base, whilst I can
+actually see no ill effects from this on Arndale. I suspect this
+patch may be only part of the solution and may potentially cause
+issues for others even though it seems fine for me.
 
-Regards
-Hoan
+It does seem to there is some circular dependancy issues between
+setting up the pinctrl and setting up the gpio which crops up in
+the case of gpio hogs that may be more fundamental.
 
->
-> Yours,
-> Linus Walleij
+Thanks,
+Charles
