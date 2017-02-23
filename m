@@ -1,59 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Really force states during suspend/resume
-Date: Thu, 23 Feb 2017 11:30:06 +0100
-Message-ID: <CACRpkdaUMGy1s24hsrs0wCr8s7Di_9WSmrsM8is784deChnr9g@mail.gmail.com>
-References: <20170208011759.15478-1-f.fainelli@gmail.com> <CAHp75VejE9ofBBSbKraon96pWDg7a00TJgViS-m6BGO4p0_E8A@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
+Date: Thu, 23 Feb 2017 13:37:03 +0200
+Message-ID: <CAJKOXPdjGaA4yYBsby5pVENos2iQM_zaRxo_19sN2fHt9Jru2Q@mail.gmail.com>
+References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
+ <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VejE9ofBBSbKraon96pWDg7a00TJgViS-m6BGO4p0_E8A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Al Cooper <alcooperx@gmail.com>, Stephen Warren <swarren@nvidia.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 8, 2017 at 10:46 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-
-> Btw, I have got similar issue and thinking about those states they are
-> quite orthogonal to the pin states. Wouldn't be better to actually
-> differentiate PM related states and pin states?
-
-I don't fully understand what you mean here, but I like the sound
-of it.
-
-"sleep" and "default" were traditionally related to the system
-suspend/resume states. It was suggested that the core handle this
-automatically, but it doesn't work because of things like that
-userspace can disable a TTY/UART and then it should sleep,
-regardless of the state of the system.
-
-Runtime PM "sleep" and "resume" is closer to what we want to
-achieve here, and might be a good integration point.
-(CC:ing Ulf, he's looking into things like this.)
-
-> In my case I have a ->probe() function where device is requested GPIO
-> in order to make it wake capable source without using anywhere else.
-> So, this requires to have "init" state to be defined which is kinda
-> inconvenient.
+On Thu, Feb 23, 2017 at 12:12 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> Some pinctrls share memory regions, and devm_ioremap_resource does not
+> allow to share resources, in opposition to devm_ioremap.
+> This patch restores back usage of devm_ioremap function, but with proper
+> error handling and logging.
 >
-> On resume/suspend it calls pinctrl_pm_state*() and requires "default"
-> and "sleep" states to be defined.
+> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> v2:
+> - added platform_get_resource error check (thanks to Krzysztof)
 >
-> I think GPIO case is quite generic and pin control framework lacks of
-> something like switching some pins of the group to GPIO state and back
-> whenever they defined as wake capable sources.
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 
-I guess by "GPIO state" you are referring to what is discussed in
-Documentation/pinctrl.txt as "GPIO mode pitfalls", i.e. it is not really
-used as a GPIO, but as part of a device functionality it just happens
-that the TRM calls the asynchronous (low power mode) edge detector
-mode "GPIO".
+Thanks for update. Looks good:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> I would work towards fixing this issue anyway (to get UART runtime PM
-> working on serial consoles).
-
-Everyone would be grateful for that.
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
