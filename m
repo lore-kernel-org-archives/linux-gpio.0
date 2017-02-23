@@ -1,28 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: dwapb: Add support for next generation of X-Gene SoC
-Date: Thu, 23 Feb 2017 16:07:47 +0100
-Message-ID: <CACRpkdYEg6gr_qzDPggfcS=qaLc25iQNXTH7Ziq5juBo3Xyq6Q@mail.gmail.com>
-References: <1487705563-8054-1-git-send-email-hotran@apm.com>
+Subject: Re: [PATCH v2 1/1] gpio: altera: Use handle_level_irq when configured
+ as a level_high
+Date: Thu, 23 Feb 2017 16:10:16 +0100
+Message-ID: <CACRpkdYwqH3tP=VaVr9bv5ttaqfh-PGf1qCJKT+rhwBTKWaz5g@mail.gmail.com>
+References: <1487554905-24714-1-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1487705563-8054-1-git-send-email-hotran@apm.com>
+In-Reply-To: <1487554905-24714-1-git-send-email-preid@electromag.com.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hoan Tran <hotran@apm.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Jamie Iles <jamie@jamieiles.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Loc Ho <lho@apm.com>
+To: Phil Reid <preid@electromag.com.au>
+Cc: Tien Hock Loh <thloh@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Feb 21, 2017 at 8:32 PM, Hoan Tran <hotran@apm.com> wrote:
+On Mon, Feb 20, 2017 at 2:41 AM, Phil Reid <preid@electromag.com.au> wrote:
 
-> Next generation of X-Gene SoC's GPIO hardware register map is very
-> similar to DW GPIO. It only differs by a few register addresses.
-> This patch modifies DW GPIO driver to accommodate the difference
-> in a few register addresses.
+> When a threaded irq handler is chained attached to one of the gpio
+> pins when configure for level irq the altera_gpio_irq_leveL_high_handler
+> does not mask the interrupt while being handled by the chained irq.
+> This resulting in the threaded irq not getting enough cycles to complete
+> quickly enough before the irq was disabled as faulty. handle_level_irq
+> should be used in this situation instead of handle_simple_irq.
 >
-> Signed-off-by: Hoan Tran <hotran@apm.com>
+> In gpiochip_irqchip_add set default handler to handle_bad_irq as
+> per Documentation/gpio/driver.txt. Then set the correct handler in
+> the set_type callback.
+>
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
+> ---
+>
+> Notes:
+>     Change from v1:
+>     - As per hint from Andy.
+>       Set handler to handle_bad_irq in gpiochip_irqchip_add
+>       This is inline with documentation but not what most gpio drivers do.
+>       So I'm guessing this is now the correct way to do things.
 
-Patch applied for v4.12 with Andy's review tag.
-Will appear in linux-next after the merge window.
+Heh I caught up on reviews and in the inbox is already this patch
+that fixes my review comments before I even sent them...
+
+Thanks and patch applied for fixes.
 
 Yours,
 Linus Walleij
