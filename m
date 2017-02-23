@@ -1,343 +1,226 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] gpio: add NCT5104D gpio driver
-Date: Wed, 22 Feb 2017 16:04:20 -0500
-Message-ID: <20170222210420.GA15290@sophia>
-References: <77f71974-541e-7e06-d37d-c52b9623ed25@pignat.org>
- <CACRpkdbfOFCWQsytnf0f2ZvBsvHqQ85nk-aKK-zXpr8F=uJ3UQ@mail.gmail.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH] pinctrl: aspeed: Add initial pinconf support
+Date: Thu, 23 Feb 2017 10:54:22 +1030
+Message-ID: <1487809462.21631.4.camel@aj.id.au>
+References: <20170220143850.10723-1-andrew@aj.id.au>
+         <CACPK8XeXW_YjGkV0S5OJj2b814DA1tT33o-_0ToNvJ7UM4sy7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-9SRg7tw9xCAtW/JLgjzO"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:36524 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754654AbdBVVFx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Feb 2017 16:05:53 -0500
-Received: by mail-yw0-f193.google.com with SMTP id 2so1099764ywn.3
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Feb 2017 13:04:28 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbfOFCWQsytnf0f2ZvBsvHqQ85nk-aKK-zXpr8F=uJ3UQ@mail.gmail.com>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:58028 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932426AbdBWAYc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Feb 2017 19:24:32 -0500
+In-Reply-To: <CACPK8XeXW_YjGkV0S5OJj2b814DA1tT33o-_0ToNvJ7UM4sy7w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Marc Pignat <marc@pignat.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 
-On Wed, Feb 22, 2017 at 03:52:05PM +0100, Linus Walleij wrote:
->On Thu, Feb 9, 2017 at 11:54 AM, Marc Pignat <marc@pignat.org> wrote:
->
->I looped in Bjorn Helgaas to have a look at how this thing probes. Please
->keep him on CC for future reposts.
->
->I'd like William to look at this driver too, he's the authority on
->EISA type cards
->and port-mapped GPIO IO. Please keep him on CC too.
->
->Please look a bit at drivers/gpio/gpio-it87.c, and gpio-f7188x.c it seems to me
->that this is a simlar or identical chip to one of these. In that case,
->you should
->augment and extend an existing driver instead of writing a new one.
->But I haven't
->drilled into the problem and I don't know EISA well enough.
->
 
-Hi Linus,
+--=-9SRg7tw9xCAtW/JLgjzO
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This looks like a Super I/O chip (correct me if I'm mistaken Marc).
-Super I/O chips typically communicate via the LPC bus (which is software
-compatible with the ISA bus) hence the ioport operations.
+On Wed, 2017-02-22 at 14:09 +1030, Joel Stanley wrote:
+> > On Tue, Feb 21, 2017 at 1:08 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
+:
+> > Several pinconf parameters have a fairly straight-forward mapping onto
+> > the Aspeed pin controller. These include management of pull-down bias,
+> > drive-strength, and some debounce configuration.
+> >=20
+> > Pin biasing largely is managed on a per-GPIO-bank basis, aside from the
+> > ADC and RMII/RGMII pins. As the bias configuration for each pin in a
+> > bank maps onto a single per-bank bit, configuration tables are
+> > introduced to describe the ranges of pins and the supported pinconf
+> > parameter. The use of tables also helps with the sparse support of
+> > pinconf properties, and the fact that not all GPIO banks support
+> > biasing or drive-strength configuration.
+> >=20
+> > Further, as the pin controller uses a consistent approach for bias and
+> > drive strength configuration at the register level, a second table is
+> > defined for looking up the the bit-state required to enable or query th=
+e
+> > provided configuration.
+> >=20
+> > Testing for pinctrl-aspeed-g4 was performed on an OpenPOWER Palmetto
+> > system, and pinctrl-aspeed-g5 on an AST2500EVB. The test method was to
+> > set the appropriate bits via devmem and verify the result through the
+> > controller's pinconf-pins debugfs file. This simultaneously validates
+> > the get() path and half of the set() path. The remainder of the set()
+> > path was validated by configuring a handful of pins via the devicetree
+> > with the supported pinconf properties and verifying the appropriate
+> > registers were touched.
+> >=20
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+>=20
+> Looks good. I assume the bindings are generic and don't need any
+> update for this. Perhaps an update to the example would be helpful.
 
-The F7188x and IT87xx drivers handle respective Super I/O chips as well.
-It appears that a lot of code duplication is occurring between these
-three drivers; this makes sense since the functionality would be similar
-between these devices.
+Yes, the code makes use of the generic pinconf bindings. It's probably
+best I update the aspeed pinctrl bindings document to explicitly call
+this out.
 
->> +++ b/drivers/gpio/gpio-nct5104d.c
->> @@ -0,0 +1,438 @@
->> +/*
->> + * GPIO driver for NCT5104D
->> + *
->> + * Author: Tasanakorn Phaipool <tasanakorn@gmail.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/init.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/io.h>
->> +#include <linux/gpio.h>
->
->Use #include <linux/gpio/driver.h> only
->
->> +#define DRVNAME "gpio-nct5104d"
->
->Usually I prefer to just hardcode the string when used.
->
->> +/*
->> + * Super-I/O registers
->> + */
->> +#define SIO_LDSEL              0x07    /* Logical device select */
->> +#define SIO_CHIPID             0x20    /* Chaip ID (2 bytes) */
->> +#define SIO_GPIO_ENABLE                0x30    /* GPIO enable */
->> +#define SIO_GPIO1_MODE         0xE0    /* GPIO1 Mode OpenDrain/Push-Pull */
->> +#define SIO_GPIO2_MODE         0xE1    /* GPIO2 Mode OpenDrain/Push-Pull */
->> +
->> +#define SIO_LD_GPIO            0x07    /* GPIO logical device */
->> +#define SIO_LD_GPIO_MODE       0x0F    /* GPIO mode control device */
->> +#define SIO_UNLOCK_KEY         0x87    /* Key to enable Super-I/O */
->> +#define SIO_LOCK_KEY           0xAA    /* Key to disable Super-I/O */
->> +
->> +#define SIO_NCT5104D_ID                        0x1061  /* Chip ID */
->> +#define SIO_PCENGINES_APU_NCT5104D_ID  0xc452  /* Chip ID */
->> +
->> +enum chips { nct5104d };
->> +
->> +static const char * const nct5104d_names[] = {
->> +       "nct5104d"
->> +};
->
->This enum and name array seems a bit overkill? Are you already planning
->to add support for a bunch of other chips?
->
->> +/*
->> + * GPIO chip.
->> + */
->> +
->> +static int nct5104d_gpio_direction_in(struct gpio_chip *chip,
->> +                                     unsigned int offset);
->> +static int nct5104d_gpio_get(struct gpio_chip *chip, unsigned int offset);
->> +static int nct5104d_gpio_direction_out(struct gpio_chip *chip,
->> +                                      unsigned int offset, int value);
->> +static void nct5104d_gpio_set(struct gpio_chip *chip, unsigned int offset,
->> +                             int value);
->
->Do you really have to forward-declare all this?
->
->I strongly prefer if you move code around so as to avoid it.
->
->> +#define NCT5104D_GPIO_BANK(_base, _ngpio, _regbase)                    \
->> +       {                                                               \
->> +               .chip = {                                               \
->> +                       .label            = DRVNAME,                    \
->> +                       .owner            = THIS_MODULE,                \
->> +                       .direction_input  = nct5104d_gpio_direction_in, \
->> +                       .get              = nct5104d_gpio_get,          \
->> +                       .direction_output = nct5104d_gpio_direction_out,\
->> +                       .set              = nct5104d_gpio_set,          \
->> +                       .base             = _base,                      \
->> +                       .ngpio            = _ngpio,                     \
->> +                       .can_sleep        = true,                       \
->> +               },                                                      \
->> +               .regbase = _regbase,                                    \
->> +       }
->
->Please also implement .get_direction(), it is very helpful to have.
->
->> +static int nct5104d_gpio_direction_in(struct gpio_chip *chip,
->> +                                     unsigned int offset)
->> +{
->> +       int err;
->> +       struct nct5104d_gpio_bank *bank =
->> +               container_of(chip, struct nct5104d_gpio_bank, chip);
->> +       struct nct5104d_sio *sio = bank->data->sio;
->> +       u8 dir;
->> +
->> +       err = superio_enter(sio->addr);
->> +       if (err)
->> +               return err;
->> +       superio_select(sio->addr, SIO_LD_GPIO);
->> +
->> +       dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
->> +       dir |= (1 << offset);
->
->Please use:
->#include <linux/bitops.h>
->
->dir |= BIT(offset);
->
->This applies to all sites using this pattern.
->
->> +               err = gpiochip_add(&bank->chip);
->
->Can you use devm_gpiochip_add_data() (you can pass NULL as data)
->so you do not need the .remove() call below at all?
->
->> +err_gpiochip:
->> +       for (i = i - 1; i >= 0; i--) {
->> +               struct nct5104d_gpio_bank *bank = &data->bank[i];
->> +
->> +               gpiochip_remove(&bank->chip);
->
->Then conversely this needs devm_gpiochip_remove().
->
->> +static int nct5104d_gpio_remove(struct platform_device *pdev)
->
->And this could go away.
->
->> +static int __init nct5104d_find(int addr, struct nct5104d_sio *sio)
->> +{
->> +       int err;
->> +       u16 devid;
->> +       u8 gpio_cfg;
->> +
->> +       err = superio_enter(addr);
->> +       if (err)
->> +               return err;
->> +
->> +       err = -ENODEV;
->> +
->> +       devid = superio_inw(addr, SIO_CHIPID);
->> +       switch (devid) {
->> +       case SIO_NCT5104D_ID:
->> +       case SIO_PCENGINES_APU_NCT5104D_ID:
->> +               sio->type = nct5104d;
->> +               /* enable GPIO0 and GPIO1 */
->> +               superio_select(addr, SIO_LD_GPIO);
->> +               gpio_cfg = superio_inb(addr, SIO_GPIO_ENABLE);
->> +               gpio_cfg |= 0x03;
->> +               superio_outb(addr, SIO_GPIO_ENABLE, gpio_cfg);
->> +               break;
->> +       default:
->> +               pr_info(DRVNAME ": Unsupported device 0x%04x\n", devid);
->> +               goto err;
->> +       }
->> +       sio->addr = addr;
->> +       err = 0;
->> +
->> +       pr_info(DRVNAME ": Found %s at %#x chip id 0x%04x\n",
->> +               nct5104d_names[sio->type],
->> +               (unsigned int) addr,
->> +               (int) superio_inw(addr, SIO_CHIPID));
->> +
->> +       superio_select(sio->addr, SIO_LD_GPIO_MODE);
->> +       superio_outb(sio->addr, SIO_GPIO1_MODE, 0x0);
->> +       superio_outb(sio->addr, SIO_GPIO2_MODE, 0x0);
->> +
->> +err:
->> +       superio_exit(addr);
->> +       return err;
->> +}
->> +
->> +static struct platform_device *nct5104d_gpio_pdev;
->> +
->> +static int __init
->> +nct5104d_gpio_device_add(const struct nct5104d_sio *sio)
->> +{
->> +       int err;
->> +
->> +       nct5104d_gpio_pdev = platform_device_alloc(DRVNAME, -1);
->> +       if (!nct5104d_gpio_pdev)
->> +               pr_err(DRVNAME ": Error platform_device_alloc\n");
->> +       if (!nct5104d_gpio_pdev)
->> +               return -ENOMEM;
->> +
->> +       err = platform_device_add_data(nct5104d_gpio_pdev,
->> +                                      sio, sizeof(*sio));
->> +       if (err) {
->> +               pr_err(DRVNAME "Platform data allocation failed\n");
->> +               goto err;
->> +       }
->> +
->> +       err = platform_device_add(nct5104d_gpio_pdev);
->> +       if (err) {
->> +               pr_err(DRVNAME "Device addition failed\n");
->> +               goto err;
->> +       }
->> +       pr_info(DRVNAME ": Device added\n");
->> +       return 0;
->> +
->> +err:
->> +       platform_device_put(nct5104d_gpio_pdev);
->> +
->> +       return err;
->> +}
->> +
->> +/*
->> + */
->> +
->> +static struct platform_driver nct5104d_gpio_driver = {
->> +       .driver = {
->> +               .owner  = THIS_MODULE,
->> +               .name   = DRVNAME,
->> +       },
->> +       .probe          = nct5104d_gpio_probe,
->> +       .remove         = nct5104d_gpio_remove,
->> +};
->> +
->> +static int __init nct5104d_gpio_init(void)
->> +{
->> +       int err;
->> +       struct nct5104d_sio sio;
->> +
->> +       if (nct5104d_find(0x2e, &sio) &&
->> +           nct5104d_find(0x4e, &sio))
->> +               return -ENODEV;
->> +
->> +       err = platform_driver_register(&nct5104d_gpio_driver);
->> +       if (!err) {
->> +               pr_info(DRVNAME ": platform_driver_register\n");
->> +               err = nct5104d_gpio_device_add(&sio);
->> +               if (err)
->> +                       platform_driver_unregister(&nct5104d_gpio_driver);
->> +       }
->> +
->> +       return err;
->> +}
->> +subsys_initcall(nct5104d_gpio_init);
->> +
->> +static void __exit nct5104d_gpio_exit(void)
->> +{
->> +       platform_device_unregister(nct5104d_gpio_pdev);
->> +       platform_driver_unregister(&nct5104d_gpio_driver);
->> +}
->> +module_exit(nct5104d_gpio_exit);
->
+>=20
+> Some minor comments below.
+>=20
+> > ---
+> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c | 117 +++++++++++++++-
+> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 153 ++++++++++++++++=
+++++-
+> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c=C2=A0=C2=A0=C2=A0=C2=A0| =
+207 +++++++++++++++++++++++++++++
+> > =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.h=C2=A0=C2=A0=C2=A0=C2=A0|=
+=C2=A0=C2=A028 ++++
+> > =C2=A04 files changed, 503 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinct=
+rl/aspeed/pinctrl-aspeed-g4.c
+> > index 7de596e2b9d4..3e8625110136 100644
+> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
+> > @@ -2234,6 +2234,110 @@ static const struct aspeed_pin_function aspeed_=
+g4_functions[] =3D {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ASPEED_PINCTRL_FUNC(WDT=
+RST2),
+> > =C2=A0};
+> >=20
+> > +static struct aspeed_pin_config aspeed_g4_configs[] =3D {
+>=20
+> I think this could be const.
 
-Marc,
+Agreed.
 
-I recommend utilizing the isa_driver since you are interfacing a super
-I/O chip. This should simplify your __init and __exit code by removing
-the need for all those platform_driver setup calls you make; instead you
-would simply call isa_register_driver.
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* GPIO banks ranges [A, B],=
+ [D, J], [M, R] */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
+ { D6,=C2=A0=C2=A0D5=C2=A0=C2=A0}, SCU8C, BIT(16) },
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
+=C2=A0=C2=A0=C2=A0{ D6,=C2=A0=C2=A0D5=C2=A0=C2=A0}, SCU8C, BIT(16) },
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
+ { J21, E18 }, SCU8C, BIT(17) },
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
+=C2=A0=C2=A0=C2=A0{ J21, E18 }, SCU8C, BIT(17) },
+>=20
+> I didn't verify every definition is correct. I wondered why we skipped
+> bit 18, but it is reserved by the looks.
 
-Check out the respective __init, __exit, probe, and remove code in
-drivers/watchdog/ebc-c384_wdt.c file a simple example of how to use the
-isa_driver calls. If you need more specific help, let me know and I'll
-go into more detail.
+Yes, 18 is reserved. Banks C, K and Q have Schmitt triggers and aren't
+internally biased.
 
->I'm not thrilled by this "plug-and-play" that seems very far from autodetection.
->
+I don't blame you for not verifying every definition. Luckily enough I
+lost my sanity on the initial pinctrl effort so this was a breeze, but
+using ball numbers vs GPIO numbers does make things harder to verify
+than I'd like. But we already have the ball numbers defined, so that's
+what I chose to live with.
 
-Linus,
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
+ { A18, E15 }, SCU8C, BIT(19) },
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
+=C2=A0=C2=A0=C2=A0{ A18, E15 }, SCU8C, BIT(19) },
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_PULL_DOWN,=
+ { D15, B14 }, SCU8C, BIT(20) },
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ PIN_CONFIG_BIAS_DISABLE,=
+=C2=A0=C2=A0=C2=A0{ D15, B14 }, SCU8C, BIT(20) },
+> > diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinct=
+rl/aspeed/pinctrl-aspeed-g5.c
+> > index 43221a3c7e23..b22523bdd79b 100644
+> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
+> > =C2=A0static struct pinmux_ops aspeed_g5_pinmux_ops =3D {
+> > @@ -2308,16 +2450,25 @@ static struct pinctrl_ops aspeed_g5_pinctrl_ops=
+ =3D {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.get_group_name =3D asp=
+eed_pinctrl_get_group_name,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.get_group_pins =3D asp=
+eed_pinctrl_get_group_pins,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_dbg_show =3D aspee=
+d_pinctrl_pin_dbg_show,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.dt_node_to_map =3D pinconf_=
+generic_dt_node_to_map_pin,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.dt_node_to_map =3D pinconf_=
+generic_dt_node_to_map_all,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.dt_free_map =3D pinctr=
+l_utils_free_map,
+> > =C2=A0};
+> >=20
+> > +static struct pinconf_ops aspeed_g5_conf_ops =3D {
+>=20
+> const here too?
 
-I believe the best course of action forward would be the development of
-a "super_io_driver" to handle the detection of these type of devices.
-Super I/O chips typically have a ioport base address at 0x2E; this is
-why you see all of these Super I/O chip drivers probing that address.
+Yep.
 
-Since device IDs can be found at the standard Super I/O base address, it
-would be useful to have a super_io_driver structure with an id_table
-member filled with possible device IDs of devices supported by the
-respective driver. I imagine that this would enable automatic driver
-loads and device probes such as we have with the PCI bus driver, where a
-super_io_driver structure can be populated by the driver author and then
-passed to a super_io_register_driver call.
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.is_generic =3D true,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_get =3D aspeed_p=
+in_config_get,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_set =3D aspeed_p=
+in_config_set,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_group_get =3D as=
+peed_pin_config_group_get,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0.pin_config_group_set =3D as=
+peed_pin_config_group_set,
+> > +};
+> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
+> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
+> > @@ -514,6 +514,20 @@ struct aspeed_pin_desc {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SIG_EXPR_LIST_DECL_SING=
+LE(gpio, gpio); \
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0MS_PIN_DECL_(pin, SIG_E=
+XPR_LIST_PTR(gpio))
+> >=20
+> > +/**
+> > + * @param The pinconf parameter type
+> > + * @pins The pin range this config struct covers, [low, high]
+> > + * @reg The register housing the configuration bits
+> > + * @mask The mask to select the bits of interest in @reg
+> > + */
+> > +struct aspeed_pin_config {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0enum pin_config_param param;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int pins[2];
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int reg;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 mask;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 value;
+>=20
+> Can we save some space by making these smaller types. pins could be
+> u16 at least.
 
-Furthermore, a Super I/O driver could provide the common read/write
-operations we see across the existing Super I/O drivers, thus
-eliminating the code duplication (superio_outb, superio_inw, etc. become
-standardized).
+Yeah, no worries. Realistically value could also be smaller as the
+masks are all single bits. This also means we could rename 'mask' to
+'bit' and derive the mask, and make both mask and value a u8.
 
-This plan would obviously require more time to get right, so if you
-decide to merge this particular driver now, I suggest at least using the
-isa_driver idioms for now to ease the transition to a possible future
-super_io_driver.
+Thanks for the review.
 
-William Breathitt Gray
+Andrew
 
->I need help reviewing this from someone who knows how to deal with
->this kind of platform drivers on port-mapped I/O.
->
->Yours,
->Linus Walleij
+>=20
+> > +};
+> > +
+--=-9SRg7tw9xCAtW/JLgjzO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJYriu2AAoJEJ0dnzgO5LT5M/sQAJIw7pzx0Sc6uWE1wXOaeOT7
+XIPXpvhDVEXdDNrQMSPbp0lYHEn9Mkrz3QrwSdtV+NADi1V1ahrSCFNPEV0urYwI
+hEmiT7rAyfUPuktK4TlAAmIgiz5TkQ8pyWfIF1rP9E5M9ytY+fEQniUgwqXZEH0o
+S1ihuZz8nxT5E+0TVp0kKJx29vHYqxMdCJCAvbx65LeCpsSPog0rFUX8lWi2g2mz
+LOwe3tDJ2qdmad/xkWd8EhN+SJPgg2TsGZPnvBPlNhz5VHeJXpksDKsHWgtne/pM
+siuicEyZHihD0R3Pqe888lz1CJI8MOHFrDSolZHPmFHtEiI4v9rgieMiwe3ifr0W
+w8+suUXXUPlXkSOZk/ORboWVOWzYmY42nymQsXv4KvPGbLwEoco9iHtr5SRvbnrf
+tvNfvvAB00YVrn6YfTS/0xatxdbeqRGOO8sNT257FnpjTdJb/E+4iskQtKVVJOoM
+oyNWKxpZVjIRNi9FFbbeC/E+/PMXH1D6Zcc9mOyw2Mem1WALIdJszmEAqvE31tAr
+AvTxuDJRPEVKXEoctVddaYW3nNWu+z4u6KmI9HLepnNfx7uc0kh8zwTK18vbFrEC
+P/992oC1IYfNywb9VniS/OdGxyY37Q8lFkP1UtBwNQdlLSnjIlKKkOeCAvmdrSWq
+Ip5PZ1Poya+MsI58CXDQ
+=ww1z
+-----END PGP SIGNATURE-----
+
+--=-9SRg7tw9xCAtW/JLgjzO--
+
