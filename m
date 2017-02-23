@@ -1,49 +1,89 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
-Date: Thu, 23 Feb 2017 11:15:56 +0100
-Message-ID: <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
-References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
- <2809087.MHZWQWdaOC@phil> <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
+Subject: Re: [PATCH] pinctrl: Really force states during suspend/resume
+Date: Thu, 23 Feb 2017 11:23:09 +0100
+Message-ID: <CACRpkda=EhP9a7rGCJPz9fSjGcypxgXh2B-YWXbuCMcPRRwEEQ@mail.gmail.com>
+References: <20170208011759.15478-1-f.fainelli@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Shawn Lin <shawn.lin@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:38234 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750891AbdBWKXv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 05:23:51 -0500
+Received: by mail-it0-f50.google.com with SMTP id y135so11075371itc.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Feb 2017 02:23:11 -0800 (PST)
+In-Reply-To: <20170208011759.15478-1-f.fainelli@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: alcooperx@gmail.com, Stephen Warren <swarren@nvidia.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On Tue, Feb 14, 2017 at 1:44 AM, Andy Yan <andy.yan@rock-chips.com> wrote:
-> Hi Heiko & Rob:
-> On 2017=E5=B9=B402=E6=9C=8813=E6=97=A5 20:51, Heiko Stuebner wrote:
->>
->> Hi Andy,
->>
->> Am Montag, 13. Februar 2017, 18:59:26 CET schrieb Andy Yan:
->>>
->>> Rockchip finally named this soc as RV1108, so change
->>> RK1108/rk1108 to RV1108/rv1108 for compatible.
->>
->> renaming existing bindings (that have been in multiple kernel versions
->> already) always is a hot topic. So I'll be hoping for Rob to give a
->> go-ahead
->> for it :-) .
->>
->> Just to confirm, the rk1108/rv1108 is completely new to the market, so
->> we're
->> not breaking any existing devices, right?
+Hi Florian, a big sorry for not looking into this earlier, I've been
+having a mess in my inbox... and too much fun with the Gemini
+hehe :)
+
+On Wed, Feb 8, 2017 at 2:17 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+
+> In case a platform only defaults a "default" set of pins, but not a
+> "sleep" set of pins, and this particular platform suspends and resumes
+> in a way that the pin states are not preserved by the hardware, when we
+> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+> -> pinctrl_select_state() and the first thing we do is check that the
+> pins state is the same as before, and do nothing.
 >
+> In order to fix this, decouple pinctrl_select_state and make it become
+> __pinctrl_select_state(), taking an additional ignore_state_check
+> boolean which allows us to bypass the state check during suspend/resume,
+> since we really want to re-apply the previous pin states in these case.
 >
->     Yes, the 1108 Soc is completely new to market, this change will not
-> breaking any existing devices.
+> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Nobody gets hurt. Just rename everything to avoid confusion.
-Just my =E2=82=AC0.01.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>  /**
+> - * pinctrl_select_state() - select/activate/program a pinctrl state to HW
+> + * __pinctrl_select_state() - select/activate/program a pinctrl state to HW
+>   * @p: the pinctrl handle for the device that requests configuration
+>   * @state: the state handle to select/activate/program
+> + * @force: ignore the state check (e.g: to re-apply default state during
+> + * suspend/resume)
+>   */
+> -int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
+> +static int __pinctrl_select_state(struct pinctrl *p,
+> +                                 struct pinctrl_state *state,
+> +                                 bool ignore_state_check)
 
-Tell me if I can merge a subset of the patches to the pinctrl tree.
+OMG no __prefix functions I'm allergic to that :D
+
+Just come up with a new name that describe what this function is
+really doing. I'm picky about syntax matching semantics.
+Name it pinctrl_commit_state() if nothing better comes to mind.
+
+>  static void devm_pinctrl_release(struct device *dev, void *res)
+> @@ -1236,7 +1250,8 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
+>  int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
+>  {
+>         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
+> -               return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
+> +               return __pinctrl_select_state(pctldev->p,
+> +                                             pctldev->hog_sleep, true);
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+> @@ -1248,7 +1263,8 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+>  int pinctrl_force_default(struct pinctrl_dev *pctldev)
+>  {
+>         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
+> -               return pinctrl_select_state(pctldev->p, pctldev->hog_default);
+> +               return __pinctrl_select_state(pctldev->p,
+> +                                             pctldev->hog_default, true);
+
+OK makes sense.
+
+If you respin with a better function name I will queue it for fixes.
+
+I guess also CC stable if you have problems with older kernels
+including v4.10 at this point... sorry if I created a mess.
 
 Yours,
 Linus Walleij
