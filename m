@@ -1,53 +1,33 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2] pinctrl: samsung: Fix memory mapping code
-Date: Thu, 23 Feb 2017 11:12:40 +0100
-Message-ID: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
-References: <20170222170202.heu35anyoziwv23n@kozik-lap>
- <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20170222170202.heu35anyoziwv23n@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: altera-a10sr: Set gpio_chip parent property
+Date: Thu, 23 Feb 2017 11:14:24 +0100
+Message-ID: <CACRpkdZVNNnNQsmNDWpAen_eJyvY+Bqp8LTbV4QbCVrps4fqdg@mail.gmail.com>
+References: <1487015398-4603-1-git-send-email-thor.thayer@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:36305 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbdBWKOb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 05:14:31 -0500
+Received: by mail-it0-f42.google.com with SMTP id h10so160820968ith.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Feb 2017 02:14:31 -0800 (PST)
+In-Reply-To: <1487015398-4603-1-git-send-email-thor.thayer@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: thor.thayer@linux.intel.com
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Some pinctrls share memory regions, and devm_ioremap_resource does not
-allow to share resources, in opposition to devm_ioremap.
-This patch restores back usage of devm_ioremap function, but with proper
-error handling and logging.
+On Mon, Feb 13, 2017 at 8:49 PM,  <thor.thayer@linux.intel.com> wrote:
 
-Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-v2:
-- added platform_get_resource error check (thanks to Krzysztof)
+> From: Thor Thayer <thor.thayer@linux.intel.com>
+>
+> Set the gpio_chip parent property since some recent functions
+> such as devprop_gpiochip_set_names() can use it.
+>
+> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
 
- drivers/pinctrl/samsung/pinctrl-samsung.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+Patch applied for fixes.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index f9ddba7..d7aa22c 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -988,9 +988,16 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 
- 	for (i = 0; i < ctrl->nr_ext_resources + 1; i++) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		virt_base[i] = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(virt_base[i]))
--			return ERR_CAST(virt_base[i]);
-+		if (!res) {
-+			dev_err(&pdev->dev, "failed to get mem%d resource\n", i);
-+			return ERR_PTR(-EINVAL);
-+		}
-+		virt_base[i] = devm_ioremap(&pdev->dev, res->start,
-+						resource_size(res));
-+		if (!virt_base[i]) {
-+			dev_err(&pdev->dev, "failed to ioremap %pR\n", res);
-+			return ERR_PTR(-EIO);
-+		}
- 	}
- 
- 	bank = d->pin_banks;
--- 
-2.7.4
+Yours,
+Linus Walleij
