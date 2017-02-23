@@ -1,66 +1,94 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: pl061: use all specified IRQs for chained handler
-Date: Thu, 23 Feb 2017 10:45:00 +0100
-Message-ID: <CACRpkdbO=2PzwFM4RRq4gLSb1OEmfgwkyEeoSRZcB5ya1HBRtg@mail.gmail.com>
-References: <20170222123049.17588-1-alexander.sverdlin@nokia.com>
- <CACRpkdZpYzpMDWqJobSYH=JHgB74HbCQihOtexs+sVyo6SRJdA@mail.gmail.com> <7e183e70-50e0-61ed-6b33-e691046df725@nokia.com>
+Subject: Re: [PATCH v3 01/14] Documentation: dt/bindings: Document pinctrl-ingenic
+Date: Thu, 23 Feb 2017 10:59:14 +0100
+Message-ID: <CACRpkdYiA157afJW2hnJzRgWOT02pCuU5rPCdHC-G5qb-FrxQA@mail.gmail.com>
+References: <27071da2f01d48141e8ac3dfaa13255d@mail.crapouillou.net>
+ <20170125185207.23902-1-paul@crapouillou.net> <20170125185207.23902-2-paul@crapouillou.net>
+ <20170130203617.hpljtcmzava3rq2n@rob-hp-laptop> <12dc62a7255bd453ff4e5e89f93ebc58@mail.crapouillou.net>
+ <CACRpkdbAgy4sh6NT5DdQD6EQtOZEwevohEA6OGRcVz98yqS52Q@mail.gmail.com>
+ <fd3c507484a9ee34a08c9f92e60624db@mail.crapouillou.net> <CACRpkdbAA33FFrMgx-eZPmpBBfQ_hF+=dSu0hANVthdbadicDg@mail.gmail.com>
+ <f19fea79c2616455f5f08070923428cc@crapouillou.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:37799 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbdBWJqC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 04:46:02 -0500
-Received: by mail-it0-f49.google.com with SMTP id 203so10132948ith.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Feb 2017 01:45:02 -0800 (PST)
-In-Reply-To: <7e183e70-50e0-61ed-6b33-e691046df725@nokia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <f19fea79c2616455f5f08070923428cc@crapouillou.net>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Ulf Hansson <ulf.hansson@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, linux-pwm@vger.ker
 List-Id: linux-gpio@vger.kernel.org
-To: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Krzysztof Adamski <krzysztof.adamski@nokia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?B?U8WCYXdvbWlyIFN0xJlwaWXFhA==?= <slawomir.stepien@nokia.com>
 
-On Wed, Feb 22, 2017 at 1:57 PM, Alexander Sverdlin
-<alexander.sverdlin@nokia.com> wrote:
-
->> - If the component has 8 IRQ lines, create a hierarchical IRQdomain
->>   and chip using a gpiolib core helper.
+On Tue, Feb 21, 2017 at 12:20 PM, Paul Cercueil <paul@crapouillou.net> wrot=
+e:
+> Le 2017-02-20 14:56, Linus Walleij a =C3=A9crit :
+>>
+>> On Thu, Feb 9, 2017 at 6:28 PM, Paul Cercueil <paul@crapouillou.net>
+>> wrote:
+>>
+>>> I was thinking that instead of having one pinctrl-ingenic instance
+>>> covering
+>>> 0x600 of register space, and 6 instances of gpio-ingenic having 0x100
+>>> each,
+>>> I could just have 6 instances of pinctrl-ingenic, each one with an
+>>> instance
+>>> of gpio-ingenic declared as a sub-node, each handling just 0x100 of
+>>> memory
+>>> space.
+>>
+>>
+>> My head is spinning,  but I think I get it. What is wrong with the
+>> solution
+>> I proposed with one pin control instance covering the whole 0x600 and wi=
+th
+>> 6
+>> subnodes of GPIO?
+>>
+>> The GPIO nodes do not even have to have an address range associated with
+>> them you know, that can be distributed out with regmap code accessing
+>> the parent regmap.
 >
-> This was an option of course, the only this is, PL061 spec says, there is
-> GPIOINTR and if someone has forgot it, we can support it with a quirk.
-
-I don't know about that. The PL061 manual says:
-
-"The contents of this register are made available externally through the
-intra-chip (or on-chip) GPIOMIS[7:0] signals."
-
-They don't say why, but it is reasonable to assume that this is an
-either-or not both-and integration point.
-
-EITHER you route GPIOMIS[7:0] to individual IRQ lines to the CPU
-OR you route GPIOINTR to the CPU.
-
-The first approach is in a sense more efficient, because you do not
-need a second level read to figure out what IRQ was fired.
-
-> It's not specified to work this way at all, so why spend any resources
-> and add second implementation to the driver?
-
-It's not specified at all how it's supposed to work. But can you really
-see any other reason to make both GPIOMIS[7:0] and GPIOINTR
-available that what I describe above?
-
->> - If not 1 or 8 lines, bail out with an error.
 >
-> Well, I'd divide it into "1" and "!= 1" cases... Who knows, maybe
-> only 4 GPIOs will be implemented...
+> OK, but then each GPIO chip 'X' still need to know its offset in the
+> register
+> area, which is (pinctrl_base + X * 0x100).
+> What's the best way to pass that info to the driver? (I assume it's not w=
+ith
+> a custom DT binding...).
 
-If you mean that the hardware engineer only route 4 of the signals,
-then the ngpio property of the device tree node must be specified.
-That is exactly what that property is for, see:
-Documentation/devicetree/bindings/gpio/gpio.txt
+I do not really understand what driver you are referring to.
 
-If that is not specified, it should be 1 using GPIOINTR, 8 and
-using GPIOMIS[7:0] or error.
+If the pin controller node is overarching and spawning children for
+the gpiochips, you use the design pattern from MFD to pass data
+from parents to children, e.g.:
+
+#include <linux/regmap.h>
+
+pinctrl driver:
+     struct regmap_config mapconf =3D {
+                .reg_bits =3D 32,
+                .val_bits =3D 32,
+                .reg_stride =3D 4,
+     };
+    struct regmap *map;
+
+    map =3D regmap_init_mmio(dev, base, &mapconf);
+    if (IS_ERR(map))
+          ....
+    dev_set_drvdata(dev, map);
+    of_populate_children(dev,)..
+    (can also use platform_device_add_data() or "simple-bus" etc)
+
+gpio subdrivers:
+     struct regmap *map;
+
+     map =3D dev_get_drvdata(dev->parent);
+
+There are examples of drivers passing more complex things to
+their children than a regmap, just put some struct in a <linux/*/*.h>
+file and pass it with drvdata as per above.
+
+PS i2c_set_drvdata(), platform_set_drvdata() are just aliases
+for dev_set_drvdata().
 
 Yours,
 Linus Walleij
