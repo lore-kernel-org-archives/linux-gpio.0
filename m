@@ -1,34 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] tools/gpio: Add .gitignore file
-Date: Thu, 23 Feb 2017 16:26:09 +0100
-Message-ID: <CACRpkdZua-XU4qvoY_MFkWu9tV3Ay+ZcgBSm6cCV75XvzBtu9w@mail.gmail.com>
-References: <1487599261-19584-1-git-send-email-prarit@redhat.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v1 1/2] pinctrl: =?UTF-8?B?cm9ja2NoaXDvvJpBZGQ=?= input schmitt support
+Date: Thu, 23 Feb 2017 17:51:41 +0100
+Message-ID: <48027259.fqOrTqXNdI@phil>
+References: <1487068541-14120-1-git-send-email-david.wu@rock-chips.com> <1487068541-14120-2-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:37328 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751169AbdBWP1A (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Feb 2017 10:27:00 -0500
-Received: by mail-it0-f47.google.com with SMTP id 203so3120096ith.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Feb 2017 07:26:13 -0800 (PST)
-In-Reply-To: <1487599261-19584-1-git-send-email-prarit@redhat.com>
+Received: from gloria.sntech.de ([95.129.55.99]:42982 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbdBWQwH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 23 Feb 2017 11:52:07 -0500
+In-Reply-To: <1487068541-14120-2-git-send-email-david.wu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Prarit Bhargava <prarit@redhat.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: David Wu <david.wu@rock-chips.com>
+Cc: linus.walleij@linaro.org, huangtao@rock-chips.com, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 20, 2017 at 3:01 PM, Prarit Bhargava <prarit@redhat.com> wrote:
+Hi David,
 
-> Add .gitignore file for untracked files in tools/gpio.
->
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
+Am Dienstag, 14. Februar 2017, 18:35:40 CET schrieb David Wu:
+> From: "david.wu" <david.wu@rock-chips.com>
+> 
+> To prevent external noise crosstalk, some pins need to
+> enable input schmitt, like i2c pins, 32k-input pin and so on.
+> 
+> Signed-off-by: david.wu <david.wu@rock-chips.com>
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 69
+> ++++++++++++++++++++++++++++++++++++++ 1 file changed, 69 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> b/drivers/pinctrl/pinctrl-rockchip.c index a20ce9f..6a071b1 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -308,6 +308,9 @@ struct rockchip_pin_ctrl {
+>  				    int *reg, u8 *bit);
+>  	void	(*iomux_recalc)(u8 bank_num, int pin, int *reg,
+>  				u8 *bit, int *mask);
+> +	void	(*schmitt_calc_reg)(struct rockchip_pin_bank *bank,
+> +				    int pin_num, struct regmap **regmap,
+> +				    int *reg, u8 *bit);
+>  };
+> 
+>  struct rockchip_pin_config {
+> @@ -1355,6 +1358,53 @@ static int rockchip_set_pull(struct rockchip_pin_bank
+> *bank, return ret;
+>  }
+> 
+> +static int rockchip_get_schmitt(struct rockchip_pin_bank *bank, int
+> pin_num) +{
+> +	struct rockchip_pinctrl *info = bank->drvdata;
+> +	struct rockchip_pin_ctrl *ctrl = info->ctrl;
+> +	struct regmap *regmap;
+> +	int reg, ret;
+> +	u8 bit;
+> +	u32 data;
+> +
+> +	ctrl->schmitt_calc_reg(bank, pin_num, &regmap, &reg, &bit);
 
-We already have a patch like this in the upstream kernel.
+we might want to have and check an actual return value here.
+On things like the rk3288 only some special pins have these schmitt triggers 
+it seems, so we might want to abort if something tries to access an 
+unsupported one.
 
-As discussed the include/ is wrong I think it should not even be there...
+> +
+> +	ret = regmap_read(regmap, reg, &data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data >>= bit;
+> +	return data & 0x1;
 
-Yours,
-Linus Walleij
+The mask seems to also be variable, for example on the rk3399 there seem to be 
+multiple "levels" for at least gpio2. So your calc-callback might want to also 
+set the right mask.
+
+Otherwise looks good.
+
+
+Heiko
+
