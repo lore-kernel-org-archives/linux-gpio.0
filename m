@@ -1,135 +1,107 @@
-From: Dong Aisheng <dongas86@gmail.com>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-Date: Fri, 24 Feb 2017 17:02:12 +0800
-Message-ID: <CAA+hA=SnrGo62=XAQCTjmsS0tQTB097JhVXFSQU8RDak3hA1Rg@mail.gmail.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com>
- <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+From: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+Subject: [PATCH v2 13/16] rapidio: utilize new cdev_device_add helper function
+Date: Sat, 25 Feb 2017 23:38:14 -0700
+Message-ID: <1488091097-12328-14-git-send-email-logang@deltatee.com>
+References: <1488091097-12328-1-git-send-email-logang@deltatee.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bai Ping <ping.bai@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Jacky Bai <jacky.baip@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawnguo@kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <1488091097-12328-1-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
+List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
+Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
+Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgTGludXMKCkdlbnRseSBQaW5nLi4uCgpBbnkgZmVlZGJhY2sgYWJvdXQgdGhlIHByb3Bvc2Fs
-PwoKUmVnYXJkcwpEb25nIEFpc2hlbmcKCk9uIFRodSwgRmViIDE2LCAyMDE3IGF0IDM6NTEgUE0s
-IERvbmcgQWlzaGVuZyA8ZG9uZ2FzODZAZ21haWwuY29tPiB3cm90ZToKPiBIaSBMaW51cywKPgo+
-IE9uIFR1ZSwgRGVjIDI3LCAyMDE2IGF0IDg6NTkgUE0sIExpbnVzIFdhbGxlaWogPGxpbnVzLndh
-bGxlaWpAbGluYXJvLm9yZz4gd3JvdGU6Cj4+IE9uIFR1ZSwgRGVjIDI3LCAyMDE2IGF0IDEwOjQ3
-IEFNLCBCYWkgUGluZyA8cGluZy5iYWlAbnhwLmNvbT4gd3JvdGU6Cj4+Cj4+PiBBZGQgcGluY3Ry
-bCBiaW5kaW5nIGRvYyB1cGRhdGUgZm9yIGlteDZzbGwuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTog
-QmFpIFBpbmcgPHBpbmcuYmFpQG54cC5jb20+Cj4+Cj4+IEkgaGF2ZSB0byBwdXNoIGJhY2sgb24g
-dGhpcyBhIGJpdC4KPj4KPj4+ICtQbGVhc2UgcmVmZXIgdG8gZnNsLGlteC1waW5jdHJsLnR4dCBp
-biB0aGlzIGRpcmVjdG9yeSBmb3IgY29tbW9uIGJpbmRpbmcgcGFydAo+Pj4gK2FuZCB1c2FnZS4K
-Pj4KPj4gSSB1bmRlcnN0YW5kIHRoYXQgaXQgaXMgYnVpbGRpbmcgb24gdG9wIG9mIHRoZSBvbGQg
-aS5NWCBiaW5kaW5ncyBhbmQgdGhhdAo+PiBpdCBoYXMgc29tZSBraW5kIG9mICJ0cmFkaXRpb24i
-IGNvbWluZyB3aXRoIGl0Lgo+Pgo+PiBBdCB0aGUgc2FtZSB0aW1lLCB0aGUgaS5NWCBiaW5kaW5n
-cyBjYW1lIGFib3V0IGJlZm9yZSB3ZSBoYWQgdGhlCj4+IGdlbmVyaWMgcGluIGNvbnRyb2wgYmlu
-ZGluZ3MgZGVmaW5lZC4KPj4KPj4+ICtDT05GSUcgYml0cyBkZWZpbml0aW9uOgo+Pj4gK1BBRF9D
-VExfTFZFICAgICAgICAgICAgICAgICAgICAoMSA8PCAyMikKPj4+ICtQQURfQ1RMX0hZUyAgICAg
-ICAgICAgICAgICAgICAgICgxIDw8IDE2KQo+Pj4gK1BBRF9DVExfUFVTXzEwMEtfRE9XTiAgICAg
-ICAgICAgKDAgPDwgMTQpCj4+PiArUEFEX0NUTF9QVVNfNDdLX1VQICAgICAgICAgICAgICAoMSA8
-PCAxNCkKPj4+ICtQQURfQ1RMX1BVU18xMDBLX1VQICAgICAgICAgICAgICgyIDw8IDE0KQo+Pj4g
-K1BBRF9DVExfUFVTXzIyS19VUCAgICAgICAgICAgICAgKDMgPDwgMTQpCj4+PiArUEFEX0NUTF9Q
-VUUgICAgICAgICAgICAgICAgICAgICAoMSA8PCAxMykKPj4+ICtQQURfQ1RMX1BLRSAgICAgICAg
-ICAgICAgICAgICAgICgxIDw8IDEyKQo+Pj4gK1BBRF9DVExfT0RFICAgICAgICAgICAgICAgICAg
-ICAgKDEgPDwgMTEpCj4+PiArUEFEX0NUTF9TUEVFRF9MT1cgICAgICAgICAgICAgICAoMCA8PCA2
-KQo+Pj4gK1BBRF9DVExfU1BFRURfTUVEICAgICAgICAgICAgICAgKDEgPDwgNikKPj4+ICtQQURf
-Q1RMX1NQRUVEX0hJR0ggICAgICAgICAgICAgICgzIDw8IDYpCj4+PiArUEFEX0NUTF9EU0VfRElT
-QUJMRSAgICAgICAgICAgICAoMCA8PCAzKQo+Pj4gK1BBRF9DVExfRFNFXzI2MG9obSAgICAgICAg
-ICAgICAgKDEgPDwgMykKPj4+ICtQQURfQ1RMX0RTRV8xMzBvaG0gICAgICAgICAgICAgICgyIDw8
-IDMpCj4+PiArUEFEX0NUTF9EU0VfODdvaG0gICAgICAgICAgICAgICAoMyA8PCAzKQo+Pj4gK1BB
-RF9DVExfRFNFXzY1b2htICAgICAgICAgICAgICAgKDQgPDwgMykKPj4+ICtQQURfQ1RMX0RTRV81
-Mm9obSAgICAgICAgICAgICAgICg1IDw8IDMpCj4+PiArUEFEX0NUTF9EU0VfNDNvaG0gICAgICAg
-ICAgICAgICAoNiA8PCAzKQo+Pj4gK1BBRF9DVExfRFNFXzM3b2htICAgICAgICAgICAgICAgKDcg
-PDwgMykKPj4+ICtQQURfQ1RMX1NSRV9GQVNUICAgICAgICAgICAgICAgICgxIDw8IDApCj4+PiAr
-UEFEX0NUTF9TUkVfU0xPVyAgICAgICAgICAgICAgICAoMCA8PCAwKQo+Pgo+PiBBIHdob2xlIHNs
-ZXcgb2YgdGhlc2UgaWYgbm90IGFsbCBjb3JyZXNwb25kIHRvIHRoZSBnZW5lcmljIGJpbmRpbmdz
-Lgo+Pgo+PiBJIHdvdWxkIGNvbnNpZGVyIGF1Z21lbnRpbmcgdGhlIGNvZGUgaW4gdGhlIGRyaXZl
-ciB0byBoYW5kbGUgdGhlIGdlbmVyaWMKPj4gYmluZGluZ3MgKmluIGFkZGl0aW9uKiB0byB0aGUg
-b2xkIGxlZ2FjeSBiaW5kaW5ncywgYW5kIHVzZSB0aG9zZSBvdmVyIHRoZXNlCj4+IHJhbmRvbSBj
-dXN0b20gYml0cy4KPj4KPj4gUmVhZCBkcml2ZXJzIHVzaW5nIENPTkZJR19HRU5FUklDX1BJTkNP
-TkYgYXMgYW4gaW5zcGlyYXRpb24uCj4+Cj4+IEZvciBleGFtcGxlIHNlZSBjb21taXQKPj4gY2Vm
-YmYxYTFiMjk1MzFhOTcwYmMyOTA4YTUwYTc1ZDY0NzRmY2MzOAo+PiAicGluY3RybDogc3VueGk6
-IFN1cHBvcnQgZ2VuZXJpYyBiaW5kaW5nIgo+PiBmcm9tIE1heGltZSBSaXBhcmQsIHdoZXJlIGhl
-IGRvZXMgYSBzaW1pbGFyIHRoaW5nIGZvciBzdW54aS4KPj4KPgo+IEZpcnN0IHRoYW5rcyBmb3Ig
-eW91ciBnb29kIHN1Z2dlc3Rpb24hCj4KPiBBbGwgd2UgcmVhbGl6ZWQgdGhhdCB0aGUgcmF3IGRh
-dGEgb2YgSU1YIHBhZCBjb25maWcgaW4gZHRzIGlzIG5vdCBnb29kLgo+IGUuZy4KPiBwaW5jdHJs
-X2Vjc3BpMzogZWNzcGkzZ3JwIHsKPiAgICAgICAgIGZzbCxwaW5zID0gPAo+ICAgICAgICAgICAg
-ICAgICBNWDdEX1BBRF9TQUkyX1RYX1NZTkNfX0VDU1BJM19NSVNPICAgICAgMHgxNzA1OQo+ICAg
-ICAgICAgLi4uLi4uLi4uCj4KPiBJIGRpZCBhIGRlZXAgZmVhc2liaWxpdHkgYW5hbHlzaXMgdGhl
-c2UgZGF5cyBvbiB0aGUgbWlncmF0aW5nIHRvIGdlbmVyaWMKPiBwaW5jdHJsIGJpbmRpbmcgeW91
-IHJlZmVycmVkLiBJdCBpcyByZWdyZXR0YWJseSB0aGF0IGl0IG1heSBub3QgYmUgc28gc3VpdGFi
-bGUKPiBmb3IgSU1YIHRvIGZ1bGx5IG1pZ3JhdGUgcmlnaHQgbm93Lgo+Cj4gR2VuZXJpYyBiaW5k
-aW5nIG9ubHkgc3VwcG9ydHMgcGFyc2luZyBzdHJpbmdzIGZvciBwaW5zIGFuZCBmdW5jdGlvbgo+
-IGZyb20gZHRzIHJpZ2h0IG5vdywgdGhhdCBtZWFucyB3ZSBuZWVkIGJhY2sgdG8gdGhlIG9sZCB3
-YXkgb2YgaGFyZGNvZGluZwo+IGFsbCByZWdpc3RlciBiaXRzIGluIGRyaXZlciB3aGljaCB3ZSBh
-Y3R1YWxseSBjaG9zZSB0byBtb3ZlIG91dCBzaW5jZQo+IHRoZSBjb21taXQgImUxNjQxNTMgcGlu
-Y3RybDogaW14OiBtb3ZlIGhhcmQtY29kaW5nIGRhdGEgaW50byBkZXZpY2UgdHJlZSIuCj4KPiBB
-bmQgSU1YIGRvZXNuJ3QgaGF2ZSBQQUQgR1JPVVAgaW4gSFcsIGVhY2ggcGFkIHRoZW9yZXRpY2Fs
-bHkgY2FuIGJlIG11eGVkCj4gYXMgOCBzaW5nbGUgZnVuY3Rpb25zLgo+IGUuZy4KPiBGb3IgSU9N
-VVhDX1NXX01VWF9DVExfUEFEX0NTSV9EQVRBMDcKPiBNVVhfTU9ERSBNVVggTW9kZSBTZWxlY3Qg
-RmllbGQuCj4gU2VsZWN0IDEgb2YgOCBpb211eCBtb2RlcyB0byBiZSB1c2VkIGZvciBwYWQ6IENT
-SV9EQVRBMDcuCj4gMDAwIEFMVDAg4oCUIFNlbGVjdCBzaWduYWwgQ1NJMV9EQVRBMDkuCj4gMDAx
-IEFMVDEg4oCUIFNlbGVjdCBzaWduYWwgRVNBSV9UWDNfUlgyLgo+IDAxMCBBTFQyIOKAlCBTZWxl
-Y3Qgc2lnbmFsIEkyQzRfU0RBLgo+IDAxMSBBTFQzIOKAlCBTZWxlY3Qgc2lnbmFsIEtQUF9ST1c3
-Lgo+IDEwMCBBTFQ0IOKAlCBTZWxlY3Qgc2lnbmFsIFVBUlQ2X0NUU19CLgo+IDEwMSBBTFQ1IOKA
-lCBTZWxlY3Qgc2lnbmFsIEdQSU8xX0lPMjEuCj4gMTEwIEFMVDYg4oCUIFNlbGVjdCBzaWduYWwg
-RUlNX0RBVEExNi4KPiAxMTEgQUxUNyDigJQgU2VsZWN0IHNpZ25hbCBEQ0lDMV9PVVQuCj4gQnkg
-Y29udmVydGluZyB0byBnZW5lcmljIGJpbmRpbmcsIHdlIG5lZWQgY29uc3RydWN0IGEgaHVnZSBm
-dW5jdGlvbi9ncm91cCBtYXAKPiBpbiBkcml2ZXIgZm9yIGh1bmRyZWRzIG9mIHBhZHMgZm9yIGVh
-Y2ggU29DLiBUaGF0IGlzIGEgYml0IGZlYXIgdG8gdXMuCj4KPiBDdXJyZW50IElNWCBtZXRob2Qg
-b25seSBnZW5lcmF0ZXMgdGhlIHVzZWQgZnVuY3Rpb24vZ3JvdXBzIGR5bmFtaWNhbGx5Cj4gYnkg
-cGFyc2luZyBib2FyZCBkdHMgd2hpY2ggaXMgbXVjaCBhIGxpZ2h0ZXIgd2F5Lgo+Cj4gQnV0IG9m
-IGNvdXJzZSwgd2Ugd2FudCB0byBmaXggdGhlIHJhdyBjb25maWcgdmFsdWUgaXNzdWUgYXMgd2Vs
-bCB3aGljaCBpcwo+IHVuLW1haW50YWluYWJsZSBhbmQgdW4tcmVhZGFibGUgYXMgeW91IHBvaW50
-ZWQgb3V0Lgo+Cj4gSSB0aGluayB0aGVyZSBtaWdodCBiZSB0d28gb3B0aW9ucyBmb3IgdXMgdG8g
-Z286Cj4gT25lIG9wdGlvbiBpcyB1c2luZyBtYWNybyBkZWZpbml0aW9ucyBpbnN0ZWFkIG9mIHJh
-dyBkYXRhIGFzIHBpbmN0cmwtc2luZ2xlCj4gdXNlcnMgYXMgT01BUC4KPiBlLmcuCj4gYXJ0Ml9w
-aW5zOiBwaW5tdXhfdWFydDJfcGlucyB7Cj4gICAgICAgICBwaW5jdHJsLXNpbmdsZSxwaW5zID0g
-PAo+ICAgICAgICAgICAgICAgICBPTUFQNF9JT1BBRCgweDExOCwgUElOX0lOUFVUX1BVTExVUCB8
-IE1VWF9NT0RFMCkKPiAgLyogdWFydDJfY3RzLnVhcnQyX2N0cyAqLwo+ICAgICAgICAgLi4uLi4u
-Li4KPgo+IEZvciB0aGlzIHdheSwgbm8gZHJpdmVyIGNoYW5nZXMgcmVxdWlyZWQsIGp1c3QgcmVw
-bGFjZSB0aGUgcmF3IGRhdGEgYnkgbWFjcm8KPiBpbiBkZXZpY2UgdHJlZS4gQnV0IGkgd29uZGVy
-IHRoaXMgbWF5IG5vdCBiZSB5b3VyIG9yaWdpbmFsIGludGVudGlvbiBhbHRob3VnaAo+IGl0J3Mg
-dGhlIGVhc2llc3Qgd2F5IGZvciB1cy4KPiBBbnl3YXksIGlmIHlvdSBhZ3JlZSwgd2UgcHJvYmFi
-bHkgd291bGQgcHJlZmVyIHRoaXMgd2F5Lgo+Cj4gQW5vdGhlciBvcHRpb24gaXMgcGFydGlhbGx5
-IGNvbnZlcnQgdG8gZ2VuZXJpYyBiaW5kaW5nIGZvciBvbmx5IHBhZAo+IGNvbmZpZ3VyYXRpb24K
-PiBwYXJ0LiBlLmcuCj4gcGluY3RybF91c2RoYzE6IHVzZGhjMWdycCB7Cj4gICAgICAgICBmc2ws
-cGlucyA9IDwKPiAgICAgICAgICAgICAgICAgTVg3RF9QQURfU0QxX0NNRF9fU0QxX0NNRAo+ICAg
-ICAgICAgICAgICAgICBNWDdEX1BBRF9TRDFfQ0xLX19TRDFfQ0xLCj4gICAgICAgICAgICAgICAg
-IE1YN0RfUEFEX1NEMV9EQVRBMF9fU0QxX0RBVEEwCj4gICAgICAgICAgICAgICAgIC4uLgo+ICAg
-ICAgICAgPjsKPiAgICAgICAgIGJpYXMtcHVsbC11cCA9IDw0N0tPSE0+Owo+ICAgICAgICAgZHJp
-dmUtc3RyZW5ndGggPSA8MTMwT0hNPjsKPiAgICAgICAgIHNsZXctcmF0ZSA9IDxGQVNUPjsKPiAg
-ICAgICAgIHNwZWVkID0gPDUwTUhaPjsKPiAgICAgICAgIC4uLi4KPiB9Owo+IChTb21lIG9mIHRo
-ZSBwcm9wZXJ0eSBzdGlsbCBub3Qgc3VwcG9ydGVkIG9yIG5vdCB0aGUgc2FtZSBhcyBnZW5lcmlj
-Cj4gYmluZGluZyByaWdodCBub3cpCj4KPiBUaGlzIHdheSByZXF1aXJlcyBubyBiaWcgZHJpdmVy
-cyBjaGFuZ2VzIGFuZCBvbmx5IGV4dGVuZCB0aGUgZHJpdmVyCj4gdG8gc3VwcG9ydCB0aGUgZ2Vu
-ZXJpYyBwaW5jdHJsIGR0IGNvbmZpZ3VyYXRpb24gcHJvcGVydGllcy4KPgo+IEFuZCBpdCBhbHNv
-IGZpeCB0aGUgcmF3IGRhdGEgaXNzdWVzIGFuZCBsb29rcyBsaWtlIG1vcmUgYXBwbGljYWJsZSB0
-aGFuIHRoZSBmdWxsCj4gbWlncmF0aW9uLgo+Cj4gU28gd291bGQgeW91IGJlIHdpbGxpbmcgdG8g
-YWNjZXB0IGl0Pwo+Cj4gQW5vdGhlciBwb3RlbnRpYWwgYmVuZWZpdHMgZm9yIHRoaXMgd2F5IGlz
-IHRoYXQgd2UgbWF5IGNhbiB1c2UgUENPTkZEVU1QCj4gdG8gZHVtcCBhIG1vcmUgcmVhZGFibGUg
-ZGF0YSBmcm9tIHBpbmN0cmwgZGVidWcgc3lzdGVtLgo+Cj4+IFlvdXJzLAo+PiBMaW51cyBXYWxs
-ZWlqCj4+IC0tCj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
-ICJ1bnN1YnNjcmliZSBsaW51eC1jbGsiIGluCj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBt
-YWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6
-Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Cj4gUmVnYXJkcwo+IERvbmcg
-QWlzaGVuZwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-bGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGlu
-dXgtYXJtLWtlcm5lbAo=
+This driver did not originally set kobj.parent so it likely had
+potential a use after free bug which this patch fixes.
+
+We convert from device_register to device_initialize/cdev_device_add.
+While we are at it we use put_device instead of kfree (as recommended
+by the device_initialize documentation). We also remove an unnecessary
+extra get_device from the code.
+
+Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+---
+ drivers/rapidio/devices/rio_mport_cdev.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index 9013a58..b8165e9 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -2445,31 +2445,25 @@ static struct mport_dev *mport_cdev_add(struct rio_mport *mport)
+ 	mutex_init(&md->buf_mutex);
+ 	mutex_init(&md->file_mutex);
+ 	INIT_LIST_HEAD(&md->file_list);
+-	cdev_init(&md->cdev, &mport_fops);
+-	md->cdev.owner = THIS_MODULE;
+-	ret = cdev_add(&md->cdev, MKDEV(MAJOR(dev_number), mport->id), 1);
+-	if (ret < 0) {
+-		kfree(md);
+-		rmcd_error("Unable to register a device, err=%d", ret);
+-		return NULL;
+-	}
+ 
+-	md->dev.devt = md->cdev.dev;
++	device_initialize(&md->dev);
++	md->dev.devt = MKDEV(MAJOR(dev_number), mport->id);
+ 	md->dev.class = dev_class;
+ 	md->dev.parent = &mport->dev;
+ 	md->dev.release = mport_device_release;
+ 	dev_set_name(&md->dev, DEV_NAME "%d", mport->id);
+ 	atomic_set(&md->active, 1);
+ 
+-	ret = device_register(&md->dev);
++	cdev_init(&md->cdev, &mport_fops);
++	md->cdev.owner = THIS_MODULE;
++
++	ret = cdev_device_add(&md->cdev, &md->dev);
+ 	if (ret) {
+ 		rmcd_error("Failed to register mport %d (err=%d)",
+ 		       mport->id, ret);
+ 		goto err_cdev;
+ 	}
+ 
+-	get_device(&md->dev);
+-
+ 	INIT_LIST_HEAD(&md->doorbells);
+ 	spin_lock_init(&md->db_lock);
+ 	INIT_LIST_HEAD(&md->portwrites);
+@@ -2514,8 +2508,7 @@ static struct mport_dev *mport_cdev_add(struct rio_mport *mport)
+ 	return md;
+ 
+ err_cdev:
+-	cdev_del(&md->cdev);
+-	kfree(md);
++	put_device(&md->dev);
+ 	return NULL;
+ }
+ 
+@@ -2579,7 +2572,7 @@ static void mport_cdev_remove(struct mport_dev *md)
+ 	atomic_set(&md->active, 0);
+ 	mport_cdev_terminate_dma(md);
+ 	rio_del_mport_pw_handler(md->mport, md, rio_mport_pw_handler);
+-	cdev_del(&(md->cdev));
++	cdev_device_del(&md->cdev, &md->dev);
+ 	mport_cdev_kill_fasync(md);
+ 
+ 	flush_workqueue(dma_wq);
+@@ -2604,7 +2597,6 @@ static void mport_cdev_remove(struct mport_dev *md)
+ 
+ 	rio_release_inb_dbell(md->mport, 0, 0x0fff);
+ 
+-	device_unregister(&md->dev);
+ 	put_device(&md->dev);
+ }
+ 
+-- 
+2.1.4
