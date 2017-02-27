@@ -1,62 +1,51 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: Calculate GPIO base for pinctrl_add_gpio_range
-Date: Mon, 27 Feb 2017 11:13:59 +0900
-Message-ID: <CA+Ln22FJ=Kg_HmfjhDst4fNeUoA8jh=QVsF-rUVeXgPrzunJ+w@mail.gmail.com>
-References: <20170223172313.GF2742@localhost.localdomain> <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: Re: [PATCH v1 0/4] gpio: make gpiod_count() API consistent
+Date: Mon, 27 Feb 2017 09:27:35 +0100
+Message-ID: <20170227082735.GA2373@mail.corp.redhat.com>
+References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33077 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751431AbdB0CPp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Feb 2017 21:15:45 -0500
-In-Reply-To: <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 
-Hi Charles,
+On Feb 20 2017 or thereabouts, Andy Shevchenko wrote:
+> There are three possibilities in gpiod_count(): ACPI, OF, and
+> platform data.
+> 
+> Some of them return 0, which requires to be handled separately, though
+> developers rather lazy and just shadow an actual error code.
+> 
+> Let's make this API consistent by not allowing 0 in returned value.
+> 
+> There are luckily only 3 users right now, one of them handles this
+> properly, the rest is converted in this series.
+> 
+> Series is supposed to go through GPIO tree.
+> 
+> Andy Shevchenko (4):
+>   gpio: acpi: Don't return 0 on acpi_gpio_count()
+>   gpio: of: Don't return 0 on dt_gpio_count()
+>   platform/x86: surface3_button: Propagate error from gpiod_count()
+>   Input: soc_button_array - Propagate error from gpiod_count()
 
-2017-02-24 2:54 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
-> As the pinctrl is now added before the GPIOs are registered we need to
-> manually calculate what the GPIO base will be, otherwise the base for
-> each gpio_range will be set to zero. Fortunately the driver
-> already assigns a GPIO base, in samsung_gpiolib_register, and uses the
-> same calculation it does for the pin_base. Meaning the two will always
-> be the same and allowing us to reuse the pinbase and avoid the issue.
+Not sure if this still matters, but still:
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Please see my comment inline.
+Cheers,
+Benjamin
 
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
->
-> Ok I might have spoken to soon there looks like there is a simple
-> way to fix this up, at least in this case. It would be much more
-> of an issue if the driver allocated its GPIO base dynamically.
->
-> Thanks,
-> Charles
->
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index ddc8d6b..864d8b4d 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
->                 pin_bank->grange.id = bank;
->                 pin_bank->grange.pin_base = drvdata->pin_base
->                                                 + pin_bank->pin_base;
-> -               pin_bank->grange.base = pin_bank->gpio_chip.base;
-> +               pin_bank->grange.base = pin_bank->grange.pin_base;
-
-If we are not reading the base from the GPIO bank anymore, maybe it
-could make sense to actually make samsung_gpiolib_register() use
-bank->grange.base as gc->base? This way we would avoid explicitly
-numbering two times.
-
-Best regards,
-Tomasz
+> 
+>  drivers/gpio/gpiolib-acpi.c            | 4 ++--
+>  drivers/gpio/gpiolib.c                 | 4 ++--
+>  drivers/input/misc/soc_button_array.c  | 5 +++--
+>  drivers/platform/x86/surface3_button.c | 5 +++--
+>  4 files changed, 10 insertions(+), 8 deletions(-)
+> 
+> -- 
+> 2.11.0
+> 
