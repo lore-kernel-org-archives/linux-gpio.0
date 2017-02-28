@@ -1,57 +1,50 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 01/16] chardev: add helper function to
- register char devs with a struct device
-Date: Mon, 27 Feb 2017 19:36:09 -0800
-Message-ID: <CAPcyv4jiPE1jK9ubbsAm_ZNMt=S106NCpXD4KPUWpcK9_GEDJA@mail.gmail.com>
-References: <1488091097-12328-1-git-send-email-logang@deltatee.com>
- <1488091097-12328-2-git-send-email-logang@deltatee.com> <CAPcyv4i91_esBtBxbnDH3ZDd8Mnz4HoJEW2yeEvQ4QikFBjapA@mail.gmail.com>
- <20170227165618.GE5891@obsidianresearch.com> <7df6e57b-531c-1b23-05bf-c368df2d20f3@deltatee.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Fengguang Wu <fengguang.wu@intel.com>
+Subject: Re: 289b7bfd48 BUG: KASAN: slab-out-of-bounds in of_device_uevent at
+ addr ffff880012049289
+Date: Tue, 28 Feb 2017 12:29:43 +0800
+Message-ID: <20170228042943.zyt2oqqtwuheki5d@wfg-t540p.sh.intel.com>
+References: <20170228042403.tl3d7v7iedqxoe4n@wfg-t540p.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBDZYPUPHYEJBBKXA2PCQKGQEV3PRTLA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <7df6e57b-531c-1b23-05bf-c368df2d20f3-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:17609 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751285AbdB1EaE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 27 Feb 2017 23:30:04 -0500
+Content-Disposition: inline
+In-Reply-To: <20170228042403.tl3d7v7iedqxoe4n@wfg-t540p.sh.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, LKP <lkp@01.org>
 
-On Mon, Feb 27, 2017 at 7:27 PM, Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org> wrote:
+On Tue, Feb 28, 2017 at 12:24:03PM +0800, Fengguang Wu wrote:
+>Hi Linus Walleij,
 >
+>I'm not sure if this is a good bisect since the merged gpio branch
+>suffers from another early hang problem which could hide the KASAN
+>BUG. So also OF people are also included in the loop.
 >
-> On 27/02/17 09:56 AM, Jason Gunthorpe wrote:
->> Yes please, that is way too subtle. Suggest:
->>
->> NOTE: Callers must assume that userspace was able to open the cdev and
->> can call cdev fops callbacks at any time, even if this function fails.
->>
->> I would also add a note to cdev_device_del:
->>
->> NOTE: This guarantees that associated sysfs callbacks are not running
->> or runnable, however any open cdevs will remain and their fops remain
->> callable even after this returns.
->>
->> Since I have seen a lot of confusion on that point as well..
+>The attached reproduce-* script may easily reproduce the bug.
 >
-> Sure, I'll add that verbiage to a v3 sometime after rc1.
+>https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>
+>commit 289b7bfd483c8ca3dfde92d7e19a8b70e0b81248
+>Merge: 183c948 9b8e3ec
+>Author:     Linus Torvalds <torvalds@linux-foundation.org>
+>AuthorDate: Sat Apr 9 13:28:50 2016 -0700
+>Commit:     Linus Torvalds <torvalds@linux-foundation.org>
+>CommitDate: Sat Apr 9 13:28:50 2016 -0700
+>
+>     Merge tag 'gpio-v4.6-3' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio
 
-It would also be great to patch1 into a stable non-rebasing git tree
-so it can be used as a baseline for other 4.12 targeted development.
-The device-dax patches in particular collide with some pending
-development.
+The below bisect log shows this old bug is still alive in mainline.
+Not sure for linux-next because it now suffers from an early boot hang bug.
 
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+># extra tests on tree/branch linus/master
+>git bisect  bad e5d56efc97f8240d0b5d66c03949382b6d7e5570  # 10:50      0-      3  Merge tag 'watchdog-for-linus-v4.11' of git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging
+># extra tests on tree/branch linux-next/master
+>git bisect good 3e7350242c6f3d41d28e03418bd781cc1b7bad5f  # 01:04     60+     72  Add linux-next specific files for 20170224
+
+Thanks,
+Fengguang
