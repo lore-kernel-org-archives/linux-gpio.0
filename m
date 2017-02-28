@@ -1,105 +1,46 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH fixes v2] pinctrl: Really force states during suspend/resume
-Date: Mon, 27 Feb 2017 15:06:34 -0800
-Message-ID: <20170227230634.10688-1-f.fainelli@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34056 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751039AbdB0XJR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 27 Feb 2017 18:09:17 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 01/16] chardev: add helper function to register char
+ devs with a struct device
+Date: Mon, 27 Feb 2017 20:27:44 -0700
+Message-ID: <7df6e57b-531c-1b23-05bf-c368df2d20f3@deltatee.com>
+References: <1488091097-12328-1-git-send-email-logang@deltatee.com>
+ <1488091097-12328-2-git-send-email-logang@deltatee.com>
+ <CAPcyv4i91_esBtBxbnDH3ZDd8Mnz4HoJEW2yeEvQ4QikFBjapA@mail.gmail.com>
+ <20170227165618.GE5891@obsidianresearch.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <20170227165618.GE5891-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
+List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
+Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
+Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+To: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexandre Bounine <alexandre.bounine-49Rm3DX9dRQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-scsi <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, "James E.J. Bottomley" <jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Matt
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 
-In case a platform only defaults a "default" set of pins, but not a
-"sleep" set of pins, and this particular platform suspends and resumes
-in a way that the pin states are not preserved by the hardware, when we
-resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
--> pinctrl_select_state() and the first thing we do is check that the
-pins state is the same as before, and do nothing.
 
-In order to fix this, decouple pinctrl_select_state and make it become
-pinctrl_commit_state(), taking an additional ignore_state_check boolean
-which allows us to bypass the state check during suspend/resume, since
-we really want to re-apply the previous pin states in these case.
 
-Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Changes in v2:
+On 27/02/17 09:56 AM, Jason Gunthorpe wrote:
+> Yes please, that is way too subtle. Suggest:
+> 
+> NOTE: Callers must assume that userspace was able to open the cdev and
+> can call cdev fops callbacks at any time, even if this function fails.
+> 
+> I would also add a note to cdev_device_del:
+> 
+> NOTE: This guarantees that associated sysfs callbacks are not running
+> or runnable, however any open cdevs will remain and their fops remain
+> callable even after this returns.
+> 
+> Since I have seen a lot of confusion on that point as well..
 
-- rename __pinctrl_select_state to pinctrl_commit_state
+Sure, I'll add that verbiage to a v3 sometime after rc1.
 
- drivers/pinctrl/core.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index fb38e208f32d..36bb329c13e2 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -992,17 +992,21 @@ struct pinctrl_state *pinctrl_lookup_state(struct pinctrl *p,
- EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
- 
- /**
-- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
-  * @p: the pinctrl handle for the device that requests configuration
-  * @state: the state handle to select/activate/program
-+ * @force: ignore the state check (e.g: to re-apply default state during
-+ * suspend/resume)
-  */
--int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+static int pinctrl_commit_state(struct pinctrl *p,
-+				struct pinctrl_state *state,
-+				bool ignore_state_check)
- {
- 	struct pinctrl_setting *setting, *setting2;
- 	struct pinctrl_state *old_state = p->state;
- 	int ret;
- 
--	if (p->state == state)
-+	if (p->state == state && !ignore_state_check)
- 		return 0;
- 
- 	if (p->state) {
-@@ -1068,6 +1072,16 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
- 
- 	return ret;
- }
-+
-+/**
-+ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * @p: the pinctrl handle for the device that requests configuration
-+ * @state: the state handle to select/activate/program
-+ */
-+int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+{
-+	return pinctrl_commit_state(p, state, false);
-+}
- EXPORT_SYMBOL_GPL(pinctrl_select_state);
- 
- static void devm_pinctrl_release(struct device *dev, void *res)
-@@ -1236,7 +1250,8 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
- int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-+		return pinctrl_commit_state(pctldev->p,
-+					    pctldev->hog_sleep, true);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-@@ -1248,7 +1263,8 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
- int pinctrl_force_default(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-+		return pinctrl_commit_state(pctldev->p,
-+					    pctldev->hog_default, true);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
--- 
-2.9.3
-
+Logan
