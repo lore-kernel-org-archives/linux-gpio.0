@@ -1,232 +1,188 @@
-From: Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 5/5] pinctrl: sunxi: Add A64 R_PIO
- controller support
-Date: Tue, 28 Feb 2017 18:29:17 +0000
-Message-ID: <b04ad85d-698b-56b4-6b82-1791bd7b14b7@arm.com>
-References: <20170228172444.59655-1-icenowy@aosc.xyz>
- <20170228172444.59655-5-icenowy@aosc.xyz>
-Reply-To: andre.przywara-5wv7dgnIgG8@public.gmane.org
+From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 04/16] input: utilize new cdev_device_add
+ helper function
+Date: Tue, 28 Feb 2017 10:27:34 -0800
+Message-ID: <20170228182734.GC20776@dtor-ws>
+References: <1488091097-12328-1-git-send-email-logang@deltatee.com>
+ <1488091097-12328-5-git-send-email-logang@deltatee.com>
+Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDNZNK75ZIKRBG4C27CQKGQE2XXEXDY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170228172444.59655-5-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: icenowy-ymACFijhrKM@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Return-path: <rtc-linux+bncBDP6N55ZUYDRBGUC27CQKGQES5LLKCA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <1488091097-12328-5-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/rtc-linux
+List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/rtc-linux/subscribe>
+To: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars@>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
-
-On 28/02/17 17:24, Icenowy Zheng wrote:
-> The A64 has a R_PIO pin controller, similar to the one found on the H3 SoC.
-> Add support for the pins controlled by the R_PIO controller.
+On Sat, Feb 25, 2017 at 11:38:05PM -0700, Logan Gunthorpe wrote:
+> Replace the open coded registration of the cdev and dev with the
+> new device_add_cdev() helper in evdev, joydev and mousedev. The helper
+> replaces a common pattern by taking the proper reference against the
+> parent device and adding both the cdev and the device.
 > 
-> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+> Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
+
+Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
 > ---
->  drivers/pinctrl/sunxi/Kconfig                |   5 +
->  drivers/pinctrl/sunxi/Makefile               |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c | 143 +++++++++++++++++++++++++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
+>  drivers/input/evdev.c    | 11 ++---------
+>  drivers/input/joydev.c   | 11 ++---------
+>  drivers/input/mousedev.c | 11 ++---------
+>  3 files changed, 6 insertions(+), 27 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-> index 92325736d953..0738b0df5a0b 100644
-> --- a/drivers/pinctrl/sunxi/Kconfig
-> +++ b/drivers/pinctrl/sunxi/Kconfig
-> @@ -69,6 +69,11 @@ config PINCTRL_SUN50I_A64
->  	def_bool ARM64 && ARCH_SUNXI
->  	select PINCTRL_SUNXI
+> diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+> index e9ae3d5..9255714 100644
+> --- a/drivers/input/evdev.c
+> +++ b/drivers/input/evdev.c
+> @@ -1354,8 +1354,6 @@ static void evdev_cleanup(struct evdev *evdev)
+>  	evdev_mark_dead(evdev);
+>  	evdev_hangup(evdev);
 >  
-> +config PINCTRL_SUN50I_A64_R
-> +	def_bool ARM64 && ARCH_SUNXI
-> +	depends on RESET_CONTROLLER
-
-Same comment as on patch 1/5 (select instead of "depends on").
-I take it this for drivers/reset/reset-sunxi.c?
-Shouldn't this be the sunxi specific CONFIG_RESET_SUNXI then?
-Also from from having a quick look at the driver this is broken for
-arm64 (BITS_PER_LONG usage).
->From having a closer look this driver is actually not Allwinner specific
-at all, since it just describes a number of bits in consecutive
-32-bit(!) registers as reset cells.
-As I today stumbled upon another SoC which has the same reset register
-layout I was wondering if it's worth to generalise this? Possibly
-renaming the driver, and allowing additional compatibles?
-I can take a stab at this.
-
-Cheers,
-Andre.
-
-> +	select PINCTRL_SUNXI
-> +
->  config PINCTRL_SUN50I_H5
->  	def_bool ARM64 && ARCH_SUNXI
->  	select PINCTRL_SUNXI
-> diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-> index 04ccb88ebd5f..df4ccd6cd44c 100644
-> --- a/drivers/pinctrl/sunxi/Makefile
-> +++ b/drivers/pinctrl/sunxi/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
->  obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
->  obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
->  obj-$(CONFIG_PINCTRL_SUN50I_A64)	+= pinctrl-sun50i-a64.o
-> +obj-$(CONFIG_PINCTRL_SUN50I_A64_R)	+= pinctrl-sun50i-a64-r.o
->  obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
->  obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
->  obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
-> new file mode 100644
-> index 000000000000..90996a63689b
-> --- /dev/null
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
-> @@ -0,0 +1,143 @@
-> +/*
-> + * Allwinner A64 SoCs special pins pinctrl driver.
-> + *
-> + * Based on pinctrl-sun8i-a23-r.c
-> + *
-> + * Copyright (C) 2016 Icenowy Zheng
-> + * Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-> + *
-> + * Copyright (C) 2014 Chen-Yu Tsai
-> + * Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> + *
-> + * Copyright (C) 2014 Boris Brezillon
-> + * Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> + *
-> + * Copyright (C) 2014 Maxime Ripard
-> + * Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2.  This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset.h>
-> +
-> +#include "pinctrl-sunxi.h"
-> +
-> +static const struct sunxi_desc_pin sun50i_a64_r_pins[] = {
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
-> +		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SCK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
-> +		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SDA */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* MS */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* CK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* DO */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x3, "s_jtag"),	/* DI */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SCK */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SDA */
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_pwm"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION(0x2, "s_cir_rx"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
-> +	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
-> +		  SUNXI_FUNCTION(0x0, "gpio_in"),
-> +		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> +		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 12)),	/* PL_EINT12 */
-> +};
-> +
-> +static const struct sunxi_pinctrl_desc sun50i_a64_r_pinctrl_data = {
-> +	.pins = sun50i_a64_r_pins,
-> +	.npins = ARRAY_SIZE(sun50i_a64_r_pins),
-> +	.pin_base = PL_BASE,
-> +	.irq_banks = 1,
-> +};
-> +
-> +static int sun50i_a64_r_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct reset_control *rstc;
-> +	int ret;
-> +
-> +	rstc = devm_reset_control_get(&pdev->dev, NULL);
-> +	if (IS_ERR(rstc)) {
-> +		dev_err(&pdev->dev, "Reset controller missing\n");
-> +		return PTR_ERR(rstc);
-> +	}
-> +
-> +	ret = reset_control_deassert(rstc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = sunxi_pinctrl_init(pdev,
-> +				 &sun50i_a64_r_pinctrl_data);
-> +
-> +	if (ret)
-> +		reset_control_assert(rstc);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id sun50i_a64_r_pinctrl_match[] = {
-> +	{ .compatible = "allwinner,sun50i-a64-r-pinctrl", },
-> +	{}
-> +};
-> +
-> +static struct platform_driver sun50i_a64_r_pinctrl_driver = {
-> +	.probe	= sun50i_a64_r_pinctrl_probe,
-> +	.driver	= {
-> +		.name		= "sun50i-a64-r-pinctrl",
-> +		.of_match_table	= sun50i_a64_r_pinctrl_match,
-> +	},
-> +};
-> +builtin_platform_driver(sun50i_a64_r_pinctrl_driver);
+> -	cdev_del(&evdev->cdev);
+> -
+>  	/* evdev is marked dead so no one else accesses evdev->open */
+>  	if (evdev->open) {
+>  		input_flush_device(handle, NULL);
+> @@ -1416,12 +1414,8 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+>  		goto err_free_evdev;
+>  
+>  	cdev_init(&evdev->cdev, &evdev_fops);
+> -	evdev->cdev.kobj.parent = &evdev->dev.kobj;
+> -	error = cdev_add(&evdev->cdev, evdev->dev.devt, 1);
+> -	if (error)
+> -		goto err_unregister_handle;
+>  
+> -	error = device_add(&evdev->dev);
+> +	error = cdev_device_add(&evdev->cdev, &evdev->dev);
+>  	if (error)
+>  		goto err_cleanup_evdev;
+>  
+> @@ -1429,7 +1423,6 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+>  
+>   err_cleanup_evdev:
+>  	evdev_cleanup(evdev);
+> - err_unregister_handle:
+>  	input_unregister_handle(&evdev->handle);
+>   err_free_evdev:
+>  	put_device(&evdev->dev);
+> @@ -1442,7 +1435,7 @@ static void evdev_disconnect(struct input_handle *handle)
+>  {
+>  	struct evdev *evdev = handle->private;
+>  
+> -	device_del(&evdev->dev);
+> +	cdev_device_del(&evdev->cdev, &evdev->dev);
+>  	evdev_cleanup(evdev);
+>  	input_free_minor(MINOR(evdev->dev.devt));
+>  	input_unregister_handle(handle);
+> diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
+> index abd18f3..e38b84f 100644
+> --- a/drivers/input/joydev.c
+> +++ b/drivers/input/joydev.c
+> @@ -729,8 +729,6 @@ static void joydev_cleanup(struct joydev *joydev)
+>  	joydev_mark_dead(joydev);
+>  	joydev_hangup(joydev);
+>  
+> -	cdev_del(&joydev->cdev);
+> -
+>  	/* joydev is marked dead so no one else accesses joydev->open */
+>  	if (joydev->open)
+>  		input_close_device(handle);
+> @@ -905,12 +903,8 @@ static int joydev_connect(struct input_handler *handler, struct input_dev *dev,
+>  		goto err_free_joydev;
+>  
+>  	cdev_init(&joydev->cdev, &joydev_fops);
+> -	joydev->cdev.kobj.parent = &joydev->dev.kobj;
+> -	error = cdev_add(&joydev->cdev, joydev->dev.devt, 1);
+> -	if (error)
+> -		goto err_unregister_handle;
+>  
+> -	error = device_add(&joydev->dev);
+> +	error = cdev_device_add(&joydev->cdev, &joydev->dev);
+>  	if (error)
+>  		goto err_cleanup_joydev;
+>  
+> @@ -918,7 +912,6 @@ static int joydev_connect(struct input_handler *handler, struct input_dev *dev,
+>  
+>   err_cleanup_joydev:
+>  	joydev_cleanup(joydev);
+> - err_unregister_handle:
+>  	input_unregister_handle(&joydev->handle);
+>   err_free_joydev:
+>  	put_device(&joydev->dev);
+> @@ -931,7 +924,7 @@ static void joydev_disconnect(struct input_handle *handle)
+>  {
+>  	struct joydev *joydev = handle->private;
+>  
+> -	device_del(&joydev->dev);
+> +	cdev_device_del(&joydev->cdev, &joydev->dev);
+>  	joydev_cleanup(joydev);
+>  	input_free_minor(MINOR(joydev->dev.devt));
+>  	input_unregister_handle(handle);
+> diff --git a/drivers/input/mousedev.c b/drivers/input/mousedev.c
+> index b604564..0e0ff84 100644
+> --- a/drivers/input/mousedev.c
+> +++ b/drivers/input/mousedev.c
+> @@ -812,8 +812,6 @@ static void mousedev_cleanup(struct mousedev *mousedev)
+>  	mousedev_mark_dead(mousedev);
+>  	mousedev_hangup(mousedev);
+>  
+> -	cdev_del(&mousedev->cdev);
+> -
+>  	/* mousedev is marked dead so no one else accesses mousedev->open */
+>  	if (mousedev->open)
+>  		input_close_device(handle);
+> @@ -901,12 +899,8 @@ static struct mousedev *mousedev_create(struct input_dev *dev,
+>  	}
+>  
+>  	cdev_init(&mousedev->cdev, &mousedev_fops);
+> -	mousedev->cdev.kobj.parent = &mousedev->dev.kobj;
+> -	error = cdev_add(&mousedev->cdev, mousedev->dev.devt, 1);
+> -	if (error)
+> -		goto err_unregister_handle;
+>  
+> -	error = device_add(&mousedev->dev);
+> +	error = cdev_device_add(&mousedev->cdev, &mousedev->dev);
+>  	if (error)
+>  		goto err_cleanup_mousedev;
+>  
+> @@ -914,7 +908,6 @@ static struct mousedev *mousedev_create(struct input_dev *dev,
+>  
+>   err_cleanup_mousedev:
+>  	mousedev_cleanup(mousedev);
+> - err_unregister_handle:
+>  	if (!mixdev)
+>  		input_unregister_handle(&mousedev->handle);
+>   err_free_mousedev:
+> @@ -927,7 +920,7 @@ static struct mousedev *mousedev_create(struct input_dev *dev,
+>  
+>  static void mousedev_destroy(struct mousedev *mousedev)
+>  {
+> -	device_del(&mousedev->dev);
+> +	cdev_device_del(&mousedev->cdev, &mousedev->dev);
+>  	mousedev_cleanup(mousedev);
+>  	input_free_minor(MINOR(mousedev->dev.devt));
+>  	if (mousedev != mousedev_mix)
+> -- 
+> 2.1.4
 > 
+
+-- 
+Dmitry
+
+-- 
+You received this message because you are subscribed to "rtc-linux".
+Membership options at http://groups.google.com/group/rtc-linux .
+Please read http://groups.google.com/group/rtc-linux/web/checklist
+before submitting a driver.
+--- 
+You received this message because you are subscribed to the Google Groups "rtc-linux" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
