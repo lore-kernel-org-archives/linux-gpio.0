@@ -1,167 +1,165 @@
-From: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>
-Subject: [PATCH] fix pinctrl setup for i.IMX6
-Date: Tue, 28 Feb 2017 08:00:16 +0200
-Message-ID: <d217e26e-9b5c-7b01-67e2-017293ca1407@nextfour.com>
+From: Marc Pignat <marc@pignat.org>
+Subject: [PATCH,v2 0/1] gpio: add NCT5104D gpio driver
+Date: Tue, 28 Feb 2017 09:14:24 +0100
+Message-ID: <b1834c0a-52bb-56a4-5c52-dbf7a5a02dec@pignat.org>
+References: <77f71974-541e-7e06-d37d-c52b9623ed25@pignat.org>
+ <CACRpkdbfOFCWQsytnf0f2ZvBsvHqQ85nk-aKK-zXpr8F=uJ3UQ@mail.gmail.com>
+ <20170222210420.GA15290@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0084.outbound.protection.outlook.com ([104.47.2.84]:4192
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751037AbdB1GQw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 28 Feb 2017 01:16:52 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:52502 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751666AbdB1IOb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Feb 2017 03:14:31 -0500
+In-Reply-To: <20170222210420.GA15290@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi!
+Hi all,
 
-Recent pulls for mainline pre 4.11 introduced pinctrl setup changes and moved pinctrl-imx to
-use generic helpers. 
+Here is a v2, with fixes or at least responses to your comments.
 
-Net effect was that hog group could not be resolved. I made it work for myself
-with a two stage setup with create and start separated, and dt probe in between them.
+On 02/22/2017 10:04 PM, William Breathitt Gray wrote:
+> On Wed, Feb 22, 2017 at 03:52:05PM +0100, Linus Walleij wrote:
+>> On Thu, Feb 9, 2017 at 11:54 AM, Marc Pignat <marc@pignat.org> wrote:
+>>
+...
+>> Please look a bit at drivers/gpio/gpio-it87.c, and gpio-f7188x.c it seems to me
+>> that this is a simlar or identical chip to one of these. In that case,
+>> you should
+
+gpio-f7188x is really similar, but I failed to add nct5104d into it, the
+registers are not at the same addresses, input/output is inverted and open
+drain management is different.
+
+So I restarted the gpio-nct5104d.c driver using gpio-f7188x.c.
+
+...
+...
+
+>>
+>> This enum and name array seems a bit overkill? Are you already planning
+>> to add support for a bunch of other chips?
+
+No, removed.
+
+>>
+>>> +/*
+>>> + * GPIO chip.
+>>> + */
+>>> +
+>>> +static int nct5104d_gpio_direction_in(struct gpio_chip *chip,
+>>> +                                     unsigned int offset);
+>>> +static int nct5104d_gpio_get(struct gpio_chip *chip, unsigned int offset);
+>>> +static int nct5104d_gpio_direction_out(struct gpio_chip *chip,
+>>> +                                      unsigned int offset, int value);
+>>> +static void nct5104d_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>>> +                             int value);
+>>
+>> Do you really have to forward-declare all this?
+
+No, but was like that in gpio-f7188x.c, fixed.
+
+>>
+>> I strongly prefer if you move code around so as to avoid it.
+>>
+>>> +#define NCT5104D_GPIO_BANK(_base, _ngpio, _regbase)                    \
+>>> +       {                                                               \
+>>> +               .chip = {                                               \
+>>> +                       .label            = DRVNAME,                    \
+>>> +                       .owner            = THIS_MODULE,                \
+>>> +                       .direction_input  = nct5104d_gpio_direction_in, \
+>>> +                       .get              = nct5104d_gpio_get,          \
+>>> +                       .direction_output = nct5104d_gpio_direction_out,\
+>>> +                       .set              = nct5104d_gpio_set,          \
+>>> +                       .base             = _base,                      \
+>>> +                       .ngpio            = _ngpio,                     \
+>>> +                       .can_sleep        = true,                       \
+>>> +               },                                                      \
+>>> +               .regbase = _regbase,                                    \
+>>> +       }
+>>
+>> Please also implement .get_direction(), it is very helpful to have.
+
+done
+
+>>
+>>> +static int nct5104d_gpio_direction_in(struct gpio_chip *chip,
+>>> +                                     unsigned int offset)
+>>> +{
+>>> +       int err;
+>>> +       struct nct5104d_gpio_bank *bank =
+>>> +               container_of(chip, struct nct5104d_gpio_bank, chip);
+>>> +       struct nct5104d_sio *sio = bank->data->sio;
+>>> +       u8 dir;
+>>> +
+>>> +       err = superio_enter(sio->addr);
+>>> +       if (err)
+>>> +               return err;
+>>> +       superio_select(sio->addr, SIO_LD_GPIO);
+>>> +
+>>> +       dir = superio_inb(sio->addr, gpio_dir(bank->regbase));
+>>> +       dir |= (1 << offset);
+>>
+>> Please use:
+>> #include <linux/bitops.h>
+>>
+>> dir |= BIT(offset);
+>>
+>> This applies to all sites using this pattern.
+
+done
+
+>>
+>>> +               err = gpiochip_add(&bank->chip);
+>>
+>> Can you use devm_gpiochip_add_data() (you can pass NULL as data)
+>> so you do not need the .remove() call below at all?
 
 
-Signed-off-by: Mika Penttilä <mika.penttila@nextfour.com>
----
+done
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index d690465..33659c5a 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -2237,6 +2237,47 @@ int devm_pinctrl_register_and_init(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_pinctrl_register_and_init);
- 
-+int devm_pinctrl_register_and_init_nostart(struct device *dev,
-+					struct pinctrl_desc *pctldesc,
-+					void *driver_data,
-+					struct pinctrl_dev **pctldev)
-+{
-+	struct pinctrl_dev **ptr;
-+	struct pinctrl_dev *p;
-+
-+	ptr = devres_alloc(devm_pinctrl_dev_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	p = pinctrl_init_controller(pctldesc, dev, driver_data);
-+	if (IS_ERR(p)) {
-+		devres_free(ptr);
-+		return PTR_ERR(p);
-+	}
-+
-+	*ptr = p;
-+	devres_add(dev, ptr);
-+	*pctldev = p;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(devm_pinctrl_register_and_init_nostart);
-+
-+int devm_pinctrl_start(struct device *dev,
-+		struct pinctrl_dev *pctldev)
-+{
-+	int error = 0;
-+
-+	error = pinctrl_create_and_start(pctldev);
-+	if (error) {
-+		mutex_destroy(&pctldev->mutex);
-+		return error;
-+	}
-+
-+	return error;
-+}
-+EXPORT_SYMBOL_GPL(devm_pinctrl_start);
-+
- /**
-  * devm_pinctrl_unregister() - Resource managed version of pinctrl_unregister().
-  * @dev: device for which which resource was allocated
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index a7ace9e..3644aed 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -686,16 +686,6 @@ static int imx_pinctrl_probe_dt(struct platform_device *pdev,
- 	return 0;
- }
- 
--/*
-- * imx_free_resources() - free memory used by this driver
-- * @info: info driver instance
-- */
--static void imx_free_resources(struct imx_pinctrl *ipctl)
--{
--	if (ipctl->pctl)
--		pinctrl_unregister(ipctl->pctl);
--}
--
- int imx_pinctrl_probe(struct platform_device *pdev,
- 		      struct imx_pinctrl_soc_info *info)
- {
-@@ -774,26 +764,30 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 	ipctl->info = info;
- 	ipctl->dev = info->dev;
- 	platform_set_drvdata(pdev, ipctl);
--	ret = devm_pinctrl_register_and_init(&pdev->dev,
--					     imx_pinctrl_desc, ipctl,
--					     &ipctl->pctl);
-+
-+	ret = devm_pinctrl_register_and_init_nostart(&pdev->dev,
-+						imx_pinctrl_desc, ipctl,
-+						&ipctl->pctl);
-+
- 	if (ret) {
- 		dev_err(&pdev->dev, "could not register IMX pinctrl driver\n");
--		goto free;
-+		return ret;
- 	}
- 
- 	ret = imx_pinctrl_probe_dt(pdev, ipctl);
- 	if (ret) {
- 		dev_err(&pdev->dev, "fail to probe dt properties\n");
--		goto free;
-+		return ret;
-+	}
-+
-+	ret = devm_pinctrl_start(&pdev->dev, ipctl->pctl);
-+	if (ret) {
-+		dev_err(&pdev->dev, "could not start IMX pinctrl driver\n");
-+		return ret;
- 	}
- 
- 	dev_info(&pdev->dev, "initialized IMX pinctrl driver\n");
- 
- 	return 0;
- 
--free:
--	imx_free_resources(ipctl);
--
--	return ret;
- }
-diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
-index 8ce2d87..e7020f0 100644
---- a/include/linux/pinctrl/pinctrl.h
-+++ b/include/linux/pinctrl/pinctrl.h
-@@ -153,9 +153,17 @@ extern struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
- extern void pinctrl_unregister(struct pinctrl_dev *pctldev);
- 
- extern int devm_pinctrl_register_and_init(struct device *dev,
--				struct pinctrl_desc *pctldesc,
--				void *driver_data,
--				struct pinctrl_dev **pctldev);
-+					struct pinctrl_desc *pctldesc,
-+					void *driver_data,
-+					struct pinctrl_dev **pctldev);
-+
-+extern int devm_pinctrl_register_and_init_nostart(struct device *dev,
-+						struct pinctrl_desc *pctldesc,
-+						void *driver_data,
-+						struct pinctrl_dev **pctldev);
-+
-+extern int devm_pinctrl_start(struct device *dev,
-+			struct pinctrl_dev *pctldev);
- 
- /* Please use devm_pinctrl_register_and_init() instead */
- extern struct pinctrl_dev *devm_pinctrl_register(struct device *dev,
+>>
+>>> +err_gpiochip:
+>>> +       for (i = i - 1; i >= 0; i--) {
+>>> +               struct nct5104d_gpio_bank *bank = &data->bank[i];
+>>> +
+>>> +               gpiochip_remove(&bank->chip);
+>>
+>> Then conversely this needs devm_gpiochip_remove().
+>>
+>>> +static int nct5104d_gpio_remove(struct platform_device *pdev)
+>>
+>> And this could go away.
+
+done
+
+...
+
+>>
+> 
+> Marc,
+> 
+> I recommend utilizing the isa_driver since you are interfacing a super
+> I/O chip. This should simplify your __init and __exit code by removing
+> the need for all those platform_driver setup calls you make; instead you
+> would simply call isa_register_driver.
+> 
+> Check out the respective __init, __exit, probe, and remove code in
+> drivers/watchdog/ebc-c384_wdt.c file a simple example of how to use the
+> isa_driver calls. If you need more specific help, let me know and I'll
+> go into more detail.
+> 
+>> I'm not thrilled by this "plug-and-play" that seems very far from autodetection.
+
+Sure ISA driver seems a little more clean, but it seems recent kernel are
+not compiled with CONFIG_ISA_BUS_API. 
+
+Best regards
+
+
+Marc
