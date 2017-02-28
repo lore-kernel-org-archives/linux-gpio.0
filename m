@@ -1,73 +1,59 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: Re: [RFC PATCH 4/9] clk: sunxi-ng: support R40 SoC
-Date: Tue, 28 Feb 2017 23:50:14 +0800
-Message-ID: <CAGb2v66AZK+g3xX4cXd8Q6Ob_+SxpYsxHBEfC9Ec2QsdN4eA9A@mail.gmail.com>
-References: <20170222231738.HXRSmi86@smtp1o.mail.yandex.net> <20170224002028.miupa6dzefgxbfse@lukather>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH v2] pinctrl: samsung: Calculate GPIO base for pinctrl_add_gpio_range
+Date: Tue, 28 Feb 2017 17:04:35 +0000
+Message-ID: <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <20170228090143.GG2742@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBTVY23CQKGQELPAN2AY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170224002028.miupa6dzefgxbfse@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20170228090143.GG2742@localhost.localdomain>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: linus.walleij@linaro.org, krzk@kernel.org
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Icenowy,
+As the pinctrl is now added before the GPIOs are registered we need to
+manually calculate what the GPIO base will be, otherwise the base for
+each gpio_range will be set to zero. Fortunately the driver
+already assigns a GPIO base, in samsung_gpiolib_register, and uses the
+same calculation it does for the pin_base. Meaning the two will always
+be the same and allowing us to reuse the pinbase and avoid the issue.
 
-On Fri, Feb 24, 2017 at 8:20 AM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Wed, Feb 22, 2017 at 01:54:58PM +0800, Icenowy Zheng wrote:
->>
->> 2017=E5=B9=B42=E6=9C=8822=E6=97=A5 07:03=E4=BA=8E Maxime Ripard <maxime.=
-ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>=E5=86=99=E9=81=93=EF=BC=9A
->> >
->> > Hi,
->> >
->> > On Sat, Feb 18, 2017 at 01:37:17AM +0800, Icenowy Zheng wrote:
->> > > Allwinner R40 SoC have a clock controller module in the style of the
->> > > SoCs beyond sun6i, however, it's more rich and complex.
->> > >
->> > > Add support for it.
->> > >
->> > > As the user manual is still not available, this driver is made with
->> > > knowledge from clk-sun8iw11.c in the BSP kernel source.
->> >
->> > Missing SoB.
->> >
->> > Why are some patches tagged as RFC and some don't?
->>
->> There's still no open User Manual for R40, so I tagged CCU-related
->> drivers RFC.
->>
->> Pinctrl driver can be written with the datasheet draft, which is
->> available now.
->>
->> For USB we have never user manual so everything is educated guess --
->> so it's not RFC.
->
-> It's still kind of weird to mix and match patches with and without RFC
-> tags.
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
 
-Allwinner just released the docs today. See
+Changes since v1:
+ - Use grange.base in samsung_gpiolib_register to make it more
+   clear the two are related in the driver.
 
-    https://github.com/tinalinux/docs/tree/r40-v1.y
+Thanks,
+Charles
 
-Could you check your patches against it, and maybe we don't need the
-RFC tags anymore?
 
-ChenYu
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index ddc8d6b..27d5157 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+ 		pin_bank->grange.id = bank;
+ 		pin_bank->grange.pin_base = drvdata->pin_base
+ 						+ pin_bank->pin_base;
+-		pin_bank->grange.base = pin_bank->gpio_chip.base;
++		pin_bank->grange.base = pin_bank->grange.pin_base;
+ 		pin_bank->grange.npins = pin_bank->gpio_chip.ngpio;
+ 		pin_bank->grange.gc = &pin_bank->gpio_chip;
+ 		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
+@@ -928,7 +928,7 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
+ 		bank->gpio_chip = samsung_gpiolib_chip;
+ 
+ 		gc = &bank->gpio_chip;
+-		gc->base = drvdata->pin_base + bank->pin_base;
++		gc->base = bank->grange.base;
+ 		gc->ngpio = bank->nr_pins;
+ 		gc->parent = &pdev->dev;
+ 		gc->of_node = bank->of_node;
+-- 
+2.1.4
