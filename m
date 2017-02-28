@@ -1,59 +1,74 @@
-From: "David.Wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: =?UTF-8?Q?Re:_[PATCH_v1_1/2]_pinctrl:_rockchip=ef=bc=9aAdd_input_sc?=
- =?UTF-8?Q?hmitt_support?=
-Date: Tue, 28 Feb 2017 19:12:19 +0800
-Message-ID: <dd65cf84-dc24-d9d1-9147-582eef3acbac@rock-chips.com>
-References: <1487068541-14120-1-git-send-email-david.wu@rock-chips.com>
- <1487068541-14120-2-git-send-email-david.wu@rock-chips.com>
- <48027259.fqOrTqXNdI@phil>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <48027259.fqOrTqXNdI@phil>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] pinctrl: Fix spelling typos
+Date: Tue, 28 Feb 2017 16:59:56 +0200
+Message-ID: <20170228145956.43476-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:64436 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752029AbdB1PAi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 28 Feb 2017 10:00:38 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-SGkgSGVpa28sCgrlnKggMjAxNy8yLzI0IDA6NTEsIEhlaWtvIFN0dWVibmVyIOWGmemBkzoKPiBI
-aSBEYXZpZCwKPgo+IEFtIERpZW5zdGFnLCAxNC4gRmVicnVhciAyMDE3LCAxODozNTo0MCBDRVQg
-c2NocmllYiBEYXZpZCBXdToKPj4gRnJvbTogImRhdmlkLnd1IiA8ZGF2aWQud3VAcm9jay1jaGlw
-cy5jb20+Cj4+Cj4+ICBzdHJ1Y3Qgcm9ja2NoaXBfcGluX2NvbmZpZyB7Cj4+IEBAIC0xMzU1LDYg
-KzEzNTgsNTMgQEAgc3RhdGljIGludCByb2NrY2hpcF9zZXRfcHVsbChzdHJ1Y3Qgcm9ja2NoaXBf
-cGluX2JhbmsKPj4gKmJhbmssIHJldHVybiByZXQ7Cj4+ICB9Cj4+Cj4+ICtzdGF0aWMgaW50IHJv
-Y2tjaGlwX2dldF9zY2htaXR0KHN0cnVjdCByb2NrY2hpcF9waW5fYmFuayAqYmFuaywgaW50Cj4+
-IHBpbl9udW0pICt7Cj4+ICsJc3RydWN0IHJvY2tjaGlwX3BpbmN0cmwgKmluZm8gPSBiYW5rLT5k
-cnZkYXRhOwo+PiArCXN0cnVjdCByb2NrY2hpcF9waW5fY3RybCAqY3RybCA9IGluZm8tPmN0cmw7
-Cj4+ICsJc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+PiArCWludCByZWcsIHJldDsKPj4gKwl1OCBi
-aXQ7Cj4+ICsJdTMyIGRhdGE7Cj4+ICsKPj4gKwljdHJsLT5zY2htaXR0X2NhbGNfcmVnKGJhbmss
-IHBpbl9udW0sICZyZWdtYXAsICZyZWcsICZiaXQpOwo+Cj4gd2UgbWlnaHQgd2FudCB0byBoYXZl
-IGFuZCBjaGVjayBhbiBhY3R1YWwgcmV0dXJuIHZhbHVlIGhlcmUuCj4gT24gdGhpbmdzIGxpa2Ug
-dGhlIHJrMzI4OCBvbmx5IHNvbWUgc3BlY2lhbCBwaW5zIGhhdmUgdGhlc2Ugc2NobWl0dCB0cmln
-Z2Vycwo+IGl0IHNlZW1zLCBzbyB3ZSBtaWdodCB3YW50IHRvIGFib3J0IGlmIHNvbWV0aGluZyB0
-cmllcyB0byBhY2Nlc3MgYW4KPiB1bnN1cHBvcnRlZCBvbmUuCgpUaGFua3MsIGkgZm9yZ2V0IHRv
-IGNoZWNrIHRoZSByZXR1cm4gdmFsdWUuCj4KPj4gKwo+PiArCXJldCA9IHJlZ21hcF9yZWFkKHJl
-Z21hcCwgcmVnLCAmZGF0YSk7Cj4+ICsJaWYgKHJldCkKPj4gKwkJcmV0dXJuIHJldDsKPj4gKwo+
-PiArCWRhdGEgPj49IGJpdDsKPj4gKwlyZXR1cm4gZGF0YSAmIDB4MTsKPgo+IFRoZSBtYXNrIHNl
-ZW1zIHRvIGFsc28gYmUgdmFyaWFibGUsIGZvciBleGFtcGxlIG9uIHRoZSByazMzOTkgdGhlcmUg
-c2VlbSB0byBiZQo+IG11bHRpcGxlICJsZXZlbHMiIGZvciBhdCBsZWFzdCBncGlvMi4gU28geW91
-ciBjYWxjLWNhbGxiYWNrIG1pZ2h0IHdhbnQgdG8gYWxzbwo+IHNldCB0aGUgcmlnaHQgbWFzay4K
-ClRvIHRoZSBtdWx0aXBsZSAibGV2ZWxzIiwgaSB0aGluayB3ZSBjYW4gdXNlIHRoZSAKIlBJTl9D
-T05GSUdfSU5QVVRfU0NITUlUVCIgcGluIGNvbmZpZywgd2hpY2ggZGVzY3JpYmVkIGF0IHBpbmNv
-bmYtZ2VuZXJpYy5oLgoKICAqIEBQSU5fQ09ORklHX0lOUFVUX1NDSE1JVFQ6IHRoaXMgd2lsbCBj
-b25maWd1cmUgYW4gaW5wdXQgcGluIHRvIHJ1biBpbgogICoJc2NobWl0dC10cmlnZ2VyIG1vZGUu
-IElmIHRoZSBzY2htaXR0LXRyaWdnZXIgaGFzIGFkanVzdGFibGUgaHlzdGVyZXNpcywKICAqCXRo
-ZSB0aHJlc2hvbGQgdmFsdWUgaXMgZ2l2ZW4gb24gYSBjdXN0b20gZm9ybWF0IGFzIGFyZ3VtZW50
-IHdoZW4KICAqCXNldHRpbmcgcGlucyB0byB0aGlzIG1vZGUuCgo+Cj4gT3RoZXJ3aXNlIGxvb2tz
-IGdvb2QuCj4KPgo+IEhlaWtvCj4KPgo+Cj4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKTGludXgtcm9j
-a2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCg==
+Just fix spelling typos in comments.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/core.c            | 2 +-
+ drivers/pinctrl/pinconf-generic.c | 2 +-
+ drivers/pinctrl/pinconf.c         | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index d69046537b75..3a84b45f9275 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1062,7 +1062,7 @@ static struct pinctrl *create_pinctrl(struct device *dev,
+ 	mutex_unlock(&pinctrl_maps_mutex);
+ 
+ 	if (ret < 0) {
+-		/* If some other error than deferral occured, return here */
++		/* If some other error than deferral occurred, return here */
+ 		pinctrl_free(p, false);
+ 		return ERR_PTR(ret);
+ 	}
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index ce3335accb5b..720a19fd38d2 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -187,7 +187,7 @@ static const struct pinconf_generic_params dt_params[] = {
+  * @ncfg:	Number of entries in @cfg
+  *
+  * Parse the config options described in @params from @np and puts the result
+- * in @cfg. @cfg does not need to be empty, entries are added beggining at
++ * in @cfg. @cfg does not need to be empty, entries are added beginning at
+  * @ncfg. @ncfg is updated to reflect the number of entries after parsing. @cfg
+  * needs to have enough memory allocated to hold all possible entries.
+  */
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index c1c1ccc58267..a02dba35fcf3 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -284,7 +284,7 @@ void pinconf_show_setting(struct seq_file *s,
+ 	}
+ 
+ 	/*
+-	 * FIXME: We should really get the pin controler to dump the config
++	 * FIXME: We should really get the pin controller to dump the config
+ 	 * values, so they can be decoded to something meaningful.
+ 	 */
+ 	pinconf_show_config(s, pctldev, setting->data.configs.configs,
+@@ -473,7 +473,7 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
+  *     "config_pin" or "config_group", alternatives like config_mux are not
+  *     supported yet.
+  * <devicename> <state> <name> are values that should match the pinctrl-maps
+- * <newvalue> reflects the new config and is driver dependant
++ * <newvalue> reflects the new config and is driver dependent
+  */
+ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 	const char __user *user_buf, size_t count, loff_t *ppos)
+-- 
+2.11.0
+
