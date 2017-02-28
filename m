@@ -1,45 +1,48 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] pinctrl: samsung: Calculate GPIO base for
- pinctrl_add_gpio_range
-Date: Tue, 28 Feb 2017 09:01:43 +0000
-Message-ID: <20170228090143.GG2742@localhost.localdomain>
-References: <20170223172313.GF2742@localhost.localdomain>
- <1487872490-27643-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CA+Ln22FJ=Kg_HmfjhDst4fNeUoA8jh=QVsF-rUVeXgPrzunJ+w@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 0/4] gpio: make gpiod_count() API consistent
+Date: Tue, 28 Feb 2017 11:48:06 +0200
+Message-ID: <1488275286.20145.49.camel@linux.intel.com>
+References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
+         <20170227082735.GA2373@mail.corp.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:49474 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751181AbdB1JGh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 28 Feb 2017 04:06:37 -0500
-Content-Disposition: inline
-In-Reply-To: <CA+Ln22FJ=Kg_HmfjhDst4fNeUoA8jh=QVsF-rUVeXgPrzunJ+w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <20170227082735.GA2373@mail.corp.redhat.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 
-On Mon, Feb 27, 2017 at 11:13:59AM +0900, Tomasz Figa wrote:
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > index ddc8d6b..864d8b4d 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > @@ -882,7 +882,7 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
-> >                 pin_bank->grange.id = bank;
-> >                 pin_bank->grange.pin_base = drvdata->pin_base
-> >                                                 + pin_bank->pin_base;
-> > -               pin_bank->grange.base = pin_bank->gpio_chip.base;
-> > +               pin_bank->grange.base = pin_bank->grange.pin_base;
+On Mon, 2017-02-27 at 09:27 +0100, Benjamin Tissoires wrote:
+> On Feb 20 2017 or thereabouts, Andy Shevchenko wrote:
+> > There are three possibilities in gpiod_count(): ACPI, OF, and
+> > platform data.
+> > 
+> > Some of them return 0, which requires to be handled separately,
+> > though
+> > developers rather lazy and just shadow an actual error code.
+> > 
+> > Let's make this API consistent by not allowing 0 in returned value.
+> > 
+> > There are luckily only 3 users right now, one of them handles this
+> > properly, the rest is converted in this series.
+> > 
+> > Series is supposed to go through GPIO tree.
+> > 
+> > Andy Shevchenko (4):
+> >   gpio: acpi: Don't return 0 on acpi_gpio_count()
+> >   gpio: of: Don't return 0 on dt_gpio_count()
+> >   platform/x86: surface3_button: Propagate error from gpiod_count()
+> >   Input: soc_button_array - Propagate error from gpiod_count()
 > 
-> If we are not reading the base from the GPIO bank anymore, maybe it
-> could make sense to actually make samsung_gpiolib_register() use
-> bank->grange.base as gc->base? This way we would avoid explicitly
-> numbering two times.
-> 
+> Not sure if this still matters, but still:
+> Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Yeah no problem I can respin with that included.
+I'm sure it is.
 
-Thanks,
-Charles
+Linus, is your plan to go through queue after merge window is closed?
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
