@@ -1,48 +1,59 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 0/4] gpio: make gpiod_count() API consistent
-Date: Tue, 28 Feb 2017 11:48:06 +0200
-Message-ID: <1488275286.20145.49.camel@linux.intel.com>
-References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
-         <20170227082735.GA2373@mail.corp.redhat.com>
+From: "David.Wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Subject: =?UTF-8?Q?Re:_[PATCH_v1_1/2]_pinctrl:_rockchip=ef=bc=9aAdd_input_sc?=
+ =?UTF-8?Q?hmitt_support?=
+Date: Tue, 28 Feb 2017 19:12:19 +0800
+Message-ID: <dd65cf84-dc24-d9d1-9147-582eef3acbac@rock-chips.com>
+References: <1487068541-14120-1-git-send-email-david.wu@rock-chips.com>
+ <1487068541-14120-2-git-send-email-david.wu@rock-chips.com>
+ <48027259.fqOrTqXNdI@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170227082735.GA2373@mail.corp.redhat.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <48027259.fqOrTqXNdI@phil>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2017-02-27 at 09:27 +0100, Benjamin Tissoires wrote:
-> On Feb 20 2017 or thereabouts, Andy Shevchenko wrote:
-> > There are three possibilities in gpiod_count(): ACPI, OF, and
-> > platform data.
-> > 
-> > Some of them return 0, which requires to be handled separately,
-> > though
-> > developers rather lazy and just shadow an actual error code.
-> > 
-> > Let's make this API consistent by not allowing 0 in returned value.
-> > 
-> > There are luckily only 3 users right now, one of them handles this
-> > properly, the rest is converted in this series.
-> > 
-> > Series is supposed to go through GPIO tree.
-> > 
-> > Andy Shevchenko (4):
-> >   gpio: acpi: Don't return 0 on acpi_gpio_count()
-> >   gpio: of: Don't return 0 on dt_gpio_count()
-> >   platform/x86: surface3_button: Propagate error from gpiod_count()
-> >   Input: soc_button_array - Propagate error from gpiod_count()
-> 
-> Not sure if this still matters, but still:
-> Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-
-I'm sure it is.
-
-Linus, is your plan to go through queue after merge window is closed?
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+SGkgSGVpa28sCgrlnKggMjAxNy8yLzI0IDA6NTEsIEhlaWtvIFN0dWVibmVyIOWGmemBkzoKPiBI
+aSBEYXZpZCwKPgo+IEFtIERpZW5zdGFnLCAxNC4gRmVicnVhciAyMDE3LCAxODozNTo0MCBDRVQg
+c2NocmllYiBEYXZpZCBXdToKPj4gRnJvbTogImRhdmlkLnd1IiA8ZGF2aWQud3VAcm9jay1jaGlw
+cy5jb20+Cj4+Cj4+ICBzdHJ1Y3Qgcm9ja2NoaXBfcGluX2NvbmZpZyB7Cj4+IEBAIC0xMzU1LDYg
+KzEzNTgsNTMgQEAgc3RhdGljIGludCByb2NrY2hpcF9zZXRfcHVsbChzdHJ1Y3Qgcm9ja2NoaXBf
+cGluX2JhbmsKPj4gKmJhbmssIHJldHVybiByZXQ7Cj4+ICB9Cj4+Cj4+ICtzdGF0aWMgaW50IHJv
+Y2tjaGlwX2dldF9zY2htaXR0KHN0cnVjdCByb2NrY2hpcF9waW5fYmFuayAqYmFuaywgaW50Cj4+
+IHBpbl9udW0pICt7Cj4+ICsJc3RydWN0IHJvY2tjaGlwX3BpbmN0cmwgKmluZm8gPSBiYW5rLT5k
+cnZkYXRhOwo+PiArCXN0cnVjdCByb2NrY2hpcF9waW5fY3RybCAqY3RybCA9IGluZm8tPmN0cmw7
+Cj4+ICsJc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+PiArCWludCByZWcsIHJldDsKPj4gKwl1OCBi
+aXQ7Cj4+ICsJdTMyIGRhdGE7Cj4+ICsKPj4gKwljdHJsLT5zY2htaXR0X2NhbGNfcmVnKGJhbmss
+IHBpbl9udW0sICZyZWdtYXAsICZyZWcsICZiaXQpOwo+Cj4gd2UgbWlnaHQgd2FudCB0byBoYXZl
+IGFuZCBjaGVjayBhbiBhY3R1YWwgcmV0dXJuIHZhbHVlIGhlcmUuCj4gT24gdGhpbmdzIGxpa2Ug
+dGhlIHJrMzI4OCBvbmx5IHNvbWUgc3BlY2lhbCBwaW5zIGhhdmUgdGhlc2Ugc2NobWl0dCB0cmln
+Z2Vycwo+IGl0IHNlZW1zLCBzbyB3ZSBtaWdodCB3YW50IHRvIGFib3J0IGlmIHNvbWV0aGluZyB0
+cmllcyB0byBhY2Nlc3MgYW4KPiB1bnN1cHBvcnRlZCBvbmUuCgpUaGFua3MsIGkgZm9yZ2V0IHRv
+IGNoZWNrIHRoZSByZXR1cm4gdmFsdWUuCj4KPj4gKwo+PiArCXJldCA9IHJlZ21hcF9yZWFkKHJl
+Z21hcCwgcmVnLCAmZGF0YSk7Cj4+ICsJaWYgKHJldCkKPj4gKwkJcmV0dXJuIHJldDsKPj4gKwo+
+PiArCWRhdGEgPj49IGJpdDsKPj4gKwlyZXR1cm4gZGF0YSAmIDB4MTsKPgo+IFRoZSBtYXNrIHNl
+ZW1zIHRvIGFsc28gYmUgdmFyaWFibGUsIGZvciBleGFtcGxlIG9uIHRoZSByazMzOTkgdGhlcmUg
+c2VlbSB0byBiZQo+IG11bHRpcGxlICJsZXZlbHMiIGZvciBhdCBsZWFzdCBncGlvMi4gU28geW91
+ciBjYWxjLWNhbGxiYWNrIG1pZ2h0IHdhbnQgdG8gYWxzbwo+IHNldCB0aGUgcmlnaHQgbWFzay4K
+ClRvIHRoZSBtdWx0aXBsZSAibGV2ZWxzIiwgaSB0aGluayB3ZSBjYW4gdXNlIHRoZSAKIlBJTl9D
+T05GSUdfSU5QVVRfU0NITUlUVCIgcGluIGNvbmZpZywgd2hpY2ggZGVzY3JpYmVkIGF0IHBpbmNv
+bmYtZ2VuZXJpYy5oLgoKICAqIEBQSU5fQ09ORklHX0lOUFVUX1NDSE1JVFQ6IHRoaXMgd2lsbCBj
+b25maWd1cmUgYW4gaW5wdXQgcGluIHRvIHJ1biBpbgogICoJc2NobWl0dC10cmlnZ2VyIG1vZGUu
+IElmIHRoZSBzY2htaXR0LXRyaWdnZXIgaGFzIGFkanVzdGFibGUgaHlzdGVyZXNpcywKICAqCXRo
+ZSB0aHJlc2hvbGQgdmFsdWUgaXMgZ2l2ZW4gb24gYSBjdXN0b20gZm9ybWF0IGFzIGFyZ3VtZW50
+IHdoZW4KICAqCXNldHRpbmcgcGlucyB0byB0aGlzIG1vZGUuCgo+Cj4gT3RoZXJ3aXNlIGxvb2tz
+IGdvb2QuCj4KPgo+IEhlaWtvCj4KPgo+Cj4KCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpMaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKTGludXgtcm9j
+a2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2xpbnV4LXJvY2tjaGlwCg==
