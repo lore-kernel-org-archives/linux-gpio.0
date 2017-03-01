@@ -1,49 +1,36 @@
-From: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH v2 4/5] dt: bindings: add binding for Allwinner A64 R_PIO
- pinctrl
-Date: Thu,  2 Mar 2017 02:01:10 +0800
-Message-ID: <20170301180111.12365-5-icenowy@aosc.xyz>
-References: <20170301180111.12365-1-icenowy@aosc.xyz>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH fixes v2] pinctrl: Really force states during
+ suspend/resume
+Date: Wed, 1 Mar 2017 10:29:00 -0800
+Message-ID: <9f02caa1-638a-cb72-c87f-69e4282ae67d@gmail.com>
+References: <20170227230634.10688-1-f.fainelli@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170301180111.12365-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Andre Przywara <andre.przywara@arm.com>
-Cc: linux-gpio@vger.kernel.org, Icenowy Zheng <icenowy@aosc.xyz>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170227230634.10688-1-f.fainelli@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Allwinner A64 SoC has also a dedicated pin controller for Port L GPIOs,
-which is called "Port Controller (CPUs-PORT)" in SoC User Manual.
+On 02/27/2017 03:06 PM, Florian Fainelli wrote:
+> In case a platform only defaults a "default" set of pins, but not a
+> "sleep" set of pins, and this particular platform suspends and resumes
+> in a way that the pin states are not preserved by the hardware, when we
+> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+> -> pinctrl_select_state() and the first thing we do is check that the
+> pins state is the same as before, and do nothing.
+> 
+> In order to fix this, decouple pinctrl_select_state and make it become
+> pinctrl_commit_state(), taking an additional ignore_state_check boolean
+> which allows us to bypass the state check during suspend/resume, since
+> we really want to re-apply the previous pin states in these case.
+> 
+> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Add a binding for this pin controller, like the ones in A23/33 and H3.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-index 8177bb4d5f53..b53224473672 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-@@ -23,6 +23,7 @@ Required properties:
-   "allwinner,sun8i-h3-pinctrl"
-   "allwinner,sun8i-h3-r-pinctrl"
-   "allwinner,sun50i-a64-pinctrl"
-+  "allwinner,sun50i-a64-r-pinctrl"
-   "allwinner,sun50i-h5-pinctrl"
-   "nextthing,gr8-pinctrl"
- 
+Linus, I have a better version of this coming where the p->state ==
+state check is just moved into pinctrl_select_state() instead.
 -- 
-2.11.1
+Florian
