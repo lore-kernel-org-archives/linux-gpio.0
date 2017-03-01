@@ -1,15 +1,15 @@
 From: David Daney <david.daney@cavium.com>
-Subject: [PATCH v5 1/6] genirq: Export more irq_chip_*_parent() functions.
-Date: Tue, 28 Feb 2017 17:48:47 -0800
-Message-ID: <1488332932-2691-2-git-send-email-david.daney@cavium.com>
+Subject: [PATCH v5 6/6] MAINTAINERS: Add entry for THUNDERX GPIO Driver.
+Date: Tue, 28 Feb 2017 17:48:52 -0800
+Message-ID: <1488332932-2691-7-git-send-email-david.daney@cavium.com>
 References: <1488332932-2691-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-co1nam03on0085.outbound.protection.outlook.com ([104.47.40.85]:44000
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+Received: from mail-bn3nam01on0083.outbound.protection.outlook.com ([104.47.33.83]:49158
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751446AbdCACQX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1751439AbdCACQX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Tue, 28 Feb 2017 21:16:23 -0500
 In-Reply-To: <1488332932-2691-1-git-send-email-david.daney@cavium.com>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -17,46 +17,27 @@ List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
 
-Many of the family of functions including irq_chip_mask_parent(),
-irq_chip_unmask_parent() are exported, but not all.
-
-Add EXPORT_SYMBOL_GPL to irq_chip_enable_parent,
-irq_chip_disable_parent and irq_chip_set_affinity_parent, so they
-likewise are usable from modules.
-
 Signed-off-by: David Daney <david.daney@cavium.com>
 ---
- kernel/irq/chip.c | 3 +++
- 1 file changed, 3 insertions(+)
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index be3c34e..73ea90b 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -993,6 +993,7 @@ void irq_chip_enable_parent(struct irq_data *data)
- 	else
- 		data->chip->irq_unmask(data);
- }
-+EXPORT_SYMBOL_GPL(irq_chip_enable_parent);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 76dfb51..c281607 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11033,6 +11033,11 @@ M:	Andreas Noever <andreas.noever@gmail.com>
+ S:	Maintained
+ F:	drivers/thunderbolt/
  
- /**
-  * irq_chip_disable_parent - Disable the parent interrupt (defaults to mask if
-@@ -1007,6 +1008,7 @@ void irq_chip_disable_parent(struct irq_data *data)
- 	else
- 		data->chip->irq_mask(data);
- }
-+EXPORT_SYMBOL_GPL(irq_chip_disable_parent);
- 
- /**
-  * irq_chip_ack_parent - Acknowledge the parent interrupt
-@@ -1069,6 +1071,7 @@ int irq_chip_set_affinity_parent(struct irq_data *data,
- 
- 	return -ENOSYS;
- }
-+EXPORT_SYMBOL_GPL(irq_chip_set_affinity_parent);
- 
- /**
-  * irq_chip_set_type_parent - Set IRQ type on the parent interrupt
++THUNDERX GPIO DRIVER
++M:	David Daney <david.daney@cavium.com>
++S:	Maintained
++F:	drivers/gpio/gpio-thunderx.c
++
+ TI BQ27XXX POWER SUPPLY DRIVER
+ R:	Andrew F. Davis <afd@ti.com>
+ F:	include/linux/power/bq27xxx_battery.h
 -- 
 1.8.3.1
 
