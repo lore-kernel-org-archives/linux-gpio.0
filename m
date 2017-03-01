@@ -1,108 +1,45 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
-Date: Wed,  1 Mar 2017 10:32:57 -0800
-Message-ID: <20170301183257.6554-1-f.fainelli@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35709 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752560AbdCASlP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Mar 2017 13:41:15 -0500
-Sender: linux-gpio-owner@vger.kernel.org
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH 0/3] pc104: Mask PC/104 Kconfig options
+Date: Wed, 1 Mar 2017 15:46:52 -0500
+Message-ID: <20170301204652.GA31812@sophia>
+References: <cover.1484073324.git.vilhelm.gray@gmail.com>
+ <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Jonathan Cameron <jic23@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org
-Cc: swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 
-In case a platform only defaults a "default" set of pins, but not a
-"sleep" set of pins, and this particular platform suspends and resumes
-in a way that the pin states are not preserved by the hardware, when we
-resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
--> pinctrl_select_state() and the first thing we do is check that the
-pins state is the same as before, and do nothing.
+On Wed, Jan 11, 2017 at 04:26:19PM +0100, Linus Walleij wrote:
+>On Tue, Jan 10, 2017 at 7:50 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
+>
+>> PC/104 form factor devices serve a specific niche of embedded system
+>> users. Since PC/104 devices and hardware are typically used by just a
+>> subset of Linux users, it would be appropriate to filter PC/104 related
+>> Kconfig options for those uninterested.
+>>
+>> This patchset introduces the PC104 Kconfig option, and uses it to mask
+>> PC/104 specific device drivers and options, so that only those users
+>> interested in PC/104 related Kconfig options are exposed to them.
+>
+>Tell me when/if the PC104 option is merged and I can merge the GPIO
+>patch.
+>
+>Yours,
+>Linus Walleij
 
-In order to fix this, decouple the actual state change from
-pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
-the p->state == state check in pinctrl_select_state() not to change the
-caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
-are updated to bypass the state check by calling pinctrl_commit_state().
+Jonathan and Linus,
 
-Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Changes in v3:
+Now that the PC104 option is merged for 4.11, it should be all right to
+merge in the GPIO and IIO patches without worry of warnings. Please
+merge the relevant patch to your respective tree after you pull in the
+PC104 option.
 
-- move the state check to pinctrl_select_state
+Thank you,
 
-Changes in v2:
-
-- rename __pinctrl_select_state to pinctrl_commit_state
-
- drivers/pinctrl/core.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index fb38e208f32d..735d8f7f9d71 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -992,19 +992,16 @@ struct pinctrl_state *pinctrl_lookup_state(struct pinctrl *p,
- EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
- 
- /**
-- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
-  * @p: the pinctrl handle for the device that requests configuration
-  * @state: the state handle to select/activate/program
-  */
--int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
- {
- 	struct pinctrl_setting *setting, *setting2;
- 	struct pinctrl_state *old_state = p->state;
- 	int ret;
- 
--	if (p->state == state)
--		return 0;
--
- 	if (p->state) {
- 		/*
- 		 * For each pinmux setting in the old state, forget SW's record
-@@ -1068,6 +1065,19 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
- 
- 	return ret;
- }
-+
-+/**
-+ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * @p: the pinctrl handle for the device that requests configuration
-+ * @state: the state handle to select/activate/program
-+ */
-+int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+{
-+	if (p->state == state)
-+		return 0;
-+
-+	return pinctrl_commit_state(p, state);
-+}
- EXPORT_SYMBOL_GPL(pinctrl_select_state);
- 
- static void devm_pinctrl_release(struct device *dev, void *res)
-@@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
- int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-@@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
- int pinctrl_force_default(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
--- 
-2.9.3
-
+William Breathitt Gray
