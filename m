@@ -1,196 +1,108 @@
-From: Icenowy Zheng <icenowy@aosc.xyz>
-Subject: [PATCH v2 5/5] pinctrl: sunxi: Add A64 R_PIO controller support
-Date: Thu,  2 Mar 2017 02:09:30 +0800
-Message-ID: <20170301180930.13155-1-icenowy@aosc.xyz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Andre Przywara <andre.przywara@arm.com>
-Cc: linux-gpio@vger.kernel.org, Icenowy Zheng <icenowy@aosc.xyz>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
+Date: Wed,  1 Mar 2017 10:32:57 -0800
+Message-ID: <20170301183257.6554-1-f.fainelli@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:35709 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752560AbdCASlP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 1 Mar 2017 13:41:15 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Cc: swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 
-The A64 has a R_PIO pin controller, similar to the one found on the H3 SoC.
-Add support for the pins controlled by the R_PIO controller.
+In case a platform only defaults a "default" set of pins, but not a
+"sleep" set of pins, and this particular platform suspends and resumes
+in a way that the pin states are not preserved by the hardware, when we
+resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+-> pinctrl_select_state() and the first thing we do is check that the
+pins state is the same as before, and do nothing.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+In order to fix this, decouple the actual state change from
+pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
+the p->state == state check in pinctrl_select_state() not to change the
+caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
+are updated to bypass the state check by calling pinctrl_commit_state().
+
+Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
+Changes in v3:
+
+- move the state check to pinctrl_select_state
+
 Changes in v2:
-- Drop reset line de-assert code (as the reset line in fact does not exist).
 
- drivers/pinctrl/sunxi/Kconfig                |   4 +
- drivers/pinctrl/sunxi/Makefile               |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c | 125 +++++++++++++++++++++++++++
- 3 files changed, 130 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
+- rename __pinctrl_select_state to pinctrl_commit_state
 
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index a84bfa7f3c05..a0c419ac2a3b 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -68,6 +68,10 @@ config PINCTRL_SUN50I_A64
- 	def_bool ARM64 && ARCH_SUNXI
- 	select PINCTRL_SUNXI
+ drivers/pinctrl/core.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index fb38e208f32d..735d8f7f9d71 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -992,19 +992,16 @@ struct pinctrl_state *pinctrl_lookup_state(struct pinctrl *p,
+ EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
  
-+config PINCTRL_SUN50I_A64_R
-+	def_bool ARM64 && ARCH_SUNXI
-+	select PINCTRL_SUNXI
+ /**
+- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
++ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
+  * @p: the pinctrl handle for the device that requests configuration
+  * @state: the state handle to select/activate/program
+  */
+-int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
++static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+ {
+ 	struct pinctrl_setting *setting, *setting2;
+ 	struct pinctrl_state *old_state = p->state;
+ 	int ret;
+ 
+-	if (p->state == state)
+-		return 0;
+-
+ 	if (p->state) {
+ 		/*
+ 		 * For each pinmux setting in the old state, forget SW's record
+@@ -1068,6 +1065,19 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
+ 
+ 	return ret;
+ }
 +
- config PINCTRL_SUN50I_H5
- 	def_bool ARM64 && ARCH_SUNXI
- 	select PINCTRL_SUNXI
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index 04ccb88ebd5f..df4ccd6cd44c 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A23)		+= pinctrl-sun8i-a23.o
- obj-$(CONFIG_PINCTRL_SUN8I_A23_R)	+= pinctrl-sun8i-a23-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
- obj-$(CONFIG_PINCTRL_SUN50I_A64)	+= pinctrl-sun50i-a64.o
-+obj-$(CONFIG_PINCTRL_SUN50I_A64_R)	+= pinctrl-sun50i-a64-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
-new file mode 100644
-index 000000000000..415870e82cbf
---- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-a64-r.c
-@@ -0,0 +1,125 @@
-+/*
-+ * Allwinner A64 SoCs special pins pinctrl driver.
-+ *
-+ * Based on pinctrl-sun8i-a23-r.c
-+ *
-+ * Copyright (C) 2016 Icenowy Zheng
-+ * Icenowy Zheng <icenowy@aosc.xyz>
-+ *
-+ * Copyright (C) 2014 Chen-Yu Tsai
-+ * Chen-Yu Tsai <wens@csie.org>
-+ *
-+ * Copyright (C) 2014 Boris Brezillon
-+ * Boris Brezillon <boris.brezillon@free-electrons.com>
-+ *
-+ * Copyright (C) 2014 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard@free-electrons.com>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
++/**
++ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
++ * @p: the pinctrl handle for the device that requests configuration
++ * @state: the state handle to select/activate/program
 + */
-+
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "pinctrl-sunxi.h"
-+
-+static const struct sunxi_desc_pin sun50i_a64_r_pins[] = {
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_pwm"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_cir_rx"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 12)),	/* PL_EINT12 */
-+};
-+
-+static const struct sunxi_pinctrl_desc sun50i_a64_r_pinctrl_data = {
-+	.pins = sun50i_a64_r_pins,
-+	.npins = ARRAY_SIZE(sun50i_a64_r_pins),
-+	.pin_base = PL_BASE,
-+	.irq_banks = 1,
-+};
-+
-+static int sun50i_a64_r_pinctrl_probe(struct platform_device *pdev)
++int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
 +{
-+	return sunxi_pinctrl_init(pdev,
-+				  &sun50i_a64_r_pinctrl_data);
++	if (p->state == state)
++		return 0;
++
++	return pinctrl_commit_state(p, state);
 +}
-+
-+static const struct of_device_id sun50i_a64_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun50i-a64-r-pinctrl", },
-+	{}
-+};
-+
-+static struct platform_driver sun50i_a64_r_pinctrl_driver = {
-+	.probe	= sun50i_a64_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun50i-a64-r-pinctrl",
-+		.of_match_table	= sun50i_a64_r_pinctrl_match,
-+	},
-+};
-+builtin_platform_driver(sun50i_a64_r_pinctrl_driver);
+ EXPORT_SYMBOL_GPL(pinctrl_select_state);
+ 
+ static void devm_pinctrl_release(struct device *dev, void *res)
+@@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
+ int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
+ {
+ 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
+-		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
++		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+@@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+ int pinctrl_force_default(struct pinctrl_dev *pctldev)
+ {
+ 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
+-		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
++		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_force_default);
 -- 
-2.11.1
+2.9.3
+
