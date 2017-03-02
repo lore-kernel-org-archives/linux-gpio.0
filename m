@@ -1,56 +1,70 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
-Date: Thu, 2 Mar 2017 20:17:26 +0000
-Message-ID: <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
- <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
+From: Sergio Prado <sergio.prado@e-labworks.com>
+Subject: [PATCH] pinctrl: samsung: fix segfault when using external interrupts
+ on s3c24xx
+Date: Thu,  2 Mar 2017 18:23:19 -0300
+Message-ID: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:43497 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751152AbdCBURc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2017 15:17:32 -0500
-In-Reply-To: <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sergio Prado <sergio.prado@e-labworks.com>
 List-Id: linux-gpio@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Jacopo,
+We are getting a NULL pointer dereference when working with external
+interrupts on s3c24xx:
 
-On Tuesday, February 21, 2017, jacopo mondi wrote:
-> > +			gpio-controller;
-> > +			#gpio-cells =3D <2>;
-> > +			gpio-ranges =3D <&pinctrl 0 0 16>;
->=20
-> Not all ports have 16 pins available.
-> This is one of the differences between different RZ/A1 SoC versions
-> (RZ/A1H, RZ/A1L etc)
->=20
-> I'll change the number of pins to the actual available ones on each port
-> for r7s72100 (RZ/A1H)
+Unable to handle kernel NULL pointer dereference at virtual address 000000a8
+pgd = c0104000
+[000000a8] *pgd=00000000
+Internal error: Oops: 5 [#1] ARM
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
+Hardware name: Samsung S3C2416 (Flattened Device Tree)
+task: c07399f8 task.stack: c0734000
+PC is at s3c24xx_demux_eint4_7+0x24/0x10c
+LR is at s3c24xx_demux_eint4_7+0x108/0x10c
 
-But wait, what if someone wants to use a RZ/A1L???
+The problem is in the function s3c24xx_demux_eint() when dereferencing
+bank->eint_base.
 
-I don't want to make a separate dtsi file for RZ/A1L.
+At this point, we cannot get the bank pointer from the irq_desc
+structure since it is pointing to the hardware irq, not virq.
 
-Is it possible to change the number of port pins in the board dts file?
-For example:
-  RZ/A1H: P5_0 - P5_10
-  RZ/A1L: P5_0 - P5_16
+So let's get the bank pointer directly from data->drvdata.
 
-So, in a rza1l-board.dts file I would put:
+This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
 
-&port5 {
-	gpio-ranges =3D <&pinctrl 0 80 16>;
-}
+Tested on FriendlyARM mini2440.
 
-Will this work?
+Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+---
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Chris
-
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index b82a003546ae..1b8d887796e8 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+ {
+ 	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+-	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *d = data->drvdata;
++	struct samsung_pin_bank *bank = d->pin_banks;
+ 	unsigned int pend, mask;
+ 
+ 	chained_irq_enter(chip, desc);
+-- 
+1.9.1
