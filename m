@@ -1,70 +1,115 @@
-From: Sergio Prado <sergio.prado@e-labworks.com>
-Subject: [PATCH] pinctrl: samsung: fix segfault when using external interrupts
- on s3c24xx
-Date: Thu,  2 Mar 2017 18:23:19 -0300
-Message-ID: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v1] gpio: acpi: Add managed variant of acpi_dev_add_driver_gpios()
+Date: Thu, 02 Mar 2017 23:07:28 +0100
+Message-ID: <11931412.qmz2QKIKDY@aspire.rjw.lan>
+References: <20170302134805.81705-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene@kernel.org, krzk@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sergio Prado <sergio.prado@e-labworks.com>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170302134805.81705-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-We are getting a NULL pointer dereference when working with external
-interrupts on s3c24xx:
+On Thursday, March 02, 2017 03:48:05 PM Andy Shevchenko wrote:
+> Introduce device managed variant of acpi_dev_add_driver_gpios() and its
+> counterpart acpi_dev_remove_driver_gpios().
+> 
+> The functions in most cases are used in driver's ->probe() and
+> ->remove() callbacks, that's why it's useful to have managed variant of
+> them.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> 
+> This is supposed to go through GPIO tree.
+> 
+> Linus, can you create an immutable branch that other subsystems can use
+> it if needed?
+> 
+> (We currently have one possible leak and devm_*() would help there)
+> 
+>  drivers/gpio/gpiolib-acpi.c | 31 +++++++++++++++++++++++++++++++
+>  include/linux/acpi.h        | 11 +++++++++++
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index 1459e6183194..3fe63d8ed426 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -362,6 +362,37 @@ int acpi_dev_add_driver_gpios(struct acpi_device *adev,
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_dev_add_driver_gpios);
+>  
+> +static void devm_acpi_dev_release_driver_gpios(struct device *dev, void *res)
+> +{
+> +	acpi_dev_remove_driver_gpios(ACPI_COMPANION(dev));
+> +}
+> +
+> +int devm_acpi_dev_add_driver_gpios(struct device *dev,
+> +				   const struct acpi_gpio_mapping *gpios)
+> +{
+> +	void *res;
+> +	int ret;
+> +
+> +	res = devres_alloc(devm_acpi_dev_release_driver_gpios, 0, GFP_KERNEL);
+> +	if (!res)
+> +		return -ENOMEM;
+> +
+> +	ret = acpi_dev_add_driver_gpios(ACPI_COMPANION(dev), gpios);
+> +	if (ret) {
+> +		devres_free(res);
+> +		return ret;
+> +	}
+> +	devres_add(dev, res);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_acpi_dev_add_driver_gpios);
+> +
+> +void devm_acpi_dev_remove_driver_gpios(struct device *dev)
+> +{
+> +	WARN_ON(devres_release(dev, devm_acpi_dev_release_driver_gpios, NULL, NULL));
+> +}
+> +EXPORT_SYMBOL_GPL(devm_acpi_dev_remove_driver_gpios);
+> +
+>  static bool acpi_get_driver_gpio_data(struct acpi_device *adev,
+>  				      const char *name, int index,
+>  				      struct acpi_reference_args *args)
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 673acda012af..c8eaaad4a9ed 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -952,6 +952,10 @@ static inline void acpi_dev_remove_driver_gpios(struct acpi_device *adev)
+>  		adev->driver_gpios = NULL;
+>  }
+>  
+> +int devm_acpi_dev_add_driver_gpios(struct device *dev,
+> +				   const struct acpi_gpio_mapping *gpios);
+> +void devm_acpi_dev_remove_driver_gpios(struct device *dev);
+> +
+>  int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index);
+>  #else
+>  static inline int acpi_dev_add_driver_gpios(struct acpi_device *adev,
+> @@ -961,6 +965,13 @@ static inline int acpi_dev_add_driver_gpios(struct acpi_device *adev,
+>  }
+>  static inline void acpi_dev_remove_driver_gpios(struct acpi_device *adev) {}
+>  
+> +static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
+> +			      const struct acpi_gpio_mapping *gpios)
+> +{
+> +	return -ENXIO;
+> +}
+> +static inline void devm_acpi_dev_remove_driver_gpios(struct device *dev) {}
+> +
+>  static inline int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+>  {
+>  	return -ENXIO;
+> 
 
-Unable to handle kernel NULL pointer dereference at virtual address 000000a8
-pgd = c0104000
-[000000a8] *pgd=00000000
-Internal error: Oops: 5 [#1] ARM
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
-Hardware name: Samsung S3C2416 (Flattened Device Tree)
-task: c07399f8 task.stack: c0734000
-PC is at s3c24xx_demux_eint4_7+0x24/0x10c
-LR is at s3c24xx_demux_eint4_7+0x108/0x10c
+ACK for the ACPI header update.
 
-The problem is in the function s3c24xx_demux_eint() when dereferencing
-bank->eint_base.
+Thanks,
+Rafael
 
-At this point, we cannot get the bank pointer from the irq_desc
-structure since it is pointing to the hardware irq, not virq.
-
-So let's get the bank pointer directly from data->drvdata.
-
-This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
-
-Tested on FriendlyARM mini2440.
-
-Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
----
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index b82a003546ae..1b8d887796e8 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
- {
- 	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct irq_data *irqd = irq_desc_get_irq_data(desc);
--	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *d = data->drvdata;
-+	struct samsung_pin_bank *bank = d->pin_banks;
- 	unsigned int pend, mask;
- 
- 	chained_irq_enter(chip, desc);
--- 
-1.9.1
