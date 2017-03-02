@@ -1,7 +1,8 @@
 From: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v2 2/2] pinctrl: rockchip: Add input schmitt support for rk3328
-Date: Thu,  2 Mar 2017 15:11:24 +0800
-Message-ID: <1488438684-1801-3-git-send-email-david.wu@rock-chips.com>
+Subject: [PATCH v2 1/2] =?UTF-8?q?pinctrl:=20rockchip=EF=BC=9AAdd=20input?=
+ =?UTF-8?q?=20schmitt=20support?=
+Date: Thu,  2 Mar 2017 15:11:23 +0800
+Message-ID: <1488438684-1801-2-git-send-email-david.wu@rock-chips.com>
 References: <1488438684-1801-1-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,52 +24,121 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: "david.wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
+To prevent external signal crosstalk, some pins need to
+enable input schmitt, like i2c pins, 32k-input pin and so on.
+
 Signed-off-by: david.wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+changes in v2:
+ - check the return value (Heiko)
+
+ drivers/pinctrl/pinctrl-rockchip.c | 73 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
 
 diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 9b8d516..91b5051 100644
+index a20ce9f..9b8d516 100644
 --- a/drivers/pinctrl/pinctrl-rockchip.c
 +++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1358,6 +1358,28 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
+@@ -308,6 +308,9 @@ struct rockchip_pin_ctrl {
+ 				    int *reg, u8 *bit);
+ 	void	(*iomux_recalc)(u8 bank_num, int pin, int *reg,
+ 				u8 *bit, int *mask);
++	int	(*schmitt_calc_reg)(struct rockchip_pin_bank *bank,
++				    int pin_num, struct regmap **regmap,
++				    int *reg, u8 *bit);
+ };
+ 
+ struct rockchip_pin_config {
+@@ -1355,6 +1358,57 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
  	return ret;
  }
  
-+#define RK3328_SCHMITT_BITS_PER_PIN		1
-+#define RK3328_SCHMITT_PINS_PER_REG		16
-+#define RK3328_SCHMITT_BANK_STRIDE		8
-+#define RK3328_SCHMITT_GRF_OFFSET		0x380
-+
-+static int rk3328_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
-+					   int pin_num,
-+					   struct regmap **regmap,
-+					   int *reg, u8 *bit)
++static int rockchip_get_schmitt(struct rockchip_pin_bank *bank, int pin_num)
 +{
 +	struct rockchip_pinctrl *info = bank->drvdata;
++	struct rockchip_pin_ctrl *ctrl = info->ctrl;
++	struct regmap *regmap;
++	int reg, ret;
++	u8 bit;
++	u32 data;
 +
-+	*regmap = info->regmap_base;
-+	*reg = RK3328_SCHMITT_GRF_OFFSET;
++	ret = ctrl->schmitt_calc_reg(bank, pin_num, &regmap, &reg, &bit);
++	if (ret)
++		return ret;
 +
-+	*reg += bank->bank_num * RK3328_SCHMITT_BANK_STRIDE;
-+	*reg += ((pin_num / RK3328_SCHMITT_PINS_PER_REG) * 4);
-+	*bit = pin_num % RK3328_SCHMITT_PINS_PER_REG;
++	ret = regmap_read(regmap, reg, &data);
++	if (ret)
++		return ret;
 +
-+	return 0;
++	data >>= bit;
++	return data & 0x1;
 +}
 +
- static int rockchip_get_schmitt(struct rockchip_pin_bank *bank, int pin_num)
- {
- 	struct rockchip_pinctrl *info = bank->drvdata;
-@@ -2861,6 +2883,7 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 		.pull_calc_reg		= rk3228_calc_pull_reg_and_bit,
- 		.drv_calc_reg		= rk3228_calc_drv_reg_and_bit,
- 		.iomux_recalc		= rk3328_recalc_mux,
-+		.schmitt_calc_reg	= rk3328_calc_schmitt_reg_and_bit,
- };
++static int rockchip_set_schmitt(struct rockchip_pin_bank *bank,
++				int pin_num, int enable)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++	struct rockchip_pin_ctrl *ctrl = info->ctrl;
++	struct regmap *regmap;
++	int reg, ret;
++	unsigned long flags;
++	u8 bit;
++	u32 data, rmask;
++
++	dev_dbg(info->dev, "setting input schmitt of GPIO%d-%d to %d\n",
++		bank->bank_num, pin_num, enable);
++
++	ret = ctrl->schmitt_calc_reg(bank, pin_num, &regmap, &reg, &bit);
++	if (ret)
++		return ret;
++
++	spin_lock_irqsave(&bank->slock, flags);
++
++	/* enable the write to the equivalent lower bits */
++	data = BIT(bit + 16) | (enable << bit);
++	rmask = BIT(bit + 16) | BIT(bit);
++
++	ret = regmap_update_bits(regmap, reg, rmask, data);
++	spin_unlock_irqrestore(&bank->slock, flags);
++
++	return ret;
++}
++
+ /*
+  * Pinmux_ops handling
+  */
+@@ -1574,6 +1628,15 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			if (rc < 0)
+ 				return rc;
+ 			break;
++		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++			if (!info->ctrl->schmitt_calc_reg)
++				return -ENOTSUPP;
++
++			rc = rockchip_set_schmitt(bank,
++						  pin - bank->pin_base, arg);
++			if (rc < 0)
++				return rc;
++			break;
+ 		default:
+ 			return -ENOTSUPP;
+ 			break;
+@@ -1634,6 +1697,16 @@ static int rockchip_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
  
- static struct rockchip_pin_bank rk3368_pin_banks[] = {
+ 		arg = rc;
+ 		break;
++	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++		if (!info->ctrl->schmitt_calc_reg)
++			return -ENOTSUPP;
++
++		rc = rockchip_get_schmitt(bank, pin - bank->pin_base);
++		if (rc < 0)
++			return rc;
++
++		arg = rc;
++		break;
+ 	default:
+ 		return -ENOTSUPP;
+ 		break;
 -- 
 1.9.1
