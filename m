@@ -1,109 +1,39 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] gpio: acpi: Add managed variant of acpi_dev_add_driver_gpios()
-Date: Thu,  2 Mar 2017 15:48:05 +0200
-Message-ID: <20170302134805.81705-1-andriy.shevchenko@linux.intel.com>
+From: Peter Robinson <pbrobinson@gmail.com>
+Subject: [PATCH] pinctrl: ti: The IODelay driver is a DRA7xxx feature so depend on that SoC
+Date: Thu,  2 Mar 2017 17:46:36 +0000
+Message-ID: <20170302174636.6662-1-pbrobinson@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:44265 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752452AbdCBNsl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 2 Mar 2017 08:48:41 -0500
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:32788 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753932AbdCBRz2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2017 12:55:28 -0500
+Received: by mail-wm0-f67.google.com with SMTP id n11so6226340wma.0
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Mar 2017 09:55:23 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Nishanth Menon <nm@ti.com>, Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org
+Cc: Peter Robinson <pbrobinson@gmail.com>
 
-Introduce device managed variant of acpi_dev_add_driver_gpios() and its
-counterpart acpi_dev_remove_driver_gpios().
+As the IODelay driver is a hardware feature of the  DRA7xxx SoC
+depend on that SoC and compile test.
 
-The functions in most cases are used in driver's ->probe() and
-->remove() callbacks, that's why it's useful to have managed variant of
-them.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
 ---
+ drivers/pinctrl/ti/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is supposed to go through GPIO tree.
-
-Linus, can you create an immutable branch that other subsystems can use
-it if needed?
-
-(We currently have one possible leak and devm_*() would help there)
-
- drivers/gpio/gpiolib-acpi.c | 31 +++++++++++++++++++++++++++++++
- include/linux/acpi.h        | 11 +++++++++++
- 2 files changed, 42 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 1459e6183194..3fe63d8ed426 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -362,6 +362,37 @@ int acpi_dev_add_driver_gpios(struct acpi_device *adev,
- }
- EXPORT_SYMBOL_GPL(acpi_dev_add_driver_gpios);
- 
-+static void devm_acpi_dev_release_driver_gpios(struct device *dev, void *res)
-+{
-+	acpi_dev_remove_driver_gpios(ACPI_COMPANION(dev));
-+}
-+
-+int devm_acpi_dev_add_driver_gpios(struct device *dev,
-+				   const struct acpi_gpio_mapping *gpios)
-+{
-+	void *res;
-+	int ret;
-+
-+	res = devres_alloc(devm_acpi_dev_release_driver_gpios, 0, GFP_KERNEL);
-+	if (!res)
-+		return -ENOMEM;
-+
-+	ret = acpi_dev_add_driver_gpios(ACPI_COMPANION(dev), gpios);
-+	if (ret) {
-+		devres_free(res);
-+		return ret;
-+	}
-+	devres_add(dev, res);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(devm_acpi_dev_add_driver_gpios);
-+
-+void devm_acpi_dev_remove_driver_gpios(struct device *dev)
-+{
-+	WARN_ON(devres_release(dev, devm_acpi_dev_release_driver_gpios, NULL, NULL));
-+}
-+EXPORT_SYMBOL_GPL(devm_acpi_dev_remove_driver_gpios);
-+
- static bool acpi_get_driver_gpio_data(struct acpi_device *adev,
- 				      const char *name, int index,
- 				      struct acpi_reference_args *args)
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 673acda012af..c8eaaad4a9ed 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -952,6 +952,10 @@ static inline void acpi_dev_remove_driver_gpios(struct acpi_device *adev)
- 		adev->driver_gpios = NULL;
- }
- 
-+int devm_acpi_dev_add_driver_gpios(struct device *dev,
-+				   const struct acpi_gpio_mapping *gpios);
-+void devm_acpi_dev_remove_driver_gpios(struct device *dev);
-+
- int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index);
- #else
- static inline int acpi_dev_add_driver_gpios(struct acpi_device *adev,
-@@ -961,6 +965,13 @@ static inline int acpi_dev_add_driver_gpios(struct acpi_device *adev,
- }
- static inline void acpi_dev_remove_driver_gpios(struct acpi_device *adev) {}
- 
-+static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
-+			      const struct acpi_gpio_mapping *gpios)
-+{
-+	return -ENXIO;
-+}
-+static inline void devm_acpi_dev_remove_driver_gpios(struct device *dev) {}
-+
- static inline int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- {
- 	return -ENXIO;
+diff --git a/drivers/pinctrl/ti/Kconfig b/drivers/pinctrl/ti/Kconfig
+index 815a886..5420770 100644
+--- a/drivers/pinctrl/ti/Kconfig
++++ b/drivers/pinctrl/ti/Kconfig
+@@ -1,6 +1,6 @@
+ config PINCTRL_TI_IODELAY
+ 	tristate "TI IODelay Module pinconf driver"
+-	depends on OF
++	depends on OF && (SOC_DRA7XX || COMPILE_TEST)
+ 	select GENERIC_PINCTRL_GROUPS
+ 	select GENERIC_PINMUX_FUNCTIONS
+ 	select GENERIC_PINCONF
 -- 
-2.11.0
+2.9.3
 
