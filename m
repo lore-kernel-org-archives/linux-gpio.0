@@ -1,45 +1,71 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH 0/3] pc104: Mask PC/104 Kconfig options
-Date: Wed, 1 Mar 2017 15:46:52 -0500
-Message-ID: <20170301204652.GA31812@sophia>
-References: <cover.1484073324.git.vilhelm.gray@gmail.com>
- <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jonathan Cameron <jic23@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: [PATCH] pinctrl: rockchip: add irq_enable & irq_disable ops
+Date: Thu,  2 Mar 2017 13:56:52 +0800
+Message-ID: <1488434212-6567-1-git-send-email-jeffy.chen@rock-chips.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from regular1.263xmail.com ([211.150.99.137]:54256 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbdCBF5K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 2 Mar 2017 00:57:10 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Brian Norris <briannorris@chromium.org>, Douglas Anderson <dianders@chromium.org>, Tomasz Figa <tfiga@google.com>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Jeffy Chen <jeffy.chen@rock-chips.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 11, 2017 at 04:26:19PM +0100, Linus Walleij wrote:
->On Tue, Jan 10, 2017 at 7:50 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> PC/104 form factor devices serve a specific niche of embedded system
->> users. Since PC/104 devices and hardware are typically used by just a
->> subset of Linux users, it would be appropriate to filter PC/104 related
->> Kconfig options for those uninterested.
->>
->> This patchset introduces the PC104 Kconfig option, and uses it to mask
->> PC/104 specific device drivers and options, so that only those users
->> interested in PC/104 related Kconfig options are exposed to them.
->
->Tell me when/if the PC104 option is merged and I can merge the GPIO
->patch.
->
->Yours,
->Linus Walleij
+Currently we are trying to enable/disable the clk of irq's gpio bank when
+unmask/mask irq. But the kernel's "lazy disable approach" will skip masking
+irq when the irq chip doesn't support irq_disable ops.
 
-Jonathan and Linus,
+So we may hit this case:
+	irq_enable-> enable clk
+	irq_disable-> noop
+	irq_enable-> enable clk again
+	irq_disable-> noop
 
-Now that the PC104 option is merged for 4.11, it should be all right to
-merge in the GPIO and IIO patches without worry of warnings. Please
-merge the relevant patch to your respective tree after you pull in the
-PC104 option.
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 
-Thank you,
+---
 
-William Breathitt Gray
+ drivers/pinctrl/pinctrl-rockchip.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 7813599..a9a7dfa 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2061,7 +2061,7 @@ static void rockchip_irq_resume(struct irq_data *d)
+ 	clk_disable(bank->clk);
+ }
+ 
+-static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
++static void rockchip_irq_enable(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
+@@ -2070,7 +2070,7 @@ static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
+ 	irq_gc_mask_clr_bit(d);
+ }
+ 
+-static void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
++static void rockchip_irq_disable(struct irq_data *d)
+ {
+ 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
+ 	struct rockchip_pin_bank *bank = gc->private;
+@@ -2137,9 +2137,10 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 		gc->chip_types[0].regs.mask = GPIO_INTMASK;
+ 		gc->chip_types[0].regs.ack = GPIO_PORTS_EOI;
+ 		gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
+-		gc->chip_types[0].chip.irq_mask = rockchip_irq_gc_mask_set_bit;
+-		gc->chip_types[0].chip.irq_unmask =
+-						  rockchip_irq_gc_mask_clr_bit;
++		gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
++		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
++		gc->chip_types[0].chip.irq_enable = rockchip_irq_enable;
++		gc->chip_types[0].chip.irq_disable = rockchip_irq_disable;
+ 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
+ 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
+ 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
+-- 
+2.1.4
+
+
