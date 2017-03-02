@@ -1,144 +1,88 @@
-From: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v2 1/2] =?UTF-8?q?pinctrl:=20rockchip=EF=BC=9AAdd=20input?=
- =?UTF-8?q?=20schmitt=20support?=
-Date: Thu,  2 Mar 2017 15:11:23 +0800
-Message-ID: <1488438684-1801-2-git-send-email-david.wu@rock-chips.com>
-References: <1488438684-1801-1-git-send-email-david.wu@rock-chips.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH v2 1/5] pinctrl: sunxi: refactor pinctrl choice selecting
+ for ARM64
+Date: Thu, 2 Mar 2017 09:25:38 +0100
+Message-ID: <20170302082538.dej6h3l5zfdgttj4@lukather>
+References: <20170301180111.12365-1-icenowy@aosc.xyz>
+ <20170301180111.12365-2-icenowy@aosc.xyz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1488438684-1801-1-git-send-email-david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "david.wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============0244244545554071398=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170301180111.12365-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: "david.wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
-To prevent external signal crosstalk, some pins need to
-enable input schmitt, like i2c pins, 32k-input pin and so on.
+--===============0244244545554071398==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hecc5wjup6fbpjxa"
+Content-Disposition: inline
 
-Signed-off-by: david.wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
----
-changes in v2:
- - check the return value (Heiko)
 
- drivers/pinctrl/pinctrl-rockchip.c | 73 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+--hecc5wjup6fbpjxa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index a20ce9f..9b8d516 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -308,6 +308,9 @@ struct rockchip_pin_ctrl {
- 				    int *reg, u8 *bit);
- 	void	(*iomux_recalc)(u8 bank_num, int pin, int *reg,
- 				u8 *bit, int *mask);
-+	int	(*schmitt_calc_reg)(struct rockchip_pin_bank *bank,
-+				    int pin_num, struct regmap **regmap,
-+				    int *reg, u8 *bit);
- };
- 
- struct rockchip_pin_config {
-@@ -1355,6 +1358,57 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 	return ret;
- }
- 
-+static int rockchip_get_schmitt(struct rockchip_pin_bank *bank, int pin_num)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+	struct rockchip_pin_ctrl *ctrl = info->ctrl;
-+	struct regmap *regmap;
-+	int reg, ret;
-+	u8 bit;
-+	u32 data;
-+
-+	ret = ctrl->schmitt_calc_reg(bank, pin_num, &regmap, &reg, &bit);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(regmap, reg, &data);
-+	if (ret)
-+		return ret;
-+
-+	data >>= bit;
-+	return data & 0x1;
-+}
-+
-+static int rockchip_set_schmitt(struct rockchip_pin_bank *bank,
-+				int pin_num, int enable)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+	struct rockchip_pin_ctrl *ctrl = info->ctrl;
-+	struct regmap *regmap;
-+	int reg, ret;
-+	unsigned long flags;
-+	u8 bit;
-+	u32 data, rmask;
-+
-+	dev_dbg(info->dev, "setting input schmitt of GPIO%d-%d to %d\n",
-+		bank->bank_num, pin_num, enable);
-+
-+	ret = ctrl->schmitt_calc_reg(bank, pin_num, &regmap, &reg, &bit);
-+	if (ret)
-+		return ret;
-+
-+	spin_lock_irqsave(&bank->slock, flags);
-+
-+	/* enable the write to the equivalent lower bits */
-+	data = BIT(bit + 16) | (enable << bit);
-+	rmask = BIT(bit + 16) | BIT(bit);
-+
-+	ret = regmap_update_bits(regmap, reg, rmask, data);
-+	spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	return ret;
-+}
-+
- /*
-  * Pinmux_ops handling
-  */
-@@ -1574,6 +1628,15 @@ static int rockchip_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 			if (rc < 0)
- 				return rc;
- 			break;
-+		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-+			if (!info->ctrl->schmitt_calc_reg)
-+				return -ENOTSUPP;
-+
-+			rc = rockchip_set_schmitt(bank,
-+						  pin - bank->pin_base, arg);
-+			if (rc < 0)
-+				return rc;
-+			break;
- 		default:
- 			return -ENOTSUPP;
- 			break;
-@@ -1634,6 +1697,16 @@ static int rockchip_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
- 
- 		arg = rc;
- 		break;
-+	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
-+		if (!info->ctrl->schmitt_calc_reg)
-+			return -ENOTSUPP;
-+
-+		rc = rockchip_get_schmitt(bank, pin - bank->pin_base);
-+		if (rc < 0)
-+			return rc;
-+
-+		arg = rc;
-+		break;
- 	default:
- 		return -ENOTSUPP;
- 		break;
--- 
-1.9.1
+On Thu, Mar 02, 2017 at 02:01:07AM +0800, Icenowy Zheng wrote:
+> ARM64 Allwinner SoCs used to have every pinctrl driver selected in
+> ARCH_SUNXI. Change this to make their default value to (ARM64 &&
+> ARCH_SUNXI).
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--hecc5wjup6fbpjxa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJYt9b+AAoJEBx+YmzsjxAg768P/3Bo7ZqIEKaplKW0WJWXz4/6
+wM5fBCsu4C/2HUTqp7uBjF2P3bNJLbbZ0MrcKaALaw356/w9JsL3OxMzsXVRa5m/
+gr5+s50MoXNXP1xkd6T3T1CYxLTCxSA8Eee3MP0Rg0L+5QlVUOTm0+HLFYeQchtb
+Rx0Bbc9ZHD8tL3DbqvxIF4mAHYCvzW9+hPFybHRKqsHRsF2FnXDMxLCU8rRHvgnN
+fKKSnW0U32R3JFNjWgtW/z5kKrlYcuvaa1+kziVaqU7XYgaEXN0lYvECqhwV3DY7
+a4YZx6S3Q+kKOPV3DMI8+Dg5InORrreH9MtkthZd5bIIfs8KEEaUHOniateOkkeK
+bvGzBoi12zkYpKiR15bIJZE4YjvgxQwn6Ygb28GsZNKpXD1cfLxALrrtrc4QUQUh
+jSF9rRYODxcfah88stNjz+T//egN4k8DOWmRbMDl/vvxk17cAwNwlogncgPZoRAg
+DaM96B2gurhtnRfNOt1gamxMMH6ZMdyrir7kUvBeUj8tYqTi7Pei+GKhxnTeRWQE
+4i84G3H9lAZN2XemWeRdDBqBD/fYbsGlQgz+b1KwDE7rAGSApAjf0XH/PNXZaaiE
+uxeWVSvJRKM/QGn6nDMmFafXZmXry9ZFnCmQAKHWT3zh6gu1wh9WT6zzDkJAMfP2
+WKPbkAWusjXiHOB5ZfdV
+=1SKa
+-----END PGP SIGNATURE-----
+
+--hecc5wjup6fbpjxa--
+
+
+--===============0244244545554071398==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0244244545554071398==--
