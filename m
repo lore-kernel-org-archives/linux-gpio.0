@@ -1,146 +1,101 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during
- suspend/resume
-Date: Thu, 2 Mar 2017 14:19:49 -0800
-Message-ID: <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com>
- <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
+Date: Fri, 3 Mar 2017 11:08:51 +0100
+Message-ID: <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
+ <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org> <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, swarren@nvidia.com, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/02/2017 12:54 AM, Andy Shevchenko wrote:
-> On Wed, Mar 1, 2017 at 8:32 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->> In case a platform only defaults a "default" set of pins, but not a
->> "sleep" set of pins, and this particular platform suspends and resumes
->> in a way that the pin states are not preserved by the hardware, when we
->> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
->> -> pinctrl_select_state() and the first thing we do is check that the
->> pins state is the same as before, and do nothing.
->>
->> In order to fix this, decouple the actual state change from
->> pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
->> the p->state == state check in pinctrl_select_state() not to change the
->> caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
->> are updated to bypass the state check by calling pinctrl_commit_state().
->>
->> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> 
-> This change is indeed beautiful and clean.
-> 
-> FWIW:
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Hi Chris,
 
-Thanks Andy!
+On Thu, Mar 2, 2017 at 9:17 PM, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, February 21, 2017, jacopo mondi wrote:
+>> > +                   gpio-controller;
+>> > +                   #gpio-cells = <2>;
+>> > +                   gpio-ranges = <&pinctrl 0 0 16>;
+>>
+>> Not all ports have 16 pins available.
+>> This is one of the differences between different RZ/A1 SoC versions
+>> (RZ/A1H, RZ/A1L etc)
+>>
+>> I'll change the number of pins to the actual available ones on each port
+>> for r7s72100 (RZ/A1H)
+>
+> But wait, what if someone wants to use a RZ/A1L???
+>
+> I don't want to make a separate dtsi file for RZ/A1L.
+>
+> Is it possible to change the number of port pins in the board dts file?
+> For example:
+>   RZ/A1H: P5_0 - P5_10
+>   RZ/A1L: P5_0 - P5_16
 
-So actually, I have been thinking about this some more, and while this
-definitively fixes my original problem with pinctrl-single, I just had
-to make another driver (sdhci-brcmstb.c) pinctrl aware. And then again,
-same thing, it has got just one "default" state, so when we call
-pinctrl_select_state() during driver resume, nothing happens.
+That's 17 pins, not 16?
 
-So, with that in mind, it seems to me like we may actually just want to
-remove the p->state == state statement entirely, even though that's an
-optimization....
+>
+> So, in a rza1l-board.dts file I would put:
+>
+> &port5 {
+>         gpio-ranges = <&pinctrl 0 80 16>;
+> }
+>
+> Will this work?
 
-... or, what we could do is, expose a version of pinctrl_force_default
-that takes a struct pinctrl reference instead of a struct pinctrl_dev
-reference and named differently of course.
+Yes, overriding should work. But the number of pins is an SoC-property, not
+a board-property?
 
-Thoughts?
+Are the differences between RZ/A1H and RZ/A1L just the number of pins?
+If yes, you could use a hierarchical DTS structure:
 
-> 
-> 
->> ---
->> Changes in v3:
->>
->> - move the state check to pinctrl_select_state
->>
->> Changes in v2:
->>
->> - rename __pinctrl_select_state to pinctrl_commit_state
->>
->>  drivers/pinctrl/core.c | 24 +++++++++++++++++-------
->>  1 file changed, 17 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
->> index fb38e208f32d..735d8f7f9d71 100644
->> --- a/drivers/pinctrl/core.c
->> +++ b/drivers/pinctrl/core.c
->> @@ -992,19 +992,16 @@ struct pinctrl_state *pinctrl_lookup_state(struct pinctrl *p,
->>  EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
->>
->>  /**
->> - * pinctrl_select_state() - select/activate/program a pinctrl state to HW
->> + * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
->>   * @p: the pinctrl handle for the device that requests configuration
->>   * @state: the state handle to select/activate/program
->>   */
->> -int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
->> +static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
->>  {
->>         struct pinctrl_setting *setting, *setting2;
->>         struct pinctrl_state *old_state = p->state;
->>         int ret;
->>
->> -       if (p->state == state)
->> -               return 0;
->> -
->>         if (p->state) {
->>                 /*
->>                  * For each pinmux setting in the old state, forget SW's record
->> @@ -1068,6 +1065,19 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
->>
->>         return ret;
->>  }
->> +
->> +/**
->> + * pinctrl_select_state() - select/activate/program a pinctrl state to HW
->> + * @p: the pinctrl handle for the device that requests configuration
->> + * @state: the state handle to select/activate/program
->> + */
->> +int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
->> +{
->> +       if (p->state == state)
->> +               return 0;
->> +
->> +       return pinctrl_commit_state(p, state);
->> +}
->>  EXPORT_SYMBOL_GPL(pinctrl_select_state);
->>
->>  static void devm_pinctrl_release(struct device *dev, void *res)
->> @@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinctrl_map const *map)
->>  int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
->>  {
->>         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
->> -               return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
->> +               return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
->>         return 0;
->>  }
->>  EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
->> @@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
->>  int pinctrl_force_default(struct pinctrl_dev *pctldev)
->>  {
->>         if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
->> -               return pinctrl_select_state(pctldev->p, pctldev->hog_default);
->> +               return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
->>         return 0;
->>  }
->>  EXPORT_SYMBOL_GPL(pinctrl_force_default);
->> --
->> 2.9.3
->>
-> 
-> 
-> 
+rza1h-<board>.dts:
 
+    #include "rza1h.dtsi"
 
--- 
-Florian
+    // board specifics here
+
+rza1l-<board>.dts:
+
+    #include "rza1l.dtsi"
+
+    // board specifics here
+
+rza1h.dtsi:
+
+    #include "rza.dtsi"  // r7s72100.dtsi?
+
+    // base SoC overrides
+    &port5 {
+        gpio-ranges = <&pinctrl 0 80 11>;
+    }
+
+rza1l.dtsi:
+
+    #include "rza.dtsi"  // r7s72100.dtsi?
+
+    // base SoC overrides
+    &port5 {
+        gpio-ranges = <&pinctrl 0 80 16>;
+    }
+
+Actual naming of DTS files TBD.
+We could also decide to not have rza1h.dtsi, and assume the base dtsi is for
+RZ/A1H.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
