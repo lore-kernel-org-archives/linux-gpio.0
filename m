@@ -1,87 +1,88 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
- interrupts on s3c24xx
-Date: Sat, 4 Mar 2017 20:45:13 +0900
-Message-ID: <CA+Ln22E1FOTdU+drwy8aV8=2Ww=FBs+fZUiPS974vU2N=sD6AA@mail.gmail.com>
-References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com> <20170304081504.unv6sihbmp76ynfy@kozik-lap>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <20170304081504.unv6sihbmp76ynfy@kozik-lap>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sergio Prado <sergio.prado@e-labworks.com>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 05/12] gpio: ml-ioh: use resource management for irqs
+Date: Sat,  4 Mar 2017 17:23:33 +0100
+Message-ID: <1488644620-11488-6-git-send-email-bgolaszewski@baylibre.com>
+References: <1488644620-11488-1-git-send-email-bgolaszewski@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1488644620-11488-1-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
 
-[+Chanwoo]
+Use device resource managed variants of irq_alloc_descs() and
+request_irq() and remove the code manually freeing irq resources.
 
-2017-03-04 17:15 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Thu, Mar 02, 2017 at 06:23:19PM -0300, Sergio Prado wrote:
->> We are getting a NULL pointer dereference when working with external
->> interrupts on s3c24xx:
->>
->> Unable to handle kernel NULL pointer dereference at virtual address 000000a8
->> pgd = c0104000
->> [000000a8] *pgd=00000000
->> Internal error: Oops: 5 [#1] ARM
->> Modules linked in:
->> CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
->> Hardware name: Samsung S3C2416 (Flattened Device Tree)
->> task: c07399f8 task.stack: c0734000
->> PC is at s3c24xx_demux_eint4_7+0x24/0x10c
->> LR is at s3c24xx_demux_eint4_7+0x108/0x10c
->>
->> The problem is in the function s3c24xx_demux_eint() when dereferencing
->> bank->eint_base.
->>
->> At this point, we cannot get the bank pointer from the irq_desc
->> structure since it is pointing to the hardware irq, not virq.
->>
->> So let's get the bank pointer directly from data->drvdata.
->>
->> This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
->
-> Checkpatch should complain here about commit format.
->
->>
->> Tested on FriendlyARM mini2440.
->>
->
-> Please add:
->   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
->   Cc: <stable@vger.kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-ml-ioh.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
-Yeah, that patch seems to have also affected s3c64xx...
-
->
->> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
->> ---
->>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->> index b82a003546ae..1b8d887796e8 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->> @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
->>  {
->>       struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
->>       struct irq_chip *chip = irq_desc_get_chip(desc);
->> -     struct irq_data *irqd = irq_desc_get_irq_data(desc);
->> -     struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
->> +     struct samsung_pinctrl_drv_data *d = data->drvdata;
->> +     struct samsung_pin_bank *bank = d->pin_banks;
->
-> I think 'pin_banks' point to all banks of given controller not to the
-> currently accessed one.
-
-Yeah, this doesn't seem to be a logically correct fix, although it
-should work since in s3c24xx all banks would have the same eint_base
-value.
-
-I would suggest a partial revert of 8b1bd11c1f8f, i.e. bringing back
-samsung_pinctrl_drv_data::virt_base and undoing the changes made in
-s3c24xx and s3c64xx EINT code.
-
-Best regards,
-Tomasz
+diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+index 796a5a4..78896a8 100644
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -459,41 +459,31 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 
+ 	chip = chip_save;
+ 	for (j = 0; j < 8; j++, chip++) {
+-		irq_base = irq_alloc_descs(-1, IOH_IRQ_BASE, num_ports[j],
+-					   NUMA_NO_NODE);
++		irq_base = devm_irq_alloc_descs(&pdev->dev, -1, IOH_IRQ_BASE,
++						num_ports[j], NUMA_NO_NODE);
+ 		if (irq_base < 0) {
+ 			dev_warn(&pdev->dev,
+ 				"ml_ioh_gpio: Failed to get IRQ base num\n");
+-			chip->irq_base = -1;
+ 			ret = irq_base;
+-			goto err_irq_alloc_descs;
++			goto err_gpiochip_add;
+ 		}
+ 		chip->irq_base = irq_base;
+ 		ioh_gpio_alloc_generic_chip(chip, irq_base, num_ports[j]);
+ 	}
+ 
+ 	chip = chip_save;
+-	ret = request_irq(pdev->irq, ioh_gpio_handler,
+-			     IRQF_SHARED, KBUILD_MODNAME, chip);
++	ret = devm_request_irq(&pdev->dev, pdev->irq, ioh_gpio_handler,
++			       IRQF_SHARED, KBUILD_MODNAME, chip);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev,
+ 			"%s request_irq failed\n", __func__);
+-		goto err_request_irq;
++		goto err_gpiochip_add;
+ 	}
+ 
+ 	pci_set_drvdata(pdev, chip);
+ 
+ 	return 0;
+ 
+-err_request_irq:
+-	chip = chip_save;
+-err_irq_alloc_descs:
+-	while (--j >= 0) {
+-		chip--;
+-		irq_free_descs(chip->irq_base, num_ports[j]);
+-	}
+-
+-	chip = chip_save;
+ err_gpiochip_add:
+ 	while (--i >= 0) {
+ 		chip--;
+@@ -524,12 +514,8 @@ static void ioh_gpio_remove(struct pci_dev *pdev)
+ 
+ 	chip_save = chip;
+ 
+-	free_irq(pdev->irq, chip);
+-
+-	for (i = 0; i < 8; i++, chip++) {
+-		irq_free_descs(chip->irq_base, num_ports[i]);
++	for (i = 0; i < 8; i++, chip++)
+ 		gpiochip_remove(&chip->gpio);
+-	}
+ 
+ 	chip = chip_save;
+ 	pci_iounmap(pdev, chip->base);
+-- 
+2.9.3
