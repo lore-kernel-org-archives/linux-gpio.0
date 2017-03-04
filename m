@@ -1,26 +1,37 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH 07/12] gpio: pxa: use devm_irq_alloc_descs()
-Date: Sat, 04 Mar 2017 21:31:20 +0100
-Message-ID: <87fuiswzqf.fsf@belgarion.home>
-References: <1488644620-11488-1-git-send-email-bgolaszewski@baylibre.com>
-        <1488644620-11488-8-git-send-email-bgolaszewski@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1488644620-11488-8-git-send-email-bgolaszewski@baylibre.com>
-        (Bartosz Golaszewski's message of "Sat, 4 Mar 2017 17:23:35 +0100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] meson-gxl pinctrl - add the missing PWM pins
+Date: Sat,  4 Mar 2017 22:23:16 +0100
+Message-ID: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:32979 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752133AbdCDVXh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 4 Mar 2017 16:23:37 -0500
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
+Cc: devicetree@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Bartosz Golaszewski <bgolaszewski@baylibre.com> writes:
+Due to the lack of a public GXL or GXM datasheet most of the PWM pin
+definitions are currently missing.
+However, the people behind the Khadas VIM boards were kind enough to
+share the PWM pins and their corresponding register offsets and bits
+with me.
 
-> This driver never frees the interrupt descriptors it allocates. Fix
-> it by using the resource managed version of irq_alloc_descs().
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+This patch adds all missing PWM pins to the GXL pinctrl driver. The
+upcoming Khadas VIM board support patch only needs PWM_F and PWM_AO_A.
+I still decided to add all PWM pins just in case there's no public GXL
+datasheet release soon.
+
+
+Martin Blumenstingl (2):
+  pinctrl: meson: gxl: add the missing PWM pin definitions
+  ARM64: dts: amlogic: meson-gxl: add the missing PWM pins
+
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 56 ++++++++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 64 ++++++++++++++++++++++++++++++
+ 2 files changed, 120 insertions(+)
 
 -- 
-Robert
+2.12.0
+
