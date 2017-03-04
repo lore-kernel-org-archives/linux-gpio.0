@@ -1,77 +1,80 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
-Date: Fri, 3 Mar 2017 13:24:51 +0000
-Message-ID: <SG2PR06MB1165E8FAE15523F7D3EC83718A2B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
- <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
- <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
+ interrupts on s3c24xx
+Date: Sat, 4 Mar 2017 10:15:04 +0200
+Message-ID: <20170304081504.unv6sihbmp76ynfy@kozik-lap>
+References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:27467 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751973AbdCCNbF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 3 Mar 2017 08:31:05 -0500
-In-Reply-To: <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36523 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbdCDIP7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 4 Mar 2017 03:15:59 -0500
+Content-Disposition: inline
+In-Reply-To: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: kgene@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgTWFyY2ggMDMsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZl
-biB3cm90ZToNCj4gPiBJcyBpdCBwb3NzaWJsZSB0byBjaGFuZ2UgdGhlIG51bWJlciBvZiBwb3J0
-IHBpbnMgaW4gdGhlIGJvYXJkIGR0cyBmaWxlPw0KPiA+IEZvciBleGFtcGxlOg0KPiA+ICAgUlov
-QTFIOiBQNV8wIC0gUDVfMTANCj4gPiAgIFJaL0ExTDogUDVfMCAtIFA1XzE2DQo+IA0KPiBUaGF0
-J3MgMTcgcGlucywgbm90IDE2Pw0KDQpPb3BzLCBJIG1lYW50IFA1XzE1DQoNCkxvb2tpbmcgYXQg
-dGhlIHBhcnRzLCBoZXJlIGFyZSB0aGUgZGlmZmVyZW5jZXM6DQoNClJaL0ExSCAgICBSWi9BMUwN
-Ci0tLS0tLS0tLS0tLS0tLS0tLQ0KUDJfMDoxNSAgIFAyXzA6OQ0KUDRfMDoxNSAgIFA0XzA6Nw0K
-UDVfMDoxMCAgIFA1XzA6MTUNClA3XzA6MTUgICBQN18wOjExDQpQOV8wOjcgICAgUDlfMDo1DQpQ
-MTBfMDoxNSAgbm9uZQ0KUDExXzA6MTUgIG5vbmUNCg0KPiA+IFNvLCBpbiBhIHJ6YTFsLWJvYXJk
-LmR0cyBmaWxlIEkgd291bGQgcHV0Og0KPiA+DQo+ID4gJnBvcnQ1IHsNCj4gPiAgICAgICAgIGdw
-aW8tcmFuZ2VzID0gPCZwaW5jdHJsIDAgODAgMTY+Ow0KPiA+IH0NCj4gPg0KPiA+IFdpbGwgdGhp
-cyB3b3JrPw0KPiANCj4gWWVzLCBvdmVycmlkaW5nIHNob3VsZCB3b3JrLiBCdXQgdGhlIG51bWJl
-ciBvZiBwaW5zIGlzIGFuIFNvQy1wcm9wZXJ0eSwNCj4gbm90DQo+IGEgYm9hcmQtcHJvcGVydHk/
-DQoNClRydWUsIGJ1dCBJIGFtIHRyeWluZyB0byBmaWd1cmUgb3V0IGhvdyB0byBzb2x2ZSB0aGlz
-IGxvY2FsbHkgYW5kIG5vdCBtYWtlDQppdCBhbiB1cHN0cmVhbSBwcm9ibGVtLg0KDQoNCj4gQXJl
-IHRoZSBkaWZmZXJlbmNlcyBiZXR3ZWVuIFJaL0ExSCBhbmQgUlovQTFMIGp1c3QgdGhlIG51bWJl
-ciBvZiBwaW5zPw0KDQpZZXMvTm8uDQoNCkludGVybmFsbHksIHRoZSBJUCBibG9ja3MgYXJlIHRo
-ZSBzYW1lLCBhbmQgbG9jYXRlZCBhdCB0aGUgc2FtZSByZWdpc3Rlcg0KYWRkcmVzc2VzLCBidXQg
-Y29tZSBvdXQgdG8gZGlmZmVyZW50IHBvcnQgcGlucyBkdWUgdG8gdGhlIFJaL0ExTCBoYXZpbmcg
-c21hbGxlcg0KcGFja2FnZXMuDQoNCkFsc28sIHRoZSBMIGhhcyBsZXNzIGNoYW5uZWxzIHRoYW4g
-dGhlIEguDQpGb3IgZXhhbXBsZToNCiBRU1BJOiBIPTIsIEw9MQ0KICBMQ0Q6IEg9MiwgTD0xDQog
-U0NJRjogSD04LCBMPTUNCiAgQ0FOOiBIPTUsIEw9Mg0KDQpPZiBjb3Vyc2UgdGhlcmUgaXMgc29t
-ZSBJUCB0aGF0IG9ubHkgY29tZXMgaW4gdGhlIEguDQoNClRoaXMgaXMgd2h5IEkgZGlkbid0IHdh
-bnQgdG8gYXNzb2NpYXRlICJuYW1lcyIgd2l0aCB0aGUgcGlucyBpbiBhIHBmYyBkcml2ZXIuDQpJ
-IGp1c3Qgd2FudGVkIHRoZSBib2FyZCBEVCB0byBhc3NpZ24gYSBwaW4gdG8gYSAnZnVuY3Rpb24g
-bnVtYmVyJy4NCg0KDQoNCj4gSWYgeWVzLCB5b3UgY291bGQgdXNlIGEgaGllcmFyY2hpY2FsIERU
-UyBzdHJ1Y3R1cmU6DQo+IA0KPiByemExaC08Ym9hcmQ+LmR0czoNCj4gDQo+ICAgICAjaW5jbHVk
-ZSAicnphMWguZHRzaSINCj4gDQo+ICAgICAvLyBib2FyZCBzcGVjaWZpY3MgaGVyZQ0KPiANCj4g
-cnphMWwtPGJvYXJkPi5kdHM6DQo+IA0KPiAgICAgI2luY2x1ZGUgInJ6YTFsLmR0c2kiDQo+IA0K
-PiAgICAgLy8gYm9hcmQgc3BlY2lmaWNzIGhlcmUNCj4gDQo+IHJ6YTFoLmR0c2k6DQo+IA0KPiAg
-ICAgI2luY2x1ZGUgInJ6YS5kdHNpIiAgLy8gcjdzNzIxMDAuZHRzaT8NCj4gDQo+ICAgICAvLyBi
-YXNlIFNvQyBvdmVycmlkZXMNCj4gICAgICZwb3J0NSB7DQo+ICAgICAgICAgZ3Bpby1yYW5nZXMg
-PSA8JnBpbmN0cmwgMCA4MCAxMT47DQo+ICAgICB9DQo+IA0KPiByemExbC5kdHNpOg0KPiANCj4g
-ICAgICNpbmNsdWRlICJyemEuZHRzaSIgIC8vIHI3czcyMTAwLmR0c2k/DQo+IA0KPiAgICAgLy8g
-YmFzZSBTb0Mgb3ZlcnJpZGVzDQo+ICAgICAmcG9ydDUgew0KPiAgICAgICAgIGdwaW8tcmFuZ2Vz
-ID0gPCZwaW5jdHJsIDAgODAgMTY+Ow0KPiAgICAgfQ0KPiANCj4gQWN0dWFsIG5hbWluZyBvZiBE
-VFMgZmlsZXMgVEJELg0KDQpPSywgc28ganVzdCBwdXQgdGhlIHBpbiBkaWZmZXJlbmNlcyBpbiB0
-aGUgdHdvIGZpbGVzLiBUaGF0J3MgYSBnb29kIGlkZWEuIEJ1dCwNCnRoZW4gdGhhdCdzIDIgbW9y
-ZSBmaWxlcyB0byBhZGQgdXBzdHJlYW0uDQpBcyB0aGUgUlovQSBzZXJpZXMgY29udGludWVzLCB0
-aGV5IG1pZ2h0IGtlZXAgZG9pbmcgdGhpcyBraW5kIG9mIHRoaW5nLCBzbyBJDQpkb24ndCB3YW50
-IHRvIGdldCBpbnRvIHRoZSBoYWJpdCBvZiBhZGRpbmcgbW9yZSBhbmQgbW9yZSBEVCBmaWxlcy4N
-Cg0KIyBJIHdpc2ggdGhlcmUgd2FzIHNvbWUgdHlwZSBvZiBpZi1lbHNlIHN5bnRheCBpbiBEZXZp
-Y2UgVHJlZSBzbyBpbiB0aGUNCmJvYXJkIGZpbGUgSSBjb3VsZCBqdXN0IHNheToNCg0KLyB7DQoJ
-bW9kZWwgPSAiUlNLUlpBMSI7DQoJY29tcGF0aWJsZSA9ICJyZW5lc2FzLHJza3J6YTEiLCAicmVu
-ZXNhcyxyN3M3MjEwMCI7DQoNCgl2YXJpYW50ID0gInJ6YTFsIjsNCg0KDQo+IFdlIGNvdWxkIGFs
-c28gZGVjaWRlIHRvIG5vdCBoYXZlIHJ6YTFoLmR0c2ksIGFuZCBhc3N1bWUgdGhlIGJhc2UgZHRz
-aSBpcw0KPiBmb3INCj4gUlovQTFILg0KDQpIb25lc3RseSwgSSdtIGZpbmUgd2l0aCBSWi9BMUgg
-YmVpbmcgdGhlIGZsYWdzaGlwIHVwc3RyZWFtIFNvQyBzaW5jZSBpdCBpcyBhDQpzdXBlcnNldCBv
-ZiBhbGwgdGhlIHBlcmlwaGVyYWxzIGluIFJaL0ExTSwvQTFMLC9BMUxVLC9BMUxDLiBNZWFuaW5n
-LCB0aGlzIHNtYWxsDQpkaWZmZXJlbmNlIGNhbiBiZSBoYW5kbGVkIGluIGEgc2ltcGxlIGJvYXJk
-IGZpbGUgYWRkaXRpb24uDQoNCkkgd2FzIHRoaW5raW5nIEkgd2FzIGdvaW5nIHRvIHBvc3Qgc29t
-ZSBEVCBleGFtcGxlcyBvbiBlTGludXgub3JnIGFueXdheSwgc28gb25lIG9mDQp0aGVtIHdvdWxk
-IGp1c3QgYmUgdGhpcyBSWi9BMUwgZml4Lg0KDQpDaGVlcnMNCg0KQ2hyaXMNCg0K
+On Thu, Mar 02, 2017 at 06:23:19PM -0300, Sergio Prado wrote:
+> We are getting a NULL pointer dereference when working with external
+> interrupts on s3c24xx:
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address 000000a8
+> pgd = c0104000
+> [000000a8] *pgd=00000000
+> Internal error: Oops: 5 [#1] ARM
+> Modules linked in:
+> CPU: 0 PID: 0 Comm: swapper Not tainted 4.10.0-rc8mini2440-sub-00047-g0722f57bfae9-dirty #3
+> Hardware name: Samsung S3C2416 (Flattened Device Tree)
+> task: c07399f8 task.stack: c0734000
+> PC is at s3c24xx_demux_eint4_7+0x24/0x10c
+> LR is at s3c24xx_demux_eint4_7+0x108/0x10c
+> 
+> The problem is in the function s3c24xx_demux_eint() when dereferencing
+> bank->eint_base.
+> 
+> At this point, we cannot get the bank pointer from the irq_desc
+> structure since it is pointing to the hardware irq, not virq.
+> 
+> So let's get the bank pointer directly from data->drvdata.
+> 
+> This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
+
+Checkpatch should complain here about commit format.
+
+> 
+> Tested on FriendlyARM mini2440.
+> 
+
+Please add:
+  Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+  Cc: <stable@vger.kernel.org>
+
+> Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> index b82a003546ae..1b8d887796e8 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+>  {
+>  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+>  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+> -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> +	struct samsung_pinctrl_drv_data *d = data->drvdata;
+> +	struct samsung_pin_bank *bank = d->pin_banks;
+
+I think 'pin_banks' point to all banks of given controller not to the
+currently accessed one.
+
+
+Best regards,
+Krzysztof
+
