@@ -1,63 +1,44 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 0/3] pc104: Mask PC/104 Kconfig options
-Date: Sun, 5 Mar 2017 12:48:47 +0000
-Message-ID: <61fd7559-9001-ede7-f16d-2f74f8f9ef61@kernel.org>
-References: <cover.1484073324.git.vilhelm.gray@gmail.com>
- <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
- <20170301204652.GA31812@sophia>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH 08/12] gpio: davinci: use devm_irq_alloc_descs()
+Date: Mon, 6 Mar 2017 10:29:18 +0530
+Message-ID: <70d9fed2-1378-66a4-4640-dd93aae162b6@ti.com>
+References: <1488644620-11488-1-git-send-email-bgolaszewski@baylibre.com>
+ <1488644620-11488-9-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:60187 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752425AbdCEMsv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 5 Mar 2017 07:48:51 -0500
-In-Reply-To: <20170301204652.GA31812@sophia>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1488644620-11488-9-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>
 List-Id: linux-gpio@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald <pmeerw@pmeerw.net>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On 01/03/17 20:46, William Breathitt Gray wrote:
-> On Wed, Jan 11, 2017 at 04:26:19PM +0100, Linus Walleij wrote:
->> On Tue, Jan 10, 2017 at 7:50 PM, William Breathitt Gray
->> <vilhelm.gray@gmail.com> wrote:
->>
->>> PC/104 form factor devices serve a specific niche of embedded system
->>> users. Since PC/104 devices and hardware are typically used by just a
->>> subset of Linux users, it would be appropriate to filter PC/104 related
->>> Kconfig options for those uninterested.
->>>
->>> This patchset introduces the PC104 Kconfig option, and uses it to mask
->>> PC/104 specific device drivers and options, so that only those users
->>> interested in PC/104 related Kconfig options are exposed to them.
->>
->> Tell me when/if the PC104 option is merged and I can merge the GPIO
->> patch.
->>
->> Yours,
->> Linus Walleij
-> 
-> Jonathan and Linus,
-> 
-> Now that the PC104 option is merged for 4.11, it should be all right to
-> merge in the GPIO and IIO patches without worry of warnings. Please
-> merge the relevant patch to your respective tree after you pull in the
-> PC104 option.
-If it looks like I've forgotten this, feel free to poke me again!
 
-At least replying to you should get it back into my recent threads
-in my email client ;)
 
-Jonathan
-> 
-> Thank you,
-> 
-> William Breathitt Gray
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+On Saturday 04 March 2017 09:53 PM, Bartosz Golaszewski wrote:
+> This driver never frees the interrupt descriptors it allocates. Fix
+> it by using the resource managed version of irq_alloc_descs().
+>
 
+Acked-by: Keerthy <j-keerthy@ti.com>
+
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/gpio-davinci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 72f49d1..ac17357 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -483,7 +483,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>  	clk_prepare_enable(clk);
+>
+>  	if (!pdata->gpio_unbanked) {
+> -		irq = irq_alloc_descs(-1, 0, ngpio, 0);
+> +		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
+>  		if (irq < 0) {
+>  			dev_err(dev, "Couldn't allocate IRQ numbers\n");
+>  			return irq;
+>
