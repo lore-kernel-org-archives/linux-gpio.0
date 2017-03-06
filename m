@@ -1,94 +1,80 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
- calls
-Date: Mon, 6 Mar 2017 11:02:20 +0100
-Message-ID: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
-References: <20170303191248.wlwjri55ip2x5pgg@pengutronix.de>
- <CAMuHMdXFrwa2jCVDb+8ecqgARLG0oGrPp9pLs0b6vEiWeKJ+uA@mail.gmail.com>
- <20170303194414.n76tr3oa2mlrzjre@pengutronix.de>
- <CAMuHMdXiz5hqW=fm-2H1aNKq_gXD2o0508jD2XjxYUvKoEvHdw@mail.gmail.com>
- <20170304174819.esxhwwbsxzuq3vyc@pengutronix.de>
- <CAMuHMdX8BEnaTtNFAbcvfHwJH=oPUmQ2NB+jfouGyhQpJ_m_4A@mail.gmail.com>
- <20170306085842.yijkfpqi3adcedmm@pengutronix.de>
- <CAMuHMdV2_vbocY4wCzvYtPAaF+QEX_Y4g6qVu5EqEBf5AnFdaw@mail.gmail.com>
- <20170306093043.ay4dz3ehp3aakwxh@pengutronix.de>
- <CAMuHMdWQuvANNU14A7NQuzv6AFp04bq4DG_oc7w9h4wUrG+4aQ@mail.gmail.com>
+From: Sergio Prado <sergio.prado@e-labworks.com>
+Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
+ interrupts on s3c24xx
+Date: Mon, 6 Mar 2017 09:15:16 -0400
+Message-ID: <20170306131516.GA6095@n1>
+References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+ <20170304081504.unv6sihbmp76ynfy@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:35659 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752990AbdCFKCc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2017 05:02:32 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWQuvANNU14A7NQuzv6AFp04bq4DG_oc7w9h4wUrG+4aQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20170304081504.unv6sihbmp76ynfy@kozik-lap>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, javier@osg.samsung.com, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Cc += LinusW
+Hi Krzysztof,
 
-On Mon, Mar 06, 2017 at 10:53:27AM +0100, Geert Uytterhoeven wrote:
-> On Mon, Mar 6, 2017 at 10:30 AM, Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > On Mon, Mar 06, 2017 at 10:09:50AM +0100, Geert Uytterhoeven wrote:
-> >> On Mon, Mar 6, 2017 at 9:58 AM, Uwe Kleine-König
-> >> <u.kleine-koenig@pengutronix.de> wrote:
-> >> > On Mon, Mar 06, 2017 at 09:49:39AM +0100, Geert Uytterhoeven wrote:
-> >> >> > Given that mctrl-gpio can be useful on legacy platforms, a device could
-> >> >> > silently run without cts-gpio even there.
-> >> >>
-> >> >> On platforms were CONFIG_GPIOLIB=n, this is not true, so the issue is moot.
-> >> >>
-> >> >> All serial drivers using (optional) mctrl-gpio have this in Kconfig:
-> >> >>
-> >> >>     select SERIAL_MCTRL_GPIO if GPIOLIB
-> >> >>
-> >> >> So they will use mctrl-gpio when GPIOLIB is enabled.
-> >> >> If GPIOPLIB is disabled, no flow control GPIOs are expected, and the
-> >> >> driver should not break that case.
-> >> >
-> >> > So it all boils down to the question: Is GPIOLIB=n enough to assume no
-> >> > gpio is needed?
-> >> >
-> >> > I'd say it is not.
-> >>
-> >> How does the platform register these GPIOs when GPIOPLIB is not enabled by
-> >> the platform, and gpiod_add_lookup_table() is thus not available?
-> >
-> > Obviously the platformcode cannot. In this case you could argue that
-> > platformcode shouldn't register the device if a gpio is necessary. But
-> > this reasoning doesn't work for (DT=y || ACPI=y) && GPIOLIB=n.
-> >
-> > I wouldn't want to code this in each driver (something like:
-> >
-> >         if (IS_ENABLED(GPIOLIB) || device_is_instantiated_by_dt(dev) || device_is_instantiated_by_acpi(dev))
-> >                 gpios = mctrl_gpio_init(...);
-> >         else
-> >                 gpios = NULL;
-> >
-> > ). Putting this into GPIOLIB is the right approach, and so this is
-> > another argument for HALFGPIOLIB. This would fix mctrl_gpio_init en
-> > passant.
+> > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
 > 
-> Do we have platforms where DT=y || ACPI=y, but GPIOLIB=n?
-> Ah, x86 ;-)
+> Checkpatch should complain here about commit format.
+> 
+> > 
+> > Tested on FriendlyARM mini2440.
+> > 
+> 
+> Please add:
+>   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+>   Cc: <stable@vger.kernel.org>
+> 
 
-Yeah, and I think rm -r arch/x86 won't be acceptable :-) I assume you
-can also configure some arm or powerpc systems without GPIOLIB.
+OK.
 
-> Anyway, for sh-sci.c, platforms either have DT and GPIOLIB, or they do not
-> need mctrl-gpio.
+> > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> > ---
+> >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > index b82a003546ae..1b8d887796e8 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+> >  {
+> >  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+> >  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> > -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+> > -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> > +	struct samsung_pinctrl_drv_data *d = data->drvdata;
+> > +	struct samsung_pin_bank *bank = d->pin_banks;
+> 
+> I think 'pin_banks' point to all banks of given controller not to the
+> currently accessed one.
 
-So we're in agreement now that HALFGPIOLIB is the way to go?
-Linus, what do you think?
+Understood. I think it worked in my tests because on s3c2440 all banks
+have the same eint base address.
 
-Best regards
-Uwe
+So what do you think is the best approach to solve this problem?
+
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Sergio Prado
+Embedded Labworks
+Office: +55 11 2628-3461
+Mobile: +55 11 97123-3420
