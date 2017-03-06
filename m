@@ -1,56 +1,97 @@
-From: Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v3 03/16] device-dax: utilize new
- cdev_device_add helper function
-Date: Mon, 6 Mar 2017 09:29:01 +0100
-Message-ID: <463953d7-abbf-da30-fb63-db73c4958957@suse.de>
-References: <1488783873-2614-1-git-send-email-logang@deltatee.com>
- <1488783873-2614-4-git-send-email-logang@deltatee.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Mon, 6 Mar 2017 09:49:39 +0100
+Message-ID: <CAMuHMdX8BEnaTtNFAbcvfHwJH=oPUmQ2NB+jfouGyhQpJ_m_4A@mail.gmail.com>
+References: <20170303142201.16452-1-richard.genoud@gmail.com>
+ <CAMuHMdX-K9B20Tu5NtHJRHmGGuT60OFu8TokZxsF8aSaS7HuHQ@mail.gmail.com>
+ <20170303191248.wlwjri55ip2x5pgg@pengutronix.de>
+ <CAMuHMdXFrwa2jCVDb+8ecqgARLG0oGrPp9pLs0b6vEiWeKJ+uA@mail.gmail.com>
+ <20170303194414.n76tr3oa2mlrzjre@pengutronix.de>
+ <CAMuHMdXiz5hqW=fm-2H1aNKq_gXD2o0508jD2XjxYUvKoEvHdw@mail.gmail.com>
+ <20170304174819.esxhwwbsxzuq3vyc@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <rtc-linux+bncBDVNRMMDUUIBBT536TCQKGQEU4Q73CI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <1488783873-2614-4-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaa>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170304174819.esxhwwbsxzuq3vyc@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/06/2017 08:04 AM, Logan Gunthorpe wrote:
-> Replace the open coded registration of the cdev and dev with the
-> new device_add_cdev() helper. The helper replaces a common pattern by
-> taking the proper reference against the parent device and adding both
-> the cdev and the device.
->=20
-> Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-> Reviewed-by: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> ---
-
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>
-
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn-l3A5Bk7waGM@public.gmane.org                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg
-GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=C3=BCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
-
---=20
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
----=20
-You received this message because you are subscribed to the Google Groups "=
-rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+SGkgVXdlLAoKT24gU2F0LCBNYXIgNCwgMjAxNyBhdCA2OjQ4IFBNLCBVd2UgS2xlaW5lLUvDtm5p
+Zwo8dS5rbGVpbmUta29lbmlnQHBlbmd1dHJvbml4LmRlPiB3cm90ZToKPiBDYyArPSBsaW51eC1n
+cGlvQHZnZXIua2VybmVsLm9yZwo+Cj4gT24gU2F0LCBNYXIgMDQsIDIwMTcgYXQgMDQ6MzU6NDZQ
+TSArMDEwMCwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOgo+PiBPbiBGcmksIE1hciAzLCAyMDE3
+IGF0IDg6NDQgUE0sIFV3ZSBLbGVpbmUtS8O2bmlnCj4+IDx1LmtsZWluZS1rb2VuaWdAcGVuZ3V0
+cm9uaXguZGU+IHdyb3RlOgo+PiA+IE9uIEZyaSwgTWFyIDAzLCAyMDE3IGF0IDA4OjIxOjA1UE0g
+KzAxMDAsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToKPj4gPj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy90dHkvc2VyaWFsL3NoLXNjaS5jIGIvZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jCj4+
+ID4+ID4gaW5kZXggOTFlN2RkZGJmNzJjLi4yZjRjZGQ0ZTdiNGYgMTAwNjQ0Cj4+ID4+ID4gLS0t
+IGEvZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jCj4+ID4+ID4gKysrIGIvZHJpdmVycy90dHkv
+c2VyaWFsL3NoLXNjaS5jCj4+ID4+ID4gQEAgLTMwMjIsNyArMzAyMiw3IEBAIHN0YXRpYyBpbnQg
+c2NpX3Byb2JlX3NpbmdsZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpkZXYsCj4+ID4+ID4gICAg
+ICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4+ID4+ID4KPj4gPj4gPiAgICAgICAgIHNjaXBvcnQt
+PmdwaW9zID0gbWN0cmxfZ3Bpb19pbml0KCZzY2lwb3J0LT5wb3J0LCAwKTsKPj4gPj4gPiAtICAg
+ICAgIGlmIChJU19FUlIoc2NpcG9ydC0+Z3Bpb3MpICYmIFBUUl9FUlIoc2NpcG9ydC0+Z3Bpb3Mp
+ICE9IC1FTk9TWVMpCj4+ID4+ID4gKyAgICAgICBpZiAoSVNfRVJSKHNjaXBvcnQtPmdwaW9zKSkK
+Pj4gPj4gPiAgICAgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIoc2NpcG9ydC0+Z3Bpb3MpOwo+
+PiA+Pgo+PiA+PiBOb3cgdGhlIHNoLXNjaSBkcml2ZXIgZmFpbHMgdG8gcHJvYmUgb24gbGVnYWN5
+IHBsYXRmb3JtcyB3aGVyZSBHUElPTElCPW4uCj4+ID4+IFRoZSBjaGVjayBmb3IgLUVOT1NZUyBt
+YWRlIGl0IHN1Y2NlZWQgYmVmb3JlLgo+PiA+Cj4+ID4gVGhhdCdzIHJpZ2h0LCBpbnRlbmRlZCBh
+bmQgdGhlIG9ubHkgb3B0aW9uIHRoYXQncyBzYXZlIChmb3Igc29tZQo+PiA+IGRlZmluaXRpb24g
+b2Ygc2F2ZTsgdGhlIG9idmlvdXMgZG93bnNpZGUgaXMgdGhhdCB0aGVyZSBpcyBubwo+PiA+IC9k
+ZXYvdHR5JHdoYXRldmVyIGZvciB5b3UpLgo+Pgo+PiBUaGF0J3Mgbm90IGp1c3QgYSBkb3duc2lk
+ZSwgYnV0IGEgcGxhaW4gcmVncmVzc2lvbiBvbiBsZWdhY3kgcGxhdGZvcm1zIHRoYXQKPj4gZG8g
+bm90IHVzZSBHUElPIGZsb3cgY29udHJvbC4KPgo+IFRoZSBvbmx5IHNhbmUgd2F5IG91dCBpcyB0
+aGF0IHRoZSBkcml2ZXIgc29tZWhvdyBmaW5kcyBvdXQgdGhhdCBubyBncGlvcwo+IGFyZSBzdXBw
+b3NlZCB0byBiZSBuZWVkZWQuIFNvIHlvdSBjYW4gcGFzcyBpbiB2aWEgcGxhdGZvcm1fZGF0YSB0
+aGF0IG5vCj4gZ3Bpb3MgYXJlIHN1cHBvc2VkIHRvIGJlIHVzZWQgaWYgeW91IGRvbid0IHdhbnQg
+dG8gZW5hYmxlIEdQSU9MSUIgKG9yCj4gaW1wbGVtZW50IENPTkZJR19IQUxGR1BJT0xJQikuIEJ1
+dCBJJ2Qgc2F5IHRoaXMgaXMgYSBxdWlyayB0aGF0IHNob3VsZAo+IGJldHRlciBiZSBmaXhlZCBn
+bG9iYWxseS4gU28gSSB0aGluayB3ZSBzaG91bGQgaW1wbGVtZW50IEhBTEZHUElPTElCCj4gdGhh
+dCBpbmNsdWRlcyB0aGUgbG9va3VwIHN0dWZmIGFuZCBzbyBjYW4gbWFrZSBncGlvZF9nZXRfb3B0
+aW9uYWwgYW5kCj4gZnJpZW5kcyByZXR1cm4gTlVMTCBpZiB0aGVyZSBpcyByZWFsbHkgbm8gR1BJ
+Ty4KCklmIENPTkZJR19HUElPTElCPW4sIG5vIGdwaW9zIGFyZSBzdXBwb3NlZCB0byBiZSBuZWVk
+ZWQuCgo+PiA+IElnbm9yaW5nIC1FTk9TWVMgaXMgb25seSBvayBpZiB5b3VyIGRldmljZSBkb2Vz
+bid0IGhhdmUgYSBjdHMtZ3Bpby4gSWYKPj4gPiBpdCBoYXMsIGlnbm9yaW5nIC1FTk9TWVMgaGlk
+ZXMgYnVncyBiZWNhdXNlIHRoZSBkcml2ZXIgc2VuZHMgZGF0YSB3aGlsZQo+PiA+IGl0IHNob3Vs
+ZG4ndCBvciBjYW5ub3Qgc2lnbmFsIHRoZSBvdGhlciBzaWRlIHRoYXQgaXQgc2hvdWxkIHN0b3Ag
+KG9yCj4+ID4gc3RhcnQpIGEgdHJhbnNtaXNzaW9uLgo+Pgo+PiBNY3RybF9ncGlvIHN1cHBvcnRz
+IG1vZGVybiBwbGF0Zm9ybXMgd2l0aCBHUElPTElCIGFuZCBEVCBvciBBQ1BJIG9ubHkuCj4KPiBU
+aGF0J3Mgd3JvbmcuIEV2ZW4gZm9yIGEgbGVnYWN5IGRldmljZSB5b3UgY2FuIG1ha2UgdXNlIG9m
+IEdQSU9zLiBTZWUKPiBhcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkLXBhejAwLmMgZm9yIGEgc2lt
+cGxlIGV4YW1wbGUuCgpTb3JyeSwgZm9yZ290IGFib3V0IGdwaW9kX2xvb2t1cF90YWJsZS4gSXQn
+cyBub3QgdXNlZCBieSBhbnkgcGxhdGZvcm0gdXNpbmcKdGhlIHNoLXNjaSBzZXJpYWwgZHJpdmVy
+LgoKU3RpbGwsIHVzaW5nIGdwaW9kX2xvb2t1cF90YWJsZSBkZXBlbmRzIG9uIENPTkZJR19HUElP
+TElCPXkuCgo+PiBPbiBsZWdhY3kgcGxhdGZvcm1zLCB5b3UgY2Fubm90IHVzZSBHUElPIGZsb3cg
+Y29udHJvbCAoZXhjZXB0IHdoZW4gdXNpbmcgYQo+PiBjdXN0b20gaW1wbGVtZW50YXRpb24sIHdo
+aWNoIGlzIG91dC1vZi1zY29wZSBoZXJlKSwgc28gdGhlIGlzc3VlIG9mIHNpbGVudGx5Cj4+IHJ1
+bm5pbmcgd2l0aG91dCBjdHMtZ3BpbyBvbiB0aGVzZSBwbGF0Zm9ybXMgaXMgbW9vdC4KPgo+IEdp
+dmVuIHRoYXQgbWN0cmwtZ3BpbyBjYW4gYmUgdXNlZnVsIG9uIGxlZ2FjeSBwbGF0Zm9ybXMsIGEg
+ZGV2aWNlIGNvdWxkCj4gc2lsZW50bHkgcnVuIHdpdGhvdXQgY3RzLWdwaW8gZXZlbiB0aGVyZS4K
+Ck9uIHBsYXRmb3JtcyB3ZXJlIENPTkZJR19HUElPTElCPW4sIHRoaXMgaXMgbm90IHRydWUsIHNv
+IHRoZSBpc3N1ZSBpcyBtb290LgoKQWxsIHNlcmlhbCBkcml2ZXJzIHVzaW5nIChvcHRpb25hbCkg
+bWN0cmwtZ3BpbyBoYXZlIHRoaXMgaW4gS2NvbmZpZzoKCiAgICBzZWxlY3QgU0VSSUFMX01DVFJM
+X0dQSU8gaWYgR1BJT0xJQgoKU28gdGhleSB3aWxsIHVzZSBtY3RybC1ncGlvIHdoZW4gR1BJT0xJ
+QiBpcyBlbmFibGVkLgpJZiBHUElPUExJQiBpcyBkaXNhYmxlZCwgbm8gZmxvdyBjb250cm9sIEdQ
+SU9zIGFyZSBleHBlY3RlZCwgYW5kIHRoZQpkcml2ZXIgc2hvdWxkIG5vdCBicmVhayB0aGF0IGNh
+c2UuCgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0Cgot
+LQpHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMy
+IC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnCgpJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGgg
+dGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0CndoZW4gSSdtIHRh
+bGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5n
+IGxpa2UgdGhhdC4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2
+YWxkcwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
+dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
+YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
+YXJtLWtlcm5lbAo=
