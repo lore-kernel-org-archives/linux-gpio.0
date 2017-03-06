@@ -1,56 +1,48 @@
-From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: [PATCH v3 2/3] gpio: wm831x: Add basic device tree support
-Date: Mon, 6 Mar 2017 16:46:43 +0000
-Message-ID: <1488818804-9406-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1488818804-9406-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2] pinctrl: samsung: Calculate GPIO base for
+ pinctrl_add_gpio_range
+Date: Mon, 6 Mar 2017 16:49:09 +0000
+Message-ID: <20170306164909.GA6986@localhost.localdomain>
+References: <20170228090143.GG2742@localhost.localdomain>
+ <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1488818804-9406-1-git-send-email-ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53216 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932067AbdCFQsL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2017 11:48:11 -0500
+Content-Disposition: inline
+In-Reply-To: <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 
-Now the wm831x-core has basic DT support we can update this driver to
-allow use of the GPIOs within a device tree system.
+On Sat, Mar 04, 2017 at 08:20:11PM +0900, Tomasz Figa wrote:
+> Hi Charles,
+> 
+> 2017-03-01 2:04 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
+> > As the pinctrl is now added before the GPIOs are registered we need to
+> > manually calculate what the GPIO base will be, otherwise the base for
+> > each gpio_range will be set to zero. Fortunately the driver
+> > already assigns a GPIO base, in samsung_gpiolib_register, and uses the
+> > same calculation it does for the pin_base. Meaning the two will always
+> > be the same and allowing us to reuse the pinbase and avoid the issue.
+> 
+> Sorry, I didn't notice before and I don't see the offending patch in ,
+> but you should add
+> 
+> Fixes: XXXXXXXXXXXX ("pinctrl: Patch subject")
+> 
+> if you intend to submit this patch separately. Otherwise, maybe this
+> can be just squashed?
+> 
 
-Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
+Yeah apologies for that as the original patch hasn't showed up in
+the tree yet I couldn't pull a commit ID to add the fixes tag.
+Squashing it in is probably the best way to go.
 
-No changes since v2.
-
- drivers/gpio/gpio-wm831x.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
-index 533707f..110453c7 100644
---- a/drivers/gpio/gpio-wm831x.c
-+++ b/drivers/gpio/gpio-wm831x.c
-@@ -264,7 +264,7 @@ static const struct gpio_chip template_chip = {
- static int wm831x_gpio_probe(struct platform_device *pdev)
- {
- 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
--	struct wm831x_pdata *pdata = dev_get_platdata(wm831x->dev);
-+	struct wm831x_pdata *pdata = &wm831x->pdata;
- 	struct wm831x_gpio *wm831x_gpio;
- 	int ret;
- 
-@@ -281,6 +281,9 @@ static int wm831x_gpio_probe(struct platform_device *pdev)
- 		wm831x_gpio->gpio_chip.base = pdata->gpio_base;
- 	else
- 		wm831x_gpio->gpio_chip.base = -1;
-+#ifdef CONFIG_OF_GPIO
-+	wm831x_gpio->gpio_chip.of_node = wm831x->dev->of_node;
-+#endif
- 
- 	ret = devm_gpiochip_add_data(&pdev->dev, &wm831x_gpio->gpio_chip,
- 				     wm831x_gpio);
--- 
-2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Charles
