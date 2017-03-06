@@ -1,53 +1,221 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 0/2] meson-gxl pinctrl - add the missing PWM pins
-Date: Mon, 6 Mar 2017 17:14:56 +0100
-Message-ID: <7aaa5ff1-8c10-2b69-1273-bfdb1783e47b@baylibre.com>
-References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: [PATCH v3 1/3] mfd: wm831x: Add basic device tree binding
+Date: Mon, 6 Mar 2017 16:46:42 +0000
+Message-ID: <1488818804-9406-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:38775 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752973AbdCFQPA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2017 11:15:00 -0500
-Received: by mail-wm0-f41.google.com with SMTP id t193so68828151wmt.1
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Mar 2017 08:14:59 -0800 (PST)
-In-Reply-To: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 03/04/2017 10:23 PM, Martin Blumenstingl wrote:
-> Due to the lack of a public GXL or GXM datasheet most of the PWM pin
-> definitions are currently missing.
-> However, the people behind the Khadas VIM boards were kind enough to
-> share the PWM pins and their corresponding register offsets and bits
-> with me.
-> 
-> This patch adds all missing PWM pins to the GXL pinctrl driver. The
-> upcoming Khadas VIM board support patch only needs PWM_F and PWM_AO_A.
-> I still decided to add all PWM pins just in case there's no public GXL
-> datasheet release soon.
-> 
-> 
-> Martin Blumenstingl (2):
->   pinctrl: meson: gxl: add the missing PWM pin definitions
->   ARM64: dts: amlogic: meson-gxl: add the missing PWM pins
-> 
->  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 56 ++++++++++++++++++++++++++
->  drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 64 ++++++++++++++++++++++++++++++
->  2 files changed, 120 insertions(+)
-> 
+Add the basic ability to register the device through device tree, more
+work is needed to get each individual sub-driver functioning correctly
+but this is enough to get the device to probe from device tree.
 
-Tested by running it on the Khadas VIM :
+Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+---
 
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+No changes since v2.
 
-and
+ drivers/mfd/wm831x-core.c       | 32 +++++++++++++++++++++++++++++++-
+ drivers/mfd/wm831x-i2c.c        |  9 ++++++++-
+ drivers/mfd/wm831x-irq.c        |  6 +++---
+ drivers/mfd/wm831x-spi.c        |  6 +++++-
+ include/linux/mfd/wm831x/core.h | 15 +++++++++++++++
+ 5 files changed, 62 insertions(+), 6 deletions(-)
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
+index 3e0e99e..21d3cdd 100644
+--- a/drivers/mfd/wm831x-core.c
++++ b/drivers/mfd/wm831x-core.c
+@@ -19,6 +19,8 @@
+ #include <linux/mfd/core.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
+ 
+ #include <linux/mfd/wm831x/core.h>
+ #include <linux/mfd/wm831x/pdata.h>
+@@ -1613,6 +1615,31 @@ struct regmap_config wm831x_regmap_config = {
+ };
+ EXPORT_SYMBOL_GPL(wm831x_regmap_config);
+ 
++#ifdef CONFIG_OF
++const struct of_device_id wm831x_of_match[] = {
++	{ .compatible = "wlf,wm8310", .data = (void *)WM8310 },
++	{ .compatible = "wlf,wm8311", .data = (void *)WM8311 },
++	{ .compatible = "wlf,wm8312", .data = (void *)WM8312 },
++	{ .compatible = "wlf,wm8320", .data = (void *)WM8320 },
++	{ .compatible = "wlf,wm8321", .data = (void *)WM8321 },
++	{ .compatible = "wlf,wm8325", .data = (void *)WM8325 },
++	{ .compatible = "wlf,wm8326", .data = (void *)WM8326 },
++	{ },
++};
++EXPORT_SYMBOL_GPL(wm831x_of_match);
++
++int wm831x_of_get_type(struct device *dev)
++{
++	const struct of_device_id *id = of_match_device(wm831x_of_match, dev);
++
++	if (id)
++		return (unsigned long)id->data;
++	else
++		return 0;
++}
++EXPORT_SYMBOL_GPL(wm831x_of_get_type);
++#endif
++
+ /*
+  * Instantiate the generic non-control parts of the device.
+  */
+@@ -1628,7 +1655,10 @@ int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq)
+ 	dev_set_drvdata(wm831x->dev, wm831x);
+ 
+ 	if (pdata)
+-		wm831x->soft_shutdown = pdata->soft_shutdown;
++		memcpy(&wm831x->pdata, pdata, sizeof(*pdata));
++	pdata = &wm831x->pdata;
++
++	wm831x->soft_shutdown = pdata->soft_shutdown;
+ 
+ 	ret = wm831x_reg_read(wm831x, WM831X_PARENT_ID);
+ 	if (ret < 0) {
+diff --git a/drivers/mfd/wm831x-i2c.c b/drivers/mfd/wm831x-i2c.c
+index 824bcba..b2acd92 100644
+--- a/drivers/mfd/wm831x-i2c.c
++++ b/drivers/mfd/wm831x-i2c.c
+@@ -28,8 +28,14 @@ static int wm831x_i2c_probe(struct i2c_client *i2c,
+ 			    const struct i2c_device_id *id)
+ {
+ 	struct wm831x *wm831x;
++	enum wm831x_parent type;
+ 	int ret;
+ 
++	if (i2c->dev.of_node)
++		type = (enum wm831x_parent)wm831x_of_get_type(&i2c->dev);
++	else
++		type = (enum wm831x_parent)id->driver_data;
++
+ 	wm831x = devm_kzalloc(&i2c->dev, sizeof(struct wm831x), GFP_KERNEL);
+ 	if (wm831x == NULL)
+ 		return -ENOMEM;
+@@ -45,7 +51,7 @@ static int wm831x_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	return wm831x_device_init(wm831x, id->driver_data, i2c->irq);
++	return wm831x_device_init(wm831x, type, i2c->irq);
+ }
+ 
+ static int wm831x_i2c_remove(struct i2c_client *i2c)
+@@ -94,6 +100,7 @@ static struct i2c_driver wm831x_i2c_driver = {
+ 	.driver = {
+ 		.name = "wm831x",
+ 		.pm = &wm831x_pm_ops,
++		.of_match_table = of_match_ptr(wm831x_of_match),
+ 	},
+ 	.probe = wm831x_i2c_probe,
+ 	.remove = wm831x_i2c_remove,
+diff --git a/drivers/mfd/wm831x-irq.c b/drivers/mfd/wm831x-irq.c
+index dfea8b9..c01239a 100644
+--- a/drivers/mfd/wm831x-irq.c
++++ b/drivers/mfd/wm831x-irq.c
+@@ -564,7 +564,7 @@ static const struct irq_domain_ops wm831x_irq_domain_ops = {
+ 
+ int wm831x_irq_init(struct wm831x *wm831x, int irq)
+ {
+-	struct wm831x_pdata *pdata = dev_get_platdata(wm831x->dev);
++	struct wm831x_pdata *pdata = &wm831x->pdata;
+ 	struct irq_domain *domain;
+ 	int i, ret, irq_base;
+ 
+@@ -579,7 +579,7 @@ int wm831x_irq_init(struct wm831x *wm831x, int irq)
+ 	}
+ 
+ 	/* Try to dynamically allocate IRQs if no base is specified */
+-	if (pdata && pdata->irq_base) {
++	if (pdata->irq_base) {
+ 		irq_base = irq_alloc_descs(pdata->irq_base, 0,
+ 					   WM831X_NUM_IRQS, 0);
+ 		if (irq_base < 0) {
+@@ -608,7 +608,7 @@ int wm831x_irq_init(struct wm831x *wm831x, int irq)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (pdata && pdata->irq_cmos)
++	if (pdata->irq_cmos)
+ 		i = 0;
+ 	else
+ 		i = WM831X_IRQ_OD;
+diff --git a/drivers/mfd/wm831x-spi.c b/drivers/mfd/wm831x-spi.c
+index 80482ae..44c6eec 100644
+--- a/drivers/mfd/wm831x-spi.c
++++ b/drivers/mfd/wm831x-spi.c
+@@ -28,7 +28,10 @@ static int wm831x_spi_probe(struct spi_device *spi)
+ 	enum wm831x_parent type;
+ 	int ret;
+ 
+-	type = (enum wm831x_parent)id->driver_data;
++	if (spi->dev.of_node)
++		type = (enum wm831x_parent)wm831x_of_get_type(&spi->dev);
++	else
++		type = (enum wm831x_parent)id->driver_data;
+ 
+ 	wm831x = devm_kzalloc(&spi->dev, sizeof(struct wm831x), GFP_KERNEL);
+ 	if (wm831x == NULL)
+@@ -97,6 +100,7 @@ static struct spi_driver wm831x_spi_driver = {
+ 	.driver = {
+ 		.name	= "wm831x",
+ 		.pm	= &wm831x_spi_pm,
++		.of_match_table = of_match_ptr(wm831x_of_match),
+ 	},
+ 	.id_table	= wm831x_spi_ids,
+ 	.probe		= wm831x_spi_probe,
+diff --git a/include/linux/mfd/wm831x/core.h b/include/linux/mfd/wm831x/core.h
+index 76c2264..752a722 100644
+--- a/include/linux/mfd/wm831x/core.h
++++ b/include/linux/mfd/wm831x/core.h
+@@ -21,6 +21,8 @@
+ #include <linux/list.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/wm831x/auxadc.h>
++#include <linux/mfd/wm831x/pdata.h>
++#include <linux/of.h>
+ 
+ /*
+  * Register values.
+@@ -367,6 +369,8 @@ struct wm831x {
+ 
+ 	struct regmap *regmap;
+ 
++	struct wm831x_pdata pdata;
++
+ 	int irq;  /* Our chip IRQ */
+ 	struct mutex irq_lock;
+ 	struct irq_domain *irq_domain;
+@@ -427,4 +431,15 @@ static inline int wm831x_irq(struct wm831x *wm831x, int irq)
+ 
+ extern struct regmap_config wm831x_regmap_config;
+ 
++extern const struct of_device_id wm831x_of_match[];
++
++#ifdef CONFIG_OF
++int wm831x_of_get_type(struct device *dev);
++#else
++static inline int wm831x_of_get_type(struct device *dev)
++{
++	return 0;
++}
++#endif
++
+ #endif
+-- 
+2.1.4
 
-Thanks,
-Neil
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
