@@ -1,48 +1,53 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2] pinctrl: samsung: Calculate GPIO base for
- pinctrl_add_gpio_range
-Date: Mon, 6 Mar 2017 16:49:09 +0000
-Message-ID: <20170306164909.GA6986@localhost.localdomain>
-References: <20170228090143.GG2742@localhost.localdomain>
- <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 03/12] gpio: omap: use devm_irq_alloc_descs()
+Date: Mon, 6 Mar 2017 08:50:19 -0800
+Message-ID: <20170306165019.GK20572@atomide.com>
+References: <1488644620-11488-1-git-send-email-bgolaszewski@baylibre.com>
+ <1488644620-11488-4-git-send-email-bgolaszewski@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53216 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932067AbdCFQsL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 6 Mar 2017 11:48:11 -0500
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1488644620-11488-4-git-send-email-bgolaszewski@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Aaro Koskinen <aaro.koskinen@iki.fi>
 List-Id: linux-gpio@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 
-On Sat, Mar 04, 2017 at 08:20:11PM +0900, Tomasz Figa wrote:
-> Hi Charles,
+* Bartosz Golaszewski <bgolaszewski@baylibre.com> [170304 08:33]:
+> This driver never frees the allocated interrupt descriptors. Fix it by
+> using a resource managed variant of irq_alloc_descs().
 > 
-> 2017-03-01 2:04 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
-> > As the pinctrl is now added before the GPIOs are registered we need to
-> > manually calculate what the GPIO base will be, otherwise the base for
-> > each gpio_range will be set to zero. Fortunately the driver
-> > already assigns a GPIO base, in samsung_gpiolib_register, and uses the
-> > same calculation it does for the pin_base. Meaning the two will always
-> > be the same and allowing us to reuse the pinbase and avoid the issue.
-> 
-> Sorry, I didn't notice before and I don't see the offending patch in ,
-> but you should add
-> 
-> Fixes: XXXXXXXXXXXX ("pinctrl: Patch subject")
-> 
-> if you intend to submit this patch separately. Otherwise, maybe this
-> can be just squashed?
-> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Yeah apologies for that as the original patch hasn't showed up in
-the tree yet I couldn't pull a commit ID to add the fixes tag.
-Squashing it in is probably the best way to go.
+Would be good to get Aaro's ack on this one.
 
-Thanks,
-Charles
+Regards,
+
+Tony
+
+> ---
+>  drivers/gpio/gpio-omap.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index efc85a2..5d6a574 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1085,7 +1085,8 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+>  	 * REVISIT: Once we have OMAP1 supporting SPARSE_IRQ, we can drop
+>  	 * irq_alloc_descs() since a base IRQ offset will no longer be needed.
+>  	 */
+> -	irq_base = irq_alloc_descs(-1, 0, bank->width, 0);
+> +	irq_base = devm_irq_alloc_descs(bank->chip.parent,
+> +					-1, 0, bank->width, 0);
+>  	if (irq_base < 0) {
+>  		dev_err(bank->chip.parent, "Couldn't allocate IRQ numbers\n");
+>  		return -ENODEV;
+> -- 
+> 2.9.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
