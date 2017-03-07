@@ -1,61 +1,61 @@
-From: Gary Bisson <gary.bisson@boundarydevices.com>
-Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
- managing groups
-Date: Tue, 7 Mar 2017 18:26:12 +0100
-Message-ID: <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
-References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
- <20170102182022.2047-2-gary.bisson@boundarydevices.com> <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: [PATCH fixes v4] pinctrl: Do not check previous and current state
+Date: Tue,  7 Mar 2017 10:52:36 -0800
+Message-ID: <20170307185236.31805-1-f.fainelli@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:38167 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754946AbdCGSeq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2017 13:34:46 -0500
-Received: by mail-wm0-f52.google.com with SMTP id t189so12575769wmt.1
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Mar 2017 10:34:24 -0800 (PST)
-In-Reply-To: <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36227 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932907AbdCGSwq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 7 Mar 2017 13:52:46 -0500
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Fabio Estevam <fabio.estevam@nxp.com>, Tony Lindgren <tony@atomide.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, swarren@nvidia.com, alcooperx@gmail.com, Florian Fainelli <f.fainelli@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Hi Fabio,
+In case a platform only defaults a "default" set of pins, but not a
+"sleep" set of pins, and this particular platform suspends and resumes
+in a way that the pin states are not preserved by the hardware, when we
+resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+-> pinctrl_select_state() and the first thing we do is check that the
+pins state is the same as before, and do nothing.
 
-On Tue, Mar 7, 2017 at 6:19 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Gary,
->
-> On Mon, Jan 2, 2017 at 4:20 PM, Gary Bisson
-> <gary.bisson@boundarydevices.com> wrote:
->> Now using group_desc structure instead of imx_pin_group.
->>
->> Also leveraging generic functions to retrieve groups count/name/pins.
->>
->> The imx_free_pingroups function can be removed since it is now handled by
->> the core driver during unregister.
->>
->> Finally the device tree parsing is moved after the pinctrl driver registration
->> since this latter initializes the radix trees.
->>
->> Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
->
-> This patch is in 4.11-rc1 now and it causes a regression on the hog group:
->
-> [    0.061005] imx6q-pinctrl 20e0000.iomuxc: unable to find group for
-> node hoggrp
->
-> The hog pins can no longer be initialized.
->
-> Could you take a look, please?
+In order to fix this, just remove the p->state == state check from
+pinctrl_select_state() since it would not allow callers of this function
+to get the pins to be brought into the expected state.
 
-No it isn't because of the use of radix but instead of:
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=950b0d91dc10
+Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Changes in v4:
 
-It has been discussed here:
-https://lkml.org/lkml/2017/2/28/140
+- just remove the p->state == state check because it cannot allow pinctrl_select_state
+  to work for callers that expect it to do the actual state change
 
-Tony offered a patch in that thread which works. Tony, have you
-submitted it yet?
+Changes in v3:
 
-Regards,
-Gary
+- move the state check to pinctrl_select_state
+
+Changes in v2:
+
+- rename __pinctrl_select_state to pinctrl_commit_state
+
+ drivers/pinctrl/core.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index d69046537b75..33cef0a65c9c 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1203,9 +1203,6 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
+ 	struct pinctrl_state *old_state = p->state;
+ 	int ret;
+ 
+-	if (p->state == state)
+-		return 0;
+-
+ 	if (p->state) {
+ 		/*
+ 		 * For each pinmux setting in the old state, forget SW's record
+-- 
+2.9.3
+
