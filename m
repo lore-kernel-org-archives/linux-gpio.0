@@ -1,70 +1,27 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
- interrupts on s3c24xx
-Date: Wed, 8 Mar 2017 18:34:34 +0200
-Message-ID: <20170308163434.obhtg6fwmjwqv7jm@kozik-lap>
-References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
- <20170304081504.unv6sihbmp76ynfy@kozik-lap>
- <20170306131516.GA6095@n1>
+From: Nathan Sullivan <nathan.sullivan@ni.com>
+Subject: [PATCH v3] NI 169445 board support
+Date: Wed, 8 Mar 2017 13:35:42 -0600
+Message-ID: <1489001744-26545-1-git-send-email-nathan.sullivan@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170306131516.GA6095@n1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Sergio Prado <sergio.prado@e-labworks.com>
-Cc: kgene@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mips-bounce@linux-mips.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: linus.walleij@linaro.org, gnurou@gmail.com, mark.rutland@arm.com, devicetree@vger.kernel.org, robh+dt@kernel.org, ralf@linux-mips.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 06, 2017 at 09:15:16AM -0400, Sergio Prado wrote:
-> Hi Krzysztof,
-> 
-> > > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
-> > 
-> > Checkpatch should complain here about commit format.
-> > 
-> > > 
-> > > Tested on FriendlyARM mini2440.
-> > > 
-> > 
-> > Please add:
-> >   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-> >   Cc: <stable@vger.kernel.org>
-> > 
-> 
-> OK.
-> 
-> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
-> > > ---
-> > >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> > > index b82a003546ae..1b8d887796e8 100644
-> > > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> > > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-> > > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
-> > >  {
-> > >  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
-> > >  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> > > -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
-> > > -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-> > > +	struct samsung_pinctrl_drv_data *d = data->drvdata;
-> > > +	struct samsung_pin_bank *bank = d->pin_banks;
-> > 
-> > I think 'pin_banks' point to all banks of given controller not to the
-> > currently accessed one.
-> 
-> Understood. I think it worked in my tests because on s3c2440 all banks
-> have the same eint base address.
-> 
-> So what do you think is the best approach to solve this problem?
+Add support for the National Instruments 169445 board
 
-Maybe you can get to this through:
-	s3c24xx_eint_domain_data = s3c24xx_eint_data->domains[virq].host_data;
-	s3c24xx_eint_domain_data->bank
+----
+Changes from v2:
 
-It is getting slightly more complicated...
-
-Best regards,
-Krzysztof
+- Hand write the board config fragment, and make it more minimal.
+- Add myself as the maintainer of new dirs and files.
