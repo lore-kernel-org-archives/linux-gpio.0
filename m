@@ -1,44 +1,70 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: i.MX7 pinctrl driver writing to non existent registers
-Date: Wed, 8 Mar 2017 14:57:53 +0100
-Message-ID: <20170308135751.GB19934@x250>
-References: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
+ interrupts on s3c24xx
+Date: Wed, 8 Mar 2017 18:34:34 +0200
+Message-ID: <20170308163434.obhtg6fwmjwqv7jm@kozik-lap>
+References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
+ <20170304081504.unv6sihbmp76ynfy@kozik-lap>
+ <20170306131516.GA6095@n1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20170306131516.GA6095@n1>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Sergio Prado <sergio.prado@e-labworks.com>
+Cc: kgene@kernel.org, javier@osg.samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Feb 08, 2017 at 10:08:17AM +0100, Sascha Hauer wrote:
-> Hi All,
+On Mon, Mar 06, 2017 at 09:15:16AM -0400, Sergio Prado wrote:
+> Hi Krzysztof,
 > 
-> The i.MX7 has two pinmux controllers, the LPSR and the regular one. We
-> instantiate a driver for each one. Now the driver assumes that the pins
-> are completely configured with one iomux controller, but for the LPSR
-> pins this is not true: The MUX_CTL and PAD_CTL registers are indeed
-> in the LPSR controller, but the SELECT_INPUT registers for the same
-> pin are found in the regular controller.
+> > > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
+> > 
+> > Checkpatch should complain here about commit format.
+> > 
+> > > 
+> > > Tested on FriendlyARM mini2440.
+> > > 
+> > 
+> > Please add:
+> >   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+> >   Cc: <stable@vger.kernel.org>
+> > 
 > 
-> The result is that with this pin for example:
+> OK.
 > 
-> #define MX7D_PAD_GPIO1_IO06__UART5_DCE_RX                         0x0018 0x0048 0x0714 0x3 0x4
+> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
+> > > ---
+> > >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > > index b82a003546ae..1b8d887796e8 100644
+> > > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+> > > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+> > >  {
+> > >  	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+> > >  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> > > -	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+> > > -	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+> > > +	struct samsung_pinctrl_drv_data *d = data->drvdata;
+> > > +	struct samsung_pin_bank *bank = d->pin_banks;
+> > 
+> > I think 'pin_banks' point to all banks of given controller not to the
+> > currently accessed one.
 > 
-> The LPSR controller writes to LPSR_BASE + 0x714 where it should really
-> be IOMUX_BASE + 0x714.
+> Understood. I think it worked in my tests because on s3c2440 all banks
+> have the same eint base address.
+> 
+> So what do you think is the best approach to solve this problem?
 
-Isn't property fsl,input-sel being there for addressing that?
+Maybe you can get to this through:
+	s3c24xx_eint_domain_data = s3c24xx_eint_data->domains[virq].host_data;
+	s3c24xx_eint_domain_data->bank
 
-Shawn
+It is getting slightly more complicated...
+
+Best regards,
+Krzysztof
