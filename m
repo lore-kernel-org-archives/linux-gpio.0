@@ -1,67 +1,44 @@
-From: Bamvor Zhang Jian <bamvor.zhangjian@linaro.org>
-Subject: Re: [PATCH 01/12] gpio: mockup: use devm_irq_alloc_descs()
-Date: Wed, 8 Mar 2017 09:21:31 +0100
-Message-ID: <CAFy1USQe7Lre08VeY0=+u4YrJFBRZaUmMwYxmk49Mme4ZEjy5A@mail.gmail.com>
-References: <1488644620-11488-1-git-send-email-bgolaszewski@baylibre.com> <1488644620-11488-2-git-send-email-bgolaszewski@baylibre.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: i.MX7 pinctrl driver writing to non existent registers
+Date: Wed, 8 Mar 2017 14:57:53 +0100
+Message-ID: <20170308135751.GB19934@x250>
+References: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1488644620-11488-2-git-send-email-bgolaszewski@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, linux-gpio@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20170208090817.omm2dydhqukdzgqy@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-gpio@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 4 March 2017 at 17:23, Bartosz Golaszewski <bgolaszewski@baylibre.com> wrote:
-> Use the resource managed variant of irq_alloc_descs(). This allows us
-> to remove gpio_mockup_remove().
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+On Wed, Feb 08, 2017 at 10:08:17AM +0100, Sascha Hauer wrote:
+> Hi All,
+> 
+> The i.MX7 has two pinmux controllers, the LPSR and the regular one. We
+> instantiate a driver for each one. Now the driver assumes that the pins
+> are completely configured with one iomux controller, but for the LPSR
+> pins this is not true: The MUX_CTL and PAD_CTL registers are indeed
+> in the LPSR controller, but the SELECT_INPUT registers for the same
+> pin are found in the regular controller.
+> 
+> The result is that with this pin for example:
+> 
+> #define MX7D_PAD_GPIO1_IO06__UART5_DCE_RX                         0x0018 0x0048 0x0714 0x3 0x4
+> 
+> The LPSR controller writes to LPSR_BASE + 0x714 where it should really
+> be IOMUX_BASE + 0x714.
 
-> ---
->  drivers/gpio/gpio-mockup.c | 16 +---------------
->  1 file changed, 1 insertion(+), 15 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> index 06dac72..37c2d69 100644
-> --- a/drivers/gpio/gpio-mockup.c
-> +++ b/drivers/gpio/gpio-mockup.c
-> @@ -169,7 +169,7 @@ static int gpio_mockup_irqchip_setup(struct device *dev,
->         struct gpio_chip *gc = &chip->gc;
->         int irq_base, i;
->
-> -       irq_base = irq_alloc_descs(-1, 0, gc->ngpio, 0);
-> +       irq_base = devm_irq_alloc_descs(dev, -1, 0, gc->ngpio, 0);
->         if (irq_base < 0)
->                 return irq_base;
->
-> @@ -373,25 +373,11 @@ static int gpio_mockup_probe(struct platform_device *pdev)
->         return 0;
->  }
->
-> -static int gpio_mockup_remove(struct platform_device *pdev)
-> -{
-> -       struct gpio_mockup_chip *chips;
-> -       int i;
-> -
-> -       chips = platform_get_drvdata(pdev);
-> -
-> -       for (i = 0; i < gpio_mockup_params_nr >> 1; i++)
-> -               irq_free_descs(chips[i].gc.irq_base, chips[i].gc.ngpio);
-> -
-> -       return 0;
-> -}
-> -
->  static struct platform_driver gpio_mockup_driver = {
->         .driver = {
->                 .name = GPIO_MOCKUP_NAME,
->         },
->         .probe = gpio_mockup_probe,
-> -       .remove = gpio_mockup_remove,
->  };
->
->  static struct platform_device *pdev;
-> --
-> 2.9.3
->
+Isn't property fsl,input-sel being there for addressing that?
+
+Shawn
