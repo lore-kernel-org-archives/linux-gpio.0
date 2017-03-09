@@ -1,239 +1,232 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH 10/19] gpio: ws16c48: make use of raw_spinlock variants
-Date: Thu, 9 Mar 2017 13:36:16 -0500
-Message-ID: <20170309183616.GB10973@sophia>
-References: <cover.1489015238.git.julia@ni.com>
- <90f09a1e378d9858c4d79bd02e31512b96ef8de3.1489015238.git.julia@ni.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 1/2] pinctrl: meson: gxl: add the missing PWM pin definitions
+Date: Thu, 9 Mar 2017 20:47:03 +0100
+Message-ID: <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ@mail.gmail.com>
+References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+ <20170304212318.27076-2-martin.blumenstingl@googlemail.com> <1488811357.2420.18.camel@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:36189 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750781AbdCISm1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2017 13:42:27 -0500
-Content-Disposition: inline
-In-Reply-To: <90f09a1e378d9858c4d79bd02e31512b96ef8de3.1489015238.git.julia@ni.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36584 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750803AbdCITrZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2017 14:47:25 -0500
+In-Reply-To: <1488811357.2420.18.camel@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Cartwright <julia@ni.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, linus.walleij@linaro.org
+Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, khilman@baylibre.com, carlo@caione.org, devicetree@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Mar 09, 2017 at 10:21:57AM -0600, Julia Cartwright wrote:
->The ws16c48 gpio driver currently implements an irq_chip for handling
->interrupts; due to how irq_chip handling is done, it's necessary for the
->irq_chip methods to be invoked from hardirq context, even on a a
->real-time kernel.  Because the spinlock_t type becomes a "sleeping"
->spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
->
->A quick audit of the operations under the lock reveal that they do only
->minimal, bounded work, and are therefore safe to do under a raw spinlock.
->
->Signed-off-by: Julia Cartwright <julia@ni.com>
+Hi Linus,
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+On Mon, Mar 6, 2017 at 3:42 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Sat, 2017-03-04 at 22:23 +0100, Martin Blumenstingl wrote:
+>> This adds support for the missing PWM pins on Meson GXL SoCs, namely:
+>> - PWM_A
+>> - PWM_B
+>> - PWM_C
+>> - PWM_F (GPIOX_7 and GPIOCLK_1 can be selected as output)
+>> - PWM_AO_A (GPIOAO_3 and GPIOAO_8 can be selected as output)
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.co
+>> m>
+>> ---
+>>  drivers/pinctrl/meson/pinctrl-meson-gxl.c | 64
+>> +++++++++++++++++++++++++++++++
+>>  1 file changed, 64 insertions(+)
+>>
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+>> b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+>> index 4ab94a85e306..91dfc498780b 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+>> @@ -195,8 +195,19 @@ static const unsigned int eth_txd1_pins[]
+>> = { PIN(GPIOZ_11, EE_OFF) };
+>>  static const unsigned int eth_txd2_pins[]    = { PIN(GPIOZ_12,
+>> EE_OFF) };
+>>  static const unsigned int eth_txd3_pins[]    = { PIN(GPIOZ_13,
+>> EE_OFF) };
+>>
+>> +static const unsigned int pwm_a_pins[]               = {
+>> PIN(GPIOX_6, EE_OFF) };
+>> +
+>> +static const unsigned int pwm_b_pins[]               = {
+>> PIN(GPIODV_29, EE_OFF) };
+>> +
+>> +static const unsigned int pwm_c_pins[]               = {
+>> PIN(GPIOZ_15, EE_OFF) };
+>> +
+>> +static const unsigned int pwm_d_pins[]               = {
+>> PIN(GPIODV_28, EE_OFF) };
+>> +
+>>  static const unsigned int pwm_e_pins[]               = {
+>> PIN(GPIOX_16, EE_OFF) };
+>>
+>> +static const unsigned int pwm_f_clk_pins[]   = { PIN(GPIOCLK_1,
+>> EE_OFF) };
+>> +static const unsigned int pwm_f_x_pins[]     = { PIN(GPIOX_7,
+>> EE_OFF) };
+>> +
+>>  static const unsigned int hdmi_hpd_pins[]    = { PIN(GPIOH_0,
+>> EE_OFF) };
+>>  static const unsigned int hdmi_sda_pins[]    = { PIN(GPIOH_1,
+>> EE_OFF) };
+>>  static const unsigned int hdmi_scl_pins[]    = { PIN(GPIOH_2,
+>> EE_OFF) };
+>> @@ -225,6 +236,9 @@ static const unsigned int uart_rts_ao_b_pins[]
+>> = { PIN(GPIOAO_3, 0) };
+>>
+>>  static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0)
+>> };
+>>
+>> +static const unsigned int pwm_ao_a_3_pins[]  = { PIN(GPIOAO_3,
+>> 0) };
+>> +static const unsigned int pwm_ao_a_8_pins[]  = { PIN(GPIOAO_8,
+>> 0) };
+>> +
+>>  static const unsigned int pwm_ao_b_pins[]    = { PIN(GPIOAO_9,
+>> 0) };
+>>
+>>  static struct meson_pmx_group meson_gxl_periphs_groups[] = {
+>> @@ -350,7 +364,9 @@ static struct meson_pmx_group
+>> meson_gxl_periphs_groups[] = {
+>>       GROUP(uart_rts_a,       5,      16),
+>>       GROUP(uart_tx_c,        5,      13),
+>>       GROUP(uart_rx_c,        5,      12),
+>> +     GROUP(pwm_a,            5,      25),
+>>       GROUP(pwm_e,            5,      15),
+>> +     GROUP(pwm_f_x,          5,      14),
+>>
+>>       /* Bank Z */
+>>       GROUP(eth_mdio,         4,      22),
+>> @@ -367,6 +383,7 @@ static struct meson_pmx_group
+>> meson_gxl_periphs_groups[] = {
+>>       GROUP(eth_txd1,         4,      12),
+>>       GROUP(eth_txd2,         4,      11),
+>>       GROUP(eth_txd3,         4,      10),
+>> +     GROUP(pwm_c,            3,      20),
+>>
+>>       /* Bank H */
+>>       GROUP(hdmi_hpd,         6,      31),
+>> @@ -382,6 +399,8 @@ static struct meson_pmx_group
+>> meson_gxl_periphs_groups[] = {
+>>       GROUP(i2c_sda_b,        1,      12),
+>>       GROUP(i2c_sck_c,        1,      11),
+>>       GROUP(i2c_sda_c,        1,      10),
+>> +     GROUP(pwm_b,            2,      11),
+>> +     GROUP(pwm_d,            2,      12),
+>>
+>>       /* Bank BOOT */
+>>       GROUP(emmc_nand_d07,    7,      31),
+>> @@ -404,6 +423,9 @@ static struct meson_pmx_group
+>> meson_gxl_periphs_groups[] = {
+>>       GROUP(sdcard_d2,        6,      0),
+>>       GROUP(sdcard_cmd,       6,      2),
+>>       GROUP(sdcard_clk,       6,      3),
+>> +
+>> +     /* Bank CLK */
+>> +     GROUP(pwm_f_clk,        8,      30),
+>>  };
+>>
+>>  static struct meson_pmx_group meson_gxl_aobus_groups[] = {
+>> @@ -428,6 +450,8 @@ static struct meson_pmx_group
+>> meson_gxl_aobus_groups[] = {
+>>       GROUP(uart_cts_ao_b,    0,      8),
+>>       GROUP(uart_rts_ao_b,    0,      7),
+>>       GROUP(remote_input_ao,  0,      0),
+>> +     GROUP(pwm_ao_a_3,       0,      22),
+>> +     GROUP(pwm_ao_a_8,       0,      17),
+>>       GROUP(pwm_ao_b,         0,      3),
+>>  };
+>>
+>> @@ -513,10 +537,34 @@ static const char * const eth_groups[] = {
+>>       "eth_txd0", "eth_txd1", "eth_txd2", "eth_txd3",
+>>  };
+>>
+>> +static const char * const pwm_a_groups[] = {
+>> +     "pwm_a",
+>> +};
+>> +
+>> +static const char * const pwm_b_groups[] = {
+>> +     "pwm_b",
+>> +};
+>> +
+>> +static const char * const pwm_c_groups[] = {
+>> +     "pwm_c",
+>> +};
+>> +
+>> +static const char * const pwm_d_groups[] = {
+>> +     "pwm_d",
+>> +};
+>> +
+>>  static const char * const pwm_e_groups[] = {
+>>       "pwm_e",
+>>  };
+>>
+>> +static const char * const pwm_f_clk_groups[] = {
+>> +     "pwm_f_clk",
+>> +};
+>> +
+>> +static const char * const pwm_f_x_groups[] = {
+>> +     "pwm_f_x",
+>> +};
+>> +
+>>  static const char * const hdmi_hpd_groups[] = {
+>>       "hdmi_hpd",
+>>  };
+>> @@ -542,6 +590,14 @@ static const char * const
+>> remote_input_ao_groups[] = {
+>>       "remote_input_ao",
+>>  };
+>>
+>> +static const char * const pwm_ao_a_3_groups[] = {
+>> +     "pwm_ao_a_3",
+>> +};
+>> +
+>> +static const char * const pwm_ao_a_8_groups[] = {
+>> +     "pwm_ao_a_8",
+>> +};
+>> +
+>>  static const char * const pwm_ao_b_groups[] = {
+>>       "pwm_ao_b",
+>>  };
+>> @@ -559,7 +615,13 @@ static struct meson_pmx_func
+>> meson_gxl_periphs_functions[] = {
+>>       FUNCTION(i2c_b),
+>>       FUNCTION(i2c_c),
+>>       FUNCTION(eth),
+>> +     FUNCTION(pwm_a),
+>> +     FUNCTION(pwm_b),
+>> +     FUNCTION(pwm_c),
+>> +     FUNCTION(pwm_d),
+>>       FUNCTION(pwm_e),
+>> +     FUNCTION(pwm_f_clk),
+>> +     FUNCTION(pwm_f_x),
+>
+> I wonder if having function named "pwm_f_clk" really makes sense ?
+> Shouldn't it be just "pwm_f" ? This is real function, isn't it ?
+> The actual pin used will be provided in the dt. Here, I suppose we
+> could have this:
+>
+> +static const char * const pwm_f_groups[] = {
+> +       "pwm_f_x", "pwm_f_clk",
+> +};
+>
+> Has far as I can see, on meson arch, the function does not carry much
+> information anyway, except for prints.
+>
+> To be clear, I'm not questioning this change in particular. It looks
+> good, and follows what has been done in the past on meson. I know we
+> have been this a lot already, but I'm questioning whether we should
+> continue to do so ?
+>
+> I asking because I also have a lot case like this coming up on audio
+> for gxl and gxbb, where the same function can use different pins.
+could you please look into Jerome's question?
+personally I'm fine with either way, and changing my patch would be
+quite trivial. but I'd like to know what's "the way to go" before
+changing anything (and reverting that afterwards again).
 
->---
-> drivers/gpio/gpio-ws16c48.c | 46 ++++++++++++++++++++++-----------------------
-> 1 file changed, 23 insertions(+), 23 deletions(-)
->
->diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
->index 901b5ccb032d..87d63695dfcf 100644
->--- a/drivers/gpio/gpio-ws16c48.c
->+++ b/drivers/gpio/gpio-ws16c48.c
->@@ -51,7 +51,7 @@ struct ws16c48_gpio {
-> 	struct gpio_chip chip;
-> 	unsigned char io_state[6];
-> 	unsigned char out_state[6];
->-	spinlock_t lock;
->+	raw_spinlock_t lock;
-> 	unsigned long irq_mask;
-> 	unsigned long flow_mask;
-> 	unsigned base;
->@@ -73,13 +73,13 @@ static int ws16c48_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-> 	const unsigned mask = BIT(offset % 8);
-> 	unsigned long flags;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	ws16c48gpio->io_state[port] |= mask;
-> 	ws16c48gpio->out_state[port] &= ~mask;
-> 	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 
-> 	return 0;
-> }
->@@ -92,7 +92,7 @@ static int ws16c48_gpio_direction_output(struct gpio_chip *chip,
-> 	const unsigned mask = BIT(offset % 8);
-> 	unsigned long flags;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	ws16c48gpio->io_state[port] &= ~mask;
-> 	if (value)
->@@ -101,7 +101,7 @@ static int ws16c48_gpio_direction_output(struct gpio_chip *chip,
-> 		ws16c48gpio->out_state[port] &= ~mask;
-> 	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 
-> 	return 0;
-> }
->@@ -114,17 +114,17 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
-> 	unsigned long flags;
-> 	unsigned port_state;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	/* ensure that GPIO is set for input */
-> 	if (!(ws16c48gpio->io_state[port] & mask)) {
->-		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+		raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 		return -EINVAL;
-> 	}
-> 
-> 	port_state = inb(ws16c48gpio->base + port);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 
-> 	return !!(port_state & mask);
-> }
->@@ -136,11 +136,11 @@ static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-> 	const unsigned mask = BIT(offset % 8);
-> 	unsigned long flags;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	/* ensure that GPIO is set for output */
-> 	if (ws16c48gpio->io_state[port] & mask) {
->-		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+		raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 		return;
-> 	}
-> 
->@@ -150,7 +150,7 @@ static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
-> 		ws16c48gpio->out_state[port] &= ~mask;
-> 	outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> }
-> 
-> static void ws16c48_gpio_set_multiple(struct gpio_chip *chip,
->@@ -178,14 +178,14 @@ static void ws16c48_gpio_set_multiple(struct gpio_chip *chip,
-> 		iomask = mask[BIT_WORD(i)] & ~ws16c48gpio->io_state[port];
-> 		bitmask = iomask & bits[BIT_WORD(i)];
-> 
->-		spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+		raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 		/* update output state data and set device gpio register */
-> 		ws16c48gpio->out_state[port] &= ~iomask;
-> 		ws16c48gpio->out_state[port] |= bitmask;
-> 		outb(ws16c48gpio->out_state[port], ws16c48gpio->base + port);
-> 
->-		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+		raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 
-> 		/* prepare for next gpio register set */
-> 		mask[BIT_WORD(i)] >>= gpio_reg_size;
->@@ -207,7 +207,7 @@ static void ws16c48_irq_ack(struct irq_data *data)
-> 	if (port > 2)
-> 		return;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	port_state = ws16c48gpio->irq_mask >> (8*port);
-> 
->@@ -216,7 +216,7 @@ static void ws16c48_irq_ack(struct irq_data *data)
-> 	outb(port_state | mask, ws16c48gpio->base + 8 + port);
-> 	outb(0xC0, ws16c48gpio->base + 7);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> }
-> 
-> static void ws16c48_irq_mask(struct irq_data *data)
->@@ -232,7 +232,7 @@ static void ws16c48_irq_mask(struct irq_data *data)
-> 	if (port > 2)
-> 		return;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	ws16c48gpio->irq_mask &= ~mask;
-> 
->@@ -240,7 +240,7 @@ static void ws16c48_irq_mask(struct irq_data *data)
-> 	outb(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port);
-> 	outb(0xC0, ws16c48gpio->base + 7);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> }
-> 
-> static void ws16c48_irq_unmask(struct irq_data *data)
->@@ -256,7 +256,7 @@ static void ws16c48_irq_unmask(struct irq_data *data)
-> 	if (port > 2)
-> 		return;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	ws16c48gpio->irq_mask |= mask;
-> 
->@@ -264,7 +264,7 @@ static void ws16c48_irq_unmask(struct irq_data *data)
-> 	outb(ws16c48gpio->irq_mask >> (8*port), ws16c48gpio->base + 8 + port);
-> 	outb(0xC0, ws16c48gpio->base + 7);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> }
-> 
-> static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
->@@ -280,7 +280,7 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
-> 	if (port > 2)
-> 		return -EINVAL;
-> 
->-	spin_lock_irqsave(&ws16c48gpio->lock, flags);
->+	raw_spin_lock_irqsave(&ws16c48gpio->lock, flags);
-> 
-> 	switch (flow_type) {
-> 	case IRQ_TYPE_NONE:
->@@ -292,7 +292,7 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
-> 		ws16c48gpio->flow_mask &= ~mask;
-> 		break;
-> 	default:
->-		spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+		raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 		return -EINVAL;
-> 	}
-> 
->@@ -300,7 +300,7 @@ static int ws16c48_irq_set_type(struct irq_data *data, unsigned flow_type)
-> 	outb(ws16c48gpio->flow_mask >> (8*port), ws16c48gpio->base + 8 + port);
-> 	outb(0xC0, ws16c48gpio->base + 7);
-> 
->-	spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
->+	raw_spin_unlock_irqrestore(&ws16c48gpio->lock, flags);
-> 
-> 	return 0;
-> }
->@@ -387,7 +387,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
-> 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
-> 	ws16c48gpio->base = base[id];
-> 
->-	spin_lock_init(&ws16c48gpio->lock);
->+	raw_spin_lock_init(&ws16c48gpio->lock);
-> 
-> 	err = devm_gpiochip_add_data(dev, &ws16c48gpio->chip, ws16c48gpio);
-> 	if (err) {
->-- 
->2.11.1
->
+
+Regards,
+Martin
