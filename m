@@ -1,190 +1,220 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
-Date: Thu, 9 Mar 2017 14:55:41 +0000
-Message-ID: <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
+From: Julia Cartwright <julia@ni.com>
+Subject: [PATCH 18/19] pinctrl: sirf: atlas7: make use of raw_spinlock variants
+Date: Thu, 9 Mar 2017 10:22:05 -0600
+Message-ID: <c68b030b8903bb1ca2f501b2e5c651d9206b1133.1489015238.git.julia@ni.com>
+References: <cover.1489015238.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.1489015238.git.julia@ni.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Barry Song <baohua@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Jacopo,
+The sirf atlas7 pinctrl drivers currently implement an irq_chip for
+handling interrupts; due to how irq_chip handling is done, it's
+necessary for the irq_chip methods to be invoked from hardirq context,
+even on a a real-time kernel.  Because the spinlock_t type becomes a
+"sleeping" spinlock w/ RT kernels, it is not suitable to be used with
+irq_chips.
 
-On Monday, February 20, 2017, Jacopo Mondi wrote:
->=20
-> Add combined gpio and pin controller driver for Renesas RZ/A1
-> r7s72100 SoC.
->=20
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/pinctrl/Kconfig        |   10 +
->  drivers/pinctrl/Makefile       |    1 +
->  drivers/pinctrl/pinctrl-rza1.c | 1026
-> ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 1037 insertions(+)
->  create mode 100644 drivers/pinctrl/pinctrl-rza1.c
->=20
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index 8f8c2af..61310ac 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -163,6 +163,16 @@ config PINCTRL_ROCKCHIP
->  	select GENERIC_IRQ_CHIP
->  	select MFD_SYSCON
->=20
-> +config PINCTRL_RZA1
-> +	bool "Renesas r7s72100 RZ/A1 gpio and pinctrl driver"
+A quick audit of the operations under the lock reveal that they do only
+minimal, bounded work, and are therefore safe to do under a raw spinlock.
 
-You can drop the "r7s72100" and just say RZ/A1.
+Signed-off-by: Julia Cartwright <julia@ni.com>
+---
+ drivers/pinctrl/sirf/pinctrl-atlas7.c | 44 +++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-
-
-> +/**
-> + * rza1_pin_set_direction() - set I/O direction on a pin in port mode
-> + *
-> + * When running in output port mode keep PBDC enabled to allow reading
-> the
-> + * pin value from PPR.
-> + * When in alternate mode disable that (if not explicitly required) not
-> to
-> + * interfere with the alternate function mode.
-> + *
-> + * @port: port where pin sits on
-> + * @offset: pin offset
-> + * @input: input enable/disable flag
-> + */
-> +static inline void rza1_pin_set_direction(struct rza1_port *port,
-> +					  unsigned int offset,
-> +					  bool input)
-> +{
-> +	spin_lock(&port->lock);
-> +	if (input)
-> +		rza1_set_bit(port, PIBC_REG, offset, 1);
-> +	else {
-> +		rza1_set_bit(port, PM_REG, offset, 0);
-> +		rza1_set_bit(port, PBDC_REG, offset, 1);
-> +	}
-> +	spin_unlock(&port->lock);
-
-When input=3D=3Dtrue, you only set PIBC_REG. Otherwise you only set PM_REG =
-and PBDC_REG. This would imply that this function will only ever get called=
- once for a pin and never get called a second time with a different directi=
-on...meaning it would not really change a pin from output to input. I would=
- assume that you would need to change this function to set those 3 register=
-s either one way or the other.
-
-I would suggest:
-   PIBC_REG =3D 1 /* always gets set for GPIO mode */
- input:
-   PM_REG =3D 1
-   PBDC_REG =3D 0
-output:
-   PM_REG =3D 0
-   PBDC_REG =3D 1
-
-
-
-> +/**
-> + * rza1_alternate_function_conf() - configure pin in alternate function
-> mode
-> + *
-> + * @pinctrl: RZ/A1 pin controller device
-> + * @pin_conf: single pin configuration descriptor
-> + */
-> +static int rza1_alternate_function_conf(struct rza1_pinctrl *rza1_pctl,
-> +					struct rza1_pin_conf *pin_conf)
-> +{
-> +	unsigned int offset =3D pin_conf->offset;
-> +	struct rza1_port *port =3D &rza1_pctl->ports[pin_conf->port];
-> +	u8 mux_mode =3D (pin_conf->mux_conf - 1) & MUX_FUNC_MASK;
-> +	u8 mux_conf =3D pin_conf->mux_conf >> MUX_FUNC_OFFS;
-> +	bool swio_en =3D !!(mux_conf & MUX_CONF_SWIO);
-> +	bool input_en =3D !!(mux_conf & MUX_CONF_INPUT_ENABLE);
-> +
-> +	rza1_pin_reset(port, offset);
-> +
-> +	/*
-> +	 * When configuring pin with Software Controlled IO mode in
-> alternate
-> +	 * mode, do not enable bi-directional control to avoid driving Pn
-> +	 * value to the pin input.
-> +	 * When working in direct IO mode (aka alternate function drives the
-> +	 * pin direction), enable bi-directional control for input pins in
-> +	 * order to enable the pin's input buffer as a consequence.
-> +	 */
-> +	if ((!swio_en && input_en) || (swio_en && !input_en))
-> +		rza1_set_bit(port, PBDC_REG, offset, 1);
-
-
-Maybe just set PBDC_REG at the end of the function with everything else.
-See below...
-
-
-
-> +
-> +	/*
-> +	 * Enable alternate function mode and select it.
-> +	 *
-> +	 * ----------------------------------------------------
-> +	 * Alternate mode selection table:
-> +	 *
-> +	 * PMC	PFC	PFCE	PFCAE	mux_mode
-> +	 * 1	0	0	0	0
-> +	 * 1	1	0	0	1
-> +	 * 1	0	1	0	2
-> +	 * 1	1	1	0	3
-> +	 * 1	0	0	1	4
-> +	 * 1	1	0	1	5
-> +	 * 1	0	1	1	6
-> +	 * 1	1	1	1	7
-> +	 * ----------------------------------------------------
-> +	 */
-> +	rza1_set_bit(port, PFC_REG, offset, mux_mode & MUX_FUNC_PFC_MASK);
-> +	rza1_set_bit(port, PFCE_REG, offset, mux_mode & MUX_FUNC_PFCE_MASK);
-> +	rza1_set_bit(port, PFCEA_REG, offset, mux_mode &
-> MUX_FUNC_PFCEA_MASK);
-> +
-> +	/*
-> +	 * All alternate functions except a few (4) need PIPCn =3D 1.
-> +	 * If PIPCn has to stay disabled (SW IO mode), configure PMn
-> according
-> +	 * to I/O direction specified by pin configuration -after- PMC has
-> been
-> +	 * set to one.
-> +	 */
-> +	if (!swio_en)
-> +		rza1_set_bit(port, PIPC_REG, offset, 1);
-> +
-> +	rza1_set_bit(port, PMC_REG, offset, 1);
-> +
-> +	if (swio_en)
-> +		rza1_set_bit(port, PM_REG, offset, input_en);
-
-
-I would suggest something like this:
-
-	if (bidir)
-		rza1_set_bit(port, PBDC_REG, offset, 1);
-	else {
-		rza1_set_bit(port, PBDC_REG, offset, 0);
-		rza1_set_bit(port, PM_REG, offset, swio_in);
-	}
-
-	rza1_set_bit(port, PMC_REG, offset, 1);
-
-
-> +
-> +	return 0;
-> +}
-
-
-
-
-Chris
+diff --git a/drivers/pinctrl/sirf/pinctrl-atlas7.c b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+index 600d6427a978..1efa315a7dbe 100644
+--- a/drivers/pinctrl/sirf/pinctrl-atlas7.c
++++ b/drivers/pinctrl/sirf/pinctrl-atlas7.c
+@@ -352,7 +352,7 @@ struct atlas7_gpio_chip {
+ 	void __iomem *reg;
+ 	struct clk *clk;
+ 	int nbank;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	struct gpio_chip chip;
+ 	struct atlas7_gpio_bank banks[0];
+ };
+@@ -5650,13 +5650,13 @@ static void atlas7_gpio_irq_ack(struct irq_data *d)
+ 	pin_in_bank = d->hwirq - bank->gpio_offset;
+ 	ctrl_reg = ATLAS7_GPIO_CTRL(bank, pin_in_bank);
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	val = readl(ctrl_reg);
+ 	/* clear interrupt status */
+ 	writel(val, ctrl_reg);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ }
+ 
+ static void __atlas7_gpio_irq_mask(struct atlas7_gpio_chip *a7gc, int idx)
+@@ -5681,11 +5681,11 @@ static void atlas7_gpio_irq_mask(struct irq_data *d)
+ 	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(gc);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	__atlas7_gpio_irq_mask(a7gc, d->hwirq);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ }
+ 
+ static void atlas7_gpio_irq_unmask(struct irq_data *d)
+@@ -5701,14 +5701,14 @@ static void atlas7_gpio_irq_unmask(struct irq_data *d)
+ 	pin_in_bank = d->hwirq - bank->gpio_offset;
+ 	ctrl_reg = ATLAS7_GPIO_CTRL(bank, pin_in_bank);
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	val = readl(ctrl_reg);
+ 	val &= ~ATLAS7_GPIO_CTL_INTR_STATUS_MASK;
+ 	val |= ATLAS7_GPIO_CTL_INTR_EN_MASK;
+ 	writel(val, ctrl_reg);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ }
+ 
+ static int atlas7_gpio_irq_type(struct irq_data *d,
+@@ -5725,7 +5725,7 @@ static int atlas7_gpio_irq_type(struct irq_data *d,
+ 	pin_in_bank = d->hwirq - bank->gpio_offset;
+ 	ctrl_reg = ATLAS7_GPIO_CTRL(bank, pin_in_bank);
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	val = readl(ctrl_reg);
+ 	val &= ~(ATLAS7_GPIO_CTL_INTR_STATUS_MASK |
+@@ -5768,7 +5768,7 @@ static int atlas7_gpio_irq_type(struct irq_data *d,
+ 
+ 	writel(val, ctrl_reg);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -5863,7 +5863,7 @@ static int atlas7_gpio_request(struct gpio_chip *chip,
+ 	if (pinctrl_request_gpio(chip->base + gpio))
+ 		return -ENODEV;
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	/*
+ 	 * default status:
+@@ -5872,7 +5872,7 @@ static int atlas7_gpio_request(struct gpio_chip *chip,
+ 	__atlas7_gpio_set_input(a7gc, gpio);
+ 	__atlas7_gpio_irq_mask(a7gc, gpio);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -5883,12 +5883,12 @@ static void atlas7_gpio_free(struct gpio_chip *chip,
+ 	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	__atlas7_gpio_irq_mask(a7gc, gpio);
+ 	__atlas7_gpio_set_input(a7gc, gpio);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ 
+ 	pinctrl_free_gpio(chip->base + gpio);
+ }
+@@ -5899,11 +5899,11 @@ static int atlas7_gpio_direction_input(struct gpio_chip *chip,
+ 	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	__atlas7_gpio_set_input(a7gc, gpio);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -5936,11 +5936,11 @@ static int atlas7_gpio_direction_output(struct gpio_chip *chip,
+ 	struct atlas7_gpio_chip *a7gc = gpiochip_get_data(chip);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	__atlas7_gpio_set_output(a7gc, gpio, value);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -5956,11 +5956,11 @@ static int atlas7_gpio_get_value(struct gpio_chip *chip,
+ 	bank = atlas7_gpio_to_bank(a7gc, gpio);
+ 	pin_in_bank = gpio - bank->gpio_offset;
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	val = readl(ATLAS7_GPIO_CTRL(bank, pin_in_bank));
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ 
+ 	return !!(val & ATLAS7_GPIO_CTL_DATAIN_MASK);
+ }
+@@ -5978,7 +5978,7 @@ static void atlas7_gpio_set_value(struct gpio_chip *chip,
+ 	pin_in_bank = gpio - bank->gpio_offset;
+ 	ctrl_reg = ATLAS7_GPIO_CTRL(bank, pin_in_bank);
+ 
+-	spin_lock_irqsave(&a7gc->lock, flags);
++	raw_spin_lock_irqsave(&a7gc->lock, flags);
+ 
+ 	ctrl = readl(ctrl_reg);
+ 	if (value)
+@@ -5987,7 +5987,7 @@ static void atlas7_gpio_set_value(struct gpio_chip *chip,
+ 		ctrl &= ~ATLAS7_GPIO_CTL_DATAOUT_MASK;
+ 	writel(ctrl, ctrl_reg);
+ 
+-	spin_unlock_irqrestore(&a7gc->lock, flags);
++	raw_spin_unlock_irqrestore(&a7gc->lock, flags);
+ }
+ 
+ static const struct of_device_id atlas7_gpio_ids[] = {
+@@ -6036,7 +6036,7 @@ static int atlas7_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	a7gc->nbank = nbank;
+-	spin_lock_init(&a7gc->lock);
++	raw_spin_lock_init(&a7gc->lock);
+ 
+ 	/* Setup GPIO Chip */
+ 	chip = &a7gc->chip;
+-- 
+2.11.1
