@@ -1,22 +1,22 @@
 From: Julia Cartwright <julia@ni.com>
-Subject: [PATCH 17/19] pinctrl: amd: make use of raw_spinlock variants
-Date: Thu, 9 Mar 2017 10:22:04 -0600
-Message-ID: <1078eff36a2507d1aa5130cc0a9b28d520aabf31.1489015238.git.julia@ni.com>
+Subject: [PATCH 07/19] gpio: bcm-kona: make use of raw_spinlock variants
+Date: Thu, 9 Mar 2017 10:21:54 -0600
+Message-ID: <77d635877e765a6b4b0935debfe5836e554572c0.1489015238.git.julia@ni.com>
 References: <cover.1489015238.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:39538 "EHLO
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:40509 "EHLO
         mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932808AbdCIRpM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2017 12:45:12 -0500
+        by vger.kernel.org with ESMTP id S1754822AbdCIRyC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2017 12:54:02 -0500
 In-Reply-To: <cover.1489015238.git.julia@ni.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
+To: Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com
 Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
 
-The amd pinctrl drivers currently implement an irq_chip for handling
+The bcm-kona gpio driver currently implements an irq_chip for handling
 interrupts; due to how irq_chip handling is done, it's necessary for the
 irq_chip methods to be invoked from hardirq context, even on a a
 real-time kernel.  Because the spinlock_t type becomes a "sleeping"
@@ -27,278 +27,217 @@ minimal, bounded work, and are therefore safe to do under a raw spinlock.
 
 Signed-off-by: Julia Cartwright <julia@ni.com>
 ---
- drivers/pinctrl/pinctrl-amd.c | 66 +++++++++++++++++++++----------------------
- drivers/pinctrl/pinctrl-amd.h |  2 +-
- 2 files changed, 34 insertions(+), 34 deletions(-)
+ drivers/gpio/gpio-bcm-kona.c | 48 ++++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index d69e357a7a98..043ac9bcbccb 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -41,11 +41,11 @@ static int amd_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- 	u32 pin_reg;
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index 41d0ac142580..dfcf56ee3c61 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -67,7 +67,7 @@
+ struct bcm_kona_gpio {
+ 	void __iomem *reg_base;
+ 	int num_bank;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	struct gpio_chip gpio_chip;
+ 	struct irq_domain *irq_domain;
+ 	struct bcm_kona_gpio_bank *banks;
+@@ -95,13 +95,13 @@ static void bcm_kona_gpio_lock_gpio(struct bcm_kona_gpio *kona_gpio,
+ 	unsigned long flags;
+ 	int bank_id = GPIO_BANK(gpio);
  
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
- 	pin_reg &= ~BIT(OUTPUT_ENABLE_OFF);
- 	writel(pin_reg, gpio_dev->base + offset * 4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(kona_gpio->reg_base + GPIO_PWD_STATUS(bank_id));
+ 	val |= BIT(gpio);
+ 	bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, bank_id, val);
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ }
+ 
+ static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+@@ -111,13 +111,13 @@ static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+ 	unsigned long flags;
+ 	int bank_id = GPIO_BANK(gpio);
+ 
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(kona_gpio->reg_base + GPIO_PWD_STATUS(bank_id));
+ 	val &= ~BIT(gpio);
+ 	bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, bank_id, val);
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ }
+ 
+ static int bcm_kona_gpio_get_dir(struct gpio_chip *chip, unsigned gpio)
+@@ -141,7 +141,7 @@ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+ 
+ 	kona_gpio = gpiochip_get_data(chip);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	/* this function only applies to output pin */
+ 	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
+@@ -154,7 +154,7 @@ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+ 	writel(val, reg_base + reg_offset);
+ 
+ out:
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ }
+ 
+ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+@@ -168,7 +168,7 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ 
+ 	kona_gpio = gpiochip_get_data(chip);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
+ 		reg_offset = GPIO_IN_STATUS(bank_id);
+@@ -178,7 +178,7 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ 	/* read the GPIO bank status */
+ 	val = readl(reg_base + reg_offset);
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ 
+ 	/* return the specified bit status */
+ 	return !!(val & BIT(bit));
+@@ -208,14 +208,14 @@ static int bcm_kona_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+ 
+ 	kona_gpio = gpiochip_get_data(chip);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(reg_base + GPIO_CONTROL(gpio));
+ 	val &= ~GPIO_GPCTR0_IOTR_MASK;
+ 	val |= GPIO_GPCTR0_IOTR_CMD_INPUT;
+ 	writel(val, reg_base + GPIO_CONTROL(gpio));
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
  
  	return 0;
  }
-@@ -57,7 +57,7 @@ static int amd_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
- 	unsigned long flags;
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+@@ -232,7 +232,7 @@ static int bcm_kona_gpio_direction_output(struct gpio_chip *chip,
  
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
- 	pin_reg |= BIT(OUTPUT_ENABLE_OFF);
- 	if (value)
-@@ -65,7 +65,7 @@ static int amd_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
- 	else
- 		pin_reg &= ~BIT(OUTPUT_VALUE_OFF);
- 	writel(pin_reg, gpio_dev->base + offset * 4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 	kona_gpio = gpiochip_get_data(chip);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(reg_base + GPIO_CONTROL(gpio));
+ 	val &= ~GPIO_GPCTR0_IOTR_MASK;
+@@ -244,7 +244,7 @@ static int bcm_kona_gpio_direction_output(struct gpio_chip *chip,
+ 	val |= BIT(bit);
+ 	writel(val, reg_base + reg_offset);
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
  
  	return 0;
  }
-@@ -76,9 +76,9 @@ static int amd_gpio_get_value(struct gpio_chip *gc, unsigned offset)
- 	unsigned long flags;
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
- 	return !!(pin_reg & BIT(PIN_STS_OFF));
- }
-@@ -89,14 +89,14 @@ static void amd_gpio_set_value(struct gpio_chip *gc, unsigned offset, int value)
- 	unsigned long flags;
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
- 	if (value)
- 		pin_reg |= BIT(OUTPUT_VALUE_OFF);
- 	else
- 		pin_reg &= ~BIT(OUTPUT_VALUE_OFF);
- 	writel(pin_reg, gpio_dev->base + offset * 4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- }
- 
- static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
-@@ -108,7 +108,7 @@ static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
- 	unsigned long flags;
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + offset * 4);
- 
- 	if (debounce) {
-@@ -159,7 +159,7 @@ static int amd_gpio_set_debounce(struct gpio_chip *gc, unsigned offset,
- 		pin_reg &= ~DB_CNTRl_MASK;
+@@ -288,7 +288,7 @@ static int bcm_kona_gpio_set_debounce(struct gpio_chip *chip, unsigned gpio,
  	}
- 	writel(pin_reg, gpio_dev->base + offset * 4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
  
- 	return ret;
+ 	/* spin lock for read-modify-write of the GPIO register */
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(reg_base + GPIO_CONTROL(gpio));
+ 	val &= ~GPIO_GPCTR0_DBR_MASK;
+@@ -303,7 +303,7 @@ static int bcm_kona_gpio_set_debounce(struct gpio_chip *chip, unsigned gpio,
+ 
+ 	writel(val, reg_base + GPIO_CONTROL(gpio));
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ 
+ 	return 0;
  }
-@@ -224,9 +224,9 @@ static void amd_gpio_dbg_show(struct seq_file *s, struct gpio_chip *gc)
- 		}
- 		for (; i < pin_num; i++) {
- 			seq_printf(s, "pin%d\t", i);
--			spin_lock_irqsave(&gpio_dev->lock, flags);
-+			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 			pin_reg = readl(gpio_dev->base + i * 4);
--			spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+@@ -347,13 +347,13 @@ static void bcm_kona_gpio_irq_ack(struct irq_data *d)
  
- 			if (pin_reg & BIT(INTERRUPT_ENABLE_OFF)) {
- 				interrupt_enable = "interrupt is enabled|";
-@@ -331,12 +331,12 @@ static void amd_gpio_irq_enable(struct irq_data *d)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ 	kona_gpio = irq_data_get_irq_chip_data(d);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
  
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
- 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- }
+ 	val = readl(reg_base + GPIO_INT_STATUS(bank_id));
+ 	val |= BIT(bit);
+ 	writel(val, reg_base + GPIO_INT_STATUS(bank_id));
  
- static void amd_gpio_irq_disable(struct irq_data *d)
-@@ -346,12 +346,12 @@ static void amd_gpio_irq_disable(struct irq_data *d)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg &= ~BIT(INTERRUPT_ENABLE_OFF);
- 	pin_reg &= ~BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
  }
  
- static void amd_gpio_irq_mask(struct irq_data *d)
-@@ -361,11 +361,11 @@ static void amd_gpio_irq_mask(struct irq_data *d)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ static void bcm_kona_gpio_irq_mask(struct irq_data *d)
+@@ -368,13 +368,13 @@ static void bcm_kona_gpio_irq_mask(struct irq_data *d)
  
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg &= ~BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 	kona_gpio = irq_data_get_irq_chip_data(d);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(reg_base + GPIO_INT_MASK(bank_id));
+ 	val |= BIT(bit);
+ 	writel(val, reg_base + GPIO_INT_MASK(bank_id));
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
  }
  
- static void amd_gpio_irq_unmask(struct irq_data *d)
-@@ -375,11 +375,11 @@ static void amd_gpio_irq_unmask(struct irq_data *d)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
+ static void bcm_kona_gpio_irq_unmask(struct irq_data *d)
+@@ -389,13 +389,13 @@ static void bcm_kona_gpio_irq_unmask(struct irq_data *d)
  
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
+ 	kona_gpio = irq_data_get_irq_chip_data(d);
+ 	reg_base = kona_gpio->reg_base;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(reg_base + GPIO_INT_MSKCLR(bank_id));
+ 	val |= BIT(bit);
+ 	writel(val, reg_base + GPIO_INT_MSKCLR(bank_id));
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
  }
  
- static void amd_gpio_irq_eoi(struct irq_data *d)
-@@ -389,11 +389,11 @@ static void amd_gpio_irq_eoi(struct irq_data *d)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	reg = readl(gpio_dev->base + WAKE_INT_MASTER_REG);
- 	reg |= EOI_MASK;
- 	writel(reg, gpio_dev->base + WAKE_INT_MASTER_REG);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- }
- 
- static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
-@@ -404,7 +404,7 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 
- 	/* Ignore the settings coming from the client and
-@@ -469,7 +469,7 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 
- 	pin_reg |= CLR_INTR_STAT << INTERRUPT_STS_OFF;
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
- 	return ret;
- }
-@@ -511,14 +511,14 @@ static void amd_gpio_irq_handler(struct irq_desc *desc)
- 
- 	chained_irq_enter(chip, desc);
- 	/*enable GPIO interrupt again*/
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	reg = readl(gpio_dev->base + WAKE_INT_STATUS_REG1);
- 	reg64 = reg;
- 	reg64 = reg64 << 32;
- 
- 	reg = readl(gpio_dev->base + WAKE_INT_STATUS_REG0);
- 	reg64 |= reg;
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
- 	/*
- 	 * first 46 bits indicates interrupt status.
-@@ -546,11 +546,11 @@ static void amd_gpio_irq_handler(struct irq_desc *desc)
- 	if (handled == 0)
- 		handle_bad_irq(desc);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	reg = readl(gpio_dev->base + WAKE_INT_MASTER_REG);
- 	reg |= EOI_MASK;
- 	writel(reg, gpio_dev->base + WAKE_INT_MASTER_REG);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
- 	chained_irq_exit(chip, desc);
- }
-@@ -602,9 +602,9 @@ static int amd_pinconf_get(struct pinctrl_dev *pctldev,
- 	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
- 	enum pin_config_param param = pinconf_to_config_param(*config);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + pin*4);
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 	switch (param) {
- 	case PIN_CONFIG_INPUT_DEBOUNCE:
- 		arg = pin_reg & DB_TMR_OUT_MASK;
-@@ -644,7 +644,7 @@ static int amd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 	enum pin_config_param param;
- 	struct amd_gpio *gpio_dev = pinctrl_dev_get_drvdata(pctldev);
- 
--	spin_lock_irqsave(&gpio_dev->lock, flags);
-+	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	for (i = 0; i < num_configs; i++) {
- 		param = pinconf_to_config_param(configs[i]);
- 		arg = pinconf_to_config_argument(configs[i]);
-@@ -683,7 +683,7 @@ static int amd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- 
- 		writel(pin_reg, gpio_dev->base + pin*4);
+ static int bcm_kona_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+@@ -431,14 +431,14 @@ static int bcm_kona_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
  	}
--	spin_unlock_irqrestore(&gpio_dev->lock, flags);
-+	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
  
- 	return ret;
+-	spin_lock_irqsave(&kona_gpio->lock, flags);
++	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+ 
+ 	val = readl(reg_base + GPIO_CONTROL(gpio));
+ 	val &= ~GPIO_GPCTR0_ITR_MASK;
+ 	val |= lvl_type << GPIO_GPCTR0_ITR_SHIFT;
+ 	writel(val, reg_base + GPIO_CONTROL(gpio));
+ 
+-	spin_unlock_irqrestore(&kona_gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+ 
+ 	return 0;
  }
-@@ -751,7 +751,7 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 	if (!gpio_dev)
- 		return -ENOMEM;
+@@ -655,7 +655,7 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+ 						 bank);
+ 	}
  
--	spin_lock_init(&gpio_dev->lock);
-+	raw_spin_lock_init(&gpio_dev->lock);
+-	spin_lock_init(&kona_gpio->lock);
++	raw_spin_lock_init(&kona_gpio->lock);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
-diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
-index c03f77822069..5b1cb965c767 100644
---- a/drivers/pinctrl/pinctrl-amd.h
-+++ b/drivers/pinctrl/pinctrl-amd.h
-@@ -87,7 +87,7 @@ struct amd_function {
- };
+ 	return 0;
  
- struct amd_gpio {
--	spinlock_t              lock;
-+	raw_spinlock_t          lock;
- 	void __iomem            *base;
- 
- 	const struct amd_pingroup *groups;
 -- 
 2.11.1
 
