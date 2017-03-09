@@ -1,138 +1,195 @@
 From: Julia Cartwright <julia@ni.com>
-Subject: [PATCH 06/19] gpio: ath79: make use of raw_spinlock variants
-Date: Thu, 9 Mar 2017 10:21:53 -0600
-Message-ID: <1774d7bad8bbc672372480f540dfc8f3d1592533.1489015238.git.julia@ni.com>
+Subject: [PATCH 05/19] gpio: 104-dio-48e: make use of raw_spinlock variants
+Date: Thu, 9 Mar 2017 10:21:52 -0600
+Message-ID: <b0ce23678fb1703f761a5b380746cb0412651f09.1489015238.git.julia@ni.com>
 References: <cover.1489015238.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1489015238.git.julia@ni.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The ath79 gpio driver currently implements an irq_chip for handling
-interrupts; due to how irq_chip handling is done, it's necessary for the
-irq_chip methods to be invoked from hardirq context, even on a a
-real-time kernel.  Because the spinlock_t type becomes a "sleeping"
-spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+The 104-dio-48e gpio driver currently implements an irq_chip for
+handling interrupts; due to how irq_chip handling is done, it's
+necessary for the irq_chip methods to be invoked from hardirq context,
+even on a a real-time kernel.  Because the spinlock_t type becomes a
+"sleeping" spinlock w/ RT kernels, it is not suitable to be used with
+irq_chips.
 
 A quick audit of the operations under the lock reveal that they do only
 minimal, bounded work, and are therefore safe to do under a raw spinlock.
 
 Signed-off-by: Julia Cartwright <julia@ni.com>
 ---
- drivers/gpio/gpio-ath79.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-104-dio-48e.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index dc37dbe4b46d..f33d4a5fe671 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -32,7 +32,7 @@
- struct ath79_gpio_ctrl {
- 	struct gpio_chip gc;
- 	void __iomem *base;
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 17bd2ab4ebe2..61b50c40b87b 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -55,7 +55,7 @@ struct dio48e_gpio {
+ 	unsigned char io_state[6];
+ 	unsigned char out_state[6];
+ 	unsigned char control[2];
 -	spinlock_t lock;
 +	raw_spinlock_t lock;
- 	unsigned long both_edges;
+ 	unsigned base;
+ 	unsigned char irq_mask;
  };
- 
-@@ -74,9 +74,9 @@ static void ath79_gpio_irq_unmask(struct irq_data *data)
- 	u32 mask = BIT(irqd_to_hwirq(data));
+@@ -78,7 +78,7 @@ static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
  	unsigned long flags;
+ 	unsigned control;
  
--	spin_lock_irqsave(&ctrl->lock, flags);
-+	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, mask);
--	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
- }
+-	spin_lock_irqsave(&dio48egpio->lock, flags);
++	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
  
- static void ath79_gpio_irq_mask(struct irq_data *data)
-@@ -85,9 +85,9 @@ static void ath79_gpio_irq_mask(struct irq_data *data)
- 	u32 mask = BIT(irqd_to_hwirq(data));
- 	unsigned long flags;
+ 	/* Check if configuring Port C */
+ 	if (io_port == 2 || io_port == 5) {
+@@ -103,7 +103,7 @@ static int dio48e_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	control &= ~BIT(7);
+ 	outb(control, control_addr);
  
--	spin_lock_irqsave(&ctrl->lock, flags);
-+	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, 0);
--	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
- }
- 
- static void ath79_gpio_irq_enable(struct irq_data *data)
-@@ -96,10 +96,10 @@ static void ath79_gpio_irq_enable(struct irq_data *data)
- 	u32 mask = BIT(irqd_to_hwirq(data));
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrl->lock, flags);
-+	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_ENABLE, mask, mask);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, mask);
--	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
- }
- 
- static void ath79_gpio_irq_disable(struct irq_data *data)
-@@ -108,10 +108,10 @@ static void ath79_gpio_irq_disable(struct irq_data *data)
- 	u32 mask = BIT(irqd_to_hwirq(data));
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&ctrl->lock, flags);
-+	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_MASK, mask, 0);
- 	ath79_gpio_update_bits(ctrl, AR71XX_GPIO_REG_INT_ENABLE, mask, 0);
--	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
- }
- 
- static int ath79_gpio_irq_set_type(struct irq_data *data,
-@@ -140,7 +140,7 @@ static int ath79_gpio_irq_set_type(struct irq_data *data,
- 		return -EINVAL;
- 	}
- 
--	spin_lock_irqsave(&ctrl->lock, flags);
-+	raw_spin_lock_irqsave(&ctrl->lock, flags);
- 
- 	if (flow_type == IRQ_TYPE_EDGE_BOTH) {
- 		ctrl->both_edges |= mask;
-@@ -165,7 +165,7 @@ static int ath79_gpio_irq_set_type(struct irq_data *data,
- 		ath79_gpio_update_bits(
- 			ctrl, AR71XX_GPIO_REG_INT_ENABLE, mask, mask);
- 
--	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+-	spin_unlock_irqrestore(&dio48egpio->lock, flags);
++	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  
  	return 0;
  }
-@@ -191,7 +191,7 @@ static void ath79_gpio_irq_handler(struct irq_desc *desc)
+@@ -120,7 +120,7 @@ static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 	unsigned long flags;
+ 	unsigned control;
  
- 	chained_irq_enter(irqchip, desc);
+-	spin_lock_irqsave(&dio48egpio->lock, flags);
++	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
  
--	spin_lock_irqsave(&ctrl->lock, flags);
-+	raw_spin_lock_irqsave(&ctrl->lock, flags);
+ 	/* Check if configuring Port C */
+ 	if (io_port == 2 || io_port == 5) {
+@@ -153,7 +153,7 @@ static int dio48e_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 	control &= ~BIT(7);
+ 	outb(control, control_addr);
  
- 	pending = ath79_gpio_read(ctrl, AR71XX_GPIO_REG_INT_PENDING);
+-	spin_unlock_irqrestore(&dio48egpio->lock, flags);
++	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  
-@@ -203,7 +203,7 @@ static void ath79_gpio_irq_handler(struct irq_desc *desc)
- 				both_edges, ~state);
+ 	return 0;
+ }
+@@ -167,17 +167,17 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	unsigned long flags;
+ 	unsigned port_state;
+ 
+-	spin_lock_irqsave(&dio48egpio->lock, flags);
++	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
+ 
+ 	/* ensure that GPIO is set for input */
+ 	if (!(dio48egpio->io_state[port] & mask)) {
+-		spin_unlock_irqrestore(&dio48egpio->lock, flags);
++		raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ 		return -EINVAL;
  	}
  
--	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	raw_spin_unlock_irqrestore(&ctrl->lock, flags);
+ 	port_state = inb(dio48egpio->base + in_port);
  
- 	if (pending) {
- 		for_each_set_bit(irq, &pending, gc->ngpio)
-@@ -262,7 +262,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
- 	if (!ctrl->base)
- 		return -ENOMEM;
+-	spin_unlock_irqrestore(&dio48egpio->lock, flags);
++	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
  
--	spin_lock_init(&ctrl->lock);
-+	raw_spin_lock_init(&ctrl->lock);
- 	err = bgpio_init(&ctrl->gc, &pdev->dev, 4,
- 			ctrl->base + AR71XX_GPIO_REG_IN,
- 			ctrl->base + AR71XX_GPIO_REG_SET,
+ 	return !!(port_state & mask);
+ }
+@@ -190,7 +190,7 @@ static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	const unsigned out_port = (port > 2) ? port + 1 : port;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&dio48egpio->lock, flags);
++	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
+ 
+ 	if (value)
+ 		dio48egpio->out_state[port] |= mask;
+@@ -199,7 +199,7 @@ static void dio48e_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 
+ 	outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
+ 
+-	spin_unlock_irqrestore(&dio48egpio->lock, flags);
++	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ }
+ 
+ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
+@@ -225,14 +225,14 @@ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
+ 		out_port = (port > 2) ? port + 1 : port;
+ 		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
+ 
+-		spin_lock_irqsave(&dio48egpio->lock, flags);
++		raw_spin_lock_irqsave(&dio48egpio->lock, flags);
+ 
+ 		/* update output state data and set device gpio register */
+ 		dio48egpio->out_state[port] &= ~mask[BIT_WORD(i)];
+ 		dio48egpio->out_state[port] |= bitmask;
+ 		outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
+ 
+-		spin_unlock_irqrestore(&dio48egpio->lock, flags);
++		raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ 
+ 		/* prepare for next gpio register set */
+ 		mask[BIT_WORD(i)] >>= gpio_reg_size;
+@@ -255,7 +255,7 @@ static void dio48e_irq_mask(struct irq_data *data)
+ 	if (offset != 19 && offset != 43)
+ 		return;
+ 
+-	spin_lock_irqsave(&dio48egpio->lock, flags);
++	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
+ 
+ 	if (offset == 19)
+ 		dio48egpio->irq_mask &= ~BIT(0);
+@@ -266,7 +266,7 @@ static void dio48e_irq_mask(struct irq_data *data)
+ 		/* disable interrupts */
+ 		inb(dio48egpio->base + 0xB);
+ 
+-	spin_unlock_irqrestore(&dio48egpio->lock, flags);
++	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ }
+ 
+ static void dio48e_irq_unmask(struct irq_data *data)
+@@ -280,7 +280,7 @@ static void dio48e_irq_unmask(struct irq_data *data)
+ 	if (offset != 19 && offset != 43)
+ 		return;
+ 
+-	spin_lock_irqsave(&dio48egpio->lock, flags);
++	raw_spin_lock_irqsave(&dio48egpio->lock, flags);
+ 
+ 	if (!dio48egpio->irq_mask) {
+ 		/* enable interrupts */
+@@ -293,7 +293,7 @@ static void dio48e_irq_unmask(struct irq_data *data)
+ 	else
+ 		dio48egpio->irq_mask |= BIT(1);
+ 
+-	spin_unlock_irqrestore(&dio48egpio->lock, flags);
++	raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+ }
+ 
+ static int dio48e_irq_set_type(struct irq_data *data, unsigned flow_type)
+@@ -329,11 +329,11 @@ static irqreturn_t dio48e_irq_handler(int irq, void *dev_id)
+ 		generic_handle_irq(irq_find_mapping(chip->irqdomain,
+ 			19 + gpio*24));
+ 
+-	spin_lock(&dio48egpio->lock);
++	raw_spin_lock(&dio48egpio->lock);
+ 
+ 	outb(0x00, dio48egpio->base + 0xF);
+ 
+-	spin_unlock(&dio48egpio->lock);
++	raw_spin_unlock(&dio48egpio->lock);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -388,7 +388,7 @@ static int dio48e_probe(struct device *dev, unsigned int id)
+ 	dio48egpio->chip.set_multiple = dio48e_gpio_set_multiple;
+ 	dio48egpio->base = base[id];
+ 
+-	spin_lock_init(&dio48egpio->lock);
++	raw_spin_lock_init(&dio48egpio->lock);
+ 
+ 	err = devm_gpiochip_add_data(dev, &dio48egpio->chip, dio48egpio);
+ 	if (err) {
 -- 
 2.11.1
