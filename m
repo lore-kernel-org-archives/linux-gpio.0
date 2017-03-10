@@ -1,53 +1,109 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: PATCH v2
-Date: Fri, 10 Mar 2017 08:04:06 +0800
-Message-ID: <8ff57bd1-c6d8-5522-2aed-0c9eb76a2007@electromag.com.au>
-References: <1487777658-12951-1-git-send-email-robert.middleton@rm5248.com>
- <CAKpcJVZ-rw=-dHSSy4bF8cMMVL=o7COnMrSdpvse84BtFx8gbA@mail.gmail.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: Re: [PATCH 1/2] gpio: mmio: add support for NI 169445 NAND GPIO
+Date: Fri, 10 Mar 2017 11:21:14 +0100
+Message-ID: <4019620.oLiLCkQLlD@debian64>
+References: <1489001744-26545-1-git-send-email-nathan.sullivan@ni.com> <1489001744-26545-2-git-send-email-nathan.sullivan@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy1.45ru.net.au ([203.30.46.145]:48627 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751067AbdCJAEL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 9 Mar 2017 19:04:11 -0500
-In-Reply-To: <CAKpcJVZ-rw=-dHSSy4bF8cMMVL=o7COnMrSdpvse84BtFx8gbA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1489001744-26545-2-git-send-email-nathan.sullivan@ni.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Nathan Sullivan <nathan.sullivan@ni.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, mark.rutland@arm.com, devicetree@vger.kernel.org, robh+dt@kernel.org, ralf@linux-mips.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-mips@linux-mips.org
 List-Id: linux-gpio@vger.kernel.org
-To: Robert Middleton <robert.middleton@rm5248.com>, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On 10/03/2017 00:37, Robert Middleton wrote:
-> On Wed, Feb 22, 2017 at 10:34 AM,  <robert.middleton@rm5248.com> wrote:
->>
->> This v2 patch changes the MCP23S08 interrupt logic to ensure that if multiple
->> inputs are changed at the same time, the kernel will be notified of all
->> the pins that changed.
->>
->> I added several variables to the irq handler, however this means that there
->> are now quite a few local variables(possibly too many, as the kernel coding
->> standard says that more than 5-10 is probably too many:
->> https://www.kernel.org/doc/Documentation/process/coding-style.rst).  I'm
->> not sure what the best way to fix this is, or if it has to be fixed.
->>
->> -Robert Middleton
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> Hi, I would like to try and get some verification here on if this patch
-> is a good fix or not.  I have done testing on my side, and was
-> wondering if there was something else that I had to do in order to have
-> this patched upstream.
->
-G'day Rob,
+On Wednesday, March 8, 2017 1:35:43 PM CET Nathan Sullivan wrote:
+> The GPIO-based NAND controller on National Instruments 169445 hardware
+> exposes a set of simple lines for the control signals.
+> 
+> Signed-off-by: Nathan Sullivan <nathan.sullivan@ni.com>
+> ---
+>  .../bindings/gpio/ni,169445-nand-gpio.txt          | 36 ++++++++++++++++++++++
+>  drivers/gpio/gpio-mmio.c                           |  1 +
+>  2 files changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+> new file mode 100644
+> index 0000000..ca2c14f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/ni,169445-nand-gpio.txt
+> @@ -0,0 +1,36 @@
+> +Bindings for the National Instruments 169445 GPIO NAND controller
+> +
+> +The 169445 GPIO NAND controller has two memory mapped GPIO registers, one
+> +for input (the ready signal) and one for output (control signals).  It is
+> +intended to be used with the GPIO NAND driver.
+> +
+> +Required properties:
+> +	- compatible: should be "ni,169445-nand-gpio"
+> +	- reg-names: must contain
+> +		"dat" - data register
+> +	- reg: address + size pairs describing the GPIO register sets;
+> +		order must correspond with the order of entries in reg-names
+> +	- #gpio-cells: must be set to 2. The first cell is the pin number and
+> +			the second cell is used to specify the gpio polarity:
+> +			0 = active high
+> +			1 = active low
+> +	- gpio-controller: Marks the device node as a gpio controller.
+> +
+> +Examples:
+> +	gpio1: nand-gpio-out@1f300010 {
+> +		compatible = "ni,169445-nand-gpio";
+> +		reg = <0x1f300010 0x4>;
+> +		reg-names = "dat";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		ngpios = <5>;
+ngpios? Where is this parameter parsed? Is there a description for it
+in the Documentation?
 
-I was going to test it on my setup, just haven't got to it this week so far.
-Probably Monday for me at this rate.
+> +	};
+> +
+> +	gpio2: nand-gpio-in@1f300014 {
+^^ I assume this GPIO only has input? Is this right?
+If so you can specify the following dt property:
 
--- 
-Regards
-Phil Reid
+	no-output;
 
+So, all gpios can only be inputs.
+
+> +		compatible = "ni,169445-nand-gpio";
+> +		reg = <0x1f300014 0x4>;
+> +		reg-names = "dat";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		ngpios = <1>;
+Same as above.
+
+I think you should could either add a parser for the ngpios property.
+by adding of_property_read_u16(&pdev->dev, "ngpios", &gc->ngpio);
+in the right place. or remove the property.
+
+> +	};
+> diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+> index d7d03ad..f7da40e 100644
+> --- a/drivers/gpio/gpio-mmio.c
+> +++ b/drivers/gpio/gpio-mmio.c
+> @@ -575,6 +575,7 @@ static void __iomem *bgpio_map(struct platform_device *pdev,
+>  static const struct of_device_id bgpio_of_match[] = {
+>  	{ .compatible = "brcm,bcm6345-gpio" },
+>  	{ .compatible = "wd,mbl-gpio" },
+> +	{ .compatible = "ni,169445-nand-gpio" },
+Maybe you could add this entry above the wd,mbl-gpio. 
+So it's in alphabetical order. That's said, it's fine
+the way it is.
+
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, bgpio_of_match);
+> 
