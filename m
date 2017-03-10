@@ -1,59 +1,88 @@
-From: Anton Sviridenko <anton@corp.bluecherry.net>
-Subject: Some questions about gpio and IRQ relationship
-Date: Fri, 10 Mar 2017 23:22:30 +0400
-Message-ID: <CAAMwvWvLUeVX36eRY3yFZRKsW+RftOF7BWNDS4qgE1sTEizD0A@mail.gmail.com>
+From: Julia Cartwright <julia@ni.com>
+Subject: Re: [PATCH 07/19] gpio: bcm-kona: make use of raw_spinlock variants
+Date: Fri, 10 Mar 2017 13:35:29 -0600
+Message-ID: <20170310193529.GC32162@jcartwri.amer.corp.natinst.com>
+References: <cover.1489015238.git.julia@ni.com>
+ <77d635877e765a6b4b0935debfe5836e554572c0.1489015238.git.julia@ni.com>
+ <78b657c5-0f6a-6481-a0cf-e241c0632c7f@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ua0-f180.google.com ([209.85.217.180]:33950 "EHLO
-        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933624AbdCJTWc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2017 14:22:32 -0500
-Received: by mail-ua0-f180.google.com with SMTP id f54so119317868uaa.1
-        for <linux-gpio@vger.kernel.org>; Fri, 10 Mar 2017 11:22:31 -0800 (PST)
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:55953 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933921AbdCJTfh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 10 Mar 2017 14:35:37 -0500
+Content-Disposition: inline
+In-Reply-To: <78b657c5-0f6a-6481-a0cf-e241c0632c7f@broadcom.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
 
-Hello,
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-there are some PCI/PCIe cards based on Softlogic solo6010/6110 chips,
-chip provides hardware H.264 encoding, audio encoding and also some
-GPIO pins available for general use, they can be used with external
-hardware module for switching relays (output pins) and signalling
-about alarms (input pins).
+On Fri, Mar 10, 2017 at 09:28:08AM -0800, Ray Jui wrote:
+> Hi Julia/Linus,
+>
+> On 3/9/2017 8:21 AM, Julia Cartwright wrote:
+> > The bcm-kona gpio driver currently implements an irq_chip for handling
+> > interrupts; due to how irq_chip handling is done, it's necessary for the
+> > irq_chip methods to be invoked from hardirq context, even on a a
+> > real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+> > spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+> >=20
+> > A quick audit of the operations under the lock reveal that they do only
+> > minimal, bounded work, and are therefore safe to do under a raw spinloc=
+k.
+>
+> This is new to me. But it seems like, for the vast majority cases, user
+> can still continue to use spin_lock as it is without needing to worry
+> about the underlying difference between standard or RT kernels.
 
-There is an existing driver solo6x10 in mainline Linux tree inside
-drivers/media/pci/solo6x10 that provides V4L2 and ALSA interfaces to
-userspace, I want to add GPIO interface support too, so GPIO pins can
-be controlled by userspace software through sysfs interface for
-gpio-s.
+If by "user" you mean, "driver developer", then yes.  For most driver
+authors, the distinction between raw and non-raw spinlocks is
+irrelevant, they can use spinlocks and everything will work out just
+fine w/ mainline and on RT.
 
-1) I don't understand clearly relation between gpio_chip and irq_chip
-structures. In my case, PCI device requests some IRQ line for
-signalling about things like completed encoding frame, finished DMA
-transfer from internal RAM to system memory, etc. And it can also
-signal about changed GPIO input. I.e. same single hardware interrput
-is used for all events that happen in solo chip. And I want userspace
-software to be able to use poll() on selected exported input GPIO pin
-(/sys/class/gpio/gpioN/value) What exactly do I need to configure in
-this case?
+> But in certain cases, e.g., irq_chips, extra care needs to be done,
+> i.e., swtching to use raw spin lock to make sure that it is not
+> blocking in the case of RT.
 
+Correct, on RT the goal is to push as much as possible into a
+preemptible context, including driver interrupts, etc.  However, there
+are still codepaths which necessarily need to be executed in hardirq
+context, including anything necessary to support scheduling.  This
+includes: interrupt-dispatching (irq_chips), timers, and the scheduler
+itself, which is why this "core" code must use the raw spinlock
+variants.
 
-> GPIO irqchips usually fall in one of two categories:
+> Is such API use change well accepted by the open source community
+> already?
 
->* CHAINED GPIO irqchips: these are usually the type that is embedded on
->  an SoC. This means that there is a fast IRQ flow handler for the GPIOs that
->  gets called in a chain from the parent IRQ handler, most typically the
->  system interrupt controller.
+In what way is this an API change?  The API isn't changing, what's
+changing in this patch is to fix what is an irq_chip implementation
+which is _currently broken_ on RT.
 
+   Julia
 
-Does it correspond to this case? Device is usually attached to x86 PC
-desktop/server.
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-2) Is it ok to add gpio code to existing module inside
-drivers/media/pci/solo6x10 or it is better to create new module placed
-in drivers/gpio/
+iQEzBAABCAAdFiEEgKAEF431w1EL96k9jNrC4UVNdG8FAljC//4ACgkQjNrC4UVN
+dG/x5ggAvhT5tl0zoDREsBiBBablzKg3wl199DoDyvb0D3TRcas4H9oKA06Tz4qj
+I3T1xWvynqDVPOhqi9xQEPOXNcCcbi45Jwf+ixjYZcb42aTKJWXu0iBixldGDYIQ
+BpDAaW6CHhhWyVcL2ZeT33fMqOhBaAZLMpInzP9NLb6wVSyeWbF2dN/sILOMUPXn
+DjTyRsju95+aKeyo1E21JHbAmFtgSmmdFGP52oqmrNJhfiek1NKhVFoe3iGjt0tf
+Idq8FcbFJIhoXNnAGHYXY3WAXOcmTHs7HIJr85KdjUkemxNgAkc/MKTbEJbd23dH
+6WSI6vrFjY7Oflm6BRQ0s0hC7zTXKQ==
+=iVnh
+-----END PGP SIGNATURE-----
 
-Anton
+--VrqPEDrXMn8OVzN4--
