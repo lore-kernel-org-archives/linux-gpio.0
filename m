@@ -1,71 +1,58 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 2/2] gpio: acpi: acpi_dev_gpio_irq_get: ignore the status of unselected irqs
-Date: Fri, 10 Mar 2017 21:58:46 +0100
-Message-ID: <20170310205846.16530-3-hdegoede@redhat.com>
-References: <20170310205846.16530-1-hdegoede@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.11
+Date: Sat, 11 Mar 2017 00:29:52 +0100
+Message-ID: <CACRpkdZHWubdCaED74pPakJpp4GQ9OAqqGg7iWKHm8VG_CZ97Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40734 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755049AbdCJU6x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 10 Mar 2017 15:58:53 -0500
-In-Reply-To: <20170310205846.16530-1-hdegoede@redhat.com>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:36294 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbdCJX3y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2017 18:29:54 -0500
+Received: by mail-io0-f170.google.com with SMTP id l7so57736565ioe.3
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Mar 2017 15:29:54 -0800 (PST)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-When acpi_dev_gpio_irq_get gets called with an index of say 2, it
-should not care if the gpioint matching index 0 or 1 has a valid
-descriptor.
+Hi Linus,
 
-Before this commit acpi_dev_gpio_irq_get would exit on the first gpioint
-with an invalid descriptor it would encounter, this commit modifies it to
-only care if the gpioint with the requested index has a valid descriptor.
+a first round of pin control fixes for v4.11. I've been busy so there
+is likely more in the pipe than these two driver fixes, but no reason
+to keep them waiting so, please pull them in!
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpio/gpiolib-acpi.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Yours,
+Linus Walleij
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 86fabdd..11bd1a6 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -746,21 +746,27 @@ struct gpio_desc *acpi_node_get_gpiod(struct fwnode_handle *fwnode,
- int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- {
- 	unsigned int irq_flags;
--	int idx, i;
-+	int idx, i, irq, ret;
- 
- 	for (i = 0, idx = 0; idx <= index; i++) {
- 		struct acpi_gpio_info info;
--		struct gpio_desc *desc;
-+		struct acpi_gpio_lookup lookup;
- 
--		desc = acpi_get_gpiod_by_index(adev, NULL, i, &info);
--		if (IS_ERR(desc))
--			return PTR_ERR(desc);
-+		memset(&lookup, 0, sizeof(lookup));
-+		lookup.index = index;
-+		lookup.adev = adev;
-+		ret = acpi_gpio_resource_lookup(&lookup, &info);
-+		if (!lookup.found)
-+			return ret;
- 
- 		if (info.gpioint && idx++ == index) {
--			int irq = gpiod_to_irq(desc);
-+			struct gpio_desc *desc = lookup.desc;
- 			char label[32];
--			int ret;
- 
-+			if (!desc)
-+				return ret;
-+
-+			irq = gpiod_to_irq(desc);
- 			if (irq < 0)
- 				return irq;
- 
--- 
-2.9.3
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.11-2
+
+for you to fetch changes up to 96e1ce8fcd66d850196758c038bd9d6f7857c518:
+
+  pinctrl: uniphier: change pin names of aio/xirq for LD11 (2017-03-06
+14:38:05 +0100)
+
+----------------------------------------------------------------
+Two smaller pin control fixes for the v4.11 series:
+
+- Add a get_direction() function to the qcom driver.
+
+- Fix two pin names in the uniphier driver.
+
+----------------------------------------------------------------
+Kunihiko Hayashi (1):
+      pinctrl: uniphier: change pin names of aio/xirq for LD11
+
+Timur Tabi (1):
+      pinctrl: qcom: add get_direction function
+
+ drivers/pinctrl/qcom/pinctrl-msm.c               | 15 +++++++++++++++
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 12 ++++++------
+ 2 files changed, 21 insertions(+), 6 deletions(-)
