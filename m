@@ -1,719 +1,263 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2] gpio: Add Tegra186 support
-Date: Fri, 10 Mar 2017 17:26:29 +0100
-Message-ID: <20170310162629.31455-1-thierry.reding@gmail.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH 07/19] gpio: bcm-kona: make use of raw_spinlock variants
+Date: Fri, 10 Mar 2017 09:28:08 -0800
+Message-ID: <78b657c5-0f6a-6481-a0cf-e241c0632c7f@broadcom.com>
+References: <cover.1489015238.git.julia@ni.com>
+ <77d635877e765a6b4b0935debfe5836e554572c0.1489015238.git.julia@ni.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35656 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932908AbdCJQ0f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2017 11:26:35 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:34333 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755406AbdCJR2N (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 10 Mar 2017 12:28:13 -0500
+Received: by mail-qk0-f176.google.com with SMTP id p64so178138650qke.1
+        for <linux-gpio@vger.kernel.org>; Fri, 10 Mar 2017 09:28:12 -0800 (PST)
+In-Reply-To: <77d635877e765a6b4b0935debfe5836e554572c0.1489015238.git.julia@ni.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Julia Cartwright <julia@ni.com>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hi Julia/Linus,
 
-Tegra186 has two GPIO controllers that are largely register compatible
-between one another but are completely different from the controller
-found on earlier generations.
+On 3/9/2017 8:21 AM, Julia Cartwright wrote:
+> The bcm-kona gpio driver currently implements an irq_chip for handling
+> interrupts; due to how irq_chip handling is done, it's necessary for the
+> irq_chip methods to be invoked from hardirq context, even on a a
+> real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+> spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+> 
+> A quick audit of the operations under the lock reveal that they do only
+> minimal, bounded work, and are therefore safe to do under a raw spinlock.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- add pin names to allow easy lookup using the chardev interface
-- distinguish AON and main GPIO controllers by label
-- use gpiochip_get_data() instead of container_of()
-- use C99 initializers
+This is new to me. But it seems like, for the vast majority cases, user
+can still continue to use spin_lock as it is without needing to worry
+about the underlying difference between standard or RT kernels. But in
+certain cases, e.g., irq_chips, extra care needs to be done, i.e.,
+switching to use raw spin lock to make sure that it is not blocking in
+the case of RT.
 
-Hi Linus,
+Is such API use change well accepted by the open source community already?
 
-This addresses all comments I got on the last revision, except for your
-request to use gpiolib's IRQ chip helpers. I investigated using it with
-the driver but still can't figure out how it's supposed to work given
-our requirement to service multiple parent interrupts.
+Thanks,
 
-Thierry
+Ray
 
- drivers/gpio/Kconfig         |   8 +
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-tegra186.c | 636 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 645 insertions(+)
- create mode 100644 drivers/gpio/gpio-tegra186.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 05043071fc98..f74b61cfd113 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -431,6 +431,14 @@ config GPIO_TEGRA
- 	help
- 	  Say yes here to support GPIO pins on NVIDIA Tegra SoCs.
- 
-+config GPIO_TEGRA186
-+	tristate "NVIDIA Tegra186 GPIO support"
-+	default ARCH_TEGRA_186_SOC
-+	depends on ARCH_TEGRA_186_SOC || COMPILE_TEST
-+	depends on OF_GPIO
-+	help
-+	  Say yes here to support GPIO pins on NVIDIA Tegra186 SoCs.
-+
- config GPIO_TS4800
- 	tristate "TS-4800 DIO blocks and compatibles"
- 	depends on OF_GPIO
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index becb96c724fe..cad0eb2c3531 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -111,6 +111,7 @@ obj-$(CONFIG_GPIO_SYSCON)	+= gpio-syscon.o
- obj-$(CONFIG_GPIO_TB10X)	+= gpio-tb10x.o
- obj-$(CONFIG_GPIO_TC3589X)	+= gpio-tc3589x.o
- obj-$(CONFIG_GPIO_TEGRA)	+= gpio-tegra.o
-+obj-$(CONFIG_GPIO_TEGRA186)	+= gpio-tegra186.o
- obj-$(CONFIG_GPIO_TIMBERDALE)	+= gpio-timberdale.o
- obj-$(CONFIG_GPIO_PALMAS)	+= gpio-palmas.o
- obj-$(CONFIG_GPIO_TPIC2810)	+= gpio-tpic2810.o
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-new file mode 100644
-index 000000000000..87e02d9165d8
---- /dev/null
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -0,0 +1,636 @@
-+/*
-+ * Copyright (c) 2016-2017 NVIDIA Corporation
-+ *
-+ * Author: Thierry Reding <treding@nvidia.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/gpio.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/gpio/tegra186-gpio.h>
-+
-+#define TEGRA186_GPIO_ENABLE_CONFIG 0x00
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_ENABLE BIT(0)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_OUT BIT(1)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_NONE (0x0 << 2)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_LEVEL (0x1 << 2)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_SINGLE_EDGE (0x2 << 2)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_DOUBLE_EDGE (0x3 << 2)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_MASK (0x3 << 2)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_LEVEL BIT(4)
-+#define  TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT BIT(6)
-+
-+#define TEGRA186_GPIO_DEBOUNCE_CONTROL 0x04
-+#define  TEGRA186_GPIO_DEBOUNCE_CONTROL_THRESHOLD(x) ((x) & 0xff)
-+
-+#define TEGRA186_GPIO_INPUT 0x08
-+#define  TEGRA186_GPIO_INPUT_HIGH BIT(0)
-+
-+#define TEGRA186_GPIO_OUTPUT_CONTROL 0x0c
-+#define  TEGRA186_GPIO_OUTPUT_CONTROL_FLOATED BIT(0)
-+
-+#define TEGRA186_GPIO_OUTPUT_VALUE 0x10
-+#define  TEGRA186_GPIO_OUTPUT_VALUE_HIGH BIT(0)
-+
-+#define TEGRA186_GPIO_INTERRUPT_CLEAR 0x14
-+
-+#define TEGRA186_GPIO_INTERRUPT_STATUS(x) (0x100 + (x) * 4)
-+
-+struct tegra_gpio_port {
-+	const char *name;
-+	unsigned int offset;
-+	unsigned int pins;
-+};
-+
-+struct tegra_gpio_soc {
-+	const struct tegra_gpio_port *ports;
-+	unsigned int num_ports;
-+	const char *name;
-+};
-+
-+struct tegra_gpio {
-+	struct gpio_chip gpio;
-+	struct irq_chip intc;
-+	unsigned int num_irq;
-+	unsigned int *irq;
-+
-+	const struct tegra_gpio_soc *soc;
-+
-+	void __iomem *base;
-+
-+	struct irq_domain *domain;
-+};
-+
-+static const struct tegra_gpio_port *
-+tegra186_gpio_get_port(struct tegra_gpio *gpio, unsigned int *pin)
-+{
-+	unsigned int start = 0, i;
-+
-+	for (i = 0; i < gpio->soc->num_ports; i++) {
-+		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-+
-+		if (*pin >= start && *pin < start + port->pins) {
-+			*pin -= start;
-+			return port;
-+		}
-+
-+		start += port->pins;
-+	}
-+
-+	return NULL;
-+}
-+
-+static void __iomem *tegra186_gpio_get_base(struct tegra_gpio *gpio,
-+					    unsigned int pin)
-+{
-+	const struct tegra_gpio_port *port;
-+
-+	port = tegra186_gpio_get_port(gpio, &pin);
-+	if (!port)
-+		return NULL;
-+
-+	return gpio->base + port->offset + pin * 0x20;
-+}
-+
-+static int tegra186_gpio_get_direction(struct gpio_chip *chip,
-+				       unsigned int offset)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, offset);
-+	if (WARN_ON(base == NULL))
-+		return -ENODEV;
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	if (value & TEGRA186_GPIO_ENABLE_CONFIG_OUT)
-+		return GPIOF_DIR_OUT;
-+
-+	return GPIOF_DIR_IN;
-+}
-+
-+static int tegra186_gpio_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, offset);
-+	if (WARN_ON(base == NULL))
-+		return -ENODEV;
-+
-+	value = readl(base + TEGRA186_GPIO_OUTPUT_CONTROL);
-+	value |= TEGRA186_GPIO_OUTPUT_CONTROL_FLOATED;
-+	writel(value, base + TEGRA186_GPIO_OUTPUT_CONTROL);
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	value |= TEGRA186_GPIO_ENABLE_CONFIG_ENABLE;
-+	value &= ~TEGRA186_GPIO_ENABLE_CONFIG_OUT;
-+	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+
-+	return 0;
-+}
-+
-+static int tegra186_gpio_direction_output(struct gpio_chip *chip,
-+					  unsigned int offset, int level)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	void __iomem *base;
-+	u32 value;
-+
-+	/* configure output level first */
-+	chip->set(chip, offset, level);
-+
-+	base = tegra186_gpio_get_base(gpio, offset);
-+	if (WARN_ON(base == NULL))
-+		return -EINVAL;
-+
-+	/* set the direction */
-+	value = readl(base + TEGRA186_GPIO_OUTPUT_CONTROL);
-+	value &= ~TEGRA186_GPIO_OUTPUT_CONTROL_FLOATED;
-+	writel(value, base + TEGRA186_GPIO_OUTPUT_CONTROL);
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	value |= TEGRA186_GPIO_ENABLE_CONFIG_ENABLE;
-+	value |= TEGRA186_GPIO_ENABLE_CONFIG_OUT;
-+	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+
-+	return 0;
-+}
-+
-+static int tegra186_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, offset);
-+	if (WARN_ON(base == NULL))
-+		return -ENODEV;
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	if (value & TEGRA186_GPIO_ENABLE_CONFIG_OUT)
-+		value = readl(base + TEGRA186_GPIO_OUTPUT_VALUE);
-+	else
-+		value = readl(base + TEGRA186_GPIO_INPUT);
-+
-+	return value & BIT(0);
-+}
-+
-+static void tegra186_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			      int level)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, offset);
-+	if (WARN_ON(base == NULL))
-+		return;
-+
-+	value = readl(base + TEGRA186_GPIO_OUTPUT_VALUE);
-+	if (level == 0)
-+		value &= ~TEGRA186_GPIO_OUTPUT_VALUE_HIGH;
-+	else
-+		value |= TEGRA186_GPIO_OUTPUT_VALUE_HIGH;
-+
-+	writel(value, base + TEGRA186_GPIO_OUTPUT_VALUE);
-+}
-+
-+static int tegra186_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+
-+	return irq_find_mapping(gpio->domain, offset);
-+}
-+
-+static int tegra186_gpio_of_xlate(struct gpio_chip *chip,
-+				  const struct of_phandle_args *spec,
-+				  u32 *flags)
-+{
-+	struct tegra_gpio *gpio = gpiochip_get_data(chip);
-+	unsigned int port, pin, i, offset = 0;
-+
-+	if (WARN_ON(chip->of_gpio_n_cells < 2))
-+		return -EINVAL;
-+
-+	if (WARN_ON(spec->args_count < chip->of_gpio_n_cells))
-+		return -EINVAL;
-+
-+	port = spec->args[0] / 8;
-+	pin = spec->args[0] % 8;
-+
-+	if (port >= gpio->soc->num_ports) {
-+		dev_err(chip->parent, "invalid port number: %u\n", port);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < port; i++)
-+		offset += gpio->soc->ports[i].pins;
-+
-+	if (flags)
-+		*flags = spec->args[1];
-+
-+	return offset + pin;
-+}
-+
-+static void tegra186_irq_ack(struct irq_data *data)
-+{
-+	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
-+	void __iomem *base;
-+
-+	base = tegra186_gpio_get_base(gpio, data->hwirq);
-+	if (WARN_ON(base == NULL))
-+		return;
-+
-+	writel(1, base + TEGRA186_GPIO_INTERRUPT_CLEAR);
-+}
-+
-+static void tegra186_irq_mask(struct irq_data *data)
-+{
-+	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, data->hwirq);
-+	if (WARN_ON(base == NULL))
-+		return;
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	value &= ~TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT;
-+	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+}
-+
-+static void tegra186_irq_unmask(struct irq_data *data)
-+{
-+	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, data->hwirq);
-+	if (WARN_ON(base == NULL))
-+		return;
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	value |= TEGRA186_GPIO_ENABLE_CONFIG_INTERRUPT;
-+	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+}
-+
-+static int tegra186_irq_set_type(struct irq_data *data, unsigned int flow)
-+{
-+	struct tegra_gpio *gpio = irq_data_get_irq_chip_data(data);
-+	void __iomem *base;
-+	u32 value;
-+
-+	base = tegra186_gpio_get_base(gpio, data->hwirq);
-+	if (WARN_ON(base == NULL))
-+		return -ENODEV;
-+
-+	value = readl(base + TEGRA186_GPIO_ENABLE_CONFIG);
-+	value &= ~TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_MASK;
-+	value &= ~TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_LEVEL;
-+
-+	switch (flow & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_NONE:
-+		break;
-+
-+	case IRQ_TYPE_EDGE_RISING:
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_SINGLE_EDGE;
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_LEVEL;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_SINGLE_EDGE;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_BOTH:
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_DOUBLE_EDGE;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_LEVEL;
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_LEVEL;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_LOW:
-+		value |= TEGRA186_GPIO_ENABLE_CONFIG_TRIGGER_TYPE_LEVEL;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	writel(value, base + TEGRA186_GPIO_ENABLE_CONFIG);
-+
-+	if ((flow & IRQ_TYPE_EDGE_BOTH) == 0)
-+		irq_set_handler_locked(data, handle_level_irq);
-+	else
-+		irq_set_handler_locked(data, handle_edge_irq);
-+
-+	return 0;
-+}
-+
-+static void tegra186_gpio_irq(struct irq_desc *desc)
-+{
-+	struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned int i, offset = 0;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	for (i = 0; i < gpio->soc->num_ports; i++) {
-+		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-+		void __iomem *base = gpio->base + port->offset;
-+		unsigned int pin, irq;
-+		unsigned long value;
-+
-+		value = readl(base + TEGRA186_GPIO_INTERRUPT_STATUS(1));
-+
-+		for_each_set_bit(pin, &value, port->pins) {
-+			irq = irq_find_mapping(gpio->domain, offset + pin);
-+			if (WARN_ON(irq == 0))
-+				continue;
-+
-+			generic_handle_irq(irq);
-+		}
-+
-+		offset += port->pins;
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int tegra186_gpio_irq_domain_xlate(struct irq_domain *domain,
-+					  struct device_node *np,
-+					  const u32 *spec, unsigned int size,
-+					  unsigned long *hwirq,
-+					  unsigned int *type)
-+{
-+	struct tegra_gpio *gpio = domain->host_data;
-+	unsigned int port, pin, i, offset = 0;
-+
-+	if (size < 2)
-+		return -EINVAL;
-+
-+	port = spec[0] / 8;
-+	pin = spec[0] % 8;
-+
-+	if (port >= gpio->soc->num_ports) {
-+		dev_err(gpio->gpio.parent, "invalid port number: %u\n", port);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < port; i++)
-+		offset += gpio->soc->ports[i].pins;
-+
-+	*type = spec[1] & IRQ_TYPE_SENSE_MASK;
-+	*hwirq = offset + pin;
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops tegra186_gpio_irq_domain_ops = {
-+	.xlate = tegra186_gpio_irq_domain_xlate,
-+};
-+
-+static struct lock_class_key tegra186_gpio_lock_class;
-+
-+static int tegra186_gpio_probe(struct platform_device *pdev)
-+{
-+	unsigned int i, j, irq, offset = 0;
-+	struct tegra_gpio *gpio;
-+	struct resource *res;
-+	char **names;
-+	int err;
-+
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
-+		return -ENOMEM;
-+
-+	gpio->soc = of_device_get_match_data(&pdev->dev);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gpio");
-+	gpio->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(gpio->base))
-+		return PTR_ERR(gpio->base);
-+
-+	err = of_irq_count(pdev->dev.of_node);
-+	if (err < 0)
-+		return err;
-+
-+	gpio->num_irq = err;
-+
-+	gpio->irq = devm_kcalloc(&pdev->dev, gpio->num_irq, sizeof(*gpio->irq),
-+				 GFP_KERNEL);
-+	if (!gpio->irq)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < gpio->num_irq; i++) {
-+		err = platform_get_irq(pdev, i);
-+		if (err < 0)
-+			return err;
-+
-+		gpio->irq[i] = err;
-+	}
-+
-+	gpio->gpio.label = gpio->soc->name;
-+	gpio->gpio.parent = &pdev->dev;
-+
-+	gpio->gpio.get_direction = tegra186_gpio_get_direction;
-+	gpio->gpio.direction_input = tegra186_gpio_direction_input;
-+	gpio->gpio.direction_output = tegra186_gpio_direction_output;
-+	gpio->gpio.get = tegra186_gpio_get,
-+	gpio->gpio.set = tegra186_gpio_set;
-+	gpio->gpio.to_irq = tegra186_gpio_to_irq;
-+
-+	gpio->gpio.base = -1;
-+
-+	for (i = 0; i < gpio->soc->num_ports; i++)
-+		gpio->gpio.ngpio += gpio->soc->ports[i].pins;
-+
-+	names = devm_kcalloc(gpio->gpio.parent, gpio->gpio.ngpio,
-+			     sizeof(*names), GFP_KERNEL);
-+	if (!names)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < gpio->soc->num_ports; i++) {
-+		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-+		char *name;
-+
-+		for (j = 0; j < port->pins; j++) {
-+			name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
-+					      "P%s.%02x", port->name, j);
-+			if (!name)
-+				return -ENOMEM;
-+
-+			names[offset + j] = name;
-+		}
-+
-+		offset += port->pins;
-+	}
-+
-+	gpio->gpio.names = (const char * const *)names;
-+
-+	gpio->gpio.of_node = pdev->dev.of_node;
-+	gpio->gpio.of_gpio_n_cells = 2;
-+	gpio->gpio.of_xlate = tegra186_gpio_of_xlate;
-+
-+	gpio->intc.name = pdev->dev.of_node->name;
-+	gpio->intc.irq_ack = tegra186_irq_ack;
-+	gpio->intc.irq_mask = tegra186_irq_mask;
-+	gpio->intc.irq_unmask = tegra186_irq_unmask;
-+	gpio->intc.irq_set_type = tegra186_irq_set_type;
-+
-+	platform_set_drvdata(pdev, gpio);
-+
-+	err = devm_gpiochip_add_data(&pdev->dev, &gpio->gpio, gpio);
-+	if (err < 0)
-+		return err;
-+
-+	gpio->domain = irq_domain_add_linear(pdev->dev.of_node,
-+					     gpio->gpio.ngpio,
-+					     &tegra186_gpio_irq_domain_ops,
-+					     gpio);
-+	if (!gpio->domain)
-+		return -ENODEV;
-+
-+	for (i = 0; i < gpio->gpio.ngpio; i++) {
-+		irq = irq_create_mapping(gpio->domain, i);
-+		if (irq == 0) {
-+			dev_err(&pdev->dev,
-+				"failed to create IRQ mapping for GPIO#%u\n",
-+				i);
-+			continue;
-+		}
-+
-+		irq_set_lockdep_class(irq, &tegra186_gpio_lock_class);
-+		irq_set_chip_data(irq, gpio);
-+		irq_set_chip_and_handler(irq, &gpio->intc, handle_simple_irq);
-+	}
-+
-+	for (i = 0; i < gpio->num_irq; i++)
-+		irq_set_chained_handler_and_data(gpio->irq[i],
-+						 tegra186_gpio_irq,
-+						 gpio);
-+
-+	return 0;
-+}
-+
-+static int tegra186_gpio_remove(struct platform_device *pdev)
-+{
-+	struct tegra_gpio *gpio = platform_get_drvdata(pdev);
-+	unsigned int i, irq;
-+
-+	for (i = 0; i < gpio->num_irq; i++)
-+		irq_set_chained_handler_and_data(gpio->irq[i], NULL, NULL);
-+
-+	for (i = 0; i < gpio->gpio.ngpio; i++) {
-+		irq = irq_find_mapping(gpio->domain, i);
-+		irq_dispose_mapping(irq);
-+	}
-+
-+	irq_domain_remove(gpio->domain);
-+
-+	return 0;
-+}
-+
-+#define TEGRA_MAIN_GPIO_PORT(port, base, count)	\
-+	[TEGRA_MAIN_GPIO_PORT_##port] = {	\
-+		.name = #port,			\
-+		.offset = base,			\
-+		.pins = count,			\
-+	}
-+
-+static const struct tegra_gpio_port tegra186_main_ports[] = {
-+	TEGRA_MAIN_GPIO_PORT( A, 0x2000, 7),
-+	TEGRA_MAIN_GPIO_PORT( B, 0x3000, 7),
-+	TEGRA_MAIN_GPIO_PORT( C, 0x3200, 7),
-+	TEGRA_MAIN_GPIO_PORT( D, 0x3400, 6),
-+	TEGRA_MAIN_GPIO_PORT( E, 0x2200, 8),
-+	TEGRA_MAIN_GPIO_PORT( F, 0x2400, 6),
-+	TEGRA_MAIN_GPIO_PORT( G, 0x4200, 6),
-+	TEGRA_MAIN_GPIO_PORT( H, 0x1000, 7),
-+	TEGRA_MAIN_GPIO_PORT( I, 0x0800, 8),
-+	TEGRA_MAIN_GPIO_PORT( J, 0x5000, 8),
-+	TEGRA_MAIN_GPIO_PORT( K, 0x5200, 1),
-+	TEGRA_MAIN_GPIO_PORT( L, 0x1200, 8),
-+	TEGRA_MAIN_GPIO_PORT( M, 0x5600, 6),
-+	TEGRA_MAIN_GPIO_PORT( N, 0x0000, 7),
-+	TEGRA_MAIN_GPIO_PORT( O, 0x0200, 4),
-+	TEGRA_MAIN_GPIO_PORT( P, 0x4000, 7),
-+	TEGRA_MAIN_GPIO_PORT( Q, 0x0400, 6),
-+	TEGRA_MAIN_GPIO_PORT( R, 0x0a00, 6),
-+	TEGRA_MAIN_GPIO_PORT( T, 0x0600, 4),
-+	TEGRA_MAIN_GPIO_PORT( X, 0x1400, 8),
-+	TEGRA_MAIN_GPIO_PORT( Y, 0x1600, 7),
-+	TEGRA_MAIN_GPIO_PORT(BB, 0x2600, 2),
-+	TEGRA_MAIN_GPIO_PORT(CC, 0x5400, 4),
-+};
-+
-+static const struct tegra_gpio_soc tegra186_main_soc = {
-+	.num_ports = ARRAY_SIZE(tegra186_main_ports),
-+	.ports = tegra186_main_ports,
-+	.name = "tegra186-gpio",
-+};
-+
-+#define TEGRA_AON_GPIO_PORT(port, base, count)	\
-+	[TEGRA_AON_GPIO_PORT_##port] = {	\
-+		.name = #port,			\
-+		.offset = base,			\
-+		.pins = count,			\
-+	}
-+
-+static const struct tegra_gpio_port tegra186_aon_ports[] = {
-+	TEGRA_AON_GPIO_PORT( S, 0x0200, 5),
-+	TEGRA_AON_GPIO_PORT( U, 0x0400, 6),
-+	TEGRA_AON_GPIO_PORT( V, 0x0800, 8),
-+	TEGRA_AON_GPIO_PORT( W, 0x0a00, 8),
-+	TEGRA_AON_GPIO_PORT( Z, 0x0e00, 4),
-+	TEGRA_AON_GPIO_PORT(AA, 0x0c00, 8),
-+	TEGRA_AON_GPIO_PORT(EE, 0x0600, 3),
-+	TEGRA_AON_GPIO_PORT(FF, 0x0000, 5),
-+};
-+
-+static const struct tegra_gpio_soc tegra186_aon_soc = {
-+	.num_ports = ARRAY_SIZE(tegra186_aon_ports),
-+	.ports = tegra186_aon_ports,
-+	.name = "tegra186-gpio-aon",
-+};
-+
-+static const struct of_device_id tegra186_gpio_of_match[] = {
-+	{
-+		.compatible = "nvidia,tegra186-gpio",
-+		.data = &tegra186_main_soc
-+	}, {
-+		.compatible = "nvidia,tegra186-gpio-aon",
-+		.data = &tegra186_aon_soc
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static struct platform_driver tegra186_gpio_driver = {
-+	.driver = {
-+		.name = "tegra186-gpio",
-+		.of_match_table = tegra186_gpio_of_match,
-+	},
-+	.probe = tegra186_gpio_probe,
-+	.remove = tegra186_gpio_remove,
-+};
-+module_platform_driver(tegra186_gpio_driver);
-+
-+MODULE_DESCRIPTION("NVIDIA Tegra186 GPIO controller driver");
-+MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.12.0
-
+> 
+> Signed-off-by: Julia Cartwright <julia@ni.com>
+> ---
+>  drivers/gpio/gpio-bcm-kona.c | 48 ++++++++++++++++++++++----------------------
+>  1 file changed, 24 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+> index 41d0ac142580..dfcf56ee3c61 100644
+> --- a/drivers/gpio/gpio-bcm-kona.c
+> +++ b/drivers/gpio/gpio-bcm-kona.c
+> @@ -67,7 +67,7 @@
+>  struct bcm_kona_gpio {
+>  	void __iomem *reg_base;
+>  	int num_bank;
+> -	spinlock_t lock;
+> +	raw_spinlock_t lock;
+>  	struct gpio_chip gpio_chip;
+>  	struct irq_domain *irq_domain;
+>  	struct bcm_kona_gpio_bank *banks;
+> @@ -95,13 +95,13 @@ static void bcm_kona_gpio_lock_gpio(struct bcm_kona_gpio *kona_gpio,
+>  	unsigned long flags;
+>  	int bank_id = GPIO_BANK(gpio);
+>  
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(kona_gpio->reg_base + GPIO_PWD_STATUS(bank_id));
+>  	val |= BIT(gpio);
+>  	bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, bank_id, val);
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  }
+>  
+>  static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+> @@ -111,13 +111,13 @@ static void bcm_kona_gpio_unlock_gpio(struct bcm_kona_gpio *kona_gpio,
+>  	unsigned long flags;
+>  	int bank_id = GPIO_BANK(gpio);
+>  
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(kona_gpio->reg_base + GPIO_PWD_STATUS(bank_id));
+>  	val &= ~BIT(gpio);
+>  	bcm_kona_gpio_write_lock_regs(kona_gpio->reg_base, bank_id, val);
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  }
+>  
+>  static int bcm_kona_gpio_get_dir(struct gpio_chip *chip, unsigned gpio)
+> @@ -141,7 +141,7 @@ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+>  
+>  	kona_gpio = gpiochip_get_data(chip);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	/* this function only applies to output pin */
+>  	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
+> @@ -154,7 +154,7 @@ static void bcm_kona_gpio_set(struct gpio_chip *chip, unsigned gpio, int value)
+>  	writel(val, reg_base + reg_offset);
+>  
+>  out:
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  }
+>  
+>  static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+> @@ -168,7 +168,7 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+>  
+>  	kona_gpio = gpiochip_get_data(chip);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	if (bcm_kona_gpio_get_dir(chip, gpio) == GPIOF_DIR_IN)
+>  		reg_offset = GPIO_IN_STATUS(bank_id);
+> @@ -178,7 +178,7 @@ static int bcm_kona_gpio_get(struct gpio_chip *chip, unsigned gpio)
+>  	/* read the GPIO bank status */
+>  	val = readl(reg_base + reg_offset);
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  
+>  	/* return the specified bit status */
+>  	return !!(val & BIT(bit));
+> @@ -208,14 +208,14 @@ static int bcm_kona_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+>  
+>  	kona_gpio = gpiochip_get_data(chip);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_CONTROL(gpio));
+>  	val &= ~GPIO_GPCTR0_IOTR_MASK;
+>  	val |= GPIO_GPCTR0_IOTR_CMD_INPUT;
+>  	writel(val, reg_base + GPIO_CONTROL(gpio));
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  
+>  	return 0;
+>  }
+> @@ -232,7 +232,7 @@ static int bcm_kona_gpio_direction_output(struct gpio_chip *chip,
+>  
+>  	kona_gpio = gpiochip_get_data(chip);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_CONTROL(gpio));
+>  	val &= ~GPIO_GPCTR0_IOTR_MASK;
+> @@ -244,7 +244,7 @@ static int bcm_kona_gpio_direction_output(struct gpio_chip *chip,
+>  	val |= BIT(bit);
+>  	writel(val, reg_base + reg_offset);
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  
+>  	return 0;
+>  }
+> @@ -288,7 +288,7 @@ static int bcm_kona_gpio_set_debounce(struct gpio_chip *chip, unsigned gpio,
+>  	}
+>  
+>  	/* spin lock for read-modify-write of the GPIO register */
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_CONTROL(gpio));
+>  	val &= ~GPIO_GPCTR0_DBR_MASK;
+> @@ -303,7 +303,7 @@ static int bcm_kona_gpio_set_debounce(struct gpio_chip *chip, unsigned gpio,
+>  
+>  	writel(val, reg_base + GPIO_CONTROL(gpio));
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  
+>  	return 0;
+>  }
+> @@ -347,13 +347,13 @@ static void bcm_kona_gpio_irq_ack(struct irq_data *d)
+>  
+>  	kona_gpio = irq_data_get_irq_chip_data(d);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_INT_STATUS(bank_id));
+>  	val |= BIT(bit);
+>  	writel(val, reg_base + GPIO_INT_STATUS(bank_id));
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  }
+>  
+>  static void bcm_kona_gpio_irq_mask(struct irq_data *d)
+> @@ -368,13 +368,13 @@ static void bcm_kona_gpio_irq_mask(struct irq_data *d)
+>  
+>  	kona_gpio = irq_data_get_irq_chip_data(d);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_INT_MASK(bank_id));
+>  	val |= BIT(bit);
+>  	writel(val, reg_base + GPIO_INT_MASK(bank_id));
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  }
+>  
+>  static void bcm_kona_gpio_irq_unmask(struct irq_data *d)
+> @@ -389,13 +389,13 @@ static void bcm_kona_gpio_irq_unmask(struct irq_data *d)
+>  
+>  	kona_gpio = irq_data_get_irq_chip_data(d);
+>  	reg_base = kona_gpio->reg_base;
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_INT_MSKCLR(bank_id));
+>  	val |= BIT(bit);
+>  	writel(val, reg_base + GPIO_INT_MSKCLR(bank_id));
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  }
+>  
+>  static int bcm_kona_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> @@ -431,14 +431,14 @@ static int bcm_kona_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>  		return -EINVAL;
+>  	}
+>  
+> -	spin_lock_irqsave(&kona_gpio->lock, flags);
+> +	raw_spin_lock_irqsave(&kona_gpio->lock, flags);
+>  
+>  	val = readl(reg_base + GPIO_CONTROL(gpio));
+>  	val &= ~GPIO_GPCTR0_ITR_MASK;
+>  	val |= lvl_type << GPIO_GPCTR0_ITR_SHIFT;
+>  	writel(val, reg_base + GPIO_CONTROL(gpio));
+>  
+> -	spin_unlock_irqrestore(&kona_gpio->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kona_gpio->lock, flags);
+>  
+>  	return 0;
+>  }
+> @@ -655,7 +655,7 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
+>  						 bank);
+>  	}
+>  
+> -	spin_lock_init(&kona_gpio->lock);
+> +	raw_spin_lock_init(&kona_gpio->lock);
+>  
+>  	return 0;
+>  
+> 
