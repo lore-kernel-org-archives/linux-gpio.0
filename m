@@ -1,12 +1,12 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 1/2] gpio: acpi: acpi_gpio_resource_lookup: return info even if there is no desc
-Date: Fri, 10 Mar 2017 21:58:45 +0100
-Message-ID: <20170310205846.16530-2-hdegoede@redhat.com>
+Subject: [PATCH 2/2] gpio: acpi: acpi_dev_gpio_irq_get: ignore the status of unselected irqs
+Date: Fri, 10 Mar 2017 21:58:46 +0100
+Message-ID: <20170310205846.16530-3-hdegoede@redhat.com>
 References: <20170310205846.16530-1-hdegoede@redhat.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44352 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:40734 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750897AbdCJU6x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        id S1755049AbdCJU6x (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
         Fri, 10 Mar 2017 15:58:53 -0500
 In-Reply-To: <20170310205846.16530-1-hdegoede@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
@@ -14,57 +14,58 @@ List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-Make acpi_gpio_resource_lookup fill acpi_gpio_info even if there is
-no gpio_desc for the gpio and add a found flag to lookup which is
-used to indicate that valid info was found.
+When acpi_dev_gpio_irq_get gets called with an index of say 2, it
+should not care if the gpioint matching index 0 or 1 has a valid
+descriptor.
 
-This is a preparation patch for making acpi_dev_gpio_irq_get actually
-skip interrupts which do not match the requested index, rather then
-bailing if it cannot retreive a gpio_desc for them.
+Before this commit acpi_dev_gpio_irq_get would exit on the first gpioint
+with an invalid descriptor it would encounter, this commit modifies it to
+only care if the gpioint with the requested index has a valid descriptor.
 
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib-acpi.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 3fe63d8..86fabdd 100644
+index 86fabdd..11bd1a6 100644
 --- a/drivers/gpio/gpiolib-acpi.c
 +++ b/drivers/gpio/gpiolib-acpi.c
-@@ -475,6 +475,7 @@ struct acpi_gpio_lookup {
- 	int index;
- 	int pin_index;
- 	bool active_low;
-+	bool found;
- 	struct acpi_device *adev;
- 	struct gpio_desc *desc;
- 	int n;
-@@ -513,6 +514,7 @@ static int acpi_populate_gpio_lookup(struct acpi_resource *ares, void *data)
- 		} else {
- 			lookup->info.flags = acpi_gpio_to_gpiod_flags(agpio);
- 		}
-+		lookup->found = true;
- 	}
+@@ -746,21 +746,27 @@ struct gpio_desc *acpi_node_get_gpiod(struct fwnode_handle *fwnode,
+ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ {
+ 	unsigned int irq_flags;
+-	int idx, i;
++	int idx, i, irq, ret;
  
- 	return 1;
-@@ -534,15 +536,13 @@ static int acpi_gpio_resource_lookup(struct acpi_gpio_lookup *lookup,
+ 	for (i = 0, idx = 0; idx <= index; i++) {
+ 		struct acpi_gpio_info info;
+-		struct gpio_desc *desc;
++		struct acpi_gpio_lookup lookup;
  
- 	acpi_dev_free_resource_list(&res_list);
+-		desc = acpi_get_gpiod_by_index(adev, NULL, i, &info);
+-		if (IS_ERR(desc))
+-			return PTR_ERR(desc);
++		memset(&lookup, 0, sizeof(lookup));
++		lookup.index = index;
++		lookup.adev = adev;
++		ret = acpi_gpio_resource_lookup(&lookup, &info);
++		if (!lookup.found)
++			return ret;
  
--	if (!lookup->desc)
--		return -ENOENT;
--
- 	if (info) {
- 		*info = lookup->info;
- 		if (lookup->active_low)
- 			info->polarity = lookup->active_low;
- 	}
--	return 0;
+ 		if (info.gpioint && idx++ == index) {
+-			int irq = gpiod_to_irq(desc);
++			struct gpio_desc *desc = lookup.desc;
+ 			char label[32];
+-			int ret;
+ 
++			if (!desc)
++				return ret;
 +
-+	return lookup->desc ? 0 : -ENOENT;
- }
++			irq = gpiod_to_irq(desc);
+ 			if (irq < 0)
+ 				return irq;
  
- static int acpi_gpio_property_lookup(struct fwnode_handle *fwnode,
 -- 
 2.9.3
 
