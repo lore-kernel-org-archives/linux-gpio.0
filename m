@@ -1,75 +1,61 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/6] gpio: gemini: augment DT bindings
-Date: Mon, 13 Mar 2017 00:28:13 +0100
-Message-ID: <20170312232818.26304-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <openwrt-devel-bounces@lists.openwrt.org>
-List-Unsubscribe: <https://lists.openwrt.org/cgi-bin/mailman/options/openwrt-devel>,
- <mailto:openwrt-devel-request@lists.openwrt.org?subject=unsubscribe>
-List-Archive: <http://lists.openwrt.org/pipermail/openwrt-devel/>
-List-Post: <mailto:openwrt-devel@lists.openwrt.org>
-List-Help: <mailto:openwrt-devel-request@lists.openwrt.org?subject=help>
-List-Subscribe: <https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel>,
- <mailto:openwrt-devel-request@lists.openwrt.org?subject=subscribe>
-Errors-To: openwrt-devel-bounces@lists.openwrt.org
-Sender: "openwrt-devel" <openwrt-devel-bounces@lists.openwrt.org>
-To: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: openwrt-devel@openwrt.org, devicetree@vger.kernel.org, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-gpio@vger.kernel.org, Janos Laube <janos.dev@gmail.com>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/6] ARM: dts: augment Gemini GPIO nodes
+Date: Mon, 13 Mar 2017 00:28:14 +0100
+Message-ID: <20170312232818.26304-2-linus.walleij@linaro.org>
+References: <20170312232818.26304-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:35810 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935523AbdCLX2d (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Mar 2017 19:28:33 -0400
+Received: by mail-lf0-f54.google.com with SMTP id j90so57567284lfk.2
+        for <linux-gpio@vger.kernel.org>; Sun, 12 Mar 2017 16:28:32 -0700 (PDT)
+In-Reply-To: <20170312232818.26304-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-VGhlIERUIGJpbmRpbmdzIGFzc3VtZWQgdGhhdCB0aGlzIElQIGJsb2NrIHdhcyBjb21pbmcgZnJv
-bQpDb3J0aW5hIFN5c3RlbXMsIHdoaWNoIHR1cm5zIG91dCBub3QgdG8gYmUgdHJ1ZS4gSXQgaXMg
-YQpzdGFuZGFyZCBJUCBibG9jayBmcm9tIEZhcmFkYXkgVGVjaG5vbG9neSBhbmQgYWxzbyB1c2Vk
-IGluIHRoZQpNb3hhIG1veGFydCBTb0MuCgpXZSBhdWdtZW50IHRoZSBiaW5kaW5ncyB0byBjb3Zl
-ciBhbGwgZXhpc3RpbmcgcGFydHMgYW5kIHJlbmFtZQppdCBhZnRlciB0aGUgSVAgYmxvY2suIFRo
-aXMgaW52b2x2ZXMgZGVsZXRpbmcgdGhlIG9sZCBNb3hhCmJpbmRpbmdzIHRoYXQgbm93IGFyZSBj
-b250YWluZWQgaW4gdGhpcyBiaW5kaW5nLgoKQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
-CkNjOiBKb25hcyBKZW5zZW4gPGpvbmFzLmplbnNlbkBnbWFpbC5jb20+ClNpZ25lZC1vZmYtYnk6
-IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4KLS0tCiAuLi57Y29ydGlu
-YSxnZW1pbmktZ3Bpby50eHQgPT4gZmFyYWRheSxmdGdwaW8wMTAudHh0fSB8ICA5ICsrKysrKy0t
-LQogLi4uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9tb3hhLG1veGFydC1ncGlvLnR4dCAgICAg
-fCAxOSAtLS0tLS0tLS0tLS0tLS0tLS0tCiAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygr
-KSwgMjIgZGVsZXRpb25zKC0pCiByZW5hbWUgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL2dwaW8ve2NvcnRpbmEsZ2VtaW5pLWdwaW8udHh0ID0+IGZhcmFkYXksZnRncGlvMDEwLnR4
-dH0gKDcwJSkKIGRlbGV0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvZ3Bpby9tb3hhLG1veGFydC1ncGlvLnR4dAoKZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2NvcnRpbmEsZ2VtaW5pLWdwaW8udHh0IGIvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vZmFyYWRheSxmdGdwaW8wMTAudHh0
-CnNpbWlsYXJpdHkgaW5kZXggNzAlCnJlbmFtZSBmcm9tIERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9ncGlvL2NvcnRpbmEsZ2VtaW5pLWdwaW8udHh0CnJlbmFtZSB0byBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9mYXJhZGF5LGZ0Z3BpbzAxMC50eHQKaW5k
-ZXggNWM5MjQ2YzA1NGU1Li5kMDQyMzY1NTg2MTkgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2NvcnRpbmEsZ2VtaW5pLWdwaW8udHh0CisrKyBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2ZhcmFkYXksZnRncGlvMDEwLnR4
-dApAQCAtMSw4ICsxLDExIEBACi1Db3J0aW5hIFN5c3RlbXMgR2VtaW5pIEdQSU8gQ29udHJvbGxl
-cgorRmFyYWRheSBUZWNobm9sb2d5IEZUR1BJTzAxMCBHUElPIENvbnRyb2xsZXIKIAogUmVxdWly
-ZWQgcHJvcGVydGllczoKIAotLSBjb21wYXRpYmxlIDogTXVzdCBiZSAiY29ydGluYSxnZW1pbmkt
-Z3BpbyIKKy0gY29tcGF0aWJsZSA6IFNob3VsZCBiZSBvbmUgb2YKKyAgImNvcnRpbmEsZ2VtaW5p
-LWdwaW8iLCAiZmFyYWRheSxmdGdwaW8wMTAiCisgICJtb3hhLG1veGFydC1ncGlvIiwgImZhcmFk
-YXksZnRncGlvMDEwIgorICAiZmFyYWRheSxmdGdwaW8wMTAiCiAtIHJlZyA6IFNob3VsZCBjb250
-YWluIHJlZ2lzdGVycyBsb2NhdGlvbiBhbmQgbGVuZ3RoCiAtIGludGVycnVwdHMgOiBTaG91bGQg
-Y29udGFpbiB0aGUgaW50ZXJydXB0IGxpbmUgZm9yIHRoZSBHUElPIGJsb2NrCiAtIGdwaW8tY29u
-dHJvbGxlciA6IG1hcmtzIHRoaXMgYXMgYSBHUElPIGNvbnRyb2xsZXIKQEAgLTE0LDcgKzE3LDcg
-QEAgUmVxdWlyZWQgcHJvcGVydGllczoKIEV4YW1wbGU6CiAKIGdwaW9ANGQwMDAwMDAgewotCWNv
-bXBhdGlibGUgPSAiY29ydGluYSxnZW1pbmktZ3BpbyI7CisJY29tcGF0aWJsZSA9ICJjb3J0aW5h
-LGdlbWluaS1ncGlvIiwgImZhcmFkYXksZnRncGlvMDEwIjsKIAlyZWcgPSA8MHg0ZDAwMDAwMCAw
-eDEwMD47CiAJaW50ZXJydXB0cyA9IDwyMiBJUlFfVFlQRV9MRVZFTF9ISUdIPjsKIAlncGlvLWNv
-bnRyb2xsZXI7CmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-Z3Bpby9tb3hhLG1veGFydC1ncGlvLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9ncGlvL21veGEsbW94YXJ0LWdwaW8udHh0CmRlbGV0ZWQgZmlsZSBtb2RlIDEwMDY0NApp
-bmRleCBmOGU4ZjE4NWEzZGIuLjAwMDAwMDAwMDAwMAotLS0gYS9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvZ3Bpby9tb3hhLG1veGFydC1ncGlvLnR4dAorKysgL2Rldi9udWxsCkBA
-IC0xLDE5ICswLDAgQEAKLU1PWEEgQVJUIEdQSU8gQ29udHJvbGxlcgotCi1SZXF1aXJlZCBwcm9w
-ZXJ0aWVzOgotCi0tICNncGlvLWNlbGxzIDogU2hvdWxkIGJlIDIsIFRoZSBmaXJzdCBjZWxsIGlz
-IHRoZSBwaW4gbnVtYmVyLAotCQl0aGUgc2Vjb25kIGNlbGwgaXMgdXNlZCB0byBzcGVjaWZ5IHBv
-bGFyaXR5OgotCQkJMCA9IGFjdGl2ZSBoaWdoCi0JCQkxID0gYWN0aXZlIGxvdwotLSBjb21wYXRp
-YmxlIDogTXVzdCBiZSAibW94YSxtb3hhcnQtZ3BpbyIKLS0gcmVnIDogU2hvdWxkIGNvbnRhaW4g
-cmVnaXN0ZXJzIGxvY2F0aW9uIGFuZCBsZW5ndGgKLQotRXhhbXBsZToKLQotCWdwaW86IGdwaW9A
-OTg3MDAwMDAgewotCQlncGlvLWNvbnRyb2xsZXI7Ci0JCSNncGlvLWNlbGxzID0gPDI+OwotCQlj
-b21wYXRpYmxlID0gIm1veGEsbW94YXJ0LWdwaW8iOwotCQlyZWcgPQk8MHg5ODcwMDAwMCAweEM+
-OwotCX07Ci0tIAoyLjkuMwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpvcGVud3J0LWRldmVsIG1haWxpbmcgbGlzdApvcGVud3J0LWRldmVsQGxpc3RzLm9w
-ZW53cnQub3JnCmh0dHBzOi8vbGlzdHMub3BlbndydC5vcmcvY2dpLWJpbi9tYWlsbWFuL2xpc3Rp
-bmZvL29wZW53cnQtZGV2ZWwK
+The binding should state "cortina,gemini-gpio", "faraday,ftgpio010"
+stating the full name of the IP part.
+
+Cc: Jonas Jensen <jonas.jensen@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/boot/dts/gemini.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/gemini.dtsi b/arch/arm/boot/dts/gemini.dtsi
+index 67c0a63d5527..b8d011bdcc76 100644
+--- a/arch/arm/boot/dts/gemini.dtsi
++++ b/arch/arm/boot/dts/gemini.dtsi
+@@ -82,7 +82,7 @@
+ 		};
+ 
+ 		gpio0: gpio@4d000000 {
+-			compatible = "cortina,gemini-gpio";
++			compatible = "cortina,gemini-gpio", "faraday,ftgpio010";
+ 			reg = <0x4d000000 0x100>;
+ 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -92,7 +92,7 @@
+ 		};
+ 
+ 		gpio1: gpio@4e000000 {
+-			compatible = "cortina,gemini-gpio";
++			compatible = "cortina,gemini-gpio", "faraday,ftgpio010";
+ 			reg = <0x4e000000 0x100>;
+ 			interrupts = <23 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -102,7 +102,7 @@
+ 		};
+ 
+ 		gpio2: gpio@4f000000 {
+-			compatible = "cortina,gemini-gpio";
++			compatible = "cortina,gemini-gpio", "faraday,ftgpio010";
+ 			reg = <0x4f000000 0x100>;
+ 			interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+-- 
+2.9.3
+
