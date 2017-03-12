@@ -1,169 +1,47 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/6] gpio: moxart: Switch to using the FTGPIO010 driver
-Date: Mon, 13 Mar 2017 00:28:17 +0100
-Message-ID: <20170312232818.26304-5-linus.walleij@linaro.org>
+Subject: [PATCH 3/6] ARM: dts: augment Moxa ART GPIO node
+Date: Mon, 13 Mar 2017 00:28:15 +0100
+Message-ID: <20170312232818.26304-3-linus.walleij@linaro.org>
 References: <20170312232818.26304-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:35823 "EHLO
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:32793 "EHLO
         mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933311AbdCLX2m (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Mar 2017 19:28:42 -0400
-Received: by mail-lf0-f53.google.com with SMTP id j90so57567771lfk.2
-        for <linux-gpio@vger.kernel.org>; Sun, 12 Mar 2017 16:28:41 -0700 (PDT)
+        with ESMTP id S935487AbdCLX2g (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 12 Mar 2017 19:28:36 -0400
+Received: by mail-lf0-f53.google.com with SMTP id a6so57550564lfa.0
+        for <linux-gpio@vger.kernel.org>; Sun, 12 Mar 2017 16:28:35 -0700 (PDT)
 In-Reply-To: <20170312232818.26304-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
 Cc: Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-This just deletes the Moxa ART driver and replaces it with the
-more versatile Faraday FTGPIO010 driver.
-
-Make this default on for ARCH_GEMINI and ARCH_MOXART so we do
-not get Kconfig glitches.
+The Moxa ART GPIO is a Faraday FTGPIO010. Augment the DTS node
+to indicate both compatible values for the SoC and the IP part.
+Also increase the register range to 0x100, it has at least 0x48
+bytes of registers, and a few extra will not hurt.
 
 Cc: Jonas Jensen <jonas.jensen@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/Kconfig       | 10 +-----
- drivers/gpio/Makefile      |  1 -
- drivers/gpio/gpio-moxart.c | 84 ----------------------------------------------
- 3 files changed, 1 insertion(+), 94 deletions(-)
- delete mode 100644 drivers/gpio/gpio-moxart.c
+ arch/arm/boot/dts/moxart.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 82ba825c224a..36298ddca3d6 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -206,10 +206,10 @@ config GPIO_GE_FPGA
+diff --git a/arch/arm/boot/dts/moxart.dtsi b/arch/arm/boot/dts/moxart.dtsi
+index 1fd27ed65a01..10a8184e0ce9 100644
+--- a/arch/arm/boot/dts/moxart.dtsi
++++ b/arch/arm/boot/dts/moxart.dtsi
+@@ -66,8 +66,8 @@
+ 		gpio: gpio@98700000 {
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			compatible = "moxa,moxart-gpio";
+-			reg = <0x98700000 0xC>;
++			compatible = "moxa,moxart-gpio", "faraday,ftgpio010";
++			reg = <0x98700000 0x100>;
+ 		};
  
- config GPIO_FTGPIO010
- 	bool "Faraday FTGPIO010 GPIO"
--	depends on ARCH_GEMINI
- 	depends on OF_GPIO
- 	select GPIO_GENERIC
- 	select GPIOLIB_IRQCHIP
-+	default (ARCH_GEMINI || ARCH_MOXART)
- 	help
- 	  Support for common GPIOs from the Faraday FTGPIO010 IP core, found in
- 	  Cortina systems Gemini platforms, Moxa ART and others.
-@@ -309,14 +309,6 @@ config GPIO_MOCKUP
- 	  tools/testing/selftests/gpio/gpio-mockup.sh. Reference the usage in
- 	  it.
- 
--config GPIO_MOXART
--	bool "MOXART GPIO support"
--	depends on ARCH_MOXART || COMPILE_TEST
--	select GPIO_GENERIC
--	help
--	  Select this option to enable GPIO driver for
--	  MOXA ART SoC devices.
--
- config GPIO_MPC5200
- 	def_bool y
- 	depends on PPC_MPC52xx
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 4b904fec8273..bd995dc2a84a 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -80,7 +80,6 @@ obj-$(CONFIG_GPIO_MCP23S08)	+= gpio-mcp23s08.o
- obj-$(CONFIG_GPIO_ML_IOH)	+= gpio-ml-ioh.o
- obj-$(CONFIG_GPIO_MM_LANTIQ)	+= gpio-mm-lantiq.o
- obj-$(CONFIG_GPIO_MOCKUP)      += gpio-mockup.o
--obj-$(CONFIG_GPIO_MOXART)	+= gpio-moxart.o
- obj-$(CONFIG_GPIO_MPC5200)	+= gpio-mpc5200.o
- obj-$(CONFIG_GPIO_MPC8XXX)	+= gpio-mpc8xxx.o
- obj-$(CONFIG_GPIO_MSIC)		+= gpio-msic.o
-diff --git a/drivers/gpio/gpio-moxart.c b/drivers/gpio/gpio-moxart.c
-deleted file mode 100644
-index d58d38906ba6..000000000000
---- a/drivers/gpio/gpio-moxart.c
-+++ /dev/null
-@@ -1,84 +0,0 @@
--/*
-- * MOXA ART SoCs GPIO driver.
-- *
-- * Copyright (C) 2013 Jonas Jensen
-- *
-- * Jonas Jensen <jonas.jensen@gmail.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-- */
--
--#include <linux/err.h>
--#include <linux/init.h>
--#include <linux/irq.h>
--#include <linux/io.h>
--#include <linux/platform_device.h>
--#include <linux/of_address.h>
--#include <linux/of_gpio.h>
--#include <linux/pinctrl/consumer.h>
--#include <linux/delay.h>
--#include <linux/timer.h>
--#include <linux/bitops.h>
--#include <linux/gpio/driver.h>
--
--#define GPIO_DATA_OUT		0x00
--#define GPIO_DATA_IN		0x04
--#define GPIO_PIN_DIRECTION	0x08
--
--static int moxart_gpio_probe(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	struct resource *res;
--	struct gpio_chip *gc;
--	void __iomem *base;
--	int ret;
--
--	gc = devm_kzalloc(dev, sizeof(*gc), GFP_KERNEL);
--	if (!gc)
--		return -ENOMEM;
--
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
--
--	ret = bgpio_init(gc, dev, 4, base + GPIO_DATA_IN,
--			 base + GPIO_DATA_OUT, NULL,
--			 base + GPIO_PIN_DIRECTION, NULL,
--			 BGPIOF_READ_OUTPUT_REG_SET);
--	if (ret) {
--		dev_err(&pdev->dev, "bgpio_init failed\n");
--		return ret;
--	}
--
--	gc->label = "moxart-gpio";
--	gc->request = gpiochip_generic_request;
--	gc->free = gpiochip_generic_free;
--	gc->base = 0;
--	gc->owner = THIS_MODULE;
--
--	ret = devm_gpiochip_add_data(dev, gc, NULL);
--	if (ret) {
--		dev_err(dev, "%s: gpiochip_add failed\n",
--			dev->of_node->full_name);
--		return ret;
--	}
--
--	return ret;
--}
--
--static const struct of_device_id moxart_gpio_match[] = {
--	{ .compatible = "moxa,moxart-gpio" },
--	{ }
--};
--
--static struct platform_driver moxart_gpio_driver = {
--	.driver	= {
--		.name		= "moxart-gpio",
--		.of_match_table	= moxart_gpio_match,
--	},
--	.probe	= moxart_gpio_probe,
--};
--builtin_platform_driver(moxart_gpio_driver);
+ 		rtc: rtc {
 -- 
 2.9.3
 
