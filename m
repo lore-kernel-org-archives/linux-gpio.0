@@ -1,51 +1,59 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 0/2] gpio: acpi: acpi_dev_gpio_irq_get: ignore the
- status of unselected irqs
-Date: Mon, 13 Mar 2017 21:38:41 +0200
-Message-ID: <1489433921.20145.230.camel@linux.intel.com>
-References: <20170310205846.16530-1-hdegoede@redhat.com>
-         <1489425824.20145.223.camel@linux.intel.com>
-         <3133c2fe-427e-f742-9647-d1f45eeaed4a@redhat.com>
-         <1489432753.20145.226.camel@linux.intel.com>
-         <ef81a5ba-edaa-d6cc-70df-74180269c409@redhat.com>
-         <1489433465.20145.228.camel@linux.intel.com>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH 06/19] gpio: ath79: make use of raw_spinlock variants
+Date: Mon, 13 Mar 2017 20:51:30 +0100
+Message-ID: <20170313205130.2b5c5272@tock>
+References: <cover.1489015238.git.julia@ni.com>
+        <1774d7bad8bbc672372480f540dfc8f3d1592533.1489015238.git.julia@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:2031 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751874AbdCMTkO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Mar 2017 15:40:14 -0400
-In-Reply-To: <1489433465.20145.228.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/89nzvpisAAI+SXd+IB_tHQb"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1774d7bad8bbc672372480f540dfc8f3d1592533.1489015238.git.julia@ni.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julia Cartwright <julia@ni.com>
+Cc: Aban Bedel <albeu@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
 
-On Mon, 2017-03-13 at 21:31 +0200, Andy Shevchenko wrote:
-> On Mon, 2017-03-13 at 20:23 +0100, Hans de Goede wrote:
-> > Hi,
-> > 
-> > On 13-03-17 20:19, Andy Shevchenko wrote:
-> > > On Mon, 2017-03-13 at 18:56 +0100, Hans de Goede wrote:
-> > > > On 13-03-17 18:23, Andy Shevchenko wrote:
-> > > > > On Fri, 2017-03-10 at 21:58 +0100, Hans de Goede wrote:
-> > > I will rebase my series on your patch, but I'm going to slightly
-> > > modify
-> > > it anyway (basically squash one of my patches).
-> > 
-> > Ok, sounds good. If you're going to use my patch as a base,
-> > shall I cherry-pick the version with your changes squashed and
-> > submit that upstream stand-alone ?
-> 
-> If you want to, I have no objections.
-> Lemme submit the branch first.
+--Sig_/89nzvpisAAI+SXd+IB_tHQb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Done.
+On Thu, 9 Mar 2017 10:21:53 -0600
+Julia Cartwright <julia@ni.com> wrote:
 
-Please, test it!
+> The ath79 gpio driver currently implements an irq_chip for handling
+> interrupts; due to how irq_chip handling is done, it's necessary for the
+> irq_chip methods to be invoked from hardirq context, even on a a
+> real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+> spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+>=20
+> A quick audit of the operations under the lock reveal that they do only
+> minimal, bounded work, and are therefore safe to do under a raw spinlock.
+>=20
+> Signed-off-by: Julia Cartwright <julia@ni.com>
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Acked-by: Aban Bedel <albeu@free.fr>
+
+--Sig_/89nzvpisAAI+SXd+IB_tHQb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJYxvhCAAoJEHSUmkuduC28YjMP/1GOR4GP/z4OckebWQHLNG0G
+I1FxHkfo2kX426If5Hkyy3VdaBRVDHvFj8j8bUygxcp/nnH2xZLPBDmdaQzV6X5l
+QNvuUz762aqPRdnT+tnZ2Va+J+kuvkLcmi63RBi2puzQM173K636gtbXl2WTv2XP
+JCmRz4tMFduvlowbEe3R7az3HW+6bBMeg9w+7bPBbZG/JL1Q6JmmXGfi/kw6J41h
+YjcDRfg5PJXrIgrwaxPh/+BbWZ5to1UZFOCRyqy9vqZ/zZV++9YDimw0LanPbPwD
+3TvW2QcdVy69ky7bxs+JX4taZWN1Xhelr+jReSGXf8sTDgPye6HOw6yaza/sKCLn
+3hcYAKBb9RRXlEDeiJh+mH1XDv59M5CUxy/1fyM1Upjl3cniCcYNiIEjkgDY9L7b
+xhT/8/D8IFJ+WLu/nIFqnww1nrYTem6vSsmTPyY0ilnnGVZ+Q4C0iEGRG4KZ3njv
+rbrHmQhS+aSqjHhwQCakHVb7GsIYtzwOUmqDI30w5A8892SO6avQyEqYQ0GtjJj+
+D3BY+L5+pEWDXlJrcsxZF+ekPoAP8LUIaZGfoIYp5G4GSsq1Fum28iTKZDu3lgX+
++npCHAuCPc6M3XkDVYSnjEVvo+KbjT1pPTK8RuZENimStpoINDKGVP7SVcbMCe6h
+rZhRk20OJ/aUCepWn6AX
+=h5w/
+-----END PGP SIGNATURE-----
+
+--Sig_/89nzvpisAAI+SXd+IB_tHQb--
