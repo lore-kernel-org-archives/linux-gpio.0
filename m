@@ -1,61 +1,73 @@
 From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH 0/2] gpio: acpi: acpi_dev_gpio_irq_get: ignore the status
- of unselected irqs
-Date: Mon, 13 Mar 2017 23:02:07 +0100
-Message-ID: <f11ae260-8c0a-f3ff-4859-fb621a335dbe@redhat.com>
-References: <20170310205846.16530-1-hdegoede@redhat.com>
- <1489425824.20145.223.camel@linux.intel.com>
- <3133c2fe-427e-f742-9647-d1f45eeaed4a@redhat.com>
- <1489432753.20145.226.camel@linux.intel.com>
- <ef81a5ba-edaa-d6cc-70df-74180269c409@redhat.com>
- <1489433465.20145.228.camel@linux.intel.com>
- <1489433921.20145.230.camel@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2] gpio: acpi: Ignore -EPROBE_DEFER for unselected gpioints
+Date: Mon, 13 Mar 2017 23:04:21 +0100
+Message-ID: <20170313220421.27314-1-hdegoede@redhat.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:56678 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:57330 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750846AbdCMWCL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 13 Mar 2017 18:02:11 -0400
-In-Reply-To: <1489433921.20145.230.camel@linux.intel.com>
+        id S1750846AbdCMWEZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Mar 2017 18:04:25 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Hi,
+When acpi_dev_gpio_irq_get gets called with an index of say 2, it should
+not care if acpi_get_gpiod for index 0 or 1 returns -EPROBE_DEFER.
 
-On 13-03-17 20:38, Andy Shevchenko wrote:
-> On Mon, 2017-03-13 at 21:31 +0200, Andy Shevchenko wrote:
->> On Mon, 2017-03-13 at 20:23 +0100, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 13-03-17 20:19, Andy Shevchenko wrote:
->>>> On Mon, 2017-03-13 at 18:56 +0100, Hans de Goede wrote:
->>>>> On 13-03-17 18:23, Andy Shevchenko wrote:
->>>>>> On Fri, 2017-03-10 at 21:58 +0100, Hans de Goede wrote:
->>>> I will rebase my series on your patch, but I'm going to slightly
->>>> modify
->>>> it anyway (basically squash one of my patches).
->>>
->>> Ok, sounds good. If you're going to use my patch as a base,
->>> shall I cherry-pick the version with your changes squashed and
->>> submit that upstream stand-alone ?
->>
->> If you want to, I have no objections.
->> Lemme submit the branch first.
+This allows drivers which request a gpioint with index > 0 to function
+if there is no gpiochip driver (loaded) for gpioints with a lower index.
 
-Ok.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-> Done.
->
-> Please, test it!
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 9b37a36..8cd3f66 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -653,20 +653,24 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ {
+ 	int idx, i;
+ 	unsigned int irq_flags;
+-	int ret = -ENOENT;
+ 
+ 	for (i = 0, idx = 0; idx <= index; i++) {
+ 		struct acpi_gpio_info info;
+ 		struct gpio_desc *desc;
+ 
+ 		desc = acpi_get_gpiod_by_index(adev, NULL, i, &info);
+-		if (IS_ERR(desc)) {
+-			ret = PTR_ERR(desc);
+-			break;
+-		}
++
++		/* Ignore -EPROBE_DEFER, it only matters if idx matches */
++		if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
++			return PTR_ERR(desc);
++
+ 		if (info.gpioint && idx++ == index) {
+-			int irq = gpiod_to_irq(desc);
++			int irq;
++
++			if (IS_ERR(desc))
++				return PTR_ERR(desc);
+ 
++			irq = gpiod_to_irq(desc);
+ 			if (irq < 0)
+ 				return irq;
+ 
+@@ -682,7 +686,7 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ 		}
+ 
+ 	}
+-	return ret;
++	return -ENOENT;
+ }
+ EXPORT_SYMBOL_GPL(acpi_dev_gpio_irq_get);
+ 
+-- 
+2.9.3
 
-I've just completed tested your version of the patch (but not
-your entire branch, sorry -ENOTIME) on 2 machines, so I'm
-going to post it upstream now.
-
-Regards,
-
-Hans
