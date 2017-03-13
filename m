@@ -1,131 +1,133 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: Add Tegra186 support
-Date: Mon, 13 Mar 2017 18:44:07 +0100
-Message-ID: <20170313174407.GA19679@ulmo.ba.sec>
-References: <20170310162629.31455-1-thierry.reding@gmail.com>
- <58C6C72C.4080408@nvidia.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 0/2] gpio: acpi: acpi_dev_gpio_irq_get: ignore the status
+ of unselected irqs
+Date: Mon, 13 Mar 2017 18:56:09 +0100
+Message-ID: <3133c2fe-427e-f742-9647-d1f45eeaed4a@redhat.com>
+References: <20170310205846.16530-1-hdegoede@redhat.com>
+ <1489425824.20145.223.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <58C6C72C.4080408-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed;
+ boundary="------------F56ED34A1BD061A1410F9EBC"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:45190 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750925AbdCMR4M (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 13 Mar 2017 13:56:12 -0400
+In-Reply-To: <1489425824.20145.223.camel@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-gpio@vger.kernel.org
+
+This is a multi-part message in MIME format.
+--------------F56ED34A1BD061A1410F9EBC
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 13-03-17 18:23, Andy Shevchenko wrote:
+> On Fri, 2017-03-10 at 21:58 +0100, Hans de Goede wrote:
+>> Hi All,
+>>
+>> While trying to get a driver working for a device where I want to
+>> only use the irq in the acpi resources with index 1, and we do not
+>> have a driver for the gpiochip with the irq with index 0 yet,
+>> I hit this problem that acpi_dev_gpio_irq_get will bail with
+>> -EPROBE_DEFER because it cannot get a gpio_desc for index 0,
+>> this really should not be a problem when asking for index 1
+>> and this series fixes this.
+>>
+>> Note these patches apply on top of the gpiolib acpi work
+>> Andy Shevchenko has been doing and as such may not apply
+>> cleanly on top of current master / next.
+>
+> I will incorporate slightly different version of this (due to changes
+> happened) into my branch. Please verify if everything is okay.
+
+I just noticed that my patch was botched up a bit, it is
+taking a more complex approach then needed and it contained a bug
+(it did lookup->index = index, which should be lookup->index = i).
+
+I've just finished writing a v2 (sorry). I've attached the v2 here,
+note this is against an unmodified v4.11-rc2 rather then your branch
+as I needed a clean base to debug some problems. But it should be
+easy to adapt to your branch I think.
+
+Note this can go upstream either way (through your branch or
+directly since it is based on a clean v4.11-rc2 now) but it is
+probably easier to take it upstream through your branch to
+avoid conflicts.
+
+Regards,
+
+Hans
+
+--------------F56ED34A1BD061A1410F9EBC
+Content-Type: text/x-patch;
+ name="0001-gpio-acpi-acpi_dev_gpio_irq_get-ignore-EPROBE_DEFER-.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-gpio-acpi-acpi_dev_gpio_irq_get-ignore-EPROBE_DEFER-.pa";
+ filename*1="tch"
+
+>From 93c2c9334a24b845c5e816299d61b92f93601b07 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Mon, 13 Mar 2017 18:43:30 +0100
+Subject: [PATCH v2] gpio: acpi: acpi_dev_gpio_irq_get: ignore -EPROBE_DEFER
+ for unselected gpioints
+
+When acpi_dev_gpio_irq_get gets called with an index of say 2, it should
+not care if acpi_get_gpiod for index 0 or 1 returns -EPROBE_DEFER.
+
+This allows drivers which request a gpioint with index > 0 to function
+if there is no gpiochip driver (loaded) for gpioints with a lower index.
+
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-Completely new patch replacing my previous somewhat broken attempt
+---
+ drivers/gpio/gpiolib-acpi.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 9b37a36..fc6f34a 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -651,7 +651,7 @@ struct gpio_desc *acpi_node_get_gpiod(struct fwnode_handle *fwnode,
+  */
+ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ {
+-	int idx, i;
++	int idx, i, irq;
+ 	unsigned int irq_flags;
+ 	int ret = -ENOENT;
+ 
+@@ -660,13 +660,18 @@ int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
+ 		struct gpio_desc *desc;
+ 
+ 		desc = acpi_get_gpiod_by_index(adev, NULL, i, &info);
+-		if (IS_ERR(desc)) {
++		/* Ignore -EPROBE_DEFER, it only matters if idx matches */
++		if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER) {
+ 			ret = PTR_ERR(desc);
+ 			break;
+ 		}
+ 		if (info.gpioint && idx++ == index) {
+-			int irq = gpiod_to_irq(desc);
++			if (IS_ERR(desc)) {
++				ret = PTR_ERR(desc);
++				break;
++			}
+ 
++			irq = gpiod_to_irq(desc);
+ 			if (irq < 0)
+ 				return irq;
+ 
+-- 
+2.9.3
 
 
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 13, 2017 at 09:52:04PM +0530, Laxman Dewangan wrote:
->=20
-> On Friday 10 March 2017 09:56 PM, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Tegra186 has two GPIO controllers that are largely register compatible
-> > between one another but are completely different from the controller
-> > found on earlier generations.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Changes in v2:
-> > - add pin names to allow easy lookup using the chardev interface
-> > - distinguish AON and main GPIO controllers by label
-> > - use gpiochip_get_data() instead of container_of()
-> > - use C99 initializers
-> >=20
->=20
-> Overall it looks fine to me.
-> Only thing I did not like is the of_xlate manipulation where the gpio num=
-ber
-> is translated to another number for register access.
-> The reason is that it complicate in debugging when we instrument the
-> callbacks for some gpios and this is very common in our debugging.
->=20
-> I still request here to use simple mapping instead of complicating.
-
-I fail to see how this is complicating things. Yes, you can no longer
-directly map from an offset to the port/index, but since we have a name
-associated with each pin, we can simply print the name if we want to
-know what pin we're dealing with.
-
-So you could simply do something like this:
-
-	static int tegra186_gpio_get_direction(struct gpio_chip *chip,
-					       unsigned int offset)
-	{
-		struct gpio_desc *desc =3D gpiochip_get_desc(chip, offset);
-		...
-		dev_dbg(chip->parent, "GPIO %s (%s)\n", desc->name, desc->label);
-		...
-	}
-
-The alternative that you're talking about would be something like this:
-
-	static int tegra186_gpio_get_direction(struct gpio_chip *chip,
-					       unsigned int offset)
-	{
-		struct tegra_gpio_port_soc_info *info;
-		unsigned int port =3D GPIO_PORT(offset);
-		unsigned int pin =3D GPIO_PIN(offset);
-		...
-		info =3D tgi->soc->port[port];
-		...
-		dev_dbg(chip->parent, "GPIO P%s.%02u\n", info->port_name, pin);
-		...
-	}
-
-And with the above you'd either duplicate the logic that constructs the
-pin name: once in the instrumentation code and once in the code that
-sets up the pin names. Or you could decide not to set up any pin names
-at all, in which case userspace would need to deal with the numbering
-schemes itself, which makes things really complicated, especially when
-we start supporting multiple SoC families.
-
-The proposal in this patch is really quite elegant, if I may say so, in
-that individual pins are identified by their name. Userspace can query
-the list and get only the ones that actually exist. The wholes in the
-GPIO range are not there, so there's not even a chance of userspace
-messing with non-existing GPIOs.
-
-Similarly the kernel has access to the name of these GPIOs, so the same
-"string representation" can be used as for userspace.
-
-I think this makes the driver very consistent across all use-cases. The
-only remaining downside I see is that we're moving away from the 8-pins
-per port from earlier chips. But I actually see that as a feature, even
-something that we should backport to older chips.
-
-The only reason why the driver for older chips works is because the
-registers are laid out such that the pins of a port share one register
-block, so if a non-existing GPIO is accessed, we'd be accessing a non-
-existing field in an existing register, which seems to be less of an
-issue than accessing a non-existing register.
-
-Thierry
-
---1yeeQ81UyVL57Vl7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljG2mMACgkQ3SOs138+
-s6HfRxAAia90orQszbZT3VOd+ykbzT38utpi5vw82nvavOjwoepYZ8SuG0mK4s1u
-XdwsnAzgUt0vZlUzaOL3qx8ldW/VcW2zE3fSfobCEcXJZQDp2n5yyrCRkBixQIuG
-HDTLkAQoPj11IrHH4I0KmX+CZkmfgtTR8xkjf0xd6R0idz0k9JIRswhk8tF5RuBs
-BfKGMxp8glnSFqFTpQFNFq+tb1fM2AQnwsqdZvbUuHrCG//Trv+O2Cxf4rk2b7HY
-Jx6PzA078eyBqzWnepdgA6e3sCIBUz9gKf2AHJSIBowb4mquGm/CxTgkYeHOejyR
-Z+sZSSpvACJCJbuSbHsvxHOaTw9v/SH3Pz2z/vmd+zz4jbJnTf9kf0ZlRxH5Tkx9
-pdRnByf08e7N1cye8n1RuPPPNkU1j0dTxRWUmIfsxb0l1sutE/G5EgxxYnKHmXaW
-twfJIrYSsgQUZkUZYD2Pkoz3z1l1qo7YCUT3D5mmD/MtITDqujR21mOAr8dX+5ih
-oiR4HTMBeL4mCn0GqkyiY7Uj98IMPlAGFLoUTcpj3xN5WIYu2M0wpRsI2qZtQxqi
-FHdUkMDDgbXPhcQqhi1FcwjZE/76oFxXj+vaoWNIuBUdOKl7EbWvTdcs2dPUqw/7
-PwkII1LtFFviHm1LTtvJ1979u2oci0qXzPgy4qSTsVSFOYa1v4g=
-=hF+7
------END PGP SIGNATURE-----
-
---1yeeQ81UyVL57Vl7--
+--------------F56ED34A1BD061A1410F9EBC--
