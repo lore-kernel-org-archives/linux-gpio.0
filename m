@@ -1,39 +1,52 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
-Date: Mon, 13 Mar 2017 17:41:40 +0100
-Message-ID: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and
+ hscif4_ctrl
+Date: Mon, 13 Mar 2017 19:57:02 +0300
+Message-ID: <e5214bac-7bf9-1897-cf9f-f4735e6985e9@cogentembedded.com>
+References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
+ <1489423302-21296-2-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:32930 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754275AbdCMQ5H (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2017 12:57:07 -0400
+Received: by mail-lf0-f52.google.com with SMTP id a6so66309778lfa.0
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Mar 2017 09:57:05 -0700 (PDT)
+In-Reply-To: <1489423302-21296-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-	Hi Linus, Laurent,
+On 03/13/2017 07:41 PM, Geert Uytterhoeven wrote:
 
-This patch series contains miscellaneous fixes and cleanups for the
-Renesas R-Car H3 pinctrl driver:
+> Fix typos in hscif2_clk_[bc]_mux[] and hscif4_ctrl_mux[].
 
-I plan to queue these up in sh-pfc-for-v4.12.
+    Only seeing hscif2_clk_b_mux[] fix...
 
-Thanks for your comments!
+> Fixes: a56069c46c102710 ("pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> index 504d0c3d7f741849..6ba7ed15a4610366 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -2167,7 +2167,7 @@ static const unsigned int hscif2_clk_b_pins[] = {
+>  	RCAR_GP_PIN(6, 21),
+>  };
+>  static const unsigned int hscif2_clk_b_mux[] = {
+> -	HSCK1_B_MARK,
+> +	HSCK2_B_MARK,
+>  };
+>  static const unsigned int hscif2_ctrl_b_pins[] = {
+>  	/* RTS, CTS */
+[...]
 
-Geert Uytterhoeven (2):
-  pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and hscif4_ctrl
-  pinctrl: sh-pfc: r8a7795: Restore sort order
+MBR, Sergei
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 175 ++++++++++++++++++-----------------
- 1 file changed, 88 insertions(+), 87 deletions(-)
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
