@@ -1,85 +1,79 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
-Date: Mon, 13 Mar 2017 18:12:47 +0100
-Message-ID: <1489425167-22711-5-git-send-email-geert+renesas@glider.be>
-References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] pinctrl: sh-pfc: Add support for R-Car H3 ES2.0
+Date: Mon, 13 Mar 2017 18:12:43 +0100
+Message-ID: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-Add pins, groups, and a function for SCIF_CLK on R-Car H3 ES2.0.
-SCIF_CLK is the external clock source for the Baud Rate Generator for
-External Clock (BRG) on (H)SCIF serial ports.
+	Hi Linus, Laurent,
 
-Extracted from a big patch in the BSP by Takeshi Kihara.
+This patch series adds pinctrl support for R-Car H3 ES2.0, which differs
+from ES1.x in several areas.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>
----
-v2:
-  - New.
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+The goal is twofold:
+  1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+     for now,
+  2. Make it clear which code supports ES1.x, so it can easily be
+     identified and removed later, when production SoCs are deemed
+     ubiquitous.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 996cacee99c3e8be..0454f31c08318c48 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1773,6 +1773,22 @@ static const unsigned int scif5_clk_b_mux[] = {
- 	SCK5_B_MARK,
- };
- 
-+/* - SCIF Clock ------------------------------------------------------------- */
-+static const unsigned int scif_clk_a_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(6, 23),
-+};
-+static const unsigned int scif_clk_a_mux[] = {
-+	SCIF_CLK_A_MARK,
-+};
-+static const unsigned int scif_clk_b_pins[] = {
-+	/* SCIF_CLK */
-+	RCAR_GP_PIN(5, 9),
-+};
-+static const unsigned int scif_clk_b_mux[] = {
-+	SCIF_CLK_B_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
-@@ -1801,6 +1817,8 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_clk_a),
- 	SH_PFC_PIN_GROUP(scif5_data_b),
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
-+	SH_PFC_PIN_GROUP(scif_clk_a),
-+	SH_PFC_PIN_GROUP(scif_clk_b),
- };
- 
- static const char * const scif0_groups[] = {
-@@ -1848,6 +1866,11 @@ static const char * const scif5_groups[] = {
- 	"scif5_clk_b",
- };
- 
-+static const char * const scif_clk_groups[] = {
-+	"scif_clk_a",
-+	"scif_clk_b",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
-@@ -1855,6 +1878,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif3),
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
-+	SH_PFC_FUNCTION(scif_clk),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+This is achieved by:
+  1. Extracting the support for R-Car H3 ES1.x into a separate file, as
+     the differences are quite large,
+  2. Adding code for detecting the SoC revision at runtime using the new
+     soc_device_match() API, and selecting pinctrl tables for the actual
+     SoC revision,
+  3. Replacing the core register and bitfield definitions, and pins,
+     groups, and functions for basic devices by their counterparts for
+     R-Car H3 ES2.0.
+
+Changes compared to v1:
+  - Print correct subdriver name,
+  - Extend Proof-of-Concept to basic support (SCIF serial port).
+
+The addition of pins, groups, and functions for other on-chip devices is
+left to subsequent patches.
+
+For testers, this series and its dependencies are available in the
+topic/r8a7795es2-pfc-v2 branch of my renesas-drivers git repository at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+development board is provided as topic/r8a7795es2-integration.
+
+This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+SoCs.
+
+I plan to queue this up in sh-pfc-for-v4.12.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  pinctrl: sh-pfc: Update info pointer after SoC-specific init
+  pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0
+  pinctrl: sh-pfc: r8a7795: Add SCIF support
+  pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
+
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    3 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 4217 ++++----------------
+ .../sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c}     |   25 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
+ 5 files changed, 782 insertions(+), 3465 deletions(-)
+ copy drivers/pinctrl/sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c} (99%)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
