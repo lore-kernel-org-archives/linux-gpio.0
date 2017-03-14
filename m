@@ -1,46 +1,84 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 3/4] platform/x86: surface3_button: Propagate error
- from gpiod_count()
-Date: Tue, 14 Mar 2017 14:28:11 +0200
-Message-ID: <1489494491.20145.238.camel@linux.intel.com>
-References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
-         <20170220161549.39490-4-andriy.shevchenko@linux.intel.com>
-         <CACRpkdYiHBLuKXRWhynwkYHONy0VoV4_x68Pc4d174EZe-tNpA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:47726 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750780AbdCNM2R (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Mar 2017 08:28:17 -0400
-In-Reply-To: <CACRpkdYiHBLuKXRWhynwkYHONy0VoV4_x68Pc4d174EZe-tNpA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [RESEND PATCH] gpio: xgene: mark PM functions as __maybe_unused
+Date: Tue, 14 Mar 2017 13:57:38 +0100
+Message-ID: <20170314125748.734574-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Axel Lin <axel.lin@ingics.com>, Duc Dang <dhdang@apm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, 2017-03-14 at 10:46 +0100, Linus Walleij wrote:
-> On Mon, Feb 20, 2017 at 5:15 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > Since gpiod_count() does not return 0 anymore, we don't need to
-> > shadow
-> > its error code and would safely propagate to the user.
-> > 
-> > While here, replace second parameter by NULL in order to prevent
-> > side
-> > effects on _DSD enabled firmware.
-> > 
-> > Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> As I understand it Andy, you're more or less default-maintainer for
-> drivers/platform/x86 so I can just merge this patch into the
-> GPIO tree with the rest?
+When CONFIG_PM_SLEEP is disabled, we get a warning about unused functions:
 
-Correct!
+drivers/gpio/gpio-xgene.c:155:12: warning: 'xgene_gpio_resume' defined but not used [-Wunused-function]
+ static int xgene_gpio_resume(struct device *dev)
+            ^~~~~~~~~~~~~~~~~
+drivers/gpio/gpio-xgene.c:142:12: warning: 'xgene_gpio_suspend' defined but not used [-Wunused-function]
+ static int xgene_gpio_suspend(struct device *dev)
 
+The warnings are harmless and can be avoided by simplifying the code and marking
+the functions as __maybe_unused.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Originally submitted on Feb 17, but it ended up not getting merged into v4.11-rc2
+and is still needed there for randconfig builds
+---
+ drivers/gpio/gpio-xgene.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
+index 40a8881c2ce8..f1c6ec17b90a 100644
+--- a/drivers/gpio/gpio-xgene.c
++++ b/drivers/gpio/gpio-xgene.c
+@@ -42,9 +42,7 @@ struct xgene_gpio {
+ 	struct gpio_chip	chip;
+ 	void __iomem		*base;
+ 	spinlock_t		lock;
+-#ifdef CONFIG_PM
+ 	u32			set_dr_val[XGENE_MAX_GPIO_BANKS];
+-#endif
+ };
+ 
+ static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
+@@ -138,8 +136,7 @@ static int xgene_gpio_dir_out(struct gpio_chip *gc,
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM
+-static int xgene_gpio_suspend(struct device *dev)
++static __maybe_unused int xgene_gpio_suspend(struct device *dev)
+ {
+ 	struct xgene_gpio *gpio = dev_get_drvdata(dev);
+ 	unsigned long bank_offset;
+@@ -152,7 +149,7 @@ static int xgene_gpio_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int xgene_gpio_resume(struct device *dev)
++static __maybe_unused int xgene_gpio_resume(struct device *dev)
+ {
+ 	struct xgene_gpio *gpio = dev_get_drvdata(dev);
+ 	unsigned long bank_offset;
+@@ -166,10 +163,6 @@ static int xgene_gpio_resume(struct device *dev)
+ }
+ 
+ static SIMPLE_DEV_PM_OPS(xgene_gpio_pm, xgene_gpio_suspend, xgene_gpio_resume);
+-#define XGENE_GPIO_PM_OPS	(&xgene_gpio_pm)
+-#else
+-#define XGENE_GPIO_PM_OPS	NULL
+-#endif
+ 
+ static int xgene_gpio_probe(struct platform_device *pdev)
+ {
+@@ -241,7 +234,7 @@ static struct platform_driver xgene_gpio_driver = {
+ 		.name = "xgene-gpio",
+ 		.of_match_table = xgene_gpio_of_match,
+ 		.acpi_match_table = ACPI_PTR(xgene_gpio_acpi_match),
+-		.pm     = XGENE_GPIO_PM_OPS,
++		.pm     = &xgene_gpio_pm,
+ 	},
+ 	.probe = xgene_gpio_probe,
+ };
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.9.0
