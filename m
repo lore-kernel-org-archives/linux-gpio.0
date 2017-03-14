@@ -1,37 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 5/5] pinctrl: sunxi: Add A64 R_PIO controller support
-Date: Tue, 14 Mar 2017 14:13:32 +0100
-Message-ID: <CACRpkdaebcgFRnCTq-FdOTS5D3tNYhwP139LO-EjBrh_odVAKw@mail.gmail.com>
-References: <20170301180930.13155-1-icenowy@aosc.xyz>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: sunxi: select GPIOLIB
+Date: Tue, 14 Mar 2017 14:15:58 +0100
+Message-ID: <CACRpkdawMd98EwnWjKbvsbMc0j_RjMG1qiJ5TGQC2KLLQuYOUw@mail.gmail.com>
+References: <20170228190815.10699-1-icenowy@aosc.xyz>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170301180930.13155-1-icenowy@aosc.xyz>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Icenowy Zheng <icenowy@aosc.xyz>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBEG2T7DAKGQEOASBCHA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170228190815.10699-1-icenowy-ymACFijhrKM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Mar 1, 2017 at 7:09 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
+On Tue, Feb 28, 2017 at 8:08 PM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
 
-> The A64 has a R_PIO pin controller, similar to the one found on the H3 SoC.
-> Add support for the pins controlled by the R_PIO controller.
+> Allwinner pin controllers are also GPIO controllers.
 >
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Currently, if GPIOLIB is forgot to be chosen, the build of
+> pinctrl-sunxi.c will fail for lacking a lot of gpiochip_* functions.
+>
+> Select GPIOLIB to ensure this driver can be built.
+>
+> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 > ---
-> Changes in v2:
+> This bug is found when I try to add sunxi drivers on an ARM64
+> allnoconfig, in order to prove that sunxi-ng ccu driver depends on
+> reset_controller framework.
+>
+> I proved the latter dependency, but how to satisfy it still needs
+> some discussion.
 
 Patch applied.
+
+This is the right thing to do.
+
+We used to have a restriction such that a pin control driver
+could not simply select GPIOLIB, because the selection had
+to be done from the platform instead.
+
+But we have fixed that! We can now select GPIOLIB
+directly from any driver that needs it.
 
 Yours,
 Linus Walleij
