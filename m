@@ -1,15 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: sunxi: refactor pinctrl choice selecting
- for ARM64
-Date: Tue, 14 Mar 2017 14:09:16 +0100
-Message-ID: <CACRpkdZzTFAn-Mkm+SUwoatbV3RzyqoSVMB0dqkNhuDsYY56AA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] dt-bindings: fix for Allwinner H5 pinctrl's
+ compatible
+Date: Tue, 14 Mar 2017 14:11:00 +0100
+Message-ID: <CACRpkdZMwNoD2CGe2Hy6OXoDcjiQah_JOndVyFDUbBpFim=1aQ@mail.gmail.com>
 References: <20170301180111.12365-1-icenowy@aosc.xyz>
- <20170301180111.12365-2-icenowy@aosc.xyz>
+ <20170301180111.12365-4-icenowy@aosc.xyz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170301180111.12365-2-icenowy@aosc.xyz>
+In-Reply-To: <20170301180111.12365-4-icenowy@aosc.xyz>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,12 +25,13 @@ List-Id: linux-gpio@vger.kernel.org
 
 On Wed, Mar 1, 2017 at 7:01 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
 
-> ARM64 Allwinner SoCs used to have every pinctrl driver selected in
-> ARCH_SUNXI. Change this to make their default value to (ARM64 &&
-> ARCH_SUNXI).
+> The compatible for Allwinner H5 pin controller is wrong written as
+> allwinner,sun50i-h5-r-pinctrl, however, it's really a generic pinctrl
+> rather than a "r" one.
+>
+> Fix this compatible string.
 >
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
-> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
 Patch applied with Maxime's ACK.
 
