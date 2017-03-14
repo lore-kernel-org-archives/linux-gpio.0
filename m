@@ -1,46 +1,72 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
- calls
-Date: Tue, 14 Mar 2017 16:32:00 +0100
-Message-ID: <CACRpkdZyey3jyApevpe1tDyFdPut0J+7ZeiyJQgdaWJLr09mrQ@mail.gmail.com>
-References: <20170303191248.wlwjri55ip2x5pgg@pengutronix.de>
- <CAMuHMdXFrwa2jCVDb+8ecqgARLG0oGrPp9pLs0b6vEiWeKJ+uA@mail.gmail.com>
- <20170303194414.n76tr3oa2mlrzjre@pengutronix.de>
- <CAMuHMdXiz5hqW=fm-2H1aNKq_gXD2o0508jD2XjxYUvKoEvHdw@mail.gmail.com>
- <20170304174819.esxhwwbsxzuq3vyc@pengutronix.de>
- <CAMuHMdX8BEnaTtNFAbcvfHwJH=oPUmQ2NB+jfouGyhQpJ_m_4A@mail.gmail.com>
- <20170306085842.yijkfpqi3adcedmm@pengutronix.de>
- <CAMuHMdV2_vbocY4wCzvYtPAaF+QEX_Y4g6qVu5EqEBf5AnFdaw@mail.gmail.com>
- <20170306093043.ay4dz3ehp3aakwxh@pengutronix.de>
- <CAMuHMdWQuvANNU14A7NQuzv6AFp04bq4DG_oc7w9h4wUrG+4aQ@mail.gmail.com>
- <20170306100220.droey65uq2ew3mzu@pengutronix.de>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: meson: gxl: add the missing PWM pin definitions
+Date: Tue, 14 Mar 2017 16:42:37 +0100
+Message-ID: <CACRpkdbGfGUhnAQz=9xeFnD2hF6m_xXacu8mZiwte-OCSDMo9w@mail.gmail.com>
+References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+ <20170304212318.27076-2-martin.blumenstingl@googlemail.com>
+ <1488811357.2420.18.camel@baylibre.com> <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Cc: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gTW9uLCBNYXIgNiwgMjAxNyBhdCAxMTowMiBBTSwgVXdlIEtsZWluZS1Lw7ZuaWcKPHUua2xl
-aW5lLWtvZW5pZ0BwZW5ndXRyb25peC5kZT4gd3JvdGU6Cgo+PiBBbnl3YXksIGZvciBzaC1zY2ku
-YywgcGxhdGZvcm1zIGVpdGhlciBoYXZlIERUIGFuZCBHUElPTElCLCBvciB0aGV5IGRvIG5vdAo+
-PiBuZWVkIG1jdHJsLWdwaW8uCj4KPiBTbyB3ZSdyZSBpbiBhZ3JlZW1lbnQgbm93IHRoYXQgSEFM
-RkdQSU9MSUIgaXMgdGhlIHdheSB0byBnbz8KPiBMaW51cywgd2hhdCBkbyB5b3UgdGhpbms/CgpJ
-J20gdG9vIHN3YW1wZWQgaW4gbWFpbCBhbmQgd29yayB0byBmaWd1cmUgdGhpcyBvdXQgcmlnaHQg
-bm93LiBJIGd1ZXNzCkkgd2lsbCBnZXQgYmFjayB0byBpdC4uLgoKSSBuZWVkIG1vcmUgYWN0aXZl
-IGNvbWFpbnRhaW5lcnMgSSBndWVzcywgaW50ZXJlc3RlZCBpbiB0aGUgam9iPyA7KQoKWW91cnMs
-CkxpbnVzIFdhbGxlaWoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlz
-dHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Thu, Mar 9, 2017 at 8:47 PM, Martin Blumenstingl
+<martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
+> On Mon, Mar 6, 2017 at 3:42 PM, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
+>> On Sat, 2017-03-04 at 22:23 +0100, Martin Blumenstingl wrote:
+
+>>> +     FUNCTION(pwm_f_clk),
+>>> +     FUNCTION(pwm_f_x),
+>>
+>> I wonder if having function named "pwm_f_clk" really makes sense ?
+>> Shouldn't it be just "pwm_f" ? This is real function, isn't it ?
+>> The actual pin used will be provided in the dt. Here, I suppose we
+>> could have this:
+>>
+>> +static const char * const pwm_f_groups[] = {
+>> +       "pwm_f_x", "pwm_f_clk",
+>> +};
+>>
+>> Has far as I can see, on meson arch, the function does not carry much
+>> information anyway, except for prints.
+>>
+>> To be clear, I'm not questioning this change in particular. It looks
+>> good, and follows what has been done in the past on meson. I know we
+>> have been this a lot already, but I'm questioning whether we should
+>> continue to do so ?
+>>
+>> I asking because I also have a lot case like this coming up on audio
+>> for gxl and gxbb, where the same function can use different pins.
+>
+> could you please look into Jerome's question?
+> personally I'm fine with either way, and changing my patch would be
+> quite trivial. but I'd like to know what's "the way to go" before
+> changing anything (and reverting that afterwards again).
+
+I don't understand the question really.
+
+I am not an expert on this system, if the people working with it
+cannot tell a function from a group I don't know who can... certainly
+not me.
+
+What I can say is that pincontrol combines functions and groups to
+states using a mapping. The functions should be something you poke
+into a register, the groups are looser defined but may also be a
+character of the hardware, but more usual a character of the
+intended electronic usecase. Groups contain 1..n pins and can
+be combined with some applicable functions.
+
+Please re-read Documentation/pinctrl.txt very closely if anything is
+unclear, I really put a lot of hours into getting that right. Especially
+reexamine "Pinmux conventions".
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
