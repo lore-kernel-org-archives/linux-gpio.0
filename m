@@ -1,41 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
-Date: Tue, 14 Mar 2017 14:36:24 +0100
-Message-ID: <CACRpkdbuX7f58S_sTBMVEusX2g1iJ4T-cw9efJLFSYb8fV=EDA@mail.gmail.com>
-References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
- <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com> <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
- <4369285.zq7cJYMXhu@phil>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] pinctrl: rockchip: Add input schmitt support for
+ rk3328
+Date: Tue, 14 Mar 2017 14:39:30 +0100
+Message-ID: <CACRpkdbuRLahVf=ZBJ6XqGShjsYunPFTky9PF5sNRLjPyoc7Kw@mail.gmail.com>
+References: <1488438684-1801-1-git-send-email-david.wu@rock-chips.com>
+ <1488438684-1801-3-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:34199 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752492AbdCNNg1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 09:36:27 -0400
-Received: by mail-io0-f174.google.com with SMTP id b140so10341380iof.1
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 06:36:26 -0700 (PDT)
-In-Reply-To: <4369285.zq7cJYMXhu@phil>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1488438684-1801-3-git-send-email-david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Tao Huang <huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Shawn Lin <shawn.lin@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Feb 23, 2017 at 4:00 PM, Heiko Stuebner <heiko@sntech.de> wrote:
-> Am Donnerstag, 23. Februar 2017, 11:15:56 CET schrieb Linus Walleij:
+On Thu, Mar 2, 2017 at 8:11 AM, David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org> wrote:
 
->> Nobody gets hurt. Just rename everything to avoid confusion.
->> Just my =E2=82=AC0.01.
->>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> Tell me if I can merge a subset of the patches to the pinctrl tree.
+> From: "david.wu" <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 >
-> I did provide Reviewed-bys for them, so you should be able to merge the
-> pinctrl patches (4+5) at your convenience :-)
+> Signed-off-by: david.wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
-They are conflicting right now, but I will merge it when I get a v4.11-rc1
-based series.
+Patch applied.
 
 Yours,
 Linus Walleij
