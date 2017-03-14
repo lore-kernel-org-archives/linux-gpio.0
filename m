@@ -1,49 +1,45 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1] gpio: acpi: Add managed variant of
- acpi_dev_add_driver_gpios()
-Date: Tue, 14 Mar 2017 14:27:06 +0200
-Message-ID: <1489494426.20145.237.camel@linux.intel.com>
-References: <20170302134805.81705-1-andriy.shevchenko@linux.intel.com>
-         <CACRpkdYZVY0jYLkuH3Ti7SUnV1Dz_SkkLKv0cyZdvVjiGOR9dQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/4] platform/x86: surface3_button: Propagate error
+ from gpiod_count()
+Date: Tue, 14 Mar 2017 14:28:11 +0200
+Message-ID: <1489494491.20145.238.camel@linux.intel.com>
+References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com>
+         <20170220161549.39490-4-andriy.shevchenko@linux.intel.com>
+         <CACRpkdYiHBLuKXRWhynwkYHONy0VoV4_x68Pc4d174EZe-tNpA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYZVY0jYLkuH3Ti7SUnV1Dz_SkkLKv0cyZdvVjiGOR9dQ@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:47726 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750780AbdCNM2R (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 14 Mar 2017 08:28:17 -0400
+In-Reply-To: <CACRpkdYiHBLuKXRWhynwkYHONy0VoV4_x68Pc4d174EZe-tNpA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, 2017-03-14 at 10:58 +0100, Linus Walleij wrote:
-> On Thu, Mar 2, 2017 at 2:48 PM, Andy Shevchenko
+On Tue, 2017-03-14 at 10:46 +0100, Linus Walleij wrote:
+> On Mon, Feb 20, 2017 at 5:15 PM, Andy Shevchenko
 > <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> > Introduce device managed variant of acpi_dev_add_driver_gpios() and
-> > its
-> > counterpart acpi_dev_remove_driver_gpios().
+> > Since gpiod_count() does not return 0 anymore, we don't need to
+> > shadow
+> > its error code and would safely propagate to the user.
 > > 
-> > The functions in most cases are used in driver's ->probe() and
-> > ->remove() callbacks, that's why it's useful to have managed variant
-> > of
-> > them.
+> > While here, replace second parameter by NULL in order to prevent
+> > side
+> > effects on _DSD enabled firmware.
 > > 
+> > Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> > 
-> > This is supposed to go through GPIO tree.
-> > 
-> > Linus, can you create an immutable branch that other subsystems can
-> > use
-> > it if needed?
 > 
-> I have created ib-acpi-devm in the GPIO tree based on v4.11-rc1,
-> applied
-> this patch and merged that into my devel branch.
-> 
-> Anyone who needs it can grab that branch, I will push it out later.
+> As I understand it Andy, you're more or less default-maintainer for
+> drivers/platform/x86 so I can just merge this patch into the
+> GPIO tree with the rest?
 
-Thanks!
+Correct!
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
