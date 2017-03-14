@@ -1,97 +1,32 @@
-From: <xdi@sok.fi>
-Subject: 11532 linux-gpio
-Date: Tue, 14 Mar 2017 01:51:16 -0000
-Message-ID: <148945627604.30067.13885055905998014508@dslavangard.ru>
-Reply-To: <xdi@sok.fi>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/4] gpio: acpi: Don't return 0 on acpi_gpio_count()
+Date: Tue, 14 Mar 2017 10:43:02 +0100
+Message-ID: <CACRpkdYcPnh-2JLA658RW1RmTcMtRORkDrWe8pgEtmKXE-XSWQ@mail.gmail.com>
+References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com> <20170220161549.39490-2-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="1716516.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ppp78-36-106-171.pppoe.komi.dslavangard.ru ([78.36.106.171]:53205
-        "HELO dslavangard.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S1751655AbdCNBvU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 13 Mar 2017 21:51:20 -0400
-Content-Disposition: attachment
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20170220161549.39490-2-andriy.shevchenko@linux.intel.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio <linux-gpio@vger.kernel.org>
 
-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
+On Mon, Feb 20, 2017 at 5:15 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+
+> It's unusual to have error checking like (ret <= 0) in cases when
+> counting GPIO resources. In case when it's mandatory we propagate the
+> error (-ENOENT), otherwise we don't use the result.
+>
+> This makes consistent behaviour across all possible variants called in
+> gpiod_count().
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Mika/Rafael, can you look at this patch?
+
+(Andy: sorry for late reply, busy merge window...)
+
+Yours,
+Linus Walleij
