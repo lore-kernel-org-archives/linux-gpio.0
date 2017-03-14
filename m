@@ -1,36 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
-Date: Tue, 14 Mar 2017 14:35:31 +0100
-Message-ID: <CACRpkdbWxRVf5aVJYFMzYEzY+UvK3-vk59U=dNdK113wYOpkOw@mail.gmail.com>
-References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
- <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+Subject: Re: [PATCH 0/7] Rename RK1108 to RV1108
+Date: Tue, 14 Mar 2017 14:36:24 +0100
+Message-ID: <CACRpkdbuX7f58S_sTBMVEusX2g1iJ4T-cw9efJLFSYb8fV=EDA@mail.gmail.com>
+References: <1486983566-32265-1-git-send-email-andy.yan@rock-chips.com>
+ <0bbc4151-d954-1a27-48c3-1e8c9cb9e16f@rock-chips.com> <CACRpkdbNbGvwUq3uLgekimOwzBZCXf37JW9LCCqLm1so=CMNrw@mail.gmail.com>
+ <4369285.zq7cJYMXhu@phil>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:34199 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752492AbdCNNg1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 09:36:27 -0400
+Received: by mail-io0-f174.google.com with SMTP id b140so10341380iof.1
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 06:36:26 -0700 (PDT)
+In-Reply-To: <4369285.zq7cJYMXhu@phil>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Shawn Lin <shawn.lin@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Feb 23, 2017 at 11:12 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+On Thu, Feb 23, 2017 at 4:00 PM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Donnerstag, 23. Februar 2017, 11:15:56 CET schrieb Linus Walleij:
 
-> Some pinctrls share memory regions, and devm_ioremap_resource does not
-> allow to share resources, in opposition to devm_ioremap.
-> This patch restores back usage of devm_ioremap function, but with proper
-> error handling and logging.
+>> Nobody gets hurt. Just rename everything to avoid confusion.
+>> Just my =E2=82=AC0.01.
+>>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> Tell me if I can merge a subset of the patches to the pinctrl tree.
 >
-> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> v2:
-> - added platform_get_resource error check (thanks to Krzysztof)
+> I did provide Reviewed-bys for them, so you should be able to merge the
+> pinctrl patches (4+5) at your convenience :-)
 
-This conflicts with the revert that Marek urged me to do for the
-fixes branch.
-
-Please check the resulting tree on my fixes branch and rebase on
-that.
+They are conflicting right now, but I will merge it when I get a v4.11-rc1
+based series.
 
 Yours,
 Linus Walleij
