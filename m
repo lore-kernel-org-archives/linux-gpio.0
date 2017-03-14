@@ -1,52 +1,38 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: sunxi: select GPIOLIB
-Date: Tue, 14 Mar 2017 14:15:58 +0100
-Message-ID: <CACRpkdawMd98EwnWjKbvsbMc0j_RjMG1qiJ5TGQC2KLLQuYOUw@mail.gmail.com>
-References: <20170228190815.10699-1-icenowy@aosc.xyz>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] gpio:mcp23s08 Fixed missing interrupts
+Date: Tue, 14 Mar 2017 14:19:57 +0100
+Message-ID: <CACRpkdae8rBKrbny3T47FXx+7=hpzDi7kNvQ-VSOjkvsW=zz3w@mail.gmail.com>
+References: <1487777658-12951-1-git-send-email-robert.middleton@rm5248.com> <1487777658-12951-2-git-send-email-robert.middleton@rm5248.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBEG2T7DAKGQEOASBCHA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170228190815.10699-1-icenowy-ymACFijhrKM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Andre Przywara <andre.przywara-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f172.google.com ([209.85.223.172]:32880 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751720AbdCNNUJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 09:20:09 -0400
+Received: by mail-io0-f172.google.com with SMTP id f84so102743988ioj.0
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 06:20:03 -0700 (PDT)
+In-Reply-To: <1487777658-12951-2-git-send-email-robert.middleton@rm5248.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: robert.middleton@rm5248.com
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Feb 28, 2017 at 8:08 PM, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org> wrote:
+On Wed, Feb 22, 2017 at 4:34 PM,  <robert.middleton@rm5248.com> wrote:
 
-> Allwinner pin controllers are also GPIO controllers.
+> From: Robert Middleton <robert.middleton@rm5248.com>
 >
-> Currently, if GPIOLIB is forgot to be chosen, the build of
-> pinctrl-sunxi.c will fail for lacking a lot of gpiochip_* functions.
+> When an interrupt occurs on an MCP23S08 chip, the INTF register will only
+> contain one bit as causing the interrupt.  If more than two pins change at
+> the same time on the chip, this causes one of the pins to not be reported.
+> This patch fixes the logic for checking if a pin has changed, so that
+> multiple pins will always cause more than one change.
 >
-> Select GPIOLIB to ensure this driver can be built.
->
-> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-> ---
-> This bug is found when I try to add sunxi drivers on an ARM64
-> allnoconfig, in order to prove that sunxi-ng ccu driver depends on
-> reset_controller framework.
->
-> I proved the latter dependency, but how to satisfy it still needs
-> some discussion.
+> Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
 
-Patch applied.
-
-This is the right thing to do.
-
-We used to have a restriction such that a pin control driver
-could not simply select GPIOLIB, because the selection had
-to be done from the platform instead.
-
-But we have fixed that! We can now select GPIOLIB
-directly from any driver that needs it.
+OMG that looks complicated. But good commit with proper comments,
+so patch applied for fixes. I had to do some fuzzing patch -p1 < foo.patch
+so please check the result.
 
 Yours,
 Linus Walleij
