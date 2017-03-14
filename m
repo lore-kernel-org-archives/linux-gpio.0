@@ -1,84 +1,38 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [RESEND PATCH] gpio: xgene: mark PM functions as __maybe_unused
-Date: Tue, 14 Mar 2017 13:57:38 +0100
-Message-ID: <20170314125748.734574-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Axel Lin <axel.lin@ingics.com>, Duc Dang <dhdang@apm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: sunxi: refactor pinctrl choice selecting
+ for ARM64
+Date: Tue, 14 Mar 2017 14:09:16 +0100
+Message-ID: <CACRpkdZzTFAn-Mkm+SUwoatbV3RzyqoSVMB0dqkNhuDsYY56AA@mail.gmail.com>
+References: <20170301180111.12365-1-icenowy@aosc.xyz>
+ <20170301180111.12365-2-icenowy@aosc.xyz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170301180111.12365-2-icenowy@aosc.xyz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Icenowy Zheng <icenowy@aosc.xyz>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-When CONFIG_PM_SLEEP is disabled, we get a warning about unused functions:
+On Wed, Mar 1, 2017 at 7:01 PM, Icenowy Zheng <icenowy@aosc.xyz> wrote:
 
-drivers/gpio/gpio-xgene.c:155:12: warning: 'xgene_gpio_resume' defined but not used [-Wunused-function]
- static int xgene_gpio_resume(struct device *dev)
-            ^~~~~~~~~~~~~~~~~
-drivers/gpio/gpio-xgene.c:142:12: warning: 'xgene_gpio_suspend' defined but not used [-Wunused-function]
- static int xgene_gpio_suspend(struct device *dev)
+> ARM64 Allwinner SoCs used to have every pinctrl driver selected in
+> ARCH_SUNXI. Change this to make their default value to (ARM64 &&
+> ARCH_SUNXI).
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.xyz>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-The warnings are harmless and can be avoided by simplifying the code and marking
-the functions as __maybe_unused.
+Patch applied with Maxime's ACK.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Originally submitted on Feb 17, but it ended up not getting merged into v4.11-rc2
-and is still needed there for randconfig builds
----
- drivers/gpio/gpio-xgene.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpio/gpio-xgene.c b/drivers/gpio/gpio-xgene.c
-index 40a8881c2ce8..f1c6ec17b90a 100644
---- a/drivers/gpio/gpio-xgene.c
-+++ b/drivers/gpio/gpio-xgene.c
-@@ -42,9 +42,7 @@ struct xgene_gpio {
- 	struct gpio_chip	chip;
- 	void __iomem		*base;
- 	spinlock_t		lock;
--#ifdef CONFIG_PM
- 	u32			set_dr_val[XGENE_MAX_GPIO_BANKS];
--#endif
- };
- 
- static int xgene_gpio_get(struct gpio_chip *gc, unsigned int offset)
-@@ -138,8 +136,7 @@ static int xgene_gpio_dir_out(struct gpio_chip *gc,
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--static int xgene_gpio_suspend(struct device *dev)
-+static __maybe_unused int xgene_gpio_suspend(struct device *dev)
- {
- 	struct xgene_gpio *gpio = dev_get_drvdata(dev);
- 	unsigned long bank_offset;
-@@ -152,7 +149,7 @@ static int xgene_gpio_suspend(struct device *dev)
- 	return 0;
- }
- 
--static int xgene_gpio_resume(struct device *dev)
-+static __maybe_unused int xgene_gpio_resume(struct device *dev)
- {
- 	struct xgene_gpio *gpio = dev_get_drvdata(dev);
- 	unsigned long bank_offset;
-@@ -166,10 +163,6 @@ static int xgene_gpio_resume(struct device *dev)
- }
- 
- static SIMPLE_DEV_PM_OPS(xgene_gpio_pm, xgene_gpio_suspend, xgene_gpio_resume);
--#define XGENE_GPIO_PM_OPS	(&xgene_gpio_pm)
--#else
--#define XGENE_GPIO_PM_OPS	NULL
--#endif
- 
- static int xgene_gpio_probe(struct platform_device *pdev)
- {
-@@ -241,7 +234,7 @@ static struct platform_driver xgene_gpio_driver = {
- 		.name = "xgene-gpio",
- 		.of_match_table = xgene_gpio_of_match,
- 		.acpi_match_table = ACPI_PTR(xgene_gpio_acpi_match),
--		.pm     = XGENE_GPIO_PM_OPS,
-+		.pm     = &xgene_gpio_pm,
- 	},
- 	.probe = xgene_gpio_probe,
- };
--- 
-2.9.0
+Yours,
+Linus Walleij
