@@ -1,78 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
-Date: Tue, 14 Mar 2017 11:16:36 +0100
-Message-ID: <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com> <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
- <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
+Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()
+Date: Tue, 14 Mar 2017 11:29:28 +0100
+Message-ID: <CACRpkda1tALy3rmk7FebnR3Xg4WOuUc0Gv1xAmxkd+RLhJ_1VQ@mail.gmail.com>
+References: <20170125140321.23911-1-weiyj.lk@gmail.com> <20170205155849.4362-1-weiyj.lk@gmail.com>
+ <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
+ <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com> <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 2, 2017 at 11:19 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+On Tue, Feb 21, 2017 at 2:49 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 
-> So actually, I have been thinking about this some more, and while this
-> definitively fixes my original problem with pinctrl-single, I just had
-> to make another driver (sdhci-brcmstb.c) pinctrl aware. And then again,
-> same thing, it has got just one "default" state, so when we call
-> pinctrl_select_state() during driver resume, nothing happens.
+> Sadly this patch breaks support for IMEM pinctrl block on Exynos5433/TM2
+> and it took us some time to find the source of the problem.
 >
-> So, with that in mind, it seems to me like we may actually just want to
-> remove the p->state == state statement entirely, even though that's an
-> optimization....
+> devm_ioremap_resource() is not functionally a full equivalent of
+> devm_ioremap(). The problem here is that registers for IMEM and ALIVE
+> pin controllers are shared and both devices have <0x11090000 0x1000>
+> range in their reg property. devm_ioremap_resource() maps given
+> resource exclusively for the device, while devm_ioremap() allows
+> non-exclusive mappings.
 >
-> ... or, what we could do is, expose a version of pinctrl_force_default
-> that takes a struct pinctrl reference instead of a struct pinctrl_dev
-> reference and named differently of course.
->
-> Thoughts?
+> This patch has to be reverted asap.
 
-The root problem that the patch is trying to solve is that the hardware
-loose state when going to sleep, without the pin control core
-being informed about this, correct?
-
-And that is why the state is then "forced" with this patch, when
-setting default state: the core think we are already in "default"
-state, and thus the hack force it to be written down to the hardware
-again.
-
-But it is IMO just papering over the real bug: that the core does
-not know that the state is lost.
-
-What I think is the proper solution is to add a callback to switch
-the state in the core.
-
-The most obvious would be to use the API as many already do:
-define "sleep" states in the core, and switch to these before
-going to sleep. If CONFIG_PM is available simply by calling
-pinctrl_pm_select_sleep_state() in the driver suspend() callback.
-
-I think this is the most intuitive and clean solution.
-
-Alternatively we would add a function to set the pinctrl handle to
-an "unknown" state, so that when we resume, the pinctrl core at
-least knows that we are not in "default" state anymore, so that
-"default" is applied.
-
-So then we would add:
-
-/**
- * pinctrl_set_unknown_state() - tell the pinctrl core that we lost the state
- */
-void pinctrl_set_unknown_state(struct device *dev) {
-   struct dev_pin_info *pins = dev->pins;
-
-   if (!pins)
-        return 0;
-
-   pins->p->state = NULL;
-}
-
-I imagine this would give the right results on the suspend path.
+Patch reverted for fixes, copying the above text as commit message.
 
 Yours,
 Linus Walleij
