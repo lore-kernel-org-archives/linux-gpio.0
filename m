@@ -1,90 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
- for imx6sll
-Date: Tue, 14 Mar 2017 14:54:24 +0100
-Message-ID: <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
-References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
- <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
- <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+Subject: Re: [PATCH RFT] gpio: exar: Set proper output level in exar_direction_output
+Date: Tue, 14 Mar 2017 14:56:15 +0100
+Message-ID: <CACRpkdZvwrf__eX6eMq=k3HU+=ErFZ9xSkJC4R2+FUw-fBNsXw@mail.gmail.com>
+References: <20170226143658.24036-1-axel.lin@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:36029 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbdCNNy1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 09:54:27 -0400
-Received: by mail-it0-f50.google.com with SMTP id w124so31028789itb.1
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 06:54:26 -0700 (PDT)
-In-Reply-To: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:34489 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751607AbdCNN4S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 09:56:18 -0400
+Received: by mail-io0-f182.google.com with SMTP id b140so10733427iof.1
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 06:56:17 -0700 (PDT)
+In-Reply-To: <20170226143658.24036-1-axel.lin@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Feb 16, 2017 at 8:51 AM, Dong Aisheng <dongas86@gmail.com> wrote:
-> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Sun, Feb 26, 2017 at 3:36 PM, Axel Lin <axel.lin@ingics.com> wrote:
 
->> I would consider augmenting the code in the driver to handle the generic
->> bindings *in addition* to the old legacy bindings, and use those over these
->> random custom bits.
-(...)
-> Generic binding only supports parsing strings for pins and function
-> from dts right now, that means we need back to the old way of hardcoding
-> all register bits in driver which we actually chose to move out since
-> the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
-
-Aha I see.
-
-> One option is using macro definitions instead of raw data as pinctrl-single
-> users as OMAP.
-> e.g.
-> art2_pins: pinmux_uart2_pins {
->         pinctrl-single,pins = <
->                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
->  /* uart2_cts.uart2_cts */
->         ........
+> Current code does not set output level in exar_direction_output, fix it.
+> Also move the direction_output/direction_input code block to avoid forward
+> declaration for exar_set_value().
 >
-> For this way, no driver changes required, just replace the raw data by macro
-> in device tree. But i wonder this may not be your original intention although
-> it's the easiest way for us.
-> Anyway, if you agree, we probably would prefer this way.
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+> Hi Sudip,
+> I don't have this h/w, so please review and test if this patch works.
+> thanks,
+> Axel
 
-That make it look better than it looks today, but...
-
-> Another option is partially convert to generic binding for only pad
-> configuration
-> part. e.g.
-> pinctrl_usdhc1: usdhc1grp {
->         fsl,pins = <
->                 MX7D_PAD_SD1_CMD__SD1_CMD
->                 MX7D_PAD_SD1_CLK__SD1_CLK
->                 MX7D_PAD_SD1_DATA0__SD1_DATA0
->                 ...
->         >;
->         bias-pull-up = <47KOHM>;
->         drive-strength = <130OHM>;
->         slew-rate = <FAST>;
->         speed = <50MHZ>;
->         ....
-> };
-> (Some of the property still not supported or not the same as generic
-> binding right now)
-
-This looks totally awesome, so if you could do this, it would be even
-better.
-
-> This way requires no big drivers changes and only extend the driver
-> to support the generic pinctrl dt configuration properties.
-
-Yep, you should be able to support both the old and the new
-way of configuring the pins this way I guess.
-
-> And it also fix the raw data issues and looks like more applicable than the full
-> migration.
->
-> So would you be willing to accept it?
-
-Anything that move us closer to the generic bindings will be accepted.
+Patch applied.
 
 Yours,
 Linus Walleij
