@@ -1,32 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: ti: The IODelay driver is a DRA7xxx feature so
- depend on that SoC
-Date: Tue, 14 Mar 2017 16:05:26 +0100
-Message-ID: <CACRpkdawVCHcTbXqOa3DTOUn-xbdBX6HhWkub+8Vh9uU38fzww@mail.gmail.com>
-References: <20170302174636.6662-1-pbrobinson@gmail.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] pinctrl: rockchip: add irq_enable & irq_disable ops
+Date: Tue, 14 Mar 2017 16:06:40 +0100
+Message-ID: <1586348.DzvzNKqtLI@diego>
+References: <1488434212-6567-1-git-send-email-jeffy.chen@rock-chips.com> <CACRpkdYQawufFw+TX8MX0qbAXOy9rJ=uT5qCG8kmfOON2k7yMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:36766 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752985AbdCNPF2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 11:05:28 -0400
-Received: by mail-io0-f182.google.com with SMTP id l7so1120610ioe.3
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 08:05:27 -0700 (PDT)
-In-Reply-To: <20170302174636.6662-1-pbrobinson@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYQawufFw+TX8MX0qbAXOy9rJ=uT5qCG8kmfOON2k7yMw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Brian Norris <briannorris@chromium.org>, Douglas Anderson <dianders@chromium.org>, Tomasz Figa <tfiga@google.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Robinson <pbrobinson@gmail.com>
-Cc: Nishanth Menon <nm@ti.com>, Tony Lindgren <tony@atomide.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 2, 2017 at 6:46 PM, Peter Robinson <pbrobinson@gmail.com> wrote:
+Hi Linus,
 
-> As the IODelay driver is a hardware feature of the  DRA7xxx SoC
-> depend on that SoC and compile test.
->
-> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+Am Dienstag, 14. März 2017, 16:03:48 CET schrieb Linus Walleij:
+> On Thu, Mar 2, 2017 at 6:56 AM, Jeffy Chen <jeffy.chen@rock-chips.com> 
+wrote:
+> > Currently we are trying to enable/disable the clk of irq's gpio bank when
+> > unmask/mask irq. But the kernel's "lazy disable approach" will skip
+> > masking
+> > irq when the irq chip doesn't support irq_disable ops.
+> > 
+> > So we may hit this case:
+> >         irq_enable-> enable clk
+> >         irq_disable-> noop
+> >         irq_enable-> enable clk again
+> >         irq_disable-> noop
+> > 
+> > Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> 
+> Heiko, can you look at this patch?
 
-Patch applied for fixes with Tony's ACK.
+This (and all the other pending pinctrl patches) are in my queue, but right 
+now I'm still hunting rockchip regressions in 4.11-rc, so haven't found the 
+time to review yet.
 
-Yours,
-Linus Walleij
+
+Heiko
