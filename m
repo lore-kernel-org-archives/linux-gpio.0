@@ -1,155 +1,32 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 3/3] mfd: wm831x: Add device tree binding document
-Date: Tue, 14 Mar 2017 14:59:35 +0000
-Message-ID: <20170314145935.3wy3ximhtuhw3fgc@dell>
-References: <1488818804-9406-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1488818804-9406-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: rockchip: add irq_enable & irq_disable ops
+Date: Tue, 14 Mar 2017 16:03:48 +0100
+Message-ID: <CACRpkdYQawufFw+TX8MX0qbAXOy9rJ=uT5qCG8kmfOON2k7yMw@mail.gmail.com>
+References: <1488434212-6567-1-git-send-email-jeffy.chen@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:35242 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbdCNO7k (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 10:59:40 -0400
-Received: by mail-wm0-f53.google.com with SMTP id v186so66156150wmd.0
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 07:59:39 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1488818804-9406-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1488434212-6567-1-git-send-email-jeffy.chen@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeffy Chen <jeffy.chen@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Brian Norris <briannorris@chromium.org>, Douglas Anderson <dianders@chromium.org>, Tomasz Figa <tfiga@google.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-On Mon, 06 Mar 2017, Charles Keepax wrote:
+On Thu, Mar 2, 2017 at 6:56 AM, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
 
-> Add a device tree binding document for the wm831x series of PMICs.
-> Currently only support for the registering the device and the GPIOs are
-> actually implemented in the driver.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
-> 
-> Changes since v2:
->  - Flesh the binding some more with some additional features of the device,
->    although these are not yet implemented in the code.
-> 
->  Documentation/devicetree/bindings/mfd/wm831x.txt | 81 ++++++++++++++++++++++++
->  MAINTAINERS                                      |  1 +
->  2 files changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/wm831x.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/wm831x.txt b/Documentation/devicetree/bindings/mfd/wm831x.txt
-> new file mode 100644
-> index 0000000..680ac18
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/wm831x.txt
-> @@ -0,0 +1,81 @@
-> +Cirrus Logic/Wolfson Microelectronics wm831x PMICs
-> +
-> +System PMICs with a wide range of additional features.
-> +
-> +Required properties:
-> +
-> +  - compatible : One of the following chip-specific strings:
-> +        "wlf,wm8310"
-> +        "wlf,wm8311"
-> +        "wlf,wm8312"
-> +        "wlf,wm8320"
-> +        "wlf,wm8321"
-> +        "wlf,wm8325"
-> +        "wlf,wm8326"
-> +
-> +  - reg : I2C slave address when connected using I2C, chip select number
-> +    when using SPI.
-> +
-> +  - gpio-controller : Indicates this device is a GPIO controller.
-> +  - #gpio-cells : Must be 2. The first cell is the pin number and the
-> +    second cell is used to specify optional parameters (currently unused).
+> Currently we are trying to enable/disable the clk of irq's gpio bank when
+> unmask/mask irq. But the kernel's "lazy disable approach" will skip masking
+> irq when the irq chip doesn't support irq_disable ops.
+>
+> So we may hit this case:
+>         irq_enable-> enable clk
+>         irq_disable-> noop
+>         irq_enable-> enable clk again
+>         irq_disable-> noop
+>
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 
-Then why not "must be 1", if the second cell is unused?
+Heiko, can you look at this patch?
 
-> +  - interrupts : The interrupt line the /IRQ signal for the device is
-> +    connected to.
-
-What's with the '/'?
-
-> +  - interrupt-parent : The parent interrupt controller.
-> +
-> +  - interrupt-controller : wm831x devices contain interrupt controllers and
-> +    may provide interrupt services to other devices.
-> +  - #interrupt-cells: Must be 2. The first cell is the IRQ number, and the
-> +    second cell is the flags, encoded as the trigger masks from
-> +    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-
-Please use the succinct "../../" format.
-
-> +Optional sub-nodes:
-> +  - regulators : Contains sub-nodes for each of the regulators supplied by
-> +    the device. The regulators are bound using their names listed below:
-> +
-> +    dcdc1 : DCDC1
-> +    dcdc2 : DCDC2
-> +    dcdc3 : DCDC3
-> +    dcdc4 : DCDC3
-> +    isink1 : ISINK1
-> +    isink2 : ISINK2
-> +    ldo1 : LDO1
-> +    ldo2 : LDO2
-> +    ldo3 : LDO3
-> +    ldo4 : LDO4
-> +    ldo5 : LDO5
-> +    ldo7 : LDO7
-> +    ldo11 : LDO11
-> +
-> +    The bindings details of each regulator can be found in:
-> +    Documentation/devicetree/bindings/regulator/regulator.txt
-
-As above.
-
-> +Example:
-> +
-> +wm8310: pmic@36 {
-> +	compatible = "wlf,wm8310";
-> +	reg = <0x36>;
-> +
-> +	gpio-controller;
-> +	#gpio-cells = <2>;
-> +
-> +	interrupts = <347>;
-> +	interrupt-parent = <&gic>;
-> +
-> +	interrupt-controller;
-> +	#interrupt-cells = <2>;
-> +
-> +	regulators {
-> +		dcdc1: dcdc1 {
-> +			regulator-name = "DCDC1";
-> +			regulator-min-microvolt = <600000>;
-> +			regulator-max-microvolt = <600000>;
-> +		};
-> +		ldo1: ldo1 {
-> +			regulator-name = "LDO1";
-> +			regulator-min-microvolt = <1700000>;
-> +			regulator-max-microvolt = <1700000>;
-> +		};
-> +	};
-> +};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2d8ca28..48fdc82 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13363,6 +13363,7 @@ F:	Documentation/hwmon/wm83??
->  F:	Documentation/devicetree/bindings/extcon/extcon-arizona.txt
->  F:	Documentation/devicetree/bindings/regulator/arizona-regulator.txt
->  F:	Documentation/devicetree/bindings/mfd/arizona.txt
-> +F:	Documentation/devicetree/bindings/mfd/wm831x.txt
->  F:	arch/arm/mach-s3c64xx/mach-crag6410*
->  F:	drivers/clk/clk-wm83*.c
->  F:	drivers/extcon/extcon-arizona.c
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Yours,
+Linus Walleij
