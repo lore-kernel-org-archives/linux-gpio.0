@@ -1,64 +1,90 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
-Date: Tue, 14 Mar 2017 14:44:15 +0100
-Message-ID: <CACRpkdZ+EQ=p_vGrBFYu6p-MnC0OvcY7P1-OWzebKgQRhGWQJQ@mail.gmail.com>
-References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com> <20170223172313.GF2742@localhost.localdomain>
+Subject: Re: [PATCH v2 05/12] Document: dt: binding: imx: update pinctrl doc
+ for imx6sll
+Date: Tue, 14 Mar 2017 14:54:24 +0100
+Message-ID: <CACRpkdaLq125bKQcpHeFn312omxw9jp0VHr9DVanj42Y_29+mg@mail.gmail.com>
+References: <1482832070-22668-1-git-send-email-ping.bai@nxp.com>
+ <1482832070-22668-6-git-send-email-ping.bai@nxp.com> <CACRpkdYUME8K+JusA0ORRKqxyBuhDdyei8eg7UZbHidKw9=bQw@mail.gmail.com>
+ <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170223172313.GF2742@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Krzysztof Kozlowski <krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:36029 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbdCNNy1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 09:54:27 -0400
+Received: by mail-it0-f50.google.com with SMTP id w124so31028789itb.1
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 06:54:26 -0700 (PDT)
+In-Reply-To: <CAA+hA=TL=Ys6j7YGOofAqrEGBcR15szvx3mMf-Dm03rnEa_VRA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Bai Ping <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, linux-clk <linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jacky Bai <jacky.baip@gmail.com>
 
-On Thu, Feb 23, 2017 at 6:23 PM, Charles Keepax
-<ckeepax@opensource.wolfsonmicro.com> wrote:
-> On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
->> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
->> <ckeepax@opensource.wolfsonmicro.com> wrote:
->>
->> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
->> > some of its own GPIOs. The driver also uses gpiochip_generic_request
->> > which means that for any GPIO request to succeed the pinctrl needs to be
->> > registered. Currently however the driver registers the GPIO and then the
->> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
->> > the whole driver to fail probe. Fix this up by ensuring we register the
->> > pinctrl first. Although currently there are no users of GPIO hogs in
->> > mainline there are plenty of Samsung based boards that are widely used
->> > for development purposes of other hardware. Indeed we hit this issue
->> > whilst attaching some additional hardware to an Arndale system.
->> >
->> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->> > ---
->> >
->> > Changes since v1:
->> >  - Updated commit message
->>
->> Patch applied. Will not be visible in -next until after the merge window
->> though.
->>
+On Thu, Feb 16, 2017 at 8:51 AM, Dong Aisheng <dongas86@gmail.com> wrote:
+> On Tue, Dec 27, 2016 at 8:59 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+>> I would consider augmenting the code in the driver to handle the generic
+>> bindings *in addition* to the old legacy bindings, and use those over these
+>> random custom bits.
+(...)
+> Generic binding only supports parsing strings for pins and function
+> from dts right now, that means we need back to the old way of hardcoding
+> all register bits in driver which we actually chose to move out since
+> the commit "e164153 pinctrl: imx: move hard-coding data into device tree".
+
+Aha I see.
+
+> One option is using macro definitions instead of raw data as pinctrl-single
+> users as OMAP.
+> e.g.
+> art2_pins: pinmux_uart2_pins {
+>         pinctrl-single,pins = <
+>                 OMAP4_IOPAD(0x118, PIN_INPUT_PULLUP | MUX_MODE0)
+>  /* uart2_cts.uart2_cts */
+>         ........
 >
-> Apologies but I think you might be best to drop this patch for
-> now, it seems this causes the ranges passed to
-> pinctrl_add_gpio_range to have the wrong .base, whilst I can
-> actually see no ill effects from this on Arndale. I suspect this
-> patch may be only part of the solution and may potentially cause
-> issues for others even though it seems fine for me.
+> For this way, no driver changes required, just replace the raw data by macro
+> in device tree. But i wonder this may not be your original intention although
+> it's the easiest way for us.
+> Anyway, if you agree, we probably would prefer this way.
 
-OK I dropped it.
+That make it look better than it looks today, but...
 
-Resend it if you figure it out.
+> Another option is partially convert to generic binding for only pad
+> configuration
+> part. e.g.
+> pinctrl_usdhc1: usdhc1grp {
+>         fsl,pins = <
+>                 MX7D_PAD_SD1_CMD__SD1_CMD
+>                 MX7D_PAD_SD1_CLK__SD1_CLK
+>                 MX7D_PAD_SD1_DATA0__SD1_DATA0
+>                 ...
+>         >;
+>         bias-pull-up = <47KOHM>;
+>         drive-strength = <130OHM>;
+>         slew-rate = <FAST>;
+>         speed = <50MHZ>;
+>         ....
+> };
+> (Some of the property still not supported or not the same as generic
+> binding right now)
 
-The Samsung driver traffic is increasing, and there are now
-a bunch of developers starting to step on each others' toes.
+This looks totally awesome, so if you could do this, it would be even
+better.
 
-Would you Samsung developers start considering someone who
-can collect Samsung pin control patches and send them as
-pull requests to me?
+> This way requires no big drivers changes and only extend the driver
+> to support the generic pinctrl dt configuration properties.
+
+Yep, you should be able to support both the old and the new
+way of configuring the pins this way I guess.
+
+> And it also fix the raw data issues and looks like more applicable than the full
+> migration.
+>
+> So would you be willing to accept it?
+
+Anything that move us closer to the generic bindings will be accepted.
 
 Yours,
 Linus Walleij
