@@ -1,41 +1,126 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Subject: Re: [PATCH v5 4/6] dt-bindings: gpio: Add binding documentation for
- gpio-thunderx
-Date: Tue, 14 Mar 2017 09:45:39 -0700
-Message-ID: <c0dcf6be-b4be-168c-2cf0-9edbffddb2b5@caviumnetworks.com>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v5 2/6] genirq: Add handle_fasteoi_{level,edge}_irq flow
+ handlers.
+Date: Tue, 14 Mar 2017 16:54:08 +0000
+Message-ID: <254c0505-6890-2e9f-cf04-3c8efbcfeb2d@arm.com>
 References: <1488332932-2691-1-git-send-email-david.daney@cavium.com>
- <1488332932-2691-5-git-send-email-david.daney@cavium.com>
- <CACRpkda_k=dBdvEBu86KaahjVnADzH7tP_AnoRWS_UQ=sRmdng@mail.gmail.com>
+ <1488332932-2691-3-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam01on0046.outbound.protection.outlook.com ([104.47.32.46]:48448
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750855AbdCNQpr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Mar 2017 12:45:47 -0400
-In-Reply-To: <CACRpkda_k=dBdvEBu86KaahjVnADzH7tP_AnoRWS_UQ=sRmdng@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1488332932-2691-3-git-send-email-david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, David Daney <david.daney@cavium.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 03/14/2017 07:53 AM, Linus Walleij wrote:
-> On Wed, Mar 1, 2017 at 2:48 AM, David Daney <david.daney@cavium.com> wrote:
->
->> Signed-off-by: David Daney <david.daney@cavium.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> This patch applied to the GPIO tree, really simplistic so why not
-> merge it.
+On 01/03/17 01:48, David Daney wrote:
+> Follow-on patch for gpio-thunderx uses a irqdomain hierarchy which
+> requires slightly different flow handlers, add them to chip.c which
+> contains most of the other flow handlers.
+> 
+> Signed-off-by: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/linux/irq.h |   2 ++
+>  kernel/irq/chip.c   | 102 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 104 insertions(+)
+> 
+> diff --git a/include/linux/irq.h b/include/linux/irq.h
+> index f887351..3db0eb8 100644
+> --- a/include/linux/irq.h
+> +++ b/include/linux/irq.h
+> @@ -518,6 +518,8 @@ static inline int irq_set_parent(int irq, int parent_irq)
+>  extern int irq_chip_pm_get(struct irq_data *data);
+>  extern int irq_chip_pm_put(struct irq_data *data);
+>  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+> +extern void handle_fasteoi_edge_irq(struct irq_desc *desc);
+> +extern void handle_fasteoi_level_irq(struct irq_desc *desc);
+>  extern void irq_chip_enable_parent(struct irq_data *data);
+>  extern void irq_chip_disable_parent(struct irq_data *data);
+>  extern void irq_chip_ack_parent(struct irq_data *data);
+> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+> index 73ea90b..213105d 100644
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -981,6 +981,108 @@ void irq_cpu_offline(void)
+>  
+>  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+>  /**
+> + *	handle_fasteoi_edge_irq - irq handler for edge hierarchy
+> + *	stacked on transparent controllers
+> + *
+> + *	@desc:	the interrupt description structure for this irq
+> + *
+> + *	Like handle_fasteoi_irq(), but for use with hierarchy where
+> + *	the irq_chip also needs to have its ->irq_ack() function
+> + *	called.
+> + */
+> +void handle_fasteoi_edge_irq(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *chip = desc->irq_data.chip;
+> +
+> +	raw_spin_lock(&desc->lock);
+> +
+> +	if (!irq_may_run(desc))
+> +		goto out;
+> +
+> +	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
+> +
+> +	/*
+> +	 * If its disabled or no action available
+> +	 * then mask it and get out of here:
+> +	 */
+> +	if (unlikely(!desc->action || irqd_irq_disabled(&desc->irq_data))) {
+> +		desc->istate |= IRQS_PENDING;
+> +		mask_irq(desc);
+> +		goto out;
+> +	}
+> +
+> +	kstat_incr_irqs_this_cpu(desc);
+> +	if (desc->istate & IRQS_ONESHOT)
+> +		mask_irq(desc);
+> +
+> +	/* Start handling the irq */
+> +	desc->irq_data.chip->irq_ack(&desc->irq_data);
+> +
+> +	preflow_handler(desc);
+> +	handle_irq_event(desc);
+> +
+> +	cond_unmask_eoi_irq(desc, chip);
+> +
+> +	raw_spin_unlock(&desc->lock);
+> +	return;
+> +out:
+> +	if (!(chip->flags & IRQCHIP_EOI_IF_HANDLED))
+> +		chip->irq_eoi(&desc->irq_data);
+> +	raw_spin_unlock(&desc->lock);
+> +}
+> +EXPORT_SYMBOL_GPL(handle_fasteoi_edge_irq);
 
-I think the idea is that with Rob's Acked-by, it could be merged via the 
-GPIO tree when and if the other patches in the set are merged.  Since I 
-don't maintain any trees pulled by Linus Torvalds, I am at the mercy of 
-the various maintainers.
+So this is handle_fasteoi_irq with an irq_ack() added in the middle. In
+the spirit of making this a bit more maintainable, how about making the
+handle_fasteoi_irq code reusable (if necessary by forcing the compiler
+to inline stuff)?
 
-David Daney.
+But the one thing that makes me uncomfortable here is that we're seem to
+have this irq_ack() propagated all along the irqdata chain, which is not
+what's happening. Only the EOI gets propagated.
 
+Why can't you just put the irq_ack call in your top level irq_eoi
+callback? That'd make it similar to what is happening on the mbigen side
+(not exactly surprising, since they are doing very similar things).
 
+Same remark about handle_fasteoi_level_irq.
 
+Thoughts?
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
