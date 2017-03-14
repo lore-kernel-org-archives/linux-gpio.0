@@ -1,58 +1,59 @@
-From: Robert Middleton <robert.middleton@rm5248.com>
-Subject: Re: [PATCH v2] gpio:mcp23s08 Fixed missing interrupts
-Date: Tue, 14 Mar 2017 13:41:16 -0400
-Message-ID: <CAKpcJVZHgTYuncEtTiK3P2xKJ5RAShv564zAsy1_sxrG3abjoQ@mail.gmail.com>
-References: <1487777658-12951-1-git-send-email-robert.middleton@rm5248.com>
- <1487777658-12951-2-git-send-email-robert.middleton@rm5248.com> <CACRpkdae8rBKrbny3T47FXx+7=hpzDi7kNvQ-VSOjkvsW=zz3w@mail.gmail.com>
+From: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
+Subject: Re: Excluding pins from Linux control
+Date: Tue, 14 Mar 2017 21:09:54 +0100 (CET)
+Message-ID: <1588667510.505126.1489522194503@email.1und1.de>
+References: <433834766.313467.1488218521360@email.1und1.de>
+ <CACRpkdYB+4=hG4YcUTvyg50cP6SfMhUuUMW7XqJAVxswYBsWng@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sub5.mail.dreamhost.com ([208.113.200.129]:36633 "EHLO
-        homiemail-a57.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753474AbdCNRlT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Mar 2017 13:41:19 -0400
-Received: from homiemail-a57.g.dreamhost.com (localhost [127.0.0.1])
-        by homiemail-a57.g.dreamhost.com (Postfix) with ESMTP id C36A2600400F
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 10:41:17 -0700 (PDT)
-Received: from mail-vk0-f43.google.com (mail-vk0-f43.google.com [209.85.213.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robert.middleton@rm5248.com)
-        by homiemail-a57.g.dreamhost.com (Postfix) with ESMTPSA id A58D2600400E
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 10:41:17 -0700 (PDT)
-Received: by mail-vk0-f43.google.com with SMTP id d188so55859888vka.0
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 10:41:17 -0700 (PDT)
-In-Reply-To: <CACRpkdae8rBKrbny3T47FXx+7=hpzDi7kNvQ-VSOjkvsW=zz3w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYB+4=hG4YcUTvyg50cP6SfMhUuUMW7XqJAVxswYBsWng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Tue, Mar 14, 2017 at 9:19 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, Feb 22, 2017 at 4:34 PM,  <robert.middleton@rm5248.com> wrote:
->
->> From: Robert Middleton <robert.middleton@rm5248.com>
->>
->> When an interrupt occurs on an MCP23S08 chip, the INTF register will only
->> contain one bit as causing the interrupt.  If more than two pins change at
->> the same time on the chip, this causes one of the pins to not be reported.
->> This patch fixes the logic for checking if a pin has changed, so that
->> multiple pins will always cause more than one change.
->>
->> Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
->
-> OMG that looks complicated. But good commit with proper comments,
-> so patch applied for fixes. I had to do some fuzzing patch -p1 < foo.patch
-> so please check the result.
->
-> Yours,
-> Linus Walleij
+Hi Linus,
 
-Linux,
+> Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> hat am 14. März 2017 um 15:39 geschrieben:
+> 
+> 
+> On Mon, Feb 27, 2017 at 7:02 PM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
+> 
+> > on BCM2835 (Raspberry Pi) the firmware on the VideoCore and Linux on the ARM core share
+> > a common pin "space". Depending on the board revision the VideoCore needs to controls
+> > some pins, which shouldn't be claimed by Linux on the ARM.
+> >
+> > What is the right way to exclude control on Linux for those pins in order to avoid possible
+> > harmful operations?
+> 
+> Do you want to do this statically (at boot) or dynamically (at runtime)?
 
-Thanks, I will check it out once that gets pushed(I'm assuming it will
-be in the linux-gpio repository at
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/)
+statically
 
--Robert Middleton
+> 
+> If you want to do it statically, at boot time:
+> Just add some NOOP function (i.e. a function that result in
+> zero register writes or anything) named "videocore-reserved" or
+> something to the driver in  drivers/pinctrl/bcm/pinctrl-bcm2835.c,
+> make it applicable to the affected pins, making it possible
+> to create a state that will combine the function "videocore-reserved"
+> with these pins, resulting in them being exclusively used for
+> that.
+
+If you speak of a NOOP function, do you mean a "dummy" pin function which is configured by the device tree? Like extending the "brcm,function" property from the existing binding?
+
+> 
+> Then in the videocore device tree node (I assume there is
+> something like such) create a pinctrl state that just take all these
+> pins with this dummy function.
+
+Is there a comparable example in the existing drivers?
+
+Thanks
+Stefan
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
