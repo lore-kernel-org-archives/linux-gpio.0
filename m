@@ -1,31 +1,32 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 02/19] gpio: altera: make use of raw_spinlock variants
-Date: Wed, 15 Mar 2017 10:53:23 +0100
-Message-ID: <CACRpkdYFQT1RNhnONGHbwZ1uBKPhoEnfhZH5f1vAeUeJdDbGrA@mail.gmail.com>
-References: <cover.1489015238.git.julia@ni.com> <f655096ca76ca81032ab07e67412da0a116bbbb6.1489015238.git.julia@ni.com>
+Subject: Re: [PATCH 05/19] gpio: 104-dio-48e: make use of raw_spinlock variants
+Date: Wed, 15 Mar 2017 10:54:54 +0100
+Message-ID: <CACRpkdZxkYC4oJmWFhT_APpgZb5dzmExhyywgohRe8CyfFR+dQ@mail.gmail.com>
+References: <cover.1489015238.git.julia@ni.com> <b0ce23678fb1703f761a5b380746cb0412651f09.1489015238.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f655096ca76ca81032ab07e67412da0a116bbbb6.1489015238.git.julia@ni.com>
+In-Reply-To: <b0ce23678fb1703f761a5b380746cb0412651f09.1489015238.git.julia@ni.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Julia Cartwright <julia@ni.com>
-Cc: Tien Hock Loh <thloh@altera.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 On Thu, Mar 9, 2017 at 5:21 PM, Julia Cartwright <julia@ni.com> wrote:
 
-> The altera gpio driver currently implements an irq_chip for handling
-> interrupts; due to how irq_chip handling is done, it's necessary for the
-> irq_chip methods to be invoked from hardirq context, even on a a real-time
-> kernel.  Because the spinlock_t type becomes a "sleeping" spinlock w/ RT
-> kernels, it is not suitable to be used with irq_chips.
+> The 104-dio-48e gpio driver currently implements an irq_chip for
+> handling interrupts; due to how irq_chip handling is done, it's
+> necessary for the irq_chip methods to be invoked from hardirq context,
+> even on a a real-time kernel.  Because the spinlock_t type becomes a
+> "sleeping" spinlock w/ RT kernels, it is not suitable to be used with
+> irq_chips.
 >
 > A quick audit of the operations under the lock reveal that they do only
 > minimal, bounded work, and are therefore safe to do under a raw spinlock.
 >
 > Signed-off-by: Julia Cartwright <julia@ni.com>
 
-Patch applied.
+Patch applied with Williams ACK.
 
 Yours,
 Linus Walleij
