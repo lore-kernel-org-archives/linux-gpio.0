@@ -1,140 +1,119 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 1/2] pinctrl: meson: gxl: add the missing PWM pin
- definitions
-Date: Wed, 15 Mar 2017 21:11:58 +0100
-Message-ID: <CAFBinCCCgbSvh8B81nXP6D11d5WZZ+71jDgvsjYDsWTb=V78Xg@mail.gmail.com>
-References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
- <20170304212318.27076-2-martin.blumenstingl@googlemail.com>
- <1488811357.2420.18.camel@baylibre.com>
- <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ@mail.gmail.com>
- <CACRpkdbGfGUhnAQz=9xeFnD2hF6m_xXacu8mZiwte-OCSDMo9w@mail.gmail.com>
- <b7430d5f-96a7-2445-1c2a-ccc299bfdda2@baylibre.com>
- <m237ee8id8.fsf@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <m237ee8id8.fsf@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>
+From: robert.middleton@rm5248.com
+Subject: [PATCH v3] gpio:mcp23s08 Fixed missing interrupts
+Date: Wed, 15 Mar 2017 16:56:47 -0400
+Message-ID: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sub5.mail.dreamhost.com ([208.113.200.129]:55541 "EHLO
+        homiemail-a115.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751277AbdCOU5X (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Mar 2017 16:57:23 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, Robert Middleton <robert.middleton@rm5248.com>
 
-On Wed, Mar 15, 2017 at 8:12 PM, Kevin Hilman <khilman@baylibre.com> wrote:
-> Neil Armstrong <narmstrong@baylibre.com> writes:
->
->> On 03/14/2017 04:42 PM, Linus Walleij wrote:
->>> On Thu, Mar 9, 2017 at 8:47 PM, Martin Blumenstingl
->>> <martin.blumenstingl@googlemail.com> wrote:
->>>> On Mon, Mar 6, 2017 at 3:42 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
->>>>> On Sat, 2017-03-04 at 22:23 +0100, Martin Blumenstingl wrote:
->>>
->>>>>> +     FUNCTION(pwm_f_clk),
->>>>>> +     FUNCTION(pwm_f_x),
->>>>>
->>>>> I wonder if having function named "pwm_f_clk" really makes sense ?
->>>>> Shouldn't it be just "pwm_f" ? This is real function, isn't it ?
->>>>> The actual pin used will be provided in the dt. Here, I suppose we
->>>>> could have this:
->>>>>
->>>>> +static const char * const pwm_f_groups[] = {
->>>>> +       "pwm_f_x", "pwm_f_clk",
->>>>> +};
->>>>>
->>>>> Has far as I can see, on meson arch, the function does not carry much
->>>>> information anyway, except for prints.
->>>>>
->>>>> To be clear, I'm not questioning this change in particular. It looks
->>>>> good, and follows what has been done in the past on meson. I know we
->>>>> have been this a lot already, but I'm questioning whether we should
->>>>> continue to do so ?
->>>>>
->>>>> I asking because I also have a lot case like this coming up on audio
->>>>> for gxl and gxbb, where the same function can use different pins.
->>>>
->>>> could you please look into Jerome's question?
->>>> personally I'm fine with either way, and changing my patch would be
->>>> quite trivial. but I'd like to know what's "the way to go" before
->>>> changing anything (and reverting that afterwards again).
->>>
->>> I don't understand the question really.
->>>
->>> I am not an expert on this system, if the people working with it
->>> cannot tell a function from a group I don't know who can... certainly
->>> not me.
->>>
->>> What I can say is that pincontrol combines functions and groups to
->>> states using a mapping. The functions should be something you poke
->>> into a register, the groups are looser defined but may also be a
->>> character of the hardware, but more usual a character of the
->>> intended electronic usecase. Groups contain 1..n pins and can
->>> be combined with some applicable functions.
->>>
->>> Please re-read Documentation/pinctrl.txt very closely if anything is
->>> unclear, I really put a lot of hours into getting that right. Especially
->>> reexamine "Pinmux conventions".
->>
->> The point pushed by Jerome was purely cosmetic since the groups in the meson
->> pinctrl driver are purely cosmetic, since only the GPIO group is handled,
->> other groups are all handled the same.
->
-> handled the same... as what?
->
->> This is because I pushed all the PWM pins in a separate group, but functionnaly
->> the internal signal (i.e. PWM F) is the same for multiple pins and should be
->> a single "PWM F" group instead of multiple ones.
->>
->> My advice is to leave the PWM groups as is,
->
-> Do you mean as we have in mainline today?  or as is proposed in $SUBJECT patch?
->
->> and push new pins/functions/groups
->> grouped with the internal signal name if split on multiple pins.
->
-> Can somone do a quick patch for PWM_F for example, also showing how this
-> will look in the DT if someone wants to switch between the PWM_F on GPIOX
-> or GPIOCLK?
-it would look like this (node name, label and group stay the same,
-function does not contain the _x/_clk suffix anymore):
-pwm_f_clk_pins: pwm_f_clk {
-    mux {
-        groups = "pwm_f_clk";
-        function = "pwm_f";
-    };
-};
+From: Robert Middleton <robert.middleton@rm5248.com>
 
-pwm_f_x_pins: pwm_f_x {
-    mux {
-        groups = "pwm_f_x";
-        function = "pwm_f";
-    };
-};
+When an interrupt occurs on an MCP23S08 chip, the INTF register will only
+contain one bit as causing the interrupt.  If more than two pins change at
+the same time on the chip, this causes one of the pins to not be reported.
+This patch fixes the logic for checking if a pin has changed, so that
+multiple pins will always cause more than one change.
 
-> We shouldalso verify that the driver is detecting/removing conflicts
-> properly when something else is already using that pin (e.g. SDIO_IRQ
-> shares pin GPIOX_7 with PWM_F)
-if the same pin is assigned to two devices then the pinctrl subsystem
-will throw an error (we don't have to take care of this, it's how I
-discovered as GPIOAO_1 was used by uart_rx_ao_a and uart_rx_ao_b).
-however, I have not tested yet what happens if the same function is
-assigned to multiple pins (let's say you pass both, pwm_f_clk_pins and
-pwm_f_x_pins to the pwm_ef node - will this result in the PWM output
-being routed to *both* pins or just one pin?). if the same function
-cannot be used by two pins simultaneously then we should probably use
-function "pwm_f" instead of "pwm_f_x" (just an example) so we can
-detect these "conflicts".
+Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
+---
+ drivers/gpio/gpio-mcp23s08.c | 65 ++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 60 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+index bdb6923..2a57d024 100644
+--- a/drivers/gpio/gpio-mcp23s08.c
++++ b/drivers/gpio/gpio-mcp23s08.c
+@@ -270,8 +270,10 @@ mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
+ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ {
+ 	struct mcp23s08 *mcp = data;
+-	int intcap, intf, i;
++	int intcap, intf, i, gpio, gpio_orig, intcap_mask;
+ 	unsigned int child_irq;
++	bool intf_set, intcap_changed, gpio_bit_changed,
++		defval_changed, gpio_set;
+ 
+ 	mutex_lock(&mcp->lock);
+ 	if (mcp_read(mcp, MCP_INTF, &intf) < 0) {
+@@ -287,14 +289,67 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+ 	}
+ 
+ 	mcp->cache[MCP_INTCAP] = intcap;
++
++	/* This clears the interrupt(configurable on S18) */
++	if (mcp_read(mcp, MCP_GPIO, &gpio) < 0) {
++		mutex_unlock(&mcp->lock);
++		return IRQ_HANDLED;
++	}
++	gpio_orig = mcp->cache[MCP_GPIO];
++	mcp->cache[MCP_GPIO] = gpio;
+ 	mutex_unlock(&mcp->lock);
+ 
++	if (mcp->cache[MCP_INTF] == 0) {
++		/* There is no interrupt pending */
++		return IRQ_HANDLED;
++	}
++
++	dev_dbg(mcp->chip.parent,
++		"intcap 0x%04X intf 0x%04X gpio_orig 0x%04X gpio 0x%04X\n",
++		intcap, intf, gpio_orig, gpio);
+ 
+ 	for (i = 0; i < mcp->chip.ngpio; i++) {
+-		if ((BIT(i) & mcp->cache[MCP_INTF]) &&
+-		    ((BIT(i) & intcap & mcp->irq_rise) ||
+-		     (mcp->irq_fall & ~intcap & BIT(i)) ||
+-		     (BIT(i) & mcp->cache[MCP_INTCON]))) {
++		/* We must check all of the inputs on the chip,
++		 * otherwise we may not notice a change on >=2 pins.
++		 *
++		 * On at least the mcp23s17, INTCAP is only updated
++		 * one byte at a time(INTCAPA and INTCAPB are
++		 * not written to at the same time - only on a per-bank
++		 * basis).
++		 *
++		 * INTF only contains the single bit that caused the
++		 * interrupt per-bank.  On the mcp23s17, there is
++		 * INTFA and INTFB.  If two pins are changed on the A
++		 * side at the same time, INTF will only have one bit
++		 * set.  If one pin on the A side and one pin on the B
++		 * side are changed at the same time, INTF will have
++		 * two bits set.  Thus, INTF can't be the only check
++		 * to see if the input has changed.
++		 */
++
++		intf_set = BIT(i) & mcp->cache[MCP_INTF];
++		if (i < 8 && intf_set)
++			intcap_mask = 0x00FF;
++		else if (i >= 8 && intf_set)
++			intcap_mask = 0xFF00;
++		else
++			intcap_mask = 0x00;
++
++		intcap_changed = (intcap_mask &
++			(BIT(i) & mcp->cache[MCP_INTCAP])) !=
++			(intcap_mask & (BIT(i) & gpio_orig));
++		gpio_set = BIT(i) & mcp->cache[MCP_GPIO];
++		gpio_bit_changed = (BIT(i) & gpio_orig) !=
++			(BIT(i) & mcp->cache[MCP_GPIO]);
++		defval_changed = (BIT(i) & mcp->cache[MCP_INTCON]) &&
++			((BIT(i) & mcp->cache[MCP_GPIO]) !=
++			(BIT(i) & mcp->cache[MCP_DEFVAL]));
++
++		if (((gpio_bit_changed || intcap_changed) &&
++			(BIT(i) & mcp->irq_rise) && gpio_set) ||
++		    ((gpio_bit_changed || intcap_changed) &&
++			(BIT(i) & mcp->irq_fall) && !gpio_set) ||
++		    defval_changed) {
+ 			child_irq = irq_find_mapping(mcp->chip.irqdomain, i);
+ 			handle_nested_irq(child_irq);
+ 		}
+-- 
+2.1.4
 
-Regards,
-Martin
-
-
-[0] https://github.com/torvalds/linux/commit/b27e36482c02a94194fec71fb29696f4c8e9241c
