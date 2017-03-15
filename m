@@ -1,40 +1,28 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 2/3] gpio: wm831x: Add basic device tree support
-Date: Wed, 15 Mar 2017 09:41:56 +0000
-Message-ID: <20170315094156.GG6986@localhost.localdomain>
-References: <1488818804-9406-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1488818804-9406-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CACRpkdYE_eOeUPaQXV3avCLxebmOjPqkjkK2PaMCa_2NOTNMpQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: meson-gxbb: Fix typo in i2c ao groups
+Date: Wed, 15 Mar 2017 10:41:47 +0100
+Message-ID: <CACRpkdbwMZeChg08RXqyBqztL4w6jM9tQAy4pCmhvce+vtt0Rg@mail.gmail.com>
+References: <1488893462-7016-1-git-send-email-narmstrong@baylibre.com> <1488893462-7016-2-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:33606 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751509AbdCOJlB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Mar 2017 05:41:01 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYE_eOeUPaQXV3avCLxebmOjPqkjkK2PaMCa_2NOTNMpQ@mail.gmail.com>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:35911 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751509AbdCOJlt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 05:41:49 -0400
+Received: by mail-io0-f178.google.com with SMTP id l7so16290246ioe.3
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 02:41:48 -0700 (PDT)
+In-Reply-To: <1488893462-7016-2-git-send-email-narmstrong@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Mar 15, 2017 at 10:18:31AM +0100, Linus Walleij wrote:
-> On Mon, Mar 6, 2017 at 5:46 PM, Charles Keepax
-> <ckeepax@opensource.wolfsonmicro.com> wrote:
-> 
-> > Now the wm831x-core has basic DT support we can update this driver to
-> > allow use of the GPIOs within a device tree system.
-> >
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Patch applied.
-> 
+On Tue, Mar 7, 2017 at 2:31 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-This needs to go through Lee's tree with the patch above it has a
-build dependency on it.
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Thanks,
-Charles
+Patch applied for fixes.
+
+Yours,
+Linus Walleij
