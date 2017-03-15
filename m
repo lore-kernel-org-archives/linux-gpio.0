@@ -1,78 +1,72 @@
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Subject: Re: Excluding pins from Linux control
-Date: Wed, 15 Mar 2017 22:03:53 +0100 (CET)
-Message-ID: <453853371.502284.1489611833231@email.1und1.de>
-References: <433834766.313467.1488218521360@email.1und1.de>
- <CACRpkdYB+4=hG4YcUTvyg50cP6SfMhUuUMW7XqJAVxswYBsWng@mail.gmail.com>
- <1588667510.505126.1489522194503@email.1und1.de>
- <CACRpkdbr9-hsFzPvOpwiVg=X=avx8fb14HhWWXNda7gGZaM2Gg@mail.gmail.com>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/3] pc104: Mask PC/104 Kconfig options
+Date: Wed, 15 Mar 2017 22:00:04 +0000
+Message-ID: <73b3264d-9167-d871-d218-cbfb96cb5b45@kernel.org>
+References: <cover.1484073324.git.vilhelm.gray@gmail.com>
+ <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
+ <20170301204652.GA31812@sophia>
+ <61fd7559-9001-ede7-f16d-2f74f8f9ef61@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:57906 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752027AbdCOVEq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 17:04:46 -0400
-In-Reply-To: <CACRpkdbr9-hsFzPvOpwiVg=X=avx8fb14HhWWXNda7gGZaM2Gg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <61fd7559-9001-ede7-f16d-2f74f8f9ef61-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
+On 05/03/17 12:48, Jonathan Cameron wrote:
+> On 01/03/17 20:46, William Breathitt Gray wrote:
+>> On Wed, Jan 11, 2017 at 04:26:19PM +0100, Linus Walleij wrote:
+>>> On Tue, Jan 10, 2017 at 7:50 PM, William Breathitt Gray
+>>> <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>
+>>>> PC/104 form factor devices serve a specific niche of embedded system
+>>>> users. Since PC/104 devices and hardware are typically used by just a
+>>>> subset of Linux users, it would be appropriate to filter PC/104 related
+>>>> Kconfig options for those uninterested.
+>>>>
+>>>> This patchset introduces the PC104 Kconfig option, and uses it to mask
+>>>> PC/104 specific device drivers and options, so that only those users
+>>>> interested in PC/104 related Kconfig options are exposed to them.
+>>>
+>>> Tell me when/if the PC104 option is merged and I can merge the GPIO
+>>> patch.
+>>>
+>>> Yours,
+>>> Linus Walleij
+>>
+>> Jonathan and Linus,
+>>
+>> Now that the PC104 option is merged for 4.11, it should be all right to
+>> merge in the GPIO and IIO patches without worry of warnings. Please
+>> merge the relevant patch to your respective tree after you pull in the
+>> PC104 option.
+> If it looks like I've forgotten this, feel free to poke me again!
+> 
+> At least replying to you should get it back into my recent threads
+> in my email client ;)
+> 
+Done,. Applied to the togreg branch of iio.git and pushed out as
+testing for the autobuilders to play with it.
 
-> Linus Walleij <linus.walleij@linaro.org> hat am 15. März 2017 um 09:46 geschrieben:
-> 
-> 
-> On Tue, Mar 14, 2017 at 9:09 PM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> >> Linus Walleij <linus.walleij@linaro.org> hat am 14. März 2017 um 15:39 geschrieben:
-> 
-> >> If you want to do it statically, at boot time:
-> >> Just add some NOOP function (i.e. a function that result in
-> >> zero register writes or anything) named "videocore-reserved" or
-> >> something to the driver in  drivers/pinctrl/bcm/pinctrl-bcm2835.c,
-> >> make it applicable to the affected pins, making it possible
-> >> to create a state that will combine the function "videocore-reserved"
-> >> with these pins, resulting in them being exclusively used for
-> >> that.
-> >
-> > If you speak of a NOOP function, do you mean a "dummy" pin function
-> > which is configured by the device tree? Like extending the "brcm,function"
-> > property from the existing binding?
-> 
-> No, a function for videocore defined by the driver in
-> drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> and then used by the device tree.
-> 
-> Looking at the BCM2835 syntax (hope I get it right), in the end you should
-> be able to do this:
-> 
->     videocore: videocore {
->         brcm,pins = <12, 13, 14, 15, 16, 17, 18, 19, 20>;
->         brcm,function = <BCM2835_FSEL_VIDEOCORE>;
->     };
-> 
-> So BCM2835_FSEL_VIDEOCORE need to be defined in the
-> DT include and made available as a muxing option inside the driver, with
-> the effect that nothing really happens when you select it.
-> 
-> The point is that the pinctrl core will then regard the pin as taken
-> (this can be verified in debugfs) and then no other function can go
-> in and use the pin by mistake.
-> 
-> Something like this:
-> 
-> From d188c03c1fba7d1223c1dafcb8b977e383298ef4 Mon Sep 17 00:00:00 2001
-> From: Linus Walleij <linus.walleij@linaro.org>
-> Date: Wed, 15 Mar 2017 09:45:37 +0100
-> Subject: [PATCH] Stab at videocore function
-> 
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
 
-Again, thanks a lot
-
-Stefan
-
+Jonathan
+> Jonathan
+>>
+>> Thank you,
+>>
+>> William Breathitt Gray
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 > 
-> Yours,
-> Linus Walleij
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
