@@ -1,34 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] ARM64: dts: meson-gxl: Add missing pinctrl pins groups
-Date: Wed, 15 Mar 2017 10:44:53 +0100
-Message-ID: <CACRpkdbdBHkCg_ZK2YAL6LmMxPMHt1iWcjgJkcwCoCgR-h0LKg@mail.gmail.com>
-References: <1488893462-7016-1-git-send-email-narmstrong@baylibre.com> <1488893462-7016-4-git-send-email-narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
+ managing groups
+Date: Wed, 15 Mar 2017 10:46:16 +0100
+Message-ID: <CACRpkdb1O9=xZ-sVVh1AzmW8oknQyNAW=LirtX1CEA=pkCbA1g@mail.gmail.com>
+References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
+ <20170102182022.2047-2-gary.bisson@boundarydevices.com> <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
+ <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
+ <CAOMZO5AXOEFTep17etLyU1avWsDasFF+NAAPcusaMRGMR3nctg@mail.gmail.com> <20170307175448.GU20572@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:35905 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752605AbdCOJoz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 05:44:55 -0400
-Received: by mail-io0-f181.google.com with SMTP id l7so16330575ioe.3
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 02:44:55 -0700 (PDT)
-In-Reply-To: <1488893462-7016-4-git-send-email-narmstrong@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170307175448.GU20572@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Fabio Estevam <festevam@gmail.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 2:31 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
-
-> Add pinctrl pins nodes following the additions of missing pins in the pinctrl
-> driver.
+On Tue, Mar 7, 2017 at 6:54 PM, Tony Lindgren <tony@atomide.com> wrote:
+> * Fabio Estevam <festevam@gmail.com> [170307 09:39]:
+>> Hi Gary,
+>>
+>> On Tue, Mar 7, 2017 at 2:26 PM, Gary Bisson
+>> <gary.bisson@boundarydevices.com> wrote:
+>>
+>> > No it isn't because of the use of radix but instead of:
+>> > http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=950b0d91dc10
+>> >
+>> > It has been discussed here:
+>> > https://lkml.org/lkml/2017/2/28/140
+>>
+>> Thanks for the clarification.
+>>
+>> > Tony offered a patch in that thread which works. Tony, have you
+>> > submitted it yet?
+>>
+>> Looking forward to this one :-)
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Still waiting to hear back from Linus on what he prefers.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I am snowed under by mail and might be missing stuff at the
+moment...
 
-Please funnel this through ARM SoC or wherever meson dts files
-go.
+If there is some especially urgent fix patch I need to look into
+can you please point it out?
 
 Yours,
 Linus Walleij
