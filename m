@@ -1,267 +1,148 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 1/2] pinctrl: uniphier: remove obsoleted compatibles
-Date: Thu, 16 Mar 2017 02:38:14 +0900
-Message-ID: <1489599495-14004-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from condef-02.nifty.com ([202.248.20.67]:55426 "EHLO
-        condef-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751277AbdCORmy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 13:42:54 -0400
-Received: from conuserg-07.nifty.com ([10.126.8.70])by condef-02.nifty.com with ESMTP id v2FHdZft018972
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Mar 2017 02:39:35 +0900
-Sender: linux-gpio-owner@vger.kernel.org
+From: John Keeping <john@metanate.com>
+Subject: [PATCH v2 4/4] pinctrl: rockchip: avoid hardirq-unsafe functions in
+ irq_chip
+Date: Wed, 15 Mar 2017 17:46:54 +0000
+Message-ID: <20170315174654.15128-5-john@metanate.com>
+References: <20170315174654.15128-1-john@metanate.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170315174654.15128-1-john@metanate.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Julia Cartwright <julia@ni.com>, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, John Keeping <john@metanate.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Since commit 3e030b0b4e46 ("pinctrl: uniphier: allow to have pinctrl
-node under syscon node"), this driver has kept compatibility for the
-old DT files.  Several releases have passed since then, so remove
-the obsoleted compatibles and clean up the code.
+With real-time preemption, regmap functions cannot be used in the
+implementation of irq_chip since they use spinlocks which may sleep.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Move the setting of the mux for IRQs to an irq_bus_sync_unlock handler
+where we are allowed to sleep.
+
+Signed-off-by: John Keeping <john@metanate.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 ---
+v2: unchanged
+---
+ drivers/pinctrl/pinctrl-rockchip.c | 44 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 40 insertions(+), 4 deletions(-)
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 48 +++++++++++-------------
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  |  1 -
- drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c |  1 -
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c |  1 -
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c |  1 -
- drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c |  1 -
- drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c |  1 -
- drivers/pinctrl/uniphier/pinctrl-uniphier.h      | 11 +-----
- 8 files changed, 23 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-index 546f23c..30dec0e 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-@@ -1,5 +1,6 @@
- /*
-- * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ * Copyright (C) 2015-2017 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -26,11 +27,18 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-uniphier.h"
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 426f5ea57b16..5796b3c7cdd8 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -143,6 +143,9 @@ struct rockchip_drv {
+  * @gpio_chip: gpiolib chip
+  * @grange: gpio range
+  * @slock: spinlock for the gpio bank
++ * @irq_lock: bus lock for irq chip
++ * @new_irqs: newly configured irqs which must be muxed as GPIOs in
++ *	irq_bus_sync_unlock()
+  */
+ struct rockchip_pin_bank {
+ 	void __iomem			*reg_base;
+@@ -165,6 +168,8 @@ struct rockchip_pin_bank {
+ 	struct pinctrl_gpio_range	grange;
+ 	raw_spinlock_t			slock;
+ 	u32				toggle_edge_mode;
++	struct mutex			irq_lock;
++	u32				new_irqs;
+ };
  
-+#define UNIPHIER_PINCTRL_PINMUX_BASE	0x1000
-+#define UNIPHIER_PINCTRL_LOAD_PINMUX	0x1700
-+#define UNIPHIER_PINCTRL_DRVCTRL_BASE	0x1800
-+#define UNIPHIER_PINCTRL_DRV2CTRL_BASE	0x1900
-+#define UNIPHIER_PINCTRL_DRV3CTRL_BASE	0x1980
-+#define UNIPHIER_PINCTRL_PUPDCTRL_BASE	0x1a00
-+#define UNIPHIER_PINCTRL_IECTRL		0x1d00
+ #define PIN_BANK(id, pins, label)			\
+@@ -2134,11 +2139,12 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 	int ret;
+ 
+ 	/* make sure the pin is configured as gpio input */
+-	ret = rockchip_set_mux(bank, d->hwirq, RK_FUNC_GPIO);
++	ret = rockchip_verify_mux(bank, d->hwirq, RK_FUNC_GPIO);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	clk_enable(bank->clk);
++	bank->new_irqs |= mask;
 +
- struct uniphier_pinctrl_priv {
- 	struct pinctrl_desc pctldesc;
- 	struct pinctrl_dev *pctldev;
- 	struct regmap *regmap;
--	unsigned int regbase;
- 	struct uniphier_pinctrl_socdata *socdata;
- };
+ 	raw_spin_lock_irqsave(&bank->slock, flags);
  
-@@ -171,7 +179,7 @@ static int uniphier_conf_pin_bias_get(struct pinctrl_dev *pctldev,
- 	reg = UNIPHIER_PINCTRL_PUPDCTRL_BASE + pupdctrl / 32 * 4;
- 	shift = pupdctrl % 32;
- 
--	ret = regmap_read(priv->regmap, priv->regbase + reg, &val);
-+	ret = regmap_read(priv->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -231,7 +239,7 @@ static int uniphier_conf_pin_drive_get(struct pinctrl_dev *pctldev,
- 	shift = drvctrl % 32;
- 	mask = (1U << width) - 1;
- 
--	ret = regmap_read(priv->regmap, priv->regbase + reg, &val);
-+	ret = regmap_read(priv->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -252,8 +260,7 @@ static int uniphier_conf_pin_input_enable_get(struct pinctrl_dev *pctldev,
- 		/* This pin is always input-enabled. */
- 		return 0;
- 
--	ret = regmap_read(priv->regmap,
--			  priv->regbase + UNIPHIER_PINCTRL_IECTRL, &val);
-+	ret = regmap_read(priv->regmap, UNIPHIER_PINCTRL_IECTRL, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -366,8 +373,7 @@ static int uniphier_conf_pin_bias_set(struct pinctrl_dev *pctldev,
- 	reg = UNIPHIER_PINCTRL_PUPDCTRL_BASE + pupdctrl / 32 * 4;
- 	shift = pupdctrl % 32;
- 
--	return regmap_update_bits(priv->regmap, priv->regbase + reg,
--				  1 << shift, val << shift);
-+	return regmap_update_bits(priv->regmap, reg, 1 << shift, val << shift);
- }
- 
- static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
-@@ -427,7 +433,7 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
- 	shift = drvctrl % 32;
- 	mask = (1U << width) - 1;
- 
--	return regmap_update_bits(priv->regmap, priv->regbase + reg,
-+	return regmap_update_bits(priv->regmap, reg,
- 				  mask << shift, val << shift);
- }
- 
-@@ -451,7 +457,7 @@ static int uniphier_conf_pin_input_enable(struct pinctrl_dev *pctldev,
- 	if (iectrl == UNIPHIER_PIN_IECTRL_NONE)
- 		return enable ? 0 : -EINVAL;
- 
--	reg = priv->regbase + UNIPHIER_PINCTRL_IECTRL + iectrl / 32 * 4;
-+	reg = UNIPHIER_PINCTRL_IECTRL + iectrl / 32 * 4;
- 	mask = BIT(iectrl % 32);
- 
- 	return regmap_update_bits(priv->regmap, reg, mask, enable ? mask : 0);
-@@ -601,7 +607,7 @@ static int uniphier_pmx_set_one_mux(struct pinctrl_dev *pctldev, unsigned pin,
- 	 * stored in the offset+4.
- 	 */
- 	for (; reg < reg_end; reg += 4) {
--		ret = regmap_update_bits(priv->regmap, priv->regbase + reg,
-+		ret = regmap_update_bits(priv->regmap, reg,
- 					 mask << shift, muxval << shift);
- 		if (ret)
- 			return ret;
-@@ -610,8 +616,7 @@ static int uniphier_pmx_set_one_mux(struct pinctrl_dev *pctldev, unsigned pin,
- 
- 	if (load_pinctrl) {
- 		ret = regmap_write(priv->regmap,
--				   priv->regbase + UNIPHIER_PINCTRL_LOAD_PINMUX,
--				   1);
-+				   UNIPHIER_PINCTRL_LOAD_PINMUX, 1);
- 		if (ret)
- 			return ret;
+ 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+@@ -2196,7 +2202,6 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 	default:
+ 		irq_gc_unlock(gc);
+ 		raw_spin_unlock_irqrestore(&bank->slock, flags);
+-		clk_disable(bank->clk);
+ 		return -EINVAL;
  	}
-@@ -698,20 +703,9 @@ int uniphier_pinctrl_probe(struct platform_device *pdev,
- 	if (!priv)
- 		return -ENOMEM;
  
--	if (of_device_is_compatible(dev->of_node, "socionext,ph1-ld4-pinctrl") ||
--	    of_device_is_compatible(dev->of_node, "socionext,ph1-pro4-pinctrl") ||
--	    of_device_is_compatible(dev->of_node, "socionext,ph1-sld8-pinctrl") ||
--	    of_device_is_compatible(dev->of_node, "socionext,ph1-pro5-pinctrl") ||
--	    of_device_is_compatible(dev->of_node, "socionext,proxstream2-pinctrl") ||
--	    of_device_is_compatible(dev->of_node, "socionext,ph1-ld6b-pinctrl")) {
--		/* old binding */
--		priv->regmap = syscon_node_to_regmap(dev->of_node);
--	} else {
--		priv->regbase = 0x1000;
--		parent = of_get_parent(dev->of_node);
--		priv->regmap = syscon_node_to_regmap(parent);
--		of_node_put(parent);
--	}
-+	parent = of_get_parent(dev->of_node);
-+	priv->regmap = syscon_node_to_regmap(parent);
-+	of_node_put(parent);
+@@ -2205,7 +2210,6 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
  
- 	if (IS_ERR(priv->regmap)) {
- 		dev_err(dev, "failed to get regmap\n");
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-index 3edfb6f..ce2a705 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c
-@@ -929,7 +929,6 @@ static int uniphier_ld4_pinctrl_probe(struct platform_device *pdev)
+ 	irq_gc_unlock(gc);
+ 	raw_spin_unlock_irqrestore(&bank->slock, flags);
+-	clk_disable(bank->clk);
  
- static const struct of_device_id uniphier_ld4_pinctrl_match[] = {
- 	{ .compatible = "socionext,uniphier-ld4-pinctrl" },
--	{ .compatible = "socionext,ph1-ld4-pinctrl" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, uniphier_ld4_pinctrl_match);
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-index 708e510..73e044b 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c
-@@ -1290,7 +1290,6 @@ static int uniphier_ld6b_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+@@ -2249,6 +2253,34 @@ static void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
+ 	clk_disable(bank->clk);
+ }
  
- static const struct of_device_id uniphier_ld6b_pinctrl_match[] = {
- 	{ .compatible = "socionext,uniphier-ld6b-pinctrl" },
--	{ .compatible = "socionext,ph1-ld6b-pinctrl" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, uniphier_ld6b_pinctrl_match);
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-index c306e84..6fe402c 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c
-@@ -1600,7 +1600,6 @@ static int uniphier_pro4_pinctrl_probe(struct platform_device *pdev)
++static void rockchip_irq_bus_lock(struct irq_data *d)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct rockchip_pin_bank *bank = gc->private;
++
++	clk_enable(bank->clk);
++	mutex_lock(&bank->irq_lock);
++}
++
++static void rockchip_irq_bus_sync_unlock(struct irq_data *d)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
++	struct rockchip_pin_bank *bank = gc->private;
++
++	while (bank->new_irqs) {
++		unsigned int irq = __ffs(bank->new_irqs);
++		int ret;
++
++		ret = rockchip_set_mux(bank, irq, RK_FUNC_GPIO);
++		WARN_ON(ret < 0);
++
++		bank->new_irqs &= ~BIT(irq);
++	}
++
++	mutex_unlock(&bank->irq_lock);
++	clk_disable(bank->clk);
++}
++
+ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 						struct rockchip_pinctrl *info)
+ {
+@@ -2314,6 +2346,9 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
+ 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
+ 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
+ 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
++		gc->chip_types[0].chip.irq_bus_lock = rockchip_irq_bus_lock;
++		gc->chip_types[0].chip.irq_bus_sync_unlock =
++						rockchip_irq_bus_sync_unlock;
+ 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
  
- static const struct of_device_id uniphier_pro4_pinctrl_match[] = {
- 	{ .compatible = "socionext,uniphier-pro4-pinctrl" },
--	{ .compatible = "socionext,ph1-pro4-pinctrl" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, uniphier_pro4_pinctrl_match);
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-index 55d4a12..f55457f 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-@@ -1365,7 +1365,6 @@ static int uniphier_pro5_pinctrl_probe(struct platform_device *pdev)
+ 		irq_set_chained_handler_and_data(bank->irq,
+@@ -2487,6 +2522,7 @@ static struct rockchip_pin_ctrl *rockchip_pinctrl_get_soc_data(
+ 		int bank_pins = 0;
  
- static const struct of_device_id uniphier_pro5_pinctrl_match[] = {
- 	{ .compatible = "socionext,uniphier-pro5-pinctrl" },
--	{ .compatible = "socionext,ph1-pro5-pinctrl" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, uniphier_pro5_pinctrl_match);
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-index 85ca5e2..93db82f 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c
-@@ -1277,7 +1277,6 @@ static int uniphier_pxs2_pinctrl_probe(struct platform_device *pdev)
- 
- static const struct of_device_id uniphier_pxs2_pinctrl_match[] = {
- 	{ .compatible = "socionext,uniphier-pxs2-pinctrl" },
--	{ .compatible = "socionext,proxstream2-pinctrl" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, uniphier_pxs2_pinctrl_match);
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-index da689d8..3c673c2 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c
-@@ -856,7 +856,6 @@ static int uniphier_sld8_pinctrl_probe(struct platform_device *pdev)
- 
- static const struct of_device_id uniphier_sld8_pinctrl_match[] = {
- 	{ .compatible = "socionext,uniphier-sld8-pinctrl" },
--	{ .compatible = "socionext,ph1-sld8-pinctrl" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, uniphier_sld8_pinctrl_match);
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier.h b/drivers/pinctrl/uniphier/pinctrl-uniphier.h
-index 923f36c..6f2f33b 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier.h
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier.h
-@@ -1,5 +1,6 @@
- /*
-- * Copyright (C) 2015 Masahiro Yamada <yamada.masahiro@socionext.com>
-+ * Copyright (C) 2015-2017 Socionext Inc.
-+ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License as published by
-@@ -22,14 +23,6 @@
- 
- struct platform_device;
- 
--#define UNIPHIER_PINCTRL_PINMUX_BASE	0x0
--#define UNIPHIER_PINCTRL_LOAD_PINMUX	0x700
--#define UNIPHIER_PINCTRL_DRVCTRL_BASE	0x800
--#define UNIPHIER_PINCTRL_DRV2CTRL_BASE	0x900
--#define UNIPHIER_PINCTRL_DRV3CTRL_BASE	0x980
--#define UNIPHIER_PINCTRL_PUPDCTRL_BASE	0xa00
--#define UNIPHIER_PINCTRL_IECTRL		0xd00
--
- /* input enable control register bit */
- #define UNIPHIER_PIN_IECTRL_SHIFT	0
- #define UNIPHIER_PIN_IECTRL_BITS	8
+ 		raw_spin_lock_init(&bank->slock);
++		mutex_init(&bank->irq_lock);
+ 		bank->drvdata = d;
+ 		bank->pin_base = ctrl->nr_pins;
+ 		ctrl->nr_pins += bank->nr_pins;
 -- 
-2.7.4
-
+2.12.0.377.gf910686b23.dirty
