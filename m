@@ -1,125 +1,74 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during
- suspend/resume
-Date: Tue, 14 Mar 2017 19:18:22 -0700
-Message-ID: <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com>
- <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
- <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
- <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: add get_direction function
+Date: Tue, 14 Mar 2017 22:08:50 -0700
+Message-ID: <20170315050850.GC1694@minitux>
+References: <1486768860-18237-1-git-send-email-timur@codeaurora.org>
+ <8652c018-4051-5c77-3126-2d41d150518a@codeaurora.org>
+ <CACRpkdaoHTZa+XjEBAMtO2dS1jevi5h-QYe90SrZDuJghQSyYw@mail.gmail.com>
+ <13b19c7f-9440-ab8e-8a2f-d1796a9b3dde@codeaurora.org>
+ <CACRpkdZFzYStyPfK1DwkZfvtd7wX9HtD1bnCy+i9h-7xowOz4g@mail.gmail.com>
+ <e209d18d-dc53-c0e9-448c-8a88264cac74@codeaurora.org>
+ <20170314233040.GH10239@codeaurora.org>
+ <c40b0ee7-6d8c-8c5d-d4c5-9ecf8076e44f@codeaurora.org>
+ <20170314234140.GI10239@codeaurora.org>
+ <f1152d48-004e-71bc-16a1-3a25990ba9e4@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36367 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbdCOCSZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 22:18:25 -0400
-In-Reply-To: <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:32803 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbdCOFIz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 01:08:55 -0400
+Received: by mail-pg0-f47.google.com with SMTP id n190so3855806pga.0
+        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 22:08:54 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <f1152d48-004e-71bc-16a1-3a25990ba9e4@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 03/14/2017 03:16 AM, Linus Walleij wrote:
-> On Thu, Mar 2, 2017 at 11:19 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+On Tue 14 Mar 17:12 PDT 2017, Timur Tabi wrote:
+
+> Stephen Boyd wrote:
 > 
->> So actually, I have been thinking about this some more, and while this
->> definitively fixes my original problem with pinctrl-single, I just had
->> to make another driver (sdhci-brcmstb.c) pinctrl aware. And then again,
->> same thing, it has got just one "default" state, so when we call
->> pinctrl_select_state() during driver resume, nothing happens.
->>
->> So, with that in mind, it seems to me like we may actually just want to
->> remove the p->state == state statement entirely, even though that's an
->> optimization....
->>
->> ... or, what we could do is, expose a version of pinctrl_force_default
->> that takes a struct pinctrl reference instead of a struct pinctrl_dev
->> reference and named differently of course.
->>
->> Thoughts?
+> > > > The idea is to notify drivers with an error code when they make a
+> > > > mistake. Perhaps the device tree or the ACPI table has an error?
 > 
-> The root problem that the patch is trying to solve is that the hardware
-> loose state when going to sleep, without the pin control core
-> being informed about this, correct?
-
-That is exactly what is happening.
-
+> > In general the kernel isn't a firmware validator. At least that's
+> > the way I view it. Others may have different opinions here.
 > 
-> And that is why the state is then "forced" with this patch, when
-> setting default state: the core think we are already in "default"
-> state, and thus the hack force it to be written down to the hardware
-> again.
-
-Correct.
-
-> 
-> But it is IMO just papering over the real bug: that the core does
-> not know that the state is lost.
-
-Yes, agree with that statement.
-
-> 
-> What I think is the proper solution is to add a callback to switch
-> the state in the core.
-> 
-> The most obvious would be to use the API as many already do:
-> define "sleep" states in the core, and switch to these before
-> going to sleep. If CONFIG_PM is available simply by calling
-> pinctrl_pm_select_sleep_state() in the driver suspend() callback.
-
-Well, the difficulty for our platforms is that S2 does not make the HW
-lose pin states, only S3 does and drivers should be agnostic of S2 vs. S3.
-
-There is not really a "sleep" and "default" state defined for these
-platforms just the "default" state. I initially even considered adding a
-fake "sleep" state just to satisfy the state transition condition, but
-that does not accurately represent the HW.
-
-> 
-> I think this is the most intuitive and clean solution.
-> 
-> Alternatively we would add a function to set the pinctrl handle to
-> an "unknown" state, so that when we resume, the pinctrl core at
-> least knows that we are not in "default" state anymore, so that
-> "default" is applied.
-
-And such a function would be called during driver suspend? Would not we
-still end-up with the drivers having to know about the fact that there
-is a) only one pin state defined, and b) these pins potentially lose
-their states in some deep sleep mode?
-
-> 
-> So then we would add:
-> 
-> /**
->  * pinctrl_set_unknown_state() - tell the pinctrl core that we lost the state
->  */
-> void pinctrl_set_unknown_state(struct device *dev) {
->    struct dev_pin_info *pins = dev->pins;
-> 
->    if (!pins)
->         return 0;
-> 
->    pins->p->state = NULL;
-> }
-> 
-> I imagine this would give the right results on the suspend path.
-
-Humm, why not, but I am not clear how I would call that nor under which
-conditions from both the pinctrl-single driver and another one that we
-use (sdhci-brcmstb.c for instance, but it could be any pinctrl consumer
-really)?
-
-Thanks!
-
-> 
-> Yours,
-> Linus Walleij
+> I would be okay with wrapping that check around #ifdef CONFIG_DEBUG_GPIO.
 > 
 
+This will, more or less, only be useful for system integrators - whom
+likely won't enable DEBUG_GPIO. But I'm generally fine with failing
+gpio_set if we're not in function 0.
 
--- 
-Florian
+My question is if we should wrap that check in a WARN(), just to make it
+easy for said system integrator to spot the issue - or if that will just
+leave another chunk of printouts that people will ignore in their
+products.
 
+> > > > I could add that, but I still think returning an error code is
+> > > > appropriate.  On the TLMM, we know for sure that the pin must be set
+> > > > to function 0 in order for the read/write routines to operate
+> > > > correctly.
+> 
+> > On ACPI we could make the gpio_get() path fail if the pin isn't
+> > in GPIO mode?
+> 
+> Did you mean the gpio_chip.request callback?  Currently that points to
+> gpiochip_generic_request in pinctrl-msm.c.
+> 
+
+It might be useful to fail gpio_get, as that gives a much nicer error
+path in the client. But I'm slightly concerned about the few cases where
+one of the pinmux states is gpio and that this would force the
+gpio_get() only to be called after switching to that particular mode.
+
+
+@Linus, have there been any discussion around this in other drivers?
+
+Regards,
+Bjorn
