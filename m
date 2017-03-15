@@ -1,41 +1,64 @@
 From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [RFC PATCH 0/4] pinctrl: rockchip: PREEMPT_RT_FULL fixes
-Date: Wed, 15 Mar 2017 18:09:52 +0100
-Message-ID: <2965030.XxB81LuoOf@phil>
+Subject: Re: [RFC PATCH 2/4] pinctrl: rockchip: convert to raw spinlock
+Date: Wed, 15 Mar 2017 18:12:53 +0100
+Message-ID: <5561804.yNijhH7yqI@phil>
 References: <20170313183813.3582-1-john@metanate.com>
+ <2549921.4Nq1JGygY8@phil> <20170315165900.63f32371.john@metanate.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:50424 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753305AbdCORKC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Mar 2017 13:10:02 -0400
-In-Reply-To: <20170313183813.3582-1-john@metanate.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170315165900.63f32371.john@metanate.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: John Keeping <john@metanate.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
-Am Montag, 13. März 2017, 18:38:09 CET schrieb John Keeping:
-> As described in Documentation/gpio/driver.txt, we should not be using
-> sleepable APIs in the irqchip implementation.  Since this includes the
-> regmap API, this patch series ends up moving the mux setup for IRQs into
-> an irq_bus_sync_unlock() handler which may result in the IRQ being
-> configured before the port has been muxed as a GPIO.
-> 
-> I've marked the series as RFC because I'm not sure if this is the best
-> way to accomplish this or if there is another approach that is cleaner.
-> Also, the first patch may not be correct on RK3399 because I originally
-> wrote the patch for RK3288 on top of v4.4 where all drive updates only
-> affect a single register.  We don't need locking in this case because
-> regmap_update_bits() takes a lock on the regmap internally, but if these
-> two registers need to be updated atomically then another lock will
-> be required here - slock cannot be used if it is converted to a raw
-> spinlock since with full RT preemption the regmap's spinlock may sleep.
+Am Mittwoch, 15. M=E4rz 2017, 16:59:00 CET schrieb John Keeping:
+> On Wed, 15 Mar 2017 17:41:21 +0100, Heiko Stuebner wrote:
+> > Am Mittwoch, 15. M=E4rz 2017, 17:28:56 CET schrieb Heiko Stuebner:
+> > > Am Montag, 13. M=E4rz 2017, 18:38:11 CET schrieb John Keeping:
+> > > > This lock is used from rockchip_irq_set_type() which is part of the
+> > > > irq_chip implementation and thus must use raw_spinlock_t as documen=
+ted
+> > > > in Documentation/gpio/driver.txt.
+> > > > =
 
-With the issue in patch2 fixed and top of the current head of Linus T's tree 
-(4.11-rc2 + some patches), at least rk3036, rk3288, rk3368 and rk3399 come up 
-nicely including multiple (1 to 3 per board) gpio-interrupts, so this series
+> > > > Signed-off-by: John Keeping <john@metanate.com>
+> > > =
 
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > > Looks good
+> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> > =
+
+> > I have to take that back.
+> > This leaves the spin_lock in the schmitt trigger unconverted and produc=
+es
+> > compile issues.
+> > =
+
+> > So it either needs to be converted or removed - I guess it should be
+> > removed.
+> Yes, it looks like it should be removed - the patches adding that hadn't
+> been applied when I sent this out!
+> =
+
+> I'll rebase and add the schmitt trigger change to patch 1 in a day or
+> two, after giving a bit more time for reviews.
+
+I don't think you need to wait overly long. Linus seems happy, I'm happy an=
+d =
+
+the schmitt issue in the open might prevent people from taking a closer loo=
+k.
+
+
+Heiko
