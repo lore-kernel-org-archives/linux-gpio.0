@@ -1,42 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH -next v2] pinctrl: samsung: Fix return value check in
- samsung_pinctrl_get_soc_data()
-Date: Wed, 15 Mar 2017 14:45:20 +0100
-Message-ID: <CACRpkdbY9SJhoqmMQBSc169SgVagcrPb9DaYnLXT0atLc1pH1Q@mail.gmail.com>
-References: <20170125140321.23911-1-weiyj.lk@gmail.com>
- <20170205155849.4362-1-weiyj.lk@gmail.com>
- <CGME20170213145008epcas3p119bdd6f76468a00fb8d796308ad37698@epcas3p1.samsung.com>
- <CACRpkda0BYLNpPFwpNaEMdeyx61KDUQz_6Y=FQj340pViFjVVQ@mail.gmail.com>
- <c4dd122b-0312-fcca-08e2-4d4586949a88@samsung.com>
- <CACRpkda1tALy3rmk7FebnR3Xg4WOuUc0Gv1xAmxkd+RLhJ_1VQ@mail.gmail.com>
- <0eb09039-17c4-5c00-0501-812d4de1ab4a@samsung.com>
+Subject: Re: [RESEND PATCH] gpio: xgene: mark PM functions as __maybe_unused
+Date: Wed, 15 Mar 2017 14:47:36 +0100
+Message-ID: <CACRpkdaDX2ZqUxOHivyv98TuYjTjYSs3D7f43jd7T6jPvTQQKQ@mail.gmail.com>
+References: <20170314125748.734574-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <0eb09039-17c4-5c00-0501-812d4de1ab4a@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wei Yongjun <weiyj.lk@gmail.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170314125748.734574-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Axel Lin <axel.lin@ingics.com>, Duc Dang <dhdang@apm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 14, 2017 at 11:44 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+On Tue, Mar 14, 2017 at 1:57 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-> I have posted proper fix some times ago[1], no need to revert.
+> When CONFIG_PM_SLEEP is disabled, we get a warning about unused functions:
 >
-> [1]: https://www.spinics.net/lists/linux-samsung-soc/msg58395.html
+> drivers/gpio/gpio-xgene.c:155:12: warning: 'xgene_gpio_resume' defined but not used [-Wunused-function]
+>  static int xgene_gpio_resume(struct device *dev)
+>             ^~~~~~~~~~~~~~~~~
+> drivers/gpio/gpio-xgene.c:142:12: warning: 'xgene_gpio_suspend' defined but not used [-Wunused-function]
+>  static int xgene_gpio_suspend(struct device *dev)
+>
+> The warnings are harmless and can be avoided by simplifying the code and marking
+> the functions as __maybe_unused.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> Originally submitted on Feb 17, but it ended up not getting merged into v4.11-rc2
+> and is still needed there for randconfig builds
 
-OK fixed that now.
-
-Unreverted the revert, applied your patch.
+Yeah I have it queued but just too much to do. I hope to be able to
+send a pull request for this & more soon.
 
 Yours,
 Linus Walleij
