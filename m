@@ -1,59 +1,44 @@
-From: Jayachandran C <jnair@caviumnetworks.com>
-Subject: Re: [PATCH] gpio: xlp: Update for ARCH_THUNDER2
-Date: Wed, 15 Mar 2017 10:48:00 +0000
-Message-ID: <20170315104759.GA2584@localhost>
-References: <1489317268-5376-1-git-send-email-jnair@caviumnetworks.com>
- <CACRpkdZ88ObS-eqT5tVmktXWy6HdS9hor9wjJ6Ktvb6efcNYGQ@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: acpi: Ignore -EPROBE_DEFER for unselected
+ gpioints
+Date: Wed, 15 Mar 2017 12:54:07 +0200
+Message-ID: <20170315105407.GT2957@lahna.fi.intel.com>
+References: <20170313220421.27314-1-hdegoede@redhat.com>
+ <CACRpkdb68FrQdx2TL2cRybCWLPvaDjcPNk3VZWGEeAeCWZwBQg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0083.outbound.protection.outlook.com ([104.47.38.83]:13760
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753412AbdCOKsR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Mar 2017 06:48:17 -0400
+Received: from mga05.intel.com ([192.55.52.43]:6781 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751694AbdCOKyM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Mar 2017 06:54:12 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZ88ObS-eqT5tVmktXWy6HdS9hor9wjJ6Ktvb6efcNYGQ@mail.gmail.com>
+In-Reply-To: <CACRpkdb68FrQdx2TL2cRybCWLPvaDjcPNk3VZWGEeAeCWZwBQg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kamlakant.Patel@cavium.com
+Cc: Hans de Goede <hdegoede@redhat.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 15, 2017 at 11:22:58AM +0100, Linus Walleij wrote:
-> On Sun, Mar 12, 2017 at 12:14 PM, Jayachandran C
-> <jnair@caviumnetworks.com> wrote:
+On Wed, Mar 15, 2017 at 11:31:36AM +0100, Linus Walleij wrote:
+> On Mon, Mar 13, 2017 at 11:04 PM, Hans de Goede <hdegoede@redhat.com> wrote:
 > 
-> > ARCH_VULCAN arm64 platform (for Broadcom Vulcan ARM64 processors) has
-> > been discontinued. Cavium's ThunderX2 CN99XX (ARCH_THUNDER2) will be
-> > the next revision of this platform.
+> > When acpi_dev_gpio_irq_get gets called with an index of say 2, it should
+> > not care if acpi_get_gpiod for index 0 or 1 returns -EPROBE_DEFER.
 > >
-> > Update compile dependencies and ACPI ID to reflect this change. There
-> > is not need to retain ARCH_VULCAN since the Vulcan processor was never
-> > in production.
+> > This allows drivers which request a gpioint with index > 0 to function
+> > if there is no gpiochip driver (loaded) for gpioints with a lower index.
 > >
-> > Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> Patch applied.
-> 
-> > -       depends on OF_GPIO && (CPU_XLP || ARCH_VULCAN || COMPILE_TEST)
-> > +       depends on OF_GPIO && (CPU_XLP || ARCH_THUNDER2 || COMPILE_TEST)
-> 
-> I kept ARCH_VULCAN.
-> 
-> I will consider removing it when Vulcan DTS files etc get removed from
-> arch/arm64/boot/dts/broadcom/*
+> I am dependent on Mika and Rafael to review ACPI/GPIO patches,
+> maybe I should just put in a special entry to MAINTAINERS for
+> this file... anyway let's see what they say.
 
-I have a patch posted to move the dts files at:
-https://www.spinics.net/lists/arm-kernel/msg568462.html
-and I hope it will get merged in the next cycle. I should have added
-this to the patch comments, so that you have the complete information.
- 
-> People may still be using preproduction boards and I do not want
-> to screw things up for them.
+Hans, could you in future Cc patches related to ACPI to linux-acpi
+mailing list as well? This one I looked up from linux-gpio mail
+archives.
 
-I understand, I left the Broadcom ACPI and DT strings alone due
-to similar concerns. For the Kconfig symbol, it is not much of an
-issue, but I'll leave that to your preference.
+The patch looks good to me so,
 
-Thanks,
-JC.
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
