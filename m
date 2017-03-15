@@ -1,73 +1,125 @@
-From: Robert Middleton <robert.middleton@rm5248.com>
-Subject: Re: [PATCH v2] gpio:mcp23s08 Fixed missing interrupts
-Date: Tue, 14 Mar 2017 21:56:12 -0400
-Message-ID: <CAKpcJVaw5vLtPR_gUVbjRPmh4TTVHh+XX4A5phTcQbXtGtwL9A@mail.gmail.com>
-References: <1487777658-12951-1-git-send-email-robert.middleton@rm5248.com>
- <1487777658-12951-2-git-send-email-robert.middleton@rm5248.com>
- <CACRpkdae8rBKrbny3T47FXx+7=hpzDi7kNvQ-VSOjkvsW=zz3w@mail.gmail.com>
- <CAKpcJVZHgTYuncEtTiK3P2xKJ5RAShv564zAsy1_sxrG3abjoQ@mail.gmail.com> <CACRpkdYcswm5Wb60aiaxuxdNSjApjXPptHiwgRaf8cohwz7Acw@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH fixes v3] pinctrl: Really force states during
+ suspend/resume
+Date: Tue, 14 Mar 2017 19:18:22 -0700
+Message-ID: <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
+References: <20170301183257.6554-1-f.fainelli@gmail.com>
+ <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
+ <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
+ <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sub5.mail.dreamhost.com ([208.113.200.129]:49659 "EHLO
-        homiemail-a57.g.dreamhost.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750818AbdCOB4P (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 14 Mar 2017 21:56:15 -0400
-Received: from homiemail-a57.g.dreamhost.com (localhost [127.0.0.1])
-        by homiemail-a57.g.dreamhost.com (Postfix) with ESMTP id 5D54A6004D12
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 18:56:14 -0700 (PDT)
-Received: from mail-vk0-f43.google.com (mail-vk0-f43.google.com [209.85.213.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: robert.middleton@rm5248.com)
-        by homiemail-a57.g.dreamhost.com (Postfix) with ESMTPSA id 431F46004D10
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 18:56:14 -0700 (PDT)
-Received: by mail-vk0-f43.google.com with SMTP id r136so1785434vke.1
-        for <linux-gpio@vger.kernel.org>; Tue, 14 Mar 2017 18:56:14 -0700 (PDT)
-In-Reply-To: <CACRpkdYcswm5Wb60aiaxuxdNSjApjXPptHiwgRaf8cohwz7Acw@mail.gmail.com>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:36367 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751037AbdCOCSZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 14 Mar 2017 22:18:25 -0400
+In-Reply-To: <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 14, 2017 at 5:16 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Mar 14, 2017 at 6:41 PM, Robert Middleton
-> <robert.middleton@rm5248.com> wrote:
->> On Tue, Mar 14, 2017 at 9:19 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Wed, Feb 22, 2017 at 4:34 PM,  <robert.middleton@rm5248.com> wrote:
->>>
->>>> From: Robert Middleton <robert.middleton@rm5248.com>
->>>>
->>>> When an interrupt occurs on an MCP23S08 chip, the INTF register will only
->>>> contain one bit as causing the interrupt.  If more than two pins change at
->>>> the same time on the chip, this causes one of the pins to not be reported.
->>>> This patch fixes the logic for checking if a pin has changed, so that
->>>> multiple pins will always cause more than one change.
->>>>
->>>> Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
->>>
->>> OMG that looks complicated. But good commit with proper comments,
->>> so patch applied for fixes. I had to do some fuzzing patch -p1 < foo.patch
->>> so please check the result.
->>>
->>> Yours,
->>> Linus Walleij
+On 03/14/2017 03:16 AM, Linus Walleij wrote:
+> On Thu, Mar 2, 2017 at 11:19 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> 
+>> So actually, I have been thinking about this some more, and while this
+>> definitively fixes my original problem with pinctrl-single, I just had
+>> to make another driver (sdhci-brcmstb.c) pinctrl aware. And then again,
+>> same thing, it has got just one "default" state, so when we call
+>> pinctrl_select_state() during driver resume, nothing happens.
 >>
->> Linux,
+>> So, with that in mind, it seems to me like we may actually just want to
+>> remove the p->state == state statement entirely, even though that's an
+>> optimization....
 >>
->> Thanks, I will check it out once that gets pushed(I'm assuming it will
->> be in the linux-gpio repository at
->> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/)
->
-> Unfortunately it explodes in the build servers due to changes in
-> the driver.
->
-> Can you rebase and test on v4.11-rc1 and resend?
->
+>> ... or, what we could do is, expose a version of pinctrl_force_default
+>> that takes a struct pinctrl reference instead of a struct pinctrl_dev
+>> reference and named differently of course.
+>>
+>> Thoughts?
+> 
+> The root problem that the patch is trying to solve is that the hardware
+> loose state when going to sleep, without the pin control core
+> being informed about this, correct?
+
+That is exactly what is happening.
+
+> 
+> And that is why the state is then "forced" with this patch, when
+> setting default state: the core think we are already in "default"
+> state, and thus the hack force it to be written down to the hardware
+> again.
+
+Correct.
+
+> 
+> But it is IMO just papering over the real bug: that the core does
+> not know that the state is lost.
+
+Yes, agree with that statement.
+
+> 
+> What I think is the proper solution is to add a callback to switch
+> the state in the core.
+> 
+> The most obvious would be to use the API as many already do:
+> define "sleep" states in the core, and switch to these before
+> going to sleep. If CONFIG_PM is available simply by calling
+> pinctrl_pm_select_sleep_state() in the driver suspend() callback.
+
+Well, the difficulty for our platforms is that S2 does not make the HW
+lose pin states, only S3 does and drivers should be agnostic of S2 vs. S3.
+
+There is not really a "sleep" and "default" state defined for these
+platforms just the "default" state. I initially even considered adding a
+fake "sleep" state just to satisfy the state transition condition, but
+that does not accurately represent the HW.
+
+> 
+> I think this is the most intuitive and clean solution.
+> 
+> Alternatively we would add a function to set the pinctrl handle to
+> an "unknown" state, so that when we resume, the pinctrl core at
+> least knows that we are not in "default" state anymore, so that
+> "default" is applied.
+
+And such a function would be called during driver suspend? Would not we
+still end-up with the drivers having to know about the fact that there
+is a) only one pin state defined, and b) these pins potentially lose
+their states in some deep sleep mode?
+
+> 
+> So then we would add:
+> 
+> /**
+>  * pinctrl_set_unknown_state() - tell the pinctrl core that we lost the state
+>  */
+> void pinctrl_set_unknown_state(struct device *dev) {
+>    struct dev_pin_info *pins = dev->pins;
+> 
+>    if (!pins)
+>         return 0;
+> 
+>    pins->p->state = NULL;
+> }
+> 
+> I imagine this would give the right results on the suspend path.
+
+Humm, why not, but I am not clear how I would call that nor under which
+conditions from both the pinctrl-single driver and another one that we
+use (sdhci-brcmstb.c for instance, but it could be any pinctrl consumer
+really)?
+
+Thanks!
+
+> 
 > Yours,
 > Linus Walleij
+> 
 
-Sure, that will take me a day or two but I can get that done.
 
--Robert Middleton
+-- 
+Florian
+
