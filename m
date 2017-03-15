@@ -1,192 +1,109 @@
-From: John Keeping <john@metanate.com>
-Subject: [PATCH v2.1 1/4] pinctrl: rockchip: remove unnecessary locking
-Date: Wed, 15 Mar 2017 18:51:33 +0000
-Message-ID: <20170315185133.38ee57a4.john@metanate.com>
-References: <20170315174654.15128-1-john@metanate.com>
-        <20170315174654.15128-2-john@metanate.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 1/2] pinctrl: meson: gxl: add the missing PWM pin
+ definitions
+Date: Wed, 15 Mar 2017 12:12:03 -0700
+Message-ID: <m237ee8id8.fsf@baylibre.com>
+References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+ <20170304212318.27076-2-martin.blumenstingl@googlemail.com>
+ <1488811357.2420.18.camel@baylibre.com>
+ <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ@mail.gmail.com>
+ <CACRpkdbGfGUhnAQz=9xeFnD2hF6m_xXacu8mZiwte-OCSDMo9w@mail.gmail.com>
+ <b7430d5f-96a7-2445-1c2a-ccc299bfdda2@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from dougal.metanate.com ([90.155.101.14]:49487 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750988AbdCOSvv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Mar 2017 14:51:51 -0400
-In-Reply-To: <20170315174654.15128-2-john@metanate.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <b7430d5f-96a7-2445-1c2a-ccc299bfdda2@baylibre.com> (Neil
+ Armstrong's message of "Wed, 15 Mar 2017 10:59:06 +0100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Julia Cartwright <julia@ni.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
 
-regmap_update_bits does its own locking and everything else accessed
-here is a local variable so there is no need to lock around it.
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-Signed-off-by: John Keeping <john@metanate.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
-v2.1:
-- Remove RK2928 locking in rockchip_set_pull()
-v2:
-- Also remove locking in rockchip_set_schmitt()
----
- drivers/pinctrl/pinctrl-rockchip.c | 33 ++-------------------------------
- 1 file changed, 2 insertions(+), 31 deletions(-)
+> On 03/14/2017 04:42 PM, Linus Walleij wrote:
+>> On Thu, Mar 9, 2017 at 8:47 PM, Martin Blumenstingl
+>> <martin.blumenstingl@googlemail.com> wrote:
+>>> On Mon, Mar 6, 2017 at 3:42 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>>> On Sat, 2017-03-04 at 22:23 +0100, Martin Blumenstingl wrote:
+>> 
+>>>>> +     FUNCTION(pwm_f_clk),
+>>>>> +     FUNCTION(pwm_f_x),
+>>>>
+>>>> I wonder if having function named "pwm_f_clk" really makes sense ?
+>>>> Shouldn't it be just "pwm_f" ? This is real function, isn't it ?
+>>>> The actual pin used will be provided in the dt. Here, I suppose we
+>>>> could have this:
+>>>>
+>>>> +static const char * const pwm_f_groups[] = {
+>>>> +       "pwm_f_x", "pwm_f_clk",
+>>>> +};
+>>>>
+>>>> Has far as I can see, on meson arch, the function does not carry much
+>>>> information anyway, except for prints.
+>>>>
+>>>> To be clear, I'm not questioning this change in particular. It looks
+>>>> good, and follows what has been done in the past on meson. I know we
+>>>> have been this a lot already, but I'm questioning whether we should
+>>>> continue to do so ?
+>>>>
+>>>> I asking because I also have a lot case like this coming up on audio
+>>>> for gxl and gxbb, where the same function can use different pins.
+>>>
+>>> could you please look into Jerome's question?
+>>> personally I'm fine with either way, and changing my patch would be
+>>> quite trivial. but I'd like to know what's "the way to go" before
+>>> changing anything (and reverting that afterwards again).
+>> 
+>> I don't understand the question really.
+>> 
+>> I am not an expert on this system, if the people working with it
+>> cannot tell a function from a group I don't know who can... certainly
+>> not me.
+>> 
+>> What I can say is that pincontrol combines functions and groups to
+>> states using a mapping. The functions should be something you poke
+>> into a register, the groups are looser defined but may also be a
+>> character of the hardware, but more usual a character of the
+>> intended electronic usecase. Groups contain 1..n pins and can
+>> be combined with some applicable functions.
+>> 
+>> Please re-read Documentation/pinctrl.txt very closely if anything is
+>> unclear, I really put a lot of hours into getting that right. Especially
+>> reexamine "Pinmux conventions".
+>
+> The point pushed by Jerome was purely cosmetic since the groups in the meson
+> pinctrl driver are purely cosmetic, since only the GPIO group is handled,
+> other groups are all handled the same.
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 1e276dfe1763..1d835370c2c7 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -652,7 +652,6 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
- 	int iomux_num = (pin / 8);
- 	struct regmap *regmap;
- 	int reg, ret, mask, mux_type;
--	unsigned long flags;
- 	u8 bit;
- 	u32 data, rmask;
- 
-@@ -701,15 +700,11 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
- 	if (ctrl->iomux_recalc && (mux_type & IOMUX_RECALCED))
- 		ctrl->iomux_recalc(bank->bank_num, pin, &reg, &bit, &mask);
- 
--	spin_lock_irqsave(&bank->slock, flags);
--
- 	data = (mask << (bit + 16));
- 	rmask = data | (data >> 16);
- 	data |= (mux & mask) << bit;
- 	ret = regmap_update_bits(regmap, reg, rmask, data);
- 
--	spin_unlock_irqrestore(&bank->slock, flags);
--
- 	return ret;
- }
- 
-@@ -1135,7 +1130,6 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 	struct rockchip_pinctrl *info = bank->drvdata;
- 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
- 	struct regmap *regmap;
--	unsigned long flags;
- 	int reg, ret, i;
- 	u32 data, rmask, rmask_bits, temp;
- 	u8 bit;
-@@ -1163,8 +1157,6 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 		return ret;
- 	}
- 
--	spin_lock_irqsave(&bank->slock, flags);
--
- 	switch (drv_type) {
- 	case DRV_TYPE_IO_1V8_3V0_AUTO:
- 	case DRV_TYPE_IO_3V3_ONLY:
-@@ -1185,17 +1177,14 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 			rmask = BIT(15) | BIT(31);
- 			data |= BIT(31);
- 			ret = regmap_update_bits(regmap, reg, rmask, data);
--			if (ret) {
--				spin_unlock_irqrestore(&bank->slock, flags);
-+			if (ret)
- 				return ret;
--			}
- 
- 			rmask = 0x3 | (0x3 << 16);
- 			temp |= (0x3 << 16);
- 			reg += 0x4;
- 			ret = regmap_update_bits(regmap, reg, rmask, temp);
- 
--			spin_unlock_irqrestore(&bank->slock, flags);
- 			return ret;
- 		case 18 ... 21:
- 			/* setting fully enclosed in the second register */
-@@ -1203,7 +1192,6 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 			bit -= 16;
- 			break;
- 		default:
--			spin_unlock_irqrestore(&bank->slock, flags);
- 			dev_err(info->dev, "unsupported bit: %d for pinctrl drive type: %d\n",
- 				bit, drv_type);
- 			return -EINVAL;
-@@ -1215,7 +1203,6 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 		rmask_bits = RK3288_DRV_BITS_PER_PIN;
- 		break;
- 	default:
--		spin_unlock_irqrestore(&bank->slock, flags);
- 		dev_err(info->dev, "unsupported pinctrl drive type: %d\n",
- 			drv_type);
- 		return -EINVAL;
-@@ -1227,7 +1214,6 @@ static int rockchip_set_drive_perpin(struct rockchip_pin_bank *bank,
- 	data |= (ret << bit);
- 
- 	ret = regmap_update_bits(regmap, reg, rmask, data);
--	spin_unlock_irqrestore(&bank->slock, flags);
- 
- 	return ret;
- }
-@@ -1294,7 +1280,6 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
- 	struct regmap *regmap;
- 	int reg, ret, i, pull_type;
--	unsigned long flags;
- 	u8 bit;
- 	u32 data, rmask;
- 
-@@ -1309,14 +1294,10 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 
- 	switch (ctrl->type) {
- 	case RK2928:
--		spin_lock_irqsave(&bank->slock, flags);
--
- 		data = BIT(bit + 16);
- 		if (pull == PIN_CONFIG_BIAS_DISABLE)
- 			data |= BIT(bit);
- 		ret = regmap_write(regmap, reg, data);
--
--		spin_unlock_irqrestore(&bank->slock, flags);
- 		break;
- 	case RK1108:
- 	case RK3188:
-@@ -1339,16 +1320,12 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 			return ret;
- 		}
- 
--		spin_lock_irqsave(&bank->slock, flags);
--
- 		/* enable the write to the equivalent lower bits */
- 		data = ((1 << RK3188_PULL_BITS_PER_PIN) - 1) << (bit + 16);
- 		rmask = data | (data >> 16);
- 		data |= (ret << bit);
- 
- 		ret = regmap_update_bits(regmap, reg, rmask, data);
--
--		spin_unlock_irqrestore(&bank->slock, flags);
- 		break;
- 	default:
- 		dev_err(info->dev, "unsupported pinctrl type\n");
-@@ -1408,7 +1385,6 @@ static int rockchip_set_schmitt(struct rockchip_pin_bank *bank,
- 	struct rockchip_pin_ctrl *ctrl = info->ctrl;
- 	struct regmap *regmap;
- 	int reg, ret;
--	unsigned long flags;
- 	u8 bit;
- 	u32 data, rmask;
- 
-@@ -1419,16 +1395,11 @@ static int rockchip_set_schmitt(struct rockchip_pin_bank *bank,
- 	if (ret)
- 		return ret;
- 
--	spin_lock_irqsave(&bank->slock, flags);
--
- 	/* enable the write to the equivalent lower bits */
- 	data = BIT(bit + 16) | (enable << bit);
- 	rmask = BIT(bit + 16) | BIT(bit);
- 
--	ret = regmap_update_bits(regmap, reg, rmask, data);
--	spin_unlock_irqrestore(&bank->slock, flags);
--
--	return ret;
-+	return regmap_update_bits(regmap, reg, rmask, data);
- }
- 
- /*
--- 
-2.12.0.377.gf910686b23.dirty
+handled the same... as what?
 
+> This is because I pushed all the PWM pins in a separate group, but functionnaly
+> the internal signal (i.e. PWM F) is the same for multiple pins and should be
+> a single "PWM F" group instead of multiple ones.
+>
+> My advice is to leave the PWM groups as is,
+
+Do you mean as we have in mainline today?  or as is proposed in $SUBJECT patch?
+
+> and push new pins/functions/groups
+> grouped with the internal signal name if split on multiple pins.
+
+Can somone do a quick patch for PWM_F for example, also showing how this
+will look in the DT if someone wants to switch between the PWM_F on GPIOX
+or GPIOCLK?
+
+We shouldalso verify that the driver is detecting/removing conflicts
+properly when something else is already using that pin (e.g. SDIO_IRQ
+shares pin GPIOX_7 with PWM_F)
+
+Kevin
