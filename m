@@ -1,43 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH fixes v4] pinctrl: Do not check previous and current state
-Date: Wed, 15 Mar 2017 11:29:42 +0100
-Message-ID: <CACRpkdYourx7eRAx6eGeyzqF+TUAy9gy=Pr8X6=oTxkcPzE1WQ@mail.gmail.com>
-References: <20170307185236.31805-1-f.fainelli@gmail.com> <d9a20f6c-96e5-1e12-447d-fbea5014fa57@gmail.com>
- <CAHp75VfXsKVYrwdQqf6KGXH-zmpc-5PevPT-Q2P4cuOyKYSdxg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: acpi: Ignore -EPROBE_DEFER for unselected gpioints
+Date: Wed, 15 Mar 2017 11:31:36 +0100
+Message-ID: <CACRpkdb68FrQdx2TL2cRybCWLPvaDjcPNk3VZWGEeAeCWZwBQg@mail.gmail.com>
+References: <20170313220421.27314-1-hdegoede@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:35659 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbdCOK3o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 06:29:44 -0400
-Received: by mail-io0-f173.google.com with SMTP id z13so17027100iof.2
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 03:29:44 -0700 (PDT)
-In-Reply-To: <CAHp75VfXsKVYrwdQqf6KGXH-zmpc-5PevPT-Q2P4cuOyKYSdxg@mail.gmail.com>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:34485 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbdCOKbi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 06:31:38 -0400
+Received: by mail-io0-f180.google.com with SMTP id b140so17088070iof.1
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 03:31:38 -0700 (PDT)
+In-Reply-To: <20170313220421.27314-1-hdegoede@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 13, 2017 at 8:06 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Mon, Mar 13, 2017 at 8:59 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->> On 03/07/2017 10:52 AM, Florian Fainelli wrote:
+On Mon, Mar 13, 2017 at 11:04 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+
+> When acpi_dev_gpio_irq_get gets called with an index of say 2, it should
+> not care if acpi_get_gpiod for index 0 or 1 returns -EPROBE_DEFER.
 >
->> Linus am I hitting some of your spam folder, or you are really having
->> way too much fun with Gemini ;) ?
+> This allows drivers which request a gpioint with index > 0 to function
+> if there is no gpiochip driver (loaded) for gpioints with a lower index.
 >
-> A bit offtopic here, but I have almost same question. I noticed no
-> reaction for patches I had sent up to 3 weeks ago (yes, I understand
-> that far was a time of merge window, though...).
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Yeah it's official, I'm overloaded.
-
-I need to find a pinctrl comaintainer, I have Geert pulling together
-Renesas patches, and I asked someone from Samsung to step up
-for their stuff as it is creating a bit of stir.
-
-For helping out with pinctrl core I am open to nominations :)
+I am dependent on Mika and Rafael to review ACPI/GPIO patches,
+maybe I should just put in a special entry to MAINTAINERS for
+this file... anyway let's see what they say.
 
 Yours,
 Linus Walleij
