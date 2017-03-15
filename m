@@ -1,48 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
- managing groups
-Date: Wed, 15 Mar 2017 10:46:16 +0100
-Message-ID: <CACRpkdb1O9=xZ-sVVh1AzmW8oknQyNAW=LirtX1CEA=pkCbA1g@mail.gmail.com>
-References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
- <20170102182022.2047-2-gary.bisson@boundarydevices.com> <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
- <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
- <CAOMZO5AXOEFTep17etLyU1avWsDasFF+NAAPcusaMRGMR3nctg@mail.gmail.com> <20170307175448.GU20572@atomide.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 2/3] pinctrl: meson-gxl: Fix inverted registers and add
+ missing pins
+Date: Wed, 15 Mar 2017 10:49:13 +0100
+Message-ID: <5e975901-b5d4-fdc8-9866-ad6bc9e3b599@baylibre.com>
+References: <1488893462-7016-1-git-send-email-narmstrong@baylibre.com>
+ <1488893462-7016-3-git-send-email-narmstrong@baylibre.com>
+ <CACRpkdZ+x6vZQKfCoKD3dn-XzAxBBwMy=HF1Zi7SqXFWv28rZA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170307175448.GU20572@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Fabio Estevam <festevam@gmail.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:33903 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752511AbdCOJtb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 05:49:31 -0400
+Received: by mail-wr0-f172.google.com with SMTP id l37so7183241wrc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 02:49:29 -0700 (PDT)
+In-Reply-To: <CACRpkdZ+x6vZQKfCoKD3dn-XzAxBBwMy=HF1Zi7SqXFWv28rZA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 6:54 PM, Tony Lindgren <tony@atomide.com> wrote:
-> * Fabio Estevam <festevam@gmail.com> [170307 09:39]:
->> Hi Gary,
+On 03/15/2017 10:43 AM, Linus Walleij wrote:
+> On Tue, Mar 7, 2017 at 2:31 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> 
+>> Fix some inverted bit numbers in some pinctrl groups and add missing pins
+>> and groups to be in pair with the GXBB pinctrl pins definition.
 >>
->> On Tue, Mar 7, 2017 at 2:26 PM, Gary Bisson
->> <gary.bisson@boundarydevices.com> wrote:
->>
->> > No it isn't because of the use of radix but instead of:
->> > http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=950b0d91dc10
->> >
->> > It has been discussed here:
->> > https://lkml.org/lkml/2017/2/28/140
->>
->> Thanks for the clarification.
->>
->> > Tony offered a patch in that thread which works. Tony, have you
->> > submitted it yet?
->>
->> Looking forward to this one :-)
->
-> Still waiting to hear back from Linus on what he prefers.
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> This does not apply on my fixes branch and possibly no other
+> v4.11-rc1-based branch. Can you please rebase it and resend?
+> 
+> I guess this also needs queueing for fixes?
+> 
+> Yours,
+> Linus Walleij
+> 
 
-I am snowed under by mail and might be missing stuff at the
-moment...
+Hi Linus,
 
-If there is some especially urgent fix patch I need to look into
-can you please point it out?
+Indeed, it depends on Martin's "pinctrl: meson: gxl: add the missing PWM pin definitions" posted earlier.
 
-Yours,
-Linus Walleij
+Neil
