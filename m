@@ -1,99 +1,93 @@
-From: Julia Cartwright <julia@ni.com>
-Subject: Re: [RFC PATCH 0/4] pinctrl: rockchip: PREEMPT_RT_FULL fixes
-Date: Wed, 15 Mar 2017 13:17:30 -0500
-Message-ID: <20170315181730.GC682@jcartwri.amer.corp.natinst.com>
-References: <20170313183813.3582-1-john@metanate.com>
- <CACRpkdZXBZr_Syur3r=3GTjjrCPx4bgj0g5iNSN6rdikqkww4w@mail.gmail.com>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: rockchip: add irq_enable & irq_disable ops
+Date: Wed, 15 Mar 2017 18:46:38 +0100
+Message-ID: <2305921.lIYBC71m00@phil>
+References: <1488434212-6567-1-git-send-email-jeffy.chen@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0693551128324563205=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdZXBZr_Syur3r=3GTjjrCPx4bgj0g5iNSN6rdikqkww4w@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1488434212-6567-1-git-send-email-jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, John Keeping <john-HooS5bfzL4hWk0Htik3J/w@public.gmane.org>
+Cc: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Brian Norris <briannorris-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tfiga-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
---===============0693551128324563205==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
-Content-Disposition: inline
+Am Donnerstag, 2. M=E4rz 2017, 13:56:52 CET schrieb Jeffy Chen:
+> Currently we are trying to enable/disable the clk of irq's gpio bank when
+> unmask/mask irq. But the kernel's "lazy disable approach" will skip maski=
+ng
+> irq when the irq chip doesn't support irq_disable ops.
+> =
 
---f2QGlHpHGjS2mn6Y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> So we may hit this case:
+> 	irq_enable-> enable clk
+> 	irq_disable-> noop
+> 	irq_enable-> enable clk again
+> 	irq_disable-> noop
+> =
 
-On Wed, Mar 15, 2017 at 02:12:39PM +0100, Linus Walleij wrote:
-> On Mon, Mar 13, 2017 at 7:38 PM, John Keeping <john@metanate.com> wrote:
->=20
-> > As described in Documentation/gpio/driver.txt, we should not be using
-> > sleepable APIs in the irqchip implementation.  Since this includes the
-> > regmap API, this patch series ends up moving the mux setup for IRQs into
-> > an irq_bus_sync_unlock() handler which may result in the IRQ being
-> > configured before the port has been muxed as a GPIO.
-> >
-> > I've marked the series as RFC because I'm not sure if this is the best
-> > way to accomplish this or if there is another approach that is cleaner.
-> > Also, the first patch may not be correct on RK3399 because I originally
-> > wrote the patch for RK3288 on top of v4.4 where all drive updates only
-> > affect a single register.  We don't need locking in this case because
-> > regmap_update_bits() takes a lock on the regmap internally, but if these
-> > two registers need to be updated atomically then another lock will
-> > be required here - slock cannot be used if it is converted to a raw
-> > spinlock since with full RT preemption the regmap's spinlock may sleep.
->=20
-> Nice work! It all looks good to me, let's see what Heiko says.
->=20
-> Please keep Julia Cartwright on the CC for this patch series, she is
-> doing some coccinelle-based rewrites to use raw spinlocks as we
-> speak, and she knows this stuff.
->=20
-> She has not targeted the Rockchip driver yet, I guess because of
-> its complexity.
+> Signed-off-by: Jeffy Chen <jeffy.chen-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
-I haven't really given much thought to how we might generically solve
-raw_spinlock problems for those drivers which make of irq_chip_generic
-just yet.  I don't imagine it would be too difficult, just more work.
+While I'm not that versed in irqchip details, reading through some other =
 
-Thanks for the CC.
+irqchips makes this look correct handling, so also makes sense in the conte=
+xt =
 
-   Julia
+of the pinctrl irqs here
 
---f2QGlHpHGjS2mn6Y
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
------BEGIN PGP SIGNATURE-----
+> ---
+> =
 
-iQEzBAABCAAdFiEEgKAEF431w1EL96k9jNrC4UVNdG8FAljJhTcACgkQjNrC4UVN
-dG8J0ggAnmLjlTFh5Xc+HNTHAda33ZrkUSdO/yu8HYGet+iZXDr5LXJe9JMHqSRB
-//IPiMJjeRhagDFB/rYHmDu1WehVBLy/UcM+75g8B0fUnpJ9ikqVTddRrx292IxT
-xxsnyLkelJRNI43hYMjeOSungCL7etHxYM53YIKeyob6DvU+69L5TlXlEHr8WlZm
-haT+M8PVkKQiAgueFjniCN+UsR1GXOuM8omYSFJoBVTjAAvN6z/XbVl3JGsh4hbO
-LYUnBZPOa778h/ljJW526Fza6f69FzHEiSN3JeQWI0bi/gAjmKyLd5WvbpE6w0Ui
-53XWUAzdVOhR4pcMd88mMzEc81f0aw==
-=Z0Qv
------END PGP SIGNATURE-----
+>  drivers/pinctrl/pinctrl-rockchip.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> =
 
---f2QGlHpHGjS2mn6Y--
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> b/drivers/pinctrl/pinctrl-rockchip.c index 7813599..a9a7dfa 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -2061,7 +2061,7 @@ static void rockchip_irq_resume(struct irq_data *d)
+>  	clk_disable(bank->clk);
+>  }
+> =
 
+> -static void rockchip_irq_gc_mask_clr_bit(struct irq_data *d)
+> +static void rockchip_irq_enable(struct irq_data *d)
+>  {
+>  	struct irq_chip_generic *gc =3D irq_data_get_irq_chip_data(d);
+>  	struct rockchip_pin_bank *bank =3D gc->private;
+> @@ -2070,7 +2070,7 @@ static void rockchip_irq_gc_mask_clr_bit(struct
+> irq_data *d) irq_gc_mask_clr_bit(d);
+>  }
+> =
 
---===============0693551128324563205==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0693551128324563205==--
+> -static void rockchip_irq_gc_mask_set_bit(struct irq_data *d)
+> +static void rockchip_irq_disable(struct irq_data *d)
+>  {
+>  	struct irq_chip_generic *gc =3D irq_data_get_irq_chip_data(d);
+>  	struct rockchip_pin_bank *bank =3D gc->private;
+> @@ -2137,9 +2137,10 @@ static int rockchip_interrupts_register(struct
+> platform_device *pdev, gc->chip_types[0].regs.mask =3D GPIO_INTMASK;
+>  		gc->chip_types[0].regs.ack =3D GPIO_PORTS_EOI;
+>  		gc->chip_types[0].chip.irq_ack =3D irq_gc_ack_set_bit;
+> -		gc->chip_types[0].chip.irq_mask =3D rockchip_irq_gc_mask_set_bit;
+> -		gc->chip_types[0].chip.irq_unmask =3D
+> -						  rockchip_irq_gc_mask_clr_bit;
+> +		gc->chip_types[0].chip.irq_mask =3D irq_gc_mask_set_bit;
+> +		gc->chip_types[0].chip.irq_unmask =3D irq_gc_mask_clr_bit;
+> +		gc->chip_types[0].chip.irq_enable =3D rockchip_irq_enable;
+> +		gc->chip_types[0].chip.irq_disable =3D rockchip_irq_disable;
+>  		gc->chip_types[0].chip.irq_set_wake =3D irq_gc_set_wake;
+>  		gc->chip_types[0].chip.irq_suspend =3D rockchip_irq_suspend;
+>  		gc->chip_types[0].chip.irq_resume =3D rockchip_irq_resume;
