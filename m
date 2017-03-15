@@ -1,27 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
-Date: Wed, 15 Mar 2017 11:26:05 +0100
-Message-ID: <CACRpkdaTYVj_RrSLhiZxwFogmW80wvFo8cO7zO7uRm_JajUz-A@mail.gmail.com>
-References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH fixes v4] pinctrl: Do not check previous and current state
+Date: Wed, 15 Mar 2017 11:28:11 +0100
+Message-ID: <CACRpkdawrRDyL=vWs5nR4RSycPdLpUwcK-XdOa-x-6+kWM3chQ@mail.gmail.com>
+References: <20170307185236.31805-1-f.fainelli@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170307185236.31805-1-f.fainelli@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 13, 2017 at 5:41 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, Mar 7, 2017 at 7:52 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-> I plan to queue these up in sh-pfc-for-v4.12.
+> In case a platform only defaults a "default" set of pins, but not a
+> "sleep" set of pins, and this particular platform suspends and resumes
+> in a way that the pin states are not preserved by the hardware, when we
+> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+> -> pinctrl_select_state() and the first thing we do is check that the
+> pins state is the same as before, and do nothing.
+>
+> In order to fix this, just remove the p->state == state check from
+> pinctrl_select_state() since it would not allow callers of this function
+> to get the pins to be brought into the expected state.
+>
+> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Thanks, looking forward to pull request.
-
-I realized I needed a maintainer collecting Samsung patches
-as well this week, so we may get more people maintaining
-subdirs in pinctrl...
+I responded to some patch in the series yesterday that what we
+need is to inform the pinctrl core that we lost state, so let's discuss
+this in that thread.
 
 Yours,
 Linus Walleij
