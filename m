@@ -1,193 +1,70 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [RFC PATCH 1/4] pinctrl: rockchip: remove unnecessary locking
-Date: Wed, 15 Mar 2017 17:25:33 +0100
-Message-ID: <1496183.x1RzxkxUrn@phil>
-References: <20170313183813.3582-1-john@metanate.com>
- <20170313183813.3582-2-john@metanate.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] fix pinctrl setup for i.IMX6
+Date: Wed, 15 Mar 2017 09:26:39 -0700
+Message-ID: <20170315162639.GK20572@atomide.com>
+References: <d217e26e-9b5c-7b01-67e2-017293ca1407@nextfour.com>
+ <CACRpkdZ6=1U6cDdPr64aDFDizHfzzAPOeNKwQy5Z0nRpB=jLjw@mail.gmail.com>
+ <20170314145527.q53qh7yzm2x4zksf@t450s.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170313183813.3582-2-john@metanate.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: John Keeping <john@metanate.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170314145527.q53qh7yzm2x4zksf@t450s.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Linus Walleij <linus.walleij@linaro.org>, Mika =?utf-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>, Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Am Montag, 13. M=E4rz 2017, 18:38:10 CET schrieb John Keeping:
-> regmap_update_bits does its own locking and everything else accessed
-> here is a local variable so there is no need to lock around it.
-> =
+* Gary Bisson <gary.bisson@boundarydevices.com> [170314 07:57]:
+> Hi Linus,
+> 
+> On Tue, Mar 14, 2017 at 03:47:58PM +0100, Linus Walleij wrote:
+> > On Tue, Feb 28, 2017 at 7:00 AM, Mika Penttilä
+> > <mika.penttila@nextfour.com> wrote:
+> > 
+> > > Recent pulls for mainline pre 4.11 introduced pinctrl setup changes and moved pinctrl-imx to
+> > > use generic helpers.
+> > >
+> > > Net effect was that hog group could not be resolved. I made it work for myself
+> > > with a two stage setup with create and start separated, and dt probe in between them.
+> > >
+> > >
+> > > Signed-off-by: Mika Penttilä <mika.penttila@nextfour.com>
+> > 
+> > Sorry for including the whole mail body, some people may have missed the
+> > mail. Notably the i.MX maintainers.
+> > 
+> > Your patch reminds me of the pinctrl_register() vs pinctrl_register_and_init()
+> > introduced by Tony Lindgren, can you look into this in commit
+> > 950b0d91dc108f54bccca5a2f75bb46f2df63d29
+> > "pinctrl: core: Fix regression caused by delayed work for hogs"?
+> > 
+> > Does switching pinctrl_register_and_init() back to pinctrl_register()
+> > solve your problem?
+> > 
+> > Gary: have you seen any problem like this?
+> 
+> Yes, Mika brought it up as soon as the first 4.11-rc appeared and indeed
+> this issue can be reproduced on any i.MX6 platform.
+> 
+> Then Tony offered a patch but you haven't replied to him yet:
+> https://lkml.org/lkml/2017/2/28/140
 
-> I originally wrote this on to of v4.4 which doesn't have the split
-> registers for drive strength, where some additional locking might be
-> necessary.  But I don't think it can be "slock" given that the following
-> patches will convert that to a raw spinlock and regmap uses a normal
-> spinlock internally.
-> =
+I think as a regression fix for the -rc series, we should use Mika's
+patch with the following tweaks:
 
-> Signed-off-by: John Keeping <john@metanate.com>
+1. Instead of adding yet another devm_pinctrl_register_and_init(),
+   let's just make devm_pinctrl_register_and_init() not call start
+   automatically. If people prefer to use Mika's naming for it
+   with nostart, I have no problem with that. But let's then rename
+   the current devm_pinctrl_register_and_init() so we are not stuck
+   with another interface with issues.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+2. Update the four drivers using devm_pinctrl_register_and_init()
+   to also call start separately.
 
-I have a hard time remembering why these locks are in there in the first pl=
-ace. =
+Mika, care to update your patch for that?
 
-Not only has regmap its own locking, all the grf-registers handling iomux (=
-and =
+Regards,
 
-also the new schmitt triggers) are hiword-mask registers (meaning you enabl=
-e =
-
-bit x+16 to get write access to bit x), so there isn't locking needed to =
-
-prevent concurrent register access in the first place.
-
-I can only guess  this was meant as a safeguard for earlier socs (
-- rk2928 - single-core Cortex-A9
-- rk2918 Cortex-A8
-- earlier ARM9) that hadn't these hiword-mask mechanisms yet.
-I don't think we'll ever have support for those (they're old and nobody car=
-es) =
-
-but we can of course revisit this if at some point somebody is interested i=
-n =
-
-affected socs.
-
-Of course that is only true for the grf-based parts, not for the gpio =
-
-registers.
-
-> ---
->  drivers/pinctrl/pinctrl-rockchip.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
-> =
-
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c index a838c8bb3129..1defe83a5c4d
-> 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -649,7 +649,6 @@ static int rockchip_set_mux(struct rockchip_pin_bank
-> *bank, int pin, int mux) int iomux_num =3D (pin / 8);
->  	struct regmap *regmap;
->  	int reg, ret, mask, mux_type;
-> -	unsigned long flags;
->  	u8 bit;
->  	u32 data, rmask;
-> =
-
-> @@ -698,15 +697,11 @@ static int rockchip_set_mux(struct rockchip_pin_bank
-> *bank, int pin, int mux) if (ctrl->iomux_recalc && (mux_type &
-> IOMUX_RECALCED))
->  		ctrl->iomux_recalc(bank->bank_num, pin, &reg, &bit, &mask);
-> =
-
-> -	spin_lock_irqsave(&bank->slock, flags);
-> -
->  	data =3D (mask << (bit + 16));
->  	rmask =3D data | (data >> 16);
->  	data |=3D (mux & mask) << bit;
->  	ret =3D regmap_update_bits(regmap, reg, rmask, data);
-> =
-
-> -	spin_unlock_irqrestore(&bank->slock, flags);
-> -
->  	return ret;
->  }
-> =
-
-> @@ -1132,7 +1127,6 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank, struct rockchip_pinctrl *info =3D bank->drvdata;
->  	struct rockchip_pin_ctrl *ctrl =3D info->ctrl;
->  	struct regmap *regmap;
-> -	unsigned long flags;
->  	int reg, ret, i;
->  	u32 data, rmask, rmask_bits, temp;
->  	u8 bit;
-> @@ -1160,8 +1154,6 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank, return ret;
->  	}
-> =
-
-> -	spin_lock_irqsave(&bank->slock, flags);
-> -
->  	switch (drv_type) {
->  	case DRV_TYPE_IO_1V8_3V0_AUTO:
->  	case DRV_TYPE_IO_3V3_ONLY:
-> @@ -1182,17 +1174,14 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank, rmask =3D BIT(15) | BIT(31);
->  			data |=3D BIT(31);
->  			ret =3D regmap_update_bits(regmap, reg, rmask, data);
-> -			if (ret) {
-> -				spin_unlock_irqrestore(&bank->slock, flags);
-> +			if (ret)
->  				return ret;
-> -			}
-> =
-
->  			rmask =3D 0x3 | (0x3 << 16);
->  			temp |=3D (0x3 << 16);
->  			reg +=3D 0x4;
->  			ret =3D regmap_update_bits(regmap, reg, rmask, temp);
-> =
-
-> -			spin_unlock_irqrestore(&bank->slock, flags);
->  			return ret;
->  		case 18 ... 21:
->  			/* setting fully enclosed in the second register */
-> @@ -1200,7 +1189,6 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank, bit -=3D 16;
->  			break;
->  		default:
-> -			spin_unlock_irqrestore(&bank->slock, flags);
->  			dev_err(info->dev, "unsupported bit: %d for pinctrl drive type: %d
-\n",
->  				bit, drv_type);
->  			return -EINVAL;
-> @@ -1212,7 +1200,6 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank, rmask_bits =3D RK3288_DRV_BITS_PER_PIN;
->  		break;
->  	default:
-> -		spin_unlock_irqrestore(&bank->slock, flags);
->  		dev_err(info->dev, "unsupported pinctrl drive type: %d\n",
->  			drv_type);
->  		return -EINVAL;
-> @@ -1224,7 +1211,6 @@ static int rockchip_set_drive_perpin(struct
-> rockchip_pin_bank *bank, data |=3D (ret << bit);
-> =
-
->  	ret =3D regmap_update_bits(regmap, reg, rmask, data);
-> -	spin_unlock_irqrestore(&bank->slock, flags);
-> =
-
->  	return ret;
->  }
-> @@ -1336,16 +1322,12 @@ static int rockchip_set_pull(struct
-> rockchip_pin_bank *bank, return ret;
->  		}
-> =
-
-> -		spin_lock_irqsave(&bank->slock, flags);
-> -
->  		/* enable the write to the equivalent lower bits */
->  		data =3D ((1 << RK3188_PULL_BITS_PER_PIN) - 1) << (bit + 16);
->  		rmask =3D data | (data >> 16);
->  		data |=3D (ret << bit);
-> =
-
->  		ret =3D regmap_update_bits(regmap, reg, rmask, data);
-> -
-> -		spin_unlock_irqrestore(&bank->slock, flags);
->  		break;
->  	default:
->  		dev_err(info->dev, "unsupported pinctrl type\n");
+Tony
