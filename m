@@ -1,36 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: add names to the gpios
-Date: Wed, 15 Mar 2017 10:40:17 +0100
-Message-ID: <CACRpkdZE2kawSKaukwbdDHPKfzeAvMCMe8ZTGWB8FvPqObruDQ@mail.gmail.com>
-References: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 2/3] gpio: wm831x: Add basic device tree support
+Date: Wed, 15 Mar 2017 09:41:56 +0000
+Message-ID: <20170315094156.GG6986@localhost.localdomain>
+References: <1488818804-9406-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1488818804-9406-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdYE_eOeUPaQXV3avCLxebmOjPqkjkK2PaMCa_2NOTNMpQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:36248 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751509AbdCOJkT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 05:40:19 -0400
-Received: by mail-it0-f46.google.com with SMTP id w124so46066017itb.1
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 02:40:18 -0700 (PDT)
-In-Reply-To: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:33606 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751509AbdCOJlB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Mar 2017 05:41:01 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYE_eOeUPaQXV3avCLxebmOjPqkjkK2PaMCa_2NOTNMpQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 
-On Tue, Mar 7, 2017 at 12:32 AM, Timur Tabi <timur@codeaurora.org> wrote:
+On Wed, Mar 15, 2017 at 10:18:31AM +0100, Linus Walleij wrote:
+> On Mon, Mar 6, 2017 at 5:46 PM, Charles Keepax
+> <ckeepax@opensource.wolfsonmicro.com> wrote:
+> 
+> > Now the wm831x-core has basic DT support we can update this driver to
+> > allow use of the GPIOs within a device tree system.
+> >
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Patch applied.
+> 
 
-> The sysfs and debugfs entries for pin control drivers work better when
-> the individual pins are given real names, even if they are all just
-> "gpio0", "gpio1", etc.
->
-> Signed-off-by: Timur Tabi <timur@codeaurora.org>
+This needs to go through Lee's tree with the patch above it has a
+build dependency on it.
 
-Patch tentatively applied (looks right to me), unless Bj=C3=B6rn has concer=
-ns.
-
-Is this a problem in other qcom pinctrl drivers?
-
-Yours,
-Linus Walleij
+Thanks,
+Charles
