@@ -1,74 +1,36 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] MIPS: NI 169445 board support
-Date: Wed, 15 Mar 2017 10:37:12 +0100
-Message-ID: <CACRpkda0xsm+iN_Kxg4pB43LQ7i2MzfJgqibDAt3V5xCRinHEA@mail.gmail.com>
-References: <1488830761-681-1-git-send-email-nathan.sullivan@ni.com> <1488830761-681-3-git-send-email-nathan.sullivan@ni.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: add names to the gpios
+Date: Wed, 15 Mar 2017 10:40:17 +0100
+Message-ID: <CACRpkdZE2kawSKaukwbdDHPKfzeAvMCMe8ZTGWB8FvPqObruDQ@mail.gmail.com>
+References: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1488830761-681-3-git-send-email-nathan.sullivan-acOepvfBmUk@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36248 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751509AbdCOJkT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 05:40:19 -0400
+Received: by mail-it0-f46.google.com with SMTP id w124so46066017itb.1
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 02:40:18 -0700 (PDT)
+In-Reply-To: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Mar 6, 2017 at 9:06 PM, Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org> wrote:
+On Tue, Mar 7, 2017 at 12:32 AM, Timur Tabi <timur@codeaurora.org> wrote:
 
-> Support the National Instruments 169445 board.
+> The sysfs and debugfs entries for pin control drivers work better when
+> the individual pins are given real names, even if they are all just
+> "gpio0", "gpio1", etc.
 >
-> Signed-off-by: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-(...)
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 
-> +               gpio1:gpio-controller@1f300010 {
-> +                       compatible = "ni,169445-nand-gpio";
-> +                       reg = <0x10 0x4>;
-> +                       reg-names = "dat";
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +                       ngpios = <5>;
+Patch tentatively applied (looks right to me), unless Bj=C3=B6rn has concer=
+ns.
 
-Here I would add:
-
-gpio-line-names = "NC", "NCE", "ALE", "CLE", "NWP";
-
-(Dunno about the first one, maybe you have a schematic?)
-
-> +               };
-> +
-> +               gpio2:gpio-controller@1f300014 {
-> +                       compatible = "ni,169445-nand-gpio";
-> +                       reg = <0x14 0x4>;
-> +                       reg-names = "dat";
-> +                       gpio-controller;
-> +                       #gpio-cells = <2>;
-> +                       ngpios = <1>;
-
-gpio-line-names = "RDY";
-
-> +               };
-> +
-> +               nand@1f300000 {
-> +                       compatible = "gpio-control-nand";
-> +                       nand-on-flash-bbt;
-> +                       nand-ecc-mode = "soft_bch";
-> +                       nand-ecc-step-size = <512>;
-> +                       nand-ecc-strength = <4>;
-> +                       reg = <0x0 4>;
-> +                       gpios = <&gpio2 0 0>, /* rdy */
-> +                               <&gpio1 1 0>, /* nce */
-> +                               <&gpio1 2 0>, /* ale */
-> +                               <&gpio1 3 0>, /* cle */
-> +                               <&gpio1 4 0>; /* nwp */
-> +               };
-
-To reflect this. "lsgpio" gives better info after that.
-
-Other than that:
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Is this a problem in other qcom pinctrl drivers?
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
