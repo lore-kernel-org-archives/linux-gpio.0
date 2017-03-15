@@ -1,58 +1,33 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v2] gpio: acpi: Ignore -EPROBE_DEFER for unselected
- gpioints
-Date: Wed, 15 Mar 2017 14:35:42 +0100
-Message-ID: <77aa7ebe-83e2-3754-fae4-72cb623b8200@redhat.com>
-References: <20170313220421.27314-1-hdegoede@redhat.com>
- <CACRpkdb68FrQdx2TL2cRybCWLPvaDjcPNk3VZWGEeAeCWZwBQg@mail.gmail.com>
- <20170315105407.GT2957@lahna.fi.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: samsung: Fix memory mapping code
+Date: Wed, 15 Mar 2017 14:43:23 +0100
+Message-ID: <CACRpkdbjuLarHU-1msrapD=kyuGnmPigrBZfUUAcNjUK4oZWNQ@mail.gmail.com>
+References: <CGME20170223101244eucas1p2eddf13a013d66f9ccdbe45f410b5939c@eucas1p2.samsung.com>
+ <20170222170202.heu35anyoziwv23n@kozik-lap> <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44552 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750977AbdCONfq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Mar 2017 09:35:46 -0400
-In-Reply-To: <20170315105407.GT2957@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1487844760-26272-1-git-send-email-a.hajda@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi,
+On Thu, Feb 23, 2017 at 11:12 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
 
-On 15-03-17 11:54, Mika Westerberg wrote:
-> On Wed, Mar 15, 2017 at 11:31:36AM +0100, Linus Walleij wrote:
->> On Mon, Mar 13, 2017 at 11:04 PM, Hans de Goede <hdegoede@redhat.com> wrote:
->>
->>> When acpi_dev_gpio_irq_get gets called with an index of say 2, it should
->>> not care if acpi_get_gpiod for index 0 or 1 returns -EPROBE_DEFER.
->>>
->>> This allows drivers which request a gpioint with index > 0 to function
->>> if there is no gpiochip driver (loaded) for gpioints with a lower index.
->>>
->>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
->> I am dependent on Mika and Rafael to review ACPI/GPIO patches,
->> maybe I should just put in a special entry to MAINTAINERS for
->> this file... anyway let's see what they say.
+> Some pinctrls share memory regions, and devm_ioremap_resource does not
+> allow to share resources, in opposition to devm_ioremap.
+> This patch restores back usage of devm_ioremap function, but with proper
+> error handling and logging.
 >
-> Hans, could you in future Cc patches related to ACPI to linux-acpi
-> mailing list as well?
+> Fixes: baafaca ("pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data()")
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> v2:
+> - added platform_get_resource error check (thanks to Krzysztof)
 
-Ok, will do.
+I removed the revert and applied this instead, adding Marek's tested-by
+and Krzysztof's reviewed-by.
 
-> This one I looked up from linux-gpio mail
-> archives.
->
-> The patch looks good to me so,
->
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-Thank you.
-
-Regards,
-
-Hans
+Yours,
+Linus Walleij
