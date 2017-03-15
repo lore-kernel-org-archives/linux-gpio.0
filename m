@@ -1,70 +1,207 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] fix pinctrl setup for i.IMX6
-Date: Wed, 15 Mar 2017 09:26:39 -0700
-Message-ID: <20170315162639.GK20572@atomide.com>
-References: <d217e26e-9b5c-7b01-67e2-017293ca1407@nextfour.com>
- <CACRpkdZ6=1U6cDdPr64aDFDizHfzzAPOeNKwQy5Z0nRpB=jLjw@mail.gmail.com>
- <20170314145527.q53qh7yzm2x4zksf@t450s.lan>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [RFC PATCH 2/4] pinctrl: rockchip: convert to raw spinlock
+Date: Wed, 15 Mar 2017 17:28:56 +0100
+Message-ID: <39203480.lbsBriduiK@phil>
+References: <20170313183813.3582-1-john@metanate.com>
+ <20170313183813.3582-3-john@metanate.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170314145527.q53qh7yzm2x4zksf@t450s.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Linus Walleij <linus.walleij@linaro.org>, Mika =?utf-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>, Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170313183813.3582-3-john@metanate.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: John Keeping <john@metanate.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Gary Bisson <gary.bisson@boundarydevices.com> [170314 07:57]:
-> Hi Linus,
-> 
-> On Tue, Mar 14, 2017 at 03:47:58PM +0100, Linus Walleij wrote:
-> > On Tue, Feb 28, 2017 at 7:00 AM, Mika Penttilä
-> > <mika.penttila@nextfour.com> wrote:
-> > 
-> > > Recent pulls for mainline pre 4.11 introduced pinctrl setup changes and moved pinctrl-imx to
-> > > use generic helpers.
-> > >
-> > > Net effect was that hog group could not be resolved. I made it work for myself
-> > > with a two stage setup with create and start separated, and dt probe in between them.
-> > >
-> > >
-> > > Signed-off-by: Mika Penttilä <mika.penttila@nextfour.com>
-> > 
-> > Sorry for including the whole mail body, some people may have missed the
-> > mail. Notably the i.MX maintainers.
-> > 
-> > Your patch reminds me of the pinctrl_register() vs pinctrl_register_and_init()
-> > introduced by Tony Lindgren, can you look into this in commit
-> > 950b0d91dc108f54bccca5a2f75bb46f2df63d29
-> > "pinctrl: core: Fix regression caused by delayed work for hogs"?
-> > 
-> > Does switching pinctrl_register_and_init() back to pinctrl_register()
-> > solve your problem?
-> > 
-> > Gary: have you seen any problem like this?
-> 
-> Yes, Mika brought it up as soon as the first 4.11-rc appeared and indeed
-> this issue can be reproduced on any i.MX6 platform.
-> 
-> Then Tony offered a patch but you haven't replied to him yet:
-> https://lkml.org/lkml/2017/2/28/140
+Am Montag, 13. M=E4rz 2017, 18:38:11 CET schrieb John Keeping:
+> This lock is used from rockchip_irq_set_type() which is part of the
+> irq_chip implementation and thus must use raw_spinlock_t as documented
+> in Documentation/gpio/driver.txt.
+> =
 
-I think as a regression fix for the -rc series, we should use Mika's
-patch with the following tweaks:
+> Signed-off-by: John Keeping <john@metanate.com>
 
-1. Instead of adding yet another devm_pinctrl_register_and_init(),
-   let's just make devm_pinctrl_register_and_init() not call start
-   automatically. If people prefer to use Mika's naming for it
-   with nostart, I have no problem with that. But let's then rename
-   the current devm_pinctrl_register_and_init() so we are not stuck
-   with another interface with issues.
+Looks good
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-2. Update the four drivers using devm_pinctrl_register_and_init()
-   to also call start separately.
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 30 +++++++++++++++---------------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
+> =
 
-Mika, care to update your patch for that?
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> b/drivers/pinctrl/pinctrl-rockchip.c index 1defe83a5c4d..2f963aea64b2
+> 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -163,7 +163,7 @@ struct rockchip_pin_bank {
+>  	struct irq_domain		*domain;
+>  	struct gpio_chip		gpio_chip;
+>  	struct pinctrl_gpio_range	grange;
+> -	spinlock_t			slock;
+> +	raw_spinlock_t			slock;
+>  	u32				toggle_edge_mode;
+>  };
+> =
 
-Regards,
+> @@ -1292,14 +1292,14 @@ static int rockchip_set_pull(struct
+> rockchip_pin_bank *bank,
+> =
 
-Tony
+>  	switch (ctrl->type) {
+>  	case RK2928:
+> -		spin_lock_irqsave(&bank->slock, flags);
+> +		raw_spin_lock_irqsave(&bank->slock, flags);
+> =
+
+>  		data =3D BIT(bit + 16);
+>  		if (pull =3D=3D PIN_CONFIG_BIAS_DISABLE)
+>  			data |=3D BIT(bit);
+>  		ret =3D regmap_write(regmap, reg, data);
+> =
+
+> -		spin_unlock_irqrestore(&bank->slock, flags);
+> +		raw_spin_unlock_irqrestore(&bank->slock, flags);
+>  		break;
+>  	case RK1108:
+>  	case RK3188:
+> @@ -1433,7 +1433,7 @@ static int _rockchip_pmx_gpio_set_direction(struct
+> gpio_chip *chip, return ret;
+> =
+
+>  	clk_enable(bank->clk);
+> -	spin_lock_irqsave(&bank->slock, flags);
+> +	raw_spin_lock_irqsave(&bank->slock, flags);
+> =
+
+>  	data =3D readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+>  	/* set bit to 1 for output, 0 for input */
+> @@ -1443,7 +1443,7 @@ static int _rockchip_pmx_gpio_set_direction(struct
+> gpio_chip *chip, data &=3D ~BIT(pin);
+>  	writel_relaxed(data, bank->reg_base + GPIO_SWPORT_DDR);
+> =
+
+> -	spin_unlock_irqrestore(&bank->slock, flags);
+> +	raw_spin_unlock_irqrestore(&bank->slock, flags);
+>  	clk_disable(bank->clk);
+> =
+
+>  	return 0;
+> @@ -1874,7 +1874,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc,
+> unsigned offset, int value) u32 data;
+> =
+
+>  	clk_enable(bank->clk);
+> -	spin_lock_irqsave(&bank->slock, flags);
+> +	raw_spin_lock_irqsave(&bank->slock, flags);
+> =
+
+>  	data =3D readl(reg);
+>  	data &=3D ~BIT(offset);
+> @@ -1882,7 +1882,7 @@ static void rockchip_gpio_set(struct gpio_chip *gc,
+> unsigned offset, int value) data |=3D BIT(offset);
+>  	writel(data, reg);
+> =
+
+> -	spin_unlock_irqrestore(&bank->slock, flags);
+> +	raw_spin_unlock_irqrestore(&bank->slock, flags);
+>  	clk_disable(bank->clk);
+>  }
+> =
+
+> @@ -1994,7 +1994,7 @@ static void rockchip_irq_demux(struct irq_desc *des=
+c)
+> =
+
+>  			data =3D readl_relaxed(bank->reg_base + GPIO_EXT_PORT);
+>  			do {
+> -				spin_lock_irqsave(&bank->slock, flags);
+> +				raw_spin_lock_irqsave(&bank->slock, flags);
+> =
+
+>  				polarity =3D readl_relaxed(bank->reg_base +
+>  							 GPIO_INT_POLARITY);
+> @@ -2005,7 +2005,7 @@ static void rockchip_irq_demux(struct irq_desc *des=
+c)
+>  				writel(polarity,
+>  				       bank->reg_base + GPIO_INT_POLARITY);
+> =
+
+> -				spin_unlock_irqrestore(&bank->slock, flags);
+> +				raw_spin_unlock_irqrestore(&bank->slock, flags);
+> =
+
+>  				data_old =3D data;
+>  				data =3D readl_relaxed(bank->reg_base +
+> @@ -2036,20 +2036,20 @@ static int rockchip_irq_set_type(struct irq_data =
+*d,
+> unsigned int type) return ret;
+> =
+
+>  	clk_enable(bank->clk);
+> -	spin_lock_irqsave(&bank->slock, flags);
+> +	raw_spin_lock_irqsave(&bank->slock, flags);
+> =
+
+>  	data =3D readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+>  	data &=3D ~mask;
+>  	writel_relaxed(data, bank->reg_base + GPIO_SWPORT_DDR);
+> =
+
+> -	spin_unlock_irqrestore(&bank->slock, flags);
+> +	raw_spin_unlock_irqrestore(&bank->slock, flags);
+> =
+
+>  	if (type & IRQ_TYPE_EDGE_BOTH)
+>  		irq_set_handler_locked(d, handle_edge_irq);
+>  	else
+>  		irq_set_handler_locked(d, handle_level_irq);
+> =
+
+> -	spin_lock_irqsave(&bank->slock, flags);
+> +	raw_spin_lock_irqsave(&bank->slock, flags);
+>  	irq_gc_lock(gc);
+> =
+
+>  	level =3D readl_relaxed(gc->reg_base + GPIO_INTTYPE_LEVEL);
+> @@ -2092,7 +2092,7 @@ static int rockchip_irq_set_type(struct irq_data *d,
+> unsigned int type) break;
+>  	default:
+>  		irq_gc_unlock(gc);
+> -		spin_unlock_irqrestore(&bank->slock, flags);
+> +		raw_spin_unlock_irqrestore(&bank->slock, flags);
+>  		clk_disable(bank->clk);
+>  		return -EINVAL;
+>  	}
+> @@ -2101,7 +2101,7 @@ static int rockchip_irq_set_type(struct irq_data *d,
+> unsigned int type) writel_relaxed(polarity, gc->reg_base +
+> GPIO_INT_POLARITY);
+> =
+
+>  	irq_gc_unlock(gc);
+> -	spin_unlock_irqrestore(&bank->slock, flags);
+> +	raw_spin_unlock_irqrestore(&bank->slock, flags);
+>  	clk_disable(bank->clk);
+> =
+
+>  	return 0;
+> @@ -2383,7 +2383,7 @@ static struct rockchip_pin_ctrl
+> *rockchip_pinctrl_get_soc_data( for (i =3D 0; i < ctrl->nr_banks; ++i,
+> ++bank) {
+>  		int bank_pins =3D 0;
+> =
+
+> -		spin_lock_init(&bank->slock);
+> +		raw_spin_lock_init(&bank->slock);
+>  		bank->drvdata =3D d;
+>  		bank->pin_base =3D ctrl->nr_pins;
+>  		ctrl->nr_pins +=3D bank->nr_pins;
