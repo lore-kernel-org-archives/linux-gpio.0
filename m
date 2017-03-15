@@ -1,20 +1,20 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 16/19] pinctrl: bcm: make use of raw_spinlock variants
-Date: Wed, 15 Mar 2017 11:11:42 +0100
-Message-ID: <CACRpkdZ1O705yTosq-MYA58T1CB8Nz1bu5+Mr4m5nMVjGE_fHg@mail.gmail.com>
-References: <cover.1489015238.git.julia@ni.com> <47cee188d7e2046b72f56bfc282fd601da237d3b.1489015238.git.julia@ni.com>
+Subject: Re: [PATCH 17/19] pinctrl: amd: make use of raw_spinlock variants
+Date: Wed, 15 Mar 2017 11:12:37 +0100
+Message-ID: <CACRpkdaQ8+D31EndEJfE4GOdmhe8kUL0zN8fT9yG-KEeO_1kSw@mail.gmail.com>
+References: <cover.1489015238.git.julia@ni.com> <1078eff36a2507d1aa5130cc0a9b28d520aabf31.1489015238.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <47cee188d7e2046b72f56bfc282fd601da237d3b.1489015238.git.julia@ni.com>
+In-Reply-To: <1078eff36a2507d1aa5130cc0a9b28d520aabf31.1489015238.git.julia@ni.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Julia Cartwright <julia@ni.com>
-Cc: Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
 On Thu, Mar 9, 2017 at 5:22 PM, Julia Cartwright <julia@ni.com> wrote:
 
-> The bcm pinctrl drivers currently implement an irq_chip for handling
+> The amd pinctrl drivers currently implement an irq_chip for handling
 > interrupts; due to how irq_chip handling is done, it's necessary for the
 > irq_chip methods to be invoked from hardirq context, even on a a
 > real-time kernel.  Because the spinlock_t type becomes a "sleeping"
