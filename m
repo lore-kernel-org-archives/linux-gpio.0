@@ -1,43 +1,59 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
-Date: Wed, 15 Mar 2017 11:46:03 +0100
-Message-ID: <CAMuHMdUqxJpvCiPx4uKv4OGzyXS4RaM43BWQ3eos5tr_FCaKzw@mail.gmail.com>
-References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be> <CACRpkdaTYVj_RrSLhiZxwFogmW80wvFo8cO7zO7uRm_JajUz-A@mail.gmail.com>
+From: Jayachandran C <jnair@caviumnetworks.com>
+Subject: Re: [PATCH] gpio: xlp: Update for ARCH_THUNDER2
+Date: Wed, 15 Mar 2017 10:48:00 +0000
+Message-ID: <20170315104759.GA2584@localhost>
+References: <1489317268-5376-1-git-send-email-jnair@caviumnetworks.com>
+ <CACRpkdZ88ObS-eqT5tVmktXWy6HdS9hor9wjJ6Ktvb6efcNYGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaTYVj_RrSLhiZxwFogmW80wvFo8cO7zO7uRm_JajUz-A@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2nam02on0083.outbound.protection.outlook.com ([104.47.38.83]:13760
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753412AbdCOKsR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 15 Mar 2017 06:48:17 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ88ObS-eqT5tVmktXWy6HdS9hor9wjJ6Ktvb6efcNYGQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kamlakant.Patel@cavium.com
 
-Hi Linus,
+On Wed, Mar 15, 2017 at 11:22:58AM +0100, Linus Walleij wrote:
+> On Sun, Mar 12, 2017 at 12:14 PM, Jayachandran C
+> <jnair@caviumnetworks.com> wrote:
+> 
+> > ARCH_VULCAN arm64 platform (for Broadcom Vulcan ARM64 processors) has
+> > been discontinued. Cavium's ThunderX2 CN99XX (ARCH_THUNDER2) will be
+> > the next revision of this platform.
+> >
+> > Update compile dependencies and ACPI ID to reflect this change. There
+> > is not need to retain ARCH_VULCAN since the Vulcan processor was never
+> > in production.
+> >
+> > Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
+> 
+> Patch applied.
+> 
+> > -       depends on OF_GPIO && (CPU_XLP || ARCH_VULCAN || COMPILE_TEST)
+> > +       depends on OF_GPIO && (CPU_XLP || ARCH_THUNDER2 || COMPILE_TEST)
+> 
+> I kept ARCH_VULCAN.
+> 
+> I will consider removing it when Vulcan DTS files etc get removed from
+> arch/arm64/boot/dts/broadcom/*
 
-On Wed, Mar 15, 2017 at 11:26 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Mon, Mar 13, 2017 at 5:41 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->
->> I plan to queue these up in sh-pfc-for-v4.12.
->
-> Thanks, looking forward to pull request.
+I have a patch posted to move the dts files at:
+https://www.spinics.net/lists/arm-kernel/msg568462.html
+and I hope it will get merged in the next cycle. I should have added
+this to the patch comments, so that you have the complete information.
+ 
+> People may still be using preproduction boards and I do not want
+> to screw things up for them.
 
-Thanks!
+I understand, I left the Broadcom ACPI and DT strings alone due
+to similar concerns. For the Kconfig symbol, it is not much of an
+issue, but I'll leave that to your preference.
 
-> I realized I needed a maintainer collecting Samsung patches
-> as well this week, so we may get more people maintaining
-> subdirs in pinctrl...
-
-Good. I'll refrain from making updates to drivers/pinctrl/samsung/ myself ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+JC.
