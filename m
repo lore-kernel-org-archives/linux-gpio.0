@@ -1,36 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH fixes v4] pinctrl: Do not check previous and current state
-Date: Wed, 15 Mar 2017 11:28:11 +0100
-Message-ID: <CACRpkdawrRDyL=vWs5nR4RSycPdLpUwcK-XdOa-x-6+kWM3chQ@mail.gmail.com>
-References: <20170307185236.31805-1-f.fainelli@gmail.com>
+Date: Wed, 15 Mar 2017 11:29:42 +0100
+Message-ID: <CACRpkdYourx7eRAx6eGeyzqF+TUAy9gy=Pr8X6=oTxkcPzE1WQ@mail.gmail.com>
+References: <20170307185236.31805-1-f.fainelli@gmail.com> <d9a20f6c-96e5-1e12-447d-fbea5014fa57@gmail.com>
+ <CAHp75VfXsKVYrwdQqf6KGXH-zmpc-5PevPT-Q2P4cuOyKYSdxg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170307185236.31805-1-f.fainelli@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:35659 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbdCOK3o (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 06:29:44 -0400
+Received: by mail-io0-f173.google.com with SMTP id z13so17027100iof.2
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Mar 2017 03:29:44 -0700 (PDT)
+In-Reply-To: <CAHp75VfXsKVYrwdQqf6KGXH-zmpc-5PevPT-Q2P4cuOyKYSdxg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On Tue, Mar 7, 2017 at 7:52 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-
-> In case a platform only defaults a "default" set of pins, but not a
-> "sleep" set of pins, and this particular platform suspends and resumes
-> in a way that the pin states are not preserved by the hardware, when we
-> resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
-> -> pinctrl_select_state() and the first thing we do is check that the
-> pins state is the same as before, and do nothing.
+On Mon, Mar 13, 2017 at 8:06 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Mon, Mar 13, 2017 at 8:59 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 03/07/2017 10:52 AM, Florian Fainelli wrote:
 >
-> In order to fix this, just remove the p->state == state check from
-> pinctrl_select_state() since it would not allow callers of this function
-> to get the pins to be brought into the expected state.
+>> Linus am I hitting some of your spam folder, or you are really having
+>> way too much fun with Gemini ;) ?
 >
-> Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> A bit offtopic here, but I have almost same question. I noticed no
+> reaction for patches I had sent up to 3 weeks ago (yes, I understand
+> that far was a time of merge window, though...).
 
-I responded to some patch in the series yesterday that what we
-need is to inform the pinctrl core that we lost state, so let's discuss
-this in that thread.
+Yeah it's official, I'm overloaded.
+
+I need to find a pinctrl comaintainer, I have Geert pulling together
+Renesas patches, and I asked someone from Samsung to step up
+for their stuff as it is creating a bit of stir.
+
+For helping out with pinctrl core I am open to nominations :)
 
 Yours,
 Linus Walleij
