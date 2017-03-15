@@ -1,245 +1,166 @@
-From: John Keeping <john@metanate.com>
-Subject: Re: [RFC PATCH 2/4] pinctrl: rockchip: convert to raw spinlock
-Date: Wed, 15 Mar 2017 16:59:00 +0000
-Message-ID: <20170315165900.63f32371.john@metanate.com>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [RFC PATCH 4/4] pinctrl: rockchip: avoid hardirq-unsafe functions
+ in irq_chip
+Date: Wed, 15 Mar 2017 18:04:37 +0100
+Message-ID: <8279144.RSoYI8sFdD@phil>
 References: <20170313183813.3582-1-john@metanate.com>
-        <20170313183813.3582-3-john@metanate.com>
-        <39203480.lbsBriduiK@phil>
-        <2549921.4Nq1JGygY8@phil>
+ <20170313183813.3582-5-john@metanate.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from dougal.metanate.com ([90.155.101.14]:35301 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752919AbdCOQ7D (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 15 Mar 2017 12:59:03 -0400
-In-Reply-To: <2549921.4Nq1JGygY8@phil>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20170313183813.3582-5-john-HooS5bfzL4hWk0Htik3J/w@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: John Keeping <john-HooS5bfzL4hWk0Htik3J/w@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 
-On Wed, 15 Mar 2017 17:41:21 +0100, Heiko Stuebner wrote:
+Am Montag, 13. M=E4rz 2017, 18:38:13 CET schrieb John Keeping:
+> With real-time preemption, regmap functions cannot be used in the
+> implementation of irq_chip since they use spinlocks which may sleep.
+> =
 
-> Am Mittwoch, 15. M=C3=A4rz 2017, 17:28:56 CET schrieb Heiko Stuebner:
-> > Am Montag, 13. M=C3=A4rz 2017, 18:38:11 CET schrieb John Keeping: =20
-> > > This lock is used from rockchip_irq_set_type() which is part of the
-> > > irq_chip implementation and thus must use raw_spinlock_t as documented
-> > > in Documentation/gpio/driver.txt.
-> > >=20
-> > > Signed-off-by: John Keeping <john@metanate.com> =20
-> >=20
-> > Looks good
-> > Reviewed-by: Heiko Stuebner <heiko@sntech.de> =20
->=20
-> I have to take that back.
-> This leaves the spin_lock in the schmitt trigger unconverted and produces=
-=20
-> compile issues.
->=20
-> So it either needs to be converted or removed - I guess it should be remo=
-ved.
+> Move the setting of the mux for IRQs to an irq_bus_sync_unlock handler
+> where we are allowed to sleep.
+> =
 
-Yes, it looks like it should be removed - the patches adding that hadn't
-been applied when I sent this out!
+> Signed-off-by: John Keeping <john-HooS5bfzL4hWk0Htik3J/w@public.gmane.org>
 
-I'll rebase and add the schmitt trigger change to patch 1 in a day or
-two, after giving a bit more time for reviews.
+Looks good
+Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
-> > > ---
-> > >=20
-> > >  drivers/pinctrl/pinctrl-rockchip.c | 30 +++++++++++++++-------------=
---
-> > >  1 file changed, 15 insertions(+), 15 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> > > b/drivers/pinctrl/pinctrl-rockchip.c index 1defe83a5c4d..2f963aea64b2
-> > > 100644
-> > > --- a/drivers/pinctrl/pinctrl-rockchip.c
-> > > +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> > > @@ -163,7 +163,7 @@ struct rockchip_pin_bank {
-> > >=20
-> > >  	struct irq_domain		*domain;
-> > >  	struct gpio_chip		gpio_chip;
-> > >  	struct pinctrl_gpio_range	grange;
-> > >=20
-> > > -	spinlock_t			slock;
-> > > +	raw_spinlock_t			slock;
-> > >=20
-> > >  	u32				toggle_edge_mode;
-> > > =20
-> > >  };
-> > >=20
-> > > @@ -1292,14 +1292,14 @@ static int rockchip_set_pull(struct
-> > > rockchip_pin_bank *bank,
-> > >=20
-> > >  	switch (ctrl->type) {
-> > >=20
-> > >  	case RK2928:
-> > > -		spin_lock_irqsave(&bank->slock, flags);
-> > > +		raw_spin_lock_irqsave(&bank->slock, flags);
-> > >=20
-> > >  		data =3D BIT(bit + 16);
-> > >  		if (pull =3D=3D PIN_CONFIG_BIAS_DISABLE)
-> > >  	=09
-> > >  			data |=3D BIT(bit);
-> > >  	=09
-> > >  		ret =3D regmap_write(regmap, reg, data);
-> > >=20
-> > > -		spin_unlock_irqrestore(&bank->slock, flags);
-> > > +		raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  		break;
-> > >  =09
-> > >  	case RK1108:
-> > >=20
-> > >  	case RK3188:
-> > > @@ -1433,7 +1433,7 @@ static int _rockchip_pmx_gpio_set_direction(str=
-uct
-> > > gpio_chip *chip, return ret;
-> > >=20
-> > >  	clk_enable(bank->clk);
-> > >=20
-> > > -	spin_lock_irqsave(&bank->slock, flags);
-> > > +	raw_spin_lock_irqsave(&bank->slock, flags);
-> > >=20
-> > >  	data =3D readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-> > >  	/* set bit to 1 for output, 0 for input */
-> > >=20
-> > > @@ -1443,7 +1443,7 @@ static int _rockchip_pmx_gpio_set_direction(str=
-uct
-> > > gpio_chip *chip, data &=3D ~BIT(pin);
-> > >=20
-> > >  	writel_relaxed(data, bank->reg_base + GPIO_SWPORT_DDR);
-> > >=20
-> > > -	spin_unlock_irqrestore(&bank->slock, flags);
-> > > +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  	clk_disable(bank->clk);
-> > >  =09
-> > >  	return 0;
-> > >=20
-> > > @@ -1874,7 +1874,7 @@ static void rockchip_gpio_set(struct gpio_chip =
-*gc,
-> > > unsigned offset, int value) u32 data;
-> > >=20
-> > >  	clk_enable(bank->clk);
-> > >=20
-> > > -	spin_lock_irqsave(&bank->slock, flags);
-> > > +	raw_spin_lock_irqsave(&bank->slock, flags);
-> > >=20
-> > >  	data =3D readl(reg);
-> > >  	data &=3D ~BIT(offset);
-> > >=20
-> > > @@ -1882,7 +1882,7 @@ static void rockchip_gpio_set(struct gpio_chip =
-*gc,
-> > > unsigned offset, int value) data |=3D BIT(offset);
-> > >=20
-> > >  	writel(data, reg);
-> > >=20
-> > > -	spin_unlock_irqrestore(&bank->slock, flags);
-> > > +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  	clk_disable(bank->clk);
-> > > =20
-> > >  }
-> > >=20
-> > > @@ -1994,7 +1994,7 @@ static void rockchip_irq_demux(struct irq_desc
-> > > *desc)
-> > >=20
-> > >  			data =3D readl_relaxed(bank->reg_base + GPIO_EXT_PORT);
-> > >  			do {
-> > >=20
-> > > -				spin_lock_irqsave(&bank->slock, flags);
-> > > +				raw_spin_lock_irqsave(&bank->slock, flags);
-> > >=20
-> > >  				polarity =3D readl_relaxed(bank->reg_base +
-> > >  			=09
-> > >  							 GPIO_INT_POLARITY);
-> > >=20
-> > > @@ -2005,7 +2005,7 @@ static void rockchip_irq_demux(struct irq_desc
-> > > *desc)
-> > >=20
-> > >  				writel(polarity,
-> > >  			=09
-> > >  				       bank->reg_base + GPIO_INT_POLARITY);
-> > >=20
-> > > -				spin_unlock_irqrestore(&bank->slock, flags);
-> > > +				raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  				data_old =3D data;
-> > >  				data =3D readl_relaxed(bank->reg_base +
-> > >=20
-> > > @@ -2036,20 +2036,20 @@ static int rockchip_irq_set_type(struct irq_d=
-ata
-> > > *d, unsigned int type) return ret;
-> > >=20
-> > >  	clk_enable(bank->clk);
-> > >=20
-> > > -	spin_lock_irqsave(&bank->slock, flags);
-> > > +	raw_spin_lock_irqsave(&bank->slock, flags);
-> > >=20
-> > >  	data =3D readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-> > >  	data &=3D ~mask;
-> > >  	writel_relaxed(data, bank->reg_base + GPIO_SWPORT_DDR);
-> > >=20
-> > > -	spin_unlock_irqrestore(&bank->slock, flags);
-> > > +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  	if (type & IRQ_TYPE_EDGE_BOTH)
-> > >  =09
-> > >  		irq_set_handler_locked(d, handle_edge_irq);
-> > >  =09
-> > >  	else
-> > >  =09
-> > >  		irq_set_handler_locked(d, handle_level_irq);
-> > >=20
-> > > -	spin_lock_irqsave(&bank->slock, flags);
-> > > +	raw_spin_lock_irqsave(&bank->slock, flags);
-> > >=20
-> > >  	irq_gc_lock(gc);
-> > >  =09
-> > >  	level =3D readl_relaxed(gc->reg_base + GPIO_INTTYPE_LEVEL);
-> > >=20
-> > > @@ -2092,7 +2092,7 @@ static int rockchip_irq_set_type(struct irq_dat=
-a *d,
-> > > unsigned int type) break;
-> > >=20
-> > >  	default:
-> > >  		irq_gc_unlock(gc);
-> > >=20
-> > > -		spin_unlock_irqrestore(&bank->slock, flags);
-> > > +		raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  		clk_disable(bank->clk);
-> > >  		return -EINVAL;
-> > >  =09
-> > >  	}
-> > >=20
-> > > @@ -2101,7 +2101,7 @@ static int rockchip_irq_set_type(struct irq_dat=
-a *d,
-> > > unsigned int type) writel_relaxed(polarity, gc->reg_base +
-> > > GPIO_INT_POLARITY);
-> > >=20
-> > >  	irq_gc_unlock(gc);
-> > >=20
-> > > -	spin_unlock_irqrestore(&bank->slock, flags);
-> > > +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-> > >=20
-> > >  	clk_disable(bank->clk);
-> > >  =09
-> > >  	return 0;
-> > >=20
-> > > @@ -2383,7 +2383,7 @@ static struct rockchip_pin_ctrl
-> > > *rockchip_pinctrl_get_soc_data( for (i =3D 0; i < ctrl->nr_banks; ++i,
-> > > ++bank) {
-> > >=20
-> > >  		int bank_pins =3D 0;
-> > >=20
-> > > -		spin_lock_init(&bank->slock);
-> > > +		raw_spin_lock_init(&bank->slock);
-> > >=20
-> > >  		bank->drvdata =3D d;
-> > >  		bank->pin_base =3D ctrl->nr_pins;
-> > >  		ctrl->nr_pins +=3D bank->nr_pins; =20
+> ---
+>  drivers/pinctrl/pinctrl-rockchip.c | 44
+> ++++++++++++++++++++++++++++++++++---- 1 file changed, 40 insertions(+), 4
+> deletions(-)
+> =
+
+> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
+> b/drivers/pinctrl/pinctrl-rockchip.c index 52e70c4aef7c..80f7c23d12d4
+> 100644
+> --- a/drivers/pinctrl/pinctrl-rockchip.c
+> +++ b/drivers/pinctrl/pinctrl-rockchip.c
+> @@ -143,6 +143,9 @@ struct rockchip_drv {
+>   * @gpio_chip: gpiolib chip
+>   * @grange: gpio range
+>   * @slock: spinlock for the gpio bank
+> + * @irq_lock: bus lock for irq chip
+> + * @new_irqs: newly configured irqs which must be muxed as GPIOs in
+> + *	irq_bus_sync_unlock()
+>   */
+>  struct rockchip_pin_bank {
+>  	void __iomem			*reg_base;
+> @@ -165,6 +168,8 @@ struct rockchip_pin_bank {
+>  	struct pinctrl_gpio_range	grange;
+>  	raw_spinlock_t			slock;
+>  	u32				toggle_edge_mode;
+> +	struct mutex			irq_lock;
+> +	u32				new_irqs;
+>  };
+> =
+
+>  #define PIN_BANK(id, pins, label)			\
+> @@ -2045,11 +2050,12 @@ static int rockchip_irq_set_type(struct irq_data =
+*d,
+> unsigned int type) int ret;
+> =
+
+>  	/* make sure the pin is configured as gpio input */
+> -	ret =3D rockchip_set_mux(bank, d->hwirq, RK_FUNC_GPIO);
+> +	ret =3D rockchip_verify_mux(bank, d->hwirq, RK_FUNC_GPIO);
+>  	if (ret < 0)
+>  		return ret;
+> =
+
+> -	clk_enable(bank->clk);
+> +	bank->new_irqs |=3D mask;
+> +
+>  	raw_spin_lock_irqsave(&bank->slock, flags);
+> =
+
+>  	data =3D readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
+> @@ -2107,7 +2113,6 @@ static int rockchip_irq_set_type(struct irq_data *d,
+> unsigned int type) default:
+>  		irq_gc_unlock(gc);
+>  		raw_spin_unlock_irqrestore(&bank->slock, flags);
+> -		clk_disable(bank->clk);
+>  		return -EINVAL;
+>  	}
+> =
+
+> @@ -2116,7 +2121,6 @@ static int rockchip_irq_set_type(struct irq_data *d,
+> unsigned int type)
+> =
+
+>  	irq_gc_unlock(gc);
+>  	raw_spin_unlock_irqrestore(&bank->slock, flags);
+> -	clk_disable(bank->clk);
+> =
+
+>  	return 0;
+>  }
+> @@ -2160,6 +2164,34 @@ static void rockchip_irq_gc_mask_set_bit(struct
+> irq_data *d) clk_disable(bank->clk);
+>  }
+> =
+
+> +static void rockchip_irq_bus_lock(struct irq_data *d)
+> +{
+> +	struct irq_chip_generic *gc =3D irq_data_get_irq_chip_data(d);
+> +	struct rockchip_pin_bank *bank =3D gc->private;
+> +
+> +	clk_enable(bank->clk);
+> +	mutex_lock(&bank->irq_lock);
+> +}
+> +
+> +static void rockchip_irq_bus_sync_unlock(struct irq_data *d)
+> +{
+> +	struct irq_chip_generic *gc =3D irq_data_get_irq_chip_data(d);
+> +	struct rockchip_pin_bank *bank =3D gc->private;
+> +
+> +	while (bank->new_irqs) {
+> +		unsigned int irq =3D __ffs(bank->new_irqs);
+> +		int ret;
+> +
+> +		ret =3D rockchip_set_mux(bank, irq, RK_FUNC_GPIO);
+> +		WARN_ON(ret < 0);
+> +
+> +		bank->new_irqs &=3D ~BIT(irq);
+> +	}
+> +
+> +	mutex_unlock(&bank->irq_lock);
+> +	clk_disable(bank->clk);
+> +}
+> +
+>  static int rockchip_interrupts_register(struct platform_device *pdev,
+>  						struct rockchip_pinctrl *info)
+>  {
+> @@ -2225,6 +2257,9 @@ static int rockchip_interrupts_register(struct
+> platform_device *pdev, gc->chip_types[0].chip.irq_suspend =3D
+> rockchip_irq_suspend;
+>  		gc->chip_types[0].chip.irq_resume =3D rockchip_irq_resume;
+>  		gc->chip_types[0].chip.irq_set_type =3D rockchip_irq_set_type;
+> +		gc->chip_types[0].chip.irq_bus_lock =3D rockchip_irq_bus_lock;
+> +		gc->chip_types[0].chip.irq_bus_sync_unlock =3D
+> +						rockchip_irq_bus_sync_unlock;
+>  		gc->wake_enabled =3D IRQ_MSK(bank->nr_pins);
+> =
+
+>  		irq_set_chained_handler_and_data(bank->irq,
+> @@ -2398,6 +2433,7 @@ static struct rockchip_pin_ctrl
+> *rockchip_pinctrl_get_soc_data( int bank_pins =3D 0;
+> =
+
+>  		raw_spin_lock_init(&bank->slock);
+> +		mutex_init(&bank->irq_lock);
+>  		bank->drvdata =3D d;
+>  		bank->pin_base =3D ctrl->nr_pins;
+>  		ctrl->nr_pins +=3D bank->nr_pins;
