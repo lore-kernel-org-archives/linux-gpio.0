@@ -1,32 +1,43 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: add names to the gpios
-Date: Wed, 15 Mar 2017 05:33:51 -0500
-Message-ID: <5f2fa494-5dc2-1186-f516-c3a5dfb65b98@codeaurora.org>
-References: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
- <CACRpkdZE2kawSKaukwbdDHPKfzeAvMCMe8ZTGWB8FvPqObruDQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
+Date: Wed, 15 Mar 2017 11:46:03 +0100
+Message-ID: <CAMuHMdUqxJpvCiPx4uKv4OGzyXS4RaM43BWQ3eos5tr_FCaKzw@mail.gmail.com>
+References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be> <CACRpkdaTYVj_RrSLhiZxwFogmW80wvFo8cO7zO7uRm_JajUz-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:41700 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753086AbdCOKdy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 06:33:54 -0400
-In-Reply-To: <CACRpkdZE2kawSKaukwbdDHPKfzeAvMCMe8ZTGWB8FvPqObruDQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaTYVj_RrSLhiZxwFogmW80wvFo8cO7zO7uRm_JajUz-A@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Linus Walleij wrote:
-> Patch tentatively applied (looks right to me), unless Björn has concerns.
+Hi Linus,
+
+On Wed, Mar 15, 2017 at 11:26 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Mon, Mar 13, 2017 at 5:41 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
 >
-> Is this a problem in other qcom pinctrl drivers?
+>> I plan to queue these up in sh-pfc-for-v4.12.
+>
+> Thanks, looking forward to pull request.
 
-Not any of the ones that use pinctrl-msm, because they all use the static 
-arrays, whereas my driver (because it's for ACPI), creates a dynamic array.
+Thanks!
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the
-Code Aurora Forum, hosted by The Linux Foundation.
+> I realized I needed a maintainer collecting Samsung patches
+> as well this week, so we may get more people maintaining
+> subdirs in pinctrl...
+
+Good. I'll refrain from making updates to drivers/pinctrl/samsung/ myself ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
