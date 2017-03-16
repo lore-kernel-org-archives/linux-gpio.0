@@ -1,230 +1,237 @@
-From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: meson: gxl: add the missing PWM pin
- definitions
-Date: Thu, 16 Mar 2017 14:54:03 +0100
-Message-ID: <c0dad3a3-bdd4-3563-0ca6-0ca9d5a4ce2f@baylibre.com>
-References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
- <20170304212318.27076-2-martin.blumenstingl@googlemail.com>
- <1488811357.2420.18.camel@baylibre.com>
- <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ@mail.gmail.com>
- <CACRpkdbGfGUhnAQz=9xeFnD2hF6m_xXacu8mZiwte-OCSDMo9w@mail.gmail.com>
- <b7430d5f-96a7-2445-1c2a-ccc299bfdda2@baylibre.com>
- <m237ee8id8.fsf@baylibre.com>
- <CAFBinCCCgbSvh8B81nXP6D11d5WZZ+71jDgvsjYDsWTb=V78Xg@mail.gmail.com>
+From: jacopo mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
+Date: Thu, 16 Mar 2017 15:04:32 +0100
+Message-ID: <6804f0d9-3768-c792-e4c7-2512fac83d2d@jmondi.org>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAFBinCCCgbSvh8B81nXP6D11d5WZZ+71jDgvsjYDsWTb=V78Xg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60256 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752029AbdCPOGr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 10:06:47 -0400
+In-Reply-To: <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 03/15/2017 09:11 PM, Martin Blumenstingl wrote:
-> On Wed, Mar 15, 2017 at 8:12 PM, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
->> Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> writes:
+Hi Chris,
+    thanks for looking into this...
+
+On 09/03/2017 15:55, Chris Brandt wrote:
+> Hi Jacopo,
+>
+> On Monday, February 20, 2017, Jacopo Mondi wrote:
 >>
->>> On 03/14/2017 04:42 PM, Linus Walleij wrote:
->>>> On Thu, Mar 9, 2017 at 8:47 PM, Martin Blumenstingl
->>>> <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
->>>>> On Mon, Mar 6, 2017 at 3:42 PM, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
->>>>>> On Sat, 2017-03-04 at 22:23 +0100, Martin Blumenstingl wrote:
->>>>
->>>>>>> +     FUNCTION(pwm_f_clk),
->>>>>>> +     FUNCTION(pwm_f_x),
->>>>>>
->>>>>> I wonder if having function named "pwm_f_clk" really makes sense ?
->>>>>> Shouldn't it be just "pwm_f" ? This is real function, isn't it ?
->>>>>> The actual pin used will be provided in the dt. Here, I suppose we
->>>>>> could have this:
->>>>>>
->>>>>> +static const char * const pwm_f_groups[] = {
->>>>>> +       "pwm_f_x", "pwm_f_clk",
->>>>>> +};
->>>>>>
->>>>>> Has far as I can see, on meson arch, the function does not carry much
->>>>>> information anyway, except for prints.
->>>>>>
->>>>>> To be clear, I'm not questioning this change in particular. It looks
->>>>>> good, and follows what has been done in the past on meson. I know we
->>>>>> have been this a lot already, but I'm questioning whether we should
->>>>>> continue to do so ?
->>>>>>
->>>>>> I asking because I also have a lot case like this coming up on audio
->>>>>> for gxl and gxbb, where the same function can use different pins.
->>>>>
->>>>> could you please look into Jerome's question?
->>>>> personally I'm fine with either way, and changing my patch would be
->>>>> quite trivial. but I'd like to know what's "the way to go" before
->>>>> changing anything (and reverting that afterwards again).
->>>>
->>>> I don't understand the question really.
->>>>
->>>> I am not an expert on this system, if the people working with it
->>>> cannot tell a function from a group I don't know who can... certainly
->>>> not me.
->>>>
->>>> What I can say is that pincontrol combines functions and groups to
->>>> states using a mapping. The functions should be something you poke
->>>> into a register, the groups are looser defined but may also be a
->>>> character of the hardware, but more usual a character of the
->>>> intended electronic usecase. Groups contain 1..n pins and can
->>>> be combined with some applicable functions.
->>>>
->>>> Please re-read Documentation/pinctrl.txt very closely if anything is
->>>> unclear, I really put a lot of hours into getting that right. Especially
->>>> reexamine "Pinmux conventions".
->>>
->>> The point pushed by Jerome was purely cosmetic since the groups in the meson
->>> pinctrl driver are purely cosmetic, since only the GPIO group is handled,
->>> other groups are all handled the same.
+>> Add combined gpio and pin controller driver for Renesas RZ/A1
+>> r7s72100 SoC.
 >>
->> handled the same... as what?
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> ---
+>>  drivers/pinctrl/Kconfig        |   10 +
+>>  drivers/pinctrl/Makefile       |    1 +
+>>  drivers/pinctrl/pinctrl-rza1.c | 1026
+>> ++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 1037 insertions(+)
+>>  create mode 100644 drivers/pinctrl/pinctrl-rza1.c
 >>
->>> This is because I pushed all the PWM pins in a separate group, but functionnaly
->>> the internal signal (i.e. PWM F) is the same for multiple pins and should be
->>> a single "PWM F" group instead of multiple ones.
->>>
->>> My advice is to leave the PWM groups as is,
+>> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+>> index 8f8c2af..61310ac 100644
+>> --- a/drivers/pinctrl/Kconfig
+>> +++ b/drivers/pinctrl/Kconfig
+>> @@ -163,6 +163,16 @@ config PINCTRL_ROCKCHIP
+>>  	select GENERIC_IRQ_CHIP
+>>  	select MFD_SYSCON
 >>
->> Do you mean as we have in mainline today?  or as is proposed in $SUBJECT patch?
->>
->>> and push new pins/functions/groups
->>> grouped with the internal signal name if split on multiple pins.
->>
->> Can somone do a quick patch for PWM_F for example, also showing how this
->> will look in the DT if someone wants to switch between the PWM_F on GPIOX
->> or GPIOCLK?
-> it would look like this (node name, label and group stay the same,
-> function does not contain the _x/_clk suffix anymore):
-> pwm_f_clk_pins: pwm_f_clk {
->     mux {
->         groups = "pwm_f_clk";
->         function = "pwm_f";
->     };
-> };
-> 
-> pwm_f_x_pins: pwm_f_x {
->     mux {
->         groups = "pwm_f_x";
->         function = "pwm_f";
->     };
-> };
-> 
->> We shouldalso verify that the driver is detecting/removing conflicts
->> properly when something else is already using that pin (e.g. SDIO_IRQ
->> shares pin GPIOX_7 with PWM_F)
-> if the same pin is assigned to two devices then the pinctrl subsystem
-> will throw an error (we don't have to take care of this, it's how I
-> discovered as GPIOAO_1 was used by uart_rx_ao_a and uart_rx_ao_b).
-> however, I have not tested yet what happens if the same function is
-> assigned to multiple pins (let's say you pass both, pwm_f_clk_pins and
-> pwm_f_x_pins to the pwm_ef node - will this result in the PWM output
-> being routed to *both* pins or just one pin?). if the same function
-> cannot be used by two pins simultaneously then we should probably use
-> function "pwm_f" instead of "pwm_f_x" (just an example) so we can
-> detect these "conflicts".
-> 
-> 
-> Regards,
-> Martin
-> 
-> 
-> [0] https://github.com/torvalds/linux/commit/b27e36482c02a94194fec71fb29696f4c8e9241c
-> 
+>> +config PINCTRL_RZA1
+>> +	bool "Renesas r7s72100 RZ/A1 gpio and pinctrl driver"
+>
+> You can drop the "r7s72100" and just say RZ/A1.
+>
+>
+>
+>> +/**
+>> + * rza1_pin_set_direction() - set I/O direction on a pin in port mode
+>> + *
+>> + * When running in output port mode keep PBDC enabled to allow reading
+>> the
+>> + * pin value from PPR.
+>> + * When in alternate mode disable that (if not explicitly required) not
+>> to
+>> + * interfere with the alternate function mode.
+>> + *
+>> + * @port: port where pin sits on
+>> + * @offset: pin offset
+>> + * @input: input enable/disable flag
+>> + */
+>> +static inline void rza1_pin_set_direction(struct rza1_port *port,
+>> +					  unsigned int offset,
+>> +					  bool input)
+>> +{
+>> +	spin_lock(&port->lock);
+>> +	if (input)
+>> +		rza1_set_bit(port, PIBC_REG, offset, 1);
+>> +	else {
+>> +		rza1_set_bit(port, PM_REG, offset, 0);
+>> +		rza1_set_bit(port, PBDC_REG, offset, 1);
+>> +	}
+>> +	spin_unlock(&port->lock);
+>
+> When input==true, you only set PIBC_REG. Otherwise you only set PM_REG and PBDC_REG. This would imply that this function will only ever get called once for a pin and never get called a second time with a different direction...meaning it would not really change a pin from output to input. I would assume that you would need to change this function to set those 3 registers either one way or the other.
+>
+> I would suggest:
+>    PIBC_REG = 1 /* always gets set for GPIO mode */
+>  input:
+>    PM_REG = 1
+>    PBDC_REG = 0
+> output:
+>    PM_REG = 0
+>    PBDC_REG = 1
+>
 
-Let's resume :
-In the mainline meson pinctrl driver, we have :
- - pins that represent the PAD name (GPIOX_3 or GPIODV_17)
- - groups that represent each physical "bit" we set in the control registers, each group can group 1 or multiple physical pins
-For example, the "emmc_nand_d07" sets the mode of multiple pins.
- - functions are a purely logical set of groups
+I assumed "set_direction()" to always be called after a "request()", so 
+that the pin is always in reset state.
+This is obviously not true, so I'm going to fix this as you suggested.
+I'm just wondering why we should keep input buffer enabled even if we're 
+running in output mode. This seems to be "safe" according to TRM but I'm 
+a bit afraid of unexpected consequences (am I too paranoid?)
 
-The only C function handling the "function" is :
-static int meson_pmx_set_mux(func_num, group_num)
-{
-...
-	struct meson_pmx_func *func = &pc->data->funcs[func_num];
-...
-	/* Function 0 (GPIO) doesn't need any additional setting */
-	if (func_num)
-		ret = regmap_update_bits(...);
-...
-}
+>
+>
+>> +/**
+>> + * rza1_alternate_function_conf() - configure pin in alternate function
+>> mode
+>> + *
+>> + * @pinctrl: RZ/A1 pin controller device
+>> + * @pin_conf: single pin configuration descriptor
+>> + */
+>> +static int rza1_alternate_function_conf(struct rza1_pinctrl *rza1_pctl,
+>> +					struct rza1_pin_conf *pin_conf)
+>> +{
+>> +	unsigned int offset = pin_conf->offset;
+>> +	struct rza1_port *port = &rza1_pctl->ports[pin_conf->port];
+>> +	u8 mux_mode = (pin_conf->mux_conf - 1) & MUX_FUNC_MASK;
+>> +	u8 mux_conf = pin_conf->mux_conf >> MUX_FUNC_OFFS;
+>> +	bool swio_en = !!(mux_conf & MUX_CONF_SWIO);
+>> +	bool input_en = !!(mux_conf & MUX_CONF_INPUT_ENABLE);
+>> +
+>> +	rza1_pin_reset(port, offset);
+>> +
+>> +	/*
+>> +	 * When configuring pin with Software Controlled IO mode in
+>> alternate
+>> +	 * mode, do not enable bi-directional control to avoid driving Pn
+>> +	 * value to the pin input.
+>> +	 * When working in direct IO mode (aka alternate function drives the
+>> +	 * pin direction), enable bi-directional control for input pins in
+>> +	 * order to enable the pin's input buffer as a consequence.
+>> +	 */
+>> +	if ((!swio_en && input_en) || (swio_en && !input_en))
+>> +		rza1_set_bit(port, PBDC_REG, offset, 1);
+>
+>
+> Maybe just set PBDC_REG at the end of the function with everything else.
+> See below...
+>
 
-So we could have only two big functions :
-is_gpio
-is_not_gpio
+Let me reply below to both these comments...
 
-But now we group every logically similar "groups" into the same function, like :
-static const char * const uart_a_groups[] = {
-	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
-};
+>
+>
+>> +
+>> +	/*
+>> +	 * Enable alternate function mode and select it.
+>> +	 *
+>> +	 * ----------------------------------------------------
+>> +	 * Alternate mode selection table:
+>> +	 *
+>> +	 * PMC	PFC	PFCE	PFCAE	mux_mode
+>> +	 * 1	0	0	0	0
+>> +	 * 1	1	0	0	1
+>> +	 * 1	0	1	0	2
+>> +	 * 1	1	1	0	3
+>> +	 * 1	0	0	1	4
+>> +	 * 1	1	0	1	5
+>> +	 * 1	0	1	1	6
+>> +	 * 1	1	1	1	7
+>> +	 * ----------------------------------------------------
+>> +	 */
+>> +	rza1_set_bit(port, PFC_REG, offset, mux_mode & MUX_FUNC_PFC_MASK);
+>> +	rza1_set_bit(port, PFCE_REG, offset, mux_mode & MUX_FUNC_PFCE_MASK);
+>> +	rza1_set_bit(port, PFCEA_REG, offset, mux_mode &
+>> MUX_FUNC_PFCEA_MASK);
+>> +
+>> +	/*
+>> +	 * All alternate functions except a few (4) need PIPCn = 1.
+>> +	 * If PIPCn has to stay disabled (SW IO mode), configure PMn
+>> according
+>> +	 * to I/O direction specified by pin configuration -after- PMC has
+>> been
+>> +	 * set to one.
+>> +	 */
+>> +	if (!swio_en)
+>> +		rza1_set_bit(port, PIPC_REG, offset, 1);
+>> +
+>> +	rza1_set_bit(port, PMC_REG, offset, 1);
+>> +
+>> +	if (swio_en)
+>> +		rza1_set_bit(port, PM_REG, offset, input_en);
+>
+>
+> I would suggest something like this:
+>
+> 	if (bidir)
+> 		rza1_set_bit(port, PBDC_REG, offset, 1);
+> 	else {
+> 		rza1_set_bit(port, PBDC_REG, offset, 0);
+> 		rza1_set_bit(port, PM_REG, offset, swio_in);
+> 	}
+>
+> 	rza1_set_bit(port, PMC_REG, offset, 1);
+>
+>
 
-When I pushed the PWM pins, I did not knew how to handle the fact that the same signal
-is on multiple physical pins, so I added multiple functions for each physical pin mode.
+This looks nicer, for sure, but from my testing I found out that the 
+sequence reported in section 54.19-c of TRM has to be carefully 
+respected, particularly setting PM after PMC (and iirc setting PBDC 
+before PFC*)
+Am I wrong? I will give your suggestion spin anyway...
 
-What jerome pointed is that instead of :
-static const char * const pwm_a_x_groups[] = {
-	"pwm_a_x",
-};
+This apart, you suggestion is tied to your comment on [2/7] on replacing 
+INPUT_EN with BIDIR and introduce SWIO_IN and SWIO_OUT, which I mostly 
+agree on (I'll comment on that as well).
 
-static const char * const pwm_a_y_groups[] = {
-	"pwm_a_y",
-};
+A sort of middle-ground to get rid of horrible conditions like
+"if ((!swio_en && input_en) || (swio_en && !input_en))"
+which requires a 7 lines comments to be explained and I still found 
+obscure after a month I was not looking at it, would be making BIDIR and 
+SWIO_[IN|OUT] exclusive, as if a pin is set to be SWIO it already has 
+direction specified, and if it is said to be BIDIR, it means its 
+direction is decided by the alternate function, not by software.
+Does this fly for you? Do you see cases where those flags may have to be 
+specified together?
+If not, it would simplify this routine for sure...
 
-we could have single :
-static const char * const pwm_a_groups[] = {
-	"pwm_a_x", "pwm_a_y",
-};
+Thanks
+    j
 
-But we should also change the DT accordingly.
 
-So we can see that from different perspective :
-- from the "pin" perspective : they are different functions, so we leave like it's already mainline
-- from the "signal" perspective : they are the same signal, so we should group
-- both, so we set a function per groupable groups.
+>> +
+>> +	return 0;
+>> +}
+>
+>
+>
+>
+> Chris
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
-for example, on the GXL, we can have UART_AO_B TX&RX on multiple pins, so we can have either :
-static const char * const uart_ao_b_groups[] = {
- 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
-	"uart_tx_ao_b_0", "uart_rx_ao_b_1",
-};
-
-or
-
-static const char * const uart_ao_b_groups[] = {
- 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
-};
-
-static const char * const uart_ao_b_0_1_groups[] = {
-	"uart_tx_ao_b_0", "uart_rx_ao_b_1",
-};
-
-or
-
-static const char * const uart_ao_b_groups[] = {
- 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
-};
-
-static const char * const uart_ao_b_0_1_groups[] = {
- 	"uart_tx_ao_b_0", "uart_rx_ao_b_1", "uart_cts_ao_b", "uart_rts_ao_b",
-};
-
-The three of these are correct.
-The point Jerome asked was for solution 1, and it what I pushed
-The solution 2 is how functions are today.
-
-The third solution is less easy but still valid.
-
-What I want is :
- - since it's purely logical, it's not very important and each solution is still valid from
-all perspectives, so leave the PWM functions like this and push new PWMs in the same way
- - The next functions should behave like solution 1, or solution 3 if better
-
-Neil
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
