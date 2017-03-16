@@ -1,87 +1,202 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-Date: Thu, 16 Mar 2017 15:03:25 +0000
-Message-ID: <SG2PR06MB1165846E7C2AA8133FC166538A260@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-4-git-send-email-jacopo+renesas@jmondi.org>
- <SG2PR06MB1165A5A95A54365FF5E43FCF8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <38f7c630-d765-da38-dcdc-fed2c853cf36@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL calls
+Date: Thu, 16 Mar 2017 16:18:52 +0100
+Message-ID: <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
+References: <20170303191248.wlwjri55ip2x5pgg@pengutronix.de>
+ <CAMuHMdXFrwa2jCVDb+8ecqgARLG0oGrPp9pLs0b6vEiWeKJ+uA@mail.gmail.com>
+ <20170303194414.n76tr3oa2mlrzjre@pengutronix.de> <CAMuHMdXiz5hqW=fm-2H1aNKq_gXD2o0508jD2XjxYUvKoEvHdw@mail.gmail.com>
+ <20170304174819.esxhwwbsxzuq3vyc@pengutronix.de> <CAMuHMdX8BEnaTtNFAbcvfHwJH=oPUmQ2NB+jfouGyhQpJ_m_4A@mail.gmail.com>
+ <20170306085842.yijkfpqi3adcedmm@pengutronix.de> <CAMuHMdV2_vbocY4wCzvYtPAaF+QEX_Y4g6qVu5EqEBf5AnFdaw@mail.gmail.com>
+ <20170306093043.ay4dz3ehp3aakwxh@pengutronix.de> <CAMuHMdWQuvANNU14A7NQuzv6AFp04bq4DG_oc7w9h4wUrG+4aQ@mail.gmail.com>
+ <20170306100220.droey65uq2ew3mzu@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <38f7c630-d765-da38-dcdc-fed2c853cf36@jmondi.org>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jacopo mondi <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:36895 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753728AbdCPPSz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 11:18:55 -0400
+Received: by mail-it0-f42.google.com with SMTP id g138so47460768itb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Mar 2017 08:18:54 -0700 (PDT)
+In-Reply-To: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Jacopo,
+On Mon, Mar 6, 2017 at 11:02 AM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Mon, Mar 06, 2017 at 10:53:27AM +0100, Geert Uytterhoeven wrote:
+>> On Mon, Mar 6, 2017 at 10:30 AM, Uwe Kleine-K=C3=B6nig
 
-> > Additionally, according to the RZ/A1 hardware manual:
-> >  "When the output buffer is enabled and the PBDCn.PBDCnm bit is 1, the
-> >   input buffer is enabled regardless of this register setting."
-> >
->=20
-> Yes, I used INPUT_EN to drive PBDC..
-> My assumption was that "users" would have had to decide when a pin was
-> acting as input, when describing it in dts, rather than having to deal
-> with the TRM and learn what bidirectional control is and is consequences
-> (particularly, that it enables the input buffer).
->=20
-> But since I guess this whole driver assumes more detailed knowledge on th=
-e
-> hardware compared to group-based ones, I think using BI_DIR is fine here
+>> > I wouldn't want to code this in each driver (something like:
+>> >
+>> >         if (IS_ENABLED(GPIOLIB) || device_is_instantiated_by_dt(dev) |=
+| device_is_instantiated_by_acpi(dev))
+>> >                 gpios =3D mctrl_gpio_init(...);
+>> >         else
+>> >                 gpios =3D NULL;
+>> >
+>> > ). Putting this into GPIOLIB is the right approach, and so this is
+>> > another argument for HALFGPIOLIB. This would fix mctrl_gpio_init en
+>> > passant.
+>>
+>> Do we have platforms where DT=3Dy || ACPI=3Dy, but GPIOLIB=3Dn?
+>> Ah, x86 ;-)
+>
+> Yeah, and I think rm -r arch/x86 won't be acceptable :-) I assume you
+> can also configure some arm or powerpc systems without GPIOLIB.
+>
+>> Anyway, for sh-sci.c, platforms either have DT and GPIOLIB, or they do n=
+ot
+>> need mctrl-gpio.
+>
+> So we're in agreement now that HALFGPIOLIB is the way to go?
+> Linus, what do you think?
 
-The reality is, I will be providing DT examples and people will just follow
-them like they copy/paste the code from my rskrza1-board.c file today.
-Of course they still have to look up the 'alternative function' number in t=
-he
-Hardware manual, but that's in an easy to read table.
+OK modem lines over GPIO.
 
+So the problem is that GPIOLIB is needed (obviously) for mctrl_gpio_init() =
+to
+work properly, and then there are some stubs in
+drivers/tty/serial/serial_mctrl_gpio.h
+for !GPIOLIB.
 
+And this whole discussion is all about that !GPIOLIB case really,
+whether DT, ACPI, SFI or board files machine data is used doesn't
+really matter.
 
-> > So in summary, this is how I think things should look in the DT:
-> >
-> > Example of a 'normal' pin (most of the pins).
-> > 		/* P3_0 as TxD2; P3_2 as RxD2 */
-> > 		renesas,pins =3D <PIN(3, 0) 6>,
-> > 			       <PIN(3, 2) 4>;
->=20
-> Just to make sure I'm following you: why RxD2 (P3_2) is not marked as
-> BI_DIR?
+We're talking about:
 
-Because it doesn't have to be. The pin controller itself knows how to set i=
-t up
-itself as soon as you set the PIPC.
+> git grep mctrl_gpio_init
+drivers/tty/serial/atmel_serial.c:      atmel_port->gpios =3D
+mctrl_gpio_init(&atmel_port->uart, 0);
+drivers/tty/serial/clps711x.c:  s->gpios =3D
+mctrl_gpio_init_noauto(&pdev->dev, 0);
+drivers/tty/serial/etraxfs-uart.c:      up->gpios =3D
+mctrl_gpio_init_noauto(&pdev->dev, 0);
+drivers/tty/serial/imx.c:       sport->gpios =3D mctrl_gpio_init(&sport->po=
+rt, 0);
+drivers/tty/serial/mxs-auart.c: s->gpios =3D mctrl_gpio_init_noauto(dev, 0)=
+;
+drivers/tty/serial/sh-sci.c:    sciport->gpios =3D
+mctrl_gpio_init(&sciport->port, 0);
 
-> I would have expected to have the flag specified here, as it
-> requires PIBC enabled (and as you said, BI_DIR drives PBDC that enables
-> PIBC consequentially)
+Atmel, ARM, ETRAX, ARM, ARM, Super-H, all have GPIOLIB.
+Right now no x86, correct?
 
-PIBC (Port Input Buffer Control) is only valid when you are in GPIO input p=
-ort
-mode (PMCn.PMCnm =3D 0 and PMn.PMnm =3D 1).
+They actually all even do things like this in Kconfig:
 
+config SERIAL_ATMEL
+(...)
+        select SERIAL_MCTRL_GPIO if GPIOLIB
 
-The reality is, it would be nice if the controller could magically know how=
- to
-set all the pins direction, buffers and such depending on their function, b=
-ut
-there were some that needed an extra signals to be manually set (whether it=
- makes
-sense or not). I guess that's the consequence of mixing-and-matching IP fro=
-m
-different product lines. Oh well, we just fix it all in software, right?  ;=
+What stops us from removing all the stubs in
+drivers/tty/serial/serial_mctrl_gpio.h
+and just make SERIAL_MCTRL_GPIO depends on GPIOLIB?
+
+>From 2ecc70acc510784d953add707f2a5acfebe484c2 Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 16 Mar 2017 16:18:21 +0100
+Subject: [PATCH] stab at mctrl
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/tty/serial/Kconfig             |  1 +
+ drivers/tty/serial/serial_mctrl_gpio.h | 55 ------------------------------=
+----
+ 2 files changed, 1 insertion(+), 55 deletions(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 6117ac8da48f..39833d009c18 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1681,5 +1681,6 @@ endmenu
+
+ config SERIAL_MCTRL_GPIO
+     tristate
++    depends on GPIOLIB
+
+ endif # TTY
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.h
+b/drivers/tty/serial/serial_mctrl_gpio.h
+index fa000bcff217..ba8f8e531d56 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.h
++++ b/drivers/tty/serial/serial_mctrl_gpio.h
+@@ -40,8 +40,6 @@ enum mctrl_gpio_idx {
+  */
+ struct mctrl_gpios;
+
+-#ifdef CONFIG_GPIOLIB
+-
+ /*
+  * Set state of the modem control output lines via GPIOs.
+  */
+@@ -101,57 +99,4 @@ void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios);
+  */
+ void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios);
+
+-#else /* GPIOLIB */
+-
+-static inline
+-void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
+-{
+-}
+-
+-static inline
+-unsigned int mctrl_gpio_get(struct mctrl_gpios *gpios, unsigned int *mctrl=
 )
+-{
+-    return *mctrl;
+-}
+-
+-static inline unsigned int
+-mctrl_gpio_get_outputs(struct mctrl_gpios *gpios, unsigned int *mctrl)
+-{
+-    return *mctrl;
+-}
+-
+-static inline
+-struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+-                      enum mctrl_gpio_idx gidx)
+-{
+-    return ERR_PTR(-ENOSYS);
+-}
+-
+-static inline
+-struct mctrl_gpios *mctrl_gpio_init(struct uart_port *port, unsigned int i=
+dx)
+-{
+-    return ERR_PTR(-ENOSYS);
+-}
+-
+-static inline
+-struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev,
+unsigned int idx)
+-{
+-    return ERR_PTR(-ENOSYS);
+-}
+-
+-static inline
+-void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
+-{
+-}
+-
+-static inline void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios)
+-{
+-}
+-
+-static inline void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios)
+-{
+-}
+-
+-#endif /* GPIOLIB */
+-
+ #endif
+--=20
+2.9.3
 
-I'd rather this than the PFC that's in the R-Car....which I think is the re=
-sult
-of trying to make it smarter and just ended up making it more complicated.
 
-
-Cheers
-
-
-Chris
+Yours,
+Linus Walleij
