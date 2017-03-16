@@ -1,202 +1,78 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL calls
-Date: Thu, 16 Mar 2017 16:18:52 +0100
-Message-ID: <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
-References: <20170303191248.wlwjri55ip2x5pgg@pengutronix.de>
- <CAMuHMdXFrwa2jCVDb+8ecqgARLG0oGrPp9pLs0b6vEiWeKJ+uA@mail.gmail.com>
- <20170303194414.n76tr3oa2mlrzjre@pengutronix.de> <CAMuHMdXiz5hqW=fm-2H1aNKq_gXD2o0508jD2XjxYUvKoEvHdw@mail.gmail.com>
- <20170304174819.esxhwwbsxzuq3vyc@pengutronix.de> <CAMuHMdX8BEnaTtNFAbcvfHwJH=oPUmQ2NB+jfouGyhQpJ_m_4A@mail.gmail.com>
- <20170306085842.yijkfpqi3adcedmm@pengutronix.de> <CAMuHMdV2_vbocY4wCzvYtPAaF+QEX_Y4g6qVu5EqEBf5AnFdaw@mail.gmail.com>
- <20170306093043.ay4dz3ehp3aakwxh@pengutronix.de> <CAMuHMdWQuvANNU14A7NQuzv6AFp04bq4DG_oc7w9h4wUrG+4aQ@mail.gmail.com>
- <20170306100220.droey65uq2ew3mzu@pengutronix.de>
+Subject: Re: [PATCH v2 2/4] pinctrl: samsung: Register pinctrl before GPIO
+Date: Thu, 16 Mar 2017 16:28:45 +0100
+Message-ID: <CACRpkda=ZmeftaTdqP3m2=NrSgr6=_HcrkTYcrH3AA7nNvhHiA@mail.gmail.com>
+References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1487251636-2480-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdbq4RMH_2rfaxDbEZaqrQWO9bq8BS8AqnaV6SH=0s6jRQ@mail.gmail.com>
+ <20170223172313.GF2742@localhost.localdomain> <CACRpkdZ+EQ=p_vGrBFYu6p-MnC0OvcY7P1-OWzebKgQRhGWQJQ@mail.gmail.com>
+ <CAJKOXPf09Y7ojLP4reZpCy9D509fRSs08otnN4mHmZJjYO6EDw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:36895 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753728AbdCPPSz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 11:18:55 -0400
-Received: by mail-it0-f42.google.com with SMTP id g138so47460768itb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Mar 2017 08:18:54 -0700 (PDT)
-In-Reply-To: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <CAJKOXPf09Y7ojLP4reZpCy9D509fRSs08otnN4mHmZJjYO6EDw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 6, 2017 at 11:02 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Mon, Mar 06, 2017 at 10:53:27AM +0100, Geert Uytterhoeven wrote:
->> On Mon, Mar 6, 2017 at 10:30 AM, Uwe Kleine-K=C3=B6nig
-
->> > I wouldn't want to code this in each driver (something like:
->> >
->> >         if (IS_ENABLED(GPIOLIB) || device_is_instantiated_by_dt(dev) |=
-| device_is_instantiated_by_acpi(dev))
->> >                 gpios =3D mctrl_gpio_init(...);
->> >         else
->> >                 gpios =3D NULL;
->> >
->> > ). Putting this into GPIOLIB is the right approach, and so this is
->> > another argument for HALFGPIOLIB. This would fix mctrl_gpio_init en
->> > passant.
+On Tue, Mar 14, 2017 at 2:58 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Tue, Mar 14, 2017 at 3:44 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Feb 23, 2017 at 6:23 PM, Charles Keepax
+>> <ckeepax@opensource.wolfsonmicro.com> wrote:
+>>> On Wed, Feb 22, 2017 at 03:37:37PM +0100, Linus Walleij wrote:
+>>>> On Thu, Feb 16, 2017 at 2:27 PM, Charles Keepax
+>>>> <ckeepax@opensource.wolfsonmicro.com> wrote:
+>>>>
+>>>> > If we request a GPIO hog, then gpiochip_add_data will attempt to request
+>>>> > some of its own GPIOs. The driver also uses gpiochip_generic_request
+>>>> > which means that for any GPIO request to succeed the pinctrl needs to be
+>>>> > registered. Currently however the driver registers the GPIO and then the
+>>>> > pinctrl meaning all GPIO hog requests will fail, which then in turn causes
+>>>> > the whole driver to fail probe. Fix this up by ensuring we register the
+>>>> > pinctrl first. Although currently there are no users of GPIO hogs in
+>>>> > mainline there are plenty of Samsung based boards that are widely used
+>>>> > for development purposes of other hardware. Indeed we hit this issue
+>>>> > whilst attaching some additional hardware to an Arndale system.
+>>>> >
+>>>> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+>>>> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>> > ---
+>>>> >
+>>>> > Changes since v1:
+>>>> >  - Updated commit message
+>>>>
+>>>> Patch applied. Will not be visible in -next until after the merge window
+>>>> though.
+>>>>
+>>>
+>>> Apologies but I think you might be best to drop this patch for
+>>> now, it seems this causes the ranges passed to
+>>> pinctrl_add_gpio_range to have the wrong .base, whilst I can
+>>> actually see no ill effects from this on Arndale. I suspect this
+>>> patch may be only part of the solution and may potentially cause
+>>> issues for others even though it seems fine for me.
 >>
->> Do we have platforms where DT=3Dy || ACPI=3Dy, but GPIOLIB=3Dn?
->> Ah, x86 ;-)
+>> OK I dropped it.
+>>
+>> Resend it if you figure it out.
+>>
+>> The Samsung driver traffic is increasing, and there are now
+>> a bunch of developers starting to step on each others' toes.
+>>
+>> Would you Samsung developers start considering someone who
+>> can collect Samsung pin control patches and send them as
+>> pull requests to me?
 >
-> Yeah, and I think rm -r arch/x86 won't be acceptable :-) I assume you
-> can also configure some arm or powerpc systems without GPIOLIB.
+> For some reason, some days ago I had impression that Sylwester is
+> doing this already... but I was corrected that you are taking them
+> directly. If Tomasz and Sylwester are willing to do this, they got my
+> Ack.
 >
->> Anyway, for sh-sci.c, platforms either have DT and GPIOLIB, or they do n=
-ot
->> need mctrl-gpio.
->
-> So we're in agreement now that HALFGPIOLIB is the way to go?
-> Linus, what do you think?
+> If not, I can take it and set a separate repo on my kernel.org account.
 
-OK modem lines over GPIO.
-
-So the problem is that GPIOLIB is needed (obviously) for mctrl_gpio_init() =
-to
-work properly, and then there are some stubs in
-drivers/tty/serial/serial_mctrl_gpio.h
-for !GPIOLIB.
-
-And this whole discussion is all about that !GPIOLIB case really,
-whether DT, ACPI, SFI or board files machine data is used doesn't
-really matter.
-
-We're talking about:
-
-> git grep mctrl_gpio_init
-drivers/tty/serial/atmel_serial.c:      atmel_port->gpios =3D
-mctrl_gpio_init(&atmel_port->uart, 0);
-drivers/tty/serial/clps711x.c:  s->gpios =3D
-mctrl_gpio_init_noauto(&pdev->dev, 0);
-drivers/tty/serial/etraxfs-uart.c:      up->gpios =3D
-mctrl_gpio_init_noauto(&pdev->dev, 0);
-drivers/tty/serial/imx.c:       sport->gpios =3D mctrl_gpio_init(&sport->po=
-rt, 0);
-drivers/tty/serial/mxs-auart.c: s->gpios =3D mctrl_gpio_init_noauto(dev, 0)=
-;
-drivers/tty/serial/sh-sci.c:    sciport->gpios =3D
-mctrl_gpio_init(&sciport->port, 0);
-
-Atmel, ARM, ETRAX, ARM, ARM, Super-H, all have GPIOLIB.
-Right now no x86, correct?
-
-They actually all even do things like this in Kconfig:
-
-config SERIAL_ATMEL
-(...)
-        select SERIAL_MCTRL_GPIO if GPIOLIB
-
-What stops us from removing all the stubs in
-drivers/tty/serial/serial_mctrl_gpio.h
-and just make SERIAL_MCTRL_GPIO depends on GPIOLIB?
-
->From 2ecc70acc510784d953add707f2a5acfebe484c2 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 16 Mar 2017 16:18:21 +0100
-Subject: [PATCH] stab at mctrl
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/tty/serial/Kconfig             |  1 +
- drivers/tty/serial/serial_mctrl_gpio.h | 55 ------------------------------=
-----
- 2 files changed, 1 insertion(+), 55 deletions(-)
-
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 6117ac8da48f..39833d009c18 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1681,5 +1681,6 @@ endmenu
-
- config SERIAL_MCTRL_GPIO
-     tristate
-+    depends on GPIOLIB
-
- endif # TTY
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.h
-b/drivers/tty/serial/serial_mctrl_gpio.h
-index fa000bcff217..ba8f8e531d56 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.h
-+++ b/drivers/tty/serial/serial_mctrl_gpio.h
-@@ -40,8 +40,6 @@ enum mctrl_gpio_idx {
-  */
- struct mctrl_gpios;
-
--#ifdef CONFIG_GPIOLIB
--
- /*
-  * Set state of the modem control output lines via GPIOs.
-  */
-@@ -101,57 +99,4 @@ void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios);
-  */
- void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios);
-
--#else /* GPIOLIB */
--
--static inline
--void mctrl_gpio_set(struct mctrl_gpios *gpios, unsigned int mctrl)
--{
--}
--
--static inline
--unsigned int mctrl_gpio_get(struct mctrl_gpios *gpios, unsigned int *mctrl=
-)
--{
--    return *mctrl;
--}
--
--static inline unsigned int
--mctrl_gpio_get_outputs(struct mctrl_gpios *gpios, unsigned int *mctrl)
--{
--    return *mctrl;
--}
--
--static inline
--struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
--                      enum mctrl_gpio_idx gidx)
--{
--    return ERR_PTR(-ENOSYS);
--}
--
--static inline
--struct mctrl_gpios *mctrl_gpio_init(struct uart_port *port, unsigned int i=
-dx)
--{
--    return ERR_PTR(-ENOSYS);
--}
--
--static inline
--struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev,
-unsigned int idx)
--{
--    return ERR_PTR(-ENOSYS);
--}
--
--static inline
--void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
--{
--}
--
--static inline void mctrl_gpio_enable_ms(struct mctrl_gpios *gpios)
--{
--}
--
--static inline void mctrl_gpio_disable_ms(struct mctrl_gpios *gpios)
--{
--}
--
--#endif /* GPIOLIB */
--
- #endif
---=20
-2.9.3
-
+That would be great, if there will be a lot of Samsung pin control work
+for this kernel cycle.
 
 Yours,
 Linus Walleij
