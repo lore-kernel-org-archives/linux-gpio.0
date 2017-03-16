@@ -1,134 +1,35 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH v3] gpio:mcp23s08 Fixed missing interrupts
-Date: Thu, 16 Mar 2017 10:36:18 +0800
-Message-ID: <fd649ba4-753f-f897-4df8-f484ad476d6c@electromag.com.au>
-References: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: add names to the gpios
+Date: Wed, 15 Mar 2017 22:50:58 -0700
+Message-ID: <CAOCOHw6Epj2ZLB227L_vbZJ02orYb9W5koJcaLxeSJy_gfG+Sg@mail.gmail.com>
+References: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy2.45ru.net.au ([203.30.46.146]:50793 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751191AbdCPCgX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 22:36:23 -0400
-In-Reply-To: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, LAKML <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: robert.middleton@rm5248.com, linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, gnurou@gmail.com
 
-On 16/03/2017 04:56, robert.middleton@rm5248.com wrote:
-> From: Robert Middleton <robert.middleton@rm5248.com>
->
-> When an interrupt occurs on an MCP23S08 chip, the INTF register will only
-> contain one bit as causing the interrupt.  If more than two pins change at
-> the same time on the chip, this causes one of the pins to not be reported.
-> This patch fixes the logic for checking if a pin has changed, so that
-> multiple pins will always cause more than one change.
->
-> Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
-> ---
->  drivers/gpio/gpio-mcp23s08.c | 65 ++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 60 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-> index bdb6923..2a57d024 100644
-> --- a/drivers/gpio/gpio-mcp23s08.c
-> +++ b/drivers/gpio/gpio-mcp23s08.c
-> @@ -270,8 +270,10 @@ mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
->  static irqreturn_t mcp23s08_irq(int irq, void *data)
->  {
->  	struct mcp23s08 *mcp = data;
-> -	int intcap, intf, i;
-> +	int intcap, intf, i, gpio, gpio_orig, intcap_mask;
->  	unsigned int child_irq;
-> +	bool intf_set, intcap_changed, gpio_bit_changed,
-> +		defval_changed, gpio_set;
->
->  	mutex_lock(&mcp->lock);
->  	if (mcp_read(mcp, MCP_INTF, &intf) < 0) {
-> @@ -287,14 +289,67 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
->  	}
->
->  	mcp->cache[MCP_INTCAP] = intcap;
-> +
-> +	/* This clears the interrupt(configurable on S18) */
-> +	if (mcp_read(mcp, MCP_GPIO, &gpio) < 0) {
-> +		mutex_unlock(&mcp->lock);
-> +		return IRQ_HANDLED;
-> +	}
-> +	gpio_orig = mcp->cache[MCP_GPIO];
-> +	mcp->cache[MCP_GPIO] = gpio;
->  	mutex_unlock(&mcp->lock);
->
-> +	if (mcp->cache[MCP_INTF] == 0) {
-> +		/* There is no interrupt pending */
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	dev_dbg(mcp->chip.parent,
-> +		"intcap 0x%04X intf 0x%04X gpio_orig 0x%04X gpio 0x%04X\n",
-> +		intcap, intf, gpio_orig, gpio);
->
->  	for (i = 0; i < mcp->chip.ngpio; i++) {
-> -		if ((BIT(i) & mcp->cache[MCP_INTF]) &&
-> -		    ((BIT(i) & intcap & mcp->irq_rise) ||
-> -		     (mcp->irq_fall & ~intcap & BIT(i)) ||
-> -		     (BIT(i) & mcp->cache[MCP_INTCON]))) {
-> +		/* We must check all of the inputs on the chip,
-> +		 * otherwise we may not notice a change on >=2 pins.
-> +		 *
-> +		 * On at least the mcp23s17, INTCAP is only updated
-> +		 * one byte at a time(INTCAPA and INTCAPB are
-> +		 * not written to at the same time - only on a per-bank
-> +		 * basis).
-> +		 *
-> +		 * INTF only contains the single bit that caused the
-> +		 * interrupt per-bank.  On the mcp23s17, there is
-> +		 * INTFA and INTFB.  If two pins are changed on the A
-> +		 * side at the same time, INTF will only have one bit
-> +		 * set.  If one pin on the A side and one pin on the B
-> +		 * side are changed at the same time, INTF will have
-> +		 * two bits set.  Thus, INTF can't be the only check
-> +		 * to see if the input has changed.
-> +		 */
-> +
-> +		intf_set = BIT(i) & mcp->cache[MCP_INTF];
-> +		if (i < 8 && intf_set)
-> +			intcap_mask = 0x00FF;
-> +		else if (i >= 8 && intf_set)
-> +			intcap_mask = 0xFF00;
-> +		else
-> +			intcap_mask = 0x00;
-> +
-> +		intcap_changed = (intcap_mask &
-> +			(BIT(i) & mcp->cache[MCP_INTCAP])) !=
-> +			(intcap_mask & (BIT(i) & gpio_orig));
-> +		gpio_set = BIT(i) & mcp->cache[MCP_GPIO];
-> +		gpio_bit_changed = (BIT(i) & gpio_orig) !=
-> +			(BIT(i) & mcp->cache[MCP_GPIO]);
-> +		defval_changed = (BIT(i) & mcp->cache[MCP_INTCON]) &&
-> +			((BIT(i) & mcp->cache[MCP_GPIO]) !=
-> +			(BIT(i) & mcp->cache[MCP_DEFVAL]));
-> +
-> +		if (((gpio_bit_changed || intcap_changed) &&
-> +			(BIT(i) & mcp->irq_rise) && gpio_set) ||
-> +		    ((gpio_bit_changed || intcap_changed) &&
-> +			(BIT(i) & mcp->irq_fall) && !gpio_set) ||
-> +		    defval_changed) {
->  			child_irq = irq_find_mapping(mcp->chip.irqdomain, i);
->  			handle_nested_irq(child_irq);
->  		}
+On Mon, Mar 6, 2017 at 3:32 PM, Timur Tabi <timur@codeaurora.org> wrote:
+> The sysfs and debugfs entries for pin control drivers work better when
+> the individual pins are given real names, even if they are all just
+> "gpio0", "gpio1", etc.
 >
 
-I tested this on my system based on 4.9 branch. It required minor changes to the
-register read calls to apply to that branch as it didn't have regmap changes.
-all works for me.
+Yeah, you do want "name" for those to play nice.
 
-Tested-by: Phil Reid <preid@electromag.com.au>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
--- 
-Regards
-Phil Reid
-
-
+Regards,
+Bjorn
