@@ -1,47 +1,46 @@
 From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: [PATCH 2/6] gpio: mvebu: start multiline block comments with blank line
-Date: Thu, 16 Mar 2017 07:33:57 +0100
-Message-ID: <20170316063402.8667-3-ralph.sennhauser@gmail.com>
-References: <20170316063402.8667-1-ralph.sennhauser@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170316063402.8667-1-ralph.sennhauser@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Ralph Sennhauser <ralph.sennhauser@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 3/4] ARM: mvebu: Enable SENSORS_PWM_FAN in defconfig
+Date: Thu, 16 Mar 2017 07:42:17 +0100
+Message-ID: <20170316064218.9169-4-ralph.sennhauser@gmail.com>
+References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36306 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751117AbdCPGnS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 02:43:18 -0400
+In-Reply-To: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Imre Kaloz <kaloz@openwrt.org>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/Marvell
+        Kirkwood and Armada 370, 375, 38x,..." <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>
 
-While this isn't an issue according to checkpatch two styles are used.
-Add a blank line to the block comments missing a blank line at the start
-so multiline block comments look the same across the file.
+From: Andrew Lunn <andrew@lunn.ch>
 
+Now that the gpio driver also supports PWM operation, enable the PWM
+framework and fan driver in mvebu_v7_defconfig.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+URL: https://patchwork.ozlabs.org/patch/427297/
+[Ralph Sennhauser: add fan driver to defconfig]
 Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
 ---
- drivers/gpio/gpio-mvebu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm/configs/mvebu_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index a2351f3..80b1d52 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -788,7 +788,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 		goto err_domain;
- 	}
- 
--	/* NOTE: The common accessors cannot be used because of the percpu
-+	/*
-+	 * NOTE: The common accessors cannot be used because of the percpu
- 	 * access to the mask registers
- 	 */
- 	gc = irq_get_domain_generic_chip(mvchip->domain, 0);
-@@ -809,7 +810,8 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	ct->handler = handle_edge_irq;
- 	ct->chip.name = mvchip->chip.label;
- 
--	/* Setup the interrupt handlers. Each chip can have up to 4
-+	/*
-+	 * Setup the interrupt handlers. Each chip can have up to 4
- 	 * interrupt handlers, with each handler dealing with 8 GPIO
- 	 * pins.
- 	 */
+diff --git a/arch/arm/configs/mvebu_v7_defconfig b/arch/arm/configs/mvebu_v7_defconfig
+index f1a0e25..6955370 100644
+--- a/arch/arm/configs/mvebu_v7_defconfig
++++ b/arch/arm/configs/mvebu_v7_defconfig
+@@ -135,6 +135,8 @@ CONFIG_DMADEVICES=y
+ CONFIG_MV_XOR=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_MEMORY=y
++CONFIG_PWM=y
++CONFIG_SENSORS_PWM_FAN=y
+ CONFIG_EXT4_FS=y
+ CONFIG_ISO9660_FS=y
+ CONFIG_JOLIET=y
 -- 
 2.10.2
+
