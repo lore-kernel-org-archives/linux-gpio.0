@@ -1,70 +1,36 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v4 1/3] mfd: wm831x: Add basic device tree binding
-Date: Thu, 16 Mar 2017 14:31:44 +0000
-Message-ID: <20170316143144.GL6986@localhost.localdomain>
-References: <1489592384-11510-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20170316140019.eoe757vox5wrlkmu@dell>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 4/4] Input: soc_button_array - Propagate error from gpiod_count()
+Date: Thu, 16 Mar 2017 15:46:09 +0100
+Message-ID: <CACRpkdY4VaOk7yb9A5cuXGdS=T2ZLte2nmfaf95xbUeZ+ZraUw@mail.gmail.com>
+References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com> <20170220161549.39490-5-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170316140019.eoe757vox5wrlkmu@dell>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:34722 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753952AbdCPOqM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 10:46:12 -0400
+Received: by mail-it0-f51.google.com with SMTP id m27so4263536iti.1
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Mar 2017 07:46:11 -0700 (PDT)
+In-Reply-To: <20170220161549.39490-5-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Mar 16, 2017 at 02:00:19PM +0000, Lee Jones wrote:
-> On Wed, 15 Mar 2017, Charles Keepax wrote:
-> 
-> > Add the basic ability to register the device through device tree, more
-> > work is needed to get each individual sub-driver functioning correctly
-> > but this is enough to get the device to probe from device tree.
-> > 
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > ---
-> >  static int wm831x_i2c_probe(struct i2c_client *i2c,
-> >  			    const struct i2c_device_id *id)
-> >  {
-> > +	struct wm831x_pdata *pdata = dev_get_platdata(&i2c->dev);
-> >  	struct wm831x *wm831x;
-> > +	enum wm831x_parent type;
-> >  	int ret;
-> >  
-> > +	if (i2c->dev.of_node) {
-> > +		const struct of_device_id *id = of_match_device(wm831x_of_match,
-> > +								&i2c->dev);
-> 
-> Not keen on this.  Please declare the variable up with the others.
-> 
+On Mon, Feb 20, 2017 at 5:15 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-They are never going to be used anywhere else in the function.
-Again I can if you feel strongly but isn't it really better to
-limit the scope of the variables if they are only being used
-locally.
+> Since gpiod_count() does not return 0 anymore, we don't need to shadow
+> its error code and would safely propagate to the user.
+>
+> While here, replace second parameter by NULL in order to prevent side
+> effects on _DSD enabled firmware.
+>
+> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> > +		unsigned long of_type = (unsigned long)id->data;
-> 
-> And this one.
-> 
-> > +		type = (enum wm831x_parent)of_type;
-> 
-> Looks like you don't even need of_type.
-> 
-> Just cast id->data straight into wm81x_parent.
-> 
+Patch applied with Dmitry's ACK.
 
-Pretty sure you will get a warning on 64-bit systems if I do
-that.
-
-> > +	} else {
-> > +		type = (enum wm831x_parent)id->driver_data;
-> > +	}
-> 
-> No need for bracketing here.
-> 
-
-Kernel coding standards if one side  of the if has both should.
-
-Thanks,
-Charles
+Yours,
+Linus Walleij
