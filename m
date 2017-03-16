@@ -1,72 +1,134 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/3] pc104: Mask PC/104 Kconfig options
-Date: Wed, 15 Mar 2017 22:00:04 +0000
-Message-ID: <73b3264d-9167-d871-d218-cbfb96cb5b45@kernel.org>
-References: <cover.1484073324.git.vilhelm.gray@gmail.com>
- <CACRpkdaqeLktgqmd6qcdGmruxABS0fWQacPOTYf0V24cKyiSRA@mail.gmail.com>
- <20170301204652.GA31812@sophia>
- <61fd7559-9001-ede7-f16d-2f74f8f9ef61@kernel.org>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH v3] gpio:mcp23s08 Fixed missing interrupts
+Date: Thu, 16 Mar 2017 10:36:18 +0800
+Message-ID: <fd649ba4-753f-f897-4df8-f484ad476d6c@electromag.com.au>
+References: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <61fd7559-9001-ede7-f16d-2f74f8f9ef61-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anchovy2.45ru.net.au ([203.30.46.146]:50793 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751191AbdCPCgX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 15 Mar 2017 22:36:23 -0400
+In-Reply-To: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: robert.middleton@rm5248.com, linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, gnurou@gmail.com
 
-On 05/03/17 12:48, Jonathan Cameron wrote:
-> On 01/03/17 20:46, William Breathitt Gray wrote:
->> On Wed, Jan 11, 2017 at 04:26:19PM +0100, Linus Walleij wrote:
->>> On Tue, Jan 10, 2017 at 7:50 PM, William Breathitt Gray
->>> <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>>
->>>> PC/104 form factor devices serve a specific niche of embedded system
->>>> users. Since PC/104 devices and hardware are typically used by just a
->>>> subset of Linux users, it would be appropriate to filter PC/104 related
->>>> Kconfig options for those uninterested.
->>>>
->>>> This patchset introduces the PC104 Kconfig option, and uses it to mask
->>>> PC/104 specific device drivers and options, so that only those users
->>>> interested in PC/104 related Kconfig options are exposed to them.
->>>
->>> Tell me when/if the PC104 option is merged and I can merge the GPIO
->>> patch.
->>>
->>> Yours,
->>> Linus Walleij
->>
->> Jonathan and Linus,
->>
->> Now that the PC104 option is merged for 4.11, it should be all right to
->> merge in the GPIO and IIO patches without worry of warnings. Please
->> merge the relevant patch to your respective tree after you pull in the
->> PC104 option.
-> If it looks like I've forgotten this, feel free to poke me again!
-> 
-> At least replying to you should get it back into my recent threads
-> in my email client ;)
-> 
-Done,. Applied to the togreg branch of iio.git and pushed out as
-testing for the autobuilders to play with it.
+On 16/03/2017 04:56, robert.middleton@rm5248.com wrote:
+> From: Robert Middleton <robert.middleton@rm5248.com>
+>
+> When an interrupt occurs on an MCP23S08 chip, the INTF register will only
+> contain one bit as causing the interrupt.  If more than two pins change at
+> the same time on the chip, this causes one of the pins to not be reported.
+> This patch fixes the logic for checking if a pin has changed, so that
+> multiple pins will always cause more than one change.
+>
+> Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
+> ---
+>  drivers/gpio/gpio-mcp23s08.c | 65 ++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 60 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
+> index bdb6923..2a57d024 100644
+> --- a/drivers/gpio/gpio-mcp23s08.c
+> +++ b/drivers/gpio/gpio-mcp23s08.c
+> @@ -270,8 +270,10 @@ mcp23s08_direction_output(struct gpio_chip *chip, unsigned offset, int value)
+>  static irqreturn_t mcp23s08_irq(int irq, void *data)
+>  {
+>  	struct mcp23s08 *mcp = data;
+> -	int intcap, intf, i;
+> +	int intcap, intf, i, gpio, gpio_orig, intcap_mask;
+>  	unsigned int child_irq;
+> +	bool intf_set, intcap_changed, gpio_bit_changed,
+> +		defval_changed, gpio_set;
+>
+>  	mutex_lock(&mcp->lock);
+>  	if (mcp_read(mcp, MCP_INTF, &intf) < 0) {
+> @@ -287,14 +289,67 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+>  	}
+>
+>  	mcp->cache[MCP_INTCAP] = intcap;
+> +
+> +	/* This clears the interrupt(configurable on S18) */
+> +	if (mcp_read(mcp, MCP_GPIO, &gpio) < 0) {
+> +		mutex_unlock(&mcp->lock);
+> +		return IRQ_HANDLED;
+> +	}
+> +	gpio_orig = mcp->cache[MCP_GPIO];
+> +	mcp->cache[MCP_GPIO] = gpio;
+>  	mutex_unlock(&mcp->lock);
+>
+> +	if (mcp->cache[MCP_INTF] == 0) {
+> +		/* There is no interrupt pending */
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	dev_dbg(mcp->chip.parent,
+> +		"intcap 0x%04X intf 0x%04X gpio_orig 0x%04X gpio 0x%04X\n",
+> +		intcap, intf, gpio_orig, gpio);
+>
+>  	for (i = 0; i < mcp->chip.ngpio; i++) {
+> -		if ((BIT(i) & mcp->cache[MCP_INTF]) &&
+> -		    ((BIT(i) & intcap & mcp->irq_rise) ||
+> -		     (mcp->irq_fall & ~intcap & BIT(i)) ||
+> -		     (BIT(i) & mcp->cache[MCP_INTCON]))) {
+> +		/* We must check all of the inputs on the chip,
+> +		 * otherwise we may not notice a change on >=2 pins.
+> +		 *
+> +		 * On at least the mcp23s17, INTCAP is only updated
+> +		 * one byte at a time(INTCAPA and INTCAPB are
+> +		 * not written to at the same time - only on a per-bank
+> +		 * basis).
+> +		 *
+> +		 * INTF only contains the single bit that caused the
+> +		 * interrupt per-bank.  On the mcp23s17, there is
+> +		 * INTFA and INTFB.  If two pins are changed on the A
+> +		 * side at the same time, INTF will only have one bit
+> +		 * set.  If one pin on the A side and one pin on the B
+> +		 * side are changed at the same time, INTF will have
+> +		 * two bits set.  Thus, INTF can't be the only check
+> +		 * to see if the input has changed.
+> +		 */
+> +
+> +		intf_set = BIT(i) & mcp->cache[MCP_INTF];
+> +		if (i < 8 && intf_set)
+> +			intcap_mask = 0x00FF;
+> +		else if (i >= 8 && intf_set)
+> +			intcap_mask = 0xFF00;
+> +		else
+> +			intcap_mask = 0x00;
+> +
+> +		intcap_changed = (intcap_mask &
+> +			(BIT(i) & mcp->cache[MCP_INTCAP])) !=
+> +			(intcap_mask & (BIT(i) & gpio_orig));
+> +		gpio_set = BIT(i) & mcp->cache[MCP_GPIO];
+> +		gpio_bit_changed = (BIT(i) & gpio_orig) !=
+> +			(BIT(i) & mcp->cache[MCP_GPIO]);
+> +		defval_changed = (BIT(i) & mcp->cache[MCP_INTCON]) &&
+> +			((BIT(i) & mcp->cache[MCP_GPIO]) !=
+> +			(BIT(i) & mcp->cache[MCP_DEFVAL]));
+> +
+> +		if (((gpio_bit_changed || intcap_changed) &&
+> +			(BIT(i) & mcp->irq_rise) && gpio_set) ||
+> +		    ((gpio_bit_changed || intcap_changed) &&
+> +			(BIT(i) & mcp->irq_fall) && !gpio_set) ||
+> +		    defval_changed) {
+>  			child_irq = irq_find_mapping(mcp->chip.irqdomain, i);
+>  			handle_nested_irq(child_irq);
+>  		}
+>
 
-Thanks,
+I tested this on my system based on 4.9 branch. It required minor changes to the
+register read calls to apply to that branch as it didn't have regmap changes.
+all works for me.
 
-Jonathan
-> Jonathan
->>
->> Thank you,
->>
->> William Breathitt Gray
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Tested-by: Phil Reid <preid@electromag.com.au>
+
+-- 
+Regards
+Phil Reid
+
+
