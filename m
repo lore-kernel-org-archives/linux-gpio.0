@@ -1,37 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] fix pinctrl setup for i.IMX6
-Date: Thu, 16 Mar 2017 12:28:11 +0100
-Message-ID: <CACRpkdZNe3s4ipc_Dbbm0Pr-Bz0-a_oOkGCgECsbp75dFSZOgw@mail.gmail.com>
-References: <d217e26e-9b5c-7b01-67e2-017293ca1407@nextfour.com>
- <CACRpkdZ6=1U6cDdPr64aDFDizHfzzAPOeNKwQy5Z0nRpB=jLjw@mail.gmail.com>
- <20170314145527.q53qh7yzm2x4zksf@t450s.lan> <20170315162639.GK20572@atomide.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and hscif4_ctrl
+Date: Thu, 16 Mar 2017 13:49:00 +0100
+Message-ID: <CAMuHMdWNYqNxcBHTNiTyDe3ZED0L07z4AhRiOcfNBj4QiMJ9Ag@mail.gmail.com>
+References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
+ <1489423302-21296-2-git-send-email-geert+renesas@glider.be> <e5214bac-7bf9-1897-cf9f-f4735e6985e9@cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170315162639.GK20572@atomide.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
-Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33651 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751384AbdCPMtC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 08:49:02 -0400
+In-Reply-To: <e5214bac-7bf9-1897-cf9f-f4735e6985e9@cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 15, 2017 at 5:26 PM, Tony Lindgren <tony@atomide.com> wrote:
+Hei Sergey,
 
-> I think as a regression fix for the -rc series, we should use Mika's
-> patch with the following tweaks:
+On Mon, Mar 13, 2017 at 5:57 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 03/13/2017 07:41 PM, Geert Uytterhoeven wrote:
 >
-> 1. Instead of adding yet another devm_pinctrl_register_and_init(),
->    let's just make devm_pinctrl_register_and_init() not call start
->    automatically. If people prefer to use Mika's naming for it
->    with nostart, I have no problem with that. But let's then rename
->    the current devm_pinctrl_register_and_init() so we are not stuck
->    with another interface with issues.
+>> Fix typos in hscif2_clk_[bc]_mux[] and hscif4_ctrl_mux[].
 >
-> 2. Update the four drivers using devm_pinctrl_register_and_init()
->    to also call start separately.
->
-> Mika, care to update your patch for that?
+>    Only seeing hscif2_clk_b_mux[] fix...
 
-OK sounds reasonable waiting for a revised patch from Mika.
+Thanks for noticing, I had copied this line from another patch for r8a7796,
+but forgot to update it.
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
