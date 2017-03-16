@@ -1,237 +1,331 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
-Date: Thu, 16 Mar 2017 15:04:32 +0100
-Message-ID: <6804f0d9-3768-c792-e4c7-2512fac83d2d@jmondi.org>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-2-git-send-email-jacopo+renesas@jmondi.org>
- <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/3] mfd: wm831x: Add basic device tree binding
+Date: Thu, 16 Mar 2017 14:00:19 +0000
+Message-ID: <20170316140019.eoe757vox5wrlkmu@dell>
+References: <1489592384-11510-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60256 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752029AbdCPOGr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 10:06:47 -0400
-In-Reply-To: <SG2PR06MB1165969D5D3072A3A19DEDCE8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1489592384-11510-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Chris,
-    thanks for looking into this...
+On Wed, 15 Mar 2017, Charles Keepax wrote:
 
-On 09/03/2017 15:55, Chris Brandt wrote:
-> Hi Jacopo,
->
-> On Monday, February 20, 2017, Jacopo Mondi wrote:
->>
->> Add combined gpio and pin controller driver for Renesas RZ/A1
->> r7s72100 SoC.
->>
->> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> ---
->>  drivers/pinctrl/Kconfig        |   10 +
->>  drivers/pinctrl/Makefile       |    1 +
->>  drivers/pinctrl/pinctrl-rza1.c | 1026
->> ++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 1037 insertions(+)
->>  create mode 100644 drivers/pinctrl/pinctrl-rza1.c
->>
->> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
->> index 8f8c2af..61310ac 100644
->> --- a/drivers/pinctrl/Kconfig
->> +++ b/drivers/pinctrl/Kconfig
->> @@ -163,6 +163,16 @@ config PINCTRL_ROCKCHIP
->>  	select GENERIC_IRQ_CHIP
->>  	select MFD_SYSCON
->>
->> +config PINCTRL_RZA1
->> +	bool "Renesas r7s72100 RZ/A1 gpio and pinctrl driver"
->
-> You can drop the "r7s72100" and just say RZ/A1.
->
->
->
->> +/**
->> + * rza1_pin_set_direction() - set I/O direction on a pin in port mode
->> + *
->> + * When running in output port mode keep PBDC enabled to allow reading
->> the
->> + * pin value from PPR.
->> + * When in alternate mode disable that (if not explicitly required) not
->> to
->> + * interfere with the alternate function mode.
->> + *
->> + * @port: port where pin sits on
->> + * @offset: pin offset
->> + * @input: input enable/disable flag
->> + */
->> +static inline void rza1_pin_set_direction(struct rza1_port *port,
->> +					  unsigned int offset,
->> +					  bool input)
->> +{
->> +	spin_lock(&port->lock);
->> +	if (input)
->> +		rza1_set_bit(port, PIBC_REG, offset, 1);
->> +	else {
->> +		rza1_set_bit(port, PM_REG, offset, 0);
->> +		rza1_set_bit(port, PBDC_REG, offset, 1);
->> +	}
->> +	spin_unlock(&port->lock);
->
-> When input==true, you only set PIBC_REG. Otherwise you only set PM_REG and PBDC_REG. This would imply that this function will only ever get called once for a pin and never get called a second time with a different direction...meaning it would not really change a pin from output to input. I would assume that you would need to change this function to set those 3 registers either one way or the other.
->
-> I would suggest:
->    PIBC_REG = 1 /* always gets set for GPIO mode */
->  input:
->    PM_REG = 1
->    PBDC_REG = 0
-> output:
->    PM_REG = 0
->    PBDC_REG = 1
->
+> Add the basic ability to register the device through device tree, more
+> work is needed to get each individual sub-driver functioning correctly
+> but this is enough to get the device to probe from device tree.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+> 
+> Changes since v3:
+>  - No longer check return of of_match_device it should always match
+>  - Move calls of of_match_device from helper function in wm831x-core
+>    into both wm831x-i2c and wm831x-spi
+>  - Move copy of pdata from wm831x-core into both wm831x-i2c and wm831x-spi
+>  - Put device type into struct wm831x and remove the argument to that
+>    effect passed to wm831x_device_init
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/mfd/wm831x-core.c       | 29 +++++++++++++++++++++--------
+>  drivers/mfd/wm831x-i2c.c        | 21 ++++++++++++++++++++-
+>  drivers/mfd/wm831x-irq.c        |  6 +++---
+>  drivers/mfd/wm831x-spi.c        | 20 ++++++++++++++++++--
+>  include/linux/mfd/wm831x/core.h |  9 ++++++++-
+>  5 files changed, 70 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
+> index 3e0e99e..13a4c11 100644
+> --- a/drivers/mfd/wm831x-core.c
+> +++ b/drivers/mfd/wm831x-core.c
+> @@ -19,6 +19,8 @@
+>  #include <linux/mfd/core.h>
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+>  
+>  #include <linux/mfd/wm831x/core.h>
+>  #include <linux/mfd/wm831x/pdata.h>
+> @@ -1613,12 +1615,24 @@ struct regmap_config wm831x_regmap_config = {
+>  };
+>  EXPORT_SYMBOL_GPL(wm831x_regmap_config);
+>  
+> +const struct of_device_id wm831x_of_match[] = {
+> +	{ .compatible = "wlf,wm8310", .data = (void *)WM8310 },
+> +	{ .compatible = "wlf,wm8311", .data = (void *)WM8311 },
+> +	{ .compatible = "wlf,wm8312", .data = (void *)WM8312 },
+> +	{ .compatible = "wlf,wm8320", .data = (void *)WM8320 },
+> +	{ .compatible = "wlf,wm8321", .data = (void *)WM8321 },
+> +	{ .compatible = "wlf,wm8325", .data = (void *)WM8325 },
+> +	{ .compatible = "wlf,wm8326", .data = (void *)WM8326 },
+> +	{ },
+> +};
+> +EXPORT_SYMBOL_GPL(wm831x_of_match);
+> +
+>  /*
+>   * Instantiate the generic non-control parts of the device.
+>   */
+> -int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq)
+> +int wm831x_device_init(struct wm831x *wm831x, int irq)
+>  {
+> -	struct wm831x_pdata *pdata = dev_get_platdata(wm831x->dev);
+> +	struct wm831x_pdata *pdata = &wm831x->pdata;
+>  	int rev, wm831x_num;
+>  	enum wm831x_parent parent;
+>  	int ret, i;
+> @@ -1627,8 +1641,7 @@ int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq)
+>  	mutex_init(&wm831x->key_lock);
+>  	dev_set_drvdata(wm831x->dev, wm831x);
+>  
+> -	if (pdata)
+> -		wm831x->soft_shutdown = pdata->soft_shutdown;
+> +	wm831x->soft_shutdown = pdata->soft_shutdown;
+>  
+>  	ret = wm831x_reg_read(wm831x, WM831X_PARENT_ID);
+>  	if (ret < 0) {
+> @@ -1663,7 +1676,7 @@ int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq)
+>  	 */
+>  	if (ret == 0) {
+>  		dev_info(wm831x->dev, "Device is an engineering sample\n");
+> -		ret = id;
+> +		ret = wm831x->type;
+>  	}
+>  
+>  	switch (ret) {
+> @@ -1736,9 +1749,9 @@ int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq)
+>  	/* This will need revisiting in future but is OK for all
+>  	 * current parts.
+>  	 */
+> -	if (parent != id)
+> -		dev_warn(wm831x->dev, "Device was registered as a WM%lx\n",
+> -			 id);
+> +	if (parent != wm831x->type)
+> +		dev_warn(wm831x->dev, "Device was registered as a WM%x\n",
+> +			 wm831x->type);
+>  
+>  	/* Bootstrap the user key */
+>  	ret = wm831x_reg_read(wm831x, WM831X_SECURITY_KEY);
+> diff --git a/drivers/mfd/wm831x-i2c.c b/drivers/mfd/wm831x-i2c.c
+> index 824bcba..c442736 100644
+> --- a/drivers/mfd/wm831x-i2c.c
+> +++ b/drivers/mfd/wm831x-i2c.c
+> @@ -19,6 +19,8 @@
+>  #include <linux/mfd/core.h>
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/regmap.h>
+>  
+>  #include <linux/mfd/wm831x/core.h>
+> @@ -27,15 +29,28 @@
+>  static int wm831x_i2c_probe(struct i2c_client *i2c,
+>  			    const struct i2c_device_id *id)
+>  {
+> +	struct wm831x_pdata *pdata = dev_get_platdata(&i2c->dev);
+>  	struct wm831x *wm831x;
+> +	enum wm831x_parent type;
+>  	int ret;
+>  
+> +	if (i2c->dev.of_node) {
+> +		const struct of_device_id *id = of_match_device(wm831x_of_match,
+> +								&i2c->dev);
 
-I assumed "set_direction()" to always be called after a "request()", so 
-that the pin is always in reset state.
-This is obviously not true, so I'm going to fix this as you suggested.
-I'm just wondering why we should keep input buffer enabled even if we're 
-running in output mode. This seems to be "safe" according to TRM but I'm 
-a bit afraid of unexpected consequences (am I too paranoid?)
+Not keen on this.  Please declare the variable up with the others.
 
->
->
->> +/**
->> + * rza1_alternate_function_conf() - configure pin in alternate function
->> mode
->> + *
->> + * @pinctrl: RZ/A1 pin controller device
->> + * @pin_conf: single pin configuration descriptor
->> + */
->> +static int rza1_alternate_function_conf(struct rza1_pinctrl *rza1_pctl,
->> +					struct rza1_pin_conf *pin_conf)
->> +{
->> +	unsigned int offset = pin_conf->offset;
->> +	struct rza1_port *port = &rza1_pctl->ports[pin_conf->port];
->> +	u8 mux_mode = (pin_conf->mux_conf - 1) & MUX_FUNC_MASK;
->> +	u8 mux_conf = pin_conf->mux_conf >> MUX_FUNC_OFFS;
->> +	bool swio_en = !!(mux_conf & MUX_CONF_SWIO);
->> +	bool input_en = !!(mux_conf & MUX_CONF_INPUT_ENABLE);
->> +
->> +	rza1_pin_reset(port, offset);
->> +
->> +	/*
->> +	 * When configuring pin with Software Controlled IO mode in
->> alternate
->> +	 * mode, do not enable bi-directional control to avoid driving Pn
->> +	 * value to the pin input.
->> +	 * When working in direct IO mode (aka alternate function drives the
->> +	 * pin direction), enable bi-directional control for input pins in
->> +	 * order to enable the pin's input buffer as a consequence.
->> +	 */
->> +	if ((!swio_en && input_en) || (swio_en && !input_en))
->> +		rza1_set_bit(port, PBDC_REG, offset, 1);
->
->
-> Maybe just set PBDC_REG at the end of the function with everything else.
-> See below...
->
+> +		unsigned long of_type = (unsigned long)id->data;
 
-Let me reply below to both these comments...
+And this one.
 
->
->
->> +
->> +	/*
->> +	 * Enable alternate function mode and select it.
->> +	 *
->> +	 * ----------------------------------------------------
->> +	 * Alternate mode selection table:
->> +	 *
->> +	 * PMC	PFC	PFCE	PFCAE	mux_mode
->> +	 * 1	0	0	0	0
->> +	 * 1	1	0	0	1
->> +	 * 1	0	1	0	2
->> +	 * 1	1	1	0	3
->> +	 * 1	0	0	1	4
->> +	 * 1	1	0	1	5
->> +	 * 1	0	1	1	6
->> +	 * 1	1	1	1	7
->> +	 * ----------------------------------------------------
->> +	 */
->> +	rza1_set_bit(port, PFC_REG, offset, mux_mode & MUX_FUNC_PFC_MASK);
->> +	rza1_set_bit(port, PFCE_REG, offset, mux_mode & MUX_FUNC_PFCE_MASK);
->> +	rza1_set_bit(port, PFCEA_REG, offset, mux_mode &
->> MUX_FUNC_PFCEA_MASK);
->> +
->> +	/*
->> +	 * All alternate functions except a few (4) need PIPCn = 1.
->> +	 * If PIPCn has to stay disabled (SW IO mode), configure PMn
->> according
->> +	 * to I/O direction specified by pin configuration -after- PMC has
->> been
->> +	 * set to one.
->> +	 */
->> +	if (!swio_en)
->> +		rza1_set_bit(port, PIPC_REG, offset, 1);
->> +
->> +	rza1_set_bit(port, PMC_REG, offset, 1);
->> +
->> +	if (swio_en)
->> +		rza1_set_bit(port, PM_REG, offset, input_en);
->
->
-> I would suggest something like this:
->
-> 	if (bidir)
-> 		rza1_set_bit(port, PBDC_REG, offset, 1);
-> 	else {
-> 		rza1_set_bit(port, PBDC_REG, offset, 0);
-> 		rza1_set_bit(port, PM_REG, offset, swio_in);
-> 	}
->
-> 	rza1_set_bit(port, PMC_REG, offset, 1);
->
->
+> +		type = (enum wm831x_parent)of_type;
 
-This looks nicer, for sure, but from my testing I found out that the 
-sequence reported in section 54.19-c of TRM has to be carefully 
-respected, particularly setting PM after PMC (and iirc setting PBDC 
-before PFC*)
-Am I wrong? I will give your suggestion spin anyway...
+Looks like you don't even need of_type.
 
-This apart, you suggestion is tied to your comment on [2/7] on replacing 
-INPUT_EN with BIDIR and introduce SWIO_IN and SWIO_OUT, which I mostly 
-agree on (I'll comment on that as well).
+Just cast id->data straight into wm81x_parent.
 
-A sort of middle-ground to get rid of horrible conditions like
-"if ((!swio_en && input_en) || (swio_en && !input_en))"
-which requires a 7 lines comments to be explained and I still found 
-obscure after a month I was not looking at it, would be making BIDIR and 
-SWIO_[IN|OUT] exclusive, as if a pin is set to be SWIO it already has 
-direction specified, and if it is said to be BIDIR, it means its 
-direction is decided by the alternate function, not by software.
-Does this fly for you? Do you see cases where those flags may have to be 
-specified together?
-If not, it would simplify this routine for sure...
+> +	} else {
+> +		type = (enum wm831x_parent)id->driver_data;
+> +	}
 
-Thanks
-    j
+No need for bracketing here.
 
+>  	wm831x = devm_kzalloc(&i2c->dev, sizeof(struct wm831x), GFP_KERNEL);
+>  	if (wm831x == NULL)
+>  		return -ENOMEM;
+>  
+>  	i2c_set_clientdata(i2c, wm831x);
+>  	wm831x->dev = &i2c->dev;
+> +	wm831x->type = type;
+>  
+>  	wm831x->regmap = devm_regmap_init_i2c(i2c, &wm831x_regmap_config);
+>  	if (IS_ERR(wm831x->regmap)) {
+> @@ -45,7 +60,10 @@ static int wm831x_i2c_probe(struct i2c_client *i2c,
+>  		return ret;
+>  	}
+>  
+> -	return wm831x_device_init(wm831x, id->driver_data, i2c->irq);
+> +	if (pdata)
+> +		memcpy(&wm831x->pdata, pdata, sizeof(*pdata));
+> +
+> +	return wm831x_device_init(wm831x, i2c->irq);
+>  }
+>  
+>  static int wm831x_i2c_remove(struct i2c_client *i2c)
+> @@ -94,6 +112,7 @@ static struct i2c_driver wm831x_i2c_driver = {
+>  	.driver = {
+>  		.name = "wm831x",
+>  		.pm = &wm831x_pm_ops,
+> +		.of_match_table = of_match_ptr(wm831x_of_match),
+>  	},
+>  	.probe = wm831x_i2c_probe,
+>  	.remove = wm831x_i2c_remove,
+> diff --git a/drivers/mfd/wm831x-irq.c b/drivers/mfd/wm831x-irq.c
+> index dfea8b9..c01239a 100644
+> --- a/drivers/mfd/wm831x-irq.c
+> +++ b/drivers/mfd/wm831x-irq.c
+> @@ -564,7 +564,7 @@ static const struct irq_domain_ops wm831x_irq_domain_ops = {
+>  
+>  int wm831x_irq_init(struct wm831x *wm831x, int irq)
+>  {
+> -	struct wm831x_pdata *pdata = dev_get_platdata(wm831x->dev);
+> +	struct wm831x_pdata *pdata = &wm831x->pdata;
+>  	struct irq_domain *domain;
+>  	int i, ret, irq_base;
+>  
+> @@ -579,7 +579,7 @@ int wm831x_irq_init(struct wm831x *wm831x, int irq)
+>  	}
+>  
+>  	/* Try to dynamically allocate IRQs if no base is specified */
+> -	if (pdata && pdata->irq_base) {
+> +	if (pdata->irq_base) {
+>  		irq_base = irq_alloc_descs(pdata->irq_base, 0,
+>  					   WM831X_NUM_IRQS, 0);
+>  		if (irq_base < 0) {
+> @@ -608,7 +608,7 @@ int wm831x_irq_init(struct wm831x *wm831x, int irq)
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (pdata && pdata->irq_cmos)
+> +	if (pdata->irq_cmos)
+>  		i = 0;
+>  	else
+>  		i = WM831X_IRQ_OD;
+> diff --git a/drivers/mfd/wm831x-spi.c b/drivers/mfd/wm831x-spi.c
+> index 80482ae..c8e7007 100644
+> --- a/drivers/mfd/wm831x-spi.c
+> +++ b/drivers/mfd/wm831x-spi.c
+> @@ -14,6 +14,8 @@
+>  
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/pm.h>
+>  #include <linux/spi/spi.h>
+>  #include <linux/regmap.h>
+> @@ -23,12 +25,21 @@
+>  
+>  static int wm831x_spi_probe(struct spi_device *spi)
+>  {
+> +	struct wm831x_pdata *pdata = dev_get_platdata(&spi->dev);
+>  	const struct spi_device_id *id = spi_get_device_id(spi);
+>  	struct wm831x *wm831x;
+>  	enum wm831x_parent type;
+>  	int ret;
+>  
+> -	type = (enum wm831x_parent)id->driver_data;
+> +	if (spi->dev.of_node) {
+> +		const struct of_device_id *id = of_match_device(wm831x_of_match,
+> +								&spi->dev);
+> +		unsigned long of_type = (unsigned long)id->data;
+> +
+> +		type = (enum wm831x_parent)of_type;
+> +	} else {
+> +		type = (enum wm831x_parent)id->driver_data;
+> +	}
 
->> +
->> +	return 0;
->> +}
->
->
->
->
-> Chris
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+As above.
 
+>  	wm831x = devm_kzalloc(&spi->dev, sizeof(struct wm831x), GFP_KERNEL);
+>  	if (wm831x == NULL)
+> @@ -38,6 +49,7 @@ static int wm831x_spi_probe(struct spi_device *spi)
+>  
+>  	spi_set_drvdata(spi, wm831x);
+>  	wm831x->dev = &spi->dev;
+> +	wm831x->type = type;
+>  
+>  	wm831x->regmap = devm_regmap_init_spi(spi, &wm831x_regmap_config);
+>  	if (IS_ERR(wm831x->regmap)) {
+> @@ -47,7 +59,10 @@ static int wm831x_spi_probe(struct spi_device *spi)
+>  		return ret;
+>  	}
+>  
+> -	return wm831x_device_init(wm831x, type, spi->irq);
+> +	if (pdata)
+> +		memcpy(&wm831x->pdata, pdata, sizeof(*pdata));
+> +
+> +	return wm831x_device_init(wm831x, spi->irq);
+>  }
+>  
+>  static int wm831x_spi_remove(struct spi_device *spi)
+> @@ -97,6 +112,7 @@ static struct spi_driver wm831x_spi_driver = {
+>  	.driver = {
+>  		.name	= "wm831x",
+>  		.pm	= &wm831x_spi_pm,
+> +		.of_match_table = of_match_ptr(wm831x_of_match),
+>  	},
+>  	.id_table	= wm831x_spi_ids,
+>  	.probe		= wm831x_spi_probe,
+> diff --git a/include/linux/mfd/wm831x/core.h b/include/linux/mfd/wm831x/core.h
+> index 76c2264..b49fa676 100644
+> --- a/include/linux/mfd/wm831x/core.h
+> +++ b/include/linux/mfd/wm831x/core.h
+> @@ -21,6 +21,8 @@
+>  #include <linux/list.h>
+>  #include <linux/regmap.h>
+>  #include <linux/mfd/wm831x/auxadc.h>
+> +#include <linux/mfd/wm831x/pdata.h>
+> +#include <linux/of.h>
+>  
+>  /*
+>   * Register values.
+> @@ -367,6 +369,9 @@ struct wm831x {
+>  
+>  	struct regmap *regmap;
+>  
+> +	struct wm831x_pdata pdata;
+> +	enum wm831x_parent type;
+> +
+>  	int irq;  /* Our chip IRQ */
+>  	struct mutex irq_lock;
+>  	struct irq_domain *irq_domain;
+> @@ -412,7 +417,7 @@ int wm831x_set_bits(struct wm831x *wm831x, unsigned short reg,
+>  int wm831x_bulk_read(struct wm831x *wm831x, unsigned short reg,
+>  		     int count, u16 *buf);
+>  
+> -int wm831x_device_init(struct wm831x *wm831x, unsigned long id, int irq);
+> +int wm831x_device_init(struct wm831x *wm831x, int irq);
+>  void wm831x_device_exit(struct wm831x *wm831x);
+>  int wm831x_device_suspend(struct wm831x *wm831x);
+>  void wm831x_device_shutdown(struct wm831x *wm831x);
+> @@ -427,4 +432,6 @@ static inline int wm831x_irq(struct wm831x *wm831x, int irq)
+>  
+>  extern struct regmap_config wm831x_regmap_config;
+>  
+> +extern const struct of_device_id wm831x_of_match[];
+> +
+>  #endif
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
