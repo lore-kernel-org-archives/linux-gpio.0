@@ -1,31 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 3/4] platform/x86: surface3_button: Propagate error
- from gpiod_count()
-Date: Thu, 16 Mar 2017 15:45:01 +0100
-Message-ID: <CACRpkdZNs=xGiumQTamSJ=xtC7gkkyoSOv2DpMpkEsbsN7WDpA@mail.gmail.com>
-References: <20170220161549.39490-1-andriy.shevchenko@linux.intel.com> <20170220161549.39490-4-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] gpio: acpi: Ignore -EPROBE_DEFER for unselected gpioints
+Date: Thu, 16 Mar 2017 15:48:21 +0100
+Message-ID: <CACRpkda+z+5mQGgZTvT=dF3qUz1-axMCZyP7OCUDMfR9H8OrCg@mail.gmail.com>
+References: <20170313220421.27314-1-hdegoede@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170220161549.39490-4-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linux Input <linux-input@vger.kernel.org>, Darren Hart <dvhart@infradead.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37873 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753277AbdCPOsp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 10:48:45 -0400
+Received: by mail-it0-f49.google.com with SMTP id g138so46232136itb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Mar 2017 07:48:32 -0700 (PDT)
+In-Reply-To: <20170313220421.27314-1-hdegoede@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Feb 20, 2017 at 5:15 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Mar 13, 2017 at 11:04 PM, Hans de Goede <hdegoede@redhat.com> wrote:
 
-> Since gpiod_count() does not return 0 anymore, we don't need to shadow
-> its error code and would safely propagate to the user.
+> When acpi_dev_gpio_irq_get gets called with an index of say 2, it should
+> not care if acpi_get_gpiod for index 0 or 1 returns -EPROBE_DEFER.
 >
-> While here, replace second parameter by NULL in order to prevent side
-> effects on _DSD enabled firmware.
+> This allows drivers which request a gpioint with index > 0 to function
+> if there is no gpiochip driver (loaded) for gpioints with a lower index.
 >
-> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Patch applied to the GPIO tree.
+Patch applied with Mika's ACK.
 
 Yours,
 Linus Walleij
