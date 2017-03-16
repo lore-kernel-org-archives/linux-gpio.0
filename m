@@ -1,231 +1,230 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH v3 01/16] chardev: add helper function to
- register char devs with a struct device
-Date: Thu, 16 Mar 2017 22:22:22 +0900
-Message-ID: <20170316132222.GA9923@kroah.com>
-References: <1488783873-2614-1-git-send-email-logang@deltatee.com>
- <1488783873-2614-2-git-send-email-logang@deltatee.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: meson: gxl: add the missing PWM pin
+ definitions
+Date: Thu, 16 Mar 2017 14:54:03 +0100
+Message-ID: <c0dad3a3-bdd4-3563-0ca6-0ca9d5a4ce2f@baylibre.com>
+References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+ <20170304212318.27076-2-martin.blumenstingl@googlemail.com>
+ <1488811357.2420.18.camel@baylibre.com>
+ <CAFBinCDty8v80tLxHJPR+SHv32LX834dPJUruRNqr6angx3OOQ@mail.gmail.com>
+ <CACRpkdbGfGUhnAQz=9xeFnD2hF6m_xXacu8mZiwte-OCSDMo9w@mail.gmail.com>
+ <b7430d5f-96a7-2445-1c2a-ccc299bfdda2@baylibre.com>
+ <m237ee8id8.fsf@baylibre.com>
+ <CAFBinCCCgbSvh8B81nXP6D11d5WZZ+71jDgvsjYDsWTb=V78Xg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBCUJ7YGL3QFBBH5DVLDAKGQEO2BDM5A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <1488783873-2614-2-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Sajjan Vikas C <vikas.cha.sajjan-ZPxbGqLxI0U@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter Huewe <peterhuewe-Mmb7MZpHnFY@public.gmane.org>, Marcel Selhorst <tpmdd-yWjUBOtONefk1uMJSBkQmQ@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Vyukov <dvyukov-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haggai Eran <haggaie-VPRAkNaXOzVWk0Htik3J/w@public.gmane.org>, Parav Pandit <pandit.parav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Leon Romanovsky <leon-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars@meta>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAFBinCCCgbSvh8B81nXP6D11d5WZZ+71jDgvsjYDsWTb=V78Xg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 06, 2017 at 12:04:17AM -0700, Logan Gunthorpe wrote:
-> Credit for this patch goes is shared with Dan Williams [1]. I've
-> taken things one step further to make the helper function more
-> useful and clean up calling code.
+On 03/15/2017 09:11 PM, Martin Blumenstingl wrote:
+> On Wed, Mar 15, 2017 at 8:12 PM, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
+>> Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> writes:
+>>
+>>> On 03/14/2017 04:42 PM, Linus Walleij wrote:
+>>>> On Thu, Mar 9, 2017 at 8:47 PM, Martin Blumenstingl
+>>>> <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
+>>>>> On Mon, Mar 6, 2017 at 3:42 PM, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
+>>>>>> On Sat, 2017-03-04 at 22:23 +0100, Martin Blumenstingl wrote:
+>>>>
+>>>>>>> +     FUNCTION(pwm_f_clk),
+>>>>>>> +     FUNCTION(pwm_f_x),
+>>>>>>
+>>>>>> I wonder if having function named "pwm_f_clk" really makes sense ?
+>>>>>> Shouldn't it be just "pwm_f" ? This is real function, isn't it ?
+>>>>>> The actual pin used will be provided in the dt. Here, I suppose we
+>>>>>> could have this:
+>>>>>>
+>>>>>> +static const char * const pwm_f_groups[] = {
+>>>>>> +       "pwm_f_x", "pwm_f_clk",
+>>>>>> +};
+>>>>>>
+>>>>>> Has far as I can see, on meson arch, the function does not carry much
+>>>>>> information anyway, except for prints.
+>>>>>>
+>>>>>> To be clear, I'm not questioning this change in particular. It looks
+>>>>>> good, and follows what has been done in the past on meson. I know we
+>>>>>> have been this a lot already, but I'm questioning whether we should
+>>>>>> continue to do so ?
+>>>>>>
+>>>>>> I asking because I also have a lot case like this coming up on audio
+>>>>>> for gxl and gxbb, where the same function can use different pins.
+>>>>>
+>>>>> could you please look into Jerome's question?
+>>>>> personally I'm fine with either way, and changing my patch would be
+>>>>> quite trivial. but I'd like to know what's "the way to go" before
+>>>>> changing anything (and reverting that afterwards again).
+>>>>
+>>>> I don't understand the question really.
+>>>>
+>>>> I am not an expert on this system, if the people working with it
+>>>> cannot tell a function from a group I don't know who can... certainly
+>>>> not me.
+>>>>
+>>>> What I can say is that pincontrol combines functions and groups to
+>>>> states using a mapping. The functions should be something you poke
+>>>> into a register, the groups are looser defined but may also be a
+>>>> character of the hardware, but more usual a character of the
+>>>> intended electronic usecase. Groups contain 1..n pins and can
+>>>> be combined with some applicable functions.
+>>>>
+>>>> Please re-read Documentation/pinctrl.txt very closely if anything is
+>>>> unclear, I really put a lot of hours into getting that right. Especially
+>>>> reexamine "Pinmux conventions".
+>>>
+>>> The point pushed by Jerome was purely cosmetic since the groups in the meson
+>>> pinctrl driver are purely cosmetic, since only the GPIO group is handled,
+>>> other groups are all handled the same.
+>>
+>> handled the same... as what?
+>>
+>>> This is because I pushed all the PWM pins in a separate group, but functionnaly
+>>> the internal signal (i.e. PWM F) is the same for multiple pins and should be
+>>> a single "PWM F" group instead of multiple ones.
+>>>
+>>> My advice is to leave the PWM groups as is,
+>>
+>> Do you mean as we have in mainline today?  or as is proposed in $SUBJECT patch?
+>>
+>>> and push new pins/functions/groups
+>>> grouped with the internal signal name if split on multiple pins.
+>>
+>> Can somone do a quick patch for PWM_F for example, also showing how this
+>> will look in the DT if someone wants to switch between the PWM_F on GPIOX
+>> or GPIOCLK?
+> it would look like this (node name, label and group stay the same,
+> function does not contain the _x/_clk suffix anymore):
+> pwm_f_clk_pins: pwm_f_clk {
+>     mux {
+>         groups = "pwm_f_clk";
+>         function = "pwm_f";
+>     };
+> };
 > 
-> There's a common pattern in the kernel whereby a struct cdev is placed
-> in a structure along side a struct device which manages the life-cycle
-> of both. In the naive approach, the reference counting is broken and
-> the struct device can free everything before the chardev code
-> is entirely released.
+> pwm_f_x_pins: pwm_f_x {
+>     mux {
+>         groups = "pwm_f_x";
+>         function = "pwm_f";
+>     };
+> };
 > 
-> Many developers have solved this problem by linking the internal kobjs
-> in this fashion:
+>> We shouldalso verify that the driver is detecting/removing conflicts
+>> properly when something else is already using that pin (e.g. SDIO_IRQ
+>> shares pin GPIOX_7 with PWM_F)
+> if the same pin is assigned to two devices then the pinctrl subsystem
+> will throw an error (we don't have to take care of this, it's how I
+> discovered as GPIOAO_1 was used by uart_rx_ao_a and uart_rx_ao_b).
+> however, I have not tested yet what happens if the same function is
+> assigned to multiple pins (let's say you pass both, pwm_f_clk_pins and
+> pwm_f_x_pins to the pwm_ef node - will this result in the PWM output
+> being routed to *both* pins or just one pin?). if the same function
+> cannot be used by two pins simultaneously then we should probably use
+> function "pwm_f" instead of "pwm_f_x" (just an example) so we can
+> detect these "conflicts".
 > 
-> cdev.kobj.parent = &parent_dev.kobj;
 > 
-> The cdev code explicitly gets and puts a reference to it's kobj parent.
-> So this seems like it was intended to be used this way. Dmitrty Torokhov
-> first put this in place in 2012 with this commit:
+> Regards,
+> Martin
 > 
-> 2f0157f char_dev: pin parent kobject
 > 
-> and the first instance of the fix was then done in the input subsystem
-> in the following commit:
+> [0] https://github.com/torvalds/linux/commit/b27e36482c02a94194fec71fb29696f4c8e9241c
 > 
-> 4a215aa Input: fix use-after-free introduced with dynamic minor changes
-> 
-> Subsequently over the years, however, this issue seems to have tripped
-> up multiple developers independently. For example, see these commits:
-> 
-> 0d5b7da iio: Prevent race between IIO chardev opening and IIO device
-> (by Lars-Peter Clausen in 2013)
-> 
-> ba0ef85 tpm: Fix initialization of the cdev
-> (by Jason Gunthorpe in 2015)
-> 
-> 5b28dde [media] media: fix use-after-free in cdev_put() when app exits
-> after driver unbind
-> (by Shauh Khan in 2016)
-> 
-> This technique is similarly done in at least 15 places within the kernel
-> and probably should have been done so in another, at least, 5 places.
-> The kobj line also looks very suspect in that one would not expect
-> drivers to have to mess with kobject internals in this way.
-> Even highly experienced kernel developers can be surprised by this
-> code, as seen in [2].
-> 
-> To help alleviate this situation, and hopefully prevent future
-> wasted effort on this problem, this patch introduces a helper function
-> to register a char device along with its parent struct device.
-> This creates a more regular API for tying a char device to its parent
-> without the developer having to set members in the underlying kobject.
-> 
-> This patch introduce cdev_device_add and cdev_device_del which
-> replaces a common pattern including setting the kobj parent, calling
-> cdev_add and then calling device_add. It also introduces cdev_set_parent
-> for the few cases that set the kobject parent without using device_add.
-> 
-> [1] https://lkml.org/lkml/2017/2/13/700
-> [2] https://lkml.org/lkml/2017/2/10/370
-> 
-> Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-> Signed-off-by: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Reviewed-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-> Reviewed-by: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->  fs/char_dev.c        | 77 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/cdev.h |  4 +++
->  2 files changed, 81 insertions(+)
-> 
-> diff --git a/fs/char_dev.c b/fs/char_dev.c
-> index 44a240c..09b93fb 100644
-> --- a/fs/char_dev.c
-> +++ b/fs/char_dev.c
-> @@ -471,6 +471,76 @@ int cdev_add(struct cdev *p, dev_t dev, unsigned count)
->  	return 0;
->  }
->  
-> +/**
-> + * cdev_set_parent() - set the parent kobject for a char device
-> + * @p: the cdev structure
-> + * @kobj: the kobject to take a reference to
-> + *
-> + * cdev_set_parent() sets a parent kobject which will be referenced
-> + * appropriately so the parent is not freed before the cdev. This
-> + * should be called before cdev_add.
-> + */
-> +void cdev_set_parent(struct cdev *p, struct kobject *kobj)
-> +{
-> +	WARN_ON(!kobj->state_initialized);
-> +	p->kobj.parent = kobj;
-> +}
-> +
-> +/**
-> + * cdev_device_add() - add a char device and it's corresponding
-> + *	struct device, linkink
-> + * @dev: the device structure
-> + * @cdev: the cdev structure
-> + *
-> + * cdev_device_add() adds the char device represented by @cdev to the system,
-> + * just as cdev_add does. It then adds @dev to the system using device_add
-> + * The dev_t for the char device will be taken from the struct device which
-> + * needs to be initialized first. This helper function correctly takes a
-> + * reference to the parent device so the parent will not get released until
-> + * all references to the cdev are released.
-> + *
-> + * This function should be used whenever the struct cdev and the
-> + * struct device are members of the same structure whose lifetime is
-> + * managed by the struct device.
-> + *
-> + * NOTE: Callers must assume that userspace was able to open the cdev and
-> + * can call cdev fops callbacks at any time, even if this function fails.
-> + */
-> +int cdev_device_add(struct cdev *cdev, struct device *dev)
-> +{
-> +	int rc = 0;
-> +
-> +	cdev_set_parent(cdev, &dev->kobj);
-> +
-> +	rc = cdev_add(cdev, dev->devt, 1);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = device_add(dev);
-> +	if (rc)
-> +		cdev_del(cdev);
-> +
-> +	return rc;
-> +}
-> +
-> +/**
-> + * cdev_device_del() - inverse of cdev_device_add
-> + * @dev: the device structure
-> + * @cdev: the cdev structure
-> + *
-> + * cdev_device_del() is a helper function to call cdev_del and device_del.
-> + * It should be used whenever cdev_device_add is used.
-> + *
-> + * NOTE: This guarantees that associated sysfs callbacks are not running
-> + * or runnable, however any cdevs already open will remain and their fops
-> + * will still be callable even after this function returns.
-> + */
-> +void cdev_device_del(struct cdev *cdev, struct device *dev)
-> +{
-> +	device_del(dev);
-> +	cdev_del(cdev);
-> +}
-> +
->  static void cdev_unmap(dev_t dev, unsigned count)
->  {
->  	kobj_unmap(cdev_map, dev, count);
-> @@ -482,6 +552,10 @@ static void cdev_unmap(dev_t dev, unsigned count)
->   *
->   * cdev_del() removes @p from the system, possibly freeing the structure
->   * itself.
-> + *
-> + * NOTE: This guarantees that cdev device will no longer be able to be
-> + * opened, however any cdevs already open will remain and their fops will
-> + * still be callable even after cdev_del returns.
->   */
->  void cdev_del(struct cdev *p)
->  {
-> @@ -570,5 +644,8 @@ EXPORT_SYMBOL(cdev_init);
->  EXPORT_SYMBOL(cdev_alloc);
->  EXPORT_SYMBOL(cdev_del);
->  EXPORT_SYMBOL(cdev_add);
-> +EXPORT_SYMBOL(cdev_set_parent);
-> +EXPORT_SYMBOL(cdev_device_add);
-> +EXPORT_SYMBOL(cdev_device_del);
->  EXPORT_SYMBOL(__register_chrdev);
->  EXPORT_SYMBOL(__unregister_chrdev);
-> diff --git a/include/linux/cdev.h b/include/linux/cdev.h
-> index f876361..4c99579 100644
-> --- a/include/linux/cdev.h
-> +++ b/include/linux/cdev.h
-> @@ -26,6 +26,10 @@ void cdev_put(struct cdev *p);
->  
->  int cdev_add(struct cdev *, dev_t, unsigned);
->  
-> +void cdev_set_parent(struct cdev *p, struct kobject *kobj);
-> +int cdev_device_add(struct cdev *cdev, struct device *dev);
-> +void cdev_device_del(struct cdev *cdev, struct device *dev);
-> +
->  void cdev_del(struct cdev *);
->  
->  void cd_forget(struct inode *);
 
-I don't know why kbuild didn't catch these before, but it looks like we
-really need to include device.h in cdev.h now to fix up these build
-warnings, right?
+Let's resume :
+In the mainline meson pinctrl driver, we have :
+ - pins that represent the PAD name (GPIOX_3 or GPIODV_17)
+ - groups that represent each physical "bit" we set in the control registers, each group can group 1 or multiple physical pins
+For example, the "emmc_nand_d07" sets the mode of multiple pins.
+ - functions are a purely logical set of groups
 
-I'll try that out and rebase the char-misc-testing tree in the morning
-to see if that fixes the build problems...
+The only C function handling the "function" is :
+static int meson_pmx_set_mux(func_num, group_num)
+{
+...
+	struct meson_pmx_func *func = &pc->data->funcs[func_num];
+...
+	/* Function 0 (GPIO) doesn't need any additional setting */
+	if (func_num)
+		ret = regmap_update_bits(...);
+...
+}
 
-thanks,
+So we could have only two big functions :
+is_gpio
+is_not_gpio
 
-greg k-h
+But now we group every logically similar "groups" into the same function, like :
+static const char * const uart_a_groups[] = {
+	"uart_tx_a", "uart_rx_a", "uart_cts_a", "uart_rts_a",
+};
 
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+When I pushed the PWM pins, I did not knew how to handle the fact that the same signal
+is on multiple physical pins, so I added multiple functions for each physical pin mode.
+
+What jerome pointed is that instead of :
+static const char * const pwm_a_x_groups[] = {
+	"pwm_a_x",
+};
+
+static const char * const pwm_a_y_groups[] = {
+	"pwm_a_y",
+};
+
+we could have single :
+static const char * const pwm_a_groups[] = {
+	"pwm_a_x", "pwm_a_y",
+};
+
+But we should also change the DT accordingly.
+
+So we can see that from different perspective :
+- from the "pin" perspective : they are different functions, so we leave like it's already mainline
+- from the "signal" perspective : they are the same signal, so we should group
+- both, so we set a function per groupable groups.
+
+for example, on the GXL, we can have UART_AO_B TX&RX on multiple pins, so we can have either :
+static const char * const uart_ao_b_groups[] = {
+ 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
+	"uart_tx_ao_b_0", "uart_rx_ao_b_1",
+};
+
+or
+
+static const char * const uart_ao_b_groups[] = {
+ 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
+};
+
+static const char * const uart_ao_b_0_1_groups[] = {
+	"uart_tx_ao_b_0", "uart_rx_ao_b_1",
+};
+
+or
+
+static const char * const uart_ao_b_groups[] = {
+ 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
+};
+
+static const char * const uart_ao_b_0_1_groups[] = {
+ 	"uart_tx_ao_b_0", "uart_rx_ao_b_1", "uart_cts_ao_b", "uart_rts_ao_b",
+};
+
+The three of these are correct.
+The point Jerome asked was for solution 1, and it what I pushed
+The solution 2 is how functions are today.
+
+The third solution is less easy but still valid.
+
+What I want is :
+ - since it's purely logical, it's not very important and each solution is still valid from
+all perspectives, so leave the PWM functions like this and push new PWMs in the same way
+ - The next functions should behave like solution 1, or solution 3 if better
+
+Neil
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
