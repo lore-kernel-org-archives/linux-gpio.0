@@ -1,35 +1,42 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: add names to the gpios
-Date: Wed, 15 Mar 2017 22:50:58 -0700
-Message-ID: <CAOCOHw6Epj2ZLB227L_vbZJ02orYb9W5koJcaLxeSJy_gfG+Sg@mail.gmail.com>
-References: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1488843122-7960-1-git-send-email-timur@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, LAKML <linux-arm-kernel@lists.infradead.org>
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: [PATCH 0/6] gpio: mvebu: prepatatory cleanup for pwm-fan support
+Date: Thu, 16 Mar 2017 07:33:55 +0100
+Message-ID: <20170316063402.8667-1-ralph.sennhauser@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36072 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbdCPGeM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 02:34:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Ralph Sennhauser <ralph.sennhauser@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, open list <linux-kernel@vger.kernel.org>
 
-On Mon, Mar 6, 2017 at 3:32 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> The sysfs and debugfs entries for pin control drivers work better when
-> the individual pins are given real names, even if they are all just
-> "gpio0", "gpio1", etc.
->
+Hi everyone
 
-Yeah, you do want "name" for those to play nice.
+I did pick up a patch series by Andrew Lunn adding PWM upport to mvebu's
+gpio controller. Checkpach complained quite a bit and there are extra
+inconsitencies which make it worth to clean drivers/gpio/gpio-mvebu.c a bit
+before adding the desired pwm fan support for armada 370 / xp.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+This series is split out to save the pwm folks from having to review this
+part as well.
 
-Regards,
-Bjorn
+Thanks
+Ralph
+
+
+Ralph Sennhauser (6):
+  gpio: mvebu: checkpatch: block comment fixes
+  gpio: mvebu: start multiline block comments with blank line
+  gpio: mvebu: checkpatch: unsigned int fixes
+  gpio: mvebu: checkpatch: whitespace fixes
+  gpio: mvebu: extra whitespace fixes
+  gpio: mvebu: let the compiler inline
+
+ drivers/gpio/gpio-mvebu.c | 75 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 41 insertions(+), 34 deletions(-)
+
+-- 
+2.10.2
+
