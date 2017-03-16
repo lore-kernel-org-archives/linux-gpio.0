@@ -1,71 +1,161 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
-Date: Thu, 16 Mar 2017 15:08:40 +0100
-Message-ID: <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com> <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
- <304fb86d-0862-992b-4563-61151b37d060@gmail.com> <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
- <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
+From: jacopo mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+Date: Thu, 16 Mar 2017 15:14:01 +0100
+Message-ID: <38f7c630-d765-da38-dcdc-fed2c853cf36@jmondi.org>
+References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1487610788-6939-4-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB1165A5A95A54365FF5E43FCF8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:38070 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbdCPOI7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 16 Mar 2017 10:08:59 -0400
-Received: by mail-it0-f42.google.com with SMTP id m27so44577189iti.1
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Mar 2017 07:08:58 -0700 (PDT)
-In-Reply-To: <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <SG2PR06MB1165A5A95A54365FF5E43FCF8A210@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 15, 2017 at 3:18 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> On 03/14/2017 03:16 AM, Linus Walleij wrote:
+Hi Chris,
 
->> The most obvious would be to use the API as many already do:
->> define "sleep" states in the core, and switch to these before
->> going to sleep. If CONFIG_PM is available simply by calling
->> pinctrl_pm_select_sleep_state() in the driver suspend() callback.
+On 09/03/2017 15:54, Chris Brandt wrote:
+> Hi Jacopo,
 >
-> Well, the difficulty for our platforms is that S2 does not make the HW
-> lose pin states, only S3 does and drivers should be agnostic of S2 vs. S3.
+> On Monday, February 20, 2017, Jacopo Mondi wrote:
+>>
+>> Add dt-bindings for Renesas r7s72100 pin controller header file.
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> ---
+>>  include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 30
+>> ++++++++++++++++++++++++++
+>>  1 file changed, 30 insertions(+)
+>>  create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+>>
+>> diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-
+>> bindings/pinctrl/r7s72100-pinctrl.h
+>> new file mode 100644
+>> index 0000000..24759bf
+>> --- /dev/null
+>> +++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+>> @@ -0,0 +1,30 @@
+>> +/*
+>> + * Defines macros and constants for Renesas RZ/A1 pin controller pin
+>> + * muxing functions.
+>> + */
+>> +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
+>> +#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
+>> +
+>> +#define RZA1_PINS_PER_PORT	16
+>> +
+>> +/* Create the pin index from it's bank and position numbers */
+>> +#define PIN(b, p)		((b) * RZA1_PINS_PER_PORT + (p))
+>> +
+>> +/* Flags to apply to alternate function configuration */
+>> +/*
+>> + * Pin needs input buffer enabled.
+>> + * This applies to pin which alternate function requires input
+>> capabilities.
+>> + * Eg: RX pin on a serial interface needs this flag to be set.
+>> + */
+>> +#define INPUT_EN		(1 << 3)
 >
-> There is not really a "sleep" and "default" state defined for these
-> platforms just the "default" state. I initially even considered adding a
-> fake "sleep" state just to satisfy the state transition condition, but
-> that does not accurately represent the HW.
-
-Do you mean that on the way up, on the resume path, you know
-whether the setting was lost or not?
-
-Or you don't know it anywhere?
-
-It is not less elegant to uncessesarily switch to a sleep state
-than to unnecessarily program the default state when you only
-went into S2 in that case.
-
-I guess then it is better to assume we will loose the state, or
-push for more granular handling of S2/3 etc states in the
-PM core (I guess these states comes from ACPI or similar).
-
->> Alternatively we would add a function to set the pinctrl handle to
->> an "unknown" state, so that when we resume, the pinctrl core at
->> least knows that we are not in "default" state anymore, so that
->> "default" is applied.
+> This is basically talking about the "Port Input Buffer Control Register"
+> (PIBCn) which is actually not that important. But, you are also using it
+> for the special cases where you have to manually define the pin to be either
+> input or output....but I would just remove INPUT_EN.
 >
-> And such a function would be called during driver suspend? Would not we
-> still end-up with the drivers having to know about the fact that there
-> is a) only one pin state defined, and b) these pins potentially lose
-> their states in some deep sleep mode?
+> For the PIBCn register, just set it automatically if you are going to
+> use the pin as a GPIO (in or out). I have not really found a case yet where
+> I had to set this bit for another other than GPIO-input.
+>
+> I would prefer to see a different define that talks about the pin being bi-directional
+> which is required for things like I2C, SDHI, etc... and would be directly related
+> to the "Port Bidirection Control Register" (PBDCn) for each pin.
+>
+> #define BI_DIR		(1 << 3)
+>
+>
+> Additionally, according to the RZ/A1 hardware manual:
+>  "When the output buffer is enabled and the PBDCn.PBDCnm bit is 1, the
+>   input buffer is enabled regardless of this register setting."
+>
 
-Again, the proposal to switch to default state twice just because
-we do not know how deep sleep we went into isn't any more
-elegant. Then it is better to just assume we lost the state at
-all times.
+Yes, I used INPUT_EN to drive PBDC..
+My assumption was that "users" would have had to decide when a pin was 
+acting as input, when describing it in dts, rather than having to deal 
+with the TRM and learn what bidirectional control is and is consequences 
+(particularly, that it enables the input buffer).
 
-Alternatively develop the PM core. Is it really impossible for
-PM hooks to know which state it went into/came from?
+But since I guess this whole driver assumes more detailed knowledge on 
+the hardware compared to group-based ones, I think using BI_DIR is fine here
 
-Yours,
-Linus Walleij
+>> +
+>> +/*
+>> + * Let software drive the pin I/O direction overriding the alternate
+>> function
+>> + * configuration.
+>> + * Some alternate function requires software to force I/O direction of a
+>> pin,
+>> + * ovverriding the designated one.
+>> + * Reference to the HW manual to know when this flag shall be used.
+>> + */
+>> +#define SWIO			(1 << 4)
+>
+> For "software I/O" settings, you were using INPUT_EN to determine input or output.
+>
+> To make things simple, I would just define:
+> #define SWIO_IN			(1 << 4)
+> #define SWIO_OUT			(1 << 5)
+>
+>
+> So in summary, this is how I think things should look in the DT:
+>
+> Example of a 'normal' pin (most of the pins).
+> 		/* P3_0 as TxD2; P3_2 as RxD2 */
+> 		renesas,pins = <PIN(3, 0) 6>,
+> 			       <PIN(3, 2) 4>;
+
+Just to make sure I'm following you: why RxD2 (P3_2) is not marked as 
+BI_DIR? I would have expected to have the flag specified here, as it 
+requires PIBC enabled (and as you said, BI_DIR drives PBDC that enables 
+PIBC consequentially)
+
+>
+> Example of pins that need bi-directional specified:
+> 		/* RIIC2: P1_4 as SCL, P1_5 as SDA */
+> 		renesas,pins = <PIN(1, 4) (1 | BI_DIR)>,
+> 			       <PIN(1, 5) (1 | BI_DIR)>;
+>
+
+nice
+
+>
+> Example of pins that need software I/O manually specified (because they are
+> whacky pins) as defined by Table 54.7:
+>
+> 		/* MTU2 TIOC0A as input capture */
+> 		renesas,pins = <PIN(4, 0) (2 | SWIO_IN)>;
+>
+> 		/* MTU2 TIOC0A as output compare */
+> 		renesas,pins = <PIN(4, 0) (2 | SWIO_OUT)>;
+>
+> 		/* LVDS */
+> 		renesas,pins = <PIN(5, 0) (1 | SWIO_IN)>; /* the spec says to put these as inputs */
+>
+> 		/* SSI Audio */
+> 		renesas,pins = <PIN(2, 11) (4 | SWIO_OUT)>;
+>
+> 		/* Watchdog Overflow */
+> 		renesas,pins = <PIN(3, 7) (8 | SWIO_OUT)>;
+>
+>
+
+Makes total sense, and will got for it.
+
+Thanks
+    j
+
+
+>
+> Chris
+>
