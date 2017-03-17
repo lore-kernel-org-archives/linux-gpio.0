@@ -1,163 +1,151 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: [PATCH 1/1] gpio: mvebu: use BIT macro instead of bit shifting
-Date: Fri, 17 Mar 2017 18:44:06 +0100
-Message-ID: <20170317174406.13431-1-ralph.sennhauser@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33945 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbdCQRoR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Mar 2017 13:44:17 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: David Rivshin <drivshin@awxrd.com>
+Subject: Re: [PATCH 1/2] gpio: omap: return error if requested debounce time
+ is not possible
+Date: Fri, 17 Mar 2017 13:54:13 -0400
+Message-ID: <20170317135413.78118dc2.drivshin@awxrd.com>
+References: <20170317005704.11971-1-drivshin@awxrd.com>
+ <20170317005704.11971-2-drivshin@awxrd.com>
+ <d1200407-5efd-ca7b-f936-fa37b206e1ea@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <d1200407-5efd-ca7b-f936-fa37b206e1ea@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-gpio@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ralph Sennhauser <ralph.sennhauser@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Use the BIT macro instead of explicitly shifting bits for some added
-clarity.
+Hi Grygorii,
 
-Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
----
+On Fri, 17 Mar 2017 11:45:56 -0500
+Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 
-Hi Linus,
+> On 03/16/2017 07:57 PM, David Rivshin wrote:
+> > From: David Rivshin <DRivshin@allworx.com>
+> > 
+> > omap_gpio_debounce() does not validate that the requested debounce
+> > is within a range it can handle. Instead it lets the register value
+> > wrap silently, and always returns success.
+> > 
+> > This can lead to all sorts of unexpected behavior, such as gpio_keys
+> > asking for a too-long debounce, but getting a very short debounce in
+> > practice.
+> > 
+> > Fix this by returning -EINVAL if the requested value does not fit into
+> > the register field. If there is no debounce clock available at all,
+> > return -ENOTSUPP.  
+> 
+> In general this patch looks good, but there is one thing I'm worry about..
+> 
+> > 
+> > Fixes: e85ec6c3047b ("gpio: omap: fix omap2_set_gpio_debounce")
+> > Cc: <stable@vger.kernel.org> # 4.3+
+> > Signed-off-by: David Rivshin <drivshin@allworx.com>
+> > ---
+> >  drivers/gpio/gpio-omap.c | 16 +++++++++++-----
+> >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> > index efc85a2..33ec02d 100644
+> > --- a/drivers/gpio/gpio-omap.c
+> > +++ b/drivers/gpio/gpio-omap.c
+> > @@ -208,8 +208,10 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+> >   * OMAP's debounce time is in 31us steps
+> >   *   <debounce time> = (GPIO_DEBOUNCINGTIME[7:0].DEBOUNCETIME + 1) x 31
+> >   * so we need to convert and round up to the closest unit.
+> > + *
+> > + * Return: 0 on success, negative error otherwise.
+> >   */
+> > -static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+> > +static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+> >  				    unsigned debounce)
+> >  {
+> >  	void __iomem		*reg;
+> > @@ -218,11 +220,12 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+> >  	bool			enable = !!debounce;
+> >  
+> >  	if (!bank->dbck_flag)
+> > -		return;
+> > +		return -ENOTSUPP;
+> >  
+> >  	if (enable) {
+> >  		debounce = DIV_ROUND_UP(debounce, 31) - 1;
+> > -		debounce &= OMAP4_GPIO_DEBOUNCINGTIME_MASK;
+> > +		if ((debounce & OMAP4_GPIO_DEBOUNCINGTIME_MASK) != debounce)
+> > +			return -EINVAL;  
+> 
+> This might cause boot issues as current drivers may expect this op to succeed even if
+> configured value is wrong - just think, may be we can do warn here and use max value as
+> fallback?
 
-To use the BIT macro for the pwm-fan addition it would be nice to have the
-rest converted before hand. This patch takes care of that.
+I have not looked through all drivers to be sure, but at least the gpio-keys 
+driver requires set_debounce to return an error if it can't satisfy the request. 
+In that case gpio-keys will use a software timer instead. 
 
-Ralph
+                if (button->debounce_interval) {
+                        error = gpiod_set_debounce(bdata->gpiod,
+                                        button->debounce_interval * 1000);
+                        /* use timer if gpiolib doesn't provide debounce */
+                        if (error < 0)
+                                bdata->software_debounce =
+                                                button->debounce_interval;
+                }
 
+Also, at least some other GPIO drivers (e.g. gpio-max7760) return -EINVAL in 
+such a case. And gpiolib will return -ENOTSUPP if there is no debounce 
+callback at all. So I expect all drivers which use gpiod_set_debounce() to 
+handle error returns gracefully. 
 
- drivers/gpio/gpio-mvebu.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+So I certainly understand the concern about backwards compatibility, but I 
+think clipping to max is the greater of the evils in this case. Even a 
+warning may be too much, because it's not necessarily anything wrong. 
+Perhaps an info or debug message would be helpful, though?
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 029f43c..fae4db6 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -45,6 +45,7 @@
- #include <linux/clk.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/irqchip/chained_irq.h>
-+#include <linux/bitops.h>
- 
- /*
-  * GPIO unit register offsets.
-@@ -191,9 +192,9 @@ static void mvebu_gpio_set(struct gpio_chip *chip, unsigned int pin, int value)
- 	spin_lock_irqsave(&mvchip->lock, flags);
- 	u = readl_relaxed(mvebu_gpioreg_out(mvchip));
- 	if (value)
--		u |= 1 << pin;
-+		u |= BIT(pin);
- 	else
--		u &= ~(1 << pin);
-+		u &= ~BIT(pin);
- 	writel_relaxed(u, mvebu_gpioreg_out(mvchip));
- 	spin_unlock_irqrestore(&mvchip->lock, flags);
- }
-@@ -203,7 +204,7 @@ static int mvebu_gpio_get(struct gpio_chip *chip, unsigned int pin)
- 	struct mvebu_gpio_chip *mvchip = gpiochip_get_data(chip);
- 	u32 u;
- 
--	if (readl_relaxed(mvebu_gpioreg_io_conf(mvchip)) & (1 << pin)) {
-+	if (readl_relaxed(mvebu_gpioreg_io_conf(mvchip)) & BIT(pin)) {
- 		u = readl_relaxed(mvebu_gpioreg_data_in(mvchip)) ^
- 			readl_relaxed(mvebu_gpioreg_in_pol(mvchip));
- 	} else {
-@@ -223,9 +224,9 @@ static void mvebu_gpio_blink(struct gpio_chip *chip, unsigned int pin,
- 	spin_lock_irqsave(&mvchip->lock, flags);
- 	u = readl_relaxed(mvebu_gpioreg_blink(mvchip));
- 	if (value)
--		u |= 1 << pin;
-+		u |= BIT(pin);
- 	else
--		u &= ~(1 << pin);
-+		u &= ~BIT(pin);
- 	writel_relaxed(u, mvebu_gpioreg_blink(mvchip));
- 	spin_unlock_irqrestore(&mvchip->lock, flags);
- }
-@@ -247,7 +248,7 @@ static int mvebu_gpio_direction_input(struct gpio_chip *chip, unsigned int pin)
- 
- 	spin_lock_irqsave(&mvchip->lock, flags);
- 	u = readl_relaxed(mvebu_gpioreg_io_conf(mvchip));
--	u |= 1 << pin;
-+	u |= BIT(pin);
- 	writel_relaxed(u, mvebu_gpioreg_io_conf(mvchip));
- 	spin_unlock_irqrestore(&mvchip->lock, flags);
- 
-@@ -275,7 +276,7 @@ static int mvebu_gpio_direction_output(struct gpio_chip *chip, unsigned int pin,
- 
- 	spin_lock_irqsave(&mvchip->lock, flags);
- 	u = readl_relaxed(mvebu_gpioreg_io_conf(mvchip));
--	u &= ~(1 << pin);
-+	u &= ~BIT(pin);
- 	writel_relaxed(u, mvebu_gpioreg_io_conf(mvchip));
- 	spin_unlock_irqrestore(&mvchip->lock, flags);
- 
-@@ -392,7 +393,7 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 
- 	pin = d->hwirq;
- 
--	u = readl_relaxed(mvebu_gpioreg_io_conf(mvchip)) & (1 << pin);
-+	u = readl_relaxed(mvebu_gpioreg_io_conf(mvchip)) & BIT(pin);
- 	if (!u)
- 		return -EINVAL;
- 
-@@ -412,13 +413,13 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	case IRQ_TYPE_EDGE_RISING:
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		u = readl_relaxed(mvebu_gpioreg_in_pol(mvchip));
--		u &= ~(1 << pin);
-+		u &= ~BIT(pin);
- 		writel_relaxed(u, mvebu_gpioreg_in_pol(mvchip));
- 		break;
- 	case IRQ_TYPE_EDGE_FALLING:
- 	case IRQ_TYPE_LEVEL_LOW:
- 		u = readl_relaxed(mvebu_gpioreg_in_pol(mvchip));
--		u |= 1 << pin;
-+		u |= BIT(pin);
- 		writel_relaxed(u, mvebu_gpioreg_in_pol(mvchip));
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH: {
-@@ -431,10 +432,10 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 		 * set initial polarity based on current input level
- 		 */
- 		u = readl_relaxed(mvebu_gpioreg_in_pol(mvchip));
--		if (v & (1 << pin))
--			u |= 1 << pin;		/* falling */
-+		if (v & BIT(pin))
-+			u |= BIT(pin);		/* falling */
- 		else
--			u &= ~(1 << pin);	/* rising */
-+			u &= ~BIT(pin);		/* rising */
- 		writel_relaxed(u, mvebu_gpioreg_in_pol(mvchip));
- 		break;
- 	}
-@@ -464,7 +465,7 @@ static void mvebu_gpio_irq_handler(struct irq_desc *desc)
- 
- 		irq = irq_find_mapping(mvchip->domain, i);
- 
--		if (!(cause & (1 << i)))
-+		if (!(cause & BIT(i)))
- 			continue;
- 
- 		type = irq_get_trigger_type(irq);
-@@ -473,7 +474,7 @@ static void mvebu_gpio_irq_handler(struct irq_desc *desc)
- 			u32 polarity;
- 
- 			polarity = readl_relaxed(mvebu_gpioreg_in_pol(mvchip));
--			polarity ^= 1 << i;
-+			polarity ^= BIT(i);
- 			writel_relaxed(polarity, mvebu_gpioreg_in_pol(mvchip));
- 		}
- 
-@@ -510,7 +511,7 @@ static void mvebu_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 		if (!label)
- 			continue;
- 
--		msk = 1 << i;
-+		msk = BIT(i);
- 		is_out = !(io_conf & msk);
- 
- 		seq_printf(s, " gpio-%-3d (%-20.20s)", chip->base + i, label);
--- 
-2.10.2
+If you prefer, I can try to go through all callers of gpiod_set_debounce()
+and see how they'd handle an error return. The handful I've looked through so 
+far all behave like gpio-keys. The only ones I'd be particularly concerned
+about are platform-specific drivers which were perhaps never used with other
+gpio drivers. Do you know of that I should pay special attention to?
 
+> 
+> >  	}
+> >  
+> >  	l = BIT(offset);
+> > @@ -255,6 +258,8 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+> >  		bank->context.debounce = debounce;
+> >  		bank->context.debounce_en = val;
+> >  	}
+> > +
+> > +	return 0;
+> >  }
+> >  
+> >  /**
+> > @@ -964,14 +969,15 @@ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
+> >  {
+> >  	struct gpio_bank *bank;
+> >  	unsigned long flags;
+> > +	int ret;
+> >  
+> >  	bank = gpiochip_get_data(chip);
+> >  
+> >  	raw_spin_lock_irqsave(&bank->lock, flags);
+> > -	omap2_set_gpio_debounce(bank, offset, debounce);
+> > +	ret = omap2_set_gpio_debounce(bank, offset, debounce);
+> >  	raw_spin_unlock_irqrestore(&bank->lock, flags);
+> >  
+> > -	return 0;
+> > +	return ret;
+> >  }
+> >  
+> >  static int omap_gpio_set_config(struct gpio_chip *chip, unsigned offset,
+> >   
+> 
