@@ -1,59 +1,48 @@
-From: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: [PATCH v5 2/3] gpio: wm831x: Add basic device tree support
-Date: Fri, 17 Mar 2017 10:05:19 +0000
-Message-ID: <1489745120-2918-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1489745120-2918-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1489745120-2918-1-git-send-email-ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 2/3] mfd: intel_soc_pmic_bxtwc: Move inclusion to c-file
+Date: Fri, 17 Mar 2017 17:37:14 +0200
+Message-ID: <20170317153715.48555-2-andriy.shevchenko@linux.intel.com>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Now the wm831x-core has basic DT support we can update this driver to
-allow use of the GPIOs within a device tree system.
+There is no need to include intel_soc_pmic.h into header which doesn't
+require it.
 
-Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
+ drivers/mfd/intel_soc_pmic_bxtwc.c | 1 +
+ include/linux/mfd/intel_bxtwc.h    | 2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-No changes since v4, still should go through Lee's tree.
-
-Thanks,
-Charles
-
- drivers/gpio/gpio-wm831x.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
-index 00e3839..938bbe3 100644
---- a/drivers/gpio/gpio-wm831x.c
-+++ b/drivers/gpio/gpio-wm831x.c
-@@ -263,7 +263,7 @@ static const struct gpio_chip template_chip = {
- static int wm831x_gpio_probe(struct platform_device *pdev)
- {
- 	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
--	struct wm831x_pdata *pdata = dev_get_platdata(wm831x->dev);
-+	struct wm831x_pdata *pdata = &wm831x->pdata;
- 	struct wm831x_gpio *wm831x_gpio;
- 	int ret;
+diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+index 699c8c7c9052..c71db687b7ca 100644
+--- a/drivers/mfd/intel_soc_pmic_bxtwc.c
++++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+@@ -21,6 +21,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/intel_bxtwc.h>
++#include <linux/mfd/intel_soc_pmic.h>
+ #include <asm/intel_pmc_ipc.h>
  
-@@ -280,6 +280,9 @@ static int wm831x_gpio_probe(struct platform_device *pdev)
- 		wm831x_gpio->gpio_chip.base = pdata->gpio_base;
- 	else
- 		wm831x_gpio->gpio_chip.base = -1;
-+#ifdef CONFIG_OF_GPIO
-+	wm831x_gpio->gpio_chip.of_node = wm831x->dev->of_node;
-+#endif
+ /* PMIC device registers */
+diff --git a/include/linux/mfd/intel_bxtwc.h b/include/linux/mfd/intel_bxtwc.h
+index 1a0ee9d6efe9..240d6752ec64 100644
+--- a/include/linux/mfd/intel_bxtwc.h
++++ b/include/linux/mfd/intel_bxtwc.h
+@@ -13,8 +13,6 @@
+  * more details.
+  */
  
- 	ret = devm_gpiochip_add_data(&pdev->dev, &wm831x_gpio->gpio_chip,
- 				     wm831x_gpio);
+-#include <linux/mfd/intel_soc_pmic.h>
+-
+ #ifndef __INTEL_BXTWC_H__
+ #define __INTEL_BXTWC_H__
+ 
 -- 
-2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.11.0
