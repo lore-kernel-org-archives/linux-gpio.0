@@ -1,228 +1,171 @@
-From: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH v5 01/16] chardev: add helper function to register char devs
- with a struct device
-Date: Fri, 17 Mar 2017 12:48:08 -0600
-Message-ID: <1489776503-3151-2-git-send-email-logang@deltatee.com>
-References: <1489776503-3151-1-git-send-email-logang@deltatee.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH 1/2] gpio: omap: return error if requested debounce time
+ is not possible
+Date: Fri, 17 Mar 2017 13:54:28 -0500
+Message-ID: <dc614a7a-e0fa-c071-478b-2124724d95e9@ti.com>
+References: <20170317005704.11971-1-drivshin@awxrd.com>
+ <20170317005704.11971-2-drivshin@awxrd.com>
+ <d1200407-5efd-ca7b-f936-fa37b206e1ea@ti.com>
+ <20170317135413.78118dc2.drivshin@awxrd.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-In-Reply-To: <1489776503-3151-1-git-send-email-logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
- <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
-List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
- <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
-Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
-Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>, Alexander Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Johannes Thumshirn <jthumshirn-l3A5Bk7waGM@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jarkko Sakkinen <jarkko.sakkinen-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "James E.J. Bottomley" <jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, "Martin K. Petersen" <martin.petersen-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cyrille Pitchen <cyrille.pitchen-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
-Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170317135413.78118dc2.drivshin@awxrd.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: David Rivshin <drivshin@awxrd.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-gpio@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Credit for this patch goes is shared with Dan Williams [1]. I've
-taken things one step further to make the helper function more
-useful and clean up calling code.
 
-There's a common pattern in the kernel whereby a struct cdev is placed
-in a structure along side a struct device which manages the life-cycle
-of both. In the naive approach, the reference counting is broken and
-the struct device can free everything before the chardev code
-is entirely released.
 
-Many developers have solved this problem by linking the internal kobjs
-in this fashion:
+On 03/17/2017 12:54 PM, David Rivshin wrote:
+> Hi Grygorii,
+> 
+> On Fri, 17 Mar 2017 11:45:56 -0500
+> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+> 
+>> On 03/16/2017 07:57 PM, David Rivshin wrote:
+>>> From: David Rivshin <DRivshin@allworx.com>
+>>>
+>>> omap_gpio_debounce() does not validate that the requested debounce
+>>> is within a range it can handle. Instead it lets the register value
+>>> wrap silently, and always returns success.
+>>>
+>>> This can lead to all sorts of unexpected behavior, such as gpio_keys
+>>> asking for a too-long debounce, but getting a very short debounce in
+>>> practice.
+>>>
+>>> Fix this by returning -EINVAL if the requested value does not fit into
+>>> the register field. If there is no debounce clock available at all,
+>>> return -ENOTSUPP.  
+>>
+>> In general this patch looks good, but there is one thing I'm worry about..
+>>
+>>>
+>>> Fixes: e85ec6c3047b ("gpio: omap: fix omap2_set_gpio_debounce")
+>>> Cc: <stable@vger.kernel.org> # 4.3+
+>>> Signed-off-by: David Rivshin <drivshin@allworx.com>
+>>> ---
+>>>  drivers/gpio/gpio-omap.c | 16 +++++++++++-----
+>>>  1 file changed, 11 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+>>> index efc85a2..33ec02d 100644
+>>> --- a/drivers/gpio/gpio-omap.c
+>>> +++ b/drivers/gpio/gpio-omap.c
+>>> @@ -208,8 +208,10 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+>>>   * OMAP's debounce time is in 31us steps
+>>>   *   <debounce time> = (GPIO_DEBOUNCINGTIME[7:0].DEBOUNCETIME + 1) x 31
+>>>   * so we need to convert and round up to the closest unit.
+>>> + *
+>>> + * Return: 0 on success, negative error otherwise.
+>>>   */
+>>> -static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+>>> +static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+>>>  				    unsigned debounce)
+>>>  {
+>>>  	void __iomem		*reg;
+>>> @@ -218,11 +220,12 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+>>>  	bool			enable = !!debounce;
+>>>  
+>>>  	if (!bank->dbck_flag)
+>>> -		return;
+>>> +		return -ENOTSUPP;
+>>>  
+>>>  	if (enable) {
+>>>  		debounce = DIV_ROUND_UP(debounce, 31) - 1;
+>>> -		debounce &= OMAP4_GPIO_DEBOUNCINGTIME_MASK;
+>>> +		if ((debounce & OMAP4_GPIO_DEBOUNCINGTIME_MASK) != debounce)
+>>> +			return -EINVAL;  
+>>
+>> This might cause boot issues as current drivers may expect this op to succeed even if
+>> configured value is wrong - just think, may be we can do warn here and use max value as
+>> fallback?
+> 
+> I have not looked through all drivers to be sure, but at least the gpio-keys 
+> driver requires set_debounce to return an error if it can't satisfy the request. 
+> In that case gpio-keys will use a software timer instead. 
+> 
+>                 if (button->debounce_interval) {
+>                         error = gpiod_set_debounce(bdata->gpiod,
+>                                         button->debounce_interval * 1000);
+>                         /* use timer if gpiolib doesn't provide debounce */
+>                         if (error < 0)
+>                                 bdata->software_debounce =
+>                                                 button->debounce_interval;
+>                 }
+> 
+> Also, at least some other GPIO drivers (e.g. gpio-max7760) return -EINVAL in 
+> such a case. And gpiolib will return -ENOTSUPP if there is no debounce 
+> callback at all. So I expect all drivers which use gpiod_set_debounce() to 
+> handle error returns gracefully. 
+> 
+> So I certainly understand the concern about backwards compatibility, but I 
+> think clipping to max is the greater of the evils in this case. Even a 
+> warning may be too much, because it's not necessarily anything wrong. 
+> Perhaps an info or debug message would be helpful, though?
+> 
+> If you prefer, I can try to go through all callers of gpiod_set_debounce()
+> and see how they'd handle an error return. The handful I've looked through so 
+> far all behave like gpio-keys. The only ones I'd be particularly concerned
+> about are platform-specific drivers which were perhaps never used with other
+> gpio drivers. Do you know of that I should pay special attention to?
 
-cdev.kobj.parent = &parent_dev.kobj;
+Yeh agree. But the problem here will be not only with drivers itself - it can be wrong data in DT :(
+As result, even  gpio-keys driver will just silently switch to software_debounce
+without any notification.
 
-The cdev code explicitly gets and puts a reference to it's kobj parent.
-So this seems like it was intended to be used this way. Dmitrty Torokhov
-first put this in place in 2012 with this commit:
+But agree - max might not be a good choose, so can you add dev_err() below, pls. 
 
-2f0157f char_dev: pin parent kobject
+> 
+>>
+>>>  	}
+>>>  
+>>>  	l = BIT(offset);
+>>> @@ -255,6 +258,8 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+>>>  		bank->context.debounce = debounce;
+>>>  		bank->context.debounce_en = val;
+>>>  	}
+>>> +
+>>> +	return 0;
+>>>  }
+>>>  
+>>>  /**
+>>> @@ -964,14 +969,15 @@ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
+>>>  {
+>>>  	struct gpio_bank *bank;
+>>>  	unsigned long flags;
+>>> +	int ret;
+>>>  
+>>>  	bank = gpiochip_get_data(chip);
+>>>  
+>>>  	raw_spin_lock_irqsave(&bank->lock, flags);
+>>> -	omap2_set_gpio_debounce(bank, offset, debounce);
+>>> +	ret = omap2_set_gpio_debounce(bank, offset, debounce);
+>>>  	raw_spin_unlock_irqrestore(&bank->lock, flags);
 
-and the first instance of the fix was then done in the input subsystem
-in the following commit:
+if (ret) dev_err();
 
-4a215aa Input: fix use-after-free introduced with dynamic minor changes
+>>>  
+>>> -	return 0;
+>>> +	return ret;
+>>>  }
+>>>  
+>>>  static int omap_gpio_set_config(struct gpio_chip *chip, unsigned offset,
+>>>   
+>>
+> 
+> 
 
-Subsequently over the years, however, this issue seems to have tripped
-up multiple developers independently. For example, see these commits:
-
-0d5b7da iio: Prevent race between IIO chardev opening and IIO device
-(by Lars-Peter Clausen in 2013)
-
-ba0ef85 tpm: Fix initialization of the cdev
-(by Jason Gunthorpe in 2015)
-
-5b28dde [media] media: fix use-after-free in cdev_put() when app exits
-after driver unbind
-(by Shauh Khan in 2016)
-
-This technique is similarly done in at least 15 places within the kernel
-and probably should have been done so in another, at least, 5 places.
-The kobj line also looks very suspect in that one would not expect
-drivers to have to mess with kobject internals in this way.
-Even highly experienced kernel developers can be surprised by this
-code, as seen in [2].
-
-To help alleviate this situation, and hopefully prevent future
-wasted effort on this problem, this patch introduces a helper function
-to register a char device along with its parent struct device.
-This creates a more regular API for tying a char device to its parent
-without the developer having to set members in the underlying kobject.
-
-This patch introduce cdev_device_add and cdev_device_del which
-replaces a common pattern including setting the kobj parent, calling
-cdev_add and then calling device_add. It also introduces cdev_set_parent
-for the few cases that set the kobject parent without using device_add.
-
-[1] https://lkml.org/lkml/2017/2/13/700
-[2] https://lkml.org/lkml/2017/2/10/370
-
-Signed-off-by: Logan Gunthorpe <logang-OTvnGxWRz7hWk0Htik3J/w@public.gmane.org>
-Signed-off-by: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
----
- fs/char_dev.c        | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/cdev.h |  5 +++
- 2 files changed, 91 insertions(+)
-
-diff --git a/fs/char_dev.c b/fs/char_dev.c
-index 44a240c..fb8507f 100644
---- a/fs/char_dev.c
-+++ b/fs/char_dev.c
-@@ -471,6 +471,85 @@ int cdev_add(struct cdev *p, dev_t dev, unsigned count)
- 	return 0;
- }
- 
-+/**
-+ * cdev_set_parent() - set the parent kobject for a char device
-+ * @p: the cdev structure
-+ * @kobj: the kobject to take a reference to
-+ *
-+ * cdev_set_parent() sets a parent kobject which will be referenced
-+ * appropriately so the parent is not freed before the cdev. This
-+ * should be called before cdev_add.
-+ */
-+void cdev_set_parent(struct cdev *p, struct kobject *kobj)
-+{
-+	WARN_ON(!kobj->state_initialized);
-+	p->kobj.parent = kobj;
-+}
-+
-+/**
-+ * cdev_device_add() - add a char device and it's corresponding
-+ *	struct device, linkink
-+ * @dev: the device structure
-+ * @cdev: the cdev structure
-+ *
-+ * cdev_device_add() adds the char device represented by @cdev to the system,
-+ * just as cdev_add does. It then adds @dev to the system using device_add
-+ * The dev_t for the char device will be taken from the struct device which
-+ * needs to be initialized first. This helper function correctly takes a
-+ * reference to the parent device so the parent will not get released until
-+ * all references to the cdev are released.
-+ *
-+ * This helper uses dev->devt for the device number. If it is not set
-+ * it will not add the cdev and it will be equivalent to device_add.
-+ *
-+ * This function should be used whenever the struct cdev and the
-+ * struct device are members of the same structure whose lifetime is
-+ * managed by the struct device.
-+ *
-+ * NOTE: Callers must assume that userspace was able to open the cdev and
-+ * can call cdev fops callbacks at any time, even if this function fails.
-+ */
-+int cdev_device_add(struct cdev *cdev, struct device *dev)
-+{
-+	int rc = 0;
-+
-+	if (dev->devt) {
-+		cdev_set_parent(cdev, &dev->kobj);
-+
-+		rc = cdev_add(cdev, dev->devt, 1);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	rc = device_add(dev);
-+	if (rc)
-+		cdev_del(cdev);
-+
-+	return rc;
-+}
-+
-+/**
-+ * cdev_device_del() - inverse of cdev_device_add
-+ * @dev: the device structure
-+ * @cdev: the cdev structure
-+ *
-+ * cdev_device_del() is a helper function to call cdev_del and device_del.
-+ * It should be used whenever cdev_device_add is used.
-+ *
-+ * If dev->devt is not set it will not remove the cdev and will be equivalent
-+ * to device_del.
-+ *
-+ * NOTE: This guarantees that associated sysfs callbacks are not running
-+ * or runnable, however any cdevs already open will remain and their fops
-+ * will still be callable even after this function returns.
-+ */
-+void cdev_device_del(struct cdev *cdev, struct device *dev)
-+{
-+	device_del(dev);
-+	if (dev->devt)
-+		cdev_del(cdev);
-+}
-+
- static void cdev_unmap(dev_t dev, unsigned count)
- {
- 	kobj_unmap(cdev_map, dev, count);
-@@ -482,6 +561,10 @@ static void cdev_unmap(dev_t dev, unsigned count)
-  *
-  * cdev_del() removes @p from the system, possibly freeing the structure
-  * itself.
-+ *
-+ * NOTE: This guarantees that cdev device will no longer be able to be
-+ * opened, however any cdevs already open will remain and their fops will
-+ * still be callable even after cdev_del returns.
-  */
- void cdev_del(struct cdev *p)
- {
-@@ -570,5 +653,8 @@ EXPORT_SYMBOL(cdev_init);
- EXPORT_SYMBOL(cdev_alloc);
- EXPORT_SYMBOL(cdev_del);
- EXPORT_SYMBOL(cdev_add);
-+EXPORT_SYMBOL(cdev_set_parent);
-+EXPORT_SYMBOL(cdev_device_add);
-+EXPORT_SYMBOL(cdev_device_del);
- EXPORT_SYMBOL(__register_chrdev);
- EXPORT_SYMBOL(__unregister_chrdev);
-diff --git a/include/linux/cdev.h b/include/linux/cdev.h
-index f876361..408bc09 100644
---- a/include/linux/cdev.h
-+++ b/include/linux/cdev.h
-@@ -4,6 +4,7 @@
- #include <linux/kobject.h>
- #include <linux/kdev_t.h>
- #include <linux/list.h>
-+#include <linux/device.h>
- 
- struct file_operations;
- struct inode;
-@@ -26,6 +27,10 @@ void cdev_put(struct cdev *p);
- 
- int cdev_add(struct cdev *, dev_t, unsigned);
- 
-+void cdev_set_parent(struct cdev *p, struct kobject *kobj);
-+int cdev_device_add(struct cdev *cdev, struct device *dev);
-+void cdev_device_del(struct cdev *cdev, struct device *dev);
-+
- void cdev_del(struct cdev *);
- 
- void cd_forget(struct inode *);
 -- 
-2.1.4
+regards,
+-grygorii
