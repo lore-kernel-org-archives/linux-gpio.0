@@ -1,29 +1,36 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: ipq4019: add missing pingroups for pins >
- 70
-Date: Thu, 16 Mar 2017 23:02:37 -0700
-Message-ID: <20170317060237.GC54108@Bjorns-MacBook-Pro-2.local>
-References: <20170316203607.12714-1-chunkeey@googlemail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3] gpio:mcp23s08 Fixed missing interrupts
+Date: Fri, 17 Mar 2017 09:21:33 +0100
+Message-ID: <CACRpkdbnov_E1ZV3B4T1Xm3-0Zzt2q+SFUHmrcXMDSRAr0by4w@mail.gmail.com>
+References: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170316203607.12714-1-chunkeey@googlemail.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Brown <david.brown@linaro.org>, Andy Gross <andy.gross@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36484 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751087AbdCQIa1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 17 Mar 2017 04:30:27 -0400
+Received: by mail-it0-f46.google.com with SMTP id w124so15546571itb.1
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Mar 2017 01:30:26 -0700 (PDT)
+In-Reply-To: <1489611407-23884-1-git-send-email-robert.middleton@rm5248.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Robert Middleton <robert.middleton@rm5248.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Thu 16 Mar 13:36 PDT 2017, Christian Lamparter wrote:
+On Wed, Mar 15, 2017 at 9:56 PM,  <robert.middleton@rm5248.com> wrote:
 
-> This patch adds the missing PINGROUP for GPIO70-99.
-> This fixes a crash that happens in pinctrl-msm, if any
-> of the GPIO70-99 are accessed.
-> 
-> Fixes: 5303f7827fcd41d ("pinctrl: qcom: ipq4019: set ngpios to correct value")
-> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+> From: Robert Middleton <robert.middleton@rm5248.com>
+>
+> When an interrupt occurs on an MCP23S08 chip, the INTF register will only
+> contain one bit as causing the interrupt.  If more than two pins change at
+> the same time on the chip, this causes one of the pins to not be reported.
+> This patch fixes the logic for checking if a pin has changed, so that
+> multiple pins will always cause more than one change.
+>
+> Signed-off-by: Robert Middleton <robert.middleton@rm5248.com>
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Patch applied for fixes with Phil's Tested-by and tagged for stable.
 
-Regards,
-Bjorn
+Yours,
+Linus Walleij
