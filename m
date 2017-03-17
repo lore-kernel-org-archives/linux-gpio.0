@@ -1,91 +1,105 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] mfd: wm831x: Add basic device tree binding
-Date: Fri, 17 Mar 2017 09:15:02 +0000
-Message-ID: <20170317091502.kzcrhj7vlku5mtq7@dell>
-References: <1489592384-11510-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20170316140019.eoe757vox5wrlkmu@dell>
- <20170316143144.GL6986@localhost.localdomain>
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH 1/4] gpio: mvebu: Add limited PWM support
+Date: Fri, 17 Mar 2017 10:17:47 +0100
+Message-ID: <20170317101747.67a09ccd@gmail.com>
+References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
+ <20170316064218.9169-2-ralph.sennhauser@gmail.com>
+ <CACRpkdZ=bor380ic_X36M7vVbopDCZe9Yb9TxkmOHyO75gdAnw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170316143144.GL6986-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZ=bor380ic_X36M7vVbopDCZe9Yb9TxkmOHyO75gdAnw@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Imre Kaloz <kaloz@openwrt.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 16 Mar 2017, Charles Keepax wrote:
+On Thu, 16 Mar 2017 17:03:05 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> On Thu, Mar 16, 2017 at 02:00:19PM +0000, Lee Jones wrote:
-> > On Wed, 15 Mar 2017, Charles Keepax wrote:
-> > 
-> > > Add the basic ability to register the device through device tree, more
-> > > work is needed to get each individual sub-driver functioning correctly
-> > > but this is enough to get the device to probe from device tree.
-> > > 
-> > > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-> > > ---
-> > >  static int wm831x_i2c_probe(struct i2c_client *i2c,
-> > >  			    const struct i2c_device_id *id)
-> > >  {
-> > > +	struct wm831x_pdata *pdata = dev_get_platdata(&i2c->dev);
-> > >  	struct wm831x *wm831x;
-> > > +	enum wm831x_parent type;
-> > >  	int ret;
-> > >  
-> > > +	if (i2c->dev.of_node) {
-> > > +		const struct of_device_id *id = of_match_device(wm831x_of_match,
-> > > +								&i2c->dev);
-> > 
-> > Not keen on this.  Please declare the variable up with the others.
-> > 
 > 
-> They are never going to be used anywhere else in the function.
-> Again I can if you feel strongly but isn't it really better to
-> limit the scope of the variables if they are only being used
-> locally.
+> In essence I am very positive of this patch set and happy to merge
+> it as a PWM driver inside of GPIO if Thierry is OK with it.
 
-I understand the motivation, but if we did that all the time, the code
-would look pretty dire IMHO.
+Hi Linus,
 
-> > > +		unsigned long of_type = (unsigned long)id->data;
-> > 
-> > And this one.
-> > 
-> > > +		type = (enum wm831x_parent)of_type;
-> > 
-> > Looks like you don't even need of_type.
-> > 
-> > Just cast id->data straight into wm81x_parent.
+thanks for merging the cleanup patches. 
+
+
 > 
-> Pretty sure you will get a warning on 64-bit systems if I do
-> that.
-
-What makes you think that?
-
-> > > +	} else {
-> > > +		type = (enum wm831x_parent)id->driver_data;
-> > > +	}
-> > 
-> > No need for bracketing here.
-> > 
+> > +static void mvebu_pwm_free(struct pwm_chip *chip, struct
+> > pwm_device *pwmd) +{
+> > +       struct mvebu_pwm *pwm = to_mvebu_pwm(chip);
+> > +       struct gpio_desc *desc = gpio_to_desc(pwmd->pwm);
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&pwm->lock, flags);
+> > +       gpiod_free(desc);
+> > +       pwm->used = false;
+> > +       spin_unlock_irqrestore(&pwm->lock, flags);
+> > +}  
 > 
-> Kernel coding standards if one side  of the if has both should.
+> No need to set the output value to zero or something here?
+> And turn off blinking? Or is that done some other way?
+>
 
-Yes, my bad.  I retract this one.
+Heh, good point, will need to look into this.
 
-/me has been working on Zephyr too much recently (where *everything*
-has to be bracketed -- I guess I'm getting a bit sensitive to
-over-bracketing) :)
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> > +       u = readl_relaxed(mvebu_gpioreg_blink_select(mvchip));
+> > +       u &= ~(1 << pwm->pin);  
+> 
+> In GPIO code I usually do this:
+> 
+> #include <linus/bitops.h>
+> 
+> u &= ~BIT(pwm->pin);
+>
+
+linus/bitops.h ...
+    ^
+Another one of those nifty macros, sure, can do so for v2, though there
+are many instances of this technique already, I'll send another cleanup
+patch to convert them all for consistency sake.
+
+
+> 
+> > +       u |= (pwm->id << pwm->pin);
+> 
+> I don't understand this line. Above you mask BIT(pwm->pin)
+> so we are only manipulating one bit, and then you ... shift the ID?
+> Is the ID always 0 or 1? If that is the case then this
+> is easier to understand:
+> 
+> if (pwm->id)
+>   u |= BIT(pwm->pin);
+> 
+> + a comment
+>
+
+mvebu_pwm_probe returns -EINVAL if id isn't 0 or 1.
+
+        if (id < 0 || id > 1)
+                return -EINVAL;
+
+Guess this needs commenting as well then.
+
+> 
+> > +static void mvebu_pwm_suspend(struct mvebu_gpio_chip *mvchip)
+> > +static void mvebu_pwm_resume(struct mvebu_gpio_chip *mvchip)
+> 
+> I think both of these need to be tagged __maybe_unused to not give
+> noise in randconfig builds.
+
+I haven't seen any warnings with CONFIG_PWM disabled. Which
+configuration you expect to trigger a warning? mvebu_pwm_probe should
+be the same, right?
+
+> 
+> Yours,
+> Linus Walleij
+
+Thanks for the review.
+Ralph
