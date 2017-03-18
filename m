@@ -1,52 +1,44 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/2] meson-gxl pinctrl - add the missing PWM pins
-Date: Sat, 18 Mar 2017 13:27:34 +0100
-Message-ID: <20170318122736.11592-1-martin.blumenstingl@googlemail.com>
-References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36640 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbdCRM2E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 18 Mar 2017 08:28:04 -0400
-In-Reply-To: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 1/4] gpio: mvebu: Add limited PWM support
+Date: Sat, 18 Mar 2017 16:37:53 +0100
+Message-ID: <20170318153753.GA22088@lunn.ch>
+References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
+ <20170316064218.9169-2-ralph.sennhauser@gmail.com>
+ <CACRpkdZ=bor380ic_X36M7vVbopDCZe9Yb9TxkmOHyO75gdAnw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ=bor380ic_X36M7vVbopDCZe9Yb9TxkmOHyO75gdAnw@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Ralph Sennhauser <ralph.sennhauser@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Imre Kaloz <kaloz@openwrt.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linus.walleij@linaro.org, khilman@baylibre.com, carlo@caione.org
-Cc: devicetree@vger.kernel.org, will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com, narmstrong@baylibre.com, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Due to the lack of a public GXL or GXM datasheet most of the PWM pin
-definitions are currently missing.
-However, the people behind the Khadas VIM boards were kind enough to
-share the PWM pins and their corresponding register offsets and bits
-with me.
+> > +static void mvebu_pwm_free(struct pwm_chip *chip, struct pwm_device *pwmd)
+> > +{
+> > +       struct mvebu_pwm *pwm = to_mvebu_pwm(chip);
+> > +       struct gpio_desc *desc = gpio_to_desc(pwmd->pwm);
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&pwm->lock, flags);
+> > +       gpiod_free(desc);
+> > +       pwm->used = false;
+> > +       spin_unlock_irqrestore(&pwm->lock, flags);
+> > +}
+> 
+> No need to set the output value to zero or something here?
+> And turn off blinking? Or is that done some other way?
 
-This patch adds all missing PWM pins to the GXL pinctrl driver. The
-upcoming Khadas VIM board support patch only needs PWM_F and PWM_AO_A.
-I still decided to add all PWM pins just in case there's no public GXL
-datasheet release soon.
+Hi Linus
 
+The disable op will turn of blinking. I've not checked, but i assume
+the PWM core will not allow you to free an enabled PWM?
 
-Changes since v1:
-- combined previously separate functions for example: there were
-  separate functions pwm_ao_a_3 and pwm_ao_a_8) into one function
-  (in the previous example: pwm_ao_a). this affects both, the dtsi
-  and driver patches and was done for pwm_ao_a and pwm_f.
-  this is the result of a discussion [0] based on v1 of these patches
-  along with re-reading Linus Walleij's pinctrl documentation [1]
-- added Neil Armstrong's Reviewed-By and Tested-By
+> I think both of these need to be tagged __maybe_unused to not give
+> noise in randconfig builds.
 
+I've not seen any 0-day patch emails giving warnings. So i suspect it
+is O.K.
 
-[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-March/002864.html
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2017-March/002816.html
-
-Martin Blumenstingl (2):
-  pinctrl: meson: gxl: add the missing PWM pin definitions
-  ARM64: dts: amlogic: meson-gxl: add the missing PWM pins
-
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 56 ++++++++++++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 54 ++++++++++++++++++++++++++++
- 2 files changed, 110 insertions(+)
-
--- 
-2.12.0
-
+   Andrew
