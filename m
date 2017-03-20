@@ -1,59 +1,68 @@
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v2 5/7] arm: dts: genmai: Add SCIF2 pin group
-Date: Mon, 20 Mar 2017 17:14:49 +0100
-Message-ID: <1490026491-21742-6-git-send-email-jacopo+renesas@jmondi.org>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl
+ entry
+Date: Mon, 20 Mar 2017 18:58:41 +0200
+Message-ID: <20170320165841.gpbevoscf2fjvods@kozik-lap>
+References: <20170320164851.5999-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20170320164851.5999-1-krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add pin configuration subnode for SCIF2 serial debug interface.
+On Mon, Mar 20, 2017 at 06:48:51PM +0200, Krzysztof Kozlowski wrote:
+> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
+> drivers.  The tree will be maintained in a shared model between current
+> Samsung pinctrl maintainers.  Pull requests will be going to Linus
+> Walleij.
+> 
+> Also add the patchwork for linux-samsung-soc mailing list which will be
+> used for handling the patches.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> As of now, only I have the access to this git tree. Tomasz is welcomed
+> to join anytime. We are also waiting for Sywlester to get account on
+> kernel.org.
+> 
+> For the Patchwork, I use it also for Exynos/Samsung ARM architecture
+> maintenance.  I will add appropriate permissions to Sylwester so we can
+> share it.
+> ---
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r7s72100-genmai.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Linus,
 
-diff --git a/arch/arm/boot/dts/r7s72100-genmai.dts b/arch/arm/boot/dts/r7s72100-genmai.dts
-index 118a8e2..569c86a 100644
---- a/arch/arm/boot/dts/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/r7s72100-genmai.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "r7s72100.dtsi"
-+#include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
- 
- / {
- 	model = "Genmai";
-@@ -36,6 +37,15 @@
- 	};
- };
- 
-+&pinctrl {
-+
-+	scif2_pins: serial2 {
-+		/* P3_0 as TxD2; P3_2 as RxD2 */
-+		renesas,pins = <PIN(3, 0) 6>,
-+			       <PIN(3, 2) 4>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <13330000>;
- };
-@@ -60,6 +70,9 @@
- };
- 
- &scif2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif2_pins>;
-+
- 	status = "okay";
- };
- 
--- 
-2.7.4
+I talked with Sylwester few days ago and we agreed on a shared mainainer
+model.  Mostly because:
+1. Only Sylwester from three of us works in Samsung,
+2. It helps distributing the load in case of any holidays/travel etc,
+3. It might also make easier for future transitions.
+
+For this release I can start taking the patches. Please let me know:
+1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
+   branches? In the second case your branches should not be rebased.
+2. When do you expect pull requests (preferred time and acceptable late
+   stuff)?
+
+
+Also, I will add this tree to the linux-next + auto-builders.
+
+Best regards,
+Krzysztof
