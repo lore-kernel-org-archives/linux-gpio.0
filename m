@@ -1,40 +1,49 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/6] gpio: gemini: augment DT bindings
-Date: Mon, 20 Mar 2017 12:16:53 -0500
-Message-ID: <20170320171653.3o4sgrwswpcf4fgl@rob-hp-laptop>
-References: <20170312232818.26304-1-linus.walleij@linaro.org>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH] gpio: acpi: Call enable_irq_wake for _IAE GpioInts with
+ Wake set
+Date: Mon, 20 Mar 2017 18:20:26 +0100
+Message-ID: <c9801c6a-b773-b5fd-25dc-6e19053512ac@redhat.com>
+References: <20170318233524.5047-1-hdegoede@redhat.com>
+ <1489937116.19767.92.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:36016 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754942AbdCTRRA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Mar 2017 13:17:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20170312232818.26304-1-linus.walleij@linaro.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1489937116.19767.92.camel@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, Mar 13, 2017 at 12:28:13AM +0100, Linus Walleij wrote:
-> The DT bindings assumed that this IP block was coming from
-> Cortina Systems, which turns out not to be true. It is a
-> standard IP block from Faraday Technology and also used in the
-> Moxa moxart SoC.
-> 
-> We augment the bindings to cover all existing parts and rename
-> it after the IP block. This involves deleting the old Moxa
-> bindings that now are contained in this binding.
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: Jonas Jensen <jonas.jensen@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  ...{cortina,gemini-gpio.txt => faraday,ftgpio010.txt} |  9 ++++++---
->  .../devicetree/bindings/gpio/moxa,moxart-gpio.txt     | 19 -------------------
->  2 files changed, 6 insertions(+), 22 deletions(-)
->  rename Documentation/devicetree/bindings/gpio/{cortina,gemini-gpio.txt => faraday,ftgpio010.txt} (70%)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/moxa,moxart-gpio.txt
+Hi,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On 19-03-17 16:25, Andy Shevchenko wrote:
+> On Sun, 2017-03-19 at 00:35 +0100, Hans de Goede wrote:
+>> On baytrail / cherrytrail systems with a LID switch the LID switch is
+>> often connect to a gpioint handled by an _IAE event handler.
+>> Before this commit such systems would not wake up when opening the
+>> lid,
+>> requiring the powerbutton to be pressed after opening the lid to
+>> wakeup.
+>>
+>> This commit calls enable_irq_wake() for _IAE GpioInts with a valid
+>> event handler which have their Wake flag set. This fixes such systems
+>> not waking up when opening the lid.
+>
+> I perhaps give up on my nits against Capital Letters :-), though for
+> consistency, please, use Baytrail, Cherry Trail.
+
+Will fix for v2.
+
+>
+>> +		if (event->irq_wake_enabled)
+>
+> You may use irqd_is_wakeup_set() instead. IRQ framework keeps this state
+> already.
+
+That requires having irq_data which is only (normally) available to
+irq_chip drivers, so that is not going to work here.
+
+Regards,
+
+Hans
