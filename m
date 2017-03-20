@@ -1,37 +1,88 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v2 4/4] pinctrl: samsung: Use devres version of
- gpiochip_add_data
-Date: Mon, 20 Mar 2017 20:44:47 +0200
-Message-ID: <20170320184447.mmof2ksaz4ajz7bk@kozik-lap>
-References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1487251636-2480-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20170217133504.5poemeadyunc4pyh@kozik-lap>
- <20170217135214.GG30007@localhost.localdomain>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] gpio: acpi: Call enable_irq_wake for _IAE GpioInts with Wake set
+Date: Mon, 20 Mar 2017 22:59:16 +0100
+Message-ID: <2997741.ylvZKAC5a8@aspire.rjw.lan>
+References: <20170320173221.3397-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170217135214.GG30007@localhost.localdomain>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linus.walleij@linaro.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170320173221.3397-1-hdegoede@redhat.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-acpi@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Feb 17, 2017 at 01:52:14PM +0000, Charles Keepax wrote:
-> On Fri, Feb 17, 2017 at 03:35:04PM +0200, Krzysztof Kozlowski wrote:
-> > On Thu, Feb 16, 2017 at 01:27:16PM +0000, Charles Keepax wrote:
-> > > Use devm_gpiochip_add_data to simplify the error path in
-> > > samsung_gpiolib_register. Additionally this would also fix a leak if
-> > > the pinctrl driver was unbound, although admittedly I can't see any
-> > > good use-case for doing so, but the driver does currently allow it.
-> > 
-> > Driver does not allow unbinding (.suppress_bind_attrs = true)...
-> > 
+On Monday, March 20, 2017 06:32:21 PM Hans de Goede wrote:
+> On Bay Trail / Cherry Trail systems with a LID switch, the LID switch is
+> often connect to a gpioint handled by an _IAE event handler.
+> Before this commit such systems would not wake up when opening the lid,
+> requiring the powerbutton to be pressed after opening the lid to wakeup.
 > 
-> Oops... sorry missed that.
+> Note that Bay Trail / Cherry Trail systems use suspend-to-idle, so
+> the interrupts are generated anyway on those lines on lid switch changes,
+> but they are treated by the IRQ subsystem as spurious while suspended if
+> not marked as wakeup IRQs.
+> 
+> This commit calls enable_irq_wake() for _IAE GpioInts with a valid
+> event handler which have their Wake flag set. This fixes such systems
+> not waking up when opening the lid.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Changes in v2:
+> -Improve commit msg
+> -Add Mika's Acked-by
+> ---
+>  drivers/gpio/gpiolib-acpi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> index 8cd3f66..18207b2 100644
+> --- a/drivers/gpio/gpiolib-acpi.c
+> +++ b/drivers/gpio/gpiolib-acpi.c
+> @@ -28,6 +28,7 @@ struct acpi_gpio_event {
+>  	acpi_handle handle;
+>  	unsigned int pin;
+>  	unsigned int irq;
+> +	bool irq_wake_enabled;
+>  	struct gpio_desc *desc;
+>  };
+>  
+> @@ -266,6 +267,11 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+>  		goto fail_free_event;
+>  	}
+>  
+> +	if (agpio->wake_capable == ACPI_WAKE_CAPABLE) {
+> +		enable_irq_wake(irq);
+> +		event->irq_wake_enabled = true;
+> +	}
+> +
+>  	list_add_tail(&event->node, &acpi_gpio->events);
+>  	return AE_OK;
+>  
+> @@ -339,6 +345,9 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
+>  	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
+>  		struct gpio_desc *desc;
+>  
+> +		if (event->irq_wake_enabled)
 
-Can you resend with updated commit msg? I think it was not picked up by
-Linus yet.
+It has just occurred to me that if the event is in the list, the IRQ will be
+enabled to wake up as long as agpio->wake_capable == ACPI_WAKE_CAPABLE, so it
+looks like it should be sufficient to check
 
-Best regards,
-Krzysztof
+	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
+
+here and the new flag is not necessary.  Or is it?
+
+> +			disable_irq_wake(event->irq);
+> +
+>  		free_irq(event->irq, event);
+>  		desc = event->desc;
+>  		if (WARN_ON(IS_ERR(desc)))
+> 
+
+Thanks,
+Rafael
+
