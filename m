@@ -1,68 +1,40 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl
- entry
-Date: Mon, 20 Mar 2017 18:58:41 +0200
-Message-ID: <20170320165841.gpbevoscf2fjvods@kozik-lap>
-References: <20170320164851.5999-1-krzk@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/6] gpio: gemini: augment DT bindings
+Date: Mon, 20 Mar 2017 12:16:53 -0500
+Message-ID: <20170320171653.3o4sgrwswpcf4fgl@rob-hp-laptop>
+References: <20170312232818.26304-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:36016 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754942AbdCTRRA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Mar 2017 13:17:00 -0400
 Content-Disposition: inline
-In-Reply-To: <20170320164851.5999-1-krzk@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20170312232818.26304-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Jonas Jensen <jonas.jensen@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, openwrt-devel@openwrt.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 06:48:51PM +0200, Krzysztof Kozlowski wrote:
-> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
-> drivers.  The tree will be maintained in a shared model between current
-> Samsung pinctrl maintainers.  Pull requests will be going to Linus
-> Walleij.
+On Mon, Mar 13, 2017 at 12:28:13AM +0100, Linus Walleij wrote:
+> The DT bindings assumed that this IP block was coming from
+> Cortina Systems, which turns out not to be true. It is a
+> standard IP block from Faraday Technology and also used in the
+> Moxa moxart SoC.
 > 
-> Also add the patchwork for linux-samsung-soc mailing list which will be
-> used for handling the patches.
+> We augment the bindings to cover all existing parts and rename
+> it after the IP block. This involves deleting the old Moxa
+> bindings that now are contained in this binding.
 > 
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
+> Cc: devicetree@vger.kernel.org
+> Cc: Jonas Jensen <jonas.jensen@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
-> 
-> As of now, only I have the access to this git tree. Tomasz is welcomed
-> to join anytime. We are also waiting for Sywlester to get account on
-> kernel.org.
-> 
-> For the Patchwork, I use it also for Exynos/Samsung ARM architecture
-> maintenance.  I will add appropriate permissions to Sylwester so we can
-> share it.
-> ---
+>  ...{cortina,gemini-gpio.txt => faraday,ftgpio010.txt} |  9 ++++++---
+>  .../devicetree/bindings/gpio/moxa,moxart-gpio.txt     | 19 -------------------
+>  2 files changed, 6 insertions(+), 22 deletions(-)
+>  rename Documentation/devicetree/bindings/gpio/{cortina,gemini-gpio.txt => faraday,ftgpio010.txt} (70%)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/moxa,moxart-gpio.txt
 
-Linus,
-
-I talked with Sylwester few days ago and we agreed on a shared mainainer
-model.  Mostly because:
-1. Only Sylwester from three of us works in Samsung,
-2. It helps distributing the load in case of any holidays/travel etc,
-3. It might also make easier for future transitions.
-
-For this release I can start taking the patches. Please let me know:
-1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
-   branches? In the second case your branches should not be rebased.
-2. When do you expect pull requests (preferred time and acceptable late
-   stuff)?
-
-
-Also, I will add this tree to the linux-next + auto-builders.
-
-Best regards,
-Krzysztof
+Acked-by: Rob Herring <robh@kernel.org>
