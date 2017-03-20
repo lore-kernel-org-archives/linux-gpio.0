@@ -1,71 +1,57 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v2] gpio: acpi: Call enable_irq_wake for _IAE GpioInts with Wake set
-Date: Mon, 20 Mar 2017 18:32:21 +0100
-Message-ID: <20170320173221.3397-1-hdegoede@redhat.com>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-acpi@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] pinctrl: samsung: Calculate GPIO base for
+ pinctrl_add_gpio_range
+Date: Mon, 20 Mar 2017 20:39:15 +0200
+Message-ID: <20170320183915.r4bfl466yyph74i4@kozik-lap>
+References: <20170228090143.GG2742@localhost.localdomain>
+ <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
+ <20170306164909.GA6986@localhost.localdomain>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170306164909.GA6986@localhost.localdomain>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Bay Trail / Cherry Trail systems with a LID switch, the LID switch is
-often connect to a gpioint handled by an _IAE event handler.
-Before this commit such systems would not wake up when opening the lid,
-requiring the powerbutton to be pressed after opening the lid to wakeup.
+On Mon, Mar 06, 2017 at 04:49:09PM +0000, Charles Keepax wrote:
+> On Sat, Mar 04, 2017 at 08:20:11PM +0900, Tomasz Figa wrote:
+> > Hi Charles,
+> > 
+> > 2017-03-01 2:04 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
+> > > As the pinctrl is now added before the GPIOs are registered we need to
+> > > manually calculate what the GPIO base will be, otherwise the base for
+> > > each gpio_range will be set to zero. Fortunately the driver
+> > > already assigns a GPIO base, in samsung_gpiolib_register, and uses the
+> > > same calculation it does for the pin_base. Meaning the two will always
+> > > be the same and allowing us to reuse the pinbase and avoid the issue.
+> > 
+> > Sorry, I didn't notice before and I don't see the offending patch in ,
+> > but you should add
+> > 
+> > Fixes: XXXXXXXXXXXX ("pinctrl: Patch subject")
+> > 
+> > if you intend to submit this patch separately. Otherwise, maybe this
+> > can be just squashed?
+> > 
+> 
+> Yeah apologies for that as the original patch hasn't showed up in
+> the tree yet I couldn't pull a commit ID to add the fixes tag.
+> Squashing it in is probably the best way to go.
 
-Note that Bay Trail / Cherry Trail systems use suspend-to-idle, so
-the interrupts are generated anyway on those lines on lid switch changes,
-but they are treated by the IRQ subsystem as spurious while suspended if
-not marked as wakeup IRQs.
+Hi Charles,
 
-This commit calls enable_irq_wake() for _IAE GpioInts with a valid
-event handler which have their Wake flag set. This fixes such systems
-not waking up when opening the lid.
+Thanks for the work.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-Changes in v2:
--Improve commit msg
--Add Mika's Acked-by
----
- drivers/gpio/gpiolib-acpi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This is a follow up of:
+https://patchwork.kernel.org/patch/9577147/
+Right?
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 8cd3f66..18207b2 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -28,6 +28,7 @@ struct acpi_gpio_event {
- 	acpi_handle handle;
- 	unsigned int pin;
- 	unsigned int irq;
-+	bool irq_wake_enabled;
- 	struct gpio_desc *desc;
- };
- 
-@@ -266,6 +267,11 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 		goto fail_free_event;
- 	}
- 
-+	if (agpio->wake_capable == ACPI_WAKE_CAPABLE) {
-+		enable_irq_wake(irq);
-+		event->irq_wake_enabled = true;
-+	}
-+
- 	list_add_tail(&event->node, &acpi_gpio->events);
- 	return AE_OK;
- 
-@@ -339,6 +345,9 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
- 	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
- 		struct gpio_desc *desc;
- 
-+		if (event->irq_wake_enabled)
-+			disable_irq_wake(event->irq);
-+
- 		free_irq(event->irq, event);
- 		desc = event->desc;
- 		if (WARN_ON(IS_ERR(desc)))
--- 
-2.9.3
+None of these two were applied so can you squash them, rebase, retest
+and send again?
 
+Best regards,
+Krzysztof
