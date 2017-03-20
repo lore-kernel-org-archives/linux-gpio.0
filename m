@@ -1,28 +1,29 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Subject: Re: [PATCH] pinctrl: cherryview: Add support for GMMR GPIO opregion
-Date: Mon, 20 Mar 2017 13:25:12 +0200
-Message-ID: <20170320112512.GK2957@lahna.fi.intel.com>
+Date: Mon, 20 Mar 2017 13:43:09 +0200
+Message-ID: <1490010189.19767.97.camel@linux.intel.com>
 References: <20170320111910.12449-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:61293 "EHLO mga14.intel.com"
+Received: from mga11.intel.com ([192.55.52.93]:45287 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753715AbdCTLb7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 20 Mar 2017 07:31:59 -0400
-Content-Disposition: inline
+        id S1753429AbdCTL4k (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 20 Mar 2017 07:56:40 -0400
 In-Reply-To: <20170320111910.12449-1-hdegoede@redhat.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 12:19:10PM +0100, Hans de Goede wrote:
+On Mon, 2017-03-20 at 12:19 +0100, Hans de Goede wrote:
 > On some Cherry Trail devices the ASL uses the GMMR GPIO to access
 > GPIOs so as to serialize MMIO accesses to GPIO registers with the
 > OS, because:
 > 
-> "Due to a silicon issue, a shared lock must be used to prevent concurrent
+> "Due to a silicon issue, a shared lock must be used to prevent
+> concurrent
 > accesses across the 4 GPIO controllers.
 > 
 > See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
@@ -31,60 +32,73 @@ On Mon, Mar 20, 2017 at 12:19:10PM +0100, Hans de Goede wrote:
 > This commit adds support for this opregion, this fixes a number of
 > ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
 > muxing which is controlled in firmware on this model work properly.
+
+One minor (as usual) acpi -> ACPI below.
+
+Anyway, after addressing Mika's comment:
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 > 
 > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 35 ++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 35
+> ++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 > 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> b/drivers/pinctrl/intel/pinctrl-cherryview.c
 > index f80134e..6253064 100644
 > --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
 > +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
 > @@ -148,6 +148,7 @@ struct chv_community {
->  	size_t ngpio_ranges;
->  	size_t ngpios;
->  	size_t nirqs;
+>  	size_t ngpio_ranges;
+>  	size_t ngpios;
+>  	size_t nirqs;
 > +	acpi_adr_space_type acpi_space_id;
->  };
->  
->  struct chv_pin_context {
-> @@ -404,6 +405,7 @@ static const struct chv_community southwest_community = {
->  	 * trigger GPEs.
->  	 */
->  	.nirqs = 8,
+>  };
+>  
+>  struct chv_pin_context {
+> @@ -404,6 +405,7 @@ static const struct chv_community
+> southwest_community = {
+>  	 * trigger GPEs.
+>  	 */
+>  	.nirqs = 8,
 > +	.acpi_space_id = 0x91,
->  };
->  
->  static const struct pinctrl_pin_desc north_pins[] = {
-> @@ -493,6 +495,7 @@ static const struct chv_community north_community = {
->  	 * GPEs.
->  	 */
->  	.nirqs = 8,
+>  };
+>  
+>  static const struct pinctrl_pin_desc north_pins[] = {
+> @@ -493,6 +495,7 @@ static const struct chv_community north_community
+> = {
+>  	 * GPEs.
+>  	 */
+>  	.nirqs = 8,
 > +	.acpi_space_id = 0x92,
->  };
->  
->  static const struct pinctrl_pin_desc east_pins[] = {
-> @@ -536,6 +539,7 @@ static const struct chv_community east_community = {
->  	.ngpio_ranges = ARRAY_SIZE(east_gpio_ranges),
->  	.ngpios = ARRAY_SIZE(east_pins),
->  	.nirqs = 16,
+>  };
+>  
+>  static const struct pinctrl_pin_desc east_pins[] = {
+> @@ -536,6 +539,7 @@ static const struct chv_community east_community =
+> {
+>  	.ngpio_ranges = ARRAY_SIZE(east_gpio_ranges),
+>  	.ngpios = ARRAY_SIZE(east_pins),
+>  	.nirqs = 16,
 > +	.acpi_space_id = 0x93,
->  };
->  
->  static const struct pinctrl_pin_desc southeast_pins[] = {
-> @@ -662,6 +666,7 @@ static const struct chv_community southeast_community = {
->  	.ngpio_ranges = ARRAY_SIZE(southeast_gpio_ranges),
->  	.ngpios = ARRAY_SIZE(southeast_pins),
->  	.nirqs = 16,
+>  };
+>  
+>  static const struct pinctrl_pin_desc southeast_pins[] = {
+> @@ -662,6 +666,7 @@ static const struct chv_community
+> southeast_community = {
+>  	.ngpio_ranges = ARRAY_SIZE(southeast_gpio_ranges),
+>  	.ngpios = ARRAY_SIZE(southeast_pins),
+>  	.nirqs = 16,
 > +	.acpi_space_id = 0x94,
->  };
->  
->  static const struct chv_community *chv_communities[] = {
-> @@ -1586,11 +1591,34 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
->  	return 0;
->  }
->  
+>  };
+>  
+>  static const struct chv_community *chv_communities[] = {
+> @@ -1586,11 +1591,34 @@ static int chv_gpio_probe(struct chv_pinctrl
+> *pctrl, int irq)
+>  	return 0;
+>  }
+>  
 > +static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
 > +	acpi_physical_address address, u32 bits, u64 *value,
 > +	void *handler_context, void *region_context)
@@ -96,7 +110,8 @@ On Mon, Mar 20, 2017 at 12:19:10PM +0100, Hans de Goede wrote:
 > +	raw_spin_lock_irqsave(&chv_lock, flags);
 > +
 > +	if (function == ACPI_WRITE)
-> +		chv_writel((u32)(*value), pctrl->regs + (u32)address);
+> +		chv_writel((u32)(*value), pctrl->regs +
+> (u32)address);
 > +	else if (function == ACPI_READ)
 > +		*value = readl(pctrl->regs + (u32)address);
 > +	else
@@ -107,32 +122,34 @@ On Mon, Mar 20, 2017 at 12:19:10PM +0100, Hans de Goede wrote:
 > +	return AE_OK;
 > +}
 > +
->  static int chv_pinctrl_probe(struct platform_device *pdev)
->  {
->  	struct chv_pinctrl *pctrl;
->  	struct acpi_device *adev;
->  	struct resource *res;
+>  static int chv_pinctrl_probe(struct platform_device *pdev)
+>  {
+>  	struct chv_pinctrl *pctrl;
+>  	struct acpi_device *adev;
+>  	struct resource *res;
 > +	acpi_status status;
->  	int ret, irq, i;
->  
->  	adev = ACPI_COMPANION(&pdev->dev);
-> @@ -1646,6 +1674,13 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
+>  	int ret, irq, i;
+>  
+>  	adev = ACPI_COMPANION(&pdev->dev);
+> @@ -1646,6 +1674,13 @@ static int chv_pinctrl_probe(struct
+> platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
 > +	status = acpi_install_address_space_handler(adev->handle,
-> +					pctrl->community->acpi_space_id,
-> +					chv_pinctrl_mmio_access_handler,
+> +					pctrl->community-
+> >acpi_space_id,
+> +					chv_pinctrl_mmio_access_handl
+> er,
 > +					NULL, pctrl);
 > +	if (ACPI_FAILURE(status))
-> +		dev_err(&pdev->dev, "failed to install acpi addr space handler\n");
+> +		dev_err(&pdev->dev, "failed to install acpi addr
+> space handler\n");
 > +
+>  	platform_set_drvdata(pdev, pctrl);
+>  
+>  	return 0;
 
-You should probably uninstall the handler when the driver is unloaded.
-For that you need to re-introduce chv_pinctrl_remove().
-
->  	platform_set_drvdata(pdev, pctrl);
->  
->  	return 0;
-> -- 
-> 2.9.3
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
