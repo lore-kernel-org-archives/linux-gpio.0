@@ -1,56 +1,62 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/3] gpio: pca953x: Sort headers alphabetically
-Date: Mon, 20 Mar 2017 17:45:16 +0200
-Message-ID: <20170320154517.41003-2-andriy.shevchenko@linux.intel.com>
-References: <20170320154517.41003-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:31854 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754942AbdCTPqM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 20 Mar 2017 11:46:12 -0400
-In-Reply-To: <20170320154517.41003-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 0/7] Renesas RZ/A1 pin and gpio controller
+Date: Mon, 20 Mar 2017 17:14:44 +0100
+Message-ID: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-For sake of better maintenance sort the headers by alphabetical order.
+Hello,
+   second round of combined GPIO and pin controller driver
+for Renesas RZ/A1 SoC.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpio-pca953x.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Few adjustments compared to v1.
+The most visible one is the update of pin configuration flag to what
+Chris suggested, and consequent simplification of pin multiplexing routine.
+Some other fixes in DTS suggested by Geert have been applied.
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 968e8bf5b286..cd6c9c5f3e77 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -11,18 +11,19 @@
-  *  the Free Software Foundation; version 2 of the License.
-  */
- 
--#include <linux/module.h>
--#include <linux/init.h>
-+#include <linux/acpi.h>
- #include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
--#include <linux/interrupt.h>
- #include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_data/pca953x.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/slab.h>
-+
- #include <asm/unaligned.h>
--#include <linux/of_platform.h>
--#include <linux/acpi.h>
--#include <linux/regulator/consumer.h>
- 
- #define PCA953X_INPUT		0
- #define PCA953X_OUTPUT		1
+Testing done verifying functionalities of hardware modules enabled in device
+tree (SCIF2 for serial output, RIIC for accessing an internal eeprom chip and
+user visible leds).
+Gpio have been also verified using a i2c-gpio device in place of the native
+RIIC one to access the same eeprom device.
+
+Chris: it would be great if you could give this another spin on RSK board. In
+v4.11 generic pinmux and pinctrl function have been merged in mainline, so no
+need for an ad-hoc branch if you're willing to test this again.
+
+Thanks
+   j
+
+v1 -> v2:
+- change pin configuration flags as suggested by Chris
+- gpio set direction function fixed as suggested by Chris
+- add some more example on pin configuration flag usage to dt-binding doc
+- fix gpio-controller names to remove unit address as suggested by Geert
+- some comments chopped here and there to make the driver less verbose
+
+Jacopo Mondi (7):
+  pinctrl: Renesas RZ/A1 pin and gpio controller
+  dt-bindings: pinctrl: Add RZ/A1 bindings doc
+  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+  arm: dts: r7s72100: Add pin controller node
+  arm: dts: genmai: Add SCIF2 pin group
+  arm: dts: genmai: Add RIIC2 pin group
+  arm: dts: genmai: Add user led device nodes
+
+ .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 144 +++
+ arch/arm/boot/dts/r7s72100-genmai.dts              |  36 +
+ arch/arm/boot/dts/r7s72100.dtsi                    |  80 ++
+ drivers/pinctrl/Kconfig                            |  10 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-rza1.c                     | 963 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  36 +
+ 7 files changed, 1270 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-rza1.c
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+
 -- 
-2.11.0
-
+2.7.4
