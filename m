@@ -1,31 +1,58 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 4/7] arm: dts: r7s72100: Add pin controller node
-Date: Mon, 20 Mar 2017 15:17:11 +0000
-Message-ID: <SG2PR06MB1165B74ADB66F43FC53FB54A8A3A0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1487610788-6939-1-git-send-email-jacopo+renesas@jmondi.org>
- <1487610788-6939-5-git-send-email-jacopo+renesas@jmondi.org>
- <3dd69ef5-e8a4-b69c-b4fa-1be6ba777cfa@jmondi.org>
- <SG2PR06MB1165DCCA724AD6A8325862668A280@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVdiMWNq1or9JgzAKfWXsDg1VD9ehG6U=E_snes04Y1Mg@mail.gmail.com>
- <SG2PR06MB1165E8FAE15523F7D3EC83718A2B0@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20170320134755.GB30223@w540>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170320134755.GB30223@w540>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jacopo <jacopo@jmondi.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/3] gpio: pca953x: Introduce a long awaited ->get_direction()
+Date: Mon, 20 Mar 2017 17:45:15 +0200
+Message-ID: <20170320154517.41003-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:36913 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754903AbdCTPpw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 20 Mar 2017 11:45:52 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-SGkgSmFjb3BvLA0KDQpNb25kYXksIE1hcmNoIDIwLCAyMDE3LCBqYWNvcG8gd3JvdGU6DQo+ID4g
-SSB3YXMgdGhpbmtpbmcgSSB3YXMgZ29pbmcgdG8gcG9zdCBzb21lIERUIGV4YW1wbGVzIG9uIGVM
-aW51eC5vcmcNCj4gPiBhbnl3YXksIHNvIG9uZSBvZiB0aGVtIHdvdWxkIGp1c3QgYmUgdGhpcyBS
-Wi9BMUwgZml4Lg0KPiA+DQo+IA0KPiBJZiB3ZSBkbyBhbGwgYWdyZWUgb24gaGF2aW5nIFJaL0Ex
-SCB1cHN0cmVhbSBhbmQgbGV0IGRpZmZlcmVuY2VzIGJldHdlZW4NCj4gU29DcyB0byBiZSBoYW5k
-bGVkIGluIHRoZSBCU1AvZG93bnN0cmVhbSBib2FyZCBmaWxlcywgSSdsbCBzZW5kDQo+IHYyIHRh
-cmdldGluZyB0aGF0IHNwZWNpZmljIFNvQyBvbmx5DQoNCg0KSSdtIGZpbmUgd2l0aCB0aGF0Lg0K
-DQogICAgICAuLi5vZiBjb3Vyc2Ugc2luY2UgaXQgd2FzIG15IHN1Z2dlc3Rpb24gOykNCg0KDQpD
-aHJpcw0KDQo=
+Introduce ->get_direction() callback for the driver.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca953x.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d44232aadb6c..968e8bf5b286 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -363,6 +363,21 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ 	mutex_unlock(&chip->i2c_lock);
+ }
+ 
++static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
++{
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
++	u32 reg_val;
++	int ret;
++
++	mutex_lock(&chip->i2c_lock);
++	ret = pca953x_read_single(chip, chip->regs->direction, &reg_val, off);
++	mutex_unlock(&chip->i2c_lock);
++	if (ret < 0)
++		return ret;
++
++	return (reg_val & (1u << (off % BANK_SZ))) ? GPIOF_DIR_OUT : GPIOF_DIR_IN;
++}
++
+ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 				      unsigned long *mask, unsigned long *bits)
+ {
+@@ -408,6 +423,7 @@ static void pca953x_setup_gpio(struct pca953x_chip *chip, int gpios)
+ 	gc->direction_output = pca953x_gpio_direction_output;
+ 	gc->get = pca953x_gpio_get_value;
+ 	gc->set = pca953x_gpio_set_value;
++	gc->get_direction = pca953x_gpio_get_direction;
+ 	gc->set_multiple = pca953x_gpio_set_multiple;
+ 	gc->can_sleep = true;
+ 
+-- 
+2.11.0
+
