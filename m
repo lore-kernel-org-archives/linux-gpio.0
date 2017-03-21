@@ -1,18 +1,23 @@
 From: Julia Cartwright <julia@ni.com>
-Subject: [PATCH v2 9/9] gpio: pci-idio-16: make use of raw_spinlock variants
-Date: Tue, 21 Mar 2017 17:43:09 -0500
-Message-ID: <a5d7b7ed45046ec6f7b5fbf9c284281e02204198.1490135047.git.julia@ni.com>
+Subject: [PATCH v2 8/9] gpio: 104-idio-16: make use of raw_spinlock variants
+Date: Tue, 21 Mar 2017 17:43:08 -0500
+Message-ID: <9b15e28c4aeeade4b44e9a2bb06c12ded5d0990b.1490135047.git.julia@ni.com>
 References: <cover.1490135047.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-rt-users-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:57052 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758176AbdCUXsz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Mar 2017 19:48:55 -0400
 In-Reply-To: <cover.1490135047.git.julia@ni.com>
-Sender: linux-rt-users-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
-The pci-idio-16 gpio driver currently implements an irq_chip for handling
+The 104-idio-16 gpio driver currently implements an irq_chip for handling
 interrupts; due to how irq_chip handling is done, it's necessary for the
 irq_chip methods to be invoked from hardirq context, even on a a
 real-time kernel.  Because the spinlock_t type becomes a "sleeping"
@@ -25,118 +30,103 @@ Signed-off-by: Julia Cartwright <julia@ni.com>
 ---
 New patch as of v2 of series.
 
- drivers/gpio/gpio-pci-idio-16.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-104-idio-16.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
-index 269ab628634b..7de4f6a2cb49 100644
---- a/drivers/gpio/gpio-pci-idio-16.c
-+++ b/drivers/gpio/gpio-pci-idio-16.c
-@@ -59,7 +59,7 @@ struct idio_16_gpio_reg {
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 7053cf736648..5281e1cedb01 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -50,7 +50,7 @@ MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
   */
  struct idio_16_gpio {
  	struct gpio_chip chip;
 -	spinlock_t lock;
 +	raw_spinlock_t lock;
- 	struct idio_16_gpio_reg __iomem *reg;
  	unsigned long irq_mask;
- };
-@@ -121,7 +121,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	} else
- 		base = &idio16gpio->reg->out0_7;
+ 	unsigned base;
+ 	unsigned out_state;
+@@ -99,7 +99,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	if (offset > 15)
+ 		return;
  
 -	spin_lock_irqsave(&idio16gpio->lock, flags);
 +	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
  
  	if (value)
- 		out_state = ioread8(base) | mask;
-@@ -130,7 +130,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 
- 	iowrite8(out_state, base);
+ 		idio16gpio->out_state |= mask;
+@@ -111,7 +111,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	else
+ 		outb(idio16gpio->out_state, idio16gpio->base);
  
 -	spin_unlock_irqrestore(&idio16gpio->lock, flags);
 +	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
  }
  
  static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
-@@ -140,7 +140,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+@@ -120,7 +120,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+ 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
  	unsigned long flags;
- 	unsigned int out_state;
  
 -	spin_lock_irqsave(&idio16gpio->lock, flags);
 +	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
  
- 	/* process output lines 0-7 */
- 	if (*mask & 0xFF) {
-@@ -160,7 +160,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
- 		iowrite8(out_state, &idio16gpio->reg->out8_15);
- 	}
+ 	idio16gpio->out_state &= ~*mask;
+ 	idio16gpio->out_state |= *mask & *bits;
+@@ -130,7 +130,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+ 	if ((*mask >> 8) & 0xFF)
+ 		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
  
 -	spin_unlock_irqrestore(&idio16gpio->lock, flags);
 +	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
  }
  
  static void idio_16_irq_ack(struct irq_data *data)
-@@ -177,11 +177,11 @@ static void idio_16_irq_mask(struct irq_data *data)
+@@ -147,11 +147,11 @@ static void idio_16_irq_mask(struct irq_data *data)
  	idio16gpio->irq_mask &= ~mask;
  
  	if (!idio16gpio->irq_mask) {
 -		spin_lock_irqsave(&idio16gpio->lock, flags);
 +		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
  
- 		iowrite8(0, &idio16gpio->reg->irq_ctl);
+ 		outb(0, idio16gpio->base + 2);
  
 -		spin_unlock_irqrestore(&idio16gpio->lock, flags);
 +		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
  	}
  }
  
-@@ -196,11 +196,11 @@ static void idio_16_irq_unmask(struct irq_data *data)
+@@ -166,11 +166,11 @@ static void idio_16_irq_unmask(struct irq_data *data)
  	idio16gpio->irq_mask |= mask;
  
  	if (!prev_irq_mask) {
 -		spin_lock_irqsave(&idio16gpio->lock, flags);
 +		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
  
- 		ioread8(&idio16gpio->reg->irq_ctl);
+ 		inb(idio16gpio->base + 2);
  
 -		spin_unlock_irqrestore(&idio16gpio->lock, flags);
 +		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
  	}
  }
  
-@@ -229,11 +229,11 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
- 	struct gpio_chip *const chip = &idio16gpio->chip;
- 	int gpio;
- 
--	spin_lock(&idio16gpio->lock);
-+	raw_spin_lock(&idio16gpio->lock);
- 
- 	irq_status = ioread8(&idio16gpio->reg->irq_status);
- 
--	spin_unlock(&idio16gpio->lock);
-+	raw_spin_unlock(&idio16gpio->lock);
- 
- 	/* Make sure our device generated IRQ */
- 	if (!(irq_status & 0x3) || !(irq_status & 0x4))
-@@ -242,12 +242,12 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+@@ -201,11 +201,11 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
  	for_each_set_bit(gpio, &idio16gpio->irq_mask, chip->ngpio)
  		generic_handle_irq(irq_find_mapping(chip->irqdomain, gpio));
  
 -	spin_lock(&idio16gpio->lock);
 +	raw_spin_lock(&idio16gpio->lock);
  
- 	/* Clear interrupt */
- 	iowrite8(0, &idio16gpio->reg->in0_7);
+ 	outb(0, idio16gpio->base + 1);
  
 -	spin_unlock(&idio16gpio->lock);
 +	raw_spin_unlock(&idio16gpio->lock);
  
  	return IRQ_HANDLED;
  }
-@@ -302,7 +302,7 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	idio16gpio->chip.set = idio_16_gpio_set;
- 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+@@ -249,7 +249,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+ 	idio16gpio->base = base[id];
+ 	idio16gpio->out_state = 0xFFFF;
  
 -	spin_lock_init(&idio16gpio->lock);
 +	raw_spin_lock_init(&idio16gpio->lock);
