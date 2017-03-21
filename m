@@ -1,39 +1,53 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] gpio: acpi: Call enable_irq_wake for _IAE GpioInts
- with Wake set
-Date: Tue, 21 Mar 2017 14:40:14 +0200
-Message-ID: <1490100014.19767.126.camel@linux.intel.com>
-References: <20170320173221.3397-1-hdegoede@redhat.com>
-         <1490099423.19767.124.camel@linux.intel.com>
-         <CAJZ5v0jrq_AUysuLuyhUqWXOYm8X-koq8ra=rgrjUo+bFMyw9w@mail.gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 1/4] gpio: mvebu: Add limited PWM support
+Date: Tue, 21 Mar 2017 15:50:56 +0100
+Message-ID: <20170321145056.GA30655@lunn.ch>
+References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
+ <20170316064218.9169-2-ralph.sennhauser@gmail.com>
+ <20170320134252.GM22463@ulmo.ba.sec>
+ <20170321073618.2e4d41cc@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0jrq_AUysuLuyhUqWXOYm8X-koq8ra=rgrjUo+bFMyw9w@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170321073618.2e4d41cc@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2017-03-21 at 13:36 +0100, Rafael J. Wysocki wrote:
-> On Tue, Mar 21, 2017 at 1:30 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Mon, 2017-03-20 at 18:32 +0100, Hans de Goede wrote:
-
-> > > +     bool irq_wake_enabled;
-> > > 
-> > > +             if (event->irq_wake_enabled)
-> > > 
+> > > *mvebu_gpioreg_blink(struct mvebu_gpio_chip *mvchip) return
+> > > mvchip->membase + GPIO_BLINK_EN_OFF; }
+> > >  
+> > > +static void __iomem *mvebu_gpioreg_blink_select(struct
+> > > mvebu_gpio_chip *mvchip) +{
+> > > +	return mvchip->membase + GPIO_BLINK_CNT_SELECT_OFF;
+> > > +}  
 > > 
-> > Same (new) comment as in v1.
-> 
-> Why not just check for agpio->wake_capable == ACPI_WAKE_CAPABLE
-> instead as I said?
+> > That's a really weird thing to do. Why not just use this expression in
+> > your calls to readl() and writel() directly? Seems a lot of additional
+> > code for no gain.
 
-Ah, yes, it could work as well as far as I can see from the code point
-of view.
+This driver is made more complex by the Armada XP SMP handling. Some
+GPIO registers are per-cpu, others are global. Registers for
+interrupts in particular are per CPU. So there is a general trend in
+this driver to have a function which returns the address of a
+register, for a given SOC variant. In this case, it is fixed, so could
+be collapsed into the actual read/write. But then it would be
+different to all others in this driver...
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> > > +	pwm->chip.dev = dev;
+> > > +	pwm->chip.ops = &mvebu_pwm_ops;
+> > > +	pwm->chip.base = mvchip->chip.base;
+> > > +	pwm->chip.npwm = mvchip->chip.ngpio;  
+> > 
+> > Isn't that a lie? The code above suggests you can only ever have a
+> > single GPIO turn into a PWM, so I'd expect ".npwm = 1" here.
+
+Well, any of the 32 GPIOs can be a PWM. But only one can be enabled at
+a time. What exactly does pwm->chip.npwm mean? If we say 1 here, how
+at run time do we say which of the 32 GPIOs is used as a PWM output?
+By saying 32, it is simpler, which ever is enabled first is the one to
+use.
+
+	Andrew
