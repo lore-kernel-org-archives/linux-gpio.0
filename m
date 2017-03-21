@@ -1,88 +1,72 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2] gpio: acpi: Call enable_irq_wake for _IAE GpioInts with Wake set
-Date: Mon, 20 Mar 2017 22:59:16 +0100
-Message-ID: <2997741.ylvZKAC5a8@aspire.rjw.lan>
-References: <20170320173221.3397-1-hdegoede@redhat.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
+Date: Tue, 21 Mar 2017 09:54:34 +0900
+Message-ID: <CA+Ln22HW-oAtgdzrjcm2CXK4j4SURdVNV_eZsr51peg4n4AUSA@mail.gmail.com>
+References: <20170320164851.5999-1-krzk@kernel.org> <20170320165841.gpbevoscf2fjvods@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170320173221.3397-1-hdegoede@redhat.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-acpi@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35424 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755214AbdCUAyf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 20 Mar 2017 20:54:35 -0400
+In-Reply-To: <20170320165841.gpbevoscf2fjvods@kozik-lap>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Monday, March 20, 2017 06:32:21 PM Hans de Goede wrote:
-> On Bay Trail / Cherry Trail systems with a LID switch, the LID switch is
-> often connect to a gpioint handled by an _IAE event handler.
-> Before this commit such systems would not wake up when opening the lid,
-> requiring the powerbutton to be pressed after opening the lid to wakeup.
-> 
-> Note that Bay Trail / Cherry Trail systems use suspend-to-idle, so
-> the interrupts are generated anyway on those lines on lid switch changes,
-> but they are treated by the IRQ subsystem as spurious while suspended if
-> not marked as wakeup IRQs.
-> 
-> This commit calls enable_irq_wake() for _IAE GpioInts with a valid
-> event handler which have their Wake flag set. This fixes such systems
-> not waking up when opening the lid.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> Changes in v2:
-> -Improve commit msg
-> -Add Mika's Acked-by
-> ---
->  drivers/gpio/gpiolib-acpi.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 8cd3f66..18207b2 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -28,6 +28,7 @@ struct acpi_gpio_event {
->  	acpi_handle handle;
->  	unsigned int pin;
->  	unsigned int irq;
-> +	bool irq_wake_enabled;
->  	struct gpio_desc *desc;
->  };
->  
-> @@ -266,6 +267,11 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
->  		goto fail_free_event;
->  	}
->  
-> +	if (agpio->wake_capable == ACPI_WAKE_CAPABLE) {
-> +		enable_irq_wake(irq);
-> +		event->irq_wake_enabled = true;
-> +	}
-> +
->  	list_add_tail(&event->node, &acpi_gpio->events);
->  	return AE_OK;
->  
-> @@ -339,6 +345,9 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
->  	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
->  		struct gpio_desc *desc;
->  
-> +		if (event->irq_wake_enabled)
+2017-03-21 1:58 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> On Mon, Mar 20, 2017 at 06:48:51PM +0200, Krzysztof Kozlowski wrote:
+>> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
+>> drivers.  The tree will be maintained in a shared model between current
+>> Samsung pinctrl maintainers.  Pull requests will be going to Linus
+>> Walleij.
+>>
+>> Also add the patchwork for linux-samsung-soc mailing list which will be
+>> used for handling the patches.
+>>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-It has just occurred to me that if the event is in the list, the IRQ will be
-enabled to wake up as long as agpio->wake_capable == ACPI_WAKE_CAPABLE, so it
-looks like it should be sufficient to check
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
+>>
+>> ---
+>>
+>> As of now, only I have the access to this git tree. Tomasz is welcomed
+>> to join anytime. We are also waiting for Sywlester to get account on
+>> kernel.org.
 
-here and the new flag is not necessary.  Or is it?
+I'll stay alerted. :) Please let me know whenever you both guys are
+busy and I can kick in. Will keep reviewing the patches as well.
 
-> +			disable_irq_wake(event->irq);
-> +
->  		free_irq(event->irq, event);
->  		desc = event->desc;
->  		if (WARN_ON(IS_ERR(desc)))
-> 
+>>
+>> For the Patchwork, I use it also for Exynos/Samsung ARM architecture
+>> maintenance.  I will add appropriate permissions to Sylwester so we can
+>> share it.
+>> ---
+>
+> Linus,
+>
+> I talked with Sylwester few days ago and we agreed on a shared mainainer
+> model.  Mostly because:
+> 1. Only Sylwester from three of us works in Samsung,
+> 2. It helps distributing the load in case of any holidays/travel etc,
+> 3. It might also make easier for future transitions.
+>
+> For this release I can start taking the patches. Please let me know:
+> 1. Can I base on Torvalds' rc-1 or you prefer basing on top of your
+>    branches? In the second case your branches should not be rebased.
+> 2. When do you expect pull requests (preferred time and acceptable late
+>    stuff)?
+>
+>
+> Also, I will add this tree to the linux-next + auto-builders.
 
-Thanks,
-Rafael
+Thanks Krzysztof, you're doing some really good work here! :)
 
+Best regards,
+Tomasz
