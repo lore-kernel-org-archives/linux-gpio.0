@@ -1,109 +1,49 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: fix segfault when using external
- interrupts on s3c24xx
-Date: Tue, 21 Mar 2017 10:31:37 +0900
-Message-ID: <CA+Ln22E55XD92vzG=+3DYxozQiXc=DOEzSg655fYY5gVep6Diw@mail.gmail.com>
-References: <1488489799-18136-1-git-send-email-sergio.prado@e-labworks.com>
- <20170304081504.unv6sihbmp76ynfy@kozik-lap> <20170306131516.GA6095@n1>
- <20170308163434.obhtg6fwmjwqv7jm@kozik-lap>
- <CA+Ln22FEYfO2EmvLKTRSHNFPpKSOw38vSDvg-nPv_j08cApqCw@mail.gmail.com>
- <CAJKOXPdUQ8DSPR_4cDs8WyrV9Mmy6isncW72BNiTyiRb79qf7g@mail.gmail.com>
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH 1/4] gpio: mvebu: Add limited PWM support
+Date: Tue, 21 Mar 2017 07:31:56 +0100
+Message-ID: <20170321073156.12c0c0bc@gmail.com>
+References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
+        <20170316064218.9169-2-ralph.sennhauser@gmail.com>
+        <CACRpkdZ=bor380ic_X36M7vVbopDCZe9Yb9TxkmOHyO75gdAnw@mail.gmail.com>
+        <20170317101747.67a09ccd@gmail.com>
+        <20170320135131.GP22463@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAJKOXPdUQ8DSPR_4cDs8WyrV9Mmy6isncW72BNiTyiRb79qf7g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sergio Prado <sergio.prado@e-labworks.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170320135131.GP22463@ulmo.ba.sec>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Imre Kaloz <kaloz@openwrt.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2017-03-09 15:42 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Thu, Mar 9, 2017 at 7:56 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> 2017-03-09 1:34 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
->>> On Mon, Mar 06, 2017 at 09:15:16AM -0400, Sergio Prado wrote:
->>>> Hi Krzysztof,
->>>>
->>>> > > This is a regression from commit 8b1bd11c1f8f529057369c5b3702d13fd24e2765.
->>>> >
->>>> > Checkpatch should complain here about commit format.
->>>> >
->>>> > >
->>>> > > Tested on FriendlyARM mini2440.
->>>> > >
->>>> >
->>>> > Please add:
->>>> >   Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
->>>> >   Cc: <stable@vger.kernel.org>
->>>> >
->>>>
->>>> OK.
->>>>
->>>> > > Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
->>>> > > ---
->>>> > >  drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 4 ++--
->>>> > >  1 file changed, 2 insertions(+), 2 deletions(-)
->>>> > >
->>>> > > diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->>>> > > index b82a003546ae..1b8d887796e8 100644
->>>> > > --- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->>>> > > +++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
->>>> > > @@ -356,8 +356,8 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
->>>> > >  {
->>>> > >   struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
->>>> > >   struct irq_chip *chip = irq_desc_get_chip(desc);
->>>> > > - struct irq_data *irqd = irq_desc_get_irq_data(desc);
->>>> > > - struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
->>>> > > + struct samsung_pinctrl_drv_data *d = data->drvdata;
->>>> > > + struct samsung_pin_bank *bank = d->pin_banks;
->>>> >
->>>> > I think 'pin_banks' point to all banks of given controller not to the
->>>> > currently accessed one.
->>>>
->>>> Understood. I think it worked in my tests because on s3c2440 all banks
->>>> have the same eint base address.
->>>>
->>>> So what do you think is the best approach to solve this problem?
->>>
->>> Maybe you can get to this through:
->>>         s3c24xx_eint_domain_data = s3c24xx_eint_data->domains[virq].host_data;
->>>         s3c24xx_eint_domain_data->bank
->>>
->>> It is getting slightly more complicated...
->>
->> How about the suggestions I made in my reply from March 4 (JST)?
->
-> Yes, this also looks like solution. I am not sure how much you would
-> like to revert but wouldn't it create duplicated members in pinctrl
-> structures? One for Exynos and other for S3C?
+On Mon, 20 Mar 2017 14:51:31 +0100
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-I would actually lean towards introducing one duplicated member
-(drvdata->pctl_base) versus adding unnecessarily complex special ways
-of calculating the addresses from current (unsuitable) set of data.
+> On Fri, Mar 17, 2017 at 10:17:47AM +0100, Ralph Sennhauser wrote:
+> > On Thu, 16 Mar 2017 17:03:05 +0100
+> > Linus Walleij <linus.walleij@linaro.org> wrote:  
+> [...]
+> > > > +static void mvebu_pwm_suspend(struct mvebu_gpio_chip *mvchip)
+> > > > +static void mvebu_pwm_resume(struct mvebu_gpio_chip *mvchip)  
+> > > 
+> > > I think both of these need to be tagged __maybe_unused to not give
+> > > noise in randconfig builds.  
+> > 
+> > I haven't seen any warnings with CONFIG_PWM disabled. Which
+> > configuration you expect to trigger a warning? mvebu_pwm_probe
+> > should be the same, right?  
+> 
+> It's got nothing to do with CONFIG_PWM and as far as I can tell your
+> usage of IS_ENABLED() is fine here. However, if you try building the
+> driver with a !PM configuration, both *_suspend() and *_resume() end
+> up being unused and giving you a warning.
+> 
+> Thierry
 
+What is a !PM configuration if not "# CONFIG_PWM is not set"
+in .config? I'd really like to trigger those warnings myself
+respectively understand where they come from.
 
-By the way, I think I just found yet another bug introduced by that
-patch. In exynos_irq_request_resources() and
-exynos_irq_release_resources(), the address of CON register is
-calculated from bank->eint_base, while I believe it should be
-calculated from bank->pctl_base (which is also what
-samsung_pinmux_setup() uses).
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/pinctrl/samsung/pinctrl-exynos.c?id=refs/tags/next-20170320#n174
-
-Ehh, I think I regret letting that patch be merged as it made some of
-the code quite messy and we actually found a better way to support
-those strange banks later (group banks by their pctl_base and only
-allow eint_base to be selectable per bank; then we could just keep
-drvdata->pctl_base constant over all related banks).
-
-Best regards,
-Tomasz
+Thanks
+Ralph
