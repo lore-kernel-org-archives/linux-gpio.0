@@ -1,203 +1,93 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: Re: [PATCH 1/4] gpio: mvebu: Add limited PWM support
-Date: Tue, 21 Mar 2017 07:36:18 +0100
-Message-ID: <20170321073618.2e4d41cc@gmail.com>
-References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
- <20170316064218.9169-2-ralph.sennhauser@gmail.com>
- <20170320134252.GM22463@ulmo.ba.sec>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] GPIO fixes for v4.11
+Date: Tue, 21 Mar 2017 09:18:19 +0100
+Message-ID: <CACRpkda90xKmfK1T8mSgr_XPeGcHXzOSUnTaFvPYX+bhrvq4-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20170320134252.GM22463@ulmo.ba.sec>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Imre Kaloz <kaloz@openwrt.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f45.google.com ([209.85.214.45]:35325 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755395AbdCUISW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Mar 2017 04:18:22 -0400
+Received: by mail-it0-f45.google.com with SMTP id y18so4961204itc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Mar 2017 01:18:20 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, 20 Mar 2017 14:42:52 +0100
-Thierry Reding <thierry.reding@gmail.com> wrote:
+Hi Linus,
 
-> > diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-> > b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt index
-> > a6f3bec..86932e3 100644 ---
-> > a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt +++
-> > b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt @@ -38,6
-> > +38,23 @@ Required properties:
-> >  - #gpio-cells: Should be two. The first cell is the pin number. The
-> >    second cell is reserved for flags, unused at the moment.
-> >  
-> > +Optional properties:
-> > +
-> > +In order to use the gpio lines in PWM mode, some additional
-> > optional +properties are required. Only Armada 370 and XP support
-> > these properties. +
-> > +- reg: an additional register set is needed, for the GPIO Blink
-> > +  Counter on/off registers.
-> > +
-> > +- reg-names: Must contain an entry "pwm" corresponding to the
-> > +  additional register range needed for pwm operation.
-> > +
-> > +- #pwm-cells: Should be two. The first cell is the pin number. The
-> > +  second cell is reserved for flags and should be set to 0, so it
-> > has a
-> > +  known value. It then becomes possible to use it in the future.  
-> 
-> That's usually not how we do this. Either your hardware can support
-> the flags (which at this point effectively means polarity) or it
-> can't. Any potential future feature can be enabled when it emerges.
-> No need to concern ourselves with something that doesn't exist yet.
+here is the first set of GPIO fixes. It was delayed a bit beacuse
+I was chicken when linux-next was not rotating last week.
 
-So for short:
-  #pwm-cells: Should be one. The first cell is the pin number.
+This hits the ST serial driver in drivers/tty/serial and that has an
+ACK from Greg, he suggested to keep the old GPIO fwnode API
+around to smoothen things in the merge Windod and those have
+now served their purpose so we take them out and convert the last
+driver to the new API.
 
-or just a blatant copy of #gpio-cells as in the above hunk.
+Apart from that it's fixes as usual.
 
-> > @@ -109,6 +139,11 @@ static void __iomem
-> > *mvebu_gpioreg_blink(struct mvebu_gpio_chip *mvchip) return
-> > mvchip->membase + GPIO_BLINK_EN_OFF; }
-> >  
-> > +static void __iomem *mvebu_gpioreg_blink_select(struct
-> > mvebu_gpio_chip *mvchip) +{
-> > +	return mvchip->membase + GPIO_BLINK_CNT_SELECT_OFF;
-> > +}  
-> 
-> That's a really weird thing to do. Why not just use this expression in
-> your calls to readl() and writel() directly? Seems a lot of additional
-> code for no gain.
-> 
+Please pull them in!
 
-How to hide a tree in the forest. Just following suite with the rest of
-the file. So I'd leave it as is but certainly don't mind changing
-it.
+Yours,
+Linus Walleij
 
-> > +
-> > +static int mvebu_pwm_request(struct pwm_chip *chip, struct
-> > pwm_device *pwmd) +{
-> > +	struct mvebu_pwm *pwm = to_mvebu_pwm(chip);
-> > +	struct mvebu_gpio_chip *mvchip = pwm->mvchip;
-> > +	struct gpio_desc *desc = gpio_to_desc(pwmd->pwm);
-> > +	unsigned long flags;
-> > +	int ret = 0;
-> > +
-> > +	spin_lock_irqsave(&pwm->lock, flags);
-> > +	if (pwm->used) {
-> > +		ret = -EBUSY;
-> > +	} else {
-> > +		if (!desc) {
-> > +			ret = -ENODEV;
-> > +			goto out;
-> > +		}
-> > +		ret = gpiod_request(desc, "mvebu-pwm");
-> > +		if (ret)
-> > +			goto out;
-> > +
-> > +		ret = gpiod_direction_output(desc, 0);
-> > +		if (ret) {
-> > +			gpiod_free(desc);
-> > +			goto out;
-> > +		}
-> > +
-> > +		pwm->pin = pwmd->pwm - mvchip->chip.base;  
-> 
-> pwm->pin = pwmd->hwpwm? But then, why store something that you can
-> always access directly?
 
-Agreed.
+The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
 
-> > +
-> > +static const struct pwm_ops mvebu_pwm_ops = {
-> > +	.request = mvebu_pwm_request,
-> > +	.free = mvebu_pwm_free,
-> > +	.config = mvebu_pwm_config,
-> > +	.enable = mvebu_pwm_enable,
-> > +	.disable = mvebu_pwm_disable,
-> > +	.owner = THIS_MODULE,
-> > +};  
-> 
-> Can you please implement the atomic PWM API? Specifically the
-> ->apply() and ->get_state() implementations replace ->config(),
-> ->enable() and ->disable().  
-> 
+  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
 
-Will do for v3.
+are available in the git repository at:
 
-> > +/*
-> > + * Armada 370/XP has simple PWM support for gpio lines. Other SoCs
-> > + * don't have this hardware. So if we don't have the necessary
-> > + * resource, it is not an error.
-> > + */  
-> 
-> There's a bit of inconsistency in this file regarding "pwm" -> "PWM"
-> and "gpio" -> "GPIO". In prose, please always use the uppercase
-> version for these abbreviations.
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.11-2
 
-Will do as told for this series and maybe send another cleanup patch
-as well.
+for you to fetch changes up to 2cd29f2387be70de9feb4c9f8dbc7c0bd55748ce:
 
-> > +static int mvebu_pwm_probe(struct platform_device *pdev,
-> > +		    struct mvebu_gpio_chip *mvchip,
-> > +		    int id)  
-> 
-> Is there any reason why id would want to be negative?
-> 
+  gpio:mcp23s08 Fixed missing interrupts (2017-03-17 09:20:28 +0100)
 
-v2 dropped id from the function signature as I moved id to the
-struct mvebu_gpio_chip. Then it's also apparent why not unsigned was
-used. Cast it?
+----------------------------------------------------------------
+GPIO fixes for the v4.11 series:
 
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct mvebu_pwm *pwm;
-> > +	struct resource *res;
-> > +
-> > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> > "pwm");
-> > +	if (!res)
-> > +		return 0;
-> > +
-> > +	pwm = devm_kzalloc(dev, sizeof(struct mvebu_pwm),
-> > GFP_KERNEL);
-> > +	if (!pwm)
-> > +		return -ENOMEM;
-> > +	mvchip->pwm = pwm;
-> > +	pwm->mvchip = mvchip;
-> > +
-> > +	pwm->membase = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(pwm->membase))
-> > +		return PTR_ERR(pwm->membase);
-> > +
-> > +	if (id < 0 || id > 1)
-> > +		return -EINVAL;  
-> 
-> You check for negative values here, so might as well turn id into an
-> unsigned to prohibit them altogether.
+- Set the parent on the Altera A10SR driver, also fix
+  high level IRQs.
 
-See above. Though the test for id < 0 is redundant as we checked this
-earlier already.
+- Fix error path on the mockup driver.
 
-> 
-> > +	pwm->id = id;
-> > +
-> > +	if (IS_ERR(mvchip->clk))
-> > +		return PTR_ERR(mvchip->clk);
-> > +
-> > +	pwm->clk_rate = clk_get_rate(mvchip->clk);
-> > +	if (!pwm->clk_rate) {
-> > +		dev_err(dev, "failed to get clock rate\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	pwm->chip.dev = dev;
-> > +	pwm->chip.ops = &mvebu_pwm_ops;
-> > +	pwm->chip.base = mvchip->chip.base;
-> > +	pwm->chip.npwm = mvchip->chip.ngpio;  
-> 
-> Isn't that a lie? The code above suggests you can only ever have a
-> single GPIO turn into a PWM, so I'd expect ".npwm = 1" here.
-> 
+- Compilation noise about unused functions fixed.
 
-Agreed.
+- Fix missed interrupts on the MCP23S08 expander, this is also
+  tagged for stable.
 
-Thanks
-Ralph
+- Retire the interrim helpers devm_get_gpiod_from_child() used
+  to smoothen merging in the merge window.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      gpio: xgene: mark PM functions as __maybe_unused
+
+Dan Carpenter (1):
+      gpio: mockup: return -EFAULT if copy_from_user() fails
+
+Lee Jones (1):
+      serial: st-asc: Use new GPIOD API to obtain RTS pin
+
+Phil Reid (1):
+      gpio: altera: Use handle_level_irq when configured as a level_high
+
+Robert Middleton (1):
+      gpio:mcp23s08 Fixed missing interrupts
+
+Thor Thayer (1):
+      gpio: altera-a10sr: Set gpio_chip parent property
+
+ drivers/gpio/gpio-altera-a10sr.c |  2 +-
+ drivers/gpio/gpio-altera.c       | 26 +++++++---------
+ drivers/gpio/gpio-mcp23s08.c     | 65 ++++++++++++++++++++++++++++++++++++----
+ drivers/gpio/gpio-mockup.c       |  7 ++---
+ drivers/gpio/gpio-xgene.c        | 13 ++------
+ drivers/tty/serial/st-asc.c      | 11 +++----
+ include/linux/gpio/consumer.h    | 16 ----------
+ 7 files changed, 84 insertions(+), 56 deletions(-)
