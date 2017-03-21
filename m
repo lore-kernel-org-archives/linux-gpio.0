@@ -1,44 +1,65 @@
-From: Jonas Jensen <jonas.jensen@gmail.com>
-Subject: Re: [PATCH 4/6] gpio: gemini: rename to match
-	Faraday IP
-Date: Tue, 21 Mar 2017 11:59:30 +0100
-Message-ID: <CACmBeS2OC6X_Rb5qaVEGMY4mPyHwnib-=pm-g=+73J6ZSRDgLw@mail.gmail.com>
-References: <20170312232818.26304-1-linus.walleij@linaro.org>
- <20170312232818.26304-4-linus.walleij@linaro.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpio: acpi: Call enable_irq_wake for _IAE GpioInts with
+ Wake set
+Date: Tue, 21 Mar 2017 14:21:52 +0200
+Message-ID: <1490098912.19767.122.camel@linux.intel.com>
+References: <20170318233524.5047-1-hdegoede@redhat.com>
+         <1489937116.19767.92.camel@linux.intel.com>
+         <c9801c6a-b773-b5fd-25dc-6e19053512ac@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <openwrt-devel-bounces@lists.openwrt.org>
-In-Reply-To: <20170312232818.26304-4-linus.walleij@linaro.org>
-List-Unsubscribe: <https://lists.openwrt.org/cgi-bin/mailman/options/openwrt-devel>,
- <mailto:openwrt-devel-request@lists.openwrt.org?subject=unsubscribe>
-List-Archive: <http://lists.openwrt.org/pipermail/openwrt-devel/>
-List-Post: <mailto:openwrt-devel@lists.openwrt.org>
-List-Help: <mailto:openwrt-devel-request@lists.openwrt.org?subject=help>
-List-Subscribe: <https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel>,
- <mailto:openwrt-devel-request@lists.openwrt.org?subject=subscribe>
-Errors-To: openwrt-devel-bounces@lists.openwrt.org
-Sender: "openwrt-devel" <openwrt-devel-bounces@lists.openwrt.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: openwrt-devel@openwrt.org, Alexandre Courbot <gnurou@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:18233 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932276AbdCUMX1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Mar 2017 08:23:27 -0400
+In-Reply-To: <c9801c6a-b773-b5fd-25dc-6e19053512ac@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org
 
-VmVyaWZpZWQgb24gVUMtNzExMi1MWCBieSBidXp6aW5nIHRoZSBidXp6ZXIgYW5kIHdyaXRpbmcg
-dGhlIFJUQyAoc2VlCmxvZyBbMV0gZm9yIG5leHQtMjAxNzAzMTApOgoKWzFdIGh0dHBzOi8vYml0
-YnVja2V0Lm9yZy9LYXNyZXluL2xpbnV4LW5leHQvY29tbWl0cy9jNjNmM2MyMjE1ZjZmZDEwNmZm
-MGVjNmY5ODY0Yjg1YjdiZTU2NWFjCgpbICAgIDAuMDAwMDAwXSBMaW51eCB2ZXJzaW9uIDQuMTEu
-MC1yYzEtbmV4dC0yMDE3MDMxMC0wMDAwNC1nYzYzZjNjMgooaUBpbGRqYXJuKSAoZ2NjIHZlcnNp
-b24gNC45LjEgKGNyb3NzdG9vbC1ORyAxLjIwLjApICkgIzQ0NjEgUFJFRU1QClQgVHVlIE1hciAy
-MSAxMTo0MzoyOSBDRVQgMjAxNwouLgplY2hvIDI0ID4gL3N5cy9jbGFzcy9ncGlvL2V4cG9ydApl
-Y2hvIG91dCA+IC9zeXMvY2xhc3MvZ3Bpby9ncGlvMjQvZGlyZWN0aW9uCmVjaG8gMSA+IC9zeXMv
-Y2xhc3MvZ3Bpby9ncGlvMjQvdmFsdWUKZWNobyAwID4gL3N5cy9jbGFzcy9ncGlvL2dwaW8yNC92
-YWx1ZQouLgpkYXRlICslWSVtJWQlaCVtIC1zICIyMDEwMDEyMDIzMjMiCmh3Y2xvY2sgLXcKcmVi
-b290Ci4uClsgICAgNC41MjAwMDBdIG1veGFydC1ydGMgOTAwMDAwMDAuc29jOnJ0Yzogc2V0dGlu
-ZyBzeXN0ZW0gY2xvY2sgdG8KMjAxMC0wMS0yMCAyMzoyMzoyMCBVVEMgKDEyNjQwMjk4MDApCi4u
-CmRhdGUgKyVZJW0lZCVoJW0gLXMgIjIwMTIxMjE4MTU1MyIKaHdjbG9jayAtdwpyZWJvb3QKLi4K
-WyAgICA0LjUyMDAwMF0gbW94YXJ0LXJ0YyA5MDAwMDAwMC5zb2M6cnRjOiBzZXR0aW5nIHN5c3Rl
-bSBjbG9jayB0bwoyMDEyLTEyLTE4IDE1OjUzOjIwIFVUQyAoMTM1NTg0NjAwMCkKCgpUZXN0ZWQt
-Ynk6IEpvbmFzIEplbnNlbiA8am9uYXMuamVuc2VuQGdtYWlsLmNvbT4KX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18Kb3BlbndydC1kZXZlbCBtYWlsaW5nIGxp
-c3QKb3BlbndydC1kZXZlbEBsaXN0cy5vcGVud3J0Lm9yZwpodHRwczovL2xpc3RzLm9wZW53cnQu
-b3JnL2NnaS1iaW4vbWFpbG1hbi9saXN0aW5mby9vcGVud3J0LWRldmVsCg==
+On Mon, 2017-03-20 at 18:20 +0100, Hans de Goede wrote:
+> Hi,
+> 
+> On 19-03-17 16:25, Andy Shevchenko wrote:
+> > On Sun, 2017-03-19 at 00:35 +0100, Hans de Goede wrote:
+> > > On baytrail / cherrytrail systems with a LID switch the LID switch
+> > > is
+> > > often connect to a gpioint handled by an _IAE event handler.
+> > > Before this commit such systems would not wake up when opening the
+> > > lid,
+> > > requiring the powerbutton to be pressed after opening the lid to
+> > > wakeup.
+> > > 
+> > > This commit calls enable_irq_wake() for _IAE GpioInts with a valid
+> > > event handler which have their Wake flag set. This fixes such
+> > > systems
+> > > not waking up when opening the lid.
+> > 
+> > I perhaps give up on my nits against Capital Letters :-), though for
+> > consistency, please, use Baytrail, Cherry Trail.
+> 
+> Will fix for v2.
+> 
+> > 
+> > > +		if (event->irq_wake_enabled)
+> > 
+> > You may use irqd_is_wakeup_set() instead. IRQ framework keeps this
+> > state
+> > already.
+> 
+> That requires having irq_data which is only (normally) available to
+> irq_chip drivers, so that is not going to work here.
+
+Which you can get easily from IRQ line number.
+
+  data = irq_get_irq_data(irq);
+  if (irqd_is_wakeup_set(data))
+
+Would this work?
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
