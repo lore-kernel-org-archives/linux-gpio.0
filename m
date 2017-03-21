@@ -1,67 +1,44 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2] pinctrl: samsung: Calculate GPIO base for
- pinctrl_add_gpio_range
-Date: Tue, 21 Mar 2017 09:32:20 +0000
-Message-ID: <20170321093220.GV6986@localhost.localdomain>
-References: <20170228090143.GG2742@localhost.localdomain>
- <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
- <20170306164909.GA6986@localhost.localdomain>
- <20170320183915.r4bfl466yyph74i4@kozik-lap>
+From: Jonas Jensen <jonas.jensen@gmail.com>
+Subject: Re: [PATCH 4/6] gpio: gemini: rename to match
+	Faraday IP
+Date: Tue, 21 Mar 2017 11:59:30 +0100
+Message-ID: <CACmBeS2OC6X_Rb5qaVEGMY4mPyHwnib-=pm-g=+73J6ZSRDgLw@mail.gmail.com>
+References: <20170312232818.26304-1-linus.walleij@linaro.org>
+ <20170312232818.26304-4-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53708 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753669AbdCUJbX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 21 Mar 2017 05:31:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20170320183915.r4bfl466yyph74i4@kozik-lap>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <openwrt-devel-bounces@lists.openwrt.org>
+In-Reply-To: <20170312232818.26304-4-linus.walleij@linaro.org>
+List-Unsubscribe: <https://lists.openwrt.org/cgi-bin/mailman/options/openwrt-devel>,
+ <mailto:openwrt-devel-request@lists.openwrt.org?subject=unsubscribe>
+List-Archive: <http://lists.openwrt.org/pipermail/openwrt-devel/>
+List-Post: <mailto:openwrt-devel@lists.openwrt.org>
+List-Help: <mailto:openwrt-devel-request@lists.openwrt.org?subject=help>
+List-Subscribe: <https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel>,
+ <mailto:openwrt-devel-request@lists.openwrt.org?subject=subscribe>
+Errors-To: openwrt-devel-bounces@lists.openwrt.org
+Sender: "openwrt-devel" <openwrt-devel-bounces@lists.openwrt.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: openwrt-devel@openwrt.org, Alexandre Courbot <gnurou@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 
-On Mon, Mar 20, 2017 at 08:39:15PM +0200, Krzysztof Kozlowski wrote:
-> On Mon, Mar 06, 2017 at 04:49:09PM +0000, Charles Keepax wrote:
-> > On Sat, Mar 04, 2017 at 08:20:11PM +0900, Tomasz Figa wrote:
-> > > Hi Charles,
-> > > 
-> > > 2017-03-01 2:04 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
-> > > > As the pinctrl is now added before the GPIOs are registered we need to
-> > > > manually calculate what the GPIO base will be, otherwise the base for
-> > > > each gpio_range will be set to zero. Fortunately the driver
-> > > > already assigns a GPIO base, in samsung_gpiolib_register, and uses the
-> > > > same calculation it does for the pin_base. Meaning the two will always
-> > > > be the same and allowing us to reuse the pinbase and avoid the issue.
-> > > 
-> > > Sorry, I didn't notice before and I don't see the offending patch in ,
-> > > but you should add
-> > > 
-> > > Fixes: XXXXXXXXXXXX ("pinctrl: Patch subject")
-> > > 
-> > > if you intend to submit this patch separately. Otherwise, maybe this
-> > > can be just squashed?
-> > > 
-> > 
-> > Yeah apologies for that as the original patch hasn't showed up in
-> > the tree yet I couldn't pull a commit ID to add the fixes tag.
-> > Squashing it in is probably the best way to go.
-> 
-> Hi Charles,
-> 
-> Thanks for the work.
-> 
-> This is a follow up of:
-> https://patchwork.kernel.org/patch/9577147/
-> Right?
-> 
-> None of these two were applied so can you squash them, rebase, retest
-> and send again?
-> 
-
-Yeah no problem should be able to resend later today hopefully.
-
-Thanks,
-Charles
+VmVyaWZpZWQgb24gVUMtNzExMi1MWCBieSBidXp6aW5nIHRoZSBidXp6ZXIgYW5kIHdyaXRpbmcg
+dGhlIFJUQyAoc2VlCmxvZyBbMV0gZm9yIG5leHQtMjAxNzAzMTApOgoKWzFdIGh0dHBzOi8vYml0
+YnVja2V0Lm9yZy9LYXNyZXluL2xpbnV4LW5leHQvY29tbWl0cy9jNjNmM2MyMjE1ZjZmZDEwNmZm
+MGVjNmY5ODY0Yjg1YjdiZTU2NWFjCgpbICAgIDAuMDAwMDAwXSBMaW51eCB2ZXJzaW9uIDQuMTEu
+MC1yYzEtbmV4dC0yMDE3MDMxMC0wMDAwNC1nYzYzZjNjMgooaUBpbGRqYXJuKSAoZ2NjIHZlcnNp
+b24gNC45LjEgKGNyb3NzdG9vbC1ORyAxLjIwLjApICkgIzQ0NjEgUFJFRU1QClQgVHVlIE1hciAy
+MSAxMTo0MzoyOSBDRVQgMjAxNwouLgplY2hvIDI0ID4gL3N5cy9jbGFzcy9ncGlvL2V4cG9ydApl
+Y2hvIG91dCA+IC9zeXMvY2xhc3MvZ3Bpby9ncGlvMjQvZGlyZWN0aW9uCmVjaG8gMSA+IC9zeXMv
+Y2xhc3MvZ3Bpby9ncGlvMjQvdmFsdWUKZWNobyAwID4gL3N5cy9jbGFzcy9ncGlvL2dwaW8yNC92
+YWx1ZQouLgpkYXRlICslWSVtJWQlaCVtIC1zICIyMDEwMDEyMDIzMjMiCmh3Y2xvY2sgLXcKcmVi
+b290Ci4uClsgICAgNC41MjAwMDBdIG1veGFydC1ydGMgOTAwMDAwMDAuc29jOnJ0Yzogc2V0dGlu
+ZyBzeXN0ZW0gY2xvY2sgdG8KMjAxMC0wMS0yMCAyMzoyMzoyMCBVVEMgKDEyNjQwMjk4MDApCi4u
+CmRhdGUgKyVZJW0lZCVoJW0gLXMgIjIwMTIxMjE4MTU1MyIKaHdjbG9jayAtdwpyZWJvb3QKLi4K
+WyAgICA0LjUyMDAwMF0gbW94YXJ0LXJ0YyA5MDAwMDAwMC5zb2M6cnRjOiBzZXR0aW5nIHN5c3Rl
+bSBjbG9jayB0bwoyMDEyLTEyLTE4IDE1OjUzOjIwIFVUQyAoMTM1NTg0NjAwMCkKCgpUZXN0ZWQt
+Ynk6IEpvbmFzIEplbnNlbiA8am9uYXMuamVuc2VuQGdtYWlsLmNvbT4KX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18Kb3BlbndydC1kZXZlbCBtYWlsaW5nIGxp
+c3QKb3BlbndydC1kZXZlbEBsaXN0cy5vcGVud3J0Lm9yZwpodHRwczovL2xpc3RzLm9wZW53cnQu
+b3JnL2NnaS1iaW4vbWFpbG1hbi9saXN0aW5mby9vcGVud3J0LWRldmVsCg==
