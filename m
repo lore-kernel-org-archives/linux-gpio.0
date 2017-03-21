@@ -1,53 +1,59 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH 1/4] gpio: mvebu: Add limited PWM support
-Date: Tue, 21 Mar 2017 15:50:56 +0100
-Message-ID: <20170321145056.GA30655@lunn.ch>
-References: <20170316064218.9169-1-ralph.sennhauser@gmail.com>
- <20170316064218.9169-2-ralph.sennhauser@gmail.com>
- <20170320134252.GM22463@ulmo.ba.sec>
- <20170321073618.2e4d41cc@gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH v2 0/7] Hi,
+Date: Tue, 21 Mar 2017 19:28:29 +0100
+Message-ID: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170321073618.2e4d41cc@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, Imre Kaloz <kaloz@openwrt.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Hua Jing <jinghua@marvell.com>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-> > > *mvebu_gpioreg_blink(struct mvebu_gpio_chip *mvchip) return
-> > > mvchip->membase + GPIO_BLINK_EN_OFF; }
-> > >  
-> > > +static void __iomem *mvebu_gpioreg_blink_select(struct
-> > > mvebu_gpio_chip *mvchip) +{
-> > > +	return mvchip->membase + GPIO_BLINK_CNT_SELECT_OFF;
-> > > +}  
-> > 
-> > That's a really weird thing to do. Why not just use this expression in
-> > your calls to readl() and writel() directly? Seems a lot of additional
-> > code for no gain.
+this series add support for the pin and gpio controllers present on
+the Armada 37xx SoCs.
 
-This driver is made more complex by the Armada XP SMP handling. Some
-GPIO registers are per-cpu, others are global. Registers for
-interrupts in particular are per CPU. So there is a general trend in
-this driver to have a function which returns the address of a
-register, for a given SOC variant. In this case, it is fixed, so could
-be collapsed into the actual read/write. But then it would be
-different to all others in this driver...
+Each Armada 37xx SoC comes with 2 pin controllers: one on the south
+bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
 
-> > > +	pwm->chip.dev = dev;
-> > > +	pwm->chip.ops = &mvebu_pwm_ops;
-> > > +	pwm->chip.base = mvchip->chip.base;
-> > > +	pwm->chip.npwm = mvchip->chip.ngpio;  
-> > 
-> > Isn't that a lie? The code above suggests you can only ever have a
-> > single GPIO turn into a PWM, so I'd expect ".npwm = 1" here.
+At the hardware level the controller configure the pins by group and not
+pin by pin.
 
-Well, any of the 32 GPIOs can be a PWM. But only one can be enabled at
-a time. What exactly does pwm->chip.npwm mean? If we say 1 here, how
-at run time do we say which of the 32 GPIOs is used as a PWM output?
-By saying 32, it is simpler, which ever is enabled first is the one to
-use.
+The gpio controller is also capable to handle interrupt from gpio.
 
-	Andrew
+Gregory
+
+Gregory CLEMENT (7):
+  pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
+  arm64: marvell: enable the Armada 37xx pinctrl driver
+  pinctrl: armada-37xx: Add pin controller support for Armada 37xx
+  pinctrl: armada-37xx: Add gpio support
+  pinctrl: aramda-37xx: Add irqchip support
+  ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
+  ARM64: dts: marvell: armada37xx: add pinctrl definition
+
+ Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
+ Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
+ arch/arm64/Kconfig.platforms                                              |   2 +-
+ arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
+ drivers/pinctrl/Makefile                                                  |   2 +-
+ drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
+ drivers/pinctrl/mvebu/Makefile                                            |   3 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 9 files changed, 1153 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+ create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+
+base-commit: c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201
+-- 
+git-series 0.9.1
