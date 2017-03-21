@@ -1,143 +1,148 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH v2 0/7] Add support for pinctrl/gpio on Armada 37xx Was Re: [PATCH v2 0/7] Hi,
-Date: Tue, 21 Mar 2017 21:50:37 +0100
-Message-ID: <87pohafj6q.fsf@free-electrons.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
+From: Julia Cartwright <julia@ni.com>
+Subject: [PATCH v2 9/9] gpio: pci-idio-16: make use of raw_spinlock variants
+Date: Tue, 21 Mar 2017 17:43:09 -0500
+Message-ID: <a5d7b7ed45046ec6f7b5fbf9c284281e02204198.1490135047.git.julia@ni.com>
+References: <cover.1490135047.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:46557 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757182AbdCUUuy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Mar 2017 16:50:54 -0400
-In-Reply-To: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
-        (Gregory CLEMENT's message of "Tue, 21 Mar 2017 19:28:29 +0100")
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-rt-users-owner@vger.kernel.org>
+In-Reply-To: <cover.1490135047.git.julia@ni.com>
+Sender: linux-rt-users-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-Hi,
+The pci-idio-16 gpio driver currently implements an irq_chip for handling
+interrupts; due to how irq_chip handling is done, it's necessary for the
+irq_chip methods to be invoked from hardirq context, even on a a
+real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
 
-Obviously this cover letter is wrong. Actually I forgot to commit it in
-git series. Here it is the correct one:
+A quick audit of the operations under the lock reveal that they do only
+minimal, bounded work, and are therefore safe to do under a raw spinlock.
 
-After several months here it is the second version of the series adding
-support for the pin and gpio controllers present on the Armada 37xx
-SoCs.
+Signed-off-by: Julia Cartwright <julia@ni.com>
+---
+New patch as of v2 of series.
 
-Each Armada 37xx SoC comes with 2 pin controllers: one on the south
-bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
+ drivers/gpio/gpio-pci-idio-16.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-At the hardware level the controller configure the pins by group and not
-pin by pin.
-
-The gpio controller is also capable to handle interrupt from gpio.
-
-In the second version several changes has been done:
-
-- Update binding documentation making clear that mfd and syscon must
-  be used (patch 1).
-
-- Split the fist patch adding pin controller support for Armada 37xx
-  in arm64 part (for kconfig) and pinctrl part (patch 2 and 3)
-
-- Add MFD_SYSCON dependency (patch 3)
-
-- Add kerneldoc for the armada_37xx_pin_group struct (patch 3)
-
-- Rename _add_function() to armada_37xx_add_function() (patch 3)
-
-- Use an inline function to update the reg offset (patch 4)
-
-- Rename gpiolib_register to gpiochip_register (patch 4)
-
-- Add a comment about the two registers limit (patch 4)
-
-- Add explicit gpio node in the device tree (patch 4)
-
-- Convert the driver to use GPIOLIB_IRQCHIP (patch 5)
-
-- Add a critical section when accessing the hardware registers (patch 5)
-
-- Use the gpio sub-node (patch 5)
-
-With these change most of the comment of the first revision have been addressed.
-
-Thanks,
-
-Gregory
-
-Gregory CLEMENT (7):
-  pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
-  arm64: marvell: enable the Armada 37xx pinctrl driver
-  pinctrl: armada-37xx: Add pin controller support for Armada 37xx
-  pinctrl: armada-37xx: Add gpio support
-  pinctrl: aramda-37xx: Add irqchip support
-  ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
-  ARM64: dts: marvell: armada37xx: add pinctrl definition
-
- Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
- Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
- arch/arm64/Kconfig.platforms                                              |   2 +-
- arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
- drivers/pinctrl/Makefile                                                  |   2 +-
- drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
- drivers/pinctrl/mvebu/Makefile                                            |   3 +-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 9 files changed, 1153 insertions(+), 8 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
- create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-
-Sorry for the noise,
-
-Gregory
-
-
- On mar., mars 21 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-
-> this series add support for the pin and gpio controllers present on
-> the Armada 37xx SoCs.
->
-> Each Armada 37xx SoC comes with 2 pin controllers: one on the south
-> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
->
-> At the hardware level the controller configure the pins by group and not
-> pin by pin.
->
-> The gpio controller is also capable to handle interrupt from gpio.
->
-> Gregory
->
-> Gregory CLEMENT (7):
->   pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
->   arm64: marvell: enable the Armada 37xx pinctrl driver
->   pinctrl: armada-37xx: Add pin controller support for Armada 37xx
->   pinctrl: armada-37xx: Add gpio support
->   pinctrl: aramda-37xx: Add irqchip support
->   ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
->   ARM64: dts: marvell: armada37xx: add pinctrl definition
->
->  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
->  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
->  arch/arm64/Kconfig.platforms                                              |   2 +-
->  arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
->  drivers/pinctrl/Makefile                                                  |   2 +-
->  drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
->  drivers/pinctrl/mvebu/Makefile                                            |   3 +-
->  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  9 files changed, 1153 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
->  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
->
-> base-commit: c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201
-> -- 
-> git-series 0.9.1
-
+diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
+index 269ab628634b..7de4f6a2cb49 100644
+--- a/drivers/gpio/gpio-pci-idio-16.c
++++ b/drivers/gpio/gpio-pci-idio-16.c
+@@ -59,7 +59,7 @@ struct idio_16_gpio_reg {
+  */
+ struct idio_16_gpio {
+ 	struct gpio_chip chip;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	struct idio_16_gpio_reg __iomem *reg;
+ 	unsigned long irq_mask;
+ };
+@@ -121,7 +121,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	} else
+ 		base = &idio16gpio->reg->out0_7;
+ 
+-	spin_lock_irqsave(&idio16gpio->lock, flags);
++	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+ 	if (value)
+ 		out_state = ioread8(base) | mask;
+@@ -130,7 +130,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 
+ 	iowrite8(out_state, base);
+ 
+-	spin_unlock_irqrestore(&idio16gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+ 
+ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+@@ -140,7 +140,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+ 	unsigned long flags;
+ 	unsigned int out_state;
+ 
+-	spin_lock_irqsave(&idio16gpio->lock, flags);
++	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+ 	/* process output lines 0-7 */
+ 	if (*mask & 0xFF) {
+@@ -160,7 +160,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+ 		iowrite8(out_state, &idio16gpio->reg->out8_15);
+ 	}
+ 
+-	spin_unlock_irqrestore(&idio16gpio->lock, flags);
++	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ }
+ 
+ static void idio_16_irq_ack(struct irq_data *data)
+@@ -177,11 +177,11 @@ static void idio_16_irq_mask(struct irq_data *data)
+ 	idio16gpio->irq_mask &= ~mask;
+ 
+ 	if (!idio16gpio->irq_mask) {
+-		spin_lock_irqsave(&idio16gpio->lock, flags);
++		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+ 		iowrite8(0, &idio16gpio->reg->irq_ctl);
+ 
+-		spin_unlock_irqrestore(&idio16gpio->lock, flags);
++		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ 	}
+ }
+ 
+@@ -196,11 +196,11 @@ static void idio_16_irq_unmask(struct irq_data *data)
+ 	idio16gpio->irq_mask |= mask;
+ 
+ 	if (!prev_irq_mask) {
+-		spin_lock_irqsave(&idio16gpio->lock, flags);
++		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+ 
+ 		ioread8(&idio16gpio->reg->irq_ctl);
+ 
+-		spin_unlock_irqrestore(&idio16gpio->lock, flags);
++		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+ 	}
+ }
+ 
+@@ -229,11 +229,11 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+ 	struct gpio_chip *const chip = &idio16gpio->chip;
+ 	int gpio;
+ 
+-	spin_lock(&idio16gpio->lock);
++	raw_spin_lock(&idio16gpio->lock);
+ 
+ 	irq_status = ioread8(&idio16gpio->reg->irq_status);
+ 
+-	spin_unlock(&idio16gpio->lock);
++	raw_spin_unlock(&idio16gpio->lock);
+ 
+ 	/* Make sure our device generated IRQ */
+ 	if (!(irq_status & 0x3) || !(irq_status & 0x4))
+@@ -242,12 +242,12 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+ 	for_each_set_bit(gpio, &idio16gpio->irq_mask, chip->ngpio)
+ 		generic_handle_irq(irq_find_mapping(chip->irqdomain, gpio));
+ 
+-	spin_lock(&idio16gpio->lock);
++	raw_spin_lock(&idio16gpio->lock);
+ 
+ 	/* Clear interrupt */
+ 	iowrite8(0, &idio16gpio->reg->in0_7);
+ 
+-	spin_unlock(&idio16gpio->lock);
++	raw_spin_unlock(&idio16gpio->lock);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -302,7 +302,7 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	idio16gpio->chip.set = idio_16_gpio_set;
+ 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+ 
+-	spin_lock_init(&idio16gpio->lock);
++	raw_spin_lock_init(&idio16gpio->lock);
+ 
+ 	err = devm_gpiochip_add_data(dev, &idio16gpio->chip, idio16gpio);
+ 	if (err) {
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.12.0
+
