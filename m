@@ -1,93 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] GPIO fixes for v4.11
-Date: Tue, 21 Mar 2017 09:18:19 +0100
-Message-ID: <CACRpkda90xKmfK1T8mSgr_XPeGcHXzOSUnTaFvPYX+bhrvq4-A@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2] pinctrl: samsung: Calculate GPIO base for
+ pinctrl_add_gpio_range
+Date: Tue, 21 Mar 2017 09:32:20 +0000
+Message-ID: <20170321093220.GV6986@localhost.localdomain>
+References: <20170228090143.GG2742@localhost.localdomain>
+ <1488301475-10804-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CA+Ln22HUK2NBV7=NCeJ3r1J2E5-C_5qc+i9Co5js9VamAXF04g@mail.gmail.com>
+ <20170306164909.GA6986@localhost.localdomain>
+ <20170320183915.r4bfl466yyph74i4@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:35325 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755395AbdCUISW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 21 Mar 2017 04:18:22 -0400
-Received: by mail-it0-f45.google.com with SMTP id y18so4961204itc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Mar 2017 01:18:20 -0700 (PDT)
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53708 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753669AbdCUJbX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 21 Mar 2017 05:31:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20170320183915.r4bfl466yyph74i4@kozik-lap>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, patches@opensource.wolfsonmicro.com
 
-Hi Linus,
+On Mon, Mar 20, 2017 at 08:39:15PM +0200, Krzysztof Kozlowski wrote:
+> On Mon, Mar 06, 2017 at 04:49:09PM +0000, Charles Keepax wrote:
+> > On Sat, Mar 04, 2017 at 08:20:11PM +0900, Tomasz Figa wrote:
+> > > Hi Charles,
+> > > 
+> > > 2017-03-01 2:04 GMT+09:00 Charles Keepax <ckeepax@opensource.wolfsonmicro.com>:
+> > > > As the pinctrl is now added before the GPIOs are registered we need to
+> > > > manually calculate what the GPIO base will be, otherwise the base for
+> > > > each gpio_range will be set to zero. Fortunately the driver
+> > > > already assigns a GPIO base, in samsung_gpiolib_register, and uses the
+> > > > same calculation it does for the pin_base. Meaning the two will always
+> > > > be the same and allowing us to reuse the pinbase and avoid the issue.
+> > > 
+> > > Sorry, I didn't notice before and I don't see the offending patch in ,
+> > > but you should add
+> > > 
+> > > Fixes: XXXXXXXXXXXX ("pinctrl: Patch subject")
+> > > 
+> > > if you intend to submit this patch separately. Otherwise, maybe this
+> > > can be just squashed?
+> > > 
+> > 
+> > Yeah apologies for that as the original patch hasn't showed up in
+> > the tree yet I couldn't pull a commit ID to add the fixes tag.
+> > Squashing it in is probably the best way to go.
+> 
+> Hi Charles,
+> 
+> Thanks for the work.
+> 
+> This is a follow up of:
+> https://patchwork.kernel.org/patch/9577147/
+> Right?
+> 
+> None of these two were applied so can you squash them, rebase, retest
+> and send again?
+> 
 
-here is the first set of GPIO fixes. It was delayed a bit beacuse
-I was chicken when linux-next was not rotating last week.
+Yeah no problem should be able to resend later today hopefully.
 
-This hits the ST serial driver in drivers/tty/serial and that has an
-ACK from Greg, he suggested to keep the old GPIO fwnode API
-around to smoothen things in the merge Windod and those have
-now served their purpose so we take them out and convert the last
-driver to the new API.
-
-Apart from that it's fixes as usual.
-
-Please pull them in!
-
-Yours,
-Linus Walleij
-
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.11-2
-
-for you to fetch changes up to 2cd29f2387be70de9feb4c9f8dbc7c0bd55748ce:
-
-  gpio:mcp23s08 Fixed missing interrupts (2017-03-17 09:20:28 +0100)
-
-----------------------------------------------------------------
-GPIO fixes for the v4.11 series:
-
-- Set the parent on the Altera A10SR driver, also fix
-  high level IRQs.
-
-- Fix error path on the mockup driver.
-
-- Compilation noise about unused functions fixed.
-
-- Fix missed interrupts on the MCP23S08 expander, this is also
-  tagged for stable.
-
-- Retire the interrim helpers devm_get_gpiod_from_child() used
-  to smoothen merging in the merge window.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      gpio: xgene: mark PM functions as __maybe_unused
-
-Dan Carpenter (1):
-      gpio: mockup: return -EFAULT if copy_from_user() fails
-
-Lee Jones (1):
-      serial: st-asc: Use new GPIOD API to obtain RTS pin
-
-Phil Reid (1):
-      gpio: altera: Use handle_level_irq when configured as a level_high
-
-Robert Middleton (1):
-      gpio:mcp23s08 Fixed missing interrupts
-
-Thor Thayer (1):
-      gpio: altera-a10sr: Set gpio_chip parent property
-
- drivers/gpio/gpio-altera-a10sr.c |  2 +-
- drivers/gpio/gpio-altera.c       | 26 +++++++---------
- drivers/gpio/gpio-mcp23s08.c     | 65 ++++++++++++++++++++++++++++++++++++----
- drivers/gpio/gpio-mockup.c       |  7 ++---
- drivers/gpio/gpio-xgene.c        | 13 ++------
- drivers/tty/serial/st-asc.c      | 11 +++----
- include/linux/gpio/consumer.h    | 16 ----------
- 7 files changed, 84 insertions(+), 56 deletions(-)
+Thanks,
+Charles
