@@ -1,26 +1,55 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v2 4/6] clk: rockchip: rename RK1108 to RV1108
-Date: Wed, 22 Mar 2017 18:06:17 +0100
-Message-ID: <3220937.UdfUUayLc5@phil>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-5-heiko@sntech.de>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 2/2] pinctrl: samsung: Use devres version of gpiochip_add_data
+Date: Wed, 22 Mar 2017 17:15:35 +0000
+Message-ID: <1490202935-4708-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20170317171840.4683-5-heiko@sntech.de>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, andy.yan@rock-chips.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: krzk@kernel.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com
+Cc: linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-gpio@vger.kernel.org
 
-Am Freitag, 17. März 2017, 18:18:38 CET schrieb Heiko Stuebner:
-> From: Andy Yan <andy.yan@rock-chips.com>
-> 
-> Rockchip finally named the SOC as RV1108, so change it.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> 
-> [include rename in rk1108.dtsi to prevent compile errors]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Use devm_gpiochip_add_data to simplify the error path in
+samsung_gpiolib_register.
 
-applied to my clk-branch for 4.12
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+
+No changes since v2.
+
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 5d53370..934fc3b 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -936,20 +936,15 @@ static int samsung_gpiolib_register(struct platform_device *pdev,
+ 		gc->of_node = bank->of_node;
+ 		gc->label = bank->name;
+ 
+-		ret = gpiochip_add_data(gc, bank);
++		ret = devm_gpiochip_add_data(&pdev->dev, gc, bank);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "failed to register gpio_chip %s, error code: %d\n",
+ 							gc->label, ret);
+-			goto fail;
++			return ret;
+ 		}
+ 	}
+ 
+ 	return 0;
+-
+-fail:
+-	for (--i, --bank; i >= 0; --i, --bank)
+-		gpiochip_remove(&bank->gpio_chip);
+-	return ret;
+ }
+ 
+ /* retrieve the soc specific data */
+-- 
+2.1.4
