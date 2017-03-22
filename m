@@ -1,33 +1,64 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Wed, 22 Mar 2017 11:09:30 +0100
-Message-ID: <10fb6332-402a-924e-8976-85c3b651d6d9@samsung.com>
-References: <CGME20170320164914epcas1p316c1dee152cb3a9c5a65014aa59006af@epcas1p3.samsung.com>
- <20170320164851.5999-1-krzk@kernel.org>
+From: Jonas Jensen <jonas.jensen@gmail.com>
+Subject: Re: [PATCH 4/6] gpio: gemini: rename to match
+	Faraday IP
+Date: Wed, 22 Mar 2017 11:21:01 +0100
+Message-ID: <CACmBeS23APp1=+0Cypyx9OujhekUTF7w5QbwE_9zt_go3GdUPw@mail.gmail.com>
+References: <20170312232818.26304-1-linus.walleij@linaro.org>
+ <20170312232818.26304-4-linus.walleij@linaro.org>
+ <CACmBeS2OC6X_Rb5qaVEGMY4mPyHwnib-=pm-g=+73J6ZSRDgLw@mail.gmail.com>
+ <CACRpkda0TpcUsEW6wiHzhueSckz_WTfbDgpixdgCNvodHDmpyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20170320164851.5999-1-krzk@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <openwrt-devel-bounces@lists.openwrt.org>
+In-Reply-To: <CACRpkda0TpcUsEW6wiHzhueSckz_WTfbDgpixdgCNvodHDmpyw@mail.gmail.com>
+List-Unsubscribe: <https://lists.openwrt.org/cgi-bin/mailman/options/openwrt-devel>,
+ <mailto:openwrt-devel-request@lists.openwrt.org?subject=unsubscribe>
+List-Archive: <http://lists.openwrt.org/pipermail/openwrt-devel/>
+List-Post: <mailto:openwrt-devel@lists.openwrt.org>
+List-Help: <mailto:openwrt-devel-request@lists.openwrt.org?subject=help>
+List-Subscribe: <https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel>,
+ <mailto:openwrt-devel-request@lists.openwrt.org?subject=subscribe>
+Errors-To: openwrt-devel-bounces@lists.openwrt.org
+Sender: "openwrt-devel" <openwrt-devel-bounces@lists.openwrt.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: openwrt-devel@openwrt.org, Alexandre Courbot <gnurou@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 03/20/2017 05:48 PM, Krzysztof Kozlowski wrote:
-> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
-> drivers.  The tree will be maintained in a shared model between current
-> Samsung pinctrl maintainers.  Pull requests will be going to Linus
-> Walleij.
->
-> Also add the patchwork for linux-samsung-soc mailing list which will be
-> used for handling the patches.
->
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Thanks for your effort Krzysztof,
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+T24gMjIgTWFyY2ggMjAxNyBhdCAwOTo0MiwgTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBs
+aW5hcm8ub3JnPiB3cm90ZToKPiBOaWNlISBIYXZlIHlvdSB0ZXN0ZWQgbXkgbmV3IEdQSU8gY2hh
+cmFjdGVyIGRldmljZSB0b29scyBmcm9tCj4gdG9vbHMvZ3Bpby8qIGluIHRoZSBrZXJuZWwgdHJl
+ZT8KCkkgaGFkIG5vdCBhbmQgdGhhbmtzIGZvciBwb2ludGluZyB0aGF0IG91dCwgbHNncGlvIGxp
+c3RzIGFsbCBhdmFpbGFibGUKZ3Bpb3MgKHRob3VnaCBtb3N0IG9mIHRoZW0gYXJlIHVubmFtZWQp
+LCBhbmQgZ3Bpby1oYW1tZXIgc3VjY2Vzc2Z1bGx5CnRvZ2dsZWQgYnV6emVyIG9uL29mZi4KCnVu
+YW1lIC1hCkxpbnV4IHp1cmtvbiA0LjExLjAtcmMxLW5leHQtMjAxNzAzMTAtMDAwMDQtZ2M2M2Yz
+YzIgIzQ0NjYgUFJFRU1QVCBXZWQKTWFyIDIyIDExOjA1OjI4IENFVCAyMDE3IGFybXY0bCBHTlUv
+TGludXgKCi4vbHNncGlvCkdQSU8gY2hpcDogZ3Bpb2NoaXAwLCAiRlRHUElPMDEwIiwgMzIgR1BJ
+TyBsaW5lcwogICAgICAgIGxpbmUgIDA6IHVubmFtZWQgdW51c2VkIFtvdXRwdXRdCiAgICAgICAg
+bGluZSAgMTogdW5uYW1lZCB1bnVzZWQgW291dHB1dF0KICAgICAgICBsaW5lICAyOiB1bm5hbWVk
+IHVudXNlZCBbb3V0cHV0XQogICAgICAgIGxpbmUgIDM6IHVubmFtZWQgdW51c2VkIFtvdXRwdXRd
+CiAgICAgICAgbGluZSAgNDogdW5uYW1lZCB1bnVzZWQKICAgICAgICBsaW5lICA1OiB1bm5hbWVk
+ICJydGNfc2NsayIgW2tlcm5lbCBvdXRwdXRdCiAgICAgICAgbGluZSAgNjogdW5uYW1lZCAicnRj
+X2RhdGEiIFtrZXJuZWxdCiAgICAgICAgbGluZSAgNzogdW5uYW1lZCAicnRjX3Jlc2V0IiBba2Vy
+bmVsIG91dHB1dF0KICAgICAgICBsaW5lICA4OiB1bm5hbWVkIHVudXNlZAogICAgICAgIGxpbmUg
+IDk6IHVubmFtZWQgdW51c2VkCiAgICAgICAgbGluZSAxMDogdW5uYW1lZCB1bnVzZWQKICAgICAg
+ICBsaW5lIDExOiB1bm5hbWVkIHVudXNlZCBbb3V0cHV0XQogICAgICAgIGxpbmUgMTI6IHVubmFt
+ZWQgdW51c2VkCiAgICAgICAgbGluZSAxMzogdW5uYW1lZCB1bnVzZWQgW291dHB1dF0KICAgICAg
+ICBsaW5lIDE0OiB1bm5hbWVkIHVudXNlZAogICAgICAgIGxpbmUgMTU6IHVubmFtZWQgdW51c2Vk
+IFtvdXRwdXRdCiAgICAgICAgbGluZSAxNjogdW5uYW1lZCB1bnVzZWQKICAgICAgICBsaW5lIDE3
+OiB1bm5hbWVkIHVudXNlZCBbb3V0cHV0XQogICAgICAgIGxpbmUgMTg6IHVubmFtZWQgdW51c2Vk
+CiAgICAgICAgbGluZSAxOTogdW5uYW1lZCB1bnVzZWQKICAgICAgICBsaW5lIDIwOiB1bm5hbWVk
+IHVudXNlZAogICAgICAgIGxpbmUgMjE6IHVubmFtZWQgdW51c2VkCiAgICAgICAgbGluZSAyMjog
+dW5uYW1lZCB1bnVzZWQKICAgICAgICBsaW5lIDIzOiB1bm5hbWVkIHVudXNlZAogICAgICAgIGxp
+bmUgMjQ6IHVubmFtZWQgdW51c2VkIFtvdXRwdXRdCiAgICAgICAgbGluZSAyNTogdW5uYW1lZCB1
+bnVzZWQKICAgICAgICBsaW5lIDI2OiB1bm5hbWVkIHVudXNlZAogICAgICAgIGxpbmUgMjc6IHVu
+bmFtZWQgInJlYWR5LWxlZCIgW2tlcm5lbCBvdXRwdXQgYWN0aXZlLWxvd10KICAgICAgICBsaW5l
+IDI4OiB1bm5hbWVkIHVudXNlZAogICAgICAgIGxpbmUgMjk6IHVubmFtZWQgdW51c2VkCiAgICAg
+ICAgbGluZSAzMDogdW5uYW1lZCB1bnVzZWQKICAgICAgICBsaW5lIDMxOiB1bm5hbWVkIHVudXNl
+ZCBbb3V0cHV0XQoKLi9ncGlvLWhhbW1lciAtbiBncGlvY2hpcDAgLW8gMjQKSGFtbWVyIGxpbmVz
+IFsyNF0gb24gZ3Bpb2NoaXAwLCBpbml0aWFsIHN0YXRlczogWzBdClt8XSBbMjQ6IDFdCgouL2dw
+aW8taGFtbWVyIC1uIGdwaW9jaGlwMCAtbyAyNwpGYWlsZWQgdG8gaXNzdWUgR0VUIExJTkVIQU5E
+TEUgSU9DVEwgKC0xNikKCgogICBKb25hcwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpvcGVud3J0LWRldmVsIG1haWxpbmcgbGlzdApvcGVud3J0LWRldmVs
+QGxpc3RzLm9wZW53cnQub3JnCmh0dHBzOi8vbGlzdHMub3BlbndydC5vcmcvY2dpLWJpbi9tYWls
+bWFuL2xpc3RpbmZvL29wZW53cnQtZGV2ZWwK
