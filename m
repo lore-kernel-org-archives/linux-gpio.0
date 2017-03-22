@@ -1,167 +1,48 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/2] pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of
- Exynos5433
-Date: Wed, 22 Mar 2017 17:03:31 +0900
-Message-ID: <1490169812-25225-2-git-send-email-cw00.choi@samsung.com>
-References: <1490169812-25225-1-git-send-email-cw00.choi@samsung.com>
- <CGME20170322080335epcas5p2c169c15e1b9db200aee9ca83c71699f6@epcas5p2.samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/6] gpio: gemini: rename to match
+	Faraday IP
+Date: Wed, 22 Mar 2017 09:42:48 +0100
+Message-ID: <CACRpkda0TpcUsEW6wiHzhueSckz_WTfbDgpixdgCNvodHDmpyw@mail.gmail.com>
+References: <20170312232818.26304-1-linus.walleij@linaro.org>
+ <20170312232818.26304-4-linus.walleij@linaro.org>
+ <CACmBeS2OC6X_Rb5qaVEGMY4mPyHwnib-=pm-g=+73J6ZSRDgLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1490169812-25225-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <openwrt-devel-bounces@lists.openwrt.org>
+In-Reply-To: <CACmBeS2OC6X_Rb5qaVEGMY4mPyHwnib-=pm-g=+73J6ZSRDgLw@mail.gmail.com>
+List-Unsubscribe: <https://lists.openwrt.org/cgi-bin/mailman/options/openwrt-devel>,
+ <mailto:openwrt-devel-request@lists.openwrt.org?subject=unsubscribe>
+List-Archive: <http://lists.openwrt.org/pipermail/openwrt-devel/>
+List-Post: <mailto:openwrt-devel@lists.openwrt.org>
+List-Help: <mailto:openwrt-devel-request@lists.openwrt.org?subject=help>
+List-Subscribe: <https://lists.openwrt.org/cgi-bin/mailman/listinfo/openwrt-devel>,
+ <mailto:openwrt-devel-request@lists.openwrt.org?subject=subscribe>
+Errors-To: openwrt-devel-bounces@lists.openwrt.org
+Sender: "openwrt-devel" <openwrt-devel-bounces@lists.openwrt.org>
+To: Jonas Jensen <jonas.jensen@gmail.com>
+Cc: openwrt-devel@openwrt.org, Alexandre Courbot <gnurou@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janos Laube <janos.dev@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The commit 1259feddd0f8("pinctrl: samsung: Fix the width of
-PINCFG_TYPE_DRV bitfields for Exynos5433") already fixed
-the different width of PINCFG_TYPE_DRV from previous Exynos SoC.
-
-But, when merged the multiple patches, the missing parts occurred.
-So, this patch adds the missing part using the EXYNOS5433_PIN_BANK_* macro.
-
-Fixes: 7f36f5d11cda ("Merge tag 'v4.10-rc6' into devel")
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 80 ++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index f9b49967f512..63e51b56a22a 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1468,82 +1468,82 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- 
- /* pin banks of exynos5433 pin-controller - ALIVE */
- static const struct samsung_pin_bank_data exynos5433_pin_banks0[] __initconst = {
--	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
--	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
--	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
--	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1),
--	EXYNOS_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x020, "gpf1", 0x1004, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(4, 0x040, "gpf2", 0x1008, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(4, 0x060, "gpf3", 0x100c, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x080, "gpf4", 0x1010, 1),
-+	EXYNOS5433_PIN_BANK_EINTW_EXT(8, 0x0a0, "gpf5", 0x1014, 1),
- };
- 
- /* pin banks of exynos5433 pin-controller - AUD */
- static const struct samsung_pin_bank_data exynos5433_pin_banks1[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
--	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
- };
- 
- /* pin banks of exynos5433 pin-controller - CPIF */
- static const struct samsung_pin_bank_data exynos5433_pin_banks2[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - eSE */
- static const struct samsung_pin_bank_data exynos5433_pin_banks3[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - FINGER */
- static const struct samsung_pin_bank_data exynos5433_pin_banks4[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - FSYS */
- static const struct samsung_pin_bank_data exynos5433_pin_banks5[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
--	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
--	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
- };
- 
- /* pin banks of exynos5433 pin-controller - IMEM */
- static const struct samsung_pin_bank_data exynos5433_pin_banks6[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - NFC */
- static const struct samsung_pin_bank_data exynos5433_pin_banks7[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
- };
- 
- /* pin banks of exynos5433 pin-controller - PERIC */
- static const struct samsung_pin_bank_data exynos5433_pin_banks8[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
--	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
--	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
--	EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
--	EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
--	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
--	EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
--	EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
--	EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
--	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
--	EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
--	EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
--	EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
--	EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
--	EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
--	EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
--	EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
-+	EXYNOS5433_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
-+	EXYNOS5433_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
-+	EXYNOS5433_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
-+	EXYNOS5433_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
-+	EXYNOS5433_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
-+	EXYNOS5433_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
- };
- 
- /* pin banks of exynos5433 pin-controller - TOUCH */
- static const struct samsung_pin_bank_data exynos5433_pin_banks9[] __initconst = {
--	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
-+	EXYNOS5433_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
- };
- 
- /*
--- 
-1.9.1
+T24gVHVlLCBNYXIgMjEsIDIwMTcgYXQgMTE6NTkgQU0sIEpvbmFzIEplbnNlbiA8am9uYXMuamVu
+c2VuQGdtYWlsLmNvbT4gd3JvdGU6Cgo+IFZlcmlmaWVkIG9uIFVDLTcxMTItTFggYnkgYnV6emlu
+ZyB0aGUgYnV6emVyIGFuZCB3cml0aW5nIHRoZSBSVEMgKHNlZQo+IGxvZyBbMV0gZm9yIG5leHQt
+MjAxNzAzMTApOgo+Cj4gWzFdIGh0dHBzOi8vYml0YnVja2V0Lm9yZy9LYXNyZXluL2xpbnV4LW5l
+eHQvY29tbWl0cy9jNjNmM2MyMjE1ZjZmZDEwNmZmMGVjNmY5ODY0Yjg1YjdiZTU2NWFjCj4KPiBb
+ICAgIDAuMDAwMDAwXSBMaW51eCB2ZXJzaW9uIDQuMTEuMC1yYzEtbmV4dC0yMDE3MDMxMC0wMDAw
+NC1nYzYzZjNjMgo+IChpQGlsZGphcm4pIChnY2MgdmVyc2lvbiA0LjkuMSAoY3Jvc3N0b29sLU5H
+IDEuMjAuMCkgKSAjNDQ2MSBQUkVFTVAKPiBUIFR1ZSBNYXIgMjEgMTE6NDM6MjkgQ0VUIDIwMTcK
+PiAuLgo+IGVjaG8gMjQgPiAvc3lzL2NsYXNzL2dwaW8vZXhwb3J0Cj4gZWNobyBvdXQgPiAvc3lz
+L2NsYXNzL2dwaW8vZ3BpbzI0L2RpcmVjdGlvbgo+IGVjaG8gMSA+IC9zeXMvY2xhc3MvZ3Bpby9n
+cGlvMjQvdmFsdWUKPiBlY2hvIDAgPiAvc3lzL2NsYXNzL2dwaW8vZ3BpbzI0L3ZhbHVlCj4gLi4K
+PiBkYXRlICslWSVtJWQlaCVtIC1zICIyMDEwMDEyMDIzMjMiCj4gaHdjbG9jayAtdwo+IHJlYm9v
+dAo+IC4uCj4gWyAgICA0LjUyMDAwMF0gbW94YXJ0LXJ0YyA5MDAwMDAwMC5zb2M6cnRjOiBzZXR0
+aW5nIHN5c3RlbSBjbG9jayB0bwo+IDIwMTAtMDEtMjAgMjM6MjM6MjAgVVRDICgxMjY0MDI5ODAw
+KQoKTmljZSEgSGF2ZSB5b3UgdGVzdGVkIG15IG5ldyBHUElPIGNoYXJhY3RlciBkZXZpY2UgdG9v
+bHMgZnJvbQp0b29scy9ncGlvLyogaW4gdGhlIGtlcm5lbCB0cmVlPwoKPiBUZXN0ZWQtYnk6IEpv
+bmFzIEplbnNlbiA8am9uYXMuamVuc2VuQGdtYWlsLmNvbT4KClRoYW5rcyBtYW4uIEkgaGF2ZSBv
+bmx5IGEgZmV3IG1vcmUgb3IgdGhlc2UsIEkgbWlnaHQgc2F2ZSBzb21lCmZvciB0aGUgbmV4dCBr
+ZXJuZWwgY3ljbGUuIDspCgpZb3VycywKTGludXMgV2FsbGVpagpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpvcGVud3J0LWRldmVsIG1haWxpbmcgbGlzdApv
+cGVud3J0LWRldmVsQGxpc3RzLm9wZW53cnQub3JnCmh0dHBzOi8vbGlzdHMub3BlbndydC5vcmcv
+Y2dpLWJpbi9tYWlsbWFuL2xpc3RpbmZvL29wZW53cnQtZGV2ZWwK
