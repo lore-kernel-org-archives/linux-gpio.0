@@ -1,92 +1,112 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH v2 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-Date: Wed, 22 Mar 2017 11:35:35 +0100
-Message-ID: <CAMuHMdUYZ0+468Djucy2NXXUq7LOZMUwm-3YmiFATVQa=M_CTg@mail.gmail.com>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org> <1490026491-21742-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v4 1/2] backlight: pwm_bl: Move the checks for initial
+ power state to a separate function
+Date: Wed, 22 Mar 2017 11:46:34 +0100
+Message-ID: <1490179594.2285.33.camel@pengutronix.de>
+References: <20161122134123.1209-1-peter.ujfalusi@ti.com>
+         <20161122134123.1209-2-peter.ujfalusi@ti.com>
+         <CAMuHMdXcgWyKqhZFX49Ri1eEgi1_8b_xj6P9vKwEBwpsxMXTuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1490026491-21742-4-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Cc: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdXcgWyKqhZFX49Ri1eEgi1_8b_xj6P9vKwEBwpsxMXTuA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, Lee Jones <lee.jones@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
-> Add dt-bindings for Renesas r7s72100 pin controller header file.
+On Tue, 2017-03-21 at 19:48 +0100, Geert Uytterhoeven wrote:
+> Hi Peter,
+> 
+> On Tue, Nov 22, 2016 at 2:41 PM, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> > Move the checks to select the initial state for the backlight to a new
+> > function and document the checks we are doing.
+> 
+> This is far from a simple "move"...
+> 
+> > With the separate function it is going to be easier to fix or improve the
+> > initial power state configuration later and it is easier to read the code.
+> >
+> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > Reviewed-by: Thierry Reding <treding@nvidia.com>
+> 
+> This patch (commit 7613c922315e308a in v4.11-rc1) broke the display on
+> r8a7740/armadillo.
+> 
+> > @@ -267,20 +292,16 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> >                 pb->enable_gpio = gpio_to_desc(data->enable_gpio);
+> >         }
+> >
+> > -       if (pb->enable_gpio) {
+> > -               /*
+> > -                * If the driver is probed from the device tree and there is a
+> > -                * phandle link pointing to the backlight node, it is safe to
+> > -                * assume that another driver will enable the backlight at the
+> > -                * appropriate time. Therefore, if it is disabled, keep it so.
+> > -                */
+> > -               if (node && node->phandle &&
+> > -                   gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_OUT &&
+> > -                   gpiod_get_value(pb->enable_gpio) == 0)
+> > -                       initial_blank = FB_BLANK_POWERDOWN;
+> > -               else
+> > -                       gpiod_direction_output(pb->enable_gpio, 1);
+> 
+> In my case, "node" points to the "/backlight" node, but phandle is NULL.
+> Hence before, gpiod_direction_output() was called to enable the GPIO...
+> 
+> > -       }
+> > +       /*
+> > +        * If the GPIO is configured as input, change the direction to output
+> > +        * and set the GPIO as active.
+> > +        * Do not force the GPIO to active when it was already output as it
+> > +        * could cause backlight flickering or we would enable the backlight too
+> > +        * early. Leave the decision of the initial backlight state for later.
+> > +        */
+> > +       if (pb->enable_gpio &&
+> > +           gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN)
+> > +               gpiod_direction_output(pb->enable_gpio, 1);
+> 
+> ... while now it's no longer called, as gpiod_get_direction() returns
+> -EINVAL.
+> 
+> Indeed, r8a7740_pfc does not implement the .get_direction() callback,
+> so gpiod_get_direction() always returns -EINVAL, which is never equal
+> to GPIOF_DIR_IN.
+
+Oh, I didn't think about this at all, anymore. Though I believe to
+remember that this was the reason that I checked for
+(gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_OUT) before, so ...
+
+> Restoring the old behavior by changing the above test to
+> 
+>         if (pb->enable_gpio &&
+>             (!node || !node->phandle ||
+>              gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN))
+> 
+> fixes the display for me, but leads to a more complex expression.
+> 
+> However, changing the test to
+> 
+>         if (pb->enable_gpio &&
+>             gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
+> 
+> also fixes the display, as an error is always different from GPIOF_DIR_OUT.
 >
-> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-> ---
->  include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 36 ++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
->
-> diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-> new file mode 100644
-> index 0000000..98852d3
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-> @@ -0,0 +1,36 @@
-> +/*
-> + * Defines macros and constants for Renesas RZ/A1 pin controller pin
-> + * muxing functions.
-> + */
-> +#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-> +#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-> +
-> +#define RZA1_PINS_PER_PORT     16
-> +
-> +/* Create the pin index from it's bank and position numbers */
+> Anyone with comments or suggestions to fix this for real?
 
-its bank
+... I'm in favor of the latter, as this is closer to the initial
+intention. I'd also mention this in the comment:
 
-> +#define PIN(b, p)              ((b) * RZA1_PINS_PER_PORT + (p))
-> +
-> +/*
-> + * Flags to apply to alternate function configuration
-> + * All of the following are mutually exclusive.
-> + */
-> +
-> +/*
-> + * Pin is bi-directional.
-> + * Alternate function that need both input/outpu functionalities shall
+       /*
+        * If the GPIO is not known to be already configured as output, that is,
+        * if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL, change
+        * the direction to output and set the GPIO as active.
+        * Do not force the GPIO to active when it was already output as it
+        * could cause backlight flickering or we would enable the backlight too
+        * early. Leave the decision of the initial backlight state for later.
+        */
 
-An alternate function that needs ... output
-
-> + * be configured as bidirectional.
-> + * Eg. SDA/SCL pins of an I2c interface.
-> + */
-> +#define BI_DIR                 (1 << 3)
-> +
-> +/*
-> + * Flags used to ask software drive the pin I/O direction overriding the
-
-to drive
-
-> + * alternate function configuration.
-> + * Some alternate function requires software to force I/O direction of a pin,
-
-functions require
-
-> + * ovverriding the designated one.
-
-overriding
-
-> + * Reference to the HW manual to know when this flag shall be used.
-
-Refer
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+regards
+Philipp
