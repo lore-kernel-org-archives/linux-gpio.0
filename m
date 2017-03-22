@@ -1,69 +1,29 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] pinctrl: cherryview: Add support for GMMR GPIO
- opregion
-Date: Wed, 22 Mar 2017 19:00:54 +0200
-Message-ID: <1490202054.19767.173.camel@linux.intel.com>
-References: <20170322153858.19656-1-hdegoede@redhat.com>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/6] dt-bindings: rk1108-cru: rename RK1108 to RV1108
+Date: Wed, 22 Mar 2017 18:05:50 +0100
+Message-ID: <45160004.yQbCIfXNgo@phil>
+References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-4-heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:53695 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760972AbdCVRBI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Mar 2017 13:01:08 -0400
-In-Reply-To: <20170322153858.19656-1-hdegoede@redhat.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170317171840.4683-4-heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
 
-On Wed, 2017-03-22 at 16:38 +0100, Hans de Goede wrote:
-> On some Cherry Trail devices the ASL uses the GMMR GPIO to access
-> GPIOs so as to serialize MMIO accesses to GPIO registers with the
-> OS, because:
+Am Freitag, 17. März 2017, 18:18:37 CET schrieb Heiko Stuebner:
+> From: Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 > 
-> "Due to a silicon issue, a shared lock must be used to prevent
-> concurrent
-> accesses across the 4 GPIO controllers.
+> Rockchip finally named the SOC as RV1108, so change it.
 > 
-> See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
-> errata #CHT34, for further information."
-> 
-> This commit adds support for this opregion, this fixes a number of
-> ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
-> muxing which is controlled in firmware on this model work properly.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
-> +static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
-> +	acpi_physical_address address, u32 bits, u64 *value,
-> +	void *handler_context, void *region_context)
-> +{
-> +	struct chv_pinctrl *pctrl = region_context;
-> +	unsigned long flags;
-> +	acpi_status ret = AE_OK;
-> +
-> +	raw_spin_lock_irqsave(&chv_lock, flags);
-> +
-> +	if (function == ACPI_WRITE)
-> +		chv_writel((u32)(*value), pctrl->regs +
-> (u32)address);
-> +	else if (function == ACPI_READ)
-> +		*value = readl(pctrl->regs + (u32)address);
-> +	else
-> +		ret = AE_BAD_PARAMETER;
-> +
-> +	raw_spin_unlock_irqrestore(&chv_lock, flags);
-> +
-
-> +	return AE_OK;
-
-return ret;
-
-Didn't notice before, sorry.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+applied to my clk-branch for 4.12
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
