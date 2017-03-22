@@ -1,157 +1,66 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v2] pinctrl: cherryview: Add support for GMMR GPIO opregion
-Date: Wed, 22 Mar 2017 16:38:58 +0100
-Message-ID: <20170322153858.19656-1-hdegoede@redhat.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:34530 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935098AbdCVPjC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Mar 2017 11:39:02 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Wed, 22 Mar 2017 16:49:49 +0100
+Message-ID: <CAMuHMdVwQtdezy2vSp=v_DVHSoVtaOBVgam79k67zNSPiMB1jg@mail.gmail.com>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <CAMuHMdUvq6afz4h8XGUP=Ui6re9J1uZDrcSZ9OV+agY-jhJebQ@mail.gmail.com> <20170322153628.GH30223@w540>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170322153628.GH30223@w540>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: jacopo <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On some Cherry Trail devices the ASL uses the GMMR GPIO to access
-GPIOs so as to serialize MMIO accesses to GPIO registers with the
-OS, because:
+Hi Jacopo,
 
-"Due to a silicon issue, a shared lock must be used to prevent concurrent
-accesses across the 4 GPIO controllers.
+On Wed, Mar 22, 2017 at 4:36 PM, jacopo <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
+> On Wed, Mar 22, 2017 at 02:20:08PM +0100, Geert Uytterhoeven wrote:
+>> On Wed, Mar 22, 2017 at 11:33 AM, Geert Uytterhoeven
+>> <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> wrote:
+>> > On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
+>> >> Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+>>
+>> ulating the pin index from its position
+>> >> +      (port where it sits on and pin offset), and alternate function
+>> >> +      configuration options are provided in pin controller header file at:
+>> >
+>> > the pin ... file
+>> >
+>> >> +      include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+>> >
+>> > Hence I'd include that file in this patch, as it's part of the bindings.
+>>
+>> Ah, that would create a hard dependency between the DTS files and the
+>> DT bindings, which typically go in through different trees.
+>> As the driver replicates the definitions from the header, the include file
+>> can go in with the DTS updates.
+>>
+>
+> Sorry, got confused by multiple reviews here..
+> Are you suggesting to squash [03/07] in [04/07] here?
 
-See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
-errata #CHT34, for further information."
+No, I suggested to squash [03/07] into [02/07].
 
-This commit adds support for this opregion, this fixes a number of
-ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
-muxing which is controlled in firmware on this model work properly.
+But upon second thought, that's not such a good idea, as it creates an
+additional dependency.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-Changes in v2:
--Call acpi_remove_address_space_handler on remove
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 47 ++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index f80134e..4246493 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -148,6 +148,7 @@ struct chv_community {
- 	size_t ngpio_ranges;
- 	size_t ngpios;
- 	size_t nirqs;
-+	acpi_adr_space_type acpi_space_id;
- };
- 
- struct chv_pin_context {
-@@ -404,6 +405,7 @@ static const struct chv_community southwest_community = {
- 	 * trigger GPEs.
- 	 */
- 	.nirqs = 8,
-+	.acpi_space_id = 0x91,
- };
- 
- static const struct pinctrl_pin_desc north_pins[] = {
-@@ -493,6 +495,7 @@ static const struct chv_community north_community = {
- 	 * GPEs.
- 	 */
- 	.nirqs = 8,
-+	.acpi_space_id = 0x92,
- };
- 
- static const struct pinctrl_pin_desc east_pins[] = {
-@@ -536,6 +539,7 @@ static const struct chv_community east_community = {
- 	.ngpio_ranges = ARRAY_SIZE(east_gpio_ranges),
- 	.ngpios = ARRAY_SIZE(east_pins),
- 	.nirqs = 16,
-+	.acpi_space_id = 0x93,
- };
- 
- static const struct pinctrl_pin_desc southeast_pins[] = {
-@@ -662,6 +666,7 @@ static const struct chv_community southeast_community = {
- 	.ngpio_ranges = ARRAY_SIZE(southeast_gpio_ranges),
- 	.ngpios = ARRAY_SIZE(southeast_pins),
- 	.nirqs = 16,
-+	.acpi_space_id = 0x94,
- };
- 
- static const struct chv_community *chv_communities[] = {
-@@ -1586,11 +1591,34 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 	return 0;
- }
- 
-+static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
-+	acpi_physical_address address, u32 bits, u64 *value,
-+	void *handler_context, void *region_context)
-+{
-+	struct chv_pinctrl *pctrl = region_context;
-+	unsigned long flags;
-+	acpi_status ret = AE_OK;
-+
-+	raw_spin_lock_irqsave(&chv_lock, flags);
-+
-+	if (function == ACPI_WRITE)
-+		chv_writel((u32)(*value), pctrl->regs + (u32)address);
-+	else if (function == ACPI_READ)
-+		*value = readl(pctrl->regs + (u32)address);
-+	else
-+		ret = AE_BAD_PARAMETER;
-+
-+	raw_spin_unlock_irqrestore(&chv_lock, flags);
-+
-+	return AE_OK;
-+}
-+
- static int chv_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct chv_pinctrl *pctrl;
- 	struct acpi_device *adev;
- 	struct resource *res;
-+	acpi_status status;
- 	int ret, irq, i;
- 
- 	adev = ACPI_COMPANION(&pdev->dev);
-@@ -1646,11 +1674,29 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	status = acpi_install_address_space_handler(adev->handle,
-+					pctrl->community->acpi_space_id,
-+					chv_pinctrl_mmio_access_handler,
-+					NULL, pctrl);
-+	if (ACPI_FAILURE(status))
-+		dev_err(&pdev->dev, "failed to install ACPI addr space handler\n");
-+
- 	platform_set_drvdata(pdev, pctrl);
- 
- 	return 0;
- }
- 
-+static int chv_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-+
-+	acpi_remove_address_space_handler(ACPI_COMPANION(&pdev->dev),
-+					  pctrl->community->acpi_space_id,
-+					  chv_pinctrl_mmio_access_handler);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int chv_pinctrl_suspend_noirq(struct device *dev)
- {
-@@ -1758,6 +1804,7 @@ MODULE_DEVICE_TABLE(acpi, chv_pinctrl_acpi_match);
- 
- static struct platform_driver chv_pinctrl_driver = {
- 	.probe = chv_pinctrl_probe,
-+	.remove = chv_pinctrl_remove,
- 	.driver = {
- 		.name = "cherryview-pinctrl",
- 		.pm = &chv_pinctrl_pm_ops,
--- 
-2.9.3
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
