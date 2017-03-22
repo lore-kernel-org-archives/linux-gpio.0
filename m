@@ -1,47 +1,59 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 3/3] gpio: pca953x: Expand comment for "reset" GPIO in ACPI case
-Date: Wed, 22 Mar 2017 16:11:13 +0200
-Message-ID: <20170322141113.34396-3-andriy.shevchenko@linux.intel.com>
-References: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/3] gpio: pca953x: Introduce a long awaited ->get_direction()
+Date: Wed, 22 Mar 2017 16:11:11 +0200
+Message-ID: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:36244 "EHLO mga14.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:58432 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759624AbdCVOME (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:12:04 -0400
-In-Reply-To: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
+        id S1751125AbdCVOMA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Mar 2017 10:12:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Phil Reid <preid@electromag.com.au>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-GPIO ACPI library is going to be stricter about resources, thus, expand
-comment regarding "reset" GPIO resource in this driver to clarify its
-usage in ACPI case.
+Introduce ->get_direction() callback for the driver.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/gpio/gpio-pca953x.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ v2: fix direction (0 for out, 1 for in)
+ drivers/gpio/gpio-pca953x.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index cfee792182ab..d8eddc9b7af0 100644
+index d44232aadb6c..c149054ef976 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -777,7 +777,13 @@ static int pca953x_probe(struct i2c_client *client,
- 		chip->gpio_start = -1;
- 		irq_base = 0;
+@@ -363,6 +363,21 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ 	mutex_unlock(&chip->i2c_lock);
+ }
  
--		/* See if we need to de-assert a reset pin */
-+		/*
-+		 * See if we need to de-assert a reset pin.
-+		 *
-+		 * There is no known ACPI-enabled platforms that are
-+		 * using "reset" GPIO. Otherwise any of those platform
-+		 * must use _DSD method with corresponding property.
-+		 */
- 		reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
- 						     GPIOD_OUT_LOW);
- 		if (IS_ERR(reset_gpio))
++static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
++{
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
++	u32 reg_val;
++	int ret;
++
++	mutex_lock(&chip->i2c_lock);
++	ret = pca953x_read_single(chip, chip->regs->direction, &reg_val, off);
++	mutex_unlock(&chip->i2c_lock);
++	if (ret < 0)
++		return ret;
++
++	return (reg_val & (1u << (off % BANK_SZ))) ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
++}
++
+ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 				      unsigned long *mask, unsigned long *bits)
+ {
+@@ -408,6 +423,7 @@ static void pca953x_setup_gpio(struct pca953x_chip *chip, int gpios)
+ 	gc->direction_output = pca953x_gpio_direction_output;
+ 	gc->get = pca953x_gpio_get_value;
+ 	gc->set = pca953x_gpio_set_value;
++	gc->get_direction = pca953x_gpio_get_direction;
+ 	gc->set_multiple = pca953x_gpio_set_multiple;
+ 	gc->can_sleep = true;
+ 
 -- 
 2.11.0
 
