@@ -1,168 +1,51 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 0/7] Add support for pinctrl/gpio on Armada 37xx Was Re: [PATCH v2 0/7] Hi,
-Date: Wed, 22 Mar 2017 12:40:49 +0100
-Message-ID: <87efxpfsji.fsf@free-electrons.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
-        <87pohafj6q.fsf@free-electrons.com>
+Subject: Re: [PATCH 1/6] pinctrl: dt-bindings: Add documentation for Armada
+ 37xx pin controllers
+Date: Wed, 22 Mar 2017 12:42:04 +0100
+Message-ID: <87d1d9fshf.fsf@free-electrons.com>
+References: <20161222172501.16121-1-gregory.clement@free-electrons.com>
+ <20161222172501.16121-2-gregory.clement@free-electrons.com>
+ <CACRpkdY_yUpo1nkbr0T-FZVSRFynuLSZ_6etho0hHk+otaUiYw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:56249 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759313AbdCVLkw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2017 07:40:52 -0400
-In-Reply-To: <87pohafj6q.fsf@free-electrons.com> (Gregory CLEMENT's message of
-        "Tue, 21 Mar 2017 21:50:37 +0100")
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdY_yUpo1nkbr0T-FZVSRFynuLSZ_6etho0hHk+otaUiYw@mail.gmail.com>
+ (Linus Walleij's message of "Fri, 30 Dec 2016 09:35:27 +0100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Hua Jing <jinghua@marvell.com>, Omri Itach <omrii@marvell.com>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Victor Gu <xigu@marvell.com>, Terry Zhou <bjzhou@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
- 
- On mar., mars 21 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-
-> Hi,
->
-> Obviously this cover letter is wrong. Actually I forgot to commit it in
-> git series. Here it is the correct one:
->
-> After several months here it is the second version of the series adding
-> support for the pin and gpio controllers present on the Armada 37xx
-> SoCs.
-
-As the first version was sent in December here it is a link to it:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2016-December/475216.html
-
-Also I am going to answer to your review to point what I have done in
-this new series.
-
-Gregory
-
->
-> Each Armada 37xx SoC comes with 2 pin controllers: one on the south
-> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
->
-> At the hardware level the controller configure the pins by group and not
-> pin by pin.
->
-> The gpio controller is also capable to handle interrupt from gpio.
->
-> In the second version several changes has been done:
->
-> - Update binding documentation making clear that mfd and syscon must
->   be used (patch 1).
->
-> - Split the fist patch adding pin controller support for Armada 37xx
->   in arm64 part (for kconfig) and pinctrl part (patch 2 and 3)
->
-> - Add MFD_SYSCON dependency (patch 3)
->
-> - Add kerneldoc for the armada_37xx_pin_group struct (patch 3)
->
-> - Rename _add_function() to armada_37xx_add_function() (patch 3)
->
-> - Use an inline function to update the reg offset (patch 4)
->
-> - Rename gpiolib_register to gpiochip_register (patch 4)
->
-> - Add a comment about the two registers limit (patch 4)
->
-> - Add explicit gpio node in the device tree (patch 4)
->
-> - Convert the driver to use GPIOLIB_IRQCHIP (patch 5)
->
-> - Add a critical section when accessing the hardware registers (patch 5)
->
-> - Use the gpio sub-node (patch 5)
->
-> With these change most of the comment of the first revision have been addressed.
->
-> Thanks,
->
-> Gregory
->
-> Gregory CLEMENT (7):
->   pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
->   arm64: marvell: enable the Armada 37xx pinctrl driver
->   pinctrl: armada-37xx: Add pin controller support for Armada 37xx
->   pinctrl: armada-37xx: Add gpio support
->   pinctrl: aramda-37xx: Add irqchip support
->   ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
->   ARM64: dts: marvell: armada37xx: add pinctrl definition
->
->  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
->  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
->  arch/arm64/Kconfig.platforms                                              |   2 +-
->  arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
->  drivers/pinctrl/Makefile                                                  |   2 +-
->  drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
->  drivers/pinctrl/mvebu/Makefile                                            |   3 +-
->  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  9 files changed, 1153 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
->  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
->
-> Sorry for the noise,
->
-> Gregory
->
->
->  On mar., mars 21 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
->
->> this series add support for the pin and gpio controllers present on
->> the Armada 37xx SoCs.
->>
->> Each Armada 37xx SoC comes with 2 pin controllers: one on the south
->> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
->>
->> At the hardware level the controller configure the pins by group and not
->> pin by pin.
->>
->> The gpio controller is also capable to handle interrupt from gpio.
->>
->> Gregory
->>
->> Gregory CLEMENT (7):
->>   pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
->>   arm64: marvell: enable the Armada 37xx pinctrl driver
->>   pinctrl: armada-37xx: Add pin controller support for Armada 37xx
->>   pinctrl: armada-37xx: Add gpio support
->>   pinctrl: aramda-37xx: Add irqchip support
->>   ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
->>   ARM64: dts: marvell: armada37xx: add pinctrl definition
->>
->>  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
->>  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
->>  arch/arm64/Kconfig.platforms                                              |   2 +-
->>  arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
->>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
->>  drivers/pinctrl/Makefile                                                  |   2 +-
->>  drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
->>  drivers/pinctrl/mvebu/Makefile                                            |   3 +-
->>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->>  9 files changed, 1153 insertions(+), 8 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
->>  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
->>
->> base-commit: c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201
->> -- 
->> git-series 0.9.1
->
-> -- 
-> Gregory Clement, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+SGkgTGludXMsCiAKIE9uIHZlbi4sIGTDqWMuIDMwIDIwMTYsIExpbnVzIFdhbGxlaWogPGxpbnVz
+LndhbGxlaWpAbGluYXJvLm9yZz4gd3JvdGU6Cgo+IE9uIFRodSwgRGVjIDIyLCAyMDE2IGF0IDY6
+MjQgUE0sIEdyZWdvcnkgQ0xFTUVOVAo+IDxncmVnb3J5LmNsZW1lbnRAZnJlZS1lbGVjdHJvbnMu
+Y29tPiB3cm90ZToKPgo+PiBEb2N1bWVudCB0aGUgZGV2aWNlIHRyZWUgYmluZGluZyBmb3IgdGhl
+IHBpbiBjb250cm9sbGVycyBmb3VuZCBvbiB0aGUKPj4gQXJtYWRhIDM3eHggU29Dcy4KPj4KPj4g
+U2lnbmVkLW9mZi1ieTogR3JlZ29yeSBDTEVNRU5UIDxncmVnb3J5LmNsZW1lbnRAZnJlZS1lbGVj
+dHJvbnMuY29tPgo+ICguLi4pCj4KPj4gK1JlcXVpcmVkIHByb3BlcnRpZXMgZm9yIHBpbmN0cmwg
+ZHJpdmVyOgo+PiArLSBjb21wYXRpYmxlOiAgIm1hcnZlbGwsYXJtYWRhMzcxMC1zYi1waW5jdHJs
+IiBmb3IgdGhlIHNvdXRoIGJyaWRnZQo+PiArICAgICAgICAgICAgICAgIm1hcnZlbGwsYXJtYWRh
+MzcxMC1uYi1waW5jdHJsIiBmb3IgdGhlIG5vcnRoIGJyaWRnZQo+PiArLSByZWc6IFRoZSBmaXJz
+dCBzZXQgb2YgcmVnaXN0ZXIgYXJlIGZvciBwaW5jdHJsL2dwaW8gYW5kIHRoZSBzZWNvbmQKPj4g
+KyAgc2V0IGZvciB0aGUgaW50ZXJydXB0IGNvbnRyb2xsZXIKPj4gKy0gaW50ZXJydXB0czogbGlz
+dCBvZiB0aGUgaW50ZXJydXB0IHVzZSBieSB0aGUgZ3Bpbwo+Cj4gV2hpbGUgdGhpcyBtYWtlcyBz
+ZW5zZSBvbiBpdHMgb3duLCBpdCBkb2Vzbid0IG1hdGNoIHRoZSBjb2RlIHlvdSBzZW50Lgo+Cj4g
+VGhlIGNvZGUgdXNlcyBzeXNjb24gYW5kIHJlZ21hcCBpbnNpZGUgYSBzaW1wbGUtbWZkIG5vZGUs
+IG5vdCByZWcuCj4KPiBQbGVhc2UgY2xhcmlmeSBob3cgdGhpcyB3b3JrcyBzbyB3ZSBjYW4gc2Vl
+IHdoYXQgaXMgZ29pbmcgb24uCj4KPiBUaGUgc3lzY29uIHBhcnQgZG9lc24ndCBzZWVtIG9wdGlv
+bmFsIGF0IGFsbC4KCk9LIGRvbmUuCgo+Cj4gWW91cnMsCj4gTGludXMgV2FsbGVpagoKLS0gCkdy
+ZWdvcnkgQ2xlbWVudCwgRnJlZSBFbGVjdHJvbnMKS2VybmVsLCBkcml2ZXJzLCByZWFsLXRpbWUg
+YW5kIGVtYmVkZGVkIExpbnV4CmRldmVsb3BtZW50LCBjb25zdWx0aW5nLCB0cmFpbmluZyBhbmQg
+c3VwcG9ydC4KaHR0cDovL2ZyZWUtZWxlY3Ryb25zLmNvbQoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QK
+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRl
+YWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
