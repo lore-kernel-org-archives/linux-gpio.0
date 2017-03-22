@@ -1,82 +1,66 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 3/6] pinctrl: armada-37xx: Add gpio support
-Date: Wed, 22 Mar 2017 12:54:50 +0100
-Message-ID: <874lylfrw5.fsf@free-electrons.com>
+Subject: Re: [PATCH 4/6] pinctrl: aramda-37xx: Add irqchip support
+Date: Wed, 22 Mar 2017 13:02:10 +0100
+Message-ID: <87zigdeczh.fsf@free-electrons.com>
 References: <20161222172501.16121-1-gregory.clement@free-electrons.com>
- <20161222172501.16121-4-gregory.clement@free-electrons.com>
- <CACRpkdY_68=5oBN3TLs_ohc0gc2=yiG3qizg7MGh4F7Z+-ZzSg@mail.gmail.com>
+        <20161222172501.16121-5-gregory.clement@free-electrons.com>
+        <CACRpkdbR-WRT0rJp2CuN6CkZF=J35JUgGHjW7beyaimipz0ehw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdY_68=5oBN3TLs_ohc0gc2=yiG3qizg7MGh4F7Z+-ZzSg@mail.gmail.com>
- (Linus Walleij's message of "Fri, 30 Dec 2016 09:51:51 +0100")
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Hua Jing <jinghua@marvell.com>, Omri Itach <omrii@marvell.com>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Victor Gu <xigu@marvell.com>, Terry Zhou <bjzhou@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:56926 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbdCVMCN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2017 08:02:13 -0400
+In-Reply-To: <CACRpkdbR-WRT0rJp2CuN6CkZF=J35JUgGHjW7beyaimipz0ehw@mail.gmail.com>
+        (Linus Walleij's message of "Fri, 30 Dec 2016 09:58:06 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Terry Zhou <bjzhou@marvell.com>
 
-SGkgTGludXMsCiAKIE9uIHZlbi4sIGTDqWMuIDMwIDIwMTYsIExpbnVzIFdhbGxlaWogPGxpbnVz
-LndhbGxlaWpAbGluYXJvLm9yZz4gd3JvdGU6Cgo+IE9uIFRodSwgRGVjIDIyLCAyMDE2IGF0IDY6
-MjQgUE0sIEdyZWdvcnkgQ0xFTUVOVAo+IDxncmVnb3J5LmNsZW1lbnRAZnJlZS1lbGVjdHJvbnMu
-Y29tPiB3cm90ZToKPgo+PiBHUElPIG1hbmFnZW1lbnQgaXMgcHJldHR5IHNpbXBsZSBhbmQgaXMg
-cGFydCBvZiB0aGUgc2FtZSBJUCB0aGFuIHRoZSBwaW4KPj4gY29udHJvbGxlciBmb3IgdGhlIEFy
-bWFkYSAzN3h4IFNvQ3MuICBUaGlzIHBhdGNoIGFkZHMgdGhlIEdQSU8gc3VwcG9ydCB0bwo+PiB0
-aGUgcGluY3RybC1hcm1hZGEtMzd4eC5jIGZpbGUsIGl0IGFsc28gYWxsb3dzIHNoYXJpbmcgY29t
-bW9uIGZ1bmN0aW9ucwo+PiBiZXR3ZWVuIHRoZSBncGlvbGliIGFuZCB0aGUgcGluY3RybCBkcml2
-ZXJzLgo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBHcmVnb3J5IENMRU1FTlQgPGdyZWdvcnkuY2xlbWVu
-dEBmcmVlLWVsZWN0cm9ucy5jb20+Cj4KPiBTb21lIHJlbWFya3M6Cj4KPj4gK3N0YXRpYyBpbnQg
-YXJtYWRhXzM3eHhfZ3Bpb19nZXRfZGlyZWN0aW9uKHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsCj4+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBv
-ZmZzZXQpCj4+ICt7Cj4+ICsgICAgICAgc3RydWN0IGFybWFkYV8zN3h4X3BpbmN0cmwgKmluZm8g
-PSBncGlvY2hpcF9nZXRfZGF0YShjaGlwKTsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgcmVnID0g
-T1VUUFVUX0VOOwo+PiArICAgICAgIHVuc2lnbmVkIGludCB2YWwsIG1hc2s7Cj4+ICsKPj4gKyAg
-ICAgICBpZiAob2Zmc2V0ID49IEdQSU9fUEVSX1JFRykgewo+PiArICAgICAgICAgICAgICAgb2Zm
-c2V0IC09IEdQSU9fUEVSX1JFRzsKPj4gKyAgICAgICAgICAgICAgIHJlZyArPSBzaXplb2YodTMy
-KTsKPj4gKyAgICAgICB9Cj4KPiBBZGQgYSBjb21tZW50IHNheWluZyB3ZSBuZXZlciBoYXZlIG1v
-cmUgdGhhbiB0d28gcmVnaXN0ZXJzPwo+IElmIHRoZXJlIHdvdWxkIGJlIHRocmVlIHJlZ2lzdGVy
-cyB0aGlzIHdvdWxkIGZhaWwsIHJpZ2h0PwoKSSBhZGRlZCB0aGUgY29tbWVudAoKPgo+PiArICAg
-ICAgIG1hc2sgPSBCSVQob2Zmc2V0KTsKPj4gKwo+PiArICAgICAgIHJlZ21hcF9yZWFkKGluZm8t
-PnJlZ21hcCwgcmVnLCAmdmFsKTsKPj4KPj4gKyAgICAgICByZXR1cm4gKHZhbCAmIG1hc2spID09
-IDA7Cj4KPiBVc2UgdGhpczoKPgo+IHJldHVybiAhKHZhbCAmIG1hc2spOwoKZG9uZSBidXQgSSBj
-b3VsZCB0b3UgZXhwbGFpbiB0aGUgYWR2YW50YWdlIG9mIGRvaW5nIGl0PwoKPgo+PiArc3RhdGlj
-IGludCBhcm1hZGFfMzd4eF9ncGlvX2dldChzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNpZ25l
-ZCBpbnQgb2Zmc2V0KQo+PiArewo+PiArICAgICAgIHN0cnVjdCBhcm1hZGFfMzd4eF9waW5jdHJs
-ICppbmZvID0gZ3Bpb2NoaXBfZ2V0X2RhdGEoY2hpcCk7Cj4+ICsgICAgICAgdW5zaWduZWQgaW50
-IHJlZyA9IElOUFVUX1ZBTDsKPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgdmFsLCBtYXNrOwo+PiAr
-Cj4+ICsgICAgICAgaWYgKG9mZnNldCA+PSBHUElPX1BFUl9SRUcpIHsKPj4gKyAgICAgICAgICAg
-ICAgIG9mZnNldCAtPSBHUElPX1BFUl9SRUc7Cj4+ICsgICAgICAgICAgICAgICByZWcgKz0gc2l6
-ZW9mKHUzMik7Cj4+ICsgICAgICAgfQo+PiArICAgICAgIG1hc2sgPSBCSVQob2Zmc2V0KTsKPgo+
-IFRoaXMgY29kZSBpcyByZXBlYXRpbmcuIEJyZWFrIG91dCBhIHN0YXRpYyAoaW5saW5lPykgaGVs
-cGVyIHRvIGRvCj4gdGhpcy4KCmRvbmUKCj4KPj4gK3N0YXRpYyBpbnQgYXJtYWRhXzM3eHhfZ3Bp
-b2xpYl9yZWdpc3RlcihzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2LAo+PiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGFybWFkYV8zN3h4X3BpbmN0cmwg
-KmluZm8pCj4KPiBOaXQ6IGdwaW9jaGlwX3JlZ2lzdGVyIG9yIHNvIGlzIG1vcmUgdG8gdGhlIHBv
-aW50Lgo+Cj4+ICsgICAgICAgcmV0ID0gZ3Bpb2NoaXBfYWRkX3Bpbl9yYW5nZSgmaW5mby0+Z3Bp
-b19jaGlwLCBkZXZfbmFtZShkZXYpLCAwLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgcGluYmFzZSwgaW5mby0+ZGF0YS0+bnJfcGlucyk7Cj4+ICsgICAgICAgaWYgKHJl
-dCkKPj4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4KPiBXaHkgZG8geW91IGRvIHRoaXM/
-Cj4KPiBXaHkgbm90IGp1c3QgcHV0IHRoZSByYW5nZXMgaW50byB0aGUgZGV2aWNlIHRyZWU/IFdl
-IGFscmVhZHkgc3VwcG9ydAo+IHRoaXMgaW4gdGhlIGdwaW9saWIgY29yZSBhbmQgaXQgaXMgaGVs
-cGZ1bC4KPgo+IFNlZSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9ncGlv
-LnR4dAo+IGFuZCBvdGhlciBEVFMgZmlsZXMgZm9yIGdwaW8tcmFuZ2VzLgoKRm9sbG93aW5nIHlv
-dXIgcmV2aWV3LCBJIHRyaWVkIHRvIHVzZSBpdCBidXQgaXQgZGlkbid0IHdvcmsgZm9yCm1lLiBX
-aGVuIHRoZSBzZWNvbmQgcGluIGNvbnRyb2xsZXIgd2FzIHByb2JlZCB0aGVuIHRoZXJlIHdhcyBj
-b2xsaXNpb24KZm9yIHRoZSBncGlvIG51bWJlci4gSSB0cmllZCBzZXZlcmFsIGNvbWJpbmF0aW9u
-IHdpdGhvdXQgYW55IGx1Y2suCgpTbyBmb3Igbm93IEkgbGVmdCBpdCBhc2lkZS4KCkkgY2FuIHNo
-b3cgeW91IHRoZSBlcnJvcnMgbWVzc2FnZSBJIGdldCBhbmQgdGhlIGJpbmRpbmcgSSB1c2VkIGlm
-IHlvdQphcmUgaW50ZXJlc3RlZC4KCgpUaGFua3MsCgpHcmVnb3J5CgotLSAKR3JlZ29yeSBDbGVt
-ZW50LCBGcmVlIEVsZWN0cm9ucwpLZXJuZWwsIGRyaXZlcnMsIHJlYWwtdGltZSBhbmQgZW1iZWRk
-ZWQgTGludXgKZGV2ZWxvcG1lbnQsIGNvbnN1bHRpbmcsIHRyYWluaW5nIGFuZCBzdXBwb3J0Lgpo
-dHRwOi8vZnJlZS1lbGVjdHJvbnMuY29tCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Hi Linus,
+ 
+ On ven., déc. 30 2016, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> On Thu, Dec 22, 2016 at 6:24 PM, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>
+>> The Armada 37xx SoCs can handle interrupt through GPIO. However it can
+>> only manage the edge ones.
+>>
+>> The way the interrupt are managed are classical so we can use the generic
+>> interrupt chip model.
+>>
+>> The only unusual "feature" is that many interrupts are connected to the
+>> parent interrupt controller. But we do not take advantage of this and use
+>> the chained irq with all of them.
+>>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>
+> So this is very simple and should use GPIOLIB_IRQCHIP.
+>
+> Begin with select GPIOLIB_IRQCHIP in your Kconfig and then look
+> at conversions such as commit 85ae9e512f437cd09bf61564bdba29ab88bab3e3
+> ("pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP")
+> for inspiration.
+
+I switched to the use of GPIOLIB_IRQCHIP however it didn't really simplify
+my code, during the development on the v2 I did a commit only for this
+change and here it is the diffstat:
+110     72      drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+
+In my first version I used the generic irqchip so I was able to benefit
+of this framework, by switching to GPIOLIB_IRQCHIP I had to implement
+again some of the functions such as .mask, .unmask an ack.
+
+Thanks,
+
+Gregory
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
