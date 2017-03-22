@@ -1,56 +1,56 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] usb: dwc3: pci: Switch to devm_acpi_dev_add_driver_gpios()
-Date: Wed, 22 Mar 2017 16:08:07 +0200
-Message-ID: <20170322140807.34332-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 2/3] gpio: pca953x: Sort headers alphabetically
+Date: Wed, 22 Mar 2017 16:11:12 +0200
+Message-ID: <20170322141113.34396-2-andriy.shevchenko@linux.intel.com>
+References: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:57731 "EHLO mga11.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:7028 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934505AbdCVOL3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:11:29 -0400
+        id S934333AbdCVOLW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Mar 2017 10:11:22 -0400
+In-Reply-To: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Phil Reid <preid@electromag.com.au>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Switch to use managed variant of acpi_dev_add_driver_gpios() to simplify
-error path and fix potentially wrong assignment if ->probe() fails.
-
-While here, add a debug message in case assignment fails to allow user
-see the cause of a potential issue.
+For sake of better maintenance sort the headers by alphabetical order.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
+ drivers/gpio/gpio-pca953x.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
- Linus, according to preliminary agreement with Felipe it may go through
- GPIO subsystem instead of pulling from it.
-
- drivers/usb/dwc3/dwc3-pci.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-index cce0a220b6b0..a15ec71d0423 100644
---- a/drivers/usb/dwc3/dwc3-pci.c
-+++ b/drivers/usb/dwc3/dwc3-pci.c
-@@ -125,8 +125,10 @@ static int dwc3_pci_quirks(struct dwc3_pci *dwc)
- 		if (pdev->device == PCI_DEVICE_ID_INTEL_BYT) {
- 			struct gpio_desc *gpio;
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index c149054ef976..cfee792182ab 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -11,18 +11,19 @@
+  *  the Free Software Foundation; version 2 of the License.
+  */
  
--			acpi_dev_add_driver_gpios(ACPI_COMPANION(&pdev->dev),
-+			ret = devm_acpi_dev_add_driver_gpios(&pdev->dev,
- 					acpi_dwc3_byt_gpios);
-+			if (ret)
-+				dev_dbg(&pdev->dev, "failed to add mapping table\n");
+-#include <linux/module.h>
+-#include <linux/init.h>
++#include <linux/acpi.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/interrupt.h>
+ #include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_data/pca953x.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
++
+ #include <asm/unaligned.h>
+-#include <linux/of_platform.h>
+-#include <linux/acpi.h>
+-#include <linux/regulator/consumer.h>
  
- 			/*
- 			 * These GPIOs will turn on the USB2 PHY. Note that we have to
-@@ -242,7 +244,6 @@ static void dwc3_pci_remove(struct pci_dev *pci)
- 
- 	device_init_wakeup(&pci->dev, false);
- 	pm_runtime_get(&pci->dev);
--	acpi_dev_remove_driver_gpios(ACPI_COMPANION(&pci->dev));
- 	platform_device_unregister(dwc->dwc3);
- }
- 
+ #define PCA953X_INPUT		0
+ #define PCA953X_OUTPUT		1
 -- 
 2.11.0
 
