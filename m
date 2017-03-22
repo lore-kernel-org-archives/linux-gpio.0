@@ -1,46 +1,69 @@
-From: Julia Cartwright <julia@ni.com>
-Subject: Re: [PATCH v2 7/9] gpio: 104-idi-48: make use of raw_spinlock
- variants
-Date: Wed, 22 Mar 2017 11:11:16 -0500
-Message-ID: <20170322161116.GI10423@jcartwri.amer.corp.natinst.com>
-References: <cover.1490135047.git.julia@ni.com>
- <a9b84439c28b96a9b6a4cbfca85f1e13a457d25d.1490135047.git.julia@ni.com>
- <20170322124414.GA22323@sophia>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] pinctrl: cherryview: Add support for GMMR GPIO
+ opregion
+Date: Wed, 22 Mar 2017 19:00:54 +0200
+Message-ID: <1490202054.19767.173.camel@linux.intel.com>
+References: <20170322153858.19656-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-rt-users-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170322124414.GA22323@sophia>
-Sender: linux-rt-users-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga05.intel.com ([192.55.52.43]:53695 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760972AbdCVRBI (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Mar 2017 13:01:08 -0400
+In-Reply-To: <20170322153858.19656-1-hdegoede@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-On Wed, Mar 22, 2017 at 08:44:14AM -0400, William Breathitt Gray wrote:
-> On Tue, Mar 21, 2017 at 05:43:07PM -0500, Julia Cartwright wrote:
-> >The 104-idi-48 gpio driver currently implements an irq_chip for handling
-> >interrupts; due to how irq_chip handling is done, it's necessary for the
-> >irq_chip methods to be invoked from hardirq context, even on a a
-> >real-time kernel.  Because the spinlock_t type becomes a "sleeping"
-> >spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
-> >
-> >A quick audit of the operations under the lock reveal that they do only
-> >minimal, bounded work, and are therefore safe to do under a raw spinlock.
-> >
-> >Signed-off-by: Julia Cartwright <julia@ni.com>
+On Wed, 2017-03-22 at 16:38 +0100, Hans de Goede wrote:
+> On some Cherry Trail devices the ASL uses the GMMR GPIO to access
+> GPIOs so as to serialize MMIO accesses to GPIO registers with the
+> OS, because:
 > 
-> Hi Julia,
+> "Due to a silicon issue, a shared lock must be used to prevent
+> concurrent
+> accesses across the 4 GPIO controllers.
 > 
-> This driver also uses a second spinlock_t, called ack_lock, to prevent
-> reentrance into the idi_48_irq_handler function. Should ack_lock also be
-> implemented as a raw_spinlock_t?
+> See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
+> errata #CHT34, for further information."
+> 
+> This commit adds support for this opregion, this fixes a number of
+> ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
+> muxing which is controlled in firmware on this model work properly.
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I saw this lock, and I don't even understand it's purpose.
+> +static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
+> +	acpi_physical_address address, u32 bits, u64 *value,
+> +	void *handler_context, void *region_context)
+> +{
+> +	struct chv_pinctrl *pctrl = region_context;
+> +	unsigned long flags;
+> +	acpi_status ret = AE_OK;
+> +
+> +	raw_spin_lock_irqsave(&chv_lock, flags);
+> +
+> +	if (function == ACPI_WRITE)
+> +		chv_writel((u32)(*value), pctrl->regs +
+> (u32)address);
+> +	else if (function == ACPI_READ)
+> +		*value = readl(pctrl->regs + (u32)address);
+> +	else
+> +		ret = AE_BAD_PARAMETER;
+> +
+> +	raw_spin_unlock_irqrestore(&chv_lock, flags);
+> +
 
-However, I think I convinced myself that it's harmless.  Why?  It's only
-ever acquired in a handler registered with request_irq(), which, on RT,
-is invoked in a context which can sleep.
+> +	return AE_OK;
 
-Thanks for taking a closer look!
+return ret;
 
-   Julia
+Didn't notice before, sorry.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
