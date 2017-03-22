@@ -1,112 +1,168 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v4 1/2] backlight: pwm_bl: Move the checks for initial
- power state to a separate function
-Date: Wed, 22 Mar 2017 11:46:34 +0100
-Message-ID: <1490179594.2285.33.camel@pengutronix.de>
-References: <20161122134123.1209-1-peter.ujfalusi@ti.com>
-         <20161122134123.1209-2-peter.ujfalusi@ti.com>
-         <CAMuHMdXcgWyKqhZFX49Ri1eEgi1_8b_xj6P9vKwEBwpsxMXTuA@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 0/7] Add support for pinctrl/gpio on Armada 37xx Was Re: [PATCH v2 0/7] Hi,
+Date: Wed, 22 Mar 2017 12:40:49 +0100
+Message-ID: <87efxpfsji.fsf@free-electrons.com>
+References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
+        <87pohafj6q.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXcgWyKqhZFX49Ri1eEgi1_8b_xj6P9vKwEBwpsxMXTuA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, Lee Jones <lee.jones@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:56249 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759313AbdCVLkw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2017 07:40:52 -0400
+In-Reply-To: <87pohafj6q.fsf@free-electrons.com> (Gregory CLEMENT's message of
+        "Tue, 21 Mar 2017 21:50:37 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Tue, 2017-03-21 at 19:48 +0100, Geert Uytterhoeven wrote:
-> Hi Peter,
-> 
-> On Tue, Nov 22, 2016 at 2:41 PM, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
-> > Move the checks to select the initial state for the backlight to a new
-> > function and document the checks we are doing.
-> 
-> This is far from a simple "move"...
-> 
-> > With the separate function it is going to be easier to fix or improve the
-> > initial power state configuration later and it is easier to read the code.
-> >
-> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > Reviewed-by: Thierry Reding <treding@nvidia.com>
-> 
-> This patch (commit 7613c922315e308a in v4.11-rc1) broke the display on
-> r8a7740/armadillo.
-> 
-> > @@ -267,20 +292,16 @@ static int pwm_backlight_probe(struct platform_device *pdev)
-> >                 pb->enable_gpio = gpio_to_desc(data->enable_gpio);
-> >         }
-> >
-> > -       if (pb->enable_gpio) {
-> > -               /*
-> > -                * If the driver is probed from the device tree and there is a
-> > -                * phandle link pointing to the backlight node, it is safe to
-> > -                * assume that another driver will enable the backlight at the
-> > -                * appropriate time. Therefore, if it is disabled, keep it so.
-> > -                */
-> > -               if (node && node->phandle &&
-> > -                   gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_OUT &&
-> > -                   gpiod_get_value(pb->enable_gpio) == 0)
-> > -                       initial_blank = FB_BLANK_POWERDOWN;
-> > -               else
-> > -                       gpiod_direction_output(pb->enable_gpio, 1);
-> 
-> In my case, "node" points to the "/backlight" node, but phandle is NULL.
-> Hence before, gpiod_direction_output() was called to enable the GPIO...
-> 
-> > -       }
-> > +       /*
-> > +        * If the GPIO is configured as input, change the direction to output
-> > +        * and set the GPIO as active.
-> > +        * Do not force the GPIO to active when it was already output as it
-> > +        * could cause backlight flickering or we would enable the backlight too
-> > +        * early. Leave the decision of the initial backlight state for later.
-> > +        */
-> > +       if (pb->enable_gpio &&
-> > +           gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN)
-> > +               gpiod_direction_output(pb->enable_gpio, 1);
-> 
-> ... while now it's no longer called, as gpiod_get_direction() returns
-> -EINVAL.
-> 
-> Indeed, r8a7740_pfc does not implement the .get_direction() callback,
-> so gpiod_get_direction() always returns -EINVAL, which is never equal
-> to GPIOF_DIR_IN.
+Hi Linus,
+ 
+ On mar., mars 21 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
 
-Oh, I didn't think about this at all, anymore. Though I believe to
-remember that this was the reason that I checked for
-(gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_OUT) before, so ...
-
-> Restoring the old behavior by changing the above test to
-> 
->         if (pb->enable_gpio &&
->             (!node || !node->phandle ||
->              gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN))
-> 
-> fixes the display for me, but leads to a more complex expression.
-> 
-> However, changing the test to
-> 
->         if (pb->enable_gpio &&
->             gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
-> 
-> also fixes the display, as an error is always different from GPIOF_DIR_OUT.
+> Hi,
 >
-> Anyone with comments or suggestions to fix this for real?
+> Obviously this cover letter is wrong. Actually I forgot to commit it in
+> git series. Here it is the correct one:
+>
+> After several months here it is the second version of the series adding
+> support for the pin and gpio controllers present on the Armada 37xx
+> SoCs.
 
-... I'm in favor of the latter, as this is closer to the initial
-intention. I'd also mention this in the comment:
+As the first version was sent in December here it is a link to it:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2016-December/475216.html
 
-       /*
-        * If the GPIO is not known to be already configured as output, that is,
-        * if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL, change
-        * the direction to output and set the GPIO as active.
-        * Do not force the GPIO to active when it was already output as it
-        * could cause backlight flickering or we would enable the backlight too
-        * early. Leave the decision of the initial backlight state for later.
-        */
+Also I am going to answer to your review to point what I have done in
+this new series.
 
-regards
-Philipp
+Gregory
+
+>
+> Each Armada 37xx SoC comes with 2 pin controllers: one on the south
+> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
+>
+> At the hardware level the controller configure the pins by group and not
+> pin by pin.
+>
+> The gpio controller is also capable to handle interrupt from gpio.
+>
+> In the second version several changes has been done:
+>
+> - Update binding documentation making clear that mfd and syscon must
+>   be used (patch 1).
+>
+> - Split the fist patch adding pin controller support for Armada 37xx
+>   in arm64 part (for kconfig) and pinctrl part (patch 2 and 3)
+>
+> - Add MFD_SYSCON dependency (patch 3)
+>
+> - Add kerneldoc for the armada_37xx_pin_group struct (patch 3)
+>
+> - Rename _add_function() to armada_37xx_add_function() (patch 3)
+>
+> - Use an inline function to update the reg offset (patch 4)
+>
+> - Rename gpiolib_register to gpiochip_register (patch 4)
+>
+> - Add a comment about the two registers limit (patch 4)
+>
+> - Add explicit gpio node in the device tree (patch 4)
+>
+> - Convert the driver to use GPIOLIB_IRQCHIP (patch 5)
+>
+> - Add a critical section when accessing the hardware registers (patch 5)
+>
+> - Use the gpio sub-node (patch 5)
+>
+> With these change most of the comment of the first revision have been addressed.
+>
+> Thanks,
+>
+> Gregory
+>
+> Gregory CLEMENT (7):
+>   pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
+>   arm64: marvell: enable the Armada 37xx pinctrl driver
+>   pinctrl: armada-37xx: Add pin controller support for Armada 37xx
+>   pinctrl: armada-37xx: Add gpio support
+>   pinctrl: aramda-37xx: Add irqchip support
+>   ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
+>   ARM64: dts: marvell: armada37xx: add pinctrl definition
+>
+>  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
+>  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
+>  arch/arm64/Kconfig.platforms                                              |   2 +-
+>  arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
+>  drivers/pinctrl/Makefile                                                  |   2 +-
+>  drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
+>  drivers/pinctrl/mvebu/Makefile                                            |   3 +-
+>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  9 files changed, 1153 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+>
+> Sorry for the noise,
+>
+> Gregory
+>
+>
+>  On mar., mars 21 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+>
+>> this series add support for the pin and gpio controllers present on
+>> the Armada 37xx SoCs.
+>>
+>> Each Armada 37xx SoC comes with 2 pin controllers: one on the south
+>> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
+>>
+>> At the hardware level the controller configure the pins by group and not
+>> pin by pin.
+>>
+>> The gpio controller is also capable to handle interrupt from gpio.
+>>
+>> Gregory
+>>
+>> Gregory CLEMENT (7):
+>>   pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
+>>   arm64: marvell: enable the Armada 37xx pinctrl driver
+>>   pinctrl: armada-37xx: Add pin controller support for Armada 37xx
+>>   pinctrl: armada-37xx: Add gpio support
+>>   pinctrl: aramda-37xx: Add irqchip support
+>>   ARM64: dts: marvell: Add pinctrl nodes for Armada 3700
+>>   ARM64: dts: marvell: armada37xx: add pinctrl definition
+>>
+>>  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +-
+>>  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 143 +++++++++++-
+>>  arch/arm64/Kconfig.platforms                                              |   2 +-
+>>  arch/arm64/boot/dts/marvell/armada-3720-db.dts                            |   8 +-
+>>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi                              |  71 +++++-
+>>  drivers/pinctrl/Makefile                                                  |   2 +-
+>>  drivers/pinctrl/mvebu/Kconfig                                             |   7 +-
+>>  drivers/pinctrl/mvebu/Makefile                                            |   3 +-
+>>  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c                               | 918 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>  9 files changed, 1153 insertions(+), 8 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+>>  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+>>
+>> base-commit: c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201
+>> -- 
+>> git-series 0.9.1
+>
+> -- 
+> Gregory Clement, Free Electrons
+> Kernel, drivers, real-time and embedded Linux
+> development, consulting, training and support.
+> http://free-electrons.com
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
