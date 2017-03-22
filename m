@@ -1,125 +1,140 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v4 1/2] backlight: pwm_bl: Move the checks for initial
- power state to a separate function
-Date: Wed, 22 Mar 2017 13:30:32 +0100
-Message-ID: <CAMuHMdWAHpJKf1wrc-ADY1KzEtRJK1-qH-wgRqLeQD6TWP-rPQ@mail.gmail.com>
-References: <20161122134123.1209-1-peter.ujfalusi@ti.com> <20161122134123.1209-2-peter.ujfalusi@ti.com>
- <CAMuHMdXcgWyKqhZFX49Ri1eEgi1_8b_xj6P9vKwEBwpsxMXTuA@mail.gmail.com> <1490179594.2285.33.camel@pengutronix.de>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v2 8/9] gpio: 104-idio-16: make use of raw_spinlock
+ variants
+Date: Wed, 22 Mar 2017 08:45:22 -0400
+Message-ID: <20170322124522.GB22323@sophia>
+References: <cover.1490135047.git.julia@ni.com>
+ <9b15e28c4aeeade4b44e9a2bb06c12ded5d0990b.1490135047.git.julia@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35378 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759284AbdCVMeY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2017 08:34:24 -0400
-In-Reply-To: <1490179594.2285.33.camel@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-rt-users-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <9b15e28c4aeeade4b44e9a2bb06c12ded5d0990b.1490135047.git.julia@ni.com>
+Sender: linux-rt-users-owner@vger.kernel.org
+To: Julia Cartwright <julia@ni.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, Lee Jones <lee.jones@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Hi Philip,
-
-On Wed, Mar 22, 2017 at 11:46 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Tue, 2017-03-21 at 19:48 +0100, Geert Uytterhoeven wrote:
->> On Tue, Nov 22, 2016 at 2:41 PM, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->> > Move the checks to select the initial state for the backlight to a new
->> > function and document the checks we are doing.
->>
->> This is far from a simple "move"...
->>
->> > With the separate function it is going to be easier to fix or improve the
->> > initial power state configuration later and it is easier to read the code.
->> >
->> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->> > Reviewed-by: Thierry Reding <treding@nvidia.com>
->>
->> This patch (commit 7613c922315e308a in v4.11-rc1) broke the display on
->> r8a7740/armadillo.
->>
->> > @@ -267,20 +292,16 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->> >                 pb->enable_gpio = gpio_to_desc(data->enable_gpio);
->> >         }
->> >
->> > -       if (pb->enable_gpio) {
->> > -               /*
->> > -                * If the driver is probed from the device tree and there is a
->> > -                * phandle link pointing to the backlight node, it is safe to
->> > -                * assume that another driver will enable the backlight at the
->> > -                * appropriate time. Therefore, if it is disabled, keep it so.
->> > -                */
->> > -               if (node && node->phandle &&
->> > -                   gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_OUT &&
->> > -                   gpiod_get_value(pb->enable_gpio) == 0)
->> > -                       initial_blank = FB_BLANK_POWERDOWN;
->> > -               else
->> > -                       gpiod_direction_output(pb->enable_gpio, 1);
->>
->> In my case, "node" points to the "/backlight" node, but phandle is NULL.
->> Hence before, gpiod_direction_output() was called to enable the GPIO...
->>
->> > -       }
->> > +       /*
->> > +        * If the GPIO is configured as input, change the direction to output
->> > +        * and set the GPIO as active.
->> > +        * Do not force the GPIO to active when it was already output as it
->> > +        * could cause backlight flickering or we would enable the backlight too
->> > +        * early. Leave the decision of the initial backlight state for later.
->> > +        */
->> > +       if (pb->enable_gpio &&
->> > +           gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN)
->> > +               gpiod_direction_output(pb->enable_gpio, 1);
->>
->> ... while now it's no longer called, as gpiod_get_direction() returns
->> -EINVAL.
->>
->> Indeed, r8a7740_pfc does not implement the .get_direction() callback,
->> so gpiod_get_direction() always returns -EINVAL, which is never equal
->> to GPIOF_DIR_IN.
+On Tue, Mar 21, 2017 at 05:43:08PM -0500, Julia Cartwright wrote:
+>The 104-idio-16 gpio driver currently implements an irq_chip for handling
+>interrupts; due to how irq_chip handling is done, it's necessary for the
+>irq_chip methods to be invoked from hardirq context, even on a a
+>real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+>spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
 >
-> Oh, I didn't think about this at all, anymore. Though I believe to
-> remember that this was the reason that I checked for
-> (gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_OUT) before, so ...
+>A quick audit of the operations under the lock reveal that they do only
+>minimal, bounded work, and are therefore safe to do under a raw spinlock.
 >
->> Restoring the old behavior by changing the above test to
->>
->>         if (pb->enable_gpio &&
->>             (!node || !node->phandle ||
->>              gpiod_get_direction(pb->enable_gpio) == GPIOF_DIR_IN))
->>
->> fixes the display for me, but leads to a more complex expression.
->>
->> However, changing the test to
->>
->>         if (pb->enable_gpio &&
->>             gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
->>
->> also fixes the display, as an error is always different from GPIOF_DIR_OUT.
->>
->> Anyone with comments or suggestions to fix this for real?
+>Signed-off-by: Julia Cartwright <julia@ni.com>
+
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+
+>---
+>New patch as of v2 of series.
 >
-> ... I'm in favor of the latter, as this is closer to the initial
-> intention. I'd also mention this in the comment:
+> drivers/gpio/gpio-104-idio-16.c | 24 ++++++++++++------------
+> 1 file changed, 12 insertions(+), 12 deletions(-)
 >
->        /*
->         * If the GPIO is not known to be already configured as output, that is,
->         * if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL, change
->         * the direction to output and set the GPIO as active.
->         * Do not force the GPIO to active when it was already output as it
->         * could cause backlight flickering or we would enable the backlight too
->         * early. Leave the decision of the initial backlight state for later.
->         */
-
-Thanks, I'll cook up a patch.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+>index 7053cf736648..5281e1cedb01 100644
+>--- a/drivers/gpio/gpio-104-idio-16.c
+>+++ b/drivers/gpio/gpio-104-idio-16.c
+>@@ -50,7 +50,7 @@ MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
+>  */
+> struct idio_16_gpio {
+> 	struct gpio_chip chip;
+>-	spinlock_t lock;
+>+	raw_spinlock_t lock;
+> 	unsigned long irq_mask;
+> 	unsigned base;
+> 	unsigned out_state;
+>@@ -99,7 +99,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+> 	if (offset > 15)
+> 		return;
+> 
+>-	spin_lock_irqsave(&idio16gpio->lock, flags);
+>+	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+> 
+> 	if (value)
+> 		idio16gpio->out_state |= mask;
+>@@ -111,7 +111,7 @@ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+> 	else
+> 		outb(idio16gpio->out_state, idio16gpio->base);
+> 
+>-	spin_unlock_irqrestore(&idio16gpio->lock, flags);
+>+	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+> }
+> 
+> static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+>@@ -120,7 +120,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+> 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+> 	unsigned long flags;
+> 
+>-	spin_lock_irqsave(&idio16gpio->lock, flags);
+>+	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+> 
+> 	idio16gpio->out_state &= ~*mask;
+> 	idio16gpio->out_state |= *mask & *bits;
+>@@ -130,7 +130,7 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
+> 	if ((*mask >> 8) & 0xFF)
+> 		outb(idio16gpio->out_state >> 8, idio16gpio->base + 4);
+> 
+>-	spin_unlock_irqrestore(&idio16gpio->lock, flags);
+>+	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+> }
+> 
+> static void idio_16_irq_ack(struct irq_data *data)
+>@@ -147,11 +147,11 @@ static void idio_16_irq_mask(struct irq_data *data)
+> 	idio16gpio->irq_mask &= ~mask;
+> 
+> 	if (!idio16gpio->irq_mask) {
+>-		spin_lock_irqsave(&idio16gpio->lock, flags);
+>+		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+> 
+> 		outb(0, idio16gpio->base + 2);
+> 
+>-		spin_unlock_irqrestore(&idio16gpio->lock, flags);
+>+		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+> 	}
+> }
+> 
+>@@ -166,11 +166,11 @@ static void idio_16_irq_unmask(struct irq_data *data)
+> 	idio16gpio->irq_mask |= mask;
+> 
+> 	if (!prev_irq_mask) {
+>-		spin_lock_irqsave(&idio16gpio->lock, flags);
+>+		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
+> 
+> 		inb(idio16gpio->base + 2);
+> 
+>-		spin_unlock_irqrestore(&idio16gpio->lock, flags);
+>+		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
+> 	}
+> }
+> 
+>@@ -201,11 +201,11 @@ static irqreturn_t idio_16_irq_handler(int irq, void *dev_id)
+> 	for_each_set_bit(gpio, &idio16gpio->irq_mask, chip->ngpio)
+> 		generic_handle_irq(irq_find_mapping(chip->irqdomain, gpio));
+> 
+>-	spin_lock(&idio16gpio->lock);
+>+	raw_spin_lock(&idio16gpio->lock);
+> 
+> 	outb(0, idio16gpio->base + 1);
+> 
+>-	spin_unlock(&idio16gpio->lock);
+>+	raw_spin_unlock(&idio16gpio->lock);
+> 
+> 	return IRQ_HANDLED;
+> }
+>@@ -249,7 +249,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+> 	idio16gpio->base = base[id];
+> 	idio16gpio->out_state = 0xFFFF;
+> 
+>-	spin_lock_init(&idio16gpio->lock);
+>+	raw_spin_lock_init(&idio16gpio->lock);
+> 
+> 	err = devm_gpiochip_add_data(dev, &idio16gpio->chip, idio16gpio);
+> 	if (err) {
+>-- 
+>2.12.0
+>
