@@ -1,39 +1,46 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2] pinctrl: cherryview: Add support for GMMR GPIO
- opregion
-Date: Wed, 22 Mar 2017 17:42:57 +0200
-Message-ID: <20170322154257.GV2957@lahna.fi.intel.com>
-References: <20170322153858.19656-1-hdegoede@redhat.com>
+From: Julia Cartwright <julia@ni.com>
+Subject: Re: [PATCH v2 7/9] gpio: 104-idi-48: make use of raw_spinlock
+ variants
+Date: Wed, 22 Mar 2017 11:11:16 -0500
+Message-ID: <20170322161116.GI10423@jcartwri.amer.corp.natinst.com>
+References: <cover.1490135047.git.julia@ni.com>
+ <a9b84439c28b96a9b6a4cbfca85f1e13a457d25d.1490135047.git.julia@ni.com>
+ <20170322124414.GA22323@sophia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:16520 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760238AbdCVPtt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Mar 2017 11:49:49 -0400
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-rt-users-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170322153858.19656-1-hdegoede@redhat.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20170322124414.GA22323@sophia>
+Sender: linux-rt-users-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On Wed, Mar 22, 2017 at 04:38:58PM +0100, Hans de Goede wrote:
-> On some Cherry Trail devices the ASL uses the GMMR GPIO to access
-> GPIOs so as to serialize MMIO accesses to GPIO registers with the
-> OS, because:
+On Wed, Mar 22, 2017 at 08:44:14AM -0400, William Breathitt Gray wrote:
+> On Tue, Mar 21, 2017 at 05:43:07PM -0500, Julia Cartwright wrote:
+> >The 104-idi-48 gpio driver currently implements an irq_chip for handling
+> >interrupts; due to how irq_chip handling is done, it's necessary for the
+> >irq_chip methods to be invoked from hardirq context, even on a a
+> >real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+> >spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+> >
+> >A quick audit of the operations under the lock reveal that they do only
+> >minimal, bounded work, and are therefore safe to do under a raw spinlock.
+> >
+> >Signed-off-by: Julia Cartwright <julia@ni.com>
 > 
-> "Due to a silicon issue, a shared lock must be used to prevent concurrent
-> accesses across the 4 GPIO controllers.
+> Hi Julia,
 > 
-> See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
-> errata #CHT34, for further information."
-> 
-> This commit adds support for this opregion, this fixes a number of
-> ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
-> muxing which is controlled in firmware on this model work properly.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> This driver also uses a second spinlock_t, called ack_lock, to prevent
+> reentrance into the idi_48_irq_handler function. Should ack_lock also be
+> implemented as a raw_spinlock_t?
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+I saw this lock, and I don't even understand it's purpose.
+
+However, I think I convinced myself that it's harmless.  Why?  It's only
+ever acquired in a handler registered with request_irq(), which, on RT,
+is invoked in a context which can sleep.
+
+Thanks for taking a closer look!
+
+   Julia
