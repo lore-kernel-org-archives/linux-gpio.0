@@ -1,60 +1,61 @@
-From: Felipe Balbi <balbi@kernel.org>
-Subject: Re: [PATCH v1] usb: dwc3: pci: Switch to devm_acpi_dev_add_driver_gpios()
-Date: Wed, 22 Mar 2017 16:35:41 +0200
-Message-ID: <87poh9tm4i.fsf@linux.intel.com>
-References: <20170322140807.34332-1-andriy.shevchenko@linux.intel.com>
+From: jacopo <jacopo@jmondi.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Wed, 22 Mar 2017 16:36:28 +0100
+Message-ID: <20170322153628.GH30223@w540>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <CAMuHMdUvq6afz4h8XGUP=Ui6re9J1uZDrcSZ9OV+agY-jhJebQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:36923 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759133AbdCVOhQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 22 Mar 2017 10:37:16 -0400
-In-Reply-To: <20170322140807.34332-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUvq6afz4h8XGUP=Ui6re9J1uZDrcSZ9OV+agY-jhJebQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-usb@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Geert,
+    thanks for reviews
 
+On Wed, Mar 22, 2017 at 02:20:08PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Mar 22, 2017 at 11:33 AM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Mon, Mar 20, 2017 at 5:14 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> >> Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> 
+> ulating the pin index from its position
+> >> +      (port where it sits on and pin offset), and alternate function
+> >> +      configuration options are provided in pin controller header file at:
+> >
+> > the pin ... file
+> >
+> >> +      include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+> >
+> > Hence I'd include that file in this patch, as it's part of the bindings.
+> 
+> Ah, that would create a hard dependency between the DTS files and the
+> DT bindings, which typically go in through different trees.
+> As the driver replicates the definitions from the header, the include file
+> can go in with the DTS updates.
+> 
 
-Hi,
+Sorry, got confused by multiple reviews here..
+Are you suggesting to squash [03/07] in [04/07] here?
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> Switch to use managed variant of acpi_dev_add_driver_gpios() to simplify
-> error path and fix potentially wrong assignment if ->probe() fails.
->
-> While here, add a debug message in case assignment fails to allow user
-> see the cause of a potential issue.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thanks
+   j
 
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAljSi70ACgkQzL64meEa
-mQaOQxAAxPz2ykTHleJHb/PMtrpIJuLKpgMq2zOVIpgb/x//kWAkoUCyOekZwp4g
-GaTsj0jX4l6+Ej8tb1V+Wfw0XJb0Ei6JeSLxRzpei6xCAouQqxzHiyl9qF1AYniJ
-vXCfoYjaN1OAa2OSH23IuMuDvEXEtVTDwisZkDCdx87O9MeD0aWDpBS9xucnoZph
-auOstB1a1y4PbGCn6RqxDX28JvWYmdn0lEKJXVio62RHlT3ihzpfcD1SiCnO/95S
-ifi0Zxe54K+4EeGx3rrXOqHYkSIHRJiLZKcg1Lr+6qGgw0ax1Y9Pb4SZuFHWe5Pd
-WLiPjxCX9aAbVf9IoTAMiTlbnjgH/wNl4u7tXWaXmDjPwLum+FVuAXPGu6i1qdEN
-m/nL5cyRnol2ptidF5XH5mzSCJegkaIoUbfLKkc8Lo8Nr2YmsaiZk1DB+61qyXBu
-+AABACpMuoTSno8ueQKmQuTJahfFWQS6Dv3iYCUuZ3+cVwaelIM1YBbQRKC1Vs49
-Cmu42OTuFqM91dMMMl8kLI5n84HIKaiIfMkk8TlOic9QU6UqnkYyMKGhqUBIa4gr
-vTkmA5pEyUbfJGbHJxx9MGPRtOU+535Gv/09Q1PGcQ0h6ywyp4MyV2YVbNSW5tEJ
-8q25kb5DwBwQKNz191TS1lLDByotL9CsCvvt4rmLqeg1WPu/JaY=
-=LEtL
------END PGP SIGNATURE-----
---=-=-=--
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
