@@ -1,37 +1,47 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: Misc fixes and cleanups
-Date: Wed, 22 Mar 2017 14:25:37 +0100
-Message-ID: <CAMuHMdXBsv-oo4gSg-ZReRpCLyb4-wgLY_3dDxHJmnCyzPaTQQ@mail.gmail.com>
-References: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1489423302-21296-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 3/3] gpio: pca953x: Expand comment for "reset" GPIO in ACPI case
+Date: Wed, 22 Mar 2017 16:11:13 +0200
+Message-ID: <20170322141113.34396-3-andriy.shevchenko@linux.intel.com>
+References: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:36244 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759624AbdCVOME (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 22 Mar 2017 10:12:04 -0400
+In-Reply-To: <20170322141113.34396-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Phil Reid <preid@electromag.com.au>, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Mon, Mar 13, 2017 at 5:41 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This patch series contains miscellaneous fixes and cleanups for the
-> Renesas R-Car H3 pinctrl driver:
->
-> I plan to queue these up in sh-pfc-for-v4.12.
+GPIO ACPI library is going to be stricter about resources, thus, expand
+comment regarding "reset" GPIO resource in this driver to clarify its
+usage in ACPI case.
 
-Queued in sh-pfc-for-v4.12, after adressing Sergei's comment.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca953x.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> Geert Uytterhoeven (2):
->   pinctrl: sh-pfc: r8a7795: Fix hscif2_clk_b and hscif4_ctrl
->   pinctrl: sh-pfc: r8a7795: Restore sort order
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index cfee792182ab..d8eddc9b7af0 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -777,7 +777,13 @@ static int pca953x_probe(struct i2c_client *client,
+ 		chip->gpio_start = -1;
+ 		irq_base = 0;
+ 
+-		/* See if we need to de-assert a reset pin */
++		/*
++		 * See if we need to de-assert a reset pin.
++		 *
++		 * There is no known ACPI-enabled platforms that are
++		 * using "reset" GPIO. Otherwise any of those platform
++		 * must use _DSD method with corresponding property.
++		 */
+ 		reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
+ 						     GPIOD_OUT_LOW);
+ 		if (IS_ERR(reset_gpio))
+-- 
+2.11.0
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
