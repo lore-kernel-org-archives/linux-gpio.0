@@ -1,35 +1,45 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/2] pinctrl: samsung: Use devres version of
- gpiochip_add_data
-Date: Thu, 23 Mar 2017 20:51:57 +0200
-Message-ID: <20170323185157.xsw4u7zkrbk75ta6@kozik-lap>
-References: <1490202935-4708-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1490202935-4708-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH v2 2/2] ARM64: dts: amlogic: meson-gxl: add the missing PWM pins
+Date: Thu, 23 Mar 2017 12:09:53 -0700
+Message-ID: <m21stnn726.fsf@baylibre.com>
+References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+        <20170318122736.11592-1-martin.blumenstingl@googlemail.com>
+        <20170318122736.11592-3-martin.blumenstingl@googlemail.com>
+        <CACRpkdZSJc8a5jqK0gAuRgogQfiLsSXocR4RKsogqnWgNnVsjQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1490202935-4708-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:35066 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751235AbdCWTJ4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 15:09:56 -0400
+Received: by mail-pg0-f47.google.com with SMTP id t143so62534434pgb.2
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 12:09:56 -0700 (PDT)
+In-Reply-To: <CACRpkdZSJc8a5jqK0gAuRgogQfiLsSXocR4RKsogqnWgNnVsjQ@mail.gmail.com>
+        (Linus Walleij's message of "Thu, 23 Mar 2017 09:47:23 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Carlo Caione <carlo@caione.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>
 
-On Wed, Mar 22, 2017 at 05:15:35PM +0000, Charles Keepax wrote:
-> Use devm_gpiochip_add_data to simplify the error path in
-> samsung_gpiolib_register.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
-> 
-> No changes since v2.
-> 
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
-> 
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Thanks, applied.
+> On Sat, Mar 18, 2017 at 1:27 PM, Martin Blumenstingl
+> <martin.blumenstingl@googlemail.com> wrote:
+>
+>> This adds the new DT nodes for the missing PWM pins in the EE and AO
+>> domain.
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+>> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Pls take this through ARM SoC.
 
-Best regards,
-Krzysztof
+Applied to amlogic v4.12/dt64 branch, to be sent via arm-soc.
+
+Thanks,
+
+Kevin
