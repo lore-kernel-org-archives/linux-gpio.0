@@ -1,43 +1,48 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 2/6] pinctrl: samsung: Add support for pad retention
- control for Exynos5433 SoCs
-Date: Thu, 23 Mar 2017 21:15:01 +0200
-Message-ID: <20170323191501.3xufnbb5nqhm4szm@kozik-lap>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080348eucas1p188a598869b71a1302160df46839b3ca8@eucas1p1.samsung.com>
- <1490256207-10061-3-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35046 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935273AbdCWTPV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 15:15:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1490256207-10061-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/8] gpio: acpi: Align acpi_find_gpio() with DT version
+Date: Thu, 23 Mar 2017 21:46:12 +0200
+Message-ID: <20170323194618.26548-3-andriy.shevchenko@linux.intel.com>
+References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Thu, Mar 23, 2017 at 09:03:23AM +0100, Marek Szyprowski wrote:
-> This patch adds support for retention control for Exynos5433 SoCs. Three
-> groups of pins has been defined for retention control: common shared group
-> for ALIVE, CPIF, eSE, FINGER, IMEM, NFC, PERIC, TOUCH pin banks and
-> separate control for FSYS and AUD pin banks, for which PMU retention
-> registers match whole banks.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 58 ++++++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
-> 
+By some reason acpi_find_gpio() and acpi_gpio_count() have compared connection
+ID to "gpios" when tries to check if suffix is needed or not.
 
-Thanks, applied.
+Don't do any assumptions about what connection ID can be and, when defined, use
+it only with suffix as it's done in the device tree version.
 
-Let it settle for one day so auto-builders will catch up and then I will
-provide a stable tag for Lee (MFD).
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 56a6b1be3a17..3bda3166d418 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -593,7 +593,7 @@ struct gpio_desc *acpi_find_gpio(struct device *dev,
+ 
+ 	/* Try first from _DSD */
+ 	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+-		if (con_id && strcmp(con_id, "gpios")) {
++		if (con_id) {
+ 			snprintf(propname, sizeof(propname), "%s-%s",
+ 				 con_id, gpio_suffixes[i]);
+ 		} else {
+@@ -1081,7 +1081,7 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
+ 
+ 	/* Try first from _DSD */
+ 	for (i = 0; i < ARRAY_SIZE(gpio_suffixes); i++) {
+-		if (con_id && strcmp(con_id, "gpios"))
++		if (con_id)
+ 			snprintf(propname, sizeof(propname), "%s-%s",
+ 				 con_id, gpio_suffixes[i]);
+ 		else
+-- 
+2.11.0
+
