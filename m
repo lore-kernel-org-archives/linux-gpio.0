@@ -1,77 +1,49 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
- calls
-Date: Thu, 23 Mar 2017 12:11:06 +0100
-Message-ID: <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
-References: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
- <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
- <CAMuHMdWv-xs12UqutEtXJGR8qqgx6DeDhkKvvYhhyW+XTVsUNQ@mail.gmail.com>
- <CAMuHMdXGn35bEsJKnUi5o3AytL4AJN2fBfoB79v5W-jOVFQx6g@mail.gmail.com>
- <20170320103113.tpveoq2onzrwmkdt@pengutronix.de>
- <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
- <20170320110718.e44s2gip36m75bqj@pengutronix.de>
- <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
- <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
- <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/4] pinctrl: samsung: Use devres version of gpiochip_add_data
+Date: Thu, 23 Mar 2017 13:34:10 +0200
+Message-ID: <CAJKOXPdqTmv02+WC2Nh5zWiiotJ094dQV8ywBx_1-oupCkVTXQ@mail.gmail.com>
+References: <1487251636-2480-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1487251636-2480-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20170217133504.5poemeadyunc4pyh@kozik-lap> <20170217135214.GG30007@localhost.localdomain>
+ <20170320184447.mmof2ksaz4ajz7bk@kozik-lap> <CACRpkdbm8zA8-p3nWc8-wiwLXRH8FDUdE=2L4QQc79TOT-fdaQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbm8zA8-p3nWc8-wiwLXRH8FDUdE=2L4QQc79TOT-fdaQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+On Thu, Mar 23, 2017 at 11:47 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Mon, Mar 20, 2017 at 7:44 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On Fri, Feb 17, 2017 at 01:52:14PM +0000, Charles Keepax wrote:
+> >> On Fri, Feb 17, 2017 at 03:35:04PM +0200, Krzysztof Kozlowski wrote:
+> >> > On Thu, Feb 16, 2017 at 01:27:16PM +0000, Charles Keepax wrote:
+> >> > > Use devm_gpiochip_add_data to simplify the error path in
+> >> > > samsung_gpiolib_register. Additionally this would also fix a leak if
+> >> > > the pinctrl driver was unbound, although admittedly I can't see any
+> >> > > good use-case for doing so, but the driver does currently allow it.
+> >> >
+> >> > Driver does not allow unbinding (.suppress_bind_attrs = true)...
+> >> >
+> >>
+> >> Oops... sorry missed that.
+> >
+> > Can you resend with updated commit msg? I think it was not picked up by
+> > Linus yet.
+>
+> I'm expecting you to pick it up and send to me by pull request now I guess,
+> or did we agree that a Samsung patches wouldn't be too voluminous this
+> cycle?
+>
+> If you're OK with it, can we proceed to use you as Samsung patch
+> collection point for this kernel cycle from this moment on?
 
-On Thu, Mar 23, 2017 at 11:20:39AM +0100, Geert Uytterhoeven wrote:
-> But having the error breaks setups where the GPIO is optional and does
-> not exist.
+I will take it, especially that more things are coming. I already
+applied patch from Chanwoo which should go to fixes (initially I put
+it on wrong branch).
 
-so the right way forward is to check harder in the situation where
--ENOSYS was returned before to determine if there is really no GPIO to
-be used. "Oh, there are hints that there is no GPIO (GPIOLIB=n), so lets
-assume there isn't." is wrong.
-
-Can we please properly fix the problem instead of papering over it?
-
-> Make sure to enable all drivers and subsystems you need when building
-> your kernel. That's always true. And may indeed be hard to debug (e.g. what
-> kernel options do I need to make systemd work?).
-
-It's worse here. If you forget to enable a driver the device isn't bound
-and that's obvious to diagnose. When ignoring an optional GPIO there
-might be a device that claims to work but fails to do so. (e.g. you
-write to memory, write() returns 0, but the data never landed there.)
-
-> > write(2) and close(2) succeed most of the time, too. Still it's not a
-> > good idea to not check the return value. Or let the kernel return
-> > success unconditionally.
-> 
-> Writing all bytes passed in the buffer is "optional" in another sense than
-> an "optional" GPIO: you must retry the write, while you can continue if
-> an optional GPIO is not present.
-
-And that is the point. You can continue *iff* the optional GPIO is not
-present. The patch in question removes the ability to determine if that
-GPIO is present and claims it is not present.
-
-> > So you exchanged many obvious and easy to fix problems with a few hard
-> > ones. I don't agree that's a good idea, but you seem to be willing to
-> > try it. Good luck.
-> 
-> Yeah, before drivers had to explicitly ignore -ENOSYS if they want to
-> support platforms with and without GPIOLIB. Bad...
-
-Doing things right is sometimes not maximally easy. But that is no
-excuse to do it wrong.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Best regards,
+Krzysztof
