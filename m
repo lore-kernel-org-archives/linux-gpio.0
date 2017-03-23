@@ -1,46 +1,97 @@
 From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 0/8] pinctrl: meson: add audio output pins
-Date: Thu, 23 Mar 2017 17:50:53 +0100
-Message-ID: <20170323165101.29262-1-jbrunet@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Subject: [PATCH 2/8] pinctrl: meson: gxbb: add spdif output pins
+Date: Thu, 23 Mar 2017 17:50:55 +0100
+Message-ID: <20170323165101.29262-3-jbrunet@baylibre.com>
+References: <20170323165101.29262-1-jbrunet@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170323165101.29262-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patchset adds the pinctrl definition and the related device-tree
-bindings of the i2s output and spdif output pins on the meson gxbb and
-gxl SoCs.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-This is part of the ongoing work to bring audio output suppot on the
-meson family. It was tested on the gxbb p200 and gxl p230.
-
-Jerome Brunet (8):
-  pinctrl: meson: gxbb: add i2s output pins
-  pinctrl: meson: gxbb: add spdif output pins
-  pinctrl: meson: gxl: add i2s output pins
-  pinctrl: meson: gxl: add spdif output pins
-  ARM64: dts: meson-gxbb: add i2s output pins
-  ARM64: dts: meson-gxbb: add spdif output pins
-  ARM64: dts: meson-gxl: add i2s output pins
-  ARM64: dts: meson-gxl: add spdif output pins
-
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 84 +++++++++++++++++++++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 83 ++++++++++++++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c  | 49 +++++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxl.c   | 49 +++++++++++++++++
- 4 files changed, 265 insertions(+)
-
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+index 8d5dd4772042..9bae2e3968af 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+@@ -240,6 +240,8 @@ static const unsigned int i2s_out_ch23_y_pins[]	= { PIN(GPIOY_8, EE_OFF) };
+ static const unsigned int i2s_out_ch45_y_pins[]	= { PIN(GPIOY_9, EE_OFF) };
+ static const unsigned int i2s_out_ch67_y_pins[]	= { PIN(GPIOY_10, EE_OFF) };
+ 
++static const unsigned int spdif_out_y_pins[]	= { PIN(GPIOY_12, EE_OFF) };
++
+ static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
+ 	MESON_PIN(GPIOAO_0, 0),
+ 	MESON_PIN(GPIOAO_1, 0),
+@@ -285,6 +287,9 @@ static const unsigned int i2s_out_ch01_ao_pins[] = { PIN(GPIOAO_11, 0) };
+ static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_12, 0) };
+ static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_13, 0) };
+ 
++static const unsigned int spdif_out_ao_6_pins[]	= { PIN(GPIOAO_6, 0) };
++static const unsigned int spdif_out_ao_13_pins[] = { PIN(GPIOAO_13, 0) };
++
+ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0, EE_OFF),
+ 	GPIO_GROUP(GPIOZ_1, EE_OFF),
+@@ -440,6 +445,7 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GROUP(i2s_out_ch23_y,	1,	5),
+ 	GROUP(i2s_out_ch45_y,	1,	6),
+ 	GROUP(i2s_out_ch67_y,	1,	7),
++	GROUP(spdif_out_y,	1,	9),
+ 
+ 	/* Bank Z */
+ 	GROUP(eth_mdio,		6,	1),
+@@ -543,6 +549,8 @@ static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
+ 	GROUP(i2s_out_ch01_ao,	0,	27),
+ 	GROUP(i2s_out_ch23_ao,	1,	0),
+ 	GROUP(i2s_out_ch45_ao,	1,	1),
++	GROUP(spdif_out_ao_6,	0,	16),
++	GROUP(spdif_out_ao_13,	0,	4),
+ };
+ 
+ static const char * const gpio_periphs_groups[] = {
+@@ -676,6 +684,10 @@ static const char * const i2s_out_groups[] = {
+ 	"i2s_out_ch23_y", "i2s_out_ch45_y", "i2s_out_ch67_y",
+ };
+ 
++static const char * const spdif_out_groups[] = {
++	"spdif_out_y",
++};
++
+ static const char * const gpio_aobus_groups[] = {
+ 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
+ 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
+@@ -723,6 +735,10 @@ static const char * const i2s_out_ao_groups[] = {
+ 	"i2s_out_ch01_ao", "i2s_out_ch23_ao", "i2s_out_ch45_ao",
+ };
+ 
++static const char * const spdif_out_ao_groups[] = {
++	"spdif_out_ao_6", "spdif_out_ao_13",
++};
++
+ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+@@ -747,6 +763,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(hdmi_hpd),
+ 	FUNCTION(hdmi_i2c),
+ 	FUNCTION(i2s_out),
++	FUNCTION(spdif_out),
+ };
+ 
+ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
+@@ -761,6 +778,7 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
+ 	FUNCTION(pwm_ao_a_12),
+ 	FUNCTION(pwm_ao_b),
+ 	FUNCTION(i2s_out_ao),
++	FUNCTION(spdif_out_ao),
+ };
+ 
+ static struct meson_bank meson_gxbb_periphs_banks[] = {
 -- 
 2.9.3
