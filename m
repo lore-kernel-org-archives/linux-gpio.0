@@ -1,39 +1,55 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] pinctrl: samsung: Remove unused pin-bank macro
-Date: Wed, 22 Mar 2017 20:11:27 +0200
-Message-ID: <20170322181127.aolaevubauaolb3g@kozik-lap>
-References: <1490169812-25225-1-git-send-email-cw00.choi@samsung.com>
- <CGME20170322080335epcas5p2f514974da14bd739d712cf1ab1a4cc0c@epcas5p2.samsung.com>
- <1490169812-25225-3-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v4 1/6] pinctrl: samsung: Ensure that pad retention is disabled
+ on driver init
+Date: Thu, 23 Mar 2017 09:03:22 +0100
+Message-ID: <1490256207-10061-2-git-send-email-m.szyprowski@samsung.com>
+References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+ <CGME20170323080347eucas1p2d0340709543b3ce128281e5a490216d4@eucas1p2.samsung.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34045 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935789AbdCVSLf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 22 Mar 2017 14:11:35 -0400
-Content-Disposition: inline
-In-Reply-To: <1490169812-25225-3-git-send-email-cw00.choi@samsung.com>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:36951 "EHLO
+        mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753575AbdCWID5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 04:03:57 -0400
+In-reply-to: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, kgene@kernel.org, javier@osg.samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Wed, Mar 22, 2017 at 05:03:32PM +0900, Chanwoo Choi wrote:
-> After merged commit 1259feddd0f8 ("pinctrl: samsung: Fix the width
-> of PINCFG_TYPE_DRV bitfields for Exynos5433"), EXYNOS_PIN_BANK_EINTW
-> was replaced by EXYNOS5433_PIN_BANK_EINTW_EXT. This patch removes
-> the unused pin-bank macro (EXYNOS_PIN_BANK_EINTW).
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-exynos.h | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
+When pin controller device is a part of power domain, there is no guarantee
+that the power domain was not turned off and then on during boot process
+before probing of the pin control driver. If it happened, then pin control
+driver should ensure that pad retention is turned off during its probe call.
 
-Thanks, applied and squashed with previous one (it is logically the same
-change).
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index f9b49967f512..fa8bdd9ae198 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -777,6 +777,7 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+ {
+ 	struct samsung_retention_ctrl *ctrl;
+ 	struct regmap *pmu_regs;
++	int i;
+ 
+ 	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
+ 	if (!ctrl)
+@@ -794,6 +795,10 @@ static void exynos_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
+ 	ctrl->enable = exynos_retention_enable;
+ 	ctrl->disable = exynos_retention_disable;
+ 
++	/* Ensure that retention is disabled on driver init */
++	for (i = 0; i < ctrl->nr_regs; i++)
++		regmap_write(pmu_regs, ctrl->regs[i], ctrl->value);
++
+ 	return ctrl;
+ }
+ 
+-- 
+1.9.1
 
