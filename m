@@ -1,160 +1,56 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v3] pinctrl: cherryview: Add support for GMMR GPIO opregion
-Date: Thu, 23 Mar 2017 14:23:25 +0100
-Message-ID: <20170323132325.21558-1-hdegoede@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL calls
+Date: Thu, 23 Mar 2017 14:37:51 +0100
+Message-ID: <CACRpkdZhLgM=PzUrCwR-gWssVQQ5KAkOS31cTx4xbpbSBpBPXQ@mail.gmail.com>
+References: <20170306093043.ay4dz3ehp3aakwxh@pengutronix.de>
+ <CAMuHMdWQuvANNU14A7NQuzv6AFp04bq4DG_oc7w9h4wUrG+4aQ@mail.gmail.com>
+ <20170306100220.droey65uq2ew3mzu@pengutronix.de> <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
+ <CAMuHMdWv-xs12UqutEtXJGR8qqgx6DeDhkKvvYhhyW+XTVsUNQ@mail.gmail.com>
+ <CAMuHMdXGn35bEsJKnUi5o3AytL4AJN2fBfoB79v5W-jOVFQx6g@mail.gmail.com>
+ <20170320103113.tpveoq2onzrwmkdt@pengutronix.de> <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
+ <20170320110718.e44s2gip36m75bqj@pengutronix.de> <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
+ <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932284AbdCWNX3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Mar 2017 09:23:29 -0400
+Received: from mail-io0-f170.google.com ([209.85.223.170]:33113 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932635AbdCWNh7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 09:37:59 -0400
+Received: by mail-io0-f170.google.com with SMTP id f84so82465255ioj.0
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 06:37:53 -0700 (PDT)
+In-Reply-To: <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Takashi Iwai <tiwai@suse.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On some Cherry Trail devices the ASL uses the GMMR GPIO to access
-GPIOs so as to serialize MMIO accesses to GPIO registers with the
-OS, because:
+On Thu, Mar 23, 2017 at 11:10 AM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-"Due to a silicon issue, a shared lock must be used to prevent concurrent
-accesses across the 4 GPIO controllers.
+> So you exchanged many obvious and easy to fix problems with a few hard
+> ones. I don't agree that's a good idea, but you seem to be willing to
+> try it. Good luck.
 
-See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
-errata #CHT34, for further information."
+I think instead of going to sarcastic remarks you can say you NACK the
+patch and suggest that it be reverted?
 
-This commit adds support for this opregion, this fixes a number of
-ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
-muxing which is controlled in firmware on this model work properly.
+The problem I have here as maintainer is that both you and Dmitry are
+very smart people and I have a great deal of trust invested in both of you.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-Changes in v2:
--Call acpi_remove_address_space_handler on remove
-Changes in v3:
--Return actual status from the handler rather then always returning AE_OK
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 47 ++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+When two valued contributors give me very different advice I get a bit
+confused and maybe the best option is not to change anything at all
+right now, and just revert Dmitry's patch.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index f80134e..83640af 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -148,6 +148,7 @@ struct chv_community {
- 	size_t ngpio_ranges;
- 	size_t ngpios;
- 	size_t nirqs;
-+	acpi_adr_space_type acpi_space_id;
- };
- 
- struct chv_pin_context {
-@@ -404,6 +405,7 @@ static const struct chv_community southwest_community = {
- 	 * trigger GPEs.
- 	 */
- 	.nirqs = 8,
-+	.acpi_space_id = 0x91,
- };
- 
- static const struct pinctrl_pin_desc north_pins[] = {
-@@ -493,6 +495,7 @@ static const struct chv_community north_community = {
- 	 * GPEs.
- 	 */
- 	.nirqs = 8,
-+	.acpi_space_id = 0x92,
- };
- 
- static const struct pinctrl_pin_desc east_pins[] = {
-@@ -536,6 +539,7 @@ static const struct chv_community east_community = {
- 	.ngpio_ranges = ARRAY_SIZE(east_gpio_ranges),
- 	.ngpios = ARRAY_SIZE(east_pins),
- 	.nirqs = 16,
-+	.acpi_space_id = 0x93,
- };
- 
- static const struct pinctrl_pin_desc southeast_pins[] = {
-@@ -662,6 +666,7 @@ static const struct chv_community southeast_community = {
- 	.ngpio_ranges = ARRAY_SIZE(southeast_gpio_ranges),
- 	.ngpios = ARRAY_SIZE(southeast_pins),
- 	.nirqs = 16,
-+	.acpi_space_id = 0x94,
- };
- 
- static const struct chv_community *chv_communities[] = {
-@@ -1586,11 +1591,34 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 	return 0;
- }
- 
-+static acpi_status chv_pinctrl_mmio_access_handler(u32 function,
-+	acpi_physical_address address, u32 bits, u64 *value,
-+	void *handler_context, void *region_context)
-+{
-+	struct chv_pinctrl *pctrl = region_context;
-+	unsigned long flags;
-+	acpi_status ret = AE_OK;
-+
-+	raw_spin_lock_irqsave(&chv_lock, flags);
-+
-+	if (function == ACPI_WRITE)
-+		chv_writel((u32)(*value), pctrl->regs + (u32)address);
-+	else if (function == ACPI_READ)
-+		*value = readl(pctrl->regs + (u32)address);
-+	else
-+		ret = AE_BAD_PARAMETER;
-+
-+	raw_spin_unlock_irqrestore(&chv_lock, flags);
-+
-+	return ret;
-+}
-+
- static int chv_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct chv_pinctrl *pctrl;
- 	struct acpi_device *adev;
- 	struct resource *res;
-+	acpi_status status;
- 	int ret, irq, i;
- 
- 	adev = ACPI_COMPANION(&pdev->dev);
-@@ -1646,11 +1674,29 @@ static int chv_pinctrl_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	status = acpi_install_address_space_handler(adev->handle,
-+					pctrl->community->acpi_space_id,
-+					chv_pinctrl_mmio_access_handler,
-+					NULL, pctrl);
-+	if (ACPI_FAILURE(status))
-+		dev_err(&pdev->dev, "failed to install ACPI addr space handler\n");
-+
- 	platform_set_drvdata(pdev, pctrl);
- 
- 	return 0;
- }
- 
-+static int chv_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct chv_pinctrl *pctrl = platform_get_drvdata(pdev);
-+
-+	acpi_remove_address_space_handler(ACPI_COMPANION(&pdev->dev),
-+					  pctrl->community->acpi_space_id,
-+					  chv_pinctrl_mmio_access_handler);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int chv_pinctrl_suspend_noirq(struct device *dev)
- {
-@@ -1758,6 +1804,7 @@ MODULE_DEVICE_TABLE(acpi, chv_pinctrl_acpi_match);
- 
- static struct platform_driver chv_pinctrl_driver = {
- 	.probe = chv_pinctrl_probe,
-+	.remove = chv_pinctrl_remove,
- 	.driver = {
- 		.name = "cherryview-pinctrl",
- 		.pm = &chv_pinctrl_pm_ops,
--- 
-2.9.3
+git grep -e 'gpio.*optional(' | wc -l
+gives 154 use sites outside drivers/gpio, so it is not impossible to fix
+this if we want a good and strict order to it. I'm just a bit overworked to
+do it myself right now.
 
+What do you all say, is it better to revert Dmitry's patch and instead go
+around and fix the consumers to do it correctly everywhere, after
+hammering down the exact semantics?
+
+Yours,
+Linus Walleij
