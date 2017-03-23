@@ -1,84 +1,38 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v4 1/4] pinctrl: rockchip: remove unnecessary locking
-Date: Thu, 23 Mar 2017 21:01:43 +0100
-Message-ID: <3695399.LE2KsF2WZK@diego>
-References: <20170323105931.10455-1-john@metanate.com> <9002373.ugSBBElCUj@diego> <20170323182910.GN10423@jcartwri.amer.corp.natinst.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [RFT PATCH 5/6] pinctrl: meson: use gpio-ranges from DT
+Date: Thu, 23 Mar 2017 21:09:52 +0100
+Message-ID: <CAFBinCBa3QuUANF1z3LGk3T9GF-rV5F4WfLGuNCMB2q5juQyOw@mail.gmail.com>
+References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
+ <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:38448 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751336AbdCWUBu (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Mar 2017 16:01:50 -0400
-In-Reply-To: <20170323182910.GN10423@jcartwri.amer.corp.natinst.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: khilman@baylibre.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, carlo@caione.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Cartwright <julia@ni.com>
-Cc: John Keeping <john@metanate.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Am Donnerstag, 23. März 2017, 13:29:10 CET schrieb Julia Cartwright:
-> On Thu, Mar 23, 2017 at 06:55:50PM +0100, Heiko St?bner wrote:
-> > Am Donnerstag, 23. März 2017, 17:51:53 CET schrieb John Keeping:
-> > > On Thu, 23 Mar 2017 11:10:20 -0500, Julia Cartwright wrote:
-> [..]
-> 
-> > > > [..]
-> > > > 
-> > > > > @@ -1185,17 +1177,14 @@ static int rockchip_set_drive_perpin(struct
-> > > > > rockchip_pin_bank *bank,> >
-> > > > > 
-> > > > >  			rmask = BIT(15) | BIT(31);
-> > > > >  			data |= BIT(31);
-> > > > >  			ret = regmap_update_bits(regmap, reg, rmask, data);
-> > > > > 
-> > > > > -			if (ret) {
-> > > > > -				spin_unlock_irqrestore(&bank->slock, flags);
-> > > > > +			if (ret)
-> > > > > 
-> > > > >  				return ret;
-> > > > > 
-> > > > > -			}
-> > > > > 
-> > > > >  			rmask = 0x3 | (0x3 << 16);
-> > > > >  			temp |= (0x3 << 16);
-> > > > >  			reg += 0x4;
-> > > > >  			ret = regmap_update_bits(regmap, reg, rmask, temp);
-> > > > 
-> > > > Killing the lock here means the writes to to this pair of registers
-> > > > (reg
-> > > > and reg + 4) can be observed non-atomically.  Have you convinced
-> > > > yourself that this isn't a problem?
-> > > 
-> > > I called it out in v1 [1] since this bit is new since v4.4 where I
-> > > originally wrote this patch, and didn't get any comments about it.
-> > > 
-> > > I've convinced myself that removing the lock doesn't cause any problems
-> > > for writing to the hardware: if the lock would prevent writes
-> > > interleaving then it means that two callers are trying to write
-> > > different drive strengths to the same pin, and even with a lock here one
-> > > of them will end up with the wrong drive strength.
-> > > 
-> > > But it does mean that a read via rockchip_get_drive_perpin() may see an
-> > > inconsistent state.  I think adding a new lock specifically for this
-> > > particular drive strength bit is overkill and I can't find a scenario
-> > > where this will actually matter; any driver setting a pinctrl config
-> > > must already be doing something to avoid racing two configurations
-> > > against each other, mustn't it?
-> > 
-> > also, pins can normally only be requested once - see drivers complaining
-> > if
-> > one of their pins is already held by a different driver. So if you really
-> > end up with two things writing to the same drive strength bits, the
-> > driver holding the pins must be really messed up anyway :-)
-> 
-> My concern would be if two independent pins' drive strength
-> configuration would walk on each other, because they happen to be
-> configured via the same registers.
-> 
-> If that's not possible, then great!
+Hi Neil,
 
-ah sorry that we didn't make that clearer in the beginning, but no that also 
-isn't possible. The registers use a "hiword-mask" scheme, so on each write to 
-bit (x) the corresponding write-mask in bit (x+16) also needs to be set, so 
-the each write will always only affect bits enabled in that way.
+On Thu, Mar 23, 2017 at 5:27 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> When trying to add a gpio-hog, we enter a weird loop where the gpio-ranges
+> is needed when gpiochip_add_data() is called but in the current implementation
+> the ranges are added from the driver afterwards.
+>
+> A simple solution is to rely on the DR gpio-ranges attribute and remove the
+> call to gpiochip_add_pin_range().
+did you mean devicetree or DT instead of "DR"?
+
+
+Regards,
+Martin
