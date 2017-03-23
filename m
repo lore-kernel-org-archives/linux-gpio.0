@@ -1,50 +1,59 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [RFT PATCH 0/6] pinctrl: meson: Fix gpio-ranged for GPIO Hog
-Date: Thu, 23 Mar 2017 17:27:23 +0100
-Message-ID: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:32853 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932939AbdCWQ1j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 12:27:39 -0400
-Received: by mail-wr0-f172.google.com with SMTP id y90so33438553wrb.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 09:27:38 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: [RFT PATCH 6/6] ARM64: dts: meson-gxbb: Add USB Hub GPIO hog
+Date: Thu, 23 Mar 2017 17:27:29 +0100
+Message-ID: <1490286449-19448-7-git-send-email-narmstrong@baylibre.com>
+References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1490286449-19448-1-git-send-email-narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Whem trying to add a gpio hog to enable the USB Hub on the Odroid-C2, I
-encountered a strange bug where when calling gpiochip_add_data() the gpiolib
-code was trying to add the Hog but failed because the gpio ranges were missing.
+The ODroid-C2 on-board USB Hub needs to to have it's reset signal set to
+high level in order to be enumerated by the USB Host Controller.
 
-In the meson-pinctrl driver, the gpio ranges are added manually /after/ the
-call to gpiochip_add_data().
-The arch/arm meson8 and meson8b patches has not been tested, this is why this
-patchset is an RFT.
+But this management must be part of the currently in-development Generic
+Power Sequence patch that will allow a USB Controller driver to start and stop
+a power sequence associated to the USB Bus.
 
-So this patchset uses the DT gpio-ranges attribute instead and solves the issue.
+In the meantime, a simple USB Hog will work to enable the USB Hub.
 
-The final patch is the actual GPIO Hog for the Odroid-C2 board, which is an ugly
-hack but is necessary to have USB Ports working on the board until the generic
-power sequence framework is merged.
-
-Neil Armstrong (6):
-  ARM64: dts: meson-gxbb: Add gpio-ranges properties
-  ARM64: dts: meson-gxl: Add gpio-ranges properties
-  ARM: dts: meson8: Add gpio-ranges properties
-  ARM: dts: meson8b: Add gpio-ranges properties
-  pinctrl: meson: use gpio-ranges from DT
-  ARM64: dts: meson-gxbb: Add USB Hub GPIO hog
-
- arch/arm/boot/dts/meson8.dtsi                       |  2 ++
- arch/arm/boot/dts/meson8b.dtsi                      |  2 ++
+Signed-off-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+---
  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 15 +++++++++++++++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi         |  2 ++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi          |  2 ++
- drivers/pinctrl/meson/pinctrl-meson.c               | 14 +-------------
- 6 files changed, 24 insertions(+), 13 deletions(-)
+ 1 file changed, 15 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index c59403a..6288538 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -177,6 +177,21 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&gpio_ao {
++	/*
++	 * WARNING: The USB Hub on the Odroid-C2 needs a reset signal
++	 * to be turned high in order to be detected by the USB Controller
++	 * This signal should be handled by a USB specific power sequence
++	 * in order to reset the Hub when USB bus is powered down.
++	 */
++	usb-hub {
++		gpio-hog;
++		gpios = <GPIOAO_4 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "usb-hub-reset";
++	};
++};
++
+ &usb0_phy {
+ 	status = "okay";
+ 	phy-supply = <&usb_otg_pwr>;
 -- 
 1.9.1
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
