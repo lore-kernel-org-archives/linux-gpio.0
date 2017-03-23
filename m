@@ -1,130 +1,121 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 4/8] gpio: acpi: Even more tighten up ACPI GPIO lookups
-Date: Thu, 23 Mar 2017 21:46:14 +0200
-Message-ID: <20170323194618.26548-5-andriy.shevchenko@linux.intel.com>
-References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:4433 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933031AbdCWTsF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Mar 2017 15:48:05 -0400
-In-Reply-To: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Thu, 23 Mar 2017 12:58:04 -0700
+Message-ID: <20170323195804.GA2502@dtor-ws>
+References: <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
+ <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+ <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+ <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+ <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
+ <20170323123437.uqdwhfmmsjke3f7s@pengutronix.de>
+ <CACRpkdZRfLh9RXRycW_cAxuTYE6tPd7LR32EkAW8y2fh=AxhXA@mail.gmail.com>
+ <20170323144325.GA952@dtor-ws>
+ <20170323154441.GA9460@dtor-ws>
+ <20170323191020.nrstp2cfh7cuqvf3@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170323191020.nrstp2cfh7cuqvf3@pengutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The commit 10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio lookups")
-prevents to getting same resource twice if the driver asks twice using same
-connection ID.
+On Thu, Mar 23, 2017 at 08:10:20PM +0100, Uwe Kleine-König wrote:
+> On Thu, Mar 23, 2017 at 08:44:41AM -0700, Dmitry Torokhov wrote:
+> > On Thu, Mar 23, 2017 at 07:43:25AM -0700, Dmitry Torokhov wrote:
+> > > On Thu, Mar 23, 2017 at 02:41:53PM +0100, Linus Walleij wrote:
+> > > > On Thu, Mar 23, 2017 at 1:34 PM, Uwe Kleine-König
+> > > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > > 
+> > > > > Maybe we can make gpiod_get_optional look like this:
+> > > > >
+> > > > >         if (!dev->of_node && isnt_a_acpi_device(dev) && !IS_ENABLED(GPIOLIB))
+> > > > >                 return NULL;
+> > > > >         else
+> > > > >                 return -ENOSYS;
+> > > > >
+> > > > > I don't know how isnt_a_acpi_device looks like, probably it involves
+> > > > > CONFIG_ACPI and/or dev->acpi_node.
+> > > > >
+> > > > > This should be safe and still comfortable for legacy platforms, isn't it?
+> > > > 
+> > > > I like the looks of this.
+> > > > 
+> > > > Can we revert Dmitry's patch and apply something like this instead?
+> > > > 
+> > > > Dmitry, how do you feel about this?
+> > > 
+> > > I frankly do not see the point. It still makes driver code more complex
+> 
+> Note that this code is in the gpio header, and not in driver code. So
+> the driver just does
+> 
+> 	gpiod = gpiod_get_optional(...)
+> 	if (IS_ERR(gpiod))
+> 		return PTR_ERR(gpiod);
+> 
+> (as it is supposed to do now). I think that's nice.
 
-But the whole idea of fallback might bring some problems. Imagine the case when
-we have two versions of BIOS/hardware where in one _DSD is introduced along
-with GPIO resources, but the other one uses just plain GPIO resource for
-another purpose
+Except that it breaks if !CONFIG_GPIOLIB which is legitimate config in
+many cases. Can I have a DT platform or ACPI platform that does not
+expose any GPIOs for kernel to control and thus want to disable GPIOLIB?
+I can't see why not.
 
-Case 1:
+> 
+> > > for no good reason. I also think that not having optional GPIO is not an
+> > > error, so returning value from error space is not correct. NULL is value
+> > > from another space altogether.
+> 
+> It seems you didn't understand my concern.
 
-    Device (DEVX)
-    {
-        ...
-        Name (_CRS, ResourceTemplate ()
-        {
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionInputOnly,
-                    "\\_SB.GPO0", 0, ResourceConsumer) {15}
-        })
-        Name (_DSD, Package ()
-        {
-            ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-            Package ()
-            {
-                Package () {"some-gpios", Package() {^DEVX, 0, 0, 0 }},
-            }
-        })
-    }
+Likewise.
 
-Case 2:
+> 
+> > > Uwe seems to be concerned about case that I find extremely unlikely. We
+> > > are talking about a system that does not have GPIO support and behaves
+> > > just fine, with the exception that it actually has (physically) a
+> > > *single* GPIO, and that GPIO happens to be optional in a single driver,
+> > > but in this particular system is actually needed (but that need
+> > > manifests in a non-obvious way). And we have system integrator that has
+> > > no idea what they are doing (no schematic, etc).
+> 
+> IMHO this is not an excuse to have lax error checking.
 
-    Device (DEVX)
-    {
-        ...
-        Name (_CRS, ResourceTemplate ()
-        {
-            GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionInputOnly,
-                    "\\_SB.GPO0", 0, ResourceConsumer) {27}
-        })
-    }
+IMO it is not an error altogether, so there is no lax checking.
 
-To prevent the possible misconfiguration tighten up even more ACPI GPIO lookups
-for case without connection ID provided.
+> 
+> > > I think that if there is one optional GPIO there will be mandatiry GPIOs
+> > > in such system as well and selection of GPIOLIB will be forced early on
+> > > in board bringup.
+> > 
+> > One more thing: if we keep reporting -ENOSYS in case of !CONFIG_GPIOLIB,
+> > then most of the non platform-sepcific drivers will eventually gain code
+> > silently coping with this -ENOSYS:
+> > 
+> > 	data->gpiod = gpiod_getptional(...);
+> > 	if (IS_ERR(data->gpiod)) {
+> > 		error = PTR_ERR(data->gpiod);
+> > 		if (error != -ENOSYS)
+> > 			return error;
+> > 
+> > 		data->gpiod = NULL; /* This GPIO _is_ optional */
+> 
+> Do you agree that this is wrong? Yes, it behaves right for most cases.
+> But there are cases where it behaves wrong and so it needs fixing.
 
-In the past the issue had been triggered by "use mctrl_gpio helpers" series
-[1,2].
+I think by now it should be obvious that I do not find it wrong. In fact
+that is what I, as a maintainer of drivers that supposed to work on
+multitude of platforms, will be forced to do, if the change to stop
+reporting -ENOSYS gets reverted. A generic driver has no way to know
+that kernel configuration or firmware configuration is wrong and should
+not be trusted (except for piling up horrendous DMI hacks in some
+cases on X86).
 
-Besides above, removal of the main logic of acpi_can_fallback_to_crs()
-eliminates a potential memory leak when the same device has been unbound and
-bound again.
+Thanks.
 
-[1] commit 4ef03d328769 ("tty/serial/8250: use mctrl_gpio helpers")
-[2] https://patchwork.kernel.org/patch/9283745/
-
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/gpio/gpiolib-acpi.c | 36 +-----------------------------------
- 1 file changed, 1 insertion(+), 35 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 21e4930ca2db..e516b7a0cc50 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1121,45 +1121,11 @@ int acpi_gpio_count(struct device *dev, const char *con_id)
- 	return count ? count : -ENOENT;
- }
- 
--struct acpi_crs_lookup {
--	struct list_head node;
--	struct acpi_device *adev;
--	const char *con_id;
--};
--
--static DEFINE_MUTEX(acpi_crs_lookup_lock);
--static LIST_HEAD(acpi_crs_lookup_list);
--
- bool acpi_can_fallback_to_crs(struct acpi_device *adev, const char *con_id)
- {
--	struct acpi_crs_lookup *l, *lookup = NULL;
--
- 	/* Never allow fallback if the device has properties */
- 	if (adev->data.properties || adev->driver_gpios)
- 		return false;
- 
--	mutex_lock(&acpi_crs_lookup_lock);
--
--	list_for_each_entry(l, &acpi_crs_lookup_list, node) {
--		if (l->adev == adev) {
--			lookup = l;
--			break;
--		}
--	}
--
--	if (!lookup) {
--		lookup = kmalloc(sizeof(*lookup), GFP_KERNEL);
--		if (lookup) {
--			lookup->adev = adev;
--			lookup->con_id = kstrdup(con_id, GFP_KERNEL);
--			list_add_tail(&lookup->node, &acpi_crs_lookup_list);
--		}
--	}
--
--	mutex_unlock(&acpi_crs_lookup_lock);
--
--	return lookup &&
--		((!lookup->con_id && !con_id) ||
--		 (lookup->con_id && con_id &&
--		  strcmp(lookup->con_id, con_id) == 0));
-+	return con_id == NULL;
- }
 -- 
-2.11.0
-
+Dmitry
