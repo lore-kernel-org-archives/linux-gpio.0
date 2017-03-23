@@ -1,72 +1,157 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
- calls
-Date: Thu, 23 Mar 2017 13:03:56 +0100
-Message-ID: <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
-References: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
- <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
- <CAMuHMdWv-xs12UqutEtXJGR8qqgx6DeDhkKvvYhhyW+XTVsUNQ@mail.gmail.com>
- <CAMuHMdXGn35bEsJKnUi5o3AytL4AJN2fBfoB79v5W-jOVFQx6g@mail.gmail.com>
- <20170320103113.tpveoq2onzrwmkdt@pengutronix.de>
- <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
- <20170320110718.e44s2gip36m75bqj@pengutronix.de>
- <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
- <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
- <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
- <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with compilation
+ units
+Date: Thu, 23 Mar 2017 12:12:52 +0000
+Message-ID: <20170323121252.vi7oggwr6bfghe3b@dell>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgVXdlLAoKT24gVGh1LCBNYXIgMjMsIDIwMTcgYXQgMTI6MTEgUE0sIFV3ZSBLbGVpbmUtS8O2
-bmlnCjx1LmtsZWluZS1rb2VuaWdAcGVuZ3V0cm9uaXguZGU+IHdyb3RlOgo+PiBNYWtlIHN1cmUg
-dG8gZW5hYmxlIGFsbCBkcml2ZXJzIGFuZCBzdWJzeXN0ZW1zIHlvdSBuZWVkIHdoZW4gYnVpbGRp
-bmcKPj4geW91ciBrZXJuZWwuIFRoYXQncyBhbHdheXMgdHJ1ZS4gQW5kIG1heSBpbmRlZWQgYmUg
-aGFyZCB0byBkZWJ1ZyAoZS5nLiB3aGF0Cj4+IGtlcm5lbCBvcHRpb25zIGRvIEkgbmVlZCB0byBt
-YWtlIHN5c3RlbWQgd29yaz8pLgo+Cj4gSXQncyB3b3JzZSBoZXJlLiBJZiB5b3UgZm9yZ2V0IHRv
-IGVuYWJsZSBhIGRyaXZlciB0aGUgZGV2aWNlIGlzbid0IGJvdW5kCj4gYW5kIHRoYXQncyBvYnZp
-b3VzIHRvIGRpYWdub3NlLiBXaGVuIGlnbm9yaW5nIGFuIG9wdGlvbmFsIEdQSU8gdGhlcmUKPiBt
-aWdodCBiZSBhIGRldmljZSB0aGF0IGNsYWltcyB0byB3b3JrIGJ1dCBmYWlscyB0byBkbyBzby4g
-KGUuZy4geW91Cj4gd3JpdGUgdG8gbWVtb3J5LCB3cml0ZSgpIHJldHVybnMgMCwgYnV0IHRoZSBk
-YXRhIG5ldmVyIGxhbmRlZCB0aGVyZS4pCj4KPj4gPiB3cml0ZSgyKSBhbmQgY2xvc2UoMikgc3Vj
-Y2VlZCBtb3N0IG9mIHRoZSB0aW1lLCB0b28uIFN0aWxsIGl0J3Mgbm90IGEKPj4gPiBnb29kIGlk
-ZWEgdG8gbm90IGNoZWNrIHRoZSByZXR1cm4gdmFsdWUuIE9yIGxldCB0aGUga2VybmVsIHJldHVy
-bgo+PiA+IHN1Y2Nlc3MgdW5jb25kaXRpb25hbGx5Lgo+Pgo+PiBXcml0aW5nIGFsbCBieXRlcyBw
-YXNzZWQgaW4gdGhlIGJ1ZmZlciBpcyAib3B0aW9uYWwiIGluIGFub3RoZXIgc2Vuc2UgdGhhbgo+
-PiBhbiAib3B0aW9uYWwiIEdQSU86IHlvdSBtdXN0IHJldHJ5IHRoZSB3cml0ZSwgd2hpbGUgeW91
-IGNhbiBjb250aW51ZSBpZgo+PiBhbiBvcHRpb25hbCBHUElPIGlzIG5vdCBwcmVzZW50Lgo+Cj4g
-QW5kIHRoYXQgaXMgdGhlIHBvaW50LiBZb3UgY2FuIGNvbnRpbnVlICppZmYqIHRoZSBvcHRpb25h
-bCBHUElPIGlzIG5vdAo+IHByZXNlbnQuIFRoZSBwYXRjaCBpbiBxdWVzdGlvbiByZW1vdmVzIHRo
-ZSBhYmlsaXR5IHRvIGRldGVybWluZSBpZiB0aGF0Cj4gR1BJTyBpcyBwcmVzZW50IGFuZCBjbGFp
-bXMgaXQgaXMgbm90IHByZXNlbnQuCgpJZiB5b3UgZm9yZ2V0IHRvIGVuYWJsZSBhIGRyaXZlci9z
-dWJzeXN0ZW0sIHlvdSBzb21ldGltZXMgY2Fubm90IGRldGVybWluZQppZiB0aGUgZGV2aWNlIGlz
-IHByZXNlbnQgb3Igbm90IG5laXRoZXIuCgpIZW5jZSBpdCBib2lscyBkb3duIHRvICJrbm93aW5n
-IiBpZiB0aGVyZSBpcyBhIEdQSU8gb3Igbm90LgpTbywgd2hlbiBjYW4gdGhlcmUgYmUgYSBHUElP
-PwogIDEuIFRoZSBHUElPIGlzIGRlc2NyaWJlZCBpbiBEVC4KICAgICA9PiBOb3QgYW4gaXNzdWUs
-IGFzIERUIEdQSU8gaW1wbGllcyBHUElPTElCLAogIDIuIFRoZSBHUElPIGlzIGRlc2NyaWJlZCBp
-biBsZWdhY3kgcGxhdGZvcm0gZGF0YS4KICAgICA9PiBUaGUgcGxhdGZvcm0gY29kZSBzaG91bGQg
-bWFrZSBzdXJlIEdQSU9MSUIgaXMgc2VsZWN0ZWQgd2hlbiBuZWVkZWQuCgpJc3N1ZSBzb2x2ZWQ/
-CgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0CgotLQpH
-ZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0t
-IGdlZXJ0QGxpbnV4LW02OGsub3JnCgpJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVj
-aG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0CndoZW4gSSdtIHRhbGtp
-bmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxp
-a2UgdGhhdC4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxk
-cwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
-YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
-LWtlcm5lbAo=
+On Fri, 17 Mar 2017, Andy Shevchenko wrote:
+
+> Crystal Cove and Whiskey Cove are two different PMICs which are
+> installed on Intel Atom SoC based platforms.
+> 
+> Moreover there are two independent drivers that by some reason were
+> supposed (*) to get into one kernel module.
+> 
+> Fix the mess by clarifying Kconfig option for Crystal Cove and split
+> Whiskey Cove out of it.
+> 
+> (*) It looks like the configuration was never tested with
+>     INTEL_SOC_PMIC=n. The line in Makefile is actually wrong.
+> 
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> (supporter:ACPI)
+> Cc: Linus Walleij <linus.walleij@linaro.org> (maintainer:GPIO SUBSYSTEM)
+> Cc: Zhang Rui <rui.zhang@intel.com> (supporter:THERMAL)
+> Cc: Eduardo Valentin <edubezval@gmail.com> (supporter:THERMAL)
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> - make option visible
+> - fix dependencies
+>  drivers/acpi/Kconfig         |  2 +-
+
+This needs an ACPI Ack before I can do anything with it.
+
+>  drivers/gpio/Kconfig         |  2 +-
+>  drivers/mfd/Kconfig          | 14 ++++++++++++--
+>  drivers/mfd/Makefile         |  2 +-
+>  drivers/platform/x86/Kconfig |  2 +-
+>  drivers/thermal/Kconfig      |  2 +-
+>  6 files changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index 83e5f7e1a20d..03708e08fcb4 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -512,7 +512,7 @@ config XPOWER_PMIC_OPREGION
+>  
+>  config BXT_WC_PMIC_OPREGION
+>  	bool "ACPI operation region support for BXT WhiskeyCove PMIC"
+> -	depends on INTEL_SOC_PMIC
+> +	depends on INTEL_SOC_PMIC_BXTWC
+>  	help
+>  	  This config adds ACPI operation region support for BXT WhiskeyCove PMIC.
+>  
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 05043071fc98..9b1bcb4d0df7 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1054,7 +1054,7 @@ config GPIO_UCB1400
+>  
+>  config GPIO_WHISKEY_COVE
+>  	tristate "GPIO support for Whiskey Cove PMIC"
+> -	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC
+> +	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC_BXTWC
+>  	select GPIOLIB_IRQCHIP
+>  	help
+>  	  Support for GPIO pins on Whiskey Cove PMIC.
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 55ecdfb74d31..e43afb8956ea 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -425,18 +425,28 @@ config LPC_SCH
+>  	  System Management Bus and General Purpose I/O.
+>  
+>  config INTEL_SOC_PMIC
+> -	bool "Support for Intel Atom SoC PMIC"
+> +	bool "Support for Crystal Cove PMIC"
+>  	depends on GPIOLIB
+>  	depends on I2C=y
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
+>  	help
+> -	  Select this option to enable support for the PMIC device
+> +	  Select this option to enable support for Crystal Cove PMIC
+>  	  on some Intel SoC systems. The PMIC provides ADC, GPIO,
+>  	  thermal, charger and related power management functions
+>  	  on these systems.
+>  
+> +config INTEL_SOC_PMIC_BXTWC
+> +	tristate "Support for Intel Broxton Whiskey Cove PMIC"
+> +	select MFD_CORE
+> +	select REGMAP_IRQ
+> +	help
+> +	  Select this option to enable support for Whiskey Cove PMIC
+> +	  on Intel Broxton systems. The PMIC provides ADC, GPIO,
+> +	  thermal, charger and related power management functions
+> +	  on these systems.
+> +
+>  config MFD_INTEL_LPSS
+>  	tristate
+>  	select COMMON_CLK
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 31ce07611a6f..201aeaf5112a 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -207,8 +207,8 @@ obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
+>  obj-$(CONFIG_MFD_SKY81452)	+= sky81452.o
+>  
+>  intel-soc-pmic-objs		:= intel_soc_pmic_core.o intel_soc_pmic_crc.o
+> -intel-soc-pmic-$(CONFIG_INTEL_PMC_IPC)	+= intel_soc_pmic_bxtwc.o
+>  obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+> +obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
+>  obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
+>  
+>  obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index e1bffc9bb194..883fbe7a2466 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1019,7 +1019,7 @@ config INTEL_PMC_IPC
+>  config INTEL_BXTWC_PMIC_TMU
+>  	tristate "Intel BXT Whiskey Cove TMU Driver"
+>  	depends on REGMAP
+> -	depends on INTEL_SOC_PMIC && INTEL_PMC_IPC
+> +	depends on INTEL_SOC_PMIC_BXTWC && INTEL_PMC_IPC
+>  	---help---
+>  	  Select this driver to use Intel BXT Whiskey Cove PMIC TMU feature.
+>  	  This driver enables the alarm wakeup functionality in the TMU unit
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 776b34396144..751e50a3d946 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -365,7 +365,7 @@ endmenu
+>  
+>  config INTEL_BXT_PMIC_THERMAL
+>  	tristate "Intel Broxton PMIC thermal driver"
+> -	depends on X86 && INTEL_SOC_PMIC && REGMAP
+> +	depends on X86 && INTEL_SOC_PMIC_BXTWC && REGMAP
+>  	help
+>  	  Select this driver for Intel Broxton PMIC with ADC channels monitoring
+>  	  system temperature measurements and alerts.
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
