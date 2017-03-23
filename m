@@ -1,74 +1,39 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v4 6/6] mfd: exynos-lpass: Add runtime PM support
-Date: Thu, 23 Mar 2017 09:03:27 +0100
-Message-ID: <1490256207-10061-7-git-send-email-m.szyprowski@samsung.com>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080350eucas1p273814a2f183f04f180f8f2a2a362b86e@eucas1p2.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Lee Jones <lee.jones@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] pinctrl: meson: gxl: add the missing PWM pin definitions
+Date: Thu, 23 Mar 2017 09:46:34 +0100
+Message-ID: <CACRpkdYYWut2aJMj1kVxisfcyur5BT9i9zSzYd8FVU9DY6taKQ@mail.gmail.com>
+References: <20170304212318.27076-1-martin.blumenstingl@googlemail.com>
+ <20170318122736.11592-1-martin.blumenstingl@googlemail.com> <20170318122736.11592-2-martin.blumenstingl@googlemail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f44.google.com ([209.85.214.44]:35259 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932206AbdCWIqg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 04:46:36 -0400
+Received: by mail-it0-f44.google.com with SMTP id y18so36286880itc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 01:46:35 -0700 (PDT)
+In-Reply-To: <20170318122736.11592-2-martin.blumenstingl@googlemail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>
 
-Convert exisitng lpass-suspend/resume callbacks into runtime PM callbacks.
-This way Exynos LPASS driver will be ready for use with power domains
-enabled. LPASS will be runtime resumed/suspended as a result of its child
-devices runtime PM transitions.
+On Sat, Mar 18, 2017 at 1:27 PM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/exynos-lpass.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+> This adds support for the missing PWM pins on Meson GXL SoCs, namely:
+> - PWM_A
+> - PWM_B
+> - PWM_C
+> - PWM_F (GPIOX_7 and GPIOCLK_1 can be selected as output)
+> - PWM_AO_A (GPIOAO_3 and GPIOAO_8 can be selected as output)
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 9dbbedad916f..6d735e22acda 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -22,6 +22,7 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/types.h>
- 
-@@ -132,6 +133,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	}
- 
- 	platform_set_drvdata(pdev, lpass);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
- 	exynos_lpass_enable(lpass);
- 
- 	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-@@ -141,7 +144,9 @@ static int exynos_lpass_remove(struct platform_device *pdev)
- {
- 	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
- 
--	exynos_lpass_disable(lpass);
-+	pm_runtime_disable(&pdev->dev);
-+	if (!pm_runtime_status_suspended(&pdev->dev))
-+		exynos_lpass_disable(lpass);
- 	regmap_exit(lpass->top);
- 
- 	return 0;
-@@ -165,8 +170,11 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
- 	return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
--					exynos_lpass_resume);
-+static const struct dev_pm_ops lpass_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos_lpass_suspend, exynos_lpass_resume, NULL)
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
-+};
- 
- static const struct of_device_id exynos_lpass_of_match[] = {
- 	{ .compatible = "samsung,exynos5433-lpass" },
--- 
-1.9.1
+Patch applied.
+
+Yours,
+Linus Walleij
