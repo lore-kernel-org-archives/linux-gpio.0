@@ -1,32 +1,27 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] gpio: mvebu: use BIT macro instead of bit shifting
-Date: Thu, 23 Mar 2017 10:22:11 +0100
-Message-ID: <CACRpkdZ_uUSvgO1uW73U8zZt9i87xBaXx925XJoUU-r6OsdpJg@mail.gmail.com>
-References: <20170317174406.13431-1-ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH v2 0/4] gpio: mvebu: Add PWM fan support
+Date: Thu, 23 Mar 2017 10:23:47 +0100
+Message-ID: <CACRpkdbdnkWpDHeAwWQ-dmJL4DB-vsW17Po7-7bzKMPCb_KaMA@mail.gmail.com>
+References: <20170318154305.28348-1-ralph.sennhauser@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:36786 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933751AbdCWJWO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 05:22:14 -0400
-Received: by mail-it0-f42.google.com with SMTP id w124so36534991itb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 02:22:12 -0700 (PDT)
-In-Reply-To: <20170317174406.13431-1-ralph.sennhauser@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170318154305.28348-1-ralph.sennhauser@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Imre Kaloz <kaloz@openwrt.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 17, 2017 at 6:44 PM, Ralph Sennhauser
+On Sat, Mar 18, 2017 at 4:43 PM, Ralph Sennhauser
 <ralph.sennhauser@gmail.com> wrote:
 
-> Use the BIT macro instead of explicitly shifting bits for some added
-> clarity.
->
-> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+> This patch series was originally submitted by Andrew Lunn but got stalled.
+> I picked up the series and addressed what was discussed for the earlier
+> submission with some helpful input from Andrew. Hopefully this time support
+> for the PWM fan as found on Linksys WRT1900AC (Mamba) will make it in.
 
-Patch applied.
+All looks good to me, I'm waiting for an ACK from the PWM
+maintainer.
 
 Yours,
 Linus Walleij
