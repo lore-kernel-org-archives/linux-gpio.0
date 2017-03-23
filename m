@@ -1,63 +1,110 @@
-From: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH 8/8] ARM64: dts: meson-gxl: add spdif output pins
-Date: Thu, 23 Mar 2017 17:51:01 +0100
-Message-ID: <20170323165101.29262-9-jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 1/8] pinctrl: meson: gxbb: add i2s output pins
+Date: Thu, 23 Mar 2017 17:50:54 +0100
+Message-ID: <20170323165101.29262-2-jbrunet@baylibre.com>
 References: <20170323165101.29262-1-jbrunet@baylibre.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170323165101.29262-1-jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170323165101.29262-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 31 ++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 88ad3490c124..8f57e74b719c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -138,6 +138,20 @@
- 				function = "i2s_out_ao";
- 			};
- 		};
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+index 7671424d46cb..8d5dd4772042 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+@@ -236,6 +236,10 @@ static const unsigned int hdmi_hpd_pins[]	= { PIN(GPIOH_0, EE_OFF) };
+ static const unsigned int hdmi_sda_pins[]	= { PIN(GPIOH_1, EE_OFF) };
+ static const unsigned int hdmi_scl_pins[]	= { PIN(GPIOH_2, EE_OFF) };
+ 
++static const unsigned int i2s_out_ch23_y_pins[]	= { PIN(GPIOY_8, EE_OFF) };
++static const unsigned int i2s_out_ch45_y_pins[]	= { PIN(GPIOY_9, EE_OFF) };
++static const unsigned int i2s_out_ch67_y_pins[]	= { PIN(GPIOY_10, EE_OFF) };
 +
-+		spdif_out_ao_6_pins: spdif_out_ao_6 {
-+			mux {
-+				groups = "spdif_out_ao_6";
-+				function = "spdif_out_ao";
-+			};
-+		};
+ static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
+ 	MESON_PIN(GPIOAO_0, 0),
+ 	MESON_PIN(GPIOAO_1, 0),
+@@ -274,6 +278,13 @@ static const unsigned int pwm_ao_a_6_pins[]	= { PIN(GPIOAO_6, 0) };
+ static const unsigned int pwm_ao_a_12_pins[]	= { PIN(GPIOAO_12, 0) };
+ static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_13, 0) };
+ 
++static const unsigned int i2s_am_clk_pins[]	 = { PIN(GPIOAO_8, 0) };
++static const unsigned int i2s_out_ao_clk_pins[]	 = { PIN(GPIOAO_9, 0) };
++static const unsigned int i2s_out_lr_clk_pins[]	 = { PIN(GPIOAO_10, 0) };
++static const unsigned int i2s_out_ch01_ao_pins[] = { PIN(GPIOAO_11, 0) };
++static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_12, 0) };
++static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_13, 0) };
 +
-+		spdif_out_ao_9_pins: spdif_out_ao_9 {
-+			mux {
-+				groups = "spdif_out_ao_9";
-+				function = "spdif_out_ao";
-+			};
-+		};
- 	};
+ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0, EE_OFF),
+ 	GPIO_GROUP(GPIOZ_1, EE_OFF),
+@@ -426,6 +437,9 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+ 	GROUP(uart_rx_c,	1,	16),
+ 	GROUP(pwm_a_y,		1,	21),
+ 	GROUP(pwm_f_y,		1,	20),
++	GROUP(i2s_out_ch23_y,	1,	5),
++	GROUP(i2s_out_ch45_y,	1,	6),
++	GROUP(i2s_out_ch67_y,	1,	7),
+ 
+ 	/* Bank Z */
+ 	GROUP(eth_mdio,		6,	1),
+@@ -523,6 +537,12 @@ static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
+ 	GROUP(pwm_ao_a_6,	0,	18),
+ 	GROUP(pwm_ao_a_12,	0,	17),
+ 	GROUP(pwm_ao_b,		0,	3),
++	GROUP(i2s_am_clk,	0,	30),
++	GROUP(i2s_out_ao_clk,	0,	29),
++	GROUP(i2s_out_lr_clk,	0,	28),
++	GROUP(i2s_out_ch01_ao,	0,	27),
++	GROUP(i2s_out_ch23_ao,	1,	0),
++	GROUP(i2s_out_ch45_ao,	1,	1),
  };
  
-@@ -359,6 +373,13 @@
- 				function = "i2s_out";
- 			};
- 		};
-+
-+		spdif_out_h_pins: spdif_out_ao_h {
-+			mux {
-+				groups = "spdif_out_h";
-+				function = "spdif_out";
-+			};
-+		};
- 	};
+ static const char * const gpio_periphs_groups[] = {
+@@ -652,6 +672,10 @@ static const char * const hdmi_i2c_groups[] = {
+ 	"hdmi_sda", "hdmi_scl",
+ };
  
- 	eth-phy-mux {
++static const char * const i2s_out_groups[] = {
++	"i2s_out_ch23_y", "i2s_out_ch45_y", "i2s_out_ch67_y",
++};
++
+ static const char * const gpio_aobus_groups[] = {
+ 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
+ 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
+@@ -694,6 +718,11 @@ static const char * const pwm_ao_b_groups[] = {
+ 	"pwm_ao_b",
+ };
+ 
++static const char * const i2s_out_ao_groups[] = {
++	"i2s_am_clk", "i2s_out_ao_clk", "i2s_out_lr_clk",
++	"i2s_out_ch01_ao", "i2s_out_ch23_ao", "i2s_out_ch45_ao",
++};
++
+ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+@@ -717,6 +746,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+ 	FUNCTION(pwm_f_y),
+ 	FUNCTION(hdmi_hpd),
+ 	FUNCTION(hdmi_i2c),
++	FUNCTION(i2s_out),
+ };
+ 
+ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
+@@ -730,6 +760,7 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
+ 	FUNCTION(pwm_ao_a_6),
+ 	FUNCTION(pwm_ao_a_12),
+ 	FUNCTION(pwm_ao_b),
++	FUNCTION(i2s_out_ao),
+ };
+ 
+ static struct meson_bank meson_gxbb_periphs_banks[] = {
 -- 
 2.9.3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
