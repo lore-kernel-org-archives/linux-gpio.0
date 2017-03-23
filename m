@@ -1,255 +1,89 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH v3 1/7] pinctrl: dt-bindings: Add documentation for Armada
- 37xx pin controllers
-Date: Thu, 23 Mar 2017 16:19:01 +0100
-Message-ID: <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1490282185.git-series.gregory.clement@free-electrons.com>
-References: <cover.72ded2a212a37139db2a4193482b04a84a545a48.1490282185.git-series.gregory.clement@free-electrons.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Thu, 23 Mar 2017 08:44:41 -0700
+Message-ID: <20170323154441.GA9460@dtor-ws>
+References: <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
+ <20170320110718.e44s2gip36m75bqj@pengutronix.de>
+ <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
+ <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+ <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+ <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+ <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
+ <20170323123437.uqdwhfmmsjke3f7s@pengutronix.de>
+ <CACRpkdZRfLh9RXRycW_cAxuTYE6tPd7LR32EkAW8y2fh=AxhXA@mail.gmail.com>
+ <20170323144325.GA952@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.72ded2a212a37139db2a4193482b04a84a545a48.1490282185.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.72ded2a212a37139db2a4193482b04a84a545a48.1490282185.git-series.gregory.clement@free-electrons.com>
-References: <cover.72ded2a212a37139db2a4193482b04a84a545a48.1490282185.git-series.gregory.clement@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Hua Jing <jinghua@marvell.com>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36267 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753202AbdCWPou (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 11:44:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20170323144325.GA952@dtor-ws>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Document the device tree binding for the pin controllers found on the
-Armada 37xx SoCs.
+On Thu, Mar 23, 2017 at 07:43:25AM -0700, Dmitry Torokhov wrote:
+> On Thu, Mar 23, 2017 at 02:41:53PM +0100, Linus Walleij wrote:
+> > On Thu, Mar 23, 2017 at 1:34 PM, Uwe Kleine-König
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > 
+> > > Maybe we can make gpiod_get_optional look like this:
+> > >
+> > >         if (!dev->of_node && isnt_a_acpi_device(dev) && !IS_ENABLED(GPIOLIB))
+> > >                 return NULL;
+> > >         else
+> > >                 return -ENOSYS;
+> > >
+> > > I don't know how isnt_a_acpi_device looks like, probably it involves
+> > > CONFIG_ACPI and/or dev->acpi_node.
+> > >
+> > > This should be safe and still comfortable for legacy platforms, isn't it?
+> > 
+> > I like the looks of this.
+> > 
+> > Can we revert Dmitry's patch and apply something like this instead?
+> > 
+> > Dmitry, how do you feel about this?
+> 
+> I frankly do not see the point. It still makes driver code more complex
+> for no good reason. I also think that not having optional GPIO is not an
+> error, so returning value from error space is not correct. NULL is value
+> from another space altogether.
+> 
+> Uwe seems to be concerned about case that I find extremely unlikely. We
+> are talking about a system that does not have GPIO support and behaves
+> just fine, with the exception that it actually has (physically) a
+> *single* GPIO, and that GPIO happens to be optional in a single driver,
+> but in this particular system is actually needed (but that need
+> manifests in a non-obvious way). And we have system integrator that has
+> no idea what they are doing (no schematic, etc).
+> 
+> I think that if there is one optional GPIO there will be mandatiry GPIOs
+> in such system as well and selection of GPIOLIB will be forced early on
+> in board bringup.
 
-Update the binding documention of the xtal clk which is a subnode of this
-syscon node.
+One more thing: if we keep reporting -ENOSYS in case of !CONFIG_GPIOLIB,
+then most of the non platform-sepcific drivers will eventually gain code
+silently coping with this -ENOSYS:
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +--
- Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 187 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+	data->gpiod = gpiod_getptional(...);
+	if (IS_ERR(data->gpiod)) {
+		error = PTR_ERR(data->gpiod);
+		if (error != -ENOSYS)
+			return error;
 
-diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-index a88f1f05fbd6..4c0807f28cfa 100644
---- a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-@@ -5,6 +5,7 @@ reading the gpio latch register.
- 
- This node must be a subnode of the node exposing the register address
- of the GPIO block where the gpio latch is located.
-+See Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
- 
- Required properties:
- - compatible : shall be one of the following:
-@@ -16,9 +17,9 @@ Optional properties:
- 	output names ("xtal")
- 
- Example:
--gpio1: gpio@13800 {
--	compatible = "marvell,armada-3700-gpio", "syscon", "simple-mfd";
--	reg = <0x13800 0x1000>;
-+pinctrl_nb: pinctrl-nb@13800 {
-+	compatible = "armada3710-nb-pinctrl", "syscon", "simple-mfd";
-+	reg = <0x13800 0x100>, <0x13C00 0x20>;
- 
- 	xtalclk: xtal-clk {
- 		compatible = "marvell,armada-3700-xtal-clock";
-diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-new file mode 100644
-index 000000000000..2eda81e0bca1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-@@ -0,0 +1,183 @@
-+* Marvell Armada 37xx SoC pin and gpio controller
-+
-+Each Armada 37xx SoC come with two pin and gpio controller one for the
-+south bridge and the other for the north bridge.
-+
-+Inside this set of register the gpio latch allows exposing some
-+configuration of the SoC and especially the clock frequency of the
-+xtal. Hence, this node is a represent as syscon allowing sharing the
-+register between multiple hardware block.
-+
-+GPIO and pin controller:
-+------------------------
-+
-+Main node:
-+
-+Refer to pinctrl-bindings.txt in this directory for details of the
-+common pinctrl bindings used by client devices, including the meaning
-+of the phrase "pin configuration node".
-+
-+Required properties for pinctrl driver:
-+
-+- compatible:	"marvell,armada3710-sb-pinctrl", "syscon, "simple-mfd"
-+		for the south bridge
-+		"marvell,armada3710-nb-pinctrl", "syscon, "simple-mfd"
-+		for the north bridge
-+- reg: The first set of register are for pinctrl/gpio and the second
-+  set for the interrupt controller
-+- interrupts: list of the interrupt use by the gpio
-+
-+Available groups and functions for the North bridge:
-+
-+group: jtag
-+ - pins 20-24
-+ - functions jtag, gpio
-+
-+group sdio0
-+ - pins 8-10
-+ - functions sdio, gpio
-+
-+group emmc_nb
-+ - pins 27-35
-+ - functions emmc, gpio
-+
-+group pwm0
-+ - pin 11 (GPIO1-11)
-+ - functions pwm, gpio
-+
-+group pwm1
-+ - pin 12
-+ - functions pwm, gpio
-+
-+group pwm2
-+ - pin 13
-+ - functions pwm, gpio
-+
-+group pwm3
-+ - pin 14
-+ - functions pwm, gpio
-+
-+group pmic1
-+ - pin 17
-+ - functions pmic, gpio
-+
-+group pmic0
-+ - pin 16
-+ - functions pmic, gpio
-+
-+group i2c2
-+ - pins 2-3
-+ - functions i2c, gpio
-+
-+group i2c1
-+ - pins 0-1
-+ - functions i2c, gpio
-+
-+group spi_cs1
-+ - pin 17
-+ - functions spi, gpio
-+
-+group spi_cs2
-+ - pin 18
-+ - functions spi, gpio
-+
-+group spi_cs3
-+ - pin 19
-+ - functions spi, gpio
-+
-+group onewire
-+ - pin 4
-+ - functions onewire, gpio
-+
-+group uart1
-+ - pins 25-26
-+ - functions uart, gpio
-+
-+group spi_quad
-+ - pins 15-16
-+ - functions spi, gpio
-+
-+group uart_2
-+ - pins 9-10
-+ - functions uart, gpio
-+
-+Available groups and functions for the South bridge:
-+
-+group usb32_drvvbus0
-+ - pin 36
-+ - functions drvbus, gpio
-+
-+group usb2_drvvbus1
-+ - pin 37
-+ - functions drvbus, gpio
-+
-+group sdio_sb
-+ - pins 60-64
-+ - functions sdio, gpio
-+
-+group rgmii
-+ - pins 42-55
-+ - functions mii, gpio
-+
-+group pcie1
-+ - pins 39-40
-+ - functions pcie, gpio
-+
-+group ptp
-+ - pins 56-58
-+ - functions ptp, gpio
-+
-+group ptp_clk
-+ - pin 57
-+ - functions ptp, mii
-+
-+group ptp_trig
-+ - pin 58
-+ - functions ptp, mii
-+
-+group mii_col
-+ - pin 59
-+ - functions mii, mii_err
-+
-+GPIO subnode:
-+
-+Please refer to gpio.txt in this directory for details of gpio-ranges property
-+and the common GPIO bindings used by client devices.
-+
-+Required properties for gpio driver under the gpio subnode:
-+- interrupts: List of interrupt specifier for the controllers interrupt.
-+- gpio-controller: Marks the device node as a gpio controller.
-+- #gpio-cells: Should be 2. The first cell is the GPIO number and the
-+   second cell specifies GPIO flags, as defined in
-+   <dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH and
-+   GPIO_ACTIVE_LOW flags are supported.
-+- gpio-ranges: Range of pins managed by the GPIO controller.
-+
-+Xtal Clock bindings for Marvell Armada 37xx SoCs
-+------------------------------------------------
-+
-+see Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-+
-+
-+Example:
-+pinctrl_sb: pinctrl-sb@18800 {
-+	compatible = "marvell,armada3710-sb-pinctrl", "syscon", "simple-mfd";
-+	reg = <0x18800 0x100>, <0x18C00 0x20>;
-+	gpiosb: gpiosb {
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&pinctrl_sb 0 0 29>;
-+		gpio-controller;
-+		interrupts =
-+		<GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+		<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-+		<GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+		<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-+		<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	rgmii_pins: mii-pins {
-+		groups = "rgmii";
-+		function = "mii";
-+	};
-+
-+};
+		data->gpiod = NULL; /* This GPIO _is_ optional */
+	}
+
+which will negate Uwe's claim that it will help debugging issues.
+
+Thanks.
+
 -- 
-git-series 0.9.1
+Dmitry
