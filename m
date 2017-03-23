@@ -1,66 +1,84 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 4/6] pinctrl: aramda-37xx: Add irqchip support
-Date: Thu, 23 Mar 2017 15:41:11 +0100
-Message-ID: <87inn0dpiw.fsf@free-electrons.com>
-References: <20161222172501.16121-1-gregory.clement@free-electrons.com>
-        <20161222172501.16121-5-gregory.clement@free-electrons.com>
-        <CACRpkdbR-WRT0rJp2CuN6CkZF=J35JUgGHjW7beyaimipz0ehw@mail.gmail.com>
-        <87zigdeczh.fsf@free-electrons.com>
-        <CACRpkdaVDQMoPXmT++vJ4v9mUejYSy28Ybwb0v2519OeCSPvXg@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Thu, 23 Mar 2017 07:43:25 -0700
+Message-ID: <20170323144325.GA952@dtor-ws>
+References: <20170320103113.tpveoq2onzrwmkdt@pengutronix.de>
+ <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
+ <20170320110718.e44s2gip36m75bqj@pengutronix.de>
+ <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
+ <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+ <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+ <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+ <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
+ <20170323123437.uqdwhfmmsjke3f7s@pengutronix.de>
+ <CACRpkdZRfLh9RXRycW_cAxuTYE6tPd7LR32EkAW8y2fh=AxhXA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42107 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbdCWOlO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 10:41:14 -0400
-In-Reply-To: <CACRpkdaVDQMoPXmT++vJ4v9mUejYSy28Ybwb0v2519OeCSPvXg@mail.gmail.com>
-        (Linus Walleij's message of "Thu, 23 Mar 2017 11:36:52 +0100")
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZRfLh9RXRycW_cAxuTYE6tPd7LR32EkAW8y2fh=AxhXA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Omri Itach <omrii@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Terry Zhou <bjzhou@marvell.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
- 
- On jeu., mars 23 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Thu, Mar 23, 2017 at 02:41:53PM +0100, Linus Walleij wrote:
+> On Thu, Mar 23, 2017 at 1:34 PM, Uwe Kleine-K=F6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+> =
 
->> I switched to the use of GPIOLIB_IRQCHIP however it didn't really simplify
->> my code, during the development on the v2 I did a commit only for this
->> change and here it is the diffstat:
->> 110     72      drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
->>
->> In my first version I used the generic irqchip so I was able to benefit
->> of this framework, by switching to GPIOLIB_IRQCHIP I had to implement
->> again some of the functions such as .mask, .unmask an ack.
->
-> I still think this is better, so thanks.
+> > Maybe we can make gpiod_get_optional look like this:
+> >
+> >         if (!dev->of_node && isnt_a_acpi_device(dev) && !IS_ENABLED(GPI=
+OLIB))
+> >                 return NULL;
+> >         else
+> >                 return -ENOSYS;
+> >
+> > I don't know how isnt_a_acpi_device looks like, probably it involves
+> > CONFIG_ACPI and/or dev->acpi_node.
+> >
+> > This should be safe and still comfortable for legacy platforms, isn't i=
+t?
+> =
 
-Yes, I understand that from the point of view of the gpio subsystem it
-is better to share as code as possible between the driver.
+> I like the looks of this.
+> =
 
->
-> If you have ideas of how we could combine generic irqchip with
-> GPIOLIB_IRQCHIP in an efficient manner, I'd be happy to hear
-> about it? I want gpiolib core to be involved setting things like
-> the .irq_request/release_resources() for example, so if you
-> would proceed with this solution, I would have had you add those
-> duplicating the gpiolib helpers instead.
+> Can we revert Dmitry's patch and apply something like this instead?
+> =
 
-Indeed it could be interesting to be able to combine both, however it
-does not seem an easy task: at first sight both subsystem would need to
-be modified. It is obviously beyond the scope of this driver, but I will
-try to have a look on it to see what I could propose in a separate
-series.
+> Dmitry, how do you feel about this?
 
-Gregory
+I frankly do not see the point. It still makes driver code more complex
+for no good reason. I also think that not having optional GPIO is not an
+error, so returning value from error space is not correct. NULL is value
+from another space altogether.
 
->
-> Yours,
-> Linus Walleij
+Uwe seems to be concerned about case that I find extremely unlikely. We
+are talking about a system that does not have GPIO support and behaves
+just fine, with the exception that it actually has (physically) a
+*single* GPIO, and that GPIO happens to be optional in a single driver,
+but in this particular system is actually needed (but that need
+manifests in a non-obvious way). And we have system integrator that has
+no idea what they are doing (no schematic, etc).
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+I think that if there is one optional GPIO there will be mandatiry GPIOs
+in such system as well and selection of GPIOLIB will be forced early on
+in board bringup.
+
+Thanks.
+
+-- =
+
+Dmitry
