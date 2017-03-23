@@ -1,116 +1,145 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v1 6/8] gpio: acpi: Explain how to get GPIO descriptors
- in ACPI case
-Date: Thu, 23 Mar 2017 13:28:38 -0700
-Message-ID: <20170323202838.GA11818@dtor-ws>
-References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
- <20170323194618.26548-7-andriy.shevchenko@linux.intel.com>
+From: Julia Cartwright <julia@ni.com>
+Subject: Re: [PATCH v4 1/4] pinctrl: rockchip: remove unnecessary locking
+Date: Thu, 23 Mar 2017 15:43:22 -0500
+Message-ID: <20170323204322.GO10423@jcartwri.amer.corp.natinst.com>
+References: <20170323105931.10455-1-john@metanate.com>
+ <9002373.ugSBBElCUj@diego>
+ <20170323182910.GN10423@jcartwri.amer.corp.natinst.com>
+ <3695399.LE2KsF2WZK@diego>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36254 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932419AbdCWU2w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 16:28:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20170323194618.26548-7-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============5931885812877845041=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <3695399.LE2KsF2WZK@diego>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Heiko St?bner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 09:46:16PM +0200, Andy Shevchenko wrote:
-> Documentation lacks of explanation how we actually use device properties
-> for GPIO resources.
-> 
-> Add a section to the documentation about that.
-> 
-> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  Documentation/acpi/gpio-properties.txt | 60 ++++++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
-> 
-> diff --git a/Documentation/acpi/gpio-properties.txt b/Documentation/acpi/gpio-properties.txt
-> index 2aff0349facd..07954b7c3a12 100644
-> --- a/Documentation/acpi/gpio-properties.txt
-> +++ b/Documentation/acpi/gpio-properties.txt
-> @@ -156,3 +156,63 @@ pointed to by its first argument.  That should be done in the driver's .probe()
->  routine.  On removal, the driver should unregister its GPIO mapping table by
->  calling acpi_dev_remove_driver_gpios() on the ACPI device object where that
->  table was previously registered.
-> +
-> +Using the _CRS fallback
-> +-----------------------
-> +
-> +If a device does not have _DSD or the driver does not create ACPI GPIO
-> +mapping, the Linux GPIO framework refuses to return any GPIOs. This is
-> +because the driver does not know what it actually gets. For example if we
-> +have a device like below:
-> +
-> +  Device (BTH)
-> +  {
-> +      Name (_HID, ...)
-> +
-> +      Name (_CRS, ResourceTemplate () {
-> +          GpioIo (Exclusive, PullNone, 0, 0, IoRestrictionNone,
-> +                  "\\_SB.GPO0", 0, ResourceConsumer) {15}
-> +          GpioIo (Exclusive, PullNone, 0, 0, IoRestrictionNone,
-> +                  "\\_SB.GPO0", 0, ResourceConsumer) {27}
-> +      })
-> +  }
-> +
-> +The driver might expect to get the right GPIO when it does:
-> +
-> +  desc = gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> +
-> +but since there is no way to know the mapping between "reset" and
-> +the GpioIo() in _CRS desc will hold ERR_PTR(-ENOENT).
-> +
-> +The driver author can solve this by passing the mapping explictly
-> +(the recommended way and documented in the above chapter).
+--===============5931885812877845041==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FeAIMMcddNRN4P4/"
+Content-Disposition: inline
 
-If the driver is not platform specific, then it would have no idea about
-mapping between _CRS GPIOs and names. All such stuff should be hidden in
-platform glue (i.e drivers/platform/x86/platform_crap.c).
+--FeAIMMcddNRN4P4/
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +Getting GPIO descriptor
-> +-----------------------
-> +
-> +There are two main approaches to get GPIO resource from ACPI:
-> +	desc = gpiod_get(dev, connection_id, flags);
-> +	desc = gpiod_get_index(dev, connection_id, index, flags);
-> +
-> +We may consider two different cases here, i.e. when connection ID is
-> +provided and otherwise.
-> +
-> +Case 1:
-> +	desc = gpiod_get(dev, "non-null-connection-id", flags);
-> +	desc = gpiod_get_index(dev, "non-null-connection-id", index, flags);
-> +
-> +Case 2:
-> +	desc = gpiod_get(dev, NULL, flags);
-> +	desc = gpiod_get_index(dev, NULL, index, flags);
-> +
-> +Case 1 assumes that corresponding ACPI device description must have
-> +defined device properties and will prevent to getting any GPIO resources
-> +otherwise.
-> +
-> +Case 2 explicitly tells GPIO core to look for resources in _CRS.
-> +
-> +Be aware that gpiod_get_index() in cases 1 and 2, assuming that there
-> +are two versions of ACPI device description provided and no mapping is
-> +present in the driver, will return different resources. That's why a
-> +certain driver has to handle them carefully as explained in previous
-> +chapter.
+On Thu, Mar 23, 2017 at 09:01:43PM +0100, Heiko St?bner wrote:
+> Am Donnerstag, 23. M=E4rz 2017, 13:29:10 CET schrieb Julia Cartwright:
+> > On Thu, Mar 23, 2017 at 06:55:50PM +0100, Heiko St?bner wrote:
+> > > Am Donnerstag, 23. M=E4rz 2017, 17:51:53 CET schrieb John Keeping:
+> > > > On Thu, 23 Mar 2017 11:10:20 -0500, Julia Cartwright wrote:
+[..]
+> > > > > > @@ -1185,17 +1177,14 @@ static int rockchip_set_drive_perpin(st=
+ruct
+> > > > > > rockchip_pin_bank *bank,> >
+> > > > > >=20
+> > > > > >  			rmask =3D BIT(15) | BIT(31);
+> > > > > >  			data |=3D BIT(31);
+> > > > > >  			ret =3D regmap_update_bits(regmap, reg, rmask, data);
+> > > > > >=20
+> > > > > > -			if (ret) {
+> > > > > > -				spin_unlock_irqrestore(&bank->slock, flags);
+> > > > > > +			if (ret)
+> > > > > >=20
+> > > > > >  				return ret;
+> > > > > >=20
+> > > > > > -			}
+> > > > > >=20
+> > > > > >  			rmask =3D 0x3 | (0x3 << 16);
+> > > > > >  			temp |=3D (0x3 << 16);
+> > > > > >  			reg +=3D 0x4;
+> > > > > >  			ret =3D regmap_update_bits(regmap, reg, rmask, temp);
+> > > > >=20
+> > > > > Killing the lock here means the writes to to this pair of registe=
+rs
+> > > > > (reg
+> > > > > and reg + 4) can be observed non-atomically.  Have you convinced
+> > > > > yourself that this isn't a problem?
+> > > >=20
+> > > > I called it out in v1 [1] since this bit is new since v4.4 where I
+> > > > originally wrote this patch, and didn't get any comments about it.
+> > > >=20
+> > > > I've convinced myself that removing the lock doesn't cause any prob=
+lems
+> > > > for writing to the hardware: if the lock would prevent writes
+> > > > interleaving then it means that two callers are trying to write
+> > > > different drive strengths to the same pin, and even with a lock her=
+e one
+> > > > of them will end up with the wrong drive strength.
+> > > >=20
+> > > > But it does mean that a read via rockchip_get_drive_perpin() may se=
+e an
+> > > > inconsistent state.  I think adding a new lock specifically for this
+> > > > particular drive strength bit is overkill and I can't find a scenar=
+io
+> > > > where this will actually matter; any driver setting a pinctrl config
+> > > > must already be doing something to avoid racing two configurations
+> > > > against each other, mustn't it?
+> > >=20
+> > > also, pins can normally only be requested once - see drivers complain=
+ing
+> > > if
+> > > one of their pins is already held by a different driver. So if you re=
+ally
+> > > end up with two things writing to the same drive strength bits, the
+> > > driver holding the pins must be really messed up anyway :-)
+> >=20
+> > My concern would be if two independent pins' drive strength
+> > configuration would walk on each other, because they happen to be
+> > configured via the same registers.
+> >=20
+> > If that's not possible, then great!
+>=20
+> ah sorry that we didn't make that clearer in the beginning, but no that a=
+lso=20
+> isn't possible. The registers use a "hiword-mask" scheme, so on each writ=
+e to=20
+> bit (x) the corresponding write-mask in bit (x+16) also needs to be set, =
+so=20
+> the each write will always only affect bits enabled in that way.
 
-I think that this wording is too x86-centric. We are talking about
-consumers of GPIOs here (i.e. drivers), which need unified behavior
-between ACPI, DT, and static board properties, they do not really care
-about _CRS or _DSD.
+Awesome, thanks for clearing things up.
 
-Thanks.
+Thanks!
+   Julia
 
--- 
-Dmitry
+--FeAIMMcddNRN4P4/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEgKAEF431w1EL96k9jNrC4UVNdG8FAljUM2YACgkQjNrC4UVN
+dG8XyAf8CKpyGTgNTVt3BUdIYvfXRGUVC+jZvtY4VzZdd9Ibio1qzpuKGqaIX0BR
+0Ldbbp5cBuS3+lVy5XZNfQ39G9DRZtgFCNXNuc4UgI3GWfck40llhvHxqaUZX0YW
+s6iHtSxf/ooh7EFItvIq0VtaY7wymjPTl5uKy1a/bV1Fb0cH01JYKD4dqDgDbZVS
+sdwpDpr2ywqspwdvT+I2crOqblUG/Cfop6f3LfMaYfvRM/GvpB+4Fn4s+P1kFw/l
+9qZ93DDfhrtWHReoxmAN12Rraq5SyDalvq7LYaNyJBRToztSceOeqhPZGv1cqYiu
+QRc3dvOYC3HHBUSpm3MvmE1C44VjLw==
+=KHj2
+-----END PGP SIGNATURE-----
+
+--FeAIMMcddNRN4P4/--
+
+
+--===============5931885812877845041==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============5931885812877845041==--
