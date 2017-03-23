@@ -1,62 +1,72 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD and GPIO due for the v4.12
- merge window
-Date: Thu, 23 Mar 2017 11:48:43 +0000
-Message-ID: <20170323114843.q7zcakeajjnhqr4l@dell>
-References: <1489745120-2918-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Thu, 23 Mar 2017 13:03:56 +0100
+Message-ID: <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
+References: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
+ <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
+ <CAMuHMdWv-xs12UqutEtXJGR8qqgx6DeDhkKvvYhhyW+XTVsUNQ@mail.gmail.com>
+ <CAMuHMdXGn35bEsJKnUi5o3AytL4AJN2fBfoB79v5W-jOVFQx6g@mail.gmail.com>
+ <20170320103113.tpveoq2onzrwmkdt@pengutronix.de>
+ <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
+ <20170320110718.e44s2gip36m75bqj@pengutronix.de>
+ <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
+ <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+ <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+ <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36062 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751732AbdCWLsx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 07:48:53 -0400
-Received: by mail-wm0-f42.google.com with SMTP id n11so58704908wma.1
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 04:48:52 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1489745120-2918-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-Enjoy,
-
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-v4.12
-
-for you to fetch changes up to 9f7c7ceefe5e824e8333859bded12257a6d3548a:
-
-  mfd: wm831x: Add device tree binding document (2017-03-23 11:46:00 +0000)
-
-----------------------------------------------------------------
-Immutable branch between MFD and GPIO due for the v4.12 merge window
-
-----------------------------------------------------------------
-Charles Keepax (3):
-      mfd: wm831x: Add basic device tree binding
-      gpio: wm831x: Add basic device tree support
-      mfd: wm831x: Add device tree binding document
-
- Documentation/devicetree/bindings/mfd/wm831x.txt | 81 ++++++++++++++++++++++++
- MAINTAINERS                                      |  1 +
- drivers/gpio/gpio-wm831x.c                       |  5 +-
- drivers/mfd/wm831x-core.c                        | 29 ++++++---
- drivers/mfd/wm831x-i2c.c                         | 19 +++++-
- drivers/mfd/wm831x-irq.c                         |  6 +-
- drivers/mfd/wm831x-spi.c                         | 18 +++++-
- include/linux/mfd/wm831x/core.h                  |  9 ++-
- 8 files changed, 152 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/wm831x.txt
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+SGkgVXdlLAoKT24gVGh1LCBNYXIgMjMsIDIwMTcgYXQgMTI6MTEgUE0sIFV3ZSBLbGVpbmUtS8O2
+bmlnCjx1LmtsZWluZS1rb2VuaWdAcGVuZ3V0cm9uaXguZGU+IHdyb3RlOgo+PiBNYWtlIHN1cmUg
+dG8gZW5hYmxlIGFsbCBkcml2ZXJzIGFuZCBzdWJzeXN0ZW1zIHlvdSBuZWVkIHdoZW4gYnVpbGRp
+bmcKPj4geW91ciBrZXJuZWwuIFRoYXQncyBhbHdheXMgdHJ1ZS4gQW5kIG1heSBpbmRlZWQgYmUg
+aGFyZCB0byBkZWJ1ZyAoZS5nLiB3aGF0Cj4+IGtlcm5lbCBvcHRpb25zIGRvIEkgbmVlZCB0byBt
+YWtlIHN5c3RlbWQgd29yaz8pLgo+Cj4gSXQncyB3b3JzZSBoZXJlLiBJZiB5b3UgZm9yZ2V0IHRv
+IGVuYWJsZSBhIGRyaXZlciB0aGUgZGV2aWNlIGlzbid0IGJvdW5kCj4gYW5kIHRoYXQncyBvYnZp
+b3VzIHRvIGRpYWdub3NlLiBXaGVuIGlnbm9yaW5nIGFuIG9wdGlvbmFsIEdQSU8gdGhlcmUKPiBt
+aWdodCBiZSBhIGRldmljZSB0aGF0IGNsYWltcyB0byB3b3JrIGJ1dCBmYWlscyB0byBkbyBzby4g
+KGUuZy4geW91Cj4gd3JpdGUgdG8gbWVtb3J5LCB3cml0ZSgpIHJldHVybnMgMCwgYnV0IHRoZSBk
+YXRhIG5ldmVyIGxhbmRlZCB0aGVyZS4pCj4KPj4gPiB3cml0ZSgyKSBhbmQgY2xvc2UoMikgc3Vj
+Y2VlZCBtb3N0IG9mIHRoZSB0aW1lLCB0b28uIFN0aWxsIGl0J3Mgbm90IGEKPj4gPiBnb29kIGlk
+ZWEgdG8gbm90IGNoZWNrIHRoZSByZXR1cm4gdmFsdWUuIE9yIGxldCB0aGUga2VybmVsIHJldHVy
+bgo+PiA+IHN1Y2Nlc3MgdW5jb25kaXRpb25hbGx5Lgo+Pgo+PiBXcml0aW5nIGFsbCBieXRlcyBw
+YXNzZWQgaW4gdGhlIGJ1ZmZlciBpcyAib3B0aW9uYWwiIGluIGFub3RoZXIgc2Vuc2UgdGhhbgo+
+PiBhbiAib3B0aW9uYWwiIEdQSU86IHlvdSBtdXN0IHJldHJ5IHRoZSB3cml0ZSwgd2hpbGUgeW91
+IGNhbiBjb250aW51ZSBpZgo+PiBhbiBvcHRpb25hbCBHUElPIGlzIG5vdCBwcmVzZW50Lgo+Cj4g
+QW5kIHRoYXQgaXMgdGhlIHBvaW50LiBZb3UgY2FuIGNvbnRpbnVlICppZmYqIHRoZSBvcHRpb25h
+bCBHUElPIGlzIG5vdAo+IHByZXNlbnQuIFRoZSBwYXRjaCBpbiBxdWVzdGlvbiByZW1vdmVzIHRo
+ZSBhYmlsaXR5IHRvIGRldGVybWluZSBpZiB0aGF0Cj4gR1BJTyBpcyBwcmVzZW50IGFuZCBjbGFp
+bXMgaXQgaXMgbm90IHByZXNlbnQuCgpJZiB5b3UgZm9yZ2V0IHRvIGVuYWJsZSBhIGRyaXZlci9z
+dWJzeXN0ZW0sIHlvdSBzb21ldGltZXMgY2Fubm90IGRldGVybWluZQppZiB0aGUgZGV2aWNlIGlz
+IHByZXNlbnQgb3Igbm90IG5laXRoZXIuCgpIZW5jZSBpdCBib2lscyBkb3duIHRvICJrbm93aW5n
+IiBpZiB0aGVyZSBpcyBhIEdQSU8gb3Igbm90LgpTbywgd2hlbiBjYW4gdGhlcmUgYmUgYSBHUElP
+PwogIDEuIFRoZSBHUElPIGlzIGRlc2NyaWJlZCBpbiBEVC4KICAgICA9PiBOb3QgYW4gaXNzdWUs
+IGFzIERUIEdQSU8gaW1wbGllcyBHUElPTElCLAogIDIuIFRoZSBHUElPIGlzIGRlc2NyaWJlZCBp
+biBsZWdhY3kgcGxhdGZvcm0gZGF0YS4KICAgICA9PiBUaGUgcGxhdGZvcm0gY29kZSBzaG91bGQg
+bWFrZSBzdXJlIEdQSU9MSUIgaXMgc2VsZWN0ZWQgd2hlbiBuZWVkZWQuCgpJc3N1ZSBzb2x2ZWQ/
+CgpHcntvZXRqZSxlZXRpbmd9cywKCiAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0CgotLQpH
+ZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0t
+IGdlZXJ0QGxpbnV4LW02OGsub3JnCgpJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVj
+aG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0CndoZW4gSSdtIHRhbGtp
+bmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxp
+a2UgdGhhdC4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxk
+cwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgt
+YXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJt
+LWtlcm5lbAo=
