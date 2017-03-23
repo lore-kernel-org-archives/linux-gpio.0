@@ -1,61 +1,49 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v1 3/8] gpio: acpi: Do sanity check for GpioInt in
- acpi_find_gpio()
-Date: Thu, 23 Mar 2017 13:19:29 -0700
-Message-ID: <20170323201929.GD2502@dtor-ws>
-References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
- <20170323194618.26548-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH] ACPI / gpio: do not fall back to parsing _CRS when we get a
+ deferral
+Date: Thu, 23 Mar 2017 13:21:38 -0700
+Message-ID: <20170323202138.GA11912@dtor-ws>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36657 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbdCWUTd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 16:19:33 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34705 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752299AbdCWUVm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 16:21:42 -0400
 Content-Disposition: inline
-In-Reply-To: <20170323194618.26548-4-andriy.shevchenko@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 09:46:13PM +0200, Andy Shevchenko wrote:
-> Check that we don't ask for output direction on GpioInt resource in cases with
-> or without _DSD defined.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+If, while locating GPIOs by name, we get probe deferral, we should
+immediately report it to caller rather than trying to fall back to parsing
+unnamed GPIOs from _CRS block.
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/gpio/gpiolib-acpi.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 3bda3166d418..21e4930ca2db 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -614,12 +614,12 @@ struct gpio_desc *acpi_find_gpio(struct device *dev,
->  		desc = acpi_get_gpiod_by_index(adev, NULL, idx, &info);
->  		if (IS_ERR(desc))
->  			return desc;
-> +	}
->  
-> -		if ((flags == GPIOD_OUT_LOW || flags == GPIOD_OUT_HIGH) &&
-> -		    info.gpioint) {
-> -			dev_dbg(dev, "refusing GpioInt() entry when doing GPIOD_OUT_* lookup\n");
-> -			return ERR_PTR(-ENOENT);
-> -		}
-> +	if (info.gpioint &&
-> +	    (flags == GPIOD_OUT_LOW || flags == GPIOD_OUT_HIGH)) {
-> +		dev_dbg(dev, "refusing GpioInt() entry when doing GPIOD_OUT_* lookup\n");
-> +		return ERR_PTR(-ENOENT);
->  	}
->  
->  	if (info.polarity == GPIO_ACTIVE_LOW)
-> -- 
-> 2.11.0
-> 
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index a3faefa44f68..d3f9f028a37b 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -572,8 +572,10 @@ struct gpio_desc *acpi_find_gpio(struct device *dev,
+ 		}
+ 
+ 		desc = acpi_get_gpiod_by_index(adev, propname, idx, &info);
+-		if (!IS_ERR(desc) || (PTR_ERR(desc) == -EPROBE_DEFER))
++		if (!IS_ERR(desc))
+ 			break;
++		if (PTR_ERR(desc) == -EPROBE_DEFER)
++			return ERR_CAST(desc);
+ 	}
+ 
+ 	/* Then from plain _CRS GPIOs */
+-- 
+2.12.1.500.gab5fba24ee-goog
+
 
 -- 
 Dmitry
