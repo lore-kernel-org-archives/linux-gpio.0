@@ -1,137 +1,77 @@
-From: John Keeping <john@metanate.com>
-Subject: [PATCH v4 4/4] pinctrl: rockchip: avoid hardirq-unsafe functions in irq_chip
-Date: Thu, 23 Mar 2017 10:59:31 +0000
-Message-ID: <20170323105931.10455-5-john@metanate.com>
-References: <20170323105931.10455-1-john@metanate.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Thu, 23 Mar 2017 12:11:06 +0100
+Message-ID: <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+References: <20170306100220.droey65uq2ew3mzu@pengutronix.de>
+ <CACRpkdYeFyr4yjQjDAUpPJwuD_NW2y=wXnzt1xSNoOX0SFCLmw@mail.gmail.com>
+ <CAMuHMdWv-xs12UqutEtXJGR8qqgx6DeDhkKvvYhhyW+XTVsUNQ@mail.gmail.com>
+ <CAMuHMdXGn35bEsJKnUi5o3AytL4AJN2fBfoB79v5W-jOVFQx6g@mail.gmail.com>
+ <20170320103113.tpveoq2onzrwmkdt@pengutronix.de>
+ <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
+ <20170320110718.e44s2gip36m75bqj@pengutronix.de>
+ <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
+ <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+ <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170323105931.10455-1-john@metanate.com>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-With real-time preemption, regmap functions cannot be used in the
-implementation of irq_chip since they use spinlocks which may sleep.
+Hello,
 
-Move the setting of the mux for IRQs to an irq_bus_sync_unlock handler
-where we are allowed to sleep.
+On Thu, Mar 23, 2017 at 11:20:39AM +0100, Geert Uytterhoeven wrote:
+> But having the error breaks setups where the GPIO is optional and does
+> not exist.
 
-Signed-off-by: John Keeping <john@metanate.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
-v3: unchanged
-v2: unchanged
----
- drivers/pinctrl/pinctrl-rockchip.c | 44 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 40 insertions(+), 4 deletions(-)
+so the right way forward is to check harder in the situation where
+-ENOSYS was returned before to determine if there is really no GPIO to
+be used. "Oh, there are hints that there is no GPIO (GPIOLIB=n), so lets
+assume there isn't." is wrong.
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 9dd981ddbb17..f141aa0430b1 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -143,6 +143,9 @@ struct rockchip_drv {
-  * @gpio_chip: gpiolib chip
-  * @grange: gpio range
-  * @slock: spinlock for the gpio bank
-+ * @irq_lock: bus lock for irq chip
-+ * @new_irqs: newly configured irqs which must be muxed as GPIOs in
-+ *	irq_bus_sync_unlock()
-  */
- struct rockchip_pin_bank {
- 	void __iomem			*reg_base;
-@@ -165,6 +168,8 @@ struct rockchip_pin_bank {
- 	struct pinctrl_gpio_range	grange;
- 	raw_spinlock_t			slock;
- 	u32				toggle_edge_mode;
-+	struct mutex			irq_lock;
-+	u32				new_irqs;
- };
- 
- #define PIN_BANK(id, pins, label)			\
-@@ -2129,11 +2134,12 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 	int ret;
- 
- 	/* make sure the pin is configured as gpio input */
--	ret = rockchip_set_mux(bank, d->hwirq, RK_FUNC_GPIO);
-+	ret = rockchip_verify_mux(bank, d->hwirq, RK_FUNC_GPIO);
- 	if (ret < 0)
- 		return ret;
- 
--	clk_enable(bank->clk);
-+	bank->new_irqs |= mask;
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-@@ -2191,7 +2197,6 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 	default:
- 		irq_gc_unlock(gc);
- 		raw_spin_unlock_irqrestore(&bank->slock, flags);
--		clk_disable(bank->clk);
- 		return -EINVAL;
- 	}
- 
-@@ -2200,7 +2205,6 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 
- 	irq_gc_unlock(gc);
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
--	clk_disable(bank->clk);
- 
- 	return 0;
- }
-@@ -2244,6 +2248,34 @@ static void rockchip_irq_disable(struct irq_data *d)
- 	clk_disable(bank->clk);
- }
- 
-+static void rockchip_irq_bus_lock(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
-+
-+	clk_enable(bank->clk);
-+	mutex_lock(&bank->irq_lock);
-+}
-+
-+static void rockchip_irq_bus_sync_unlock(struct irq_data *d)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct rockchip_pin_bank *bank = gc->private;
-+
-+	while (bank->new_irqs) {
-+		unsigned int irq = __ffs(bank->new_irqs);
-+		int ret;
-+
-+		ret = rockchip_set_mux(bank, irq, RK_FUNC_GPIO);
-+		WARN_ON(ret < 0);
-+
-+		bank->new_irqs &= ~BIT(irq);
-+	}
-+
-+	mutex_unlock(&bank->irq_lock);
-+	clk_disable(bank->clk);
-+}
-+
- static int rockchip_interrupts_register(struct platform_device *pdev,
- 						struct rockchip_pinctrl *info)
- {
-@@ -2310,6 +2342,9 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
- 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
- 		gc->chip_types[0].chip.irq_set_type = rockchip_irq_set_type;
-+		gc->chip_types[0].chip.irq_bus_lock = rockchip_irq_bus_lock;
-+		gc->chip_types[0].chip.irq_bus_sync_unlock =
-+						rockchip_irq_bus_sync_unlock;
- 		gc->wake_enabled = IRQ_MSK(bank->nr_pins);
- 
- 		irq_set_chained_handler_and_data(bank->irq,
-@@ -2483,6 +2518,7 @@ static struct rockchip_pin_ctrl *rockchip_pinctrl_get_soc_data(
- 		int bank_pins = 0;
- 
- 		raw_spin_lock_init(&bank->slock);
-+		mutex_init(&bank->irq_lock);
- 		bank->drvdata = d;
- 		bank->pin_base = ctrl->nr_pins;
- 		ctrl->nr_pins += bank->nr_pins;
+Can we please properly fix the problem instead of papering over it?
+
+> Make sure to enable all drivers and subsystems you need when building
+> your kernel. That's always true. And may indeed be hard to debug (e.g. what
+> kernel options do I need to make systemd work?).
+
+It's worse here. If you forget to enable a driver the device isn't bound
+and that's obvious to diagnose. When ignoring an optional GPIO there
+might be a device that claims to work but fails to do so. (e.g. you
+write to memory, write() returns 0, but the data never landed there.)
+
+> > write(2) and close(2) succeed most of the time, too. Still it's not a
+> > good idea to not check the return value. Or let the kernel return
+> > success unconditionally.
+> 
+> Writing all bytes passed in the buffer is "optional" in another sense than
+> an "optional" GPIO: you must retry the write, while you can continue if
+> an optional GPIO is not present.
+
+And that is the point. You can continue *iff* the optional GPIO is not
+present. The patch in question removes the ability to determine if that
+GPIO is present and claims it is not present.
+
+> > So you exchanged many obvious and easy to fix problems with a few hard
+> > ones. I don't agree that's a good idea, but you seem to be willing to
+> > try it. Good luck.
+> 
+> Yeah, before drivers had to explicitly ignore -ENOSYS if they want to
+> support platforms with and without GPIOLIB. Bad...
+
+Doing things right is sometimes not maximally easy. But that is no
+excuse to do it wrong.
+
+Best regards
+Uwe
+
 -- 
-2.12.0.377.gf910686b23.dirty
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
