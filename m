@@ -1,259 +1,33 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 1/2] pinctrl: meson-gxl: Fix inverted registers and add missing pins
-Date: Thu, 23 Mar 2017 11:41:10 +0100
-Message-ID: <20170323104112.16558-2-narmstrong@baylibre.com>
-References: <20170323104112.16558-1-narmstrong@baylibre.com>
+From: John Keeping <john@metanate.com>
+Subject: [PATCH v4 0/4] pinctrl: rockchip: PREEMPT_RT_FULL fixes
+Date: Thu, 23 Mar 2017 10:59:27 +0000
+Message-ID: <20170323105931.10455-1-john@metanate.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35449 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932484AbdCWKl2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 06:41:28 -0400
-Received: by mail-wm0-f43.google.com with SMTP id u132so57501910wmg.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 03:41:27 -0700 (PDT)
-In-Reply-To: <20170323104112.16558-1-narmstrong@baylibre.com>
+Received: from dougal.metanate.com ([90.155.101.14]:38660 "EHLO metanate.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932257AbdCWLAe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 23 Mar 2017 07:00:34 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
 
-Fix some inverted bit numbers in some pinctrl groups and add missing pins
-and groups to be in pair with the GXBB pinctrl pins definition.
+The aim of the series is to make the Rockchip pinctrl irq_chip
+implementation safe for use with RT_FULL which requires that raw
+spinlocks are used to avoid sleeping in hardirq context.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxl.c | 83 +++++++++++++++++++++++++------
- 1 file changed, 68 insertions(+), 15 deletions(-)
+v4 is v3 rebased onto pinctrl/devel as of b9c6dcab265e ("pinctrl: rockchip:
+rename RK1108 to RV1108").
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index a0a7936..6c2a15d 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -136,6 +136,11 @@ static const unsigned int emmc_clk_pins[] = { PIN(BOOT_8, EE_OFF) };
- static const unsigned int emmc_cmd_pins[] = { PIN(BOOT_10, EE_OFF) };
- static const unsigned int emmc_ds_pins[] = { PIN(BOOT_15, EE_OFF) };
- 
-+static const unsigned int nor_d_pins[]		= { PIN(BOOT_11, EE_OFF) };
-+static const unsigned int nor_q_pins[]		= { PIN(BOOT_12, EE_OFF) };
-+static const unsigned int nor_c_pins[]		= { PIN(BOOT_13, EE_OFF) };
-+static const unsigned int nor_cs_pins[]		= { PIN(BOOT_15, EE_OFF) };
-+
- static const unsigned int sdcard_d0_pins[] = { PIN(CARD_1, EE_OFF) };
- static const unsigned int sdcard_d1_pins[] = { PIN(CARD_0, EE_OFF) };
- static const unsigned int sdcard_d2_pins[] = { PIN(CARD_5, EE_OFF) };
-@@ -167,9 +172,13 @@ static const unsigned int uart_rts_a_pins[]	= { PIN(GPIOX_15, EE_OFF) };
- 
- static const unsigned int uart_tx_b_pins[]	= { PIN(GPIODV_24, EE_OFF) };
- static const unsigned int uart_rx_b_pins[]	= { PIN(GPIODV_25, EE_OFF) };
-+static const unsigned int uart_cts_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
-+static const unsigned int uart_rts_b_pins[]	= { PIN(GPIODV_27, EE_OFF) };
- 
- static const unsigned int uart_tx_c_pins[]	= { PIN(GPIOX_8, EE_OFF) };
- static const unsigned int uart_rx_c_pins[]	= { PIN(GPIOX_9, EE_OFF) };
-+static const unsigned int uart_cts_c_pins[]	= { PIN(GPIOX_10, EE_OFF) };
-+static const unsigned int uart_rts_c_pins[]	= { PIN(GPIOX_11, EE_OFF) };
- 
- static const unsigned int i2c_sck_a_pins[]	= { PIN(GPIODV_25, EE_OFF) };
- static const unsigned int i2c_sda_a_pins[]	= { PIN(GPIODV_24, EE_OFF) };
-@@ -180,6 +189,9 @@ static const unsigned int i2c_sda_b_pins[]	= { PIN(GPIODV_26, EE_OFF) };
- static const unsigned int i2c_sck_c_pins[]	= { PIN(GPIODV_29, EE_OFF) };
- static const unsigned int i2c_sda_c_pins[]	= { PIN(GPIODV_28, EE_OFF) };
- 
-+static const unsigned int i2c_sck_c_dv19_pins[]	= { PIN(GPIODV_19, EE_OFF) };
-+static const unsigned int i2c_sda_c_dv18_pins[]	= { PIN(GPIODV_18, EE_OFF) };
-+
- static const unsigned int eth_mdio_pins[]	= { PIN(GPIOZ_0, EE_OFF) };
- static const unsigned int eth_mdc_pins[]	= { PIN(GPIOZ_1, EE_OFF) };
- static const unsigned int eth_clk_rx_clk_pins[]	= { PIN(GPIOZ_2, EE_OFF) };
-@@ -227,6 +239,8 @@ static const struct pinctrl_pin_desc meson_gxl_aobus_pins[] = {
- 
- static const unsigned int uart_tx_ao_a_pins[]	= { PIN(GPIOAO_0, 0) };
- static const unsigned int uart_rx_ao_a_pins[]	= { PIN(GPIOAO_1, 0) };
-+static const unsigned int uart_tx_ao_b_0_pins[]	= { PIN(GPIOAO_0, 0) };
-+static const unsigned int uart_rx_ao_b_1_pins[]	= { PIN(GPIOAO_1, 0) };
- static const unsigned int uart_cts_ao_a_pins[]	= { PIN(GPIOAO_2, 0) };
- static const unsigned int uart_rts_ao_a_pins[]	= { PIN(GPIOAO_3, 0) };
- static const unsigned int uart_tx_ao_b_pins[]	= { PIN(GPIOAO_4, 0) };
-@@ -234,12 +248,18 @@ static const unsigned int uart_rx_ao_b_pins[]	= { PIN(GPIOAO_5, 0) };
- static const unsigned int uart_cts_ao_b_pins[]	= { PIN(GPIOAO_2, 0) };
- static const unsigned int uart_rts_ao_b_pins[]	= { PIN(GPIOAO_3, 0) };
- 
-+static const unsigned int i2c_sck_ao_pins[] = {PIN(GPIOAO_4, 0) };
-+static const unsigned int i2c_sda_ao_pins[] = {PIN(GPIOAO_5, 0) };
-+static const unsigned int i2c_slave_sck_ao_pins[] = {PIN(GPIOAO_4, 0) };
-+static const unsigned int i2c_slave_sda_ao_pins[] = {PIN(GPIOAO_5, 0) };
-+
- static const unsigned int remote_input_ao_pins[] = {PIN(GPIOAO_7, 0) };
- 
- static const unsigned int pwm_ao_a_3_pins[]	= { PIN(GPIOAO_3, 0) };
- static const unsigned int pwm_ao_a_8_pins[]	= { PIN(GPIOAO_8, 0) };
- 
- static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_9, 0) };
-+static const unsigned int pwm_ao_b_6_pins[]	= { PIN(GPIOAO_6, 0) };
- 
- static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0, EE_OFF),
-@@ -355,8 +375,8 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GROUP(sdio_d1,		5,	30),
- 	GROUP(sdio_d2,		5,	29),
- 	GROUP(sdio_d3,		5,	28),
--	GROUP(sdio_cmd,		5,	27),
--	GROUP(sdio_clk,		5,	26),
-+	GROUP(sdio_clk,		5,	27),
-+	GROUP(sdio_cmd,		5,	26),
- 	GROUP(sdio_irq,		5,	24),
- 	GROUP(uart_tx_a,	5,	19),
- 	GROUP(uart_rx_a,	5,	18),
-@@ -364,13 +384,15 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GROUP(uart_rts_a,	5,	16),
- 	GROUP(uart_tx_c,	5,	13),
- 	GROUP(uart_rx_c,	5,	12),
-+	GROUP(uart_cts_c,	5,	11),
-+	GROUP(uart_rts_c,	5,	10),
- 	GROUP(pwm_a,		5,	25),
- 	GROUP(pwm_e,		5,	15),
- 	GROUP(pwm_f_x,		5,	14),
- 
- 	/* Bank Z */
--	GROUP(eth_mdio,		4,	22),
--	GROUP(eth_mdc,		4,	23),
-+	GROUP(eth_mdio,		4,	23),
-+	GROUP(eth_mdc,		4,	22),
- 	GROUP(eth_clk_rx_clk,	4,	21),
- 	GROUP(eth_rx_dv,	4,	20),
- 	GROUP(eth_rxd0,		4,	19),
-@@ -393,12 +415,16 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	/* Bank DV */
- 	GROUP(uart_tx_b,	2,	16),
- 	GROUP(uart_rx_b,	2,	15),
--	GROUP(i2c_sck_a,	1,	15),
--	GROUP(i2c_sda_a,	1,	14),
--	GROUP(i2c_sck_b,	1,	13),
--	GROUP(i2c_sda_b,	1,	12),
--	GROUP(i2c_sck_c,	1,	11),
--	GROUP(i2c_sda_c,	1,	10),
-+	GROUP(uart_cts_b,	2,	14),
-+	GROUP(uart_rts_b,	2,	13),
-+	GROUP(i2c_sda_c_dv18,	1,	17),
-+	GROUP(i2c_sck_c_dv19,	1,	16),
-+	GROUP(i2c_sda_a,	1,	15),
-+	GROUP(i2c_sck_a,	1,	14),
-+	GROUP(i2c_sda_b,	1,	13),
-+	GROUP(i2c_sck_b,	1,	12),
-+	GROUP(i2c_sda_c,	1,	11),
-+	GROUP(i2c_sck_c,	1,	10),
- 	GROUP(pwm_b,		2,	11),
- 	GROUP(pwm_d,		2,	12),
- 
-@@ -407,6 +433,10 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
- 	GROUP(emmc_clk,		7,	30),
- 	GROUP(emmc_cmd,		7,	29),
- 	GROUP(emmc_ds,		7,	28),
-+	GROUP(nor_d,		7,	13),
-+	GROUP(nor_q,		7,	12),
-+	GROUP(nor_c,		7,	11),
-+	GROUP(nor_cs,		7,	10),
- 	GROUP(nand_ce0,		7,	7),
- 	GROUP(nand_ce1,		7,	6),
- 	GROUP(nand_rb0,		7,	5),
-@@ -441,16 +471,23 @@ static struct meson_pmx_group meson_gxl_aobus_groups[] = {
- 	GPIO_GROUP(GPIOAO_9, 0),
- 
- 	/* bank AO */
-+	GROUP(uart_tx_ao_b_0,	0,	26),
-+	GROUP(uart_rx_ao_b_1,	0,	25),
- 	GROUP(uart_tx_ao_b,	0,	24),
--	GROUP(uart_rx_ao_b,	0,	25),
-+	GROUP(uart_rx_ao_b,	0,	23),
- 	GROUP(uart_tx_ao_a,	0,	12),
- 	GROUP(uart_rx_ao_a,	0,	11),
- 	GROUP(uart_cts_ao_a,	0,	10),
- 	GROUP(uart_rts_ao_a,	0,	9),
- 	GROUP(uart_cts_ao_b,	0,	8),
- 	GROUP(uart_rts_ao_b,	0,	7),
-+	GROUP(i2c_sck_ao,	0,	6),
-+	GROUP(i2c_sda_ao,	0,	5),
-+	GROUP(i2c_slave_sck_ao, 0,	2),
-+	GROUP(i2c_slave_sda_ao, 0,	1),
- 	GROUP(remote_input_ao,	0,	0),
- 	GROUP(pwm_ao_a_3,	0,	22),
-+	GROUP(pwm_ao_b_6,	0,	18),
- 	GROUP(pwm_ao_a_8,	0,	17),
- 	GROUP(pwm_ao_b,		0,	3),
- };
-@@ -491,6 +528,10 @@ static const char * const emmc_groups[] = {
- 	"emmc_nand_d07", "emmc_clk", "emmc_cmd", "emmc_ds",
- };
- 
-+static const char * const nor_groups[] = {
-+	"nor_d", "nor_q", "nor_c", "nor_cs",
-+};
-+
- static const char * const sdcard_groups[] = {
- 	"sdcard_d0", "sdcard_d1", "sdcard_d2", "sdcard_d3",
- 	"sdcard_cmd", "sdcard_clk",
-@@ -511,11 +552,11 @@ static const char * const uart_a_groups[] = {
- };
- 
- static const char * const uart_b_groups[] = {
--	"uart_tx_b", "uart_rx_b",
-+	"uart_tx_b", "uart_rx_b", "uart_cts_b", "uart_rts_b",
- };
- 
- static const char * const uart_c_groups[] = {
--	"uart_tx_c", "uart_rx_c",
-+	"uart_tx_c", "uart_rx_c", "uart_cts_c", "uart_rts_c",
- };
- 
- static const char * const i2c_a_groups[] = {
-@@ -527,7 +568,7 @@ static const char * const i2c_b_groups[] = {
- };
- 
- static const char * const i2c_c_groups[] = {
--	"i2c_sck_c", "i2c_sda_c",
-+	"i2c_sck_c", "i2c_sda_c", "i2c_sda_c_dv18", "i2c_sck_c_dv19",
- };
- 
- static const char * const eth_groups[] = {
-@@ -580,6 +621,15 @@ static const char * const uart_ao_groups[] = {
- 
- static const char * const uart_ao_b_groups[] = {
- 	"uart_tx_ao_b", "uart_rx_ao_b", "uart_cts_ao_b", "uart_rts_ao_b",
-+	"uart_tx_ao_b_0", "uart_rx_ao_b_1",
-+};
-+
-+static const char * const i2c_ao_groups[] = {
-+	"i2c_sck_ao", "i2c_sda_ao",
-+};
-+
-+static const char * const i2c_slave_ao_groups[] = {
-+	"i2c_slave_sck_ao", "i2c_slave_sda_ao",
- };
- 
- static const char * const remote_input_ao_groups[] = {
-@@ -591,12 +641,13 @@ static const char * const pwm_ao_a_groups[] = {
- };
- 
- static const char * const pwm_ao_b_groups[] = {
--	"pwm_ao_b",
-+	"pwm_ao_b", "pwm_ao_b_6",
- };
- 
- static struct meson_pmx_func meson_gxl_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
-+	FUNCTION(nor),
- 	FUNCTION(sdcard),
- 	FUNCTION(sdio),
- 	FUNCTION(nand),
-@@ -621,6 +672,8 @@ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
- 	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(uart_ao_b),
-+	FUNCTION(i2c_ao),
-+	FUNCTION(i2c_slave_ao),
- 	FUNCTION(remote_input_ao),
- 	FUNCTION(pwm_ao_a),
- 	FUNCTION(pwm_ao_b),
+John Keeping (4):
+  pinctrl: rockchip: remove unnecessary locking
+  pinctrl: rockchip: convert to raw spinlock
+  pinctrl: rockchip: split out verification of mux settings
+  pinctrl: rockchip: avoid hardirq-unsafe functions in irq_chip
+
+ drivers/pinctrl/pinctrl-rockchip.c | 149 +++++++++++++++++++++----------------
+ 1 file changed, 85 insertions(+), 64 deletions(-)
+
 -- 
-2.7.0
+2.12.0.377.gf910686b23.dirty
 
