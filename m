@@ -1,43 +1,65 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Thu, 23 Mar 2017 13:35:34 +0200
-Message-ID: <CAJKOXPcLQCWdMrZTxJk+tjKyuzR6LmruPU0-K4p=wkR-f6bV+A@mail.gmail.com>
-References: <20170320164851.5999-1-krzk@kernel.org> <CACRpkdZK=5hnNFZ=M6jf-YeGj_nZx4Xw3+UQfj_5kOQ5_Hhj5Q@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v5 2/3] gpio: wm831x: Add basic device tree support
+Date: Thu, 23 Mar 2017 11:47:27 +0000
+Message-ID: <20170323114727.g7huthlsuh7tplxk@dell>
+References: <1489745120-2918-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1489745120-2918-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:58412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751905AbdCWLfj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 23 Mar 2017 07:35:39 -0400
-In-Reply-To: <CACRpkdZK=5hnNFZ=M6jf-YeGj_nZx4Xw3+UQfj_5kOQ5_Hhj5Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1489745120-2918-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org, gnurou@gmail.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Mar 23, 2017 at 12:38 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Mon, Mar 20, 2017 at 5:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
->> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
->> drivers.  The tree will be maintained in a shared model between current
->> Samsung pinctrl maintainers.  Pull requests will be going to Linus
->> Walleij.
->>
->> Also add the patchwork for linux-samsung-soc mailing list which will be
->> used for handling the patches.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
+On Fri, 17 Mar 2017, Charles Keepax wrote:
+
+> Now the wm831x-core has basic DT support we can update this driver to
+> allow use of the GPIOs within a device tree system.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Should I apply this patch by the way?
+> ---
+> 
+> No changes since v4, still should go through Lee's tree.
+> 
+> Thanks,
+> Charles
+> 
+>  drivers/gpio/gpio-wm831x.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-Yes, please go ahead.
+Applied, thanks.
 
-Best regards,
-Krzysztof
+> diff --git a/drivers/gpio/gpio-wm831x.c b/drivers/gpio/gpio-wm831x.c
+> index 00e3839..938bbe3 100644
+> --- a/drivers/gpio/gpio-wm831x.c
+> +++ b/drivers/gpio/gpio-wm831x.c
+> @@ -263,7 +263,7 @@ static const struct gpio_chip template_chip = {
+>  static int wm831x_gpio_probe(struct platform_device *pdev)
+>  {
+>  	struct wm831x *wm831x = dev_get_drvdata(pdev->dev.parent);
+> -	struct wm831x_pdata *pdata = dev_get_platdata(wm831x->dev);
+> +	struct wm831x_pdata *pdata = &wm831x->pdata;
+>  	struct wm831x_gpio *wm831x_gpio;
+>  	int ret;
+>  
+> @@ -280,6 +280,9 @@ static int wm831x_gpio_probe(struct platform_device *pdev)
+>  		wm831x_gpio->gpio_chip.base = pdata->gpio_base;
+>  	else
+>  		wm831x_gpio->gpio_chip.base = -1;
+> +#ifdef CONFIG_OF_GPIO
+> +	wm831x_gpio->gpio_chip.of_node = wm831x->dev->of_node;
+> +#endif
+>  
+>  	ret = devm_gpiochip_add_data(&pdev->dev, &wm831x_gpio->gpio_chip,
+>  				     wm831x_gpio);
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
