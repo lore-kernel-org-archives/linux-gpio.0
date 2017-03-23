@@ -1,45 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL calls
-Date: Thu, 23 Mar 2017 14:41:53 +0100
-Message-ID: <CACRpkdZRfLh9RXRycW_cAxuTYE6tPd7LR32EkAW8y2fh=AxhXA@mail.gmail.com>
-References: <CAMuHMdWv-xs12UqutEtXJGR8qqgx6DeDhkKvvYhhyW+XTVsUNQ@mail.gmail.com>
- <CAMuHMdXGn35bEsJKnUi5o3AytL4AJN2fBfoB79v5W-jOVFQx6g@mail.gmail.com>
- <20170320103113.tpveoq2onzrwmkdt@pengutronix.de> <CAMuHMdWbwA+3UGVnHYJOs26vTj13Yn+s4B8tE9kyy25JcjyZGg@mail.gmail.com>
- <20170320110718.e44s2gip36m75bqj@pengutronix.de> <CACRpkdZy_uguiKfSH-0gdanjr-xkwxoANTx6Fb2VwsvzRwcPRA@mail.gmail.com>
- <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de> <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
- <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de> <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
- <20170323123437.uqdwhfmmsjke3f7s@pengutronix.de>
+Subject: Re: [PATCH v3] pinctrl: cherryview: Add support for GMMR GPIO opregion
+Date: Thu, 23 Mar 2017 14:43:25 +0100
+Message-ID: <CACRpkdYSAzs7vCMronYhpgZSw1yzAPtMH4-hBuiTsK5PKsGSug@mail.gmail.com>
+References: <20170323132325.21558-1-hdegoede@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170323123437.uqdwhfmmsjke3f7s@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Nicolas Ferre <nicolas.ferre@microchip.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f45.google.com ([209.85.214.45]:38835 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752507AbdCWNnq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 23 Mar 2017 09:43:46 -0400
+Received: by mail-it0-f45.google.com with SMTP id y18so40551376itc.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Mar 2017 06:43:26 -0700 (PDT)
+In-Reply-To: <20170323132325.21558-1-hdegoede@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Takashi Iwai <tiwai@suse.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 23, 2017 at 1:34 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+On Thu, Mar 23, 2017 at 2:23 PM, Hans de Goede <hdegoede@redhat.com> wrote:
 
-> Maybe we can make gpiod_get_optional look like this:
+> On some Cherry Trail devices the ASL uses the GMMR GPIO to access
+> GPIOs so as to serialize MMIO accesses to GPIO registers with the
+> OS, because:
 >
->         if (!dev->of_node && isnt_a_acpi_device(dev) && !IS_ENABLED(GPIOL=
-IB))
->                 return NULL;
->         else
->                 return -ENOSYS;
+> "Due to a silicon issue, a shared lock must be used to prevent concurrent
+> accesses across the 4 GPIO controllers.
 >
-> I don't know how isnt_a_acpi_device looks like, probably it involves
-> CONFIG_ACPI and/or dev->acpi_node.
+> See Intel Atom Z8000 Processor Series Specification Update (Rev. 005),
+> errata #CHT34, for further information."
 >
-> This should be safe and still comfortable for legacy platforms, isn't it?
+> This commit adds support for this opregion, this fixes a number of
+> ASL errors on my Ezpad mini3 tablet and makes the otg port device/host
+> muxing which is controlled in firmware on this model work properly.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Changes in v2:
+> -Call acpi_remove_address_space_handler on remove
+> Changes in v3:
+> -Return actual status from the handler rather then always returning AE_OK
 
-I like the looks of this.
-
-Can we revert Dmitry's patch and apply something like this instead?
-
-Dmitry, how do you feel about this?
+Patch applied.
 
 Yours,
 Linus Walleij
