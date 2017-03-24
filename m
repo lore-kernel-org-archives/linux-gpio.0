@@ -1,43 +1,36 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [RFT PATCH 5/6] pinctrl: meson: use gpio-ranges from DT
-Date: Fri, 24 Mar 2017 17:52:10 +0100
-Message-ID: <45f14809-8303-b58b-1f38-7b76a3b7c00b@baylibre.com>
-References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
- <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
- <CAFBinCBa3QuUANF1z3LGk3T9GF-rV5F4WfLGuNCMB2q5juQyOw@mail.gmail.com>
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 0/8] pinctrl: meson: add audio output pins
+Date: Fri, 24 Mar 2017 12:52:44 -0700
+Message-ID: <m2wpbeh2pf.fsf@baylibre.com>
+References: <20170323165101.29262-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:37982 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757362AbdCXQwQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Mar 2017 12:52:16 -0400
-Received: by mail-wm0-f52.google.com with SMTP id t189so7045539wmt.1
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Mar 2017 09:52:15 -0700 (PDT)
-In-Reply-To: <CAFBinCBa3QuUANF1z3LGk3T9GF-rV5F4WfLGuNCMB2q5juQyOw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170323165101.29262-1-jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> (Jerome Brunet's
+        message of "Thu, 23 Mar 2017 17:50:53 +0100")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Carlo Caione <carlo-KA+7E9HrN00dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 03/23/2017 09:09 PM, Martin Blumenstingl wrote:
-> Hi Neil,
-> 
-> On Thu, Mar 23, 2017 at 5:27 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
->> When trying to add a gpio-hog, we enter a weird loop where the gpio-ranges
->> is needed when gpiochip_add_data() is called but in the current implementation
->> the ranges are added from the driver afterwards.
->>
->> A simple solution is to rely on the DR gpio-ranges attribute and remove the
->> call to gpiochip_add_pin_range().
-> did you mean devicetree or DT instead of "DR"?
-> 
-> 
-> Regards,
-> Martin
-> 
+Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> writes:
 
-Indeed, sorry for the typo.
+> This patchset adds the pinctrl definition and the related device-tree
+> bindings of the i2s output and spdif output pins on the meson gxbb and
+> gxl SoCs.
+>
+> This is part of the ongoing work to bring audio output suppot on the
+> meson family. It was tested on the gxbb p200 and gxl p230.
 
-Neil
+Series looks good to me,
+
+However, I'm not sure about Linus's preference, but most maintainers
+(myself included) prefer a small description in the changelog, even if
+it restates (with slightly more description) what's already in the
+$SUBJECT.
+
+Kevin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
