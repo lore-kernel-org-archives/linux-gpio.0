@@ -1,74 +1,44 @@
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v3 0/8] Renesas RZ/A1 pin and gpio controller
-Date: Fri, 24 Mar 2017 16:22:07 +0100
-Message-ID: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:38021 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757372AbdCXPW1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Mar 2017 11:22:27 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v3 4/7] arm: dts: r7s72100: Add pin controller node
+Date: Fri, 24 Mar 2017 18:32:47 +0300
+Message-ID: <f9481bea-2e22-2b9c-e592-a0a843d3331e@cogentembedded.com>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-5-git-send-email-jacopo+renesas@jmondi.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1490368934-12494-5-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
 Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 Hello!
 
-Third round for Renesas RZ/A1 PFC gpio and pin controller.
+On 03/24/2017 06:22 PM, Jacopo Mondi wrote:
 
-V3 fixes review comments on grammar and spelling by Geert.
-Some other fixes from Geert's review as update of function argument names
-to reflect the function purpose (s/offset/[pin|bit]), use irqsave/irqrestore
-version of spinlocks locking/unlocking methods and other style fixes.
+> Add pin controller node with 12 gpio controller sub-nodes to
+> r7s72100 dtsi.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  arch/arm/boot/dts/r7s72100.dtsi | 80 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+> index b8aa256..83e8f27 100644
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@ -180,6 +180,86 @@
+>  		};
+>  	};
+>
+> +	pinctrl: pinctrl@fcfe3000 {
 
-Still an open question on the use of "pins" or "renesas,pins" property in
-device tree bindings:
-https://www.spinics.net/lists/linux-renesas-soc/msg12765.html
+    I suggest to call it "pin-controller@...", no need to reduce.
 
-Tested on Genmai and RSK boards with SCIF, I2c and GPIO (genmai) and SCIF, I2c,
-SDHI and ethernet on RSK (thanks Chris).
+[...]
 
-Thanks
-   j
-
-v1 -> v2:
-- change pin configuration flags as suggested by Chris
-- gpio set direction function fixed as suggested by Chris
-- add some more example on pin configuration flag usage to dt-binding doc
-- fix gpio-controller names to remove unit address as suggested by Geert
-- some comments chopped here and there to make the driver less verbose
-
-v2 -> v3:
-- fix grammar and syntax in comment and documentation
-- fix code style (reverse xmas tree ordering in variable declaration)
-- use irqsave/irqrestore in spinlock lock/unlock
-- use devm_ version of kasprintf (memory returned was not properly free)
-- use bitops.h operation ffs and fls to make sure a single bit is set in pmx
-  mask
-- Add Geert's reviewed-by to DTS patches
-
-Jacopo Mondi (8):
-  pinctrl: Renesas RZ/A1 pin and gpio controller
-  dt-bindings: pinctrl: Add RZ/A1 bindings doc
-  arm: dts: dt-bindings: Add Renesas RZ pinctrl header
-  arm: dts: r7s72100: Add pin controller node
-  arm: dts: genmai: Add SCIF2 pin group
-  arm: dts: genmai: Add RIIC2 pin group
-  arm: dts: genmai: Add user led device nodes
-  arm: dts: genmai: Add ethernet pin group
-
- .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 143 +++
- arch/arm/boot/dts/r7s72100-genmai.dts              |  68 ++
- arch/arm/boot/dts/r7s72100.dtsi                    |  80 ++
- drivers/pinctrl/Kconfig                            |  10 +
- drivers/pinctrl/Makefile                           |   1 +
- drivers/pinctrl/pinctrl-rza1.c                     | 961 +++++++++++++++++++++
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |  36 +
- 7 files changed, 1299 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
- create mode 100644 drivers/pinctrl/pinctrl-rza1.c
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-
--- 
-2.7.4
-
+MBR, Sergei
