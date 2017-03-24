@@ -1,99 +1,97 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] gpio: mvebu: Add limited PWM support
-Date: Fri, 24 Mar 2017 10:18:29 -0500
-Message-ID: <20170324151829.awmhshsent4ngqb5@rob-hp-laptop>
-References: <20170318154305.28348-1-ralph.sennhauser@gmail.com>
- <20170318154305.28348-2-ralph.sennhauser@gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] gpio: acpi: Call enable_irq_wake for _IAE GpioInts with Wake set
+Date: Fri, 24 Mar 2017 16:16:12 +0100
+Message-ID: <2621777.XspNn8L99p@aspire.rjw.lan>
+References: <20170320173221.3397-1-hdegoede@redhat.com> <2997741.ylvZKAC5a8@aspire.rjw.lan> <2506dfe4-a01e-f73a-0e11-fc2d99d6b91a@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170318154305.28348-2-ralph.sennhauser@gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Imre Kaloz <kaloz@openwrt.org>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guenter Roeck <linux@roeck-us.net>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <2506dfe4-a01e-f73a-0e11-fc2d99d6b91a@redhat.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-acpi@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Mar 18, 2017 at 04:43:01PM +0100, Ralph Sennhauser wrote:
-> From: Andrew Lunn <andrew@lunn.ch>
+On Friday, March 24, 2017 10:51:53 AM Hans de Goede wrote:
+> Hi,
 > 
-> Armada 370/XP devices can 'blink' gpio lines with a configurable on
-> and off period. This can be modelled as a PWM.
+> On 20-03-17 22:59, Rafael J. Wysocki wrote:
+> > On Monday, March 20, 2017 06:32:21 PM Hans de Goede wrote:
+> >> On Bay Trail / Cherry Trail systems with a LID switch, the LID switch is
+> >> often connect to a gpioint handled by an _IAE event handler.
+> >> Before this commit such systems would not wake up when opening the lid,
+> >> requiring the powerbutton to be pressed after opening the lid to wakeup.
+> >>
+> >> Note that Bay Trail / Cherry Trail systems use suspend-to-idle, so
+> >> the interrupts are generated anyway on those lines on lid switch changes,
+> >> but they are treated by the IRQ subsystem as spurious while suspended if
+> >> not marked as wakeup IRQs.
+> >>
+> >> This commit calls enable_irq_wake() for _IAE GpioInts with a valid
+> >> event handler which have their Wake flag set. This fixes such systems
+> >> not waking up when opening the lid.
+> >>
+> >> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> >> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> >> ---
+> >> Changes in v2:
+> >> -Improve commit msg
+> >> -Add Mika's Acked-by
+> >> ---
+> >>  drivers/gpio/gpiolib-acpi.c | 9 +++++++++
+> >>  1 file changed, 9 insertions(+)
+> >>
+> >> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+> >> index 8cd3f66..18207b2 100644
+> >> --- a/drivers/gpio/gpiolib-acpi.c
+> >> +++ b/drivers/gpio/gpiolib-acpi.c
+> >> @@ -28,6 +28,7 @@ struct acpi_gpio_event {
+> >>  	acpi_handle handle;
+> >>  	unsigned int pin;
+> >>  	unsigned int irq;
+> >> +	bool irq_wake_enabled;
+> >>  	struct gpio_desc *desc;
+> >>  };
+> >>
+> >> @@ -266,6 +267,11 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+> >>  		goto fail_free_event;
+> >>  	}
+> >>
+> >> +	if (agpio->wake_capable == ACPI_WAKE_CAPABLE) {
+> >> +		enable_irq_wake(irq);
+> >> +		event->irq_wake_enabled = true;
+> >> +	}
+> >> +
+> >>  	list_add_tail(&event->node, &acpi_gpio->events);
+> >>  	return AE_OK;
+> >>
+> >> @@ -339,6 +345,9 @@ void acpi_gpiochip_free_interrupts(struct gpio_chip *chip)
+> >>  	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio->events, node) {
+> >>  		struct gpio_desc *desc;
+> >>
+> >> +		if (event->irq_wake_enabled)
+> >
+> > It has just occurred to me that if the event is in the list, the IRQ will be
+> > enabled to wake up as long as agpio->wake_capable == ACPI_WAKE_CAPABLE, so it
+> > looks like it should be sufficient to check
+> >
+> > 	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
+> >
+> > here and the new flag is not necessary.  Or is it?
 > 
-> However, there are only two sets of PWM configuration registers for
-> all the gpio lines. This driver simply allows a single gpio line per
-> gpio chip of 32 lines to be used as a PWM. Attempts to use more return
-> EBUSY.
+> We don't have (readily available) access to the acpi_resource_gpio struct
+> in acpi_gpiochip_free_interrupts, so I'm going to go with Andy's suggestion
+> instead and change the if to:
 > 
-> Due to the interleaving of registers it is not simple to separate the
-> PWM driver from the gpio driver. Thus the gpio driver has been
-> extended with a PWM driver.
+>                  if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
+>                          disable_irq_wake(event->irq);
 > 
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> URL: https://patchwork.ozlabs.org/patch/427287/
-> URL: https://patchwork.ozlabs.org/patch/427295/
-> [Ralph Sennhauser:
->   * port forward
->   * merge pwm portion into gpio-mvebu.c
->   * merge documentation patch
->   * update MAINTAINERS]
-> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-mvebu.txt        |  31 +++
->  MAINTAINERS                                        |   2 +
->  drivers/gpio/gpio-mvebu.c                          | 291 +++++++++++++++++++--
->  3 files changed, 307 insertions(+), 17 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-> index a6f3bec..86932e3 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-> @@ -38,6 +38,23 @@ Required properties:
->  - #gpio-cells: Should be two. The first cell is the pin number. The
->    second cell is reserved for flags, unused at the moment.
->  
-> +Optional properties:
-> +
-> +In order to use the gpio lines in PWM mode, some additional optional
-> +properties are required. Only Armada 370 and XP support these properties.
-> +
-> +- reg: an additional register set is needed, for the GPIO Blink
-> +  Counter on/off registers.
-> +
-> +- reg-names: Must contain an entry "pwm" corresponding to the
-> +  additional register range needed for pwm operation.
-> +
-> +- #pwm-cells: Should be two. The first cell is the pin number. The
+> Still need to run some quick tests and then I will send v3 with this
+> change.
 
-s/pin number/gpio line/ ?
+OK, fair enough.
 
-> +  second cell is reserved for flags and should be set to 0, so it has a
-> +  known value. It then becomes possible to use it in the future.
-> +
-> +- clocks: Must be a phandle to the clock for the gpio controller.
-> +
->  Example:
->  
->  		gpio0: gpio@d0018100 {
-> @@ -51,3 +68,17 @@ Example:
->  			#interrupt-cells = <2>;
->  			interrupts = <16>, <17>, <18>, <19>;
->  		};
-> +
-> +		gpio1: gpio@18140 {
-> +			compatible = "marvell,orion-gpio";
+Thanks,
+Rafael
 
-If only 370 and XP support this, I'd expect a compatible string for one 
-of them here.
-
-> +			reg = <0x18140 0x40>, <0x181c8 0x08>;
-> +			reg-names = "gpio", "pwm";
-> +			ngpios = <17>;
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			#pwm-cells = <2>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +			interrupts = <87>, <88>, <89>;
-> +			clocks = <&coreclk 0>;
-> +		};
