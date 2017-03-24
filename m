@@ -1,87 +1,104 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3] gpio: acpi: Call enable_irq_wake for _IAE GpioInts
- with Wake set
-Date: Fri, 24 Mar 2017 13:34:03 +0200
-Message-ID: <1490355243.21738.3.camel@linux.intel.com>
-References: <20170324100847.25434-1-hdegoede@redhat.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2 3/5] mfd: palmas: Reset the POWERHOLD mux during power
+ off
+Date: Fri, 24 Mar 2017 17:06:03 +0530
+Message-ID: <78ad0c4c-2746-9f3d-e070-1042c1d9f297@ti.com>
+References: <1478754560-27923-1-git-send-email-j-keerthy@ti.com>
+ <1478754560-27923-4-git-send-email-j-keerthy@ti.com>
+ <20161122130308.GE316@dell.lan> <ee4f7c28-7847-ab4f-4d8f-1dce288f809a@ti.com>
+ <20170324113014.fpkfoc5n7qpo2l5d@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:28390 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751314AbdCXLeJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 24 Mar 2017 07:34:09 -0400
-In-Reply-To: <20170324100847.25434-1-hdegoede@redhat.com>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:11028 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbdCXLgN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 24 Mar 2017 07:36:13 -0400
+In-Reply-To: <20170324113014.fpkfoc5n7qpo2l5d@dell>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-acpi@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: tony@atomide.com, robh+dt@kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, nm@ti.com, t-kristo@ti.com
 
-On Fri, 2017-03-24 at 11:08 +0100, Hans de Goede wrote:
-> On Bay Trail / Cherry Trail systems with a LID switch, the LID switch
-> is
-> often connect to a gpioint handled by an _IAE event handler.
-> Before this commit such systems would not wake up when opening the
-> lid,
-> requiring the powerbutton to be pressed after opening the lid to
-> wakeup.
-> 
-> Note that Bay Trail / Cherry Trail systems use suspend-to-idle, so
-> the interrupts are generated anyway on those lines on lid switch
-> changes,
-> but they are treated by the IRQ subsystem as spurious while suspended
-> if
-> not marked as wakeup IRQs.
-> 
-> This commit calls enable_irq_wake() for _IAE GpioInts with a valid
-> event handler which have their Wake flag set. This fixes such systems
-> not waking up when opening the lid.
-> 
 
-FWIW:
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> Changes in v2:
-> -Improve commit msg
-> -Add Mika's Acked-by
-> Changes in v3:
-> -Use irqd_is_wakeup_set rather then tracking this ourselves
-> ---
->  drivers/gpio/gpiolib-acpi.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Friday 24 March 2017 05:00 PM, Lee Jones wrote:
+> On Fri, 24 Mar 2017, Keerthy wrote:
 > 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index 8cd3f66..2972cad 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -266,6 +266,9 @@ static acpi_status
-> acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
->  		goto fail_free_event;
->  	}
->  
-> +	if (agpio->wake_capable == ACPI_WAKE_CAPABLE)
-> +		enable_irq_wake(irq);
-> +
->  	list_add_tail(&event->node, &acpi_gpio->events);
->  	return AE_OK;
->  
-> @@ -339,6 +342,9 @@ void acpi_gpiochip_free_interrupts(struct
-> gpio_chip *chip)
->  	list_for_each_entry_safe_reverse(event, ep, &acpi_gpio-
-> >events, node) {
->  		struct gpio_desc *desc;
->  
-> +		if (irqd_is_wakeup_set(irq_get_irq_data(event->irq)))
-> +			disable_irq_wake(event->irq);
-> +
->  		free_irq(event->irq, event);
->  		desc = event->desc;
->  		if (WARN_ON(IS_ERR(desc)))
+>>
+>>
+>> On Tuesday 22 November 2016 06:33 PM, Lee Jones wrote:
+>>> On Thu, 10 Nov 2016, Keerthy wrote:
+>>>
+>>>> POWERHOLD signal has higher priority  over the DEV_ON bit.
+>>>> So power off will not happen if the POWERHOLD is held high.
+>>>> Hence reset the MUX to GPIO_7 mode to release the POWERHOLD
+>>>> and the DEV_ON bit to take effect to power off the PMIC.
+>>>>
+>>>> PMIC Power off happens in dire situations like thermal shutdown
+>>>> so irrespective of the POWERHOLD setting go ahead and turn off
+>>>> the powerhold.  Currently poweroff is broken on boards that have
+>>>> powerhold enabled. This fixes poweroff on those boards.
+>>>>
+>>>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>>
+>>>>   * Changed pr_err to dev_err
+>>>>   * removed redundant boolean variable override-powerhold
+>>>>
+>>>>  drivers/mfd/palmas.c | 14 ++++++++++++++
+>>>>  1 file changed, 14 insertions(+)
+>>>
+>>> Applied, thanks.
+>>
+>> Lee Jones,
+>>
+>> For some strange reason this patch is missing!
+>> The other patch in the series is applied through mfd tree but somehow
+>> this particular patch is missed out.
+>>
+>> https://patchwork.kernel.org/patch/9420631/ is applied.
+>>
+>> https://patchwork.kernel.org/patch/9420655/ is not.
+>>
+>> I tried applying this very patch and it applies cleanly on the next
+>> branch. Let me know if you want me to send this again on top of latest
+>> next branch.
+> 
+> Sorry about this.
+> 
+> Reapplied and re-pushed.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Thanks Lee Jones.
+
+> 
+>>>> diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+>>>> index ee9e9ea..da90124 100644
+>>>> --- a/drivers/mfd/palmas.c
+>>>> +++ b/drivers/mfd/palmas.c
+>>>> @@ -430,6 +430,20 @@ static void palmas_power_off(void)
+>>>>  {
+>>>>  	unsigned int addr;
+>>>>  	int ret, slave;
+>>>> +	struct device_node *np = palmas_dev->dev->of_node;
+>>>> +
+>>>> +	if (of_property_read_bool(np, "ti,palmas-override-powerhold")) {
+>>>> +		addr = PALMAS_BASE_TO_REG(PALMAS_PU_PD_OD_BASE,
+>>>> +					  PALMAS_PRIMARY_SECONDARY_PAD2);
+>>>> +		slave = PALMAS_BASE_TO_SLAVE(PALMAS_PU_PD_OD_BASE);
+>>>> +
+>>>> +		ret = regmap_update_bits(palmas_dev->regmap[slave], addr,
+>>>> +				PALMAS_PRIMARY_SECONDARY_PAD2_GPIO_7_MASK, 0);
+>>>> +		if (ret)
+>>>> +			dev_err(palmas_dev->dev,
+>>>> +				"Unable to write PRIMARY_SECONDARY_PAD2 %d\n",
+>>>> +				ret);
+>>>> +	}
+>>>>  
+>>>>  	slave = PALMAS_BASE_TO_SLAVE(PALMAS_PMU_CONTROL_BASE);
+>>>>  	addr = PALMAS_BASE_TO_REG(PALMAS_PMU_CONTROL_BASE, PALMAS_DEV_CTRL);
+>>>
+> 
