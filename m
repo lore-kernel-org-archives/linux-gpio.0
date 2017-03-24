@@ -1,306 +1,258 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] MIPS: NI 169445 board support
-Date: Thu, 23 Mar 2017 17:29:45 -0500
-Message-ID: <20170323222945.bxz4qa6ydicrh4q6@rob-hp-laptop>
-References: <1489508003-25288-1-git-send-email-nathan.sullivan@ni.com>
- <1489508003-25288-3-git-send-email-nathan.sullivan@ni.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 4/4] tty/serial: sh-sci: remove uneeded IS_ERR_OR_NULL
+ calls
+Date: Fri, 24 Mar 2017 09:00:06 +0100
+Message-ID: <20170324080006.tbhyqlgk35xybsna@pengutronix.de>
+References: <20170323101045.u3uigdu5xfwjmjc7@pengutronix.de>
+ <CAMuHMdWDUzwUqrchbhh-TkE3J9Xg4TrwTF6HreikUcNNTf_ozQ@mail.gmail.com>
+ <20170323111106.7ogh6g2oa3m4cqc6@pengutronix.de>
+ <CAMuHMdUWybAZXc2RbGMGyp4DYQZU9BS8MxXKE5Kfd+aH8+w9sA@mail.gmail.com>
+ <20170323123437.uqdwhfmmsjke3f7s@pengutronix.de>
+ <CACRpkdZRfLh9RXRycW_cAxuTYE6tPd7LR32EkAW8y2fh=AxhXA@mail.gmail.com>
+ <20170323144325.GA952@dtor-ws> <20170323154441.GA9460@dtor-ws>
+ <20170323191020.nrstp2cfh7cuqvf3@pengutronix.de>
+ <20170323195804.GA2502@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1489508003-25288-3-git-send-email-nathan.sullivan-acOepvfBmUk@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org
+In-Reply-To: <20170323195804.GA2502@dtor-ws>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Richard Genoud <richard.genoud@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Janusz Uzycki <j.uzycki@elproma.com.pl>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 14, 2017 at 11:13:23AM -0500, Nathan Sullivan wrote:
-> Support the National Instruments 169445 board.
-> 
-> Signed-off-by: Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/mips/ni.txt   |   7 ++
->  MAINTAINERS                                     |   8 ++
->  arch/mips/boot/dts/Makefile                     |   1 +
->  arch/mips/boot/dts/ni/169445.dts                | 100 ++++++++++++++++++++++++
->  arch/mips/boot/dts/ni/Makefile                  |   7 ++
->  arch/mips/configs/generic/board-ni169445.config |  27 +++++++
->  arch/mips/generic/Kconfig                       |   6 ++
->  arch/mips/generic/vmlinux.its.S                 |  25 ++++++
->  8 files changed, 181 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/ni.txt
->  create mode 100644 arch/mips/boot/dts/ni/169445.dts
->  create mode 100644 arch/mips/boot/dts/ni/Makefile
->  create mode 100644 arch/mips/configs/generic/board-ni169445.config
-> 
-> diff --git a/Documentation/devicetree/bindings/mips/ni.txt b/Documentation/devicetree/bindings/mips/ni.txt
-> new file mode 100644
-> index 0000000..722bf2d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mips/ni.txt
-> @@ -0,0 +1,7 @@
-> +National Instruments MIPS platforms
-> +
-> +required root node properties:
-> +	- compatible: must be "ni,169445"
-> +
-> +CPU Nodes
-> +	- compatible: must be "mti,mips14KEc"
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c265a5f..b72f059 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8887,6 +8887,14 @@ F:	include/linux/sunrpc/
->  F:	include/uapi/linux/nfs*
->  F:	include/uapi/linux/sunrpc/
->  
-> +NI169445 MIPS ARCHITECTURE
-> +M:	Nathan Sullivan <nathan.sullivan-acOepvfBmUk@public.gmane.org>
-> +L:	linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org
-> +S:	Maintained
-> +F:	arch/mips/boot/dts/ni/
-> +F:	arch/mips/configs/generic/board-ni169445.config
-> +F:	Documentation/devicetree/bindings/mips/ni.txt
-> +
->  NILFS2 FILESYSTEM
->  M:	Ryusuke Konishi <konishi.ryusuke-Zyj7fXuS5i5L9jVzuh4AOg@public.gmane.org>
->  L:	linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
-> index b9db492..27b0f37 100644
-> --- a/arch/mips/boot/dts/Makefile
-> +++ b/arch/mips/boot/dts/Makefile
-> @@ -4,6 +4,7 @@ dts-dirs	+= img
->  dts-dirs	+= ingenic
->  dts-dirs	+= lantiq
->  dts-dirs	+= mti
-> +dts-dirs	+= ni
->  dts-dirs	+= netlogic
->  dts-dirs	+= pic32
->  dts-dirs	+= qca
-> diff --git a/arch/mips/boot/dts/ni/169445.dts b/arch/mips/boot/dts/ni/169445.dts
-> new file mode 100644
-> index 0000000..9746576
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/ni/169445.dts
-> @@ -0,0 +1,100 @@
-> +/dts-v1/;
-> +
-> +/ {
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	compatible = "ni,169445";
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "mti,mips14KEc";
-> +			clocks = <&baseclk>;
-> +			reg = <0>;
-> +		};
-> +	};
-> +
-> +	memory@0 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x10000000>;
-> +	};
-> +
-> +	baseclk: baseclock {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <50000000>;
-> +	};
-> +
-> +	cpu_intc: cpu_intc {
+Hello Dmitry,
 
-interrupt-controller {
+On Thu, Mar 23, 2017 at 12:58:04PM -0700, Dmitry Torokhov wrote:
+> On Thu, Mar 23, 2017 at 08:10:20PM +0100, Uwe Kleine-K=F6nig wrote:
+> > On Thu, Mar 23, 2017 at 08:44:41AM -0700, Dmitry Torokhov wrote:
+> > > On Thu, Mar 23, 2017 at 07:43:25AM -0700, Dmitry Torokhov wrote:
+> > > > On Thu, Mar 23, 2017 at 02:41:53PM +0100, Linus Walleij wrote:
+> > > > > On Thu, Mar 23, 2017 at 1:34 PM, Uwe Kleine-K=F6nig
+> > > > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > > > =
 
-> +		#address-cells = <0>;
-> +		compatible = "mti,cpu-interrupt-controller";
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +	};
-> +
-> +	ahb@0 {
+> > > > > > Maybe we can make gpiod_get_optional look like this:
+> > > > > >
+> > > > > >         if (!dev->of_node && isnt_a_acpi_device(dev) && !IS_ENA=
+BLED(GPIOLIB))
+> > > > > >                 return NULL;
+> > > > > >         else
+> > > > > >                 return -ENOSYS;
+> > > > > >
+> > > > > > I don't know how isnt_a_acpi_device looks like, probably it inv=
+olves
+> > > > > > CONFIG_ACPI and/or dev->acpi_node.
+> > > > > >
+> > > > > > This should be safe and still comfortable for legacy platforms,=
+ isn't it?
+> > > > > =
 
-ahb@1f300000
+> > > > > I like the looks of this.
+> > > > > =
 
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x1f300000 0x80FFF>;
-> +
-> +		gpio1:gpio-controller@1f300010 {
-                      ^ space
+> > > > > Can we revert Dmitry's patch and apply something like this instea=
+d?
+> > > > > =
 
-'gpio' is the standard node name, so
+> > > > > Dmitry, how do you feel about this?
+> > > > =
 
-gpio@...
+> > > > I frankly do not see the point. It still makes driver code more com=
+plex
+> > =
 
-> +			compatible = "ni,169445-nand-gpio";
-> +			reg = <0x10 0x4>;
-> +			reg-names = "dat";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +		};
-> +
-> +		gpio2:gpio-controller@1f300014 {
+> > Note that this code is in the gpio header, and not in driver code. So
+> > the driver just does
+> > =
 
-ditto
+> > 	gpiod =3D gpiod_get_optional(...)
+> > 	if (IS_ERR(gpiod))
+> > 		return PTR_ERR(gpiod);
+> > =
 
-> +			compatible = "ni,169445-nand-gpio";
-> +			reg = <0x14 0x4>;
-> +			reg-names = "dat";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			no-output;
-> +		};
-> +
-> +		nand@1f300000 {
-> +			compatible = "gpio-control-nand";
-> +			nand-on-flash-bbt;
-> +			nand-ecc-mode = "soft_bch";
-> +			nand-ecc-step-size = <512>;
-> +			nand-ecc-strength = <4>;
-> +			reg = <0x0 4>;
-> +			gpios = <&gpio2 0 0>, /* rdy */
-> +				<&gpio1 1 0>, /* nce */
-> +				<&gpio1 2 0>, /* ale */
-> +				<&gpio1 3 0>, /* cle */
-> +				<&gpio1 4 0>; /* nwp */
-> +		};
-> +
-> +		serial@1f380000 {
-> +			compatible = "ns16550a";
-> +			reg = <0x80000 0x1000>;
-> +			interrupt-parent = <&cpu_intc>;
-> +			interrupts = <6>;
-> +			clocks = <&baseclk>;
-> +			reg-shift = <0>;
-> +		};
-> +
-> +		ethernet@1f340000 {
-> +			compatible = "snps,dwmac-4.10a";
-> +			interrupt-parent = <&cpu_intc>;
-> +			interrupts = <5>;
-> +			interrupt-names = "macirq";
-> +			reg = <0x40000 0x2000>;
-> +			clock-names = "stmmaceth", "pclk";
-> +			clocks = <&baseclk>, <&baseclk>;
-> +
-> +			phy-mode = "rgmii";
-> +
-> +			fixed-link {
-> +				speed = <1000>;
-> +				full-duplex;
-> +			};
-> +		};
-> +	};
-> +};
-> diff --git a/arch/mips/boot/dts/ni/Makefile b/arch/mips/boot/dts/ni/Makefile
-> new file mode 100644
-> index 0000000..66cfdff
-> --- /dev/null
-> +++ b/arch/mips/boot/dts/ni/Makefile
-> @@ -0,0 +1,7 @@
-> +dtb-$(CONFIG_FIT_IMAGE_FDT_NI169445)	+= 169445.dtb
-> +
-> +# Force kbuild to make empty built-in.o if necessary
-> +obj-					+= dummy.o
-> +
-> +always					:= $(dtb-y)
-> +clean-files				:= *.dtb *.dtb.S
-> diff --git a/arch/mips/configs/generic/board-ni169445.config b/arch/mips/configs/generic/board-ni169445.config
-> new file mode 100644
-> index 0000000..0bae1f8
-> --- /dev/null
-> +++ b/arch/mips/configs/generic/board-ni169445.config
-> @@ -0,0 +1,27 @@
-> +CONFIG_FIT_IMAGE_FDT_NI169445=y
-> +
-> +CONFIG_SERIAL_8250=y
-> +CONFIG_SERIAL_8250_CONSOLE=y
-> +CONFIG_SERIAL_OF_PLATFORM=y
-> +
-> +CONFIG_GPIOLIB=y
-> +CONFIG_GPIO_SYSFS=y
-> +CONFIG_GPIO_GENERIC_PLATFORM=y
-> +
-> +CONFIG_MTD=y
-> +CONFIG_MTD_BLOCK=y
-> +CONFIG_MTD_CMDLINE_PARTS=y
-> +
-> +CONFIG_MTD_NAND_ECC=y
-> +CONFIG_MTD_NAND_ECC_BCH=y
-> +CONFIG_MTD_NAND=y
-> +CONFIG_MTD_NAND_GPIO=y
-> +CONFIG_MTD_NAND_IDS=y
-> +
-> +CONFIG_MTD_UBI=y
-> +CONFIG_MTD_UBI_BLOCK=y
-> +
-> +CONFIG_NETDEVICES=y
-> +CONFIG_STMMAC_ETH=y
-> +CONFIG_STMMAC_PLATFORM=y
-> +CONFIG_DWMAC_GENERIC=y
-> diff --git a/arch/mips/generic/Kconfig b/arch/mips/generic/Kconfig
-> index a606b3f..fbf0813 100644
-> --- a/arch/mips/generic/Kconfig
-> +++ b/arch/mips/generic/Kconfig
-> @@ -16,4 +16,10 @@ config LEGACY_BOARD_SEAD3
->  	  Enable this to include support for booting on MIPS SEAD-3 FPGA-based
->  	  development boards, which boot using a legacy boot protocol.
->  
-> +config FIT_IMAGE_FDT_NI169445
-> +	bool "Include FDT for NI 169445"
-> +	help
-> +	  Enable this to include the FDT for the 169445 platform from
-> +	  National Instruments in the FIT kernel image.
-> +
->  endif
-> diff --git a/arch/mips/generic/vmlinux.its.S b/arch/mips/generic/vmlinux.its.S
-> index f67fbf1..de851f7 100644
-> --- a/arch/mips/generic/vmlinux.its.S
-> +++ b/arch/mips/generic/vmlinux.its.S
-> @@ -29,3 +29,28 @@
->  		};
->  	};
->  };
-> +
-> +#ifdef CONFIG_FIT_IMAGE_FDT_NI169445
-> +/ {
+> > (as it is supposed to do now). I think that's nice.
+> =
 
-IMO, this shouldn't be in the kernel. Is the kernel supposed to 
-create board specific images for every bootloaders custom format? It 
-doesn't scale.
+> Except that it breaks if !CONFIG_GPIOLIB which is legitimate config in
+> many cases. Can I have a DT platform or ACPI platform that does not
+> expose any GPIOs for kernel to control and thus want to disable GPIOLIB?
+> I can't see why not.
+> =
 
-> +	images {
-> +		fdt@ni169445 {
-> +			description = "NI 169445 device tree";
-> +			data = /incbin/("boot/dts/ni/169445.dtb");
-> +			type = "flat_dt";
-> +			arch = "mips";
-> +			compression = "none";
-> +			hash@0 {
-> +				algo = "sha1";
-> +			};
-> +		};
-> +	};
-> +
-> +	configurations {
-> +		conf@ni169445 {
-> +			description = "NI 169445 Linux Kernel";
-> +			kernel = "kernel@0";
-> +			fdt = "fdt@ni169445";
-> +		};
-> +	};
-> +};
-> +#endif
-> -- 
-> 2.1.4
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > =
+
+> > > > for no good reason. I also think that not having optional GPIO is n=
+ot an
+> > > > error, so returning value from error space is not correct. NULL is =
+value
+> > > > from another space altogether.
+> > =
+
+> > It seems you didn't understand my concern.
+> =
+
+> Likewise.
+
+OK, lets agree that we don't agree then. You think that if someone
+disabled GPIOLIB it should be safe to assume that there is no GPIO, I
+think that's wrong.
+
+Still I think it should be possible that we agree on my suggestion to
+return NULL in some cases only. Here is a prototype (not even compile
+tested without GPIOLIB):
+
+
+------->8--------
+From: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] gpiod: let get_optional return NULL in some cases with GPI=
+OLIB disabled
+
+People disagree if gpiod_get_optional should return NULL or
+ERR_PTR(-ENOSYS) if GPIOLIB is disabled. The argument for NULL is that
+the person who decided to disable GPIOLIB is assumed to know that there
+is no GPIO. The reason to stick to ERR_PTR(-ENOSYS) is that it might
+introduce hard to debug problems if that decision is wrong.
+
+So this patch introduces a compromise and let gpiod_get_optional (and
+its variants) return NULL if the device in question cannot have an
+associated GPIO because it is neither instantiated by a device tree nor
+by ACPI.
+
+This should handle most cases that are argued about.
+
+Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+---
+ include/linux/gpio/consumer.h | 55 ++++++++++++++++++++++++++++++++++++---=
+----
+ 1 file changed, 46 insertions(+), 9 deletions(-)
+
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index fb0fde686cb1..0ca29889290d 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -161,20 +161,48 @@ gpiod_get_index(struct device *dev,
+ 	return ERR_PTR(-ENOSYS);
+ }
+ =
+
+-static inline struct gpio_desc *__must_check
+-gpiod_get_optional(struct device *dev, const char *con_id,
+-		   enum gpiod_flags flags)
++static inline bool __gpiod_no_optional_possible(struct device *dev)
+ {
+-	return ERR_PTR(-ENOSYS);
++	/*
++	 * gpiod_get_optional et al can only provide a GPIO if at least one of
++	 * the backends for specifing a GPIO is available. These are device
++	 * tree, ACPI and gpiolib's lookup tables. The latter isn't available if
++	 * GPIOLIB is disabled (which is the case here).
++	 * So if the provided device is unrelated to device tree and ACPI, we
++	 * can be sure that there is no optional GPIO and let gpiod_get_optional
++	 * safely return NULL.
++	 * Otherwise there is still a chance that there is no GPIO but we cannot
++	 * be sure without having to enable a part of GPIOLIB (i.e. the lookup
++	 * part). So lets play safe and return an error. (Though there are also
++	 * arguments that returning NULL then would be beneficial.)
++	 */
++
++	if (IS_ENABLED(CONFIG_OF) && dev && dev->of_node)
++		return false;
++
++	if (IS_ENABLED(CONFIG_ACPI) && dev && ACPI_COMPANION(dev))
++		return false;
++
++	return true;
+ }
+ =
+
+ static inline struct gpio_desc *__must_check
+ gpiod_get_index_optional(struct device *dev, const char *con_id,
+ 			 unsigned int index, enum gpiod_flags flags)
+ {
++	if (__gpiod_no_optional_possible(dev))
++		return NULL;
++
+ 	return ERR_PTR(-ENOSYS);
+ }
+ =
+
++static inline struct gpio_desc *__must_check
++gpiod_get_optional(struct device *dev, const char *con_id,
++		   enum gpiod_flags flags)
++{
++	return gpiod_get_index_optional(dev, con_id, 0, flags);
++}
++
+ static inline struct gpio_descs *__must_check
+ gpiod_get_array(struct device *dev, const char *con_id,
+ 		enum gpiod_flags flags)
+@@ -186,6 +214,9 @@ static inline struct gpio_descs *__must_check
+ gpiod_get_array_optional(struct device *dev, const char *con_id,
+ 			 enum gpiod_flags flags)
+ {
++	if (__gpiod_no_optional_possible(dev))
++		return NULL;
++
+ 	return ERR_PTR(-ENOSYS);
+ }
+ =
+
+@@ -223,17 +254,20 @@ devm_gpiod_get_index(struct device *dev,
+ }
+ =
+
+ static inline struct gpio_desc *__must_check
+-devm_gpiod_get_optional(struct device *dev, const char *con_id,
+-			  enum gpiod_flags flags)
++devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
++			      unsigned int index, enum gpiod_flags flags)
+ {
++	if (__gpiod_no_optional_possible(dev))
++		return NULL;
++
+ 	return ERR_PTR(-ENOSYS);
+ }
+ =
+
+ static inline struct gpio_desc *__must_check
+-devm_gpiod_get_index_optional(struct device *dev, const char *con_id,
+-				unsigned int index, enum gpiod_flags flags)
++devm_gpiod_get_optional(struct device *dev, const char *con_id,
++			enum gpiod_flags flags)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return devm_gpiod_get_index_optional(dev, con_id, 0, flags);
+ }
+ =
+
+ static inline struct gpio_descs *__must_check
+@@ -247,6 +281,9 @@ static inline struct gpio_descs *__must_check
+ devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
+ 			      enum gpiod_flags flags)
+ {
++	if (__gpiod_no_optional_possible(dev))
++		return NULL;
++
+ 	return ERR_PTR(-ENOSYS);
+ }
+ =
+
+
+Best regards
+Uwe
+
+-- =
+
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
