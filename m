@@ -1,46 +1,38 @@
-From: Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 4/4] mvebu: wrt1900ac: Use pwm-fan rather than
- gpio-fan
-Date: Fri, 24 Mar 2017 23:23:40 +0100
-Message-ID: <20170324232340.7487f638@gmail.com>
-References: <20170324141815.7252-1-ralph.sennhauser@gmail.com>
-        <20170324141815.7252-5-ralph.sennhauser@gmail.com>
-        <20170324143505.GK28518@lunn.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170324143505.GK28518-g2DYL2Zd6BY@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/1] pinctrl-meson8b: fix the NAND DQS pin definitions
+Date: Sat, 25 Mar 2017 19:43:49 +0100
+Message-ID: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36762 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbdCYSoF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Mar 2017 14:44:05 -0400
+Received: by mail-wm0-f66.google.com with SMTP id x124so3820187wmf.3
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Mar 2017 11:44:03 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-On Fri, 24 Mar 2017 15:35:05 +0100
-Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org> wrote:
+We currently do not have a NAND driver but once we have one this will
+become handy:
+The current nand_dqs_0 and nand_dqs_1 groups are not usable because the
+"nand" function only allows "nand_dqs0" and "nand_dqs1" (no underscore
+after "nand_dqs").
 
-> > +	pwm_fan {
-> >  		/* SUNON HA4010V4-0000-C99 */
-> > -		compatible = "gpio-fan";
-> > -		gpios = <&gpio0 24 0>;
-> >  
-> > -		gpio-fan,speed-map = <0    0
-> > -				      4500 1>;
-> > +		compatible = "pwm-fan";
-> > +		pwms = <&gpio0 24 4000 0>;  
-> 
-> Hi Ralph
-> 
-> I believe this last 0 is the flags parameter. Now that we have
-> #pwm-cells = 1, i think this last 0 should be dropped.
-> 
-> 	  Andrew
+While here, also rename the groups to "nand_dqs_15" (uses pin 15) and
+"nand_dqs_18" (uses pin 18).
+Renaming is safe in this case as it was not possible to use these
+groups/pins before (so we can be sure that there are no "old DT
+consumers" out there).
 
-Missed it. Duly noted like the other comments.
 
-Thanks
-Ralph
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Martin Blumenstingl (1):
+  pinctrl: meson: meson8b: fix the NAND DQS pins
+
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+-- 
+2.12.1
+
