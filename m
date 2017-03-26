@@ -1,38 +1,66 @@
 From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 7/8] ARM64: dts: meson-gxl: add i2s output pins
-Date: Sun, 26 Mar 2017 19:19:22 +0200
-Message-ID: <20170326171923.19269-8-jbrunet@baylibre.com>
+Subject: [PATCH v2 5/8] ARM64: dts: meson-gxbb: add i2s output pins
+Date: Sun, 26 Mar 2017 19:19:20 +0200
+Message-ID: <20170326171923.19269-6-jbrunet@baylibre.com>
 References: <20170326171923.19269-1-jbrunet@baylibre.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:34349 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbdCZRTq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Mar 2017 13:19:46 -0400
-Received: by mail-wr0-f179.google.com with SMTP id l43so25402766wre.1
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Mar 2017 10:19:45 -0700 (PDT)
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:35543 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751789AbdCZRUM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Mar 2017 13:20:12 -0400
+Received: by mail-wr0-f171.google.com with SMTP id u1so25435987wra.2
+        for <linux-gpio@vger.kernel.org>; Sun, 26 Mar 2017 10:20:01 -0700 (PDT)
 In-Reply-To: <20170326171923.19269-1-jbrunet@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Add EE and AO domains pins for the i2s output clocks and data the gxl
-device tree
+Add EE and AO domains pins for the i2s output clocks and data to the gxbb
+device tree.
 
 Acked-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi | 62 ++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 63 +++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 269458b05fd4..3dde55856234 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -160,6 +160,20 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 34168a3b0dd1..a9cacbd6a1d6 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -192,6 +192,48 @@
  				function = "pwm_ao_b";
  			};
  		};
++
++		i2s_am_clk_pins: i2s_am_clk {
++			mux {
++				groups = "i2s_am_clk";
++				function = "i2s_out_ao";
++			};
++		};
++
++		i2s_out_ao_clk_pins: i2s_out_ao_clk {
++			mux {
++				groups = "i2s_out_ao_clk";
++				function = "i2s_out_ao";
++			};
++		};
++
++		i2s_out_lr_clk_pins: i2s_out_lr_clk {
++			mux {
++				groups = "i2s_out_lr_clk";
++				function = "i2s_out_ao";
++			};
++		};
++
++		i2s_out_ch01_ao_pins: i2s_out_ch01_ao {
++			mux {
++				groups = "i2s_out_ch01_ao";
++				function = "i2s_out_ao";
++			};
++		};
 +
 +		i2s_out_ch23_ao_pins: i2s_out_ch23_ao {
 +			mux {
@@ -50,61 +78,34 @@ index 269458b05fd4..3dde55856234 100644
  	};
  };
  
-@@ -385,6 +399,54 @@
+@@ -432,6 +474,27 @@
  				function = "hdmi_i2c";
  			};
  		};
 +
-+		i2s_am_clk_pins: i2s_am_clk {
++		i2sout_ch23_y_pins: i2sout_ch23_y {
 +			mux {
-+				groups = "i2s_am_clk";
++				groups = "i2sout_ch23_y";
 +				function = "i2s_out";
 +			};
 +		};
 +
-+		i2s_out_ao_clk_pins: i2s_out_ao_clk {
++		i2sout_ch45_y_pins: i2sout_ch45_y {
 +			mux {
-+				groups = "i2s_out_ao_clk";
++				groups = "i2sout_ch45_y";
 +				function = "i2s_out";
 +			};
 +		};
 +
-+		i2s_out_lr_clk_pins: i2s_out_lr_clk {
++		i2sout_ch67_y_pins: i2sout_ch67_y {
 +			mux {
-+				groups = "i2s_out_lr_clk";
-+				function = "i2s_out";
-+			};
-+		};
-+
-+		i2s_out_ch01_pins: i2s_out_ch01 {
-+			mux {
-+				groups = "i2s_out_ch01";
-+				function = "i2s_out";
-+			};
-+		};
-+		i2sout_ch23_z_pins: i2sout_ch23_z {
-+			mux {
-+				groups = "i2sout_ch23_z";
-+				function = "i2s_out";
-+			};
-+		};
-+
-+		i2sout_ch45_z_pins: i2sout_ch45_z {
-+			mux {
-+				groups = "i2sout_ch45_z";
-+				function = "i2s_out";
-+			};
-+		};
-+
-+		i2sout_ch67_z_pins: i2sout_ch67_z {
-+			mux {
-+				groups = "i2sout_ch67_z";
++				groups = "i2sout_ch67_y";
 +				function = "i2s_out";
 +			};
 +		};
  	};
+ };
  
- 	eth-phy-mux {
 -- 
 2.9.3
 
