@@ -1,126 +1,48 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 1/8] pinctrl: meson: gxbb: add i2s output pins
-Date: Sun, 26 Mar 2017 19:19:16 +0200
-Message-ID: <20170326171923.19269-2-jbrunet@baylibre.com>
-References: <20170326171923.19269-1-jbrunet@baylibre.com>
+From: Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 4/4] mvebu: wrt1900ac: Use pwm-fan rather than
+ gpio-fan
+Date: Sun, 26 Mar 2017 23:05:58 +0200
+Message-ID: <20170326230558.6b6c4ec6@gmail.com>
+References: <20170324141815.7252-1-ralph.sennhauser@gmail.com>
+ <20170324141815.7252-5-ralph.sennhauser@gmail.com>
+ <20170324143505.GK28518@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170326171923.19269-1-jbrunet@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jerome Brunet <jbrunet@baylibre.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170324143505.GK28518-g2DYL2Zd6BY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add EE and AO domains pins for the i2s output clocks and data.
-I2S output channel 6/7 on TEST_N pin is missing from this patch and will
-be added later on.
+On Fri, 24 Mar 2017 15:35:05 +0100
+Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org> wrote:
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 31 ++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+> > +	pwm_fan {
+> >  		/* SUNON HA4010V4-0000-C99 */
+> > -		compatible = "gpio-fan";
+> > -		gpios = <&gpio0 24 0>;
+> >  
+> > -		gpio-fan,speed-map = <0    0
+> > -				      4500 1>;
+> > +		compatible = "pwm-fan";
+> > +		pwms = <&gpio0 24 4000 0>;  
+> 
+> Hi Ralph
+> 
+> I believe this last 0 is the flags parameter. Now that we have
+> #pwm-cells = 1, i think this last 0 should be dropped.
+> 
+> 	  Andrew
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 31a3a98d067c..b9772a124a82 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -236,6 +236,10 @@ static const unsigned int hdmi_hpd_pins[]	= { PIN(GPIOH_0, EE_OFF) };
- static const unsigned int hdmi_sda_pins[]	= { PIN(GPIOH_1, EE_OFF) };
- static const unsigned int hdmi_scl_pins[]	= { PIN(GPIOH_2, EE_OFF) };
- 
-+static const unsigned int i2s_out_ch23_y_pins[]	= { PIN(GPIOY_8, EE_OFF) };
-+static const unsigned int i2s_out_ch45_y_pins[]	= { PIN(GPIOY_9, EE_OFF) };
-+static const unsigned int i2s_out_ch67_y_pins[]	= { PIN(GPIOY_10, EE_OFF) };
-+
- static const struct pinctrl_pin_desc meson_gxbb_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_0, 0),
- 	MESON_PIN(GPIOAO_1, 0),
-@@ -274,6 +278,13 @@ static const unsigned int pwm_ao_a_6_pins[]	= { PIN(GPIOAO_6, 0) };
- static const unsigned int pwm_ao_a_12_pins[]	= { PIN(GPIOAO_12, 0) };
- static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_13, 0) };
- 
-+static const unsigned int i2s_am_clk_pins[]	 = { PIN(GPIOAO_8, 0) };
-+static const unsigned int i2s_out_ao_clk_pins[]	 = { PIN(GPIOAO_9, 0) };
-+static const unsigned int i2s_out_lr_clk_pins[]	 = { PIN(GPIOAO_10, 0) };
-+static const unsigned int i2s_out_ch01_ao_pins[] = { PIN(GPIOAO_11, 0) };
-+static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_12, 0) };
-+static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_13, 0) };
-+
- static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0, EE_OFF),
- 	GPIO_GROUP(GPIOZ_1, EE_OFF),
-@@ -426,6 +437,9 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(uart_rx_c,	1,	16),
- 	GROUP(pwm_a_y,		1,	21),
- 	GROUP(pwm_f_y,		1,	20),
-+	GROUP(i2s_out_ch23_y,	1,	5),
-+	GROUP(i2s_out_ch45_y,	1,	6),
-+	GROUP(i2s_out_ch67_y,	1,	7),
- 
- 	/* Bank Z */
- 	GROUP(eth_mdio,		6,	1),
-@@ -523,6 +537,12 @@ static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
- 	GROUP(pwm_ao_a_6,	0,	18),
- 	GROUP(pwm_ao_a_12,	0,	17),
- 	GROUP(pwm_ao_b,		0,	3),
-+	GROUP(i2s_am_clk,	0,	30),
-+	GROUP(i2s_out_ao_clk,	0,	29),
-+	GROUP(i2s_out_lr_clk,	0,	28),
-+	GROUP(i2s_out_ch01_ao,	0,	27),
-+	GROUP(i2s_out_ch23_ao,	1,	0),
-+	GROUP(i2s_out_ch45_ao,	1,	1),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -652,6 +672,10 @@ static const char * const hdmi_i2c_groups[] = {
- 	"hdmi_sda", "hdmi_scl",
- };
- 
-+static const char * const i2s_out_groups[] = {
-+	"i2s_out_ch23_y", "i2s_out_ch45_y", "i2s_out_ch67_y",
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -694,6 +718,11 @@ static const char * const pwm_ao_b_groups[] = {
- 	"pwm_ao_b",
- };
- 
-+static const char * const i2s_out_ao_groups[] = {
-+	"i2s_am_clk", "i2s_out_ao_clk", "i2s_out_lr_clk",
-+	"i2s_out_ch01_ao", "i2s_out_ch23_ao", "i2s_out_ch45_ao",
-+};
-+
- static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
-@@ -717,6 +746,7 @@ static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(pwm_f_y),
- 	FUNCTION(hdmi_hpd),
- 	FUNCTION(hdmi_i2c),
-+	FUNCTION(i2s_out),
- };
- 
- static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
-@@ -730,6 +760,7 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- 	FUNCTION(pwm_ao_a_6),
- 	FUNCTION(pwm_ao_a_12),
- 	FUNCTION(pwm_ao_b),
-+	FUNCTION(i2s_out_ao),
- };
- 
- static struct meson_bank meson_gxbb_periphs_banks[] = {
--- 
-2.9.3
+Hi Andrew,
+
+isn't the 4000 (period?) pwm-cell #2 and 0 (flags?) pwm-cell #3? I
+actually expect "pwms = <&gpio0 24>;" here or "#pwm-cells = <2>;"
+
+Ralph
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
