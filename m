@@ -1,73 +1,172 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/1] pinctrl: meson: meson8b: fix the NAND DQS pins
-Date: Sat, 25 Mar 2017 19:43:50 +0100
-Message-ID: <20170325184350.7677-2-martin.blumenstingl@googlemail.com>
-References: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33904 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751506AbdCYSoG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 25 Mar 2017 14:44:06 -0400
-Received: by mail-wm0-f68.google.com with SMTP id u132so3829157wmg.1
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Mar 2017 11:44:04 -0700 (PDT)
-In-Reply-To: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with compilation
+ units
+Date: Sun, 26 Mar 2017 15:37:59 +0300
+Message-ID: <1490531879.708.8.camel@linux.intel.com>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+         <20170323121252.vi7oggwr6bfghe3b@dell>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170323121252.vi7oggwr6bfghe3b@dell>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-The nand_groups table uses different names for the NAND DQS pins than
-the GROUP() definition in meson8b_cbus_groups (nand_dqs_0 vs nand_dqs0).
-This prevents using the NAND DQS pins in the devicetree.
+On Thu, 2017-03-23 at 12:12 +0000, Lee Jones wrote:
+> On Fri, 17 Mar 2017, Andy Shevchenko wrote:
+> 
+> > Crystal Cove and Whiskey Cove are two different PMICs which are
+> > installed on Intel Atom SoC based platforms.
+> > 
+> > Moreover there are two independent drivers that by some reason were
+> > supposed (*) to get into one kernel module.
+> > 
+> > Fix the mess by clarifying Kconfig option for Crystal Cove and split
+> > Whiskey Cove out of it.
+> > 
+> > (*) It looks like the configuration was never tested with
+> >     INTEL_SOC_PMIC=n. The line in Makefile is actually wrong.
+> > 
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> (supporter:ACPI)
+> > Cc: Linus Walleij <linus.walleij@linaro.org> (maintainer:GPIO
+> > SUBSYSTEM)
+> > Cc: Zhang Rui <rui.zhang@intel.com> (supporter:THERMAL)
+> > Cc: Eduardo Valentin <edubezval@gmail.com> (supporter:THERMAL)
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> > - make option visible
+> > - fix dependencies
+> >  drivers/acpi/Kconfig         |  2 +-
+> 
+> This needs an ACPI Ack before I can do anything with it.
 
-I decided to rename both pins to nand_dqs_15 and nand_dqs_18 as both seem
-to serve the same function, just exposed on different pins (unlike the
-ethernet TX pins for example, where there's eth_txd0..3 - all of these
-can be active at the same time as they are different data lines).
+Rafael, can you give you tag?
 
-Fixes: 0fefcb6876d0 ("pinctrl: Add support for Meson8b")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/pinctrl/meson/pinctrl-meson8b.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> >  drivers/gpio/Kconfig         |  2 +-
+> >  drivers/mfd/Kconfig          | 14 ++++++++++++--
+> >  drivers/mfd/Makefile         |  2 +-
+> >  drivers/platform/x86/Kconfig |  2 +-
+> >  drivers/thermal/Kconfig      |  2 +-
+> >  6 files changed, 17 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> > index 83e5f7e1a20d..03708e08fcb4 100644
+> > --- a/drivers/acpi/Kconfig
+> > +++ b/drivers/acpi/Kconfig
+> > @@ -512,7 +512,7 @@ config XPOWER_PMIC_OPREGION
+> >  
+> >  config BXT_WC_PMIC_OPREGION
+> >  	bool "ACPI operation region support for BXT WhiskeyCove
+> > PMIC"
+> > -	depends on INTEL_SOC_PMIC
+> > +	depends on INTEL_SOC_PMIC_BXTWC
+> >  	help
+> >  	  This config adds ACPI operation region support for BXT
+> > WhiskeyCove PMIC.
+> >  
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index 05043071fc98..9b1bcb4d0df7 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -1054,7 +1054,7 @@ config GPIO_UCB1400
+> >  
+> >  config GPIO_WHISKEY_COVE
+> >  	tristate "GPIO support for Whiskey Cove PMIC"
+> > -	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC
+> > +	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC_BXTWC
+> >  	select GPIOLIB_IRQCHIP
+> >  	help
+> >  	  Support for GPIO pins on Whiskey Cove PMIC.
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 55ecdfb74d31..e43afb8956ea 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -425,18 +425,28 @@ config LPC_SCH
+> >  	  System Management Bus and General Purpose I/O.
+> >  
+> >  config INTEL_SOC_PMIC
+> > -	bool "Support for Intel Atom SoC PMIC"
+> > +	bool "Support for Crystal Cove PMIC"
+> >  	depends on GPIOLIB
+> >  	depends on I2C=y
+> >  	select MFD_CORE
+> >  	select REGMAP_I2C
+> >  	select REGMAP_IRQ
+> >  	help
+> > -	  Select this option to enable support for the PMIC device
+> > +	  Select this option to enable support for Crystal Cove
+> > PMIC
+> >  	  on some Intel SoC systems. The PMIC provides ADC, GPIO,
+> >  	  thermal, charger and related power management functions
+> >  	  on these systems.
+> >  
+> > +config INTEL_SOC_PMIC_BXTWC
+> > +	tristate "Support for Intel Broxton Whiskey Cove PMIC"
+> > +	select MFD_CORE
+> > +	select REGMAP_IRQ
+> > +	help
+> > +	  Select this option to enable support for Whiskey Cove
+> > PMIC
+> > +	  on Intel Broxton systems. The PMIC provides ADC, GPIO,
+> > +	  thermal, charger and related power management functions
+> > +	  on these systems.
+> > +
+> >  config MFD_INTEL_LPSS
+> >  	tristate
+> >  	select COMMON_CLK
+> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > index 31ce07611a6f..201aeaf5112a 100644
+> > --- a/drivers/mfd/Makefile
+> > +++ b/drivers/mfd/Makefile
+> > @@ -207,8 +207,8 @@ obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
+> >  obj-$(CONFIG_MFD_SKY81452)	+= sky81452.o
+> >  
+> >  intel-soc-pmic-objs		:= intel_soc_pmic_core.o
+> > intel_soc_pmic_crc.o
+> > -intel-soc-pmic-$(CONFIG_INTEL_PMC_IPC)	+=
+> > intel_soc_pmic_bxtwc.o
+> >  obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+> > +obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
+> >  obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
+> >  
+> >  obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
+> > diff --git a/drivers/platform/x86/Kconfig
+> > b/drivers/platform/x86/Kconfig
+> > index e1bffc9bb194..883fbe7a2466 100644
+> > --- a/drivers/platform/x86/Kconfig
+> > +++ b/drivers/platform/x86/Kconfig
+> > @@ -1019,7 +1019,7 @@ config INTEL_PMC_IPC
+> >  config INTEL_BXTWC_PMIC_TMU
+> >  	tristate "Intel BXT Whiskey Cove TMU Driver"
+> >  	depends on REGMAP
+> > -	depends on INTEL_SOC_PMIC && INTEL_PMC_IPC
+> > +	depends on INTEL_SOC_PMIC_BXTWC && INTEL_PMC_IPC
+> >  	---help---
+> >  	  Select this driver to use Intel BXT Whiskey Cove PMIC TMU
+> > feature.
+> >  	  This driver enables the alarm wakeup functionality in the
+> > TMU unit
+> > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> > index 776b34396144..751e50a3d946 100644
+> > --- a/drivers/thermal/Kconfig
+> > +++ b/drivers/thermal/Kconfig
+> > @@ -365,7 +365,7 @@ endmenu
+> >  
+> >  config INTEL_BXT_PMIC_THERMAL
+> >  	tristate "Intel Broxton PMIC thermal driver"
+> > -	depends on X86 && INTEL_SOC_PMIC && REGMAP
+> > +	depends on X86 && INTEL_SOC_PMIC_BXTWC && REGMAP
+> >  	help
+> >  	  Select this driver for Intel Broxton PMIC with ADC
+> > channels monitoring
+> >  	  system temperature measurements and alerts.
+> 
+> 
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 76f077f18193..bf747eb1f3f4 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -267,8 +267,8 @@ static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, 0) };
- static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, 0) };
- static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, 0) };
- static const unsigned int nand_ren_clk_pins[]	= { PIN(BOOT_14, 0) };
--static const unsigned int nand_dqs_0_pins[]	= { PIN(BOOT_15, 0) };
--static const unsigned int nand_dqs_1_pins[]	= { PIN(BOOT_18, 0) };
-+static const unsigned int nand_dqs_15_pins[]	= { PIN(BOOT_15, 0) };
-+static const unsigned int nand_dqs_18_pins[]	= { PIN(BOOT_18, 0) };
- 
- static const unsigned int sdxc_d0_c_pins[]	= { PIN(BOOT_0, 0)};
- static const unsigned int sdxc_d13_c_pins[]	= { PIN(BOOT_1, 0), PIN(BOOT_2, 0),
-@@ -527,8 +527,8 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
- 	GROUP(nand_cle,		2,	20),
- 	GROUP(nand_wen_clk,	2,	19),
- 	GROUP(nand_ren_clk,	2,	18),
--	GROUP(nand_dqs_0,	2,	27),
--	GROUP(nand_dqs_1,	2,	28),
-+	GROUP(nand_dqs_15,	2,	27),
-+	GROUP(nand_dqs_18,	2,	28),
- 	GROUP(sdxc_d0_c,	4,	30),
- 	GROUP(sdxc_d13_c,	4,	29),
- 	GROUP(sdxc_d47_c,	4,	28),
-@@ -739,8 +739,8 @@ static const char * const sdxc_c_groups[] = {
- static const char * const nand_groups[] = {
- 	"nand_io", "nand_io_ce0", "nand_io_ce1",
- 	"nand_io_rb0", "nand_ale", "nand_cle",
--	"nand_wen_clk", "nand_ren_clk", "nand_dqs0",
--	"nand_dqs1"
-+	"nand_wen_clk", "nand_ren_clk", "nand_dqs_15",
-+	"nand_dqs_18"
- };
- 
- static const char * const nor_groups[] = {
 -- 
-2.12.1
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
