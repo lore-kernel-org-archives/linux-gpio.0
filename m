@@ -1,111 +1,120 @@
 From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 5/8] ARM64: dts: meson-gxbb: add i2s output pins
-Date: Sun, 26 Mar 2017 19:19:20 +0200
-Message-ID: <20170326171923.19269-6-jbrunet@baylibre.com>
+Subject: [PATCH v2 3/8] pinctrl: meson: gxl: add i2s output pins
+Date: Sun, 26 Mar 2017 19:19:18 +0200
+Message-ID: <20170326171923.19269-4-jbrunet@baylibre.com>
 References: <20170326171923.19269-1-jbrunet@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:35543 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751789AbdCZRUM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 26 Mar 2017 13:20:12 -0400
-Received: by mail-wr0-f171.google.com with SMTP id u1so25435987wra.2
-        for <linux-gpio@vger.kernel.org>; Sun, 26 Mar 2017 10:20:01 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170326171923.19269-1-jbrunet@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Add EE and AO domains pins for the i2s output clocks and data to the gxbb
-device tree.
+Add EE and AO domains pins for the i2s output clocks and data.
+I2S output channel 6/7 on TEST_N pin is missing from this patch and will
+be added later on.
 
 Acked-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 63 +++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 34168a3b0dd1..a9cacbd6a1d6 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -192,6 +192,48 @@
- 				function = "pwm_ao_b";
- 			};
- 		};
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+index 6c2a15dde99f..e472213fd673 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -224,6 +224,14 @@ static const unsigned int hdmi_hpd_pins[]	= { PIN(GPIOH_0, EE_OFF) };
+ static const unsigned int hdmi_sda_pins[]	= { PIN(GPIOH_1, EE_OFF) };
+ static const unsigned int hdmi_scl_pins[]	= { PIN(GPIOH_2, EE_OFF) };
+ 
++static const unsigned int i2s_am_clk_pins[]	= { PIN(GPIOH_6, EE_OFF) };
++static const unsigned int i2s_out_ao_clk_pins[]	= { PIN(GPIOH_7, EE_OFF) };
++static const unsigned int i2s_out_lr_clk_pins[]	= { PIN(GPIOH_8, EE_OFF) };
++static const unsigned int i2s_out_ch01_pins[]	= { PIN(GPIOH_9, EE_OFF) };
++static const unsigned int i2s_out_ch23_z_pins[]	= { PIN(GPIOZ_5, EE_OFF) };
++static const unsigned int i2s_out_ch45_z_pins[]	= { PIN(GPIOZ_6, EE_OFF) };
++static const unsigned int i2s_out_ch67_z_pins[]	= { PIN(GPIOZ_7, EE_OFF) };
 +
-+		i2s_am_clk_pins: i2s_am_clk {
-+			mux {
-+				groups = "i2s_am_clk";
-+				function = "i2s_out_ao";
-+			};
-+		};
+ static const struct pinctrl_pin_desc meson_gxl_aobus_pins[] = {
+ 	MESON_PIN(GPIOAO_0, 0),
+ 	MESON_PIN(GPIOAO_1, 0),
+@@ -261,6 +269,9 @@ static const unsigned int pwm_ao_a_8_pins[]	= { PIN(GPIOAO_8, 0) };
+ static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_9, 0) };
+ static const unsigned int pwm_ao_b_6_pins[]	= { PIN(GPIOAO_6, 0) };
+ 
++static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_8, EE_OFF) };
++static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_9, EE_OFF) };
 +
-+		i2s_out_ao_clk_pins: i2s_out_ao_clk {
-+			mux {
-+				groups = "i2s_out_ao_clk";
-+				function = "i2s_out_ao";
-+			};
-+		};
-+
-+		i2s_out_lr_clk_pins: i2s_out_lr_clk {
-+			mux {
-+				groups = "i2s_out_lr_clk";
-+				function = "i2s_out_ao";
-+			};
-+		};
-+
-+		i2s_out_ch01_ao_pins: i2s_out_ch01_ao {
-+			mux {
-+				groups = "i2s_out_ch01_ao";
-+				function = "i2s_out_ao";
-+			};
-+		};
-+
-+		i2s_out_ch23_ao_pins: i2s_out_ch23_ao {
-+			mux {
-+				groups = "i2s_out_ch23_ao";
-+				function = "i2s_out_ao";
-+			};
-+		};
-+
-+		i2s_out_ch45_ao_pins: i2s_out_ch45_ao {
-+			mux {
-+				groups = "i2s_out_ch45_ao";
-+				function = "i2s_out_ao";
-+			};
-+		};
- 	};
+ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
+ 	GPIO_GROUP(GPIOZ_0, EE_OFF),
+ 	GPIO_GROUP(GPIOZ_1, EE_OFF),
+@@ -406,11 +417,18 @@ static struct meson_pmx_group meson_gxl_periphs_groups[] = {
+ 	GROUP(eth_txd2,		4,	11),
+ 	GROUP(eth_txd3,		4,	10),
+ 	GROUP(pwm_c,		3,	20),
++	GROUP(i2s_out_ch23_z,	3,	26),
++	GROUP(i2s_out_ch45_z,	3,	25),
++	GROUP(i2s_out_ch67_z,	3,	24),
+ 
+ 	/* Bank H */
+ 	GROUP(hdmi_hpd,		6,	31),
+ 	GROUP(hdmi_sda,		6,	30),
+ 	GROUP(hdmi_scl,		6,	29),
++	GROUP(i2s_am_clk,	6,	26),
++	GROUP(i2s_out_ao_clk,	6,	25),
++	GROUP(i2s_out_lr_clk,	6,	24),
++	GROUP(i2s_out_ch01,	6,	23),
+ 
+ 	/* Bank DV */
+ 	GROUP(uart_tx_b,	2,	16),
+@@ -490,6 +508,8 @@ static struct meson_pmx_group meson_gxl_aobus_groups[] = {
+ 	GROUP(pwm_ao_b_6,	0,	18),
+ 	GROUP(pwm_ao_a_8,	0,	17),
+ 	GROUP(pwm_ao_b,		0,	3),
++	GROUP(i2s_out_ch23_ao,	1,	0),
++	GROUP(i2s_out_ch45_ao,	1,	1),
  };
  
-@@ -432,6 +474,27 @@
- 				function = "hdmi_i2c";
- 			};
- 		};
-+
-+		i2sout_ch23_y_pins: i2sout_ch23_y {
-+			mux {
-+				groups = "i2sout_ch23_y";
-+				function = "i2s_out";
-+			};
-+		};
-+
-+		i2sout_ch45_y_pins: i2sout_ch45_y {
-+			mux {
-+				groups = "i2sout_ch45_y";
-+				function = "i2s_out";
-+			};
-+		};
-+
-+		i2sout_ch67_y_pins: i2sout_ch67_y {
-+			mux {
-+				groups = "i2sout_ch67_y";
-+				function = "i2s_out";
-+			};
-+		};
- 	};
+ static const char * const gpio_periphs_groups[] = {
+@@ -610,6 +630,11 @@ static const char * const hdmi_i2c_groups[] = {
+ 	"hdmi_sda", "hdmi_scl",
  };
  
++static const char * const i2s_out_groups[] = {
++	"i2s_am_clk", "i2s_out_ao_clk", "i2s_out_lr_clk",
++	"i2s_out_ch01", "i2s_out_ch23_z", "i2s_out_ch45_z", "i2s_out_ch67_z",
++};
++
+ static const char * const gpio_aobus_groups[] = {
+ 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
+ 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
+@@ -644,6 +669,10 @@ static const char * const pwm_ao_b_groups[] = {
+ 	"pwm_ao_b", "pwm_ao_b_6",
+ };
+ 
++static const char * const i2s_out_ao_groups[] = {
++	"i2s_out_ch23_ao", "i2s_out_ch45_ao",
++};
++
+ static struct meson_pmx_func meson_gxl_periphs_functions[] = {
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+@@ -666,6 +695,7 @@ static struct meson_pmx_func meson_gxl_periphs_functions[] = {
+ 	FUNCTION(pwm_f),
+ 	FUNCTION(hdmi_hpd),
+ 	FUNCTION(hdmi_i2c),
++	FUNCTION(i2s_out),
+ };
+ 
+ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
+@@ -677,6 +707,7 @@ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
+ 	FUNCTION(remote_input_ao),
+ 	FUNCTION(pwm_ao_a),
+ 	FUNCTION(pwm_ao_b),
++	FUNCTION(i2s_out_ao),
+ };
+ 
+ static struct meson_bank meson_gxl_periphs_banks[] = {
 -- 
 2.9.3
-
