@@ -1,84 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.11 take two
-Date: Mon, 27 Mar 2017 09:38:02 +0200
-Message-ID: <CACRpkdbAbbeY_FObg9bH-=tKQci3EpSFfGkrHc3RF09zY+u+7g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Nandor Han <nandor.han@ge.com>
+Subject: [PATCH 2/3] doc,dts - add XRA1403 DTS binding documentation
+Date: Mon, 27 Mar 2017 09:23:01 +0300
+Message-ID: <39ba92bacf48da957f8f85d5cb11d3254fe3d68f.1490595641.git.nandor.han@ge.com>
+References: <cover.1490595641.git.nandor.han@ge.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0a-00176a03.pphosted.com ([67.231.149.52]:50343 "EHLO
+        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751609AbdC0IDv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 27 Mar 2017 04:03:51 -0400
+In-Reply-To: <cover.1490595641.git.nandor.han@ge.com>
+In-Reply-To: <cover.1490595641.git.nandor.han@ge.com>
+References: <cover.1490595641.git.nandor.han@ge.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Nandor Han <nandor.han@ge.com>
 
-Hi Linus,
+Add the XRA1403 DTS binding documentation.
 
-Here is a bunch of pin control fixes again. A bit more than I'd like
-for this subsystem at this point, but what can I do. They are all
-driver fixes for hardware issues, as like "we forgot", "we didn't think
-of the fact that this could happen", "oops that one goes there" etc.
+Signed-off-by: Nandor Han <nandor.han@ge.com>
+---
+ .../devicetree/bindings/gpio/gpio-xra1403.txt      | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
 
-Please pull them in!
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-xra1403.txt b/Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
+new file mode 100644
+index 0000000..ccf5337
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
+@@ -0,0 +1,37 @@
++GPIO Driver for XRA1403 16-BIT GPIO Expander With Reset Input from EXAR
++
++The XRA1403 is an 16-bit GPIO expander with an SPI interface. Features available:
++	- Individually programmable inputs:
++		- Internal pull-up resistors
++		- Polarity inversion
++		- Individual interrupt enable
++		- Rising edge and/or Falling edge interrupt
++		- Input filter
++	- Individually programmable outputs
++		- Output Level Control
++		- Output Three-State Control
++
++Properties
++----------
++Check documentation for SPI and GPIO controllers regarding properties needed to configure the node.
++
++	- compatible = "exar,xra1403".
++	- reg = SPI id of the device.
++	- gpio-controller: mark the node as gpio.
++
++Optional properties:
++-------------------
++	- reset-gpios: in case available used to control the device reset line.
++
++Example
++--------
++
++	gpioxra0: gpio@2 {
++		compatible = "exar,xra1403";
++		reg = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		reset-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
++		spi-max-frequency = <1000000>;
++		status = "okay";
++	};
+-- 
+2.10.1
 
-Yours,
-Linus Walleij
-
-The following changes since commit 97da3854c526d3a6ee05c849c96e48d21527606c:
-
-  Linux 4.11-rc3 (2017-03-19 19:09:39 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.11-3
-
-for you to fetch changes up to d7402de48efae57bbb0072e53d3800c30de57ea5:
-
-  pinctrl: qcom: ipq4019: add missing pingroups for pins > 70
-(2017-03-23 10:13:15 +0100)
-
-----------------------------------------------------------------
-Pin control fixes for v4.11, take two:
-
-- Kconfig fixup for the TI IOdelay pinctrl-single add-on.
-
-- Fix up a typo in the meson i2c ao groups.
-
-- Switch a remapping back to use devm_ioremap() as
-  devm_ioremap_resource() does not allow for sharing memory
-  regions.
-
-- Do not clear the Qualcomm irq status bit in irq_unmask(),
-  as this can lead to missing interrupts while the irq handler
-  is executing.
-
-- Add irq_request/release_resources() on the ST driver.
-
-- Add a bunch of mysteriously missing pingroups for high
-  numbered pins in the Qualcomm ipq4019 driver.
-
-----------------------------------------------------------------
-Andrzej Hajda (1):
-      pinctrl: samsung: Fix memory mapping code
-
-Bjorn Andersson (1):
-      pinctrl: qcom: Don't clear status bit on irq_unmask
-
-Christian Lamparter (1):
-      pinctrl: qcom: ipq4019: add missing pingroups for pins > 70
-
-Neil Armstrong (1):
-      pinctrl: meson-gxbb: Fix typo in i2c ao groups
-
-Patrice Chotard (1):
-      pinctrl: st: add irq_request/release_resources callbacks
-
-Peter Robinson (1):
-      pinctrl: ti: The IODelay driver is a DRA7xxx feature so depend on that SoC
-
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  4 ++--
- drivers/pinctrl/pinctrl-st.c               | 30 ++++++++++++++++++++++++------
- drivers/pinctrl/qcom/pinctrl-ipq4019.c     | 30 ++++++++++++++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-msm.c         |  4 ----
- drivers/pinctrl/samsung/pinctrl-samsung.c  | 13 ++++++++++---
- drivers/pinctrl/ti/Kconfig                 |  2 +-
- 6 files changed, 67 insertions(+), 16 deletions(-)
