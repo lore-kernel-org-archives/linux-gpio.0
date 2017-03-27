@@ -1,184 +1,115 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/7] pinctrl: armada-37xx: Add pin controller support
- for Armada 37xx
-Date: Mon, 27 Mar 2017 11:26:49 +0200
-Message-ID: <CACRpkdYQb9wL+g5T08Mgv+RQYaUZPoS+0RXXfk2XdD+AHSs9gA@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 4/7] pinctrl: armada-37xx: Add gpio support
+Date: Mon, 27 Mar 2017 11:46:48 +0200
+Message-ID: <878tnraw6v.fsf@free-electrons.com>
 References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
- <087ef357fa23193d135d37ec2206a5798d27aab5.1490120798.git-series.gregory.clement@free-electrons.com>
+        <913cf9807c7c351bb7dabac9b3336431dac060e5.1490120798.git-series.gregory.clement@free-electrons.com>
+        <CACRpkdaueEJKTJq6QihyBS18wgtgqVLHAFa=13_2X8AYuh7tqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <087ef357fa23193d135d37ec2206a5798d27aab5.1490120798.git-series.gregory.clement@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaueEJKTJq6QihyBS18wgtgqVLHAFa=13_2X8AYuh7tqg@mail.gmail.com>
+        (Linus Walleij's message of "Mon, 27 Mar 2017 10:57:15 +0200")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 21, 2017 at 7:28 PM, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
+Hi Linus,
+ 
+ On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> The Armada 37xx SoC come with 2 pin controllers: one on the south
-> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
+> On Tue, Mar 21, 2017 at 7:28 PM, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
 >
-> At the hardware level the controller configure the pins by group and not
-> pin by pin. This constraint is reflected in the design of the driver:
-> only the group related functions are implemented.
+> You should add something to your Kconfig including:
+>
+> select GPIOLIB
+> select OF_GPIO
+>
+> or so... or depends on. You certainly need them.
 
-Interesting!
+I missed it I will do it in v4.
 
-> +static int armada_37xx_pmx_direction_input(struct armada_37xx_pinctrl *info,
-> +                                          unsigned int offset)
-> +{
-> +       unsigned int reg = OUTPUT_EN;
-> +       unsigned int mask;
-> +
-> +       if (offset >= GPIO_PER_REG) {
-> +               offset -= GPIO_PER_REG;
-> +               reg += sizeof(u32);
-> +       }
-> +       mask = BIT(offset);
-> +
-> +       return regmap_update_bits(info->regmap, reg, mask, 0);
-> +}
-> +
-> +
-> +
+>
+>> +static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+>> +                                       struct armada_37xx_pinctrl *info)
+>> +{
+>> +       struct device_node *np;
+>> +       struct gpio_chip *gc;
+>> +       int ret = -ENODEV;
+>> +
+>> +       for_each_child_of_node(info->dev->of_node, np) {
+>> +               if (of_find_property(np, "gpio-controller", NULL)) {
+>> +                       ret = 0;
+>> +                       break;
+>> +               }
+>> +       };
+>
+> OK so several GPIO chips as subnodes, why not one device per
+> chip? Or have we discussed this before? It seems a bit weird,
+> apparently there is just one node with a gpio-controller, as you're
+> just adding one pin range.
 
-A bit of excess whitespace, OK nitpicking.
+As you probably noticed pinctrl and gpio register are mixed in this
+hardware. One of the register is alos use to get some clock freqeuncy,
+so that's why I ended with a syscon node. The parent node is the
+pinctrl. My main motivation to use a subnode was to be ablee to have a
+phandle associated with the GPIO chip. In my first version I only have
+one node but then I realized that I could not use GPIO in the device
+tree without an phandle to point it.
 
-Then this stuff:
-
-> +static int armada_37xx_add_function(struct armada_37xx_pmx_func *funcs,
-> +                                   int *funcsize, const char *name)
-> +{
-> +       int i = 0;
-> +
-> +       if (*funcsize <= 0)
-> +               return -EOVERFLOW;
-> +
-> +       while (funcs->ngroups) {
-> +               /* function already there */
-> +               if (strcmp(funcs->name, name) == 0) {
-> +                       funcs->ngroups++;
-> +
-> +                       return -EEXIST;
-> +               }
-> +               funcs++;
-> +               i++;
-> +       }
-> +
-> +       /* append new unique function */
-> +       funcs->name = name;
-> +       funcs->ngroups = 1;
-> +       (*funcsize)--;
-> +
-> +       return 0;
-> +}
-> +
-> +static int armada_37xx_fill_group(struct armada_37xx_pinctrl *info, int base)
-> +{
-> +       int n, num = 0, funcsize = info->data->nr_pins;
-> +
-> +       for (n = 0; n < info->ngroups; n++) {
-> +               struct armada_37xx_pin_group *grp = &info->groups[n];
-> +               int i, j, f;
-> +
-> +               grp->pins = devm_kzalloc(info->dev,
-> +                                        (grp->npins + grp->extra_npins) *
-> +                                        sizeof(*grp->pins), GFP_KERNEL);
-> +               if (!grp->pins)
-> +                       return -ENOMEM;
-> +
-> +               for (i = 0; i < grp->npins; i++)
-> +                       grp->pins[i] = grp->start_pin + base + i;
-> +
-> +               for (j = 0; j < grp->extra_npins; j++)
-> +                       grp->pins[i+j] = grp->extra_pin + base + j;
-> +
-> +               for (f = 0; f < NB_FUNCS; f++) {
-> +                       int ret;
-> +                       /* check for unique functions and count groups */
-> +                       ret = armada_37xx_add_function(info->funcs, &funcsize,
-> +                                           grp->funcs[f]);
-> +                       if (ret == -EOVERFLOW)
-> +                               dev_err(info->dev,
-> +                                       "More functions than pins(%d)\n",
-> +                                       info->data->nr_pins);
-> +                       if (ret < 0)
-> +                               continue;
-> +                       num++;
-> +               }
-> +       }
-> +
-> +       info->nfuncs = num;
-> +
-> +       return 0;
-> +}
-> +
-> +static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
-> +{
-> +       struct armada_37xx_pmx_func *funcs = info->funcs;
-> +       int n;
-> +
-> +       for (n = 0; n < info->nfuncs; n++) {
-> +               const char *name = funcs[n].name;
-> +               const char **groups;
-> +               int g;
-> +
-> +               funcs[n].groups = devm_kzalloc(info->dev, funcs[n].ngroups *
-> +                                              sizeof(*(funcs[n].groups)),
-> +                                              GFP_KERNEL);
-> +               if (!funcs[n].groups)
-> +                       return -ENOMEM;
-> +
-> +               groups = funcs[n].groups;
-> +
-> +               for (g = 0; g < info->ngroups; g++) {
-> +                       struct armada_37xx_pin_group *gp = &info->groups[g];
-> +                       int f;
-> +
-> +                       for (f = 0; f < NB_FUNCS; f++) {
-> +                               if (strcmp(gp->funcs[f], name) == 0) {
-> +                                       *groups = gp->name;
-> +                                       groups++;
-> +                               }
-> +                       }
-> +               }
-> +       }
-> +       return 0;
-> +}
-
-I would be happy if you add kerneldoc to these functions and explain
-what they do. Because I don't get it. I guess they are filling in the data
-structures but yeah. Hard to follow.
-
-> +       match = of_match_node(armada_37xx_pinctrl_of_match, np);
-> +       info->data = (struct armada_37xx_pin_data *)match->data;
-
-Use of_device_get_match_data()
+If you have an other solution, I would be happy to remove this subnode.
 
 
-> +static struct platform_driver armada_37xx_pinctrl_driver = {
-> +       .driver = {
-> +               .name = "armada-37xx-pinctrl",
-> +               .of_match_table = armada_37xx_pinctrl_of_match,
-> +       },
-> +       .probe = armada_37xx_pinctrl_probe,
-> +};
-> +
-> +builtin_platform_driver(armada_37xx_pinctrl_driver);
+>
+> What happens if there would be two gpio-controllers? The second
+> is just ignored without error?
 
-It almost looks like your could use builting_platform_driver_probe() actually,
-and tag the costly initfunctions with __init so they get dicarded after probe.
+There won't be a second gpio-controllers because we only have one gpio
+controller by pin controller (as they are actually the same). Also as I
+said above, the subnode is mainly here to provide a phandle.
 
-Yours,
-Linus Walleij
+But I can add a comment to emphasize it.
+
+
+>
+>> +       ret = gpiochip_add_data(gc, info);
+>> +       if (ret)
+>> +               return ret;
+>
+> Can't you use devm_gpiochip_add_data()?
+
+I think I can.
+
+>
+>> +       ret = gpiochip_add_pin_range(&info->gpio_chip, dev_name(dev), 0,
+>> +                                    pinbase, info->data->nr_pins);
+>> +       if (ret)
+>> +               return ret;
+>
+> Why can't you put the range(s) into the device tree?
+>
+> We already have code in drivers/gpio/gpiolib-of.c to do this
+> for you. And generic range definition bindings.
+
+It was done in the v3.
+
+Tanks,
+
+Gregory
+
+>
+> Yours,
+> Linus Walleij
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
