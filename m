@@ -1,52 +1,84 @@
-From: Nandor Han <nandor.han@ge.com>
-Subject: [PATCH 0/3] XRA1403,gpio - add XRA1403 gpio expander driver
-Date: Mon, 27 Mar 2017 09:22:59 +0300
-Message-ID: <cover.1490595641.git.nandor.han@ge.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0a-00176a03.pphosted.com ([67.231.149.52]:52801 "EHLO
-        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751465AbdC0Hki (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 27 Mar 2017 03:40:38 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.11 take two
+Date: Mon, 27 Mar 2017 09:38:02 +0200
+Message-ID: <CACRpkdbAbbeY_FObg9bH-=tKQci3EpSFfGkrHc3RF09zY+u+7g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Nandor Han <nandor.han@ge.com>
 
-The patchset will add a driver to support basic functionality for
-XRA1403 device. Features supported:
-	- configure gpin as input/out
-	- get/set gpio status
+Hi Linus,
 
-Documentation: A gpio-xra1403.txt file was added to document the DTS
-	bindings related to driver.
+Here is a bunch of pin control fixes again. A bit more than I'd like
+for this subsystem at this point, but what can I do. They are all
+driver fixes for hardware issues, as like "we forgot", "we didn't think
+of the fact that this could happen", "oops that one goes there" etc.
 
-Testing:
+Please pull them in!
 
-1. XRA1403 connected to iMX53 MCU
-2. Export gpio from userspace
-3. Verify that corresponding gpio directories are created
-   in `/sys/class/gpio/gpioXX`
-4. Export gpios from first and second bank as output
-5. Set the output gpio pin to high/low and verify with the 
-   oscilloscope that gpio status is according with the configured
-   value.
+Yours,
+Linus Walleij
 
-Nandor Han (3):
-  gpio - Add EXAR XRA1403 SPI GPIO expander driver
-  doc,dts - add XRA1403 DTS binding documentation
-  Add XRA1403 support to MAINTAINERS file
+The following changes since commit 97da3854c526d3a6ee05c849c96e48d21527606c:
 
- .../devicetree/bindings/gpio/gpio-xra1403.txt      |  37 +++
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- MAINTAINERS                                        |   8 +
- drivers/gpio/Kconfig                               |   5 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-xra1403.c                        | 252 +++++++++++++++++++++
- 6 files changed, 304 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
- create mode 100644 drivers/gpio/gpio-xra1403.c
+  Linux 4.11-rc3 (2017-03-19 19:09:39 -0700)
 
--- 
-2.10.1
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.11-3
+
+for you to fetch changes up to d7402de48efae57bbb0072e53d3800c30de57ea5:
+
+  pinctrl: qcom: ipq4019: add missing pingroups for pins > 70
+(2017-03-23 10:13:15 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for v4.11, take two:
+
+- Kconfig fixup for the TI IOdelay pinctrl-single add-on.
+
+- Fix up a typo in the meson i2c ao groups.
+
+- Switch a remapping back to use devm_ioremap() as
+  devm_ioremap_resource() does not allow for sharing memory
+  regions.
+
+- Do not clear the Qualcomm irq status bit in irq_unmask(),
+  as this can lead to missing interrupts while the irq handler
+  is executing.
+
+- Add irq_request/release_resources() on the ST driver.
+
+- Add a bunch of mysteriously missing pingroups for high
+  numbered pins in the Qualcomm ipq4019 driver.
+
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      pinctrl: samsung: Fix memory mapping code
+
+Bjorn Andersson (1):
+      pinctrl: qcom: Don't clear status bit on irq_unmask
+
+Christian Lamparter (1):
+      pinctrl: qcom: ipq4019: add missing pingroups for pins > 70
+
+Neil Armstrong (1):
+      pinctrl: meson-gxbb: Fix typo in i2c ao groups
+
+Patrice Chotard (1):
+      pinctrl: st: add irq_request/release_resources callbacks
+
+Peter Robinson (1):
+      pinctrl: ti: The IODelay driver is a DRA7xxx feature so depend on that SoC
+
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  4 ++--
+ drivers/pinctrl/pinctrl-st.c               | 30 ++++++++++++++++++++++++------
+ drivers/pinctrl/qcom/pinctrl-ipq4019.c     | 30 ++++++++++++++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.c         |  4 ----
+ drivers/pinctrl/samsung/pinctrl-samsung.c  | 13 ++++++++++---
+ drivers/pinctrl/ti/Kconfig                 |  2 +-
+ 6 files changed, 67 insertions(+), 16 deletions(-)
