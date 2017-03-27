@@ -1,115 +1,67 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 4/7] pinctrl: armada-37xx: Add gpio support
-Date: Mon, 27 Mar 2017 11:46:48 +0200
-Message-ID: <878tnraw6v.fsf@free-electrons.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
-        <913cf9807c7c351bb7dabac9b3336431dac060e5.1490120798.git-series.gregory.clement@free-electrons.com>
-        <CACRpkdaueEJKTJq6QihyBS18wgtgqVLHAFa=13_2X8AYuh7tqg@mail.gmail.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH 2/8] pinctrl: stm32: use gpio-ranges to declare bank range
+Date: Mon, 27 Mar 2017 12:23:49 +0200
+Message-ID: <7be9d251-f177-ce15-9d91-d8533ddffa06@st.com>
+References: <1485533721-9019-1-git-send-email-alexandre.torgue@st.com>
+ <1485533721-9019-3-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdYtZCJVrZhXOPXd-MNMX0Ry_H1dLQopKwsj9HnO03BtKg@mail.gmail.com>
+ <2d0cd144-9a72-52d5-b2c9-c6c9e09ac494@st.com>
+ <CACRpkdbhqT688-1MajRshqgn0bH0h2s=LM06gEQYgRmMZC_n0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaueEJKTJq6QihyBS18wgtgqVLHAFa=13_2X8AYuh7tqg@mail.gmail.com>
-        (Linus Walleij's message of "Mon, 27 Mar 2017 10:57:15 +0200")
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdbhqT688-1MajRshqgn0bH0h2s=LM06gEQYgRmMZC_n0g@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Patrice Chotard <patrice.chotard@st.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
- 
- On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi Linus
 
-> On Tue, Mar 21, 2017 at 7:28 PM, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
+On 02/01/2017 04:01 PM, Linus Walleij wrote:
+> On Mon, Jan 30, 2017 at 5:29 PM, Alexandre Torgue
+> <alexandre.torgue@st.com> wrote:
+>> On 01/30/2017 04:19 PM, Linus Walleij wrote:
 >
-> You should add something to your Kconfig including:
+>>>> +       if (!of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
+>>>> &args))
+>>>> +               bank_nr = args.args[1] / STM32_GPIO_PINS_PER_BANK;
+>>>> +       else {
+>>>> +               range->name = bank->gpio_chip.label;
+>>>> +               range->id = bank_nr;
+>>>> +               range->pin_base = range->id * STM32_GPIO_PINS_PER_BANK;
+>>>> +               range->base = range->id * STM32_GPIO_PINS_PER_BANK;
+>>>> +               range->npins = npins;
+>>>> +               range->gc = &bank->gpio_chip;
+>>>> +               pinctrl_add_gpio_range(pctl->pctl_dev,
+>>>> +                                      &pctl->banks[bank_nr].range);
+>>>> +       }
+>>
+>>
+>> I Keep the old way to get range in order to keep compatibility with older
+>> device tree (if no gpio ranges are defined).
 >
-> select GPIOLIB
-> select OF_GPIO
+> Aha I understand. Sorry for my stupidity.
 >
-> or so... or depends on. You certainly need them.
+> Go ahead with this!
 
-I missed it I will do it in v4.
+I saw an issue about this patch. It doesn't seem to be merged, so I will 
+send a V2 only for this patch.
 
->
->> +static int armada_37xx_gpiochip_register(struct platform_device *pdev,
->> +                                       struct armada_37xx_pinctrl *info)
->> +{
->> +       struct device_node *np;
->> +       struct gpio_chip *gc;
->> +       int ret = -ENODEV;
->> +
->> +       for_each_child_of_node(info->dev->of_node, np) {
->> +               if (of_find_property(np, "gpio-controller", NULL)) {
->> +                       ret = 0;
->> +                       break;
->> +               }
->> +       };
->
-> OK so several GPIO chips as subnodes, why not one device per
-> chip? Or have we discussed this before? It seems a bit weird,
-> apparently there is just one node with a gpio-controller, as you're
-> just adding one pin range.
+Regards
+Alex
 
-As you probably noticed pinctrl and gpio register are mixed in this
-hardware. One of the register is alos use to get some clock freqeuncy,
-so that's why I ended with a syscon node. The parent node is the
-pinctrl. My main motivation to use a subnode was to be ablee to have a
-phandle associated with the GPIO chip. In my first version I only have
-one node but then I realized that I could not use GPIO in the device
-tree without an phandle to point it.
-
-If you have an other solution, I would be happy to remove this subnode.
-
-
->
-> What happens if there would be two gpio-controllers? The second
-> is just ignored without error?
-
-There won't be a second gpio-controllers because we only have one gpio
-controller by pin controller (as they are actually the same). Also as I
-said above, the subnode is mainly here to provide a phandle.
-
-But I can add a comment to emphasize it.
-
-
->
->> +       ret = gpiochip_add_data(gc, info);
->> +       if (ret)
->> +               return ret;
->
-> Can't you use devm_gpiochip_add_data()?
-
-I think I can.
-
->
->> +       ret = gpiochip_add_pin_range(&info->gpio_chip, dev_name(dev), 0,
->> +                                    pinbase, info->data->nr_pins);
->> +       if (ret)
->> +               return ret;
->
-> Why can't you put the range(s) into the device tree?
->
-> We already have code in drivers/gpio/gpiolib-of.c to do this
-> for you. And generic range definition bindings.
-
-It was done in the v3.
-
-Tanks,
-
-Gregory
 
 >
 > Yours,
 > Linus Walleij
 >
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
