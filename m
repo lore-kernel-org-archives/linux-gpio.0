@@ -1,34 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 4/4] pinctrl: rockchip: avoid hardirq-unsafe functions
- in irq_chip
-Date: Tue, 28 Mar 2017 11:19:31 +0200
-Message-ID: <CACRpkdYy9cygGCYJcWQiO+iv2TSwphBxiiShsE4gWPUgM9z67A@mail.gmail.com>
-References: <20170323105931.10455-1-john@metanate.com> <20170323105931.10455-5-john@metanate.com>
+Subject: Re: [PATCH v2 9/9] gpio: pci-idio-16: make use of raw_spinlock variants
+Date: Tue, 28 Mar 2017 11:14:49 +0200
+Message-ID: <CACRpkdYcvwPt9WtTAfarpnAcRH3LUpA4LxrS1TASKiHrJ6GCvg@mail.gmail.com>
+References: <cover.1490135047.git.julia@ni.com> <a5d7b7ed45046ec6f7b5fbf9c284281e02204198.1490135047.git.julia@ni.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170323105931.10455-5-john@metanate.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: John Keeping <john@metanate.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f47.google.com ([209.85.214.47]:36767 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753947AbdC1JWE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:22:04 -0400
+Received: by mail-it0-f47.google.com with SMTP id e75so49393843itd.1
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:21:53 -0700 (PDT)
+In-Reply-To: <a5d7b7ed45046ec6f7b5fbf9c284281e02204198.1490135047.git.julia@ni.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Julia Cartwright <julia@ni.com>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 23, 2017 at 11:59 AM, John Keeping <john@metanate.com> wrote:
+On Tue, Mar 21, 2017 at 11:43 PM, Julia Cartwright <julia@ni.com> wrote:
 
-> With real-time preemption, regmap functions cannot be used in the
-> implementation of irq_chip since they use spinlocks which may sleep.
+> The pci-idio-16 gpio driver currently implements an irq_chip for handling
+> interrupts; due to how irq_chip handling is done, it's necessary for the
+> irq_chip methods to be invoked from hardirq context, even on a a
+> real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+> spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
 >
-> Move the setting of the mux for IRQs to an irq_bus_sync_unlock handler
-> where we are allowed to sleep.
+> A quick audit of the operations under the lock reveal that they do only
+> minimal, bounded work, and are therefore safe to do under a raw spinlock.
 >
-> Signed-off-by: John Keeping <john@metanate.com>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Julia Cartwright <julia@ni.com>
 > ---
-> v3: unchanged
-> v2: unchanged
+> New patch as of v2 of series.
 
-Patch applied.
+Patch applied with William's ACK.
 
 Yours,
 Linus Walleij
