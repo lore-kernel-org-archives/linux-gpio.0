@@ -1,222 +1,209 @@
-From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 5/7] pinctrl: aramda-37xx: Add irqchip support
-Date: Tue, 28 Mar 2017 12:36:49 +0200
-Message-ID: <87vaqtadry.fsf@free-electrons.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 3/7] pinctrl: armada-37xx: Add pin controller support
+ for Armada 37xx
+Date: Tue, 28 Mar 2017 12:43:34 +0200
+Message-ID: <87r31hadgp.fsf@free-electrons.com>
 References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
-        <0e60fccd7913b83ee53d2921ce8f297927e8b6f3.1490120798.git-series.gregory.clement@free-electrons.com>
-        <CACRpkdYv6WDWM60dRMaYfEt50M8N-yLYk2TRguNi78aQtt6X9A@mail.gmail.com>
+ <087ef357fa23193d135d37ec2206a5798d27aab5.1490120798.git-series.gregory.clement@free-electrons.com>
+ <CACRpkdYQb9wL+g5T08Mgv+RQYaUZPoS+0RXXfk2XdD+AHSs9gA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Victor Gu <xigu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Marcin Wojtas <mw-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Hua Jing <jinghua-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdYQb9wL+g5T08Mgv+RQYaUZPoS+0RXXfk2XdD+AHSs9gA@mail.gmail.com>
+ (Linus Walleij's message of "Mon, 27 Mar 2017 11:26:49 +0200")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
  
- On lun., mars 27 2017, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+ On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 
 > On Tue, Mar 21, 2017 at 7:28 PM, Gregory CLEMENT
-> <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> <gregory.clement@free-electrons.com> wrote:
 >
->> The Armada 37xx SoCs can handle interrupt through GPIO. However it can
->> only manage the edge ones.
+>> The Armada 37xx SoC come with 2 pin controllers: one on the south
+>> bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
 >>
->> The way the interrupt are managed are classical so we can use the generic
->> interrupt chip model.
->>
->> The only unusual "feature" is that many interrupts are connected to the
->> parent interrupt controller. But we do not take advantage of this and use
->> the chained irq with all of them.
->>
->> Signed-off-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+>> At the hardware level the controller configure the pins by group and not
+>> pin by pin. This constraint is reflected in the design of the driver:
+>> only the group related functions are implemented.
 >
-> You need something in your Kconfig
-> doing select GPIOLIB_IRQCHIP unless there is
-> something I miss here.
-
-I forgot to add it, I will do it in the v4.
-
+> Interesting!
 >
->> +#define IRQ_EN         0x0
->> +#define IRQ_POL                0x08
->> +#define IRQ_STATUS     0x10
->
-> This just cries out to me that there is a register 0x0c
-> and I bet it handles edges vs levels so you could also implement
-> level IRQs. Am I right?
-
-Unfortunately, no :(
-
-As far as I know there is now way to handle level.
-The 0xc register is the IRQ_POL for the GPIO above 32.
-
->
->> -       aramda_37xx_update_reg(&reg, offset);
->> +       armada_37xx_update_reg(&reg, offset);
-> (...)
->> -       aramda_37xx_update_reg(&reg, offset);
->> +       armada_37xx_update_reg(&reg, offset);
->
-> These spelling fixes, do not do them in this patch, fix the first
-> patch adding them
-> instead. It's super-confusing. Applies everywhere.
-
-It was a typo (too much 'a' in the same word) that I properly fixed in
-the v3. (But I still need to fix the title of the patch in the v4)
-
-
->> +static void armada_37xx_irq_handler(struct irq_desc *desc)
+>> +static int armada_37xx_pmx_direction_input(struct armada_37xx_pinctrl *info,
+>> +                                          unsigned int offset)
 >> +{
->> +       struct gpio_chip *gc = irq_desc_get_handler_data(desc);
->> +       struct irq_chip *chip = irq_desc_get_chip(desc);
->> +       struct armada_37xx_pinctrl *info = gpiochip_get_data(gc);
->> +       struct irq_domain *d = gc->irqdomain;
->> +       int i;
+>> +       unsigned int reg = OUTPUT_EN;
+>> +       unsigned int mask;
 >> +
->> +       chained_irq_enter(chip, desc);
->> +       for (i = 0; i <= d->revmap_size / GPIO_PER_REG; i++) {
->> +               u32 status;
->> +               unsigned long flags;
+>> +       if (offset >= GPIO_PER_REG) {
+>> +               offset -= GPIO_PER_REG;
+>> +               reg += sizeof(u32);
+>> +       }
+>> +       mask = BIT(offset);
 >> +
->> +               spin_lock_irqsave(&info->irq_lock, flags);
->> +               status = readl_relaxed(info->base + IRQ_STATUS + 4 * i);
->> +               /* Manage only the interrupt that was enabled */
->> +               status &= readl_relaxed(info->base + IRQ_EN + 4 * i);
->> +               spin_unlock_irqrestore(&info->irq_lock, flags);
->> +               while (status) {
->> +                       u32 hwirq = ffs(status) - 1;
->> +                       u32 virq = irq_linear_revmap(d, hwirq +
->> +                                                    i * GPIO_PER_REG);
+>> +       return regmap_update_bits(info->regmap, reg, mask, 0);
+>> +}
+>> +
+>> +
+>> +
 >
-> Use irq_find_mapping() instead please.
-
-As we are in the interrupt handler I chose to use this function because
-according to its documentation: "This is a fast path alternative to
-irq_find_mapping() that can be called directly by irq controller code to
-save a handful of instructions".
-
-The only restriction is "It is always safe to call, but won't find irqs
-mapped using the radix tree.". So I think that for this driver it is
-okay.
-
-
+> A bit of excess whitespace, OK nitpicking.
 >
->> +                       generic_handle_irq(virq);
->> +                       status &= ~(1 << hwirq);
+
+As I need to send a v4, I will fix it in the same time.
+
+> Then this stuff:
 >
-> Why not status &= ~BIT(hwirq);
+>> +static int armada_37xx_add_function(struct armada_37xx_pmx_func *funcs,
+>> +                                   int *funcsize, const char *name)
+>> +{
+>> +       int i = 0;
+>> +
+>> +       if (*funcsize <= 0)
+>> +               return -EOVERFLOW;
+>> +
+>> +       while (funcs->ngroups) {
+>> +               /* function already there */
+>> +               if (strcmp(funcs->name, name) == 0) {
+>> +                       funcs->ngroups++;
+>> +
+>> +                       return -EEXIST;
+>> +               }
+>> +               funcs++;
+>> +               i++;
+>> +       }
+>> +
+>> +       /* append new unique function */
+>> +       funcs->name = name;
+>> +       funcs->ngroups = 1;
+>> +       (*funcsize)--;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int armada_37xx_fill_group(struct armada_37xx_pinctrl *info, int base)
+>> +{
+>> +       int n, num = 0, funcsize = info->data->nr_pins;
+>> +
+>> +       for (n = 0; n < info->ngroups; n++) {
+>> +               struct armada_37xx_pin_group *grp = &info->groups[n];
+>> +               int i, j, f;
+>> +
+>> +               grp->pins = devm_kzalloc(info->dev,
+>> +                                        (grp->npins + grp->extra_npins) *
+>> +                                        sizeof(*grp->pins), GFP_KERNEL);
+>> +               if (!grp->pins)
+>> +                       return -ENOMEM;
+>> +
+>> +               for (i = 0; i < grp->npins; i++)
+>> +                       grp->pins[i] = grp->start_pin + base + i;
+>> +
+>> +               for (j = 0; j < grp->extra_npins; j++)
+>> +                       grp->pins[i+j] = grp->extra_pin + base + j;
+>> +
+>> +               for (f = 0; f < NB_FUNCS; f++) {
+>> +                       int ret;
+>> +                       /* check for unique functions and count groups */
+>> +                       ret = armada_37xx_add_function(info->funcs, &funcsize,
+>> +                                           grp->funcs[f]);
+>> +                       if (ret == -EOVERFLOW)
+>> +                               dev_err(info->dev,
+>> +                                       "More functions than pins(%d)\n",
+>> +                                       info->data->nr_pins);
+>> +                       if (ret < 0)
+>> +                               continue;
+>> +                       num++;
+>> +               }
+>> +       }
+>> +
+>> +       info->nfuncs = num;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
+>> +{
+>> +       struct armada_37xx_pmx_func *funcs = info->funcs;
+>> +       int n;
+>> +
+>> +       for (n = 0; n < info->nfuncs; n++) {
+>> +               const char *name = funcs[n].name;
+>> +               const char **groups;
+>> +               int g;
+>> +
+>> +               funcs[n].groups = devm_kzalloc(info->dev, funcs[n].ngroups *
+>> +                                              sizeof(*(funcs[n].groups)),
+>> +                                              GFP_KERNEL);
+>> +               if (!funcs[n].groups)
+>> +                       return -ENOMEM;
+>> +
+>> +               groups = funcs[n].groups;
+>> +
+>> +               for (g = 0; g < info->ngroups; g++) {
+>> +                       struct armada_37xx_pin_group *gp = &info->groups[g];
+>> +                       int f;
+>> +
+>> +                       for (f = 0; f < NB_FUNCS; f++) {
+>> +                               if (strcmp(gp->funcs[f], name) == 0) {
+>> +                                       *groups = gp->name;
+>> +                                       groups++;
+>> +                               }
+>> +                       }
+>> +               }
+>> +       }
+>> +       return 0;
+>> +}
+>
+> I would be happy if you add kerneldoc to these functions and explain
+> what they do. Because I don't get it. I guess they are filling in the data
+> structures but yeah. Hard to follow.
 
 OK
 
 >
->> +               }
->> +       }
->> +       chained_irq_exit(chip, desc);
+>> +       match = of_match_node(armada_37xx_pinctrl_of_match, np);
+>> +       info->data = (struct armada_37xx_pin_data *)match->data;
 >
-> Apart from that nice, it re-reads status on every iteration which is
-> good.
->
->> +static int armada_37xx_irqchip_register(struct platform_device *pdev,
->> +                                       struct armada_37xx_pinctrl *info)
->> +{
->> +       struct device_node *np = info->dev->of_node;
->> +       int nrirqs = info->data->nr_pins;
->> +       struct gpio_chip *gc = &info->gpio_chip;
->> +       struct irq_chip *irqchip = &info->irq_chip;
->> +       struct resource res;
->> +       int ret, i, nr_irq_parent;
->> +
->> +       for_each_child_of_node(info->dev->of_node, np) {
->> +               if (of_find_property(np, "gpio-controller", NULL)) {
->> +                       ret = 0;
->> +                       break;
->> +               }
->> +       };
->
-> Now there is this thing again looping over the nodes.
-
-As explained in the other patch we will only have one GPIO subnode.
-
->
->> +       if (ret)
->> +               return ret;
->
-> ret may be used uninitialized here, if you loop over all nodes
-> and do not find any "gpio-controller".
->
-> The static code checks will just scream about this.
->
-> (Please fix in the other patch as well if present there.)
+> Use of_device_get_match_data()
 
 OK
 
 >
->> +       nr_irq_parent = of_irq_count(np);
->> +       spin_lock_init(&info->irq_lock);
+>
+>> +static struct platform_driver armada_37xx_pinctrl_driver = {
+>> +       .driver = {
+>> +               .name = "armada-37xx-pinctrl",
+>> +               .of_match_table = armada_37xx_pinctrl_of_match,
+>> +       },
+>> +       .probe = armada_37xx_pinctrl_probe,
+>> +};
 >> +
->> +       if (!nr_irq_parent) {
->> +               dev_err(&pdev->dev, "Invalid or no IRQ\n");
->> +               return 0;
->> +       }
+>> +builtin_platform_driver(armada_37xx_pinctrl_driver);
 >
-> What if it is > 1? That doesn't seem to work but will pass this
-> check silently.
+> It almost looks like your could use builting_platform_driver_probe() actually,
+> and tag the costly initfunctions with __init so they get dicarded
+> after probe.
 
-If we have nr_irq_parent > 1, it will work and it is actually expected.
+Sure, I will do it
 
->
->> +       ret = gpiochip_irqchip_add(gc, irqchip, 0,
->> +                                  handle_level_irq, IRQ_TYPE_NONE);
->
-> If you also set up the handler in .set_type() you can assign
-> handle_bad_irq() here and let .set_type set the right handler
-> as e.g. drivers/gpio/gpio-pl061.c.
-
-Well the hardware can only manage the edge trigger, so there is no
-benefit to modify it each time we want to change the kind of edge we
-want (raising or falling). But your comment make me realized that I used
-the wrong one, I will move to handle_edge_irq in the v4.
-
->
->> +       for (i = 0; i < nrirqs; i++) {
->> +               struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
->> +
->> +               d->mask = 1 << (i % GPIO_PER_REG);
->> +       }
->
-> What is this? It looks like a big hack. At least put in a fat
-> comment about what is going on and why.
-
-I can reuse a part of the commit log here: "The only unusual "feature"
-is that many interrupts are connected to the parent interrupt
-controller. But we do not take advantage of this and use the chained irq
-with all of them."
-
->
->> +       for (i = 0; i < nr_irq_parent; i++) {
->> +               int irq = irq_of_parse_and_map(np, i);
->
-> I think gpiochip_irqchip_add() will do this for you already,
-> as it calls irq_create_mapping() for all offsets which will call
-> irq_of_parse_and_map() am I right?
-
-After reading the code, it doesn't seem it is the case. At least there
-is no irq_of_parse_and_map() call from gpiochip_irqchip_add(). And waht
-we need here is to associate each IRQ to the same GPIO handler.
-
-I can still try without this line to confirm it.
+Thanks,
 
 Gregory
-
 
 -- 
 Gregory Clement, Free Electrons
 Kernel, drivers, real-time and embedded Linux
 development, consulting, training and support.
 http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
