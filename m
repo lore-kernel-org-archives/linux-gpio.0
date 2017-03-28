@@ -1,138 +1,105 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 5/7] pinctrl: aramda-37xx: Add irqchip support
-Date: Tue, 28 Mar 2017 16:19:06 +0200
-Message-ID: <87mvc5a3hh.fsf@free-electrons.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
- <0e60fccd7913b83ee53d2921ce8f297927e8b6f3.1490120798.git-series.gregory.clement@free-electrons.com>
- <CACRpkdYv6WDWM60dRMaYfEt50M8N-yLYk2TRguNi78aQtt6X9A@mail.gmail.com>
- <87vaqtadry.fsf@free-electrons.com>
- <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
+From: jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Tue, 28 Mar 2017 16:38:22 +0200
+Message-ID: <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <20170323160204.GL30223@w540>
+ <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
- (Linus Walleij's message of "Tue, 28 Mar 2017 15:04:39 +0200")
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
 Hi Linus,
- 
- On mar., mars 28 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> On Tue, Mar 28, 2017 at 12:36 PM, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->>  On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
->
->>>> +                       u32 virq = irq_linear_revmap(d, hwirq +
->>>> +                                                    i * GPIO_PER_REG);
->>>
->>> Use irq_find_mapping() instead please.
->>
->> As we are in the interrupt handler I chose to use this function because
->> according to its documentation: "This is a fast path alternative to
->> irq_find_mapping() that can be called directly by irq controller code to
->> save a handful of instructions".
->>
->> The only restriction is "It is always safe to call, but won't find irqs
->> mapped using the radix tree.". So I think that for this driver it is
->> okay.
->
-> So you are relying on the core code in gpiolib to select a linear
-> map. That is implicit semantics, and either all drivers using
-> GPIOLIB_IRQCHIP should be changed to irq_linear_revmap()
-> or all stay with irq_find_mapping().
->
-> In this case, I doubt it that you are actually so timing critical that
-> it matters. Please use irq_find_mapping().
+On 2017-03-28 11:46, Linus Walleij wrote:
+> On Thu, Mar 23, 2017 at 5:02 PM, jacopo <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
+> 
+>>> > +  Required properties:
+>>> > +    - renesas,pins
+>>> 
+>>> Just "pins"?
+>>> 
+>> 
+>> You know, I've been thinking about this, bu the "pins" property
+>> definition in pinctrl-bidings is the following one:
+>> 
+>> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>> ---
+>> - pins takes a list of pin names or IDs as a required argument. The
+>>   specific binding for the hardware defines:
+>>       - Whether the entries are integers or strings, and their
+>>         meaning.
+>> ---
+>> 
+>> And all examples there assume one "pin name" or "ID" per pin.
+>> 
+>> Now, we use 2 values per each pin (the pin ID and the alternate
+>> function number), so to me this is different from what the generic
+>> binding describes.
+>> Also, pinctrl-single, and pinctrl-imx which have and ABI similar to
+>> the one this driver define, use "pinctrl-single,pins" and "fsl,pins"
+>> respectively as property names.
+>> So either they have to be updated yet, or we should keep using
+>> "renesas,pins" for our own defined ABI.
+>> 
+>> Maybe Linus or other pinctrl people can give some suggestion here.
+> 
+> To me as subsystem maintainer any "necessarily different" bindings
+> are just a big confusion for the head.
+> 
 
-OK
+Understandable :)
 
->>>> +       ret = gpiochip_irqchip_add(gc, irqchip, 0,
->>>> +                                  handle_level_irq, IRQ_TYPE_NONE);
->>>
->>> If you also set up the handler in .set_type() you can assign
->>> handle_bad_irq() here and let .set_type set the right handler
->>> as e.g. drivers/gpio/gpio-pl061.c.
->>
->> Well the hardware can only manage the edge trigger, so there is no
->> benefit to modify it each time we want to change the kind of edge we
->> want (raising or falling). But your comment make me realized that I used
->> the wrong one, I will move to handle_edge_irq in the v4.
->
-> Ooops, yeah handle_edge_irq() is what calls the ACK callback.
->
->>>> +       for (i = 0; i < nrirqs; i++) {
->>>> +               struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
->>>> +
->>>> +               d->mask = 1 << (i % GPIO_PER_REG);
->>>> +       }
->>>
->>> What is this? It looks like a big hack. At least put in a fat
->>> comment about what is going on and why.
->>
->> I can reuse a part of the commit log here: "The only unusual "feature"
->> is that many interrupts are connected to the parent interrupt
->> controller. But we do not take advantage of this and use the chained irq
->> with all of them."
->
-> What you're doing is mocking around with core irqchip semantics.
-> Is ->mask really supposed to be played around with from the outsid
-> like this?
+> Since you're adding a new driver, try to stick to the generic bindings
+> even if it deviates from what you are used to for Renesas, because
+> even if it may be more work for you guys or make you annoyed that
+> now a certain Renesas is different from all other Renesas platforms,
+> for the community this makes things easier to maintain because
+> we can look at the driver and its bindings and say "ah I know this".
+> 
+> The fact that historically all the early adopters of pinctrl in device 
+> tree
+> have these funky custom bindings is unfortunate but just something
+> that we need to live with.
+> 
 
-According to the documentation mask is a "precomputed bitmask for
-accessing the chip registers" and it is exactly the way it is used in
-this driver.
+To avoid any confusion, please bear with me and clarify this once and 
+for all,
+since I'm not certain I fully got you here.
 
-Moreover, currently ->mask is only used by the generic irqchip framework
-and not by the core of the irqchip subsystem. So the mask initialization
-is not done from the oustide but at the same level as the generic
-irqchip which is not used here.
+Are you suggesting:
 
+1) Use "pins" property with the currently implemented ABI (which 
+slightly differs
+    from the standard documented one as explained above. Not sure it is 
+fine overriding
+    it or not)
 
-> Anyways: BIT(i % GPIO_PER_REG) is nicer.
+2) Use "pins" property and change our ABI to match the documented one: 
+one ID (integer
+    or string) per pin, not 2 as we're doing now.
 
-OK
+Both solutions are easily implementable; 2) requires some more work to 
+make pin id, function number
+and pin configuration fit in one single integer, but is achievable for 
+sure.
 
->
->>>> +       for (i = 0; i < nr_irq_parent; i++) {
->>>> +               int irq = irq_of_parse_and_map(np, i);
->>>
->>> I think gpiochip_irqchip_add() will do this for you already,
->>> as it calls irq_create_mapping() for all offsets which will call
->>> irq_of_parse_and_map() am I right?
->>
->> After reading the code, it doesn't seem it is the case. At least there
->> is no irq_of_parse_and_map() call from gpiochip_irqchip_add(). And waht
->> we need here is to associate each IRQ to the same GPIO handler.
->>
->> I can still try without this line to confirm it.
->
-> It has irq_create_mapping(gpiochip->irqdomain, offset); that get
-> called for every IRQ, and that will eventually call irq_of_parse_and_map()
-> if the IRQs are defined in the device tree. (IIRC)
+Thanks
+    j
 
-When I followed the functions called I never find a call to
-irq_of_parse_and_map(), the closer things related to device tree I found
-was:
-"virq = irq_domain_alloc_descs(-1, 1, hwirq, of_node_to_nid(of_node),
-NULL);"
-http://elixir.free-electrons.com/source/kernel/irq/irqdomain.c?v=4.11-rc4#L507
+> Yours,
+> Linus Walleij
 
-Gregory
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
