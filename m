@@ -1,39 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
-Date: Tue, 28 Mar 2017 11:34:29 +0200
-Message-ID: <CACRpkdbTOOjC-DKWn85iO_VwZNOvbcK1ATSQdq8Ri8H0JxVTAw@mail.gmail.com>
-References: <20170320164851.5999-1-krzk@kernel.org>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 1/7] pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
+Date: Tue, 28 Mar 2017 11:35:28 +0200
+Message-ID: <87zig5agm7.fsf@free-electrons.com>
+References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
+        <2dc869315a1b6bcc6d7eedd67b9ea8c0483b9789.1490120798.git-series.gregory.clement@free-electrons.com>
+        <CACRpkdaP9Q=3ZeARTYizCKKtH6NdCrCnapxS7p=EdV1gvCZe8w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:35487 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751785AbdC1Jev (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:34:51 -0400
-Received: by mail-it0-f43.google.com with SMTP id y18so105467869itc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:34:50 -0700 (PDT)
-In-Reply-To: <20170320164851.5999-1-krzk@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaP9Q=3ZeARTYizCKKtH6NdCrCnapxS7p=EdV1gvCZe8w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+        (Linus Walleij's message of "Mon, 27 Mar 2017 11:18:48 +0200")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Victor Gu <xigu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Marcin Wojtas <mw-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Hua Jing <jinghua-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Mar 20, 2017 at 5:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Hi Linus,
+ 
+ On lun., mars 27 2017, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
 
-> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
-> drivers.  The tree will be maintained in a shared model between current
-> Samsung pinctrl maintainers.  Pull requests will be going to Linus
-> Walleij.
+> On Tue, Mar 21, 2017 at 7:28 PM, Gregory CLEMENT
+> <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 >
-> Also add the patchwork for linux-samsung-soc mailing list which will be
-> used for handling the patches.
+>> Document the device tree binding for the pin controllers found on the
+>> Armada 37xx SoCs.
+>>
+>> Update the binding documention of the xtal clk which is a subnode of this
+>> syscon node.
+>>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 >
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> These look all right to me, but let's see what the DT people say.
+>
+> This business with a subnode named "gpio-controller" that the code is
+> checking for is not in the bindings or examples, is this part of the old
+> Armada bindings?
 
-Patch applied with the ACKs.
+It was updated in the version 3 I sent last week.
 
-Yours,
-Linus Walleij
+Gregory
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
