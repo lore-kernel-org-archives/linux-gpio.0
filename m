@@ -1,51 +1,44 @@
-From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 1/7] pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
-Date: Tue, 28 Mar 2017 11:35:28 +0200
-Message-ID: <87zig5agm7.fsf@free-electrons.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
-        <2dc869315a1b6bcc6d7eedd67b9ea8c0483b9789.1490120798.git-series.gregory.clement@free-electrons.com>
-        <CACRpkdaP9Q=3ZeARTYizCKKtH6NdCrCnapxS7p=EdV1gvCZe8w@mail.gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [RFT PATCH 5/6] pinctrl: meson: use gpio-ranges from DT
+Date: Tue, 28 Mar 2017 11:38:20 +0200
+Message-ID: <c575d8e4-05ca-8eb0-8b64-24a65a5711a7@baylibre.com>
+References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
+ <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
+ <CACRpkdZqfwKZ=2SQzr_D5-M5em+7JBS7eUaJ_VH33uV5AZ8xRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdaP9Q=3ZeARTYizCKKtH6NdCrCnapxS7p=EdV1gvCZe8w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-        (Linus Walleij's message of "Mon, 27 Mar 2017 11:18:48 +0200")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Victor Gu <xigu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Marcin Wojtas <mw-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Hua Jing <jinghua-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZqfwKZ=2SQzr_D5-M5em+7JBS7eUaJ_VH33uV5AZ8xRw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On 03/28/2017 11:30 AM, Linus Walleij wrote:
+> On Thu, Mar 23, 2017 at 5:27 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> 
+> '> When trying to add a gpio-hog, we enter a weird loop where the gpio-ranges
+>> is needed when gpiochip_add_data() is called but in the current implementation
+>> the ranges are added from the driver afterwards.
+>>
+>> A simple solution is to rely on the DR gpio-ranges attribute and remove the
+>> call to gpiochip_add_pin_range().
+>>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> This is fine once the ranges have been applied to the device trees I guess.
+> 
+> Tell me when you want me to merge this.
+> 
+> Yours,
+> Linus Walleij
+> 
+
 Hi Linus,
- 
- On lun., mars 27 2017, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
 
-> On Tue, Mar 21, 2017 at 7:28 PM, Gregory CLEMENT
-> <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->
->> Document the device tree binding for the pin controllers found on the
->> Armada 37xx SoCs.
->>
->> Update the binding documention of the xtal clk which is a subnode of this
->> syscon node.
->>
->> Signed-off-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->
-> These look all right to me, but let's see what the DT people say.
->
-> This business with a subnode named "gpio-controller" that the code is
-> checking for is not in the bindings or examples, is this part of the old
-> Armada bindings?
+Kevin should merge the DT patches since they have now Tested and Reviewed by's, so you can merge it now if you can.
+Since it will live in you pinctrl tree, it will only impact linux-next until Kevin merges them.
 
-It was updated in the version 3 I sent last week.
-
-Gregory
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Neil
