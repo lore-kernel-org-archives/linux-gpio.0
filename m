@@ -1,39 +1,116 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 7/9] gpio: 104-idi-48: make use of raw_spinlock variants
-Date: Tue, 28 Mar 2017 14:55:57 +0200
-Message-ID: <CACRpkdYUMOdCGWz0+-4BFLDiOGPXf_8-r4oJb8eGgkb2FMumWw@mail.gmail.com>
-References: <cover.1490135047.git.julia@ni.com> <a9b84439c28b96a9b6a4cbfca85f1e13a457d25d.1490135047.git.julia@ni.com>
+Subject: Re: [PATCH v2 5/7] pinctrl: aramda-37xx: Add irqchip support
+Date: Tue, 28 Mar 2017 15:04:39 +0200
+Message-ID: <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
+References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
+ <0e60fccd7913b83ee53d2921ce8f297927e8b6f3.1490120798.git-series.gregory.clement@free-electrons.com>
+ <CACRpkdYv6WDWM60dRMaYfEt50M8N-yLYk2TRguNi78aQtt6X9A@mail.gmail.com> <87vaqtadry.fsf@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:35748 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755922AbdC1M5O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 08:57:14 -0400
-Received: by mail-it0-f44.google.com with SMTP id y18so110748539itc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 05:56:22 -0700 (PDT)
-In-Reply-To: <a9b84439c28b96a9b6a4cbfca85f1e13a457d25d.1490135047.git.julia@ni.com>
+Received: from mail-it0-f43.google.com ([209.85.214.43]:36634 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755560AbdC1NEx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 09:04:53 -0400
+Received: by mail-it0-f43.google.com with SMTP id e75so55183626itd.1
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 06:04:47 -0700 (PDT)
+In-Reply-To: <87vaqtadry.fsf@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Cartwright <julia@ni.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-On Tue, Mar 21, 2017 at 11:43 PM, Julia Cartwright <julia@ni.com> wrote:
+On Tue, Mar 28, 2017 at 12:36 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+>  On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> The 104-idi-48 gpio driver currently implements an irq_chip for handling
-> interrupts; due to how irq_chip handling is done, it's necessary for the
-> irq_chip methods to be invoked from hardirq context, even on a a
-> real-time kernel.  Because the spinlock_t type becomes a "sleeping"
-> spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+>>> +                       u32 virq = irq_linear_revmap(d, hwirq +
+>>> +                                                    i * GPIO_PER_REG);
+>>
+>> Use irq_find_mapping() instead please.
 >
-> A quick audit of the operations under the lock reveal that they do only
-> minimal, bounded work, and are therefore safe to do under a raw spinlock.
+> As we are in the interrupt handler I chose to use this function because
+> according to its documentation: "This is a fast path alternative to
+> irq_find_mapping() that can be called directly by irq controller code to
+> save a handful of instructions".
 >
-> Signed-off-by: Julia Cartwright <julia@ni.com>
-> ---
-> New patch as of v2 of series.
+> The only restriction is "It is always safe to call, but won't find irqs
+> mapped using the radix tree.". So I think that for this driver it is
+> okay.
 
-Patch applied with William's ACK.
+So you are relying on the core code in gpiolib to select a linear
+map. That is implicit semantics, and either all drivers using
+GPIOLIB_IRQCHIP should be changed to irq_linear_revmap()
+or all stay with irq_find_mapping().
+
+In this case, I doubt it that you are actually so timing critical that
+it matters. Please use irq_find_mapping().
+
+>>> +       nr_irq_parent = of_irq_count(np);
+>>> +       spin_lock_init(&info->irq_lock);
+>>> +
+>>> +       if (!nr_irq_parent) {
+>>> +               dev_err(&pdev->dev, "Invalid or no IRQ\n");
+>>> +               return 0;
+>>> +       }
+>>
+>> What if it is > 1? That doesn't seem to work but will pass this
+>> check silently.
+>
+> If we have nr_irq_parent > 1, it will work and it is actually expected.
+
+Ah, I get it. Nice.
+
+>>> +       ret = gpiochip_irqchip_add(gc, irqchip, 0,
+>>> +                                  handle_level_irq, IRQ_TYPE_NONE);
+>>
+>> If you also set up the handler in .set_type() you can assign
+>> handle_bad_irq() here and let .set_type set the right handler
+>> as e.g. drivers/gpio/gpio-pl061.c.
+>
+> Well the hardware can only manage the edge trigger, so there is no
+> benefit to modify it each time we want to change the kind of edge we
+> want (raising or falling). But your comment make me realized that I used
+> the wrong one, I will move to handle_edge_irq in the v4.
+
+Ooops, yeah handle_edge_irq() is what calls the ACK callback.
+
+>>> +       for (i = 0; i < nrirqs; i++) {
+>>> +               struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
+>>> +
+>>> +               d->mask = 1 << (i % GPIO_PER_REG);
+>>> +       }
+>>
+>> What is this? It looks like a big hack. At least put in a fat
+>> comment about what is going on and why.
+>
+> I can reuse a part of the commit log here: "The only unusual "feature"
+> is that many interrupts are connected to the parent interrupt
+> controller. But we do not take advantage of this and use the chained irq
+> with all of them."
+
+What you're doing is mocking around with core irqchip semantics.
+Is ->mask really supposed to be played around with from the outsid
+like this?
+
+Anyways: BIT(i % GPIO_PER_REG) is nicer.
+
+>>> +       for (i = 0; i < nr_irq_parent; i++) {
+>>> +               int irq = irq_of_parse_and_map(np, i);
+>>
+>> I think gpiochip_irqchip_add() will do this for you already,
+>> as it calls irq_create_mapping() for all offsets which will call
+>> irq_of_parse_and_map() am I right?
+>
+> After reading the code, it doesn't seem it is the case. At least there
+> is no irq_of_parse_and_map() call from gpiochip_irqchip_add(). And waht
+> we need here is to associate each IRQ to the same GPIO handler.
+>
+> I can still try without this line to confirm it.
+
+It has irq_create_mapping(gpiochip->irqdomain, offset); that get
+called for every IRQ, and that will eventually call irq_of_parse_and_map()
+if the IRQs are defined in the device tree. (IIRC)
 
 Yours,
 Linus Walleij
