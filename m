@@ -1,219 +1,46 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: [PATCH v4 2/4] mvebu: xp: Add PWM properties to .dtsi files
-Date: Mon, 27 Mar 2017 21:42:58 +0200
-Message-ID: <20170327194301.1104-3-ralph.sennhauser@gmail.com>
-References: <20170327194301.1104-1-ralph.sennhauser@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Query about Open drain flag with active LOW
+Date: Tue, 28 Mar 2017 11:06:21 +0200
+Message-ID: <CACRpkdYVdUyueSFsSi5SG6nfRn_s4tqfhHSkK3jhQov+9y2koA@mail.gmail.com>
+References: <58D92DE0.3000907@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170327194301.1104-1-ralph.sennhauser@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Imre Kaloz <kaloz@openwrt.org>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f41.google.com ([209.85.214.41]:35206 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932101AbdC1JGw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:06:52 -0400
+Received: by mail-it0-f41.google.com with SMTP id y18so104811409itc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:06:41 -0700 (PDT)
+In-Reply-To: <58D92DE0.3000907@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Andrew Lunn <andrew@lunn.ch>
+On Mon, Mar 27, 2017 at 5:21 PM, Laxman Dewangan <ldewangan@nvidia.com> wro=
+te:
 
-Add properties to the GPIO nodes to allow them to be also used as PWM
-lines.
+> I have the schematics, where I need to set it as
+> Pin state HIGH (by setting gpio-input mode) to enable the circuit.
+> Pin state LOW (by setting gpio-output mode with value to 0) to disable th=
+e
+> circuit.
+(...)
+> With this, I think the GPIO is active HIGH and open drain type.
+> If I set the active LOW from DT then I can not set pin to logical 1 using
+> the API gpiod_set_value() with =E2=80=9C1=E2=80=9D.
+> As this invert before calling _gpiod_set_raw_value() and so the value =3D=
+ 0
+> and it set the pin in the gpio mode output-Low.
+>
+> Shouldn'=E2=80=99t open drain pin are active HIGH?
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-URL: https://patchwork.ozlabs.org/patch/427294/
-[Ralph Sennhauser:
-  * Use new compatible string marvell,armada-370-xp-gpio
-  * Add missing reg-names / #pwm-cell properties to armada-xp-mv78260.dtsi
-    'gpio1' node]
-Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
----
- arch/arm/boot/dts/armada-370.dtsi        | 16 +++++++++++-----
- arch/arm/boot/dts/armada-xp-mv78230.dtsi | 14 ++++++++++----
- arch/arm/boot/dts/armada-xp-mv78260.dtsi | 16 +++++++++++-----
- arch/arm/boot/dts/armada-xp-mv78460.dtsi | 16 +++++++++++-----
- 4 files changed, 43 insertions(+), 19 deletions(-)
+Sorry I do not understand, have you solved it?
 
-diff --git a/arch/arm/boot/dts/armada-370.dtsi b/arch/arm/boot/dts/armada-370.dtsi
-index cc011c8..e30b076 100644
---- a/arch/arm/boot/dts/armada-370.dtsi
-+++ b/arch/arm/boot/dts/armada-370.dtsi
-@@ -137,29 +137,35 @@
- 			};
- 
- 			gpio0: gpio@18100 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18100 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18100 0x40>, <0x181c0 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <82>, <83>, <84>, <85>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio1: gpio@18140 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18140 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18140 0x40>, <0x181c8 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <87>, <88>, <89>, <90>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio2: gpio@18180 {
--				compatible = "marvell,orion-gpio";
-+				compatible = "marvell,armada-370-xp-gpio";
- 				reg = <0x18180 0x40>;
- 				ngpios = <2>;
- 				gpio-controller;
-diff --git a/arch/arm/boot/dts/armada-xp-mv78230.dtsi b/arch/arm/boot/dts/armada-xp-mv78230.dtsi
-index 07c5090..429ac10 100644
---- a/arch/arm/boot/dts/armada-xp-mv78230.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-mv78230.dtsi
-@@ -202,25 +202,31 @@
- 
- 		internal-regs {
- 			gpio0: gpio@18100 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18100 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18100 0x40>, <0x181c0 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <82>, <83>, <84>, <85>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio1: gpio@18140 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18140 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18140 0x40>, <0x181c8 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <17>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <87>, <88>, <89>;
-+				clocks = <&coreclk 0>;
- 			};
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/armada-xp-mv78260.dtsi b/arch/arm/boot/dts/armada-xp-mv78260.dtsi
-index 64e936a..333c470 100644
---- a/arch/arm/boot/dts/armada-xp-mv78260.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-mv78260.dtsi
-@@ -285,29 +285,35 @@
- 
- 		internal-regs {
- 			gpio0: gpio@18100 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18100 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18100 0x40>, <0x181c0 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <82>, <83>, <84>, <85>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio1: gpio@18140 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18140 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18140 0x40>, <0x181c8 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <87>, <88>, <89>, <90>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio2: gpio@18180 {
--				compatible = "marvell,orion-gpio";
-+				compatible = "marvell,armada-370-xp-gpio";
- 				reg = <0x18180 0x40>;
- 				ngpios = <3>;
- 				gpio-controller;
-diff --git a/arch/arm/boot/dts/armada-xp-mv78460.dtsi b/arch/arm/boot/dts/armada-xp-mv78460.dtsi
-index d1383dd..2ff825d 100644
---- a/arch/arm/boot/dts/armada-xp-mv78460.dtsi
-+++ b/arch/arm/boot/dts/armada-xp-mv78460.dtsi
-@@ -323,29 +323,35 @@
- 
- 		internal-regs {
- 			gpio0: gpio@18100 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18100 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18100 0x40>, <0x181c0 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <82>, <83>, <84>, <85>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio1: gpio@18140 {
--				compatible = "marvell,orion-gpio";
--				reg = <0x18140 0x40>;
-+				compatible = "marvell,armada-370-xp-gpio";
-+				reg = <0x18140 0x40>, <0x181c8 0x08>;
-+				reg-names = "gpio", "pwm";
- 				ngpios = <32>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
-+				#pwm-cells = <2>;
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				interrupts = <87>, <88>, <89>, <90>;
-+				clocks = <&coreclk 0>;
- 			};
- 
- 			gpio2: gpio@18180 {
--				compatible = "marvell,orion-gpio";
-+				compatible = "marvell,armada-370-xp-gpio";
- 				reg = <0x18180 0x40>;
- 				ngpios = <3>;
- 				gpio-controller;
--- 
-2.10.2
+Else can you try to break down the problem, do you mean there is a bug
+in inverted handling for open drain lines in gpiolib?
+
+Yours,
+Linus Walleij
