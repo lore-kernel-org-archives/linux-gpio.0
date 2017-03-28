@@ -1,46 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Query about Open drain flag with active LOW
-Date: Tue, 28 Mar 2017 11:06:21 +0200
-Message-ID: <CACRpkdYVdUyueSFsSi5SG6nfRn_s4tqfhHSkK3jhQov+9y2koA@mail.gmail.com>
-References: <58D92DE0.3000907@nvidia.com>
+Subject: Re: [PATCH v2 7/9] gpio: 104-idi-48: make use of raw_spinlock variants
+Date: Tue, 28 Mar 2017 11:11:59 +0200
+Message-ID: <CACRpkdbqUmTHv7pyc+EVznzR8BiO_=pc12awsS4ygYJsbsG=EQ@mail.gmail.com>
+References: <cover.1490135047.git.julia@ni.com> <a9b84439c28b96a9b6a4cbfca85f1e13a457d25d.1490135047.git.julia@ni.com>
+ <20170322124414.GA22323@sophia>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:35206 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932101AbdC1JGw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:06:52 -0400
-Received: by mail-it0-f41.google.com with SMTP id y18so104811409itc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:06:41 -0700 (PDT)
-In-Reply-To: <58D92DE0.3000907@nvidia.com>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:38437 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754677AbdC1JMB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:12:01 -0400
+Received: by mail-it0-f42.google.com with SMTP id y18so11507640itc.1
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:12:00 -0700 (PDT)
+In-Reply-To: <20170322124414.GA22323@sophia>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Julia Cartwright <julia@ni.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Mar 27, 2017 at 5:21 PM, Laxman Dewangan <ldewangan@nvidia.com> wro=
-te:
-
-> I have the schematics, where I need to set it as
-> Pin state HIGH (by setting gpio-input mode) to enable the circuit.
-> Pin state LOW (by setting gpio-output mode with value to 0) to disable th=
-e
-> circuit.
-(...)
-> With this, I think the GPIO is active HIGH and open drain type.
-> If I set the active LOW from DT then I can not set pin to logical 1 using
-> the API gpiod_set_value() with =E2=80=9C1=E2=80=9D.
-> As this invert before calling _gpiod_set_raw_value() and so the value =3D=
- 0
-> and it set the pin in the gpio mode output-Low.
+On Wed, Mar 22, 2017 at 1:44 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> On Tue, Mar 21, 2017 at 05:43:07PM -0500, Julia Cartwright wrote:
+>>The 104-idi-48 gpio driver currently implements an irq_chip for handling
+>>interrupts; due to how irq_chip handling is done, it's necessary for the
+>>irq_chip methods to be invoked from hardirq context, even on a a
+>>real-time kernel.  Because the spinlock_t type becomes a "sleeping"
+>>spinlock w/ RT kernels, it is not suitable to be used with irq_chips.
+>>
+>>A quick audit of the operations under the lock reveal that they do only
+>>minimal, bounded work, and are therefore safe to do under a raw spinlock.
+>>
+>>Signed-off-by: Julia Cartwright <julia@ni.com>
 >
-> Shouldn'=E2=80=99t open drain pin are active HIGH?
+> Hi Julia,
+>
+> This driver also uses a second spinlock_t, called ack_lock, to prevent
+> reentrance into the idi_48_irq_handler function. Should ack_lock also be
+> implemented as a raw_spinlock_t?
 
-Sorry I do not understand, have you solved it?
+Hm, can I apply this one patch or not?
 
-Else can you try to break down the problem, do you mean there is a bug
-in inverted handling for open drain lines in gpiolib?
-
-Yours,
 Linus Walleij
