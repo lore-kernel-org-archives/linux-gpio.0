@@ -1,56 +1,62 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 3/8] pinctrl: meson: gxl: add i2s output pins
-Date: Tue, 28 Mar 2017 16:10:59 +0200
-Message-ID: <1490710259.20764.0.camel@baylibre.com>
-References: <20170323165101.29262-1-jbrunet@baylibre.com>
- <20170323165101.29262-4-jbrunet@baylibre.com>
- <CACRpkdaSwA0pV=YPbxcUZ0vnmAzWw_y3Q6iC-4c2qcn11zcJYg@mail.gmail.com>
- <cae34cdd-2810-108d-7d48-8380e8ef9ea6@baylibre.com>
- <CACRpkdY66S_evq78VPOYWvad1fVdmKfc2GBL6svn-4YP+nA2FQ@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: Query about Open drain flag with active LOW
+Date: Tue, 28 Mar 2017 19:28:46 +0530
+Message-ID: <58DA6C16.2000307@nvidia.com>
+References: <58D92DE0.3000907@nvidia.com> <CACRpkdYVdUyueSFsSi5SG6nfRn_s4tqfhHSkK3jhQov+9y2koA@mail.gmail.com> <58DA26F2.6040108@nvidia.com> <CACRpkda5jFraJsd5CtjQkxo_nUYLnhsfSwMfacPnJYenwCP=VA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdY66S_evq78VPOYWvad1fVdmKfc2GBL6svn-4YP+nA2FQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10674 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755387AbdC1ORT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 10:17:19 -0400
+In-Reply-To: <CACRpkda5jFraJsd5CtjQkxo_nUYLnhsfSwMfacPnJYenwCP=VA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, 2017-03-28 at 15:30 +0200, Linus Walleij wrote:
-> On Tue, Mar 28, 2017 at 3:14 PM, Neil Armstrong <narmstrong@baylibre.com>
-> wrote:
-> > On 03/28/2017 03:13 PM, Linus Walleij wrote:
-> > > On Thu, Mar 23, 2017 at 5:50 PM, Jerome Brunet <jbrunet@baylibre.com>
-> > > wrote:
-> > > 
-> > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > 
-> > > Had to fuzz this patch a bit due to another patch from Neil, please check
-> > > the result.
-> > > 
-> > > Patch applied.
-> > > 
-> > > Yours,
-> > > Linus Walleij
-> > > 
-> > 
-> > Hi Linus,
-> > 
-> > Indeed, he sent a v2 rebased on my patchset.
-> 
-> Yeah, sorry I'm drowning in patches. Hope this works.
-> 
 
-Result looks good. Thx Linus.
+On Tuesday 28 March 2017 06:38 PM, Linus Walleij wrote:
+> On Tue, Mar 28, 2017 at 11:03 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>
+>
+> I think it should be
+>          if (of_flags & OF_GPIO_SINGLE_ENDED) {
+>                  if (of_flags & OF_GPIO_ACTIVE_LOW)
+>                          *flags |= GPIO_OPEN_SOURCE;
+>                  else
+>                          *flags |= GPIO_OPEN_DRAIN;
+>          }
+>
+>
+> Similar change is needed in the dtbinding gpio header also to invert the
+> ACTIVE state with open drain/source.
+> OK I think there are no real users of this feature yet, so it would be great if
+> you could send a patch, especially if you also have hardware so you can test it.
+>
 
-> Yours,
-> Linus Walleij
+Thinking more, active low/high for line is independent of the open 
+drain/source behavior.
+Per my understanding, Active low/high depends on the how external device 
+provides signal or glue logic designed. Open drain/source is kind of 
+setting pin state between GND or VDD or high impedance.
+
+Let me send patch on decoupling the active HIGH/LOW with open 
+drain/source and discuss more in the patch.
+
+
+Thanks,
+Laxman
+
+
+
+
+-----------------------------------------------------------------------------------
+This email message is for the sole use of the intended recipient(s) and may contain
+confidential information.  Any unauthorized review, use, disclosure or distribution
+is prohibited.  If you are not the intended recipient, please contact the sender by
+reply email and destroy all copies of the original message.
+-----------------------------------------------------------------------------------
