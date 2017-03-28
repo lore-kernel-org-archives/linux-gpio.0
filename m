@@ -1,48 +1,37 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [RFT PATCH 5/6] pinctrl: meson: use gpio-ranges from DT
-Date: Tue, 28 Mar 2017 07:57:40 -0700
-Message-ID: <m27f39bg9n.fsf@baylibre.com>
-References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
-        <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
-        <CACRpkdZqfwKZ=2SQzr_D5-M5em+7JBS7eUaJ_VH33uV5AZ8xRw@mail.gmail.com>
-        <c575d8e4-05ca-8eb0-8b64-24a65a5711a7@baylibre.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] ACPI / gpio: do not fall back to parsing _CRS when we
+ get a deferral
+Date: Tue, 28 Mar 2017 18:03:00 +0300
+Message-ID: <1490713380.708.32.camel@linux.intel.com>
+References: <20170323202138.GA11912@dtor-ws>
+         <CACRpkdZJxvLF2T4akRVSNa9SjS30_q_A-vd2OaLE4eMSye1EMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c575d8e4-05ca-8eb0-8b64-24a65a5711a7@baylibre.com> (Neil
-        Armstrong's message of "Tue, 28 Mar 2017 11:38:20 +0200")
+In-Reply-To: <CACRpkdZJxvLF2T4akRVSNa9SjS30_q_A-vd2OaLE4eMSye1EMA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+On Tue, 2017-03-28 at 15:25 +0200, Linus Walleij wrote:
+> On Thu, Mar 23, 2017 at 9:21 PM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> 
+> > If, while locating GPIOs by name, we get probe deferral, we should
+> > immediately report it to caller rather than trying to fall back to
+> > parsing
+> > unnamed GPIOs from _CRS block.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> Can I get some indication from Mika/Rafael/Andy whether this is
+> correct?
 
-> On 03/28/2017 11:30 AM, Linus Walleij wrote:
->> On Thu, Mar 23, 2017 at 5:27 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
->> 
->> '> When trying to add a gpio-hog, we enter a weird loop where the gpio-ranges
->>> is needed when gpiochip_add_data() is called but in the current implementation
->>> the ranges are added from the driver afterwards.
->>>
->>> A simple solution is to rely on the DR gpio-ranges attribute and remove the
->>> call to gpiochip_add_pin_range().
->>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> 
->> This is fine once the ranges have been applied to the device trees I guess.
->> 
->> Tell me when you want me to merge this.
->> 
->> Yours,
->> Linus Walleij
->> 
->
-> Hi Linus,
->
-> Kevin should merge the DT patches since they have now Tested and Reviewed by's, so you can merge it now if you can.
-> Since it will live in you pinctrl tree, it will only impact linux-next until Kevin merges them.
+While Mika agrees on the change, I would like nevertheless to hear Hans'
+opinion or even Tested-by tag since it was his fix around those lines.
 
-I've applied the DT patches now (branch: v4.12/dt64)
-
-Kevin
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
