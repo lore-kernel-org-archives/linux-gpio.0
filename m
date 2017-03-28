@@ -1,116 +1,68 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 5/7] pinctrl: aramda-37xx: Add irqchip support
-Date: Tue, 28 Mar 2017 15:04:39 +0200
-Message-ID: <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
- <0e60fccd7913b83ee53d2921ce8f297927e8b6f3.1490120798.git-series.gregory.clement@free-electrons.com>
- <CACRpkdYv6WDWM60dRMaYfEt50M8N-yLYk2TRguNi78aQtt6X9A@mail.gmail.com> <87vaqtadry.fsf@free-electrons.com>
+Subject: Re: Query about Open drain flag with active LOW
+Date: Tue, 28 Mar 2017 15:08:58 +0200
+Message-ID: <CACRpkda5jFraJsd5CtjQkxo_nUYLnhsfSwMfacPnJYenwCP=VA@mail.gmail.com>
+References: <58D92DE0.3000907@nvidia.com> <CACRpkdYVdUyueSFsSi5SG6nfRn_s4tqfhHSkK3jhQov+9y2koA@mail.gmail.com>
+ <58DA26F2.6040108@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:36634 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755560AbdC1NEx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 09:04:53 -0400
-Received: by mail-it0-f43.google.com with SMTP id e75so55183626itd.1
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 06:04:47 -0700 (PDT)
-In-Reply-To: <87vaqtadry.fsf@free-electrons.com>
+Received: from mail-it0-f53.google.com ([209.85.214.53]:38497 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753973AbdC1NJK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 09:09:10 -0400
+Received: by mail-it0-f53.google.com with SMTP id y18so17661810itc.1
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 06:09:09 -0700 (PDT)
+In-Reply-To: <58DA26F2.6040108@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Mar 28, 2017 at 12:36 PM, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
->  On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Tue, Mar 28, 2017 at 11:03 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
->>> +                       u32 virq = irq_linear_revmap(d, hwirq +
->>> +                                                    i * GPIO_PER_REG);
->>
->> Use irq_find_mapping() instead please.
+> I wanted to say that open drain flag should be with ACTIVE_HIGH |
+> SINGLE_ENDED which is in inverted as of now.
+
+Oh that seems correct... can you send a patch for this?
+
+>> Else can you try to break down the problem, do you mean there is a bug
+>> in inverted handling for open drain lines in gpiolib?
 >
-> As we are in the interrupt handler I chose to use this function because
-> according to its documentation: "This is a fast path alternative to
-> irq_find_mapping() that can be called directly by irq controller code to
-> save a handful of instructions".
+> Yes, I am suspecting the bug here with combination of ACTIVE state and
+> SINGLE_ENDED flag. The logic to get OPEN DRAIN flag should be in inverted
+> form.
+> Else we need to decouple the ACTIVE state with SINGLE_ENDED flag to get Open
+> drain or open source.
 >
-> The only restriction is "It is always safe to call, but won't find irqs
-> mapped using the radix tree.". So I think that for this driver it is
-> okay.
-
-So you are relying on the core code in gpiolib to select a linear
-map. That is implicit semantics, and either all drivers using
-GPIOLIB_IRQCHIP should be changed to irq_linear_revmap()
-or all stay with irq_find_mapping().
-
-In this case, I doubt it that you are actually so timing critical that
-it matters. Please use irq_find_mapping().
-
->>> +       nr_irq_parent = of_irq_count(np);
->>> +       spin_lock_init(&info->irq_lock);
->>> +
->>> +       if (!nr_irq_parent) {
->>> +               dev_err(&pdev->dev, "Invalid or no IRQ\n");
->>> +               return 0;
->>> +       }
->>
->> What if it is > 1? That doesn't seem to work but will pass this
->> check silently.
+> If I want to say logical "1" for the open drain, it is setting pin in
+> drive-0 mode. Actually, it should be in input mode so that pin state become
+> HIGH.
 >
-> If we have nr_irq_parent > 1, it will work and it is actually expected.
-
-Ah, I get it. Nice.
-
->>> +       ret = gpiochip_irqchip_add(gc, irqchip, 0,
->>> +                                  handle_level_irq, IRQ_TYPE_NONE);
->>
->> If you also set up the handler in .set_type() you can assign
->> handle_bad_irq() here and let .set_type set the right handler
->> as e.g. drivers/gpio/gpio-pl061.c.
+> In function of_find_gpio(), it is as follows:
 >
-> Well the hardware can only manage the edge trigger, so there is no
-> benefit to modify it each time we want to change the kind of edge we
-> want (raising or falling). But your comment make me realized that I used
-> the wrong one, I will move to handle_edge_irq in the v4.
-
-Ooops, yeah handle_edge_irq() is what calls the ACK callback.
-
->>> +       for (i = 0; i < nrirqs; i++) {
->>> +               struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
->>> +
->>> +               d->mask = 1 << (i % GPIO_PER_REG);
->>> +       }
->>
->> What is this? It looks like a big hack. At least put in a fat
->> comment about what is going on and why.
+>         if (of_flags & OF_GPIO_SINGLE_ENDED) {
+>                 if (of_flags & OF_GPIO_ACTIVE_LOW)
+>                         *flags |= GPIO_OPEN_DRAIN;
+>                 else
+>                         *flags |= GPIO_OPEN_SOURCE;
+>         }
 >
-> I can reuse a part of the commit log here: "The only unusual "feature"
-> is that many interrupts are connected to the parent interrupt
-> controller. But we do not take advantage of this and use the chained irq
-> with all of them."
-
-What you're doing is mocking around with core irqchip semantics.
-Is ->mask really supposed to be played around with from the outsid
-like this?
-
-Anyways: BIT(i % GPIO_PER_REG) is nicer.
-
->>> +       for (i = 0; i < nr_irq_parent; i++) {
->>> +               int irq = irq_of_parse_and_map(np, i);
->>
->> I think gpiochip_irqchip_add() will do this for you already,
->> as it calls irq_create_mapping() for all offsets which will call
->> irq_of_parse_and_map() am I right?
 >
-> After reading the code, it doesn't seem it is the case. At least there
-> is no irq_of_parse_and_map() call from gpiochip_irqchip_add(). And waht
-> we need here is to associate each IRQ to the same GPIO handler.
+> I think it should be
+>         if (of_flags & OF_GPIO_SINGLE_ENDED) {
+>                 if (of_flags & OF_GPIO_ACTIVE_LOW)
+>                         *flags |= GPIO_OPEN_SOURCE;
+>                 else
+>                         *flags |= GPIO_OPEN_DRAIN;
+>         }
 >
-> I can still try without this line to confirm it.
+>
+> Similar change is needed in the dtbinding gpio header also to invert the
+> ACTIVE state with open drain/source.
 
-It has irq_create_mapping(gpiochip->irqdomain, offset); that get
-called for every IRQ, and that will eventually call irq_of_parse_and_map()
-if the IRQs are defined in the device tree. (IIRC)
+OK I think there are no real users of this feature yet, so it would be great if
+you could send a patch, especially if you also have hardware so you can test it.
 
 Yours,
 Linus Walleij
