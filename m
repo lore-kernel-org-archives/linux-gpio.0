@@ -1,39 +1,64 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT PATCH 5/6] pinctrl: meson: use gpio-ranges from DT
-Date: Tue, 28 Mar 2017 11:40:57 +0200
-Message-ID: <CACRpkdYuj8-q-LbKYCH7dfLzF_10oViLwF3rjxULgmuw6AXYRg@mail.gmail.com>
-References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com>
- <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Tue, 28 Mar 2017 11:46:30 +0200
+Message-ID: <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com> <20170323160204.GL30223@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1490286449-19448-6-git-send-email-narmstrong@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20170323160204.GL30223@w540>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jacopo <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Mar 23, 2017 at 5:27 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Thu, Mar 23, 2017 at 5:02 PM, jacopo <jacopo@jmondi.org> wrote:
 
-> When trying to add a gpio-hog, we enter a weird loop where the gpio-ranges
-> is needed when gpiochip_add_data() is called but in the current implementation
-> the ranges are added from the driver afterwards.
+>> > +  Required properties:
+>> > +    - renesas,pins
+>>
+>> Just "pins"?
+>>
 >
-> A simple solution is to rely on the DR gpio-ranges attribute and remove the
-> call to gpiochip_add_pin_range().
+> You know, I've been thinking about this, bu the "pins" property
+> definition in pinctrl-bidings is the following one:
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> ---
+> - pins takes a list of pin names or IDs as a required argument. The
+>   specific binding for the hardware defines:
+>       - Whether the entries are integers or strings, and their
+>         meaning.
+> ---
+>
+> And all examples there assume one "pin name" or "ID" per pin.
+>
+> Now, we use 2 values per each pin (the pin ID and the alternate
+> function number), so to me this is different from what the generic
+> binding describes.
+> Also, pinctrl-single, and pinctrl-imx which have and ABI similar to
+> the one this driver define, use "pinctrl-single,pins" and "fsl,pins"
+> respectively as property names.
+> So either they have to be updated yet, or we should keep using
+> "renesas,pins" for our own defined ABI.
+>
+> Maybe Linus or other pinctrl people can give some suggestion here.
 
-Patch applied.
+To me as subsystem maintainer any "necessarily different" bindings
+are just a big confusion for the head.
+
+Since you're adding a new driver, try to stick to the generic bindings
+even if it deviates from what you are used to for Renesas, because
+even if it may be more work for you guys or make you annoyed that
+now a certain Renesas is different from all other Renesas platforms,
+for the community this makes things easier to maintain because
+we can look at the driver and its bindings and say "ah I know this".
+
+The fact that historically all the early adopters of pinctrl in device tree
+have these funky custom bindings is unfortunate but just something
+that we need to live with.
 
 Yours,
 Linus Walleij
