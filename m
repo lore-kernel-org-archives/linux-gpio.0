@@ -1,37 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT PATCH 6/6] ARM64: dts: meson-gxbb: Add USB Hub GPIO hog
-Date: Tue, 28 Mar 2017 11:31:38 +0200
-Message-ID: <CACRpkdafNk0921by3kGYqEc88P5FKxepXZsvenGELzpf=Q4AnA@mail.gmail.com>
-References: <1490286449-19448-1-git-send-email-narmstrong@baylibre.com> <1490286449-19448-7-git-send-email-narmstrong@baylibre.com>
+Subject: Re: [PATCH] MAINTAINERS: pinctrl: Add git tree to Samsung pinctrl entry
+Date: Tue, 28 Mar 2017 11:34:29 +0200
+Message-ID: <CACRpkdbTOOjC-DKWn85iO_VwZNOvbcK1ATSQdq8Ri8H0JxVTAw@mail.gmail.com>
+References: <20170320164851.5999-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:38900 "EHLO
+Received: from mail-it0-f43.google.com ([209.85.214.43]:35487 "EHLO
         mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751977AbdC1JdX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:33:23 -0400
-Received: by mail-it0-f43.google.com with SMTP id y18so11957540itc.1
-        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:31:53 -0700 (PDT)
-In-Reply-To: <1490286449-19448-7-git-send-email-narmstrong@baylibre.com>
+        with ESMTP id S1751785AbdC1Jev (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 05:34:51 -0400
+Received: by mail-it0-f43.google.com with SMTP id y18so105467869itc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 02:34:50 -0700 (PDT)
+In-Reply-To: <20170320164851.5999-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Mar 23, 2017 at 5:27 PM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Mon, Mar 20, 2017 at 5:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> The ODroid-C2 on-board USB Hub needs to to have it's reset signal set to
-> high level in order to be enumerated by the USB Host Controller.
+> Add a Git tree on @kernel.org for maintaining the Samsung pinctrl
+> drivers.  The tree will be maintained in a shared model between current
+> Samsung pinctrl maintainers.  Pull requests will be going to Linus
+> Walleij.
 >
-> But this management must be part of the currently in-development Generic
-> Power Sequence patch that will allow a USB Controller driver to start and stop
-> a power sequence associated to the USB Bus.
+> Also add the patchwork for linux-samsung-soc mailing list which will be
+> used for handling the patches.
 >
-> In the meantime, a simple USB Hog will work to enable the USB Hub.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Patch applied with the ACKs.
 
 Yours,
 Linus Walleij
