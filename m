@@ -1,60 +1,82 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] ACPI / gpio: do not fall back to parsing _CRS when we
- get a deferral
-Date: Tue, 28 Mar 2017 18:04:02 +0300
-Message-ID: <1490713442.708.33.camel@linux.intel.com>
-References: <20170323202138.GA11912@dtor-ws>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 1/1] pinctrl: meson: meson8b: fix the NAND DQS pins
+Date: Tue, 28 Mar 2017 08:09:18 -0700
+Message-ID: <m2shlxa15t.fsf@baylibre.com>
+References: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
+        <20170325184350.7677-2-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170323202138.GA11912@dtor-ws>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:36615 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751986AbdC1PJZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 11:09:25 -0400
+Received: by mail-pg0-f54.google.com with SMTP id g2so74793379pge.3
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 08:09:20 -0700 (PDT)
+In-Reply-To: <20170325184350.7677-2-martin.blumenstingl@googlemail.com>
+        (Martin Blumenstingl's message of "Sat, 25 Mar 2017 19:43:50 +0100")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, carlo@caione.org, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, 2017-03-23 at 13:21 -0700, Dmitry Torokhov wrote:
-> If, while locating GPIOs by name, we get probe deferral, we should
-> immediately report it to caller rather than trying to fall back to
-> parsing
-> unnamed GPIOs from _CRS block.
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-+Cc: Hans.
+> The nand_groups table uses different names for the NAND DQS pins than
+> the GROUP() definition in meson8b_cbus_groups (nand_dqs_0 vs nand_dqs0).
+> This prevents using the NAND DQS pins in the devicetree.
+>
+> I decided to rename both pins to nand_dqs_15 and nand_dqs_18 as both seem
+> to serve the same function, just exposed on different pins (unlike the
+> ethernet TX pins for example, where there's eth_txd0..3 - all of these
+> can be active at the same time as they are different data lines).
+>
+> Fixes: 0fefcb6876d0 ("pinctrl: Add support for Meson8b")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Hans, do have any objections on this? Would you ideally give your
-Tested-by?
+IMO, the fix should be a separate from the rename, since one is a fix
+for a real issue and the other is cosmetic.
 
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Kevin
+
 > ---
->  drivers/gpio/gpiolib-acpi.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index a3faefa44f68..d3f9f028a37b 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -572,8 +572,10 @@ struct gpio_desc *acpi_find_gpio(struct device
-> *dev,
->  		}
->  
->  		desc = acpi_get_gpiod_by_index(adev, propname, idx,
-> &info);
-> -		if (!IS_ERR(desc) || (PTR_ERR(desc) ==
-> -EPROBE_DEFER))
-> +		if (!IS_ERR(desc))
->  			break;
-> +		if (PTR_ERR(desc) == -EPROBE_DEFER)
-> +			return ERR_CAST(desc);
->  	}
->  
->  	/* Then from plain _CRS GPIOs */
-> -- 
-> 2.12.1.500.gab5fba24ee-goog
-> 
-> 
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+>  drivers/pinctrl/meson/pinctrl-meson8b.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+> index 76f077f18193..bf747eb1f3f4 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson8b.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+> @@ -267,8 +267,8 @@ static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, 0) };
+>  static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, 0) };
+>  static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, 0) };
+>  static const unsigned int nand_ren_clk_pins[]	= { PIN(BOOT_14, 0) };
+> -static const unsigned int nand_dqs_0_pins[]	= { PIN(BOOT_15, 0) };
+> -static const unsigned int nand_dqs_1_pins[]	= { PIN(BOOT_18, 0) };
+> +static const unsigned int nand_dqs_15_pins[]	= { PIN(BOOT_15, 0) };
+> +static const unsigned int nand_dqs_18_pins[]	= { PIN(BOOT_18, 0) };
+>  
+>  static const unsigned int sdxc_d0_c_pins[]	= { PIN(BOOT_0, 0)};
+>  static const unsigned int sdxc_d13_c_pins[]	= { PIN(BOOT_1, 0), PIN(BOOT_2, 0),
+> @@ -527,8 +527,8 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
+>  	GROUP(nand_cle,		2,	20),
+>  	GROUP(nand_wen_clk,	2,	19),
+>  	GROUP(nand_ren_clk,	2,	18),
+> -	GROUP(nand_dqs_0,	2,	27),
+> -	GROUP(nand_dqs_1,	2,	28),
+> +	GROUP(nand_dqs_15,	2,	27),
+> +	GROUP(nand_dqs_18,	2,	28),
+>  	GROUP(sdxc_d0_c,	4,	30),
+>  	GROUP(sdxc_d13_c,	4,	29),
+>  	GROUP(sdxc_d47_c,	4,	28),
+> @@ -739,8 +739,8 @@ static const char * const sdxc_c_groups[] = {
+>  static const char * const nand_groups[] = {
+>  	"nand_io", "nand_io_ce0", "nand_io_ce1",
+>  	"nand_io_rb0", "nand_ale", "nand_cle",
+> -	"nand_wen_clk", "nand_ren_clk", "nand_dqs0",
+> -	"nand_dqs1"
+> +	"nand_wen_clk", "nand_ren_clk", "nand_dqs_15",
+> +	"nand_dqs_18"
+>  };
+>  
+>  static const char * const nor_groups[] = {
