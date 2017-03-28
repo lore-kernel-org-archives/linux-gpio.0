@@ -1,59 +1,52 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v3] gpio: acpi: Call enable_irq_wake for _IAE GpioInts
- with Wake set
-Date: Tue, 28 Mar 2017 19:24:58 +0200
-Message-ID: <ad47fe0f-cfde-c4c6-d566-8f62a5ac443d@redhat.com>
-References: <20170324100847.25434-1-hdegoede@redhat.com>
- <CACRpkdb22Bofjk1dXCwyi_cWjmw6C1DgQ-NwEPcuR8cti63OPw@mail.gmail.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH v2 0/8] pinctrl: meson: add audio output pins
+Date: Tue, 28 Mar 2017 12:33:53 -0700
+Message-ID: <m2inmt9owu.fsf@baylibre.com>
+References: <20170326171923.19269-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb22Bofjk1dXCwyi_cWjmw6C1DgQ-NwEPcuR8cti63OPw@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:36131 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755818AbdC1Tee (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 15:34:34 -0400
+Received: by mail-pg0-f41.google.com with SMTP id g2so81112640pge.3
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Mar 2017 12:34:28 -0700 (PDT)
+In-Reply-To: <20170326171923.19269-1-jbrunet@baylibre.com> (Jerome Brunet's
+        message of "Sun, 26 Mar 2017 19:19:15 +0200")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-On 03/28/2017 03:23 PM, Linus Walleij wrote:
-> On Fri, Mar 24, 2017 at 11:08 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> This patchset adds the pinctrl definition and the related device-tree
+> bindings of the i2s output and spdif output pins on the meson gxbb and
+> gxl SoCs.
 >
->> On Bay Trail / Cherry Trail systems with a LID switch, the LID switch is
->> often connect to a gpioint handled by an _IAE event handler.
->> Before this commit such systems would not wake up when opening the lid,
->> requiring the powerbutton to be pressed after opening the lid to wakeup.
->>
->> Note that Bay Trail / Cherry Trail systems use suspend-to-idle, so
->> the interrupts are generated anyway on those lines on lid switch changes,
->> but they are treated by the IRQ subsystem as spurious while suspended if
->> not marked as wakeup IRQs.
->>
->> This commit calls enable_irq_wake() for _IAE GpioInts with a valid
->> event handler which have their Wake flag set. This fixes such systems
->> not waking up when opening the lid.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
->> ---
->> Changes in v2:
->> -Improve commit msg
->> -Add Mika's Acked-by
->> Changes in v3:
->> -Use irqd_is_wakeup_set rather then tracking this ourselves
+> This is part of the ongoing work to bring audio output support on the
+> meson family. It was tested on the gxbb p200 and gxl p230.
 >
-> This looks like it should be applied for fixes and tagged for stable.
+> Changes since v1: [0]
+> * add a few comments in the changelog
+> * patched rebased on pinctrl/for-next + Neil patch on missing pins [1]
+>
+> [0]: https://marc.info/?i=20170323165101.29262-1-jbrunet%40baylibre.com
+> [1]: https://marc.info/?i=20170323104112.16558-2-narmstrong%40baylibre.com
+>
+> Jerome Brunet (8):
+>   pinctrl: meson: gxbb: add i2s output pins
+>   pinctrl: meson: gxbb: add spdif output pins
+>   pinctrl: meson: gxl: add i2s output pins
+>   pinctrl: meson: gxl: add spdif output pins
+>   ARM64: dts: meson-gxbb: add i2s output pins
+>   ARM64: dts: meson-gxbb: add spdif output pins
+>   ARM64: dts: meson-gxl: add i2s output pins
+>   ARM64: dts: meson-gxl: add spdif output pins
 
-In theory this is a fix, but I'm afraid it may have undesirable
-side-effects on some systems (I hope not but you never know) so I'm
-not sure it should get tagged for stable, going into 4.11-rc# as
-fix seems fine to me.
+DT patches applied to amlogic v4.12/dt64 branch,
 
-> Patch applied.
+Thanks for the respin,
 
-Thank you.
-
-Regards,
-
-Hans
+Kevin
