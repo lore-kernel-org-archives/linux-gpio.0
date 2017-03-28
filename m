@@ -1,14 +1,17 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v4 0/4] gpio: mvebu: Add PWM fan support
-Date: Tue, 28 Mar 2017 15:57:39 +0200
-Message-ID: <20170328135739.GL17041@lunn.ch>
-References: <20170327194301.1104-1-ralph.sennhauser@gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 3/8] pinctrl: meson: gxl: add i2s output pins
+Date: Tue, 28 Mar 2017 16:10:59 +0200
+Message-ID: <1490710259.20764.0.camel@baylibre.com>
+References: <20170323165101.29262-1-jbrunet@baylibre.com>
+ <20170323165101.29262-4-jbrunet@baylibre.com>
+ <CACRpkdaSwA0pV=YPbxcUZ0vnmAzWw_y3Q6iC-4c2qcn11zcJYg@mail.gmail.com>
+ <cae34cdd-2810-108d-7d48-8380e8ef9ea6@baylibre.com>
+ <CACRpkdY66S_evq78VPOYWvad1fVdmKfc2GBL6svn-4YP+nA2FQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20170327194301.1104-1-ralph.sennhauser@gmail.com>
+In-Reply-To: <CACRpkdY66S_evq78VPOYWvad1fVdmKfc2GBL6svn-4YP+nA2FQ@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,18 +21,36 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, linux-pwm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Imre Kaloz <kaloz@openwrt.org>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-> Pending:
->   * npwm = 1? I vote no if that counts. ;) (suggested by Thierry Reding)
->   * Tested-by: Andrew Lunn for v1 needs renewing
+On Tue, 2017-03-28 at 15:30 +0200, Linus Walleij wrote:
+> On Tue, Mar 28, 2017 at 3:14 PM, Neil Armstrong <narmstrong@baylibre.com>
+> wrote:
+> > On 03/28/2017 03:13 PM, Linus Walleij wrote:
+> > > On Thu, Mar 23, 2017 at 5:50 PM, Jerome Brunet <jbrunet@baylibre.com>
+> > > wrote:
+> > > 
+> > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > 
+> > > Had to fuzz this patch a bit due to another patch from Neil, please check
+> > > the result.
+> > > 
+> > > Patch applied.
+> > > 
+> > > Yours,
+> > > Linus Walleij
+> > > 
+> > 
+> > Hi Linus,
+> > 
+> > Indeed, he sent a v2 rebased on my patchset.
+> 
+> Yeah, sorry I'm drowning in patches. Hope this works.
+> 
 
-Hi Ralph
+Result looks good. Thx Linus.
 
-I just tested this version. Fan it still keeping my Mamba board cool.
-
-Tested-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+> Yours,
+> Linus Walleij
