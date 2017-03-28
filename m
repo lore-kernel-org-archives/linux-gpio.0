@@ -1,62 +1,138 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: Query about Open drain flag with active LOW
-Date: Tue, 28 Mar 2017 19:28:46 +0530
-Message-ID: <58DA6C16.2000307@nvidia.com>
-References: <58D92DE0.3000907@nvidia.com> <CACRpkdYVdUyueSFsSi5SG6nfRn_s4tqfhHSkK3jhQov+9y2koA@mail.gmail.com> <58DA26F2.6040108@nvidia.com> <CACRpkda5jFraJsd5CtjQkxo_nUYLnhsfSwMfacPnJYenwCP=VA@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v2 5/7] pinctrl: aramda-37xx: Add irqchip support
+Date: Tue, 28 Mar 2017 16:19:06 +0200
+Message-ID: <87mvc5a3hh.fsf@free-electrons.com>
+References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
+ <0e60fccd7913b83ee53d2921ce8f297927e8b6f3.1490120798.git-series.gregory.clement@free-electrons.com>
+ <CACRpkdYv6WDWM60dRMaYfEt50M8N-yLYk2TRguNi78aQtt6X9A@mail.gmail.com>
+ <87vaqtadry.fsf@free-electrons.com>
+ <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10674 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755387AbdC1ORT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 28 Mar 2017 10:17:19 -0400
-In-Reply-To: <CACRpkda5jFraJsd5CtjQkxo_nUYLnhsfSwMfacPnJYenwCP=VA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
+ (Linus Walleij's message of "Tue, 28 Mar 2017 15:04:39 +0200")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
+Hi Linus,
+ 
+ On mar., mars 28 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On Tuesday 28 March 2017 06:38 PM, Linus Walleij wrote:
-> On Tue, Mar 28, 2017 at 11:03 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> On Tue, Mar 28, 2017 at 12:36 PM, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>>  On lun., mars 27 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 >
+>>>> +                       u32 virq = irq_linear_revmap(d, hwirq +
+>>>> +                                                    i * GPIO_PER_REG);
+>>>
+>>> Use irq_find_mapping() instead please.
+>>
+>> As we are in the interrupt handler I chose to use this function because
+>> according to its documentation: "This is a fast path alternative to
+>> irq_find_mapping() that can be called directly by irq controller code to
+>> save a handful of instructions".
+>>
+>> The only restriction is "It is always safe to call, but won't find irqs
+>> mapped using the radix tree.". So I think that for this driver it is
+>> okay.
 >
+> So you are relying on the core code in gpiolib to select a linear
+> map. That is implicit semantics, and either all drivers using
+> GPIOLIB_IRQCHIP should be changed to irq_linear_revmap()
+> or all stay with irq_find_mapping().
 >
-> I think it should be
->          if (of_flags & OF_GPIO_SINGLE_ENDED) {
->                  if (of_flags & OF_GPIO_ACTIVE_LOW)
->                          *flags |= GPIO_OPEN_SOURCE;
->                  else
->                          *flags |= GPIO_OPEN_DRAIN;
->          }
+> In this case, I doubt it that you are actually so timing critical that
+> it matters. Please use irq_find_mapping().
+
+OK
+
+>>>> +       ret = gpiochip_irqchip_add(gc, irqchip, 0,
+>>>> +                                  handle_level_irq, IRQ_TYPE_NONE);
+>>>
+>>> If you also set up the handler in .set_type() you can assign
+>>> handle_bad_irq() here and let .set_type set the right handler
+>>> as e.g. drivers/gpio/gpio-pl061.c.
+>>
+>> Well the hardware can only manage the edge trigger, so there is no
+>> benefit to modify it each time we want to change the kind of edge we
+>> want (raising or falling). But your comment make me realized that I used
+>> the wrong one, I will move to handle_edge_irq in the v4.
 >
+> Ooops, yeah handle_edge_irq() is what calls the ACK callback.
 >
-> Similar change is needed in the dtbinding gpio header also to invert the
-> ACTIVE state with open drain/source.
-> OK I think there are no real users of this feature yet, so it would be great if
-> you could send a patch, especially if you also have hardware so you can test it.
+>>>> +       for (i = 0; i < nrirqs; i++) {
+>>>> +               struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
+>>>> +
+>>>> +               d->mask = 1 << (i % GPIO_PER_REG);
+>>>> +       }
+>>>
+>>> What is this? It looks like a big hack. At least put in a fat
+>>> comment about what is going on and why.
+>>
+>> I can reuse a part of the commit log here: "The only unusual "feature"
+>> is that many interrupts are connected to the parent interrupt
+>> controller. But we do not take advantage of this and use the chained irq
+>> with all of them."
 >
+> What you're doing is mocking around with core irqchip semantics.
+> Is ->mask really supposed to be played around with from the outsid
+> like this?
 
-Thinking more, active low/high for line is independent of the open 
-drain/source behavior.
-Per my understanding, Active low/high depends on the how external device 
-provides signal or glue logic designed. Open drain/source is kind of 
-setting pin state between GND or VDD or high impedance.
+According to the documentation mask is a "precomputed bitmask for
+accessing the chip registers" and it is exactly the way it is used in
+this driver.
 
-Let me send patch on decoupling the active HIGH/LOW with open 
-drain/source and discuss more in the patch.
-
-
-Thanks,
-Laxman
-
+Moreover, currently ->mask is only used by the generic irqchip framework
+and not by the core of the irqchip subsystem. So the mask initialization
+is not done from the oustide but at the same level as the generic
+irqchip which is not used here.
 
 
+> Anyways: BIT(i % GPIO_PER_REG) is nicer.
 
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+OK
+
+>
+>>>> +       for (i = 0; i < nr_irq_parent; i++) {
+>>>> +               int irq = irq_of_parse_and_map(np, i);
+>>>
+>>> I think gpiochip_irqchip_add() will do this for you already,
+>>> as it calls irq_create_mapping() for all offsets which will call
+>>> irq_of_parse_and_map() am I right?
+>>
+>> After reading the code, it doesn't seem it is the case. At least there
+>> is no irq_of_parse_and_map() call from gpiochip_irqchip_add(). And waht
+>> we need here is to associate each IRQ to the same GPIO handler.
+>>
+>> I can still try without this line to confirm it.
+>
+> It has irq_create_mapping(gpiochip->irqdomain, offset); that get
+> called for every IRQ, and that will eventually call irq_of_parse_and_map()
+> if the IRQs are defined in the device tree. (IIRC)
+
+When I followed the functions called I never find a call to
+irq_of_parse_and_map(), the closer things related to device tree I found
+was:
+"virq = irq_domain_alloc_descs(-1, 1, hwirq, of_node_to_nid(of_node),
+NULL);"
+http://elixir.free-electrons.com/source/kernel/irq/irqdomain.c?v=4.11-rc4#L507
+
+Gregory
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
