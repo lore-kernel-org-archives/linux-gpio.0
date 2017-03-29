@@ -1,43 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Wed, 29 Mar 2017 15:24:21 +0200
-Message-ID: <CACRpkdb0O+_PXrYfWWaeJGU-Ytg32AJsGzOH-_AQ9eY2hOG8LA@mail.gmail.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com> <20170329131937.GW2957@lahna.fi.intel.com>
+From: jacopo <jacopo@jmondi.org>
+Subject: Re: [PATCH v3 4/7] arm: dts: r7s72100: Add pin controller node
+Date: Wed, 29 Mar 2017 15:26:11 +0200
+Message-ID: <20170329132611.GC6247@w540>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-5-git-send-email-jacopo+renesas@jmondi.org>
+ <SG2PR06MB11651E209BC332719059CC3F8A330@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:37543 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932679AbdC2NYX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 09:24:23 -0400
-Received: by mail-it0-f52.google.com with SMTP id 190so55061583itm.0
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2017 06:24:22 -0700 (PDT)
-In-Reply-To: <20170329131937.GW2957@lahna.fi.intel.com>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:55487 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbdC2N0S (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 09:26:18 -0400
+Content-Disposition: inline
+In-Reply-To: <SG2PR06MB11651E209BC332719059CC3F8A330@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 3:19 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Wed, Mar 29, 2017 at 02:58:19PM +0200, Linus Walleij wrote:
->> On Wed, Mar 29, 2017 at 11:59 AM, Mika Westerberg
->> > +       chip->irq_need_valid_mask = need_valid_mask;
->>
->> Isn't the right solution to translate this back to the offset from the "Linux
->> IRQ" and use that offset? This quirk seems pretty violent.
+Hi Chris,
+
+On Mon, Mar 27, 2017 at 05:12:04PM +0000, Chris Brandt wrote:
+> Hi Jacopo,
+> 
+> 
+> On Friday, March 24, 2017, Jacopo Mondi
+> > +	pinctrl: pinctrl@fcfe3000 {
+> > +		compatible = "renesas,r7s72100-ports";
+> > +
+> > +		#pinctrl-cells = <1>;
+> > +
+> > +		reg = <0xfcfe3000 0x42C0>;
+> 
+> Out of curiosity, why did you change this from 0x4248 to 0x42C0?
+> 
+> In your update for renesas,rza1-pinctrl.txt, for the 'Example', you changed it from 0x4248 to 0x4230 (which Geert pointed out makes more sense), but then in the actual DT file you changed it to 0x42C0. Typo?
 >
-> So based on DMI strings instead of doing this, just correct the offset
-> and be done with it? Works for me.
 
-Yeah I imagine? We just fix up the Linux magic numbers to the hardware
-magic numbers.
+Yes, type.
+Or inability to perform basic mathematical operations.
+Not sure yet.
 
-This is what a poor soul trying to port this chromebook to use BSD or
-Windows will have to do anyway, so I don't see why we should be
-different.
+Thanks for spotting this :)
+   j
 
-Yours,
-Linus Walleij
+
+> 
+> Chris
+> 
