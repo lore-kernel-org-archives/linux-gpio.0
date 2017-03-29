@@ -1,152 +1,34 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v1 6/8] gpio: acpi: Explain how to get GPIO descriptors
- in ACPI case
-Date: Wed, 29 Mar 2017 00:12:35 -0700
-Message-ID: <20170329071235.GB38261@dtor-ws>
-References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
- <20170323194618.26548-7-andriy.shevchenko@linux.intel.com>
- <20170323202838.GA11818@dtor-ws>
- <1490719163.708.40.camel@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3 1/7] pinctrl: Renesas RZ/A1 pin and gpio controller
+Date: Wed, 29 Mar 2017 09:30:21 +0200
+Message-ID: <CAMuHMdWVM2K4V+TnUGiW601+OjUBQTbnd9LU7yLGRRew06KxjQ@mail.gmail.com>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-2-git-send-email-jacopo+renesas@jmondi.org> <CACRpkdYjZJ7e0tJy6_jfpRT+UDFWqnu8ZX18-gaAHVZLgW-prA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36519 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753420AbdC2HMj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 03:12:39 -0400
-Content-Disposition: inline
-In-Reply-To: <1490719163.708.40.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYjZJ7e0tJy6_jfpRT+UDFWqnu8ZX18-gaAHVZLgW-prA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org
 
-On Tue, Mar 28, 2017 at 07:39:23PM +0300, Andy Shevchenko wrote:
-> On Thu, 2017-03-23 at 13:28 -0700, Dmitry Torokhov wrote:
-> > On Thu, Mar 23, 2017 at 09:46:16PM +0200, Andy Shevchenko wrote:
-> 
-> 
-> > > +Using the _CRS fallback
-> > > +-----------------------
-> > > +
-> > > +If a device does not have _DSD or the driver does not create ACPI
-> > > GPIO
-> > > +mapping, the Linux GPIO framework refuses to return any GPIOs. This
-> > > is
-> > > +because the driver does not know what it actually gets. For example
-> > > if we
-> > > +have a device like below:
-> > > +
-> > > +  Device (BTH)
-> > > +  {
-> > > +      Name (_HID, ...)
-> > > +
-> > > +      Name (_CRS, ResourceTemplate () {
-> > > +          GpioIo (Exclusive, PullNone, 0, 0, IoRestrictionNone,
-> > > +                  "\\_SB.GPO0", 0, ResourceConsumer) {15}
-> > > +          GpioIo (Exclusive, PullNone, 0, 0, IoRestrictionNone,
-> > > +                  "\\_SB.GPO0", 0, ResourceConsumer) {27}
-> > > +      })
-> > > +  }
-> > > +
-> > > +The driver might expect to get the right GPIO when it does:
-> > > +
-> > > +  desc = gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> > > +
-> > > +but since there is no way to know the mapping between "reset" and
-> > > +the GpioIo() in _CRS desc will hold ERR_PTR(-ENOENT).
-> > > +
-> > > +The driver author can solve this by passing the mapping explictly
-> > > +(the recommended way and documented in the above chapter).
-> > 
-> > If the driver is not platform specific, then it would have no idea
-> > about
-> > mapping between _CRS GPIOs and names. All such stuff should be hidden
-> > in
-> > platform glue (i.e drivers/platform/x86/platform_crap.c).
-> 
-> It might be interpreted that all platform data from all the drivers
-> should gone. While ideal case should be like this and I totally agree
-> with you, we are living in non-ideal world, that's why we used to and
-> continue using some ID-based quirks (PCI enumeration, I2C enumeration,
-> ACPI enumeration, SPI enumeration, UART enumeration, an so on, so on).
-> 
-> Moreover ACPI comes into ARM(64) world which might have its own troubles
-> with generating correct tables and we might end up with quirks there.
+Hi Linus,
 
-*gasp* I thought ACPI was the magic that would fix all issues with cure
-embedded hacks.
+On Fri, Mar 24, 2017 at 4:42 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Mar 24, 2017 at 4:22 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>
+> I assume Geert will queue this driver even if it is outside of sh-pfc?
 
-> 
-> So, I disagree that here is possible to hide like you said "all such
-> stuff in ...platform_crap.c".
+OK for me, thanks. I was actually wondering about that ;-)
 
-Well, Hans already posted such patch for select x86 platforms with
-Silead touchscreens. I am sure these platforms have more warts that
-could be added to the same file in platform/x86/...
+Gr{oetje,eeting}s,
 
-> 
-> > > +
-> > > +Getting GPIO descriptor
-> > > +-----------------------
-> > > +
-> > > +There are two main approaches to get GPIO resource from ACPI:
-> > > +	desc = gpiod_get(dev, connection_id, flags);
-> > > +	desc = gpiod_get_index(dev, connection_id, index, flags);
-> > > +
-> > > +We may consider two different cases here, i.e. when connection ID
-> > > is
-> > > +provided and otherwise.
-> > > +
-> > > +Case 1:
-> > > +	desc = gpiod_get(dev, "non-null-connection-id", flags);
-> > > +	desc = gpiod_get_index(dev, "non-null-connection-id",
-> > > index, flags);
-> > > +
-> > > +Case 2:
-> > > +	desc = gpiod_get(dev, NULL, flags);
-> > > +	desc = gpiod_get_index(dev, NULL, index, flags);
-> > > +
-> > > +Case 1 assumes that corresponding ACPI device description must have
-> > > +defined device properties and will prevent to getting any GPIO
-> > > resources
-> > > +otherwise.
-> > > +
-> > > +Case 2 explicitly tells GPIO core to look for resources in _CRS.
-> > > +
-> > > +Be aware that gpiod_get_index() in cases 1 and 2, assuming that
-> > > there
-> > > +are two versions of ACPI device description provided and no mapping
-> > > is
-> > > +present in the driver, will return different resources. That's why
-> > > a
-> > > +certain driver has to handle them carefully as explained in
-> > > previous
-> > > +chapter.
-> > 
-> > I think that this wording is too x86-centric. We are talking about
-> > consumers of GPIOs here (i.e. drivers), which need unified behavior
-> > between ACPI, DT, and static board properties, they do not really care
-> > about _CRS or _DSD.
-> 
-> If the certain driver cares about ACPI enumerated devices it might care
-> about supporting it disregarding on how new firmware is used (supporting
-> _DSD or not).
+                        Geert
 
-The drivers might care about ACPI enumerations, but they do not care
-about warts of particular platform that chose to implement their ACPI
-tables with missing or invalid data. I say that such knowledge should
-not go into generic driver, but rather some other entity that woudl fix
-up whatever wrong the platform did. It could be an ACPI table override,
-or block of code in platform/x86/..., DT overlay, it does not really
-matter as long as we do not litter drivers with hacks for random boxes.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Yes, we used to do that (DMI tables, etc), because there was no better
-alternative. Now that we have generic device properties, we have better
-ways of addressing these issues.
-
-Thanks.
-
--- 
-Dmitry
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
