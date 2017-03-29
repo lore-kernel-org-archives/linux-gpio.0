@@ -1,74 +1,55 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 2/2] dt-bindings: gpio: Document Cadence GPIO controller bindings
-Date: Wed, 29 Mar 2017 18:04:19 +0200
-Message-ID: <1490803459-29697-2-git-send-email-boris.brezillon@free-electrons.com>
-References: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
+ managing groups
+Date: Wed, 29 Mar 2017 09:26:04 -0700
+Message-ID: <20170329162604.GC10760@atomide.com>
+References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
+ <20170102182022.2047-2-gary.bisson@boundarydevices.com>
+ <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
+ <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
+ <CAOMZO5AXOEFTep17etLyU1avWsDasFF+NAAPcusaMRGMR3nctg@mail.gmail.com>
+ <20170307175448.GU20572@atomide.com>
+ <CACRpkdb1O9=xZ-sVVh1AzmW8oknQyNAW=LirtX1CEA=pkCbA1g@mail.gmail.com>
+ <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42504 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752283AbdC2QEY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 12:04:24 -0400
-In-Reply-To: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
+Received: from muru.com ([72.249.23.125]:42636 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752489AbdC2Q0J (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 29 Mar 2017 12:26:09 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Simon Hatliff <hatliff@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Mika =?utf-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>
 
-Document Cadence GPIO bindings.
+* Fabio Estevam <festevam@gmail.com> [170329 06:36]:
+> Tony/Linus
+> 
+> On Wed, Mar 15, 2017 at 6:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> >> Still waiting to hear back from Linus on what he prefers.
+> >
+> > I am snowed under by mail and might be missing stuff at the
+> > moment...
+> >
+> > If there is some especially urgent fix patch I need to look into
+> > can you please point it out?
+> 
+> Has this issue been solved in linux-next? Still seeing this regression
+> in 4.11-rc4.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- .../devicetree/bindings/gpio/cdns,gpio.txt         | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.txt
+Yeah I was wondering about that too. We discussed using Mika's patch
+[0] but with minor changes [1]. But we have not heard back from Mika,
+I wonder if he is travelling or something?
 
-diff --git a/Documentation/devicetree/bindings/gpio/cdns,gpio.txt b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
-new file mode 100644
-index 000000000000..09fb2c8e5c9d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
-@@ -0,0 +1,41 @@
-+Cadence GPIO controller bindings
-+
-+Required properties:
-+- compatible: should be "cdns,gpio-r1p02".
-+- reg: the register base address and size.
-+- #gpio-cells: should be 2.
-+  * first cell is the GPIO number.
-+  * second cell specifies the GPIO flags, as defined in
-+    <dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW
-+    flags are supported.
-+- gpio-controller: marks the device as a GPIO controller.
-+- clocks: should contain one entry referencing the peripheral clock driving the
-+  GPIO controller.
-+
-+Optional properties:
-+- interrupt-parent: phandle of the parent interrupt controller.
-+- interrupts: interrupt specifier for the controllers interrupt.
-+- interrupt-controller: marks the device as an interrupt controller. When
-+  defined, interrupts, interrupt-parent and #interrupt-cells are required.
-+- interrupt-cells: should be 2.
-+  * first cell is the GPIO number you want to use as an IRQ source.
-+  * second cell specifies the IRQ type, as defined in
-+    <dt-bindings/interrupt-controller/irq.h>.
-+
-+Example:
-+
-+	gpio-controller@d050000 {
-+		compatible = "cdns,gpio";
-+		reg = <0xd050000 0x10000>;
-+
-+		clocks = <&gpio_pclk>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
--- 
-2.7.4
+Would be nice to get this regression fixed.
 
+Regards,
+
+Tony
+
+[0] https://lkml.org/lkml/2017/2/28/24
+[1] https://lkml.org/lkml/2017/3/16/285
