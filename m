@@ -1,66 +1,56 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 5/7] pinctrl: aramda-37xx: Add irqchip support
-Date: Wed, 29 Mar 2017 04:18:19 +0200
-Message-ID: <CACRpkdYA9xq3TmW-=0+cxdeBcq6v3HAFf3f5E-FAvUpGZqns3g@mail.gmail.com>
-References: <cover.26288667a039bc9f8e62dec2fd6342ded4014d12.1490120798.git-series.gregory.clement@free-electrons.com>
- <0e60fccd7913b83ee53d2921ce8f297927e8b6f3.1490120798.git-series.gregory.clement@free-electrons.com>
- <CACRpkdYv6WDWM60dRMaYfEt50M8N-yLYk2TRguNi78aQtt6X9A@mail.gmail.com>
- <87vaqtadry.fsf@free-electrons.com> <CACRpkdY0DzMGiRTWeS23iCY3Vja9dnXJVaMqOnhJRpBLowfYTA@mail.gmail.com>
- <87mvc5a3hh.fsf@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Wed, 29 Mar 2017 04:30:43 +0200
+Message-ID: <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
+ <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87mvc5a3hh.fsf-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Victor Gu <xigu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Marcin Wojtas <mw-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Hua Jing <jinghua-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jacopo <jacopo@jmondi.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Mar 28, 2017 at 4:19 PM, Gregory CLEMENT
-<gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->  On mar., mars 28 2017, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+On Tue, Mar 28, 2017 at 4:38 PM,  <jacopo@jmondi.org> wrote:
 
->> What you're doing is mocking around with core irqchip semantics.
->> Is ->mask really supposed to be played around with from the outsid
->> like this?
+>> The fact that historically all the early adopters of pinctrl in device
+>> tree
+>> have these funky custom bindings is unfortunate but just something
+>> that we need to live with.
+>>
 >
-> According to the documentation mask is a "precomputed bitmask for
-> accessing the chip registers" and it is exactly the way it is used in
-> this driver.
+> To avoid any confusion, please bear with me and clarify this once and for
+> all,
+> since I'm not certain I fully got you here.
 >
-> Moreover, currently ->mask is only used by the generic irqchip framework
-> and not by the core of the irqchip subsystem. So the mask initialization
-> is not done from the oustide but at the same level as the generic
-> irqchip which is not used here.
-
-OK excellent, sorry for my ignorance. We should rather point to your driver
-as a good example of how to do this. Care to add some few lines of comment
-as to what is going on for others that need to do the same?
-
-Actually it would even be good to have something in
-Documentation/gpio/driver.txt
-
->> It has irq_create_mapping(gpiochip->irqdomain, offset); that get
->> called for every IRQ, and that will eventually call irq_of_parse_and_map()
->> if the IRQs are defined in the device tree. (IIRC)
+> Are you suggesting:
 >
-> When I followed the functions called I never find a call to
-> irq_of_parse_and_map(), the closer things related to device tree I found
-> was:
-> "virq = irq_domain_alloc_descs(-1, 1, hwirq, of_node_to_nid(of_node),
-> NULL);"
-> http://elixir.free-electrons.com/source/kernel/irq/irqdomain.c?v=4.11-rc4#L507
+> 1) Use "pins" property with the currently implemented ABI (which slightly
+> differs
+>    from the standard documented one as explained above. Not sure it is fine
+> overriding
+>    it or not)
 
-I don't know if I'm rambling or what. I'm pretty sure it gets called, maybe
-even earlier, like when the DT is parsed for the platform. We have so many
-drivers not seemingly needing this, but if your driver needs it, all others
-may need to be fixed too.
+Correction: you should be using the property "pinmux", because you
+are setting group and function at the same time.
 
-Can you put a print in irq_of_parse_and_map() and see what happens?
+See for example:
+include/dt-bindings/pinctrl/mt65xx.h
+
+And how that is used in:
+arch/arm/boot/dts/mt2701-pinfunc.h
+arch/arm/boot/dts/mt2701-evb.dts
+
+The docs are here:
+Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+
+I'm sorry that "pinmux" is not part of the generic documentation, it'd be
+great if you would like to add it with a patch.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
