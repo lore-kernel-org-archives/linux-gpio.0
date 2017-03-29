@@ -1,55 +1,76 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
- managing groups
-Date: Wed, 29 Mar 2017 09:26:04 -0700
-Message-ID: <20170329162604.GC10760@atomide.com>
-References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
- <20170102182022.2047-2-gary.bisson@boundarydevices.com>
- <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
- <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
- <CAOMZO5AXOEFTep17etLyU1avWsDasFF+NAAPcusaMRGMR3nctg@mail.gmail.com>
- <20170307175448.GU20572@atomide.com>
- <CACRpkdb1O9=xZ-sVVh1AzmW8oknQyNAW=LirtX1CEA=pkCbA1g@mail.gmail.com>
- <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH] ACPI / gpio: do not fall back to parsing _CRS when we get
+ a deferral
+Date: Wed, 29 Mar 2017 18:33:22 +0200
+Message-ID: <8eb1f4c1-61b2-1670-9ee2-086e2ea15cda@redhat.com>
+References: <20170323202138.GA11912@dtor-ws>
+ <1490713442.708.33.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:42636 "EHLO muru.com"
+Received: from mx1.redhat.com ([209.132.183.28]:62318 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752489AbdC2Q0J (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 29 Mar 2017 12:26:09 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
+        id S1752264AbdC2Qd0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 29 Mar 2017 12:33:26 -0400
+In-Reply-To: <1490713442.708.33.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Mika =?utf-8?B?UGVudHRpbMOk?= <mika.penttila@nextfour.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Fabio Estevam <festevam@gmail.com> [170329 06:36]:
-> Tony/Linus
-> 
-> On Wed, Mar 15, 2017 at 6:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> >> Still waiting to hear back from Linus on what he prefers.
-> >
-> > I am snowed under by mail and might be missing stuff at the
-> > moment...
-> >
-> > If there is some especially urgent fix patch I need to look into
-> > can you please point it out?
-> 
-> Has this issue been solved in linux-next? Still seeing this regression
-> in 4.11-rc4.
+HI,
 
-Yeah I was wondering about that too. We discussed using Mika's patch
-[0] but with minor changes [1]. But we have not heard back from Mika,
-I wonder if he is travelling or something?
+On 28-03-17 17:04, Andy Shevchenko wrote:
+> On Thu, 2017-03-23 at 13:21 -0700, Dmitry Torokhov wrote:
+>> If, while locating GPIOs by name, we get probe deferral, we should
+>> immediately report it to caller rather than trying to fall back to
+>> parsing
+>> unnamed GPIOs from _CRS block.
+>
+> +Cc: Hans.
+>
+> Hans, do have any objections on this? Would you ideally give your
+> Tested-by?
 
-Would be nice to get this regression fixed.
+Looks good to me and also does not seem to break anything on my test
+devices, so:
+
+Acked-and-Tested-by: Hans de Goede <hdegoede@redhat.com>
 
 Regards,
 
-Tony
+Hans
 
-[0] https://lkml.org/lkml/2017/2/28/24
-[1] https://lkml.org/lkml/2017/3/16/285
+
+>
+>>
+>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>> ---
+>>  drivers/gpio/gpiolib-acpi.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+>> index a3faefa44f68..d3f9f028a37b 100644
+>> --- a/drivers/gpio/gpiolib-acpi.c
+>> +++ b/drivers/gpio/gpiolib-acpi.c
+>> @@ -572,8 +572,10 @@ struct gpio_desc *acpi_find_gpio(struct device
+>> *dev,
+>>  		}
+>>
+>>  		desc = acpi_get_gpiod_by_index(adev, propname, idx,
+>> &info);
+>> -		if (!IS_ERR(desc) || (PTR_ERR(desc) ==
+>> -EPROBE_DEFER))
+>> +		if (!IS_ERR(desc))
+>>  			break;
+>> +		if (PTR_ERR(desc) == -EPROBE_DEFER)
+>> +			return ERR_CAST(desc);
+>>  	}
+>>
+>>  	/* Then from plain _CRS GPIOs */
+>> --
+>> 2.12.1.500.gab5fba24ee-goog
+>>
+>>
+>
