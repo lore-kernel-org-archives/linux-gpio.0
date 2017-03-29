@@ -1,7 +1,7 @@
-From: jacopo <jacopo@jmondi.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Wed, 29 Mar 2017 14:05:30 +0200
-Message-ID: <20170329120530.GB6247@w540>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Wed, 29 Mar 2017 12:38:21 +0000
+Message-ID: <SG2PR06MB1165276F957CE63DBE0A55268A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
  <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
  <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
@@ -12,120 +12,72 @@ References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
  <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
  <CACRpkdbT3091MzAQ_hO5Hc9=gQz-eDNCDtEnVG-3G+jJ+eO+Fw@mail.gmail.com>
  <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
+ <20170329120530.GB6247@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
+In-Reply-To: <20170329120530.GB6247@w540>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: jacopo <jacopo@jmondi.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert, Linus
-
-On Wed, Mar 29, 2017 at 01:20:39PM +0200, Geert Uytterhoeven wrote:
-> Hi Linus,
-> 
-> On Wed, Mar 29, 2017 at 12:15 PM, Linus Walleij
-> <linus.walleij@linaro.org> wrote:
-> > On Wed, Mar 29, 2017 at 9:35 AM, Geert Uytterhoeven
-> > <geert@linux-m68k.org> wrote:
-> >>> See for example:
-> >>> include/dt-bindings/pinctrl/mt65xx.h
-> >>>
-> >>> And how that is used in:
-> >>> arch/arm/boot/dts/mt2701-pinfunc.h
-> >>> arch/arm/boot/dts/mt2701-evb.dts
-> >>>
-> >>> The docs are here:
-> >>> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-> >>
-> >> All of the above pack the information for a pin into a single 32-bit integer.
-> >> Is that what you want us to use, too?
-> >> Currently we use two integers: 1) pin index, and 2) function/flags combo.
-> >
-> > I don't really know what you need, sorry. But some kind of figure, yes.
-> > I would say whatever makes sense. 16+16 bits makes sense in most
-> > combinatorial spaces does it not? If you split 32 bits  in 16 bits for
-> > pin and 16 bits for function, do you have more than 2^16 pins or 2^16
-> > functions?
-> >
-> > If you really do we may need to go for u64 but ... really? Is there
-> > a rational reason for that other than "we did it like this first"?
-> >
-> > I do not understand the notion of "flags" here. I hope that is not referring
-> 
-> Flags refers to BI_DIR, SWIO_IN, and SWIO_OUT, from
-> https://patchwork.kernel.org/patch/9643047/
-> 
-> 32-bit should be enough to cover pins, function, and flags.
-> 
-
-Geert already replied, but to avoid any confusion I'll try to remove
-from driver the use of "pin config" when referring to this three
-flags, which are just additional informations the pin controller needs
-to perform pin muxing properly. They're not related the standard pin
-config properties (pull-up/down, bias etc.. actually our hardware does
-not even support these natively)
-
-> > to pin config, because I expect that to use the standard pin config
-> > bindings outside of the pinmux value which should just define the
-> > pin+function combo:
-> >
-> > node {
-> >     pinmux = <PIN_NUMBER_PINMUX>;
-> >     GENERIC_PINCONFIG;
-> > };
-> >
-> > Example from Mediatek:
-> >
-> > i2c1_pins_a: i2c1@0 {
-> >     pins {
-> >         pinmux = <MT8135_PIN_195_SDA1__FUNC_SDA1>,
-> >                         <MT8135_PIN_196_SCL1__FUNC_SCL1>;
-> 
-> If we follow this example, then we can list all combinations in
-> include/dt-bindings/pinctrl/r7s72100-pinctrl.h, instead of creating the value
-> by combining the bits using a macro where we need it in the DTS.
-> 
-> It's gonna be a long list, though...
-> 
-
-I'm strongly in favour of something like
-    pinmux = <PIN(1, 4) | FUNC# | FLAGS>, .... ;
-
-opposed to
-    pinmux = <PIN1_4_FUNC#_FLAGS>, ... ;
-
-Not only because it will save use from having a loong list(*) of macros that has
-to be kept up to date when/if new RZ hardware will arrive, but also
-because of readability and simplicity for down-stream and BSP users.
-Speaking of which, I would like to know what does Chris think of this.
-
-Is there any strong preference between the two for you Linus?
-
-Thanks
-   j
-
-(*) 12 ports, 16 pins, 8 functions, 3 flags: you can do the math
-yourselves and see this is going to be hard to maintain.
-
-> >         bias-pull-up = <55>;
-> >     };
-> > };
-> >
-> > So this allows for a combine pin+function number but pull ups,
-> > bias etc are not baked into the thing, they have to be added on
-> > separately with the generic bindings, which is nice and very readable.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+QWRkaW5nIG15IDIgY2VudHMgaGVyZToNCg0KT24gV2VkbmVzZGF5LCBNYXJjaCAyOSwgMjAxNywg
+amFjb3BvIHdyb3RlOg0KPiA+ID4gSWYgeW91IHJlYWxseSBkbyB3ZSBtYXkgbmVlZCB0byBnbyBm
+b3IgdTY0IGJ1dCAuLi4gcmVhbGx5PyBJcyB0aGVyZQ0KPiA+ID4gYSByYXRpb25hbCByZWFzb24g
+Zm9yIHRoYXQgb3RoZXIgdGhhbiAid2UgZGlkIGl0IGxpa2UgdGhpcyBmaXJzdCI/DQo+ID4gPg0K
+PiA+ID4gSSBkbyBub3QgdW5kZXJzdGFuZCB0aGUgbm90aW9uIG9mICJmbGFncyIgaGVyZS4gSSBo
+b3BlIHRoYXQgaXMgbm90DQo+ID4gPiByZWZlcnJpbmcNCj4gPg0KPiA+IEZsYWdzIHJlZmVycyB0
+byBCSV9ESVIsIFNXSU9fSU4sIGFuZCBTV0lPX09VVCwgZnJvbQ0KPiA+IGh0dHBzOi8vcGF0Y2h3
+b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTY0MzA0Ny8NCj4gPg0KPiA+IDMyLWJpdCBzaG91bGQgYmUg
+ZW5vdWdoIHRvIGNvdmVyIHBpbnMsIGZ1bmN0aW9uLCBhbmQgZmxhZ3MuDQo+ID4NCj4gDQo+IEdl
+ZXJ0IGFscmVhZHkgcmVwbGllZCwgYnV0IHRvIGF2b2lkIGFueSBjb25mdXNpb24gSSdsbCB0cnkg
+dG8gcmVtb3ZlIGZyb20NCj4gZHJpdmVyIHRoZSB1c2Ugb2YgInBpbiBjb25maWciIHdoZW4gcmVm
+ZXJyaW5nIHRvIHRoaXMgdGhyZWUgZmxhZ3MsIHdoaWNoDQo+IGFyZSBqdXN0IGFkZGl0aW9uYWwg
+aW5mb3JtYXRpb25zIHRoZSBwaW4gY29udHJvbGxlciBuZWVkcyB0byBwZXJmb3JtIHBpbg0KPiBt
+dXhpbmcgcHJvcGVybHkuIFRoZXkncmUgbm90IHJlbGF0ZWQgdGhlIHN0YW5kYXJkIHBpbiBjb25m
+aWcgcHJvcGVydGllcw0KPiAocHVsbC11cC9kb3duLCBiaWFzIGV0Yy4uIGFjdHVhbGx5IG91ciBo
+YXJkd2FyZSBkb2VzIG5vdCBldmVuIHN1cHBvcnQNCj4gdGhlc2UgbmF0aXZlbHkpDQo+IA0KPiA+
+ID4gdG8gcGluIGNvbmZpZywgYmVjYXVzZSBJIGV4cGVjdCB0aGF0IHRvIHVzZSB0aGUgc3RhbmRh
+cmQgcGluIGNvbmZpZw0KPiA+ID4gYmluZGluZ3Mgb3V0c2lkZSBvZiB0aGUgcGlubXV4IHZhbHVl
+IHdoaWNoIHNob3VsZCBqdXN0IGRlZmluZSB0aGUNCj4gPiA+IHBpbitmdW5jdGlvbiBjb21ibzoN
+Cj4gPiA+DQo+ID4gPiBub2RlIHsNCj4gPiA+ICAgICBwaW5tdXggPSA8UElOX05VTUJFUl9QSU5N
+VVg+Ow0KPiA+ID4gICAgIEdFTkVSSUNfUElOQ09ORklHOw0KPiA+ID4gfTsNCj4gPiA+DQo+ID4g
+PiBFeGFtcGxlIGZyb20gTWVkaWF0ZWs6DQo+ID4gPg0KPiA+ID4gaTJjMV9waW5zX2E6IGkyYzFA
+MCB7DQo+ID4gPiAgICAgcGlucyB7DQo+ID4gPiAgICAgICAgIHBpbm11eCA9IDxNVDgxMzVfUElO
+XzE5NV9TREExX19GVU5DX1NEQTE+LA0KPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgPE1U
+ODEzNV9QSU5fMTk2X1NDTDFfX0ZVTkNfU0NMMT47DQo+ID4NCj4gPiBJZiB3ZSBmb2xsb3cgdGhp
+cyBleGFtcGxlLCB0aGVuIHdlIGNhbiBsaXN0IGFsbCBjb21iaW5hdGlvbnMgaW4NCj4gPiBpbmNs
+dWRlL2R0LWJpbmRpbmdzL3BpbmN0cmwvcjdzNzIxMDAtcGluY3RybC5oLCBpbnN0ZWFkIG9mIGNy
+ZWF0aW5nDQo+ID4gdGhlIHZhbHVlIGJ5IGNvbWJpbmluZyB0aGUgYml0cyB1c2luZyBhIG1hY3Jv
+IHdoZXJlIHdlIG5lZWQgaXQgaW4gdGhlDQo+IERUUy4NCj4gPg0KPiA+IEl0J3MgZ29ubmEgYmUg
+YSBsb25nIGxpc3QsIHRob3VnaC4uLg0KPiA+DQo+IA0KPiBJJ20gc3Ryb25nbHkgaW4gZmF2b3Vy
+IG9mIHNvbWV0aGluZyBsaWtlDQo+ICAgICBwaW5tdXggPSA8UElOKDEsIDQpIHwgRlVOQyMgfCBG
+TEFHUz4sIC4uLi4gOw0KPiANCj4gb3Bwb3NlZCB0bw0KPiAgICAgcGlubXV4ID0gPFBJTjFfNF9G
+VU5DI19GTEFHUz4sIC4uLiA7DQoNCg0KSSBhZ3JlZS4gSSBsaWtlICI8UElOKDEsIDQpIHwgRlVO
+QyMgfCBGTEFHUz4iLg0KDQoNCg0KPiBOb3Qgb25seSBiZWNhdXNlIGl0IHdpbGwgc2F2ZSB1c2Ug
+ZnJvbSBoYXZpbmcgYSBsb29uZyBsaXN0KCopIG9mIG1hY3Jvcw0KPiB0aGF0IGhhcyB0byBiZSBr
+ZXB0IHVwIHRvIGRhdGUgd2hlbi9pZiBuZXcgUlogaGFyZHdhcmUgd2lsbCBhcnJpdmUsIGJ1dA0K
+PiBhbHNvIGJlY2F1c2Ugb2YgcmVhZGFiaWxpdHkgYW5kIHNpbXBsaWNpdHkgZm9yIGRvd24tc3Ry
+ZWFtIGFuZCBCU1AgdXNlcnMuDQo+IFNwZWFraW5nIG9mIHdoaWNoLCBJIHdvdWxkIGxpa2UgdG8g
+a25vdyB3aGF0IGRvZXMgQ2hyaXMgdGhpbmsgb2YgdGhpcy4NCg0KVGhlIGxpc3Qgb2YgbWFjcm9z
+IHdvdWxkIGJlIHZlcnkgbG9uZywgZXNwZWNpYWxseSBhZ2FpbnN0IHRoZSBkaWZmZXJlbnQNCnBh
+Y2thZ2luZyB2ZXJzaW9uIG9mIHRoZSBSWi9BMSBzZXJpZXMuIDExIHBvcnRzLCAxNi1waW5zIGZv
+ciBlYWNoIHBvcnQsIDggZGlmZmVyZW50DQpmdW5jdGlvbiBvcHRpb25zIGZvciBlYWNoIHBpbi4u
+Li4yIGRpZmZlcmVudCBwYWNrYWdlL3BpbiB2YXJpYXRpb25zLg0KDQpBbmQgYXQgdGhlIGVuZCBv
+ZiB0aGUgZGF5Li4uLnRoZXJlIGlzIG5vIGJlbmVmaXQgZm9yIHRoZSB1c2VyIG92ZXIganVzdCB1
+c2luZw0KYSBtYWNyby4NCg0KDQpBIGxpdHRsZSBhYm91dCAidGhpcyBjb250cm9sbGVyIiBmb3Ig
+dGhlIFJaL0ExOiBJbiBteSBvcGluaW9uIGl0J3MgYSBvbmUtc2hvdCB1c2FnZS4NCkkgZG9uJ3Qg
+Zm9yZXNlZSBmdXR1cmUgUlovQSBTb0NzIHVzaW5nIHRoaXMgZXhhY3QgcGluIGNvbnRyb2xsZXIu
+DQpUaGUgcmVhc29uIGZvciB0aGUgIkZMQUdTIiBpcyB0byB3b3JrIGFyb3VuZCBhIHF1aXJreSBo
+YXJkd2FyZSBkZXNpZ24gKGluIG15IG9waW5pb24pLg0KDQpIb3dldmVyLCBmdXR1cmUgUlovQSBT
+b0NzIHdpbGwgdXNlIGEgJ3NpbWlsYXInIHR5cGUgY29udHJvbGxlciB3aGVyZSBlYWNoIHBpbiBo
+YXMgOCBmdW5jdGlvbg0Kb3B0aW9ucyAoYnV0IHRoZSBGTEFHcyB3b24ndCBiZSBuZWVkZWQgYW55
+bW9yZS4uLmFzIGZhciBhcyBJIGNhbiBzZWUuLi4pLg0KDQpTbyBJIGZvcmVzZWUgdGhlIERUIGlu
+dGVyZmFjZSBzdGF5aW5nIG1vcmUgb3IgbGVzcyB0aGUgc2FtZSwgYnV0IHRoZSB1bmRlcmx5aW5n
+IHJlZ2lzdGVyDQpzZXR1cCBpbiB0aGUgZHJpdmVyIFdpbGwgY2hhbmdlIChiZWNvbWUgbW9yZSBz
+aW1wbGUpLg0KDQoNCk5vdy4uLmlmIHdlIGNhbiBvbmx5IGNvbnZpbmNlIHRoZSBSLUNhciBndXlz
+IHRvIG1vdmUgdG8gYSBtb3JlIHNpbXBsZSBwaW4tbXV4IGNvbnRyb2xsZXIuLi4NCg0KDQpDaHJp
+cw0KDQo=
