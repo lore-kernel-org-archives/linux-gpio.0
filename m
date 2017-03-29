@@ -1,62 +1,19 @@
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 1/1] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
-Date: Wed, 29 Mar 2017 21:26:09 +0300
-Message-ID: <20170329182612.448637615@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:33744 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932215AbdC2S0S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 14:26:18 -0400
-Received: by mail-lf0-f42.google.com with SMTP id h125so14253359lfe.0
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2017 11:26:16 -0700 (PDT)
-Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-add-missing-HSCIF1-pinmux-data.patch
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 0/1] Add missing signal data to R8A7791 PFC driver
+Date: Wed, 29 Mar 2017 21:35:44 +0300
+Message-ID: <20170329183544.724690205@cogentembedded.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, stable@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-The R8A7791 PFC driver  was apparently based on the preliminary revisions
-of  the  user's manual, which  omitted the HSCIF1 group E signals in  the
-IPSR4 register description. This would cause HSCIF1's probe  to fail with
-the messages like below:
+Hello!
 
-sh-pfc e6060000.pfc: cannot locate data/mark enum_id for mark 1989
-sh-sci e62c8000.serial: Error applying setting, reverse things back
-sh-sci: probe of e62c8000.serial failed with error -22
+   Here's a set of 2 patches against the 'fixes' branch of Linus Walleij's
+'linux-pinctrl.git'.  The patches add support for (1) the HSCIF1 configured to
+use signal group E (which is currently broken) and for (2) the DVC_MUTE signal.
 
-Add the neceassary PINMUX_IPSR_MSEL() invocations for the HSCK1_E,
-HCTS1#_E, and HRTS1#_E signals...
+[1/2] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
+[2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
 
-Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC: stable@vger.kernel.org
-
----
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1010,14 +1010,17 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP4_12_10, SCL2, SEL_IIC2_0),
- 	PINMUX_IPSR_MSEL(IP4_12_10, GPS_CLK_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_12_10, GLO_Q0_D, SEL_GPS_3),
-+	PINMUX_IPSR_MSEL(IP4_12_10, HSCK1_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_GPSR(IP4_15_13, SSI_WS2),
- 	PINMUX_IPSR_MSEL(IP4_15_13, SDA2, SEL_IIC2_0),
- 	PINMUX_IPSR_MSEL(IP4_15_13, GPS_SIGN_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_15_13, RX2_E, SEL_SCIF2_4),
- 	PINMUX_IPSR_MSEL(IP4_15_13, GLO_Q1_D, SEL_GPS_3),
-+	PINMUX_IPSR_MSEL(IP4_15_13, HCTS1_N_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_GPSR(IP4_18_16, SSI_SDATA2),
- 	PINMUX_IPSR_MSEL(IP4_18_16, GPS_MAG_B, SEL_GPS_1),
- 	PINMUX_IPSR_MSEL(IP4_18_16, TX2_E, SEL_SCIF2_4),
-+	PINMUX_IPSR_MSEL(IP4_18_16, HRTS1_N_E, SEL_HSCIF1_4),
- 	PINMUX_IPSR_GPSR(IP4_19, SSI_SCK34),
- 	PINMUX_IPSR_GPSR(IP4_20, SSI_WS34),
- 	PINMUX_IPSR_GPSR(IP4_21, SSI_SDATA3),
-
+MBR, Sergei
