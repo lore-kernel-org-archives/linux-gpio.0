@@ -1,82 +1,64 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Wed, 29 Mar 2017 16:19:37 +0300
-Message-ID: <20170329131937.GW2957@lahna.fi.intel.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl header
+Date: Wed, 29 Mar 2017 15:22:23 +0200
+Message-ID: <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org> <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:30248 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755825AbdC2NTm (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 29 Mar 2017 09:19:42 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1490368934-12494-4-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 02:58:19PM +0200, Linus Walleij wrote:
-> On Wed, Mar 29, 2017 at 11:59 AM, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> 
-> > However, it seems some CYAN Chromebooks, including Acer Chromebook
-> > hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
-> > Since the numbering is different now, the IRQ meant for keyboard does
-> > not match the Linux virtual IRQ number anymore making the keyboard
-> > non-functional.
-> 
-> Well ain't that great. They made the totally unstable Linux IRQ number
-> space into an ABI.
-> 
-> I wonder what the irqchip people think about that. I think Grant warned us
-> that this could happen.
-> 
-> > Work this around by adding special quirk just for these machines where
-> > we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
-> > based machines will not be affected by the change.
-> 
-> Quirking seems right. But:
-> 
-> > +/*
-> > + * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
-> > + * tables. Since we leave GPIOs that are not capable of generating
-> > + * interrupts out of the irqdomain the numbering will be different and
-> > + * cause devices using the hardcoded IRQ numbers fail. In order not to
-> > + * break such machines we will only mask pins from irqdomain if the machine
-> > + * is not listed below.
-> > + */
-> > +static const struct dmi_system_id chv_no_valid_mask[] = {
-> > +       {
-> > +               /* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
-> > +               .ident = "Acer Chromebook (CYAN)",
-> > +               .matches = {
-> > +                       DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
-> > +                       DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
-> > +               },
-> > +       }
-> > +};
-> 
-> We match but...
-> 
-> >         const struct chv_gpio_pinrange *range;
-> >         struct gpio_chip *chip = &pctrl->chip;
-> > +       bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
-> >         int ret, i, offset;
-> >
-> >         *chip = chv_gpio_chip;
-> > @@ -1536,7 +1557,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
-> >         chip->label = dev_name(pctrl->dev);
-> >         chip->parent = pctrl->dev;
-> >         chip->base = -1;
-> > -       chip->irq_need_valid_mask = true;
-> > +       chip->irq_need_valid_mask = need_valid_mask;
-> 
-> Isn't the right solution to translate this back to the offset from the "Linux
-> IRQ" and use that offset? This quirk seems pretty violent.
+On Fri, Mar 24, 2017 at 4:22 PM, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
 
-So based on DMI strings instead of doing this, just correct the offset
-and be done with it? Works for me.
+> Add dt-bindings for Renesas r7s72100 pin controller header file.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+
+> +/*
+> + * Pin is bi-directional.
+> + * An alternate function that needs both input/output functionalities shall
+> + * be configured as bidirectional.
+> + * Eg. SDA/SCL pins of an I2c interface.
+> + */
+> +#define BI_DIR                 (1 << 3)
+
+Any specific reason why this should not simply be added to
+include/linux/pinctrl/pinconf-generic.h
+as PIN_CONFIG_BIDIRECTIONAL and parsed in
+drivers/pinctrl/pinconf-generic.c
+from the (new) DT property "bidirectional" simply?
+
+> +/*
+> + * Flags used to ask software to drive the pin I/O direction overriding the
+> + * alternate function configuration.
+> + * Some alternate functions require software to force I/O direction of a pin,
+> + * overriding the designated one.
+> + * Refer to the HW manual to know when this flag shall be used.
+> + */
+> +#define SWIO_IN                        (1 << 4)
+> +#define SWIO_OUT               (1 << 5)
+
+What is wrong in doing this with generic pin config using
+PIN_CONFIG_INPUT_ENABLE and PIN_CONFIG_OUTPUT
+(ignoring the argument)?
+
+In the device tree use input-enable and add a new output-enable
+(with unspecified value) with proper description and DT bindings?
+
+And if you think these have no general applicability, by the end
+of the day they are *still* pin config, not magic flags we can choose to
+toss in with the muxing, so you can do what the Qualcomm driver
+does and add custom pin configurations extending the generic
+pin config, see drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+qcom,pull-up-strength etc.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
