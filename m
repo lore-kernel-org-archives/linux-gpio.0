@@ -1,76 +1,102 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Wed, 29 Mar 2017 09:35:17 +0200
-Message-ID: <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
- <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
- <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org> <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: jacopo <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook keyboard work again
+Date: Wed, 29 Mar 2017 12:59:32 +0300
+Message-ID: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:31520 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754941AbdC2KAl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 29 Mar 2017 06:00:41 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
 
-Hi Linus,
+After commit 47c950d10202 ("pinctrl: cherryview: Do not add all
+southwest and north GPIOs to IRQ domain") the driver does not add all
+GPIOs to the irqdomain. The reason for that is that those GPIOs cannot
+generate IRQs at all, only GPEs (General Purpose Events). This causes
+Linux virtual IRQ numbering to change.
 
-On Wed, Mar 29, 2017 at 4:30 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Mar 28, 2017 at 4:38 PM,  <jacopo@jmondi.org> wrote:
->>> The fact that historically all the early adopters of pinctrl in device
->>> tree
->>> have these funky custom bindings is unfortunate but just something
->>> that we need to live with.
->>
->> To avoid any confusion, please bear with me and clarify this once and for
->> all,
->> since I'm not certain I fully got you here.
->>
->> Are you suggesting:
->>
->> 1) Use "pins" property with the currently implemented ABI (which slightly
->> differs
->>    from the standard documented one as explained above. Not sure it is fine
->> overriding
->>    it or not)
->
-> Correction: you should be using the property "pinmux", because you
-> are setting group and function at the same time.
+However, it seems some CYAN Chromebooks, including Acer Chromebook
+hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
+Since the numbering is different now, the IRQ meant for keyboard does
+not match the Linux virtual IRQ number anymore making the keyboard
+non-functional.
 
-OK.
+Work this around by adding special quirk just for these machines where
+we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
+based machines will not be affected by the change.
 
-> See for example:
-> include/dt-bindings/pinctrl/mt65xx.h
->
-> And how that is used in:
-> arch/arm/boot/dts/mt2701-pinfunc.h
-> arch/arm/boot/dts/mt2701-evb.dts
->
-> The docs are here:
-> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
+Reported-by: Adam S Levy <theadamlevy@gmail.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-All of the above pack the information for a pin into a single 32-bit integer.
-Is that what you want us to use, too?
-Currently we use two integers: 1) pin index, and 2) function/flags combo.
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index f80134e3e0b6..bbe9cdf36ca4 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -13,6 +13,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/dmi.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -1524,10 +1525,30 @@ static void chv_gpio_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++/*
++ * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
++ * tables. Since we leave GPIOs that are not capable of generating
++ * interrupts out of the irqdomain the numbering will be different and
++ * cause devices using the hardcoded IRQ numbers fail. In order not to
++ * break such machines we will only mask pins from irqdomain if the machine
++ * is not listed below.
++ */
++static const struct dmi_system_id chv_no_valid_mask[] = {
++	{
++		/* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
++		.ident = "Acer Chromebook (CYAN)",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
++		},
++	}
++};
++
+ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ {
+ 	const struct chv_gpio_pinrange *range;
+ 	struct gpio_chip *chip = &pctrl->chip;
++	bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
+ 	int ret, i, offset;
+ 
+ 	*chip = chv_gpio_chip;
+@@ -1536,7 +1557,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 	chip->label = dev_name(pctrl->dev);
+ 	chip->parent = pctrl->dev;
+ 	chip->base = -1;
+-	chip->irq_need_valid_mask = true;
++	chip->irq_need_valid_mask = need_valid_mask;
+ 
+ 	ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+ 	if (ret) {
+@@ -1567,7 +1588,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		intsel &= CHV_PADCTRL0_INTSEL_MASK;
+ 		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
+ 
+-		if (intsel >= pctrl->community->nirqs)
++		if (need_valid_mask && intsel >= pctrl->community->nirqs)
+ 			clear_bit(i, chip->irq_valid_mask);
+ 	}
+ 
+-- 
+2.11.0
 
-> I'm sorry that "pinmux" is not part of the generic documentation, it'd be
-> great if you would like to add it with a patch.
-
-That would mean pinmux could be an array of single values, or tuples.
-Is that OK?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
