@@ -1,56 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Wed, 29 Mar 2017 04:30:43 +0200
-Message-ID: <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
-References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
- <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
- <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v1 4/8] gpio: acpi: Even more tighten up ACPI GPIO lookups
+Date: Wed, 29 Mar 2017 00:04:47 -0700
+Message-ID: <20170329070447.GA38261@dtor-ws>
+References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
+ <20170323194618.26548-5-andriy.shevchenko@linux.intel.com>
+ <20170323201241.GB2502@dtor-ws>
+ <1490718684.708.37.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jacopo <jacopo@jmondi.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34313 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753391AbdC2HEv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 03:04:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1490718684.708.37.camel@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org, Irina Tirdea <irina.tirdea@intel.com>, Bastien Nocera <hadess@hadess.net>
 
-On Tue, Mar 28, 2017 at 4:38 PM,  <jacopo@jmondi.org> wrote:
+On Tue, Mar 28, 2017 at 07:31:24PM +0300, Andy Shevchenko wrote:
+> On Thu, 2017-03-23 at 13:12 -0700, Dmitry Torokhov wrote:
+> > On Thu, Mar 23, 2017 at 09:46:14PM +0200, Andy Shevchenko wrote:
+> > > The commit 10cf4899f8af ("gpiolib: tighten up ACPI legacy gpio
+> > > lookups")
+> > > prevents to getting same resource twice if the driver asks twice
+> > > using same
+> > 
+> > s/same/different/
+> > 
+> > > connection ID.
+> 
+> Oh, yeah, though it didn't fix a potential issue described below.
+> 
+> > > But the whole idea of fallback might bring some problems. Imagine
+> > > the case when
+> > > we have two versions of BIOS/hardware where in one _DSD is
+> > > introduced along
+> > > with GPIO resources, but the other one uses just plain GPIO resource
+> > > for
+> > > another purpose
+> > > 
+> > > Case 1:
+> > > 
+> > >     Device (DEVX)
+> > >     {
+> > >         ...
+> > >         Name (_CRS, ResourceTemplate ()
+> > >         {
+> > >             GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionInputOnly,
+> > >                     "\\_SB.GPO0", 0, ResourceConsumer) {15}
+> > >         })
+> > >         Name (_DSD, Package ()
+> > >         {
+> > >             ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+> > >             Package ()
+> > >             {
+> > >                 Package () {"some-gpios", Package() {^DEVX, 0, 0, 0
+> > > }},
+> > >             }
+> > >         })
+> > >     }
+> > > 
+> > > Case 2:
+> > > 
+> > >     Device (DEVX)
+> > >     {
+> > >         ...
+> > >         Name (_CRS, ResourceTemplate ()
+> > >         {
+> > >             GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionInputOnly,
+> > >                     "\\_SB.GPO0", 0, ResourceConsumer) {27}
+> > >         })
+> > >     }
+> > > 
+> > > To prevent the possible misconfiguration tighten up even more ACPI
+> > > GPIO lookups
+> > > for case without connection ID provided.
+> 
+> > I wonder if this will break Goodix. Irina, Bastien?
+> 
+> It would be helpful if anyone can test it.
+> 
+> Btw, which particular driver do you have in mind that might be broken
+> after such change? Ah, Goodix is a vendor of touchscreens, right?
 
->> The fact that historically all the early adopters of pinctrl in device
->> tree
->> have these funky custom bindings is unfortunate but just something
->> that we need to live with.
->>
->
-> To avoid any confusion, please bear with me and clarify this once and for
-> all,
-> since I'm not certain I fully got you here.
->
-> Are you suggesting:
->
-> 1) Use "pins" property with the currently implemented ABI (which slightly
-> differs
->    from the standard documented one as explained above. Not sure it is fine
-> overriding
->    it or not)
+Yes, and it uses named GPIOs.
 
-Correction: you should be using the property "pinmux", because you
-are setting group and function at the same time.
-
-See for example:
-include/dt-bindings/pinctrl/mt65xx.h
-
-And how that is used in:
-arch/arm/boot/dts/mt2701-pinfunc.h
-arch/arm/boot/dts/mt2701-evb.dts
-
-The docs are here:
-Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-
-I'm sorry that "pinmux" is not part of the generic documentation, it'd be
-great if you would like to add it with a patch.
-
-Yours,
-Linus Walleij
+-- 
+Dmitry
