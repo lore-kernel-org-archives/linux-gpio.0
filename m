@@ -1,81 +1,49 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Wed, 29 Mar 2017 14:58:19 +0200
-Message-ID: <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Wed, 29 Mar 2017 15:04:48 +0200
+Message-ID: <CACRpkdZTH8P53-aa6rJy=pu_btGvn7gZJLvJO2ynaEBdMZvVWA@mail.gmail.com>
+References: <1490026491-21742-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490026491-21742-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWT6vJNmMhYzMEqYRbuT=W=ZuND-WfG812LfH0r0AzM_g@mail.gmail.com>
+ <20170323160204.GL30223@w540> <CACRpkdYmitsPvv_1bsb-EKkhcWqaKNsLBfxZgf8cjVvcqCpYXA@mail.gmail.com>
+ <b9eaac8a63dced229bb152ba412e8ec1@jmondi.org> <CACRpkdbZS72xkHaM5P-Zw==A_V_BxeszLPmc0_Zy0-RRjvAbNA@mail.gmail.com>
+ <CAMuHMdXkN91uBTKhz_bveFxOgcyNe0dAbtDEVfHNKdDWNaY3jQ@mail.gmail.com>
+ <CACRpkdbT3091MzAQ_hO5Hc9=gQz-eDNCDtEnVG-3G+jJ+eO+Fw@mail.gmail.com> <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:38615 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932353AbdC2M6W (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 08:58:22 -0400
-Received: by mail-it0-f52.google.com with SMTP id y18so55566081itc.1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2017 05:58:21 -0700 (PDT)
-In-Reply-To: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdX0OdZXYDOZvFutjfBFVd65C567_G+++kHygre4KK+jLg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: jacopo <jacopo@jmondi.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 11:59 AM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Wed, Mar 29, 2017 at 1:20 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-> However, it seems some CYAN Chromebooks, including Acer Chromebook
-> hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
-> Since the numbering is different now, the IRQ meant for keyboard does
-> not match the Linux virtual IRQ number anymore making the keyboard
-> non-functional.
-
-Well ain't that great. They made the totally unstable Linux IRQ number
-space into an ABI.
-
-I wonder what the irqchip people think about that. I think Grant warned us
-that this could happen.
-
-> Work this around by adding special quirk just for these machines where
-> we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
-> based machines will not be affected by the change.
-
-Quirking seems right. But:
-
-> +/*
-> + * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
-> + * tables. Since we leave GPIOs that are not capable of generating
-> + * interrupts out of the irqdomain the numbering will be different and
-> + * cause devices using the hardcoded IRQ numbers fail. In order not to
-> + * break such machines we will only mask pins from irqdomain if the machine
-> + * is not listed below.
-> + */
-> +static const struct dmi_system_id chv_no_valid_mask[] = {
-> +       {
-> +               /* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
-> +               .ident = "Acer Chromebook (CYAN)",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
-> +                       DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
-> +               },
-> +       }
-> +};
-
-We match but...
-
->         const struct chv_gpio_pinrange *range;
->         struct gpio_chip *chip = &pctrl->chip;
-> +       bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
->         int ret, i, offset;
+>> I do not understand the notion of "flags" here. I hope that is not referring
 >
->         *chip = chv_gpio_chip;
-> @@ -1536,7 +1557,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
->         chip->label = dev_name(pctrl->dev);
->         chip->parent = pctrl->dev;
->         chip->base = -1;
-> -       chip->irq_need_valid_mask = true;
-> +       chip->irq_need_valid_mask = need_valid_mask;
+> Flags refers to BI_DIR, SWIO_IN, and SWIO_OUT, from
+> https://patchwork.kernel.org/patch/9643047/
 
-Isn't the right solution to translate this back to the offset from the "Linux
-IRQ" and use that offset? This quirk seems pretty violent.
+Aha I will go in and review that closer because it doesn't seem right.
+
+Sorry for missing it.
+
+>> i2c1_pins_a: i2c1@0 {
+>>     pins {
+>>         pinmux = <MT8135_PIN_195_SDA1__FUNC_SDA1>,
+>>                         <MT8135_PIN_196_SCL1__FUNC_SCL1>;
+>
+> If we follow this example, then we can list all combinations in
+> include/dt-bindings/pinctrl/r7s72100-pinctrl.h, instead of creating the value
+> by combining the bits using a macro where we need it in the DTS.
+>
+> It's gonna be a long list, though...
+
+Size is not the issue, readability is the issue. I don't see why you would
+need to list "all combinations" since the trees go through the C preprocessor
+so you can use macros and bit | OR to build them?
 
 Yours,
 Linus Walleij
