@@ -1,89 +1,26 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] ACPI / gpio: do not fall back to parsing _CRS when we
- get a deferral
-Date: Wed, 29 Mar 2017 19:42:26 +0300
-Message-ID: <1490805746.708.51.camel@linux.intel.com>
-References: <20170323202138.GA11912@dtor-ws>
-         <1490713442.708.33.camel@linux.intel.com>
-         <8eb1f4c1-61b2-1670-9ee2-086e2ea15cda@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/1] Add missing signal data to R8A7791 PFC driver
+Date: Wed, 29 Mar 2017 21:26:08 +0300
+Message-ID: <20170329182608.174116815@cogentembedded.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:43939 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752805AbdC2QrG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 29 Mar 2017 12:47:06 -0400
-In-Reply-To: <8eb1f4c1-61b2-1670-9ee2-086e2ea15cda@redhat.com>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34067 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbdC2S0O (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 29 Mar 2017 14:26:14 -0400
+Received: by mail-lf0-f52.google.com with SMTP id z15so14299271lfd.1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Mar 2017 11:26:12 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Wed, 2017-03-29 at 18:33 +0200, Hans de Goede wrote:
-> HI,
-> 
-> On 28-03-17 17:04, Andy Shevchenko wrote:
-> > On Thu, 2017-03-23 at 13:21 -0700, Dmitry Torokhov wrote:
-> > > If, while locating GPIOs by name, we get probe deferral, we should
-> > > immediately report it to caller rather than trying to fall back to
-> > > parsing
-> > > unnamed GPIOs from _CRS block.
-> > 
-> > +Cc: Hans.
-> > 
-> > Hans, do have any objections on this? Would you ideally give your
-> > Tested-by?
-> 
-> Looks good to me and also does not seem to break anything on my test
-> devices, so:
-> 
-> Acked-and-Tested-by: Hans de Goede <hdegoede@redhat.com>
+Hello!
 
-Thanks!
+   Here's a set of 2 patches against the 'fixes' branch of Linus Walleij's
+'linux-pinctrl.git'.  The patches add support for (1) the HSCIF1 configured to
+use signal group E (which is currently broken) and for (2) the DVC_MUTE signal.
 
-Linus, I'm fully satisfied :-)
+[1/2] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
+[2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
 
-> 
-> Regards,
-> 
-> Hans
-> 
-> 
-> > 
-> > > 
-> > > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > ---
-> > >  drivers/gpio/gpiolib-acpi.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-
-> > > acpi.c
-> > > index a3faefa44f68..d3f9f028a37b 100644
-> > > --- a/drivers/gpio/gpiolib-acpi.c
-> > > +++ b/drivers/gpio/gpiolib-acpi.c
-> > > @@ -572,8 +572,10 @@ struct gpio_desc *acpi_find_gpio(struct
-> > > device
-> > > *dev,
-> > >  		}
-> > > 
-> > >  		desc = acpi_get_gpiod_by_index(adev, propname,
-> > > idx,
-> > > &info);
-> > > -		if (!IS_ERR(desc) || (PTR_ERR(desc) ==
-> > > -EPROBE_DEFER))
-> > > +		if (!IS_ERR(desc))
-> > >  			break;
-> > > +		if (PTR_ERR(desc) == -EPROBE_DEFER)
-> > > +			return ERR_CAST(desc);
-> > >  	}
-> > > 
-> > >  	/* Then from plain _CRS GPIOs */
-> > > --
-> > > 2.12.1.500.gab5fba24ee-goog
-> > > 
-> > > 
+MBR, Sergei
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
