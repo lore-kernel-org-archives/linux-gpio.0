@@ -1,50 +1,94 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
- managing groups
-Date: Thu, 30 Mar 2017 08:05:02 -0700
-Message-ID: <20170330150501.GE10760@atomide.com>
-References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
- <20170102182022.2047-2-gary.bisson@boundarydevices.com>
- <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
- <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
- <CAOMZO5AXOEFTep17etLyU1avWsDasFF+NAAPcusaMRGMR3nctg@mail.gmail.com>
- <20170307175448.GU20572@atomide.com>
- <CACRpkdb1O9=xZ-sVVh1AzmW8oknQyNAW=LirtX1CEA=pkCbA1g@mail.gmail.com>
- <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
- <CACRpkdZ_a7YqkoM+oFettCq2h8RRnW3GSeOBbVkRACR6fcxnrg@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v4 2/4] mvebu: xp: Add PWM properties to .dtsi files
+Date: Thu, 30 Mar 2017 17:45:08 +0200
+Message-ID: <87wpb693az.fsf@free-electrons.com>
+References: <20170327194301.1104-1-ralph.sennhauser@gmail.com>
+        <20170327194301.1104-3-ralph.sennhauser@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ_a7YqkoM+oFettCq2h8RRnW3GSeOBbVkRACR6fcxnrg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Fabio Estevam <festevam@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170327194301.1104-3-ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> (Ralph
+        Sennhauser's message of "Mon, 27 Mar 2017 21:42:58 +0200")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Imre Kaloz <kaloz-p3rKhJxN3npAfugRpC6u6w@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [170330 02:08]:
-> On Wed, Mar 29, 2017 at 3:33 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> > Tony/Linus
-> >
-> > On Wed, Mar 15, 2017 at 6:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> >>> Still waiting to hear back from Linus on what he prefers.
-> >>
-> >> I am snowed under by mail and might be missing stuff at the
-> >> moment...
-> >>
-> >> If there is some especially urgent fix patch I need to look into
-> >> can you please point it out?
-> >
-> > Has this issue been solved in linux-next? Still seeing this regression
-> > in 4.11-rc4.
-> 
-> I'm a bit relying on others to test and supply patches here,
-> if Tony's patch works for you you can send it with your
-> own Signed-off-by and suggest that I merge it.
+Hi Ralph,
+ 
+ On lun., mars 27 2017, Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-I'll send a patch for testing shortly.
+The title should start by ARM: dts: mvebu:
 
-Regards,
+If there is no need to have a v5 then I wil take care of modifying the
+title while applying it.
 
-Tony
+
+> From: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+>
+> Add properties to the GPIO nodes to allow them to be also used as PWM
+> lines.
+>
+> Signed-off-by: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
+> URL: https://patchwork.ozlabs.org/patch/427294/
+> [Ralph Sennhauser:
+>   * Use new compatible string marvell,armada-370-xp-gpio
+>   * Add missing reg-names / #pwm-cell properties to armada-xp-mv78260.dtsi
+>     'gpio1' node]
+> Signed-off-by: Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/armada-370.dtsi        | 16 +++++++++++-----
+>  arch/arm/boot/dts/armada-xp-mv78230.dtsi | 14 ++++++++++----
+>  arch/arm/boot/dts/armada-xp-mv78260.dtsi | 16 +++++++++++-----
+>  arch/arm/boot/dts/armada-xp-mv78460.dtsi | 16 +++++++++++-----
+>  4 files changed, 43 insertions(+), 19 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/armada-370.dtsi b/arch/arm/boot/dts/armada-370.dtsi
+> index cc011c8..e30b076 100644
+> --- a/arch/arm/boot/dts/armada-370.dtsi
+> +++ b/arch/arm/boot/dts/armada-370.dtsi
+> @@ -137,29 +137,35 @@
+>  			};
+>  
+>  			gpio0: gpio@18100 {
+> -				compatible = "marvell,orion-gpio";
+> -				reg = <0x18100 0x40>;
+> +				compatible = "marvell,armada-370-xp-gpio";
+
+I think we should keep the "marvell,orion-gpio" too because the hardware
+is still compatible with it. Morever it will allow to use a recent dtb
+with an old kernel.
+
+
+> +				reg = <0x18100 0x40>, <0x181c0 0x08>;
+> +				reg-names = "gpio", "pwm";
+>  				ngpios = <32>;
+>  				gpio-controller;
+>  				#gpio-cells = <2>;
+> +				#pwm-cells = <2>;
+>  				interrupt-controller;
+>  				#interrupt-cells = <2>;
+>  				interrupts = <82>, <83>, <84>, <85>;
+> +				clocks = <&coreclk 0>;
+>  			};
+>  
+>  			gpio1: gpio@18140 {
+> -				compatible = "marvell,orion-gpio";
+> -				reg = <0x18140 0x40>;
+> +				compatible = "marvell,armada-370-xp-gpio";
+
+Same here and for all the others...
+
+Thanks,
+
+Gregory
+
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
