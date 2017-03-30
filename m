@@ -1,46 +1,31 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: fix SCIF2 pinmux data
-Date: Thu, 30 Mar 2017 23:20:48 +0300
-Message-ID: <20170330202059.050530179@cogentembedded.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 2/7] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Thu, 30 Mar 2017 17:39:03 -0500
+Message-ID: <20170330223903.yafbhrdulrnv2pfz@rob-hp-laptop>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-3-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:32825 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934896AbdC3UVF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 16:21:05 -0400
-Received: by mail-lf0-f43.google.com with SMTP id h125so33977305lfe.0
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Mar 2017 13:21:03 -0700 (PDT)
-Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-fix-SCIF2-pinmux-data.patch
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1490368934-12494-3-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Cc: geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-PINMUX_IPSR_MSEL() macro invocation for the TX2 signal has apparently wrong
-1st argument -- most probably a result of cut&paste programming...
+On Fri, Mar 24, 2017 at 04:22:09PM +0100, Jacopo Mondi wrote:
+> Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+> controller.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+> ---
+>  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 143 +++++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
 
-Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
----
-This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus  2 R8A7791 fixes posted yesterday.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -1103,7 +1103,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP6_5_3, FMIN_E, SEL_FM_4),
- 	PINMUX_IPSR_GPSR(IP6_7_6, AUDIO_CLKOUT),
- 	PINMUX_IPSR_MSEL(IP6_7_6, MSIOF1_SS1_B, SEL_SOF1_1),
--	PINMUX_IPSR_MSEL(IP6_5_3, TX2, SEL_SCIF2_0),
-+	PINMUX_IPSR_MSEL(IP6_7_6, TX2, SEL_SCIF2_0),
- 	PINMUX_IPSR_MSEL(IP6_7_6, SCIFA2_TXD, SEL_SCIFA2_0),
- 	PINMUX_IPSR_GPSR(IP6_9_8, IRQ0),
- 	PINMUX_IPSR_MSEL(IP6_9_8, SCIFB1_RXD_D, SEL_SCIFB1_3),
-
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
