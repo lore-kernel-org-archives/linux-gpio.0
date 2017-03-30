@@ -1,266 +1,91 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 1/7] pinctrl: dt-bindings: Add documentation for
- Armada 37xx pin controllers
-Date: Wed, 29 Mar 2017 16:11:05 -0500
-Message-ID: <20170329211105.ype3os6jldsjyrqa@rob-hp-laptop>
-References: <cover.72ded2a212a37139db2a4193482b04a84a545a48.1490282185.git-series.gregory.clement@free-electrons.com>
- <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1490282185.git-series.gregory.clement@free-electrons.com>
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
+Date: Thu, 30 Mar 2017 07:33:52 +0000
+Message-ID: <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+References: <20170329183658.618942497@cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1490282185.git-series.gregory.clement@free-electrons.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Victor Gu <xigu@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:11444 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932650AbdC3Hd7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 30 Mar 2017 03:33:59 -0400
+In-Reply-To: <20170329183658.618942497@cogentembedded.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 23, 2017 at 04:19:01PM +0100, Gregory CLEMENT wrote:
-> Document the device tree binding for the pin controllers found on the
-> Armada 37xx SoCs.
-> 
-> Update the binding documention of the xtal clk which is a subnode of this
-> syscon node.
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Hello Sergei,
+
+> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-
+> owner@vger.kernel.org] On Behalf Of Sergei Shtylyov
+> Sent: 29 March 2017 19:37
+>=20
+> The R8A7791 PFC driver  was apparently based on the preliminary revisions=
+ of
+> the user's  manual, which  omitted the DVC_MUTE signal  altogether in the
+> PFC section. The modern manual has the signal described,  so just add the
+> necassary data to the driver...
+>=20
+> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Should this patch also CC stable? (Patch 1/2 does)
+
+
+Kind regards, Chris
+
+>=20
 > ---
->  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +--
->  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 187 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> index a88f1f05fbd6..4c0807f28cfa 100644
-> --- a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> @@ -5,6 +5,7 @@ reading the gpio latch register.
->  
->  This node must be a subnode of the node exposing the register address
->  of the GPIO block where the gpio latch is located.
-> +See Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
->  
->  Required properties:
->  - compatible : shall be one of the following:
-> @@ -16,9 +17,9 @@ Optional properties:
->  	output names ("xtal")
->  
->  Example:
-> -gpio1: gpio@13800 {
-> -	compatible = "marvell,armada-3700-gpio", "syscon", "simple-mfd";
-> -	reg = <0x13800 0x1000>;
-> +pinctrl_nb: pinctrl-nb@13800 {
-> +	compatible = "armada3710-nb-pinctrl", "syscon", "simple-mfd";
-> +	reg = <0x13800 0x100>, <0x13C00 0x20>;
->  
->  	xtalclk: xtal-clk {
->  		compatible = "marvell,armada-3700-xtal-clock";
-> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-> new file mode 100644
-> index 000000000000..2eda81e0bca1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-> @@ -0,0 +1,183 @@
-> +* Marvell Armada 37xx SoC pin and gpio controller
-> +
-> +Each Armada 37xx SoC come with two pin and gpio controller one for the
-> +south bridge and the other for the north bridge.
-> +
-> +Inside this set of register the gpio latch allows exposing some
-> +configuration of the SoC and especially the clock frequency of the
-> +xtal. Hence, this node is a represent as syscon allowing sharing the
-> +register between multiple hardware block.
-> +
-> +GPIO and pin controller:
-> +------------------------
-> +
-> +Main node:
-> +
-> +Refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning
-> +of the phrase "pin configuration node".
-> +
-> +Required properties for pinctrl driver:
-> +
-> +- compatible:	"marvell,armada3710-sb-pinctrl", "syscon, "simple-mfd"
-> +		for the south bridge
-> +		"marvell,armada3710-nb-pinctrl", "syscon, "simple-mfd"
-> +		for the north bridge
-> +- reg: The first set of register are for pinctrl/gpio and the second
-> +  set for the interrupt controller
-> +- interrupts: list of the interrupt use by the gpio
-> +
-> +Available groups and functions for the North bridge:
-> +
-> +group: jtag
-> + - pins 20-24
-> + - functions jtag, gpio
-> +
-> +group sdio0
-> + - pins 8-10
-> + - functions sdio, gpio
-> +
-> +group emmc_nb
-> + - pins 27-35
-> + - functions emmc, gpio
-> +
-> +group pwm0
-> + - pin 11 (GPIO1-11)
-> + - functions pwm, gpio
-> +
-> +group pwm1
-> + - pin 12
-> + - functions pwm, gpio
-> +
-> +group pwm2
-> + - pin 13
-> + - functions pwm, gpio
-> +
-> +group pwm3
-> + - pin 14
-> + - functions pwm, gpio
-> +
-> +group pmic1
-> + - pin 17
-> + - functions pmic, gpio
-> +
-> +group pmic0
-> + - pin 16
-> + - functions pmic, gpio
-> +
-> +group i2c2
-> + - pins 2-3
-> + - functions i2c, gpio
-> +
-> +group i2c1
-> + - pins 0-1
-> + - functions i2c, gpio
-> +
-> +group spi_cs1
-> + - pin 17
-> + - functions spi, gpio
-> +
-> +group spi_cs2
-> + - pin 18
-> + - functions spi, gpio
-> +
-> +group spi_cs3
-> + - pin 19
-> + - functions spi, gpio
-> +
-> +group onewire
-> + - pin 4
-> + - functions onewire, gpio
-> +
-> +group uart1
-> + - pins 25-26
-> + - functions uart, gpio
-> +
-> +group spi_quad
-> + - pins 15-16
-> + - functions spi, gpio
-> +
-> +group uart_2
-> + - pins 9-10
-> + - functions uart, gpio
-> +
-> +Available groups and functions for the South bridge:
-> +
-> +group usb32_drvvbus0
-> + - pin 36
-> + - functions drvbus, gpio
-> +
-> +group usb2_drvvbus1
-> + - pin 37
-> + - functions drvbus, gpio
-> +
-> +group sdio_sb
-> + - pins 60-64
-> + - functions sdio, gpio
-> +
-> +group rgmii
-> + - pins 42-55
-> + - functions mii, gpio
-> +
-> +group pcie1
-> + - pins 39-40
-> + - functions pcie, gpio
-> +
-> +group ptp
-> + - pins 56-58
-> + - functions ptp, gpio
-> +
-> +group ptp_clk
-> + - pin 57
-> + - functions ptp, mii
-> +
-> +group ptp_trig
-> + - pin 58
-> + - functions ptp, mii
-> +
-> +group mii_col
-> + - pin 59
-> + - functions mii, mii_err
-> +
-> +GPIO subnode:
-> +
-> +Please refer to gpio.txt in this directory for details of gpio-ranges property
-> +and the common GPIO bindings used by client devices.
-> +
-> +Required properties for gpio driver under the gpio subnode:
+>  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> @@ -203,7 +203,7 @@ enum {
+>=20
+>  	/* IPSR6 */
+>  	FN_AUDIO_CLKB, FN_STP_OPWM_0_B, FN_MSIOF1_SCK_B,
+> -	FN_SCIF_CLK, FN_BPFCLK_E,
+> +	FN_SCIF_CLK, FN_DVC_MUTE, FN_BPFCLK_E,
+>  	FN_AUDIO_CLKC, FN_SCIFB0_SCK_C, FN_MSIOF1_SYNC_B, FN_RX2,
+>  	FN_SCIFA2_RXD, FN_FMIN_E,
+>  	FN_AUDIO_CLKOUT, FN_MSIOF1_SS1_B, FN_TX2, FN_SCIFA2_TXD,
+> @@ -573,7 +573,7 @@ enum {
+>=20
+>  	/* IPSR6 */
+>  	AUDIO_CLKB_MARK, STP_OPWM_0_B_MARK,
+> MSIOF1_SCK_B_MARK,
+> -	SCIF_CLK_MARK, BPFCLK_E_MARK,
+> +	SCIF_CLK_MARK, DVC_MUTE_MARK, BPFCLK_E_MARK,
+>  	AUDIO_CLKC_MARK, SCIFB0_SCK_C_MARK,
+> MSIOF1_SYNC_B_MARK, RX2_MARK,
+>  	SCIFA2_RXD_MARK, FMIN_E_MARK,
+>  	AUDIO_CLKOUT_MARK, MSIOF1_SS1_B_MARK, TX2_MARK,
+> SCIFA2_TXD_MARK, @@ -1093,6 +1093,7 @@ static const u16 pinmux_data[]
+> =3D {
+>  	PINMUX_IPSR_MSEL(IP6_2_0, STP_OPWM_0_B, SEL_SSP_1),
+>  	PINMUX_IPSR_MSEL(IP6_2_0, MSIOF1_SCK_B, SEL_SOF1_1),
+>  	PINMUX_IPSR_MSEL(IP6_2_0, SCIF_CLK, SEL_SCIF_0),
+> +	PINMUX_IPSR_GPSR (IP6_2_0, DVC_MUTE),
+>  	PINMUX_IPSR_MSEL(IP6_2_0, BPFCLK_E, SEL_FM_4),
+>  	PINMUX_IPSR_GPSR(IP6_5_3, AUDIO_CLKC),
+>  	PINMUX_IPSR_MSEL(IP6_5_3, SCIFB0_SCK_C, SEL_SCIFB_2), @@ -
+> 5899,7 +5900,7 @@ static const struct pinmux_cfg_reg pinmu
+>  		0, 0,
+>  		/* IP6_2_0 [3] */
+>  		FN_AUDIO_CLKB, FN_STP_OPWM_0_B, FN_MSIOF1_SCK_B,
+> -		FN_SCIF_CLK, 0, FN_BPFCLK_E,
+> +		FN_SCIF_CLK, FN_DVC_MUTE, FN_BPFCLK_E,
+>  		0, 0, }
+>  	},
+>  	{ PINMUX_CFG_REG_VAR("IPSR7", 0xE606003C, 32,
 
-Why does this need to be a sub node? You should probably have a 
-compatible if it is.
-
-> +- interrupts: List of interrupt specifier for the controllers interrupt.
-> +- gpio-controller: Marks the device node as a gpio controller.
-> +- #gpio-cells: Should be 2. The first cell is the GPIO number and the
-> +   second cell specifies GPIO flags, as defined in
-> +   <dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH and
-> +   GPIO_ACTIVE_LOW flags are supported.
-> +- gpio-ranges: Range of pins managed by the GPIO controller.
-> +
-> +Xtal Clock bindings for Marvell Armada 37xx SoCs
-> +------------------------------------------------
-> +
-> +see Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> +
-> +
-> +Example:
-> +pinctrl_sb: pinctrl-sb@18800 {
-
-pinctrl@
-
-> +	compatible = "marvell,armada3710-sb-pinctrl", "syscon", "simple-mfd";
-> +	reg = <0x18800 0x100>, <0x18C00 0x20>;
-> +	gpiosb: gpiosb {
-
-gpio@
-
-> +		#gpio-cells = <2>;
-> +		gpio-ranges = <&pinctrl_sb 0 0 29>;
-> +		gpio-controller;
-> +		interrupts =
-> +		<GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	rgmii_pins: mii-pins {
-> +		groups = "rgmii";
-> +		function = "mii";
-> +	};
-> +
-> +};
-> -- 
-> git-series 0.9.1
