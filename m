@@ -1,53 +1,61 @@
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
-Date: Thu, 30 Mar 2017 09:16:29 +0000
-Message-ID: <HK2PR0601MB1329C1778065759E02CCC15BB7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
+Date: Thu, 30 Mar 2017 12:39:48 +0300
+Message-ID: <023fbd64-9337-d126-9c9c-9d713454e547@cogentembedded.com>
 References: <20170329183658.618942497@cogentembedded.com>
  <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
  <CAMuHMdU++fKJjAAjjEHmj0W8WZj5L+kmBeW1tjqTA+JhchKbHA@mail.gmail.com>
  <CAMuHMdU_imTfh5Hb=BtKj6u1rJhuj4vAWarC7Xq2RZWQQkH8pg@mail.gmail.com>
+ <HK2PR0601MB1329C1778065759E02CCC15BB7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdU_imTfh5Hb=BtKj6u1rJhuj4vAWarC7Xq2RZWQQkH8pg@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <HK2PR0601MB1329C1778065759E02CCC15BB7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Chris Paterson <Chris.Paterson2@renesas.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-SGVsbG8gR2VlcnQsDQoNCj4gRnJvbTogZ2VlcnQudXl0dGVyaG9ldmVuQGdtYWlsLmNvbQ0KPiBb
-bWFpbHRvOmdlZXJ0LnV5dHRlcmhvZXZlbkBnbWFpbC5jb21dIE9uIEJlaGFsZiBPZiBHZWVydCBV
-eXR0ZXJob2V2ZW4NCj4gU2VudDogMzAgTWFyY2ggMjAxNyAxMDoxMQ0KPiANCj4gSGkgQ2hyaXMs
-DQo+IA0KPiBPbiBUaHUsIE1hciAzMCwgMjAxNyBhdCAxMTowMCBBTSwgR2VlcnQgVXl0dGVyaG9l
-dmVuIDxnZWVydEBsaW51eC0NCj4gbTY4ay5vcmc+IHdyb3RlOg0KPiA+IE9uIFRodSwgTWFyIDMw
-LCAyMDE3IGF0IDk6MzMgQU0sIENocmlzIFBhdGVyc29uDQo+ID4gPENocmlzLlBhdGVyc29uMkBy
-ZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4+PiBGcm9tOiBsaW51eC1yZW5lc2FzLXNvYy1vd25lckB2
-Z2VyLmtlcm5lbC5vcmcNCj4gPj4+IFttYWlsdG86bGludXgtcmVuZXNhcy1zb2MtIG93bmVyQHZn
-ZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mDQo+ID4+PiBTZXJnZWkgU2h0eWx5b3YNCj4gPj4+
-IFNlbnQ6IDI5IE1hcmNoIDIwMTcgMTk6MzcNCj4gPj4+DQo+ID4+PiBUaGUgUjhBNzc5MSBQRkMg
-ZHJpdmVyICB3YXMgYXBwYXJlbnRseSBiYXNlZCBvbiB0aGUgcHJlbGltaW5hcnkNCj4gPj4+IHJl
-dmlzaW9ucyBvZiB0aGUgdXNlcidzICBtYW51YWwsIHdoaWNoICBvbWl0dGVkIHRoZSBEVkNfTVVU
-RSBzaWduYWwNCj4gPj4+IGFsdG9nZXRoZXIgaW4gdGhlIFBGQyBzZWN0aW9uLiBUaGUgbW9kZXJu
-IG1hbnVhbCBoYXMgdGhlIHNpZ25hbA0KPiA+Pj4gZGVzY3JpYmVkLCAgc28ganVzdCBhZGQgdGhl
-IG5lY2Fzc2FyeSBkYXRhIHRvIHRoZSBkcml2ZXIuLi4NCj4gPj4+DQo+ID4+PiBGaXhlczogNTA4
-ODQ1MTk2MjM4ICgicGluY3RybDogc2gtcGZjOiByOGE3NzkxIFBGQyBzdXBwb3J0IikNCj4gPj4+
-IFNpZ25lZC1vZmYtYnk6IFNlcmdlaSBTaHR5bHlvdiA8c2VyZ2VpLnNodHlseW92QGNvZ2VudGVt
-YmVkZGVkLmNvbT4NCj4gPj4NCj4gPj4gU2hvdWxkIHRoaXMgcGF0Y2ggYWxzbyBDQyBzdGFibGU/
-IChQYXRjaCAxLzIgZG9lcykNCj4gPg0KPiA+IE5vIG5lZWQgdG8gc3BhbSBzdGFibGUgd2l0aCBh
-bGwgdGhlc2UgcGF0Y2hlcyBhbmQgcmV2aWV3cy4NCj4gPiBJZiBpdCBoYXMgYSBGaXhlcy10YWcs
-IHRoZSBzdGFibGUgdGVhbSB3aWxsIHBpY2sgaXQgdXAgYW55d2F5LiBBZnRlcg0KPiA+IGl0IGhh
-cyBlbmRlZCB1cCB1cHN0cmVhbS4NCg0KT2theS4NCg0KPiANCj4gQW5kIGluIHRoaXMgY2FzZSwg
-dGhlcmUncyBub3QgcmVhbGx5IGEgbmVlZCB0byBiYWNrcG9ydCBpdCB0byBzdGFibGUsIGFzIHRo
-ZXJlDQo+IGNhbm5vdCBiZSBhbnkgdXNlcnMgZHVlIHRvIGxhY2sgb2YgcGlucyB1c2luZyB0aGVz
-ZSBkZWZpbml0aW9ucy4NCg0KV2hlcmVhcyB0aGUgZmlyc3QgcGF0Y2ggaW4gdGhlIHNlcmllcyBm
-aXhlcyBhIHByb2JsZW0gdGhhdCAqaXMqIGN1cnJlbnRseSBzZWVuIGJ5IHVzZXJzLCBzbyB3aWxs
-IG5lZWQgYmFja3BvcnRpbmcuIE1ha2VzIHNlbnNlIG5vdywgdGhhbmtzIQ0KDQpLaW5kIHJlZ2Fy
-ZHMsIENocmlzDQoNCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVy
-ZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtDQo+IG02OGsub3Jn
-DQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwg
-SSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5h
-bGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0K
+Hello!
+
+On 3/30/2017 12:16 PM, Chris Paterson wrote:
+
+>>>>> From: linux-renesas-soc-owner@vger.kernel.org
+>>>>> [mailto:linux-renesas-soc- owner@vger.kernel.org] On Behalf Of
+>>>>> Sergei Shtylyov
+>>>>> Sent: 29 March 2017 19:37
+>>>>>
+>>>>> The R8A7791 PFC driver  was apparently based on the preliminary
+>>>>> revisions of the user's  manual, which  omitted the DVC_MUTE signal
+>>>>> altogether in the PFC section. The modern manual has the signal
+>>>>> described,  so just add the necassary data to the driver...
+>>>>>
+>>>>> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>
+>>>> Should this patch also CC stable? (Patch 1/2 does)
+>>>
+>>> No need to spam stable with all these patches and reviews.
+>>> If it has a Fixes-tag, the stable team will pick it up anyway. After
+>>> it has ended up upstream.
+>
+> Okay.
+>
+>>
+>> And in this case, there's not really a need to backport it to stable, as there
+>> cannot be any users due to lack of pins using these definitions.
+>
+> Whereas the first patch in the series fixes a problem that *is* currently seen by users, so will need backporting. Makes sense now, thanks!
+
+    Note that it might only be seen by some out-of-tree boards, as neither 
+upstream supported R8A7791-based board enables HSCIF1...
+
+> Kind regards, Chris
+>
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                         Geert
+
+MBR, Sergei
