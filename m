@@ -1,102 +1,189 @@
-From: Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl
- header
-Date: Thu, 30 Mar 2017 13:27:31 +0000
-Message-ID: <SG2PR06MB116501FDC518BB49630520588A340@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
- <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com>
- <SG2PR06MB11659AB956F83E8DCE2C9AA18A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CACRpkda_Gw9vhLqpWw8oOZyZ59nj5j9Q-T5RXVsf0vsxWcjyHg@mail.gmail.com>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: Re: [PATCH 2/3] pinctrl: Add pincontrol driver for ARTPEC-6 SoC
+Date: Thu, 30 Mar 2017 16:23:32 +0200
+Message-ID: <20170330142332.GI29118@axis.com>
+References: <20170330113302.GF29118@axis.com>
+ <CACRpkda_o9nU9jyHAEJxoownO-DXw72fr3yuxf2zGJkJvPbW7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkda_Gw9vhLqpWw8oOZyZ59nj5j9Q-T5RXVsf0vsxWcjyHg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bes.se.axis.com ([195.60.68.10]:60276 "EHLO bes.se.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933107AbdC3OXl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 30 Mar 2017 10:23:41 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkda_o9nU9jyHAEJxoownO-DXw72fr3yuxf2zGJkJvPbW7g@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, chris.paterson@linux.pieboy.co.uk, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel@axis.com
 
-T24gVGh1cnNkYXksIE1hcmNoIDMwLCAyMDE3LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiA+PiA+
-ICsvKg0KPiA+PiA+ICsgKiBQaW4gaXMgYmktZGlyZWN0aW9uYWwuDQo+ID4+ID4gKyAqIEFuIGFs
-dGVybmF0ZSBmdW5jdGlvbiB0aGF0IG5lZWRzIGJvdGggaW5wdXQvb3V0cHV0DQo+ID4+ID4gK2Z1
-bmN0aW9uYWxpdGllcyBzaGFsbA0KPiA+PiA+ICsgKiBiZSBjb25maWd1cmVkIGFzIGJpZGlyZWN0
-aW9uYWwuDQo+ID4+ID4gKyAqIEVnLiBTREEvU0NMIHBpbnMgb2YgYW4gSTJjIGludGVyZmFjZS4N
-Cj4gPj4gPiArICovDQo+ID4+ID4gKyNkZWZpbmUgQklfRElSICAgICAgICAgICAgICAgICAoMSA8
-PCAzKQ0KPiA+Pg0KPiA+PiBBbnkgc3BlY2lmaWMgcmVhc29uIHdoeSB0aGlzIHNob3VsZCBub3Qg
-c2ltcGx5IGJlIGFkZGVkIHRvDQo+ID4+IGluY2x1ZGUvbGludXgvcGluY3RybC9waW5jb25mLWdl
-bmVyaWMuaA0KPiA+PiBhcyBQSU5fQ09ORklHX0JJRElSRUNUSU9OQUwgYW5kIHBhcnNlZCBpbiBk
-cml2ZXJzL3BpbmN0cmwvcGluY29uZi0NCj4gPj4gZ2VuZXJpYy5jIGZyb20gdGhlIChuZXcpIERU
-IHByb3BlcnR5ICJiaWRpcmVjdGlvbmFsIiBzaW1wbHk/DQo+ID4NCj4gPiBJIHNlZSB5b3VyIHBv
-aW50LiBJdCB3b3VsZCBjdXQgZG93biBmcm9tIGV2ZXJ5IGRyaXZlciBvdXQgdGhlcmUNCj4gPiBp
-bnZlbnRpbmcgc29tZSBuZXcgcHJvcGVydHkgb3IgY29uZmlnIGluc3RlYWQgb2YgZXZlcnlvbmUg
-anVzdCBzaGFyaW5nDQo+ID4gYSBmaXhlZCBzZXQuDQo+ID4gTWF5YmUgc29tZW9uZSBlbHNlIG91
-dCB0aGVyZSB3aWxsIGVuZCB1cCBoYXZpbmcgYSBuZWVkIGZvciBhDQo+ID4gImJpZGlyZWN0aW9u
-YWwiIG9wdGlvbi4NCj4gDQo+IEkgd2FzIHRoaW5raW5nIGFib3V0IHRoYXQgb25lLiBJdCBpcyBh
-IGJpdCB3ZWlyZCBlbGVjdHJpY2FsbHksIGxpa2Ugd2hhdA0KPiBraW5kIG9mIGVsZWN0cm9uaWNz
-IGlzIHJlYWxseSBiaWRpcmVjdGlvbmFsPw0KPiANCj4gSXQgc2VlbXMgbGlrZSBhIGZhbmN5IG5h
-bWUgZm9yIG9wZW4gZHJhaW4vb3BlbiBzb3VyY2UsIHdoYXQgd2UgY2FsbA0KPiAic2luZ2xlIGVu
-ZGVkIiBjb25maWd1cmF0aW9uLiAoU2VlIGRvY3MgaW4NCj4gRG9jdW1lbnRhdGlvbi9ncGlvL2Ry
-aXZlci50eHQpDQo+IA0KPiBJdCB3b3VsZCBiZSBncmVhdCBpZiB5b3UgY291bGQgY2hlY2sgaWYg
-dGhhdCBpcyB3aGF0IHRoZXkgbWVhbiwgYWN0dWFsbHkuDQoNCkhlcmUgaXMgdGhlIGRlZmluaXRp
-b24gb2YgdGhlIHJlZ2lzdGVyIGluIHRoZSBoYXJkd2FyZSBtYW51YWw6DQoNCi0tLQ0KNTQuMy4x
-MyBQb3J0IEJpZGlyZWN0aW9uIENvbnRyb2wgUmVnaXN0ZXIgKFBCRENuKQ0KDQpUaGlzIHJlZ2lz
-dGVyIGVuYWJsZXMgb3IgZGlzYWJsZXMgdGhlIGlucHV0IGJ1ZmZlciB3aGlsZSB0aGUgb3V0cHV0
-IGJ1ZmZlciBpcyBlbmFibGVkLiBXaGVuIHRoZSBpbnB1dCBidWZmZXIgaXMgZW5hYmxlZA0Kd2hp
-bGUgdGhlIG91dHB1dCBidWZmZXIgaXMgZW5hYmxlZCwgdGhlIGJpZGlyZWN0aW9uYWwgbW9kZSBp
-cyBlbnRlcmVkLCBhbGxvd2luZyB0aGUgbGV2ZWwgb2YgdGhlIFBuX20gcGluIHRvIGFsd2F5cyBi
-ZSByZWFkDQp2aWEgdGhlIFBQUm4uUFBSbm0gYml0Lg0KLS0tDQoNCg0KQnV0Li4ud2hhdCB0aGV5
-IGRvbid0IHJlYWxseSB0ZWxsIHlvdSBpcyB0aGF0IGFueSBwZXJpcGhlcmFsIHRoYXQgbmVlZHMg
-dG8gVFggYW5kIFJYIGRhdGEgb3ZlciBhIHBpbiBuZWVkcyB0aGlzIHNldC4NCg0KDQpJbiB0aGUg
-aGFyZHdhcmUgbWFudWFsLCB0aGVyZSBpcyBhIHByZXR0eSBwaWN0dXJlIChGaWd1cmUgNTQuMSBM
-b2dpY2FsIERpYWdyYW0gb2YgUG9ydCBDb250cm9sKSB0aGF0IHNob3dzIGEgZGV0YWlsZWQgbG9n
-aWMgZGlhZ3JhbSBvZiB0aGUgaW50ZXJmYWNlIGJldHdlZW4gdGhlIHBlcmlwaGVyYWwgYnVzIGFu
-ZCB0aGUgcGluIHBhZC4NCkFzIGZhciBhcyBJIGNhbiB0ZWxsLCB0aGUgImZ1bmN0aW9uIG11eCIg
-cG9ydGlvbiBvZiB0aGlzIGNvbnRyb2xsZXIgb25seSBrbm93cyBob3cgdG8gc2V0IGEgcGluIGFz
-IGRpcmVjdGlvbj1pbiBvciBkaXJlY3Rpb249b3V0Lg0KU28sIGluIHRoZSBjYXNlIG9mIEkyQyB3
-aGVyZSBlYWNoIHRoZSBTQ0wgYW5kIFNEQSBwaW5zIG5lZWRzIHRvIGJlIGRyaXZlbiBhbmQgcmVh
-ZC4uLml0IGNhbid0IGRvIHRoYXQuDQpUaGVyZWZvcmUsIHRoZXJlIGlzIGFuIGFkZGl0aW9uYWwg
-cmVnaXN0ZXIgdG8gbWFudWFsbHkgZW5hYmxlIHRoZSBpbnB1dCBidWZmZXIgYW5kIGxldCB0aGUg
-bXV4IGVuYWJsZSB0aGUgb3V0cHV0IGJ1ZmZlci4NCg0KU28gd2hpbGUgeWVzLCBJMkMgaXMgb3Bl
-bi1kcmFpbiwgdGhpcyBpcyBhbHNvIHRoZSBjYXNlIGZvciB0aGUgZGF0YSBwaW5zIGZvciB0aGUg
-U0RISS4gQW5kIHRoZSBNRElPIHBpbiBmcm9tIEV0aGVybmV0LiBJdCByZWFsbHkgaGFzIHRvIGRv
-IHdpdGggdGhlIGZhY3QgdGhhdCB0aGlzIHBpbiBjb250cm9sbGVyIHdhc24ndCBkZXNpZ25lZCB0
-byBlbmFibGUgYm90aCB0aGUgaW5wdXQgYW5kIG91dHB1dCBidWZmZXJzIGF0IHRoZSBzYW1lIHRp
-bWUuDQoNClRoZSBzaXR1YXRpb24gaXMgc2ltaWxhciBmb3Igb3VyIFNXSU9fSU4gYW5kIFNXSU9f
-T1VUIGZsYWdzLiBGb3IgZXhhbXBsZSwgdG8gdXNlIHRoZSBTU0kgc291bmQgaW50ZXJmYWNlLCB5
-b3UgaGF2ZSB0byBzZXQgdGhlIFRYIHNpZ25hbHMgdG8gImlucHV0IiAoU1dJT19JTikuIE1ha2Vz
-IHNlbnNlLCByaWdodD8/DQoNCkkgY291bGQgYXJndWUgdGhhdCBhbGwgb2YgdGhlc2UgIkZMQUdT
-IiBzZXR0aW5ncyBzaG91bGQgaGF2ZSBiZWVuIGluY29ycG9yYXRlZCBpbiB0aGUgSFcgbG9naWMg
-b2YgdGhlIHBpbiBjb250cm9sbGVyLi4uYnV0IGZvciB3aGF0ZXZlciByZWFzb24sIHRoZSB0aGV5
-IGhhZCB0byBtYWtlIHRoZW0gc2VwYXJhdGUgcmVnaXN0ZXJzIGFuZCBtYWtlIFNXIGRvIGl0Lg0K
-U28sIEkgY291bGQgYXJndWUgdGhhdCB0aGVzZSByZWdpc3RlcnMgc2V0dGluZ3MgYXJlIHJlYWxs
-eSBwYXJ0IG9mIHBpbiBtdXhpbmcsIG5vdCByZWFsbHkgdXNlciBjb25maWcuLi4uYW5kIGhlbmNl
-IGJlbG9uZyBpbiB0aGUgInBpbm11eCIgcHJvcGVydHkuDQoNCg0KSG93IGFib3V0IHRoaXMgY29t
-cHJvbWlzZTogSW5zdGVhZCBvZiBCSV9ESVIsIHdlIHVzZSAiVFlQRV9JMkMiLCAiVFlQRV9TRERB
-VEEiLCAiVFlQRV9NRElPIiwgIlRZUEVfTFZEUyIsIGV0Yy4uLiB0byBkZXNjcmliZSB0aGUgJ3Nw
-ZWNpYWwnIG9uZXMuIFRoYXQgd2F5IGl0IGNhbiBnbyBiYWNrIHVuZGVyICJwaW5tdXgiLiBMaWtl
-IEphY29wbyBzYWlkLCB0aGVzZSByZWdpc3RlciBzZXR0aW5ncyBhcmUgcmVhbGx5IHN1cHBvc2Vk
-IHRvIGJlIHNldCB3aGVuIHlvdSBhcmUgc2VsZWN0aW5nIHRoZSBwaW4tbXV4IG9wdGlvbi4NCg0K
-DQpPZiBjb3Vyc2UgYmVoaW5kIHRoZSBzY2VuZXMsIGl0J3MgcmVhbGx5Og0KICAjZGVmaW5lIFRZ
-UEVfSTJDICAgIEJJX0RJUiANCiAgI2RlZmluZSBUWVBFX1NEREFUQSBCSV9ESVINCiAgI2RlZmlu
-ZSBUWVBFX1NEQ01EICBCSV9ESVINCiAgI2RlZmluZSBUWVBFX0xWRFMgICBTV0lPX09VVA0KDQpF
-eGFtcGxlczoNCg0KCWkyYzNfcGluczogaTJjMyB7DQoJCXBpbm11eCA9IDxQSU4oMSwgNikgfCBG
-VU5DXzEgfCBUWVBFX0kyQz4sDQoJCSAgICAgICAgIDxQSU4oMSwgNykgfCBGVU5DXzEgfCBUWVBF
-X0kyQz47DQoJfTsNCg0KCS8qIFNIREkgY2gxIG9uIENOMSAqLw0KCXNkaGkxX3BpbnM6IHNkaGkx
-IHsNCgkJLyogU0hESSBjaDEgb24gUG9ydCAzICovDQoJCXBpbm11eCA9IDxQSU4oMywgOCkgfCBG
-VU5DXzc+LAkJCS8qIFNESEkxIENEICovDQoJCQkJPFBJTigzLCA5KSBGVU5DXzcpPiwJCQkvKiBT
-REhJMSBXUCAqLw0KCQkJCTxQSU4oMywgMTApIEZVTkNfNyB8IFRZUEVfU0REQVRBKT4sCS8qIFNE
-SEkxIERBVDEgKi8NCgkJCQk8UElOKDMsIDExKSBGVU5DXzcgfCBUWVBFX1NEREFUQSk+LAkvKiBT
-REhJMSBEQVQwICovDQoJCQkJPFBJTigzLCAxMikgRlVOQ183KT4sCQkJLyogU0RISTEgQ0xLICov
-DQoJCQkJPFBJTigzLCAxMykgRlVOQ183IHwgVFlQRV9TRENNRCk+LAkvKiBTREhJMSBDTUQgKi8N
-CgkJCQk8UElOKDMsIDE0KSBGVU5DXzcgfCBUWVBFX1NEREFUQSk+LAkvKiBTREhJMSBEQVQzICov
-DQoJCQkJPFBJTigzLCAxNSkgRlVOQ183IHwgVFlQRV9TRERBVEEpPjsJLyogU0RISTEgREFUMiAq
-Lw0KCX07DQoNCg0KDQojIEhvbmVzdGx5LCBJIGhhdmUgbm8gaWRlYSB3aGVyZSB0aGlzIHBpbiBj
-b250cm9sbGVyIGNhbWUgZnJvbS4gSSBoYXZlIG5vdCBzZWVuIGl0IGluIGFueSBvdGhlciBSZW5l
-c2FzIHBhcnQgKE1pdHN1YmlzaGkvSGl0YWNoaS9ORUMpLg0KDQoNCkNocmlzDQoNCg0K
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Thu, Mar 30, 2017 at 02:07:33PM +0200, Linus Walleij wrote:
+> On Thu, Mar 30, 2017 at 1:33 PM, Jesper Nilsson <jesper.nilsson@axis.com> wrote:
+> 
+> > Add pinctrl driver support for the Axis ARTPEC-6 SoC.
+> > There are only some pins that actually have different
+> > functions available, but all can control bias (pull-up/-down)
+> > and drive strength.
+> > Code originally written by Chris Paterson.
+> >
+> > Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+> 
+> Very good start, but look at this:
+> 
+> > +#define ARTPEC6_PINMUX_P0_0_CTRL       0x000
+> > +#define ARTPEC6_PINMUX_P0_1_CTRL       0x004
+> > +#define ARTPEC6_PINMUX_P0_2_CTRL       0x008
+> > +#define ARTPEC6_PINMUX_P0_3_CTRL       0x00C
+> > +#define ARTPEC6_PINMUX_P0_4_CTRL       0x010
+> > +#define ARTPEC6_PINMUX_P0_5_CTRL       0x014
+> > +#define ARTPEC6_PINMUX_P0_6_CTRL       0x018
+> > +#define ARTPEC6_PINMUX_P0_7_CTRL       0x01C
+> > +#define ARTPEC6_PINMUX_P0_8_CTRL       0x020
+> > +#define ARTPEC6_PINMUX_P0_9_CTRL       0x024
+> > +#define ARTPEC6_PINMUX_P0_10_CTRL      0x028
+> > +#define ARTPEC6_PINMUX_P0_11_CTRL      0x02C
+> > +#define ARTPEC6_PINMUX_P0_12_CTRL      0x030
+> > +#define ARTPEC6_PINMUX_P0_13_CTRL      0x034
+> > +#define ARTPEC6_PINMUX_P0_14_CTRL      0x038
+> > +#define ARTPEC6_PINMUX_P0_15_CTRL      0x03C
+> 
+> It's pretty clear that the stride is always 4 bytes is it not.
+
+Agreed.
+
+> > +static const unsigned int pin_regs[] = {
+> > +       ARTPEC6_PINMUX_P0_0_CTRL,       /* Pin 0 */
+> > +       ARTPEC6_PINMUX_P0_1_CTRL,
+> > +       ARTPEC6_PINMUX_P0_2_CTRL,
+> > +       ARTPEC6_PINMUX_P0_3_CTRL,
+> > +       ARTPEC6_PINMUX_P0_4_CTRL,
+> > +       ARTPEC6_PINMUX_P0_5_CTRL,
+> > +       ARTPEC6_PINMUX_P0_6_CTRL,
+> > +       ARTPEC6_PINMUX_P0_7_CTRL,
+> > +       ARTPEC6_PINMUX_P0_8_CTRL,
+> > +       ARTPEC6_PINMUX_P0_9_CTRL,
+> > +       ARTPEC6_PINMUX_P0_10_CTRL,
+> > +       ARTPEC6_PINMUX_P0_11_CTRL,
+> > +       ARTPEC6_PINMUX_P0_12_CTRL,
+> > +       ARTPEC6_PINMUX_P0_13_CTRL,
+> > +       ARTPEC6_PINMUX_P0_14_CTRL,
+> > +       ARTPEC6_PINMUX_P0_15_CTRL,
+> 
+> The oceans of redundant information are rising ;)
+> 
+> > +static const unsigned int uart0_regs0[] = {
+> > +       ARTPEC6_PINMUX_P1_0_CTRL,
+> > +       ARTPEC6_PINMUX_P1_1_CTRL,
+> > +       ARTPEC6_PINMUX_P1_2_CTRL,
+> > +       ARTPEC6_PINMUX_P1_3_CTRL,
+> > +       ARTPEC6_PINMUX_P1_4_CTRL,
+> > +       ARTPEC6_PINMUX_P1_5_CTRL,
+> > +       ARTPEC6_PINMUX_P1_6_CTRL,
+> > +       ARTPEC6_PINMUX_P1_7_CTRL,
+> > +       ARTPEC6_PINMUX_P1_8_CTRL,
+> > +       ARTPEC6_PINMUX_P1_9_CTRL,
+> > +};
+> 
+> And rising.
+
+:-)
+
+> > +       {
+> > +               .name = "uart0grp0",
+> > +               .pins = uart0_pins0,
+> > +               .num_pins = ARRAY_SIZE(uart0_pins0),
+> > +               .reg_offsets = uart0_regs0,
+> > +               .num_regs = ARRAY_SIZE(uart0_regs0),
+> > +               .config = ARTPEC6_CONFIG_1,
+> > +       },
+> 
+> So what if the struct artpec6_pin_group...
+> 
+> > +struct artpec6_pin_group {
+> > +       const char         *name;
+> > +       const unsigned int *pins;
+> > +       const unsigned int num_pins;
+> > +       const unsigned int *reg_offsets;
+> > +       const unsigned int num_regs;
+> > +       unsigned char      config;
+> > +};
+> 
+> Instead of reg_offsets had reg_offset_base, and you just
+> calculate it with base + pin * 4 when you need it?
+
+Yes, that would be much clearer.
+
+> I also highly suspect that num_pins and num_regs above
+> are exactly the same number in all cases, correct? You
+> probably only need num_pins.
+
+Agreed.
+
+> > +static struct artpec6_pmx_func artpec6_pmx_functions[] = {
+> 
+> Needs const
+> 
+> > +static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
+> > +                                   unsigned int function, unsigned int group,
+> > +                                   bool enable)
+> > +{
+> > +       unsigned int regval, val;
+> > +       int i;
+> > +       const unsigned int *pmx_regs;
+> > +       struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
+> > +
+> > +       pmx_regs = artpec6_pin_groups[group].reg_offsets;
+> > +
+> > +       for (i = 0; i < artpec6_pin_groups[group].num_regs; i++) {
+> > +               /* Ports 4-8 do not have a SEL field and are always selected */
+> > +               if (pmx_regs[i] >= ARTPEC6_PINMUX_P4_0_CTRL)
+> > +                       continue;
+> > +
+> > +               if (!strcmp(artpec6_pmx_get_fname(pctldev, function), "gpio")) {
+> > +                       /* GPIO is always config 0 */
+> > +                       val = ARTPEC6_CONFIG_0 << ARTPEC6_PINMUX_SEL_SHIFT;
+> > +               } else {
+> > +                       if (enable)
+> > +                               val = artpec6_pin_groups[group].config
+> > +                                       << ARTPEC6_PINMUX_SEL_SHIFT;
+> > +                       else
+> > +                               val = ARTPEC6_CONFIG_0
+> > +                                       << ARTPEC6_PINMUX_SEL_SHIFT;
+> > +               }
+> > +
+> > +               regval = readl(pmx->base + pmx_regs[i]);
+> > +               regval &= ~ARTPEC6_PINMUX_SEL_MASK;
+> > +               regval |= val;
+> > +               writel(regval, pmx->base + pmx_regs[i]);
+> > +       }
+> 
+> So thus look can be different and include something like +=4 for the registers
+> for each iteration.
+> 
+> > --- /dev/null
+> > +++ b/drivers/pinctrl/pinctrl-artpec6.h
+> 
+> You don't need to have these defines in their own file, just copy it into
+> the top of the driver file.
+
+Ok.
+
+> > +/* Pinmux control register offset definitions */
+> > +
+> > +#define ARTPEC6_PINMUX_P1_0_CTRL       0x040
+> > +#define ARTPEC6_PINMUX_P1_1_CTRL       0x044
+> (...)
+> 
+> So for these defines you only need the first one.
+> 
+> With these things fixes I'm pretty sure it is close to finished.
+
+Thanks for the feedback, will rework and resend. :-)
+
+> Yours,
+> Linus Walleij
+
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
