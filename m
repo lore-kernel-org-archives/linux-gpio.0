@@ -1,49 +1,42 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
-Date: Thu, 30 Mar 2017 11:00:22 +0200
-Message-ID: <CAMuHMdU++fKJjAAjjEHmj0W8WZj5L+kmBeW1tjqTA+JhchKbHA@mail.gmail.com>
-References: <20170329183658.618942497@cogentembedded.com> <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] pinctrl: imx: use generic pinctrl helpers for
+ managing groups
+Date: Thu, 30 Mar 2017 11:05:40 +0200
+Message-ID: <CACRpkdZ_a7YqkoM+oFettCq2h8RRnW3GSeOBbVkRACR6fcxnrg@mail.gmail.com>
+References: <20170102182022.2047-1-gary.bisson@boundarydevices.com>
+ <20170102182022.2047-2-gary.bisson@boundarydevices.com> <CAOMZO5BKdP+A1JdJxkRXPvZcGGsW2k65nsseDvmFguaM8i18xw@mail.gmail.com>
+ <CAAMH-ysO7SWYJ3dWjQODXBDEvfnRf09mefWBeDgeWH=MPSd+Ww@mail.gmail.com>
+ <CAOMZO5AXOEFTep17etLyU1avWsDasFF+NAAPcusaMRGMR3nctg@mail.gmail.com>
+ <20170307175448.GU20572@atomide.com> <CACRpkdb1O9=xZ-sVVh1AzmW8oknQyNAW=LirtX1CEA=pkCbA1g@mail.gmail.com>
+ <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36174 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753085AbdC3JA0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 05:00:26 -0400
-In-Reply-To: <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOMZO5Dyu1tgKqbpbxUHjDMswJn-adDvm-FWWb6NDQO0b1kRJg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Fabio Estevam <festevam@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Tony Lindgren <tony@atomide.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Mar 30, 2017 at 9:33 AM, Chris Paterson
-<Chris.Paterson2@renesas.com> wrote:
->> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-
->> owner@vger.kernel.org] On Behalf Of Sergei Shtylyov
->> Sent: 29 March 2017 19:37
->>
->> The R8A7791 PFC driver  was apparently based on the preliminary revisions of
->> the user's  manual, which  omitted the DVC_MUTE signal  altogether in the
->> PFC section. The modern manual has the signal described,  so just add the
->> necassary data to the driver...
->>
->> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Wed, Mar 29, 2017 at 3:33 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> Tony/Linus
 >
-> Should this patch also CC stable? (Patch 1/2 does)
+> On Wed, Mar 15, 2017 at 6:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>>> Still waiting to hear back from Linus on what he prefers.
+>>
+>> I am snowed under by mail and might be missing stuff at the
+>> moment...
+>>
+>> If there is some especially urgent fix patch I need to look into
+>> can you please point it out?
+>
+> Has this issue been solved in linux-next? Still seeing this regression
+> in 4.11-rc4.
 
-No need to spam stable with all these patches and reviews.
-If it has a Fixes-tag, the stable team will pick it up anyway. After
-it has ended
-up upstream.
+I'm a bit relying on others to test and supply patches here,
+if Tony's patch works for you you can send it with your
+own Signed-off-by and suggest that I merge it.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
