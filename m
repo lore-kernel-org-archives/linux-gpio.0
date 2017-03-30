@@ -1,36 +1,41 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7791: add missing HSCIF1 pinmux data
-Date: Thu, 30 Mar 2017 10:58:50 +0200
-Message-ID: <CAMuHMdXFsUe7=pdO1ZHzvWyA3psfMSYY6FY7AYMZAWpyMzJm2g@mail.gmail.com>
-References: <20170329183653.982359372@cogentembedded.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7791: add missing DVC_MUTE signal
+Date: Thu, 30 Mar 2017 11:00:22 +0200
+Message-ID: <CAMuHMdU++fKJjAAjjEHmj0W8WZj5L+kmBeW1tjqTA+JhchKbHA@mail.gmail.com>
+References: <20170329183658.618942497@cogentembedded.com> <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170329183653.982359372@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, stable <stable@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36174 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753085AbdC3JA0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 05:00:26 -0400
+In-Reply-To: <HK2PR0601MB132955B398D6CE3FA300C222B7340@HK2PR0601MB1329.apcprd06.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Mar 29, 2017 at 8:36 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The R8A7791 PFC driver  was apparently based on the preliminary revisions
-> of  the  user's manual, which  omitted the HSCIF1 group E signals in  the
-> IPSR4 register description. This would cause HSCIF1's probe  to fail with
-> the messages like below:
+On Thu, Mar 30, 2017 at 9:33 AM, Chris Paterson
+<Chris.Paterson2@renesas.com> wrote:
+>> From: linux-renesas-soc-owner@vger.kernel.org [mailto:linux-renesas-soc-
+>> owner@vger.kernel.org] On Behalf Of Sergei Shtylyov
+>> Sent: 29 March 2017 19:37
+>>
+>> The R8A7791 PFC driver  was apparently based on the preliminary revisions of
+>> the user's  manual, which  omitted the DVC_MUTE signal  altogether in the
+>> PFC section. The modern manual has the signal described,  so just add the
+>> necassary data to the driver...
+>>
+>> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >
-> sh-pfc e6060000.pfc: cannot locate data/mark enum_id for mark 1989
-> sh-sci e62c8000.serial: Error applying setting, reverse things back
-> sh-sci: probe of e62c8000.serial failed with error -22
->
-> Add the neceassary PINMUX_IPSR_MSEL() invocations for the HSCK1_E,
-> HCTS1#_E, and HRTS1#_E signals...
->
-> Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> CC: stable@vger.kernel.org
+> Should this patch also CC stable? (Patch 1/2 does)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+No need to spam stable with all these patches and reviews.
+If it has a Fixes-tag, the stable team will pick it up anyway. After
+it has ended
+up upstream.
 
 Gr{oetje,eeting}s,
 
