@@ -1,76 +1,299 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: Re: [PATCH v4 2/4] mvebu: xp: Add PWM properties to .dtsi files
-Date: Thu, 30 Mar 2017 18:14:49 +0200
-Message-ID: <20170330181449.27508830@gmail.com>
-References: <20170327194301.1104-1-ralph.sennhauser@gmail.com>
-        <20170327194301.1104-3-ralph.sennhauser@gmail.com>
-        <87wpb693az.fsf@free-electrons.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
+Date: Thu, 30 Mar 2017 09:16:39 -0700
+Message-ID: <20170330161639.1855-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <87wpb693az.fsf@free-electrons.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Imre Kaloz <kaloz@openwrt.org>, Andrew Lunn <andrew@lunn.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:42834 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933821AbdC3QRE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 30 Mar 2017 12:17:04 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?q?Mika=20Penttil=C3=A4?= <mika.penttila@nextfour.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Nishanth Menon <nm@ti.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>
 
-On Thu, 30 Mar 2017 17:45:08 +0200
-Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+Recent pinctrl changes to allow dynamic allocation of pins exposed one
+more issue with the pinctrl pins claimed early by the controller itself.
+This caused a regression for IMX6 pinctrl hogs.
 
-> Hi Ralph,
->  
->  On lun., mars 27 2017, Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> wrote:
-> 
-> The title should start by ARM: dts: mvebu:
-> 
-> If there is no need to have a v5 then I wil take care of modifying the
-> title while applying it.
+Before enabling the pin controller driver we need to wait until it has
+been properly initialized, then claim the hogs, and only then enable it.
 
-Noted.
+To fix the regression, split the code into pinctrl_claim_hogs() and
+pinctrl_enable(). And then let's require that pinctrl_enable() is always
+called by the pin controller driver when ready after calling
+pinctrl_register_and_init().
 
-> 
-> 
-> > From: Andrew Lunn <andrew@lunn.ch>
-> >
-> > Add properties to the GPIO nodes to allow them to be also used as
-> > PWM lines.
-> >
-> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> > URL: https://patchwork.ozlabs.org/patch/427294/
-> > [Ralph Sennhauser:
-> >   * Use new compatible string marvell,armada-370-xp-gpio
-> >   * Add missing reg-names / #pwm-cell properties to
-> > armada-xp-mv78260.dtsi 'gpio1' node]
-> > Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/armada-370.dtsi        | 16 +++++++++++-----
-> >  arch/arm/boot/dts/armada-xp-mv78230.dtsi | 14 ++++++++++----
-> >  arch/arm/boot/dts/armada-xp-mv78260.dtsi | 16 +++++++++++-----
-> >  arch/arm/boot/dts/armada-xp-mv78460.dtsi | 16 +++++++++++-----
-> >  4 files changed, 43 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/armada-370.dtsi
-> > b/arch/arm/boot/dts/armada-370.dtsi index cc011c8..e30b076 100644
-> > --- a/arch/arm/boot/dts/armada-370.dtsi
-> > +++ b/arch/arm/boot/dts/armada-370.dtsi
-> > @@ -137,29 +137,35 @@
-> >  			};
-> >  
-> >  			gpio0: gpio@18100 {
-> > -				compatible = "marvell,orion-gpio";
-> > -				reg = <0x18100 0x40>;
-> > +				compatible =
-> > "marvell,armada-370-xp-gpio";  
-> 
-> I think we should keep the "marvell,orion-gpio" too because the
-> hardware is still compatible with it. Morever it will allow to use a
-> recent dtb with an old kernel.
+Depends-on: 950b0d91dc10 ("pinctrl: core: Fix regression caused by delayed
+work for hogs")
+Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
+Fixes: e566fc11ea76 ("pinctrl: imx: use generic pinctrl helpers for
+managing groups")
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Gary Bisson <gary.bisson@boundarydevices.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Mika Penttilä <mika.penttila@nextfour.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Nishanth Menon <nm@ti.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
 
-And it will remain compatible. Apart from not collecting compatible
-strings there is no reason to drop them right now, so will add them back
-for a (possible) v5.
+Apologies with all the accidental delays getting this regression
+fixed. Here's a better version of the fix I attempted earlier that
+now just adds pinctrl_enable().
 
-Thanks
-Ralph
+Some testing is needed for sure, can you guys please review and test?
+I've tested with my pinctrl hogs case, but I've and I've only compile
+tested for imx and sh.
+
+---
+ Documentation/pinctrl.txt               |  8 ++-
+ drivers/pinctrl/core.c                  | 97 +++++++++++++++++++++------------
+ drivers/pinctrl/freescale/pinctrl-imx.c |  2 +-
+ drivers/pinctrl/pinctrl-single.c        |  2 +-
+ drivers/pinctrl/sh-pfc/pinctrl.c        | 11 +++-
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c |  2 +
+ include/linux/pinctrl/pinctrl.h         |  3 +-
+ 7 files changed, 83 insertions(+), 42 deletions(-)
+
+diff --git a/Documentation/pinctrl.txt b/Documentation/pinctrl.txt
+--- a/Documentation/pinctrl.txt
++++ b/Documentation/pinctrl.txt
+@@ -77,9 +77,15 @@ static struct pinctrl_desc foo_desc = {
+ 
+ int __init foo_probe(void)
+ {
++	int error;
++
+ 	struct pinctrl_dev *pctl;
+ 
+-	return pinctrl_register_and_init(&foo_desc, <PARENT>, NULL, &pctl);
++	error = pinctrl_register_and_init(&foo_desc, <PARENT>, NULL, &pctl);
++	if (error)
++		return error;
++
++	return pinctrl_enable(pctl);
+ }
+ 
+ To enable the pinctrl subsystem and the subgroups for PINMUX and PINCONF and
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -2010,29 +2010,57 @@ struct pinctrl_dev *pinctrl_init_controller(struct pinctrl_desc *pctldesc,
+ 	return ERR_PTR(ret);
+ }
+ 
+-static int pinctrl_create_and_start(struct pinctrl_dev *pctldev)
++static int pinctrl_claim_hogs(struct pinctrl_dev *pctldev)
+ {
+ 	pctldev->p = create_pinctrl(pctldev->dev, pctldev);
+-	if (!IS_ERR(pctldev->p)) {
+-		kref_get(&pctldev->p->users);
+-		pctldev->hog_default =
+-			pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
+-		if (IS_ERR(pctldev->hog_default)) {
+-			dev_dbg(pctldev->dev,
+-				"failed to lookup the default state\n");
+-		} else {
+-			if (pinctrl_select_state(pctldev->p,
+-						pctldev->hog_default))
+-				dev_err(pctldev->dev,
+-					"failed to select default state\n");
+-		}
++	if (PTR_ERR(pctldev->p) == -ENODEV) {
++		dev_dbg(pctldev->dev, "no hogs found\n");
+ 
+-		pctldev->hog_sleep =
+-			pinctrl_lookup_state(pctldev->p,
+-						    PINCTRL_STATE_SLEEP);
+-		if (IS_ERR(pctldev->hog_sleep))
+-			dev_dbg(pctldev->dev,
+-				"failed to lookup the sleep state\n");
++		return 0;
++	}
++
++	if (IS_ERR(pctldev->p)) {
++		dev_err(pctldev->dev, "error claiming hogs: %li\n",
++			PTR_ERR(pctldev->p));
++
++		return PTR_ERR(pctldev->p);
++	}
++
++	kref_get(&pctldev->p->users);
++	pctldev->hog_default =
++		pinctrl_lookup_state(pctldev->p, PINCTRL_STATE_DEFAULT);
++	if (IS_ERR(pctldev->hog_default)) {
++		dev_dbg(pctldev->dev,
++			"failed to lookup the default state\n");
++	} else {
++		if (pinctrl_select_state(pctldev->p,
++					 pctldev->hog_default))
++			dev_err(pctldev->dev,
++				"failed to select default state\n");
++	}
++
++	pctldev->hog_sleep =
++		pinctrl_lookup_state(pctldev->p,
++				     PINCTRL_STATE_SLEEP);
++	if (IS_ERR(pctldev->hog_sleep))
++		dev_dbg(pctldev->dev,
++			"failed to lookup the sleep state\n");
++
++	return 0;
++}
++
++int pinctrl_enable(struct pinctrl_dev *pctldev)
++{
++	int error;
++
++	error = pinctrl_claim_hogs(pctldev);
++	if (error) {
++		dev_err(pctldev->dev, "could not claim hogs: %i\n",
++			error);
++		mutex_destroy(&pctldev->mutex);
++		kfree(pctldev);
++
++		return error;
+ 	}
+ 
+ 	mutex_lock(&pinctrldev_list_mutex);
+@@ -2043,6 +2071,7 @@ static int pinctrl_create_and_start(struct pinctrl_dev *pctldev)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(pinctrl_enable);
+ 
+ /**
+  * pinctrl_register() - register a pin controller device
+@@ -2065,25 +2094,30 @@ struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ 	if (IS_ERR(pctldev))
+ 		return pctldev;
+ 
+-	error = pinctrl_create_and_start(pctldev);
+-	if (error) {
+-		mutex_destroy(&pctldev->mutex);
+-		kfree(pctldev);
+-
++	error = pinctrl_enable(pctldev);
++	if (error)
+ 		return ERR_PTR(error);
+-	}
+ 
+ 	return pctldev;
+ 
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_register);
+ 
++/**
++ * pinctrl_register_and_init() - register and init pin controller device
++ * @pctldesc: descriptor for this pin controller
++ * @dev: parent device for this pin controller
++ * @driver_data: private pin controller data for this pin controller
++ * @pctldev: pin controller device
++ *
++ * Note that pinctrl_enable() still needs to be manually called after
++ * this once the driver is ready.
++ */
+ int pinctrl_register_and_init(struct pinctrl_desc *pctldesc,
+ 			      struct device *dev, void *driver_data,
+ 			      struct pinctrl_dev **pctldev)
+ {
+ 	struct pinctrl_dev *p;
+-	int error;
+ 
+ 	p = pinctrl_init_controller(pctldesc, dev, driver_data);
+ 	if (IS_ERR(p))
+@@ -2097,15 +2131,6 @@ int pinctrl_register_and_init(struct pinctrl_desc *pctldesc,
+ 	 */
+ 	*pctldev = p;
+ 
+-	error = pinctrl_create_and_start(p);
+-	if (error) {
+-		mutex_destroy(&p->mutex);
+-		kfree(p);
+-		*pctldev = NULL;
+-
+-		return error;
+-	}
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_register_and_init);
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -790,7 +790,7 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	dev_info(&pdev->dev, "initialized IMX pinctrl driver\n");
+ 
+-	return 0;
++	return pinctrl_enable(ipctl->pctl);
+ 
+ free:
+ 	imx_free_resources(ipctl);
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1781,7 +1781,7 @@ static int pcs_probe(struct platform_device *pdev)
+ 	dev_info(pcs->dev, "%i pins at pa %p size %u\n",
+ 		 pcs->desc.npins, pcs->base, pcs->size);
+ 
+-	return 0;
++	return pinctrl_enable(pcs->pctl);
+ 
+ free:
+ 	pcs_free_resources(pcs);
+diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
+--- a/drivers/pinctrl/sh-pfc/pinctrl.c
++++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+@@ -816,6 +816,13 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
+ 	pmx->pctl_desc.pins = pmx->pins;
+ 	pmx->pctl_desc.npins = pfc->info->nr_pins;
+ 
+-	return devm_pinctrl_register_and_init(pfc->dev, &pmx->pctl_desc, pmx,
+-					      &pmx->pctl);
++	ret = devm_pinctrl_register_and_init(pfc->dev, &pmx->pctl_desc, pmx,
++					     &pmx->pctl);
++	if (ret) {
++		dev_err(pfc->dev, "could not register: %i\n", ret);
++
++		return ret;
++	}
++
++	return pinctrl_enable(pmx->pctl);
+ }
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -893,6 +893,8 @@ static int ti_iodelay_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, iod);
+ 
++	return pinctrl_enable(iod->pctl);
++
+ exit_out:
+ 	of_node_put(np);
+ 	return ret;
+diff --git a/include/linux/pinctrl/pinctrl.h b/include/linux/pinctrl/pinctrl.h
+--- a/include/linux/pinctrl/pinctrl.h
++++ b/include/linux/pinctrl/pinctrl.h
+@@ -145,8 +145,9 @@ struct pinctrl_desc {
+ extern int pinctrl_register_and_init(struct pinctrl_desc *pctldesc,
+ 				     struct device *dev, void *driver_data,
+ 				     struct pinctrl_dev **pctldev);
++extern int pinctrl_enable(struct pinctrl_dev *pctldev);
+ 
+-/* Please use pinctrl_register_and_init() instead */
++/* Please use pinctrl_register_and_init() and pinctrl_enable() instead */
+ extern struct pinctrl_dev *pinctrl_register(struct pinctrl_desc *pctldesc,
+ 				struct device *dev, void *driver_data);
+ 
+-- 
+2.12.1
