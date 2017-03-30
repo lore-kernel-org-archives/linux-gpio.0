@@ -1,168 +1,91 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: Add pincontrol driver for ARTPEC-6 SoC
-Date: Thu, 30 Mar 2017 14:07:33 +0200
-Message-ID: <CACRpkda_o9nU9jyHAEJxoownO-DXw72fr3yuxf2zGJkJvPbW7g@mail.gmail.com>
-References: <20170330113302.GF29118@axis.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/4] pinctrl: sh-pfc: Add support for R-Car H3 ES2.0
+Date: Thu, 30 Mar 2017 15:08:15 +0200
+Message-ID: <CAMuHMdXEJhs97_F70BfBkbLusMT_qnVVYn_iQq8oB4B1pjf1Yg@mail.gmail.com>
+References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170330113302.GF29118@axis.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, chris.paterson@linux.pieboy.co.uk, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-arm-kernel@axis.com
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:33577 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933160AbdC3NIS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 09:08:18 -0400
+In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Mar 30, 2017 at 1:33 PM, Jesper Nilsson <jesper.nilsson@axis.com> wrote:
-
-> Add pinctrl driver support for the Axis ARTPEC-6 SoC.
-> There are only some pins that actually have different
-> functions available, but all can control bias (pull-up/-down)
-> and drive strength.
-> Code originally written by Chris Paterson.
+On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> This patch series adds pinctrl support for R-Car H3 ES2.0, which differs
+> from ES1.x in several areas.
 >
-> Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+> The goal is twofold:
+>   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
+>      for now,
+>   2. Make it clear which code supports ES1.x, so it can easily be
+>      identified and removed later, when production SoCs are deemed
+>      ubiquitous.
+>
+> This is achieved by:
+>   1. Extracting the support for R-Car H3 ES1.x into a separate file, as
+>      the differences are quite large,
+>   2. Adding code for detecting the SoC revision at runtime using the new
+>      soc_device_match() API, and selecting pinctrl tables for the actual
+>      SoC revision,
+>   3. Replacing the core register and bitfield definitions, and pins,
+>      groups, and functions for basic devices by their counterparts for
+>      R-Car H3 ES2.0.
+>
+> Changes compared to v1:
+>   - Print correct subdriver name,
+>   - Extend Proof-of-Concept to basic support (SCIF serial port).
+>
+> The addition of pins, groups, and functions for other on-chip devices is
+> left to subsequent patches.
+>
+> For testers, this series and its dependencies are available in the
+> topic/r8a7795es2-pfc-v2 branch of my renesas-drivers git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
+> development board is provided as topic/r8a7795es2-integration.
+>
+> This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
+> SoCs.
+>
+> I plan to queue this up in sh-pfc-for-v4.12.
 
-Very good start, but look at this:
+In the mean time:
+  - I renamed pfc-r8a7795es1.c to pfc-r8a7795-es1.c for compatibility with
+    the BSP, but I'm not gonna spam everybody with a v3 for such a trivial
+    change.
+  - I verified all physical pins against the R-Car H3 pin function rev0.551
+    and the R-Car H3SiP pin arrangement rev1.53 documents. No updates needed.
 
+So I've queued the remainder (patches 2-4) up in sh-pfc-for-v4.12.
 
-> +#define ARTPEC6_PINMUX_P0_0_CTRL       0x000
-> +#define ARTPEC6_PINMUX_P0_1_CTRL       0x004
-> +#define ARTPEC6_PINMUX_P0_2_CTRL       0x008
-> +#define ARTPEC6_PINMUX_P0_3_CTRL       0x00C
-> +#define ARTPEC6_PINMUX_P0_4_CTRL       0x010
-> +#define ARTPEC6_PINMUX_P0_5_CTRL       0x014
-> +#define ARTPEC6_PINMUX_P0_6_CTRL       0x018
-> +#define ARTPEC6_PINMUX_P0_7_CTRL       0x01C
-> +#define ARTPEC6_PINMUX_P0_8_CTRL       0x020
-> +#define ARTPEC6_PINMUX_P0_9_CTRL       0x024
-> +#define ARTPEC6_PINMUX_P0_10_CTRL      0x028
-> +#define ARTPEC6_PINMUX_P0_11_CTRL      0x02C
-> +#define ARTPEC6_PINMUX_P0_12_CTRL      0x030
-> +#define ARTPEC6_PINMUX_P0_13_CTRL      0x034
-> +#define ARTPEC6_PINMUX_P0_14_CTRL      0x038
-> +#define ARTPEC6_PINMUX_P0_15_CTRL      0x03C
+> Geert Uytterhoeven (4):
+>   pinctrl: sh-pfc: Update info pointer after SoC-specific init
+>   pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0
+>   pinctrl: sh-pfc: r8a7795: Add SCIF support
+>   pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
+>
+>  drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+>  drivers/pinctrl/sh-pfc/core.c                      |    3 +
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 4217 ++++----------------
+>  .../sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c}     |   25 +-
+>  drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
+>  5 files changed, 782 insertions(+), 3465 deletions(-)
+>  copy drivers/pinctrl/sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c} (99%)
 
-It's pretty clear that the stride is always 4 bytes is it not.
+Gr{oetje,eeting}s,
 
+                        Geert
 
-> +static const unsigned int pin_regs[] = {
-> +       ARTPEC6_PINMUX_P0_0_CTRL,       /* Pin 0 */
-> +       ARTPEC6_PINMUX_P0_1_CTRL,
-> +       ARTPEC6_PINMUX_P0_2_CTRL,
-> +       ARTPEC6_PINMUX_P0_3_CTRL,
-> +       ARTPEC6_PINMUX_P0_4_CTRL,
-> +       ARTPEC6_PINMUX_P0_5_CTRL,
-> +       ARTPEC6_PINMUX_P0_6_CTRL,
-> +       ARTPEC6_PINMUX_P0_7_CTRL,
-> +       ARTPEC6_PINMUX_P0_8_CTRL,
-> +       ARTPEC6_PINMUX_P0_9_CTRL,
-> +       ARTPEC6_PINMUX_P0_10_CTRL,
-> +       ARTPEC6_PINMUX_P0_11_CTRL,
-> +       ARTPEC6_PINMUX_P0_12_CTRL,
-> +       ARTPEC6_PINMUX_P0_13_CTRL,
-> +       ARTPEC6_PINMUX_P0_14_CTRL,
-> +       ARTPEC6_PINMUX_P0_15_CTRL,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-The oceans of redundant information are rising ;)
-
-> +static const unsigned int uart0_regs0[] = {
-> +       ARTPEC6_PINMUX_P1_0_CTRL,
-> +       ARTPEC6_PINMUX_P1_1_CTRL,
-> +       ARTPEC6_PINMUX_P1_2_CTRL,
-> +       ARTPEC6_PINMUX_P1_3_CTRL,
-> +       ARTPEC6_PINMUX_P1_4_CTRL,
-> +       ARTPEC6_PINMUX_P1_5_CTRL,
-> +       ARTPEC6_PINMUX_P1_6_CTRL,
-> +       ARTPEC6_PINMUX_P1_7_CTRL,
-> +       ARTPEC6_PINMUX_P1_8_CTRL,
-> +       ARTPEC6_PINMUX_P1_9_CTRL,
-> +};
-
-And rising.
-
-> +       {
-> +               .name = "uart0grp0",
-> +               .pins = uart0_pins0,
-> +               .num_pins = ARRAY_SIZE(uart0_pins0),
-> +               .reg_offsets = uart0_regs0,
-> +               .num_regs = ARRAY_SIZE(uart0_regs0),
-> +               .config = ARTPEC6_CONFIG_1,
-> +       },
-
-So what if the struct artpec6_pin_group...
-
-> +struct artpec6_pin_group {
-> +       const char         *name;
-> +       const unsigned int *pins;
-> +       const unsigned int num_pins;
-> +       const unsigned int *reg_offsets;
-> +       const unsigned int num_regs;
-> +       unsigned char      config;
-> +};
-
-Instead of reg_offsets had reg_offset_base, and you just
-calculate it with base + pin * 4 when you need it?
-
-I also highly suspect that num_pins and num_regs above
-are exactly the same number in all cases, correct? You
-probably only need num_pins.
-
-> +static struct artpec6_pmx_func artpec6_pmx_functions[] = {
-
-Needs const
-
-> +static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
-> +                                   unsigned int function, unsigned int group,
-> +                                   bool enable)
-> +{
-> +       unsigned int regval, val;
-> +       int i;
-> +       const unsigned int *pmx_regs;
-> +       struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
-> +
-> +       pmx_regs = artpec6_pin_groups[group].reg_offsets;
-> +
-> +       for (i = 0; i < artpec6_pin_groups[group].num_regs; i++) {
-> +               /* Ports 4-8 do not have a SEL field and are always selected */
-> +               if (pmx_regs[i] >= ARTPEC6_PINMUX_P4_0_CTRL)
-> +                       continue;
-> +
-> +               if (!strcmp(artpec6_pmx_get_fname(pctldev, function), "gpio")) {
-> +                       /* GPIO is always config 0 */
-> +                       val = ARTPEC6_CONFIG_0 << ARTPEC6_PINMUX_SEL_SHIFT;
-> +               } else {
-> +                       if (enable)
-> +                               val = artpec6_pin_groups[group].config
-> +                                       << ARTPEC6_PINMUX_SEL_SHIFT;
-> +                       else
-> +                               val = ARTPEC6_CONFIG_0
-> +                                       << ARTPEC6_PINMUX_SEL_SHIFT;
-> +               }
-> +
-> +               regval = readl(pmx->base + pmx_regs[i]);
-> +               regval &= ~ARTPEC6_PINMUX_SEL_MASK;
-> +               regval |= val;
-> +               writel(regval, pmx->base + pmx_regs[i]);
-> +       }
-
-So thus look can be different and include something like +=4 for the registers
-for each iteration.
-
-> --- /dev/null
-> +++ b/drivers/pinctrl/pinctrl-artpec6.h
-
-You don't need to have these defines in their own file, just copy it into
-the top of the driver file.
-
-> +/* Pinmux control register offset definitions */
-> +
-> +#define ARTPEC6_PINMUX_P1_0_CTRL       0x040
-> +#define ARTPEC6_PINMUX_P1_1_CTRL       0x044
-(...)
-
-So for these defines you only need the first one.
-
-With these things fixes I'm pretty sure it is close to finished.
-
-Yours,
-Linus Walleij
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
