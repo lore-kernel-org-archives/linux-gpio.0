@@ -1,398 +1,1528 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: Add a driver for Cadence GPIO controller
-Date: Thu, 30 Mar 2017 13:29:46 +0200
-Message-ID: <20170330132946.41314874@bbrezillon>
-References: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
-        <CACRpkdZ6w_tuzSNmFE=2BpeASNOSq0cV4fYM6F8-57Q2+3n-aQ@mail.gmail.com>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: [PATCH 2/3] pinctrl: Add pincontrol driver for ARTPEC-6 SoC
+Date: Thu, 30 Mar 2017 13:33:02 +0200
+Message-ID: <20170330113302.GF29118@axis.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:36671 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932638AbdC3L3z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 07:29:55 -0400
-In-Reply-To: <CACRpkdZ6w_tuzSNmFE=2BpeASNOSq0cV4fYM6F8-57Q2+3n-aQ@mail.gmail.com>
+Received: from bastet.se.axis.com ([195.60.68.11]:45198 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932471AbdC3LdQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 07:33:16 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Simon Hatliff <hatliff@cadence.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Mauro Carvalho Chehab <mchehab@kernel.org>, chris.paterson@linux.pieboy.co.uk, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@axis.com
 
-Hi Linus,
+Add pinctrl driver support for the Axis ARTPEC-6 SoC.
+There are only some pins that actually have different
+functions available, but all can control bias (pull-up/-down)
+and drive strength.
+Code originally written by Chris Paterson.
 
-On Thu, 30 Mar 2017 11:03:45 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+---
+ MAINTAINERS                       |    1 +
+ drivers/pinctrl/Kconfig           |   11 +
+ drivers/pinctrl/Makefile          |    1 +
+ drivers/pinctrl/pinctrl-artpec6.c | 1279 +++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-artpec6.h |  151 +++++
+ 5 files changed, 1443 insertions(+)
+ create mode 100644 drivers/pinctrl/pinctrl-artpec6.c
+ create mode 100644 drivers/pinctrl/pinctrl-artpec6.h
 
-> On Wed, Mar 29, 2017 at 6:04 PM, Boris Brezillon
-> <boris.brezillon@free-electrons.com> wrote:
-> 
-> > Add a driver for Cadence GPIO controller.  
-> 
-> IIUC Cadence do a lot of things. Are there variants of this controller?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7563bd6..d2b2449 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1088,6 +1088,7 @@ L:	linux-arm-kernel@axis.com
+ F:	arch/arm/mach-artpec
+ F:	arch/arm/boot/dts/artpec6*
+ F:	drivers/clk/axis
++F:	drivers/pinctrl/pinctrl-artpec*
+ F:	Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
+ 
+ ARM/ASPEED MACHINE SUPPORT
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index 8f8c2af..37af5e3 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -41,6 +41,17 @@ config PINCTRL_ADI2
+ 	  future processors. This option is selected automatically when specific
+ 	  machine and arch are selected to build.
+ 
++config PINCTRL_ARTPEC6
++        bool "Axis ARTPEC-6 pin controller driver"
++        depends on MACH_ARTPEC6
++        select PINMUX
++        select GENERIC_PINCONF
++        help
++          This is the driver for the Axis ARTPEC-6 pin controller. This driver
++          supports pin function multiplexing as well as pin bias and drive
++          strength configuration. Device tree integration instructions can be
++          found in Documentation/devicetree/bindings/pinctrl/axis,artpec6-pinctrl.txt
++
+ config PINCTRL_AS3722
+ 	tristate "Pinctrl and GPIO driver for ams AS3722 PMIC"
+ 	depends on MFD_AS3722 && GPIOLIB
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index a251f43..193dbba 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_PINCONF)		+= pinconf.o
+ obj-$(CONFIG_OF)		+= devicetree.o
+ obj-$(CONFIG_GENERIC_PINCONF)	+= pinconf-generic.o
+ obj-$(CONFIG_PINCTRL_ADI2)	+= pinctrl-adi2.o
++obj-$(CONFIG_PINCTRL_ARTPEC6)   += pinctrl-artpec6.o
+ obj-$(CONFIG_PINCTRL_AS3722)	+= pinctrl-as3722.o
+ obj-$(CONFIG_PINCTRL_BF54x)	+= pinctrl-adi2-bf54x.o
+ obj-$(CONFIG_PINCTRL_BF60x)	+= pinctrl-adi2-bf60x.o
+diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+new file mode 100644
+index 0000000..ff80c8a
+--- /dev/null
++++ b/drivers/pinctrl/pinctrl-artpec6.c
+@@ -0,0 +1,1279 @@
++/*
++ * Driver for the Axis ARTPEC-6 pin controller
++ *
++ * Author: Chris Paterson <chris.paterson@linux.pieboy.co.uk>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinmux.h>
++#include <linux/slab.h>
++#include "core.h"
++#include "pinconf.h"
++#include "pinctrl-utils.h"
++#include "pinctrl-artpec6.h"
++
++struct artpec6_pmx {
++	struct device	   *dev;
++	struct pinctrl_dev *pctl;
++	void __iomem	   *base;
++	struct		   pinctrl_pin_desc *pins;
++	unsigned int	   num_pins;
++	struct		   artpec6_pin_group *pin_groups;
++	unsigned int	   num_pin_groups;
++	struct		   artpec6_pmx_func *functions;
++	unsigned int	   num_functions;
++};
++
++struct artpec6_pin_group {
++	const char	   *name;
++	const unsigned int *pins;
++	const unsigned int num_pins;
++	const unsigned int *reg_offsets;
++	const unsigned int num_regs;
++	unsigned char	   config;
++};
++
++struct artpec6_pmx_func {
++	const char	   *name;
++	const char * const *groups;
++	const unsigned int num_groups;
++};
++
++/* pins */
++static struct pinctrl_pin_desc artpec6_pins[] = {
++	PINCTRL_PIN(0, "GPIO0"),
++	PINCTRL_PIN(1, "GPIO1"),
++	PINCTRL_PIN(2, "GPIO2"),
++	PINCTRL_PIN(3, "GPIO3"),
++	PINCTRL_PIN(4, "GPIO4"),
++	PINCTRL_PIN(5, "GPIO5"),
++	PINCTRL_PIN(6, "GPIO6"),
++	PINCTRL_PIN(7, "GPIO7"),
++	PINCTRL_PIN(8, "GPIO8"),
++	PINCTRL_PIN(9, "GPIO9"),
++	PINCTRL_PIN(10, "GPIO10"),
++	PINCTRL_PIN(11, "GPIO11"),
++	PINCTRL_PIN(12, "GPIO12"),
++	PINCTRL_PIN(13, "GPIO13"),
++	PINCTRL_PIN(14, "GPIO14"),
++	PINCTRL_PIN(15, "GPIO15"),
++	PINCTRL_PIN(16, "GPIO16"),
++	PINCTRL_PIN(17, "GPIO17"),
++	PINCTRL_PIN(18, "GPIO18"),
++	PINCTRL_PIN(19, "GPIO19"),
++	PINCTRL_PIN(20, "GPIO20"),
++	PINCTRL_PIN(21, "GPIO21"),
++	PINCTRL_PIN(22, "GPIO22"),
++	PINCTRL_PIN(23, "GPIO23"),
++	PINCTRL_PIN(24, "GPIO24"),
++	PINCTRL_PIN(25, "GPIO25"),
++	PINCTRL_PIN(26, "GPIO26"),
++	PINCTRL_PIN(27, "GPIO27"),
++	PINCTRL_PIN(28, "GPIO28"),
++	PINCTRL_PIN(29, "GPIO29"),
++	PINCTRL_PIN(30, "GPIO30"),
++	PINCTRL_PIN(31, "GPIO31"),
++	PINCTRL_PIN(32, "UART3_TXD"),
++	PINCTRL_PIN(33, "UART3_RXD"),
++	PINCTRL_PIN(34, "UART3_RTS"),
++	PINCTRL_PIN(35, "UART3_CTS"),
++	PINCTRL_PIN(36, "NF_ALE"),
++	PINCTRL_PIN(37, "NF_CE0_N"),
++	PINCTRL_PIN(38, "NF_CE1_N"),
++	PINCTRL_PIN(39, "NF_CLE"),
++	PINCTRL_PIN(40, "NF_RE_N"),
++	PINCTRL_PIN(41, "NF_WE_N"),
++	PINCTRL_PIN(42, "NF_WP0_N"),
++	PINCTRL_PIN(43, "NF_WP1_N"),
++	PINCTRL_PIN(44, "NF_IO0"),
++	PINCTRL_PIN(45, "NF_IO1"),
++	PINCTRL_PIN(46, "NF_IO2"),
++	PINCTRL_PIN(47, "NF_IO3"),
++	PINCTRL_PIN(48, "NF_IO4"),
++	PINCTRL_PIN(49, "NF_IO5"),
++	PINCTRL_PIN(50, "NF_IO6"),
++	PINCTRL_PIN(51, "NF_IO7"),
++	PINCTRL_PIN(52, "NF_RB0_N"),
++	PINCTRL_PIN(53, "SDIO0_CLK"),
++	PINCTRL_PIN(54, "SDIO0_CMD"),
++	PINCTRL_PIN(55, "SDIO0_DAT0"),
++	PINCTRL_PIN(56, "SDIO0_DAT1"),
++	PINCTRL_PIN(57, "SDIO0_DAT2"),
++	PINCTRL_PIN(58, "SDIO0_DAT3"),
++	PINCTRL_PIN(59, "SDI0_CD"),
++	PINCTRL_PIN(60, "SDI0_WP"),
++	PINCTRL_PIN(61, "SDIO1_CLK"),
++	PINCTRL_PIN(62, "SDIO1_CMD"),
++	PINCTRL_PIN(63, "SDIO1_DAT0"),
++	PINCTRL_PIN(64, "SDIO1_DAT1"),
++	PINCTRL_PIN(65, "SDIO1_DAT2"),
++	PINCTRL_PIN(66, "SDIO1_DAT3"),
++	PINCTRL_PIN(67, "SDIO1_CD"),
++	PINCTRL_PIN(68, "SDIO1_WP"),
++	PINCTRL_PIN(69, "GBE_REFCLk"),
++	PINCTRL_PIN(70, "GBE_GTX_CLK"),
++	PINCTRL_PIN(71, "GBE_TX_CLK"),
++	PINCTRL_PIN(72, "GBE_TX_EN"),
++	PINCTRL_PIN(73, "GBE_TX_ER"),
++	PINCTRL_PIN(74, "GBE_TXD0"),
++	PINCTRL_PIN(75, "GBE_TXD1"),
++	PINCTRL_PIN(76, "GBE_TXD2"),
++	PINCTRL_PIN(77, "GBE_TXD3"),
++	PINCTRL_PIN(78, "GBE_TXD4"),
++	PINCTRL_PIN(79, "GBE_TXD5"),
++	PINCTRL_PIN(80, "GBE_TXD6"),
++	PINCTRL_PIN(81, "GBE_TXD7"),
++	PINCTRL_PIN(82, "GBE_RX_CLK"),
++	PINCTRL_PIN(83, "GBE_RX_DV"),
++	PINCTRL_PIN(84, "GBE_RX_ER"),
++	PINCTRL_PIN(85, "GBE_RXD0"),
++	PINCTRL_PIN(86, "GBE_RXD1"),
++	PINCTRL_PIN(87, "GBE_RXD2"),
++	PINCTRL_PIN(88, "GBE_RXD3"),
++	PINCTRL_PIN(89, "GBE_RXD4"),
++	PINCTRL_PIN(90, "GBE_RXD5"),
++	PINCTRL_PIN(91, "GBE_RXD6"),
++	PINCTRL_PIN(92, "GBE_RXD7"),
++	PINCTRL_PIN(93, "GBE_CRS"),
++	PINCTRL_PIN(94, "GBE_COL"),
++	PINCTRL_PIN(95, "GBE_MDC"),
++	PINCTRL_PIN(96, "GBE_MDIO"),
++};
++
++static const unsigned int pin_regs[] = {
++	ARTPEC6_PINMUX_P0_0_CTRL,	/* Pin 0 */
++	ARTPEC6_PINMUX_P0_1_CTRL,
++	ARTPEC6_PINMUX_P0_2_CTRL,
++	ARTPEC6_PINMUX_P0_3_CTRL,
++	ARTPEC6_PINMUX_P0_4_CTRL,
++	ARTPEC6_PINMUX_P0_5_CTRL,
++	ARTPEC6_PINMUX_P0_6_CTRL,
++	ARTPEC6_PINMUX_P0_7_CTRL,
++	ARTPEC6_PINMUX_P0_8_CTRL,
++	ARTPEC6_PINMUX_P0_9_CTRL,
++	ARTPEC6_PINMUX_P0_10_CTRL,
++	ARTPEC6_PINMUX_P0_11_CTRL,
++	ARTPEC6_PINMUX_P0_12_CTRL,
++	ARTPEC6_PINMUX_P0_13_CTRL,
++	ARTPEC6_PINMUX_P0_14_CTRL,
++	ARTPEC6_PINMUX_P0_15_CTRL,
++	ARTPEC6_PINMUX_P1_0_CTRL,
++	ARTPEC6_PINMUX_P1_1_CTRL,
++	ARTPEC6_PINMUX_P1_2_CTRL,
++	ARTPEC6_PINMUX_P1_3_CTRL,
++	ARTPEC6_PINMUX_P1_4_CTRL,
++	ARTPEC6_PINMUX_P1_5_CTRL,
++	ARTPEC6_PINMUX_P1_6_CTRL,
++	ARTPEC6_PINMUX_P1_7_CTRL,
++	ARTPEC6_PINMUX_P1_8_CTRL,
++	ARTPEC6_PINMUX_P1_9_CTRL,
++	ARTPEC6_PINMUX_P1_10_CTRL,
++	ARTPEC6_PINMUX_P1_11_CTRL,
++	ARTPEC6_PINMUX_P1_12_CTRL,
++	ARTPEC6_PINMUX_P1_13_CTRL,
++	ARTPEC6_PINMUX_P1_14_CTRL,
++	ARTPEC6_PINMUX_P1_15_CTRL,
++	ARTPEC6_PINMUX_P2_0_CTRL,
++	ARTPEC6_PINMUX_P2_1_CTRL,
++	ARTPEC6_PINMUX_P2_2_CTRL,
++	ARTPEC6_PINMUX_P2_3_CTRL,
++	ARTPEC6_PINMUX_P4_0_CTRL,
++	ARTPEC6_PINMUX_P4_1_CTRL,
++	ARTPEC6_PINMUX_P4_2_CTRL,
++	ARTPEC6_PINMUX_P4_3_CTRL,
++	ARTPEC6_PINMUX_P4_4_CTRL,
++	ARTPEC6_PINMUX_P4_5_CTRL,
++	ARTPEC6_PINMUX_P4_6_CTRL,
++	ARTPEC6_PINMUX_P4_7_CTRL,
++	ARTPEC6_PINMUX_P4_8_CTRL,
++	ARTPEC6_PINMUX_P4_9_CTRL,
++	ARTPEC6_PINMUX_P4_10_CTRL,
++	ARTPEC6_PINMUX_P4_11_CTRL,
++	ARTPEC6_PINMUX_P4_12_CTRL,
++	ARTPEC6_PINMUX_P4_13_CTRL,
++	ARTPEC6_PINMUX_P4_14_CTRL,
++	ARTPEC6_PINMUX_P4_15_CTRL,
++	ARTPEC6_PINMUX_P5_0_CTRL,
++	ARTPEC6_PINMUX_P6_0_CTRL,
++	ARTPEC6_PINMUX_P6_1_CTRL,
++	ARTPEC6_PINMUX_P6_2_CTRL,
++	ARTPEC6_PINMUX_P6_3_CTRL,
++	ARTPEC6_PINMUX_P6_4_CTRL,
++	ARTPEC6_PINMUX_P6_5_CTRL,
++	ARTPEC6_PINMUX_P6_6_CTRL,
++	ARTPEC6_PINMUX_P6_7_CTRL,
++	ARTPEC6_PINMUX_P6_8_CTRL,
++	ARTPEC6_PINMUX_P6_9_CTRL,
++	ARTPEC6_PINMUX_P6_10_CTRL,
++	ARTPEC6_PINMUX_P6_11_CTRL,
++	ARTPEC6_PINMUX_P6_12_CTRL,
++	ARTPEC6_PINMUX_P6_13_CTRL,
++	ARTPEC6_PINMUX_P6_14_CTRL,
++	ARTPEC6_PINMUX_P6_15_CTRL,
++	ARTPEC6_PINMUX_P7_0_CTRL,
++	ARTPEC6_PINMUX_P7_1_CTRL,
++	ARTPEC6_PINMUX_P7_2_CTRL,
++	ARTPEC6_PINMUX_P7_3_CTRL,
++	ARTPEC6_PINMUX_P7_4_CTRL,
++	ARTPEC6_PINMUX_P7_5_CTRL,
++	ARTPEC6_PINMUX_P7_6_CTRL,
++	ARTPEC6_PINMUX_P7_7_CTRL,
++	ARTPEC6_PINMUX_P7_8_CTRL,
++	ARTPEC6_PINMUX_P7_9_CTRL,
++	ARTPEC6_PINMUX_P7_10_CTRL,
++	ARTPEC6_PINMUX_P7_11_CTRL,
++	ARTPEC6_PINMUX_P7_12_CTRL,
++	ARTPEC6_PINMUX_P7_13_CTRL,
++	ARTPEC6_PINMUX_P7_14_CTRL,
++	ARTPEC6_PINMUX_P7_15_CTRL,
++	ARTPEC6_PINMUX_P8_0_CTRL,
++	ARTPEC6_PINMUX_P8_1_CTRL,
++	ARTPEC6_PINMUX_P8_2_CTRL,
++	ARTPEC6_PINMUX_P8_3_CTRL,
++	ARTPEC6_PINMUX_P8_4_CTRL,
++	ARTPEC6_PINMUX_P8_5_CTRL,
++	ARTPEC6_PINMUX_P8_6_CTRL,
++	ARTPEC6_PINMUX_P8_7_CTRL,
++	ARTPEC6_PINMUX_P8_8_CTRL,
++	ARTPEC6_PINMUX_P8_9_CTRL,
++	ARTPEC6_PINMUX_P8_10_CTRL,
++	ARTPEC6_PINMUX_P8_11_CTRL,	/* Pin 96 */
++};
++
++static const unsigned int cpuclkout_regs0[] = {
++	ARTPEC6_PINMUX_P0_0_CTRL,
++};
++
++static const unsigned int udlclkout_regs0[] = {
++	ARTPEC6_PINMUX_P0_1_CTRL,
++};
++
++static const unsigned int i2c1_regs0[] = {
++	ARTPEC6_PINMUX_P0_2_CTRL,
++	ARTPEC6_PINMUX_P0_3_CTRL,
++};
++
++static const unsigned int i2c2_regs0[] = {
++	ARTPEC6_PINMUX_P0_4_CTRL,
++	ARTPEC6_PINMUX_P0_5_CTRL,
++};
++
++static const unsigned int i2c3_regs0[] = {
++	ARTPEC6_PINMUX_P0_6_CTRL,
++	ARTPEC6_PINMUX_P0_7_CTRL,
++};
++
++static const unsigned int i2s0_regs0[] = {
++	ARTPEC6_PINMUX_P0_8_CTRL,
++	ARTPEC6_PINMUX_P0_9_CTRL,
++	ARTPEC6_PINMUX_P0_10_CTRL,
++	ARTPEC6_PINMUX_P0_11_CTRL,
++};
++
++static const unsigned int i2s1_regs0[] = {
++	ARTPEC6_PINMUX_P0_12_CTRL,
++	ARTPEC6_PINMUX_P0_13_CTRL,
++	ARTPEC6_PINMUX_P0_14_CTRL,
++	ARTPEC6_PINMUX_P0_15_CTRL,
++};
++
++static const unsigned int i2srefclk_regs0[] = {
++	ARTPEC6_PINMUX_P1_3_CTRL,
++};
++
++static const unsigned int spi0_regs0[] = {
++	ARTPEC6_PINMUX_P0_12_CTRL,
++	ARTPEC6_PINMUX_P0_13_CTRL,
++	ARTPEC6_PINMUX_P0_14_CTRL,
++	ARTPEC6_PINMUX_P0_15_CTRL,
++};
++
++static const unsigned int spi1_regs0[] = {
++	ARTPEC6_PINMUX_P1_0_CTRL,
++	ARTPEC6_PINMUX_P1_1_CTRL,
++	ARTPEC6_PINMUX_P1_2_CTRL,
++	ARTPEC6_PINMUX_P1_3_CTRL,
++};
++
++static const unsigned int pciedebug_regs0[] = {
++	ARTPEC6_PINMUX_P0_12_CTRL,
++	ARTPEC6_PINMUX_P0_13_CTRL,
++	ARTPEC6_PINMUX_P0_14_CTRL,
++	ARTPEC6_PINMUX_P0_15_CTRL,
++};
++
++static const unsigned int uart0_regs0[] = {
++	ARTPEC6_PINMUX_P1_0_CTRL,
++	ARTPEC6_PINMUX_P1_1_CTRL,
++	ARTPEC6_PINMUX_P1_2_CTRL,
++	ARTPEC6_PINMUX_P1_3_CTRL,
++	ARTPEC6_PINMUX_P1_4_CTRL,
++	ARTPEC6_PINMUX_P1_5_CTRL,
++	ARTPEC6_PINMUX_P1_6_CTRL,
++	ARTPEC6_PINMUX_P1_7_CTRL,
++	ARTPEC6_PINMUX_P1_8_CTRL,
++	ARTPEC6_PINMUX_P1_9_CTRL,
++};
++
++static const unsigned int uart0_regs1[] = {
++	ARTPEC6_PINMUX_P1_4_CTRL,
++	ARTPEC6_PINMUX_P1_5_CTRL,
++	ARTPEC6_PINMUX_P1_6_CTRL,
++	ARTPEC6_PINMUX_P1_7_CTRL,
++};
++
++static const unsigned int uart1_regs0[] = {
++	ARTPEC6_PINMUX_P1_8_CTRL,
++	ARTPEC6_PINMUX_P1_9_CTRL,
++	ARTPEC6_PINMUX_P1_10_CTRL,
++	ARTPEC6_PINMUX_P1_11_CTRL,
++};
++
++static const unsigned int uart2_regs0[] = {
++	ARTPEC6_PINMUX_P1_10_CTRL,
++	ARTPEC6_PINMUX_P1_11_CTRL,
++	ARTPEC6_PINMUX_P1_12_CTRL,
++	ARTPEC6_PINMUX_P1_13_CTRL,
++	ARTPEC6_PINMUX_P1_14_CTRL,
++	ARTPEC6_PINMUX_P1_15_CTRL,
++	ARTPEC6_PINMUX_P2_0_CTRL,
++	ARTPEC6_PINMUX_P2_1_CTRL,
++	ARTPEC6_PINMUX_P2_2_CTRL,
++	ARTPEC6_PINMUX_P2_3_CTRL,
++};
++
++static const unsigned int uart2_regs1[] = {
++	ARTPEC6_PINMUX_P1_12_CTRL,
++	ARTPEC6_PINMUX_P1_13_CTRL,
++	ARTPEC6_PINMUX_P1_14_CTRL,
++	ARTPEC6_PINMUX_P1_15_CTRL,
++};
++
++static const unsigned int uart3_regs0[] = {
++	ARTPEC6_PINMUX_P2_0_CTRL,
++	ARTPEC6_PINMUX_P2_1_CTRL,
++	ARTPEC6_PINMUX_P2_2_CTRL,
++	ARTPEC6_PINMUX_P2_3_CTRL,
++};
++
++static const unsigned int uart4_regs0[] = {
++	ARTPEC6_PINMUX_P1_4_CTRL,
++	ARTPEC6_PINMUX_P1_5_CTRL,
++	ARTPEC6_PINMUX_P1_6_CTRL,
++	ARTPEC6_PINMUX_P1_7_CTRL,
++};
++
++static const unsigned int uart5_regs0[] = {
++	ARTPEC6_PINMUX_P1_12_CTRL,
++	ARTPEC6_PINMUX_P1_13_CTRL,
++	ARTPEC6_PINMUX_P1_14_CTRL,
++	ARTPEC6_PINMUX_P1_15_CTRL,
++};
++
++static const unsigned int nand_regs0[] = {
++	ARTPEC6_PINMUX_P4_0_CTRL,
++	ARTPEC6_PINMUX_P4_1_CTRL,
++	ARTPEC6_PINMUX_P4_2_CTRL,
++	ARTPEC6_PINMUX_P4_3_CTRL,
++	ARTPEC6_PINMUX_P4_4_CTRL,
++	ARTPEC6_PINMUX_P4_5_CTRL,
++	ARTPEC6_PINMUX_P4_6_CTRL,
++	ARTPEC6_PINMUX_P4_7_CTRL,
++	ARTPEC6_PINMUX_P4_8_CTRL,
++	ARTPEC6_PINMUX_P4_9_CTRL,
++	ARTPEC6_PINMUX_P4_10_CTRL,
++	ARTPEC6_PINMUX_P4_11_CTRL,
++	ARTPEC6_PINMUX_P4_12_CTRL,
++	ARTPEC6_PINMUX_P4_13_CTRL,
++	ARTPEC6_PINMUX_P4_14_CTRL,
++	ARTPEC6_PINMUX_P4_15_CTRL,
++	ARTPEC6_PINMUX_P5_0_CTRL,
++};
++
++static const unsigned int sdio0_regs0[] = {
++	ARTPEC6_PINMUX_P6_0_CTRL,
++	ARTPEC6_PINMUX_P6_1_CTRL,
++	ARTPEC6_PINMUX_P6_2_CTRL,
++	ARTPEC6_PINMUX_P6_3_CTRL,
++	ARTPEC6_PINMUX_P6_4_CTRL,
++	ARTPEC6_PINMUX_P6_5_CTRL,
++	ARTPEC6_PINMUX_P6_6_CTRL,
++	ARTPEC6_PINMUX_P6_7_CTRL,
++};
++
++static const unsigned int sdio1_regs0[] = {
++	ARTPEC6_PINMUX_P6_8_CTRL,
++	ARTPEC6_PINMUX_P6_9_CTRL,
++	ARTPEC6_PINMUX_P6_10_CTRL,
++	ARTPEC6_PINMUX_P6_11_CTRL,
++	ARTPEC6_PINMUX_P6_12_CTRL,
++	ARTPEC6_PINMUX_P6_13_CTRL,
++	ARTPEC6_PINMUX_P6_14_CTRL,
++	ARTPEC6_PINMUX_P6_15_CTRL,
++};
++
++static const unsigned int ethernet_regs0[] = {
++	ARTPEC6_PINMUX_P7_0_CTRL,
++	ARTPEC6_PINMUX_P7_1_CTRL,
++	ARTPEC6_PINMUX_P7_2_CTRL,
++	ARTPEC6_PINMUX_P7_3_CTRL,
++	ARTPEC6_PINMUX_P7_4_CTRL,
++	ARTPEC6_PINMUX_P7_5_CTRL,
++	ARTPEC6_PINMUX_P7_6_CTRL,
++	ARTPEC6_PINMUX_P7_7_CTRL,
++	ARTPEC6_PINMUX_P7_8_CTRL,
++	ARTPEC6_PINMUX_P7_9_CTRL,
++	ARTPEC6_PINMUX_P7_10_CTRL,
++	ARTPEC6_PINMUX_P7_11_CTRL,
++	ARTPEC6_PINMUX_P7_12_CTRL,
++	ARTPEC6_PINMUX_P7_13_CTRL,
++	ARTPEC6_PINMUX_P7_14_CTRL,
++	ARTPEC6_PINMUX_P7_15_CTRL,
++	ARTPEC6_PINMUX_P8_0_CTRL,
++	ARTPEC6_PINMUX_P8_1_CTRL,
++	ARTPEC6_PINMUX_P8_2_CTRL,
++	ARTPEC6_PINMUX_P8_3_CTRL,
++	ARTPEC6_PINMUX_P8_4_CTRL,
++	ARTPEC6_PINMUX_P8_5_CTRL,
++	ARTPEC6_PINMUX_P8_6_CTRL,
++	ARTPEC6_PINMUX_P8_7_CTRL,
++	ARTPEC6_PINMUX_P8_8_CTRL,
++	ARTPEC6_PINMUX_P8_9_CTRL,
++	ARTPEC6_PINMUX_P8_10_CTRL,
++	ARTPEC6_PINMUX_P8_11_CTRL,
++};
++
++static const unsigned int cpuclkout_pins0[] = { 0 };
++static const unsigned int udlclkout_pins0[] = { 1 };
++static const unsigned int i2c1_pins0[] = { 2, 3 };
++static const unsigned int i2c2_pins0[] = { 4, 5 };
++static const unsigned int i2c3_pins0[] = { 6, 7 };
++static const unsigned int i2s0_pins0[] = { 8, 9, 10, 11 };
++static const unsigned int i2s1_pins0[] = { 12, 13, 14, 15 };
++static const unsigned int i2srefclk_pins0[] = { 19 };
++static const unsigned int spi0_pins0[] = { 12, 13, 14, 15 };
++static const unsigned int spi1_pins0[] = { 16, 17, 18, 19 };
++static const unsigned int pciedebug_pins0[] = { 12, 13, 14, 15 };
++static const unsigned int uart0_pins0[] = { 16, 17, 18, 19, 20,
++					    21, 22, 23, 24, 25 };
++static const unsigned int uart0_pins1[] = { 20, 21, 22, 23 };
++static const unsigned int uart1_pins0[] = { 24, 25, 26, 27 };
++static const unsigned int uart2_pins0[] = { 26, 27, 28, 29, 30,
++					    31, 32, 33, 34, 35 };
++static const unsigned int uart2_pins1[] = { 28, 29, 30, 31 };
++static const unsigned int uart3_pins0[] = { 32, 33, 34, 35 };
++static const unsigned int uart4_pins0[] = { 20, 21, 22, 23 };
++static const unsigned int uart5_pins0[] = { 28, 29, 30, 31 };
++static const unsigned int nand_pins0[]  = { 36, 37, 38, 39, 40, 41,
++					    42, 43, 44, 45, 46, 47,
++					    48, 49, 50, 51, 52 };
++static const unsigned int sdio0_pins0[] = { 53, 54, 55, 56, 57, 58, 59, 60 };
++static const unsigned int sdio1_pins0[] = { 61, 62, 63, 64, 65, 66, 67, 68 };
++static const unsigned int ethernet_pins0[]  = { 69, 70, 71, 72, 73, 74, 75,
++						76, 77, 78, 79, 80, 81, 82,
++						83, 84,	85, 86, 87, 88, 89,
++						90, 91, 92, 93, 94, 95, 96 };
++
++static struct artpec6_pin_group artpec6_pin_groups[] = {
++	{
++		.name = "cpuclkoutgrp0",
++		.pins = cpuclkout_pins0,
++		.num_pins = ARRAY_SIZE(cpuclkout_pins0),
++		.reg_offsets = cpuclkout_regs0,
++		.num_regs = ARRAY_SIZE(cpuclkout_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "udlclkoutgrp0",
++		.pins = udlclkout_pins0,
++		.num_pins = ARRAY_SIZE(udlclkout_pins0),
++		.reg_offsets = udlclkout_regs0,
++		.num_regs = ARRAY_SIZE(udlclkout_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "i2c1grp0",
++		.pins = i2c1_pins0,
++		.num_pins = ARRAY_SIZE(i2c1_pins0),
++		.reg_offsets = i2c1_regs0,
++		.num_regs = ARRAY_SIZE(i2c1_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "i2c2grp0",
++		.pins = i2c2_pins0,
++		.num_pins = ARRAY_SIZE(i2c2_pins0),
++		.reg_offsets = i2c2_regs0,
++		.num_regs = ARRAY_SIZE(i2c2_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "i2c3grp0",
++		.pins = i2c3_pins0,
++		.num_pins = ARRAY_SIZE(i2c3_pins0),
++		.reg_offsets = i2c3_regs0,
++		.num_regs = ARRAY_SIZE(i2c3_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "i2s0grp0",
++		.pins = i2s0_pins0,
++		.num_pins = ARRAY_SIZE(i2s0_pins0),
++		.reg_offsets = i2s0_regs0,
++		.num_regs = ARRAY_SIZE(i2s0_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "i2s1grp0",
++		.pins = i2s1_pins0,
++		.num_pins = ARRAY_SIZE(i2s1_pins0),
++		.reg_offsets = i2s1_regs0,
++		.num_regs = ARRAY_SIZE(i2s1_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "i2srefclkgrp0",
++		.pins = i2srefclk_pins0,
++		.num_pins = ARRAY_SIZE(i2srefclk_pins0),
++		.reg_offsets = i2srefclk_regs0,
++		.num_regs = ARRAY_SIZE(i2srefclk_regs0),
++		.config = ARTPEC6_CONFIG_3,
++	},
++	{
++		.name = "spi0grp0",
++		.pins = spi0_pins0,
++		.num_pins = ARRAY_SIZE(spi0_pins0),
++		.reg_offsets = spi0_regs0,
++		.num_regs = ARRAY_SIZE(spi0_regs0),
++		.config = ARTPEC6_CONFIG_2,
++	},
++	{
++		.name = "spi1grp0",
++		.pins = spi1_pins0,
++		.num_pins = ARRAY_SIZE(spi1_pins0),
++		.reg_offsets = spi1_regs0,
++		.num_regs = ARRAY_SIZE(spi1_regs0),
++		.config = ARTPEC6_CONFIG_2,
++	},
++	{
++		.name = "pciedebuggrp0",
++		.pins = pciedebug_pins0,
++		.num_pins = ARRAY_SIZE(pciedebug_pins0),
++		.reg_offsets = pciedebug_regs0,
++		.num_regs = ARRAY_SIZE(pciedebug_regs0),
++		.config = ARTPEC6_CONFIG_3,
++	},
++	{
++		.name = "uart0grp0",
++		.pins = uart0_pins0,
++		.num_pins = ARRAY_SIZE(uart0_pins0),
++		.reg_offsets = uart0_regs0,
++		.num_regs = ARRAY_SIZE(uart0_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "uart0grp1",
++		.pins = uart0_pins1,
++		.num_pins = ARRAY_SIZE(uart0_pins1),
++		.reg_offsets = uart0_regs1,
++		.num_regs = ARRAY_SIZE(uart0_regs1),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "uart1grp0",
++		.pins = uart1_pins0,
++		.num_pins = ARRAY_SIZE(uart1_pins0),
++		.reg_offsets = uart1_regs0,
++		.num_regs = ARRAY_SIZE(uart1_regs0),
++		.config = ARTPEC6_CONFIG_2,
++	},
++	{
++		.name = "uart2grp0",
++		.pins = uart2_pins0,
++		.num_pins = ARRAY_SIZE(uart2_pins0),
++		.reg_offsets = uart2_regs0,
++		.num_regs = ARRAY_SIZE(uart2_regs0),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "uart2grp1",
++		.pins = uart2_pins1,
++		.num_pins = ARRAY_SIZE(uart2_pins1),
++		.reg_offsets = uart2_regs1,
++		.num_regs = ARRAY_SIZE(uart2_regs1),
++		.config = ARTPEC6_CONFIG_1,
++	},
++	{
++		.name = "uart3grp0",
++		.pins = uart3_pins0,
++		.num_pins = ARRAY_SIZE(uart3_pins0),
++		.reg_offsets = uart3_regs0,
++		.num_regs = ARRAY_SIZE(uart3_regs0),
++		.config = ARTPEC6_CONFIG_0,
++	},
++	{
++		.name = "uart4grp0",
++		.pins = uart4_pins0,
++		.num_pins = ARRAY_SIZE(uart4_pins0),
++		.reg_offsets = uart4_regs0,
++		.num_regs = ARRAY_SIZE(uart4_regs0),
++		.config = ARTPEC6_CONFIG_2,
++	},
++	{
++		.name = "uart5grp0",
++		.pins = uart5_pins0,
++		.num_pins = ARRAY_SIZE(uart5_pins0),
++		.reg_offsets = uart5_regs0,
++		.num_regs = ARRAY_SIZE(uart5_regs0),
++		.config = ARTPEC6_CONFIG_2,
++	},
++	{
++		.name = "uart5nocts",
++		.pins = uart5_pins0,
++		.num_pins = ARRAY_SIZE(uart5_pins0) - 1,
++		.reg_offsets = uart5_regs0,
++		.num_regs = ARRAY_SIZE(uart5_regs0) - 1,
++		.config = ARTPEC6_CONFIG_2,
++	},
++	{
++		.name = "nandgrp0",
++		.pins = nand_pins0,
++		.num_pins = ARRAY_SIZE(nand_pins0),
++		.reg_offsets = nand_regs0,
++		.num_regs = ARRAY_SIZE(nand_regs0),
++		.config = ARTPEC6_CONFIG_0,
++	},
++	{
++		.name = "sdio0grp0",
++		.pins = sdio0_pins0,
++		.num_pins = ARRAY_SIZE(sdio0_pins0),
++		.reg_offsets = sdio0_regs0,
++		.num_regs = ARRAY_SIZE(sdio0_regs0),
++		.config = ARTPEC6_CONFIG_0,
++	},
++	{
++		.name = "sdio1grp0",
++		.pins = sdio1_pins0,
++		.num_pins = ARRAY_SIZE(sdio1_pins0),
++		.reg_offsets = sdio1_regs0,
++		.num_regs = ARRAY_SIZE(sdio1_regs0),
++		.config = ARTPEC6_CONFIG_0,
++	},
++	{
++		.name = "ethernetgrp0",
++		.pins = ethernet_pins0,
++		.num_pins = ARRAY_SIZE(ethernet_pins0),
++		.reg_offsets = ethernet_regs0,
++		.num_regs = ARRAY_SIZE(ethernet_regs0),
++		.config = ARTPEC6_CONFIG_0,
++	},
++};
++
++static int artpec6_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(artpec6_pin_groups);
++}
++
++static const char *artpec6_get_group_name(struct pinctrl_dev *pctldev,
++					  unsigned int group)
++{
++	return artpec6_pin_groups[group].name;
++}
++
++static int artpec6_get_group_pins(struct pinctrl_dev *pctldev,
++				  unsigned int group,
++				  const unsigned int **pins,
++				  unsigned int *num_pins)
++{
++	*pins = (unsigned int *)artpec6_pin_groups[group].pins;
++	*num_pins = artpec6_pin_groups[group].num_pins;
++	return 0;
++}
++
++static int artpec6_pconf_drive_mA_to_field(unsigned int mA)
++{
++	switch (mA) {
++	case 4:
++		return ARTPEC6_DRIVE_4mA_SET;
++	case 6:
++		return ARTPEC6_DRIVE_6mA_SET;
++	case 8:
++		return ARTPEC6_DRIVE_8mA_SET;
++	case 9:
++		return ARTPEC6_DRIVE_9mA_SET;
++	default:
++		return -EINVAL;
++	}
++}
++
++static unsigned int artpec6_pconf_drive_field_to_mA(int field)
++{
++	switch (field) {
++	case ARTPEC6_DRIVE_4mA_SET:
++		return 4;
++	case ARTPEC6_DRIVE_6mA_SET:
++		return 6;
++	case ARTPEC6_DRIVE_8mA_SET:
++		return 8;
++	case ARTPEC6_DRIVE_9mA_SET:
++		return 9;
++	default:
++		/* Shouldn't happen */
++		return 0;
++	}
++}
++
++static struct pinctrl_ops artpec6_pctrl_ops = {
++	.get_group_pins	  = artpec6_get_group_pins,
++	.get_groups_count = artpec6_get_groups_count,
++	.get_group_name	  = artpec6_get_group_name,
++	.dt_node_to_map   = pinconf_generic_dt_node_to_map_all,
++	.dt_free_map      = pinctrl_utils_free_map,
++};
++
++static const char * const gpiogrps[] = {
++	"cpuclkoutgrp0", "udlclkoutgrp0", "i2c1grp0",      "i2c2grp0",
++	"i2c3grp0",      "i2s0grp0",      "i2s1grp0",      "i2srefclkgrp0",
++	"spi0grp0",      "spi1grp0",      "pciedebuggrp0", "uart0grp0",
++	"uart0grp1",     "uart1grp0",     "uart2grp0",     "uart2grp1",
++	"uart4grp0",     "uart5grp0",
++};
++static const char * const cpuclkoutgrps[] = { "cpuclkoutgrp0" };
++static const char * const udlclkoutgrps[] = { "udlclkoutgrp0" };
++static const char * const i2c1grps[]	  = { "i2c1grp0" };
++static const char * const i2c2grps[]	  = { "i2c2grp0" };
++static const char * const i2c3grps[]	  = { "i2c3grp0" };
++static const char * const i2s0grps[]	  = { "i2s0grp0" };
++static const char * const i2s1grps[]	  = { "i2s1grp0" };
++static const char * const i2srefclkgrps[] = { "i2srefclkgrp0" };
++static const char * const spi0grps[]	  = { "spi0grp0" };
++static const char * const spi1grps[]	  = { "spi1grp0" };
++static const char * const pciedebuggrps[] = { "pciedebuggrp0" };
++static const char * const uart0grps[]	  = { "uart0grp0", "uart0grp1" };
++static const char * const uart1grps[]	  = { "uart1grp0" };
++static const char * const uart2grps[]	  = { "uart2grp0", "uart2grp1" };
++static const char * const uart3grps[]	  = { "uart3grp0" };
++static const char * const uart4grps[]	  = { "uart4grp0" };
++static const char * const uart5grps[]	  = { "uart5grp0", "uart5nocts" };
++static const char * const nandgrps[]	  = { "nandgrp0" };
++static const char * const sdio0grps[]	  = { "sdio0grp0" };
++static const char * const sdio1grps[]	  = { "sdio1grp0" };
++static const char * const ethernetgrps[]  = { "ethernetgrp0" };
++
++static struct artpec6_pmx_func artpec6_pmx_functions[] = {
++	{
++		.name = "gpio",
++		.groups = gpiogrps,
++		.num_groups = ARRAY_SIZE(gpiogrps),
++	},
++	{
++		.name = "cpuclkout",
++		.groups = cpuclkoutgrps,
++		.num_groups = ARRAY_SIZE(cpuclkoutgrps),
++	},
++	{
++		.name = "udlclkout",
++		.groups = udlclkoutgrps,
++		.num_groups = ARRAY_SIZE(udlclkoutgrps),
++	},
++	{
++		.name = "i2c1",
++		.groups = i2c1grps,
++		.num_groups = ARRAY_SIZE(i2c1grps),
++	},
++	{
++		.name = "i2c2",
++		.groups = i2c2grps,
++		.num_groups = ARRAY_SIZE(i2c2grps),
++	},
++	{
++		.name = "i2c3",
++		.groups = i2c3grps,
++		.num_groups = ARRAY_SIZE(i2c3grps),
++	},
++	{
++		.name = "i2s0",
++		.groups = i2s0grps,
++		.num_groups = ARRAY_SIZE(i2s0grps),
++	},
++	{
++		.name = "i2s1",
++		.groups = i2s1grps,
++		.num_groups = ARRAY_SIZE(i2s1grps),
++	},
++	{
++		.name = "i2srefclk",
++		.groups = i2srefclkgrps,
++		.num_groups = ARRAY_SIZE(i2srefclkgrps),
++	},
++	{
++		.name = "spi0",
++		.groups = spi0grps,
++		.num_groups = ARRAY_SIZE(spi0grps),
++	},
++	{
++		.name = "spi1",
++		.groups = spi1grps,
++		.num_groups = ARRAY_SIZE(spi1grps),
++	},
++	{
++		.name = "pciedebug",
++		.groups = pciedebuggrps,
++		.num_groups = ARRAY_SIZE(pciedebuggrps),
++	},
++	{
++		.name = "uart0",
++		.groups = uart0grps,
++		.num_groups = ARRAY_SIZE(uart0grps),
++	},
++	{
++		.name = "uart1",
++		.groups = uart1grps,
++		.num_groups = ARRAY_SIZE(uart1grps),
++	},
++	{
++		.name = "uart2",
++		.groups = uart2grps,
++		.num_groups = ARRAY_SIZE(uart2grps),
++	},
++	{
++		.name = "uart3",
++		.groups = uart3grps,
++		.num_groups = ARRAY_SIZE(uart3grps),
++	},
++	{
++		.name = "uart4",
++		.groups = uart4grps,
++		.num_groups = ARRAY_SIZE(uart4grps),
++	},
++	{
++		.name = "uart5",
++		.groups = uart5grps,
++		.num_groups = ARRAY_SIZE(uart5grps),
++	},
++	{
++		.name = "nand",
++		.groups = nandgrps,
++		.num_groups = ARRAY_SIZE(nandgrps),
++	},
++	{
++		.name = "sdio0",
++		.groups = sdio0grps,
++		.num_groups = ARRAY_SIZE(sdio0grps),
++	},
++	{
++		.name = "sdio1",
++		.groups = sdio1grps,
++		.num_groups = ARRAY_SIZE(sdio1grps),
++	},
++	{
++		.name = "ethernet",
++		.groups = ethernetgrps,
++		.num_groups = ARRAY_SIZE(ethernetgrps),
++	},
++};
++
++static int artpec6_pmx_get_functions_count(struct pinctrl_dev *pctldev)
++{
++	return ARRAY_SIZE(artpec6_pmx_functions);
++}
++
++static const char *artpec6_pmx_get_fname(struct pinctrl_dev *pctldev,
++				  unsigned int function)
++{
++	return artpec6_pmx_functions[function].name;
++}
++
++static int artpec6_pmx_get_fgroups(struct pinctrl_dev *pctldev,
++				   unsigned int function,
++				   const char * const **groups,
++				   unsigned int * const num_groups)
++{
++	*groups = artpec6_pmx_functions[function].groups;
++	*num_groups = artpec6_pmx_functions[function].num_groups;
++	return 0;
++}
++
++static void artpec6_pmx_select_func(struct pinctrl_dev *pctldev,
++				    unsigned int function, unsigned int group,
++				    bool enable)
++{
++	unsigned int regval, val;
++	int i;
++	const unsigned int *pmx_regs;
++	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	pmx_regs = artpec6_pin_groups[group].reg_offsets;
++
++	for (i = 0; i < artpec6_pin_groups[group].num_regs; i++) {
++		/* Ports 4-8 do not have a SEL field and are always selected */
++		if (pmx_regs[i] >= ARTPEC6_PINMUX_P4_0_CTRL)
++			continue;
++
++		if (!strcmp(artpec6_pmx_get_fname(pctldev, function), "gpio")) {
++			/* GPIO is always config 0 */
++			val = ARTPEC6_CONFIG_0 << ARTPEC6_PINMUX_SEL_SHIFT;
++		} else {
++			if (enable)
++				val = artpec6_pin_groups[group].config
++					<< ARTPEC6_PINMUX_SEL_SHIFT;
++			else
++				val = ARTPEC6_CONFIG_0
++					<< ARTPEC6_PINMUX_SEL_SHIFT;
++		}
++
++		regval = readl(pmx->base + pmx_regs[i]);
++		regval &= ~ARTPEC6_PINMUX_SEL_MASK;
++		regval |= val;
++		writel(regval, pmx->base + pmx_regs[i]);
++	}
++}
++
++int artpec6_pmx_enable(struct pinctrl_dev *pctldev, unsigned int function,
++		       unsigned int group)
++{
++	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	dev_dbg(pmx->dev, "enabling %s function for pin group %s\n",
++		artpec6_pmx_get_fname(pctldev, function),
++		artpec6_get_group_name(pctldev, group));
++
++	artpec6_pmx_select_func(pctldev, function, group, true);
++
++	return 0;
++}
++
++void artpec6_pmx_disable(struct pinctrl_dev *pctldev, unsigned int function,
++			 unsigned int group)
++{
++	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++
++	dev_dbg(pmx->dev, "disabling %s function for pin group %s\n",
++		artpec6_pmx_get_fname(pctldev, function),
++		artpec6_get_group_name(pctldev, group));
++
++	artpec6_pmx_select_func(pctldev, function, group, false);
++}
++
++static int artpec6_pmx_request_gpio(struct pinctrl_dev *pctldev,
++				    struct pinctrl_gpio_range *range,
++				    unsigned int pin)
++{
++	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int reg = ARTPEC6_PINMUX_P0_0_CTRL + pin * 4;
++	u32 val;
++
++	if (pin >= 32)
++		return -EINVAL;
++
++	val = readl_relaxed(pmx->base + reg);
++	val &= ~ARTPEC6_PINMUX_SEL_MASK;
++	val |= ARTPEC6_CONFIG_0 << ARTPEC6_PINMUX_SEL_SHIFT;
++	writel_relaxed(val, pmx->base + reg);
++
++	return 0;
++}
++
++static const struct pinmux_ops artpec6_pmx_ops = {
++	.get_functions_count = artpec6_pmx_get_functions_count,
++	.get_function_name   = artpec6_pmx_get_fname,
++	.get_function_groups = artpec6_pmx_get_fgroups,
++	.set_mux	     = artpec6_pmx_enable,
++	.gpio_request_enable = artpec6_pmx_request_gpio,
++};
++
++static int artpec6_pconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
++			     unsigned long *config)
++{
++	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param = pinconf_to_config_param(*config);
++	unsigned int regval;
++
++	/* Check for valid pin */
++	if (pin >= pmx->num_pins) {
++		dev_dbg(pmx->dev, "pinconf is not supported for pin %s\n",
++			pmx->pins[pin].name);
++		return -ENOTSUPP;
++	}
++
++	dev_dbg(pmx->dev, "getting configuration for pin %s\n",
++		pmx->pins[pin].name);
++
++	/* Read pin register values */
++	regval = readl(pmx->base + pin_regs[pin]);
++
++	/* If valid, get configuration for parameter */
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		if (!(regval & ARTPEC6_PINMUX_UDC1_MASK))
++			return -EINVAL;
++		break;
++
++	case PIN_CONFIG_BIAS_PULL_UP:
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		if (regval & ARTPEC6_PINMUX_UDC1_MASK)
++			return -EINVAL;
++
++		regval = regval & ARTPEC6_PINMUX_UDC0_MASK;
++		if ((param == PIN_CONFIG_BIAS_PULL_UP && !regval) ||
++		    (param == PIN_CONFIG_BIAS_PULL_DOWN && regval))
++			return -EINVAL;
++		break;
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		regval = (regval & ARTPEC6_PINMUX_DRV_MASK)
++			>> ARTPEC6_PINMUX_DRV_SHIFT;
++		regval = artpec6_pconf_drive_field_to_mA(regval);
++		*config = pinconf_to_config_packed(param, regval);
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	return 0;
++}
++
++/*
++ * Valid combinations of param and arg:
++ *
++ * param                      arg
++ * PIN_CONFIG_BIAS_DISABLE:   x (disable bias)
++ * PIN_CONFIG_BIAS_PULL_UP:   1 (pull up bias + enable)
++ * PIN_CONFIG_BIAS_PULL_DOWN: 1 (pull down bias + enable)
++ * PIN_CONFIG_DRIVE_STRENGTH: 0 (4mA), 1 (6mA), 2 (8mA), 3 (9mA)
++ *
++ * All other args are invalid. All other params are not supported.
++ */
++static int artpec6_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
++			     unsigned long *configs, unsigned int num_configs)
++{
++	struct artpec6_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param;
++	unsigned int arg;
++	unsigned int regval;
++	unsigned int *reg;
++	int i;
++
++	/* Check for valid pin */
++	if (pin >= pmx->num_pins) {
++		dev_dbg(pmx->dev, "pinconf is not supported for pin %s\n",
++			pmx->pins[pin].name);
++		return -ENOTSUPP;
++	}
++
++	dev_dbg(pmx->dev, "setting configuration for pin %s\n",
++		pmx->pins[pin].name);
++
++	reg = pmx->base + pin_regs[pin];
++
++	/* For each config */
++	for (i = 0; i < num_configs; i++) {
++		int drive;
++
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_DISABLE:
++			regval = readl(reg);
++			regval |= (1 << ARTPEC6_PINMUX_UDC1_SHIFT);
++			writel(regval, reg);
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_UP:
++			if (arg != 1) {
++				dev_dbg(pctldev->dev, "%s: arg %u out of range\n",
++					__func__, arg);
++				return -EINVAL;
++			}
++
++			regval = readl(reg);
++			regval |= (arg << ARTPEC6_PINMUX_UDC0_SHIFT);
++			regval &= ~ARTPEC6_PINMUX_UDC1_MASK; /* Enable */
++			writel(regval, reg);
++			break;
++
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			if (arg != 1) {
++				dev_dbg(pctldev->dev, "%s: arg %u out of range\n",
++					__func__, arg);
++				return -EINVAL;
++			}
++
++			regval = readl(reg);
++			regval &= ~(arg << ARTPEC6_PINMUX_UDC0_SHIFT);
++			regval &= ~ARTPEC6_PINMUX_UDC1_MASK; /* Enable */
++			writel(regval, reg);
++			break;
++
++		case PIN_CONFIG_DRIVE_STRENGTH:
++			drive = artpec6_pconf_drive_mA_to_field(arg);
++			if (drive < 0) {
++				dev_dbg(pctldev->dev, "%s: arg %u out of range\n",
++					__func__, arg);
++				return -EINVAL;
++			}
++
++			regval = readl(reg);
++			regval &= ~ARTPEC6_PINMUX_DRV_MASK;
++			regval |= (drive << ARTPEC6_PINMUX_DRV_SHIFT);
++			writel(regval, reg);
++			break;
++
++		default:
++			dev_dbg(pmx->dev, "parameter not supported\n");
++			return -ENOTSUPP;
++		}
++	}
++
++	return 0;
++}
++
++static int artpec6_pconf_group_set(struct pinctrl_dev *pctldev,
++				   unsigned int group, unsigned long *configs,
++				   unsigned int num_configs)
++{
++	unsigned int num_pins, current_pin;
++	int ret;
++
++	dev_dbg(pctldev->dev, "setting group %s configuration\n",
++		artpec6_get_group_name(pctldev, group));
++
++	num_pins = artpec6_pin_groups[group].num_pins;
++
++	for (current_pin = 0; current_pin < num_pins; current_pin++) {
++		ret = artpec6_pconf_set(pctldev,
++				artpec6_pin_groups[group].pins[current_pin],
++				configs, num_configs);
++
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++static const struct pinconf_ops artpec6_pconf_ops = {
++	.is_generic	      = true,
++	.pin_config_get	      = artpec6_pconf_get,
++	.pin_config_set	      = artpec6_pconf_set,
++	.pin_config_group_set = artpec6_pconf_group_set,
++};
++
++static struct pinctrl_desc artpec6_desc = {
++	.name	 = "artpec6-pinctrl",
++	.owner	 = THIS_MODULE,
++	.pins	 = artpec6_pins,
++	.npins	 = ARRAY_SIZE(artpec6_pins),
++	.pctlops = &artpec6_pctrl_ops,
++	.pmxops	 = &artpec6_pmx_ops,
++	.confops = &artpec6_pconf_ops,
++};
++
++/* The reset values say 4mA, but we want 8mA as default. */
++static void artpec6_pmx_reset(struct artpec6_pmx *pmx)
++{
++	void __iomem *base = pmx->base;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(pin_regs); i++) {
++		u32 val;
++
++		val = readl_relaxed(pmx->base + pin_regs[i]);
++		val &= ~ARTPEC6_PINMUX_DRV_MASK;
++		val |= ARTPEC6_DRIVE_8mA_SET << ARTPEC6_PINMUX_DRV_SHIFT;
++		writel_relaxed(val, base + pin_regs[i]);
++	}
++}
++
++static int artpec6_pmx_probe(struct platform_device *pdev)
++{
++	struct artpec6_pmx *pmx;
++	struct resource *res;
++
++	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
++	if (!pmx)
++		return -ENOMEM;
++
++	pmx->dev = &pdev->dev;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	pmx->base = devm_ioremap_resource(&pdev->dev, res);
++
++	if (IS_ERR(pmx->base))
++		return PTR_ERR(pmx->base);
++
++	artpec6_pmx_reset(pmx);
++
++	pmx->pins	    = artpec6_pins;
++	pmx->num_pins	    = ARRAY_SIZE(artpec6_pins);
++	pmx->functions	    = artpec6_pmx_functions;
++	pmx->num_functions  = ARRAY_SIZE(artpec6_pmx_functions);
++	pmx->pin_groups	    = artpec6_pin_groups;
++	pmx->num_pin_groups = ARRAY_SIZE(artpec6_pin_groups);
++	pmx->pctl	    = pinctrl_register(&artpec6_desc, &pdev->dev, pmx);
++
++	if (!pmx->pctl) {
++		dev_err(&pdev->dev, "could not register pinctrl driver\n");
++		return -EINVAL;
++	}
++
++	platform_set_drvdata(pdev, pmx);
++
++	dev_info(&pdev->dev, "initialised Axis ARTPEC-6 pinctrl driver\n");
++
++	return 0;
++}
++
++static int artpec6_pmx_remove(struct platform_device *pdev)
++{
++	struct artpec6_pmx *pmx = platform_get_drvdata(pdev);
++
++	pinctrl_unregister(pmx->pctl);
++
++	return 0;
++}
++
++static const struct of_device_id artpec6_pinctrl_match[] = {
++	{ .compatible = "axis,artpec6-pinctrl" },
++	{},
++};
++
++static struct platform_driver artpec6_pmx_driver = {
++	.driver = {
++		.name = "artpec6-pinctrl",
++		.owner = THIS_MODULE,
++		.of_match_table = artpec6_pinctrl_match,
++	},
++	.probe = artpec6_pmx_probe,
++	.remove = artpec6_pmx_remove,
++};
++
++static int __init artpec6_pmx_init(void)
++{
++	return platform_driver_register(&artpec6_pmx_driver);
++}
++arch_initcall(artpec6_pmx_init);
++
++static void __exit artpec6_pmx_exit(void)
++{
++	platform_driver_unregister(&artpec6_pmx_driver);
++}
++module_exit(artpec6_pmx_exit);
++
++MODULE_AUTHOR("Chris Paterson <chris.paterson@linux.pieboy.co.uk>");
++MODULE_DESCRIPTION("Axis ARTPEC-6 pin control driver");
++MODULE_LICENSE("GPL v2");
++MODULE_DEVICE_TABLE(of, artpec6_pinctrl_match);
+diff --git a/drivers/pinctrl/pinctrl-artpec6.h b/drivers/pinctrl/pinctrl-artpec6.h
+new file mode 100644
+index 0000000..f51bdc1
+--- /dev/null
++++ b/drivers/pinctrl/pinctrl-artpec6.h
+@@ -0,0 +1,151 @@
++/*
++ * Driver for the Axis ARTPEC-6 pin controller
++ *
++ * Author: Chris Paterson <chris.paterson@linux.pieboy.co.uk>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#ifndef __PINCTRL_ARTPEC6_H
++#define __PINCTRL_ARTPEC6_H
++
++/* Pinmux control register offset definitions */
++#define ARTPEC6_PINMUX_P0_0_CTRL	0x000
++#define ARTPEC6_PINMUX_P0_1_CTRL	0x004
++#define ARTPEC6_PINMUX_P0_2_CTRL	0x008
++#define ARTPEC6_PINMUX_P0_3_CTRL	0x00C
++#define ARTPEC6_PINMUX_P0_4_CTRL	0x010
++#define ARTPEC6_PINMUX_P0_5_CTRL	0x014
++#define ARTPEC6_PINMUX_P0_6_CTRL	0x018
++#define ARTPEC6_PINMUX_P0_7_CTRL	0x01C
++#define ARTPEC6_PINMUX_P0_8_CTRL	0x020
++#define ARTPEC6_PINMUX_P0_9_CTRL	0x024
++#define ARTPEC6_PINMUX_P0_10_CTRL	0x028
++#define ARTPEC6_PINMUX_P0_11_CTRL	0x02C
++#define ARTPEC6_PINMUX_P0_12_CTRL	0x030
++#define ARTPEC6_PINMUX_P0_13_CTRL	0x034
++#define ARTPEC6_PINMUX_P0_14_CTRL	0x038
++#define ARTPEC6_PINMUX_P0_15_CTRL	0x03C
++
++#define ARTPEC6_PINMUX_P1_0_CTRL	0x040
++#define ARTPEC6_PINMUX_P1_1_CTRL	0x044
++#define ARTPEC6_PINMUX_P1_2_CTRL	0x048
++#define ARTPEC6_PINMUX_P1_3_CTRL	0x04C
++#define ARTPEC6_PINMUX_P1_4_CTRL	0x050
++#define ARTPEC6_PINMUX_P1_5_CTRL	0x054
++#define ARTPEC6_PINMUX_P1_6_CTRL	0x058
++#define ARTPEC6_PINMUX_P1_7_CTRL	0x05C
++#define ARTPEC6_PINMUX_P1_8_CTRL	0x060
++#define ARTPEC6_PINMUX_P1_9_CTRL	0x064
++#define ARTPEC6_PINMUX_P1_10_CTRL	0x068
++#define ARTPEC6_PINMUX_P1_11_CTRL	0x06C
++#define ARTPEC6_PINMUX_P1_12_CTRL	0x070
++#define ARTPEC6_PINMUX_P1_13_CTRL	0x074
++#define ARTPEC6_PINMUX_P1_14_CTRL	0x078
++#define ARTPEC6_PINMUX_P1_15_CTRL	0x07C
++
++#define ARTPEC6_PINMUX_P2_0_CTRL	0x080
++#define ARTPEC6_PINMUX_P2_1_CTRL	0x084
++#define ARTPEC6_PINMUX_P2_2_CTRL	0x088
++#define ARTPEC6_PINMUX_P2_3_CTRL	0x08C
++
++#define ARTPEC6_PINMUX_P4_0_CTRL	0x100
++#define ARTPEC6_PINMUX_P4_1_CTRL	0x104
++#define ARTPEC6_PINMUX_P4_2_CTRL	0x108
++#define ARTPEC6_PINMUX_P4_3_CTRL	0x10C
++#define ARTPEC6_PINMUX_P4_4_CTRL	0x110
++#define ARTPEC6_PINMUX_P4_5_CTRL	0x114
++#define ARTPEC6_PINMUX_P4_6_CTRL	0x118
++#define ARTPEC6_PINMUX_P4_7_CTRL	0x11C
++#define ARTPEC6_PINMUX_P4_8_CTRL	0x120
++#define ARTPEC6_PINMUX_P4_9_CTRL	0x124
++#define ARTPEC6_PINMUX_P4_10_CTRL	0x128
++#define ARTPEC6_PINMUX_P4_11_CTRL	0x12C
++#define ARTPEC6_PINMUX_P4_12_CTRL	0x130
++#define ARTPEC6_PINMUX_P4_13_CTRL	0x134
++#define ARTPEC6_PINMUX_P4_14_CTRL	0x138
++#define ARTPEC6_PINMUX_P4_15_CTRL	0x13C
++
++#define ARTPEC6_PINMUX_P5_0_CTRL	0x140
++
++#define ARTPEC6_PINMUX_P6_0_CTRL	0x180
++#define ARTPEC6_PINMUX_P6_1_CTRL	0x184
++#define ARTPEC6_PINMUX_P6_2_CTRL	0x188
++#define ARTPEC6_PINMUX_P6_3_CTRL	0x18C
++#define ARTPEC6_PINMUX_P6_4_CTRL	0x190
++#define ARTPEC6_PINMUX_P6_5_CTRL	0x194
++#define ARTPEC6_PINMUX_P6_6_CTRL	0x198
++#define ARTPEC6_PINMUX_P6_7_CTRL	0x19C
++#define ARTPEC6_PINMUX_P6_8_CTRL	0x1A0
++#define ARTPEC6_PINMUX_P6_9_CTRL	0x1A4
++#define ARTPEC6_PINMUX_P6_10_CTRL	0x1A8
++#define ARTPEC6_PINMUX_P6_11_CTRL	0x1AC
++#define ARTPEC6_PINMUX_P6_12_CTRL	0x1B0
++#define ARTPEC6_PINMUX_P6_13_CTRL	0x1B4
++#define ARTPEC6_PINMUX_P6_14_CTRL	0x1B8
++#define ARTPEC6_PINMUX_P6_15_CTRL	0x1BC
++
++#define ARTPEC6_PINMUX_P7_0_CTRL	0x1C0
++#define ARTPEC6_PINMUX_P7_1_CTRL	0x1C4
++#define ARTPEC6_PINMUX_P7_2_CTRL	0x1C8
++#define ARTPEC6_PINMUX_P7_3_CTRL	0x1CC
++#define ARTPEC6_PINMUX_P7_4_CTRL	0x1D0
++#define ARTPEC6_PINMUX_P7_5_CTRL	0x1D4
++#define ARTPEC6_PINMUX_P7_6_CTRL	0x1D8
++#define ARTPEC6_PINMUX_P7_7_CTRL	0x1DC
++#define ARTPEC6_PINMUX_P7_8_CTRL	0x1E0
++#define ARTPEC6_PINMUX_P7_9_CTRL	0x1E4
++#define ARTPEC6_PINMUX_P7_10_CTRL	0x1E8
++#define ARTPEC6_PINMUX_P7_11_CTRL	0x1EC
++#define ARTPEC6_PINMUX_P7_12_CTRL	0x1F0
++#define ARTPEC6_PINMUX_P7_13_CTRL	0x1F4
++#define ARTPEC6_PINMUX_P7_14_CTRL	0x1F8
++#define ARTPEC6_PINMUX_P7_15_CTRL	0x1FC
++
++#define ARTPEC6_PINMUX_P8_0_CTRL	0x200
++#define ARTPEC6_PINMUX_P8_1_CTRL	0x204
++#define ARTPEC6_PINMUX_P8_2_CTRL	0x208
++#define ARTPEC6_PINMUX_P8_3_CTRL	0x20C
++#define ARTPEC6_PINMUX_P8_4_CTRL	0x210
++#define ARTPEC6_PINMUX_P8_5_CTRL	0x214
++#define ARTPEC6_PINMUX_P8_6_CTRL	0x218
++#define ARTPEC6_PINMUX_P8_7_CTRL	0x21C
++#define ARTPEC6_PINMUX_P8_8_CTRL	0x220
++#define ARTPEC6_PINMUX_P8_9_CTRL	0x224
++#define ARTPEC6_PINMUX_P8_10_CTRL	0x228
++#define ARTPEC6_PINMUX_P8_11_CTRL	0x22C
++
++/* Pinmux control register bit definitions */
++#define ARTPEC6_PINMUX_UDC0_MASK	0x00000001
++#define ARTPEC6_PINMUX_UDC0_SHIFT	0
++#define ARTPEC6_PINMUX_UDC1_MASK	0x00000002
++#define ARTPEC6_PINMUX_UDC1_SHIFT	1
++#define ARTPEC6_PINMUX_DRV_MASK		0x00000060
++#define ARTPEC6_PINMUX_DRV_SHIFT	5
++#define ARTPEC6_PINMUX_SEL_MASK		0x00003000
++#define ARTPEC6_PINMUX_SEL_SHIFT	12
++
++/* Pinmux configurations */
++#define ARTPEC6_CONFIG_0		0
++#define ARTPEC6_CONFIG_1		1
++#define ARTPEC6_CONFIG_2		2
++#define ARTPEC6_CONFIG_3		3
++
++/* Pin drive strength options */
++#define ARTPEC6_DRIVE_4mA		4
++#define ARTPEC6_DRIVE_4mA_SET		0
++#define ARTPEC6_DRIVE_6mA		6
++#define ARTPEC6_DRIVE_6mA_SET		1
++#define ARTPEC6_DRIVE_8mA		8
++#define ARTPEC6_DRIVE_8mA_SET		2
++#define ARTPEC6_DRIVE_9mA		9
++#define ARTPEC6_DRIVE_9mA_SET		3
++
++/* Pin bias options */
++#define ARTPEC6_BIAS_DISABLE		0
++#define ARTPEC6_BIAS_PULL_UP		1
++#define ARTPEC6_BIAS_PULL_DOWN		2
++
++#endif /* __PINCTRL_ARTPEC6_H */
+-- 
+2.1.4
 
-I'll let Simon answer that one.
 
-> Thinking whether it should have several compatible strings, and
-> whether it needs SoC-specific bindings too.
-> 
-> > Even though this driver is pretty simple, I was not able to use the
-> > generic GPIO infrastructure because it needs custom ->request()/->free()
-> > implementation and ->direction_output() requires modifying 2 different
-> > registers while the generic implementation only modifies the dirin (or
-> > dirout) register. Other than that, the implementation is rather
-> > straightforward.
-> >
-> > Note that irq support has not been tested.  
-> 
-> That's cool, kudos for doing it anyway, I will see if I can spot some
-> weirdness there.
-> 
-> > +#include <linux/clk.h>
-> > +#include <linux/gpio.h>  
-> 
-> Just
-> #include <linux/gpio/driver.h>
-> 
-> It should work else something is wrong with the driver.
-
-I'll try that.
-
-> 
-> > +#include <linux/interrupt.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#define CDNS_GPIO_BYPASS_MODE          0x0
-> > +#define CDNS_GPIO_DIRECTION_MODE       0x4
-> > +#define CDNS_GPIO_OUTPUT_EN            0x8
-> > +#define CDNS_GPIO_OUTPUT_VALUE         0xc
-> > +#define CDNS_GPIO_INPUT_VALUE          0x10
-> > +#define CDNS_GPIO_IRQ_MASK             0x14
-> > +#define CDNS_GPIO_IRQ_EN               0x18
-> > +#define CDNS_GPIO_IRQ_DIS              0x1c
-> > +#define CDNS_GPIO_IRQ_STATUS           0x20
-> > +#define CDNS_GPIO_IRQ_TYPE             0x24
-> > +#define CDNS_GPIO_IRQ_VALUE            0x28
-> > +#define CDNS_GPIO_IRQ_ANY_EDGE         0x2c  
-> 
-> Seems simple.
-> 
-> > +struct cdns_gpio_chip {
-> > +       struct gpio_chip base;  
-> 
-> -EALLYOURBASE;
-> That is a really confusing name for a GPIO chip. "base" is usually used
-> to name register base, i.e. what you call "regs".
-
-I usually name a field base to show the inheritance, and regs for the
-IP registers.
-
-> 
-> Can you name it "chip" or "gc" or something?
-
-Sure, gc is fine.
-
-> 
-> > +static inline struct cdns_gpio_chip *to_cdns_gpio(struct gpio_chip *chip)
-> > +{
-> > +       return container_of(chip, struct cdns_gpio_chip, base);
-> > +}  
-> 
-> Please use gpiochip_get_data(gc); instead at all sites, and use
-> devm_gpiochip_add() to get the data associated to the chip.
-
-Okay.
-
-> 
-> > +static int cdns_gpio_request(struct gpio_chip *chip, unsigned int offset)
-> > +{
-> > +       struct cdns_gpio_chip *cgpio = to_cdns_gpio(chip);
-> > +
-> > +       iowrite32(ioread32(cgpio->regs + CDNS_GPIO_BYPASS_MODE) & ~BIT(offset),
-> > +                 cgpio->regs + CDNS_GPIO_BYPASS_MODE);
-> > +
-> > +       return 0;
-> > +}  
-> 
-> Two days ago I was adding exactly the same lines of code to
-> the Faraday driver (another IP vendor). So to me it seems you are doing
-> the right thing here. But add some comments as to what is going
-> on: is this as with the Faraday part: you disable any other
-> IO connected to the pad?
-
-AFAIU, bypass mode is here to let peripheral control the pins directly.
-I guess what's behind the GPIO controller depends on the SoC, and most
-of the time you'll have a pin controller to allow advanced pin-muxing
-operations. 
-
-> 
-> > +static void cdns_gpio_free(struct gpio_chip *chip, unsigned int offset)
-> > +{
-> > +       struct cdns_gpio_chip *cgpio = to_cdns_gpio(chip);
-> > +
-> > +       iowrite32(ioread32(cgpio->regs + CDNS_GPIO_BYPASS_MODE) | BIT(offset),
-> > +                 cgpio->regs + CDNS_GPIO_BYPASS_MODE);
-> > +}  
-> 
-> Is it really correct to *force* the bypass mode when free:ing the GPIO?
-
-I don't know. Again, it's likely to be SoC-specific.
-
-> 
-> Isn't it more appropriate to copy this bitmask into a state variable
-> and restore whatever mode it was in *before* you requested the
-> GPIO?
-
-Yep, maybe. I can store the status at probe time and restore it when
-->free() is called.
-
-> 
-> > +static int cdns_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-> > +static int cdns_gpio_direction_in(struct gpio_chip *chip, unsigned int offset)
-> > +static int cdns_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> > +static void cdns_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-> > +static void cdns_gpio_set(struct gpio_chip *chip, unsigned int offset,
-> > +static int cdns_gpio_direction_out(struct gpio_chip *chip, unsigned int offset,  
-> 
-> These are so simple. Which is why we have the generic GPIO driver :)
-> 
-> select GPIO_GENERIC in Kconfig
-> 
-> #
-> 
-> then in your dynamic gpiochip something like
-> 
->         ret = bgpio_init(&g->gc, dev, 4,
->                          g->base + GPIO_DATA_IN,
->                          g->base + GPIO_DATA_SET,
->                          g->base + GPIO_DATA_CLR,
->                          g->base + GPIO_DIR,
->                          NULL,
->                          0);
-
-Actually, for ->direction_output() it's not working (see the
-implementation: we need to change both CDNS_GPIO_DIRECTION_MODE and
-CDNS_GPIO_OUTPUT_EN to enable the output mode).
-
-I can modify generic GPIO code to handle this case, but I thought my
-case was specific enough to not complexify the generic code with a case
-that is unlikely to be re-used elsewhere. Maybe I was wrong.
-
-> 
-> There are flags and stuff for how  the bits get set and cleared
-> on various variants, check it out. It all comes in through
-> <linux/gpio/driver.h>.
-> 
-> You can still assign the .request and .free callbacks and
-> the irqchip after this, that is fine.
-> See drivers/gpio/gpio-gemini.c for my example
-
-As said above, the generic ->direction_output() implementation does not
-match the Cadence controller logic. It's almost possible to make it fit,
-but it requires extending gpio-generic.c.
-
-> 
-> > +static void cdns_gpio_irq_mask(struct irq_data *d)
-> > +static void cdns_gpio_irq_unmask(struct irq_data *d)  
-> 
-> All good.
-> 
-> > +static int cdns_gpio_irq_set_type(struct irq_data *d, unsigned int type)
-> > +{
-> > +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> > +       struct cdns_gpio_chip *cgpio = to_cdns_gpio(chip);
-> > +       u32 int_type = ioread32(cgpio->regs + CDNS_GPIO_IRQ_TYPE);
-> > +       u32 int_value = ioread32(cgpio->regs + CDNS_GPIO_IRQ_VALUE);
-> > +       u32 mask = BIT(d->hwirq);
-> > +
-> > +       int_type &= ~mask;
-> > +       int_value &= ~mask;
-> > +
-> > +       if (type == IRQ_TYPE_LEVEL_HIGH) {
-> > +               int_type |= mask;
-> > +               int_value |= mask;
-> > +       } else if (type == IRQ_TYPE_LEVEL_LOW) {
-> > +               int_type |= mask;
-> > +       } else if (type & IRQ_TYPE_EDGE_BOTH) {
-> > +               u32 any_edge;
-> > +
-> > +               int_type &= ~mask;
-> > +
-> > +               any_edge = ioread32(cgpio->regs + CDNS_GPIO_IRQ_ANY_EDGE);
-> > +               any_edge &= ~mask;
-> > +
-> > +               if (type == IRQ_TYPE_EDGE_BOTH)
-> > +                       any_edge |= mask;
-> > +               else if (IRQ_TYPE_EDGE_RISING)
-> > +                       int_value |= mask;
-> > +
-> > +               iowrite32(any_edge, cgpio->regs + CDNS_GPIO_IRQ_ANY_EDGE);
-> > +       } else {
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       iowrite32(int_type, cgpio->regs + CDNS_GPIO_IRQ_TYPE);
-> > +       iowrite32(int_value, cgpio->regs + CDNS_GPIO_IRQ_VALUE);
-> > +
-> > +       return 0;
-> > +}  
-> 
-> I see that Cadence don't have a separare ACK register and instead
-> all IRQs get cleared when reading the status register. Not good,
-> so no separate edge and level handling. What were they thinking...
-> well not much to do about that.
-
-Yep, unfortunately :-(.
-
-> 
-> > +static irqreturn_t cdns_gpio_irq_handler(int irq, void *dev)
-> > +{
-> > +       struct cdns_gpio_chip *cgpio = dev;
-> > +       unsigned long status;
-> > +       int hwirq;
-> > +
-> > +       /*
-> > +        * FIXME: If we have an edge irq that is masked we might lose it
-> > +        * since reading the STATUS register clears all IRQ flags.
-> > +        * We could store the status of all masked IRQ in the cdns_gpio_chip
-> > +        * struct but we then have no way to re-trigger the interrupt when
-> > +        * it is unmasked.
-> > +        */  
-> 
-> It is marked FIXME but do you think it can even be fixed? It seems
-> like a hardware flaw. :(
-
-Maybe not. Unless Simon comes up with a magic register to re-trigger an
-interrupt :-).
-
-> 
-> Controllers that handle this properly have a separate ACK register,
-> usually.
-
-Yes.
-
-> 
-> > +       status = ioread32(cgpio->regs + CDNS_GPIO_IRQ_STATUS) &
-> > +                ioread32(cgpio->regs + CDNS_GPIO_IRQ_MASK);
-> > +
-> > +       for_each_set_bit(hwirq, &status, 32) {
-> > +               int irq = irq_find_mapping(cgpio->base.irqdomain, hwirq);
-> > +
-> > +               handle_nested_irq(irq);  
-> 
-> I don't understand this nested business. Why are you making this
-> a nested IRQ when it seems to be just doing register writes into
-> IO space?
-> 
-> Why not use a chained interrupt handler?
-
-Indeed.
-
-> 
-> Again look at the Gemini driver or pl061 for an example.
-> 
-> > +static int cdns_gpio_probe(struct platform_device *pdev)
-> > +{
-> > +       struct cdns_gpio_chip *cgpio;
-> > +       struct resource *res;
-> > +       int ret, irq;
-> > +
-> > +       cgpio = devm_kzalloc(&pdev->dev, sizeof(*cgpio), GFP_KERNEL);
-> > +       if (!cgpio)
-> > +               return -ENOMEM;
-> > +
-> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +       cgpio->regs = devm_ioremap_resource(&pdev->dev, res);
-> > +       if (IS_ERR(cgpio->regs))
-> > +               return PTR_ERR(cgpio->regs);
-> > +
-> > +       cgpio->base.label = dev_name(&pdev->dev);
-> > +       cgpio->base.ngpio = 32;
-> > +       cgpio->base.parent = &pdev->dev;
-> > +       cgpio->base.base = -1;
-> > +       cgpio->base.owner = THIS_MODULE;
-> > +       cgpio->base.request = cdns_gpio_request;
-> > +       cgpio->base.free = cdns_gpio_free;
-> > +       cgpio->base.get_direction = cdns_gpio_get_direction;
-> > +       cgpio->base.direction_input = cdns_gpio_direction_in;
-> > +       cgpio->base.get = cdns_gpio_get;
-> > +       cgpio->base.direction_output = cdns_gpio_direction_out;
-> > +       cgpio->base.set = cdns_gpio_set;
-> > +       cgpio->base.set_multiple = cdns_gpio_set_multiple;  
-> 
-> So a bunch of these could be handled with generic GPIO so
-> we can focus on the meat.
-
-Could be, if we modify gpio-mmio.c to support my case. I have the
-feeling that you'd prefer this solution, so I'll try to do that in my
-v2 ;-).
-
-Another solution would be to write 0xffffffff into CDNS_GPIO_OUTPUT_EN
-at probe time so that each time CDNS_GPIO_DIRECTION_MODE is modified to
-set a pin in output mode, the CDNS_GPIO_OUTPUT_EN is already correctly
-configured.
-Simon, would that work? Is there a good reason to keep a bit in
-CDNS_GPIO_OUTPUT_EN set to 0 when the GPIO is in input mode (power
-consumption?)?
-
-> 
-> > +       ret = devm_gpiochip_add_data(&pdev->dev, &cgpio->base, cgpio);
-> > +       if (ret < 0) {
-> > +               dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
-> > +               goto err_disable_clk;
-> > +       }  
-> 
-> Hey you add the data, but don't get it with gpiochip_get_data().
-> Use the accessor, it's nice.
-
-Sure. I'm so used to the container_of() trick that I sometime forget to
-look at how the subsystem maintainer prefers to do it.
-
-> 
-> > +       irq = platform_get_irq(pdev, 0);
-> > +       if (irq >= 0) {
-> > +               cgpio->irqchip.name = dev_name(&pdev->dev);
-> > +               cgpio->irqchip.irq_mask = cdns_gpio_irq_mask;
-> > +               cgpio->irqchip.irq_unmask = cdns_gpio_irq_unmask;
-> > +               cgpio->irqchip.irq_set_type = cdns_gpio_irq_set_type;
-> > +
-> > +               ret = gpiochip_irqchip_add_nested(&cgpio->base,
-> > +                                                 &cgpio->irqchip, 0,
-> > +                                                 handle_simple_irq,
-> > +                                                 IRQ_TYPE_NONE);
-> > +               if (ret) {
-> > +                       dev_err(&pdev->dev,
-> > +                               "Could not connect irqchip to gpiochip, %d\n",
-> > +                               ret);
-> > +                       goto err_disable_clk;
-> > +               }
-> > +
-> > +               ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> > +                                               cdns_gpio_irq_handler,
-> > +                                               IRQF_ONESHOT,
-> > +                                               dev_name(&pdev->dev), cgpio);
-> > +               if (ret < 0) {
-> > +                       dev_err(&pdev->dev,
-> > +                               "Failed to register irq handler, %d\n", ret);
-> > +                       goto err_disable_clk;
-> > +               }
-> > +       }
-> >  
-> And as mentioned I don't get this nested IRQ business.
-> 
-> Have you tried to use a chained interrupt? Like gpio-pl061 does?
-> You can just copy/paste and try it. Don't miss the chained_irq_enter()
-> and friends.
-
-Well, yes. I'm always unsure when a nested IRQ should be used compared
-to an irqchain (other drivers in the gpio subsystem are using the
-nested IRQ approach, just grep for handle_nested_irq in drivers/gpio).
-Maybe it has to be done this way when you use a threaded interrupt. I
-looked at that a while ago, but I don't remember the differences and
-when one should be used instead of the other.
-
-Thanks for the review.
-
-Boris
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
