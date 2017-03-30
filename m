@@ -1,91 +1,102 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 0/4] pinctrl: sh-pfc: Add support for R-Car H3 ES2.0
-Date: Thu, 30 Mar 2017 15:08:15 +0200
-Message-ID: <CAMuHMdXEJhs97_F70BfBkbLusMT_qnVVYn_iQq8oB4B1pjf1Yg@mail.gmail.com>
-References: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
+From: Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v3 3/7] arm: dts: dt-bindings: Add Renesas RZ pinctrl
+ header
+Date: Thu, 30 Mar 2017 13:27:31 +0000
+Message-ID: <SG2PR06MB116501FDC518BB49630520588A340@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1490368934-12494-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1490368934-12494-4-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdZ4Z6c2YDu-e6kZ8-K7Dv_tRGxZj0vAqgPBx7rWwmHU-g@mail.gmail.com>
+ <SG2PR06MB11659AB956F83E8DCE2C9AA18A350@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CACRpkda_Gw9vhLqpWw8oOZyZ59nj5j9Q-T5RXVsf0vsxWcjyHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:33577 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933160AbdC3NIS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 30 Mar 2017 09:08:18 -0400
-In-Reply-To: <1489425167-22711-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkda_Gw9vhLqpWw8oOZyZ59nj5j9Q-T5RXVsf0vsxWcjyHg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Mar 13, 2017 at 6:12 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> This patch series adds pinctrl support for R-Car H3 ES2.0, which differs
-> from ES1.x in several areas.
->
-> The goal is twofold:
->   1. Support both the ES1.x and ES2.0 SoC revisions in a single binary
->      for now,
->   2. Make it clear which code supports ES1.x, so it can easily be
->      identified and removed later, when production SoCs are deemed
->      ubiquitous.
->
-> This is achieved by:
->   1. Extracting the support for R-Car H3 ES1.x into a separate file, as
->      the differences are quite large,
->   2. Adding code for detecting the SoC revision at runtime using the new
->      soc_device_match() API, and selecting pinctrl tables for the actual
->      SoC revision,
->   3. Replacing the core register and bitfield definitions, and pins,
->      groups, and functions for basic devices by their counterparts for
->      R-Car H3 ES2.0.
->
-> Changes compared to v1:
->   - Print correct subdriver name,
->   - Extend Proof-of-Concept to basic support (SCIF serial port).
->
-> The addition of pins, groups, and functions for other on-chip devices is
-> left to subsequent patches.
->
-> For testers, this series and its dependencies are available in the
-> topic/r8a7795es2-pfc-v2 branch of my renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> An integration branch for testing on the R-Car H3 ES2.0 based Salvator-X
-> development board is provided as topic/r8a7795es2-integration.
->
-> This has been tested on Salvator-X with R-Car H3 ES1.0, ES1.1, and ES2.0
-> SoCs.
->
-> I plan to queue this up in sh-pfc-for-v4.12.
-
-In the mean time:
-  - I renamed pfc-r8a7795es1.c to pfc-r8a7795-es1.c for compatibility with
-    the BSP, but I'm not gonna spam everybody with a v3 for such a trivial
-    change.
-  - I verified all physical pins against the R-Car H3 pin function rev0.551
-    and the R-Car H3SiP pin arrangement rev1.53 documents. No updates needed.
-
-So I've queued the remainder (patches 2-4) up in sh-pfc-for-v4.12.
-
-> Geert Uytterhoeven (4):
->   pinctrl: sh-pfc: Update info pointer after SoC-specific init
->   pinctrl: sh-pfc: r8a7795: Add support for R-Car H3 ES2.0
->   pinctrl: sh-pfc: r8a7795: Add SCIF support
->   pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support
->
->  drivers/pinctrl/sh-pfc/Makefile                    |    1 +
->  drivers/pinctrl/sh-pfc/core.c                      |    3 +
->  drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 4217 ++++----------------
->  .../sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c}     |   25 +-
->  drivers/pinctrl/sh-pfc/sh_pfc.h                    |    1 +
->  5 files changed, 782 insertions(+), 3465 deletions(-)
->  copy drivers/pinctrl/sh-pfc/{pfc-r8a7795.c => pfc-r8a7795es1.c} (99%)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+T24gVGh1cnNkYXksIE1hcmNoIDMwLCAyMDE3LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0KPiA+PiA+
+ICsvKg0KPiA+PiA+ICsgKiBQaW4gaXMgYmktZGlyZWN0aW9uYWwuDQo+ID4+ID4gKyAqIEFuIGFs
+dGVybmF0ZSBmdW5jdGlvbiB0aGF0IG5lZWRzIGJvdGggaW5wdXQvb3V0cHV0DQo+ID4+ID4gK2Z1
+bmN0aW9uYWxpdGllcyBzaGFsbA0KPiA+PiA+ICsgKiBiZSBjb25maWd1cmVkIGFzIGJpZGlyZWN0
+aW9uYWwuDQo+ID4+ID4gKyAqIEVnLiBTREEvU0NMIHBpbnMgb2YgYW4gSTJjIGludGVyZmFjZS4N
+Cj4gPj4gPiArICovDQo+ID4+ID4gKyNkZWZpbmUgQklfRElSICAgICAgICAgICAgICAgICAoMSA8
+PCAzKQ0KPiA+Pg0KPiA+PiBBbnkgc3BlY2lmaWMgcmVhc29uIHdoeSB0aGlzIHNob3VsZCBub3Qg
+c2ltcGx5IGJlIGFkZGVkIHRvDQo+ID4+IGluY2x1ZGUvbGludXgvcGluY3RybC9waW5jb25mLWdl
+bmVyaWMuaA0KPiA+PiBhcyBQSU5fQ09ORklHX0JJRElSRUNUSU9OQUwgYW5kIHBhcnNlZCBpbiBk
+cml2ZXJzL3BpbmN0cmwvcGluY29uZi0NCj4gPj4gZ2VuZXJpYy5jIGZyb20gdGhlIChuZXcpIERU
+IHByb3BlcnR5ICJiaWRpcmVjdGlvbmFsIiBzaW1wbHk/DQo+ID4NCj4gPiBJIHNlZSB5b3VyIHBv
+aW50LiBJdCB3b3VsZCBjdXQgZG93biBmcm9tIGV2ZXJ5IGRyaXZlciBvdXQgdGhlcmUNCj4gPiBp
+bnZlbnRpbmcgc29tZSBuZXcgcHJvcGVydHkgb3IgY29uZmlnIGluc3RlYWQgb2YgZXZlcnlvbmUg
+anVzdCBzaGFyaW5nDQo+ID4gYSBmaXhlZCBzZXQuDQo+ID4gTWF5YmUgc29tZW9uZSBlbHNlIG91
+dCB0aGVyZSB3aWxsIGVuZCB1cCBoYXZpbmcgYSBuZWVkIGZvciBhDQo+ID4gImJpZGlyZWN0aW9u
+YWwiIG9wdGlvbi4NCj4gDQo+IEkgd2FzIHRoaW5raW5nIGFib3V0IHRoYXQgb25lLiBJdCBpcyBh
+IGJpdCB3ZWlyZCBlbGVjdHJpY2FsbHksIGxpa2Ugd2hhdA0KPiBraW5kIG9mIGVsZWN0cm9uaWNz
+IGlzIHJlYWxseSBiaWRpcmVjdGlvbmFsPw0KPiANCj4gSXQgc2VlbXMgbGlrZSBhIGZhbmN5IG5h
+bWUgZm9yIG9wZW4gZHJhaW4vb3BlbiBzb3VyY2UsIHdoYXQgd2UgY2FsbA0KPiAic2luZ2xlIGVu
+ZGVkIiBjb25maWd1cmF0aW9uLiAoU2VlIGRvY3MgaW4NCj4gRG9jdW1lbnRhdGlvbi9ncGlvL2Ry
+aXZlci50eHQpDQo+IA0KPiBJdCB3b3VsZCBiZSBncmVhdCBpZiB5b3UgY291bGQgY2hlY2sgaWYg
+dGhhdCBpcyB3aGF0IHRoZXkgbWVhbiwgYWN0dWFsbHkuDQoNCkhlcmUgaXMgdGhlIGRlZmluaXRp
+b24gb2YgdGhlIHJlZ2lzdGVyIGluIHRoZSBoYXJkd2FyZSBtYW51YWw6DQoNCi0tLQ0KNTQuMy4x
+MyBQb3J0IEJpZGlyZWN0aW9uIENvbnRyb2wgUmVnaXN0ZXIgKFBCRENuKQ0KDQpUaGlzIHJlZ2lz
+dGVyIGVuYWJsZXMgb3IgZGlzYWJsZXMgdGhlIGlucHV0IGJ1ZmZlciB3aGlsZSB0aGUgb3V0cHV0
+IGJ1ZmZlciBpcyBlbmFibGVkLiBXaGVuIHRoZSBpbnB1dCBidWZmZXIgaXMgZW5hYmxlZA0Kd2hp
+bGUgdGhlIG91dHB1dCBidWZmZXIgaXMgZW5hYmxlZCwgdGhlIGJpZGlyZWN0aW9uYWwgbW9kZSBp
+cyBlbnRlcmVkLCBhbGxvd2luZyB0aGUgbGV2ZWwgb2YgdGhlIFBuX20gcGluIHRvIGFsd2F5cyBi
+ZSByZWFkDQp2aWEgdGhlIFBQUm4uUFBSbm0gYml0Lg0KLS0tDQoNCg0KQnV0Li4ud2hhdCB0aGV5
+IGRvbid0IHJlYWxseSB0ZWxsIHlvdSBpcyB0aGF0IGFueSBwZXJpcGhlcmFsIHRoYXQgbmVlZHMg
+dG8gVFggYW5kIFJYIGRhdGEgb3ZlciBhIHBpbiBuZWVkcyB0aGlzIHNldC4NCg0KDQpJbiB0aGUg
+aGFyZHdhcmUgbWFudWFsLCB0aGVyZSBpcyBhIHByZXR0eSBwaWN0dXJlIChGaWd1cmUgNTQuMSBM
+b2dpY2FsIERpYWdyYW0gb2YgUG9ydCBDb250cm9sKSB0aGF0IHNob3dzIGEgZGV0YWlsZWQgbG9n
+aWMgZGlhZ3JhbSBvZiB0aGUgaW50ZXJmYWNlIGJldHdlZW4gdGhlIHBlcmlwaGVyYWwgYnVzIGFu
+ZCB0aGUgcGluIHBhZC4NCkFzIGZhciBhcyBJIGNhbiB0ZWxsLCB0aGUgImZ1bmN0aW9uIG11eCIg
+cG9ydGlvbiBvZiB0aGlzIGNvbnRyb2xsZXIgb25seSBrbm93cyBob3cgdG8gc2V0IGEgcGluIGFz
+IGRpcmVjdGlvbj1pbiBvciBkaXJlY3Rpb249b3V0Lg0KU28sIGluIHRoZSBjYXNlIG9mIEkyQyB3
+aGVyZSBlYWNoIHRoZSBTQ0wgYW5kIFNEQSBwaW5zIG5lZWRzIHRvIGJlIGRyaXZlbiBhbmQgcmVh
+ZC4uLml0IGNhbid0IGRvIHRoYXQuDQpUaGVyZWZvcmUsIHRoZXJlIGlzIGFuIGFkZGl0aW9uYWwg
+cmVnaXN0ZXIgdG8gbWFudWFsbHkgZW5hYmxlIHRoZSBpbnB1dCBidWZmZXIgYW5kIGxldCB0aGUg
+bXV4IGVuYWJsZSB0aGUgb3V0cHV0IGJ1ZmZlci4NCg0KU28gd2hpbGUgeWVzLCBJMkMgaXMgb3Bl
+bi1kcmFpbiwgdGhpcyBpcyBhbHNvIHRoZSBjYXNlIGZvciB0aGUgZGF0YSBwaW5zIGZvciB0aGUg
+U0RISS4gQW5kIHRoZSBNRElPIHBpbiBmcm9tIEV0aGVybmV0LiBJdCByZWFsbHkgaGFzIHRvIGRv
+IHdpdGggdGhlIGZhY3QgdGhhdCB0aGlzIHBpbiBjb250cm9sbGVyIHdhc24ndCBkZXNpZ25lZCB0
+byBlbmFibGUgYm90aCB0aGUgaW5wdXQgYW5kIG91dHB1dCBidWZmZXJzIGF0IHRoZSBzYW1lIHRp
+bWUuDQoNClRoZSBzaXR1YXRpb24gaXMgc2ltaWxhciBmb3Igb3VyIFNXSU9fSU4gYW5kIFNXSU9f
+T1VUIGZsYWdzLiBGb3IgZXhhbXBsZSwgdG8gdXNlIHRoZSBTU0kgc291bmQgaW50ZXJmYWNlLCB5
+b3UgaGF2ZSB0byBzZXQgdGhlIFRYIHNpZ25hbHMgdG8gImlucHV0IiAoU1dJT19JTikuIE1ha2Vz
+IHNlbnNlLCByaWdodD8/DQoNCkkgY291bGQgYXJndWUgdGhhdCBhbGwgb2YgdGhlc2UgIkZMQUdT
+IiBzZXR0aW5ncyBzaG91bGQgaGF2ZSBiZWVuIGluY29ycG9yYXRlZCBpbiB0aGUgSFcgbG9naWMg
+b2YgdGhlIHBpbiBjb250cm9sbGVyLi4uYnV0IGZvciB3aGF0ZXZlciByZWFzb24sIHRoZSB0aGV5
+IGhhZCB0byBtYWtlIHRoZW0gc2VwYXJhdGUgcmVnaXN0ZXJzIGFuZCBtYWtlIFNXIGRvIGl0Lg0K
+U28sIEkgY291bGQgYXJndWUgdGhhdCB0aGVzZSByZWdpc3RlcnMgc2V0dGluZ3MgYXJlIHJlYWxs
+eSBwYXJ0IG9mIHBpbiBtdXhpbmcsIG5vdCByZWFsbHkgdXNlciBjb25maWcuLi4uYW5kIGhlbmNl
+IGJlbG9uZyBpbiB0aGUgInBpbm11eCIgcHJvcGVydHkuDQoNCg0KSG93IGFib3V0IHRoaXMgY29t
+cHJvbWlzZTogSW5zdGVhZCBvZiBCSV9ESVIsIHdlIHVzZSAiVFlQRV9JMkMiLCAiVFlQRV9TRERB
+VEEiLCAiVFlQRV9NRElPIiwgIlRZUEVfTFZEUyIsIGV0Yy4uLiB0byBkZXNjcmliZSB0aGUgJ3Nw
+ZWNpYWwnIG9uZXMuIFRoYXQgd2F5IGl0IGNhbiBnbyBiYWNrIHVuZGVyICJwaW5tdXgiLiBMaWtl
+IEphY29wbyBzYWlkLCB0aGVzZSByZWdpc3RlciBzZXR0aW5ncyBhcmUgcmVhbGx5IHN1cHBvc2Vk
+IHRvIGJlIHNldCB3aGVuIHlvdSBhcmUgc2VsZWN0aW5nIHRoZSBwaW4tbXV4IG9wdGlvbi4NCg0K
+DQpPZiBjb3Vyc2UgYmVoaW5kIHRoZSBzY2VuZXMsIGl0J3MgcmVhbGx5Og0KICAjZGVmaW5lIFRZ
+UEVfSTJDICAgIEJJX0RJUiANCiAgI2RlZmluZSBUWVBFX1NEREFUQSBCSV9ESVINCiAgI2RlZmlu
+ZSBUWVBFX1NEQ01EICBCSV9ESVINCiAgI2RlZmluZSBUWVBFX0xWRFMgICBTV0lPX09VVA0KDQpF
+eGFtcGxlczoNCg0KCWkyYzNfcGluczogaTJjMyB7DQoJCXBpbm11eCA9IDxQSU4oMSwgNikgfCBG
+VU5DXzEgfCBUWVBFX0kyQz4sDQoJCSAgICAgICAgIDxQSU4oMSwgNykgfCBGVU5DXzEgfCBUWVBF
+X0kyQz47DQoJfTsNCg0KCS8qIFNIREkgY2gxIG9uIENOMSAqLw0KCXNkaGkxX3BpbnM6IHNkaGkx
+IHsNCgkJLyogU0hESSBjaDEgb24gUG9ydCAzICovDQoJCXBpbm11eCA9IDxQSU4oMywgOCkgfCBG
+VU5DXzc+LAkJCS8qIFNESEkxIENEICovDQoJCQkJPFBJTigzLCA5KSBGVU5DXzcpPiwJCQkvKiBT
+REhJMSBXUCAqLw0KCQkJCTxQSU4oMywgMTApIEZVTkNfNyB8IFRZUEVfU0REQVRBKT4sCS8qIFNE
+SEkxIERBVDEgKi8NCgkJCQk8UElOKDMsIDExKSBGVU5DXzcgfCBUWVBFX1NEREFUQSk+LAkvKiBT
+REhJMSBEQVQwICovDQoJCQkJPFBJTigzLCAxMikgRlVOQ183KT4sCQkJLyogU0RISTEgQ0xLICov
+DQoJCQkJPFBJTigzLCAxMykgRlVOQ183IHwgVFlQRV9TRENNRCk+LAkvKiBTREhJMSBDTUQgKi8N
+CgkJCQk8UElOKDMsIDE0KSBGVU5DXzcgfCBUWVBFX1NEREFUQSk+LAkvKiBTREhJMSBEQVQzICov
+DQoJCQkJPFBJTigzLCAxNSkgRlVOQ183IHwgVFlQRV9TRERBVEEpPjsJLyogU0RISTEgREFUMiAq
+Lw0KCX07DQoNCg0KDQojIEhvbmVzdGx5LCBJIGhhdmUgbm8gaWRlYSB3aGVyZSB0aGlzIHBpbiBj
+b250cm9sbGVyIGNhbWUgZnJvbS4gSSBoYXZlIG5vdCBzZWVuIGl0IGluIGFueSBvdGhlciBSZW5l
+c2FzIHBhcnQgKE1pdHN1YmlzaGkvSGl0YWNoaS9ORUMpLg0KDQoNCkNocmlzDQoNCg0K
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
