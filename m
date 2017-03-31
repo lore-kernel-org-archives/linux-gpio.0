@@ -1,55 +1,162 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: fix IPSR comment typos
-Date: Fri, 31 Mar 2017 23:29:23 +0300
-Message-ID: <20170331202941.678985389@cogentembedded.com>
+From: David Daney <ddaney.cavm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 2/6] genirq: Add handle_fasteoi_{level,edge}_irq flow
+ handlers.
+Date: Fri, 31 Mar 2017 16:57:15 -0700
+Message-ID: <95ea6d46-be8b-1d7b-5cfc-27f604d34ea7@gmail.com>
+References: <1488332932-2691-1-git-send-email-david.daney@cavium.com>
+ <1488332932-2691-3-git-send-email-david.daney@cavium.com>
+ <254c0505-6890-2e9f-cf04-3c8efbcfeb2d@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:33622 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755093AbdCaU3s (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2017 16:29:48 -0400
-Received: by mail-lf0-f46.google.com with SMTP id h125so49393371lfe.0
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2017 13:29:47 -0700 (PDT)
-Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-fix-IPSR-comment-typos.patch
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <254c0505-6890-2e9f-cf04-3c8efbcfeb2d-5wv7dgnIgG8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The IPSR field names in the comments have been fat-fingered in a couple
-places --  fix those silly typos...
+I am finally getting back to this, sorry for the delay ...
 
-Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On 03/14/2017 09:54 AM, Marc Zyngier wrote:
+> On 01/03/17 01:48, David Daney wrote:
+>> Follow-on patch for gpio-thunderx uses a irqdomain hierarchy which
+>> requires slightly different flow handlers, add them to chip.c which
+>> contains most of the other flow handlers.
+>>
+>> Signed-off-by: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  include/linux/irq.h |   2 ++
+>>  kernel/irq/chip.c   | 102 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 104 insertions(+)
+>>
+>> diff --git a/include/linux/irq.h b/include/linux/irq.h
+>> index f887351..3db0eb8 100644
+>> --- a/include/linux/irq.h
+>> +++ b/include/linux/irq.h
+>> @@ -518,6 +518,8 @@ static inline int irq_set_parent(int irq, int parent_irq)
+>>  extern int irq_chip_pm_get(struct irq_data *data);
+>>  extern int irq_chip_pm_put(struct irq_data *data);
+>>  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+>> +extern void handle_fasteoi_edge_irq(struct irq_desc *desc);
+>> +extern void handle_fasteoi_level_irq(struct irq_desc *desc);
+>>  extern void irq_chip_enable_parent(struct irq_data *data);
+>>  extern void irq_chip_disable_parent(struct irq_data *data);
+>>  extern void irq_chip_ack_parent(struct irq_data *data);
+>> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+>> index 73ea90b..213105d 100644
+>> --- a/kernel/irq/chip.c
+>> +++ b/kernel/irq/chip.c
+>> @@ -981,6 +981,108 @@ void irq_cpu_offline(void)
+>>
+>>  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+>>  /**
+>> + *	handle_fasteoi_edge_irq - irq handler for edge hierarchy
+>> + *	stacked on transparent controllers
+>> + *
+>> + *	@desc:	the interrupt description structure for this irq
+>> + *
+>> + *	Like handle_fasteoi_irq(), but for use with hierarchy where
+>> + *	the irq_chip also needs to have its ->irq_ack() function
+>> + *	called.
+>> + */
+>> +void handle_fasteoi_edge_irq(struct irq_desc *desc)
+>> +{
+>> +	struct irq_chip *chip = desc->irq_data.chip;
+>> +
+>> +	raw_spin_lock(&desc->lock);
+>> +
+>> +	if (!irq_may_run(desc))
+>> +		goto out;
+>> +
+>> +	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
+>> +
+>> +	/*
+>> +	 * If its disabled or no action available
+>> +	 * then mask it and get out of here:
+>> +	 */
+>> +	if (unlikely(!desc->action || irqd_irq_disabled(&desc->irq_data))) {
+>> +		desc->istate |= IRQS_PENDING;
+>> +		mask_irq(desc);
+>> +		goto out;
+>> +	}
+>> +
+>> +	kstat_incr_irqs_this_cpu(desc);
+>> +	if (desc->istate & IRQS_ONESHOT)
+>> +		mask_irq(desc);
+>> +
+>> +	/* Start handling the irq */
+>> +	desc->irq_data.chip->irq_ack(&desc->irq_data);
+>> +
+>> +	preflow_handler(desc);
+>> +	handle_irq_event(desc);
+>> +
+>> +	cond_unmask_eoi_irq(desc, chip);
+>> +
+>> +	raw_spin_unlock(&desc->lock);
+>> +	return;
+>> +out:
+>> +	if (!(chip->flags & IRQCHIP_EOI_IF_HANDLED))
+>> +		chip->irq_eoi(&desc->irq_data);
+>> +	raw_spin_unlock(&desc->lock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(handle_fasteoi_edge_irq);
+>
+> So this is handle_fasteoi_irq with an irq_ack() added in the middle. In
+> the spirit of making this a bit more maintainable, how about making the
+> handle_fasteoi_irq code reusable (if necessary by forcing the compiler
+> to inline stuff)?
 
----
-This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
-repo plus  3 R8A7791 fixes posted in the last couple days...
+You, yourself, said in response to an earlier version of the patch set:
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-===================================================================
---- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -5711,7 +5711,7 @@ static const struct pinmux_cfg_reg pinmu
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR2", 0xE6060028, 32,
- 			     2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 3) {
--		/* IP2_31_20 [2] */
-+		/* IP2_31_30 [2] */
- 		0, 0, 0, 0,
- 		/* IP2_29_27 [3] */
- 		FN_EX_CS3_N, FN_ATADIR0_N, FN_MSIOF2_TXD,
-@@ -6042,7 +6042,7 @@ static const struct pinmux_cfg_reg pinmu
- 		/* IP10_24_22 [3] */
- 		FN_VI0_R1, FN_VI2_DATA2, FN_GLO_I1_B, FN_TS_SCK0_C, FN_ATAG1_N,
- 		0, 0, 0,
--		/* IP10_21_29 [3] */
-+		/* IP10_21_19 [3] */
- 		FN_VI0_R0, FN_VI2_DATA1, FN_GLO_I0_B,
- 		FN_TS_SDATA0_C, FN_ATACS11_N,
- 		0, 0, 0,
+     So you want to generalize CONFIG_IRQ_PREFLOW_FASTEOI so that it is
+     on each level of a domain stack? Humm. I personally think that
+     this is a massive bloat that is going to impact all the hot paths
+     for no gain whatsoever, but I'll let tglx speak his mind on that.
 
+Your current suggestion is, from the point of view of the "impact", 
+almost identical to what I was proposing back then.
+
+>
+> But the one thing that makes me uncomfortable here is that we're seem to
+> have this irq_ack() propagated all along the irqdata chain, which is not
+> what's happening. Only the EOI gets propagated.
+
+That is intentional.  The parent domain is handle_fasteoi_irq(), so we 
+know that it has no irq_ack().
+
+
+>
+> Why can't you just put the irq_ack call in your top level irq_eoi
+> callback? That'd make it similar to what is happening on the mbigen side
+> (not exactly surprising, since they are doing very similar things).
+
+irq_ack() must be called before handle_irq_event(), otherwise there is a 
+race condition where edge interrupts could be lost.
+
+
+>
+> Same remark about handle_fasteoi_level_irq.
+>
+> Thoughts?
+
+Several:
+
+1) Adding the additional mask_ack_irq()/irq_ack() to 
+handle_fasteoi_irq() is probably the cleanest solution, however ...
+
+2) There is a risk of breaking systems that inadvertently supply the new 
+chip methods, but the methods don't currently get called by 
+handle_fasteoi_irq().
+
+3) Checking for the presence of mask_ack_irq()/irq_ack() methods may 
+introduce additional branch mispredictions and cache misses on all 
+non-ThunderGPIO systems.
+
+
+David Daney
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
