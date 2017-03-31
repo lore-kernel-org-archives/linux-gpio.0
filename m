@@ -1,80 +1,55 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/3] doc,dts - add XRA1403 DTS binding documentation
-Date: Fri, 31 Mar 2017 13:49:57 -0500
-Message-ID: <20170331184957.bpnsgzevvfypq5ls@rob-hp-laptop>
-References: <cover.1490595641.git.nandor.han@ge.com>
- <39ba92bacf48da957f8f85d5cb11d3254fe3d68f.1490595641.git.nandor.han@ge.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791: fix IPSR comment typos
+Date: Fri, 31 Mar 2017 23:29:23 +0300
+Message-ID: <20170331202941.678985389@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <39ba92bacf48da957f8f85d5cb11d3254fe3d68f.1490595641.git.nandor.han@ge.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nandor Han <nandor.han@ge.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:33622 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755093AbdCaU3s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 31 Mar 2017 16:29:48 -0400
+Received: by mail-lf0-f46.google.com with SMTP id h125so49393371lfe.0
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Mar 2017 13:29:47 -0700 (PDT)
+Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7791-fix-IPSR-comment-typos.patch
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Mon, Mar 27, 2017 at 09:23:01AM +0300, Nandor Han wrote:
-> Add the XRA1403 DTS binding documentation.
+The IPSR field names in the comments have been fat-fingered in a couple
+places --  fix those silly typos...
 
-"dt-bindings: gpio: ..." for the subject prefix please.
+Fixes: 508845196238 ("pinctrl: sh-pfc: r8a7791 PFC support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> 
-> Signed-off-by: Nandor Han <nandor.han@ge.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-xra1403.txt      | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-xra1403.txt b/Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
-> new file mode 100644
-> index 0000000..ccf5337
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
-> @@ -0,0 +1,37 @@
-> +GPIO Driver for XRA1403 16-BIT GPIO Expander With Reset Input from EXAR
-> +
-> +The XRA1403 is an 16-bit GPIO expander with an SPI interface. Features available:
-> +	- Individually programmable inputs:
-> +		- Internal pull-up resistors
-> +		- Polarity inversion
-> +		- Individual interrupt enable
-> +		- Rising edge and/or Falling edge interrupt
-> +		- Input filter
-> +	- Individually programmable outputs
-> +		- Output Level Control
-> +		- Output Three-State Control
-> +
-> +Properties
-> +----------
-> +Check documentation for SPI and GPIO controllers regarding properties needed to configure the node.
-> +
-> +	- compatible = "exar,xra1403".
-> +	- reg = SPI id of the device.
-> +	- gpio-controller: mark the node as gpio.
+---
+This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
+repo plus  3 R8A7791 fixes posted in the last couple days...
 
-#gpio-cells?
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +
-> +Optional properties:
-> +-------------------
-> +	- reset-gpios: in case available used to control the device reset line.
-> +
-> +Example
-> +--------
-> +
-> +	gpioxra0: gpio@2 {
-> +		compatible = "exar,xra1403";
-> +		reg = <2>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		reset-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
-> +		spi-max-frequency = <1000000>;
-> +		status = "okay";
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -5711,7 +5711,7 @@ static const struct pinmux_cfg_reg pinmu
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("IPSR2", 0xE6060028, 32,
+ 			     2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 3) {
+-		/* IP2_31_20 [2] */
++		/* IP2_31_30 [2] */
+ 		0, 0, 0, 0,
+ 		/* IP2_29_27 [3] */
+ 		FN_EX_CS3_N, FN_ATADIR0_N, FN_MSIOF2_TXD,
+@@ -6042,7 +6042,7 @@ static const struct pinmux_cfg_reg pinmu
+ 		/* IP10_24_22 [3] */
+ 		FN_VI0_R1, FN_VI2_DATA2, FN_GLO_I1_B, FN_TS_SCK0_C, FN_ATAG1_N,
+ 		0, 0, 0,
+-		/* IP10_21_29 [3] */
++		/* IP10_21_19 [3] */
+ 		FN_VI0_R0, FN_VI2_DATA1, FN_GLO_I0_B,
+ 		FN_TS_SDATA0_C, FN_ATACS11_N,
+ 		0, 0, 0,
 
-Don't show status in examples.
-
-> +	};
-> -- 
-> 2.10.1
-> 
