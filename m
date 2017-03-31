@@ -1,41 +1,30 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: Add a driver for Cadence GPIO controller
-Date: Fri, 31 Mar 2017 15:28:22 +0200
-Message-ID: <20170331152822.20d30bb4@bbrezillon>
-References: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
-        <CACRpkdZ6w_tuzSNmFE=2BpeASNOSq0cV4fYM6F8-57Q2+3n-aQ@mail.gmail.com>
-        <20170330132946.41314874@bbrezillon>
-        <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] gpio: Add Tegra186 support
+Date: Fri, 31 Mar 2017 15:36:32 +0200
+Message-ID: <CACRpkdZwb37kSgKDo=6v-G102KGs0NVB1CZg+MEOKDaA8dKuLg@mail.gmail.com>
+References: <20170310162629.31455-1-thierry.reding@gmail.com> <20170331131006.GC29779@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Hatliff <hatliff@cadence.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170331131006.GC29779-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 30 Mar 2017 18:26:01 +0100
-Simon Hatliff <hatliff@cadence.com> wrote:
+On Fri, Mar 31, 2017 at 3:10 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
+> any objections to merging this for v4.12?
 
-> > Another solution would be to write 0xffffffff into CDNS_GPIO_OUTPUT_EN
-> > at probe time so that each time CDNS_GPIO_DIRECTION_MODE is modified to
-> > set a pin in output mode, the CDNS_GPIO_OUTPUT_EN is already correctly
-> > configured.
-> > Simon, would that work? Is there a good reason to keep a bit in
-> > CDNS_GPIO_OUTPUT_EN set to 0 when the GPIO is in input mode (power
-> > consumption?)?  
-> If direction_mode is set to input then output_en is ignored so this 
-> should work.  The hardware defaults to output mode, so as long as you 
-> set all pins to input mode before you set all output_en bits there 
-> should be no negative effect.
+Sorry I should have done a proper review. I'll look at it now.
 
-Okay, I'll try something like that, except I'll probably keep already
-output-enabled in their existing state to avoid modifying bootloader's
-GPIO settings.
+>I know Laxman has some
+> reservations about the internal numbering, but I hope my explanation in
+> the other subthread shows that this is the simplest way to achieve what
+> we want with the least amount of surprises.
 
-Thanks for the feedback.
+As long as he's not NACKing it it's fine I guess.
 
-Boris
+Yours,
+Linus Walleij
