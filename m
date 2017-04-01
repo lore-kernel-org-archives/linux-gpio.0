@@ -1,36 +1,73 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: Add Tegra186 support
-Date: Sat, 1 Apr 2017 13:15:50 +0530
-Message-ID: <58DF5AAE.9070409@nvidia.com>
-References: <20170310162629.31455-1-thierry.reding@gmail.com> <20170331131006.GC29779@ulmo.ba.sec> <CACRpkdZwb37kSgKDo=6v-G102KGs0NVB1CZg+MEOKDaA8dKuLg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZwb37kSgKDo=6v-G102KGs0NVB1CZg+MEOKDaA8dKuLg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 2/2] pinctrl: meson: meson8b: rename the NAND DQS pin definitions
+Date: Sat,  1 Apr 2017 15:59:22 +0200
+Message-ID: <20170401135922.1288-3-martin.blumenstingl@googlemail.com>
+References: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
+ <20170401135922.1288-1-martin.blumenstingl@googlemail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35613 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751413AbdDAN7i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Apr 2017 09:59:38 -0400
+Received: by mail-wr0-f193.google.com with SMTP id p52so24090774wrc.2
+        for <linux-gpio@vger.kernel.org>; Sat, 01 Apr 2017 06:59:37 -0700 (PDT)
+In-Reply-To: <20170401135922.1288-1-martin.blumenstingl@googlemail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
+The NAND DQS pins are currently named nand_dqs_0 and nand_dqs_1.
+However, they both seem to have the same function, just exposed on
+different pins (unlike the ethernet TX pins for example, where there's
+eth_txd0..3 - all of these can be active at the same time as they are
+different data lines).
+Rename the NAND DQS pins to nand_dqs_15 and nand_dqs_18 to reflect that
+it's the same functionality just exposed on different pins (BOOT_15 and
+BOOT_18).
 
-On Friday 31 March 2017 07:06 PM, Linus Walleij wrote:
-> On Fri, Mar 31, 2017 at 3:10 PM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
->> any objections to merging this for v4.12?
-> Sorry I should have done a proper review. I'll look at it now.
->
->> I know Laxman has some
->> reservations about the internal numbering, but I hope my explanation in
->> the other subthread shows that this is the simplest way to achieve what
->> we want with the least amount of surprises.
-> As long as he's not NACKing it it's fine I guess.
-I am fine with patch.
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-You can consider my ack.
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index f87ef5a0ee6c..bf747eb1f3f4 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -267,8 +267,8 @@ static const unsigned int nand_ale_pins[]	= { PIN(BOOT_11, 0) };
+ static const unsigned int nand_cle_pins[]	= { PIN(BOOT_12, 0) };
+ static const unsigned int nand_wen_clk_pins[]	= { PIN(BOOT_13, 0) };
+ static const unsigned int nand_ren_clk_pins[]	= { PIN(BOOT_14, 0) };
+-static const unsigned int nand_dqs_0_pins[]	= { PIN(BOOT_15, 0) };
+-static const unsigned int nand_dqs_1_pins[]	= { PIN(BOOT_18, 0) };
++static const unsigned int nand_dqs_15_pins[]	= { PIN(BOOT_15, 0) };
++static const unsigned int nand_dqs_18_pins[]	= { PIN(BOOT_18, 0) };
+ 
+ static const unsigned int sdxc_d0_c_pins[]	= { PIN(BOOT_0, 0)};
+ static const unsigned int sdxc_d13_c_pins[]	= { PIN(BOOT_1, 0), PIN(BOOT_2, 0),
+@@ -527,8 +527,8 @@ static struct meson_pmx_group meson8b_cbus_groups[] = {
+ 	GROUP(nand_cle,		2,	20),
+ 	GROUP(nand_wen_clk,	2,	19),
+ 	GROUP(nand_ren_clk,	2,	18),
+-	GROUP(nand_dqs_0,	2,	27),
+-	GROUP(nand_dqs_1,	2,	28),
++	GROUP(nand_dqs_15,	2,	27),
++	GROUP(nand_dqs_18,	2,	28),
+ 	GROUP(sdxc_d0_c,	4,	30),
+ 	GROUP(sdxc_d13_c,	4,	29),
+ 	GROUP(sdxc_d47_c,	4,	28),
+@@ -739,8 +739,8 @@ static const char * const sdxc_c_groups[] = {
+ static const char * const nand_groups[] = {
+ 	"nand_io", "nand_io_ce0", "nand_io_ce1",
+ 	"nand_io_rb0", "nand_ale", "nand_cle",
+-	"nand_wen_clk", "nand_ren_clk", "nand_dqs_0",
+-	"nand_dqs_1"
++	"nand_wen_clk", "nand_ren_clk", "nand_dqs_15",
++	"nand_dqs_18"
+ };
+ 
+ static const char * const nor_groups[] = {
+-- 
+2.12.1
 
-Acked-by: Laxman Dewangan<ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-thanks,
-Laxman
