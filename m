@@ -1,52 +1,86 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/2] pinctrl-meson8b: fix the NAND DQS pin definitions
-Date: Sat,  1 Apr 2017 15:59:20 +0200
-Message-ID: <20170401135922.1288-1-martin.blumenstingl@googlemail.com>
-References: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35533 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751413AbdDAN7f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 1 Apr 2017 09:59:35 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z133so3746242wmb.2
-        for <linux-gpio@vger.kernel.org>; Sat, 01 Apr 2017 06:59:35 -0700 (PDT)
-In-Reply-To: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] gpio: Add Tegra186 support
+Date: Sat, 1 Apr 2017 19:46:24 +0200
+Message-ID: <CACRpkdZBp1Q=J9QgwegcfqxmnDSjzYnJQg1t2UpbRkemo9aCWg@mail.gmail.com>
+References: <20170310162629.31455-1-thierry.reding@gmail.com>
+ <CACRpkdZpev7op=4e7DwYfnRpNBPN6U_EXd6G3PqM-XQudLHqow@mail.gmail.com> <20170331145437.GA16964@ulmo.ba.sec>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170331145437.GA16964-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, khilman@baylibre.com, carlo@caione.org, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-We currently do not have a NAND driver but once we have one this will
-become handy:
-The current nand_dqs_0 and nand_dqs_1 groups are not usable because the
-"nand" function only allows "nand_dqs0" and "nand_dqs1" (no underscore
-after "nand_dqs").
+On Fri, Mar 31, 2017 at 4:54 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Fri, Mar 31, 2017 at 03:59:40PM +0200, Linus Walleij wrote:
 
-While here, also rename the groups to "nand_dqs_15" (uses pin 15) and
-"nand_dqs_18" (uses pin 18).
-Renaming is safe in this case as it was not possible to use these
-groups/pins before (so we can be sure that there are no "old DT
-consumers" out there).
+> If I call this multiple times with different parent_irq parameters, then
+> only the last one will be stored in gpiochip->irq_chained_parent. Later
+> on, this is used to disconnect the chained handler and data upon GPIO
+> chip removal, which means that handler and data for all but the last one
+> end up dangling.
 
-NOTE: Both patches should be applied to the same release because
-patch #2 changes the "interface" exposed to DT. however, both can be
-applied to the same release safely because the DQS pins were not
-usable (from .dts files).
+People are using this code already for chained handlers with several
+parents.
 
+I guess it works so nicely because gpiochips are often just added
+and seldom removed.
 
-Changes since v1:
-- split the patch into one that makes nand_dqs_0 and nand_dqs_1
-  actually usable and a second one that renames them to nand_dqs_15
-  and nand_dqs_18
+Overall that means this is a bug and should be fixed, not that new
+drivers should avoid using this approach, or that we should discourage
+new drivers to use this API.
 
+>>       /* Set the parent IRQ for all affected IRQs */
+>>       for (offset = 0; offset < gpiochip->ngpio; offset++) {
+>>               if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+>>                       continue;
+>>               irq_set_parent(irq_find_mapping(gpiochip->irqdomain, offset),
+>>                              parent_irq);
+>>       }
+>> }
+>
+> Similarly here, we'd be setting the parent IRQ of all associated GPIOs
+> to the first, second... last parent IRQ. This is completely unnecessary
+> work and it's also setting the wrong parent. Note that we don't actually
+> care about that in the driver right now, but it's still wrong.
 
-Martin Blumenstingl (2):
-  pinctrl: meson: meson8b: fix the NAND DQS pins
-  pinctrl: meson: meson8b: rename the NAND DQS pin definitions
+Is that a way of saying there are bugs in the gpiolib?
 
- drivers/pinctrl/meson/pinctrl-meson8b.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I know there are, maintainers working on core code are always
+lacking. I wrote this code and I admit I make mistakes, please help
+me fix them instead of trying to make this into a reason not to
+use this code.
 
--- 
-2.12.1
+>> Why are you keeping the irqs around after requesting?
+>> Use devm_*
+>
+> First I prefer to keep resource request and driver initialization
+> separate because it makes error recovery more robust. So this is used to
+> first store the results from platform_get_irq() and later on to iterate
+> over when installing the chained handlers.
 
+OK no big deal. But it could be in a local variable rather than
+in the driver state container, right?
+
+> Also, devm_* doesn't exist for irq_set_chained_handler_and_data(). So I
+> need to keep these around in order to properly uninstall the handlers
+> again on removal.
+
+OK is this something that should be fixed in the irqchip code?
+
+> Like I explained above, I don't think it works the way it is supposed to
+> for this case. The armada-37xx patch that you linked to earlier seems to
+> suffer from the same issues in that all but the last parent IRQ handlers
+> will be left dangling after removal, which would cause the kernel to run
+> non-existing code if by any chance the interrupts were to still fire for
+> some reason.
+
+Again, bugs is not a reason not to use library code. We need to fix
+those bugs and centralize more, or we get too much strange code
+to maintain.
+
+Yours,
+Linus Walleij
