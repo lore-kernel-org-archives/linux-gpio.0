@@ -1,89 +1,76 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with compilation units
-Date: Sun, 2 Apr 2017 23:18:21 +0300
-Message-ID: <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
-References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com> <201704030357.HdHD43mM%fengguang.wu@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <201704030357.HdHD43mM%fengguang.wu@intel.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, kbuild-all@01.org, Lee Jones <lee.jones@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 01/14] dt/bindings: Document pinctrl-ingenic
+Date: Sun,  2 Apr 2017 22:42:31 +0200
+Message-ID: <20170402204244.14216-2-paul@crapouillou.net>
+References: <20170125185207.23902-2-paul@crapouillou.net>
+ <20170402204244.14216-1-paul@crapouillou.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170402204244.14216-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, james.hogan@imgtec.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@intel.com> wrote:
-> Hi Andy,
->
-> [auto build test ERROR on ljones-mfd/for-mfd-next]
-> [also build test ERROR on v4.11-rc4 next-20170331]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+This commit adds documentation for the devicetree bindings of the
+pinctrl-ingenic driver, which handles pin configuration and pin
+muxing of the Ingenic SoCs currently supported by the Linux kernel.
 
-Thank you for report, though...
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ .../bindings/pinctrl/ingenic,pinctrl.txt           | 41 ++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
 
->
-> url:    https://github.com/0day-ci/linux/commits/Andy-Shevchenko/mfd-intel_soc_pmic-Fix-a-mess-with-compilation-units/20170320-153539
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-> config: tile-allyesconfig (attached as .config)
-> compiler: tilegx-linux-gcc (GCC) 4.6.2
-> reproduce:
->         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
+ v2: Rewrote the documentation for the new pinctrl-ingenic driver
+ v3: No changes
+ v4: Update for the v4 version of the pinctrl-ingenic driver
 
->         make.cross ARCH=tile
-
-...I doubt how below is related to my patch. This is obvious x86 code
-which was initially submitted without
-depend on X86
-line in corresponding Kconfig.
-
->
-> All errors (new ones prefixed by >>):
->
->>> drivers/mfd/intel_soc_pmic_bxtwc.c:24:31: fatal error: asm/intel_pmc_ipc.h: No such file or directory
->    compilation terminated.
->
-> vim +24 drivers/mfd/intel_soc_pmic_bxtwc.c
->
-> 39d047c0 Qipeng Zha 2015-09-15   8   * version 2, as published by the Free Software Foundation.
-> 39d047c0 Qipeng Zha 2015-09-15   9   *
-> 39d047c0 Qipeng Zha 2015-09-15  10   * This program is distributed in the hope it will be useful, but WITHOUT
-> 39d047c0 Qipeng Zha 2015-09-15  11   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> 39d047c0 Qipeng Zha 2015-09-15  12   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> 39d047c0 Qipeng Zha 2015-09-15  13   * more details.
-> 39d047c0 Qipeng Zha 2015-09-15  14   */
-> 39d047c0 Qipeng Zha 2015-09-15  15
-> 39d047c0 Qipeng Zha 2015-09-15  16  #include <linux/module.h>
-> 39d047c0 Qipeng Zha 2015-09-15  17  #include <linux/acpi.h>
-> 39d047c0 Qipeng Zha 2015-09-15  18  #include <linux/err.h>
-> 39d047c0 Qipeng Zha 2015-09-15  19  #include <linux/delay.h>
-> 39d047c0 Qipeng Zha 2015-09-15  20  #include <linux/interrupt.h>
-> 39d047c0 Qipeng Zha 2015-09-15  21  #include <linux/kernel.h>
-> 39d047c0 Qipeng Zha 2015-09-15  22  #include <linux/mfd/core.h>
-> 39d047c0 Qipeng Zha 2015-09-15  23  #include <linux/mfd/intel_bxtwc.h>
-> 39d047c0 Qipeng Zha 2015-09-15 @24  #include <asm/intel_pmc_ipc.h>
-> 39d047c0 Qipeng Zha 2015-09-15  25
-> 39d047c0 Qipeng Zha 2015-09-15  26  /* PMIC device registers */
-> 39d047c0 Qipeng Zha 2015-09-15  27  #define REG_ADDR_MASK               0xFF00
-> 39d047c0 Qipeng Zha 2015-09-15  28  #define REG_ADDR_SHIFT              8
-> 39d047c0 Qipeng Zha 2015-09-15  29  #define REG_OFFSET_MASK             0xFF
-> 39d047c0 Qipeng Zha 2015-09-15  30
-> 39d047c0 Qipeng Zha 2015-09-15  31  /* Interrupt Status Registers */
-> 39d047c0 Qipeng Zha 2015-09-15  32  #define BXTWC_IRQLVL1               0x4E02
->
-> :::::: The code at line 24 was first introduced by commit
-> :::::: 39d047c0b1c812e9f0014e7100e372e61f2de3de mfd: add Intel Broxton Whiskey Cove PMIC driver
->
-> :::::: TO: Qipeng Zha <qipeng.zha@intel.com>
-> :::::: CC: Lee Jones <lee.jones@linaro.org>
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
-
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
+new file mode 100644
+index 000000000000..0e43b527b681
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
+@@ -0,0 +1,41 @@
++Ingenic jz47xx pin controller
++
++Please refer to pinctrl-bindings.txt in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
++
++For the jz47xx SoCs, pin control is tightly bound with GPIO ports. All pins may
++be used as GPIOs, multiplexed device functions are configured within the
++GPIO port configuration registers and it is typical to refer to pins using the
++naming scheme "PxN" where x is a character identifying the GPIO port with
++which the pin is associated and N is an integer from 0 to 31 identifying the
++pin within that GPIO port. For example PA0 is the first pin in GPIO port A, and
++PB31 is the last pin in GPIO port B. The jz4740 contains 4 GPIO ports, PA to
++PD, for a total of 128 pins. The jz4780 contains 6 GPIO ports, PA to PF, for a
++total of 192 pins.
++
++
++Required properties:
++--------------------
++
++ - compatible: One of:
++    - "ingenic,jz4740-pinctrl"
++    - "ingenic,jz4770-pinctrl"
++    - "ingenic,jz4780-pinctrl"
++ - reg: Address range of the pinctrl registers.
++
++
++GPIO sub-nodes
++--------------
++
++The pinctrl node can have optional sub-nodes for the Ingenic GPIO driver;
++please refer to ../gpio/ingenic,gpio.txt.
++
++
++Example:
++--------
++
++pinctrl: ingenic-pinctrl@10010000 {
++	compatible = "ingenic,jz4740-pinctrl";
++	reg = <0x10010000 0x400>;
++};
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
