@@ -1,102 +1,125 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 06/14] MIPS: jz4740: DTS: Add nodes for ingenic pinctrl and gpio drivers
-Date: Sun,  2 Apr 2017 22:42:36 +0200
-Message-ID: <20170402204244.14216-7-paul@crapouillou.net>
-References: <20170125185207.23902-2-paul@crapouillou.net>
- <20170402204244.14216-1-paul@crapouillou.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170402204244.14216-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, james.hogan@imgtec.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] gpio: Add Tegra186 support
+Date: Mon, 3 Apr 2017 07:28:09 +0200
+Message-ID: <20170403052809.GA4203@ulmo.ba.sec>
+References: <20170310162629.31455-1-thierry.reding@gmail.com>
+ <CACRpkdZpev7op=4e7DwYfnRpNBPN6U_EXd6G3PqM-XQudLHqow@mail.gmail.com>
+ <20170331145437.GA16964@ulmo.ba.sec>
+ <CACRpkdZBp1Q=J9QgwegcfqxmnDSjzYnJQg1t2UpbRkemo9aCWg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35771 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbdDCF2P (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 01:28:15 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZBp1Q=J9QgwegcfqxmnDSjzYnJQg1t2UpbRkemo9aCWg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-For a description of the pinctrl devicetree node, please read
-Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
 
-For a description of the gpio devicetree nodes, please read
-Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/jz4740.dtsi | 61 ++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+On Sat, Apr 01, 2017 at 07:46:24PM +0200, Linus Walleij wrote:
+> On Fri, Mar 31, 2017 at 4:54 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Fri, Mar 31, 2017 at 03:59:40PM +0200, Linus Walleij wrote:
+>=20
+> > If I call this multiple times with different parent_irq parameters, then
+> > only the last one will be stored in gpiochip->irq_chained_parent. Later
+> > on, this is used to disconnect the chained handler and data upon GPIO
+> > chip removal, which means that handler and data for all but the last one
+> > end up dangling.
+>=20
+> People are using this code already for chained handlers with several
+> parents.
+>=20
+> I guess it works so nicely because gpiochips are often just added
+> and seldom removed.
+>=20
+> Overall that means this is a bug and should be fixed, not that new
+> drivers should avoid using this approach, or that we should discourage
+> new drivers to use this API.
+>=20
+> >>       /* Set the parent IRQ for all affected IRQs */
+> >>       for (offset =3D 0; offset < gpiochip->ngpio; offset++) {
+> >>               if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+> >>                       continue;
+> >>               irq_set_parent(irq_find_mapping(gpiochip->irqdomain, off=
+set),
+> >>                              parent_irq);
+> >>       }
+> >> }
+> >
+> > Similarly here, we'd be setting the parent IRQ of all associated GPIOs
+> > to the first, second... last parent IRQ. This is completely unnecessary
+> > work and it's also setting the wrong parent. Note that we don't actually
+> > care about that in the driver right now, but it's still wrong.
+>=20
+> Is that a way of saying there are bugs in the gpiolib?
+>=20
+> I know there are, maintainers working on core code are always
+> lacking. I wrote this code and I admit I make mistakes, please help
+> me fix them instead of trying to make this into a reason not to
+> use this code.
 
- v2: Changed the devicetree bindings to match the new driver
- v3: No changes
- v4: Update the bindings for the v4 version of the drivers
+Fair enough. I'll see if I can turn this into something that I can use
+for this particular driver. I suspect it'll be a bit cumbersome because
+of the parent/child relationship, but I have a couple of ideas that I'd
+like to try out.
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-index 3e1587f1f77a..9c23c877fc34 100644
---- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-@@ -55,6 +55,67 @@
- 		clock-names = "rtc";
- 	};
- 
-+	pinctrl: ingenic-pinctrl@10010000 {
-+		compatible = "ingenic,jz4740-pinctrl";
-+		reg = <0x10010000 0x400>;
-+
-+		gpa: gpio-controller@0 {
-+			compatible = "ingenic,gpio-bank-a", "ingenic,jz4740-gpio";
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 0 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <28>;
-+		};
-+
-+		gpb: gpio-controller@1 {
-+			compatible = "ingenic,gpio-bank-b", "ingenic,jz4740-gpio";
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 32 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <27>;
-+		};
-+
-+		gpc: gpio-controller@2 {
-+			compatible = "ingenic,gpio-bank-c", "ingenic,jz4740-gpio";
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 64 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <26>;
-+		};
-+
-+		gpd: gpio-controller@3 {
-+			compatible = "ingenic,gpio-bank-d", "ingenic,jz4740-gpio";
-+
-+			gpio-controller;
-+			gpio-ranges = <&pinctrl 0 96 32>;
-+			#gpio-cells = <2>;
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+
-+			interrupt-parent = <&intc>;
-+			interrupts = <25>;
-+		};
-+	};
-+
- 	uart0: serial@10030000 {
- 		compatible = "ingenic,jz4740-uart";
- 		reg = <0x10030000 0x100>;
--- 
-2.11.0
+> >> Why are you keeping the irqs around after requesting?
+> >> Use devm_*
+> >
+> > First I prefer to keep resource request and driver initialization
+> > separate because it makes error recovery more robust. So this is used to
+> > first store the results from platform_get_irq() and later on to iterate
+> > over when installing the chained handlers.
+>=20
+> OK no big deal. But it could be in a local variable rather than
+> in the driver state container, right?
+
+Well, I also need the same array of interrupts to remove the handlers
+again, so I don't think local would be enough. But...
+
+>=20
+> > Also, devm_* doesn't exist for irq_set_chained_handler_and_data(). So I
+> > need to keep these around in order to properly uninstall the handlers
+> > again on removal.
+>=20
+> OK is this something that should be fixed in the irqchip code?
+
+=2E.. with this in place it wouldn't be necessary. Cross-subsystem series
+are unlikely to make it for v4.12 at this point, so here go my hopes to
+get this merged sometime soon...
+
+Thierry
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljh3WcACgkQ3SOs138+
+s6EkDA//UevCf84t9XefdBVWtR0GS9zBZh/fLMZSyzYMG7zWxRLCm0GWdcc76VU2
+g0Am1Sl7+xgAijfBACuaT+GkDLb9g/P4zY2qR7XkcgJwDDpAVXgNeV3vlXUt2Vs5
+iXOvdU0BZw1rGthcRVzzvN1jKamdPF7l6W7r9bN6oIyuf0ixFUwroMH06fVgdi8Q
+OjZj0gp0xP03dS+56bOSsdnO7MjPzORt5p5cyDrj2fweQbWbi4ocCGZkNWpMEw45
+35zM7o5876AMqRy1M4/4l9QpQ65+p4DbKtHRpVOggyTaD/DSA0VSkn8TfgYhJXHb
+NnhqAcKReAmNfmWhhy6iS39XmLXzM08ExJPjG1Fmalbcl5wBbN6kHhs3KlbTqYPr
+P8hZw0m/CpHYP5npsnKheIWzZ9dekaTuTdSKMEXEoF7g+QHSak/4MPL3vFgc3j6h
+eI3C4JUz4YG+GkdKyrPXrj9NnejQIVRiFU+xkFaIp8fG6SWKjQWE6IOnO0ADR5NA
+R7zTSxzO/wPsJsDuOlVevFuQHX09z5vpQTUlvDphK4oRMTuhCDhJ8yC25dlu1oUo
+2TAb/kcawZSymk//WtCrLegX5SarS0U36Hg35QTfk/hptLhbfZ68gDaWY1qX7Mxo
+bumq30Kw9BjwefBCciv4kUY3PMmAdAiPTDbJGRIsGsfTU0mD+MY=
+=iOfC
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
