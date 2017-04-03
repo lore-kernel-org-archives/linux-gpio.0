@@ -1,66 +1,50 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH v2] i2c/muxes/i2c-mux-ltc4306: LTC4306 and LTC4305 I2C
- multiplexer/switch
-Date: Mon, 3 Apr 2017 15:36:32 +0200
-Message-ID: <f871f082-3acd-7a28-25c7-dd77d8286ae6@analog.com>
-References: <1490782541-7832-1-git-send-email-michael.hennerich@analog.com>
- <0d4c068f-d909-64be-421d-4500da7ebd4c@axentia.se>
- <3c61461e-493c-4562-90c9-f30766591de2@axentia.se>
-Reply-To: <michael.hennerich@analog.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: pinmux: Fix kerneldoc for
+ pinmux_generic_add_function()
+Date: Mon, 3 Apr 2017 07:05:05 -0700
+Message-ID: <20170403140505.GU8575@atomide.com>
+References: <1491208362-17443-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam01on0043.outbound.protection.outlook.com ([104.47.34.43]:20334
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752109AbdDCNfJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 3 Apr 2017 09:35:09 -0400
-In-Reply-To: <3c61461e-493c-4562-90c9-f30766591de2@axentia.se>
+Received: from muru.com ([72.249.23.125]:43026 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751808AbdDCOFJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 3 Apr 2017 10:05:09 -0400
+Content-Disposition: inline
+In-Reply-To: <1491208362-17443-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On 03.04.2017 14:03, Peter Rosin wrote:
-> On 2017-03-31 17:29, Peter Rosin wrote:
->> Hi!
->>
->> Sorry for my incremental reviewing...
->>
->
-> Another incremental...
->
->> On 2017-03-29 12:15, michael.hennerich@analog.com wrote:
->>> +
->>> +	/* Now create an adapter for each channel */
->>> +	for (num = 0; num < data->chip->nchans; num++) {
->>> +		ret = i2c_mux_add_adapter(muxc, 0, num, 0);
->>> +		if (ret) {
->>> +			dev_err(&client->dev,
->>> +				"failed to register multiplexed adapter %d\n",
->>> +				num);
->
-> Just a heads up, I submitted a series to remove a bunch of dev_err calls
-> when i2c_mux_add_adapter fails. See https://lkml.org/lkml/2017/4/3/115
->
-> You can remove this one as well.
->
-> And please use a subject of the form:
-> i2c: mux: ltc4306: <message>
->
-> Cheers,
-> peda
+* Geert Uytterhoeven <geert+renesas@glider.be> [170403 01:35]:
+> Correct the incorrect function name and description.
+> 
+> Fixes: a76edc89b100e4fe ("pinctrl: core: Add generic pinctrl functions for managing groups")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-ok - no problem.
-I sent out a new patch. Per Rob's request, I split out the dt-bindings 
-into a separate patch.
+Thanks for fixing that:
 
--- 
-Greetings,
-Michael
+Acked-by: Tony Lindgren <tony@atomide.com>
 
---
-Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
-Sitz der Gesellschaft München, Registergericht München HRB 40368,
-Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
+
+>  drivers/pinctrl/pinmux.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+> index 29ad3151abecc42e..9fd6d9087dc508ca 100644
+> --- a/drivers/pinctrl/pinmux.c
+> +++ b/drivers/pinctrl/pinmux.c
+> @@ -763,7 +763,7 @@ struct function_desc *pinmux_generic_get_function(struct pinctrl_dev *pctldev,
+>  EXPORT_SYMBOL_GPL(pinmux_generic_get_function);
+>  
+>  /**
+> - * pinmux_generic_get_function_groups() - gets the function groups
+> + * pinmux_generic_add_function() - adds a function group
+>   * @pctldev: pin controller device
+>   * @name: name of the function
+>   * @groups: array of pin groups
+> -- 
+> 2.7.4
+> 
