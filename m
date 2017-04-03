@@ -1,61 +1,79 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] mfd: exynos-lpass: Pinctrl dependency
-Date: Mon, 3 Apr 2017 11:18:24 +0100
-Message-ID: <20170403101824.rpvkqzyigonyi77p@dell>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <20170328154217.5405-1-krzk@kernel.org>
+From: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
+Subject: Re: [PATCH v4 06/14] MIPS: jz4740: DTS: Add nodes for ingenic pinctrl
+ and gpio drivers
+Date: Mon, 03 Apr 2017 12:20:12 +0200
+Message-ID: <cf809000718514ba612b4f7b477586a9@crapouillou.net>
+References: <20170125185207.23902-2-paul@crapouillou.net>
+ <20170402204244.14216-1-paul@crapouillou.net>
+ <20170402204244.14216-7-paul@crapouillou.net>
+ <48f7f4ee-b8e3-0096-ddea-2fbe0b399b40@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170328154217.5405-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <48f7f4ee-b8e3-0096-ddea-2fbe0b399b40-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maarten ter Huurne <maarten-Ph2Y2OKCxY1M656bX5wj8A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Paul Burton <paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 28 Mar 2017, Krzysztof Kozlowski wrote:
+Hi,
 
+Le 2017-04-03 11:57, Sergei Shtylyov a écrit :
+> Hello!
 > 
-> Hi Lee,
+> On 4/2/2017 11:42 PM, Paul Cercueil wrote:
 > 
+>> For a description of the pinctrl devicetree node, please read
+>> Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
+>> 
+>> For a description of the gpio devicetree nodes, please read
+>> Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+>> 
+>> Signed-off-by: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
+> [...]
 > 
-> This is dependency for mfd/exynos-lpass driver changes from Marek Szyprowski.
-> That's a material for v4.12 and I will be pushing this later to Linus Walleij.
+>> diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi 
+>> b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+>> index 3e1587f1f77a..9c23c877fc34 100644
+>> --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
+>> +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+>> @@ -55,6 +55,67 @@
+>>  		clock-names = "rtc";
+>>  	};
+>> 
+>> +	pinctrl: ingenic-pinctrl@10010000 {
+> 
+>    The node name should be generic, so please rename it to something
+> like "pin-controller@..."
 
-This does not work, and *may* still break.
+OK.
 
-The only way to guarantee the order of the patches is to have them
-*all* as part of the pull-request.  Not just some of them.
+>> +		compatible = "ingenic,jz4740-pinctrl";
+>> +		reg = <0x10010000 0x400>;
+>> +
+>> +		gpa: gpio-controller@0 {
+> 
+>    The name should be just "gpio@0", according to ePAPR and its
+> successor spec. Although, using the <unit-address> without the "reg"
+> prop isn't allowed either...
 
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
-> 
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-retention-4.12
-> 
-> for you to fetch changes up to e1d7eb0c8fc9c33ef60ac31172fb0fbb78c24271:
-> 
->   pinctrl: samsung: Add support for pad retention control for Exynos5433 SoCs (2017-03-23 21:07:02 +0200)
-> 
-> ----------------------------------------------------------------
-> Add retention control to Exynos5433 pinctrl driver, necessary for proper
-> handling of runtime Power Management of Exynos Audio SubSystem and effectively
-> allowing to power down the domain.
-> 
-> ----------------------------------------------------------------
-> Marek Szyprowski (2):
->       pinctrl: samsung: Ensure that pad retention is disabled on driver init
->       pinctrl: samsung: Add support for pad retention control for Exynos5433 SoCs
-> 
->  drivers/pinctrl/samsung/pinctrl-exynos.c | 63 ++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
+ePAPR says: "If the node has no reg property, the unit-address may be
+omitted if the node name alone differentiates the node from other nodes 
+at
+the same level in the tree."
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I could use 'gpio@bank-a', it is allowed by the spec. Or do you prefer 
+'gpio@0'?
+
+> MBR, Sergei
+
+I'll wait from some feedback on the other patches then send a v5.
+
+Thanks,
+-Paul
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
