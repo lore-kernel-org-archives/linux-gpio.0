@@ -1,61 +1,63 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with compilation units
-Date: Mon, 3 Apr 2017 12:26:54 +0300
-Message-ID: <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
-References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
- <201704030357.HdHD43mM%fengguang.wu@intel.com> <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
- <20170403092028.z4xtrwz5wj3go3jd@dell>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v4 06/14] MIPS: jz4740: DTS: Add nodes for ingenic pinctrl
+ and gpio drivers
+Date: Mon, 3 Apr 2017 12:57:25 +0300
+Message-ID: <48f7f4ee-b8e3-0096-ddea-2fbe0b399b40@cogentembedded.com>
+References: <20170125185207.23902-2-paul@crapouillou.net>
+ <20170402204244.14216-1-paul@crapouillou.net>
+ <20170402204244.14216-7-paul@crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34994 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751460AbdDCJ04 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 05:26:56 -0400
-In-Reply-To: <20170403092028.z4xtrwz5wj3go3jd@dell>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:35844 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752445AbdDCJ52 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 05:57:28 -0400
+Received: by mail-lf0-f42.google.com with SMTP id x137so69665119lff.3
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Apr 2017 02:57:27 -0700 (PDT)
+In-Reply-To: <20170402204244.14216-7-paul@crapouillou.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: kbuild test robot <lkp@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, kbuild-all@01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+To: Paul Cercueil <paul@crapouillou.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, james.hogan@imgtec.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org
 
-On Mon, Apr 3, 2017 at 12:20 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Sun, 02 Apr 2017, Andy Shevchenko wrote:
+Hello!
+
+On 4/2/2017 11:42 PM, Paul Cercueil wrote:
+
+> For a description of the pinctrl devicetree node, please read
+> Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
 >
->> On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@intel.com> wrote:
->> > Hi Andy,
->> >
->> > [auto build test ERROR on ljones-mfd/for-mfd-next]
->> > [also build test ERROR on v4.11-rc4 next-20170331]
->> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> Thank you for report, though...
->>
->> >
->> > url:    https://github.com/0day-ci/linux/commits/Andy-Shevchenko/mfd-intel_soc_pmic-Fix-a-mess-with-compilation-units/20170320-153539
->> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
->> > config: tile-allyesconfig (attached as .config)
->> > compiler: tilegx-linux-gcc (GCC) 4.6.2
->> > reproduce:
->> >         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->> >         chmod +x ~/bin/make.cross
->> >         # save the attached .config to linux build tree
->>
->> >         make.cross ARCH=tile
->>
->> ...I doubt how below is related to my patch. This is obvious x86 code
->> which was initially submitted without
->> depend on X86
->> line in corresponding Kconfig.
+> For a description of the gpio devicetree nodes, please read
+> Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
 >
-> I think you should probably specify the architecture in the Kconfig
-> entry, or else some `randconfig`s will fail.
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+[...]
 
-Yes, I understand how to fix this, though it's not a problem of this
-patch per se.
+> diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> index 3e1587f1f77a..9c23c877fc34 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> @@ -55,6 +55,67 @@
+>  		clock-names = "rtc";
+>  	};
+>
+> +	pinctrl: ingenic-pinctrl@10010000 {
 
-Fengguang, is there any possible way to determine the relation between
-an error and a root cause change?
+    The node name should be generic, so please rename it to something like 
+"pin-controller@..."
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +		compatible = "ingenic,jz4740-pinctrl";
+> +		reg = <0x10010000 0x400>;
+> +
+> +		gpa: gpio-controller@0 {
+
+    The name should be just "gpio@0", according to ePAPR and its successor 
+spec. Although, using the <unit-address> without the "reg" prop isn't allowed 
+either...
+
+[...]
+
+MBR, Sergei
+
