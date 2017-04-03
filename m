@@ -1,63 +1,86 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v4 06/14] MIPS: jz4740: DTS: Add nodes for ingenic pinctrl
- and gpio drivers
-Date: Mon, 3 Apr 2017 12:57:25 +0300
-Message-ID: <48f7f4ee-b8e3-0096-ddea-2fbe0b399b40@cogentembedded.com>
-References: <20170125185207.23902-2-paul@crapouillou.net>
- <20170402204244.14216-1-paul@crapouillou.net>
- <20170402204244.14216-7-paul@crapouillou.net>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: grand I2C rename
+Date: Mon, 3 Apr 2017 06:14:10 -0400
+Message-ID: <20170403101409.GD31988@verge.net.au>
+References: <20170330165412.949875557@cogentembedded.com>
+ <CAMuHMdXa+y9mJsMD9v4o9AOxyp__2LZmqpAR7=4PG3x_7pSQDw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35844 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752445AbdDCJ52 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 05:57:28 -0400
-Received: by mail-lf0-f42.google.com with SMTP id x137so69665119lff.3
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Apr 2017 02:57:27 -0700 (PDT)
-In-Reply-To: <20170402204244.14216-7-paul@crapouillou.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXa+y9mJsMD9v4o9AOxyp__2LZmqpAR7=4PG3x_7pSQDw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, james.hogan@imgtec.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org
 
-Hello!
+On Fri, Mar 31, 2017 at 01:01:04PM +0200, Geert Uytterhoeven wrote:
+> Hi Sergei,
+> 
+> On Thu, Mar 30, 2017 at 6:53 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > The R8A7791 PFC driver  was apparently based on the preliminary revisions
+> > of  the  user's manual, which called all the I2C signals {SCL|SDA}<n> and
+> > MOD_SEL register fields SEL_IIC<n> without making a difference between two
+> > types of the I2C controllers used. The recent manual calls the signals
+> > {I2C|IIC}<n>_{SCL|SDA> and the MOD_SEL fields SEL_{I2C|IIC}<n> finally
+> > making this difference. Follow the suit, also renaming the I2C{7|8} pin
+> > arrays and groups/functions (luckily, they haven't been used so far).
+> >
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Thanks for your patch!
+> 
+> >  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  521 +++++++++++++++++------------------
+> >  1 file changed, 264 insertions(+), 257 deletions(-)
+> >
+> > Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> > ===================================================================
+> > --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> > +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+> > @@ -119,22 +119,22 @@ enum {
+> >         /* IPSR0 */
+> >         FN_D0, FN_D1, FN_D2, FN_D3, FN_D4, FN_D5, FN_D6, FN_D7, FN_D8,
+> >         FN_D9, FN_D10, FN_D11, FN_D12, FN_D13, FN_D14, FN_D15,
+> > -       FN_A0, FN_ATAWR0_N_C, FN_MSIOF0_SCK_B, FN_SCL0_C, FN_PWM2_B,
+> > +       FN_A0, FN_ATAWR0_N_C, FN_MSIOF0_SCK_B, FN_I2C0_SCL_C, FN_PWM2_B,
+> 
+> While I have no issue with renaming internal definitions...
+> 
+> > @@ -4507,12 +4514,12 @@ static const struct sh_pfc_pin_group pin
+> >         SH_PFC_PIN_GROUP(i2c4),
+> >         SH_PFC_PIN_GROUP(i2c4_b),
+> >         SH_PFC_PIN_GROUP(i2c4_c),
+> > -       SH_PFC_PIN_GROUP(i2c7),
+> > -       SH_PFC_PIN_GROUP(i2c7_b),
+> > -       SH_PFC_PIN_GROUP(i2c7_c),
+> > -       SH_PFC_PIN_GROUP(i2c8),
+> > -       SH_PFC_PIN_GROUP(i2c8_b),
+> > -       SH_PFC_PIN_GROUP(i2c8_c),
+> > +       SH_PFC_PIN_GROUP(iic0),
+> > +       SH_PFC_PIN_GROUP(iic0_b),
+> > +       SH_PFC_PIN_GROUP(iic0_c),
+> > +       SH_PFC_PIN_GROUP(iic1),
+> > +       SH_PFC_PIN_GROUP(iic1_b),
+> > +       SH_PFC_PIN_GROUP(iic1_c),
+> 
+> I do object against renaming the user-visible names, like pin groups...
+> 
+> > @@ -5298,8 +5305,8 @@ static const struct sh_pfc_function pinm
+> >         SH_PFC_FUNCTION(i2c2),
+> >         SH_PFC_FUNCTION(i2c3),
+> >         SH_PFC_FUNCTION(i2c4),
+> > -       SH_PFC_FUNCTION(i2c7),
+> > -       SH_PFC_FUNCTION(i2c8),
+> > +       SH_PFC_FUNCTION(iic0),
+> > +       SH_PFC_FUNCTION(iic1),
+> 
+> ... and pin functions. Technically, they are part of the DT bindings,
+> and thus are not allowed to change.
+> 
+> IMHO either the user-visible names should be left alone, or the new names
+> should be added as alternatives, next to the existing names.
+> 
+> What do other people think?
 
-On 4/2/2017 11:42 PM, Paul Cercueil wrote:
-
-> For a description of the pinctrl devicetree node, please read
-> Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
->
-> For a description of the gpio devicetree nodes, please read
-> Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
->
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-[...]
-
-> diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-> index 3e1587f1f77a..9c23c877fc34 100644
-> --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
-> +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-> @@ -55,6 +55,67 @@
->  		clock-names = "rtc";
->  	};
->
-> +	pinctrl: ingenic-pinctrl@10010000 {
-
-    The node name should be generic, so please rename it to something like 
-"pin-controller@..."
-
-> +		compatible = "ingenic,jz4740-pinctrl";
-> +		reg = <0x10010000 0x400>;
-> +
-> +		gpa: gpio-controller@0 {
-
-    The name should be just "gpio@0", according to ePAPR and its successor 
-spec. Although, using the <unit-address> without the "reg" prop isn't allowed 
-either...
-
-[...]
-
-MBR, Sergei
-
+I think that any user-visible changes need to have a very strong reason.
