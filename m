@@ -1,80 +1,106 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v4 06/14] MIPS: jz4740: DTS: Add nodes for ingenic pinctrl
- and gpio drivers
-Date: Mon, 3 Apr 2017 13:32:46 +0300
-Message-ID: <b5d195a9-ec3d-1b92-b17c-e87bd6d990cf@cogentembedded.com>
-References: <20170125185207.23902-2-paul@crapouillou.net>
- <20170402204244.14216-1-paul@crapouillou.net>
- <20170402204244.14216-7-paul@crapouillou.net>
- <48f7f4ee-b8e3-0096-ddea-2fbe0b399b40@cogentembedded.com>
- <cf809000718514ba612b4f7b477586a9@crapouillou.net>
+From: Fengguang Wu <lkp@intel.com>
+Subject: Re: [kbuild-all] [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with
+ compilation units
+Date: Mon, 3 Apr 2017 19:06:31 +0800
+Message-ID: <20170403110631.2fksvvnj22plih7o@wfg-t540p.sh.intel.com>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+ <201704030357.HdHD43mM%fengguang.wu@intel.com>
+ <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
+ <20170403092028.z4xtrwz5wj3go3jd@dell>
+ <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:35683 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752256AbdDCKcu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 06:32:50 -0400
-Received: by mail-lf0-f43.google.com with SMTP id j90so70201396lfk.2
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Apr 2017 03:32:49 -0700 (PDT)
-In-Reply-To: <cf809000718514ba612b4f7b477586a9@crapouillou.net>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild-all@01.org, Zhang Rui <rui.zhang@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, james.hogan@imgtec.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org
 
-On 4/3/2017 1:20 PM, Paul Cercueil wrote:
-
->>> For a description of the pinctrl devicetree node, please read
->>> Documentation/devicetree/bindings/pinctrl/ingenic,pinctrl.txt
->>>
->>> For a description of the gpio devicetree nodes, please read
->>> Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
->>>
->>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->> [...]
+On Mon, Apr 03, 2017 at 12:26:54PM +0300, Andy Shevchenko wrote:
+>On Mon, Apr 3, 2017 at 12:20 PM, Lee Jones <lee.jones@linaro.org> wrote:
+>> On Sun, 02 Apr 2017, Andy Shevchenko wrote:
 >>
->>> diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi
->>> b/arch/mips/boot/dts/ingenic/jz4740.dtsi
->>> index 3e1587f1f77a..9c23c877fc34 100644
->>> --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
->>> +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
->>> @@ -55,6 +55,67 @@
->>>          clock-names = "rtc";
->>>      };
+>>> On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@intel.com> wrote:
+>>> > Hi Andy,
+>>> >
+>>> > [auto build test ERROR on ljones-mfd/for-mfd-next]
+>>> > [also build test ERROR on v4.11-rc4 next-20170331]
+>>> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 >>>
->>> +    pinctrl: ingenic-pinctrl@10010000 {
+>>> Thank you for report, though...
+>>>
+>>> >
+>>> > url:    https://github.com/0day-ci/linux/commits/Andy-Shevchenko/mfd-intel_soc_pmic-Fix-a-mess-with-compilation-units/20170320-153539
+>>> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+>>> > config: tile-allyesconfig (attached as .config)
+>>> > compiler: tilegx-linux-gcc (GCC) 4.6.2
+>>> > reproduce:
+>>> >         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>> >         chmod +x ~/bin/make.cross
+>>> >         # save the attached .config to linux build tree
+>>>
+>>> >         make.cross ARCH=tile
+>>>
+>>> ...I doubt how below is related to my patch. This is obvious x86 code
+>>> which was initially submitted without
+>>> depend on X86
+>>> line in corresponding Kconfig.
 >>
->>    The node name should be generic, so please rename it to something
->> like "pin-controller@..."
+>> I think you should probably specify the architecture in the Kconfig
+>> entry, or else some `randconfig`s will fail.
 >
-> OK.
+>Yes, I understand how to fix this, though it's not a problem of this
+>patch per se.
 >
->>> +        compatible = "ingenic,jz4740-pinctrl";
->>> +        reg = <0x10010000 0x400>;
->>> +
->>> +        gpa: gpio-controller@0 {
->>
->>    The name should be just "gpio@0", according to ePAPR and its
->> successor spec. Although, using the <unit-address> without the "reg"
->> prop isn't allowed either...
->
-> ePAPR says: "If the node has no reg property, the unit-address may be
+>Fengguang, is there any possible way to determine the relation between
+>an error and a root cause change?
 
-    My copy of ePAPR 1.1 says "must be omitted". :-)
+Andy, our 0day build error reports are all bisected ones. It means the
+error happens since the reported patch/commit, which is either
+responsible for the root cause, or somehow triggers (or changes the
+exact form of) an old bug.
 
-> omitted if the node name alone differentiates the node from other nodes at
-> the same level in the tree."
+I just manual confirmed the bisect is correct:
 
-> I could use 'gpio@bank-a', it is allowed by the spec. Or do you prefer 'gpio@0'?
+=============== commit 162c61d1a ===============
+/home/wfg/linux
+HEAD is now at 162c61d... mfd: intel_soc_pmic: Fix a mess with compilation units
+/home/wfg/linux/obj-compiletest
 
-    Hm... maybe you should just use the "reg" prop.
+make ARCH=tile allyesconfig
+make ARCH=tile drivers/mfd/
 
-> I'll wait from some feedback on the other patches then send a v5.
->
-> Thanks,
-> -Paul
+!!! BUILD ERROR !!!
+make ARCH=tile M=drivers/mfd/
 
-MBR, Sergei
+!!! BUILD ERROR !!!
+grep -a -F drivers/mfd/ /tmp/build-err-162c61d1a76aa5ccfb398225b3f6f2e896fb58b0-wfg --color
+../drivers/mfd/intel_soc_pmic_bxtwc.c:24:31: fatal error: asm/intel_pmc_ipc.h: No such file or directory
+compilation terminated.
+make[2]: *** [drivers/mfd/intel_soc_pmic_bxtwc.o] Error 1
+make[2]: Target '__build' not remade because of errors.
+make[1]: *** [drivers/mfd/] Error 2
+make: *** [sub-make] Error 2
+make[2]: *** No rule to make target 'drivers/mfd//intel_soc_pmic_bxtwc.o', needed by 'drivers/mfd//built-in.o'.
+make[2]: Target '__build' not remade because of errors.
+make[1]: *** [_module_drivers/mfd/] Error 2
+make[1]: Target '_all' not remade because of errors.
+make: *** [sub-make] Error 2
 
+=============== PREV commit e93c10211d03c35271896b03a40d3eca4a674770 ===============
+/home/wfg/linux
+Previous HEAD position was 162c61d... mfd: intel_soc_pmic: Fix a mess with compilation units
+HEAD is now at e93c102... mfd: lpc_ich: Enable watchdog on Intel Apollo Lake PCH
+/home/wfg/linux/obj-compiletest
+
+make ARCH=tile allyesconfig
+make ARCH=tile drivers/mfd/
+
+make ARCH=tile M=drivers/mfd/
+
+grep -a -F drivers/mfd/ /tmp/build-err-e93c10211d03c35271896b03a40d3eca4a674770-wfg --color
+
+Thanks,
+Fengguang
