@@ -1,71 +1,73 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v2] i2c/muxes/i2c-mux-ltc4306: LTC4306 and LTC4305 I2C
- multiplexer/switch
-Date: Mon, 3 Apr 2017 16:20:53 +0200
-Message-ID: <dcc59f26-6dec-dbf1-22d9-b681daf788a2@axentia.se>
-References: <1490782541-7832-1-git-send-email-michael.hennerich@analog.com>
- <0d4c068f-d909-64be-421d-4500da7ebd4c@axentia.se>
- <3c61461e-493c-4562-90c9-f30766591de2@axentia.se>
- <f871f082-3acd-7a28-25c7-dd77d8286ae6@analog.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [kbuild-all] [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with
+ compilation units
+Date: Mon, 3 Apr 2017 15:33:17 +0100
+Message-ID: <20170403143317.3wfqx2nek2p4dyt3@dell>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+ <201704030357.HdHD43mM%fengguang.wu@intel.com>
+ <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
+ <20170403092028.z4xtrwz5wj3go3jd@dell>
+ <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
+ <20170403110631.2fksvvnj22plih7o@wfg-t540p.sh.intel.com>
+ <CAHp75VeWmR0W1=V29OFYrAfodKam=M5bdU8bTQUj_NHVTY2gjg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0122.outbound.protection.outlook.com ([104.47.2.122]:12332
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752981AbdDCOVG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 3 Apr 2017 10:21:06 -0400
-In-Reply-To: <f871f082-3acd-7a28-25c7-dd77d8286ae6@analog.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeWmR0W1=V29OFYrAfodKam=M5bdU8bTQUj_NHVTY2gjg@mail.gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Fengguang Wu <lkp@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild-all@01.org, Zhang Rui <rui.zhang@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: michael.hennerich@analog.com, wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2017-04-03 15:36, Michael Hennerich wrote:
-> On 03.04.2017 14:03, Peter Rosin wrote:
->> On 2017-03-31 17:29, Peter Rosin wrote:
->>> Hi!
->>>
->>> Sorry for my incremental reviewing...
->>>
->>
->> Another incremental...
->>
->>> On 2017-03-29 12:15, michael.hennerich@analog.com wrote:
->>>> +
->>>> +	/* Now create an adapter for each channel */
->>>> +	for (num = 0; num < data->chip->nchans; num++) {
->>>> +		ret = i2c_mux_add_adapter(muxc, 0, num, 0);
->>>> +		if (ret) {
->>>> +			dev_err(&client->dev,
->>>> +				"failed to register multiplexed adapter %d\n",
->>>> +				num);
->>
->> Just a heads up, I submitted a series to remove a bunch of dev_err calls
->> when i2c_mux_add_adapter fails. See https://lkml.org/lkml/2017/4/3/115
->>
->> You can remove this one as well.
->>
->> And please use a subject of the form:
->> i2c: mux: ltc4306: <message>
-> ok - no problem.
+On Mon, 03 Apr 2017, Andy Shevchenko wrote:
 
-You managed to drop the spaces after the new colons in the subject.
+> On Mon, Apr 3, 2017 at 2:06 PM, Fengguang Wu <lkp@intel.com> wrote:
+> > On Mon, Apr 03, 2017 at 12:26:54PM +0300, Andy Shevchenko wrote:
+> >> On Mon, Apr 3, 2017 at 12:20 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> >>> On Sun, 02 Apr 2017, Andy Shevchenko wrote:
+> >>>> On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@intel.com>
+> >>>> wrote:
+> >>>> > Hi Andy,
+> >>>> >
+> >>>> > [auto build test ERROR on ljones-mfd/for-mfd-next]
+> >>>> > [also build test ERROR on v4.11-rc4 next-20170331]
+> >>>> > [if your patch is applied to the wrong git tree, please drop us a note
+> >>>> > to help improve the system]
+> >>>>
+> >>>> Thank you for report, though...
+> 
+> >>>> ...I doubt how below is related to my patch. This is obvious x86 code
+> >>>> which was initially submitted without
+> >>>> depend on X86
+> >>>> line in corresponding Kconfig.
+> >>>
+> >>>
+> >>> I think you should probably specify the architecture in the Kconfig
+> >>> entry, or else some `randconfig`s will fail.
+> >>
+> >>
+> >> Yes, I understand how to fix this, though it's not a problem of this
+> >> patch per se.
+> >>
+> >> Fengguang, is there any possible way to determine the relation between
+> >> an error and a root cause change?
+> >
+> >
+> > Andy, our 0day build error reports are all bisected ones. It means the
+> > error happens since the reported patch/commit, which is either
+> > responsible for the root cause, or somehow triggers (or changes the
+> > exact form of) an old bug.
+> 
+> Thanks, like you said in this case it looks pretty much for triggering
+> an old bug.
 
-And maybe there is a problem, because I don't see any reaction to any of
-the review comments I made in https://lkml.org/lkml/2017/3/31/525
+Quite.  But as a good open source citizen, you'll follow up with
+patches too, right? :)
 
-Was that on purpose? Sure, the gpio "jury" is still out on the bigger
-question so maybe you're waiting for that, but there were a few nitpicks
-as well. Anyway, sorry again for failing to compile all comments up front.
-
-> I sent out a new patch. Per Rob's request, I split out the dt-bindings 
-> into a separate patch.
-
-Thanks. I think(?) it is customary to have the bindings first, and then
-implement that "specification" in followup patches. No big deal though...
-
-Cheers,
-peda
-
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
