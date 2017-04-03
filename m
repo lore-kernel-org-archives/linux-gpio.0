@@ -1,85 +1,101 @@
-From: Gary Bisson <gary.bisson@boundarydevices.com>
-Subject: Re: [PATCH] pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
-Date: Mon, 3 Apr 2017 11:06:30 +0200
-Message-ID: <CAAMH-yu3H3dNCC7yes6SmthUbqTERTsyPh3ynz=2COXstmKfkQ@mail.gmail.com>
-References: <20170330161639.1855-1-tony@atomide.com> <CAMuHMdW6=gyf6=i2n2cpRMzFj6oiM0n7nusK9ev7WraWpwX7DA@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with compilation
+ units
+Date: Mon, 3 Apr 2017 10:20:28 +0100
+Message-ID: <20170403092028.z4xtrwz5wj3go3jd@dell>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+ <201704030357.HdHD43mM%fengguang.wu@intel.com>
+ <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:35706 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751435AbdDCJGc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 05:06:32 -0400
-Received: by mail-wr0-f176.google.com with SMTP id k6so154440166wre.2
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Apr 2017 02:06:32 -0700 (PDT)
-In-Reply-To: <CAMuHMdW6=gyf6=i2n2cpRMzFj6oiM0n7nusK9ev7WraWpwX7DA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: kbuild test robot <lkp@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, kbuild-all@01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Nishanth Menon <nm@ti.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>
 
-Tony, All,
+On Sun, 02 Apr 2017, Andy Shevchenko wrote:
 
-On Mon, Apr 3, 2017 at 10:46 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Tony,
->
-> On Thu, Mar 30, 2017 at 6:16 PM, Tony Lindgren <tony@atomide.com> wrote:
-> > Recent pinctrl changes to allow dynamic allocation of pins exposed one
-> > more issue with the pinctrl pins claimed early by the controller itself=
-.
-> > This caused a regression for IMX6 pinctrl hogs.
+> On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@intel.com> wrote:
+> > Hi Andy,
 > >
-> > Before enabling the pin controller driver we need to wait until it has
-> > been properly initialized, then claim the hogs, and only then enable it=
-.
+> > [auto build test ERROR on ljones-mfd/for-mfd-next]
+> > [also build test ERROR on v4.11-rc4 next-20170331]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> Thank you for report, though...
+> 
 > >
-> > To fix the regression, split the code into pinctrl_claim_hogs() and
-> > pinctrl_enable(). And then let's require that pinctrl_enable() is alway=
-s
-> > called by the pin controller driver when ready after calling
-> > pinctrl_register_and_init().
+> > url:    https://github.com/0day-ci/linux/commits/Andy-Shevchenko/mfd-intel_soc_pmic-Fix-a-mess-with-compilation-units/20170320-153539
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+> > config: tile-allyesconfig (attached as .config)
+> > compiler: tilegx-linux-gcc (GCC) 4.6.2
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/01org/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # save the attached .config to linux build tree
+> 
+> >         make.cross ARCH=tile
+> 
+> ...I doubt how below is related to my patch. This is obvious x86 code
+> which was initially submitted without
+> depend on X86
+> line in corresponding Kconfig.
+
+I think you should probably specify the architecture in the Kconfig
+entry, or else some `randconfig`s will fail.
+
+> > All errors (new ones prefixed by >>):
 > >
-> > Depends-on: 950b0d91dc10 ("pinctrl: core: Fix regression caused by dela=
-yed
-> > work for hogs")
-> > Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
-> > Fixes: e566fc11ea76 ("pinctrl: imx: use generic pinctrl helpers for
-> > managing groups")
-> > Cc: Fabio Estevam <festevam@gmail.com>
-> > Cc: Gary Bisson <gary.bisson@boundarydevices.com>
-> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: Mika Penttil=C3=A4 <mika.penttila@nextfour.com>
-> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Cc: Nishanth Menon <nm@ti.com>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Stefan Agner <stefan@agner.ch>
-> > Signed-off-by: Tony Lindgren <tony@atomide.com>
->
-> The display on r8a7740-armadillo800eva still works, so the GPIO hog
-> needed for that is OK.
->
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>> drivers/mfd/intel_soc_pmic_bxtwc.c:24:31: fatal error: asm/intel_pmc_ipc.h: No such file or directory
+> >    compilation terminated.
+> >
+> > vim +24 drivers/mfd/intel_soc_pmic_bxtwc.c
+> >
+> > 39d047c0 Qipeng Zha 2015-09-15   8   * version 2, as published by the Free Software Foundation.
+> > 39d047c0 Qipeng Zha 2015-09-15   9   *
+> > 39d047c0 Qipeng Zha 2015-09-15  10   * This program is distributed in the hope it will be useful, but WITHOUT
+> > 39d047c0 Qipeng Zha 2015-09-15  11   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> > 39d047c0 Qipeng Zha 2015-09-15  12   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> > 39d047c0 Qipeng Zha 2015-09-15  13   * more details.
+> > 39d047c0 Qipeng Zha 2015-09-15  14   */
+> > 39d047c0 Qipeng Zha 2015-09-15  15
+> > 39d047c0 Qipeng Zha 2015-09-15  16  #include <linux/module.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  17  #include <linux/acpi.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  18  #include <linux/err.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  19  #include <linux/delay.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  20  #include <linux/interrupt.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  21  #include <linux/kernel.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  22  #include <linux/mfd/core.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  23  #include <linux/mfd/intel_bxtwc.h>
+> > 39d047c0 Qipeng Zha 2015-09-15 @24  #include <asm/intel_pmc_ipc.h>
+> > 39d047c0 Qipeng Zha 2015-09-15  25
+> > 39d047c0 Qipeng Zha 2015-09-15  26  /* PMIC device registers */
+> > 39d047c0 Qipeng Zha 2015-09-15  27  #define REG_ADDR_MASK               0xFF00
+> > 39d047c0 Qipeng Zha 2015-09-15  28  #define REG_ADDR_SHIFT              8
+> > 39d047c0 Qipeng Zha 2015-09-15  29  #define REG_OFFSET_MASK             0xFF
+> > 39d047c0 Qipeng Zha 2015-09-15  30
+> > 39d047c0 Qipeng Zha 2015-09-15  31  /* Interrupt Status Registers */
+> > 39d047c0 Qipeng Zha 2015-09-15  32  #define BXTWC_IRQLVL1               0x4E02
+> >
+> > :::::: The code at line 24 was first introduced by commit
+> > :::::: 39d047c0b1c812e9f0014e7100e372e61f2de3de mfd: add Intel Broxton Whiskey Cove PMIC driver
+> >
+> > :::::: TO: Qipeng Zha <qipeng.zha@intel.com>
+> > :::::: CC: Lee Jones <lee.jones@linaro.org>
+> >
+> > ---
+> > 0-DAY kernel test infrastructure                Open Source Technology Center
+> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> 
+> 
 
-For imx, tested on a Nitrogen6x platform:
-
-Before the patch:
-# dmesg | grep iomux
-[    0.096672] imx6q-pinctrl 20e0000.iomuxc: unable to find group for
-node hoggrp
-[    0.097215] imx6q-pinctrl 20e0000.iomuxc: initialized IMX pinctrl driver
-
-After the patch:
-# dmesg | grep iomux
-[    0.097505] imx6q-pinctrl 20e0000.iomuxc: initialized IMX pinctrl driver
-
-Also, checking the pinctrl of the hog pins in sysfs proved to be correct.
-
-Tested-by: Gary Bisson <gary.bisson@boundarydevices.com>
-
-Regards,
-Gary
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
