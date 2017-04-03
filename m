@@ -1,61 +1,55 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [kbuild-all] [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with
- compilation units
-Date: Mon, 3 Apr 2017 14:12:45 +0300
-Message-ID: <CAHp75VeWmR0W1=V29OFYrAfodKam=M5bdU8bTQUj_NHVTY2gjg@mail.gmail.com>
-References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
- <201704030357.HdHD43mM%fengguang.wu@intel.com> <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
- <20170403092028.z4xtrwz5wj3go3jd@dell> <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
- <20170403110631.2fksvvnj22plih7o@wfg-t540p.sh.intel.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH] pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
+Date: Mon, 3 Apr 2017 09:00:20 -0300
+Message-ID: <CAOMZO5AFy_UY2KTCZHOHDEZp2tdVqZDWNisnu9sveoBmC-uOXQ@mail.gmail.com>
+References: <20170330161639.1855-1-tony@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170403110631.2fksvvnj22plih7o@wfg-t540p.sh.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Fengguang Wu <lkp@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild-all@01.org, Zhang Rui <rui.zhang@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35398 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751481AbdDCMAW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 08:00:22 -0400
+In-Reply-To: <20170330161639.1855-1-tony@atomide.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Nishanth Menon <nm@ti.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>
 
-On Mon, Apr 3, 2017 at 2:06 PM, Fengguang Wu <lkp@intel.com> wrote:
-> On Mon, Apr 03, 2017 at 12:26:54PM +0300, Andy Shevchenko wrote:
->> On Mon, Apr 3, 2017 at 12:20 PM, Lee Jones <lee.jones@linaro.org> wrote:
->>> On Sun, 02 Apr 2017, Andy Shevchenko wrote:
->>>> On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@intel.com>
->>>> wrote:
->>>> > Hi Andy,
->>>> >
->>>> > [auto build test ERROR on ljones-mfd/for-mfd-next]
->>>> > [also build test ERROR on v4.11-rc4 next-20170331]
->>>> > [if your patch is applied to the wrong git tree, please drop us a note
->>>> > to help improve the system]
->>>>
->>>> Thank you for report, though...
+Hi Tony,
 
->>>> ...I doubt how below is related to my patch. This is obvious x86 code
->>>> which was initially submitted without
->>>> depend on X86
->>>> line in corresponding Kconfig.
->>>
->>>
->>> I think you should probably specify the architecture in the Kconfig
->>> entry, or else some `randconfig`s will fail.
->>
->>
->> Yes, I understand how to fix this, though it's not a problem of this
->> patch per se.
->>
->> Fengguang, is there any possible way to determine the relation between
->> an error and a root cause change?
+On Thu, Mar 30, 2017 at 1:16 PM, Tony Lindgren <tony@atomide.com> wrote:
+> Recent pinctrl changes to allow dynamic allocation of pins exposed one
+> more issue with the pinctrl pins claimed early by the controller itself.
+> This caused a regression for IMX6 pinctrl hogs.
 >
+> Before enabling the pin controller driver we need to wait until it has
+> been properly initialized, then claim the hogs, and only then enable it.
 >
-> Andy, our 0day build error reports are all bisected ones. It means the
-> error happens since the reported patch/commit, which is either
-> responsible for the root cause, or somehow triggers (or changes the
-> exact form of) an old bug.
+> To fix the regression, split the code into pinctrl_claim_hogs() and
+> pinctrl_enable(). And then let's require that pinctrl_enable() is always
+> called by the pin controller driver when ready after calling
+> pinctrl_register_and_init().
+>
+> Depends-on: 950b0d91dc10 ("pinctrl: core: Fix regression caused by delaye=
+d
+> work for hogs")
+> Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
+> Fixes: e566fc11ea76 ("pinctrl: imx: use generic pinctrl helpers for
+> managing groups")
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Gary Bisson <gary.bisson@boundarydevices.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Mika Penttil=C3=A4 <mika.penttila@nextfour.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-Thanks, like you said in this case it looks pretty much for triggering
-an old bug.
+Your patch fixes the pinctrl hog issue on a imx53-qsb board, thanks:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
