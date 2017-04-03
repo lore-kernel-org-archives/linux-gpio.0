@@ -1,55 +1,48 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH] pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
-Date: Mon, 3 Apr 2017 09:00:20 -0300
-Message-ID: <CAOMZO5AFy_UY2KTCZHOHDEZp2tdVqZDWNisnu9sveoBmC-uOXQ@mail.gmail.com>
-References: <20170330161639.1855-1-tony@atomide.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v2] i2c/muxes/i2c-mux-ltc4306: LTC4306 and LTC4305 I2C
+ multiplexer/switch
+Date: Mon, 3 Apr 2017 14:03:35 +0200
+Message-ID: <3c61461e-493c-4562-90c9-f30766591de2@axentia.se>
+References: <1490782541-7832-1-git-send-email-michael.hennerich@analog.com>
+ <0d4c068f-d909-64be-421d-4500da7ebd4c@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:35398 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbdDCMAW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 08:00:22 -0400
-In-Reply-To: <20170330161639.1855-1-tony@atomide.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <0d4c068f-d909-64be-421d-4500da7ebd4c@axentia.se>
+Sender: linux-i2c-owner@vger.kernel.org
+To: michael.hennerich@analog.com, wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Gary Bisson <gary.bisson@boundarydevices.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Nishanth Menon <nm@ti.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>
 
-Hi Tony,
+On 2017-03-31 17:29, Peter Rosin wrote:
+> Hi!
+> 
+> Sorry for my incremental reviewing...
+> 
 
-On Thu, Mar 30, 2017 at 1:16 PM, Tony Lindgren <tony@atomide.com> wrote:
-> Recent pinctrl changes to allow dynamic allocation of pins exposed one
-> more issue with the pinctrl pins claimed early by the controller itself.
-> This caused a regression for IMX6 pinctrl hogs.
->
-> Before enabling the pin controller driver we need to wait until it has
-> been properly initialized, then claim the hogs, and only then enable it.
->
-> To fix the regression, split the code into pinctrl_claim_hogs() and
-> pinctrl_enable(). And then let's require that pinctrl_enable() is always
-> called by the pin controller driver when ready after calling
-> pinctrl_register_and_init().
->
-> Depends-on: 950b0d91dc10 ("pinctrl: core: Fix regression caused by delaye=
-d
-> work for hogs")
-> Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
-> Fixes: e566fc11ea76 ("pinctrl: imx: use generic pinctrl helpers for
-> managing groups")
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Gary Bisson <gary.bisson@boundarydevices.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Mika Penttil=C3=A4 <mika.penttila@nextfour.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+Another incremental...
 
-Your patch fixes the pinctrl hog issue on a imx53-qsb board, thanks:
+> On 2017-03-29 12:15, michael.hennerich@analog.com wrote:
+>> +
+>> +	/* Now create an adapter for each channel */
+>> +	for (num = 0; num < data->chip->nchans; num++) {
+>> +		ret = i2c_mux_add_adapter(muxc, 0, num, 0);
+>> +		if (ret) {
+>> +			dev_err(&client->dev,
+>> +				"failed to register multiplexed adapter %d\n",
+>> +				num);
 
-Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+Just a heads up, I submitted a series to remove a bunch of dev_err calls
+when i2c_mux_add_adapter fails. See https://lkml.org/lkml/2017/4/3/115
+
+You can remove this one as well.
+
+And please use a subject of the form:
+i2c: mux: ltc4306: <message>
+
+Cheers,
+peda
+
+>> +			goto add_adapter_failed;
+>> +		}
