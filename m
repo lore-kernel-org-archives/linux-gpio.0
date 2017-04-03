@@ -1,86 +1,61 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: grand I2C rename
-Date: Mon, 3 Apr 2017 06:14:10 -0400
-Message-ID: <20170403101409.GD31988@verge.net.au>
-References: <20170330165412.949875557@cogentembedded.com>
- <CAMuHMdXa+y9mJsMD9v4o9AOxyp__2LZmqpAR7=4PG3x_7pSQDw@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [GIT PULL] mfd: exynos-lpass: Pinctrl dependency
+Date: Mon, 3 Apr 2017 11:18:24 +0100
+Message-ID: <20170403101824.rpvkqzyigonyi77p@dell>
+References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+ <20170328154217.5405-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXa+y9mJsMD9v4o9AOxyp__2LZmqpAR7=4PG3x_7pSQDw@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+In-Reply-To: <20170328154217.5405-1-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 31, 2017 at 01:01:04PM +0200, Geert Uytterhoeven wrote:
-> Hi Sergei,
-> 
-> On Thu, Mar 30, 2017 at 6:53 PM, Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> > The R8A7791 PFC driver  was apparently based on the preliminary revisions
-> > of  the  user's manual, which called all the I2C signals {SCL|SDA}<n> and
-> > MOD_SEL register fields SEL_IIC<n> without making a difference between two
-> > types of the I2C controllers used. The recent manual calls the signals
-> > {I2C|IIC}<n>_{SCL|SDA> and the MOD_SEL fields SEL_{I2C|IIC}<n> finally
-> > making this difference. Follow the suit, also renaming the I2C{7|8} pin
-> > arrays and groups/functions (luckily, they haven't been used so far).
-> >
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Thanks for your patch!
-> 
-> >  drivers/pinctrl/sh-pfc/pfc-r8a7791.c |  521 +++++++++++++++++------------------
-> >  1 file changed, 264 insertions(+), 257 deletions(-)
-> >
-> > Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-> > ===================================================================
-> > --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-> > +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-> > @@ -119,22 +119,22 @@ enum {
-> >         /* IPSR0 */
-> >         FN_D0, FN_D1, FN_D2, FN_D3, FN_D4, FN_D5, FN_D6, FN_D7, FN_D8,
-> >         FN_D9, FN_D10, FN_D11, FN_D12, FN_D13, FN_D14, FN_D15,
-> > -       FN_A0, FN_ATAWR0_N_C, FN_MSIOF0_SCK_B, FN_SCL0_C, FN_PWM2_B,
-> > +       FN_A0, FN_ATAWR0_N_C, FN_MSIOF0_SCK_B, FN_I2C0_SCL_C, FN_PWM2_B,
-> 
-> While I have no issue with renaming internal definitions...
-> 
-> > @@ -4507,12 +4514,12 @@ static const struct sh_pfc_pin_group pin
-> >         SH_PFC_PIN_GROUP(i2c4),
-> >         SH_PFC_PIN_GROUP(i2c4_b),
-> >         SH_PFC_PIN_GROUP(i2c4_c),
-> > -       SH_PFC_PIN_GROUP(i2c7),
-> > -       SH_PFC_PIN_GROUP(i2c7_b),
-> > -       SH_PFC_PIN_GROUP(i2c7_c),
-> > -       SH_PFC_PIN_GROUP(i2c8),
-> > -       SH_PFC_PIN_GROUP(i2c8_b),
-> > -       SH_PFC_PIN_GROUP(i2c8_c),
-> > +       SH_PFC_PIN_GROUP(iic0),
-> > +       SH_PFC_PIN_GROUP(iic0_b),
-> > +       SH_PFC_PIN_GROUP(iic0_c),
-> > +       SH_PFC_PIN_GROUP(iic1),
-> > +       SH_PFC_PIN_GROUP(iic1_b),
-> > +       SH_PFC_PIN_GROUP(iic1_c),
-> 
-> I do object against renaming the user-visible names, like pin groups...
-> 
-> > @@ -5298,8 +5305,8 @@ static const struct sh_pfc_function pinm
-> >         SH_PFC_FUNCTION(i2c2),
-> >         SH_PFC_FUNCTION(i2c3),
-> >         SH_PFC_FUNCTION(i2c4),
-> > -       SH_PFC_FUNCTION(i2c7),
-> > -       SH_PFC_FUNCTION(i2c8),
-> > +       SH_PFC_FUNCTION(iic0),
-> > +       SH_PFC_FUNCTION(iic1),
-> 
-> ... and pin functions. Technically, they are part of the DT bindings,
-> and thus are not allowed to change.
-> 
-> IMHO either the user-visible names should be left alone, or the new names
-> should be added as alternatives, next to the existing names.
-> 
-> What do other people think?
+On Tue, 28 Mar 2017, Krzysztof Kozlowski wrote:
 
-I think that any user-visible changes need to have a very strong reason.
+> 
+> Hi Lee,
+> 
+> 
+> This is dependency for mfd/exynos-lpass driver changes from Marek Szyprowski.
+> That's a material for v4.12 and I will be pushing this later to Linus Walleij.
+
+This does not work, and *may* still break.
+
+The only way to guarantee the order of the patches is to have them
+*all* as part of the pull-request.  Not just some of them.
+
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-retention-4.12
+> 
+> for you to fetch changes up to e1d7eb0c8fc9c33ef60ac31172fb0fbb78c24271:
+> 
+>   pinctrl: samsung: Add support for pad retention control for Exynos5433 SoCs (2017-03-23 21:07:02 +0200)
+> 
+> ----------------------------------------------------------------
+> Add retention control to Exynos5433 pinctrl driver, necessary for proper
+> handling of runtime Power Management of Exynos Audio SubSystem and effectively
+> allowing to power down the domain.
+> 
+> ----------------------------------------------------------------
+> Marek Szyprowski (2):
+>       pinctrl: samsung: Ensure that pad retention is disabled on driver init
+>       pinctrl: samsung: Add support for pad retention control for Exynos5433 SoCs
+> 
+>  drivers/pinctrl/samsung/pinctrl-exynos.c | 63 ++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
