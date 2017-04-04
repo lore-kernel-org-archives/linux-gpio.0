@@ -1,79 +1,110 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [kbuild-all] [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess with
- compilation units
-Date: Tue, 4 Apr 2017 09:41:29 +0100
-Message-ID: <20170404084129.ccvpn7tnzwpgocu6@dell>
-References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
- <201704030357.HdHD43mM%fengguang.wu@intel.com>
- <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
- <20170403092028.z4xtrwz5wj3go3jd@dell>
- <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
- <20170403110631.2fksvvnj22plih7o@wfg-t540p.sh.intel.com>
- <CAHp75VeWmR0W1=V29OFYrAfodKam=M5bdU8bTQUj_NHVTY2gjg@mail.gmail.com>
- <20170403143317.3wfqx2nek2p4dyt3@dell>
- <1491230615.708.110.camel@linux.intel.com>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v2] i2c/muxes/i2c-mux-ltc4306: LTC4306 and LTC4305 I2C
+ multiplexer/switch
+Date: Tue, 4 Apr 2017 11:28:23 +0200
+Message-ID: <b5838bae-8108-1a0e-5234-d14cb5e95e52@axentia.se>
+References: <1490782541-7832-1-git-send-email-michael.hennerich@analog.com>
+ <0d4c068f-d909-64be-421d-4500da7ebd4c@axentia.se>
+ <e0027ff7-948e-60f1-a492-72ab4a67605f@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1491230615.708.110.camel@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Fengguang Wu <lkp@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild-all@01.org, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ve1eur01on0107.outbound.protection.outlook.com ([104.47.1.107]:59435
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752785AbdDDJ2b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 4 Apr 2017 05:28:31 -0400
+In-Reply-To: <e0027ff7-948e-60f1-a492-72ab4a67605f@analog.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: michael.hennerich@analog.com, wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 03 Apr 2017, Andy Shevchenko wrote:
+*snip* *snip*
 
-> On Mon, 2017-04-03 at 15:33 +0100, Lee Jones wrote:
-> > On Mon, 03 Apr 2017, Andy Shevchenko wrote:
-> > 
-> > > On Mon, Apr 3, 2017 at 2:06 PM, Fengguang Wu <lkp@intel.com> wrote:
-> > > > On Mon, Apr 03, 2017 at 12:26:54PM +0300, Andy Shevchenko wrote:
-> > > > > On Mon, Apr 3, 2017 at 12:20 PM, Lee Jones <lee.jones@linaro.org
-> > > > > > wrote:
-> > > > > > On Sun, 02 Apr 2017, Andy Shevchenko wrote:
-> > > > > > > On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@inte
-> > > > > > > l.com>
-> > > > > > > wrote:
+>>> +static int ltc4306_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>>> +{
+>>> +	struct ltc4306 *data = gpiochip_get_data(chip);
+>>> +	int ret = 0;
+>>> +
+>>> +	if (gpiochip_line_is_open_drain(chip, offset) ||
+>>> +	    (data->regs[LTC_REG_MODE] & BIT(7 - offset))) {
+>>
+>> I wonder about this open-coded register cache. So, gpio people, is there
+>> a guarantee from gpiolib that only one gpio_chip operation is in flight
+>> concurrently? Because I don't see any evidence of that. With that in
+>> mind, I think some locking is needed?
 > 
-> > > > > Yes, I understand how to fix this, though it's not a problem of
-> > > > > this
-> > > > > patch per se.
-> > > > > 
-> > > > > Fengguang, is there any possible way to determine the relation
-> > > > > between
-> > > > > an error and a root cause change?
-> > > > 
-> > > > 
-> > > > Andy, our 0day build error reports are all bisected ones. It means
-> > > > the
-> > > > error happens since the reported patch/commit, which is either
-> > > > responsible for the root cause, or somehow triggers (or changes
-> > > > the
-> > > > exact form of) an old bug.
-> > > 
-> > > Thanks, like you said in this case it looks pretty much for
-> > > triggering
-> > > an old bug.
-> > 
-> > Quite.  But as a good open source citizen, you'll follow up with
-> > patches too, right? :)
+> I thought there is a per chip mutex in the gpiolib. But I can't find 
+> anything like this either. Since these two gpios can be used from 
+> different internal or external users. The locking seem to be needed.
 > 
-> It looks like I have to submit fix for older bug first. Likely I can do
-> this without delays and give you a green light to apply via your tree.
-> Unfortunately I will continue on this tomorrow.
+> This gets us back to the regmap option. I did a quick grep, and 9 out of 
+> 205 drivers using regmap i2c, also use i2c_smbus... concurrently.
+> 
+> grep -Rl regmap_init_i2c ./drivers  | xargs grep -l i2c_smbus_ | grep "\.c"
+> 
+> Mostly to work around non uniform transfer layouts.
 
-Turns out that this is not an older bug.
+I see three options.
 
-You need to fix your patch.  I believe you lose the depend on
-INTEL_PMC_IPC, which ensures it's only built on x86 systems.
+1. Go with regmap and convert to mux-locked. Then the unlocked i2c-xfer
+becomes an ordinary i2c-xfer (or smbus, whatever). This will result in
+the cleanest code.
 
-NB: I discovered this after a 20 second scan, so it might not be the
-correct fix.  Please investigate.
+2. Go with regmap and stay parent-locked. Then hook into the regmap
+locking as is done in one of the drivers that have worked around similar
+problems with regmap and parent-locked i2c-mux interactions:
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+drivers/media/dvb-frontends/rtl2830.c
+drivers/media/dvb-frontends/m88ds3103.c
+
+This will probably work, but you'd need to add a number of extra helper
+functions.
+
+3. Exclude register 3 from regmap and only use regmap for the other
+registers. This will be a bit ugly and ad-hoc, will need clear comments
+on what is going on and why it is safe etc. And I want to see it before
+I accept it. And it might not be my call to begin with, because TBH, it
+sounds a bit disgusting...
+
+> I'll check with Mark Brown on this topic.
+
+Ok, might be a good idea...
+
+>>> +
+>>> +add_adapter_failed:
+>>> +	i2c_mux_del_adapters(muxc);
+>>> +gpio_default:
+>>> +	gpiod_direction_input(data->en_gpio);
+>>
+>> This was actually not what I had in mind when I asked about it in v1, and
+>> this looks a bit strange. You have no way of knowing if the pin was
+>> configured as input when probe was called, and I don't see code like this
+>> all over the place. Maybe it's is ok to not disable the chip over
+>> suspend/resume, I was just asking because it looked a bit strange to grab
+>> a pin and then forget about it. Now that I think about it some more, it's
+>> probably ok to do just that since it is perhaps not possible to make the
+>> chip draw less power by deasserting enable, but what do I know?
+> 
+> GPIOs are assumed by default inputs. So if you want to undo the actions 
+> in probe. The logical consequence is to move them back to inputs, and 
+> let the external PULL-UP or PULL-DOWN on the ENABLE decide what happens. 
+> I would also prefer to leave it enabled, so that the GPIOs can retain
+
+My point is that I do not see any probe functions undoing gpio configs.
+Why bother in this case? Or are other probe functions really doing this?
+I actually didn't check, but I haven't stumbled over it previously and
+at least think I would have noticed...
+
+> it's last state. Well I think the device draws a bit less power when 
+> disabled. But we don't support runtime PM anyways.
+
+It might not be safe to reset the gpio pins over a suspend/resume depending
+on what they are used for, so it is probably a bad idea to go there. Sorry
+for bringing the whole issue up and muddying the waters...
+
+Cheers,
+peda
+
