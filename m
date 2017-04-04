@@ -1,33 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.12 (take two)
-Date: Tue, 4 Apr 2017 13:56:45 +0200
-Message-ID: <CACRpkdZ3ZRSzSVDx6=fKOY5wivNPEcp4pwOnNqOHWUH1_uUY+A@mail.gmail.com>
-References: <1490952390-11256-1-git-send-email-geert+renesas@glider.be>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [kbuild-all] [PATCH v3 1/3] mfd: intel_soc_pmic: Fix a mess
+ with compilation units
+Date: Tue, 04 Apr 2017 15:13:52 +0300
+Message-ID: <1491308032.708.123.camel@linux.intel.com>
+References: <20170317153715.48555-1-andriy.shevchenko@linux.intel.com>
+         <201704030357.HdHD43mM%fengguang.wu@intel.com>
+         <CAHp75Vdt3ys=tFax5iK5tnANNCLj-b4-VxO78b4ZT0jqdAnsdg@mail.gmail.com>
+         <20170403092028.z4xtrwz5wj3go3jd@dell>
+         <CAHp75VcGgSF-spv6OZWuAE9ardAW=Q6GjC7T8Eto=7subAuW2g@mail.gmail.com>
+         <20170403110631.2fksvvnj22plih7o@wfg-t540p.sh.intel.com>
+         <CAHp75VeWmR0W1=V29OFYrAfodKam=M5bdU8bTQUj_NHVTY2gjg@mail.gmail.com>
+         <20170403143317.3wfqx2nek2p4dyt3@dell>
+         <1491230615.708.110.camel@linux.intel.com>
+         <20170404084129.ccvpn7tnzwpgocu6@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1490952390-11256-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20170404084129.ccvpn7tnzwpgocu6@dell>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Fengguang Wu <lkp@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kbuild-all@01.org, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Mar 31, 2017 at 11:26 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, 2017-04-04 at 09:41 +0100, Lee Jones wrote:
+> On Mon, 03 Apr 2017, Andy Shevchenko wrote:
+> 
+> > On Mon, 2017-04-03 at 15:33 +0100, Lee Jones wrote:
+> > > On Mon, 03 Apr 2017, Andy Shevchenko wrote:
+> > > 
+> > > > On Mon, Apr 3, 2017 at 2:06 PM, Fengguang Wu <lkp@intel.com>
+> > > > wrote:
+> > > > > On Mon, Apr 03, 2017 at 12:26:54PM +0300, Andy Shevchenko
+> > > > > wrote:
+> > > > > > On Mon, Apr 3, 2017 at 12:20 PM, Lee Jones <lee.jones@linaro
+> > > > > > .org
+> > > > > > > wrote:
+> > > > > > > On Sun, 02 Apr 2017, Andy Shevchenko wrote:
+> > > > > > > > On Sun, Apr 2, 2017 at 11:03 PM, kbuild test robot <lkp@
+> > > > > > > > inte
+> > > > > > > > l.com>
+> > > > > > > > wrote:
 
-> The following changes since commit 3091ae775fae17084013021d01513bc1ad274e6a:
->
->   pinctrl: sh-pfc: Update info pointer after SoC-specific init (2017-03-21 11:21:55 +0100)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.12-tag2
->
-> for you to fetch changes up to d14a39edf757f5bdd73cf25d0155d7cfb271e782:
->
->   pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support (2017-03-30 13:43:55 +0200)
+> > > > > > It looks like I have to submit fix for older bug first.
+> > > > > > Likely I can do
+> > this without delays and give you a green light to apply via your
+> > tree.
+> > Unfortunately I will continue on this tomorrow.
+> 
+> Turns out that this is not an older bug.
+> 
+> You need to fix your patch.  I believe you lose the depend on
+> INTEL_PMC_IPC, which ensures it's only built on x86 systems.
+> 
+> NB: I discovered this after a 20 second scan, so it might not be the
+> correct fix.  Please investigate.
 
-Pulled into the pinctrl devel branch, thanks!
+Oh my gosh, I was looking to older version of the patch which does a
+select and thus I was quite sure that that triggers an old bug.
 
-Yours,
-Linus Walleij
+Thank you everyone who raised concern.
+
+P.S. Certainly need a vacation...
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
