@@ -1,87 +1,92 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Mon, 3 Apr 2017 11:52:18 -0700
-Message-ID: <20170403185218.GE34530@dtor-ws>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
+From: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] i2c/muxes/i2c-mux-ltc4306: LTC4306 and LTC4305 I2C
+ multiplexer/switch
+Date: Tue, 4 Apr 2017 08:32:22 +0200
+Message-ID: <5a320a13-1d61-a643-fc40-791b4d588d9a@analog.com>
+References: <1490782541-7832-1-git-send-email-michael.hennerich@analog.com>
+ <0d4c068f-d909-64be-421d-4500da7ebd4c@axentia.se>
+ <3c61461e-493c-4562-90c9-f30766591de2@axentia.se>
+ <f871f082-3acd-7a28-25c7-dd77d8286ae6@analog.com>
+ <dcc59f26-6dec-dbf1-22d9-b681daf788a2@axentia.se>
+Reply-To: <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33549 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751210AbdDCSwV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Apr 2017 14:52:21 -0400
-Received: by mail-pg0-f66.google.com with SMTP id 79so31753224pgf.0
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Apr 2017 11:52:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <dcc59f26-6dec-dbf1-22d9-b681daf788a2-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, linux-gpio@vger.kernel.org
 
-On Wed, Mar 29, 2017 at 12:59:32PM +0300, Mika Westerberg wrote:
-> After commit 47c950d10202 ("pinctrl: cherryview: Do not add all
-> southwest and north GPIOs to IRQ domain") the driver does not add all
-> GPIOs to the irqdomain. The reason for that is that those GPIOs cannot
-> generate IRQs at all, only GPEs (General Purpose Events). This causes
-> Linux virtual IRQ numbering to change.
-> 
-> However, it seems some CYAN Chromebooks, including Acer Chromebook
-> hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
-> Since the numbering is different now, the IRQ meant for keyboard does
-> not match the Linux virtual IRQ number anymore making the keyboard
-> non-functional.
-> 
-> Work this around by adding special quirk just for these machines where
-> we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
-> based machines will not be affected by the change.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
-> Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
-> Reported-by: Adam S Levy <theadamlevy@gmail.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 25 +++++++++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index f80134e3e0b6..bbe9cdf36ca4 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -13,6 +13,7 @@
->   * published by the Free Software Foundation.
->   */
->  
-> +#include <linux/dmi.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/init.h>
-> @@ -1524,10 +1525,30 @@ static void chv_gpio_irq_handler(struct irq_desc *desc)
->  	chained_irq_exit(chip, desc);
->  }
->  
-> +/*
-> + * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
-> + * tables. Since we leave GPIOs that are not capable of generating
-> + * interrupts out of the irqdomain the numbering will be different and
-> + * cause devices using the hardcoded IRQ numbers fail. In order not to
-> + * break such machines we will only mask pins from irqdomain if the machine
-> + * is not listed below.
-> + */
-> +static const struct dmi_system_id chv_no_valid_mask[] = {
-> +	{
-> +		/* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
-> +		.ident = "Acer Chromebook (CYAN)",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
+On 03.04.2017 16:20, Peter Rosin wrote:
+> On 2017-04-03 15:36, Michael Hennerich wrote:
+>> On 03.04.2017 14:03, Peter Rosin wrote:
+>>> On 2017-03-31 17:29, Peter Rosin wrote:
+>>>> Hi!
+>>>>
+>>>> Sorry for my incremental reviewing...
+>>>>
+>>>
+>>> Another incremental...
+>>>
+>>>> On 2017-03-29 12:15, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org wrote:
+>>>>> +
+>>>>> +	/* Now create an adapter for each channel */
+>>>>> +	for (num = 0; num < data->chip->nchans; num++) {
+>>>>> +		ret = i2c_mux_add_adapter(muxc, 0, num, 0);
+>>>>> +		if (ret) {
+>>>>> +			dev_err(&client->dev,
+>>>>> +				"failed to register multiplexed adapter %d\n",
+>>>>> +				num);
+>>>
+>>> Just a heads up, I submitted a series to remove a bunch of dev_err calls
+>>> when i2c_mux_add_adapter fails. See https://lkml.org/lkml/2017/4/3/115
+>>>
+>>> You can remove this one as well.
+>>>
+>>> And please use a subject of the form:
+>>> i2c: mux: ltc4306: <message>
+>> ok - no problem.
+>
+> You managed to drop the spaces after the new colons in the subject.
+>
+> And maybe there is a problem, because I don't see any reaction to any of
+> the review comments I made in https://lkml.org/lkml/2017/3/31/525
+>
+> Was that on purpose? Sure, the gpio "jury" is still out on the bigger
+> question so maybe you're waiting for that, but there were a few nitpicks
+> as well. Anyway, sorry again for failing to compile all comments up front.
 
-Is there a BIOS version (I do not have my Cyan with me)? Because if
-Intel happens to release a fixes for this hard-coded mapping, we would
-not want to continue applying this quirk, would we?
+Hi Peter,
 
-Thanks.
+sorry - this was not on purpose. I simply missed your second to last 
+incremental review. I fix the subject now finally.
+
+Thanks for your patience.
+
+>
+>> I sent out a new patch. Per Rob's request, I split out the dt-bindings
+>> into a separate patch.
+>
+> Thanks. I think(?) it is customary to have the bindings first, and then
+> implement that "specification" in followup patches. No big deal though...
+>
+> Cheers,
+> peda
+>
+>
+
 
 -- 
-Dmitry
+Greetings,
+Michael
+
+--
+Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
+Sitz der Gesellschaft München, Registergericht München HRB 40368,
+Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
