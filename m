@@ -1,86 +1,85 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v1 6/8] gpio: acpi: Explain how to get GPIO descriptors
- in ACPI case
-Date: Tue, 4 Apr 2017 11:21:29 -0700
-Message-ID: <20170404182129.GA20615@dtor-ws>
-References: <20170323194618.26548-1-andriy.shevchenko@linux.intel.com>
- <20170323194618.26548-7-andriy.shevchenko@linux.intel.com>
- <20170323202838.GA11818@dtor-ws>
- <1490719163.708.40.camel@linux.intel.com>
- <20170329071235.GB38261@dtor-ws>
- <1490799864.708.50.camel@linux.intel.com>
- <1491322277.708.129.camel@linux.intel.com>
- <20170404173108.GC29558@dtor-ws>
- <1491328751.24567.2.camel@linux.intel.com>
+From: <xdi@sok.fi>
+Subject: 17707 linux-gpio
+Date: Tue, 04 Apr 2017 18:52:30 -0000
+Message-ID: <149133195088.6120.11859032305145650794@deltainfocom.com>
+Reply-To: <xdi@sok.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1491328751.24567.2.camel@linux.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, linux-acpi@vger.kernel.org
+Content-Type: application/zip; name="15544113.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 103.31.176.53.deltainfocom.com ([103.31.176.53]:57107 "HELO
+        deltainfocom.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with SMTP id S1754601AbdDDSwh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2017 14:52:37 -0400
+Content-Disposition: attachment
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio <linux-gpio@vger.kernel.org>
 
-On Tue, Apr 04, 2017 at 08:59:11PM +0300, Andy Shevchenko wrote:
-> On Tue, 2017-04-04 at 10:31 -0700, Dmitry Torokhov wrote:
-> > On Tue, Apr 04, 2017 at 07:11:17PM +0300, Andy Shevchenko wrote:
-> > > On Wed, 2017-03-29 at 18:04 +0300, Andy Shevchenko wrote:
-> > > > On Wed, 2017-03-29 at 00:12 -0700, Dmitry Torokhov wrote:
-> > > > > On Tue, Mar 28, 2017 at 07:39:23PM +0300, Andy Shevchenko wrote:
-> > > > > > On Thu, 2017-03-23 at 13:28 -0700, Dmitry Torokhov wrote:
-> > > > > > > On Thu, Mar 23, 2017 at 09:46:16PM +0200, Andy Shevchenko
-> > > > > > > wrote:
-> 
-> > > > Otherwise I'm reading something like this:
-> > > > "If we have platform driverX.c which has DT/platform and ACPI
-> > > > enumeration, we must split ACPI part out, duplicate a lot of code
-> > > > and
-> > > > use platform driver as a library."
-> > 
-> > No. You need to split the part that augments incomplete ACPI data, and
-> > move it somewhere (drivers/platform/x86/<platform>-crap.c; the driver
-> > stays the same: a driver that is useful across multiple platforms.
-> 
-> > > > Is that what you mean?
-> 
-> So, it means to spread IDs in two places.
-
-For completely different purposes, yes. One takes DMI data to identify
-platform, and ACPI _instance_ ID to identify the particular ACPI device;
-there theoretically could be several of them.  If you have a better
-option to identify the instance, we can switch to them.
-
-The driver uses HID or CID to bind to one or more devices.
-
-> Looking into silead_dmi.c I
-> can say it looks as a hack, we aren't supposed to use "ACPIXXXX:YY" in
-> the drivers AFAIK. Besides the fact of notifier and arch_initcall().
-> 
-> It indeed feels like a crap and looks like a crap.
-
-It is supposed to be crap. We have a vendor that neglected to describe
-the device in firmware properly and instead expects the driver to be
-recompiled for each device shipped. Bad, bad vendor. So we have crap in
-platform/x86/... At least we do not smear this shit all over generic
-driver.
-
-> 
-> Rafael, Mika, what are your opinions about proposed approach?
-> 
-> > > > P.S. This all _CRS fallback shouldn't be allowed in the first
-> > > > place.
-> > 
-> > It does work in many cases. By disallowing it completely you force
-> > much
-> > more platform stuff knowledge in the kernel, whereas before you needed
-> > to deal with exceptions.
-> 
-> It works due to luck, not otherwise.
-
-As far as I see it works often enough.
-
-Thanks.
-
--- 
-Dmitry
+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
