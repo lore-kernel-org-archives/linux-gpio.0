@@ -1,85 +1,88 @@
-From: <xdi@sok.fi>
-Subject: 17707 linux-gpio
-Date: Tue, 04 Apr 2017 18:52:30 -0000
-Message-ID: <149133195088.6120.11859032305145650794@deltainfocom.com>
-Reply-To: <xdi@sok.fi>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7794: swap ATA signals
+Date: Tue, 04 Apr 2017 23:20:16 +0300
+Message-ID: <20170404202025.306556752@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="15544113.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from 103.31.176.53.deltainfocom.com ([103.31.176.53]:57107 "HELO
-        deltainfocom.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1754601AbdDDSwh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2017 14:52:37 -0400
-Content-Disposition: attachment
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:34568 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754549AbdDDUUb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Apr 2017 16:20:31 -0400
+Received: by mail-lf0-f53.google.com with SMTP id z15so99458225lfd.1
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Apr 2017 13:20:30 -0700 (PDT)
+Content-Disposition: inline; filename=pinctrl-sh-pfc-r8a7794-swap-ATA-signals.patch
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio <linux-gpio@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-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
-AAAEAAAAAFBLBQYAAAAAAQABAE8AAABqDgAAAAA=
+All R8A7794 manuals  I have here (0.50 and 1.10) agree that the PFC driver
+has ATAG0#  and ATAWR# signals in IPSR12 swapped -- fix this.
+
+Fixes: 43c4436e2f18 ("pinctrl: sh-pfc: add R8A7794 PFC support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+---
+This patch is against the 'fixes' branch of Linus Walleij's 'linux-pinctrl.git'
+repo.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+Index: linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -281,8 +281,8 @@ enum {
+ 	FN_AVB_AVTP_CAPTURE, FN_ETH_CRS_DV_B, FN_SSI_WS1, FN_SCIF1_TXD_B,
+ 	FN_IIC1_SDA_C, FN_VI1_DATA0, FN_CAN0_TX_D, FN_AVB_AVTP_MATCH,
+ 	FN_ETH_RX_ER_B, FN_SSI_SDATA1, FN_HSCIF1_HRX_B, FN_SDATA, FN_VI1_DATA1,
+-	FN_ATAG0_N, FN_ETH_RXD0_B, FN_SSI_SCK2, FN_HSCIF1_HTX_B, FN_VI1_DATA2,
+-	FN_MDATA, FN_ATAWR0_N, FN_ETH_RXD1_B,
++	FN_ATAWR0_N, FN_ETH_RXD0_B, FN_SSI_SCK2, FN_HSCIF1_HTX_B, FN_VI1_DATA2,
++	FN_MDATA, FN_ATAG0_N, FN_ETH_RXD1_B,
+ 
+ 	/* IPSR13 */
+ 	FN_SSI_WS2, FN_HSCIF1_HCTS_N_B, FN_SCIFA0_RXD_D, FN_VI1_DATA3, FN_SCKZ,
+@@ -575,8 +575,8 @@ enum {
+ 	ETH_CRS_DV_B_MARK, SSI_WS1_MARK, SCIF1_TXD_B_MARK, IIC1_SDA_C_MARK,
+ 	VI1_DATA0_MARK, CAN0_TX_D_MARK, AVB_AVTP_MATCH_MARK, ETH_RX_ER_B_MARK,
+ 	SSI_SDATA1_MARK, HSCIF1_HRX_B_MARK, VI1_DATA1_MARK, SDATA_MARK,
+-	ATAG0_N_MARK, ETH_RXD0_B_MARK, SSI_SCK2_MARK, HSCIF1_HTX_B_MARK,
+-	VI1_DATA2_MARK, MDATA_MARK, ATAWR0_N_MARK, ETH_RXD1_B_MARK,
++	ATAWR0_N_MARK, ETH_RXD0_B_MARK, SSI_SCK2_MARK, HSCIF1_HTX_B_MARK,
++	VI1_DATA2_MARK, MDATA_MARK, ATAG0_N_MARK, ETH_RXD1_B_MARK,
+ 
+ 	/* IPSR13 */
+ 	SSI_WS2_MARK, HSCIF1_HCTS_N_B_MARK, SCIFA0_RXD_D_MARK, VI1_DATA3_MARK,
+@@ -1413,13 +1413,13 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP12_26_24, HSCIF1_HRX_B, SEL_HSCIF1_1),
+ 	PINMUX_IPSR_GPSR(IP12_26_24, VI1_DATA1),
+ 	PINMUX_IPSR_MSEL(IP12_26_24, SDATA, SEL_FSN_0),
+-	PINMUX_IPSR_GPSR(IP12_26_24, ATAG0_N),
++	PINMUX_IPSR_GPSR(IP12_26_24, ATAWR0_N),
+ 	PINMUX_IPSR_MSEL(IP12_26_24, ETH_RXD0_B, SEL_ETH_1),
+ 	PINMUX_IPSR_MSEL(IP12_29_27, SSI_SCK2, SEL_SSI2_0),
+ 	PINMUX_IPSR_MSEL(IP12_29_27, HSCIF1_HTX_B, SEL_HSCIF1_1),
+ 	PINMUX_IPSR_GPSR(IP12_29_27, VI1_DATA2),
+ 	PINMUX_IPSR_MSEL(IP12_29_27, MDATA, SEL_FSN_0),
+-	PINMUX_IPSR_GPSR(IP12_29_27, ATAWR0_N),
++	PINMUX_IPSR_GPSR(IP12_29_27, ATAG0_N),
+ 	PINMUX_IPSR_MSEL(IP12_29_27, ETH_RXD1_B, SEL_ETH_1),
+ 
+ 	/* IPSR13 */
+@@ -4938,10 +4938,10 @@ static const struct pinmux_cfg_reg pinmu
+ 		0, 0, 0, 0,
+ 		/* IP12_29_27 [3] */
+ 		FN_SSI_SCK2, FN_HSCIF1_HTX_B, FN_VI1_DATA2, FN_MDATA,
+-		FN_ATAWR0_N, FN_ETH_RXD1_B, 0, 0,
++		FN_ATAG0_N, FN_ETH_RXD1_B, 0, 0,
+ 		/* IP12_26_24 [3] */
+ 		FN_SSI_SDATA1, FN_HSCIF1_HRX_B, FN_VI1_DATA1, FN_SDATA,
+-		FN_ATAG0_N, FN_ETH_RXD0_B, 0, 0,
++		FN_ATAWR0_N, FN_ETH_RXD0_B, 0, 0,
+ 		/* IP12_23_21 [3] */
+ 		FN_SSI_WS1, FN_SCIF1_TXD_B, FN_IIC1_SDA_C, FN_VI1_DATA0,
+ 		FN_CAN0_TX_D, FN_AVB_AVTP_MATCH, FN_ETH_RX_ER_B, 0,
+
