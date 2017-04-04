@@ -1,46 +1,44 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [GIT PULL] mfd: exynos-lpass: Pinctrl dependency
-Date: Tue, 4 Apr 2017 10:23:32 +0200
-Message-ID: <CAJKOXPeVOMBZxXeh7=oXbgnxSrUtHa86eAtP2BppY=G4Uygarg@mail.gmail.com>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <20170328154217.5405-1-krzk@kernel.org> <20170403101824.rpvkqzyigonyi77p@dell>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: question about concurrent regmap i2c usage
+Date: Tue, 4 Apr 2017 10:28:23 +0200
+Message-ID: <76471664-425b-c386-3ad8-efeabc2eaf7e@analog.com>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752560AbdDDIXg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 4 Apr 2017 04:23:36 -0400
-In-Reply-To: <20170403101824.rpvkqzyigonyi77p@dell>
+Received: from mail-by2nam03on0068.outbound.protection.outlook.com ([104.47.42.68]:36825
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751073AbdDDI1A (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 4 Apr 2017 04:27:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: broonie@kernel.org, ", linus.walleij"@linaro.org, wsa@the-dreams.de
+Cc: linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Apr 3, 2017 at 12:18 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Tue, 28 Mar 2017, Krzysztof Kozlowski wrote:
->
->>
->> Hi Lee,
->>
->>
->> This is dependency for mfd/exynos-lpass driver changes from Marek Szyprowski.
->> That's a material for v4.12 and I will be pushing this later to Linus Walleij.
->
-> This does not work, and *may* still break.
->
-> The only way to guarantee the order of the patches is to have them
-> *all* as part of the pull-request.  Not just some of them.
+Hi Mark,
 
-What do you mean exactly? If these two patches come through my tree
-first, then everything will work fine because they do not break any
-other stuff.
+During the discussion here: https://lkml.org/lkml/2017/4/4/76
 
-If you pull it and apply the rest on top, then it should also work
-without problems because your history will contain everything needed
-in proper order.
+A question came up, regarding whether it's recommended to mix regmap_i2c 
+and plain i2c_smbus or direct adapter transfers.
 
-In both cases bisectability is preserved. Did I missed something?
+In this specific case for the i2c MUX portion we need to avoid double 
+locks, and therefore use un-locked direct adapter transfers.
 
-Best regards,
-Krzysztof
+The same time we also implement a small gpiochip, where we would like to 
+use regmap to avoid some boilerplate code for the register cache.
+
+
+What is your thought on this?
+
+
+-- 
+Greetings,
+Michael
+
+--
+Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
+Sitz der Gesellschaft München, Registergericht München HRB 40368,
+Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
