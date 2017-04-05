@@ -1,26 +1,50 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: swap ATA signals
-Date: Tue, 4 Apr 2017 23:22:03 +0300
-Message-ID: <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
-References: <20170404202025.306556752@cogentembedded.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: Re: question about concurrent regmap i2c usage
+Date: Wed, 5 Apr 2017 08:31:15 +0200
+Message-ID: <4929e112-9a08-8b9c-f64e-fd2ffaf8b45e@analog.com>
+References: <76471664-425b-c386-3ad8-efeabc2eaf7e@analog.com>
+ <20170404122654.dfhtvpcnngl3gfco@sirena.org.uk>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170404202025.306556752@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2nam02on0065.outbound.protection.outlook.com ([104.47.38.65]:24596
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753062AbdDEG3y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 5 Apr 2017 02:29:54 -0400
+In-Reply-To: <20170404122654.dfhtvpcnngl3gfco@sirena.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linus.walleij@linaro.org, wsa@the-dreams.de, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/04/2017 11:20 PM, Sergei Shtylyov wrote:
+On 04.04.2017 14:26, Mark Brown wrote:
+> On Tue, Apr 04, 2017 at 10:28:23AM +0200, Michael Hennerich wrote:
+>
+>> A question came up, regarding whether it's recommended to mix regmap_i2c and
+>> plain i2c_smbus or direct adapter transfers.
+>
+>> In this specific case for the i2c MUX portion we need to avoid double locks,
+>> and therefore use un-locked direct adapter transfers.
+>
+>> The same time we also implement a small gpiochip, where we would like to use
+>> regmap to avoid some boilerplate code for the register cache.
+>
+> That should work fine providing nothing tries to change cached registers
+> underneath the regmap.  regmap won't be able to tell anything's changed
+> otherwise.
 
-> All R8A7794 manuals  I have here (0.50 and 1.10) agree that the PFC driver
-> has ATAG0#  and ATAWR# signals in IPSR12 swapped -- fix this.
+Hi Mark,
 
-    Oops, ATAWR0#. Do I need to resend?
+Thanks for confirmation!
 
-> Fixes: 43c4436e2f18 ("pinctrl: sh-pfc: add R8A7794 PFC support")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-[...]
+-- 
+Greetings,
+Michael
 
-MBR, Sergei
+--
+Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
+Sitz der Gesellschaft München, Registergericht München HRB 40368,
+Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
