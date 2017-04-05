@@ -1,101 +1,96 @@
-From: <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 1/2] dt-bindings: i2c: mux: ltc4306: Add dt-bindings for I2C multiplexer/switch
-Date: Wed, 5 Apr 2017 15:07:50 +0200
-Message-ID: <1491397671-14675-1-git-send-email-michael.hennerich@analog.com>
+From: "Han, Nandor (GE Healthcare)" <nandor.han@ge.com>
+Subject: [PATCH 1/3] gpio - Add EXAR XRA1403 SPI GPIO expander driver
+Date: Wed, 5 Apr 2017 13:24:49 +0000
+Message-ID: <HE1P101MB01883B516828F26921267A4FE60A0@HE1P101MB0188.NAMP101.PROD.OUTLOOK.COM>
+References: <cover.1490595641.git.nandor.han@ge.com>
+ <6bf04ba1761f0692cb461558f0c8836f0d1f7ad8.1490595641.git.nandor.han@ge.com>
+ <CACRpkdZB_cxqw0=M4YOhcwdZe7BxJtVKA290yGH-jxPU2MDgBg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:50930 "EHLO
+        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933359AbdDENZK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Apr 2017 09:25:10 -0400
+In-Reply-To: <CACRpkdZB_cxqw0=M4YOhcwdZe7BxJtVKA290yGH-jxPU2MDgBg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Malinen, Semi (GE Healthcare)" <semi.malinen@ge.com>
 
-From: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-
-This patch adds support for the Analog Devices / Linear Technology
-LTC4306 and LTC4305 4/2 Channel I2C Bus Multiplexer/Switches.
-The LTC4306 optionally provides two general purpose input/output pins
-(GPIOs) that can be configured as logic inputs, opendrain outputs or
-push-pull outputs via the generic GPIOLIB framework.
-
-Signed-off-by: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
----
- .../devicetree/bindings/i2c/i2c-mux-ltc4306.txt    | 61 ++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
-
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
-new file mode 100644
-index 0000000..1e98c6b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
-@@ -0,0 +1,61 @@
-+* Linear Technology / Analog Devices I2C bus switch
-+
-+Required Properties:
-+
-+  - compatible: Must contain one of the following.
-+    "lltc,ltc4305", "lltc,ltc4306"
-+  - reg: The I2C address of the device.
-+
-+  The following required properties are defined externally:
-+
-+  - Standard I2C mux properties. See i2c-mux.txt in this directory.
-+  - I2C child bus nodes. See i2c-mux.txt in this directory.
-+
-+Optional Properties:
-+
-+  - enable-gpios: Reference to the GPIO connected to the enable input.
-+  - i2c-mux-idle-disconnect: Boolean; if defined, forces mux to disconnect all
-+    children in idle state. This is necessary for example, if there are several
-+    multiplexers on the bus and the devices behind them use same I2C addresses.
-+  - gpio-controller: Marks the device node as a GPIO Controller.
-+  - #gpio-cells: Should be two.  The first cell is the pin number and
-+	the second cell is used to specify flags.
-+	See ../gpio/gpio.txt for more information.
-+  - ltc,downstream-accelerators-enable: Enables the rise time accelerators
-+	on the downstream port.
-+  - ltc,upstream-accelerators-enable: Enables the rise time accelerators
-+	on the upstream port.
-+
-+Example:
-+
-+	ltc4306: i2c-mux@4a {
-+		compatible = "lltc,ltc4306";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x4a>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		i2c@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			eeprom@50 {
-+				compatible = "at,24c02";
-+				reg = <0x50>;
-+			};
-+		};
-+
-+		i2c@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+
-+			eeprom@50 {
-+				compatible = "at,24c02";
-+				reg = <0x50>;
-+			};
-+		};
-+	};
--- 
-2.7.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMgV2FsbGVpaiBb
+bWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMjkgTWFyY2ggMjAxNyAw
+NTowNw0KPiBUbzogSGFuLCBOYW5kb3IgKEdFIEhlYWx0aGNhcmUpIDxuYW5kb3IuaGFuQGdlLmNv
+bT4NCj4gQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPjsgUm9iIEhlcnJp
+bmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IE1hcmsgUnV0bGFuZA0KPiA8bWFyay5ydXRsYW5kQGFy
+bS5jb20+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IE1hbGluZW4sIFNlbWkgKEdF
+IEhlYWx0aGNhcmUpIDxzZW1pLm1hbGluZW5AZ2UuY29tPg0KPiBTdWJqZWN0OiBFWFQ6IFJlOiBb
+UEFUQ0ggMS8zXSBncGlvIC0gQWRkIEVYQVIgWFJBMTQwMyBTUEkgR1BJTyBleHBhbmRlciBkcml2
+ZXINCj4gDQo+IE9uIE1vbiwgTWFyIDI3LCAyMDE3IGF0IDg6MjMgQU0sIE5hbmRvciBIYW4gPG5h
+bmRvci5oYW5AZ2UuY29tPiB3cm90ZToNCj4gDQo+ID4gVGhpcyBpcyBhIHNpbXBsZSBkcml2ZXIg
+dGhhdCBwcm92aWRlcyBhIC9zeXMvY2xhc3MvZ3Bpbw0KPiA+IGludGVyZmFjZSBmb3IgY29udHJv
+bGxpbmcgYW5kIGNvbmZpZ3VyaW5nIHRoZSBHUElPIGxpbmVzLg0KPiANCj4gVXNlIHRoZSBncGlv
+IHRvb2xzIGluIHRvb2xzL2dwaW8sIHVzZSB0aGUgY2hhcmFjY3RlciBkZXZpY2UuDQo+IERvIG5v
+dCB1c2Ugc3lzZnMuIENoYW5nZSB0aGlzIHRvIHJlZmVyZW5jZSB0aGUgdG9vbHMuDQo+IA0KPiA+
+IEl0IGRvZXMgbm90IHByb3ZpZGUgc3VwcG9ydCBmb3IgY2hpcCBzZWxlY3Qgb3IgaW50ZXJydXB0
+cy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE5hbmRvciBIYW4gPG5hbmRvci5oYW5AZ2UuY29t
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNlbWkgTWFsaW5lbiA8c2VtaS5tYWxpbmVuQGdlLmNvbT4N
+Cj4gKC4uLikNCj4gPiArZXhhciAgIEV4YXIgQ29ycG9yYXRpb24NCj4gDQo+IFNlbmQgdGhpcyBh
+cyBhIHNlcGFyYXRlIHBhdGNoIHRvIHRoZSBEVCBiaW5kaW5ncyBtYWludGFpbmVyDQo+IChSb2Ig
+SGVycmluZy4pDQo+IA0KDQpPSy4gSSB3aWxsIGNyZWF0ZSBhIHNlcGFyYXRlIHBhdGNoIHdpdGgg
+dGhpcyBvbmUuIA0KSSBndWVzcyBpcyBub3QgYW4gaXNzdWUgdG8gc2VuZCBhbGwgdGhlIHBhdGNo
+ZXMgdG8gUm9iIGFzIHdlbGwuDQoNCjxzbmlwPg0KDQo+ID4gKw0KPiA+ICsgICAgICAgcmV0ID0g
+eHJhMTQwM19nZXRfYnl0ZSh4cmEsIGFkZHIgKyAoYml0ID4gNykpOw0KPiA+ICsgICAgICAgaWYg
+KHJldCA8IDApDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiByZXQ7DQo+ID4gKw0KPiA+ICsg
+ICAgICAgcmV0dXJuICEhKHJldCAmIEJJVChiaXQgJSA4KSk7DQo+ID4gK30NCj4gDQo+IFRoaXMg
+bG9va3MgbGlrZSBpdCBjYW4gdXNlIHJlZ21hcC1zcGkgcmlnaHQgb2ZmLCBkbyB5b3UgYWdyZWU/
+DQo+IA0KDQpZZXMuIFVzaW5nIHJlZ21hcC1zcGkgd2lsbCBkZWZpbml0ZWx5IGltcHJvdmUgdGhl
+IGNvZGUgcmVhZGFiaWxpdHkgYW5kIHJlZHVjZSBib2lsZXJwbGF0ZS4NCkRvbmUuDQoNCj4gZ2l0
+IGdyZXAgZGV2bV9yZWdtYXBfaW5pdF9zcGkNCj4gc2hvdWxkIGdpdmUgeW91IHNvbWUgZXhhbXBs
+ZXMgb2YgaG93IHRvIHVzZSBpdC4NCj4gDQo+IElmIGl0J3Mgbm90IG9mZi10aGUgc2hlbGYgcmVn
+bWFwIGRyaXZlcnMgbGlrZQ0KPiBkcml2ZXJzL2lpby9wcmVzc3VyZS9tcGwxMTVfc3BpLmMNCj4g
+Z2l2ZSBleGFtcGxlcyBvZiBob3cgdG8gbWFrZSBtb3JlIGVsYWJvcmF0ZSBjdXN0b20NCj4gU1BJ
+IHRyYW5zZmVycyB3aXRoIHJlZ21hcC4NCj4gDQoNClRoYW5rcywgSSBkaWQgY2hlY2sgb3RoZXIg
+ZHJpdmVycyBhcyBleGFtcGxlcy4gDQpOb3QgdGhhdCBJIG5lZWRlZCBmb3IgdGhpcyBkcml2ZXIs
+IGJ1dCAuLi5tcGwxMTVfc3BpLmMgZG9lc24ndCBzZWVtIHRvDQp1c2UgcmVnbWFwIChjaGVja2Vk
+IG9uIG5leHQtMjAxNzAzMjcpDQoNCjxzbmlwPg0KDQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKHZh
+bHVlICE9IHJldCkgew0KPiA+ICsgICAgICAgICAgICAgICB0eFswXSA9IGFkZHIgPDwgMTsNCj4g
+PiArICAgICAgICAgICAgICAgdHhbMV0gPSB2YWx1ZTsNCj4gPiArICAgICAgICAgICAgICAgcmV0
+ID0gc3BpX3dyaXRlKHhyYS0+c3BpLCB0eCwgc2l6ZW9mKHR4KSk7DQo+ID4gKyAgICAgICB9IGVs
+c2Ugew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSAwOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsN
+Cj4gPiArb3V0X3VubG9jazoNCj4gPiArICAgICAgIG11dGV4X3VubG9jaygmeHJhLT5sb2NrKTsN
+Cj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICt9DQo+IA0KPiBDbGFzc2ljYWwg
+bWFzay1hbmQtc2V0IGltcGxlbWVudGF0aW9uIHJpZ2h0Pw0KPiBXaXRoIHJlZ21hcCB0aGlzIGJl
+Y29tZXMgc2ltcGx5IHJlZ21hcF91cGRhdGVfYml0cyhtYXAsIGFkZHIsIG1hc2ssIHNldCkNCj4g
+DQoNClRydWUuIDopDQoNCjxzbmlwPg0KDQo+ID4gKyAgICAgICAvKiBicmluZyB0aGUgY2hpcCBv
+dXQgb2YgcmVzZXQgKi8NCj4gPiArICAgICAgIHJlc2V0X2dwaW8gPSBncGlvZF9nZXRfb3B0aW9u
+YWwoJnNwaS0+ZGV2LCAicmVzZXQiLCBHUElPRF9PVVRfTE9XKTsNCj4gPiArICAgICAgIGlmIChJ
+U19FUlIocmVzZXRfZ3BpbykpDQo+ID4gKyAgICAgICAgICAgICAgIGRldl93YXJuKCZzcGktPmRl
+diwgImNvdWxkIG5vdCBnZXQgcmVzZXQtZ3Bpb3NcbiIpOw0KPiA+ICsgICAgICAgZWxzZSBpZiAo
+cmVzZXRfZ3BpbykNCj4gPiArICAgICAgICAgICAgICAgZ3Bpb2RfcHV0KHJlc2V0X2dwaW8pOw0K
+PiANCj4gSSBkb24ndCB0aGluayB5b3Ugc2hvdWxkIHB1dCBpdCwgb3RoZXIgdGhhbiBpbiB0aGUg
+cmVtb3ZlKCkNCj4gZnVuY3Rpb24gYW5kIGluIHRoYXQgY2FzZSB5b3UgbmVlZCB0byBoYXZlIGl0
+IGluIHRoZQ0KPiBzdGF0ZSBjb250YWluZXIuDQoNCkNhbiB5b3UgcGxlYXNlIGJlIG1vcmUgZXhw
+bGljaXQgaGVyZS4NCg0KQ3VycmVudGx5IEknbSB0cnlpbmcgdG8gYnJpbmcgdGhlIGRldmljZSBv
+dXQgZnJvbSByZXNldCBpbiBjYXNlIHJlc2V0IEdQSU8gaXMgcHJvdmlkZWQuDQpJIGRvbid0IHNl
+ZSBob3cgdGhpcyBjb3VsZCBiZSBkb25lIGluIHJlbW92ZSgpICA6KQ0KDQo+IA0KPiA+ICsgICAg
+ICAgbXV0ZXhfaW5pdCgmeHJhLT5sb2NrKTsNCj4gPiArDQo+ID4gKyAgICAgICB4cmEtPmNoaXAu
+ZGlyZWN0aW9uX2lucHV0ID0geHJhMTQwM19kaXJlY3Rpb25faW5wdXQ7DQo+ID4gKyAgICAgICB4
+cmEtPmNoaXAuZGlyZWN0aW9uX291dHB1dCA9IHhyYTE0MDNfZGlyZWN0aW9uX291dHB1dDsNCj4g
+DQo+IFBsZWFzZSBpbXBsZW1lbnQgLmdldF9kaXJlY3Rpb24oKS4gVGhpcyBpcyB2ZXJ5IG5pY2Ug
+dG8gaGF2ZS4NCj4gDQoNCkRvbmUNCg0KPiA+ICtzdGF0aWMgaW50IHhyYTE0MDNfcmVtb3ZlKHN0
+cnVjdCBzcGlfZGV2aWNlICpzcGkpDQo+ID4gK3sNCj4gPiArICAgICAgIHN0cnVjdCB4cmExNDAz
+ICp4cmEgPSBzcGlfZ2V0X2RydmRhdGEoc3BpKTsNCj4gPiArDQo+ID4gKyAgICAgICBncGlvY2hp
+cF9yZW1vdmUoJnhyYS0+Y2hpcCk7DQo+IA0KPiBVc2UgZGV2bV9ncGlvY2hpcF9hZGRfZGF0YSgp
+IGFuZCB0aGlzIHJlbW92ZSBpcyBub3QNCj4gbmVlZGVkIGF0IGFsbC4NCj4gDQoNClRydWUuIERv
+bmUNCg0KPHNuaXA+DQoNCj4gPiArc3Vic3lzX2luaXRjYWxsKHhyYTE0MDNfaW5pdCk7DQo+ID4g
+Kw0KPiA+ICtzdGF0aWMgdm9pZCBfX2V4aXQgeHJhMTQwM19leGl0KHZvaWQpDQo+ID4gK3sNCj4g
+PiArICAgICAgIHNwaV91bnJlZ2lzdGVyX2RyaXZlcigmeHJhMTQwM19kcml2ZXIpOw0KPiA+ICt9
+DQo+ID4gK21vZHVsZV9leGl0KHhyYTE0MDNfZXhpdCk7DQo+IA0KPiBUaGlzIHNlZW1zIGxpa2Ug
+dHJpY2tzeS4gSnVzdCBtb2R1bGVfc3BpX2RyaXZlcigpDQo+IHNob3VsZCBiZSBmaW5lIGRvbid0
+IHlvdSB0aGluaz8NCg0KWWVhaC4gVEJIIEkgZG9uJ3QgaGF2ZSBhIHN0cm9uZyByZWFzb24gd2h5
+IG1vZHVsZV9zcGlfZHJpdmVyIGluaXQgbGV2ZWwgc2hvdWxkbid0IGJlIGVub3VnaC4gDQpEb25l
+Lg0KDQpSZWdhcmRzLA0KICAgIE5hbmRvcg0K
