@@ -1,141 +1,344 @@
-From: David Howells <dhowells@redhat.com>
-Subject: [PATCH 08/38] Annotate hardware config module parameters in
- drivers/gpio/
-Date: Wed, 05 Apr 2017 17:57:54 +0100
-Message-ID: <149141147489.29162.566616944109123278.stgit@warthog.procyon.org.uk>
-References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: wm_adsp: Add support for ADSP2V2" to the asoc tree
+Date: Wed, 05 Apr 2017 18:31:04 +0100
+Message-ID: <E1cvols-0000rQ-7f@debutante>
+References: <1491386884-30689-12-git-send-email-rf@opensource.wolfsonmicro.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:54874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756002AbdDEQ56 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 5 Apr 2017 12:57:58 -0400
-In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52750 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754375AbdDERbQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Apr 2017 13:31:16 -0400
+In-Reply-To: <1491386884-30689-12-git-send-email-rf@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, gnomes@lxorguk.ukuu.org.uk, gregkh@linuxfoundation.org, Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, dhowells@redhat.com, linux-gpio@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Mark Brown <broonie@kernel.org>, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, lee.jones@linaro.orgbroonie@kernel.org, linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.orgalsa-devel@alsa-project.org
 
-When the kernel is running in secure boot mode, we lock down the kernel to
-prevent userspace from modifying the running kernel image.  Whilst this
-includes prohibiting access to things like /dev/mem, it must also prevent
-access by means of configuring driver modules in such a way as to cause a
-device to access or modify the kernel image.
+The patch
 
-To this end, annotate module_param* statements that refer to hardware
-configuration and indicate for future reference what type of parameter they
-specify.  The parameter parser in the core sees this information and can
-skip such parameters with an error message if the kernel is locked down.
-The module initialisation then runs as normal, but just sees whatever the
-default values for those parameters is.
+   ASoC: wm_adsp: Add support for ADSP2V2
 
-Note that we do still need to do the module initialisation because some
-drivers have viable defaults set in case parameters aren't specified and
-some drivers support automatic configuration (e.g. PNP or PCI) in addition
-to manually coded parameters.
+has been applied to the asoc tree at
 
-This patch annotates drivers in drivers/gpio/.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-cc: Alexandre Courbot <gnurou@gmail.com>
-cc: linux-gpio@vger.kernel.org
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e1ea1879f2889a26370bd0bc29c1e95caf9d36f2 Mon Sep 17 00:00:00 2001
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Date: Wed, 5 Apr 2017 11:07:59 +0100
+Subject: [PATCH] ASoC: wm_adsp: Add support for ADSP2V2
+
+Adds support for ADSP2V2 cores. Primary differences are that
+they use a 32-bit register map compared to the 16-bit register
+map of ADSP2V1, and there are some changes to clocking control.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ sound/soc/codecs/wm_adsp.c | 187 ++++++++++++++++++++++++++++++++++-----------
+ sound/soc/codecs/wm_adsp.h |   1 +
+ 2 files changed, 145 insertions(+), 43 deletions(-)
 
- drivers/gpio/gpio-104-dio-48e.c |    4 ++--
- drivers/gpio/gpio-104-idi-48.c  |    4 ++--
- drivers/gpio/gpio-104-idio-16.c |    4 ++--
- drivers/gpio/gpio-gpio-mm.c     |    2 +-
- drivers/gpio/gpio-ws16c48.c     |    4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index 17bd2ab4ebe2..dfa1a298e4f6 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -33,11 +33,11 @@
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index bbdb72f73df1..a9acf222b502 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -112,17 +112,22 @@
+ #define ADSP1_CLK_SEL_SHIFT                    0  /* CLK_SEL_ENA */
+ #define ADSP1_CLK_SEL_WIDTH                    3  /* CLK_SEL_ENA */
  
- static unsigned int base[MAX_NUM_DIO48E];
- static unsigned int num_dio48e;
--module_param_array(base, uint, &num_dio48e, 0);
-+module_param_hw_array(base, uint, ioport, &num_dio48e, 0);
- MODULE_PARM_DESC(base, "ACCES 104-DIO-48E base addresses");
+-#define ADSP2_CONTROL        0x0
+-#define ADSP2_CLOCKING       0x1
+-#define ADSP2_STATUS1        0x4
+-#define ADSP2_WDMA_CONFIG_1 0x30
+-#define ADSP2_WDMA_CONFIG_2 0x31
+-#define ADSP2_RDMA_CONFIG_1 0x34
+-
+-#define ADSP2_SCRATCH0        0x40
+-#define ADSP2_SCRATCH1        0x41
+-#define ADSP2_SCRATCH2        0x42
+-#define ADSP2_SCRATCH3        0x43
++#define ADSP2_CONTROL                     0x0
++#define ADSP2_CLOCKING                    0x1
++#define ADSP2V2_CLOCKING                  0x2
++#define ADSP2_STATUS1                     0x4
++#define ADSP2_WDMA_CONFIG_1               0x30
++#define ADSP2_WDMA_CONFIG_2               0x31
++#define ADSP2V2_WDMA_CONFIG_2             0x32
++#define ADSP2_RDMA_CONFIG_1               0x34
++
++#define ADSP2_SCRATCH0                    0x40
++#define ADSP2_SCRATCH1                    0x41
++#define ADSP2_SCRATCH2                    0x42
++#define ADSP2_SCRATCH3                    0x43
++
++#define ADSP2V2_SCRATCH0_1                0x40
++#define ADSP2V2_SCRATCH2_3                0x42
  
- static unsigned int irq[MAX_NUM_DIO48E];
--module_param_array(irq, uint, NULL, 0);
-+module_param_hw_array(irq, uint, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "ACCES 104-DIO-48E interrupt line numbers");
+ /*
+  * ADSP2 Control
+@@ -153,6 +158,17 @@
+ #define ADSP2_CLK_SEL_WIDTH                    3  /* CLK_SEL_ENA */
  
- /**
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index 568375a7ebc2..c369b2083876 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -33,11 +33,11 @@
+ /*
++ * ADSP2V2 clocking
++ */
++#define ADSP2V2_CLK_SEL_MASK             0x70000  /* CLK_SEL_ENA */
++#define ADSP2V2_CLK_SEL_SHIFT                 16  /* CLK_SEL_ENA */
++#define ADSP2V2_CLK_SEL_WIDTH                  3  /* CLK_SEL_ENA */
++
++#define ADSP2V2_RATE_MASK                 0x7800  /* DSP_RATE */
++#define ADSP2V2_RATE_SHIFT                    11  /* DSP_RATE */
++#define ADSP2V2_RATE_WIDTH                     4  /* DSP_RATE */
++
++/*
+  * ADSP2 Status 1
+  */
+ #define ADSP2_RAM_RDY                     0x0001
+@@ -683,6 +699,9 @@ static const struct soc_enum wm_adsp_fw_enum[] = {
+ 	SOC_ENUM_SINGLE(0, 1, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ 	SOC_ENUM_SINGLE(0, 2, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ 	SOC_ENUM_SINGLE(0, 3, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
++	SOC_ENUM_SINGLE(0, 4, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
++	SOC_ENUM_SINGLE(0, 5, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
++	SOC_ENUM_SINGLE(0, 6, ARRAY_SIZE(wm_adsp_fw_text), wm_adsp_fw_text),
+ };
  
- static unsigned int base[MAX_NUM_IDI_48];
- static unsigned int num_idi_48;
--module_param_array(base, uint, &num_idi_48, 0);
-+module_param_hw_array(base, uint, ioport, &num_idi_48, 0);
- MODULE_PARM_DESC(base, "ACCES 104-IDI-48 base addresses");
+ const struct snd_kcontrol_new wm_adsp_fw_controls[] = {
+@@ -694,6 +713,12 @@ const struct snd_kcontrol_new wm_adsp_fw_controls[] = {
+ 		     wm_adsp_fw_get, wm_adsp_fw_put),
+ 	SOC_ENUM_EXT("DSP4 Firmware", wm_adsp_fw_enum[3],
+ 		     wm_adsp_fw_get, wm_adsp_fw_put),
++	SOC_ENUM_EXT("DSP5 Firmware", wm_adsp_fw_enum[4],
++		     wm_adsp_fw_get, wm_adsp_fw_put),
++	SOC_ENUM_EXT("DSP6 Firmware", wm_adsp_fw_enum[5],
++		     wm_adsp_fw_get, wm_adsp_fw_put),
++	SOC_ENUM_EXT("DSP7 Firmware", wm_adsp_fw_enum[6],
++		     wm_adsp_fw_get, wm_adsp_fw_put),
+ };
+ EXPORT_SYMBOL_GPL(wm_adsp_fw_controls);
  
- static unsigned int irq[MAX_NUM_IDI_48];
--module_param_array(irq, uint, NULL, 0);
-+module_param_hw_array(irq, uint, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
+@@ -750,6 +775,29 @@ static void wm_adsp2_show_fw_status(struct wm_adsp *dsp)
+ 		 be16_to_cpu(scratch[3]));
+ }
  
- /**
-diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
-index 7053cf736648..5949123986f2 100644
---- a/drivers/gpio/gpio-104-idio-16.c
-+++ b/drivers/gpio/gpio-104-idio-16.c
-@@ -33,11 +33,11 @@
++static void wm_adsp2v2_show_fw_status(struct wm_adsp *dsp)
++{
++	u32 scratch[2];
++	int ret;
++
++	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
++			      scratch, sizeof(scratch));
++
++	if (ret) {
++		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
++		return;
++	}
++
++	scratch[0] = be32_to_cpu(scratch[0]);
++	scratch[1] = be32_to_cpu(scratch[1]);
++
++	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
++		 scratch[0] & 0xFFFF,
++		 scratch[0] >> 16,
++		 scratch[1] & 0xFFFF,
++		 scratch[1] >> 16);
++}
++
+ static inline struct wm_coeff_ctl *bytes_ext_to_ctl(struct soc_bytes_ext *ext)
+ {
+ 	return container_of(ext, struct wm_coeff_ctl, bytes_ext);
+@@ -2435,10 +2483,17 @@ static int wm_adsp2_ena(struct wm_adsp *dsp)
+ 	unsigned int val;
+ 	int ret, count;
  
- static unsigned int base[MAX_NUM_IDIO_16];
- static unsigned int num_idio_16;
--module_param_array(base, uint, &num_idio_16, 0);
-+module_param_hw_array(base, uint, ioport, &num_idio_16, 0);
- MODULE_PARM_DESC(base, "ACCES 104-IDIO-16 base addresses");
+-	ret = regmap_update_bits_async(dsp->regmap, dsp->base + ADSP2_CONTROL,
+-				       ADSP2_SYS_ENA, ADSP2_SYS_ENA);
+-	if (ret != 0)
+-		return ret;
++	switch (dsp->rev) {
++	case 0:
++		ret = regmap_update_bits_async(dsp->regmap,
++					       dsp->base + ADSP2_CONTROL,
++					       ADSP2_SYS_ENA, ADSP2_SYS_ENA);
++		if (ret != 0)
++			return ret;
++		break;
++	default:
++		break;
++	}
  
- static unsigned int irq[MAX_NUM_IDIO_16];
--module_param_array(irq, uint, NULL, 0);
-+module_param_hw_array(irq, uint, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
+ 	/* Wait for the RAM to start, should be near instantaneous */
+ 	for (count = 0; count < 10; ++count) {
+@@ -2497,11 +2552,17 @@ static void wm_adsp2_boot_work(struct work_struct *work)
+ 	if (ret != 0)
+ 		goto err_ena;
  
- /**
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index fa4baa2543db..11ade5b288f8 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -31,7 +31,7 @@
+-	/* Turn DSP back off until we are ready to run */
+-	ret = regmap_update_bits(dsp->regmap, dsp->base + ADSP2_CONTROL,
+-				 ADSP2_SYS_ENA, 0);
+-	if (ret != 0)
+-		goto err_ena;
++	switch (dsp->rev) {
++	case 0:
++		/* Turn DSP back off until we are ready to run */
++		ret = regmap_update_bits(dsp->regmap, dsp->base + ADSP2_CONTROL,
++					 ADSP2_SYS_ENA, 0);
++		if (ret != 0)
++			goto err_ena;
++		break;
++	default:
++		break;
++	}
  
- static unsigned int base[MAX_NUM_GPIOMM];
- static unsigned int num_gpiomm;
--module_param_array(base, uint, &num_gpiomm, 0);
-+module_param_hw_array(base, uint, ioport, &num_gpiomm, 0);
- MODULE_PARM_DESC(base, "Diamond Systems GPIO-MM base addresses");
+ 	dsp->booted = true;
  
- /**
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 901b5ccb032d..f8a4f91f36c7 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -30,11 +30,11 @@
+@@ -2523,12 +2584,21 @@ static void wm_adsp2_set_dspclk(struct wm_adsp *dsp, unsigned int freq)
+ {
+ 	int ret;
  
- static unsigned int base[MAX_NUM_WS16C48];
- static unsigned int num_ws16c48;
--module_param_array(base, uint, &num_ws16c48, 0);
-+module_param_hw_array(base, uint, ioport, &num_ws16c48, 0);
- MODULE_PARM_DESC(base, "WinSystems WS16C48 base addresses");
+-	ret = regmap_update_bits_async(dsp->regmap,
+-				       dsp->base + ADSP2_CLOCKING,
+-				       ADSP2_CLK_SEL_MASK,
+-				       freq << ADSP2_CLK_SEL_SHIFT);
+-	if (ret != 0)
+-		adsp_err(dsp, "Failed to set clock rate: %d\n", ret);
++	switch (dsp->rev) {
++	case 0:
++		ret = regmap_update_bits_async(dsp->regmap,
++					       dsp->base + ADSP2_CLOCKING,
++					       ADSP2_CLK_SEL_MASK,
++					       freq << ADSP2_CLK_SEL_SHIFT);
++		if (ret) {
++			adsp_err(dsp, "Failed to set clock rate: %d\n", ret);
++			return;
++		}
++		break;
++	default:
++		/* clock is handled by parent codec driver */
++		break;
++	}
+ }
  
- static unsigned int irq[MAX_NUM_WS16C48];
--module_param_array(irq, uint, NULL, 0);
-+module_param_hw_array(irq, uint, irq, NULL, 0);
- MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
+ int wm_adsp2_preloader_get(struct snd_kcontrol *kcontrol,
+@@ -2664,22 +2734,46 @@ int wm_adsp2_event(struct snd_soc_dapm_widget *w,
+ 		wm_adsp_signal_event_controls(dsp, WM_ADSP_FW_EVENT_SHUTDOWN);
  
- /**
+ 		/* Log firmware state, it can be useful for analysis */
+-		wm_adsp2_show_fw_status(dsp);
++		switch (dsp->rev) {
++		case 0:
++			wm_adsp2_show_fw_status(dsp);
++			break;
++		default:
++			wm_adsp2v2_show_fw_status(dsp);
++			break;
++		}
+ 
+ 		mutex_lock(&dsp->pwr_lock);
+ 
+ 		dsp->running = false;
+ 
+-		regmap_update_bits(dsp->regmap, dsp->base + ADSP2_CONTROL,
++		regmap_update_bits(dsp->regmap,
++				   dsp->base + ADSP2_CONTROL,
+ 				   ADSP2_CORE_ENA | ADSP2_START, 0);
+ 
+ 		/* Make sure DMAs are quiesced */
+-		regmap_write(dsp->regmap, dsp->base + ADSP2_RDMA_CONFIG_1, 0);
+-		regmap_write(dsp->regmap, dsp->base + ADSP2_WDMA_CONFIG_1, 0);
+-		regmap_write(dsp->regmap, dsp->base + ADSP2_WDMA_CONFIG_2, 0);
+-
+-		regmap_update_bits(dsp->regmap, dsp->base + ADSP2_CONTROL,
+-				   ADSP2_SYS_ENA, 0);
++		switch (dsp->rev) {
++		case 0:
++			regmap_write(dsp->regmap,
++				     dsp->base + ADSP2_RDMA_CONFIG_1, 0);
++			regmap_write(dsp->regmap,
++				     dsp->base + ADSP2_WDMA_CONFIG_1, 0);
++			regmap_write(dsp->regmap,
++				     dsp->base + ADSP2_WDMA_CONFIG_2, 0);
++
++			regmap_update_bits(dsp->regmap,
++					   dsp->base + ADSP2_CONTROL,
++					   ADSP2_SYS_ENA, 0);
++			break;
++		default:
++			regmap_write(dsp->regmap,
++				     dsp->base + ADSP2_RDMA_CONFIG_1, 0);
++			regmap_write(dsp->regmap,
++				     dsp->base + ADSP2_WDMA_CONFIG_1, 0);
++			regmap_write(dsp->regmap,
++				     dsp->base + ADSP2V2_WDMA_CONFIG_2, 0);
++			break;
++		}
+ 
+ 		if (wm_adsp_fw[dsp->fw].num_caps != 0)
+ 			wm_adsp_buffer_free(dsp);
+@@ -2732,15 +2826,22 @@ int wm_adsp2_init(struct wm_adsp *dsp)
+ {
+ 	int ret;
+ 
+-	/*
+-	 * Disable the DSP memory by default when in reset for a small
+-	 * power saving.
+-	 */
+-	ret = regmap_update_bits(dsp->regmap, dsp->base + ADSP2_CONTROL,
+-				 ADSP2_MEM_ENA, 0);
+-	if (ret != 0) {
+-		adsp_err(dsp, "Failed to clear memory retention: %d\n", ret);
+-		return ret;
++	switch (dsp->rev) {
++	case 0:
++		/*
++		 * Disable the DSP memory by default when in reset for a small
++		 * power saving.
++		 */
++		ret = regmap_update_bits(dsp->regmap, dsp->base + ADSP2_CONTROL,
++					 ADSP2_MEM_ENA, 0);
++		if (ret) {
++			adsp_err(dsp,
++				 "Failed to clear memory retention: %d\n", ret);
++			return ret;
++		}
++		break;
++	default:
++		break;
+ 	}
+ 
+ 	INIT_LIST_HEAD(&dsp->alg_regions);
+diff --git a/sound/soc/codecs/wm_adsp.h b/sound/soc/codecs/wm_adsp.h
+index 3706b11053a3..997227f4d404 100644
+--- a/sound/soc/codecs/wm_adsp.h
++++ b/sound/soc/codecs/wm_adsp.h
+@@ -40,6 +40,7 @@ struct wm_adsp_compr_buf;
+ 
+ struct wm_adsp {
+ 	const char *part;
++	int rev;
+ 	int num;
+ 	int type;
+ 	struct device *dev;
+-- 
+2.11.0
 
