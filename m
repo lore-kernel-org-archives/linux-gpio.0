@@ -1,50 +1,47 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: question about concurrent regmap i2c usage
-Date: Wed, 5 Apr 2017 08:31:15 +0200
-Message-ID: <4929e112-9a08-8b9c-f64e-fd2ffaf8b45e@analog.com>
-References: <76471664-425b-c386-3ad8-efeabc2eaf7e@analog.com>
- <20170404122654.dfhtvpcnngl3gfco@sirena.org.uk>
-Reply-To: <michael.hennerich@analog.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7794: swap ATA signals
+Date: Wed, 5 Apr 2017 09:22:34 +0200
+Message-ID: <CAMuHMdX6-CEL6c8say8VkRkvhXCSBPCTDZzpqRJTbTjeBXpP9w@mail.gmail.com>
+References: <20170404202025.306556752@cogentembedded.com> <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0065.outbound.protection.outlook.com ([104.47.38.65]:24596
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753062AbdDEG3y (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 5 Apr 2017 02:29:54 -0400
-In-Reply-To: <20170404122654.dfhtvpcnngl3gfco@sirena.org.uk>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36361 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbdDEHWg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Apr 2017 03:22:36 -0400
+In-Reply-To: <d3c8c307-934e-511d-486f-0d5ced2e54c5@cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linus.walleij@linaro.org, wsa@the-dreams.de, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 04.04.2017 14:26, Mark Brown wrote:
-> On Tue, Apr 04, 2017 at 10:28:23AM +0200, Michael Hennerich wrote:
->
->> A question came up, regarding whether it's recommended to mix regmap_i2c and
->> plain i2c_smbus or direct adapter transfers.
->
->> In this specific case for the i2c MUX portion we need to avoid double locks,
->> and therefore use un-locked direct adapter transfers.
->
->> The same time we also implement a small gpiochip, where we would like to use
->> regmap to avoid some boilerplate code for the register cache.
->
-> That should work fine providing nothing tries to change cached registers
-> underneath the regmap.  regmap won't be able to tell anything's changed
-> otherwise.
+Hi Sergei,
 
-Hi Mark,
+On Tue, Apr 4, 2017 at 10:22 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 04/04/2017 11:20 PM, Sergei Shtylyov wrote:
+>> All R8A7794 manuals  I have here (0.50 and 1.10) agree that the PFC driver
+>> has ATAG0#  and ATAWR# signals in IPSR12 swapped -- fix this.
 
-Thanks for confirmation!
+Thanks!
 
--- 
-Greetings,
-Michael
+>    Oops, ATAWR0#. Do I need to resend?
+
+No, I can handle that.
+
+>> Fixes: 43c4436e2f18 ("pinctrl: sh-pfc: add R8A7794 PFC support")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --
-Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
-Sitz der Gesellschaft München, Registergericht München HRB 40368,
-Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
