@@ -1,39 +1,49 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 07/16] regulator: madera-micsupp: Mic
- supply for Cirrus Logic Madera codecs
-Date: Wed, 5 Apr 2017 14:53:57 +0100
-Message-ID: <1491400437.4096.5.camel@rf-debian.wolfsonmicro.main>
-References: <1491386884-30689-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1491386884-30689-8-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170405134054.kz3j56vza4pqki75@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20170405134054.kz3j56vza4pqki75@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, tglx@linutronix.de, lee.jones@linaro.org
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH v4 4/9] arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
+Date: Wed,  5 Apr 2017 16:07:22 +0200
+Message-ID: <1491401247-7030-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:47295 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932698AbdDEOHx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Apr 2017 10:07:53 -0400
+In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 2017-04-05 at 14:40 +0100, Mark Brown wrote:
-> On Wed, Apr 05, 2017 at 11:07:55AM +0100, Richard Fitzgerald wrote:
-> > The adds a driver for the microphone supply regulator on Cirrus Logic
-> > Madera class codecs.
-> 
-> Again, this appears to have only data and minor code style changes
-> relative to the existing arizona driver - is there no opportunity for
-> code sharing here?
+Add dt-bindings for Renesas r7s72100 pin controller header file.
 
-I'll have a look at how it would work out.
-My thought was that these two regulator drivers are so small it wasn't
-worth creating an entanglement between arizona and madera for so little
-code.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+
+diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+new file mode 100644
+index 0000000..6b609fe
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+@@ -0,0 +1,16 @@
++/*
++ * Defines macros and constants for Renesas RZ/A1 pin controller pin
++ * muxing functions.
++ */
++#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
++
++#define RZA1_PINS_PER_PORT	16
++
++/*
++ * Create the pin index from its bank and position numbers and store in
++ * the upper 16 bits the alternate function identifier
++ */
++#define RZA1_PINMUX(b, p, f)	((b) * RZA1_PINS_PER_PORT + (p) | (f << 16))
++
++#endif /* __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H */
+-- 
+2.7.4
+
