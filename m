@@ -1,333 +1,141 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v4 5/7] pinctrl: aramda-37xx: Add irqchip support
-Date: Wed, 05 Apr 2017 18:03:27 +0200
-Message-ID: <87d1cq6dv4.fsf@free-electrons.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
- <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
- <70ffe3343c13d01737bf74e5de4898d0c0be07a0.1491405475.git-series.gregory.clement@free-electrons.com>
+From: David Howells <dhowells@redhat.com>
+Subject: [PATCH 08/38] Annotate hardware config module parameters in
+ drivers/gpio/
+Date: Wed, 05 Apr 2017 17:57:54 +0100
+Message-ID: <149141147489.29162.566616944109123278.stgit@warthog.procyon.org.uk>
+References: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <70ffe3343c13d01737bf74e5de4898d0c0be07a0.1491405475.git-series.gregory.clement@free-electrons.com>
- (Gregory CLEMENT's message of "Wed, 5 Apr 2017 17:18:06 +0200")
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Neta Zur Hershkovits <neta@marvell.com>, Victor Gu <xigu@marvell.com>, Hua Jing <jinghua@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:54874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756002AbdDEQ56 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 5 Apr 2017 12:57:58 -0400
+In-Reply-To: <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, gnomes@lxorguk.ukuu.org.uk, gregkh@linuxfoundation.org, Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, dhowells@redhat.com, linux-gpio@vger.kernel.org, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 
+When the kernel is running in secure boot mode, we lock down the kernel to
+prevent userspace from modifying the running kernel image.  Whilst this
+includes prohibiting access to things like /dev/mem, it must also prevent
+access by means of configuring driver modules in such a way as to cause a
+device to access or modify the kernel image.
 
-Argh, I sill have the typo in the title of this patch! :(
+To this end, annotate module_param* statements that refer to hardware
+configuration and indicate for future reference what type of parameter they
+specify.  The parameter parser in the core sees this information and can
+skip such parameters with an error message if the kernel is locked down.
+The module initialisation then runs as normal, but just sees whatever the
+default values for those parameters is.
 
-If you are going to apply it could you fix it, else it will be fixed in
-the next version.
+Note that we do still need to do the module initialisation because some
+drivers have viable defaults set in case parameters aren't specified and
+some drivers support automatic configuration (e.g. PNP or PCI) in addition
+to manually coded parameters.
 
-Sorry,
+This patch annotates drivers in drivers/gpio/.
 
-Gregory
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+cc: Alexandre Courbot <gnurou@gmail.com>
+cc: linux-gpio@vger.kernel.org
+---
 
+ drivers/gpio/gpio-104-dio-48e.c |    4 ++--
+ drivers/gpio/gpio-104-idi-48.c  |    4 ++--
+ drivers/gpio/gpio-104-idio-16.c |    4 ++--
+ drivers/gpio/gpio-gpio-mm.c     |    2 +-
+ drivers/gpio/gpio-ws16c48.c     |    4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 17bd2ab4ebe2..dfa1a298e4f6 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -33,11 +33,11 @@
  
- On mer., avril 05 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+ static unsigned int base[MAX_NUM_DIO48E];
+ static unsigned int num_dio48e;
+-module_param_array(base, uint, &num_dio48e, 0);
++module_param_hw_array(base, uint, ioport, &num_dio48e, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-DIO-48E base addresses");
+ 
+ static unsigned int irq[MAX_NUM_DIO48E];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-DIO-48E interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 568375a7ebc2..c369b2083876 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -33,11 +33,11 @@
+ 
+ static unsigned int base[MAX_NUM_IDI_48];
+ static unsigned int num_idi_48;
+-module_param_array(base, uint, &num_idi_48, 0);
++module_param_hw_array(base, uint, ioport, &num_idi_48, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-IDI-48 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_IDI_48];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-IDI-48 interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 7053cf736648..5949123986f2 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -33,11 +33,11 @@
+ 
+ static unsigned int base[MAX_NUM_IDIO_16];
+ static unsigned int num_idio_16;
+-module_param_array(base, uint, &num_idio_16, 0);
++module_param_hw_array(base, uint, ioport, &num_idio_16, 0);
+ MODULE_PARM_DESC(base, "ACCES 104-IDIO-16 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_IDIO_16];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "ACCES 104-IDIO-16 interrupt line numbers");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index fa4baa2543db..11ade5b288f8 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -31,7 +31,7 @@
+ 
+ static unsigned int base[MAX_NUM_GPIOMM];
+ static unsigned int num_gpiomm;
+-module_param_array(base, uint, &num_gpiomm, 0);
++module_param_hw_array(base, uint, ioport, &num_gpiomm, 0);
+ MODULE_PARM_DESC(base, "Diamond Systems GPIO-MM base addresses");
+ 
+ /**
+diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
+index 901b5ccb032d..f8a4f91f36c7 100644
+--- a/drivers/gpio/gpio-ws16c48.c
++++ b/drivers/gpio/gpio-ws16c48.c
+@@ -30,11 +30,11 @@
+ 
+ static unsigned int base[MAX_NUM_WS16C48];
+ static unsigned int num_ws16c48;
+-module_param_array(base, uint, &num_ws16c48, 0);
++module_param_hw_array(base, uint, ioport, &num_ws16c48, 0);
+ MODULE_PARM_DESC(base, "WinSystems WS16C48 base addresses");
+ 
+ static unsigned int irq[MAX_NUM_WS16C48];
+-module_param_array(irq, uint, NULL, 0);
++module_param_hw_array(irq, uint, irq, NULL, 0);
+ MODULE_PARM_DESC(irq, "WinSystems WS16C48 interrupt line numbers");
+ 
+ /**
 
-> The Armada 37xx SoCs can handle interrupt through GPIO. However it can
-> only manage the edge ones.
->
-> The way the interrupt are managed are classical so we can use the generic
-> interrupt chip model.
->
-> The only unusual "feature" is that many interrupts are connected to the
-> parent interrupt controller. But we do not take advantage of this and use
-> the chained irq with all of them.
->
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 221 +++++++++++++++++++++-
->  1 file changed, 221 insertions(+)
->
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> index 5c96f5558310..7356516e0921 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-> @@ -13,7 +13,9 @@
->  #include <linux/gpio/driver.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_irq.h>
->  #include <linux/pinctrl/pinconf-generic.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/pinctrl/pinctrl.h>
-> @@ -30,6 +32,11 @@
->  #define OUTPUT_CTL	0x20
->  #define SELECTION	0x30
->  
-> +#define IRQ_EN		0x0
-> +#define IRQ_POL		0x08
-> +#define IRQ_STATUS	0x10
-> +#define IRQ_WKUP	0x18
-> +
->  #define NB_FUNCS 2
->  #define GPIO_PER_REG	32
->  
-> @@ -75,9 +82,12 @@ struct armada_37xx_pmx_func {
->  
->  struct armada_37xx_pinctrl {
->  	struct regmap			*regmap;
-> +	void __iomem			*base;
->  	const struct armada_37xx_pin_data	*data;
->  	struct device			*dev;
->  	struct gpio_chip		gpio_chip;
-> +	struct irq_chip			irq_chip;
-> +	spinlock_t			irq_lock;
->  	struct pinctrl_desc		pctl;
->  	struct pinctrl_dev		*pctl_dev;
->  	struct armada_37xx_pin_group	*groups;
-> @@ -346,6 +356,14 @@ static int armada_37xx_pmx_set(struct pinctrl_dev *pctldev,
->  	return armada_37xx_pmx_set_by_name(pctldev, name, grp);
->  }
->  
-> +static inline void armada_37xx_irq_update_reg(unsigned int *reg,
-> +					  struct irq_data *d)
-> +{
-> +	int offset = irqd_to_hwirq(d);
-> +
-> +	armada_37xx_update_reg(reg, offset);
-> +}
-> +
->  static int armada_37xx_gpio_direction_input(struct gpio_chip *chip,
->  					    unsigned int offset)
->  {
-> @@ -468,6 +486,206 @@ static const struct gpio_chip armada_37xx_gpiolib_chip = {
->  	.owner = THIS_MODULE,
->  };
->  
-> +void armada_37xx_irq_ack(struct irq_data *d)
-> +{
-> +	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-> +	u32 reg = IRQ_STATUS, mask = d->mask;
-> +	unsigned long flags;
-> +
-> +	armada_37xx_irq_update_reg(&reg, d);
-> +	spin_lock_irqsave(&info->irq_lock, flags);
-> +	writel(mask, info->base + reg);
-> +	spin_unlock_irqrestore(&info->irq_lock, flags);
-> +}
-> +
-> +void armada_37xx_irq_mask(struct irq_data *d)
-> +{
-> +	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-> +	u32 val, reg = IRQ_EN, mask = d->mask;
-> +	unsigned long flags;
-> +
-> +	armada_37xx_irq_update_reg(&reg, d);
-> +	spin_lock_irqsave(&info->irq_lock, flags);
-> +	val = readl(info->base + reg);
-> +	writel(val & ~mask, info->base + reg);
-> +	spin_unlock_irqrestore(&info->irq_lock, flags);
-> +}
-> +
-> +void armada_37xx_irq_unmask(struct irq_data *d)
-> +{
-> +	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-> +	u32 val, reg = IRQ_EN, mask = d->mask;
-> +	unsigned long flags;
-> +
-> +	armada_37xx_irq_update_reg(&reg, d);
-> +	spin_lock_irqsave(&info->irq_lock, flags);
-> +	val = readl(info->base + reg);
-> +	writel(val | mask, info->base + reg);
-> +	spin_unlock_irqrestore(&info->irq_lock, flags);
-> +}
-> +
-> +static int armada_37xx_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-> +	u32 val, reg = IRQ_WKUP, mask = d->mask;
-> +	unsigned long flags;
-> +
-> +	armada_37xx_irq_update_reg(&reg, d);
-> +	spin_lock_irqsave(&info->irq_lock, flags);
-> +	val = readl(info->base + reg);
-> +	if (on)
-> +		val |= mask;
-> +	else
-> +		val &= ~mask;
-> +	writel(val, info->base + reg);
-> +	spin_unlock_irqrestore(&info->irq_lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-> +	u32 val, reg = IRQ_POL, mask = d->mask;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&info->irq_lock, flags);
-> +	armada_37xx_irq_update_reg(&reg, d);
-> +	val = readl(info->base + reg);
-> +	switch (type) {
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		val &= ~mask;
-> +		break;
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		val |= mask;
-> +		break;
-> +	default:
-> +		spin_unlock_irqrestore(&info->irq_lock, flags);
-> +		return -EINVAL;
-> +	}
-> +	writel(val, info->base + reg);
-> +	spin_unlock_irqrestore(&info->irq_lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +
-> +static void armada_37xx_irq_handler(struct irq_desc *desc)
-> +{
-> +	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	struct armada_37xx_pinctrl *info = gpiochip_get_data(gc);
-> +	struct irq_domain *d = gc->irqdomain;
-> +	int i;
-> +
-> +	chained_irq_enter(chip, desc);
-> +	for (i = 0; i <= d->revmap_size / GPIO_PER_REG; i++) {
-> +		u32 status;
-> +		unsigned long flags;
-> +
-> +		spin_lock_irqsave(&info->irq_lock, flags);
-> +		status = readl_relaxed(info->base + IRQ_STATUS + 4 * i);
-> +		/* Manage only the interrupt that was enabled */
-> +		status &= readl_relaxed(info->base + IRQ_EN + 4 * i);
-> +		spin_unlock_irqrestore(&info->irq_lock, flags);
-> +		while (status) {
-> +			u32 hwirq = ffs(status) - 1;
-> +			u32 virq = irq_find_mapping(d, hwirq +
-> +						     i * GPIO_PER_REG);
-> +
-> +			generic_handle_irq(virq);
-> +			status &= ~BIT(hwirq);
-> +		}
-> +	}
-> +	chained_irq_exit(chip, desc);
-> +}
-> +
-> +static int armada_37xx_irqchip_register(struct platform_device *pdev,
-> +					struct armada_37xx_pinctrl *info)
-> +{
-> +	struct device_node *np = info->dev->of_node;
-> +	int nrirqs = info->data->nr_pins;
-> +	struct gpio_chip *gc = &info->gpio_chip;
-> +	struct irq_chip *irqchip = &info->irq_chip;
-> +	struct resource res;
-> +	int ret = -ENODEV, i, nr_irq_parent;
-> +
-> +	for_each_child_of_node(info->dev->of_node, np) {
-> +		if (of_find_property(np, "gpio-controller", NULL)) {
-> +			ret = 0;
-> +			break;
-> +		}
-> +	};
-> +	if (ret)
-> +		return ret;
-> +
-> +	nr_irq_parent = of_irq_count(np);
-> +	spin_lock_init(&info->irq_lock);
-> +
-> +	if (!nr_irq_parent) {
-> +		dev_err(&pdev->dev, "Invalid or no IRQ\n");
-> +		return 0;
-> +	}
-> +
-> +	if (of_address_to_resource(info->dev->of_node, 1, &res)) {
-> +		dev_err(info->dev, "cannot find IO resource\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	info->base = devm_ioremap_resource(info->dev, &res);
-> +	if (IS_ERR(info->base))
-> +		return PTR_ERR(info->base);
-> +
-> +	irqchip->irq_ack = armada_37xx_irq_ack;
-> +	irqchip->irq_mask = armada_37xx_irq_mask;
-> +	irqchip->irq_unmask = armada_37xx_irq_unmask;
-> +	irqchip->irq_set_wake = armada_37xx_irq_set_wake;
-> +	irqchip->irq_set_type = armada_37xx_irq_set_type;
-> +	irqchip->name = info->data->name;
-> +
-> +	ret = gpiochip_irqchip_add(gc, irqchip, 0,
-> +				   handle_edge_irq, IRQ_TYPE_NONE);
-> +	if (ret) {
-> +		dev_info(&pdev->dev, "could not add irqchip\n");
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Many interrupts are connected to the parent interrupt
-> +	 * controller. But we do not take advantage of this and use
-> +	 * the chained irq with all of them.
-> +	 */
-> +	for (i = 0; i < nrirqs; i++) {
-> +		struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
-> +
-> +		/*
-> +		 * The mask field is a "precomputed bitmask for
-> +		 * accessing the chip registers" which was introduced
-> +		 * for the generic irqchip framework. As we don't use
-> +		 * this framework, we can reuse this field for our own
-> +		 * usage.
-> +		 */
-> +		d->mask = BIT(i % GPIO_PER_REG);
-> +	}
-> +
-> +	for (i = 0; i < nr_irq_parent; i++) {
-> +		int irq = irq_of_parse_and_map(np, i);
-> +
-> +		if (irq < 0)
-> +			continue;
-> +
-> +		gpiochip_set_chained_irqchip(gc, irqchip, irq,
-> +					     armada_37xx_irq_handler);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int armada_37xx_gpiochip_register(struct platform_device *pdev,
->  					struct armada_37xx_pinctrl *info)
->  {
-> @@ -496,6 +714,9 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
->  	ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
->  	if (ret)
->  		return ret;
-> +	ret = armada_37xx_irqchip_register(pdev, info);
-> +	if (ret)
-> +		return ret;
->  
->  	return 0;
->  }
-> -- 
-> git-series 0.9.1
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
