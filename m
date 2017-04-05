@@ -1,114 +1,85 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH v4 7/7] ARM64: dts: marvell: armada37xx: add pinctrl definition
-Date: Wed,  5 Apr 2017 17:18:08 +0200
-Message-ID: <7b07bd69cd506effa716c41f8ec3dda7a7c6c563.1491405475.git-series.gregory.clement@free-electrons.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH] gpio: arizona: Correct handling for reading input GPIOs
+Date: Wed, 5 Apr 2017 16:50:46 +0100
+Message-ID: <1491407446-5891-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:45347 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933010AbdDEPtt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 5 Apr 2017 11:49:49 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-Start to populate the device tree of the Armada 37xx with the pincontrol
-configuration used on the board providing a dts.
+The GPIO register is cached since all the configuration resides within
+it, however, this means for input GPIOs the driver will not return the
+actual state but the last value written to the register cache.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+To correct this in the case of reading an input GPIO resume the CODEC
+and drop the cache for the input register to ensure an actual hardware
+read takes place.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 ---
- arch/arm64/boot/dts/marvell/armada-3720-db.dts |  8 +++++-
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi   | 31 +++++++++++++++++++-
- 2 files changed, 39 insertions(+)
+ drivers/gpio/gpio-arizona.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-index 86602c907a61..e749c5727490 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-@@ -63,6 +63,8 @@
- };
+diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
+index 1f91557..60b3102 100644
+--- a/drivers/gpio/gpio-arizona.c
++++ b/drivers/gpio/gpio-arizona.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/gpio.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/seq_file.h>
  
- &i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_pins>;
- 	status = "okay";
- };
+ #include <linux/mfd/arizona/core.h>
+@@ -41,13 +42,38 @@ static int arizona_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
+ 	struct arizona *arizona = arizona_gpio->arizona;
+-	unsigned int val;
++	unsigned int reg, val;
+ 	int ret;
  
-@@ -73,6 +75,8 @@
+-	ret = regmap_read(arizona->regmap, ARIZONA_GPIO1_CTRL + offset, &val);
++	reg = ARIZONA_GPIO1_CTRL + offset;
++	ret = regmap_read(arizona->regmap, reg, &val);
+ 	if (ret < 0)
+ 		return ret;
  
- &spi0 {
- 	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_quad_pins>;
- 
- 	m25p80@0 {
- 		compatible = "jedec,spi-nor";
-@@ -103,6 +107,8 @@
- 
- /* Exported on the micro USB connector CON32 through an FTDI */
- &uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
- 	status = "okay";
- };
- 
-@@ -128,6 +134,8 @@
- };
- 
- &eth0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>;
- 	phy-mode = "rgmii-id";
- 	phy = <&phy0>;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-index c02b13479458..2ac25f54d01d 100644
---- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-@@ -186,6 +186,31 @@
- 					clock-output-names = "xtal";
- 					#clock-cells = <0>;
- 				};
++	/* Resume to read actual registers for input pins */
++	if (!(val & ARIZONA_GPN_DIR)) {
++		ret = pm_runtime_get_sync(chip->parent);
++		if (ret < 0) {
++			dev_err(chip->parent, "Failed to resume: %d\n", ret);
++			return ret;
++		}
 +
-+				spi_quad_pins: spi-quad-pins {
-+					groups = "spi_quad";
-+					function = "spi";
-+				};
++		/* Register is cached, drop it to ensure a physical read */
++		ret = regcache_drop_region(arizona->regmap, reg, reg);
++		if (ret < 0) {
++			dev_err(chip->parent, "Failed to drop cache: %d\n",
++				ret);
++			return ret;
++		}
 +
-+				i2c1_pins: i2c1-pins {
-+					groups = "i2c1";
-+					function = "i2c";
-+				};
++		ret = regmap_read(arizona->regmap, reg, &val);
++		if (ret < 0)
++			return ret;
 +
-+				i2c2_pins: i2c2-pins {
-+					groups = "i2c2";
-+					function = "i2c";
-+				};
++		pm_runtime_mark_last_busy(chip->parent);
++		pm_runtime_put_autosuspend(chip->parent);
++	}
 +
-+				uart1_pins: uart1-pins {
-+					groups = "uart1";
-+					function = "uart";
-+				};
-+
-+				uart2_pins: uart2-pins {
-+					groups = "uart2";
-+					function = "uart";
-+				};
- 			};
- 
- 			pinctrl_sb: pinctrl-sb@18800 {
-@@ -203,6 +228,12 @@
- 					<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
- 				};
-+
-+				rgmii_pins: mii-pins {
-+					groups = "rgmii";
-+					function = "mii";
-+				};
-+
- 			};
- 
- 			eth0: ethernet@30000 {
+ 	if (val & ARIZONA_GPN_LVL)
+ 		return 1;
+ 	else
 -- 
-git-series 0.9.1
+2.1.4
+
