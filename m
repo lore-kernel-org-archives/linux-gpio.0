@@ -1,151 +1,58 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 00/12] gpio: Tight IRQ chip integration and Tegra186
- support
-Date: Fri, 7 Apr 2017 00:34:49 +0200
-Message-ID: <20170406223449.GH27728@ulmo.ba.sec>
-References: <20170403160532.20282-1-thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
+Date: Fri, 7 Apr 2017 01:10:28 +0200
+Message-ID: <CACRpkdaA9OtLn1RARF4-e5xhFGbXOnw=dNA0P=em0ApW47O0iA@mail.gmail.com>
+References: <20170330161639.1855-1-tony@atomide.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="G44BJl3Aq1QbV/QL"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35867 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752345AbdDFWew (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Apr 2017 18:34:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20170403160532.20282-1-thierry.reding@gmail.com>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:33295 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754883AbdDFXKb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Apr 2017 19:10:31 -0400
+Received: by mail-io0-f177.google.com with SMTP id t68so6111213iof.0
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Apr 2017 16:10:30 -0700 (PDT)
+In-Reply-To: <20170330161639.1855-1-tony@atomide.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>, Gary Bisson <gary.bisson@boundarydevices.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Haojian Zhuang <haojian.zhuang@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Nishanth Menon <nm@ti.com>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>
 
+On Thu, Mar 30, 2017 at 6:16 PM, Tony Lindgren <tony@atomide.com> wrote:
 
---G44BJl3Aq1QbV/QL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Recent pinctrl changes to allow dynamic allocation of pins exposed one
+> more issue with the pinctrl pins claimed early by the controller itself.
+> This caused a regression for IMX6 pinctrl hogs.
+>
+> Before enabling the pin controller driver we need to wait until it has
+> been properly initialized, then claim the hogs, and only then enable it.
+>
+> To fix the regression, split the code into pinctrl_claim_hogs() and
+> pinctrl_enable(). And then let's require that pinctrl_enable() is always
+> called by the pin controller driver when ready after calling
+> pinctrl_register_and_init().
+>
+> Depends-on: 950b0d91dc10 ("pinctrl: core: Fix regression caused by delaye=
+d
+> work for hogs")
+> Fixes: df61b366af26 ("pinctrl: core: Use delayed work for hogs")
+> Fixes: e566fc11ea76 ("pinctrl: imx: use generic pinctrl helpers for
+> managing groups")
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Gary Bisson <gary.bisson@boundarydevices.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Mika Penttil=C3=A4 <mika.penttila@nextfour.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-On Mon, Apr 03, 2017 at 06:05:20PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> Hi Linus,
->=20
-> here's a first draft of patches to make GPIOLIB_IRQCHIP flexible enough
-> to support the Tegra186 use-case. Instead of just fixing the bugs that I
-> had pointed out earlier, this goes one step further and completely
-> integrates IRQ chip registration into GPIO chip registration. The idea
-> is that drivers will initialize a set of fields (collected in a new
-> struct gpio_irq_chip) before calling gpiochip_add() (or derivatives) and
-> gpiolib will internally set up an IRQ domain and register the IRQ chip.
->=20
-> Currently this makes use of the new infrastructure only in the Tegra186
-> driver, but I plan to convert a couple of others once we can agree that
-> this is a direction that you're comfortable with.
+Patch applied for fixes with the test tags,
+sorry for slowness.
 
-Linus,
-
-any comments on this?
-
-Thierry
-
-> Thierry Reding (12):
->   gpio: Use unsigned int for interrupt numbers
->   gpio: Implement tighter IRQ chip integration
->   gpio: Move irq_nested into struct gpio_irq_chip
->   gpio: Move irqdomain into struct gpio_irq_chip
->   gpio: Move irqchip into struct gpio_irq_chip
->   gpio: Move irq_valid_mask into struct gpio_irq_chip
->   gpio: Move lock_key into struct gpio_irq_chip
->   gpio: Move irq_chained_parent to struct gpio_irq_chip
->   gpio: Move irq_default_type to struct gpio_irq_chip
->   gpio: Move irq_handler to struct gpio_irq_chip
->   gpio: Move irq_base to struct gpio_irq_chip
->   gpio: Add Tegra186 support
->=20
->  Documentation/gpio/driver.txt              |   6 +-
->  drivers/bcma/driver_gpio.c                 |   2 +-
->  drivers/gpio/Kconfig                       |   9 +
->  drivers/gpio/Makefile                      |   1 +
->  drivers/gpio/gpio-104-dio-48e.c            |   2 +-
->  drivers/gpio/gpio-104-idi-48.c             |   2 +-
->  drivers/gpio/gpio-104-idio-16.c            |   2 +-
->  drivers/gpio/gpio-adnp.c                   |   2 +-
->  drivers/gpio/gpio-altera.c                 |   4 +-
->  drivers/gpio/gpio-aspeed.c                 |   6 +-
->  drivers/gpio/gpio-ath79.c                  |   2 +-
->  drivers/gpio/gpio-brcmstb.c                |   2 +-
->  drivers/gpio/gpio-crystalcove.c            |   2 +-
->  drivers/gpio/gpio-dln2.c                   |   2 +-
->  drivers/gpio/gpio-ftgpio010.c              |   2 +-
->  drivers/gpio/gpio-intel-mid.c              |   2 +-
->  drivers/gpio/gpio-lynxpoint.c              |   2 +-
->  drivers/gpio/gpio-max732x.c                |   2 +-
->  drivers/gpio/gpio-mcp23s08.c               |   2 +-
->  drivers/gpio/gpio-merrifield.c             |   2 +-
->  drivers/gpio/gpio-mockup.c                 |  10 +-
->  drivers/gpio/gpio-omap.c                   |   2 +-
->  drivers/gpio/gpio-pca953x.c                |   2 +-
->  drivers/gpio/gpio-pcf857x.c                |   2 +-
->  drivers/gpio/gpio-pci-idio-16.c            |   2 +-
->  drivers/gpio/gpio-pl061.c                  |   2 +-
->  drivers/gpio/gpio-rcar.c                   |   2 +-
->  drivers/gpio/gpio-reg.c                    |   4 +-
->  drivers/gpio/gpio-stmpe.c                  |   6 +-
->  drivers/gpio/gpio-tc3589x.c                |   2 +-
->  drivers/gpio/gpio-tegra186.c               | 625 +++++++++++++++++++++++=
-++++++
->  drivers/gpio/gpio-vf610.c                  |   2 +-
->  drivers/gpio/gpio-wcove.c                  |   2 +-
->  drivers/gpio/gpio-ws16c48.c                |   2 +-
->  drivers/gpio/gpio-xgene-sb.c               |   2 +-
->  drivers/gpio/gpio-xlp.c                    |   2 +-
->  drivers/gpio/gpio-zx.c                     |   2 +-
->  drivers/gpio/gpio-zynq.c                   |   2 +-
->  drivers/gpio/gpiolib.c                     | 232 ++++++++---
->  drivers/pinctrl/bcm/pinctrl-bcm2835.c      |   4 +-
->  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c   |   2 +-
->  drivers/pinctrl/intel/pinctrl-baytrail.c   |   6 +-
->  drivers/pinctrl/intel/pinctrl-cherryview.c |   6 +-
->  drivers/pinctrl/intel/pinctrl-intel.c      |   2 +-
->  drivers/pinctrl/nomadik/pinctrl-nomadik.c  |   4 +-
->  drivers/pinctrl/pinctrl-amd.c              |   2 +-
->  drivers/pinctrl/pinctrl-at91.c             |   2 +-
->  drivers/pinctrl/pinctrl-coh901.c           |   2 +-
->  drivers/pinctrl/pinctrl-oxnas.c            |   2 +-
->  drivers/pinctrl/pinctrl-pic32.c            |   2 +-
->  drivers/pinctrl/pinctrl-pistachio.c        |   2 +-
->  drivers/pinctrl/pinctrl-st.c               |   2 +-
->  drivers/pinctrl/pinctrl-sx150x.c           |   2 +-
->  drivers/pinctrl/qcom/pinctrl-msm.c         |   2 +-
->  drivers/pinctrl/sirf/pinctrl-atlas7.c      |   2 +-
->  drivers/pinctrl/sirf/pinctrl-sirf.c        |   2 +-
->  drivers/pinctrl/spear/pinctrl-plgpio.c     |   2 +-
->  include/linux/gpio/driver.h                |  81 ++--
->  58 files changed, 943 insertions(+), 147 deletions(-)
->  create mode 100644 drivers/gpio/gpio-tegra186.c
->=20
-> --=20
-> 2.12.0
->=20
-
---G44BJl3Aq1QbV/QL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljmwoYACgkQ3SOs138+
-s6EDig//Zfpk4B0+Hk/jc5WWiaL32hbpfaCYheOxws7xbRR/37Rva6pUypkRlKpt
-A67Ydq/nOl/ZrZw2YVLdn7cfhVaeR8oAP823bD4o5XtY8LDzfZOHQ8Tq0WY8s9V3
-8VnjCtfmwIrKiBoNeKAF4XMPCyEK1WVGzP7xdQZoMJ/1oE+1eUq0OJ2MelCY3P7G
-ku77nGWNUMUTYtIzpLWErR8juXVgVk+NUoCx2rKIxVR8NTMLCUjbG2LXMd346rLm
-nasKjof0wtG06Lsb1ixL1XHVaEp6mFIcRvC7/kLi5Z5gj2wTplEw0Pm5UlrTCNE9
-vv9dTLyF+8DSXA57g2WP/gMac2sh3C11sTcU1fZ/wXjV5B4SwVefiQ2HcWalzpsj
-BuuNYJqI7F0wR+tJZwkqYnsr183BMboWmFgvVf/1v7kCXTfNttYiutw5u2xf7l/D
-zt/XADVzs69yvKWyCqAZ468e25DOG1MNEYkDe0JZeAASNjozKrQZKandTJ2jv1XN
-aHO7M8gwdn8mK1w6PAMwcACeetzIpPHaH0A4rzOldE0CRZhRgzZ1uTL241/qXPLF
-L+HY7kAZ71qqfI5QZguRtnT1WqFL0YS9+fyMmPOqt6ihWD4AmLF9naaOfujNn7Io
-oUOOTs+3oXJ4GPTu7Ghr8S5KUu6FFaAwT/3DiH79FRfc/r8M68E=
-=wy83
------END PGP SIGNATURE-----
-
---G44BJl3Aq1QbV/QL--
+Yours,
+Linus Walleij
