@@ -1,82 +1,58 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 13/14] pwm: jz4740: Let the pinctrl driver configure
- the pins
-Date: Thu, 6 Apr 2017 16:40:34 +0200
-Message-ID: <20170406144034.GE8438@ulmo.ba.sec>
-References: <20170125185207.23902-2-paul@crapouillou.net>
- <20170402204244.14216-1-paul@crapouillou.net>
- <20170402204244.14216-14-paul@crapouillou.net>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
+ keyboard work again
+Date: Thu, 6 Apr 2017 16:15:57 +0100
+Message-ID: <ebf75f34-4b57-b0d8-8818-6c56861f2923@arm.com>
+References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
+ <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
+ <da0935b8-245a-6920-4749-ade6eb278dba@arm.com>
+ <20170330090047.GX2957@lahna.fi.intel.com>
+ <20170406095948.GT2957@lahna.fi.intel.com>
+ <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
+ <20170406105059.GV2957@lahna.fi.intel.com>
+ <f5508b70-3cbd-bbdd-da8d-ff0bff08f835@arm.com>
+ <20170406131824.GW2957@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="brEuL7wsLY8+TuWz"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170402204244.14216-14-paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maarten ter Huurne <maarten-Ph2Y2OKCxY1M656bX5wj8A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Paul Burton <paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:44580 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752831AbdDFPQA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 6 Apr 2017 11:16:00 -0400
+In-Reply-To: <20170406131824.GW2957@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On 06/04/17 14:18, Mika Westerberg wrote:
+> On Thu, Apr 06, 2017 at 12:05:28PM +0100, Marc Zyngier wrote:
+>>> There is a proper way to use GPIOs as interrupts in ACPI, namely GpioInt
+>>> resource but it has not been used in that particular machine for some
+>>> reason.
+>>
+>> OK, that explains it. One thing you could try would be to allocate the
+>> domain as a legacy one, which allows you to specify the virtual
+>> interrupt range you require. Not sure that's any better though.
+> 
+> Yeah, then I would have to add a whole bunch of code to handle custom
+> irqdomain just to support this one machine (fingers crossed that it is
+> limited to only this particular machine).
+> 
+> If no objections, I would rather stick to the approach used in this
+> patch. I will just update the DMI strings to include BIOS version/date.
 
---brEuL7wsLY8+TuWz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fair enough. Though I have the ugly feeling that we're going to see this
+cropping up again in a couple of releases, when some ordering changes
+affect the interrupts allocated to this domain.
 
-On Sun, Apr 02, 2017 at 10:42:43PM +0200, Paul Cercueil wrote:
-> Now that the JZ4740 and similar SoCs have a pinctrl driver, we rely on
-> the pins being properly configured before the driver probes.
->=20
-> One inherent problem of this new approach is that the pinctrl framework
-> does not allow us to configure each pin on demand, when the various PWM
-> channels are requested or released. For instance, the PWM channels can
-> be configured from sysfs, which would require all PWM pins to be configur=
-ed
-> properly beforehand for the PWM function, eventually causing conflicts
-> with other platform or board drivers.
->=20
-> The proper solution here would be to modify the pwm-jz4740 driver to
-> handle only one PWM channel, and create an instance of this driver
-> for each one of the 8 PWM channels. Then, it could use the pinctrl
-> framework to dynamically configure the PWM pin it controls.
->=20
-> Until this can be done, the only jz4740 board supported upstream
-> (Qi lb60) can configure all of its connected PWM pins in PWM function
-> mode, since those are not used by other drivers nor by GPIOs on the
-> board.
->=20
-> Signed-off-by: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
-> ---
->  drivers/pwm/pwm-jz4740.c | 29 -----------------------------
->  1 file changed, 29 deletions(-)
+Another thing worth exploring would be to actually quirk the i8042
+driver to override the ACPI interrupt. That would have a better chance
+of working in the long term.
 
-Assuming that you want to take this through the pinctrl tree along with
-the remainder of the series:
+Thanks,
 
-Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
---brEuL7wsLY8+TuWz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljmU2EACgkQ3SOs138+
-s6HGABAApLsMiPuePBh0cJc9OAijswAsVlj72HCTmH1JA3qrEfhOVWZxltlReNwi
-z9upRVFfXOAux8PGiJT+0N/z5Zrkwu/haho/al14XxloMx4DSW4UWkeBAVyqBkba
-N6btN6WY2TLAMi7gav0GWbXFhspUJCncB+HqK2wmXyAhQJfBjMQ2Et1OpniwQ5fe
-v60TCWUjBY7dZtgtZ5I80tQKjYnZC6hLQoXZcBwTNvQbeIM3sl9cymdPbMXVIJH4
-dzxud0NQLfx1flI0KlEI35gpRAAfinGr5XqUYipP1JtsegR51uvpQdQ6l2WdGcBV
-9mICw0SZnFuELmPzAYXFjKEYvmOFLB9kMgVHISOgCCwFtJfIH4slY27lZLLvmUkg
-y/erHU6r8KQfjkVdxNiMcktqMOoAoHaUpWfgsBL/kE3Am0aoXXL3AFEsKY8WXbDg
-qjN3dsSIdafpEngfpz6tyxbZfPeUkpYubI4+D9T4ov5SC9JeKuPLd6TTXnGtAntx
-FNhSfWilbcbkYG1r37LpNkW8xWo904JQ7G0pn7opGScBH92xGhV3+g0MBTlTfs/8
-t1fqhL3r7+z576vncJwup/hFZq2XrjqCWjizIHKwp2q7vj8JFyN1NXrwRp0CwfJt
-IwPgbk9MEqstyCKhNIpM4qoJvvmSTQS/SC3k2JvQVGkwjWiytNM=
-=QxS9
------END PGP SIGNATURE-----
-
---brEuL7wsLY8+TuWz--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	M.
+-- 
+Jazz is not dead. It just smells funny...
