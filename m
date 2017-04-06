@@ -1,58 +1,52 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Thu, 6 Apr 2017 16:15:57 +0100
-Message-ID: <ebf75f34-4b57-b0d8-8818-6c56861f2923@arm.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
- <da0935b8-245a-6920-4749-ade6eb278dba@arm.com>
- <20170330090047.GX2957@lahna.fi.intel.com>
- <20170406095948.GT2957@lahna.fi.intel.com>
- <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
- <20170406105059.GV2957@lahna.fi.intel.com>
- <f5508b70-3cbd-bbdd-da8d-ff0bff08f835@arm.com>
- <20170406131824.GW2957@lahna.fi.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 1/1] gpio: core: Decouple open drain/source flag with
+ active low/high
+Date: Thu, 6 Apr 2017 19:10:38 +0300
+Message-ID: <CAHp75Ver7n=Xoer0YzA0sVVrcXKOB1bDz0ygSm0V0YoyYbe3pg@mail.gmail.com>
+References: <1491485752-28030-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:44580 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752831AbdDFPQA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 6 Apr 2017 11:16:00 -0400
-In-Reply-To: <20170406131824.GW2957@lahna.fi.intel.com>
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:35553 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751251AbdDFQKk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Apr 2017 12:10:40 -0400
+In-Reply-To: <1491485752-28030-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
 
-On 06/04/17 14:18, Mika Westerberg wrote:
-> On Thu, Apr 06, 2017 at 12:05:28PM +0100, Marc Zyngier wrote:
->>> There is a proper way to use GPIOs as interrupts in ACPI, namely GpioInt
->>> resource but it has not been used in that particular machine for some
->>> reason.
->>
->> OK, that explains it. One thing you could try would be to allocate the
->> domain as a legacy one, which allows you to specify the virtual
->> interrupt range you require. Not sure that's any better though.
-> 
-> Yeah, then I would have to add a whole bunch of code to handle custom
-> irqdomain just to support this one machine (fingers crossed that it is
-> limited to only this particular machine).
-> 
-> If no objections, I would rather stick to the approach used in this
-> patch. I will just update the DMI strings to include BIOS version/date.
+On Thu, Apr 6, 2017 at 4:35 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> Currently, the GPIO interface is said to Open Drain if it is Single
+> Ended and active LOW. Similarly, it is said as Open Source if it is
+> Single Ended and active HIGH.
+>
+> The active HIGH/LOW is used in the interface for setting the pin
+> state to HIGH or LOW when enabling/disabling the interface.
+>
+> In Open Drain interface, pin is set to HIGH by putting pin in
+> high impedance and LOW by driving to the LOW.
+>
+> In Open Source interface, pin is set to HIGH by driving pin to
+> HIGH and set to LOW by putting pin in high impedance.
+>
+> With above, the Open Drain/Source is unrelated to the active LOW/HIGH
+> in interface. There is interface where the enable/disable of interface
+> is ether active LOW or HIGH but it is Open Drain type.
+>
+> Hence decouple the Open Drain with Single Ended + Active LOW and
+> Open Source with Single Ended + Active HIGH.
+>
+> Adding different flag for the Open Drain/Open Source which is valid
+> only when Single ended flag is enabled.
 
-Fair enough. Though I have the ugly feeling that we're going to see this
-cropping up again in a couple of releases, when some ordering changes
-affect the interrupts allocated to this domain.
+>         if (single_ended) {
+> -               if (active_low)
+> +               if (open_drain)
 
-Another thing worth exploring would be to actually quirk the i8042
-driver to override the ACPI interrupt. That would have a better chance
-of working in the long term.
+This breaks ACPI case, right?
 
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+With Best Regards,
+Andy Shevchenko
