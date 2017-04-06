@@ -1,42 +1,95 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Thu, 6 Apr 2017 16:18:24 +0300
-Message-ID: <20170406131824.GW2957@lahna.fi.intel.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
- <da0935b8-245a-6920-4749-ade6eb278dba@arm.com>
- <20170330090047.GX2957@lahna.fi.intel.com>
- <20170406095948.GT2957@lahna.fi.intel.com>
- <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
- <20170406105059.GV2957@lahna.fi.intel.com>
- <f5508b70-3cbd-bbdd-da8d-ff0bff08f835@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: [PATCH] pinctrl: at91-pio4: handle suspend to ram
+Date: Thu,  6 Apr 2017 15:36:23 +0200
+Message-ID: <20170406133623.19160-1-alexandre.belloni@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga14.intel.com ([192.55.52.115]:8562 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934257AbdDFNVA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 6 Apr 2017 09:21:00 -0400
-Content-Disposition: inline
-In-Reply-To: <f5508b70-3cbd-bbdd-da8d-ff0bff08f835@arm.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:42935 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934233AbdDFNg3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Apr 2017 09:36:29 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-On Thu, Apr 06, 2017 at 12:05:28PM +0100, Marc Zyngier wrote:
-> > There is a proper way to use GPIOs as interrupts in ACPI, namely GpioInt
-> > resource but it has not been used in that particular machine for some
-> > reason.
-> 
-> OK, that explains it. One thing you could try would be to allocate the
-> domain as a legacy one, which allows you to specify the virtual
-> interrupt range you require. Not sure that's any better though.
+When suspending to RAM, the power to the core is cut and the register
+values are lost. Save and restore more registers than just IMR.
 
-Yeah, then I would have to add a whole bunch of code to handle custom
-irqdomain just to support this one machine (fingers crossed that it is
-limited to only this particular machine).
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+---
+ drivers/pinctrl/pinctrl-at91-pio4.c | 34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
-If no objections, I would rather stick to the approach used in this
-patch. I will just update the DMI strings to include BIOS version/date.
+diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
+index 28bbc1bb9e6c..dc8591543dee 100644
+--- a/drivers/pinctrl/pinctrl-at91-pio4.c
++++ b/drivers/pinctrl/pinctrl-at91-pio4.c
+@@ -126,7 +126,11 @@ struct atmel_pioctrl {
+ 	struct irq_domain	*irq_domain;
+ 	int			*irqs;
+ 	unsigned		*pm_wakeup_sources;
+-	unsigned		*pm_suspend_backup;
++	struct {
++		u32		imr;
++		u32		odsr;
++		u32		cfgr[ATMEL_PIO_NPINS_PER_BANK];
++	} *pm_suspend_backup;
+ 	struct device		*dev;
+ 	struct device_node	*node;
+ };
+@@ -830,17 +834,26 @@ static int __maybe_unused atmel_pctrl_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+-	int i;
++	int i, j;
+ 
+ 	/*
+ 	 * For each bank, save IMR to restore it later and disable all GPIO
+ 	 * interrupts excepting the ones marked as wakeup sources.
+ 	 */
+ 	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+-		atmel_pioctrl->pm_suspend_backup[i] =
++		atmel_pioctrl->pm_suspend_backup[i].imr =
+ 			atmel_gpio_read(atmel_pioctrl, i, ATMEL_PIO_IMR);
+ 		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_IDR,
+ 				 ~atmel_pioctrl->pm_wakeup_sources[i]);
++		atmel_pioctrl->pm_suspend_backup[i].odsr =
++			atmel_gpio_read(atmel_pioctrl, i, ATMEL_PIO_ODSR);
++		for (j = 0; j < ATMEL_PIO_NPINS_PER_BANK; j++) {
++			atmel_gpio_write(atmel_pioctrl, i,
++					 ATMEL_PIO_MSKR, BIT(j));
++			atmel_pioctrl->pm_suspend_backup[i].cfgr[j] =
++				atmel_gpio_read(atmel_pioctrl, i,
++						ATMEL_PIO_CFGR);
++		}
+ 	}
+ 
+ 	return 0;
+@@ -850,11 +863,20 @@ static int __maybe_unused atmel_pctrl_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct atmel_pioctrl *atmel_pioctrl = platform_get_drvdata(pdev);
+-	int i;
++	int i, j;
+ 
+-	for (i = 0; i < atmel_pioctrl->nbanks; i++)
++	for (i = 0; i < atmel_pioctrl->nbanks; i++) {
+ 		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_IER,
+-				 atmel_pioctrl->pm_suspend_backup[i]);
++				 atmel_pioctrl->pm_suspend_backup[i].imr);
++		atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_SODR,
++				 atmel_pioctrl->pm_suspend_backup[i].odsr);
++		for (j = 0; j < ATMEL_PIO_NPINS_PER_BANK; j++) {
++			atmel_gpio_write(atmel_pioctrl, i,
++					 ATMEL_PIO_MSKR, BIT(j));
++			atmel_gpio_write(atmel_pioctrl, i, ATMEL_PIO_CFGR,
++					 atmel_pioctrl->pm_suspend_backup[i].cfgr[j]);
++		}
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.11.0
+
