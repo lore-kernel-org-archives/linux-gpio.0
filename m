@@ -1,73 +1,78 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Thu, 6 Apr 2017 13:50:59 +0300
-Message-ID: <20170406105059.GV2957@lahna.fi.intel.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
- <da0935b8-245a-6920-4749-ade6eb278dba@arm.com>
- <20170330090047.GX2957@lahna.fi.intel.com>
- <20170406095948.GT2957@lahna.fi.intel.com>
- <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 07/16] regulator: madera-micsupp: Mic
+ supply for Cirrus Logic Madera codecs
+Date: Thu, 6 Apr 2017 11:57:44 +0100
+Message-ID: <20170406105744.f5qpmmi2pjvc7n2z@sirena.org.uk>
+References: <1491386884-30689-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1491386884-30689-8-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20170405134054.kz3j56vza4pqki75@sirena.org.uk>
+ <1491400437.4096.5.camel@rf-debian.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:22240 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753424AbdDFKvE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 6 Apr 2017 06:51:04 -0400
-Content-Disposition: inline
-In-Reply-To: <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============6717022043634860279=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1491400437.4096.5.camel@rf-debian.wolfsonmicro.main>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, tglx@linutronix.de, lee.jones@linaro.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Apr 06, 2017 at 11:32:59AM +0100, Marc Zyngier wrote:
-> On 06/04/17 10:59, Mika Westerberg wrote:
-> > On Thu, Mar 30, 2017 at 12:00:47PM +0300, Mika Westerberg wrote:
-> >>>> Isn't the right solution to translate this back to the offset from the "Linux
-> >>>> IRQ" and use that offset? This quirk seems pretty violent.
-> >>>
-> >>> I'm not sure I understand the quirk here, but my personal approach would
-> >>> be to provide an inverse mapping oldIRQ->hwirq, and use the usual
-> >>> irqdomain lookup to get back to the real thing.
-> >>
-> >> OK, thanks for tip. Let me try both approaches and see which one works
-> >> better :)
-> > 
-> > I've now looked at the issue again and I'm actually not sure if we can
-> > use either of the proposals here :/
-> > 
-> > Essentially all the Linux IRQ<->hwirq mappings are created when the
-> > gpiochip is initialized in gpiochip_irqchip_add(). Because of that, I
-> > don't see how we can change those afterwards when the i8042 keyboard
-> > driver asks for IRQ 182. Maybe I'm missing something obvious but to me
-> > the only way to go forward is to do what this patch does and add all the
-> > GPIOs to the irqdomain (if we don't want to add a custom IRQ domain for
-> > cherryview).
-> 
-> Something is very fishy here: You say that the i8042 asks for IRQ 182.
-> But surely that's a hwirq. Or is it directly poking at the ACPI table,
-> extracting a number and do a request_irq() on it? If that's the case,
-> this is a bug (or at least a severe limitation) in the i8042 driver.
 
-Yes, it gets the number 182 from ACPI tables but that's not hwirq but
-instead it is the Linux IRQ number the cherryview-pinctrl driver has
-assigned for the GPIO in question (as far as I can tell).
+--===============6717022043634860279==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5wfkgd3jlpzi3vd7"
+Content-Disposition: inline
 
-This is already reported as a bug in coreboot for the particular machine
-but we need to work it around in Linux anyway, even though it may break
-again if Linux IRQ numbering changes.
 
-> If the latter, even adding all the GPIOs to the domain do not guarantee
-> that the allocated interrupts will always be in the range you expect
-> (depending on the order of things being initialized).
-> 
-> It all feels extremely fragile to me...
+--5wfkgd3jlpzi3vd7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, it is unfortunately.
+On Wed, Apr 05, 2017 at 02:53:57PM +0100, Richard Fitzgerald wrote:
+> On Wed, 2017-04-05 at 14:40 +0100, Mark Brown wrote:
 
-There is a proper way to use GPIOs as interrupts in ACPI, namely GpioInt
-resource but it has not been used in that particular machine for some
-reason.
+> > Again, this appears to have only data and minor code style changes
+> > relative to the existing arizona driver - is there no opportunity for
+> > code sharing here?
+
+> I'll have a look at how it would work out.
+> My thought was that these two regulator drivers are so small it wasn't
+> worth creating an entanglement between arizona and madera for so little
+> code.
+
+It's a fairly small amount of code but it's an extremely high proportion
+of the code in the driver and doing something a bit unusual, not just
+boilerplate.
+
+--5wfkgd3jlpzi3vd7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljmHycACgkQJNaLcl1U
+h9DhaAf+MgOeQ1O1F7YETxiO6bPPXlueOsp5OuXiyDXFjzO/9ekNHkmsjxrSQvpT
+8dcJVUx8lEHEvBB5zDs608/EobDSl+TKPT6Ud1O2ouczXHFxj627/6+bU8s9avNi
+V593V8cSNP9/9qzB60+iBOsLRvtICY2YPGmIuftVBI1bJFIDbxzMZvYApY1+q99Q
+KZiUuGM2VRlHPfDQhHODX1dlN8HNtVzMHmN1ldE1u2Catl3VAus9Cjo62g69tCkM
+7KuHk3plxKPLdZD/lej8/OW1GB1qy/gS03Ui4eRgOJJz4jBGDzty4zQP1myiIXW2
+MevGyBfDke4KCZNx3kQ7V6Y4AgTRBg==
+=/bkc
+-----END PGP SIGNATURE-----
+
+--5wfkgd3jlpzi3vd7--
+
+--===============6717022043634860279==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6717022043634860279==--
