@@ -1,542 +1,174 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH v4 2/2] i2c: mux: ltc4306: LTC4306 and LTC4305 I2C
- multiplexer/switch
-Date: Thu, 6 Apr 2017 13:31:20 +0200
-Message-ID: <376f970f-9e0f-1d44-3813-93691c849b83@analog.com>
-References: <1491397671-14675-1-git-send-email-michael.hennerich@analog.com>
- <1491397671-14675-2-git-send-email-michael.hennerich@analog.com>
- <a5127934-863a-64d6-88e6-b8119035baf9@axentia.se>
-Reply-To: <michael.hennerich@analog.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7791: add R8A7743 support
+Date: Thu, 6 Apr 2017 16:07:30 +0300
+Message-ID: <3b8a2d84-8a58-0a4a-b45e-e2f5e5786fdd@cogentembedded.com>
+References: <20170401220849.814356301@cogentembedded.com>
+ <CAMuHMdVY=GGoygPTbtPv4jiUqeU8FL2g2nXcReXrChZ-fatMZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-dm3nam03on0057.outbound.protection.outlook.com ([104.47.41.57]:52885
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753441AbdDFLaF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 6 Apr 2017 07:30:05 -0400
-In-Reply-To: <a5127934-863a-64d6-88e6-b8119035baf9@axentia.se>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVY=GGoygPTbtPv4jiUqeU8FL2g2nXcReXrChZ-fatMZg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, wsa@the-dreams.de, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06.04.2017 10:39, Peter Rosin wrote:
-> Hi Michael,
->
-> I would still like to hear from someone with more gpio experience.
+Hello!
 
-I'll ping Linus.
+On 04/03/2017 11:13 AM, Geert Uytterhoeven wrote:
 
->
-> Anyway, from my point of view, there's just a few minor things left,
-> with comments inline as usual.
->
-> Thanks for you patience!
-
-Thanks for review.
-
->
-> Cheers,
-> peda
->
-> On 2017-04-05 15:07, michael.hennerich@analog.com wrote:
->> From: Michael Hennerich <michael.hennerich@analog.com>
+>> Renesas RZ/G1M (R8A7743) is pin compatible with R-Car M2-W/N (R8A7791/3),
+>> however it doesn't have several automotive specific peripherals. Along
+>> with adding 'struct sh_pfc_soc_info' for R8A7743, annotate  all  items
+>> that only exist on the R-Car SoCs.
 >>
->> This patch adds support for the Analog Devices / Linear Technology
->> LTC4306 and LTC4305 4/2 Channel I2C Bus Multiplexer/Switches.
->> The LTC4306 optionally provides two general purpose input/output pins
->> (GPIOs) that can be configured as logic inputs, opendrain outputs or
->> push-pull outputs via the generic GPIOLIB framework.
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Thanks for your (big) patch!
+
+    My pleasure. :-)
+
+>> --- linux-pinctrl.orig/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+>> +++ linux-pinctrl/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+>> @@ -1,8 +1,8 @@
+>>  /*
+>> - * r8a7791 processor support - PFC hardware block.
+>> + * r8a7791/r8a7743 processor support - PFC hardware block.
+>>   *
+>>   * Copyright (C) 2013 Renesas Electronics Corporation
+>> - * Copyright (C) 2014-2015 Cogent Embedded, Inc.
+>> + * Copyright (C) 2014-2017 Cogent Embedded, Inc.
+>>   *
+>>   * This program is free software; you can redistribute it and/or modify
+>>   * it under the terms of the GNU General Public License version 2
+>> @@ -129,11 +129,12 @@ enum {
+>>         FN_A9, FN_MSIOF1_SS2, FN_I2C0_SDA,
+>>         FN_A10, FN_MSIOF1_TXD, FN_MSIOF1_TXD_D,
+>>         FN_A11, FN_MSIOF1_RXD, FN_I2C3_SCL_D, FN_MSIOF1_RXD_D,
+>> -       FN_A12, FN_FMCLK, FN_I2C3_SDA_D, FN_MSIOF1_SCK_D,
+>> -       FN_A13, FN_ATAG0_N_C, FN_BPFCLK, FN_MSIOF1_SS1_D,
+>> -       FN_A14, FN_ATADIR0_N_C, FN_FMIN, FN_FMIN_C, FN_MSIOF1_SYNC_D,
+>> -       FN_A15, FN_BPFCLK_C,
+>> -       FN_A16, FN_DREQ2_B, FN_FMCLK_C, FN_SCIFA1_SCK_B,
+>> +       FN_A12, FN_FMCLK /* R8A779x only */, FN_I2C3_SDA_D, FN_MSIOF1_SCK_D,
+>> +       FN_A13, FN_ATAG0_N_C, FN_BPFCLK /* R8A779x only */, FN_MSIOF1_SS1_D,
+>> +       FN_A14, FN_ATADIR0_N_C, FN_FMIN /* R8A779x only */,
+>> +       FN_FMIN_C /* R8A779x only */, FN_MSIOF1_SYNC_D,
+>> +       FN_A15, FN_BPFCLK_C /* R8A779x only */,
+>> +       FN_A16, FN_DREQ2_B, FN_FMCLK_C /* R8A779x only */, FN_SCIFA1_SCK_B,
+>
+> I don't know if it's worth annotating all bits...
+
+>> @@ -1702,7 +1789,7 @@ static const struct sh_pfc_pin pinmux_pi
+>>         PINMUX_GPIO_GP_ALL(),
+>>  };
 >>
->> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+>> -/* - ADI -------------------------------------------------------------------- */
+>> +/* - ADI (R8A779x only) ----------------------------------------------------- */
+>>  static const unsigned int adi_common_pins[] = {
+>>         /* ADIDATA, ADICS/SAMP, ADICLK */
+>>         RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25), RCAR_GP_PIN(6, 26),
+>
+> ... and pins (and groups and register bit fields), as they're used
+> only indirectly.
+
+    As I've said already (on IRC?), I was aiming at a self-documented driver.
+
+>> @@ -4420,14 +4507,14 @@ static const unsigned int vin2_clk_mux[]
+>>  };
 >>
->> ---
+>>  static const struct sh_pfc_pin_group pinmux_groups[] = {
+>> -       SH_PFC_PIN_GROUP(adi_common),
+>> -       SH_PFC_PIN_GROUP(adi_chsel0),
+>> -       SH_PFC_PIN_GROUP(adi_chsel1),
+>> -       SH_PFC_PIN_GROUP(adi_chsel2),
+>> -       SH_PFC_PIN_GROUP(adi_common_b),
+>> -       SH_PFC_PIN_GROUP(adi_chsel0_b),
+>> -       SH_PFC_PIN_GROUP(adi_chsel1_b),
+>> -       SH_PFC_PIN_GROUP(adi_chsel2_b),
+>> +       SH_PFC_PIN_GROUP(adi_common),   /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_chsel0),   /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_chsel1),   /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_chsel2),   /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_common_b), /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_chsel0_b), /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_chsel1_b), /* R8A779x only */
+>> +       SH_PFC_PIN_GROUP(adi_chsel2_b), /* R8A779x only */
+>>         SH_PFC_PIN_GROUP(audio_clk_a),
+>>         SH_PFC_PIN_GROUP(audio_clk_b),
+>>         SH_PFC_PIN_GROUP(audio_clk_b_b),
+>> @@ -4524,7 +4611,7 @@ static const struct sh_pfc_pin_group pin
+>>         SH_PFC_PIN_GROUP(intc_irq1),
+>>         SH_PFC_PIN_GROUP(intc_irq2),
+>>         SH_PFC_PIN_GROUP(intc_irq3),
+>> -       SH_PFC_PIN_GROUP(mlb_3pin),
+>> +       SH_PFC_PIN_GROUP(mlb_3pin),     /* R8A7794 only */
+>
+> R8A779x ;-)
+
+    Oops, so this one did slip thru... :-(
+
+>>         SH_PFC_PIN_GROUP(mmc_data1),
+>>         SH_PFC_PIN_GROUP(mmc_data4),
+>>         SH_PFC_PIN_GROUP(mmc_data8),
+>
+>> @@ -5288,7 +5377,7 @@ static const char * const vin2_groups[]
+>>  };
 >>
->> Changes since v1:
->>
->>  - Sort makefile entries
->>  - Sort driver includes
->>  - Use proper defines
->>  - Miscellaneous coding style fixups
->>  - Rename mux select callback
->>  - Revise i2c-mux-idle-disconnect handling
->>  - Add ENABLE GPIO handling on error and device removal.
->>  - Remove surplus of_match_device call.
->>
->> Changes since v2:
->>
->>  - Stop double error reporting (i2c_mux_add_adapter)
->>  - Change subject
->>  - Split dt bindings to separate patch
->>
->> Changes since v3:
->>
->>  - Change subject and add spaces
->>  - Convert to I2C_MUX_LOCKED
->>  - Convert to regmap
->>  - Remove local register cache
->>  - Restore previous ENABLE GPIO handling
->>  - Initially pulse ENABLE low
->>  - Eliminate i2c client struct in driver state structure
->>  - Simplify error return path
->>  - Misc minor cleanups
->> ---
->>  MAINTAINERS                         |   8 +
->>  drivers/i2c/muxes/Kconfig           |  11 ++
->>  drivers/i2c/muxes/Makefile          |   1 +
->>  drivers/i2c/muxes/i2c-mux-ltc4306.c | 310 ++++++++++++++++++++++++++++++++++++
->>  4 files changed, 330 insertions(+)
->>  create mode 100644 drivers/i2c/muxes/i2c-mux-ltc4306.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index c776906..9a27a19 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -7698,6 +7698,14 @@ S:	Maintained
->>  F:	Documentation/hwmon/ltc4261
->>  F:	drivers/hwmon/ltc4261.c
->>
->> +LTC4306 I2C MULTIPLEXER DRIVER
->> +M:	Michael Hennerich <michael.hennerich@analog.com>
->> +W:	http://ez.analog.com/community/linux-device-drivers
->> +L:	linux-i2c@vger.kernel.org
->> +S:	Supported
->> +F:	drivers/i2c/muxes/i2c-mux-ltc4306.c
->> +F:	Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
->> +
->>  LTP (Linux Test Project)
->>  M:	Mike Frysinger <vapier@gentoo.org>
->>  M:	Cyril Hrubis <chrubis@suse.cz>
->> diff --git a/drivers/i2c/muxes/Kconfig b/drivers/i2c/muxes/Kconfig
->> index 10b3d17..41153b4 100644
->> --- a/drivers/i2c/muxes/Kconfig
->> +++ b/drivers/i2c/muxes/Kconfig
->> @@ -30,6 +30,17 @@ config I2C_MUX_GPIO
->>  	  This driver can also be built as a module.  If so, the module
->>  	  will be called i2c-mux-gpio.
->>
->> +config I2C_MUX_LTC4306
->> +	tristate "LTC LTC4306/5 I2C multiplexer"
->> +	select GPIOLIB
->> +	select REGMAP_I2C
->> +	help
->> +	  If you say yes here you get support for the LTC LTC4306 or LTC4305
+>>  static const struct sh_pfc_function pinmux_functions[] = {
+>> -       SH_PFC_FUNCTION(adi),
+>> +       SH_PFC_FUNCTION(adi),           /* R8A779x only */
+>>         SH_PFC_FUNCTION(audio_clk),
+>>         SH_PFC_FUNCTION(avb),
+>>         SH_PFC_FUNCTION(can0),
+>> @@ -5308,7 +5397,7 @@ static const struct sh_pfc_function pinm
+>>         SH_PFC_FUNCTION(iic0),
+>>         SH_PFC_FUNCTION(iic1),
+>>         SH_PFC_FUNCTION(intc),
+>> -       SH_PFC_FUNCTION(mlb),
+>> +       SH_PFC_FUNCTION(mlb),           /* R8A779x only */
+>>         SH_PFC_FUNCTION(mmc),
+>>         SH_PFC_FUNCTION(msiof0),
+>>         SH_PFC_FUNCTION(msiof1),
 >
-> This reads a bit funny, and I think you should just spell out the
-> first LTC? But perhaps not in the tristate above though, depending
-> on how long it gets?
+> For pinmux_groups[] and pinmux_functions[] I agree they should be annotated.
+>
+> However, you could achieve the same by using separate arrays for r8a7791
+> and r8a7743, with the added benefits that users cannot select nonexisting groups
+> and functions, and that only existing groups and functions are exposed
+> through debugfs
+> (/sys/kernel/debug/pinctrl/e6060000.pfc/pin{conf-groups,groups,mux-functions}).
 
-Ok - I rename LTC -> Analog Devices
+    I didn't know about debugfs...
 
+> Alternatively, you could share the arrays by putting the common entries first,
+> and the r8a7791/3-only entries last, and restricting r8a7743 to the common
+> subsets by filling in a lower values in r8a7743_pinmux_info.nr_groups resp.
+> r8a7743_pinmux_info.nr_functions.
+> Currently groups and functions do not have to be sorted, so this should work.
+> I'm not aware of a safe and simple way of filling in .nr_groups resp.
+> .nr_functions, and make sure everything stays in sync, except perhaps by
+> creating a struct:
 >
->> +	  I2C mux/switch devices.
->> +
->> +	  This driver can also be built as a module.  If so, the module
->> +	  will be called i2c-mux-ltc4306.
->> +
->>  config I2C_MUX_PCA9541
->>  	tristate "NXP PCA9541 I2C Master Selector"
->>  	help
->> diff --git a/drivers/i2c/muxes/Makefile b/drivers/i2c/muxes/Makefile
->> index 9948fa4..ff7618c 100644
->> --- a/drivers/i2c/muxes/Makefile
->> +++ b/drivers/i2c/muxes/Makefile
->> @@ -6,6 +6,7 @@ obj-$(CONFIG_I2C_ARB_GPIO_CHALLENGE)	+= i2c-arb-gpio-challenge.o
->>  obj-$(CONFIG_I2C_DEMUX_PINCTRL)		+= i2c-demux-pinctrl.o
->>
->>  obj-$(CONFIG_I2C_MUX_GPIO)	+= i2c-mux-gpio.o
->> +obj-$(CONFIG_I2C_MUX_LTC4306)	+= i2c-mux-ltc4306.o
->>  obj-$(CONFIG_I2C_MUX_MLXCPLD)	+= i2c-mux-mlxcpld.o
->>  obj-$(CONFIG_I2C_MUX_PCA9541)	+= i2c-mux-pca9541.o
->>  obj-$(CONFIG_I2C_MUX_PCA954x)	+= i2c-mux-pca954x.o
->> diff --git a/drivers/i2c/muxes/i2c-mux-ltc4306.c b/drivers/i2c/muxes/i2c-mux-ltc4306.c
->> new file mode 100644
->> index 0000000..7d34434
->> --- /dev/null
->> +++ b/drivers/i2c/muxes/i2c-mux-ltc4306.c
->> @@ -0,0 +1,310 @@
->> +/*
->> + * Linear Technology LTC4306 and LTC4305 I2C multiplexer/switch
->> + *
->> + * Copyright (C) 2017 Analog Devices Inc.
->> + *
->> + * Licensed under the GPL-2.
->> + *
->> + * Based on: i2c-mux-pca954x.c
->> + *
->> + * Datasheet: http://cds.linear.com/docs/en/datasheet/4306.pdf
->> + */
->> +
->> +#include <linux/device.h>
->> +#include <linux/gpio.h>
->> +#include <linux/gpio/consumer.h>
->> +#include <linux/gpio/driver.h>
->> +#include <linux/i2c-mux.h>
->> +#include <linux/i2c.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
->> +
->> +#define LTC4305_MAX_NCHANS 2
->> +#define LTC4306_MAX_NCHANS 4
->> +
->> +#define LTC_REG_STATUS	0x0
->> +#define LTC_REG_CONFIG	0x1
->> +#define LTC_REG_MODE	0x2
->> +#define LTC_REG_SWITCH	0x3
->> +
->> +#define LTC_DOWNSTREAM_ACCL_EN	BIT(6)
->> +#define LTC_UPSTREAM_ACCL_EN	BIT(7)
->> +
->> +#define LTC_GPIO_ALL_INPUT	0xC0
->> +#define LTC_SWITCH_MASK		0xF0
->> +
->> +enum ltc_type {
->> +	ltc_4305,
->> +	ltc_4306,
->> +};
->> +
->> +struct chip_desc {
->> +	u8 nchans;
->> +	u8 num_gpios;
->> +};
->> +
->> +struct ltc4306 {
->> +	struct regmap *regmap;
->> +	struct gpio_chip gpiochip;
->> +	const struct chip_desc *chip;
->> +};
->> +
->> +static const struct chip_desc chips[] = {
->> +	[ltc_4305] = {
->> +		.nchans = LTC4305_MAX_NCHANS,
->> +	},
->> +	[ltc_4306] = {
->> +		.nchans = LTC4306_MAX_NCHANS,
->> +		.num_gpios = 2,
->> +	},
->> +};
->> +
->> +static bool ltc4306_is_volatile_reg(struct device *dev, unsigned int reg)
->> +{
->> +	return (reg == LTC_REG_CONFIG) ? true : false;
->> +}
->> +
->> +static const struct regmap_config ltc4306_regmap_config = {
->> +	.reg_bits = 8,
->> +	.val_bits = 8,
->> +	.max_register = LTC_REG_SWITCH,
->> +	.volatile_reg = ltc4306_is_volatile_reg,
->> +	.cache_type = REGCACHE_RBTREE,
+>         static const struct {
+>                 struct sh_pfc_function common[<n>];
+>                 struct sh_pfc_function r8a7791[];
+>         } pinmux_functions;
 >
-> Did you consider REGCACHE_FLAT? There are very few registers and no hole
-> in the map, and maintaining a tree seems like total overkill.
+> and manually updating <n> when changing the initializers?
+> Then at least the compiler will complain when adding (not when
+> removing) entries.
+>
+> Both alternatives allow to add #ifdefs to the pinmux_groups[] and
+> pinmux_functions[] arrays (and __maybe_unused to referred arrays) to reduce
+> kernel size when not enabling support for all SoCs.
 
-There is no reason to use REGCACHE_FLAT, in our case it will be a single 
-node.
+    I'll give that a thought...
 
+[...]
+> Gr{oetje,eeting}s,
 >
->> +};
->> +
->> +static int ltc4306_gpio_get(struct gpio_chip *chip, unsigned int offset)
->> +{
->> +	struct ltc4306 *data = gpiochip_get_data(chip);
->> +	unsigned int val;
->> +	int ret;
->> +
->> +	ret = regmap_read(data->regmap, LTC_REG_CONFIG, &val);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	return (val & BIT(1 - offset));
->
-> The outer parentheses do not add anything, and I think they might remain
-> from when you just removed a double negation at some point. But is it
-> good practice to indicate "high" with anything other than one? Sure, the
-> gpiolib function that wraps the ->get() op does the !! dance for you,
-> but even so, every single one of the half dozen random gpio providers I
-> looked at had code to coerce the value to 0/1 (or error). Which makes me
-> think you should also have it. And the gpio_chip documentation on ->get()
-> agrees with me...
+>                         Geert
 
-I'll restore the double negations.
-
->
->> +}
->> +
->> +static void ltc4306_gpio_set(struct gpio_chip *chip, unsigned int offset,
->> +			     int value)
->> +{
->> +	struct ltc4306 *data = gpiochip_get_data(chip);
->> +
->> +	regmap_update_bits(data->regmap, LTC_REG_CONFIG, BIT(5 - offset),
->> +			   value ? BIT(5 - offset) : 0);
->> +}
->> +
->> +static int ltc4306_gpio_direction_input(struct gpio_chip *chip,
->> +					unsigned int offset)
->> +{
->> +	struct ltc4306 *data = gpiochip_get_data(chip);
->> +
->> +	return regmap_update_bits(data->regmap, LTC_REG_MODE,
->> +				  BIT(7 - offset), BIT(7 - offset));
->> +}
->> +
->> +static int ltc4306_gpio_direction_output(struct gpio_chip *chip,
->> +					 unsigned int offset, int value)
->> +{
->> +	struct ltc4306 *data = gpiochip_get_data(chip);
->> +
->> +	ltc4306_gpio_set(chip, offset, value);
->> +	return regmap_update_bits(data->regmap, LTC_REG_MODE,
->> +				  BIT(7 - offset), 0);
->> +}
->> +
->> +static int ltc4306_gpio_set_config(struct gpio_chip *chip,
->> +				   unsigned int offset, unsigned long config)
->> +{
->> +	struct ltc4306 *data = gpiochip_get_data(chip);
->> +	unsigned int val;
->> +
->> +	switch (pinconf_to_config_param(config)) {
->> +	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
->> +		val = 0;
->> +		break;
->> +	case PIN_CONFIG_DRIVE_PUSH_PULL:
->> +		val = BIT(4 - offset);
->> +		break;
->> +	default:
->> +		return -ENOTSUPP;
->> +	}
->> +
->> +	return regmap_update_bits(data->regmap, LTC_REG_MODE,
->> +				  BIT(4 - offset), val);
->> +}
->> +
->> +static int ltc4306_gpio_init(struct ltc4306 *data)
->> +{
->> +	struct device *dev = regmap_get_device(data->regmap);
->> +
->> +	if (!data->chip->num_gpios)
->> +		return 0;
->> +
->> +	data->gpiochip.label = dev_name(dev);
->> +	data->gpiochip.base = -1;
->> +	data->gpiochip.ngpio = data->chip->num_gpios;
->> +	data->gpiochip.parent = dev;
->> +	data->gpiochip.can_sleep = true;
->> +	data->gpiochip.direction_input = ltc4306_gpio_direction_input;
->> +	data->gpiochip.direction_output = ltc4306_gpio_direction_output;
->
-> I'm missing a get_direction op?
-
-No - its purely optional - the vast majority of gpiochips don't 
-implement it.
-
-linux/drivers/gpio$ grep -lr --include \*.c get_direction | wc
-      36      36     523
-linux/drivers/gpio$ grep -Lr --include \*.c get_direction | wc
-     101     101    1461
->
->> +	data->gpiochip.get = ltc4306_gpio_get;
->> +	data->gpiochip.set = ltc4306_gpio_set;
->> +	data->gpiochip.set_config = ltc4306_gpio_set_config;
->> +	data->gpiochip.owner = THIS_MODULE;
->> +
->> +	/* gpiolib assumes all GPIOs default input */
->> +	regmap_write(data->regmap, LTC_REG_MODE, LTC_GPIO_ALL_INPUT);
->> +
->> +	return devm_gpiochip_add_data(dev, &data->gpiochip, data);
->> +}
->> +
->> +static int ltc4306_select_mux(struct i2c_mux_core *muxc, u32 chan)
->> +{
->> +	struct ltc4306 *data = i2c_mux_priv(muxc);
->> +
->> +	return regmap_update_bits(data->regmap, LTC_REG_SWITCH,
->> +				  LTC_SWITCH_MASK, BIT(7 - chan));
->
-> Since the bits outside the mask are ignored for writes, I'd go with
-> regmap_write. Especially since those bits are volatile, which admittedly
-> will not have much impact until there is a need to read those volatile
-> bits outside the mask. But still.
-
-Yes they are volatile - but not declared as such.
-So regmap cache just ignores them.
-And we totally ignore these RONLY status bits, too.
-regmap_write() will always write and ignore the cache, while 
-regmap_update_bits() uses the cached value.
-
-Are these callbacks guaranteed to be never called with the same CHAN 
-sequentially? if yes - use regmap_write() otherwise its more efficient 
-to use regmap_update_bits().
-
->
->> +}
->> +
->> +static int ltc4306_deselect_mux(struct i2c_mux_core *muxc, u32 chan)
->> +{
->> +	struct ltc4306 *data = i2c_mux_priv(muxc);
->> +
->> +	return regmap_update_bits(data->regmap, LTC_REG_SWITCH,
->> +				  LTC_SWITCH_MASK, 0);
->
-> Dito.
->
->> +}
->> +
->> +static const struct i2c_device_id ltc4306_id[] = {
->> +	{ "ltc4305", ltc_4305 },
->> +	{ "ltc4306", ltc_4306 },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(i2c, ltc4306_id);
->> +
->> +static const struct of_device_id ltc4306_of_match[] = {
->> +	{ .compatible = "lltc,ltc4305", .data = &chips[ltc_4305] },
->> +	{ .compatible = "lltc,ltc4306", .data = &chips[ltc_4306] },
->> +	{ }
->> +};
->> +MODULE_DEVICE_TABLE(of, ltc4306_of_match);
->> +
->> +static int ltc4306_probe(struct i2c_client *client,
->> +			 const struct i2c_device_id *id)
->> +{
->> +	struct i2c_adapter *adap = to_i2c_adapter(client->dev.parent);
->> +	struct device_node *of_node = client->dev.of_node;
->> +	struct i2c_mux_core *muxc;
->> +	struct ltc4306 *data;
->> +	struct gpio_desc *gpio;
->> +	bool idle_disc = false;
->> +	int num, ret;
->> +
->> +	if (of_node)
->> +		idle_disc = of_property_read_bool(of_node,
->> +						  "i2c-mux-idle-disconnect");
->> +
->> +	muxc = i2c_mux_alloc(adap, &client->dev,
->> +			     LTC4306_MAX_NCHANS, sizeof(*data),
->
-> Hmmm, I didn't see this before, but if you do some more rearranging, it
-> should be possible to replace LTC4306_MAX_NCHANS with data->chip->nchans
-> and reduce resource waste for ltc4305. But it's just storage for two
-> pointers which is really really minor... Feel free to ignore.
->
-> But you want to set a good example, right :-)
->
->> +			     I2C_MUX_LOCKED, ltc4306_select_mux,
->> +			     idle_disc ? ltc4306_deselect_mux : NULL);
->> +	if (!muxc)
->> +		return -ENOMEM;
->> +	data = i2c_mux_priv(muxc);
->> +
->> +	i2c_set_clientdata(client, muxc);
->> +
->> +	data->regmap = devm_regmap_init_i2c(client, &ltc4306_regmap_config);
->> +	if (IS_ERR(data->regmap)) {
->> +		ret = PTR_ERR(data->regmap);
->> +		dev_err(&client->dev, "Failed to allocate register map: %d\n",
->> +			ret);
->> +		return ret;
->> +	}
->> +
->> +	/* Reset and enable the mux if an enable GPIO is specified. */
->> +	gpio = devm_gpiod_get_optional(&client->dev, "enable", GPIOD_OUT_LOW);
->> +	if (IS_ERR(gpio))
->> +		return PTR_ERR(gpio);
->> +
->> +	if (gpio) {
->> +		udelay(1);
->> +		gpiod_set_value(gpio, 1);
->> +	}
->> +
->> +	/*
->> +	 * Write the mux register at addr to verify
->> +	 * that the mux is in fact present. This also
->> +	 * initializes the mux to disconnected state.
->> +	 */
->> +	if (regmap_write(data->regmap, LTC_REG_SWITCH, 0) < 0) {
->> +		dev_warn(&client->dev, "probe failed\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	if (of_node) {
->> +		unsigned int val = 0;
->> +
->> +		data->chip = of_device_get_match_data(&client->dev);
->> +
->> +		if (of_property_read_bool(of_node,
->> +					  "ltc,downstream-accelerators-enable"))
->> +			val |= LTC_DOWNSTREAM_ACCL_EN;
->> +
->> +		if (of_property_read_bool(of_node,
->> +					  "ltc,upstream-accelerators-enable"))
->> +			val |= LTC_UPSTREAM_ACCL_EN;
->> +
->> +		if (regmap_write(data->regmap, LTC_REG_CONFIG, val) < 0)
->> +			return -ENODEV;
->> +	} else {
->> +		data->chip = &chips[id->driver_data];
->> +	}
->> +
->> +	ret = ltc4306_gpio_init(data);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	/* Now create an adapter for each channel */
->> +	for (num = 0; num < data->chip->nchans; num++) {
->> +		ret = i2c_mux_add_adapter(muxc, 0, num, 0);
->> +		if (ret) {
->> +			i2c_mux_del_adapters(muxc);
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	dev_info(&client->dev,
->> +		 "registered %d multiplexed busses for I2C switch %s\n",
->> +		 num, client->name);
->> +
->> +	return 0;
->> +}
->> +
->> +static int ltc4306_remove(struct i2c_client *client)
->> +{
->> +	struct i2c_mux_core *muxc = i2c_get_clientdata(client);
->> +
->> +	i2c_mux_del_adapters(muxc);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct i2c_driver ltc4306_driver = {
->> +	.driver		= {
->> +		.name	= "ltc4306",
->> +		.of_match_table = of_match_ptr(ltc4306_of_match),
->> +	},
->> +	.probe		= ltc4306_probe,
->> +	.remove		= ltc4306_remove,
->> +	.id_table	= ltc4306_id,
->> +};
->> +
->> +module_i2c_driver(ltc4306_driver);
->> +
->> +MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
->> +MODULE_DESCRIPTION("Linear Technology LTC4306, LTC4305 I2C mux/switch driver");
->> +MODULE_LICENSE("GPL v2");
->>
->
->
-
-
--- 
-Greetings,
-Michael
-
---
-Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
-Sitz der Gesellschaft München, Registergericht München HRB 40368,
-Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
+MBR, Sergei
