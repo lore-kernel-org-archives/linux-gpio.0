@@ -1,61 +1,139 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Thu, 6 Apr 2017 11:32:59 +0100
-Message-ID: <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
- <da0935b8-245a-6920-4749-ade6eb278dba@arm.com>
- <20170330090047.GX2957@lahna.fi.intel.com>
- <20170406095948.GT2957@lahna.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:40986 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932662AbdDFKdD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 6 Apr 2017 06:33:03 -0400
-In-Reply-To: <20170406095948.GT2957@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [RFC] Documentation: pinctrl: Add "pinmux" property
+Date: Thu,  6 Apr 2017 12:35:55 +0200
+Message-ID: <1491474955-25605-1-git-send-email-jacopo+renesas@jmondi.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linus.walleij@linaro.org, geert@linux-m68k.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 06/04/17 10:59, Mika Westerberg wrote:
-> On Thu, Mar 30, 2017 at 12:00:47PM +0300, Mika Westerberg wrote:
->>>> Isn't the right solution to translate this back to the offset from the "Linux
->>>> IRQ" and use that offset? This quirk seems pretty violent.
->>>
->>> I'm not sure I understand the quirk here, but my personal approach would
->>> be to provide an inverse mapping oldIRQ->hwirq, and use the usual
->>> irqdomain lookup to get back to the real thing.
->>
->> OK, thanks for tip. Let me try both approaches and see which one works
->> better :)
-> 
-> I've now looked at the issue again and I'm actually not sure if we can
-> use either of the proposals here :/
-> 
-> Essentially all the Linux IRQ<->hwirq mappings are created when the
-> gpiochip is initialized in gpiochip_irqchip_add(). Because of that, I
-> don't see how we can change those afterwards when the i8042 keyboard
-> driver asks for IRQ 182. Maybe I'm missing something obvious but to me
-> the only way to go forward is to do what this patch does and add all the
-> GPIOs to the irqdomain (if we don't want to add a custom IRQ domain for
-> cherryview).
+Document "pinmux" property as part of generic pin controller
+documentation.
+Fix 2 minor typos in documentation while at there.
 
-Something is very fishy here: You say that the i8042 asks for IRQ 182.
-But surely that's a hwirq. Or is it directly poking at the ACPI table,
-extracting a number and do a request_irq() on it? If that's the case,
-this is a bug (or at least a severe limitation) in the i8042 driver.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-If the latter, even adding all the GPIOs to the domain do not guarantee
-that the allocated interrupts will always be in the range you expect
-(depending on the order of things being initialized).
+---
+Hi Linus and linux-gpio community.
 
-It all feels extremely fragile to me...
+During development of Renesas RZ/A1 pin controller I've been suggested to add
+description of "pinmux" property to generic pin controller documentation.
+Currently several pin controller drivers are using this property in place of
+the already documented "pin"/"group" and "function" ones: stm32, mt65xx, mt8173
+and in-review r7s72100, not sure about at91-sama5d2)
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Sending this one as RFC to collect feedback. If the change is not rejected is it
+worth adding to pin controller core helper functions to parse the newly
+documented property, as this commit
+<https://patchwork.kernel.org/patch/9411231/>
+did for "pinctrl-pin-array" one?
+
+All drivers using "pinmux" exhibit the same behavior which is fine as long as
+"pinmux" only accepts a list of u32 parameters.
+
+	...
+	pins = of_find_property(node, "pinmux", NULL);
+	...
+	npins = pins->length / sizeof(u32);
+	...
+	of_property_read_u32_index(node, "pinmux",
+				   i, &pinfunc);
+	...
+
+Thanks
+
+---
+ .../bindings/pinctrl/pinctrl-bindings.txt          | 46 +++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+index f2ed458..6609389 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -162,8 +162,8 @@ state_2_node_a {
+ 	pins = "mfio29", "mfio30";
+ };
+
+-Optionally an altenative binding can be used if more suitable depending on the
+-pin controller hardware. For hardaware where there is a large number of identical
++Optionally an alternative binding can be used if more suitable depending on the
++pin controller hardware. For hardware where there is a large number of identical
+ pin controller instances, naming each pin and function can easily become
+ unmaintainable. This is especially the case if the same controller is used for
+ different pins and functions depending on the SoC revision and packaging.
+@@ -198,6 +198,28 @@ registers, and must not be a virtual index of pin instances. The reason for
+ this is to avoid mapping of the index in the dts files and the pin controller
+ driver as it can change.
+
++For hardware where pin multiplexing configurations have to be specified for
++each single pin the number of required sub-nodes containing "pin" and
++"function" properties can quickly escalate and become hard to write and
++maintain.
++
++For cases like this, the pin controller driver may use the pinmux helper
++property, where the pin identifier is packed with mux configuration settings
++in a single integer.
++
++The pinmux property accepts an array of integers, each of them describing
++a single pin multiplexing configuration.
++
++pincontroller {
++	state_0_node_a {
++		pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ...;
++	};
++};
++
++Each individual pin controller driver bindings documentation shall specify
++how those values (pin IDs and pin multiplexing configuration) are defined and
++assembled together.
++
+ == Generic pin configuration node content ==
+
+ Many data items that are represented in a pin configuration node are common
+@@ -210,12 +232,15 @@ structure of the DT nodes that contain these properties.
+ Supported generic properties are:
+
+ pins			- the list of pins that properties in the node
+-			  apply to (either this or "group" has to be
++			  apply to (either this, "group" or "pinmux" has to be
+ 			  specified)
+ group			- the group to apply the properties to, if the driver
+ 			  supports configuration of whole groups rather than
+-			  individual pins (either this or "pins" has to be
+-			  specified)
++			  individual pins (either this, "pins" or "pinmux" has
++			  to be specified)
++pinmux			- the list of numeric pin ids and their mux settings
++			  that properties in the node apply to (either this,
++			  "pins" or "groups" have to be specified)
+ bias-disable		- disable any pin bias
+ bias-high-impedance	- high impedance mode ("third-state", "floating")
+ bias-bus-hold		- latch weakly
+@@ -260,6 +285,12 @@ state_2_node_a {
+ 		bias-pull-up;
+ 	};
+ };
++state_3_node_a {
++	mux {
++		pinmux = <GPIOx_PINm_MUXn>, <GPIOx_PINj_MUXk)>;
++		input-enable;
++	};
++};
+
+ Some of the generic properties take arguments. For those that do, the
+ arguments are described below.
+@@ -268,6 +299,11 @@ arguments are described below.
+   binding for the hardware defines:
+   - Whether the entries are integers or strings, and their meaning.
+
++- pinmux takes a list of pin IDs and mux settings as required argument. The
++  specific bindings for the hardware defines:
++  - How pin IDs and mux settings are defined and assembled together in a single
++    integer.
++
+ - bias-pull-up, -down and -pin-default take as optional argument on hardware
+   supporting it the pull strength in Ohm. bias-disable will disable the pull.
+
+--
+2.7.4
