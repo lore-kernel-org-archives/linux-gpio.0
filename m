@@ -1,81 +1,53 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 01/16] mfd: madera: Add register definitions for Cirrus
- Logic Madera codecs
-Date: Fri, 7 Apr 2017 12:14:58 +0100
-Message-ID: <20170407111458.vw7oxemasqhcfepq@sirena.org.uk>
-References: <1491386884-30689-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1491386884-30689-2-git-send-email-rf@opensource.wolfsonmicro.com>
- <CACRpkdaYzPSVqqhbi2Zop7J9vzCqZZiN=9pAEw1vcWy_ove9Tg@mail.gmail.com>
- <CACRpkdY=cOhw59O8EE6J82aq897YKZkLsmUzeEnzkC5jtT6yyA@mail.gmail.com>
- <20170407084823.GB3412@localhost.localdomain>
- <CACRpkdZLfL+dxMN-uaRp57u4yW4cLfLFoZVkNWFZL4eECOyR1A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: at91-pio4: handle suspend to ram
+Date: Fri, 7 Apr 2017 14:34:03 +0200
+Message-ID: <CACRpkdZ=7e71XR++RWY8j5Lqb_UF6oMZzibCRo=76b8YPvcPiw@mail.gmail.com>
+References: <20170406133623.19160-1-alexandre.belloni@free-electrons.com>
+ <CACRpkdYFPhewV4NLNxxVkXCwuyoo3rgeLt0auErS47R=055FHQ@mail.gmail.com> <20170407104846.5ghrcqc2ws4dkqxt@piout.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k4nxp35gqq27j42m"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZLfL+dxMN-uaRp57u4yW4cLfLFoZVkNWFZL4eECOyR1A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:33731 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754416AbdDGMeF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2017 08:34:05 -0400
+Received: by mail-io0-f177.google.com with SMTP id t68so14718231iof.0
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Apr 2017 05:34:05 -0700 (PDT)
+In-Reply-To: <20170407104846.5ghrcqc2ws4dkqxt@piout.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+On Fri, Apr 7, 2017 at 12:48 PM, Alexandre Belloni
+<alexandre.belloni@free-electrons.com> wrote:
+> On 07/04/2017 at 12:16:22 +0200, Linus Walleij wrote:
+>> On Thu, Apr 6, 2017 at 3:36 PM, Alexandre Belloni
+>> <alexandre.belloni@free-electrons.com> wrote:
+>>
+>> > When suspending to RAM, the power to the core is cut and the register
+>> > values are lost. Save and restore more registers than just IMR.
+>> >
+>> > Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+>>
+>> Should this be tagged for stable?
+>>
+>
+> No because that particular suspend to ram mode is not yet implemented
+> upstream.
+>
+>> Waiting for input from the AT91 maintainers here.
+>>
+>
+> Well, I've been an AT91 maintainer for 2 years now and I have done all
+> the AT91 pull requests since 3.16. I hope this qualifies me here.
 
---k4nxp35gqq27j42m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So much for trying to keep MAINTAINERS in my head :(
 
-On Fri, Apr 07, 2017 at 11:12:53AM +0200, Linus Walleij wrote:
-> On Fri, Apr 7, 2017 at 10:48 AM, Charles Keepax
-> > On Fri, Apr 07, 2017 at 10:30:12AM +0200, Linus Walleij wrote:
+I wish there was gmail integration so I could annotate people
+with roles...
 
-> >> > Get included in all subdrivers I suppose?
+Patch applied.
 
-> >> > So you are broadcasting 8800+ lines into every subdriver across the
-> >> > entire kernel.
-
-> >> > Just the time spent in the preprocessor parsing this will affect compilation
-> >> > time.
-
-> >> Or maybe this is a necessary sacrifice to get the regmap cache
-> >> centralized in MFD. I don't know. I feel stupid.
-
-> >> I guess I should focus on "my" subsystems...
-
-> > This only gets included in files that are part of this driver, it
-> > shouldn't affect compilation time for anyone not building the
-> > madera driver and even then it should only affect compilation
-> > times for the 10 or so C files that make up the driver. Also I
-> > don't really see any other way to specify the registers for the
-> > device.
-
-> No when using regmap cache this seems necessary.
-> I was just wrong.
-
-Right.  The other thing to bear in mind with things like this is that
-often if it's the chip vendor they've got mechanisms to generate the
-register definitions directly from the chip design so if we take the
-complete thing with minimal edits it's a great way of ensuring we've got
-information about the chip in the upstream kernel to support future
-development.
-
---k4nxp35gqq27j42m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljndK4ACgkQJNaLcl1U
-h9AcrQf/fG+V7Yqvtyj+A9tD0Pa38YObImkcpc/f14hebTVi+wnwaAb31NfjLeZx
-MTN45CwPQBj80UhTFhFaYKeOOPAmtmH7QWr0PqW33f99e/Qcvv2nyQOTaw6Mqef8
-p8JwoPBdrejXb+sftbbMhMt1Ti6ZIOGvV/v64REmHwxNp/nL5DkiqjEjHD2DgoKl
-ZrE4ayBB5w6YQgaWruaEuTEJQRL5R3HK9v8AyFtdY12iMlTsd+UTevqoJmi0vrLW
-hx2AdajwjehAC/n8rSY9vE+Gc+KAKcEHjYCNVWClP4hQ1y4vecVE6/bLsKDlze9C
-RTA+TF7mDZWi2Vokx9b+JqAZXk4NaQ==
-=4XT0
------END PGP SIGNATURE-----
-
---k4nxp35gqq27j42m--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
