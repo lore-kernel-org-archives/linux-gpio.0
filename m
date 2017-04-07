@@ -1,46 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: Add a quirk to make Acer Chromebook
- keyboard work again
-Date: Fri, 7 Apr 2017 09:27:36 +0200
-Message-ID: <CACRpkdaTviFd65mAR+CqTC+j6WWY-ETbRvTnyh-6orDZF6YPpw@mail.gmail.com>
-References: <20170329095932.73368-1-mika.westerberg@linux.intel.com>
- <CACRpkdYm_wzJWskrkStgjXPM=F93S3K3HO-c5Tt=qSVJOxkGAw@mail.gmail.com>
- <da0935b8-245a-6920-4749-ade6eb278dba@arm.com> <20170330090047.GX2957@lahna.fi.intel.com>
- <20170406095948.GT2957@lahna.fi.intel.com> <6bcf8db2-626c-7934-a334-13b11fb7be68@arm.com>
- <20170406105059.GV2957@lahna.fi.intel.com> <f5508b70-3cbd-bbdd-da8d-ff0bff08f835@arm.com>
- <20170406131824.GW2957@lahna.fi.intel.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: meson: meson8b: fix the NAND DQS pins
+Date: Fri, 7 Apr 2017 09:29:53 +0200
+Message-ID: <CACRpkdbc9BqTAo-KbqVdeJ5ZS1K5ikepdvz_-ScjcX_sDvioPA@mail.gmail.com>
+References: <20170325184350.7677-1-martin.blumenstingl@googlemail.com>
+ <20170401135922.1288-1-martin.blumenstingl@googlemail.com>
+ <20170401135922.1288-2-martin.blumenstingl@googlemail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f180.google.com ([209.85.223.180]:36085 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754862AbdDGH1n (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2017 03:27:43 -0400
-Received: by mail-io0-f180.google.com with SMTP id l7so44351911ioe.3
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Apr 2017 00:27:43 -0700 (PDT)
-In-Reply-To: <20170406131824.GW2957@lahna.fi.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170401135922.1288-2-martin.blumenstingl@googlemail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Carlo Caione <carlo@caione.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Apr 6, 2017 at 3:18 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> On Thu, Apr 06, 2017 at 12:05:28PM +0100, Marc Zyngier wrote:
->> > There is a proper way to use GPIOs as interrupts in ACPI, namely GpioInt
->> > resource but it has not been used in that particular machine for some
->> > reason.
->>
->> OK, that explains it. One thing you could try would be to allocate the
->> domain as a legacy one, which allows you to specify the virtual
->> interrupt range you require. Not sure that's any better though.
+On Sat, Apr 1, 2017 at 3:59 PM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+
+> The nand_groups table uses different names for the NAND DQS pins than
+> the GROUP() definition in meson8b_cbus_groups (nand_dqs_0 vs nand_dqs0).
+> This prevents using the NAND DQS pins in the devicetree.
 >
-> Yeah, then I would have to add a whole bunch of code to handle custom
-> irqdomain just to support this one machine (fingers crossed that it is
-> limited to only this particular machine).
+> Fix this by ensuring that the GROUP() definition and the
+> meson8b_cbus_groups use the same name for these pins.
+>
+> Fixes: 0fefcb6876d0 ("pinctrl: Add support for Meson8b")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Thierry is working on better generic/custom irqdomains for the GPIOlib
-core IRQ support. But right now the quirk is maybe a better solution.
+Patch applied with Kevin's ACK.
 
 Yours,
 Linus Walleij
