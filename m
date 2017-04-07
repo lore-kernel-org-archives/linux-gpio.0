@@ -1,62 +1,47 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] pinctrl: aspeed: Fix unused-const-variable warnings
-Date: Fri,  7 Apr 2017 22:28:17 +0930
-Message-ID: <20170407125817.15834-1-andrew@aj.id.au>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43952 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932534AbdDGM66 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2017 08:58:58 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Subject: [PATCH v2 0/4] gpio: aspeed: Add debounce support
+Date: Fri,  7 Apr 2017 22:28:58 +0930
+Message-ID: <20170407125902.15960-1-andrew@aj.id.au>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
 
-Three video input signals suffered from a search/replace failure in
-some copied code.
+Hi Linus,
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+v2 of the Aspeed GPIO debounce patch expands it out into a series, resolving a
+lack of devicetree binding documentation updates in the initial send, and
+completely reworking the debounce timer use tracking for space efficiency.
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-index 7de596e2b9d4..731dc2352c71 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c
-@@ -856,8 +856,8 @@ SIG_EXPR_DECL(VPIG3, VPI18, VPI18_DESC, AB1_DESC);
- SIG_EXPR_DECL(VPIG3, VPI24, VPI24_DESC, AB1_DESC);
- SIG_EXPR_DECL(VPIG3, VPI30, VPI30_DESC, AB1_DESC);
- SIG_EXPR_LIST_DECL(VPIG3, SIG_EXPR_PTR(VPIG3, VPI18),
--		SIG_EXPR_PTR(VPIG2, VPI24),
--		SIG_EXPR_PTR(VPIG2, VPI30));
-+		SIG_EXPR_PTR(VPIG3, VPI24),
-+		SIG_EXPR_PTR(VPIG3, VPI30));
- SIG_EXPR_LIST_DECL_SINGLE(PWM3, PWM3, AB1_DESC);
- MS_PIN_DECL(AB1, GPION3, VPIG3, PWM3);
- FUNC_GROUP_DECL(PWM3, AB1);
-@@ -868,8 +868,8 @@ SIG_EXPR_DECL(VPIG4, VPI18, VPI18_DESC, W5_DESC);
- SIG_EXPR_DECL(VPIG4, VPI24, VPI24_DESC, W5_DESC);
- SIG_EXPR_DECL(VPIG4, VPI30, VPI30_DESC, W5_DESC);
- SIG_EXPR_LIST_DECL(VPIG4, SIG_EXPR_PTR(VPIG4, VPI18),
--		SIG_EXPR_PTR(VPIG2, VPI24),
--		SIG_EXPR_PTR(VPIG2, VPI30));
-+		SIG_EXPR_PTR(VPIG4, VPI24),
-+		SIG_EXPR_PTR(VPIG4, VPI30));
- SIG_EXPR_LIST_DECL_SINGLE(PWM4, PWM4, W5_DESC);
- MS_PIN_DECL(W5, GPION4, VPIG4, PWM4);
- FUNC_GROUP_DECL(PWM4, W5);
-@@ -880,8 +880,8 @@ SIG_EXPR_DECL(VPIG5, VPI18, VPI18_DESC, Y4_DESC);
- SIG_EXPR_DECL(VPIG5, VPI24, VPI24_DESC, Y4_DESC);
- SIG_EXPR_DECL(VPIG5, VPI30, VPI30_DESC, Y4_DESC);
- SIG_EXPR_LIST_DECL(VPIG5, SIG_EXPR_PTR(VPIG5, VPI18),
--		SIG_EXPR_PTR(VPIG2, VPI24),
--		SIG_EXPR_PTR(VPIG2, VPI30));
-+		SIG_EXPR_PTR(VPIG5, VPI24),
-+		SIG_EXPR_PTR(VPIG5, VPI30));
- SIG_EXPR_LIST_DECL_SINGLE(PWM5, PWM5, Y4_DESC);
- MS_PIN_DECL(Y4, GPION5, VPIG5, PWM5);
- FUNC_GROUP_DECL(PWM5, Y4);
+I do wonder whether there's a more acceptable way to track the use of the
+timers than what I've got, but it at least works.
+
+The rework was largely an effort to resolve Joel's review of v1, in the absence
+of any other feedback.
+
+Cheers,
+
+Andrew
+
+In v2:
+* Update devicetree bindings documentation
+* Address Joel's comments
+
+Andrew Jeffery (4):
+  gpio: aspeed: dt: Fix description alignment in bindings document
+  gpio: aspeed: dt: Add optional clocks property
+  gpio: aspeed: Add debounce support
+  gpio: aspeed: Add open-source and open-drain support
+
+ .../devicetree/bindings/gpio/gpio-aspeed.txt       |   3 +-
+ drivers/gpio/gpio-aspeed.c                         | 285 ++++++++++++++++++++-
+ 2 files changed, 282 insertions(+), 6 deletions(-)
+
 -- 
 2.9.3
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
