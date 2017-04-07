@@ -1,41 +1,58 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: f7188x: Add F71889A GPIO support.
-Date: Fri, 7 Apr 2017 12:27:10 +0200
-Message-ID: <CACRpkdbkkA6uJEgcBWj19DB6TLimie50pZoj_J+i8mt2BkQ_RA@mail.gmail.com>
-References: <20170407004205.45btnkgk7k5jv3td@tha-monstah.mydomain>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] gpio: core: Decouple open drain/source flag with
+ active low/high
+Date: Fri, 7 Apr 2017 15:44:21 +0530
+Message-ID: <58E7667D.2070408@nvidia.com>
+References: <1491485752-28030-1-git-send-email-ldewangan@nvidia.com> <CACRpkdaK1ut-1=NtqqL15QuQV+P2n8XidNqVspOfu+7x=XMvog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:34090 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932632AbdDGK1L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Apr 2017 06:27:11 -0400
-Received: by mail-io0-f173.google.com with SMTP id b140so46842463iof.1
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Apr 2017 03:27:11 -0700 (PDT)
-In-Reply-To: <20170407004205.45btnkgk7k5jv3td@tha-monstah.mydomain>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaK1ut-1=NtqqL15QuQV+P2n8XidNqVspOfu+7x=XMvog-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Marty Plummer <netz.kernel@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, Apr 7, 2017 at 2:42 AM, Marty Plummer <netz.kernel@gmail.com> wrote:
 
-> Add F71889A GPIO support.
+On Friday 07 April 2017 03:55 PM, Linus Walleij wrote:
+> On Thu, Apr 6, 2017 at 3:35 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 >
-> Fintek F71889A is a SuperIO. It contains HWMON/GPIO/Serial Ports.
+>> Currently, the GPIO interface is said to Open Drain if it is Single
+>> Ended and active LOW. Similarly, it is said as Open Source if it is
+>> Single Ended and active HIGH.
+>>
+>> The active HIGH/LOW is used in the interface for setting the pin
+>> state to HIGH or LOW when enabling/disabling the interface.
+>>
+>> In Open Drain interface, pin is set to HIGH by putting pin in
+>> high impedance and LOW by driving to the LOW.
+>>
+>> In Open Source interface, pin is set to HIGH by driving pin to
+>> HIGH and set to LOW by putting pin in high impedance.
+>>
+>> With above, the Open Drain/Source is unrelated to the active LOW/HIGH
+>> in interface. There is interface where the enable/disable of interface
+>> is ether active LOW or HIGH but it is Open Drain type.
+>>
+>> Hence decouple the Open Drain with Single Ended + Active LOW and
+>> Open Source with Single Ended + Active HIGH.
+>>
+>> Adding different flag for the Open Drain/Open Source which is valid
+>> only when Single ended flag is enabled.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Patch applied.
 >
-> Datasheet:
-> http://www.alldatasheet.com/datasheet-pdf/pdf/459076/FINTEK/F71889A.html
->
-> Its virtually identical to the F71889F superio as far as gpios go.
-> One oddity is GPIO2 at index 0xD0; the datasheet only lists gpio's 7-5,
-> but it logically seems that it should continue down to 0. I'm not sure
-> if the driver can handle gpios that are shifted away from index 0 as it
-> currently stands.
->
-> Signed-off-by: Marty Plummer <netz.kernel@gmail.com>
+> Good that you found this and fixed it before someone git hurt.
 
-Patch applied.
+Thanks you very much.
 
-Yours,
-Linus Walleij
+
+Now we are going to use the descriptor based GPIO APIs as this is very 
+powerful and passing this info from DT is very useful.
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
