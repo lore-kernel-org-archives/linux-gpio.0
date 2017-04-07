@@ -1,135 +1,90 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/2] gpio: arizona: Add support for GPIOs that need to be maintained
-Date: Fri, 7 Apr 2017 13:38:45 +0100
-Message-ID: <1491568725-14882-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-References: <1491568725-14882-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH v2 0/7] Add STM32F469 pinctrl and fix issues in STM32 pinctrl
+Date: Fri, 7 Apr 2017 14:42:57 +0200
+Message-ID: <1491568984-20169-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1491568725-14882-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, lee.jones@linaro.org
-Cc: gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, lee.jones@linaro.org, Jonathan Corbet <corbet@lwn.net>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-The Arizona devices only maintain the state of output GPIOs whilst the
-CODEC is active, this can cause issues if the CODEC suspends whilst
-something is relying on the state of one of its GPIOs. However, in
-many systems the CODEC GPIOs are used for audio related features
-and thus the state of the GPIOs is unimportant whilst the CODEC is
-suspended. Often keeping the CODEC resumed in such a system would
-incur a power impact that is unacceptable.
+This series adds support of a dedicated driver for STM32F469 MCU pinctroller.
+This add generates some changes inside STM32 pinctrl driver and inside STM32
+device tree.
 
-Allow the user to select whether a GPIO output should keep the
-CODEC resumed, by adding a flag through the second cell of the GPIO
-specifier in device tree. The default behaviour remains the same with
-the GPIO not forcing the CODEC to remain active and losing state, so
-as to not cause power regressions on existing systems.
+Changes in STM32 pinctrl driver:
+-------------------------------
+	
+	- Add STM32F469 driver.
+	
+	- Change STM32 pinctrl core in order to use "gpio-ranges" devicetree definitions.
+	  Indeed, on STM32F469 there an hole in BANK J. We need to declare a gpio-ranges
+	  in gpioj controller node to handle this hole.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
- drivers/gpio/gpio-arizona.c | 52 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Changes in STM32 device tree:
+----------------------------
+I propose a new architecture (a new file split) for pinmux definition:
+	
+	- Create a common stm32f4-pinctrl.dtsi for pinmuxing definitions
+	  which are common between STM32F429 and STM32F469 MCU. 
+	
+	- Create dedicated stm32fxxx-pinctrl.dtsi file for each MCU
+	  (stm32f429-pinctrl.dtsi and stm32f469-pinctrl.dtsi) each one will
+	  include stm32f4-pinctrl.dtsi. All differences (pinmuxing or GPIO
+	  bank holes) will be put inside the dedicated files.
 
-diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
-index 60b3102..027a70a 100644
---- a/drivers/gpio/gpio-arizona.c
-+++ b/drivers/gpio/gpio-arizona.c
-@@ -24,15 +24,27 @@
- #include <linux/mfd/arizona/pdata.h>
- #include <linux/mfd/arizona/registers.h>
- 
-+#define ARIZONA_GP_STATE_OUTPUT   0x00000001
-+
- struct arizona_gpio {
- 	struct arizona *arizona;
- 	struct gpio_chip gpio_chip;
-+	int status[ARIZONA_MAX_GPIO];
- };
- 
- static int arizona_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
- {
- 	struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
- 	struct arizona *arizona = arizona_gpio->arizona;
-+	int status = arizona_gpio->status[offset];
-+
-+	status &= (ARIZONA_GP_MAINTAIN | ARIZONA_GP_STATE_OUTPUT);
-+	if (status == (ARIZONA_GP_MAINTAIN | ARIZONA_GP_STATE_OUTPUT)) {
-+		arizona_gpio->status[offset] &= ~ARIZONA_GP_STATE_OUTPUT;
-+
-+		pm_runtime_mark_last_busy(chip->parent);
-+		pm_runtime_put_autosuspend(chip->parent);
-+	}
- 
- 	return regmap_update_bits(arizona->regmap, ARIZONA_GPIO1_CTRL + offset,
- 				  ARIZONA_GPN_DIR, ARIZONA_GPN_DIR);
-@@ -85,6 +97,19 @@ static int arizona_gpio_direction_out(struct gpio_chip *chip,
- {
- 	struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
- 	struct arizona *arizona = arizona_gpio->arizona;
-+	int status = arizona_gpio->status[offset];
-+	int ret;
-+
-+	status &= (ARIZONA_GP_MAINTAIN | ARIZONA_GP_STATE_OUTPUT);
-+	if (status == ARIZONA_GP_MAINTAIN) {
-+		arizona_gpio->status[offset] |= ARIZONA_GP_STATE_OUTPUT;
-+
-+		ret = pm_runtime_get_sync(chip->parent);
-+		if (ret < 0) {
-+			dev_err(chip->parent, "Failed to resume: %d\n", ret);
-+			return ret;
-+		}
-+	}
- 
- 	if (value)
- 		value = ARIZONA_GPN_LVL;
-@@ -105,6 +130,29 @@ static void arizona_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 			   ARIZONA_GPN_LVL, value);
- }
- 
-+static int arizona_gpio_of_xlate(struct gpio_chip *chip,
-+				 const struct of_phandle_args *gpiospec,
-+				 u32 *flags)
-+{
-+	struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
-+	u32 offset = gpiospec->args[0];
-+	u32 bits = gpiospec->args[1];
-+
-+	if (gpiospec->args_count < chip->of_gpio_n_cells)
-+		return -EINVAL;
-+
-+	if (offset >= chip->ngpio)
-+		return -EINVAL;
-+
-+	if (flags)
-+		*flags = bits & ~ARIZONA_GP_MAINTAIN;
-+
-+	if (bits & ARIZONA_GP_MAINTAIN)
-+		arizona_gpio->status[offset] |= ARIZONA_GP_MAINTAIN;
-+
-+	return offset;
-+}
-+
- static const struct gpio_chip template_chip = {
- 	.label			= "arizona",
- 	.owner			= THIS_MODULE,
-@@ -113,6 +161,8 @@ static const struct gpio_chip template_chip = {
- 	.direction_output	= arizona_gpio_direction_out,
- 	.set			= arizona_gpio_set,
- 	.can_sleep		= true,
-+	.of_xlate		= arizona_gpio_of_xlate,
-+	.of_gpio_n_cells	= 2,
- };
- 
- static int arizona_gpio_probe(struct platform_device *pdev)
-@@ -158,6 +208,8 @@ static int arizona_gpio_probe(struct platform_device *pdev)
- 	else
- 		arizona_gpio->gpio_chip.base = -1;
- 
-+	pm_runtime_enable(&pdev->dev);
-+
- 	ret = devm_gpiochip_add_data(&pdev->dev, &arizona_gpio->gpio_chip,
- 				     arizona_gpio);
- 	if (ret < 0) {
+This series fix a locking issue when a gpio is used as IRQ.
+
+Changes since v1:
+ -Rebase on 4.11-rc1.
+ -Fix issues for "gpio-ranges" patch.
+
+Regards
+Alex
+
+Alexandre TORGUE (7):
+  pinctrl: stm32: add possibility to use gpio-ranges to declare bank
+    range
+  Documentation: dt: Remove bindings for STM32 pinctrl
+  includes: dt-bindings: Rename STM32F429 pinctrl DT bindings
+  pinctrl: stm32: Add STM32F469 MCU support
+  Documentation: dt: Add new compatible to STM32 pinctrl driver bindings
+  ARM: Kconfig: Introduce MACH_STM32F469 flag
+  ARM: dts: stm32: create dedicated files for pinctrl definitions
+
+ .../bindings/pinctrl/st,stm32-pinctrl.txt          |    3 +-
+ arch/arm/Kconfig                                   |    5 +
+ arch/arm/boot/dts/stm32429i-eval.dts               |    1 +
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi             |  243 +++
+ arch/arm/boot/dts/stm32f429-disco.dts              |    1 +
+ arch/arm/boot/dts/stm32f429-pinctrl.dtsi           |   95 ++
+ arch/arm/boot/dts/stm32f429.dtsi                   |  196 ---
+ arch/arm/boot/dts/stm32f469-disco.dts              |    1 +
+ arch/arm/boot/dts/stm32f469-pinctrl.dtsi           |   96 ++
+ drivers/pinctrl/stm32/Kconfig                      |    6 +
+ drivers/pinctrl/stm32/Makefile                     |    1 +
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  115 +-
+ drivers/pinctrl/stm32/pinctrl-stm32f469.c          | 1578 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/stm32f4-pinfunc.h      | 1302 ++++++++++++++++
+ include/dt-bindings/pinctrl/stm32f429-pinfunc.h    | 1239 ---------------
+ 15 files changed, 3395 insertions(+), 1487 deletions(-)
+ create mode 100644 arch/arm/boot/dts/stm32f4-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32f429-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/stm32f469-pinctrl.dtsi
+ create mode 100644 drivers/pinctrl/stm32/pinctrl-stm32f469.c
+ create mode 100644 include/dt-bindings/pinctrl/stm32f4-pinfunc.h
+ delete mode 100644 include/dt-bindings/pinctrl/stm32f429-pinfunc.h
+
 -- 
-2.1.4
+1.9.1
