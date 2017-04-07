@@ -1,23 +1,42 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 08/38] Annotate hardware config module parameters in drivers/gpio/
-Date: Fri, 07 Apr 2017 13:52:27 +0100
-Message-ID: <31467.1491569547@warthog.procyon.org.uk>
-References: <CACRpkdaLW6egEB-w1iEfy1b0RM=yB8QoYFkatiUvEE8fvWJSiw@mail.gmail.com> <149141141298.29162.5612793122429261720.stgit@warthog.procyon.org.uk> <149141147489.29162.566616944109123278.stgit@warthog.procyon.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaLW6egEB-w1iEfy1b0RM=yB8QoYFkatiUvEE8fvWJSiw@mail.gmail.com>
-Content-ID: <31466.1491569547.1@warthog.procyon.org.uk>
-Sender: owner-linux-security-module@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: dhowells@redhat.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>, Greg KH <gregkh@linuxfoundation.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+From: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Subject: [PATCH v2 0/4] pinctrl: aspeed: Add initial pinconf support
+Date: Fri,  7 Apr 2017 22:27:09 +0930
+Message-ID: <20170407125713.15678-1-andrew@aj.id.au>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi Linus,
 
-> I see that I don't have this symbol in my tree so I guess the patch
-> series adds it and this patch needs to follow it.
+v2 breaks the pinconf patch for the Aspeed pin controller out into a series,
+adding explicit documentation to the devicetree bindings and breaking out
+changes to the core from those to the SoC drivers.
 
-Yep.  Patch #1 adds it.
+The changes also address review comments from Joel.
 
-David
+Cheers,
+
+Andrew
+
+Andrew Jeffery (4):
+  pinctrl: aspeed: Document pinconf in devicetree bindings
+  pinctrl: aspeed: Add core pinconf support
+  pinctrl: aspeed: g4: Add pinconf support
+  pinctrl: aspeed: g5: Add pinconf support
+
+ .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt |  40 +++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g4.c         | 117 +++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c         | 153 ++++++++++++++-
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c            | 211 +++++++++++++++++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed.h            |  28 +++
+ 5 files changed, 538 insertions(+), 11 deletions(-)
+
+-- 
+2.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
