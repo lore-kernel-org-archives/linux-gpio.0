@@ -1,65 +1,63 @@
-From: "Han, Nandor (GE Healthcare)" <nandor.han-JJi787mZWgc@public.gmane.org>
-Subject: [PATCH 1/3] gpio - Add EXAR XRA1403 SPI GPIO expander driver
-Date: Sat, 8 Apr 2017 07:38:50 +0000
-Message-ID: <HE1P101MB01883D37543C63B3B020F91DE60F0@HE1P101MB0188.NAMP101.PROD.OUTLOOK.COM>
-References: <cover.1490595641.git.nandor.han@ge.com>
- <6bf04ba1761f0692cb461558f0c8836f0d1f7ad8.1490595641.git.nandor.han@ge.com>
- <CACRpkdZB_cxqw0=M4YOhcwdZe7BxJtVKA290yGH-jxPU2MDgBg@mail.gmail.com>
- <HE1P101MB01883B516828F26921267A4FE60A0@HE1P101MB0188.NAMP101.PROD.OUTLOOK.COM>
- <CACRpkdYZVy2t9=K0jVm5=BxhWWUwiNsGDTMVBbSiB9+1+uafJQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fix for v4.11
+Date: Sat, 8 Apr 2017 12:24:09 +0200
+Message-ID: <CACRpkda+kKQhiaQByG4A1AtyJkNhEggh-n7q1cHn8+nQzgFzsQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYZVy2t9=K0jVm5=BxhWWUwiNsGDTMVBbSiB9+1+uafJQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Malinen, Semi (GE Healthcare)" <semi.malinen-JJi787mZWgc@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f45.google.com ([209.85.214.45]:36858 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751523AbdDHKYL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 8 Apr 2017 06:24:11 -0400
+Received: by mail-it0-f45.google.com with SMTP id 19so5975765itj.1
+        for <linux-gpio@vger.kernel.org>; Sat, 08 Apr 2017 03:24:11 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMgV2FsbGVpaiBb
-bWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMDcgQXByaWwgMjAxNyAx
-MzowNw0KPiBUbzogSGFuLCBOYW5kb3IgKEdFIEhlYWx0aGNhcmUpIDxuYW5kb3IuaGFuQGdlLmNv
-bT4NCj4gQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPjsgUm9iIEhlcnJp
-bmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IE1hcmsgUnV0bGFuZA0KPiA8bWFyay5ydXRsYW5kQGFy
-bS5jb20+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IE1hbGluZW4sIFNlbWkgKEdF
-IEhlYWx0aGNhcmUpIDxzZW1pLm1hbGluZW5AZ2UuY29tPg0KPiBTdWJqZWN0OiBFWFQ6IFJlOiBb
-UEFUQ0ggMS8zXSBncGlvIC0gQWRkIEVYQVIgWFJBMTQwMyBTUEkgR1BJTyBleHBhbmRlciBkcml2
-ZXINCj4gDQo+IE9uIFdlZCwgQXByIDUsIDIwMTcgYXQgMzoyNCBQTSwgSGFuLCBOYW5kb3IgKEdF
-IEhlYWx0aGNhcmUpDQo+IDxuYW5kb3IuaGFuQGdlLmNvbT4gd3JvdGU6DQo+ID4gW01lXQ0KPiA+
-PiA+ICsgICAgICAgLyogYnJpbmcgdGhlIGNoaXAgb3V0IG9mIHJlc2V0ICovDQo+ID4+ID4gKyAg
-ICAgICByZXNldF9ncGlvID0gZ3Bpb2RfZ2V0X29wdGlvbmFsKCZzcGktPmRldiwgInJlc2V0Iiwg
-R1BJT0RfT1VUX0xPVyk7DQo+ID4+ID4gKyAgICAgICBpZiAoSVNfRVJSKHJlc2V0X2dwaW8pKQ0K
-PiA+PiA+ICsgICAgICAgICAgICAgICBkZXZfd2Fybigmc3BpLT5kZXYsICJjb3VsZCBub3QgZ2V0
-IHJlc2V0LWdwaW9zXG4iKTsNCj4gPj4gPiArICAgICAgIGVsc2UgaWYgKHJlc2V0X2dwaW8pDQo+
-ID4+ID4gKyAgICAgICAgICAgICAgIGdwaW9kX3B1dChyZXNldF9ncGlvKTsNCj4gPj4NCj4gPj4g
-SSBkb24ndCB0aGluayB5b3Ugc2hvdWxkIHB1dCBpdCwgb3RoZXIgdGhhbiBpbiB0aGUgcmVtb3Zl
-KCkNCj4gPj4gZnVuY3Rpb24gYW5kIGluIHRoYXQgY2FzZSB5b3UgbmVlZCB0byBoYXZlIGl0IGlu
-IHRoZQ0KPiA+PiBzdGF0ZSBjb250YWluZXIuDQo+ID4NCj4gPiBDYW4geW91IHBsZWFzZSBiZSBt
-b3JlIGV4cGxpY2l0IGhlcmUuDQo+ID4NCj4gPiBDdXJyZW50bHkgSSdtIHRyeWluZyB0byBicmlu
-ZyB0aGUgZGV2aWNlIG91dCBmcm9tIHJlc2V0IGluIGNhc2UgcmVzZXQgR1BJTyBpcyBwcm92aWRl
-ZC4NCj4gPiBJIGRvbid0IHNlZSBob3cgdGhpcyBjb3VsZCBiZSBkb25lIGluIHJlbW92ZSgpICA6
-KQ0KPiANCj4gSWYgeW91IGlzc3VlIGdwaW9kX3B1dCgpIHlvdSByZWxlYXNlIHRoZSBHUElPIGhh
-bmRlIHNvIHNvbWV0aGluZyBlbHNlDQo+IGNhbiBnbyBpbiBhbmQgZ3JhYiB0aGUgR1BJTyBhbmQg
-YXNzZXJ0IHRoZSByZXNldC4NCj4gDQo+IFRoaXMgaXMgbm90IHdoYXQgeW91IHdhbnQgdG8gbWFr
-ZSBwb3NzaWJsZTogeW91IHdhbnQgdG8gaG9sZCB0aGlzIGdwaW9kIGhhbmRsZQ0KPiBhcyBsb25n
-IGFzIHRoZSBkcml2ZXIgaXMgcnVubmluZy4gZGV2bV9ncGlvZF9nZXRfb3B0aW9uYWwoKSB3aWxs
-IGRvIHRoZQ0KPiB0cmljayBpZiB5b3UgZG9uJ3Qgd2FudCB0byBwdXQgdGhlIGhhbmRsZSB1bmRl
-ciBleHBsaWNpdCBjb250cm9sLg0KPiANCg0KVGhhdCB3YXMgbXkgZmlyc3QgaW50ZW50aW9uIHRv
-IHJlbGVhc2UgdGhlIHJlc2V0IGxpbmUgaW4gY2FzZSBzb21lYm9keSBlbHNlIHdhbnRzIHRvIGNv
-bnRyb2wgaXQuIEkgZGlkIGl0DQpsaWtlIHRoYXQgYmVjYXVzZSB1c3VhbGx5IHJlc2V0IGxpbmUg
-Y29udHJvbHMgbXVsdGlwbGUgZGV2aWNlcyBhbmQgcHJvYmFibHkgc29tZSB1cHBlciBsYXllciB3
-YW50cyB0bw0KY29udHJvbCB0aGF0LiANCg0KQWZ0ZXIgeW91ciBjb21tZW50IEkgZGlkIHNvbWUg
-YW5hbHlzaW5nIGFuZCBJIHdpbGwgZm9sbG93IHlvdXIgYWR2aWNlIGFuZCBjaGFuZ2UgdGhlIHJl
-c2V0IGxpbmUgaGFuZGxpbmcuIA0KT25jZSB0aGUgR1BJTyBpcyBwcm92aWRlZCB0byB0aGUgZHJp
-dmVyIHRoZSBkcml2ZXIgd2lsbCBvd24gaXQgYW5kIGJyaW5nIG91dCB0aGUgZGV2aWNlIGZyb20g
-cmVzZXQuIEluIGNhc2Ugbm90DQpwcm92aWRlZCB0aGUgcmVzZXQgbGluZSBpcyBzb21lYm9keSBl
-bHNlIHJlc3BvbnNpYmlsaXR5LiANCg0KVGhpcyB3YXkgd2UgYXJlIGFibGUgdG8gY292ZXIgbXVs
-dGlwbGUgdXNlLWNhc2VzLiANCg0KVGhhbmtzIExpbnVzLA0KTmFuZHkNCg0KPiBZb3VycywNCj4g
-TGludXMgV2FsbGVpag0K
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi Linus,
+
+this late fix for pin control is hopefully the last I send this cycle.
+The problem was detected early in the v4.11 release cycle and
+there has been some back and forth on how to solve it.
+Sadly the proper fix arrives late, but at least not too late.
+
+Please pull it in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit a71c9a1c779f2499fb2afc0553e543f18aff6edf:
+
+  Linux 4.11-rc5 (2017-04-02 17:23:54 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.11-4
+
+for you to fetch changes up to 6118714275f0a313ecc296a87ed1af32d9691bed:
+
+  pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
+(2017-04-07 01:08:08 +0200)
+
+----------------------------------------------------------------
+Late pin control fix for v4.11:
+
+An issue was detected with pin control hos on the Freescale i.MX after
+the refactorings for more general group and function handling. We now
+have the proper fix for this.
+
+----------------------------------------------------------------
+Tony Lindgren (1):
+      pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
+
+ Documentation/pinctrl.txt               |  8 ++-
+ drivers/pinctrl/core.c                  | 97 +++++++++++++++++++++------------
+ drivers/pinctrl/freescale/pinctrl-imx.c |  2 +-
+ drivers/pinctrl/pinctrl-single.c        |  2 +-
+ drivers/pinctrl/sh-pfc/pinctrl.c        | 11 +++-
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c |  2 +
+ include/linux/pinctrl/pinctrl.h         |  3 +-
+ 7 files changed, 83 insertions(+), 42 deletions(-)
