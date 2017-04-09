@@ -1,100 +1,128 @@
-From: <linux-gpio@vger.kernel.org>
-Subject: 59479 linux-gpio
-Date: Sun, 30 Apr 2017 21:35:39 -0000
-Message-ID: <149358813916.14993.13901494403255030996@taihoinst.com>
-Mime-Version: 1.0
-Content-Type: application/zip; name="765221568173567.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.taihoinst.com ([218.38.136.99]:48946 "HELO taihoinst.com"
-        rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with SMTP
-        id S1950479AbdD3Vfp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 30 Apr 2017 17:35:45 -0400
-Content-Disposition: attachment
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: [PATCH v5 0/4] gpio: mvebu: Add PWM fan support
+Date: Sun,  9 Apr 2017 20:09:26 +0200
+Message-ID: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ralph Sennhauser <ralph.sennhauser@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
 
-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
-AVBLBQYAAAAAAQABAFsAAADoEQAAAAA=
+Hi Therry,
+
+Resending this as v5 with some minor changes since v4. What is missing is
+an ACK from you so Linus can merge the driver and Gregory the dts
+changes. For this driver to make it into 4.12 it would be nice to have
+it in next soon. I hope you can make some room in your schedule to have
+another look at this series.
+
+Thanks
+Ralph
+
+---
+
+Notes:
+
+  About npwm = 1:
+    The only way I can think of to achieve that requires reading the
+    GPIO line from the device tree. This would prevent a user to
+    dynamically choose a line. Which is fine for the fan found on Mamba
+    but let's take some development board with freely accessible GPIOs
+    and suddenly we limit the use of this driver. Given the above, npwm
+    = ngpio with only one usable at a time is a more accurate
+    description of the situation. The only downside is some "wasted"
+    space.
+
+  About the new compatible string:
+    Orion was chosen for the SoC variant for the same reason as in
+    commit 5f79c651e81e ("arm: mvebu: use global interrupts for GPIOs on
+    Armada XP").
+    The "pwm" property remains optional for the new compatible string so
+    the compatiple string "marvell,armada-370-xp-gpio" can be used by
+    all and not just the first two GPIO chips. A property to select "Set
+    A" / "Set B" registers could be invented though.
+
+---
+
+Pending:
+  * Needs ACK from Thierry Reding to be merged via linux-gpio tree by Linus
+    Walleij. (fine with the general approach, requested changes which
+    should have been taken care of now)
+
+---
+
+Changes v4->v5:
+  All
+    * add Tested-by: Andrew Lunn <andrew@lunn.ch>, thanks
+  Patch 2/4 mvebu: xp: Add PWM properties to .dtsi files
+    * keep the old compatible stings, we don't have to drop them,
+      therefore keep them (suggested by Gregory CLEMENT)
+    * subject starts with ARM: dts: mvebu: (suggested by Gregory CLEMENT)
+  Patch 4/4 mvebu: wrt1900ac: Use pwm-fan rather than gpio-fan
+    * subject starts with ARM: dts: armada-xp: (suggested by Gregory CLEMENT)
+
+Changes v3->v4:
+  Patch 1/4 gpio: mvebu: Add limited PWM support:
+    * braces for both branches in if statement if one needs it. (suggested
+      by Andrew Lunn)
+    * introduce compatible string marvell,armada-370-xp-gpio (suggest by
+      Rob Herring)
+    * fix mvebu_pwmreg_blink_on_duration -> mvebu_pwmreg_blink_off_duration
+      for period callculation in mvebu_pwm_get_state()
+  Patch 4/4 mvebu: wrt1900ac: Use pwm-fan rather than gpio-fan
+    * Drop flags from pwms for Mamba, as no longer used (suggested by
+      Andrew Lunn)
+    * Use again #pwm-cell = 2, the second cell is actually the period.
+
+Changes v2->v3:
+  Patch 1/4 gpio: mvebu: Add limited PWM support:
+    * drop pin from mvebu_pwn, can be infered (suggested by Thierry Reding)
+    * rename pwm to mvpwm so pwm can be used for pwm_device as in the API,
+      avoids some mental gymnastic.
+    * drop id from struct mvebu_gpio_chip, select blink counter in
+      mvebu_pwm_probe for all lines instead. We do not care about the
+      unused ones. I think a clear improvement in readability.
+      Makes coming up with a good comment simple as well.
+    * Switch to new atomic PWM API (suggested by Thierry Reding)
+    * rename use mvebu_gpioreg_blink_select to
+      mvebu_gpioreg_blink_counter_select.
+    * mark *_suspend() / *_resume() as __maybe_unused (suggested by Linus
+      Walleij)
+    * document #pwm-cells = 1 (suggested by Thierry Reding)
+  Patch 2/4 mvebu: xp: Add PWM properties to .dtsi files
+    * add missing reg-names / #pwm-cell properties to
+      armada-xp-mv78260.dtsi gpio1 node
+    * set pwm-cells = 1 (suggested by Thierry Reding)
+  All:
+    * always uppercase GPIO/PWM in prose (suggested by Thierry Reding)
+
+Changes v1 -> v2:
+  Patch 1/4 gpio: mvebu: Add limited PWM support:
+    * use BIT macro (suggested by Linus Walleij)
+    * move id from struct mvebu_pwm to struct mvebu_gpio_chip, implement
+      blink select as if else and comment on the chip id for code clarity
+      (to accommodate Linus Walleijs request for a code clarification /
+      comment. If you can word it better I'm all ears.)
+    * Move function comment mvebu_pwm_probe into the function itself.
+
+---
+
+Andrew Lunn (4):
+  gpio: mvebu: Add limited PWM support
+  ARM: dts: mvebu: Add PWM properties to .dtsi files
+  ARM: mvebu: Enable SENSORS_PWM_FAN in defconfig
+  ARM: dts: armada-xp: Use pwm-fan rather than gpio-fan
+
+ .../devicetree/bindings/gpio/gpio-mvebu.txt        |  32 ++
+ MAINTAINERS                                        |   2 +
+ arch/arm/boot/dts/armada-370.dtsi                  |  19 +-
+ arch/arm/boot/dts/armada-xp-linksys-mamba.dts      |   8 +-
+ arch/arm/boot/dts/armada-xp-mv78230.dtsi           |  16 +-
+ arch/arm/boot/dts/armada-xp-mv78260.dtsi           |  19 +-
+ arch/arm/boot/dts/armada-xp-mv78460.dtsi           |  19 +-
+ arch/arm/configs/mvebu_v7_defconfig                |   2 +
+ drivers/gpio/gpio-mvebu.c                          | 324 ++++++++++++++++++++-
+ 9 files changed, 405 insertions(+), 36 deletions(-)
+
+-- 
+2.10.2
