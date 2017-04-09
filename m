@@ -1,40 +1,228 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Fix for v4.11
-Date: Sat,  8 Apr 2017 16:20:50 +0200
-Message-ID: <20170408142050.1164-3-krzk@kernel.org>
-References: <20170408142050.1164-1-krzk@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:38150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752828AbdDHOVa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 8 Apr 2017 10:21:30 -0400
-In-Reply-To: <20170408142050.1164-1-krzk@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: [PATCH v5 2/4] ARM: dts: mvebu: Add PWM properties to .dtsi files
+Date: Sun,  9 Apr 2017 20:09:28 +0200
+Message-ID: <20170409180931.4884-3-ralph.sennhauser@gmail.com>
+References: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, Ralph Sennhauser <ralph.sennhauser@gmail.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
+From: Andrew Lunn <andrew@lunn.ch>
 
-The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+Add properties to the GPIO nodes to allow them to be also used as PWM
+lines.
 
-  Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+URL: https://patchwork.ozlabs.org/patch/427294/
+[Ralph Sennhauser: Add new compatible string marvell,armada-370-xp-gpio]
+Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Tested-by: Andrew Lunn <andrew@lunn.ch>
+---
+ arch/arm/boot/dts/armada-370.dtsi        | 19 ++++++++++++++-----
+ arch/arm/boot/dts/armada-xp-mv78230.dtsi | 16 ++++++++++++----
+ arch/arm/boot/dts/armada-xp-mv78260.dtsi | 19 ++++++++++++++-----
+ arch/arm/boot/dts/armada-xp-mv78460.dtsi | 19 ++++++++++++++-----
+ 4 files changed, 54 insertions(+), 19 deletions(-)
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-fixes-4.11
-
-for you to fetch changes up to 87dc66299e51a17aacd25ad25c1f1283ca2ae305:
-
-  pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433 (2017-03-23 20:47:34 +0200)
-
-----------------------------------------------------------------
-Fix for Samsung pinctrl drivers for v4.11, introduced by wrong merge conflict
-resolution.
-
-----------------------------------------------------------------
-Chanwoo Choi (1):
-      pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433
-
- drivers/pinctrl/samsung/pinctrl-exynos.c | 80 ++++++++++++++++----------------
- drivers/pinctrl/samsung/pinctrl-exynos.h | 11 -----
- 2 files changed, 40 insertions(+), 51 deletions(-)
+diff --git a/arch/arm/boot/dts/armada-370.dtsi b/arch/arm/boot/dts/armada-370.dtsi
+index cc011c8..5e815cc 100644
+--- a/arch/arm/boot/dts/armada-370.dtsi
++++ b/arch/arm/boot/dts/armada-370.dtsi
+@@ -137,29 +137,38 @@
+ 			};
+ 
+ 			gpio0: gpio@18100 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18100 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18100 0x40>, <0x181c0 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <82>, <83>, <84>, <85>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio1: gpio@18140 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18140 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18140 0x40>, <0x181c8 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <87>, <88>, <89>, <90>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio2: gpio@18180 {
+-				compatible = "marvell,orion-gpio";
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
+ 				reg = <0x18180 0x40>;
+ 				ngpios = <2>;
+ 				gpio-controller;
+diff --git a/arch/arm/boot/dts/armada-xp-mv78230.dtsi b/arch/arm/boot/dts/armada-xp-mv78230.dtsi
+index 07c5090..f77168c9 100644
+--- a/arch/arm/boot/dts/armada-xp-mv78230.dtsi
++++ b/arch/arm/boot/dts/armada-xp-mv78230.dtsi
+@@ -202,25 +202,33 @@
+ 
+ 		internal-regs {
+ 			gpio0: gpio@18100 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18100 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18100 0x40>, <0x181c0 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <82>, <83>, <84>, <85>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio1: gpio@18140 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18140 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18140 0x40>, <0x181c8 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <17>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <87>, <88>, <89>;
++				clocks = <&coreclk 0>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/armada-xp-mv78260.dtsi b/arch/arm/boot/dts/armada-xp-mv78260.dtsi
+index 64e936a..0ecfaf4 100644
+--- a/arch/arm/boot/dts/armada-xp-mv78260.dtsi
++++ b/arch/arm/boot/dts/armada-xp-mv78260.dtsi
+@@ -285,29 +285,38 @@
+ 
+ 		internal-regs {
+ 			gpio0: gpio@18100 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18100 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18100 0x40>, <0x181c0 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <82>, <83>, <84>, <85>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio1: gpio@18140 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18140 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18140 0x40>, <0x181c8 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <87>, <88>, <89>, <90>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio2: gpio@18180 {
+-				compatible = "marvell,orion-gpio";
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
+ 				reg = <0x18180 0x40>;
+ 				ngpios = <3>;
+ 				gpio-controller;
+diff --git a/arch/arm/boot/dts/armada-xp-mv78460.dtsi b/arch/arm/boot/dts/armada-xp-mv78460.dtsi
+index d1383dd..670ece4c 100644
+--- a/arch/arm/boot/dts/armada-xp-mv78460.dtsi
++++ b/arch/arm/boot/dts/armada-xp-mv78460.dtsi
+@@ -323,29 +323,38 @@
+ 
+ 		internal-regs {
+ 			gpio0: gpio@18100 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18100 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18100 0x40>, <0x181c0 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <82>, <83>, <84>, <85>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio1: gpio@18140 {
+-				compatible = "marvell,orion-gpio";
+-				reg = <0x18140 0x40>;
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
++				reg = <0x18140 0x40>, <0x181c8 0x08>;
++				reg-names = "gpio", "pwm";
+ 				ngpios = <32>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
++				#pwm-cells = <2>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				interrupts = <87>, <88>, <89>, <90>;
++				clocks = <&coreclk 0>;
+ 			};
+ 
+ 			gpio2: gpio@18180 {
+-				compatible = "marvell,orion-gpio";
++				compatible = "marvell,armada-370-xp-gpio",
++					     "marvell,orion-gpio";
+ 				reg = <0x18180 0x40>;
+ 				ngpios = <3>;
+ 				gpio-controller;
+-- 
+2.10.2
