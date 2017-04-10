@@ -1,117 +1,58 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2] pinctrl: cherryview: Add a quirk to make Acer Chromebook keyboard work again
-Date: Mon, 10 Apr 2017 13:16:33 +0300
-Message-ID: <20170410101633.53161-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:19298 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751968AbdDJKQl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 10 Apr 2017 06:16:41 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 1/2] gpio: Add a driver for Cadence GPIO controller
+Date: Mon, 10 Apr 2017 15:26:10 +0200
+Message-ID: <20170410152610.58bc589a@bbrezillon>
+References: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
+        <CACRpkdZ6w_tuzSNmFE=2BpeASNOSq0cV4fYM6F8-57Q2+3n-aQ@mail.gmail.com>
+        <20170330132946.41314874@bbrezillon>
+        <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, thierry.reding@gmail.com, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
+Cc: Simon Hatliff <hatliff@cadence.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+List-Id: linux-gpio@vger.kernel.org
 
-After commit 47c950d10202 ("pinctrl: cherryview: Do not add all
-southwest and north GPIOs to IRQ domain") the driver does not add all
-GPIOs to the irqdomain. The reason for that is that those GPIOs cannot
-generate IRQs at all, only GPEs (General Purpose Events). This causes
-Linux virtual IRQ numbering to change.
+On Thu, 30 Mar 2017 18:26:01 +0100
+Simon Hatliff <hatliff@cadence.com> wrote:
 
-However, it seems some CYAN Chromebooks, including Acer Chromebook
-hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
-Since the numbering is different now, the IRQ meant for keyboard does
-not match the Linux virtual IRQ number anymore making the keyboard
-non-functional.
+> Hi Boris, Linus,
+> 
+> On 30/03/17 12:29, Boris Brezillon wrote:
+> > Hi Linus,
+> >
+> > On Thu, 30 Mar 2017 11:03:45 +0200
+> > Linus Walleij <linus.walleij@linaro.org> wrote:
+> >  
+> >> On Wed, Mar 29, 2017 at 6:04 PM, Boris Brezillon
+> >> <boris.brezillon@free-electrons.com> wrote:
+> >>  
+> >>> Add a driver for Cadence GPIO controller.  
+> >> IIUC Cadence do a lot of things. Are there variants of this controller?  
+> > I'll let Simon answer that one.  
+> This is a controller that has been around since 2000.  It is not 
+> configurable in any way, so there are no variants.  Cadence do not offer 
+> any other GPIO controllers as IP.
+> >>> +static irqreturn_t cdns_gpio_irq_handler(int irq, void *dev)
+> >>> +{
+> >>> +       struct cdns_gpio_chip *cgpio = dev;
+> >>> +       unsigned long status;
+> >>> +       int hwirq;
+> >>> +
+> >>> +       /*
+> >>> +        * FIXME: If we have an edge irq that is masked we might lose it
+> >>> +        * since reading the STATUS register clears all IRQ flags.
+> >>> +        * We could store the status of all masked IRQ in the cdns_gpio_chip
+> >>> +        * struct but we then have no way to re-trigger the interrupt when
+> >>> +        * it is unmasked.
+> >>> +        */  
+> >> It is marked FIXME but do you think it can even be fixed? It seems
+> >> like a hardware flaw. :(  
+> > Maybe not. Unless Simon comes up with a magic register to re-trigger an
+> > interrupt :-).  
+> There are no plans to update the controller.
 
-Work this around by adding special quirk just for these machines where
-we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
-based machines will not be affected by the change.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
-Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
-Reported-by: Adam S Levy <theadamlevy@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
-Changes from v1:
- - Add BIOS date to DMI match string to keep this quirk from affecting
-   future BIOS versions where the issue might be fixed already.
-
-Marc, Linus,
-
-I went for adding the quirk here instead of quirking it in i8042 keyboard
-driver because there might be other devices hard-coding the Linux IRQ
-number. This way we only need to touch one driver.
-
-Adam,
-
-Can you please try if this patch still fixes the problem for you? Thanks.
-
- drivers/pinctrl/intel/pinctrl-cherryview.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index f80134e3e0b6..9ff790174906 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -13,6 +13,7 @@
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/dmi.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/init.h>
-@@ -1524,10 +1525,31 @@ static void chv_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+/*
-+ * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
-+ * tables. Since we leave GPIOs that are not capable of generating
-+ * interrupts out of the irqdomain the numbering will be different and
-+ * cause devices using the hardcoded IRQ numbers fail. In order not to
-+ * break such machines we will only mask pins from irqdomain if the machine
-+ * is not listed below.
-+ */
-+static const struct dmi_system_id chv_no_valid_mask[] = {
-+	{
-+		/* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
-+		.ident = "Acer Chromebook (CYAN)",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
-+			DMI_MATCH(DMI_BIOS_DATE, "05/21/2016"),
-+		},
-+	}
-+};
-+
- static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- {
- 	const struct chv_gpio_pinrange *range;
- 	struct gpio_chip *chip = &pctrl->chip;
-+	bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
- 	int ret, i, offset;
- 
- 	*chip = chv_gpio_chip;
-@@ -1536,7 +1558,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 	chip->label = dev_name(pctrl->dev);
- 	chip->parent = pctrl->dev;
- 	chip->base = -1;
--	chip->irq_need_valid_mask = true;
-+	chip->irq_need_valid_mask = need_valid_mask;
- 
- 	ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
- 	if (ret) {
-@@ -1567,7 +1589,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 		intsel &= CHV_PADCTRL0_INTSEL_MASK;
- 		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
- 
--		if (intsel >= pctrl->community->nirqs)
-+		if (need_valid_mask && intsel >= pctrl->community->nirqs)
- 			clear_bit(i, chip->irq_valid_mask);
- 	}
- 
--- 
-2.11.0
-
+Linus, what should I do here? Drop support for edge interrupts?
