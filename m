@@ -1,262 +1,64 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 1/7] pinctrl: dt-bindings: Add documentation for
- Armada 37xx pin controllers
-Date: Mon, 10 Apr 2017 13:15:14 -0500
-Message-ID: <20170410181514.kzbpkaxkwf7uycdc@rob-hp-laptop>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
- <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v1 1/7] mfd: intel_soc_pmic_bxtwc: fix TMU interrupt index
+Date: Mon, 10 Apr 2017 11:52:23 -0700
+Message-ID: <b8e952de94ed1902b922224de11f0814371b08b0.1491848776.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33405 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753071AbdDJSPR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Apr 2017 14:15:17 -0400
-Content-Disposition: inline
-In-Reply-To: <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement@free-electrons.com>
+Received: from mga14.intel.com ([192.55.52.115]:55806 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752047AbdDJS4B (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 10 Apr 2017 14:56:01 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
+To: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, lee.jones@linaro.org, andy@infradead.org, hdegoede@redhat.com
+Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, sathyaosid@gmail.com, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-On Wed, Apr 05, 2017 at 05:18:02PM +0200, Gregory CLEMENT wrote:
-> Document the device tree binding for the pin controllers found on the
-> Armada 37xx SoCs.
-> 
-> Update the binding documention of the xtal clk which is a subnode of this
-> syscon node.
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +--
->  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 187 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> index a88f1f05fbd6..4c0807f28cfa 100644
-> --- a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> @@ -5,6 +5,7 @@ reading the gpio latch register.
->  
->  This node must be a subnode of the node exposing the register address
->  of the GPIO block where the gpio latch is located.
-> +See Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
->  
->  Required properties:
->  - compatible : shall be one of the following:
-> @@ -16,9 +17,9 @@ Optional properties:
->  	output names ("xtal")
->  
->  Example:
-> -gpio1: gpio@13800 {
-> -	compatible = "marvell,armada-3700-gpio", "syscon", "simple-mfd";
-> -	reg = <0x13800 0x1000>;
-> +pinctrl_nb: pinctrl-nb@13800 {
-> +	compatible = "armada3710-nb-pinctrl", "syscon", "simple-mfd";
-> +	reg = <0x13800 0x100>, <0x13C00 0x20>;
->  
->  	xtalclk: xtal-clk {
->  		compatible = "marvell,armada-3700-xtal-clock";
-> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-> new file mode 100644
-> index 000000000000..2eda81e0bca1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
-> @@ -0,0 +1,183 @@
-> +* Marvell Armada 37xx SoC pin and gpio controller
-> +
-> +Each Armada 37xx SoC come with two pin and gpio controller one for the
-> +south bridge and the other for the north bridge.
-> +
-> +Inside this set of register the gpio latch allows exposing some
-> +configuration of the SoC and especially the clock frequency of the
-> +xtal. Hence, this node is a represent as syscon allowing sharing the
-> +register between multiple hardware block.
-> +
-> +GPIO and pin controller:
-> +------------------------
-> +
-> +Main node:
-> +
-> +Refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning
-> +of the phrase "pin configuration node".
-> +
-> +Required properties for pinctrl driver:
-> +
-> +- compatible:	"marvell,armada3710-sb-pinctrl", "syscon, "simple-mfd"
-> +		for the south bridge
-> +		"marvell,armada3710-nb-pinctrl", "syscon, "simple-mfd"
-> +		for the north bridge
-> +- reg: The first set of register are for pinctrl/gpio and the second
-> +  set for the interrupt controller
-> +- interrupts: list of the interrupt use by the gpio
-> +
-> +Available groups and functions for the North bridge:
-> +
-> +group: jtag
-> + - pins 20-24
-> + - functions jtag, gpio
-> +
-> +group sdio0
-> + - pins 8-10
-> + - functions sdio, gpio
-> +
-> +group emmc_nb
-> + - pins 27-35
-> + - functions emmc, gpio
-> +
-> +group pwm0
-> + - pin 11 (GPIO1-11)
-> + - functions pwm, gpio
-> +
-> +group pwm1
-> + - pin 12
-> + - functions pwm, gpio
-> +
-> +group pwm2
-> + - pin 13
-> + - functions pwm, gpio
-> +
-> +group pwm3
-> + - pin 14
-> + - functions pwm, gpio
-> +
-> +group pmic1
-> + - pin 17
-> + - functions pmic, gpio
-> +
-> +group pmic0
-> + - pin 16
-> + - functions pmic, gpio
-> +
-> +group i2c2
-> + - pins 2-3
-> + - functions i2c, gpio
-> +
-> +group i2c1
-> + - pins 0-1
-> + - functions i2c, gpio
-> +
-> +group spi_cs1
-> + - pin 17
-> + - functions spi, gpio
-> +
-> +group spi_cs2
-> + - pin 18
-> + - functions spi, gpio
-> +
-> +group spi_cs3
-> + - pin 19
-> + - functions spi, gpio
-> +
-> +group onewire
-> + - pin 4
-> + - functions onewire, gpio
-> +
-> +group uart1
-> + - pins 25-26
-> + - functions uart, gpio
-> +
-> +group spi_quad
-> + - pins 15-16
-> + - functions spi, gpio
-> +
-> +group uart_2
-> + - pins 9-10
-> + - functions uart, gpio
-> +
-> +Available groups and functions for the South bridge:
-> +
-> +group usb32_drvvbus0
-> + - pin 36
-> + - functions drvbus, gpio
-> +
-> +group usb2_drvvbus1
-> + - pin 37
-> + - functions drvbus, gpio
-> +
-> +group sdio_sb
-> + - pins 60-64
-> + - functions sdio, gpio
-> +
-> +group rgmii
-> + - pins 42-55
-> + - functions mii, gpio
-> +
-> +group pcie1
-> + - pins 39-40
-> + - functions pcie, gpio
-> +
-> +group ptp
-> + - pins 56-58
-> + - functions ptp, gpio
-> +
-> +group ptp_clk
-> + - pin 57
-> + - functions ptp, mii
-> +
-> +group ptp_trig
-> + - pin 58
-> + - functions ptp, mii
-> +
-> +group mii_col
-> + - pin 59
-> + - functions mii, mii_err
-> +
-> +GPIO subnode:
-> +
-> +Please refer to gpio.txt in this directory for details of gpio-ranges property
-> +and the common GPIO bindings used by client devices.
-> +
-> +Required properties for gpio driver under the gpio subnode:
-> +- interrupts: List of interrupt specifier for the controllers interrupt.
-> +- gpio-controller: Marks the device node as a gpio controller.
-> +- #gpio-cells: Should be 2. The first cell is the GPIO number and the
-> +   second cell specifies GPIO flags, as defined in
-> +   <dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH and
-> +   GPIO_ACTIVE_LOW flags are supported.
-> +- gpio-ranges: Range of pins managed by the GPIO controller.
-> +
-> +Xtal Clock bindings for Marvell Armada 37xx SoCs
-> +------------------------------------------------
-> +
-> +see Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
-> +
-> +
-> +Example:
-> +pinctrl_sb: pinctrl-sb@18800 {
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Just pinctrl@...
+TMU interrupts are registered as a separate interrupt chip, and
+hence it should start its interrupt index(BXTWC_TMU_IRQ) number
+from 0. But currently, BXTWC_TMU_IRQ is defined as part of enum
+bxtwc_irqs_level2 and its index value is 11. Since this index
+value is used when calculating .num_irqs of regmap_irq_chip_tmu,
+it incorrectly reports number of irqs as 12 instead of actual
+value of 1.
 
-> +	compatible = "marvell,armada3710-sb-pinctrl", "syscon", "simple-mfd";
-> +	reg = <0x18800 0x100>, <0x18C00 0x20>;
-> +	gpiosb: gpiosb {
+static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
+	REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, 0x06),
+};
 
-gpio {
+static struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
+	.name = "bxtwc_irq_chip_tmu",
+	.status_base = BXTWC_TMUIRQ,
+	.mask_base = BXTWC_MTMUIRQ,
+	.irqs = bxtwc_regmap_irqs_tmu,
+	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_tmu),
+	.num_regs = 1,
+};
 
-With that,
+This patch fixes this issue by creating new enum of tmu irqs and
+resetting its starting index to 0.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ drivers/mfd/intel_soc_pmic_bxtwc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
+index 699c8c7..bb18e20 100644
+--- a/drivers/mfd/intel_soc_pmic_bxtwc.c
++++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
+@@ -94,7 +94,10 @@ enum bxtwc_irqs_level2 {
+ 	BXTWC_GPIO0_IRQ,
+ 	BXTWC_GPIO1_IRQ,
+ 	BXTWC_CRIT_IRQ,
+-	BXTWC_TMU_IRQ,
++};
++
++enum bxtwc_irqs_tmu {
++	BXTWC_TMU_IRQ = 0,
+ };
+ 
+ static const struct regmap_irq bxtwc_regmap_irqs[] = {
+-- 
+2.7.4
 
-> +		#gpio-cells = <2>;
-> +		gpio-ranges = <&pinctrl_sb 0 0 29>;
-> +		gpio-controller;
-> +		interrupts =
-> +		<GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-> +		<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	rgmii_pins: mii-pins {
-> +		groups = "rgmii";
-> +		function = "mii";
-> +	};
-> +
-> +};
-> -- 
-> git-series 0.9.1
