@@ -1,66 +1,109 @@
-From: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v1 4/7] mfd: intel_soc_pmic_bxtwc: remove second level irq for gpio device
-Date: Mon, 10 Apr 2017 11:52:26 -0700
-Message-ID: <50fd2e28a661a0b62f7d270a511a354d56d19bda.1491848776.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <b8e952de94ed1902b922224de11f0814371b08b0.1491848776.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b8e952de94ed1902b922224de11f0814371b08b0.1491848776.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, lee.jones@linaro.org, andy@infradead.org, hdegoede@redhat.com
-Cc: linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, sathyaosid@gmail.com, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+From: jmondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 3/9] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Mon, 10 Apr 2017 21:19:17 +0200
+Message-ID: <20170410191917.GA14910@w540>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1491401247-7030-4-git-send-email-jacopo+renesas@jmondi.org>
+ <20170410181215.e6cihbv2rfljbm3b@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170410181215.e6cihbv2rfljbm3b@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Hi Rob,
 
-Currently all PMIC GPIO domain irqs are consumed by the same
-device(bxt_wcove_gpio), so there is no need to export them as
-separate interrupts. We can just export only the first level
-GPIO irq(BXTWC_GPIO_LVL1_IRQ) as an irq resource and let the
-GPIO device driver(bxt_wcove_gpio) handle the GPIO sub domain
-irqs based on status value of GPIO level2 interrupt status
-register. Also, just using only the first level irq will eliminate
-the bug involved in requesting only the second level irq and not
-explicitly enable the first level irq. For more info on this
-issue please read the details at,
+On Mon, Apr 10, 2017 at 01:12:15PM -0500, Rob Herring wrote:
+> On Wed, Apr 05, 2017 at 04:07:21PM +0200, Jacopo Mondi wrote:
+> > Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+> > controller.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+> > ---
+> >  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 218 +++++++++++++++++++++
+> >  1 file changed, 218 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> > new file mode 100644
+> > index 0000000..46584ef
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> > @@ -0,0 +1,218 @@
+> > +Renesas RZ/A1 combined Pin and GPIO controller
+> > +
+> > +The Renesas SoCs of RZ/A1 family feature a combined Pin and GPIO controller,
+> > +named "Ports" in the hardware reference manual.
+> > +Pin multiplexing and GPIO configuration is performed on a per-pin basis
+> > +writing configuration values to per-port register sets.
+> > +Each "port" features up to 16 pins, each of them configurable for GPIO
+> > +function (port mode) or in alternate function mode.
+> > +Up to 8 different alternate function modes exist for each single pin.
+> > +
+> > +Pin controller node
+> > +-------------------
+> > +
+> > +Required properties:
+> > +  - compatible
+> > +    this shall be "renesas,r7s72100-ports".
+> > +
+> > +  - reg
+> > +    address base and length of the memory area where pin controller
+> > +    hardware is mapped to.
+> > +
+> > +Example:
+> > +Pin controller node for RZ/A1H SoC (r7s72100)
+> > +
+> > +pinctrl: pin-controller@fcfe3000 {
+> > +	compatible = "renesas,r7s72100-ports";
+> > +
+> > +	reg = <0xfcfe3000 0x4230>;
+> > +};
+> > +
+> > +Sub-nodes
+> > +---------
+> > +
+> > +The child nodes of the pin controller node describe a pin multiplexing
+> > +function or a gpio controller alternatively.
+> > +
+> > +- Pin multiplexing sub-nodes:
+> > +  A pin multiplexing sub-node describes how to configure a set of
+> > +  (or a single) pin in some desired alternate function mode.
+> > +  A single sub-node may define several pin configurations.
+> > +  Some alternate functions require special pin configuration flags to be
+> > +  supplied along with the alternate function configuration number.
+> > +  When hardware reference manual specifies a pin function to be either
+> > +  "bi-directional" or "software IO driven", use the generic properties from
+> > +  <include/linux/pinctrl/pinconf_generic.h> header file to instruct the
+> > +  pin controller to perform the desired pin configuration operations.
+> > +  Please refer to pinctrl-bindings.txt to get to know more on generic
+> > +  pin properties usage.
+> > +
+> > +  The allowed generic formats for a pin multiplexing sub-node are the
+> > +  following ones:
+> > +
+> > +  node-1 {
+> > +      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
+> > +      GENERIC_PINCONFIG;
+>
+> What's GENERIC_PINCONFIG? I see this in some other binding docs, but not
+> used anywhere. If this is a boolean property then get rid of the all
+> caps. If this is a define, then don't use complex defines that expand to
+> dts source.
 
-https://lkml.org/lkml/2017/2/27/148
+GENERIC_PINCONF is a wildcard that identifies "generic" pin
+configuration properties the pin controller framework defines.
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/mfd/intel_soc_pmic_bxtwc.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Have a look at "enum pin_config_param" in
+<include/linux/pinctrl/pinconf-generic.h>
 
-diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-index c08d514..dc8af1d 100644
---- a/drivers/mfd/intel_soc_pmic_bxtwc.c
-+++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-@@ -88,8 +88,6 @@ enum bxtwc_irqs_level2 {
- 	BXTWC_USBC_IRQ,
- 	BXTWC_CHGR0_IRQ,
- 	BXTWC_CHGR1_IRQ,
--	BXTWC_GPIO0_IRQ,
--	BXTWC_GPIO1_IRQ,
- 	BXTWC_CRIT_IRQ,
- };
- 
-@@ -115,8 +113,6 @@ static const struct regmap_irq bxtwc_regmap_irqs_level2[] = {
- 	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 2, BIT(5)),
- 	REGMAP_IRQ_REG(BXTWC_CHGR0_IRQ, 2, 0x1f),
- 	REGMAP_IRQ_REG(BXTWC_CHGR1_IRQ, 3, 0x1f),
--	REGMAP_IRQ_REG(BXTWC_GPIO0_IRQ, 4, 0xff),
--	REGMAP_IRQ_REG(BXTWC_GPIO1_IRQ, 5, 0x3f),
- 	REGMAP_IRQ_REG(BXTWC_CRIT_IRQ, 6, 0x03),
- };
- 
-@@ -152,8 +148,7 @@ static struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
- };
- 
- static struct resource gpio_resources[] = {
--	DEFINE_RES_IRQ_NAMED(BXTWC_GPIO0_IRQ, "GPIO0"),
--	DEFINE_RES_IRQ_NAMED(BXTWC_GPIO1_IRQ, "GPIO1"),
-+	DEFINE_RES_IRQ_NAMED(BXTWC_GPIO_LVL1_IRQ, "GPIO"),
- };
- 
- static struct resource adc_resources[] = {
--- 
-2.7.4
+Thanks
+  j
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
