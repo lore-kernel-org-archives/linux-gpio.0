@@ -1,32 +1,117 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.12
-Date: Mon, 10 Apr 2017 09:36:27 +0200
-Message-ID: <CACRpkdb9OJTsyLknXA-D9TZ_VHmGkaF8zbG1GQbsFgEfmqa9Uw@mail.gmail.com>
-References: <20170408142050.1164-1-krzk@kernel.org> <20170408142050.1164-2-krzk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170408142050.1164-2-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH v2] pinctrl: cherryview: Add a quirk to make Acer Chromebook keyboard work again
+Date: Mon, 10 Apr 2017 13:16:33 +0300
+Message-ID: <20170410101633.53161-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:19298 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751968AbdDJKQl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 10 Apr 2017 06:16:41 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Adam S Levy <theadamlevy@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, thierry.reding@gmail.com, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On Sat, Apr 8, 2017 at 4:20 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+After commit 47c950d10202 ("pinctrl: cherryview: Do not add all
+southwest and north GPIOs to IRQ domain") the driver does not add all
+GPIOs to the irqdomain. The reason for that is that those GPIOs cannot
+generate IRQs at all, only GPEs (General Purpose Events). This causes
+Linux virtual IRQ numbering to change.
 
-> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
->
->   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.12
->
-> for you to fetch changes up to f69ae4f58a198ad15b0422637434d2bcf6fc2e2a:
->
->   pinctrl: samsung: Use devres version of gpiochip_add_data (2017-03-23 21:13:19 +0200)
+However, it seems some CYAN Chromebooks, including Acer Chromebook
+hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
+Since the numbering is different now, the IRQ meant for keyboard does
+not match the Linux virtual IRQ number anymore making the keyboard
+non-functional.
 
-Pulled into my devel branch for v4.12.
+Work this around by adding special quirk just for these machines where
+we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
+based machines will not be affected by the change.
 
-Thanks!
-Linus Walleij
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
+Reported-by: Adam S Levy <theadamlevy@gmail.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+Changes from v1:
+ - Add BIOS date to DMI match string to keep this quirk from affecting
+   future BIOS versions where the issue might be fixed already.
+
+Marc, Linus,
+
+I went for adding the quirk here instead of quirking it in i8042 keyboard
+driver because there might be other devices hard-coding the Linux IRQ
+number. This way we only need to touch one driver.
+
+Adam,
+
+Can you please try if this patch still fixes the problem for you? Thanks.
+
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index f80134e3e0b6..9ff790174906 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -13,6 +13,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/dmi.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+@@ -1524,10 +1525,31 @@ static void chv_gpio_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++/*
++ * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
++ * tables. Since we leave GPIOs that are not capable of generating
++ * interrupts out of the irqdomain the numbering will be different and
++ * cause devices using the hardcoded IRQ numbers fail. In order not to
++ * break such machines we will only mask pins from irqdomain if the machine
++ * is not listed below.
++ */
++static const struct dmi_system_id chv_no_valid_mask[] = {
++	{
++		/* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
++		.ident = "Acer Chromebook (CYAN)",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
++			DMI_MATCH(DMI_BIOS_DATE, "05/21/2016"),
++		},
++	}
++};
++
+ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ {
+ 	const struct chv_gpio_pinrange *range;
+ 	struct gpio_chip *chip = &pctrl->chip;
++	bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
+ 	int ret, i, offset;
+ 
+ 	*chip = chv_gpio_chip;
+@@ -1536,7 +1558,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 	chip->label = dev_name(pctrl->dev);
+ 	chip->parent = pctrl->dev;
+ 	chip->base = -1;
+-	chip->irq_need_valid_mask = true;
++	chip->irq_need_valid_mask = need_valid_mask;
+ 
+ 	ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+ 	if (ret) {
+@@ -1567,7 +1589,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+ 		intsel &= CHV_PADCTRL0_INTSEL_MASK;
+ 		intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
+ 
+-		if (intsel >= pctrl->community->nirqs)
++		if (need_valid_mask && intsel >= pctrl->community->nirqs)
+ 			clear_bit(i, chip->irq_valid_mask);
+ 	}
+ 
+-- 
+2.11.0
+
