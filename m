@@ -1,96 +1,262 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 3/9] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Mon, 10 Apr 2017 13:12:15 -0500
-Message-ID: <20170410181215.e6cihbv2rfljbm3b@rob-hp-laptop>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
- <1491401247-7030-4-git-send-email-jacopo+renesas@jmondi.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/7] pinctrl: dt-bindings: Add documentation for
+ Armada 37xx pin controllers
+Date: Mon, 10 Apr 2017 13:15:14 -0500
+Message-ID: <20170410181514.kzbpkaxkwf7uycdc@rob-hp-laptop>
+References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
+ <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33405 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753071AbdDJSPR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Apr 2017 14:15:17 -0400
 Content-Disposition: inline
-In-Reply-To: <1491401247-7030-4-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-On Wed, Apr 05, 2017 at 04:07:21PM +0200, Jacopo Mondi wrote:
-> Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
-> controller.
+On Wed, Apr 05, 2017 at 05:18:02PM +0200, Gregory CLEMENT wrote:
+> Document the device tree binding for the pin controllers found on the
+> Armada 37xx SoCs.
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+> Update the binding documention of the xtal clk which is a subnode of this
+> syscon node.
+> 
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 > ---
->  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 218 +++++++++++++++++++++
->  1 file changed, 218 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+>  Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt         |   7 +--
+>  Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 187 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> diff --git a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> index a88f1f05fbd6..4c0807f28cfa 100644
+> --- a/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> @@ -5,6 +5,7 @@ reading the gpio latch register.
+>  
+>  This node must be a subnode of the node exposing the register address
+>  of the GPIO block where the gpio latch is located.
+> +See Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+>  
+>  Required properties:
+>  - compatible : shall be one of the following:
+> @@ -16,9 +17,9 @@ Optional properties:
+>  	output names ("xtal")
+>  
+>  Example:
+> -gpio1: gpio@13800 {
+> -	compatible = "marvell,armada-3700-gpio", "syscon", "simple-mfd";
+> -	reg = <0x13800 0x1000>;
+> +pinctrl_nb: pinctrl-nb@13800 {
+> +	compatible = "armada3710-nb-pinctrl", "syscon", "simple-mfd";
+> +	reg = <0x13800 0x100>, <0x13C00 0x20>;
+>  
+>  	xtalclk: xtal-clk {
+>  		compatible = "marvell,armada-3700-xtal-clock";
+> diff --git a/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
 > new file mode 100644
-> index 0000000..46584ef
+> index 000000000000..2eda81e0bca1
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-> @@ -0,0 +1,218 @@
-> +Renesas RZ/A1 combined Pin and GPIO controller
+> +++ b/Documentation/devicetree/bindings/pinctrl/marvell,armada-37xx-pinctrl.txt
+> @@ -0,0 +1,183 @@
+> +* Marvell Armada 37xx SoC pin and gpio controller
 > +
-> +The Renesas SoCs of RZ/A1 family feature a combined Pin and GPIO controller,
-> +named "Ports" in the hardware reference manual.
-> +Pin multiplexing and GPIO configuration is performed on a per-pin basis
-> +writing configuration values to per-port register sets.
-> +Each "port" features up to 16 pins, each of them configurable for GPIO
-> +function (port mode) or in alternate function mode.
-> +Up to 8 different alternate function modes exist for each single pin.
+> +Each Armada 37xx SoC come with two pin and gpio controller one for the
+> +south bridge and the other for the north bridge.
 > +
-> +Pin controller node
-> +-------------------
+> +Inside this set of register the gpio latch allows exposing some
+> +configuration of the SoC and especially the clock frequency of the
+> +xtal. Hence, this node is a represent as syscon allowing sharing the
+> +register between multiple hardware block.
 > +
-> +Required properties:
-> +  - compatible
-> +    this shall be "renesas,r7s72100-ports".
+> +GPIO and pin controller:
+> +------------------------
 > +
-> +  - reg
-> +    address base and length of the memory area where pin controller
-> +    hardware is mapped to.
+> +Main node:
+> +
+> +Refer to pinctrl-bindings.txt in this directory for details of the
+> +common pinctrl bindings used by client devices, including the meaning
+> +of the phrase "pin configuration node".
+> +
+> +Required properties for pinctrl driver:
+> +
+> +- compatible:	"marvell,armada3710-sb-pinctrl", "syscon, "simple-mfd"
+> +		for the south bridge
+> +		"marvell,armada3710-nb-pinctrl", "syscon, "simple-mfd"
+> +		for the north bridge
+> +- reg: The first set of register are for pinctrl/gpio and the second
+> +  set for the interrupt controller
+> +- interrupts: list of the interrupt use by the gpio
+> +
+> +Available groups and functions for the North bridge:
+> +
+> +group: jtag
+> + - pins 20-24
+> + - functions jtag, gpio
+> +
+> +group sdio0
+> + - pins 8-10
+> + - functions sdio, gpio
+> +
+> +group emmc_nb
+> + - pins 27-35
+> + - functions emmc, gpio
+> +
+> +group pwm0
+> + - pin 11 (GPIO1-11)
+> + - functions pwm, gpio
+> +
+> +group pwm1
+> + - pin 12
+> + - functions pwm, gpio
+> +
+> +group pwm2
+> + - pin 13
+> + - functions pwm, gpio
+> +
+> +group pwm3
+> + - pin 14
+> + - functions pwm, gpio
+> +
+> +group pmic1
+> + - pin 17
+> + - functions pmic, gpio
+> +
+> +group pmic0
+> + - pin 16
+> + - functions pmic, gpio
+> +
+> +group i2c2
+> + - pins 2-3
+> + - functions i2c, gpio
+> +
+> +group i2c1
+> + - pins 0-1
+> + - functions i2c, gpio
+> +
+> +group spi_cs1
+> + - pin 17
+> + - functions spi, gpio
+> +
+> +group spi_cs2
+> + - pin 18
+> + - functions spi, gpio
+> +
+> +group spi_cs3
+> + - pin 19
+> + - functions spi, gpio
+> +
+> +group onewire
+> + - pin 4
+> + - functions onewire, gpio
+> +
+> +group uart1
+> + - pins 25-26
+> + - functions uart, gpio
+> +
+> +group spi_quad
+> + - pins 15-16
+> + - functions spi, gpio
+> +
+> +group uart_2
+> + - pins 9-10
+> + - functions uart, gpio
+> +
+> +Available groups and functions for the South bridge:
+> +
+> +group usb32_drvvbus0
+> + - pin 36
+> + - functions drvbus, gpio
+> +
+> +group usb2_drvvbus1
+> + - pin 37
+> + - functions drvbus, gpio
+> +
+> +group sdio_sb
+> + - pins 60-64
+> + - functions sdio, gpio
+> +
+> +group rgmii
+> + - pins 42-55
+> + - functions mii, gpio
+> +
+> +group pcie1
+> + - pins 39-40
+> + - functions pcie, gpio
+> +
+> +group ptp
+> + - pins 56-58
+> + - functions ptp, gpio
+> +
+> +group ptp_clk
+> + - pin 57
+> + - functions ptp, mii
+> +
+> +group ptp_trig
+> + - pin 58
+> + - functions ptp, mii
+> +
+> +group mii_col
+> + - pin 59
+> + - functions mii, mii_err
+> +
+> +GPIO subnode:
+> +
+> +Please refer to gpio.txt in this directory for details of gpio-ranges property
+> +and the common GPIO bindings used by client devices.
+> +
+> +Required properties for gpio driver under the gpio subnode:
+> +- interrupts: List of interrupt specifier for the controllers interrupt.
+> +- gpio-controller: Marks the device node as a gpio controller.
+> +- #gpio-cells: Should be 2. The first cell is the GPIO number and the
+> +   second cell specifies GPIO flags, as defined in
+> +   <dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH and
+> +   GPIO_ACTIVE_LOW flags are supported.
+> +- gpio-ranges: Range of pins managed by the GPIO controller.
+> +
+> +Xtal Clock bindings for Marvell Armada 37xx SoCs
+> +------------------------------------------------
+> +
+> +see Documentation/devicetree/bindings/clock/armada3700-xtal-clock.txt
+> +
 > +
 > +Example:
-> +Pin controller node for RZ/A1H SoC (r7s72100)
-> +
-> +pinctrl: pin-controller@fcfe3000 {
-> +	compatible = "renesas,r7s72100-ports";
-> +
-> +	reg = <0xfcfe3000 0x4230>;
-> +};
-> +
-> +Sub-nodes
-> +---------
-> +
-> +The child nodes of the pin controller node describe a pin multiplexing
-> +function or a gpio controller alternatively.
-> +
-> +- Pin multiplexing sub-nodes:
-> +  A pin multiplexing sub-node describes how to configure a set of
-> +  (or a single) pin in some desired alternate function mode.
-> +  A single sub-node may define several pin configurations.
-> +  Some alternate functions require special pin configuration flags to be
-> +  supplied along with the alternate function configuration number.
-> +  When hardware reference manual specifies a pin function to be either
-> +  "bi-directional" or "software IO driven", use the generic properties from
-> +  <include/linux/pinctrl/pinconf_generic.h> header file to instruct the
-> +  pin controller to perform the desired pin configuration operations.
-> +  Please refer to pinctrl-bindings.txt to get to know more on generic
-> +  pin properties usage.
-> +
-> +  The allowed generic formats for a pin multiplexing sub-node are the
-> +  following ones:
-> +
-> +  node-1 {
-> +      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
-> +      GENERIC_PINCONFIG;
+> +pinctrl_sb: pinctrl-sb@18800 {
 
-What's GENERIC_PINCONFIG? I see this in some other binding docs, but not 
-used anywhere. If this is a boolean property then get rid of the all 
-caps. If this is a define, then don't use complex defines that expand to 
-dts source.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Just pinctrl@...
+
+> +	compatible = "marvell,armada3710-sb-pinctrl", "syscon", "simple-mfd";
+> +	reg = <0x18800 0x100>, <0x18C00 0x20>;
+> +	gpiosb: gpiosb {
+
+gpio {
+
+With that,
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+
+> +		#gpio-cells = <2>;
+> +		gpio-ranges = <&pinctrl_sb 0 0 29>;
+> +		gpio-controller;
+> +		interrupts =
+> +		<GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> +		<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
+> +		<GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
+> +		<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
+> +		<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	rgmii_pins: mii-pins {
+> +		groups = "rgmii";
+> +		function = "mii";
+> +	};
+> +
+> +};
+> -- 
+> git-series 0.9.1
