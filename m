@@ -1,58 +1,59 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: Add a driver for Cadence GPIO controller
-Date: Mon, 10 Apr 2017 15:26:10 +0200
-Message-ID: <20170410152610.58bc589a@bbrezillon>
-References: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
-        <CACRpkdZ6w_tuzSNmFE=2BpeASNOSq0cV4fYM6F8-57Q2+3n-aQ@mail.gmail.com>
-        <20170330132946.41314874@bbrezillon>
-        <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
+From: "DR.ANTHONY EMMANUEL" <dr.anthony.emmanuel95@gmail.com>
+Subject: Respond to me immediately!!
+Date: Mon, 10 Apr 2017 13:36:40 +0000 (UTC)
+Message-ID: <1704972427.272963.1491831400573@mail.yahoo.com>
+References: <1704972427.272963.1491831400573.ref@mail.yahoo.com>
+Reply-To: "DR.ANTHONY EMMANUEL" <emmanueldranthony29@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Hatliff <hatliff@cadence.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from nm24-vm5.bullet.mail.ne1.yahoo.com ([98.138.91.246]:49863 "EHLO
+        nm24-vm5.bullet.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752880AbdDJNgm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 10 Apr 2017 09:36:42 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 30 Mar 2017 18:26:01 +0100
-Simon Hatliff <hatliff@cadence.com> wrote:
+Dear how are you,
 
-> Hi Boris, Linus,
-> 
-> On 30/03/17 12:29, Boris Brezillon wrote:
-> > Hi Linus,
-> >
-> > On Thu, 30 Mar 2017 11:03:45 +0200
-> > Linus Walleij <linus.walleij@linaro.org> wrote:
-> >  
-> >> On Wed, Mar 29, 2017 at 6:04 PM, Boris Brezillon
-> >> <boris.brezillon@free-electrons.com> wrote:
-> >>  
-> >>> Add a driver for Cadence GPIO controller.  
-> >> IIUC Cadence do a lot of things. Are there variants of this controller?  
-> > I'll let Simon answer that one.  
-> This is a controller that has been around since 2000.  It is not 
-> configurable in any way, so there are no variants.  Cadence do not offer 
-> any other GPIO controllers as IP.
-> >>> +static irqreturn_t cdns_gpio_irq_handler(int irq, void *dev)
-> >>> +{
-> >>> +       struct cdns_gpio_chip *cgpio = dev;
-> >>> +       unsigned long status;
-> >>> +       int hwirq;
-> >>> +
-> >>> +       /*
-> >>> +        * FIXME: If we have an edge irq that is masked we might lose it
-> >>> +        * since reading the STATUS register clears all IRQ flags.
-> >>> +        * We could store the status of all masked IRQ in the cdns_gpio_chip
-> >>> +        * struct but we then have no way to re-trigger the interrupt when
-> >>> +        * it is unmasked.
-> >>> +        */  
-> >> It is marked FIXME but do you think it can even be fixed? It seems
-> >> like a hardware flaw. :(  
-> > Maybe not. Unless Simon comes up with a magic register to re-trigger an
-> > interrupt :-).  
-> There are no plans to update the controller.
+First I got your contact from yahoo Terrors search, when am searching for a=
+ foreigner, please I don=E2=80=99t now if you can keep secret? A word of yo=
+ur own as a human-being? As I have gone through your profile. Well I have a=
+ deal worth 5.5m$ from the dormant account in the bank where I am working. =
+However the fund belong to one Mr J. korovo he die in years ago along with =
+his family by plan crash, Please if you can keep secret, I will give you mo=
+re details and the nest thing to do,
+No risk involve, hence I work in the same bank,
+For the expenses will be in my side not you. Till you confirm the fund in y=
+our account, I will take care of every expense. Also all the documents that=
+ will back you up must send to you. Meanwhile before I contact you I have d=
+one every underground work through the documents of the deceases person, I =
+have put or attachment his file to our favor. Also with my position every t=
+hing works successfully.
 
-Linus, what should I do here? Drop support for edge interrupts?
+Contact me for more details please if you really want to know about this bu=
+siness also want to get more details please contact me through this my alte=
+rnative email for more detail copy this address emmanueldranthony29@gmail.c=
+om, I will send you my ID also my working Id and my family picture For you =
+to know who your dealing with. Contact me back with
+Your Full Name,
+Phone No=E2=80=A6.,
+Receiver Country..,
+Occupation..,
+
+PLEASE IF REALLY YOUR NEED MORE DETAILS CONTACT ME VIEW MY ALTERNATIVE FOR =
+SECURITY REASONS. ALSO MY PHONE NUMBER AS FOLLOW.
+emmanueldranthony29@gmail.com
+
+thanks for your understand please contact me base if you can control this f=
+und once it transfer into your account before my family and I will arriver =
+in your country for the sharing, 40% for you. 10% for the poorest, rest is =
+for me.
+Give me your Phone number Let me call you so that we can talk one and one=
+=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
+
+Yours faithfully,
+
+>From DR.ANTHONY EMMANUEL.
