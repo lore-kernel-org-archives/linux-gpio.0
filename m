@@ -1,65 +1,35 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v4 0/9] Renesas RZ/A1 pin and gpio controller
-Date: Mon, 10 Apr 2017 02:33:36 +0000
-Message-ID: <SG2PR06MB1165D83E182D6B043C3C59928A010@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [GIT PULL] pinctrl: samsung: Fix for v4.11
+Date: Mon, 10 Apr 2017 09:35:09 +0200
+Message-ID: <CACRpkdY7h9za0_Pv7Hhm--+=14AKhgKYKi7-nprL=gtfLwDPuQ@mail.gmail.com>
+References: <20170408142050.1164-1-krzk@kernel.org> <20170408142050.1164-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:61329 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751173AbdDJCdm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 9 Apr 2017 22:33:42 -0400
-In-Reply-To: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170408142050.1164-3-krzk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Jacopo,
+On Sat, Apr 8, 2017 at 4:20 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-On Wednesday, April 05, 2017, Jacopo Mondi wrote:
-> v3 -> v4:
-> - use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
-> - use pinconf standard properties to set pin mux additional flags
-> - add "bi-directional" and "output-enable" to pinconf generic properties
-> - perform pmx function parsing at dt_node_to_map() time
-> - change DT bindings to use GENERIC_PINCONF
-> - change DT bindings to allow sub-nodes to have "pinmux" property
-> specified
-> - several renames (register names, DT parse functions, set_mux() function=
-)
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+>
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-fixes-4.11
+>
+> for you to fetch changes up to 87dc66299e51a17aacd25ad25c1f1283ca2ae305:
+>
+>   pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433 (2017-03-23 20:47:34 +0200)
 
+Thanks, pulled.
 
-I just tested this driver on the RZ/A1 RSK board.
-The following worked good.
+I rebased it to v4.11-rc6 so as not to deviate too much from the HEAD at this
+point in development.
 
-   SCIF2, I2C, SDHI, Ethernet
-
-
-SDHI also has bi-direction pins. For your reference, here was my DT:
-
-
-	/* SHDI ch1 on CN1 */
-	sdhi1_pins: sdhi1 {
-		pins {
-			pinmux =3D <RZA1_PINMUX(3, 8, 7)>,	/* SD_CD_1 */
-				 <RZA1_PINMUX(3, 9, 7)>,	/* SD_WP_1 */
-				 <RZA1_PINMUX(3, 12, 7)>,	/* SD_CLK_1 */
-				 <RZA1_PINMUX(3, 13, 7)>;	/* SD_CMD_1 */
-		};
-
-		pins_bidir {
-			pinmux =3D <RZA1_PINMUX(3, 10, 7)>,	/* SD_D1_1 */
-				 <RZA1_PINMUX(3, 11, 7)>,	/* SD_D0_1 */
-				 <RZA1_PINMUX(3, 14, 7)>,	/* SD_D3_1 */
-				 <RZA1_PINMUX(3, 15, 7)>;	/* SD_D2_1 */
-			bi-directional;
-		};
-	};
-
-
-Thanks,
-Chris
+Yours,
+Linus Walleij
