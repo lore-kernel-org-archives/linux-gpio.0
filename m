@@ -1,87 +1,96 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 6/6] mfd: exynos-lpass: Add runtime PM support
-Date: Tue, 11 Apr 2017 13:03:31 +0100
-Message-ID: <20170411120331.ic7syfg3s4vtyay6@dell>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080350eucas1p273814a2f183f04f180f8f2a2a362b86e@eucas1p2.samsung.com>
- <1490256207-10061-7-git-send-email-m.szyprowski@samsung.com>
+From: <michael.hennerich@analog.com>
+Subject: [PATCH v5 1/2] dt-bindings: i2c: mux: ltc4306: Add dt-bindings for I2C multiplexer/switch
+Date: Tue, 11 Apr 2017 14:16:15 +0200
+Message-ID: <1491912976-8396-1-git-send-email-michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1490256207-10061-7-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: wsa@the-dreams.de, peda@axentia.se, robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 23 Mar 2017, Marek Szyprowski wrote:
+From: Michael Hennerich <michael.hennerich@analog.com>
 
-> Convert exisitng lpass-suspend/resume callbacks into runtime PM callbacks.
-> This way Exynos LPASS driver will be ready for use with power domains
-> enabled. LPASS will be runtime resumed/suspended as a result of its child
-> devices runtime PM transitions.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/exynos-lpass.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+This patch adds support for the Analog Devices / Linear Technology
+LTC4306 and LTC4305 4/2 Channel I2C Bus Multiplexer/Switches.
+The LTC4306 optionally provides two general purpose input/output pins
+(GPIOs) that can be configured as logic inputs, opendrain outputs or
+push-pull outputs via the generic GPIOLIB framework.
 
-Applied, thanks.
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/i2c/i2c-mux-ltc4306.txt    | 61 ++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
 
-> diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-> index 9dbbedad916f..6d735e22acda 100644
-> --- a/drivers/mfd/exynos-lpass.c
-> +++ b/drivers/mfd/exynos-lpass.c
-> @@ -22,6 +22,7 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/types.h>
->  
-> @@ -132,6 +133,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
->  	}
->  
->  	platform_set_drvdata(pdev, lpass);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
->  	exynos_lpass_enable(lpass);
->  
->  	return of_platform_populate(dev->of_node, NULL, NULL, dev);
-> @@ -141,7 +144,9 @@ static int exynos_lpass_remove(struct platform_device *pdev)
->  {
->  	struct exynos_lpass *lpass = platform_get_drvdata(pdev);
->  
-> -	exynos_lpass_disable(lpass);
-> +	pm_runtime_disable(&pdev->dev);
-> +	if (!pm_runtime_status_suspended(&pdev->dev))
-> +		exynos_lpass_disable(lpass);
->  	regmap_exit(lpass->top);
->  
->  	return 0;
-> @@ -165,8 +170,11 @@ static int __maybe_unused exynos_lpass_resume(struct device *dev)
->  	return 0;
->  }
->  
-> -static SIMPLE_DEV_PM_OPS(lpass_pm_ops, exynos_lpass_suspend,
-> -					exynos_lpass_resume);
-> +static const struct dev_pm_ops lpass_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(exynos_lpass_suspend, exynos_lpass_resume, NULL)
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				     pm_runtime_force_resume)
-> +};
->  
->  static const struct of_device_id exynos_lpass_of_match[] = {
->  	{ .compatible = "samsung,exynos5433-lpass" },
-
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt b/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
+new file mode 100644
+index 0000000..1e98c6b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-mux-ltc4306.txt
+@@ -0,0 +1,61 @@
++* Linear Technology / Analog Devices I2C bus switch
++
++Required Properties:
++
++  - compatible: Must contain one of the following.
++    "lltc,ltc4305", "lltc,ltc4306"
++  - reg: The I2C address of the device.
++
++  The following required properties are defined externally:
++
++  - Standard I2C mux properties. See i2c-mux.txt in this directory.
++  - I2C child bus nodes. See i2c-mux.txt in this directory.
++
++Optional Properties:
++
++  - enable-gpios: Reference to the GPIO connected to the enable input.
++  - i2c-mux-idle-disconnect: Boolean; if defined, forces mux to disconnect all
++    children in idle state. This is necessary for example, if there are several
++    multiplexers on the bus and the devices behind them use same I2C addresses.
++  - gpio-controller: Marks the device node as a GPIO Controller.
++  - #gpio-cells: Should be two.  The first cell is the pin number and
++	the second cell is used to specify flags.
++	See ../gpio/gpio.txt for more information.
++  - ltc,downstream-accelerators-enable: Enables the rise time accelerators
++	on the downstream port.
++  - ltc,upstream-accelerators-enable: Enables the rise time accelerators
++	on the upstream port.
++
++Example:
++
++	ltc4306: i2c-mux@4a {
++		compatible = "lltc,ltc4306";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x4a>;
++
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			eeprom@50 {
++				compatible = "at,24c02";
++				reg = <0x50>;
++			};
++		};
++
++		i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++
++			eeprom@50 {
++				compatible = "at,24c02";
++				reg = <0x50>;
++			};
++		};
++	};
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
