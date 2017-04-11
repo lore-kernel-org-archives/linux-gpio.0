@@ -1,152 +1,71 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4] mfd: intel_soc_pmic: Fix a mess with compilation units
-Date: Tue, 11 Apr 2017 14:54:12 +0100
-Message-ID: <20170411135412.qnepq52p3m44zqkq@dell>
-References: <20170404123856.3052-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.12
+Date: Tue, 11 Apr 2017 15:08:16 +0100
+Message-ID: <20170411140816.3al2ge7zsskswmaq@dell>
+References: <20170408142050.1164-1-krzk@kernel.org>
+ <20170408142050.1164-2-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35026 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752010AbdDKOIV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2017 10:08:21 -0400
+Received: by mail-wm0-f47.google.com with SMTP id w64so64766556wma.0
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2017 07:08:21 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20170404123856.3052-1-andriy.shevchenko@linux.intel.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>
+In-Reply-To: <20170408142050.1164-2-krzk@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, 04 Apr 2017, Andy Shevchenko wrote:
+On Sat, 08 Apr 2017, Krzysztof Kozlowski wrote:
 
-> Crystal Cove and Whiskey Cove are two different PMICs which are
-> installed on Intel Atom SoC based platforms.
+> Hi,
 > 
-> Moreover there are two independent drivers that by some reason were
-> supposed (*) to get into one kernel module.
-> 
-> Fix the mess by clarifying Kconfig option for Crystal Cove and split
-> Whiskey Cove out of it.
-> 
-> (*) It looks like the configuration was never tested with
->     INTEL_SOC_PMIC=n. The line in Makefile is actually wrong.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> (supporter:ACPI)
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Zhang Rui <rui.zhang@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  - fix dependency for now, proper fix is to provide headers in platform_data/x86
->  - add tags
->  drivers/acpi/Kconfig         |  2 +-
->  drivers/gpio/Kconfig         |  2 +-
->  drivers/mfd/Kconfig          | 15 +++++++++++++--
->  drivers/mfd/Makefile         |  2 +-
->  drivers/platform/x86/Kconfig |  2 +-
->  drivers/thermal/Kconfig      |  2 +-
->  6 files changed, 18 insertions(+), 7 deletions(-)
+> Update for v4.12. Marek's commits were also shared (as separate sub-tag) to MFD
+> (Lee Jones) for his work (it is a dependency).
 
-Applied, thanks.
+I already pulled Marek's patches into MFD.
 
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index 3e15bf8f99f7..47d4e7be7a46 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -512,7 +512,7 @@ config XPOWER_PMIC_OPREGION
->  
->  config BXT_WC_PMIC_OPREGION
->  	bool "ACPI operation region support for BXT WhiskeyCove PMIC"
-> -	depends on INTEL_SOC_PMIC
-> +	depends on INTEL_SOC_PMIC_BXTWC
->  	help
->  	  This config adds ACPI operation region support for BXT WhiskeyCove PMIC.
->  
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 63ceed246b6f..05e8fbfb3d85 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1053,7 +1053,7 @@ config GPIO_UCB1400
->  
->  config GPIO_WHISKEY_COVE
->  	tristate "GPIO support for Whiskey Cove PMIC"
-> -	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC
-> +	depends on (X86 || COMPILE_TEST) && INTEL_SOC_PMIC_BXTWC
->  	select GPIOLIB_IRQCHIP
->  	help
->  	  Support for GPIO pins on Whiskey Cove PMIC.
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index ce3a9180a765..a48176eb9b48 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -446,18 +446,29 @@ config LPC_SCH
->  	  System Management Bus and General Purpose I/O.
->  
->  config INTEL_SOC_PMIC
-> -	bool "Support for Intel Atom SoC PMIC"
-> +	bool "Support for Crystal Cove PMIC"
->  	depends on GPIOLIB
->  	depends on I2C=y
->  	select MFD_CORE
->  	select REGMAP_I2C
->  	select REGMAP_IRQ
->  	help
-> -	  Select this option to enable support for the PMIC device
-> +	  Select this option to enable support for Crystal Cove PMIC
->  	  on some Intel SoC systems. The PMIC provides ADC, GPIO,
->  	  thermal, charger and related power management functions
->  	  on these systems.
->  
-> +config INTEL_SOC_PMIC_BXTWC
-> +	tristate "Support for Intel Broxton Whiskey Cove PMIC"
-> +	depends on INTEL_PMC_IPC
-> +	select MFD_CORE
-> +	select REGMAP_IRQ
-> +	help
-> +	  Select this option to enable support for Whiskey Cove PMIC
-> +	  on Intel Broxton systems. The PMIC provides ADC, GPIO,
-> +	  thermal, charger and related power management functions
-> +	  on these systems.
-> +
->  config MFD_INTEL_LPSS
->  	tristate
->  	select COMMON_CLK
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index fa86dbe65e52..c16bf1ea0ea9 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -212,8 +212,8 @@ obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
->  obj-$(CONFIG_MFD_SKY81452)	+= sky81452.o
->  
->  intel-soc-pmic-objs		:= intel_soc_pmic_core.o intel_soc_pmic_crc.o
-> -intel-soc-pmic-$(CONFIG_INTEL_PMC_IPC)	+= intel_soc_pmic_bxtwc.o
->  obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
-> +obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
->  obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
->  
->  obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 5602bdfcad65..4c0933174cd9 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1020,7 +1020,7 @@ config INTEL_PMC_IPC
->  config INTEL_BXTWC_PMIC_TMU
->  	tristate "Intel BXT Whiskey Cove TMU Driver"
->  	depends on REGMAP
-> -	depends on INTEL_SOC_PMIC && INTEL_PMC_IPC
-> +	depends on INTEL_SOC_PMIC_BXTWC && INTEL_PMC_IPC
->  	---help---
->  	  Select this driver to use Intel BXT Whiskey Cove PMIC TMU feature.
->  	  This driver enables the alarm wakeup functionality in the TMU unit
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 93474015bb1d..8e47cfaa9aab 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -353,7 +353,7 @@ endmenu
->  
->  config INTEL_BXT_PMIC_THERMAL
->  	tristate "Intel Broxton PMIC thermal driver"
-> -	depends on X86 && INTEL_SOC_PMIC && REGMAP
-> +	depends on X86 && INTEL_SOC_PMIC_BXTWC && REGMAP
->  	help
->  	  Select this driver for Intel Broxton PMIC with ADC channels monitoring
->  	  system temperature measurements and alerts.
+What are Charles' patches for?
+
+> Cc: Lee Jones <lee.jones@linaro.org>
+> 
+> The following changes since commit c1ae3cfa0e89fa1a7ecc4c99031f5e9ae99d9201:
+> 
+>   Linux 4.11-rc1 (2017-03-05 12:59:56 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.12
+> 
+> for you to fetch changes up to f69ae4f58a198ad15b0422637434d2bcf6fc2e2a:
+> 
+>   pinctrl: samsung: Use devres version of gpiochip_add_data (2017-03-23 21:13:19 +0200)
+> 
+> ----------------------------------------------------------------
+> Samsung pinctrl drivers update for v4.12:
+> 1. Add support for pad retention control through pinctrl drivers which
+>    moves us forward to better runtime PM of pinctrl, clocks, power domains
+>    and other devices.
+> 2. Fix GPIO hogs by registering pinctrl before registering gpiolib.
+> 3. Use devm-like interface.
+> 
+> ----------------------------------------------------------------
+> Charles Keepax (2):
+>       pinctrl: samsung: Register pinctrl before GPIO
+>       pinctrl: samsung: Use devres version of gpiochip_add_data
+> 
+> Marek Szyprowski (2):
+>       pinctrl: samsung: Ensure that pad retention is disabled on driver init
+>       pinctrl: samsung: Add support for pad retention control for Exynos5433 SoCs
+> 
+>  drivers/pinctrl/samsung/pinctrl-exynos.c  | 63 +++++++++++++++++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 45 ++++++++++------------
+>  2 files changed, 83 insertions(+), 25 deletions(-)
 
 -- 
 Lee Jones
