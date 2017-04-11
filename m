@@ -1,61 +1,85 @@
-From: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/2] mfd: arizona: Add GPIO maintain state flag
-Date: Tue, 11 Apr 2017 10:34:27 +0100
-Message-ID: <1491903267.4826.8.camel@rf-debian.wolfsonmicro.main>
-References: <1491568725-14882-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-         <20170410201758.lobmtzxt2jgcwwvc@rob-hp-laptop>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [GIT PULL] mfd: exynos-lpass: Pinctrl dependency
+Date: Tue, 11 Apr 2017 12:57:16 +0100
+Message-ID: <20170411115716.ahvcgwexaud2hhv7@dell>
+References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
+ <20170328154217.5405-1-krzk@kernel.org>
+ <20170403101824.rpvkqzyigonyi77p@dell>
+ <CAJKOXPeVOMBZxXeh7=oXbgnxSrUtHa86eAtP2BppY=G4Uygarg@mail.gmail.com>
+ <20170404095054.7m6nf6bxweskabuu@dell>
+ <20170404095751.GA28977@kozik-book>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170410201758.lobmtzxt2jgcwwvc@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170404095751.GA28977@kozik-book>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2017-04-10 at 15:17 -0500, Rob Herring wrote:
-> On Fri, Apr 07, 2017 at 01:38:44PM +0100, Charles Keepax wrote:
-> > The Arizona devices only maintain the state of output GPIOs whilst the
-> > CODEC is active, this can cause issues if the CODEC suspends whilst
-> > something is relying on the state of one of its GPIOs. However, in
-> > many systems the CODEC GPIOs are used for audio related features
-> > and thus the state of the GPIOs is unimportant whilst the CODEC is
-> > suspended. Often keeping the CODEC resumed in such a system would
-> > incur a power impact that is unacceptable.
+On Tue, 04 Apr 2017, Krzysztof Kozlowski wrote:
+
+> On Tue, Apr 04, 2017 at 10:50:54AM +0100, Lee Jones wrote:
+> > On Tue, 04 Apr 2017, Krzysztof Kozlowski wrote:
 > > 
-> > Add a flag through the second cell of the GPIO specifier in device
-> > tree, to allow the user to select whether a GPIO being configured as
-> > an output should keep the CODEC resumed.
-> 
-> If the whole codec can't be suspended, why does this need to be per 
-> GPIO? You could just have a single boolean property.
-> 
-
-Three reasons I can think of:
-
-1) The GPIO binding already provides for passing extra information
-through the binding ("Exact meaning of each specifier cell is controller
-specific" as it says in the main gpio binding doc) so why add yet
-another custom property to do it?
-
-2) Doing it through the gpio means that if ultimately the child DT node
-that is using it gets disabled (status="disabled") or that driver isn't
-in use the codec will be able to go to sleep. That won't happen with a
-brute-force "big lock".
-
-3) The codec only has to be kept awake while any such GPIO is actually
-in use. See (2)
-
+> > > On Mon, Apr 3, 2017 at 12:18 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> > > > On Tue, 28 Mar 2017, Krzysztof Kozlowski wrote:
+> > > >
+> > > >>
+> > > >> Hi Lee,
+> > > >>
+> > > >>
+> > > >> This is dependency for mfd/exynos-lpass driver changes from Marek Szyprowski.
+> > > >> That's a material for v4.12 and I will be pushing this later to Linus Walleij.
+> > > >
+> > > > This does not work, and *may* still break.
+> > > >
+> > > > The only way to guarantee the order of the patches is to have them
+> > > > *all* as part of the pull-request.  Not just some of them.
+> > > 
+> > > What do you mean exactly? If these two patches come through my tree
+> > > first, then everything will work fine because they do not break any
+> > > other stuff.
+> > > 
+> > > If you pull it and apply the rest on top, then it should also work
+> > > without problems because your history will contain everything needed
+> > > in proper order.
+> > > 
+> > > In both cases bisectability is preserved. Did I missed something?
 > > 
-> > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/arizona.txt | 5 ++++-
-> >  include/dt-bindings/mfd/arizona.h                 | 3 +++
-> >  2 files changed, 7 insertions(+), 1 deletion(-)
+> > Okay, so you're suggesting that I rebase MFD *on-top* of your PR.  That
+> > does work for me because I insist on being able to re-work my tree at
+> > any time.  However, be aware that some Maintainers do not work this
+> > way, thus *normally* you will have to send PR containing all of the
+> > dependant patches.
+> 
+> You could either rebased on top of this PR or merge it before applying
+> rest of patches. It does not matter because in both cases all dependant
+> patches will be after the dependency. Also in both cases you will be
+> sending them in your PR.
+> 
+> You can then rebase your stuff as well, keeping only the external
+> commits untouced and merged.
 
+Right.  As I say, it does work for me because I always rebase MFD
+patches on-top of the immutable branches.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+What time trying to say is that, some Maintainers treat their master
+branches as stable once they get pushed, so this style of "pull this
+and apply it as a base for patches already in your tree" pull-request
+will not work for some.
+
+> Really, that does not differ from all your stable immutable branches you
+> have been providing for other folks.
+
+No, this is different.  When I create a pull-request it always
+contains *all* of the dependencies, so it can be pulled in before or
+after any other patches.
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
