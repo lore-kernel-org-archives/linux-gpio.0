@@ -1,84 +1,137 @@
-From: <linux-gpio@vger.kernel.org>
-Subject: 60803 linux-gpio
-Date: Tue, 11 Apr 2017 01:16:08 -0000
-Message-ID: <149187336868.19119.14504870681875705127@business.telecomitalia.it>
-Reply-To: <linux-gpio@vger.kernel.org>
+From: Adam Levy <theadamlevy@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: cherryview: Add a quirk to make Acer
+ Chromebook keyboard work again
+Date: Mon, 10 Apr 2017 21:47:57 -0800
+Message-ID: <CAO_eOSguid+1F1NEwwoioQENyTmOOYy-w_PXOPCNsD7KXZW76Q@mail.gmail.com>
+References: <20170410101633.53161-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="21154378229544.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from host94-198-static.43-85-b.business.telecomitalia.it ([85.43.198.94]:50382
-        "HELO business.telecomitalia.it" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with SMTP id S1751932AbdDKBQc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 10 Apr 2017 21:16:32 -0400
-Content-Disposition: attachment
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:34210 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752236AbdDKFr7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2017 01:47:59 -0400
+Received: by mail-vk0-f68.google.com with SMTP id y16so14280940vky.1
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Apr 2017 22:47:58 -0700 (PDT)
+In-Reply-To: <20170410101633.53161-1-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Grant Likely <grant.likely@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, thierry.reding@gmail.com, linux-gpio@vger.kernel.org
 
-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
-atrFjEsaYKM6H81rUBWEA3yS9/r1lDJpYppo5qRjBM7FOvXqzcr84sZBtbX0up284cuEYlRWeMKQ
-2xvPPiH30kD4qDL3KNacK1M5MeYZgmqQzUeILX+FbmTXnppkti811KzhEFMhCpxo1oyDvezfhE96
-IJ/X6egmn/yUDFXbz661LYyRrUYmskSqWwMP++z/hqw+dmWu5GHyUqZv8FW2N+eOX3ksakzgeZSs
-6HQCw/OuRmy8lC6O3BJVeYdnutxThrJmRXoJztEukj8pgrmyDzLnxAA6wUYokzoBYqlT+ovYOX0P
-+vDiRJ3TtIh0zrwXC08ChGAS1txOXtWszZMoJyx1PCz1gsR5Ls4MMPA0IJ8sMWq+TFjI6EadTMm1
-i34MSYGigOY/x65XqXICKrzETkMAQ+xiPtxT11pb7uJ15pnPlxa1EPSqcnnUNNdezgKXZwJuvW1x
-6hI7JYVOKTmRjZoFFslfzzSWeD7v4idk7+rl5X2Yrnue3IftDZ5veN+0N+bR7Z7Jt3u/vXn7btnc
-H98vW91o5cutfLultW+vtS5f/plnLv8O2r3aVXvdrJ2uAQ+657u+q64qfPD34zH+vqmt2dWuxt9h
-Vw9+1/a7xu6apt95s3Nu592uMQMeDDvXamWDJZ3Z7nRbp1tFbXdTNrvd6LLUfvz+NdboYs1cv6pe
-VTveaMJyaJ8Ox02+witP8rs935Vnfy3iv3u33L2+f7M+vrpal15dbT+8TZvy29+ui3Vl/fbDWeLH
-osXVtW5V97xMzJeKZY+bIvz2u1/ej7/cHzcwcrv9qUi8KZJuty8/Vlenm9k/+analF3LlaICvqt0
-XVzlq8UXL8bjEv+tH3ml+OCeMcf749NbVvPMLevp9pYLdjLqsH98+30wz91+H56Bj+To9vuw3oNT
-ZP5JL/fni9Sy/OZf8f7NTVl3u8m/5bW3m+1fiqjtrbzxUNFdld4BpFfVkVLj3cyff64+//r88OTS
-eI1zvtl9mGd4sX96i86nzybSfi/79ePZ6h+h4v3x7d3rm/LqdlNW53jnjWHZ8fDzD2/i8YfDvFSf
-e5NeNMTDlTBOF8rbl38AUEsBAh4DFAACAAgAQzaLSvDNba6bDQAA7SAAAAgAGAAAAAAAAQAAAKSB
-AAAAADIwMDIwLmpzVVQFAAM9KOxYdXgLAAEEAAAAAAQAAAAAUEsFBgAAAAABAAEATgAAAN0NAAAA
-AA==
+Mika,
+
+Your patch v2 still works on my Edgar CYAN Acer Chromebook 14 (CB3-431).
+
+Tested on latest upstream kernel 4.11rc6.r4.gc08e611b7d01.
+
+Let me know if you need anything else.
+
+Thank you,
+Adam Levy
+
+On Mon, Apr 10, 2017 at 2:16 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> After commit 47c950d10202 ("pinctrl: cherryview: Do not add all
+> southwest and north GPIOs to IRQ domain") the driver does not add all
+> GPIOs to the irqdomain. The reason for that is that those GPIOs cannot
+> generate IRQs at all, only GPEs (General Purpose Events). This causes
+> Linux virtual IRQ numbering to change.
+>
+> However, it seems some CYAN Chromebooks, including Acer Chromebook
+> hardcodes these Linux IRQ numbers in the ACPI tables of the machine.
+> Since the numbering is different now, the IRQ meant for keyboard does
+> not match the Linux virtual IRQ number anymore making the keyboard
+> non-functional.
+>
+> Work this around by adding special quirk just for these machines where
+> we add back all GPIOs to the irqdomain. Rest of the Cherryview/Braswell
+> based machines will not be affected by the change.
+>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> Fixes: 47c950d10202 ("pinctrl: cherryview: Do not add all southwest and north GPIOs to IRQ domain")
+> Reported-by: Adam S Levy <theadamlevy@gmail.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+> Changes from v1:
+>  - Add BIOS date to DMI match string to keep this quirk from affecting
+>    future BIOS versions where the issue might be fixed already.
+>
+> Marc, Linus,
+>
+> I went for adding the quirk here instead of quirking it in i8042 keyboard
+> driver because there might be other devices hard-coding the Linux IRQ
+> number. This way we only need to touch one driver.
+>
+> Adam,
+>
+> Can you please try if this patch still fixes the problem for you? Thanks.
+>
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index f80134e3e0b6..9ff790174906 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -13,6 +13,7 @@
+>   * published by the Free Software Foundation.
+>   */
+>
+> +#include <linux/dmi.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+> @@ -1524,10 +1525,31 @@ static void chv_gpio_irq_handler(struct irq_desc *desc)
+>         chained_irq_exit(chip, desc);
+>  }
+>
+> +/*
+> + * Certain machines seem to hardcode Linux IRQ numbers in their ACPI
+> + * tables. Since we leave GPIOs that are not capable of generating
+> + * interrupts out of the irqdomain the numbering will be different and
+> + * cause devices using the hardcoded IRQ numbers fail. In order not to
+> + * break such machines we will only mask pins from irqdomain if the machine
+> + * is not listed below.
+> + */
+> +static const struct dmi_system_id chv_no_valid_mask[] = {
+> +       {
+> +               /* See https://bugzilla.kernel.org/show_bug.cgi?id=194945 */
+> +               .ident = "Acer Chromebook (CYAN)",
+> +               .matches = {
+> +                       DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+> +                       DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
+> +                       DMI_MATCH(DMI_BIOS_DATE, "05/21/2016"),
+> +               },
+> +       }
+> +};
+> +
+>  static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>  {
+>         const struct chv_gpio_pinrange *range;
+>         struct gpio_chip *chip = &pctrl->chip;
+> +       bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
+>         int ret, i, offset;
+>
+>         *chip = chv_gpio_chip;
+> @@ -1536,7 +1558,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>         chip->label = dev_name(pctrl->dev);
+>         chip->parent = pctrl->dev;
+>         chip->base = -1;
+> -       chip->irq_need_valid_mask = true;
+> +       chip->irq_need_valid_mask = need_valid_mask;
+>
+>         ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+>         if (ret) {
+> @@ -1567,7 +1589,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>                 intsel &= CHV_PADCTRL0_INTSEL_MASK;
+>                 intsel >>= CHV_PADCTRL0_INTSEL_SHIFT;
+>
+> -               if (intsel >= pctrl->community->nirqs)
+> +               if (need_valid_mask && intsel >= pctrl->community->nirqs)
+>                         clear_bit(i, chip->irq_valid_mask);
+>         }
+>
+> --
+> 2.11.0
+>
