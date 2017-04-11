@@ -1,82 +1,49 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v4 1/7] pinctrl: dt-bindings: Add documentation for Armada 37xx pin controllers
-Date: Tue, 11 Apr 2017 18:09:59 +0200
-Message-ID: <87inmbhqnc.fsf@free-electrons.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-        <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement@free-electrons.com>
-        <20170410181514.kzbpkaxkwf7uycdc@rob-hp-laptop>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.12
+Date: Tue, 11 Apr 2017 17:29:49 +0100
+Message-ID: <20170411162949.gcta3czjlmojnqzt@dell>
+References: <20170408142050.1164-1-krzk@kernel.org>
+ <20170408142050.1164-2-krzk@kernel.org>
+ <20170411140816.3al2ge7zsskswmaq@dell>
+ <CAJKOXPc7D_1xaJDG+W4JJ5YxRVJ868RU-Vmbh_r4J0g0Qjufdw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:36299 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751997AbdDKQKB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2017 12:10:01 -0400
-In-Reply-To: <20170410181514.kzbpkaxkwf7uycdc@rob-hp-laptop> (Rob Herring's
-        message of "Mon, 10 Apr 2017 13:15:14 -0500")
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37638 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751799AbdDKQ3x (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2017 12:29:53 -0400
+Received: by mail-wm0-f51.google.com with SMTP id u2so5098906wmu.0
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2017 09:29:52 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPc7D_1xaJDG+W4JJ5YxRVJ868RU-Vmbh_r4J0g0Qjufdw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Linus,
- 
- On lun., avril 10 2017, Rob Herring <robh@kernel.org> wrote:
+On Tue, 11 Apr 2017, Krzysztof Kozlowski wrote:
 
-> On Wed, Apr 05, 2017 at 05:18:02PM +0200, Gregory CLEMENT wrote:
+> On Tue, Apr 11, 2017 at 4:08 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Sat, 08 Apr 2017, Krzysztof Kozlowski wrote:
+> >
+> >> Hi,
+> >>
+> >> Update for v4.12. Marek's commits were also shared (as separate sub-tag) to MFD
+> >> (Lee Jones) for his work (it is a dependency).
+> >
+> > I already pulled Marek's patches into MFD.
+> >
+> > What are Charles' patches for?
+> 
+> This is a pull request for Linus Walleij, not for you. As you said,
+> you already have all necessary dependencies for MFD.
 
->> +Example:
->> +pinctrl_sb: pinctrl-sb@18800 {
->
-> Just pinctrl@...
->
->> +	compatible = "marvell,armada3710-sb-pinctrl", "syscon", "simple-mfd";
->> +	reg = <0x18800 0x100>, <0x18C00 0x20>;
->> +	gpiosb: gpiosb {
->
-> gpio {
->
-> With that,
->
-> Acked-by: Rob Herring <robh@kernel.org>
-
-Could you do this change while applying the patches, or do you want a
-new series?
-
-Also, if the binding is also OK for you, do you agree that I apply the
-last 2 patches on the mvebu trees? (of course with the same changes
-asked by Rob)
-
-Thanks,
-
-Gregory
-
-
-
->
->
->> +		#gpio-cells = <2>;
->> +		gpio-ranges = <&pinctrl_sb 0 0 29>;
->> +		gpio-controller;
->> +		interrupts =
->> +		<GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
->> +		<GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
->> +		<GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
->> +		<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
->> +		<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
->> +	};
->> +
->> +	rgmii_pins: mii-pins {
->> +		groups = "rgmii";
->> +		function = "mii";
->> +	};
->> +
->> +};
->> -- 
->> git-series 0.9.1
+Okay, so no need to sent it to me then, right? =;-)
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
