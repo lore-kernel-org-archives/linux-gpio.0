@@ -1,49 +1,86 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [GIT PULL] pinctrl: samsung: Stuff for v4.12
-Date: Tue, 11 Apr 2017 17:29:49 +0100
-Message-ID: <20170411162949.gcta3czjlmojnqzt@dell>
-References: <20170408142050.1164-1-krzk@kernel.org>
- <20170408142050.1164-2-krzk@kernel.org>
- <20170411140816.3al2ge7zsskswmaq@dell>
- <CAJKOXPc7D_1xaJDG+W4JJ5YxRVJ868RU-Vmbh_r4J0g0Qjufdw@mail.gmail.com>
+From: David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v6 0/6] genirq/gpio: Add driver for ThunderX and OCTEON-TX SoCs
+Date: Tue, 11 Apr 2017 10:21:03 -0700
+Message-ID: <1491931269-15650-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37638 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbdDKQ3x (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Apr 2017 12:29:53 -0400
-Received: by mail-wm0-f51.google.com with SMTP id u2so5098906wmu.0
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Apr 2017 09:29:52 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPc7D_1xaJDG+W4JJ5YxRVJ868RU-Vmbh_r4J0g0Qjufdw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, 11 Apr 2017, Krzysztof Kozlowski wrote:
+The ThunderX/OCTEON-TX GPIO hardware looks like a PCIe device, with
+the interrupt signal from each GPIO line being routed to a dedicated
+MSI-X.  This interrupt routing requires that we add some custom
+processing to the beginning of the MSI-X irqdomain hierarchy.
 
-> On Tue, Apr 11, 2017 at 4:08 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> > On Sat, 08 Apr 2017, Krzysztof Kozlowski wrote:
-> >
-> >> Hi,
-> >>
-> >> Update for v4.12. Marek's commits were also shared (as separate sub-tag) to MFD
-> >> (Lee Jones) for his work (it is a dependency).
-> >
-> > I already pulled Marek's patches into MFD.
-> >
-> > What are Charles' patches for?
-> 
-> This is a pull request for Linus Walleij, not for you. As you said,
-> you already have all necessary dependencies for MFD.
+Changes from v5:
 
-Okay, so no need to sent it to me then, right? =;-)
+ - Added .irq_{request,release}_resources() functions to irq_chip.
+
+ - Quit calling irq_set_irq_type() in the irq_map() function.
+
+ - Added more error condition checking to irq_domain_{push,pop}_irq()
+
+Changes from v4:
+
+ - Rebased to post-v4.10 to support .set_config() function.
+
+ - Added .get_direction() support.
+
+ - Added PIN_CONFIG_INPUT_DEBOUNCE support.
+
+ - Removed some improper use of ENOSYS.
+
+Changes from v3:
+
+ - Add some "depends on" to the driver Kconfig to avoid build errors
+   in some architectures when doing COMPILE_TEST builds.
+
+Changes from v2:
+
+ - in 4/6: Added Rob Harring's Acked-by
+
+ - Added three patches to genirq/irqdomain to support interrupt code
+   in the driver.
+
+ - Rewrite irq code in driver to use irqdomain hierarchy.
+
+ - Other naming and style changes as recommended by Linus Walleij.
+
+Changes from v1:
+
+ - in 1/3: Addressed Rob Harring's comments.
+
+ - in 2/3: Trivial cleanups found in internal review + add some
+   comments.
+
+David Daney (6):
+  genirq: Export more irq_chip_*_parent() functions.
+  genirq: Add handle_fasteoi_{level,edge}_irq flow handlers.
+  irqdomain: Add irq_domain_{push,pop}_irq() functions.
+  dt-bindings: gpio: Add binding documentation for gpio-thunderx
+  gpio: Add gpio driver support for ThunderX and OCTEON-TX
+  MAINTAINERS: Add entry for THUNDERX GPIO Driver.
+
+ .../devicetree/bindings/gpio/gpio-thunderx.txt     |  27 +
+ MAINTAINERS                                        |   5 +
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-thunderx.c                       | 639 +++++++++++++++++++++
+ include/linux/irq.h                                |   2 +
+ include/linux/irqdomain.h                          |   3 +
+ kernel/irq/chip.c                                  | 105 ++++
+ kernel/irq/irqdomain.c                             | 178 ++++++
+ 9 files changed, 968 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-thunderx.txt
+ create mode 100644 drivers/gpio/gpio-thunderx.c
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+1.8.3.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
