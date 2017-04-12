@@ -1,100 +1,111 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 0/4] gpio: mvebu: Add PWM fan support
-Date: Wed, 12 Apr 2017 19:16:56 +0200
-Message-ID: <20170412171656.GC11964@ulmo.ba.sec>
+Subject: Re: [PATCH v5 1/4] gpio: mvebu: Add limited PWM support
+Date: Wed, 12 Apr 2017 19:21:58 +0200
+Message-ID: <20170412172158.GF11964@ulmo.ba.sec>
 References: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
+ <20170409180931.4884-2-ralph.sennhauser@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uh9ZiVrAOUUm9fzH"
-Return-path: <linux-pwm-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="gneEPciiIl/aKvOT"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
+In-Reply-To: <20170409180931.4884-2-ralph.sennhauser@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---uh9ZiVrAOUUm9fzH
+--gneEPciiIl/aKvOT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Apr 09, 2017 at 08:09:26PM +0200, Ralph Sennhauser wrote:
-> Hi Therry,
+On Sun, Apr 09, 2017 at 08:09:27PM +0200, Ralph Sennhauser wrote:
+> From: Andrew Lunn <andrew@lunn.ch>
 >=20
-> Resending this as v5 with some minor changes since v4. What is missing is
-> an ACK from you so Linus can merge the driver and Gregory the dts
-> changes. For this driver to make it into 4.12 it would be nice to have
-> it in next soon. I hope you can make some room in your schedule to have
-> another look at this series.
+> Armada 370/XP devices can 'blink' GPIO lines with a configurable on
+> and off period. This can be modelled as a PWM.
 >=20
-> Thanks
-> Ralph
+> However, there are only two sets of PWM configuration registers for
+> all the GPIO lines. This driver simply allows a single GPIO line per
+> GPIO chip of 32 lines to be used as a PWM. Attempts to use more return
+> EBUSY.
 >=20
+> Due to the interleaving of registers it is not simple to separate the
+> PWM driver from the GPIO driver. Thus the GPIO driver has been
+> extended with a PWM driver.
+>=20
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> URL: https://patchwork.ozlabs.org/patch/427287/
+> URL: https://patchwork.ozlabs.org/patch/427295/
+> [Ralph Sennhauser:
+>   * Port forward
+>   * Merge PWM portion into gpio-mvebu.c
+>   * Switch to atomic PWM API
+>   * Add new compatible string marvell,armada-370-xp-gpio
+>   * Update and merge documentation patch
+>   * Update MAINTAINERS]
+> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+> Tested-by: Andrew Lunn <andrew@lunn.ch>
 > ---
+>  .../devicetree/bindings/gpio/gpio-mvebu.txt        |  32 ++
+>  MAINTAINERS                                        |   2 +
+>  drivers/gpio/gpio-mvebu.c                          | 324 +++++++++++++++=
++++++-
+>  3 files changed, 346 insertions(+), 12 deletions(-)
 >=20
-> Notes:
->=20
->   About npwm =3D 1:
->     The only way I can think of to achieve that requires reading the
->     GPIO line from the device tree. This would prevent a user to
->     dynamically choose a line. Which is fine for the fan found on Mamba
->     but let's take some development board with freely accessible GPIOs
->     and suddenly we limit the use of this driver. Given the above, npwm
->     =3D ngpio with only one usable at a time is a more accurate
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Docu=
+mentation/devicetree/bindings/gpio/gpio-mvebu.txt
+> index a6f3bec..fe49e9d 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+> @@ -38,6 +38,24 @@ Required properties:
+>  - #gpio-cells: Should be two. The first cell is the pin number. The
+>    second cell is reserved for flags, unused at the moment.
+> =20
+> +Optional properties:
+> +
+> +In order to use the gpio lines in PWM mode, some additional optional
+> +properties are required. Only Armada 370 and XP support these properties.
+> +
+> +- compatible: Must contain "marvell,armada-370-xp-gpio"
+> +
+> +- reg: an additional register set is needed, for the GPIO Blink
+> +  Counter on/off registers.
+> +
+> +- reg-names: Must contain an entry "pwm" corresponding to the
+> +  additional register range needed for pwm operation.
+> +
+> +- #pwm-cells: Should be two. The first cell is the GPIO line number. The
+> +  second cell is the period in nanoseconds.
+> +
+> +- clocks: Must be a phandle to the clock for the gpio controller.
 
-I think "accurate" is perhaps not the word I'd choose. "npwm" is defined
-as "number of PWMs controlled by this chip", and that's effectively just
-the one. It's implied that all PWMs exposed by a chip can be used
-concurrently.
-
-Anyway, I can see how npwm =3D ngpio might be more convenient, and if that
-is what you want to do, I don't feel strongly enough to object.
-
->     description of the situation. The only downside is some "wasted"
->     space.
->=20
->   About the new compatible string:
->     Orion was chosen for the SoC variant for the same reason as in
->     commit 5f79c651e81e ("arm: mvebu: use global interrupts for GPIOs on
->     Armada XP").
->     The "pwm" property remains optional for the new compatible string so
->     the compatiple string "marvell,armada-370-xp-gpio" can be used by
->     all and not just the first two GPIO chips. A property to select "Set
->     A" / "Set B" registers could be invented though.
->=20
-> ---
->=20
-> Pending:
->   * Needs ACK from Thierry Reding to be merged via linux-gpio tree by Lin=
-us
->     Walleij. (fine with the general approach, requested changes which
->     should have been taken care of now)
-
-As I said elsewhere, I haven't seen an Acked-by on the binding changes,
-so that would be another pending item here.
+One other thing: there's a mix of pwm/PWM and gpio/GPIO in this hunk. In
+prose, always use the all-uppercase variants because they are
+abbreviations.
 
 Thierry
 
---uh9ZiVrAOUUm9fzH
+--gneEPciiIl/aKvOT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljuYQgACgkQ3SOs138+
-s6F++w//ZQQVWItP/+jQOkxZTHX5ot0U2tFzFfWDCsTrPuGcK5qvkHuC8bXW0RK0
-lWuoRE8F+Q8gQ/T/mdYnrTlKg3j5xlb8JA00tfvdYqN2PjShAU+XZrp6zPdXaNOp
-ah6YgzNW1EZl+kLu6kRnWDgnVw2tU2jAX7YRhl+PupsRscDrkOkIBowK/NatIIxG
-6/Yd7COEVtXXcj9ebkJRe35tdyJUmxEvan6u+0owDNRKb/O/e81BgH3DQjYyfh3s
-tN5/i4lAaizxl/uJsvWvf0bm2QBkpwuOxr8IWBfRy7Pr1z52r5Y3SNE+sWMYePqG
-WI6gHBTv6rf1qiPXkkZG7KCyswuGC/2dTaFMzt3UzYqVhovjPzwJZOy0xF15xEt7
-Zhloqs+K1ol5YLUyx/KWT8TFcGVv65B9fRV1a9T8ZycdNw2QY8AjFfhdq0LrbyfB
-4tUBOVJFWPL6vvM5SoNPvkhHcnVHGZCCYJzqWlM8LbhM9mMLeeGma0uYToY/f3hC
-2KQeNBp+P6XtcRA745Te9spP2A2iH3/VNqjQzTLkqxxPB2zJ/KlPs5hL0058UZzN
-ICogEy+ycOiSNazYdDnN4LXPHEiquq8loP6tc0b1wN7NtlE3ZcA0dDDZszXku4pr
-j6NVh91oG38tHYCHZcgLO4VFzh6vlZNMWiIJPiqXKyo3F2OTWdU=
-=o1SP
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljuYjYACgkQ3SOs138+
+s6FkgA//Ryn2pStMlaD7yTkQgTMaDoalwaL/OXPiz0BJr6Rn/cNbAgmtKmlDs1Q3
+fpqxAhU4v/Y8Wojf8MaT3J64eQKQ0s7bC0hjx/MGsefNdL+XP5krfXLmZoyJ5OV7
+ZjOoTSxzt9stVoEGgmdJF54miaCTc4B2Cj0HRn5Ygs8LLR3+rwHiaLNpTh34VBqB
+tvHLRRF9G/xUNGpBqJ7hmO3VhLRkxUU8TAQq5gBuBTpbY1PKvwtrJf7pPTM3xcja
+OWfwrIZ2EvSSQsFMAaHlUfZ9y0Zrv5mslTI0QVWCseEOHwY3x4CnqLwfYoaiI8+c
+hk6wh732ea7FTUxJEbVwk/YeYl67DOpxsVfSpM1UqH1SC/u+9oNq8Mtb81mCtPJA
+tVMjZbnRSrBFqhmgbg638SsjqQ+Z6QOy/SyGr30H0RUYEmz++DhGmXw0qPfwV7sl
+VmOm89RlydVnGUEfFovATa3JX7Fe0yLEYO1V/ulMttLWiiT6+aMUwX580gmPqiL4
+/UiIVhN9xnymJEntaqKn9+FEmj48wSNHW8eq9k5bPbGWJC+GqU7O20eUP3z+WXlh
+lg1PBn8pSMdFHQt++qZeyD0uvE+KM9wLq0T+A+23PQ8jG6DNKJtMEfBo8WQVcAyR
+FJJkYoG+MFr8VNwsQG+ttkqDudZHnN1CgdWaOb9rnVeGMe3+ehQ=
+=e7yD
 -----END PGP SIGNATURE-----
 
---uh9ZiVrAOUUm9fzH--
+--gneEPciiIl/aKvOT--
