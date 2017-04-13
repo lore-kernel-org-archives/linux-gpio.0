@@ -1,44 +1,44 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH] gpio: dwapb: use dwapb_read instead of readl_relaxed
-Date: Thu, 13 Apr 2017 17:46:39 +0800
-Message-ID: <20170413094639.484-1-jszhang@marvell.com>
+From: Nandor Han <nandor.han@ge.com>
+Subject: [PATCH v2 1/4] dt-bindings: gpio - add exar to vendor prefixes list
+Date: Thu, 13 Apr 2017 13:27:48 +0300
+Message-ID: <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han@ge.com>
+References: <cover.1492077070.git.nandor.han@ge.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:58009 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751678AbdDMJvU (ORCPT
+Received: from mx0a-00176a03.pphosted.com ([67.231.149.52]:58750 "EHLO
+        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751164AbdDMK2E (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Apr 2017 05:51:20 -0400
+        Thu, 13 Apr 2017 06:28:04 -0400
+In-Reply-To: <cover.1492077070.git.nandor.han@ge.com>
+In-Reply-To: <cover.1492077070.git.nandor.han@ge.com>
+References: <cover.1492077070.git.nandor.han@ge.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>
+To: gregkh@linuxfoundation.org, davem@davemloft.net, geert@linux-m68k.org, mchehab@kernel.org, daniel.vetter@ffwll.ch, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Nandor Han <nandor.han@ge.com>
 
-Commit 67809b974a07 ("GPIO: gpio-dwapb: Change readl&writel to
-dwapb_read&dwapb_write") missed this readl_relaxed() usage, I'm not
-sure the reason, maybe for performance reason? But if we do care
-the performance, we could use the relaxed io in dwapb_read and
-dwapb_write.
+Add Exar Corporation to vendors list.
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+Signed-off-by: Nandor Han <nandor.han@ge.com>
 ---
- drivers/gpio/gpio-dwapb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 9c15ee4ef4e9..fe6cdb5d03d9 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -128,7 +128,7 @@ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
- 
- static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
- {
--	u32 irq_status = readl_relaxed(gpio->regs + GPIO_INTSTATUS);
-+	u32 irq_status = dwapb_read(gpio, GPIO_INTSTATUS);
- 	u32 ret = irq_status;
- 
- 	while (irq_status) {
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index c7d1b72..ba9058c 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -104,6 +104,7 @@ ettus	NI Ettus Research
+ eukrea  Eukréa Electromatique
+ everest	Everest Semiconductor Co. Ltd.
+ everspin	Everspin Technologies, Inc.
++exar	Exar Corporation
+ excito	Excito
+ ezchip	EZchip Semiconductor
+ faraday	Faraday Technology Corporation
 -- 
-2.11.0
+2.10.1
 
