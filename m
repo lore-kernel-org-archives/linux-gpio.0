@@ -1,28 +1,31 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] gpio: aspeed: dt: Fix description alignment in
- bindings document
-Date: Thu, 13 Apr 2017 14:50:36 -0500
-Message-ID: <20170413195036.eu5wqx6bgpx2f7ok@rob-hp-laptop>
+Subject: Re: [PATCH v2 2/4] gpio: aspeed: dt: Add optional clocks property
+Date: Thu, 13 Apr 2017 14:52:30 -0500
+Message-ID: <20170413195230.oze5qsyunckajbk7@rob-hp-laptop>
 References: <20170407125902.15960-1-andrew@aj.id.au>
- <20170407125902.15960-2-andrew@aj.id.au>
+ <20170407125902.15960-3-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33013 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755416AbdDMTui (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2017 15:50:38 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34955 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755918AbdDMTwx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2017 15:52:53 -0400
 Content-Disposition: inline
-In-Reply-To: <20170407125902.15960-2-andrew@aj.id.au>
+In-Reply-To: <20170407125902.15960-3-andrew@aj.id.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andrew Jeffery <andrew@aj.id.au>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
 
-On Fri, Apr 07, 2017 at 10:28:59PM +0930, Andrew Jeffery wrote:
+On Fri, Apr 07, 2017 at 10:29:00PM +0930, Andrew Jeffery wrote:
+> We need a reference to the HPLL to calculate debounce cycles. If the
+> clocks property is not supplied in the GPIO node then the consumer
+> should deny any debounce requests.
+> 
 > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio-aspeed.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/gpio/gpio-aspeed.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
 Acked-by: Rob Herring <robh@kernel.org>
