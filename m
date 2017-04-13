@@ -1,61 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.11
-Date: Thu, 13 Apr 2017 13:36:41 +0200
-Message-ID: <CACRpkdaQ=DeBwpe6dQNJwGT35voh5p838NXaNzKxkgT05hh99A@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] mfd: arizona: Add GPIO maintain state flag
+Date: Thu, 13 Apr 2017 14:14:25 +0200
+Message-ID: <CACRpkdZ6PBv72BCn1bXsvhcHD2+dsCdh=3F3Vnnm7AWZqyWrig@mail.gmail.com>
+References: <1491568725-14882-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20170410201758.lobmtzxt2jgcwwvc@rob-hp-laptop> <1491903267.4826.8.camel@rf-debian.wolfsonmicro.main>
+ <20170413091513.GA1878@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170413091513.GA1878-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Thu, Apr 13, 2017 at 11:15 AM, Charles Keepax
+<ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+> On Tue, Apr 11, 2017 at 10:34:27AM +0100, Richard Fitzgerald wrote:
 
-these are hopefully the last pin control fixes I send this
-kernel cycle. A Chromebook and an Exynos SoC thingie.
+>> 3) The codec only has to be kept awake while any such GPIO is actually
+>> in use. See (2)
+>
+> Yeah option 3 is the primary issue here, we only want to keep the
+> CODEC enabled whilst specific GPIOs are in use. As GPIOs can be
+> dynamically requested/released by things in the kernel we want to
+> know which GPIOs require the CODEC to be kept alive. Also in the
+> future one might be tempted to add maintain whilst high and
+> maintain whilst low options for lines with pulls on them to
+> further optimise power.
 
-The Exynos patch is pretty big, it is fixing unbroken a breakage
-caused by yours truly when trying to figure out the merge mess
-with the different Samsung platforms for this merge window.
-Sorry about that. We have countered this situation by assigning
-a Samsung pin control submaintainer to catch stuff earlier.
+Why does this have to be encoded as information in the device
+tree? Isn't it better to use a static table in the driver?
 
-Please pull them in!
+I don't see what use system integrators and others playing
+around with the device tree has of this, it will just be confusing
+to them if it is a chip-internal detail.
 
 Yours,
 Linus Walleij
-
-The following changes since commit 39da7c509acff13fc8cb12ec1bb20337c988ed36:
-
-  Linux 4.11-rc6 (2017-04-09 09:49:44 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.11-5
-
-for you to fetch changes up to 7036502783729c2aaf7a3c24c89087c58721430f:
-
-  pinctrl: cherryview: Add a quirk to make Acer Chromebook keyboard
-work again (2017-04-11 10:09:39 +0200)
-
-----------------------------------------------------------------
-Two pin control fixes arriving late:
-
-- Make the Acer Chromebook keyboard work again with the Intel
-  Cherryview driver.
-- Fix a merge error in the Exynos 5433 driver.
-
-----------------------------------------------------------------
-Chanwoo Choi (1):
-      pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433
-
-Mika Westerberg (1):
-      pinctrl: cherryview: Add a quirk to make Acer Chromebook
-keyboard work again
-
- drivers/pinctrl/intel/pinctrl-cherryview.c | 26 +++++++++-
- drivers/pinctrl/samsung/pinctrl-exynos.c   | 80 +++++++++++++++---------------
- drivers/pinctrl/samsung/pinctrl-exynos.h   | 11 ----
- 3 files changed, 64 insertions(+), 53 deletions(-)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
