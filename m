@@ -1,67 +1,47 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] mfd: arizona: Add GPIO maintain state flag
-Date: Thu, 13 Apr 2017 10:15:13 +0100
-Message-ID: <20170413091513.GA1878@localhost.localdomain>
-References: <1491568725-14882-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <20170410201758.lobmtzxt2jgcwwvc@rob-hp-laptop>
- <1491903267.4826.8.camel@rf-debian.wolfsonmicro.main>
+From: Benjamin Henrion <zoobab@gmail.com>
+Subject: ch341 gpio over USB help needed
+Date: Thu, 13 Apr 2017 11:30:58 +0200
+Message-ID: <CANjd3nd5K_=WSNQ4Yswv8m_JQqrQP1F7KcRi=eVzzMwk5vzRSw@mail.gmail.com>
+Reply-To: zoobab@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:49264 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750773AbdDMJOI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Apr 2017 05:14:08 -0400
-Content-Disposition: inline
-In-Reply-To: <1491903267.4826.8.camel@rf-debian.wolfsonmicro.main>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:34579 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbdDMJbA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2017 05:31:00 -0400
+Received: by mail-io0-f170.google.com with SMTP id a103so73392514ioj.1
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Apr 2017 02:31:00 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Rob Herring <robh@kernel.org>, linus.walleij@linaro.org, lee.jones@linaro.org, gnurou@gmail.com, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com
+To: linux-gpio@vger.kernel.org
 
-On Tue, Apr 11, 2017 at 10:34:27AM +0100, Richard Fitzgerald wrote:
-> On Mon, 2017-04-10 at 15:17 -0500, Rob Herring wrote:
-> > On Fri, Apr 07, 2017 at 01:38:44PM +0100, Charles Keepax wrote:
-> > > The Arizona devices only maintain the state of output GPIOs whilst the
-> > > CODEC is active, this can cause issues if the CODEC suspends whilst
-> > > something is relying on the state of one of its GPIOs. However, in
-> > > many systems the CODEC GPIOs are used for audio related features
-> > > and thus the state of the GPIOs is unimportant whilst the CODEC is
-> > > suspended. Often keeping the CODEC resumed in such a system would
-> > > incur a power impact that is unacceptable.
-> > > 
-> > > Add a flag through the second cell of the GPIO specifier in device
-> > > tree, to allow the user to select whether a GPIO being configured as
-> > > an output should keep the CODEC resumed.
-> > 
-> > If the whole codec can't be suspended, why does this need to be per 
-> > GPIO? You could just have a single boolean property.
-> > 
-> 
-> Three reasons I can think of:
-> 
-> 1) The GPIO binding already provides for passing extra information
-> through the binding ("Exact meaning of each specifier cell is controller
-> specific" as it says in the main gpio binding doc) so why add yet
-> another custom property to do it?
-> 
-> 2) Doing it through the gpio means that if ultimately the child DT node
-> that is using it gets disabled (status="disabled") or that driver isn't
-> in use the codec will be able to go to sleep. That won't happen with a
-> brute-force "big lock".
-> 
-> 3) The codec only has to be kept awake while any such GPIO is actually
-> in use. See (2)
-> 
+Hi,
 
-Yeah option 3 is the primary issue here, we only want to keep the
-CODEC enabled whilst specific GPIOs are in use. As GPIOs can be
-dynamically requested/released by things in the kernel we want to
-know which GPIOs require the CODEC to be kept alive. Also in the
-future one might be tempted to add maintain whilst high and
-maintain whilst low options for lines with pulls on them to
-further optimise power.
+I found a cheap USB dongle based on ch341 chip, which has 8 GPIOs
+available (D0-D7):
 
-Thanks,
-Charles
+http://www.zoobab.com/ch341-usb-spi-i2c-uart-isp-dongle
+https://github.com/zoobab/ch341-parport
+
+I mirrored the driver published by WCH, they have a cli and a gui
+interface to toggle the pins, but I cannot figure out what to pass
+over there.
+
+My goal is to sniff and write some simple toggling tool with libusb,
+and then make a proper kernel driver for it (sysfs to start with).
+
+Anyone can help?
+
+Best,
+
+--
+Benjamin Henrion <bhenrion at ffii.org>
+FFII Brussels - +32-484-566109 - +32-2-3500762
+"In July 2005, after several failed attempts to legalise software
+patents in Europe, the patent establishment changed its strategy.
+Instead of explicitly seeking to sanction the patentability of
+software, they are now seeking to create a central European patent
+court, which would establish and enforce patentability rules in their
+favor, without any possibility of correction by competing courts or
+democratically elected legislators."
