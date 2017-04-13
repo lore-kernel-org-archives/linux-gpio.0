@@ -1,68 +1,158 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH v5 2/2] i2c: mux: ltc4306: LTC4306 and LTC4305 I2C
- multiplexer/switch
-Date: Thu, 13 Apr 2017 08:58:26 +0200
-Message-ID: <03a776ee-87f7-18d7-94f1-5864d26f846e@analog.com>
-References: <1491912976-8396-1-git-send-email-michael.hennerich@analog.com>
- <1491912976-8396-2-git-send-email-michael.hennerich@analog.com>
- <CACRpkdbOQtJvwtNRuPWh9VQyupH3kXK9-3Vu7qMemngg6O5j1w@mail.gmail.com>
- <ef75918a-3e5d-91d2-bc05-546e1e0f0bb4@axentia.se>
-Reply-To: <michael.hennerich@analog.com>
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH v5 1/4] gpio: mvebu: Add limited PWM support
+Date: Thu, 13 Apr 2017 09:45:33 +0200
+Message-ID: <20170413094533.68d47edd@gmail.com>
+References: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
+ <20170409180931.4884-2-ralph.sennhauser@gmail.com>
+ <20170412171121.GB11964@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0055.outbound.protection.outlook.com ([104.47.38.55]:19584
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751676AbdDMG5F (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Apr 2017 02:57:05 -0400
-In-Reply-To: <ef75918a-3e5d-91d2-bc05-546e1e0f0bb4@axentia.se>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36521 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756241AbdDMHpi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2017 03:45:38 -0400
+In-Reply-To: <20170412171121.GB11964@ulmo.ba.sec>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 12.04.2017 18:53, Peter Rosin wrote:
-> On 2017-04-12 10:26, Linus Walleij wrote:
->> On Tue, Apr 11, 2017 at 2:16 PM,  <michael.hennerich@analog.com> wrote:
->>
->>> From: Michael Hennerich <michael.hennerich@analog.com>
->>>
->>> This patch adds support for the Analog Devices / Linear Technology
->>> LTC4306 and LTC4305 4/2 Channel I2C Bus Multiplexer/Switches.
->>> The LTC4306 optionally provides two general purpose input/output pins
->>> (GPIOs) that can be configured as logic inputs, opendrain outputs or
->>> push-pull outputs via the generic GPIOLIB framework.
->
-> Great, thanks for your contribution Michael! Both patches pushed to the
-> for-next branch of the i2c-mux tree.
->
->>> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
->> (...)
->>> Changes since v4:
->>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> Please go ahead and merge to the i2c tree if you like.
->
-> Yup, thanks for the review! (But not merged directly to the i2c tree,
-> although they will get there eventually...)
->
-> Cheers,
-> peda
->
->
+On Wed, 12 Apr 2017 19:11:21 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
 
-Peter and Linus,
+> On Sun, Apr 09, 2017 at 08:09:27PM +0200, Ralph Sennhauser wrote:
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > 
+> > Armada 370/XP devices can 'blink' GPIO lines with a configurable on
+> > and off period. This can be modelled as a PWM.
+> > 
+> > However, there are only two sets of PWM configuration registers for
+> > all the GPIO lines. This driver simply allows a single GPIO line per
+> > GPIO chip of 32 lines to be used as a PWM. Attempts to use more
+> > return EBUSY.
+> > 
+> > Due to the interleaving of registers it is not simple to separate
+> > the PWM driver from the GPIO driver. Thus the GPIO driver has been
+> > extended with a PWM driver.
+> > 
+> > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > URL: https://patchwork.ozlabs.org/patch/427287/
+> > URL: https://patchwork.ozlabs.org/patch/427295/
+> > [Ralph Sennhauser:
+> >   * Port forward
+> >   * Merge PWM portion into gpio-mvebu.c
+> >   * Switch to atomic PWM API
+> >   * Add new compatible string marvell,armada-370-xp-gpio
+> >   * Update and merge documentation patch
+> >   * Update MAINTAINERS]
+> > Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+> > Tested-by: Andrew Lunn <andrew@lunn.ch>
+> > ---
+> >  .../devicetree/bindings/gpio/gpio-mvebu.txt        |  32 ++
+> >  MAINTAINERS                                        |   2 +
+> >  drivers/gpio/gpio-mvebu.c                          | 324
+> > ++++++++++++++++++++- 3 files changed, 346 insertions(+), 12
+> > deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+> > b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt index
+> > a6f3bec..fe49e9d 100644 ---
+> > a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt +++
+> > b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt @@ -38,6
+> > +38,24 @@ Required properties:
+> >  - #gpio-cells: Should be two. The first cell is the pin number. The
+> >    second cell is reserved for flags, unused at the moment.
+> >  
+> > +Optional properties:
+> > +
+> > +In order to use the gpio lines in PWM mode, some additional
+> > optional +properties are required. Only Armada 370 and XP support
+> > these properties. +
+> > +- compatible: Must contain "marvell,armada-370-xp-gpio"
+> > +
+> > +- reg: an additional register set is needed, for the GPIO Blink
+> > +  Counter on/off registers.
+> > +
+> > +- reg-names: Must contain an entry "pwm" corresponding to the
+> > +  additional register range needed for pwm operation.
+> > +
+> > +- #pwm-cells: Should be two. The first cell is the GPIO line
+> > number. The
+> > +  second cell is the period in nanoseconds.
+> > +
+> > +- clocks: Must be a phandle to the clock for the gpio controller.
+> > +
+> >  Example:
+> >  
+> >  		gpio0: gpio@d0018100 {
+> > @@ -51,3 +69,17 @@ Example:
+> >  			#interrupt-cells = <2>;
+> >  			interrupts = <16>, <17>, <18>, <19>;
+> >  		};
+> > +
+> > +		gpio1: gpio@18140 {
+> > +			compatible = "marvell,armada-370-xp-gpio";
+> > +			reg = <0x18140 0x40>, <0x181c8 0x08>;
+> > +			reg-names = "gpio", "pwm";
+> > +			ngpios = <17>;
+> > +			gpio-controller;
+> > +			#gpio-cells = <2>;
+> > +			#pwm-cells = <2>;
+> > +			interrupt-controller;
+> > +			#interrupt-cells = <2>;
+> > +			interrupts = <87>, <88>, <89>;
+> > +			clocks = <&coreclk 0>;
+> > +		};  
+> 
+> This is going to need an Acked-by from one of the device tree
+> maintainers. Rob and devicetree@vger.kernel.org are on Cc, but I
+> suspect nobody might look for the binding change "hidden" in this
+> patch.
+> 
+> Maybe best to split this off into a separate patch, or explicitly ping
+> Rob to look at this patch.
 
-Thanks for your precious time - really appreciated!
+Hi Thierry,
 
--- 
-Greetings,
-Michael
+Rob asked for the new compatible string so he did see it presumably. As
+you prefer to have an ACK by him I'll see to getting one for the driver
+(bindings part). The patch could be split but then one might want to
+split it even further. Like this the first patch in the series is a nice
+self contained package.
 
---
-Analog Devices GmbH      Otl-Aicher Strasse 60-64      80807 München
-Sitz der Gesellschaft München, Registergericht München HRB 40368,
-Geschäftsführer: Peter Kolberg, Ali Raza Husain, Eileen Wynne
+>
+<snip/>
+> 
+> > +
+> > +	mvpwm->clk_rate = clk_get_rate(mvchip->clk);
+> > +	if (!mvpwm->clk_rate) {
+> > +		dev_err(dev, "failed to get clock rate\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	mvpwm->chip.dev = dev;
+> > +	mvpwm->chip.ops = &mvebu_pwm_ops;
+> > +	mvpwm->chip.base = mvchip->chip.base;
+> > +	mvpwm->chip.npwm = mvchip->chip.ngpio;  
+> 
+> I still would've done this differently. If you use this with a PWM
+> user you have to hook it up via DT anyway, so it doesn't matter
+> whether you specify the PWM index or the GPIO via some other
+> property. The _only_ use-case where this might actually be an
+> advantage is if you request a PWM via the sysfs interface.
+
+Let me answer this in the other mail where you bring this up.
+
+> 
+<snip/>
+> All of my comments are effectively of a bikeshed nature, so from a PWM
+> perspective this is:
+> 
+> Acked-by: Thierry Reding <thierry.reding@gmail.com>
+
+Thanks for the detailed review and the ACK. Will work on all the
+mentioned bits for v6.
+
+Ralph
