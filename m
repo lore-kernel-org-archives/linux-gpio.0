@@ -1,185 +1,78 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 12/12] gpio: Add Tegra186 support
-Date: Thu, 13 Apr 2017 14:38:44 +0200
-Message-ID: <CACRpkdaQacEqqW9Vdn7mtnZMH_VvL1B-35VFV=PcORwgtLz2eg@mail.gmail.com>
-References: <20170403160532.20282-1-thierry.reding@gmail.com> <20170403160532.20282-13-thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] mfd: arizona: Add GPIO maintain state flag
+Date: Thu, 13 Apr 2017 14:48:45 +0200
+Message-ID: <CACRpkdYAgd+ovH5x+GpbqPqGNG8W=t3A_g1rpY6tha2=FPsfOA@mail.gmail.com>
+References: <1491568725-14882-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <20170410201758.lobmtzxt2jgcwwvc@rob-hp-laptop> <1491903267.4826.8.camel@rf-debian.wolfsonmicro.main>
+ <20170413091513.GA1878@localhost.localdomain> <CACRpkdZ6PBv72BCn1bXsvhcHD2+dsCdh=3F3Vnnm7AWZqyWrig@mail.gmail.com>
+ <1492086093.4826.25.camel@rf-debian.wolfsonmicro.main>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170403160532.20282-13-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:34966 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751255AbdDMMsr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Apr 2017 08:48:47 -0400
+Received: by mail-io0-f173.google.com with SMTP id r16so75697862ioi.2
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Apr 2017 05:48:47 -0700 (PDT)
+In-Reply-To: <1492086093.4826.25.camel@rf-debian.wolfsonmicro.main>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, Rob Herring <robh@kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 
-On Mon, Apr 3, 2017 at 6:05 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Apr 13, 2017 at 2:21 PM, Richard Fitzgerald
+<rf@opensource.wolfsonmicro.com> wrote:
+> On Thu, 2017-04-13 at 14:14 +0200, Linus Walleij wrote:
+>> On Thu, Apr 13, 2017 at 11:15 AM, Charles Keepax
+>> <ckeepax@opensource.wolfsonmicro.com> wrote:
+>> > On Tue, Apr 11, 2017 at 10:34:27AM +0100, Richard Fitzgerald wrote:
+>>
+>> >> 3) The codec only has to be kept awake while any such GPIO is actually
+>> >> in use. See (2)
+>> >
+>> > Yeah option 3 is the primary issue here, we only want to keep the
+>> > CODEC enabled whilst specific GPIOs are in use. As GPIOs can be
+>> > dynamically requested/released by things in the kernel we want to
+>> > know which GPIOs require the CODEC to be kept alive. Also in the
+>> > future one might be tempted to add maintain whilst high and
+>> > maintain whilst low options for lines with pulls on them to
+>> > further optimise power.
+>>
+>> Why does this have to be encoded as information in the device
+>> tree? Isn't it better to use a static table in the driver?
+>>
+>> I don't see what use system integrators and others playing
+>> around with the device tree has of this, it will just be confusing
+>> to them if it is a chip-internal detail.
+>>
 >
-> Tegra186 has two GPIO controllers that are largely register compatible
-> between one another but are completely different from the controller
-> found on earlier generations.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v3:
-> - make use of GPIOLIB_IRQCHIP for IRQ chip handling
+> They are GPIOs for connecting to external hardware, we don't know what
+> people are going to connect them to so they have to tell us how they
+> need them to behave.
 
-So this is the interesting patch where you make use of the new
-tightly integrated IRQchip.
+Aha it is a consumer configuration thing, then I see it.
 
-> +struct tegra_gpio {
-> +       struct gpio_chip gpio;
-> +       struct irq_chip intc;
-> +       unsigned int num_irq;
-> +       unsigned int *irq;
+I think it seems a bit odd that it is assumed that the default is that
+we should *not* preserve the GPIO output value if we go to sleep.
+Should the flag be inverted?
 
-So I find it a bit strange that the array of irq parents is still kept around
-when you add so much infrastructure. Could this not just go into the core
-so that is natively able to handle multiple parents cleanly?
+Also, why can't we just use a generic flag for this, it seems very
+very generic.
 
-> +static int tegra186_gpio_of_xlate(struct gpio_chip *chip,
-> +                                 const struct of_phandle_args *spec,
-> +                                 u32 *flags)
-> +{
-> +       struct tegra_gpio *gpio = gpiochip_get_data(chip);
-> +       unsigned int port, pin, i, offset = 0;
-> +
-> +       if (WARN_ON(chip->of_gpio_n_cells < 2))
-> +               return -EINVAL;
-> +
-> +       if (WARN_ON(spec->args_count < chip->of_gpio_n_cells))
-> +               return -EINVAL;
-> +
-> +       port = spec->args[0] / 8;
-> +       pin = spec->args[0] % 8;
+Look in:
+include/dt-bindings/gpio/gpio.h
 
-Actually modular ports/banks is something we will also see again and
-have seen before. Maybe this should be a new core xlate function
-just taking some MOD argument.
+Is there any reasons why we can't have:
+/* Bit 3 express GPIO suspend/resume persistance in low power mode */
+#define GPIO_MUST_KEEP_VALUE 0
+#define GPIO_MAY_LOOSE_VALUE_DURING_SLEEP 8
 
-> +static void tegra186_gpio_irq(struct irq_desc *desc)
-> +{
-> +       struct tegra_gpio *gpio = irq_desc_get_handler_data(desc);
-> +       struct irq_domain *domain = gpio->gpio.irq.domain;
-> +       struct irq_chip *chip = irq_desc_get_chip(desc);
-> +       unsigned int parent = irq_desc_get_irq(desc);
-> +       unsigned int i, offset = 0;
-> +
-> +       chained_irq_enter(chip, desc);
-> +
-> +       for (i = 0; i < gpio->soc->num_ports; i++) {
-> +               const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-> +               void __iomem *base = gpio->base + port->offset;
-> +               unsigned int pin, irq;
-> +               unsigned long value;
-> +
-> +               /* skip ports that are not associated with this controller */
-> +               if (parent != gpio->irq[port->irq])
-> +                       goto skip;
-
-This parent-to-irq lookup I think the core should handle.
-
-> +static int tegra186_gpio_irq_domain_xlate(struct irq_domain *domain,
-> +                                         struct device_node *np,
-> +                                         const u32 *spec, unsigned int size,
-> +                                         unsigned long *hwirq,
-> +                                         unsigned int *type)
-> +{
-> +       struct tegra_gpio *gpio = gpiochip_get_data(domain->host_data);
-> +       unsigned int port, pin, i, offset = 0;
-> +
-> +       if (size < 2)
-> +               return -EINVAL;
-> +
-> +       port = spec[0] / 8;
-> +       pin = spec[0] % 8;
-
-Here is this MOD business again. This is clearly a pattern.
-
-> +       err = of_irq_count(pdev->dev.of_node);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       gpio->num_irq = err;
-
-This variable (err) has a confusing name. This is clearly not an error
-at this point. Can you rename it to "ret" or something?
-
-> +       gpio->irq = devm_kcalloc(&pdev->dev, gpio->num_irq, sizeof(*gpio->irq),
-> +                                GFP_KERNEL);
-> +       if (!gpio->irq)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < gpio->num_irq; i++) {
-> +               err = platform_get_irq(pdev, i);
-> +               if (err < 0)
-> +                       return err;
-> +
-> +               gpio->irq[i] = err;
-> +       }
-
-So this array of parent IRQs I think should be stored in the core
-gpio irqchip, not here locally in the driver.
-
-> +       for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
-> +               const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-> +               char *name;
-> +
-> +               for (j = 0; j < port->pins; j++) {
-> +                       name = devm_kasprintf(gpio->gpio.parent, GFP_KERNEL,
-> +                                             "P%s.%02x", port->name, j);
-> +                       if (!name)
-> +                               return -ENOMEM;
-> +
-> +                       names[offset + j] = name;
-> +               }
-> +
-> +               offset += port->pins;
-> +       }
-
-Interesting way of using the names array. This will override any names
-from the device tree I think, don't you want to use gpio-line-names = ""..
-in the device tree instead?
-
-> +       irq = &gpio->gpio.irq;
-> +       irq->chip = &gpio->intc;
-> +       irq->first = 0;
-> +       irq->domain_ops = &tegra186_gpio_irq_domain_ops;
-> +       irq->handler = handle_simple_irq;
-> +       irq->lock_key = &tegra186_gpio_lock_class;
-> +       irq->default_type = IRQ_TYPE_NONE;
-> +       irq->parent_handler = tegra186_gpio_irq;
-> +       irq->parent_handler_data = gpio;
-> +       irq->num_parents = gpio->num_irq;
-> +       irq->parents = gpio->irq;
-> +
-> +       irq->map = devm_kcalloc(&pdev->dev, gpio->gpio.ngpio,
-> +                               sizeof(*irq->map), GFP_KERNEL);
-> +       if (!irq->map)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0, offset = 0; i < gpio->soc->num_ports; i++) {
-> +               const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-> +
-> +               for (j = 0; j < port->pins; j++)
-> +                       irq->map[offset + j] = irq->parents[port->irq];
-> +
-> +               offset += port->pins;
-> +       }
-
-So this is the core API use. But setting up the map in the driver, that
-seems too much to implement over and over again for all drivers
-don't you think? Also to have local irqdomain operations. All that
-should be in the core and be reusable IMO.
-
-I would imagine that the core keeps track of the parent IRQs and
-will make sure to free up all maps of all IRQs when the GPIOchip
-is removed.
-
-Maybe I'm missing something about this, I was simply expecting
-a full multi-parent handling and tracking in the core, moving the
-drivers that now loose track of their parents over to that as well.
+Yeah it's talkative but informative. This way you can mark up lines
+that are OK to loose their value during low-power/sleep using
+just (new) standard bindings that can be reused by others,
+also optionally making it possible for the gpiolib core to take action
+on these properties if need be.
 
 Yours,
 Linus Walleij
