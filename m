@@ -1,42 +1,61 @@
-From: Nandor Han <nandor.han@ge.com>
-Subject: [PATCH v2 4/4] Add XRA1403 support to MAINTAINERS file
-Date: Thu, 13 Apr 2017 13:27:51 +0300
-Message-ID: <e37304435b118b295ab62ee324a62f6c7b1d7879.1492077070.git.nandor.han@ge.com>
-References: <cover.1492077070.git.nandor.han@ge.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.11
+Date: Thu, 13 Apr 2017 13:36:41 +0200
+Message-ID: <CACRpkdaQ=DeBwpe6dQNJwGT35voh5p838NXaNzKxkgT05hh99A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1492077070.git.nandor.han@ge.com>
-In-Reply-To: <cover.1492077070.git.nandor.han@ge.com>
-References: <cover.1492077070.git.nandor.han@ge.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, davem@davemloft.net, geert@linux-m68k.org, mchehab@kernel.org, daniel.vetter@ffwll.ch, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Nandor Han <nandor.han@ge.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Add XRA1403 support to MAINTAINERS list.
+Hi Linus,
 
-Signed-off-by: Nandor Han <nandor.han@ge.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+these are hopefully the last pin control fixes I send this
+kernel cycle. A Chromebook and an Exynos SoC thingie.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 892e958..0c5b984 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14013,6 +14013,14 @@ L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	drivers/char/xillybus/
- 
-+XRA1403 GPIO EXPANDER
-+M:	Nandor Han <nandor.han@ge.com>
-+M:	Semi Malinen <semi.malinen@ge.com>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/gpio/gpio-xra1403.c
-+F:	Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
-+
- XTENSA XTFPGA PLATFORM SUPPORT
- M:	Max Filippov <jcmvbkbc@gmail.com>
- L:	linux-xtensa@linux-xtensa.org
--- 
-2.10.1
+The Exynos patch is pretty big, it is fixing unbroken a breakage
+caused by yours truly when trying to figure out the merge mess
+with the different Samsung platforms for this merge window.
+Sorry about that. We have countered this situation by assigning
+a Samsung pin control submaintainer to catch stuff earlier.
+
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit 39da7c509acff13fc8cb12ec1bb20337c988ed36:
+
+  Linux 4.11-rc6 (2017-04-09 09:49:44 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.11-5
+
+for you to fetch changes up to 7036502783729c2aaf7a3c24c89087c58721430f:
+
+  pinctrl: cherryview: Add a quirk to make Acer Chromebook keyboard
+work again (2017-04-11 10:09:39 +0200)
+
+----------------------------------------------------------------
+Two pin control fixes arriving late:
+
+- Make the Acer Chromebook keyboard work again with the Intel
+  Cherryview driver.
+- Fix a merge error in the Exynos 5433 driver.
+
+----------------------------------------------------------------
+Chanwoo Choi (1):
+      pinctrl: samsung: Add missing part for PINCFG_TYPE_DRV of Exynos5433
+
+Mika Westerberg (1):
+      pinctrl: cherryview: Add a quirk to make Acer Chromebook
+keyboard work again
+
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 26 +++++++++-
+ drivers/pinctrl/samsung/pinctrl-exynos.c   | 80 +++++++++++++++---------------
+ drivers/pinctrl/samsung/pinctrl-exynos.h   | 11 ----
+ 3 files changed, 64 insertions(+), 53 deletions(-)
