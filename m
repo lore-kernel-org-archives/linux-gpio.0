@@ -1,40 +1,81 @@
-From: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v1 2/2] gpio: gpio-wcove: fix irq pending status bit width
-Date: Fri, 14 Apr 2017 10:29:25 -0700
-Message-ID: <197e6ca51bb83ae865022d7ffd085d06dfee7795.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <d2f4d86de7bb816663e1db3a1385ae917aa699ca.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d2f4d86de7bb816663e1db3a1385ae917aa699ca.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gnurou@gmail.com, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, sathyaosid@gmail.com, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+From: <iles@appliedis.com>
+Subject: 19778 linux-gpio
+Date: Fri, 14 Apr 2017 19:14:43 -0000
+Message-ID: <149219728396.21738.8142061685570518125@telesa.com.br>
+Reply-To: <iles@appliedis.com>
+Mime-Version: 1.0
+Content-Type: application/zip; name="787041412548.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from 189.89.1.23.telesa.com.br ([189.89.1.23]:4585 "HELO
+        telesa.com.br" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with SMTP id S1755565AbdDNTOv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Apr 2017 15:14:51 -0400
+Content-Disposition: attachment
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio <linux-gpio@vger.kernel.org>
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-
-Whiskey cove PMIC has three GPIO banks with total number of 13 GPIO
-pins. But when checking for the pending status, for_each_set_bit() uses
-bit width of 7 and hence it only checks the status for first 7 GPIO pins
-missing to check/clear the status of rest of the GPIO pins. This patch
-fixes this issue.
-
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/gpio/gpio-wcove.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
-index 68ef061..48c1504 100644
---- a/drivers/gpio/gpio-wcove.c
-+++ b/drivers/gpio/gpio-wcove.c
-@@ -319,7 +319,7 @@ static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
- 	while (pending) {
- 		/* One iteration is for all pending bits */
- 		for_each_set_bit(gpio, (const unsigned long *)&pending,
--						 GROUP0_NR_IRQS) {
-+						 WCOVE_GPIO_NUM) {
- 			offset = (gpio > GROUP0_NR_IRQS) ? 1 : 0;
- 			mask = (offset == 1) ? BIT(gpio - GROUP0_NR_IRQS) :
- 								BIT(gpio);
--- 
-2.7.4
+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
