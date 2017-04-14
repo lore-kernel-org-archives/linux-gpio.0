@@ -1,8 +1,8 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 04/10] pinctrl: imx: Improve another size determination in
- imx_pinctrl_parse_functions()
-Date: Fri, 14 Apr 2017 11:14:13 +0200
-Message-ID: <d9923862-efac-949d-9915-de19d3f13fa5@users.sourceforge.net>
+Subject: [PATCH 05/10] pinctrl: imx: Use devm_kmalloc_array() in
+ imx_pinctrl_probe()
+Date: Fri, 14 Apr 2017 11:15:41 +0200
+Message-ID: <33fef6f9-0ab0-9cd9-201e-c37c53e7b798@users.sourceforge.net>
 References: <59fae4ac-9e07-232a-4843-92dd9e0cf2ef@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -16,31 +16,35 @@ Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 13 Apr 2017 15:20:43 +0200
+Date: Thu, 13 Apr 2017 15:35:27 +0200
 
-Replace the specification of a data structure by a pointer dereference
-as the parameter for the operator "sizeof" to make the corresponding size
-determination a bit safer according to the Linux coding style convention.
+A multiplication for the size determination of a memory allocation
+indicated that an array data structure should be processed.
+Thus use the corresponding function "devm_kmalloc_array".
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/freescale/pinctrl-imx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-imx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index f835e8210ace..44dbf6e38d79 100644
+index 44dbf6e38d79..078875361d76 100644
 --- a/drivers/pinctrl/freescale/pinctrl-imx.c
 +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -590,9 +590,7 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+@@ -726,8 +726,10 @@ int imx_pinctrl_probe(struct platform_device *pdev,
+ 	if (!ipctl)
+ 		return -ENOMEM;
  
- 	for_each_child_of_node(np, child) {
- 		func->group_names[i] = child->name;
--
--		grp = devm_kzalloc(info->dev, sizeof(struct group_desc),
--				   GFP_KERNEL);
-+		grp = devm_kzalloc(info->dev, sizeof(*grp), GFP_KERNEL);
- 		if (!grp)
- 			return -ENOMEM;
+-	info->pin_regs = devm_kmalloc(&pdev->dev, sizeof(*info->pin_regs) *
+-				      info->npins, GFP_KERNEL);
++	info->pin_regs = devm_kmalloc_array(&pdev->dev,
++					    info->npins,
++					    sizeof(*info->pin_regs),
++					    GFP_KERNEL);
+ 	if (!info->pin_regs)
+ 		return -ENOMEM;
  
 -- 
 2.12.2
