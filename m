@@ -1,67 +1,61 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] pinctrl-armada-xp: Use devm_kmalloc_array() in
- armada_xp_pinctrl_probe()
-Date: Fri, 14 Apr 2017 18:58:25 +0200
-Message-ID: <d109d375-6e91-420d-eb9a-fcaea4fbc5f7@users.sourceforge.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Language: en-GB
-Sender: kernel-janitors-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Chris Packham <chris.packham@alliedtelesis.co.nz>, Kalyan Kinthada <kalyan.kinthada@alliedtelesis.co.nz>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh@kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v1 1/2] gpio: gpio-wcove: fix GPIO irq status mask
+Date: Fri, 14 Apr 2017 10:29:24 -0700
+Message-ID: <d2f4d86de7bb816663e1db3a1385ae917aa699ca.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga14.intel.com ([192.55.52.115]:49345 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751416AbdDNRdD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 14 Apr 2017 13:33:03 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: gnurou@gmail.com, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, sathyaosid@gmail.com, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 14 Apr 2017 18:48:15 +0200
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-* A multiplication for the size determination of a memory allocation
-  indicated that an array data structure should be processed.
-  Thus use the corresponding function "devm_kmalloc_array".
+According to Whiskey cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
+battery IO. So we should skip this bit when checking for GPIO irq pending
+status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
+loop until irq "pending" status becomes 0. This patch fixes this issue.
 
-  This issue was detected by using the Coccinelle software.
-
-* Replace the specification of a data type by a pointer dereference
-  to make the corresponding size determination a bit safer according to
-  the Linux coding style convention.
-
-* Delete the local variable "nregs" which became unnecessary with
-  this refactoring.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-wcove.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-index b854f1ee5de5..457c54c8fed3 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c
-@@ -574,7 +574,6 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
- 	struct mvebu_pinctrl_soc_info *soc = &armada_xp_pinctrl_info;
- 	const struct of_device_id *match =
- 		of_match_device(armada_xp_pinctrl_of_match, &pdev->dev);
--	int nregs;
+diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
+index 97613de..68ef061 100644
+--- a/drivers/gpio/gpio-wcove.c
++++ b/drivers/gpio/gpio-wcove.c
+@@ -51,6 +51,8 @@
+ #define GROUP1_NR_IRQS		6
+ #define IRQ_MASK_BASE		0x4e19
+ #define IRQ_STATUS_BASE		0x4e0b
++#define GPIO_IRQ0_MASK		0x7f
++#define GPIO_IRQ1_MASK		0x3f
+ #define UPDATE_IRQ_TYPE		BIT(0)
+ #define UPDATE_IRQ_MASK		BIT(1)
  
- 	if (!match)
- 		return -ENODEV;
-@@ -628,10 +627,11 @@ static int armada_xp_pinctrl_probe(struct platform_device *pdev)
- 		break;
+@@ -309,7 +311,7 @@ static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+ 		return IRQ_NONE;
  	}
  
--	nregs = DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);
--
--	mpp_saved_regs = devm_kmalloc(&pdev->dev, nregs * sizeof(u32),
--				      GFP_KERNEL);
-+	mpp_saved_regs = devm_kmalloc_array(&pdev->dev,
-+					    DIV_ROUND_UP(soc->nmodes,
-+							 MVEBU_MPPS_PER_REG),
-+					    sizeof(*mpp_saved_regs),
-+					    GFP_KERNEL);
- 	if (!mpp_saved_regs)
- 		return -ENOMEM;
+-	pending = p[0] | (p[1] << 8);
++	pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
+ 	if (!pending)
+ 		return IRQ_NONE;
  
+@@ -333,7 +335,8 @@ static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+ 			break;
+ 		}
+ 
+-		pending = p[0] | (p[1] << 8);
++		pending = (p[0] & GPIO_IRQ0_MASK) |
++			((p[1] & GPIO_IRQ1_MASK) << 7);
+ 	}
+ 
+ 	return IRQ_HANDLED;
 -- 
-2.12.2
+2.7.4
 
