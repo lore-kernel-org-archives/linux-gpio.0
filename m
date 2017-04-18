@@ -1,33 +1,56 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: Re: pinctrl: imx: Checking reuse of grouping functionality
-Date: Mon, 17 Apr 2017 18:08:24 +0200
-Message-ID: <2c82f25b-4095-fbb0-f766-c83387b46ef5@users.sourceforge.net>
-References: <60eb8e84-7914-4e25-4822-7e1d8fd8afcb@users.sourceforge.net>
- <CAAMH-ysVX+ZX-+nEF2kyrAKqhrkaZisBKiZuv6fAZUrKk3-ZDg@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v4] mfd: intel_soc_pmic: Fix a mess with compilation
+ units
+Date: Tue, 18 Apr 2017 16:05:24 +0300
+Message-ID: <1492520724.24567.59.camel@linux.intel.com>
+References: <20170404123856.3052-1-andriy.shevchenko@linux.intel.com>
+         <20170411135412.qnepq52p3m44zqkq@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.12]:62775 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752223AbdDQQIo (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 17 Apr 2017 12:08:44 -0400
-In-Reply-To: <CAAMH-ysVX+ZX-+nEF2kyrAKqhrkaZisBKiZuv6fAZUrKk3-ZDg@mail.gmail.com>
-Content-Language: en-GB
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170411135412.qnepq52p3m44zqkq@dell>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-gpio@vger.kernel.org
-To: Gary Bisson <gary.bisson@boundarydevices.com>
-Cc: linux-gpio@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Fabio Estevam <fabio.estevam@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Peng Fan <van.freenix@gmail.com>, Tony Lindgren <tony@atomide.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-> However the imx pinctrl driver _absolutely_ needs this configuration to work.
+On Tue, 2017-04-11 at 14:54 +0100, Lee Jones wrote:
+> On Tue, 04 Apr 2017, Andy Shevchenko wrote:
+> 
+> > Crystal Cove and Whiskey Cove are two different PMICs which are
+> > installed on Intel Atom SoC based platforms.
+> > 
+> > Moreover there are two independent drivers that by some reason were
+> > supposed (*) to get into one kernel module.
+> > 
+> > Fix the mess by clarifying Kconfig option for Crystal Cove and split
+> > Whiskey Cove out of it.
+> > 
+> > (*) It looks like the configuration was never tested with
+> >     INTEL_SOC_PMIC=n. The line in Makefile is actually wrong.
+> > 
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> (supporter:ACPI)
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > Acked-by: Zhang Rui <rui.zhang@intel.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  - fix dependency for now, proper fix is to provide headers in
+> > platform_data/x86
+> >  - add tags
+> >  drivers/acpi/Kconfig         |  2 +-
+> >  drivers/gpio/Kconfig         |  2 +-
+> >  drivers/mfd/Kconfig          | 15 +++++++++++++--
+> >  drivers/mfd/Makefile         |  2 +-
+> >  drivers/platform/x86/Kconfig |  2 +-
+> >  drivers/thermal/Kconfig      |  2 +-
+> >  6 files changed, 18 insertions(+), 7 deletions(-)
+> 
+> Applied, thanks.
 
-Thanks for your explanation that the file “drivers/pinctrl/freescale/Kconfig”
-will usually provide needed information for this software module.
+I didn't see it in next. Does it cause build issues still? I didn't get
+any report on it.
 
-Would it make sense to document such a requirement also by a preprocessor error
-directive in the source file “drivers/pinctrl/freescale/pinctrl-imx.c”
-for the special case if the macro “CONFIG_GENERIC_PINCTRL_GROUPS” would
-accidentally not be defined?
-
-Regards,
-Markus
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
