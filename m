@@ -1,56 +1,43 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4] mfd: intel_soc_pmic: Fix a mess with compilation
- units
-Date: Tue, 18 Apr 2017 16:05:24 +0300
-Message-ID: <1492520724.24567.59.camel@linux.intel.com>
-References: <20170404123856.3052-1-andriy.shevchenko@linux.intel.com>
-         <20170411135412.qnepq52p3m44zqkq@dell>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH] gpio: arizona: Correct check whether the pin is an input
+Date: Wed, 19 Apr 2017 10:30:44 +0100
+Message-ID: <1492594244-27361-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170411135412.qnepq52p3m44zqkq@dell>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47107 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1761481AbdDSJ3e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 19 Apr 2017 05:29:34 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: gnurou@gmail.com, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-On Tue, 2017-04-11 at 14:54 +0100, Lee Jones wrote:
-> On Tue, 04 Apr 2017, Andy Shevchenko wrote:
-> 
-> > Crystal Cove and Whiskey Cove are two different PMICs which are
-> > installed on Intel Atom SoC based platforms.
-> > 
-> > Moreover there are two independent drivers that by some reason were
-> > supposed (*) to get into one kernel module.
-> > 
-> > Fix the mess by clarifying Kconfig option for Crystal Cove and split
-> > Whiskey Cove out of it.
-> > 
-> > (*) It looks like the configuration was never tested with
-> >     INTEL_SOC_PMIC=n. The line in Makefile is actually wrong.
-> > 
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> (supporter:ACPI)
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Acked-by: Zhang Rui <rui.zhang@intel.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  - fix dependency for now, proper fix is to provide headers in
-> > platform_data/x86
-> >  - add tags
-> >  drivers/acpi/Kconfig         |  2 +-
-> >  drivers/gpio/Kconfig         |  2 +-
-> >  drivers/mfd/Kconfig          | 15 +++++++++++++--
-> >  drivers/mfd/Makefile         |  2 +-
-> >  drivers/platform/x86/Kconfig |  2 +-
-> >  drivers/thermal/Kconfig      |  2 +-
-> >  6 files changed, 18 insertions(+), 7 deletions(-)
-> 
-> Applied, thanks.
+The logic to check if the pin is an input or output whilst testing if we
+need to read the register value from the hardware or not is currently
+inverted. Remove the erroneous not from the if statement.
 
-I didn't see it in next. Does it cause build issues still? I didn't get
-any report on it.
+Fixes: 11598d174050 ("gpio: arizona: Correct handling for reading input GPIOs")
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
+ drivers/gpio/gpio-arizona.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
+index 60b3102..cd23fd7 100644
+--- a/drivers/gpio/gpio-arizona.c
++++ b/drivers/gpio/gpio-arizona.c
+@@ -51,7 +51,7 @@ static int arizona_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 		return ret;
+ 
+ 	/* Resume to read actual registers for input pins */
+-	if (!(val & ARIZONA_GPN_DIR)) {
++	if (val & ARIZONA_GPN_DIR) {
+ 		ret = pm_runtime_get_sync(chip->parent);
+ 		if (ret < 0) {
+ 			dev_err(chip->parent, "Failed to resume: %d\n", ret);
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.1.4
+
