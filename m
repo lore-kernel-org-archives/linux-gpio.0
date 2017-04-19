@@ -1,35 +1,35 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: gpio - add exar to vendor prefixes
- list
-Date: Wed, 19 Apr 2017 16:48:56 -0500
-Message-ID: <20170419214856.syz6r5dsos76toma@rob-hp-laptop>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 3/4] doc,dts - add XRA1403 DTS binding documentation
+Date: Wed, 19 Apr 2017 16:55:40 -0500
+Message-ID: <20170419215540.54rct3vlot4y733r@rob-hp-laptop>
 References: <cover.1492077070.git.nandor.han@ge.com>
- <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han@ge.com>
+ <0d970c6a929597804eae3577ed24f57ee23b820a.1492077070.git.nandor.han@ge.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:35967 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1764214AbdDSVzn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Apr 2017 17:55:43 -0400
 Content-Disposition: inline
-In-Reply-To: <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han-JJi787mZWgc@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nandor Han <nandor.han-JJi787mZWgc@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <0d970c6a929597804eae3577ed24f57ee23b820a.1492077070.git.nandor.han@ge.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Nandor Han <nandor.han@ge.com>
+Cc: gregkh@linuxfoundation.org, davem@davemloft.net, geert@linux-m68k.org, mchehab@kernel.org, daniel.vetter@ffwll.ch, linus.walleij@linaro.org, gnurou@gmail.com, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 13, 2017 at 01:27:48PM +0300, Nandor Han wrote:
-> Add Exar Corporation to vendors list.
+On Thu, Apr 13, 2017 at 01:27:50PM +0300, Nandor Han wrote:
+> Add the XRA1403 DTS binding documentation.
 
-This patch has nothing to do with gpio, so that should be dropped from 
-the subject.
+"dt-bindings: gpio: ..." for the subject.
 
 > 
-> Signed-off-by: Nandor Han <nandor.han-JJi787mZWgc@public.gmane.org>
+> Signed-off-by: Nandor Han <nandor.han@ge.com>
 > ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  .../devicetree/bindings/gpio/gpio-xra1403.txt      | 46 ++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-xra1403.txt
 
 Otherwise,
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Rob Herring <robh@kernel.org>
