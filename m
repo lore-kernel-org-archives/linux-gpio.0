@@ -1,50 +1,35 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/2] gpio: gpio-wcove: fix GPIO irq status mask
-Date: Wed, 19 Apr 2017 23:41:37 +0300
-Message-ID: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
-References: <d2f4d86de7bb816663e1db3a1385ae917aa699ca.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: gpio - add exar to vendor prefixes
+ list
+Date: Wed, 19 Apr 2017 16:48:56 -0500
+Message-ID: <20170419214856.syz6r5dsos76toma@rob-hp-laptop>
+References: <cover.1492077070.git.nandor.han@ge.com>
+ <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han@ge.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:33925 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1764621AbdDSUlj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Apr 2017 16:41:39 -0400
-In-Reply-To: <d2f4d86de7bb816663e1db3a1385ae917aa699ca.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han-JJi787mZWgc@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nandor Han <nandor.han-JJi787mZWgc@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 
-On Fri, Apr 14, 2017 at 8:29 PM,
-<sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
-> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->
-> According to Whiskey cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
+On Thu, Apr 13, 2017 at 01:27:48PM +0300, Nandor Han wrote:
+> Add Exar Corporation to vendors list.
 
-cove -> Cove
+This patch has nothing to do with gpio, so that should be dropped from 
+the subject.
 
-> battery IO. So we should skip this bit when checking for GPIO irq pending
+> 
+> Signed-off-by: Nandor Han <nandor.han-JJi787mZWgc@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
 
-irq -> IRQ
+Otherwise,
 
-> status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
-> loop until irq "pending" status becomes 0. This patch fixes this issue.
-
-Ditto.
-
-> +#define GPIO_IRQ0_MASK         0x7f
-> +#define GPIO_IRQ1_MASK         0x3f
-
-GENMASK()
-
-> -               pending = p[0] | (p[1] << 8);
-> +               pending = (p[0] & GPIO_IRQ0_MASK) |
-> +                       ((p[1] & GPIO_IRQ1_MASK) << 7);
-
-I would leave this on one line despite 80 characters limit (actually
-how long is it?).
-
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
