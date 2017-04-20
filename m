@@ -1,200 +1,60 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH 1/2] gpio: omap: return error if requested debounce time
- is not possible
-Date: Thu, 20 Apr 2017 10:19:35 -0500
-Message-ID: <e0d81714-22b1-23fa-a329-9656e2283180@ti.com>
-References: <20170317005704.11971-1-drivshin@awxrd.com>
- <20170317005704.11971-2-drivshin@awxrd.com>
- <d1200407-5efd-ca7b-f936-fa37b206e1ea@ti.com>
- <20170317135413.78118dc2.drivshin@awxrd.com>
- <dc614a7a-e0fa-c071-478b-2124724d95e9@ti.com>
- <20170317165032.5b891bc1.drivshin@awxrd.com>
- <73fd00d4-6649-90d6-dcb1-0cd186055a69@ti.com>
- <20170317194235.5a883df8.drivshin@awxrd.com>
- <20170420104437.7cd68de6.drivshin@awxrd.com>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7794: add R8A7745 support
+Date: Thu, 20 Apr 2017 19:26:53 +0300
+Message-ID: <53d77809-c448-443a-6e41-6258253d98eb@cogentembedded.com>
+References: <20170413201932.890107963@cogentembedded.com>
+ <20170419224646.wwjerpgnidvk4fkh@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170420104437.7cd68de6.drivshin@awxrd.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: David Rivshin <drivshin@awxrd.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-gpio@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170419224646.wwjerpgnidvk4fkh@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+On 04/20/2017 01:46 AM, Rob Herring wrote:
 
-
-On 04/20/2017 09:44 AM, David Rivshin wrote:
-> Hi Grygorii,
+>> Renesas  RZ/G1E (R8A7745) is pin compatible with R-Car E2 (R8A7794),
+>> however  it doesn't have several automotive specific peripherals.
 >
-> Not sure if you saw the question at the bottom asking for clarification
-> on what you'd prefer as far as any dev_xxx() message for this case. If
-> there is still concern on the other patch, I could just resubmit this
-> standalone (perhaps aiming for 4.12 at this point).
+> Is a single space between words really so hard for you? You've been told
+> to write proper sentences multiple times.
 
-Could you add dev info and resubmit this alone, pls
+    Nobody else but suffer from "double spaces". I just failed to remember 
+that once you are included into the patch addresses (I forget to update the 
+bindings in v1), you'll suffer from it again...
 
+> Yes, kernel developers suffer from OCD. Sorry.
 
->
-> On Fri, 17 Mar 2017 19:42:35 -0400
-> David Rivshin <drivshin@awxrd.com> wrote:
->
->> On Fri, 17 Mar 2017 16:43:56 -0500
->> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+    Obsessive-compulsive disorder, you mean? I feel your pain then... B-)
+
+>> Annotate all the items that only exist on the R-Car SoCs and only
+>> supply the pin groups/functions existing on a given SoC (that required
+>> splitting  of the AVB function)...
 >>
->>> On 03/17/2017 03:50 PM, David Rivshin wrote:
->>>> On Fri, 17 Mar 2017 13:54:28 -0500
->>>> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
->>>>
->>>>> On 03/17/2017 12:54 PM, David Rivshin wrote:
->>>>>> Hi Grygorii,
->>>>>>
->>>>>> On Fri, 17 Mar 2017 11:45:56 -0500
->>>>>> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
->>>>>>
->>>>>>> On 03/16/2017 07:57 PM, David Rivshin wrote:
->>>>>>>> From: David Rivshin <DRivshin@allworx.com>
->>>>>>>>
->>>>>>>> omap_gpio_debounce() does not validate that the requested debounce
->>>>>>>> is within a range it can handle. Instead it lets the register value
->>>>>>>> wrap silently, and always returns success.
->>>>>>>>
->>>>>>>> This can lead to all sorts of unexpected behavior, such as gpio_keys
->>>>>>>> asking for a too-long debounce, but getting a very short debounce in
->>>>>>>> practice.
->>>>>>>>
->>>>>>>> Fix this by returning -EINVAL if the requested value does not fit into
->>>>>>>> the register field. If there is no debounce clock available at all,
->>>>>>>> return -ENOTSUPP.
->>>>>>>
->>>>>>> In general this patch looks good, but there is one thing I'm worry about..
->>>>>>>
->>>>>>>>
->>>>>>>> Fixes: e85ec6c3047b ("gpio: omap: fix omap2_set_gpio_debounce")
->>>>>>>> Cc: <stable@vger.kernel.org> # 4.3+
->>>>>>>> Signed-off-by: David Rivshin <drivshin@allworx.com>
->>>>>>>> ---
->>>>>>>>  drivers/gpio/gpio-omap.c | 16 +++++++++++-----
->>>>>>>>  1 file changed, 11 insertions(+), 5 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
->>>>>>>> index efc85a2..33ec02d 100644
->>>>>>>> --- a/drivers/gpio/gpio-omap.c
->>>>>>>> +++ b/drivers/gpio/gpio-omap.c
->>>>>>>> @@ -208,8 +208,10 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
->>>>>>>>   * OMAP's debounce time is in 31us steps
->>>>>>>>   *   <debounce time> = (GPIO_DEBOUNCINGTIME[7:0].DEBOUNCETIME + 1) x 31
->>>>>>>>   * so we need to convert and round up to the closest unit.
->>>>>>>> + *
->>>>>>>> + * Return: 0 on success, negative error otherwise.
->>>>>>>>   */
->>>>>>>> -static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
->>>>>>>> +static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
->>>>>>>>  				    unsigned debounce)
->>>>>>>>  {
->>>>>>>>  	void __iomem		*reg;
->>>>>>>> @@ -218,11 +220,12 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
->>>>>>>>  	bool			enable = !!debounce;
->>>>>>>>
->>>>>>>>  	if (!bank->dbck_flag)
->>>>>>>> -		return;
->>>>>>>> +		return -ENOTSUPP;
->>>>>>>>
->>>>>>>>  	if (enable) {
->>>>>>>>  		debounce = DIV_ROUND_UP(debounce, 31) - 1;
->>>>>>>> -		debounce &= OMAP4_GPIO_DEBOUNCINGTIME_MASK;
->>>>>>>> +		if ((debounce & OMAP4_GPIO_DEBOUNCINGTIME_MASK) != debounce)
->>>>>>>> +			return -EINVAL;
->>>>>>>
->>>>>>> This might cause boot issues as current drivers may expect this op to succeed even if
->>>>>>> configured value is wrong - just think, may be we can do warn here and use max value as
->>>>>>> fallback?
->>>>>>
->>>>>> I have not looked through all drivers to be sure, but at least the gpio-keys
->>>>>> driver requires set_debounce to return an error if it can't satisfy the request.
->>>>>> In that case gpio-keys will use a software timer instead.
->>>>>>
->>>>>>                 if (button->debounce_interval) {
->>>>>>                         error = gpiod_set_debounce(bdata->gpiod,
->>>>>>                                         button->debounce_interval * 1000);
->>>>>>                         /* use timer if gpiolib doesn't provide debounce */
->>>>>>                         if (error < 0)
->>>>>>                                 bdata->software_debounce =
->>>>>>                                                 button->debounce_interval;
->>>>>>                 }
->>>>>>
->>>>>> Also, at least some other GPIO drivers (e.g. gpio-max7760) return -EINVAL in
->>>>>> such a case. And gpiolib will return -ENOTSUPP if there is no debounce
->>>>>> callback at all. So I expect all drivers which use gpiod_set_debounce() to
->>>>>> handle error returns gracefully.
->>>>>>
->>>>>> So I certainly understand the concern about backwards compatibility, but I
->>>>>> think clipping to max is the greater of the evils in this case. Even a
->>>>>> warning may be too much, because it's not necessarily anything wrong.
->>>>>> Perhaps an info or debug message would be helpful, though?
->>>>>>
->>>>>> If you prefer, I can try to go through all callers of gpiod_set_debounce()
->>>>>> and see how they'd handle an error return. The handful I've looked through so
->>>>>> far all behave like gpio-keys. The only ones I'd be particularly concerned
->>>>>> about are platform-specific drivers which were perhaps never used with other
->>>>>> gpio drivers. Do you know of that I should pay special attention to?
->>>>>
->>>>> Yeh agree. But the problem here will be not only with drivers itself - it can be wrong data in DT :(
->>>>> As result, even  gpio-keys driver will just silently switch to software_debounce
->>>>> without any notification.
->>>>
->>>> I think that switching to software_debounce silently is exactly the
->>>> intended/desired behavior of gpio-keys (and other drivers). For example,
->>>> if the DT requests a 20ms debounce on a gpio-key, the existing math
->>>> resulted in a hardware debounce of just 2ms. With the error return,
->>>> gpio-keys would silently switch to software_debounce of the requested
->>>> 20ms (potentially longer if the CPU is busy, but I don't think that's
->>>> a problem for correctness), exactly what the DT asked for.
->>>>
-> [...snip...]
->>>>>
->>>>> But agree - max might not be a good choose, so can you add dev_err() below, pls.
->>>>
->>>> Given the above, I personally feel that a dev_err() is undesirable in most
->>>> cases. If I have a system and matching DT that just happens to need a longer
->>>> debounce than the GPIO HW is capable of, gpio-keys (etc) does the best it can automatically. I don't consider that there is any error in that case, or
->>>> anything to be fixed.
->>>> I can understanding wanting to draw attention to a change in behavior (just
->>>> in case the DT is incorrect), but I'd personally lean towards dev_info() if
->>>> anything.
->>>>
->>>> That said: if you still prefer dev_err(), I will certainly do so.
->>>
->>> Fair enough :) thanks.
->>>
->>> Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
 >>
->> Just to make sure I don't misunderstand, would you like me to:
->> A) put in a dev_err()
->> B) put in a dev_info()
->> C) leave it as-is without any message
->> ?
+>> ---
+>> This patch is  against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
+>> repo plus  R8A7794 PFC fix and R8A7743 PFC support patch...
 >>
-> [...snip...]
+>> Changes in version 2:
+>> - fixed indentation to use tabs instead of spaces;
+>> - updated the PFC bindings.
+>>
+>>  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1
 >
-> FYI, I have searched for all uses of gpio{,d}_set_debounce (in v4.11-rc1),
-> and found nothing concerning. Most drivers fall back to software debounce.
+> But given it's a one line DT change:
 >
-> The only exception I found was mmc_spi (via mmc_gpio_request_cd), but the
-> only time that has a non-zero debounce requested is for vision_ep9307 which
-> is hardcoded to ask for a 1us debounce via platform data. I don't believe
-> ep93xx would use the gpio-omap driver anyways. The mmc-spi-slot devicetree
-> binding doesn't support setting a debounce on any of the GPIOs.
->
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
--- 
-regards,
--grygorii
+   Thank you!
+
+MBR, Sergei
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
