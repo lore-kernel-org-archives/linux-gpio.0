@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 2/8] selftests: lib.mk: define CLEAN macro to allow Makefiles to override clean
-Date: Fri, 21 Apr 2017 17:14:44 -0600
-Message-ID: <b39e21f8c47318d82be999aae310bdf6bcfc9bb9.1492815938.git.shuahkh@osg.samsung.com>
+Subject: [PATCH 4/8] selftests: gpio: override clean in lib.mk to fix warnings
+Date: Fri, 21 Apr 2017 17:14:46 -0600
+Message-ID: <b216b1808abff1e75c1b325a338a518b8477257a.1492815938.git.shuahkh@osg.samsung.com>
 References: <cover.1492815938.git.shuahkh@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1492815938.git.shuahkh@osg.samsung.com>
@@ -12,34 +12,31 @@ To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, pau
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
 
-Define CLEAN macro to allow Makefiles to override common clean target
-in lib.mk. This will help fix the following failures:
+Add override for lib.mk clean to fix the following warnings from clean
+target run.
 
-warning: overriding recipe for target 'clean'
+Makefile:11: warning: overriding recipe for target 'clean'
 ../lib.mk:55: warning: ignoring old recipe for target 'clean'
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- tools/testing/selftests/lib.mk | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/testing/selftests/gpio/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 775c589..959273c 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -51,8 +51,12 @@ endef
- emit_tests:
- 	$(EMIT_TESTS)
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index 205e4d1..4f6d9e0 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -7,8 +7,9 @@ include ../lib.mk
+ 
+ all: $(BINARIES)
  
 -clean:
-+define CLEAN
- 	$(RM) -r $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES) $(EXTRA_CLEAN)
++override define CLEAN
+ 	$(RM) $(BINARIES)
 +endef
-+
-+clean:
-+	$(CLEAN)
  
- $(OUTPUT)/%:%.c
- 	$(LINK.c) $^ $(LDLIBS) -o $@
+ CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+ LDLIBS += -lmount -I/usr/include/libmount
 -- 
 2.9.3
