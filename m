@@ -1,29 +1,66 @@
-From: Joel Stanley <joel@jms.id.au>
-Subject: Re: [PATCH v2 1/4] pinctrl: aspeed: Document pinconf in devicetree bindings
-Date: Fri, 21 Apr 2017 11:50:59 +0930
-Message-ID: <CACPK8XcgiNRhoE+UcOp=3GQJHmnNCoYyKzWDKXaSny4w5Po9hw@mail.gmail.com>
-References: <20170407125713.15678-1-andrew@aj.id.au> <20170407125713.15678-2-andrew@aj.id.au>
- <20170413194907.x5ij6cehgb5dh6nj@rob-hp-laptop>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v5 1/4] gpio: mvebu: Add limited PWM support
+Date: Fri, 21 Apr 2017 11:19:52 +0200
+Message-ID: <20170421111952.54978e80@free-electrons.com>
+References: <20170409180931.4884-1-ralph.sennhauser@gmail.com>
+ <20170409180931.4884-2-ralph.sennhauser@gmail.com>
+ <20170412163128.5c985a26@free-electrons.com>
+ <20170412151932.GE7023@lunn.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:35970 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034624AbdDUCVV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Apr 2017 22:21:21 -0400
-In-Reply-To: <20170413194907.x5ij6cehgb5dh6nj@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170412151932.GE7023@lunn.ch>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, linux-pwm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Russell King <linux@armlinux.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, Ralph Sennhauser <ralph.sennhauser@gmail.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Linus Walleij <linus.walleij@linaro.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-gpio@vger.kernel.org, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 
-On Fri, Apr 14, 2017 at 5:19 AM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Apr 07, 2017 at 10:27:10PM +0930, Andrew Jeffery wrote:
->> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
->> ---
->>  .../devicetree/bindings/pinctrl/pinctrl-aspeed.txt | 40 +++++++++++++++++-----
->>  1 file changed, 31 insertions(+), 9 deletions(-)
->
-> Acked-by: Rob Herring <robh@kernel.org>
+Hello,
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+On Wed, 12 Apr 2017 17:19:32 +0200, Andrew Lunn wrote:
+
+> Yep. It was a compromise. By adding a new binding for the GPIO driver,
+> this might be possible. But it did not seem worth such a major change.
+> 
+> The prime use of this feature is for controlling a fan. So far, i've
+> not seen any hardware with more than one fan, i.e. needs more than one
+> PWM. Nor have i seen any hardware with the GPIO for the fan being on
+> the third bank. A hardware manufacture could add multiple fans, but i
+> doubt it, they make noise and fail. And if a manufacture does place a
+> fan on the third bank, it can still be controlled as a plain GPIO fan,
+> as we have been doing for the last few years.
+
+Right.
+
+> So i personally think it is an O.K. compromise.
+
+I clearly don't want to block this, but I believe this is a very good
+illustration of why stable DT bindings simply don't work. We are
+realizing here that having each GPIO bank represented as a separate DT
+node doesn't work, because this blinking functionality is not per GPIO
+bank, but global to all GPIO banks.
+
+I am totally fine with compromise, and having things simple first, and
+extend them later if needed. But this stable DT binding rule makes this
+quite impossible: what is a compromise today might put you in big
+troubles tomorrow.
+
+Anyway, it's fine for me, I don't think it's worth the effort making a
+much more complicated solution/change.
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
