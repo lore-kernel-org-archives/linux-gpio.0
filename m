@@ -1,58 +1,43 @@
-From: sathyanarayanan kuppuswamy
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: Re: [PATCH v2 8/8] platform: x86: intel_bxtwc_tmu: remove first level
- irq unmask
-Date: Fri, 21 Apr 2017 15:34:05 -0700
-Message-ID: <d9ead97f-db7b-a0b0-4eb1-1c783ee1e841@linux.intel.com>
-References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <93377b77b9493d79de48741b030fa1b03f80094f.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20170421220025.GC31650@fury>
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <20170421220025.GC31650@fury>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, rui.zhang@intel.com, lee.jones@linaro.org, andy@infradead.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 0/8] Fix clean target warnings
+Date: Fri, 21 Apr 2017 17:14:42 -0600
+Message-ID: <cover.1492815938.git.shuahkh@osg.samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:42321
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1042829AbdDUXO5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2017 19:14:57 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, dvhart@infradead.org
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 
-Hi Darren,
+This patch series consists of changes to lib.mk to allow overriding
+common clean target from Makefiles. This fixes warnings when clean
+overriding and ignoring warnings. Also fixes splice clean target
+removing a script that runs the test from its clean target.
 
-Thanks for the review.
+Shuah Khan (8):
+  selftests: splice: fix clean target to not remove
+    default_file_splice_read.sh
+  selftests: lib.mk: define CLEAN macro to allow Makefiles to override
+    clean
+  selftests: futex: override clean in lib.mk to fix warnings
+  selftests: gpio: override clean in lib.mk to fix warnings
+  selftests: powerpc: override clean in lib.mk to fix warnings
+  selftests: splice: override clean in lib.mk to fix warnings
+  selftests: sync: override clean in lib.mk to fix warnings
+  selftests: x86: override clean in lib.mk to fix warnings
 
-
-On 04/21/2017 03:00 PM, Darren Hart wrote:
-> On Fri, Apr 14, 2017 at 04:26:00PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> Currently in WCOVE PMIC mfd driver, all second level irq chips
-> By currently I believe you mean after the earlier patch in this series is
-> applied, correct?
-Yes.
-> This one is dependent on the previous one?
-Yes, one of my previous patch in this series fixes this problem in MFD 
-driver.
->
->> are chained to the respective first level irqs. So there is no
->> need for explicitly unmasking the first level irq in this
->> driver. This patches removes this level 1 irq unmask support.
->>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> For platform drivers x86:
->
-> Reviewed-by: Darren Hart (VMware) <dvhart@infradead.org>
->
-> Are you working with a specific maintainers to pull this in as a series?
-Thanks for brining it up. I was planning to ask either Andy or Lee 
-regarding this issue after all patches in the series are reviewed.
-> With so
-> many subsystems, we need to coordinate to make sure we don't make a mess for
-> Linus. Given the interdependencies, I'd recommend someone pull the series in as
-> a whole - maybe into MFD? Lee, do you have a preference?
->
+ tools/testing/selftests/futex/Makefile   | 3 ++-
+ tools/testing/selftests/gpio/Makefile    | 3 ++-
+ tools/testing/selftests/lib.mk           | 6 +++++-
+ tools/testing/selftests/powerpc/Makefile | 3 ++-
+ tools/testing/selftests/splice/Makefile  | 5 +++--
+ tools/testing/selftests/sync/Makefile    | 3 ++-
+ tools/testing/selftests/x86/Makefile     | 3 ++-
+ 7 files changed, 18 insertions(+), 8 deletions(-)
 
 -- 
-Sathyanarayanan Kuppuswamy
-Android kernel developer
+2.9.3
+
