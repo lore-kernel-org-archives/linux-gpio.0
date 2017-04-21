@@ -1,53 +1,82 @@
-From: Anders Darander <anders@chargestorm.se>
-Subject: [PATCH 2/2] gpio: DT bindings, move tca9554 from pcf857x to pca953x
-Date: Fri, 21 Apr 2017 14:46:31 +0200
-Message-ID: <20170421124631.19269-2-anders@chargestorm.se>
-References: <20170421124631.19269-1-anders@chargestorm.se>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35552 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1038265AbdDUMqp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2017 08:46:45 -0400
-Received: by mail-lf0-f41.google.com with SMTP id 75so44299651lfs.2
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Apr 2017 05:46:44 -0700 (PDT)
-In-Reply-To: <20170421124631.19269-1-anders@chargestorm.se>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH] pinctrl-armada-xp: Use devm_kmalloc_array() in
+ armada_xp_pinctrl_probe()
+Date: Fri, 21 Apr 2017 19:22:11 +0000
+Message-ID: <efa23d0481504229be1dd3678fa8078a@svr-chch-ex1.atlnz.lc>
+References: <d109d375-6e91-420d-eb9a-fcaea4fbc5f7@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: kernel-janitors-owner@vger.kernel.org
+To: SF Markus Elfring <elfring@users.sourceforge.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kalyan Kinthada <Kalyan.Kinthada@alliedtelesis.co.nz>, Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh@kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com
-Cc: Anders Darander <anders@chargestorm.se>
 
-The TCA9554 is similar to the PCA9554. Update the DT binding docs.
-
-Signed-off-by: Anders Darander <anders@chargestorm.se>
----
- Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
- Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-index e63935710011..7f57271df2bc 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-@@ -26,6 +26,7 @@ Required properties:
- 	ti,tca6416
- 	ti,tca6424
- 	ti,tca9539
-+	ti,tca9554
- 	onsemi,pca9654
- 	exar,xra1202
- 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-index ada4e2973323..7d3bd631d011 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-@@ -25,7 +25,6 @@ Required Properties:
-     - "nxp,pcf8574": For the NXP PCF8574
-     - "nxp,pcf8574a": For the NXP PCF8574A
-     - "nxp,pcf8575": For the NXP PCF8575
--    - "ti,tca9554": For the TI TCA9554
- 
-   - reg: I2C slave address.
- 
--- 
-2.11.0
-
+Hi Markus,=0A=
+=0A=
+On 15/04/17 05:04, SF Markus Elfring wrote:=0A=
+> From: Markus Elfring <elfring@users.sourceforge.net>=0A=
+> Date: Fri, 14 Apr 2017 18:48:15 +0200=0A=
+>=0A=
+> * A multiplication for the size determination of a memory allocation=0A=
+>   indicated that an array data structure should be processed.=0A=
+>   Thus use the corresponding function "devm_kmalloc_array".=0A=
+>=0A=
+>   This issue was detected by using the Coccinelle software.=0A=
+>=0A=
+> * Replace the specification of a data type by a pointer dereference=0A=
+>   to make the corresponding size determination a bit safer according to=
+=0A=
+>   the Linux coding style convention.=0A=
+>=0A=
+> * Delete the local variable "nregs" which became unnecessary with=0A=
+>   this refactoring.=0A=
+>=0A=
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>=0A=
+> ---=0A=
+>  drivers/pinctrl/mvebu/pinctrl-armada-xp.c | 10 +++++-----=0A=
+>  1 file changed, 5 insertions(+), 5 deletions(-)=0A=
+>=0A=
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c b/drivers/pinctrl/=
+mvebu/pinctrl-armada-xp.c=0A=
+> index b854f1ee5de5..457c54c8fed3 100644=0A=
+> --- a/drivers/pinctrl/mvebu/pinctrl-armada-xp.c=0A=
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-xp.c=0A=
+> @@ -574,7 +574,6 @@ static int armada_xp_pinctrl_probe(struct platform_de=
+vice *pdev)=0A=
+>  	struct mvebu_pinctrl_soc_info *soc =3D &armada_xp_pinctrl_info;=0A=
+>  	const struct of_device_id *match =3D=0A=
+>  		of_match_device(armada_xp_pinctrl_of_match, &pdev->dev);=0A=
+> -	int nregs;=0A=
+>=0A=
+>  	if (!match)=0A=
+>  		return -ENODEV;=0A=
+> @@ -628,10 +627,11 @@ static int armada_xp_pinctrl_probe(struct platform_=
+device *pdev)=0A=
+>  		break;=0A=
+>  	}=0A=
+>=0A=
+> -	nregs =3D DIV_ROUND_UP(soc->nmodes, MVEBU_MPPS_PER_REG);=0A=
+> -=0A=
+> -	mpp_saved_regs =3D devm_kmalloc(&pdev->dev, nregs * sizeof(u32),=0A=
+> -				      GFP_KERNEL);=0A=
+> +	mpp_saved_regs =3D devm_kmalloc_array(&pdev->dev,=0A=
+> +					    DIV_ROUND_UP(soc->nmodes,=0A=
+> +							 MVEBU_MPPS_PER_REG),=0A=
+> +					    sizeof(*mpp_saved_regs),=0A=
+> +					    GFP_KERNEL);=0A=
+=0A=
+I personally think having nregs makes the code a bit more readable but =0A=
+that's just me.=0A=
+=0A=
+With or without a change=0A=
+=0A=
+Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>=0A=
+=0A=
+>  	if (!mpp_saved_regs)=0A=
+>  		return -ENOMEM;=0A=
+>=0A=
+>=0A=
+=0A=
