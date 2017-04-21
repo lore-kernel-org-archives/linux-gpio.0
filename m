@@ -1,7 +1,7 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 3/8] selftests: futex: override clean in lib.mk to fix warnings
-Date: Fri, 21 Apr 2017 17:14:45 -0600
-Message-ID: <2ccc4e205a4e25e227e7a90c0037d9e6a6f99ed1.1492815938.git.shuahkh@osg.samsung.com>
+Subject: [PATCH 5/8] selftests: powerpc: override clean in lib.mk to fix warnings
+Date: Fri, 21 Apr 2017 17:14:47 -0600
+Message-ID: <7afeb848e3c8c075702b7ccc1b17f6a65a4c3aa1.1492815938.git.shuahkh@osg.samsung.com>
 References: <cover.1492815938.git.shuahkh@osg.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1492815938.git.shuahkh@osg.samsung.com>
@@ -15,29 +15,32 @@ List-Id: linux-gpio@vger.kernel.org
 Add override for lib.mk clean to fix the following warnings from clean
 target run.
 
-Makefile:36: warning: overriding recipe for target 'clean'
+Makefile:63: warning: overriding recipe for target 'clean'
 ../lib.mk:55: warning: ignoring old recipe for target 'clean'
 
 Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 ---
- tools/testing/selftests/futex/Makefile | 3 ++-
+ tools/testing/selftests/powerpc/Makefile | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selftests/futex/Makefile
-index c8095e6..e2fbb89 100644
---- a/tools/testing/selftests/futex/Makefile
-+++ b/tools/testing/selftests/futex/Makefile
-@@ -32,9 +32,10 @@ override define EMIT_TESTS
- 	echo "./run.sh"
+diff --git a/tools/testing/selftests/powerpc/Makefile b/tools/testing/selftests/powerpc/Makefile
+index 1c5d057..8d9fc64 100644
+--- a/tools/testing/selftests/powerpc/Makefile
++++ b/tools/testing/selftests/powerpc/Makefile
+@@ -59,12 +59,13 @@ override define EMIT_TESTS
+ 	done;
  endef
  
 -clean:
 +override define CLEAN
- 	for DIR in $(SUBDIRS); do		\
- 		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
- 		mkdir $$BUILD_TARGET  -p;	\
- 		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;\
- 	done
+ 	@for TARGET in $(SUB_DIRS); do \
+ 		BUILD_TARGET=$$OUTPUT/$$TARGET;	\
+ 		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET clean; \
+ 	done;
+ 	rm -f tags
 +endef
+ 
+ tags:
+ 	find . -name '*.c' -o -name '*.h' | xargs ctags
 -- 
 2.9.3
