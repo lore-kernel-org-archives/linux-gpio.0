@@ -1,41 +1,45 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 2/8] selftests: lib.mk: define CLEAN macro to allow Makefiles to override clean
-Date: Sat, 22 Apr 2017 15:38:46 +1000
-Message-ID: <87zif9ypax.fsf@concordia.ellerman.id.au>
-References: <cover.1492815938.git.shuahkh@osg.samsung.com> <b39e21f8c47318d82be999aae310bdf6bcfc9bb9.1492815938.git.shuahkh@osg.samsung.com>
+Subject: Re: [PATCH 4/8] selftests: gpio: override clean in lib.mk to fix warnings
+Date: Sat, 22 Apr 2017 15:40:04 +1000
+Message-ID: <87wpadyp8r.fsf@concordia.ellerman.id.au>
+References: <cover.1492815938.git.shuahkh@osg.samsung.com> <b216b1808abff1e75c1b325a338a518b8477257a.1492815938.git.shuahkh@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51919 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1040866AbdDVFit (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 22 Apr 2017 01:38:49 -0400
-In-Reply-To: <b39e21f8c47318d82be999aae310bdf6bcfc9bb9.1492815938.git.shuahkh@osg.samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <b216b1808abff1e75c1b325a338a518b8477257a.1492815938.git.shuahkh@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, dvhart@infradead.org
 Cc: Shuah Khan <shuahkh@osg.samsung.com>, viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+List-Id: linux-gpio@vger.kernel.org
 
 Shuah Khan <shuahkh@osg.samsung.com> writes:
 
-> Define CLEAN macro to allow Makefiles to override common clean target
-> in lib.mk. This will help fix the following failures:
+> Add override for lib.mk clean to fix the following warnings from clean
+> target run.
 >
-> warning: overriding recipe for target 'clean'
+> Makefile:11: warning: overriding recipe for target 'clean'
 > ../lib.mk:55: warning: ignoring old recipe for target 'clean'
 >
 > Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>  tools/testing/selftests/gpio/Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+> index 205e4d1..4f6d9e0 100644
+> --- a/tools/testing/selftests/gpio/Makefile
+> +++ b/tools/testing/selftests/gpio/Makefile
+> @@ -7,8 +7,9 @@ include ../lib.mk
+>  
+>  all: $(BINARIES)
+>  
+> -clean:
+> +override define CLEAN
+>  	$(RM) $(BINARIES)
+> +endef
 
-Should probably have:
+This could be achieved more simply with:
 
-Fixes: 88baa78d1f31 ("selftests: remove duplicated all and clean target")
-
-
-In hindsight I'm not sure moving the clean target into lib.mk was
-the best idea, but anyway it's a bit late to change our mind on that.
-
-This patch is a good solution to fix the warnings.
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+EXTRA_CLEAN := $(BINARIES)
 
 cheers
