@@ -1,55 +1,32 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 2/2] selftests: gpio: fix clean target to remove all generated files and dirs
-Date: Fri, 21 Apr 2017 18:13:01 -0600
-Message-ID: <f6b7e8bffbbf2ce909320dd797dc00ec7c6b8846.1492819732.git.shuahkh@osg.samsung.com>
-References: <cover.1492819732.git.shuahkh@osg.samsung.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:42822
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1426738AbdDVANJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Apr 2017 20:13:09 -0400
-In-Reply-To: <cover.1492819732.git.shuahkh@osg.samsung.com>
-In-Reply-To: <cover.1492819732.git.shuahkh@osg.samsung.com>
-References: <cover.1492819732.git.shuahkh@osg.samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 8/8] platform: x86: intel_bxtwc_tmu: remove first level
+ irq unmask
+Date: Sat, 22 Apr 2017 05:52:32 +0300
+Message-ID: <CAHp75VeGQ=Zb=azNZCEfA25VdvuQcbMJoHuXkyQ24KOh4WQjRw@mail.gmail.com>
+References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <93377b77b9493d79de48741b030fa1b03f80094f.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20170421220025.GC31650@fury> <d9ead97f-db7b-a0b0-4eb1-1c783ee1e841@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <d9ead97f-db7b-a0b0-4eb1-1c783ee1e841@linux.intel.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Darren Hart <dvhart@infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "edubezval@gmail.com" <edubezval@gmail.com>, "Zhang, Rui" <rui.zhang@intel.com>, Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: shuah@kernel.org, bamvor.zhangjian@linaro.org
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-gpio test creates executables, object files, and include directory
-under selftests directory. Enhance clean target to remove all files
-it generates.
+On Sat, Apr 22, 2017 at 1:34 AM, sathyanarayanan kuppuswamy
+<sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
----
- tools/testing/selftests/gpio/Makefile | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+> Thanks for brining it up. I was planning to ask either Andy or Lee regarding
+> this issue after all patches in the series are reviewed.
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 4f6d9e0..298929d 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -2,13 +2,19 @@
- TEST_PROGS := gpio-mockup.sh
- TEST_FILES := gpio-mockup-sysfs.sh $(BINARIES)
- BINARIES := gpio-mockup-chardev
-+EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
-+EXTRA_DIRS := ../gpioinclude/
-+EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
-+EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
-+EXTRA_OBJS += ../gpiolsgpio.o
- 
- include ../lib.mk
- 
- all: $(BINARIES)
- 
- override define CLEAN
--	$(RM) $(BINARIES)
-+	$(RM) $(BINARIES) $(EXTRA_PROGS) $(EXTRA_OBJS)
-+	$(RM) -r $(EXTRA_DIRS)
- endef
- 
- CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
+Darren, I'm planning to review this soon.
+
+P.S. We have few series flying around regarding to Intel PMIC(s): my
+for Kconfig naming, Hans' for Crystal Cove (touches Kconfig as well),
+and Sathya's series. I hope Lee can collect them in proper order.
+
 -- 
-2.9.3
-
+With Best Regards,
+Andy Shevchenko
