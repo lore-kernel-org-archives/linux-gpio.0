@@ -1,107 +1,98 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 1/4] pinctrl: stm32: set pin to gpio input when used as
- interrupt
-Date: Mon, 24 Apr 2017 18:40:20 +0200
-Message-ID: <e9d8c988-0bdd-0c82-2c56-6a31d052f0e6@st.com>
-References: <1491577811-26989-1-git-send-email-alexandre.torgue@st.com>
- <1491577811-26989-2-git-send-email-alexandre.torgue@st.com>
- <CACRpkdYZixkJroS-gQxYL6xW47-J9UiNv4hOO9F-1b2eYLr8XQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Right amount of info in the DT
+Date: Mon, 24 Apr 2017 18:45:41 +0200
+Message-ID: <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
+References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
+ <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com> <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYZixkJroS-gQxYL6xW47-J9UiNv4hOO9F-1b2eYLr8XQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f43.google.com ([209.85.214.43]:37107 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S974884AbdDXQpn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 12:45:43 -0400
+Received: by mail-it0-f43.google.com with SMTP id x188so60280523itb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 09:45:43 -0700 (PDT)
+In-Reply-To: <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
 
-Hi Linus,
+On Mon, Apr 24, 2017 at 3:03 PM, Yves Lefloch
+<YvesMarie_Lefloch@sigmadesigns.com> wrote:
 
-On 04/24/2017 02:36 PM, Linus Walleij wrote:
-> On Fri, Apr 7, 2017 at 5:10 PM, Alexandre TORGUE
-> <alexandre.torgue@st.com> wrote:
->
->> This patch ensures that pin is correctly set as gpio input when it is used
->> as an interrupt.
->>
->> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> (...)
->
->> +static int stm32_gpio_irq_request_resources(struct irq_data *irq_data)
->> +{
->> +       struct stm32_gpio_bank *bank = irq_data->domain->host_data;
->> +       u32 ret;
->> +
->> +       if (!gpiochip_is_requested(&bank->gpio_chip, irq_data->hwirq)) {
->> +               ret = stm32_gpio_request(&bank->gpio_chip, irq_data->hwirq);
->> +               if (ret)
->> +                       return ret;
->> +       }
->
-> This is wrong. You should only use gpiochip_lock_as_irq(), because of the
-> following in Documentation/gpio/driver.txt:
->
-> ---------------
-> It is legal for any IRQ consumer to request an IRQ from any irqchip no matter
-> if that is a combined GPIO+IRQ driver. The basic premise is that gpio_chip and
-> irq_chip are orthogonal, and offering their services independent of each
-> other.
-> (...)
-> So always prepare the hardware and make it ready for action in respective
-> callbacks from the GPIO and irqchip APIs. Do not rely on gpiod_to_irq() having
-> been called first.
+> OK I see now that I have to do this kind of stuff in a pinctrl/pinmux driver.
 
-Ok, so actually the action to set pin in input mode is necessary in 
-stm32_gpio_irq_request_resources.
+Great!
 
-I'll fix it in V2.
+> in
+> my SoC there is no central hw pin controller, and pin control registers are
+> scattered all over the address space because they're in different IPs. How am I
+> supposed to deal with so many different addresses?
 
+I've herd about this happening sometimes... I haven't seen a perfect solution
+for it.
 
+> I have considered hardcoding
+> them in the driver but that seems counter-productive, so I thought I could do
+> something like this, with the address of the function-select register as a
+> resource (it's the only pin property I can change besides direction and data):
 >
-> This orthogonality leads to ambiguities that we need to solve: if there is
-> competition inside the subsystem which side is using the resource (a certain
-> GPIO line and register for example) it needs to deny certain operations and
-> keep track of usage inside of the gpiolib subsystem. This is why the API
-> below exists.
 >
-> Locking IRQ usage
-> -----------------
-> Input GPIOs can be used as IRQ signals. When this happens, a driver is requested
-> to mark the GPIO as being used as an IRQ:
+> pincontroller {
+>         compatible = "foo-pinctrl";
+>         #address-cells = <1>;
+>         #size-cells = <0>;
 >
->         int gpiochip_lock_as_irq(struct gpio_chip *chip, unsigned int offset)
+>         uart1 {
+>                 reg = <0x10001>;
 >
-> This will prevent the use of non-irq related GPIO APIs until the GPIO IRQ lock
-> is released:
+>                 state_0 {
+>                         groups = "uart1";
+>                         function = "uart1";
+>                 };
+>                 state_1 {
+>                         groups = "uart1";
+>                         function = "gpio";
+>                 };
 >
->         void gpiochip_unlock_as_irq(struct gpio_chip *chip, unsigned int offset)
+>         ... other IPs (SPI, ethernet, etc.) ...
 >
-> When implementing an irqchip inside a GPIO driver, these two functions should
-> typically be called in the .startup() and .shutdown() callbacks from the
-> irqchip.
->
-> When using the gpiolib irqchip helpers, these callback are automatically
-> assigned.
-> --------------
->
-> It is because of easy to make errors like this that I prefer that people try
-> to use GPIOLIB_IRQCHIP helpers insteaf of rolling their own irqchip code.
+> };
 
-I understand. It was difficult in our case due to design.
+Maybe, I would have to check the final result. It will need some serious
+documentation so that we can establish this way of dealing with this type of
+hardware.
 
-Thanks for review.
-Alex
+> Furthermore, I was wondering how it's possible for pinctrl drivers to map registers
+> possibly used by other drivers.
 
->
-> Yours,
-> Linus Walleij
->
+We usually use syscon approaches for that. Especially when it considers
+individual bits in a single register.
+
+If you just have one single 32bit register  in each hardware blocks,
+then certainly
+it can be remapped by several drivers, or you can leave a "hole" there in the
+main driver register definitions, but that seems very awkward.
+
+> For example, the "GPIO pad mode" register of my
+> ethernet pins is right in the middle of the address space requested by the ethernet
+> driver. Meaning that if I try to "devm_ioremap_resource" when probing the GPIO or
+> pinctrl drivers, I will get an error saying that the memory region is already taken.
+> Do you have any insight on that?
+
+Isn't the best approach to add a pin controller as a subnode of the ethernet
+controller in the device tree, so that the probe() of you main driver looks
+for it and instantiates a pin controller that is then referenced by the
+driver itself?
+
+We have similar constructions with e.g. PCI irq controllers inside of PCI
+bridge nodes.
+
+Then, if the same type of pin control is
+sprinkled all over your drivers, maybe turn it into a library in drivers/pinctrl
+that you can reuse from each driver so as to centralize the code?
+
+Yours,
+Linus Walleij
