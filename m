@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 1/4] gpio: mvebu: Add limited PWM support
-Date: Mon, 24 Apr 2017 11:18:30 +0200
-Message-ID: <CACRpkdYPp6pBemTT_a4V6a-Qbk2475qOOxWJOhfVaEz=cojOvA@mail.gmail.com>
-References: <20170414154056.32055-1-ralph.sennhauser@gmail.com> <20170414154056.32055-2-ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH v6 2/4] ARM: dts: mvebu: Add PWM properties to .dtsi files
+Date: Mon, 24 Apr 2017 11:19:32 +0200
+Message-ID: <CACRpkdZE0wnotF+OdAmutJcU9JSE_LxNd7Lz7yXqcn_bq5VqgQ@mail.gmail.com>
+References: <20170414154056.32055-1-ralph.sennhauser@gmail.com> <20170414154056.32055-3-ralph.sennhauser@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:34885 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1167818AbdDXJSd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 05:18:33 -0400
-Received: by mail-io0-f171.google.com with SMTP id r16so179014723ioi.2
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 02:18:32 -0700 (PDT)
-In-Reply-To: <20170414154056.32055-2-ralph.sennhauser@gmail.com>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:36469 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1167791AbdDXJTe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 05:19:34 -0400
+Received: by mail-io0-f174.google.com with SMTP id p80so66587537iop.3
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 02:19:33 -0700 (PDT)
+In-Reply-To: <20170414154056.32055-3-ralph.sennhauser@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
@@ -23,34 +23,18 @@ On Fri, Apr 14, 2017 at 5:40 PM, Ralph Sennhauser
 
 > From: Andrew Lunn <andrew@lunn.ch>
 >
-> Armada 370/XP devices can 'blink' GPIO lines with a configurable on
-> and off period. This can be modelled as a PWM.
->
-> However, there are only two sets of PWM configuration registers for
-> all the GPIO lines. This driver simply allows a single GPIO line per
-> GPIO chip of 32 lines to be used as a PWM. Attempts to use more return
-> EBUSY.
->
-> Due to the interleaving of registers it is not simple to separate the
-> PWM driver from the GPIO driver. Thus the GPIO driver has been
-> extended with a PWM driver.
+> Add properties to the GPIO nodes to allow them to be also used as PWM
+> lines.
 >
 > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> URL: https://patchwork.ozlabs.org/patch/427287/
-> URL: https://patchwork.ozlabs.org/patch/427295/
-> [Ralph Sennhauser:
->   * Port forward
->   * Merge PWM portion into gpio-mvebu.c
->   * Switch to atomic PWM API
->   * Add new compatible string marvell,armada-370-xp-gpio
->   * Update and merge documentation patch
->   * Update MAINTAINERS]
+> URL: https://patchwork.ozlabs.org/patch/427294/
+> [Ralph Sennhauser: Add new compatible string marvell,armada-370-xp-gpio]
 > Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
 > Tested-by: Andrew Lunn <andrew@lunn.ch>
-> Acked-by: Thierry Reding <thierry.reding@gmail.com>
-> Acked-by: Rob Herring <robh@kernel.org>
 
-Patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please funnel this through ARM SoC.
 
 Yours,
 Linus Walleij
