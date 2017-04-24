@@ -1,55 +1,35 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.12 (take three)
-Date: Mon, 24 Apr 2017 13:06:13 +0200
-Message-ID: <1493031973-4634-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 4/7] pinctrl: armada-37xx: Add gpio support
+Date: Mon, 24 Apr 2017 13:48:12 +0200
+Message-ID: <CACRpkdYMt2X5-c2GOAdO-dWNnLK4L66-7hns1AwwCxDcTSdADw@mail.gmail.com>
+References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
+ <83a4f4c08275b41333a2583f01ceb0453b009d9f.1491405475.git-series.gregory.clement@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f43.google.com ([209.85.214.43]:37265 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1169256AbdDXLsO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 07:48:14 -0400
+Received: by mail-it0-f43.google.com with SMTP id x188so51681322itb.0
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 04:48:14 -0700 (PDT)
+In-Reply-To: <83a4f4c08275b41333a2583f01ceb0453b009d9f.1491405475.git-series.gregory.clement@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-	Hi Linus,
+On Wed, Apr 5, 2017 at 5:18 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-The following changes since commit d14a39edf757f5bdd73cf25d0155d7cfb271e782:
+> GPIO management is pretty simple and is part of the same IP than the pin
+> controller for the Armada 37xx SoCs.  This patch adds the GPIO support to
+> the pinctrl-armada-37xx.c file, it also allows sharing common functions
+> between the gpiolib and the pinctrl drivers.
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-  pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support (2017-03-30 13:43:55 +0200)
+Patch applied.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.12-tag3
-
-for you to fetch changes up to 5f4c8cafe1148f8a91287072815df8f0b66f0e5c:
-
-  pinctrl: sh-pfc: r8a7794: Swap ATA signals (2017-04-05 09:41:29 +0200)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.12 (take three)
-
-  - Miscellaneous fixes for R-Car M2-W and R-Car E2.
-
-Nothing critical, but given v4.11 is postponed by another week, I see no
-reason to hold these off any longer.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Sergei Shtylyov (5):
-      pinctrl: sh-pfc: r8a7791: Add missing HSCIF1 pinmux data
-      pinctrl: sh-pfc: r8a7791: Add missing DVC_MUTE signal
-      pinctrl: sh-pfc: r8a7791: Fix SCIF2 pinmux data
-      pinctrl: sh-pfc: r8a7791: Fix IPSR comment typos
-      pinctrl: sh-pfc: r8a7794: Swap ATA signals
-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 18 +++++++++++-------
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 16 ++++++++--------
- 2 files changed, 19 insertions(+), 15 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Yours,
+Linus Walleij
