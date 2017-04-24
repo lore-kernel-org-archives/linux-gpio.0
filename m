@@ -1,41 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 4/4] ARM: dts: armada-xp: Use pwm-fan rather than gpio-fan
-Date: Mon, 24 Apr 2017 11:20:31 +0200
-Message-ID: <CACRpkdbVVf91NhbiaHxo6doUdGH6thVsjoUom4nYQRhj_qkz3g@mail.gmail.com>
-References: <20170414154056.32055-1-ralph.sennhauser@gmail.com> <20170414154056.32055-5-ralph.sennhauser@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 8/8] platform: x86: intel_bxtwc_tmu: remove first
+ level irq unmask
+Date: Mon, 24 Apr 2017 10:24:01 +0100
+Message-ID: <20170424092401.uijlbkcxosoy4zmt@dell>
+References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <93377b77b9493d79de48741b030fa1b03f80094f.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20170421220025.GC31650@fury>
+ <d9ead97f-db7b-a0b0-4eb1-1c783ee1e841@linux.intel.com>
+ <CAHp75VeGQ=Zb=azNZCEfA25VdvuQcbMJoHuXkyQ24KOh4WQjRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:33395 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1167701AbdDXJUd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 05:20:33 -0400
-Received: by mail-io0-f178.google.com with SMTP id k87so186380071ioi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 02:20:33 -0700 (PDT)
-In-Reply-To: <20170414154056.32055-5-ralph.sennhauser@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeGQ=Zb=azNZCEfA25VdvuQcbMJoHuXkyQ24KOh4WQjRw@mail.gmail.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Darren Hart <dvhart@infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "edubezval@gmail.com" <edubezval@gmail.com>, "Zhang, Rui" <rui.zhang@intel.com>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Apr 14, 2017 at 5:40 PM, Ralph Sennhauser
-<ralph.sennhauser@gmail.com> wrote:
+On Sat, 22 Apr 2017, Andy Shevchenko wrote:
 
-> From: Andrew Lunn <andrew@lunn.ch>
->
-> The mvebu GPIO driver can also perform PWM on some pins. Use the pwm-fan
-> driver to control the fan of the WRT1900AC, giving us finer grained control
-> over its speed and hence noise.
->
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-> URL: https://patchwork.ozlabs.org/patch/427291/
-> [Ralph Sennhauser: drop flags paramter from pwms, no longer used]
-> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> Tested-by: Andrew Lunn <andrew@lunn.ch>
+> On Sat, Apr 22, 2017 at 1:34 AM, sathyanarayanan kuppuswamy
+> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+> 
+> > Thanks for brining it up. I was planning to ask either Andy or Lee regarding
+> > this issue after all patches in the series are reviewed.
+> 
+> Darren, I'm planning to review this soon.
+> 
+> P.S. We have few series flying around regarding to Intel PMIC(s): my
+> for Kconfig naming, Hans' for Crystal Cove (touches Kconfig as well),
+> and Sathya's series. I hope Lee can collect them in proper order.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+That could be easier said than done.
 
-Please funnel this through ARM SoC.
-
-Yours,
-Linus Walleij
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
