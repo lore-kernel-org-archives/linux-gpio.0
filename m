@@ -1,32 +1,28 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: dts: stm32: Set gpio controller also as
- interrupt controller
-Date: Mon, 24 Apr 2017 14:38:40 +0200
-Message-ID: <CACRpkdYW94rkrK+Hpa-U_NyNw=zU1dToz5Za_K4RnP_oX5iFoA@mail.gmail.com>
-References: <1491577811-26989-1-git-send-email-alexandre.torgue@st.com> <1491577811-26989-5-git-send-email-alexandre.torgue@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/4] pinctrl: aspeed: Document pinconf in devicetree bindings
+Date: Mon, 24 Apr 2017 14:42:47 +0200
+Message-ID: <CACRpkdaU7HWb434P_gctr9a6jCTxoQ4CYdbfoyvEHxVBrv0Brg@mail.gmail.com>
+References: <20170407125713.15678-1-andrew@aj.id.au> <20170407125713.15678-2-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1491577811-26989-5-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:38310 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1168923AbdDXMmt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 08:42:49 -0400
+Received: by mail-it0-f50.google.com with SMTP id e132so54223673ite.1
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 05:42:49 -0700 (PDT)
+In-Reply-To: <20170407125713.15678-2-andrew@aj.id.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andrew Jeffery <andrew@aj.id.au>
+Cc: Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 
-On Fri, Apr 7, 2017 at 5:10 PM, Alexandre TORGUE
-<alexandre.torgue-qxv4g6HH51o@public.gmane.org> wrote:
+On Fri, Apr 7, 2017 at 2:57 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> This patch set each gpio controller as a interrupt controller. User who
-> wants to use gpio as interrupt will have choice to use either "gpiolib"
-> interface or "common" interrupt interface.
->
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Patch applied with the ACKs.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
