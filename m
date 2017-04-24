@@ -1,35 +1,51 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 1/7] pinctrl: dt-bindings: Add documentation for Armada
- 37xx pin controllers
-Date: Mon, 24 Apr 2017 11:29:26 +0200
-Message-ID: <CACRpkdZ7NQRMcxaqecRNskWC_=2YpbG-L+JEhnSx+XTgANPJmA@mail.gmail.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
- <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement@free-electrons.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 8/8] platform: x86: intel_bxtwc_tmu: remove first level
+ irq unmask
+Date: Mon, 24 Apr 2017 12:44:24 +0300
+Message-ID: <CAHp75Vd-V1jzPcEj1ZgA204gL_+ToeO7itbxjE_2e2ptki_PpQ@mail.gmail.com>
+References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <93377b77b9493d79de48741b030fa1b03f80094f.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20170421220025.GC31650@fury> <d9ead97f-db7b-a0b0-4eb1-1c783ee1e841@linux.intel.com>
+ <CAHp75VeGQ=Zb=azNZCEfA25VdvuQcbMJoHuXkyQ24KOh4WQjRw@mail.gmail.com> <20170424092401.uijlbkcxosoy4zmt@dell>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <941d03c9a3bdfd5e789aada29b35184ec9fed9fe.1491405475.git-series.gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Victor Gu <xigu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Marcin Wojtas <mw-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Hua Jing <jinghua-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36584 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1166903AbdDXJo0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 05:44:26 -0400
+In-Reply-To: <20170424092401.uijlbkcxosoy4zmt@dell>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Darren Hart <dvhart@infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "edubezval@gmail.com" <edubezval@gmail.com>, "Zhang, Rui" <rui.zhang@intel.com>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 
-On Wed, Apr 5, 2017 at 5:18 PM, Gregory CLEMENT
-<gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-
-> Document the device tree binding for the pin controllers found on the
-> Armada 37xx SoCs.
+On Mon, Apr 24, 2017 at 12:24 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Sat, 22 Apr 2017, Andy Shevchenko wrote:
 >
-> Update the binding documention of the xtal clk which is a subnode of this
-> syscon node.
+>> On Sat, Apr 22, 2017 at 1:34 AM, sathyanarayanan kuppuswamy
+>> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+>>
+>> > Thanks for brining it up. I was planning to ask either Andy or Lee regarding
+>> > this issue after all patches in the series are reviewed.
+>>
+>> Darren, I'm planning to review this soon.
+>>
+>> P.S. We have few series flying around regarding to Intel PMIC(s): my
+>> for Kconfig naming, Hans' for Crystal Cove (touches Kconfig as well),
+>> and Sathya's series. I hope Lee can collect them in proper order.
 >
-> Signed-off-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> That could be easier said than done.
 
-Patch applied, fixed up Rob's comment and added his ACK in the process.
+Some of them are already in your tree, then apply
+- my Kconfig patch which makes Broxton Whiskey Cove to be built
+independently of Crystal Cove (I didn't notice that patch in your
+tree, though some of your mail told it had been applied)
+- Hans' series regarding CherryTrail Whiskey Cove support (if it has all ACKs)
+- this series after my review.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Does it sound doable?
+
+-- 
+With Best Regards,
+Andy Shevchenko
