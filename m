@@ -1,49 +1,51 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 8/8] selftests: x86: override clean in lib.mk to fix warnings
-Date: Sat, 22 Apr 2017 15:41:26 +1000
-Message-ID: <87o9vpyp6h.fsf@concordia.ellerman.id.au>
-References: <cover.1492815938.git.shuahkh@osg.samsung.com> <31b94c5cb9a8f71fd3888b648f32c0bd91e4a9bd.1492815938.git.shuahkh@osg.samsung.com>
+From: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+Subject: Re: [PATCH] ARM: at91/at91-pinctrl documentation: fix spelling
+ mistake: "contoller" -> "controller"
+Date: Mon, 24 Apr 2017 10:19:38 +0200
+Message-ID: <a5634388-bcd2-6c3f-37a6-bb293f3560ee@microchip.com>
+References: <20170421120713.4939-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55743 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1041172AbdDVFl3 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 22 Apr 2017 01:41:29 -0400
-In-Reply-To: <31b94c5cb9a8f71fd3888b648f32c0bd91e4a9bd.1492815938.git.shuahkh@osg.samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170421120713.4939-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, dvhart@infradead.org
-Cc: Shuah Khan <shuahkh@osg.samsung.com>, viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 
-Shuah Khan <shuahkh@osg.samsung.com> writes:
+Le 21/04/2017 à 14:07, Colin King a écrit :
+> From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+> 
+> trivial fix to spelling mistake in documentation
+> 
+> Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 
-> Add override for lib.mk clean to fix the following warnings from clean
-> target run.
->
-> Makefile:44: warning: overriding recipe for target 'clean'
-> ../lib.mk:55: warning: ignoring old recipe for target 'clean'
->
-> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+
 > ---
->  tools/testing/selftests/x86/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-> index 38e0a9c..4d27550 100644
-> --- a/tools/testing/selftests/x86/Makefile
-> +++ b/tools/testing/selftests/x86/Makefile
-> @@ -40,8 +40,9 @@ all_32: $(BINARIES_32)
+>  Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> index 9a8a45d9d8ab..590e60378be3 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> @@ -4,7 +4,7 @@ The AT91 Pinmux Controller, enables the IC
+>  to share one PAD to several functional blocks. The sharing is done by
+>  multiplexing the PAD input/output signals. For each PAD there are up to
+>  8 muxing options (called periph modes). Since different modules require
+> -different PAD settings (like pull up, keeper, etc) the contoller controls
+> +different PAD settings (like pull up, keeper, etc) the controller controls
+>  also the PAD settings parameters.
 >  
->  all_64: $(BINARIES_64)
->  
-> -clean:
-> +override define CLEAN
->  	$(RM) $(BINARIES_32) $(BINARIES_64)
-> +endef
+>  Please refer to pinctrl-bindings.txt in this directory for details of the
+> 
 
-Simpler as:
 
-EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
-
-cheers
+-- 
+Nicolas Ferre
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
