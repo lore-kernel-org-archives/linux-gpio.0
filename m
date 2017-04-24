@@ -1,39 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.12 (take three)
-Date: Mon, 24 Apr 2017 18:35:26 +0200
-Message-ID: <CACRpkdZFNbZ4nFP-1cazGFThVJMUtnUFPF2fLmDZf-SsX6bMRw@mail.gmail.com>
-References: <1493031973-4634-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: xusb: Silence sparse warnings
+Date: Mon, 24 Apr 2017 18:36:32 +0200
+Message-ID: <CACRpkdYYnUGbCs-9bE6FpWf6Oc2vORbyMtQphZdXQS00HFHx9w@mail.gmail.com>
+References: <20170424115649.17424-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:33863 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S974757AbdDXQf1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 12:35:27 -0400
-Received: by mail-oi0-f44.google.com with SMTP id x184so142196997oia.1
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 09:35:27 -0700 (PDT)
-In-Reply-To: <1493031973-4634-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170424115649.17424-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-On Mon, Apr 24, 2017 at 1:06 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, Apr 24, 2017 at 1:56 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-> The following changes since commit d14a39edf757f5bdd73cf25d0155d7cfb271e782:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
->   pinctrl: sh-pfc: r8a7795: Add SCIF_CLK support (2017-03-30 13:43:55 +0200)
+> Commit 53d2a715c240 ("phy: Add Tegra XUSB pad controller support") added
+> a new driver for the XUSB pad controller that implements a more flexible
+> devicetree binding. In order to preserve backwards compatibility the old
+> driver can be probed if the obsolete bindings are detected.
 >
-> are available in the git repository at:
+> In order to hide the legacy code, these prototypes were defined in a
+> header private to the new driver. This has the disadvantage of making
+> the sparse code checker complain about the missing declarations when
+> compiling the old driver and suggesting to make the functions static.
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.12-tag3
+> Avoid these sparse warnings by adding local prototype declarations into
+> the compatibility driver.
 >
-> for you to fetch changes up to 5f4c8cafe1148f8a91287072815df8f0b66f0e5c:
->
->   pinctrl: sh-pfc: r8a7794: Swap ATA signals (2017-04-05 09:41:29 +0200)
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks, pulled into my devel branch for v4.12.
+Patch applied.
 
 Yours,
 Linus Walleij
