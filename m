@@ -1,37 +1,65 @@
-From: "Ms. Katherine" <ulia@distral.ro>
-Subject: EXTREMELY IMPORTANT
-Date: Mon, 24 Apr 2017 19:52:12 +0100
-Message-ID: <20170424185219.079DA51B334E__18494.4670102142$1493062615$gmane$org@mail.distral.ro>
-Reply-To: kathrynnmison@gmail.com
+From: Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH 2/8] selftests: lib.mk: define CLEAN macro to allow
+ Makefiles to override clean
+Date: Mon, 24 Apr 2017 13:46:23 -0600
+Message-ID: <8845c13f-eaeb-86a1-1ac8-d7c52e934ef4@kernel.org>
+References: <cover.1492815938.git.shuahkh@osg.samsung.com>
+ <b39e21f8c47318d82be999aae310bdf6bcfc9bb9.1492815938.git.shuahkh@osg.samsung.com>
+ <063D6719AE5E284EB5DD2968C1650D6DCFFD98E2@AcuExch.aculab.com>
+Reply-To: shuah@kernel.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.distral.ro ([5.2.192.160]:34084 "EHLO mail.distral.ro"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969100AbdDXTgp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 Apr 2017 15:36:45 -0400
-Content-Description: Mail message body
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <063D6719AE5E284EB5DD2968C1650D6DCFFD98E2@AcuExch.aculab.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Laight <David.Laight@ACULAB.COM>, 'Shuah Khan' <shuahkh@osg.samsung.com>, "bamvor.zhangjian@linaro.org" <bamvor.zhangjian@linaro.org>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "paulus@samba.org" <paulus@samba.org>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>, "dvhart@infradead.org" <dvhart@infradead.org>
+Cc: "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "rkrcmar@redhat.com" <rkrcmar@redhat.com>, "dsafonov@virtuozzo.com" <dsafonov@virtuozzo.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "emilio.lopez@collabora.co.uk" <emilio.lopez@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "luto@kernel.org" <luto@kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "mingo@kernel.org" <mingo@kernel.org>, Shuah Khan <shuah@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Recipients <ulia@distral.ro>
 
-Dear Beloved, Sorry for the inconvenience, I am getting in touch with you regarding an extremely important and urgent matter, Please I need your urgent assistance and idea to finish up a project (Orphanage Home) Due to my health condition, Everything is available to finish up the project, All I need is your idea and trust.
+On 04/24/2017 09:45 AM, David Laight wrote:
+> From: Shuah Khan
+>> Sent: 22 April 2017 00:15
+>> Define CLEAN macro to allow Makefiles to override common clean target
+>> in lib.mk. This will help fix the following failures:
+>>
+>> warning: overriding recipe for target 'clean'
+>> ../lib.mk:55: warning: ignoring old recipe for target 'clean'
+>>
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+>> ---
+>>  tools/testing/selftests/lib.mk | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+>> index 775c589..959273c 100644
+>> --- a/tools/testing/selftests/lib.mk
+>> +++ b/tools/testing/selftests/lib.mk
+>> @@ -51,8 +51,12 @@ endef
+>>  emit_tests:
+>>  	$(EMIT_TESTS)
+>>
+>> -clean:
+>> +define CLEAN
+>>  	$(RM) -r $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES) $(EXTRA_CLEAN)
+>> +endef
+>> +
+>> +clean:
+>> +	$(CLEAN)
+> 
+> If might be easier to do something like:
+> 
+> ifneq($(NO_CLEAN),y)
+> clean:
+> 	$(RM) -r $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES) $(EXTRA_CLEAN)
+> endif
+> 
+> 	David
+> 
 
-Sehr geehrte Geliebte, traurig für die Unannehmlichkeiten, ich bin in Kontakt mit Ihnen über eine äußerst wichtige und dringende Angelegenheit, Bitte brauche ich Ihre dringende Hilfe und Idee, um ein Projekt zu beenden (Orphanage Home) Wegen meines Gesundheitszustandes ist alles verfügbar Beenden Sie das Projekt, Alles was ich brauche ist Ihre Idee und Vertrauen.
+I am not sure that it is easier. Defining a macro would work well
+in this case to override and also works well with what we are doing
+for other overrides we already have such as EMIT_TESTS.
 
-Please contact me for more details.
-Contact Email: kathrynnmison@gmail.com
-
-Thanks
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
-
-
--- 
-This message has been scanned for viruses and
-dangerous content by MailScanner, and is
-believed to be clean.
-
+thanks,
+-- Shuah
