@@ -1,28 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] gpio: Add a driver for Cadence GPIO controller
-Date: Mon, 24 Apr 2017 15:00:10 +0200
-Message-ID: <CACRpkdZSyjZCe_02uoU0kFabaDR9DDpWhKowZ6rPO_v0N6WfOQ@mail.gmail.com>
-References: <1490803459-29697-1-git-send-email-boris.brezillon@free-electrons.com>
- <CACRpkdZ6w_tuzSNmFE=2BpeASNOSq0cV4fYM6F8-57Q2+3n-aQ@mail.gmail.com>
- <20170330132946.41314874@bbrezillon> <3422ee23-53b5-8d09-2a5e-d700358ab09d@cadence.com>
- <20170410152610.58bc589a@bbrezillon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170410152610.58bc589a@bbrezillon>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Simon Hatliff <hatliff@cadence.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 0/2] Add ZTE ZX pinctrl driver support
+Date: Mon, 24 Apr 2017 21:01:11 +0800
+Message-ID: <1493038873-18354-1-git-send-email-shawnguo@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:40324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1170353AbdDXNCE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Apr 2017 09:02:04 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Baoyou Xie <xie.baoyou@zte.com.cn>, Xin Zhou <zhou.xin8@zte.com.cn>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawn.guo@linaro.org>
 
-On Mon, Apr 10, 2017 at 3:26 PM, Boris Brezillon
-<boris.brezillon@free-electrons.com> wrote:
+From: Shawn Guo <shawn.guo@linaro.org>
 
-> Linus, what should I do here? Drop support for edge interrupts?
+This is basically a rewrite of Jun's ZTE ZX pinctrl driver.  It
+has quite a few significant changes from Jun's version.
 
-Do whatever makes most sense for your usecases.
-I certainly allow dirty hacks if it is to be able to use the hardware
-at all.
+ - It handles the relation between main and auxiliary controllers
+   internally, and then we do not need to export core function
+   pin_request().
+ - Update bindings document with a ASCII figure to illustrate how this
+   'hybrid' pin controller hardware works.
+ - Rather than making up pin name with the fake port name and pin
+   number, name the pins in the exactly same way how hardware manual
+   name them.
+ - Instead of encoding AON register data, calculate the offset and bit
+   position from pin id.
+ - Utilize the generic groups and functions support from core to save
+   quite some code in our driver.
+ - Simplify the data structures and add documents for important ones.
+ - Clean up some unnecessary function calls.
 
-Yours,
-Linus Walleij
+Shawn
+
+[1] https://www.spinics.net/lists/linux-gpio/msg16147.html
+
+Shawn Guo (2):
+  dt-bindings: add bindings doc for ZTE pinctrl
+  pinctrl: add ZTE ZX pinctrl driver support
+
+ .../devicetree/bindings/pinctrl/pinctrl-zx.txt     |   85 ++
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/zte/Kconfig                        |   13 +
+ drivers/pinctrl/zte/Makefile                       |    2 +
+ drivers/pinctrl/zte/pinctrl-zx.c                   |  445 +++++++++
+ drivers/pinctrl/zte/pinctrl-zx.h                   |  105 ++
+ drivers/pinctrl/zte/pinctrl-zx296718.c             | 1027 ++++++++++++++++++++
+ 8 files changed, 1679 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-zx.txt
+ create mode 100644 drivers/pinctrl/zte/Kconfig
+ create mode 100644 drivers/pinctrl/zte/Makefile
+ create mode 100644 drivers/pinctrl/zte/pinctrl-zx.c
+ create mode 100644 drivers/pinctrl/zte/pinctrl-zx.h
+ create mode 100644 drivers/pinctrl/zte/pinctrl-zx296718.c
+
+-- 
+1.9.1
+
