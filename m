@@ -1,32 +1,34 @@
-From: Anatolij Gustschin <agust@denx.de>
-Subject: Re: [PATCH] gpio: export add/remove lookup table functions
-Date: Mon, 24 Apr 2017 16:08:01 +0200
-Message-ID: <20170424160801.31ca4b4a@crub>
-References: <1492723400-16657-1-git-send-email-agust@denx.de>
-        <CAHp75VeHmOpSAAZM87_0Y120mrXpPG0aCns=Zp5tBTMh3GBXmw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: arizona: Correct check whether the pin is an input
+Date: Mon, 24 Apr 2017 16:22:48 +0200
+Message-ID: <CACRpkdbEv5xHyh30pt3cqbDmatCv9_BhKHVOOkibukmULJRbfA@mail.gmail.com>
+References: <1492594244-27361-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:39274 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1172026AbdDXOIE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 10:08:04 -0400
-In-Reply-To: <CAHp75VeHmOpSAAZM87_0Y120mrXpPG0aCns=Zp5tBTMh3GBXmw@mail.gmail.com>
+Received: from mail-it0-f54.google.com ([209.85.214.54]:35918 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1172278AbdDXOWu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 10:22:50 -0400
+Received: by mail-it0-f54.google.com with SMTP id g66so62061588ite.1
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 07:22:50 -0700 (PDT)
+In-Reply-To: <1492594244-27361-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 
-On Fri, 21 Apr 2017 22:24:49 +0300
-Andy Shevchenko andy.shevchenko@gmail.com wrote:
-...
->...and still a question "Do we go with stubs for them in case of !GPIOLIB?"
+On Wed, Apr 19, 2017 at 11:30 AM, Charles Keepax
+<ckeepax@opensource.wolfsonmicro.com> wrote:
 
-I've just sent a patch.
+> The logic to check if the pin is an input or output whilst testing if we
+> need to read the register value from the hardware or not is currently
+> inverted. Remove the erroneous not from the if statement.
+>
+> Fixes: 11598d174050 ("gpio: arizona: Correct handling for reading input GPIOs")
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
->Patch below looks good to me:
+Patch applied.
 
-Thanks for review!
-
-Anatolij
+Yours,
+Linus Walleij
