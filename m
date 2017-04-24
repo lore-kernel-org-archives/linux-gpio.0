@@ -1,35 +1,47 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 4/7] pinctrl: armada-37xx: Add gpio support
-Date: Mon, 24 Apr 2017 13:48:12 +0200
-Message-ID: <CACRpkdYMt2X5-c2GOAdO-dWNnLK4L66-7hns1AwwCxDcTSdADw@mail.gmail.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
- <83a4f4c08275b41333a2583f01ceb0453b009d9f.1491405475.git-series.gregory.clement@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:37265 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1169256AbdDXLsO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 07:48:14 -0400
-Received: by mail-it0-f43.google.com with SMTP id x188so51681322itb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 04:48:14 -0700 (PDT)
-In-Reply-To: <83a4f4c08275b41333a2583f01ceb0453b009d9f.1491405475.git-series.gregory.clement@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] pinctrl: tegra: xusb: Silence sparse warnings
+Date: Mon, 24 Apr 2017 13:56:49 +0200
+Message-ID: <20170424115649.17424-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-On Wed, Apr 5, 2017 at 5:18 PM, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> GPIO management is pretty simple and is part of the same IP than the pin
-> controller for the Armada 37xx SoCs.  This patch adds the GPIO support to
-> the pinctrl-armada-37xx.c file, it also allows sharing common functions
-> between the gpiolib and the pinctrl drivers.
->
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Commit 53d2a715c240 ("phy: Add Tegra XUSB pad controller support") added
+a new driver for the XUSB pad controller that implements a more flexible
+devicetree binding. In order to preserve backwards compatibility the old
+driver can be probed if the obsolete bindings are detected.
 
-Patch applied.
+In order to hide the legacy code, these prototypes were defined in a
+header private to the new driver. This has the disadvantage of making
+the sparse code checker complain about the missing declarations when
+compiling the old driver and suggesting to make the functions static.
 
-Yours,
-Linus Walleij
+Avoid these sparse warnings by adding local prototype declarations into
+the compatibility driver.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
+index 6f68a9eebc58..ebedc2d32411 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
+@@ -873,6 +873,10 @@ static const struct of_device_id tegra_xusb_padctl_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_xusb_padctl_of_match);
+ 
++/* predeclare these in order to silence sparse */
++int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
++int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev);
++
+ int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_xusb_padctl *padctl;
+-- 
+2.12.0
