@@ -1,32 +1,30 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/4] pinctrl: aspeed: g4: Add pinconf support
-Date: Mon, 24 Apr 2017 14:55:30 +0200
-Message-ID: <CACRpkdZ_7YyqGnn-SP5LpBUfRornvGV2SiimM4ZD7gUL5A42Rw@mail.gmail.com>
-References: <20170407125713.15678-1-andrew@aj.id.au> <20170407125713.15678-4-andrew@aj.id.au>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] pinctrl: aspeed: g5: Add pinconf support
+Date: Mon, 24 Apr 2017 14:56:20 +0200
+Message-ID: <CACRpkdYF3v9O2XEtZiWv9LA6SzcmKMOJ-w4ZsZWc8xka7iih6A@mail.gmail.com>
+References: <20170407125713.15678-1-andrew@aj.id.au> <20170407125713.15678-5-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:36214 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1170269AbdDXMzc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 08:55:32 -0400
-Received: by mail-it0-f44.google.com with SMTP id g66so58427109ite.1
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 05:55:31 -0700 (PDT)
-In-Reply-To: <20170407125713.15678-4-andrew@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170407125713.15678-5-andrew-zrmu5oMJ5Fs@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, OpenBMC Maillist <openbmc-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Rob Herring <robh+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, OpenBMC Maillist <openbmc@lists.ozlabs.org>
 
-On Fri, Apr 7, 2017 at 2:57 PM, Andrew Jeffery <andrew@aj.id.au> wrote:
+On Fri, Apr 7, 2017 at 2:57 PM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
 
-> Testing for pinctrl-aspeed-g4 was performed on an OpenPOWER Palmetto
-> system, using the strategy outlined in the commit message for the
-> change to the Aspeed pinctrl core.
+> Testing for pinctrl-aspeed-g5 was performed on an AST2500EVB system,
+> using the strategy outlined in the commit message for the change to the
+> Aspeed pinctrl core.
 >
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
 
 Patch applied.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
