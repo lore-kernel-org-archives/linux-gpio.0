@@ -1,98 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Right amount of info in the DT
-Date: Mon, 24 Apr 2017 18:45:41 +0200
-Message-ID: <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
-References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
- <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com> <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v2 1/1] gpio: gpio-wcove: fix GPIO IRQ status mask
+Date: Mon, 24 Apr 2017 12:15:04 -0700
+Message-ID: <3257d22879148692da6887f89843389bd37ee877.1493060870.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:37107 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S974884AbdDXQpn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 12:45:43 -0400
-Received: by mail-it0-f43.google.com with SMTP id x188so60280523itb.0
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 09:45:43 -0700 (PDT)
-In-Reply-To: <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
+Received: from mga07.intel.com ([134.134.136.100]:54503 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S976034AbdDXTSe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Apr 2017 15:18:34 -0400
+In-Reply-To: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
+To: gnurou@gmail.com, linus.walleij@linaro.org, andy.shevchenko@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, sathyaosid@gmail.com, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-On Mon, Apr 24, 2017 at 3:03 PM, Yves Lefloch
-<YvesMarie_Lefloch@sigmadesigns.com> wrote:
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-> OK I see now that I have to do this kind of stuff in a pinctrl/pinmux driver.
+According to Whiskey Cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
+battery IO. So we should skip this bit when checking for GPIO IRQ pending
+status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
+loop until IRQ "pending" status becomes 0. This patch fixes this issue.
 
-Great!
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ drivers/gpio/gpio-wcove.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> in
-> my SoC there is no central hw pin controller, and pin control registers are
-> scattered all over the address space because they're in different IPs. How am I
-> supposed to deal with so many different addresses?
+Changes since v1:
+ * Used GENMASK API.
+ * Fixed some style issues.
+ * Updated commit message.
 
-I've herd about this happening sometimes... I haven't seen a perfect solution
-for it.
+diff --git a/drivers/gpio/gpio-wcove.c b/drivers/gpio/gpio-wcove.c
+index 97613de..7872435 100644
+--- a/drivers/gpio/gpio-wcove.c
++++ b/drivers/gpio/gpio-wcove.c
+@@ -51,6 +51,8 @@
+ #define GROUP1_NR_IRQS		6
+ #define IRQ_MASK_BASE		0x4e19
+ #define IRQ_STATUS_BASE		0x4e0b
++#define GPIO_IRQ0_MASK		GENMASK(6, 0)
++#define GPIO_IRQ1_MASK		GENMASK(5, 0)
+ #define UPDATE_IRQ_TYPE		BIT(0)
+ #define UPDATE_IRQ_MASK		BIT(1)
+ 
+@@ -309,7 +311,7 @@ static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	pending = p[0] | (p[1] << 8);
++	pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
+ 	if (!pending)
+ 		return IRQ_NONE;
+ 
+@@ -333,7 +335,7 @@ static irqreturn_t wcove_gpio_irq_handler(int irq, void *data)
+ 			break;
+ 		}
+ 
+-		pending = p[0] | (p[1] << 8);
++		pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
+ 	}
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.7.4
 
-> I have considered hardcoding
-> them in the driver but that seems counter-productive, so I thought I could do
-> something like this, with the address of the function-select register as a
-> resource (it's the only pin property I can change besides direction and data):
->
->
-> pincontroller {
->         compatible = "foo-pinctrl";
->         #address-cells = <1>;
->         #size-cells = <0>;
->
->         uart1 {
->                 reg = <0x10001>;
->
->                 state_0 {
->                         groups = "uart1";
->                         function = "uart1";
->                 };
->                 state_1 {
->                         groups = "uart1";
->                         function = "gpio";
->                 };
->
->         ... other IPs (SPI, ethernet, etc.) ...
->
-> };
-
-Maybe, I would have to check the final result. It will need some serious
-documentation so that we can establish this way of dealing with this type of
-hardware.
-
-> Furthermore, I was wondering how it's possible for pinctrl drivers to map registers
-> possibly used by other drivers.
-
-We usually use syscon approaches for that. Especially when it considers
-individual bits in a single register.
-
-If you just have one single 32bit register  in each hardware blocks,
-then certainly
-it can be remapped by several drivers, or you can leave a "hole" there in the
-main driver register definitions, but that seems very awkward.
-
-> For example, the "GPIO pad mode" register of my
-> ethernet pins is right in the middle of the address space requested by the ethernet
-> driver. Meaning that if I try to "devm_ioremap_resource" when probing the GPIO or
-> pinctrl drivers, I will get an error saying that the memory region is already taken.
-> Do you have any insight on that?
-
-Isn't the best approach to add a pin controller as a subnode of the ethernet
-controller in the device tree, so that the probe() of you main driver looks
-for it and instantiates a pin controller that is then referenced by the
-driver itself?
-
-We have similar constructions with e.g. PCI irq controllers inside of PCI
-bridge nodes.
-
-Then, if the same type of pin control is
-sprinkled all over your drivers, maybe turn it into a library in drivers/pinctrl
-that you can reuse from each driver so as to centralize the code?
-
-Yours,
-Linus Walleij
