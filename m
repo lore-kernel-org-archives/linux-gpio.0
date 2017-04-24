@@ -1,56 +1,52 @@
-From: David Laight <David.Laight@ACULAB.COM>
-Subject: RE: [PATCH 8/8] selftests: x86: override clean in lib.mk to fix
- warnings
-Date: Mon, 24 Apr 2017 15:57:34 +0000
-Message-ID: <063D6719AE5E284EB5DD2968C1650D6DCFFD9941@AcuExch.aculab.com>
-References: <cover.1492815938.git.shuahkh@osg.samsung.com>
- <31b94c5cb9a8f71fd3888b648f32c0bd91e4a9bd.1492815938.git.shuahkh@osg.samsung.com>
- <87o9vpyp6h.fsf@concordia.ellerman.id.au>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 6/7] ARM: Kconfig: Introduce MACH_STM32F469 flag
+Date: Mon, 24 Apr 2017 18:06:10 +0200
+Message-ID: <a45e5791-cca1-79b8-a368-6d113c933ec3@st.com>
+References: <1491568984-20169-1-git-send-email-alexandre.torgue@st.com>
+ <1491568984-20169-7-git-send-email-alexandre.torgue@st.com>
+ <CACRpkdZmWFKaZWB8qZaH=jB61xdwvJ=TC8idYH9kJdi=HEZRAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87o9vpyp6h.fsf@concordia.ellerman.id.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Michael Ellerman' <mpe@ellerman.id.au>, "shuah@kernel.org" <shuah@kernel.org>, "bamvor.zhangjian@linaro.org" <bamvor.zhangjian@linaro.org>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "paulus@samba.org" <paulus@samba.org>, "dvhart@infradead.org" <dvhart@infradead.org>
-Cc: "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "rkrcmar@redhat.com" <rkrcmar@redhat.com>, "dsafonov@virtuozzo.com" <dsafonov@virtuozzo.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, Shuah Khan <shuahkh@osg.samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "emilio.lopez@collabora.co.uk" <emilio.lopez@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "luto@kernel.org" <luto@kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "mingo@kernel.org" <mingo@kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdZmWFKaZWB8qZaH=jB61xdwvJ=TC8idYH9kJdi=HEZRAA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jonathan Corbet <corbet@lwn.net>, Russell King <linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Linuxppc-dev Michael Ellerman
-> Shuah Khan <shuahkh@osg.samsung.com> writes:
-> 
-> > Add override for lib.mk clean to fix the following warnings from clean
-> > target run.
-> >
-> > Makefile:44: warning: overriding recipe for target 'clean'
-> > ../lib.mk:55: warning: ignoring old recipe for target 'clean'
-> >
-> > Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-> > ---
-> >  tools/testing/selftests/x86/Makefile | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-> > index 38e0a9c..4d27550 100644
-> > --- a/tools/testing/selftests/x86/Makefile
-> > +++ b/tools/testing/selftests/x86/Makefile
-> > @@ -40,8 +40,9 @@ all_32: $(BINARIES_32)
-> >
-> >  all_64: $(BINARIES_64)
-> >
-> > -clean:
-> > +override define CLEAN
-> >  	$(RM) $(BINARIES_32) $(BINARIES_64)
-> > +endef
-> 
-> Simpler as:
-> 
-> EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
+Hi
 
-Actually for builds that insist on crapping all over the source tree I've used:
+On 04/24/2017 02:30 PM, Linus Walleij wrote:
+> On Fri, Apr 7, 2017 at 2:43 PM, Alexandre TORGUE
+> <alexandre.torgue@st.com> wrote:
+>
+>> This patch introduces the MACH_STM32F469 to make possible to only select
+>> STM32F469 pinctrl driver
+>>
+>> By default, all the MACH_STM32Fxxx flags will be set with STM32 defconfig.
+>>
+>> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Please funnel this through the ARM SoC tree.
 
-clean:
-	rm -rf `cat .cvsignore 2>/dev/null`
+Yes, I'll merge it in future pull request.
+Thanks for the series.
 
-	David
+Regards
+Alex
+
+>
+> Yours,
+> Linus Walleij
+>
