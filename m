@@ -1,326 +1,198 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 7/8] mfd: intel_soc_pmic_bxtwc: use chained irqs for
- second level irq chips
-Date: Mon, 24 Apr 2017 13:04:25 +0100
-Message-ID: <20170424120425.m7dei4zhw5ttykgd@dell>
-References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <92e22dfff601cdc364e018972558e3550433fc4a.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 5/7] pinctrl: aramda-37xx: Add irqchip support
+Date: Mon, 24 Apr 2017 14:14:36 +0200
+Message-ID: <CACRpkdZ=mVXBbVf1iHg8nQ6pYUkvpB+egH+stoMrkD8V_vaYpg@mail.gmail.com>
+References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
+ <70ffe3343c13d01737bf74e5de4898d0c0be07a0.1491405475.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <92e22dfff601cdc364e018972558e3550433fc4a.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, andy@infradead.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:32997 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1044560AbdDXMOj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 08:14:39 -0400
+Received: by mail-io0-f173.google.com with SMTP id k87so191381842ioi.0
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 05:14:38 -0700 (PDT)
+In-Reply-To: <70ffe3343c13d01737bf74e5de4898d0c0be07a0.1491405475.git-series.gregory.clement@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-On Fri, 14 Apr 2017, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+On Wed, Apr 5, 2017 at 5:18 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> 
-> Whishkey cove PMIC has support to mask/unmask interrupts at two levels.
-> At first level we can mask/unmask interrupt domains like TMU, GPIO, ADC,
-> CHGR, BCU THERMAL and PWRBTN and at second level, it provides facility
-> to mask/unmask individual interrupts belong each of this domain. For
-> example, in case of TMU, at first level we have TMU interrupt domain,
-> and at second level we have two interrupts, wake alarm, system alarm that
-> belong to the TMU interrupt domain.
-> 
-> Currently, in this driver all first level irqs are registered as part of
-> irq chip(bxtwc_regmap_irq_chip). By default, after you register the irq
-> chip from your driver, all irqs in that chip will masked and can only be
-> enabled if that irq is requested using request_irq call. This is the
-> default Linux irq behavior model. And whenever a dependent device that
-> belongs to PMIC requests only the second level irq and not explicitly
-> unmask the first level irq, then in essence the second level irq will
-> still be disabled. For example, if TMU device driver request wake_alarm
-> irq and not explicitly unmask TMU level 1 irq then according to the default
-> Linux irq model,  wake_alarm irq will still be disabled. So the proper
-> solution to fix this issue is to use the chained irq chip concept. We
-> should chain all the second level chip irqs to the corresponding first
-> level irq. To do this, we need to create separate irq chips for every
-> group of second level irqs.
-> 
-> In case of TMU, when adding second level irq chip, instead of using pmic
-> irq we should use the corresponding first level irq. So the following
-> code will change from
-> 
-> ret = regmap_add_irq_chip(pmic->regmap, pmic->irq, ...)
-> 
-> to,
-> 
-> virq = regmap_irq_get_virq(&pmic->irq_chip_data, BXTWC_TMU_LVL1_IRQ);
-> 
-> ret = regmap_add_irq_chip(pmic->regmap, virq, ...)
-> 
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
->  drivers/mfd/intel_soc_pmic_bxtwc.c | 174 +++++++++++++++++++++++++++++--------
->  include/linux/mfd/intel_soc_pmic.h |   5 +-
->  2 files changed, 144 insertions(+), 35 deletions(-)
+> The Armada 37xx SoCs can handle interrupt through GPIO. However it can
+> only manage the edge ones.
+>
+> The way the interrupt are managed are classical so we can use the generic
+> interrupt chip model.
+>
+> The only unusual "feature" is that many interrupts are connected to the
+> parent interrupt controller. But we do not take advantage of this and use
+> the chained irq with all of them.
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-  
-> Changes since v1:
->  * Rebased on top of dev_* cleanup patch.
->  * Fixed style & grammer issues reported by Lee Jones
-> 
-> diff --git a/drivers/mfd/intel_soc_pmic_bxtwc.c b/drivers/mfd/intel_soc_pmic_bxtwc.c
-> index 442dc29..9a04187 100644
-> --- a/drivers/mfd/intel_soc_pmic_bxtwc.c
-> +++ b/drivers/mfd/intel_soc_pmic_bxtwc.c
-> @@ -81,18 +81,26 @@ enum bxtwc_irqs {
->  	BXTWC_PWRBTN_IRQ,
->  };
->  
-> -enum bxtwc_irqs_level2 {
-> -	/* Level 2 */
-> +enum bxtwc_irqs_tmu {
-> +	BXTWC_TMU_IRQ = 0,
-> +};
-> +
-> +enum bxtwc_irqs_bcu {
->  	BXTWC_BCU_IRQ = 0,
-> -	BXTWC_ADC_IRQ,
-> -	BXTWC_USBC_IRQ,
-> +};
-> +
-> +enum bxtwc_irqs_adc {
-> +	BXTWC_ADC_IRQ = 0,
-> +};
-> +
-> +enum bxtwc_irqs_chgr {
-> +	BXTWC_USBC_IRQ = 0,
->  	BXTWC_CHGR0_IRQ,
->  	BXTWC_CHGR1_IRQ,
-> -	BXTWC_CRIT_IRQ,
->  };
->  
-> -enum bxtwc_irqs_tmu {
-> -	BXTWC_TMU_IRQ = 0,
-> +enum bxtwc_irqs_crit {
-> +	BXTWC_CRIT_IRQ = 0,
->  };
->  
->  static const struct regmap_irq bxtwc_regmap_irqs[] = {
-> @@ -107,17 +115,26 @@ static const struct regmap_irq bxtwc_regmap_irqs[] = {
->  	REGMAP_IRQ_REG(BXTWC_PWRBTN_IRQ, 1, 0x03),
->  };
->  
-> -static const struct regmap_irq bxtwc_regmap_irqs_level2[] = {
-> +static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
-> +	REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, 0x06),
-> +};
-> +
-> +static const struct regmap_irq bxtwc_regmap_irqs_bcu[] = {
->  	REGMAP_IRQ_REG(BXTWC_BCU_IRQ, 0, 0x1f),
-> -	REGMAP_IRQ_REG(BXTWC_ADC_IRQ, 1, 0xff),
-> -	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 2, BIT(5)),
-> -	REGMAP_IRQ_REG(BXTWC_CHGR0_IRQ, 2, 0x1f),
-> -	REGMAP_IRQ_REG(BXTWC_CHGR1_IRQ, 3, 0x1f),
-> -	REGMAP_IRQ_REG(BXTWC_CRIT_IRQ, 6, 0x03),
->  };
->  
-> -static const struct regmap_irq bxtwc_regmap_irqs_tmu[] = {
-> -	REGMAP_IRQ_REG(BXTWC_TMU_IRQ, 0, 0x06),
-> +static const struct regmap_irq bxtwc_regmap_irqs_adc[] = {
-> +	REGMAP_IRQ_REG(BXTWC_ADC_IRQ, 0, 0xff),
-> +};
-> +
-> +static const struct regmap_irq bxtwc_regmap_irqs_chgr[] = {
-> +	REGMAP_IRQ_REG(BXTWC_USBC_IRQ, 0, BIT(5)),
-> +	REGMAP_IRQ_REG(BXTWC_CHGR0_IRQ, 0, 0x1f),
-> +	REGMAP_IRQ_REG(BXTWC_CHGR1_IRQ, 1, 0x1f),
-> +};
-> +
-> +static const struct regmap_irq bxtwc_regmap_irqs_crit[] = {
-> +	REGMAP_IRQ_REG(BXTWC_CRIT_IRQ, 0, 0x03),
->  };
->  
->  static struct regmap_irq_chip bxtwc_regmap_irq_chip = {
-> @@ -129,15 +146,6 @@ static struct regmap_irq_chip bxtwc_regmap_irq_chip = {
->  	.num_regs = 2,
->  };
->  
-> -static struct regmap_irq_chip bxtwc_regmap_irq_chip_level2 = {
-> -	.name = "bxtwc_irq_chip_level2",
-> -	.status_base = BXTWC_BCUIRQ,
-> -	.mask_base = BXTWC_MBCUIRQ,
-> -	.irqs = bxtwc_regmap_irqs_level2,
-> -	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_level2),
-> -	.num_regs = 10,
-> -};
-> -
->  static struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
->  	.name = "bxtwc_irq_chip_tmu",
->  	.status_base = BXTWC_TMUIRQ,
-> @@ -147,6 +155,42 @@ static struct regmap_irq_chip bxtwc_regmap_irq_chip_tmu = {
->  	.num_regs = 1,
->  };
->  
-> +static struct regmap_irq_chip bxtwc_regmap_irq_chip_bcu = {
-> +	.name = "bxtwc_irq_chip_bcu",
-> +	.status_base = BXTWC_BCUIRQ,
-> +	.mask_base = BXTWC_MBCUIRQ,
-> +	.irqs = bxtwc_regmap_irqs_bcu,
-> +	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_bcu),
-> +	.num_regs = 1,
-> +};
-> +
-> +static struct regmap_irq_chip bxtwc_regmap_irq_chip_adc = {
-> +	.name = "bxtwc_irq_chip_adc",
-> +	.status_base = BXTWC_ADCIRQ,
-> +	.mask_base = BXTWC_MADCIRQ,
-> +	.irqs = bxtwc_regmap_irqs_adc,
-> +	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_adc),
-> +	.num_regs = 1,
-> +};
-> +
-> +static struct regmap_irq_chip bxtwc_regmap_irq_chip_chgr = {
-> +	.name = "bxtwc_irq_chip_chgr",
-> +	.status_base = BXTWC_CHGR0IRQ,
-> +	.mask_base = BXTWC_MCHGR0IRQ,
-> +	.irqs = bxtwc_regmap_irqs_chgr,
-> +	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_chgr),
-> +	.num_regs = 2,
-> +};
-> +
-> +static struct regmap_irq_chip bxtwc_regmap_irq_chip_crit = {
-> +	.name = "bxtwc_irq_chip_crit",
-> +	.status_base = BXTWC_CRITIRQ,
-> +	.mask_base = BXTWC_MCRITIRQ,
-> +	.irqs = bxtwc_regmap_irqs_crit,
-> +	.num_irqs = ARRAY_SIZE(bxtwc_regmap_irqs_crit),
-> +	.num_regs = 1,
-> +};
-> +
->  static struct resource gpio_resources[] = {
->  	DEFINE_RES_IRQ_NAMED(BXTWC_GPIO_LVL1_IRQ, "GPIO"),
->  };
-> @@ -358,6 +402,24 @@ static const struct regmap_config bxtwc_regmap_config = {
->  	.reg_read = regmap_ipc_byte_reg_read,
->  };
->  
-> +static int bxtwc_add_chained_irq_chip(struct intel_soc_pmic *pmic,
-> +				struct regmap_irq_chip_data *pdata,
-> +				int pirq, int irq_flags,
-> +				const struct regmap_irq_chip *chip,
-> +				struct regmap_irq_chip_data **data)
+There are some issues with this patch.
+
+First:
+You need to add
+select GPIOLIB_IRQCHIP
+to the Kconfig entry. It's only working in your setup
+because something else is selecting this for you, probably.
+
+At all places like this:
+
+> +       u32 mask = d->mask;
+(...)
+> +       if (on)
+> +               val |= mask;
+> +       else
+> +               val &= ~mask;
+
+Isn't it simpler to just use d->mask directly in the code and skip the local
+variable?
+
+if (on)
+  val |= d->mask;
+(...)
+
+> +static void armada_37xx_irq_handler(struct irq_desc *desc)
 > +{
-> +	int irq;
+> +       struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+> +       struct irq_chip *chip = irq_desc_get_chip(desc);
+> +       struct armada_37xx_pinctrl *info = gpiochip_get_data(gc);
+> +       struct irq_domain *d = gc->irqdomain;
+> +       int i;
 > +
-> +	irq = regmap_irq_get_virq(pdata, pirq);
-> +	if (irq < 0) {
-> +		dev_err(pmic->dev, "failed to get virtual interrupt:%d\n", irq);
-> +		return irq;
-> +	}
+> +       chained_irq_enter(chip, desc);
+> +       for (i = 0; i <= d->revmap_size / GPIO_PER_REG; i++) {
+> +               u32 status;
+> +               unsigned long flags;
 > +
-> +	return devm_regmap_add_irq_chip(pmic->dev, pmic->regmap, irq, irq_flags,
-> +					0, chip, data);
+> +               spin_lock_irqsave(&info->irq_lock, flags);
+> +               status = readl_relaxed(info->base + IRQ_STATUS + 4 * i);
+> +               /* Manage only the interrupt that was enabled */
+> +               status &= readl_relaxed(info->base + IRQ_EN + 4 * i);
+> +               spin_unlock_irqrestore(&info->irq_lock, flags);
+> +               while (status) {
+> +                       u32 hwirq = ffs(status) - 1;
+> +                       u32 virq = irq_find_mapping(d, hwirq +
+> +                                                    i * GPIO_PER_REG);
+> +
+> +                       generic_handle_irq(virq);
+> +                       status &= ~BIT(hwirq);
+> +               }
+
+You hae a problem here is a new IRQ appears while you are inside
+of this loop. You need to re-read the status register for each iteration
+(and &= with the IRQ_EN I guess).
+
+> +static int armada_37xx_irqchip_register(struct platform_device *pdev,
+> +                                       struct armada_37xx_pinctrl *info)
+> +{
+> +       struct device_node *np = info->dev->of_node;
+> +       int nrirqs = info->data->nr_pins;
+> +       struct gpio_chip *gc = &info->gpio_chip;
+> +       struct irq_chip *irqchip = &info->irq_chip;
+> +       struct resource res;
+> +       int ret = -ENODEV, i, nr_irq_parent;
+> +
+
+This warrants a comment:
+/* Check if we have at least one gpio-controller child node */
+
+> +       for_each_child_of_node(info->dev->of_node, np) {
+> +               if (of_find_property(np, "gpio-controller", NULL)) {
+> +                       ret = 0;
+> +                       break;
+> +               }
+
+Rewrite:
+
+if (of_property_read_bool(np, "gpio-controller"))
+
+> +       };
+> +       if (ret)
+> +               return ret;
+
+
+> +
+> +       nr_irq_parent = of_irq_count(np);
+> +       spin_lock_init(&info->irq_lock);
+> +
+> +       if (!nr_irq_parent) {
+> +               dev_err(&pdev->dev, "Invalid or no IRQ\n");
+> +               return 0;
+> +       }
+> +
+> +       if (of_address_to_resource(info->dev->of_node, 1, &res)) {
+> +               dev_err(info->dev, "cannot find IO resource\n");
+> +               return -ENOENT;
+> +       }
+> +
+> +       info->base = devm_ioremap_resource(info->dev, &res);
+> +       if (IS_ERR(info->base))
+> +               return PTR_ERR(info->base);
+> +
+> +       irqchip->irq_ack = armada_37xx_irq_ack;
+> +       irqchip->irq_mask = armada_37xx_irq_mask;
+> +       irqchip->irq_unmask = armada_37xx_irq_unmask;
+> +       irqchip->irq_set_wake = armada_37xx_irq_set_wake;
+> +       irqchip->irq_set_type = armada_37xx_irq_set_type;
+> +       irqchip->name = info->data->name;
+> +
+> +       ret = gpiochip_irqchip_add(gc, irqchip, 0,
+> +                                  handle_edge_irq, IRQ_TYPE_NONE);
+> +       if (ret) {
+> +               dev_info(&pdev->dev, "could not add irqchip\n");
+> +               return ret;
+> +       }
+> +
+> +       /*
+> +        * Many interrupts are connected to the parent interrupt
+> +        * controller. But we do not take advantage of this and use
+> +        * the chained irq with all of them.
+> +        */
+> +       for (i = 0; i < nrirqs; i++) {
+> +               struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
+> +
+> +               /*
+> +                * The mask field is a "precomputed bitmask for
+> +                * accessing the chip registers" which was introduced
+> +                * for the generic irqchip framework. As we don't use
+> +                * this framework, we can reuse this field for our own
+> +                * usage.
+> +                */
+> +               d->mask = BIT(i % GPIO_PER_REG);
+> +       }
+> +
+> +       for (i = 0; i < nr_irq_parent; i++) {
+> +               int irq = irq_of_parse_and_map(np, i);
+> +
+> +               if (irq < 0)
+> +                       continue;
+> +
+> +               gpiochip_set_chained_irqchip(gc, irqchip, irq,
+> +                                            armada_37xx_irq_handler);
+> +       }
+> +
+> +       return 0;
 > +}
 > +
->  static int bxtwc_probe(struct platform_device *pdev)
+>  static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+>                                         struct armada_37xx_pinctrl *info)
 >  {
->  	int ret;
-> @@ -409,21 +471,65 @@ static int bxtwc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	ret = devm_regmap_add_irq_chip(&pdev->dev, pmic->regmap, pmic->irq,
-> -				       IRQF_ONESHOT | IRQF_SHARED,
-> -				       0, &bxtwc_regmap_irq_chip_level2,
-> -				       &pmic->irq_chip_data_level2);
-> +	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
-> +					 BXTWC_TMU_LVL1_IRQ,
-> +					 IRQF_ONESHOT,
-> +					 &bxtwc_regmap_irq_chip_tmu,
-> +					 &pmic->irq_chip_data_tmu);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to add secondary IRQ chip\n");
-> +		dev_err(&pdev->dev, "Failed to add TMU IRQ chip\n");
->  		return ret;
->  	}
->  
-> -	ret = devm_regmap_add_irq_chip(&pdev->dev, pmic->regmap, pmic->irq,
-> -				       IRQF_ONESHOT | IRQF_SHARED,
-> -				       0, &bxtwc_regmap_irq_chip_tmu,
-> -				       &pmic->irq_chip_data_tmu);
-> +	/* Add chained IRQ handler for BCU IRQs */
-> +	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
-> +					 BXTWC_BCU_LVL1_IRQ,
-> +					 IRQF_ONESHOT,
-> +					 &bxtwc_regmap_irq_chip_bcu,
-> +					 &pmic->irq_chip_data_bcu);
-> +
-> +
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to add TMU IRQ chip\n");
-> +		dev_err(&pdev->dev, "Failed to add BUC IRQ chip\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Add chained IRQ handler for ADC IRQs */
-> +	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
-> +					 BXTWC_ADC_LVL1_IRQ,
-> +					 IRQF_ONESHOT,
-> +					 &bxtwc_regmap_irq_chip_adc,
-> +					 &pmic->irq_chip_data_adc);
-> +
-> +
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to add ADC IRQ chip\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Add chained IRQ handler for CHGR IRQs */
-> +	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
-> +					 BXTWC_CHGR_LVL1_IRQ,
-> +					 IRQF_ONESHOT,
-> +					 &bxtwc_regmap_irq_chip_chgr,
-> +					 &pmic->irq_chip_data_chgr);
-> +
-> +
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to add CHGR IRQ chip\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Add chained IRQ handler for CRIT IRQs */
-> +	ret = bxtwc_add_chained_irq_chip(pmic, pmic->irq_chip_data,
-> +					 BXTWC_CRIT_LVL1_IRQ,
-> +					 IRQF_ONESHOT,
-> +					 &bxtwc_regmap_irq_chip_crit,
-> +					 &pmic->irq_chip_data_crit);
-> +
-> +
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to add CRIT IRQ chip\n");
->  		return ret;
->  	}
->  
-> diff --git a/include/linux/mfd/intel_soc_pmic.h b/include/linux/mfd/intel_soc_pmic.h
-> index 956caa0..5aacdb0 100644
-> --- a/include/linux/mfd/intel_soc_pmic.h
-> +++ b/include/linux/mfd/intel_soc_pmic.h
-> @@ -25,8 +25,11 @@ struct intel_soc_pmic {
->  	int irq;
->  	struct regmap *regmap;
->  	struct regmap_irq_chip_data *irq_chip_data;
-> -	struct regmap_irq_chip_data *irq_chip_data_level2;
->  	struct regmap_irq_chip_data *irq_chip_data_tmu;
-> +	struct regmap_irq_chip_data *irq_chip_data_bcu;
-> +	struct regmap_irq_chip_data *irq_chip_data_adc;
-> +	struct regmap_irq_chip_data *irq_chip_data_chgr;
-> +	struct regmap_irq_chip_data *irq_chip_data_crit;
->  	struct device *dev;
->  };
->  
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> @@ -496,6 +714,9 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
+>         ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
+>         if (ret)
+>                 return ret;
+> +       ret = armada_37xx_irqchip_register(pdev, info);
+> +       if (ret)
+> +               return ret;
+>
+>         return 0;
+>  }
+> --
+> git-series 0.9.1
