@@ -1,60 +1,60 @@
-From: "Han, Nandor (GE Healthcare)" <nandor.han-JJi787mZWgc@public.gmane.org>
-Subject: [PATCH v2 2/4] gpio - Add EXAR XRA1403 SPI GPIO expander driver
-Date: Mon, 24 Apr 2017 13:53:15 +0000
-Message-ID: <DB6P101MB024681FFA568D7E03665FC08E61F0@DB6P101MB0246.NAMP101.PROD.OUTLOOK.COM>
-References: <cover.1492077070.git.nandor.han@ge.com>
- <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
- <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Malinen, Semi (GE Healthcare)" <semi.malinen-JJi787mZWgc@public.gmane.org>
+From: Anatolij Gustschin <agust@denx.de>
+Subject: [PATCH] gpiolib: Add stubs for gpiod lookup table interface
+Date: Mon, 24 Apr 2017 16:04:22 +0200
+Message-ID: <1493042662-30435-1-git-send-email-agust@denx.de>
+References: <CAHp75VeHmOpSAAZM87_0Y120mrXpPG0aCns=Zp5tBTMh3GBXmw@mail.gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:55226 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1170533AbdDXOE3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 10:04:29 -0400
+In-Reply-To: <CAHp75VeHmOpSAAZM87_0Y120mrXpPG0aCns=Zp5tBTMh3GBXmw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMgV2FsbGVpaiBb
-bWFpbHRvOmxpbnVzLndhbGxlaWpAbGluYXJvLm9yZ10NCj4gU2VudDogMjQgQXByaWwgMjAxNyAx
-Njo0Nw0KPiBUbzogSGFuLCBOYW5kb3IgKEdFIEhlYWx0aGNhcmUpIDxuYW5kb3IuaGFuQGdlLmNv
-bT4NCj4gQ2M6IEdyZWcgS0ggPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsgRGF2aWQgUy4g
-TWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQubmV0PjsgR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBs
-aW51eC0NCj4gbTY4ay5vcmc+OyBNYXVybyBDYXJ2YWxobyBDaGVoYWIgPG1jaGVoYWJAa2VybmVs
-Lm9yZz47IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+OyBBbGV4YW5kcmUg
-Q291cmJvdA0KPiA8Z251cm91QGdtYWlsLmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5l
-bC5vcmc+OyBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgbGludXgtDQo+IGdw
-aW9Admdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2Vy
-bmVsQHZnZXIua2VybmVsLm9yZzsgTWFsaW5lbiwgU2VtaSAoR0UgSGVhbHRoY2FyZSkNCj4gPHNl
-bWkubWFsaW5lbkBnZS5jb20+DQo+IFN1YmplY3Q6IEVYVDogUmU6IFtQQVRDSCB2MiAyLzRdIGdw
-aW8gLSBBZGQgRVhBUiBYUkExNDAzIFNQSSBHUElPIGV4cGFuZGVyIGRyaXZlcg0KPiANCj4gT24g
-VGh1LCBBcHIgMTMsIDIwMTcgYXQgMTI6MjcgUE0sIE5hbmRvciBIYW4gPG5hbmRvci5oYW5AZ2Uu
-Y29tPiB3cm90ZToNCj4gDQo+ID4gVGhpcyBpcyBhIHNpbXBsZSBkcml2ZXIgdGhhdCBwcm92aWRl
-cyBhIC9zeXMvY2xhc3MvZ3Bpbw0KPiA+IGludGVyZmFjZSBmb3IgY29udHJvbGxpbmcgYW5kIGNv
-bmZpZ3VyaW5nIHRoZSBHUElPIGxpbmVzLg0KPiA+IEl0IGRvZXMgbm90IHByb3ZpZGUgc3VwcG9y
-dCBmb3IgY2hpcCBzZWxlY3Qgb3IgaW50ZXJydXB0cy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6
-IE5hbmRvciBIYW4gPG5hbmRvci5oYW5AZ2UuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFNlbWkg
-TWFsaW5lbiA8c2VtaS5tYWxpbmVuQGdlLmNvbT4NCj4gDQo+IEkgYWxtb3N0IHdhbnQgdG8gbWFr
-ZSB0aGUgZHJpdmVyIGRlcGVuZCBvbiAhR1BJT19TWVNGUyBiZWNhdXNlDQo+IG9mIHRoaXMgY29t
-bWl0IG1lc3NhZ2UuDQo+IA0KPiBETyBOT1QgVVNFIE9SIEVOQ09VUkFHRSBUSEUgVVNFIE9GIFRI
-RSBHUElPIFNZU0ZTDQo+IElOVEVSRkFDRS4NCj4gDQoNCkFoaC4uIEkgZm9yZ290IHRvIGNoYW5n
-ZSB0aGlzIGNvbW1pdCBtZXNzYWdlLiBTb3JyeSBJIHdpbGwgY2hhbmdlIGl0IEFTQVAuDQoNCj4g
-VXNlIHRoZSBjaGFyYWN0ZXIgZGV2aWNlLg0KPiANCj4gVXNlIHRoZSBleGFtcGxlIGluIHRvb2xz
-L2dwaW8vKiBhcyBhIGd1aWRlbGluZSBhbmQgdGVzdGJlZC4NCj4gDQo+IFVzZSBsaWJncGlvZCBh
-cyBhIHJpY2ggdXNlcnNwYWNlLg0KPiANCj4gQW5kIHRoZSBjb21taXQgbWVzc2FnZSBzaG91bGQg
-c3RhdGUgdGhhdCB0aGlzIGlzIGEgZHJpdmVyDQo+IGZvciBzdWNoIGFuZCBzdWNoIEV4YXIgaGFy
-ZHdhcmUgaW5zdGVhZC4NCj4gDQo+IFRoYW5rcy4NCj4gDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9i
-aXRvcHMuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2dwaW8vZHJpdmVyLmg+DQo+ID4gKyNpbmNs
-dWRlIDxsaW51eC9rZXJuZWwuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPiA+
-ICsjaW5jbHVkZSA8bGludXgvbXV0ZXguaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L29mX2Rldmlj
-ZS5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvb2ZfZ3Bpby5oPg0KPiA+ICsjaW5jbHVkZSA8bGlu
-dXgvc3BpL3NwaS5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvcmVnbWFwLmg+DQo+IA0KPiBZb3Ug
-YXJlIG1pc3NpbmcNCj4gI2luY2x1ZGUgPGxpbnV4L3NlcV9maWxlLmg+DQo+IA0KPiBhbmQgdGhh
-dCBpcyB3aHkgdGhlIGJ1aWxkIHJvYm90IGlzIGNvbXBsYWluaW5nLg0KPiANCg0KSSd2ZSBub3Rp
-Y2VkIHRoYXQuIEkgd2lsbCBjaGFuZ2UgaXQgaW4gdGhlIG5leHQgcmV2Lg0KDQo+IFlvdXJzLA0K
-PiBMaW51cyBXYWxsZWlqDQoNClRoYW5rcywNCiAgIE5hbmR5DQo=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Add stubs for gpiod_add_lookup_table() and gpiod_remove_lookup_table()
+for the !GPIOLIB case to prevent build errors. Also add prototypes.
+
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+---
+ include/linux/gpio/consumer.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 933d936..6c0cc67 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -144,6 +144,11 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 						enum gpiod_flags flags,
+ 						const char *label);
+ 
++struct gpiod_lookup_table;
++
++void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
++void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
++
+ #else /* CONFIG_GPIOLIB */
+ 
+ static inline int gpiod_count(struct device *dev, const char *con_id)
+@@ -435,6 +440,16 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
++struct gpiod_lookup_table;
++
++static inline void gpiod_add_lookup_table(struct gpiod_lookup_table *table)
++{
++}
++
++static inline void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
++{
++}
++
+ #endif /* CONFIG_GPIOLIB */
+ 
+ static inline
+-- 
+2.7.4
+
