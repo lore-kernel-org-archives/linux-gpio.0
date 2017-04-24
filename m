@@ -1,53 +1,60 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 3/6] mfd: exynos-lpass: Remove pad retention control
-Date: Mon, 24 Apr 2017 11:35:04 +0100
-Message-ID: <20170424103504.vl4hhnh4pvl66ggu@dell>
-References: <1490256207-10061-1-git-send-email-m.szyprowski@samsung.com>
- <CGME20170323080348eucas1p29d1fb4eb06e4785d20341be7a374bfb3@eucas1p2.samsung.com>
- <1490256207-10061-4-git-send-email-m.szyprowski@samsung.com>
- <20170411120231.hivtn6c7to4z2gu6@dell>
- <4646acab-261e-32ea-df63-6f8333f64e2d@samsung.com>
+Subject: Re: [PATCH v4] mfd: intel_soc_pmic: Fix a mess with compilation units
+Date: Mon, 24 Apr 2017 11:48:51 +0100
+Message-ID: <20170424104851.vuxrg2vuw5ltkp5n@dell>
+References: <20170404123856.3052-1-andriy.shevchenko@linux.intel.com>
+ <20170411135412.qnepq52p3m44zqkq@dell>
+ <1492520724.24567.59.camel@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4646acab-261e-32ea-df63-6f8333f64e2d@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+In-Reply-To: <1492520724.24567.59.camel@linux.intel.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, "Rafael J . Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 19 Apr 2017, Marek Szyprowski wrote:
+On Tue, 18 Apr 2017, Andy Shevchenko wrote:
 
-> Hi Lee,
-> 
-> On 2017-04-11 14:02, Lee Jones wrote:
-> > On Thu, 23 Mar 2017, Marek Szyprowski wrote:
+> On Tue, 2017-04-11 at 14:54 +0100, Lee Jones wrote:
+> > On Tue, 04 Apr 2017, Andy Shevchenko wrote:
 > > 
-> > > Pad retention should be controlled from pin control driver, so remove it
-> > > from Exynos LPASS driver. After this change, no more access to PMU regmap
-> > > is needed, so remove also the code for handling PMU regmap.
+> > > Crystal Cove and Whiskey Cove are two different PMICs which are
+> > > installed on Intel Atom SoC based platforms.
 > > > 
-> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > > Acked-by: Rob Herring <robh@kernel.org>
-> > > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> > > Moreover there are two independent drivers that by some reason were
+> > > supposed (*) to get into one kernel module.
+> > > 
+> > > Fix the mess by clarifying Kconfig option for Crystal Cove and split
+> > > Whiskey Cove out of it.
+> > > 
+> > > (*) It looks like the configuration was never tested with
+> > >     INTEL_SOC_PMIC=n. The line in Makefile is actually wrong.
+> > > 
+> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net> (supporter:ACPI)
+> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > > Acked-by: Zhang Rui <rui.zhang@intel.com>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > > > ---
-> > >   .../bindings/mfd/samsung,exynos5433-lpass.txt           |  2 --
-> > >   drivers/mfd/exynos-lpass.c                              | 17 -----------------
-> > >   include/linux/mfd/syscon/exynos5-pmu.h                  |  3 ---
-> > >   3 files changed, 22 deletions(-)
+> > >  - fix dependency for now, proper fix is to provide headers in
+> > > platform_data/x86
+> > >  - add tags
+> > >  drivers/acpi/Kconfig         |  2 +-
+> > >  drivers/gpio/Kconfig         |  2 +-
+> > >  drivers/mfd/Kconfig          | 15 +++++++++++++--
+> > >  drivers/mfd/Makefile         |  2 +-
+> > >  drivers/platform/x86/Kconfig |  2 +-
+> > >  drivers/thermal/Kconfig      |  2 +-
+> > >  6 files changed, 18 insertions(+), 7 deletions(-)
+> > 
 > > Applied, thanks.
 > 
-> When can I expect this (and the remaining patches from this patchset) to
-> appear
-> in your -next branch?
+> I didn't see it in next. Does it cause build issues still? I didn't get
+> any report on it.
 
-Now. ;)
-
-[sorry for the delay, I was on Honeymoon last week]
+It's there now.
 
 -- 
 Lee Jones
