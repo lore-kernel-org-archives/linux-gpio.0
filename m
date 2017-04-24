@@ -1,51 +1,49 @@
-From: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
-Subject: Re: [PATCH] ARM: at91/at91-pinctrl documentation: fix spelling
- mistake: "contoller" -> "controller"
-Date: Mon, 24 Apr 2017 10:19:38 +0200
-Message-ID: <a5634388-bcd2-6c3f-37a6-bb293f3560ee@microchip.com>
-References: <20170421120713.4939-1-colin.king@canonical.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Right amount of info in the DT
+Date: Mon, 24 Apr 2017 10:23:48 +0200
+Message-ID: <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
+References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170421120713.4939-1-colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:36140 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1166623AbdDXIXu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 04:23:50 -0400
+Received: by mail-it0-f51.google.com with SMTP id g66so50061306ite.1
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 01:23:50 -0700 (PDT)
+In-Reply-To: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
 
-Le 21/04/2017 à 14:07, Colin King a écrit :
-> From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
-> 
-> trivial fix to spelling mistake in documentation
-> 
-> Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+On Thu, Apr 20, 2017 at 11:54 AM, Yves Lefloch
+<YvesMarie_Lefloch@sigmadesigns.com> wrote:
 
-Acked-by: Nicolas Ferre <nicolas.ferre-UWL1GkI3JZL3oGB3hsPCZA@public.gmane.org>
+> I have a bunch of GPIO groups all over the place (dedicated pins, UART pins,
+> ethernet pins, etc.), and even though they mainly behave similarly (same way of
+> handling direction and value), there are some differences between them:
+> - IRQs, because some groups can generate interrupts and others can't;
+> - Alternate functions (for instance GPIO mode vs UART mode), because obviously
+>   dedicated pins don't have an alternate function, and for the others which have
+>   it, the mode-changing register is sometimes before, sometimes after the other
+>   regs.
 
-> ---
->  Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-> index 9a8a45d9d8ab..590e60378be3 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-> @@ -4,7 +4,7 @@ The AT91 Pinmux Controller, enables the IC
->  to share one PAD to several functional blocks. The sharing is done by
->  multiplexing the PAD input/output signals. For each PAD there are up to
->  8 muxing options (called periph modes). Since different modules require
-> -different PAD settings (like pull up, keeper, etc) the contoller controls
-> +different PAD settings (like pull up, keeper, etc) the controller controls
->  also the PAD settings parameters.
->  
->  Please refer to pinctrl-bindings.txt in this directory for details of the
-> 
+The basic problem is that you conceptualize of these things as GPIO
+and not the more abstract concept of pins under pin control.
+For example, there are not GPIO groups, there are pin control pin
+multiplexing groups.
 
+Please read Documentation/pinctrl.txt
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/pinctrl.txt
 
--- 
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Also read the generic pin control device tree bindings:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+
+Further in the GPIO subsystem you will find references back to how it
+interacts with pin control.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/gpio/gpio.txt
+
+Yours,
+Linus Walleij
