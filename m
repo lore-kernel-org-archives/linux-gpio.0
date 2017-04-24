@@ -1,44 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: make artpec6 explicitly non-modular
-Date: Mon, 24 Apr 2017 16:29:05 +0200
-Message-ID: <CACRpkdY4+Q-ACpssSiYQRUQKo5hGcHfKjMFgmkP=yKa+XgH=ZA@mail.gmail.com>
-References: <20170419195905.9937-1-paul.gortmaker@windriver.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
+Date: Mon, 24 Apr 2017 17:07:32 +0200
+Message-ID: <0105020f-b1b3-6306-4759-25924ad4bcd6@gmail.com>
+References: <20170416180801.17828-1-marek.vasut+renesas@gmail.com>
+ <20170416180801.17828-3-marek.vasut+renesas@gmail.com>
+ <CACRpkdZYpijY5pxYNpwQyPubC4Ud5qMuM+4hgJvd1W1gAvOcFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170419195905.9937-1-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson <lars.persson@axis.com>, Niklas Cassel <niklas.cassel@axis.com>, linux-arm-kernel@axis.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZYpijY5pxYNpwQyPubC4Ud5qMuM+4hgJvd1W1gAvOcFQ@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 19, 2017 at 9:59 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
+On 04/24/2017 03:55 PM, Linus Walleij wrote:
+> On Sun, Apr 16, 2017 at 8:08 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> 
+>> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
+>> This block is pretty trivial and supports setting GPIO direction
+>> as Input/Output and in case of Output, supports setting value.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: linux-gpio@vger.kernel.org
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+> 
+> (...)
+> 
+>> +#include <linux/gpio.h>
+> 
+> Only use
+> #include <linux/gpio/driver.h>
+> 
+> It should be enough.
+> 
+> With that:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> The Kconfig currently controlling compilation of this code is:
->
-> drivers/pinctrl/Kconfig:config PINCTRL_ARTPEC6
-> drivers/pinctrl/Kconfig:        bool "Axis ARTPEC-6 pin controller driver"
->
-> ...meaning that it currently is not being built as a module by anyone.
->
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
->
-> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
-> Cc: Lars Persson <lars.persson@axis.com>
-> Cc: Niklas Cassel <niklas.cassel@axis.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-arm-kernel@axis.com
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+It is, done, will be in V2, thanks.
 
-Patch applied with Jesper's ACK.
+> I guess you plan to merge this through MFD?
+> 
+> Yours,
+> Linus Walleij
+> 
 
-Yours,
-Linus Walleij
+
+-- 
+Best regards,
+Marek Vasut
