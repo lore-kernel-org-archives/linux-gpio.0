@@ -1,41 +1,41 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 2/2] gpio: gpio-wcove: fix irq pending status bit width
-Date: Mon, 24 Apr 2017 15:15:18 +0200
-Message-ID: <CACRpkdYTjvKbz55jVXuEe6B=OE-dcirjv+TsVf5aKFv_S8u0Vg@mail.gmail.com>
-References: <d2f4d86de7bb816663e1db3a1385ae917aa699ca.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <197e6ca51bb83ae865022d7ffd085d06dfee7795.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v2 5/8] gpio: gpio-wcove: use first level PMIC GPIO irq
+Date: Mon, 24 Apr 2017 15:17:34 +0200
+Message-ID: <CACRpkdYD8SiTDL1Bc4ordyi4E2fPSRpgbKY_DPd76oQYhXe11A@mail.gmail.com>
+References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <cd9ddab845e471758b5553fcdc060d6eecd24e93.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:35816 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934157AbdDXNPU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 09:15:20 -0400
-Received: by mail-io0-f179.google.com with SMTP id r16so185892696ioi.2
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 06:15:20 -0700 (PDT)
-In-Reply-To: <197e6ca51bb83ae865022d7ffd085d06dfee7795.1492190203.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Received: from mail-io0-f176.google.com ([209.85.223.176]:35363 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1170849AbdDXNRg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 09:17:36 -0400
+Received: by mail-io0-f176.google.com with SMTP id r16so185964866ioi.2
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 06:17:36 -0700 (PDT)
+In-Reply-To: <cd9ddab845e471758b5553fcdc060d6eecd24e93.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sathyaosid@gmail.com, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Eduardo Valentin <edubezval@gmail.com>, Darren Hart <dvhart@infradead.org>, Zhang Rui <rui.zhang@intel.com>, Lee Jones <lee.jones@linaro.org>, andy@infradead.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, sathyaosid@gmail.com
 
-On Fri, Apr 14, 2017 at 7:29 PM,
+On Sat, Apr 15, 2017 at 1:25 AM,
 <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
 
 > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 >
-> Whiskey cove PMIC has three GPIO banks with total number of 13 GPIO
-> pins. But when checking for the pending status, for_each_set_bit() uses
-> bit width of 7 and hence it only checks the status for first 7 GPIO pins
-> missing to check/clear the status of rest of the GPIO pins. This patch
-> fixes this issue.
+> PMIC mfd driver only exports first level irq for GPIO device.
+> But currently we are reading the irqs from the second level irq
+> chip, So this patch fixes this issue by adding support to use
+> first level PMIC GPIO irq.
 >
 > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Looks reasonable so patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Just looping in Mika & Andy so they have an idea about what's going
-on.
+I guess this gets merged into MFD because of dependencies?
+If it compiles on its own and doesn't cause regressions I can
+merged it into the GPIO tree.
 
 Yours,
 Linus Walleij
