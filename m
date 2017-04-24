@@ -1,31 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: gpio - add exar to vendor prefixes list
-Date: Mon, 24 Apr 2017 15:19:36 +0200
-Message-ID: <CACRpkdbFaX1o-NwssGQcqP3p-xLQAq7MfUXQSaHJNV2m7-bKWQ@mail.gmail.com>
-References: <cover.1492077070.git.nandor.han@ge.com> <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han@ge.com>
+Subject: Re: [PATCH v2 2/4] gpio - Add EXAR XRA1403 SPI GPIO expander driver
+Date: Mon, 24 Apr 2017 15:47:10 +0200
+Message-ID: <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com>
+References: <cover.1492077070.git.nandor.han@ge.com> <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:34398 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1170870AbdDXNTj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 09:19:39 -0400
-Received: by mail-io0-f182.google.com with SMTP id a103so191337476ioj.1
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 06:19:39 -0700 (PDT)
-In-Reply-To: <f02af49f4d72326c455c9137ffb2714e7236cbab.1492077070.git.nandor.han@ge.com>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:36378 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1168981AbdDXNrM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Apr 2017 09:47:12 -0400
+Received: by mail-it0-f48.google.com with SMTP id g66so60542727ite.1
+        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 06:47:12 -0700 (PDT)
+In-Reply-To: <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Nandor Han <nandor.han@ge.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Semi Malinen <semi.malinen@ge.com>
 
 On Thu, Apr 13, 2017 at 12:27 PM, Nandor Han <nandor.han@ge.com> wrote:
 
-> Add Exar Corporation to vendors list.
+> This is a simple driver that provides a /sys/class/gpio
+> interface for controlling and configuring the GPIO lines.
+> It does not provide support for chip select or interrupts.
 >
 > Signed-off-by: Nandor Han <nandor.han@ge.com>
+> Signed-off-by: Semi Malinen <semi.malinen@ge.com>
 
-This patch applied to the GPIO tree with Rob's ACK and
-the suggested subject change.
+I almost want to make the driver depend on !GPIO_SYSFS because
+of this commit message.
+
+DO NOT USE OR ENCOURAGE THE USE OF THE GPIO SYSFS
+INTERFACE.
+
+Use the character device.
+
+Use the example in tools/gpio/* as a guideline and testbed.
+
+Use libgpiod as a rich userspace.
+
+And the commit message should state that this is a driver
+for such and such Exar hardware instead.
+
+Thanks.
+
+> +#include <linux/bitops.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/regmap.h>
+
+You are missing
+#include <linux/seq_file.h>
+
+and that is why the build robot is complaining.
 
 Yours,
 Linus Walleij
