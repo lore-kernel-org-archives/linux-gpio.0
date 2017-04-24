@@ -1,64 +1,108 @@
-From: Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 8/8] selftests: x86: override clean in lib.mk to fix
- warnings
-Date: Mon, 24 Apr 2017 13:48:41 -0600
-Message-ID: <83d77bfe-6219-950e-82e0-4601a8ed010c@kernel.org>
-References: <cover.1492815938.git.shuahkh@osg.samsung.com>
- <31b94c5cb9a8f71fd3888b648f32c0bd91e4a9bd.1492815938.git.shuahkh@osg.samsung.com>
- <87o9vpyp6h.fsf@concordia.ellerman.id.au>
- <063D6719AE5E284EB5DD2968C1650D6DCFFD9941@AcuExch.aculab.com>
-Reply-To: shuah@kernel.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <063D6719AE5E284EB5DD2968C1650D6DCFFD9941@AcuExch.aculab.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Laight <David.Laight@ACULAB.COM>, 'Michael Ellerman' <mpe@ellerman.id.au>, Shuah Khan <shuahkh@osg.samsung.com>, "bamvor.zhangjian@linaro.org" <bamvor.zhangjian@linaro.org>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "paulus@samba.org" <paulus@samba.org>, "dvhart@infradead.org" <dvhart@infradead.org>
-Cc: "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "rkrcmar@redhat.com" <rkrcmar@redhat.com>, "dsafonov@virtuozzo.com" <dsafonov@virtuozzo.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "emilio.lopez@collabora.co.uk" <emilio.lopez@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "luto@kernel.org" <luto@kernel.org>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "mingo@kernel.org" <mingo@kernel.org>, Shuah Khan <shuah@kernel.org>
+From: David Rivshin <drivshin@awxrd.com>
+Subject: [PATCH v2] gpio: omap: return error if requested debounce time is not possible
+Date: Mon, 24 Apr 2017 18:56:50 -0400
+Message-ID: <20170424225650.17566-1-drivshin@awxrd.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:49567 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1171997AbdDXXGE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 24 Apr 2017 19:06:04 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: drivshin@awxrd.com, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-On 04/24/2017 09:57 AM, David Laight wrote:
-> From: Linuxppc-dev Michael Ellerman
->> Shuah Khan <shuahkh@osg.samsung.com> writes:
->>
->>> Add override for lib.mk clean to fix the following warnings from clean
->>> target run.
->>>
->>> Makefile:44: warning: overriding recipe for target 'clean'
->>> ../lib.mk:55: warning: ignoring old recipe for target 'clean'
->>>
->>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->>> ---
->>>  tools/testing/selftests/x86/Makefile | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
->>> index 38e0a9c..4d27550 100644
->>> --- a/tools/testing/selftests/x86/Makefile
->>> +++ b/tools/testing/selftests/x86/Makefile
->>> @@ -40,8 +40,9 @@ all_32: $(BINARIES_32)
->>>
->>>  all_64: $(BINARIES_64)
->>>
->>> -clean:
->>> +override define CLEAN
->>>  	$(RM) $(BINARIES_32) $(BINARIES_64)
->>> +endef
->>
->> Simpler as:
->>
->> EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
-> 
-> Actually for builds that insist on crapping all over the source tree I've used:
-> 
-> clean:
-> 	rm -rf `cat .cvsignore 2>/dev/null`
-> 
-> 	David
+From: David Rivshin <DRivshin@allworx.com>
 
-This will have to be done as a separate change. The warnings I am fixing
-are related to common clean target in lib.mk and the need to override.
+omap_gpio_debounce() does not validate that the requested debounce
+is within a range it can handle. Instead it lets the register value
+wrap silently, and always returns success.
 
-thanks,
--- Shuah
+This can lead to all sorts of unexpected behavior, such as gpio_keys
+asking for a too-long debounce, but getting a very short debounce in
+practice.
+
+Fix this by returning -EINVAL if the requested value does not fit into
+the register field. If there is no debounce clock available at all,
+return -ENOTSUPP.
+
+Fixes: e85ec6c3047b ("gpio: omap: fix omap2_set_gpio_debounce")
+Cc: <stable@vger.kernel.org> # 4.3+
+Signed-off-by: David Rivshin <drivshin@allworx.com>
+---
+Changes since v1 (https://lkml.org/lkml/2017/3/16/1094):
+- Added dev_info() in omap_gpio_debounce() on error.
+
+ drivers/gpio/gpio-omap.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index efc85a2..fd9bce9 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -208,9 +208,11 @@ static inline void omap_gpio_dbck_disable(struct gpio_bank *bank)
+  * OMAP's debounce time is in 31us steps
+  *   <debounce time> = (GPIO_DEBOUNCINGTIME[7:0].DEBOUNCETIME + 1) x 31
+  * so we need to convert and round up to the closest unit.
++ *
++ * Return: 0 on success, negative error otherwise.
+  */
+-static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+-				    unsigned debounce)
++static int omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
++				   unsigned debounce)
+ {
+ 	void __iomem		*reg;
+ 	u32			val;
+@@ -218,11 +220,12 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 	bool			enable = !!debounce;
+ 
+ 	if (!bank->dbck_flag)
+-		return;
++		return -ENOTSUPP;
+ 
+ 	if (enable) {
+ 		debounce = DIV_ROUND_UP(debounce, 31) - 1;
+-		debounce &= OMAP4_GPIO_DEBOUNCINGTIME_MASK;
++		if ((debounce & OMAP4_GPIO_DEBOUNCINGTIME_MASK) != debounce)
++			return -EINVAL;
+ 	}
+ 
+ 	l = BIT(offset);
+@@ -255,6 +258,8 @@ static void omap2_set_gpio_debounce(struct gpio_bank *bank, unsigned offset,
+ 		bank->context.debounce = debounce;
+ 		bank->context.debounce_en = val;
+ 	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -964,14 +969,20 @@ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
+ {
+ 	struct gpio_bank *bank;
+ 	unsigned long flags;
++	int ret;
+ 
+ 	bank = gpiochip_get_data(chip);
+ 
+ 	raw_spin_lock_irqsave(&bank->lock, flags);
+-	omap2_set_gpio_debounce(bank, offset, debounce);
++	ret = omap2_set_gpio_debounce(bank, offset, debounce);
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ 
+-	return 0;
++	if (ret)
++		dev_info(chip->parent,
++			 "Could not set line %u debounce to %u microseconds (%d)",
++			 offset, debounce, ret);
++
++	return ret;
+ }
+ 
+ static int omap_gpio_set_config(struct gpio_chip *chip, unsigned offset,
+-- 
+2.9.3
+
+base-commit: 5a7ad1146caa895ad718a534399e38bd2ba721b7
