@@ -1,40 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
-Date: Tue, 25 Apr 2017 11:32:45 +0200
-Message-ID: <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
-References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com> <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
+From: "weiyongjun (A)" <weiyongjun1@huawei.com>
+Subject: RE: [PATCH -next] pinctrl: artpec6: Fix return value check in
+ artpec6_pmx_probe()
+Date: Tue, 25 Apr 2017 09:18:05 +0000
+Message-ID: <6AADFAC011213A4C87B956458587ADB47BDA03@SZXEMI508-MBX.china.huawei.com>
+References: <20170425032945.22157-1-weiyj.lk@gmail.com>
+ <20170425083120.GI18509@axis.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:36702 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1428429AbdDYJcr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 05:32:47 -0400
-Received: by mail-io0-f176.google.com with SMTP id p80so93101231iop.3
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Apr 2017 02:32:47 -0700 (PDT)
-In-Reply-To: <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
+Received: from szxga01-in.huawei.com ([45.249.212.187]:5798 "EHLO
+        dggrg01-dlp.huawei.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1428694AbdDYJeH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 05:34:07 -0400
+In-Reply-To: <20170425083120.GI18509@axis.com>
+Content-Language: zh-CN
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jesper Nilsson <jesper.nilsson@axis.com>, Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@axis.com" <linux-arm-kernel@axis.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
 
-> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
-> This block is pretty trivial and supports setting GPIO direction
-> as Input/Output and in case of Output, supports setting value.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> V2: Use linux/gpio/driver.h instead of linux/gpio.h
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> -----Original Message-----
+> From: Jesper Nilsson [mailto:jesper.nilsson@axis.com]
+> Sent: Tuesday, April 25, 2017 4:31 PM
+> To: Wei Yongjun <weiyj.lk@gmail.com>
+> Cc: Jesper Nilsson <jespern@axis.com>; Lars Persson <larper@axis.com>;
+> Niklas Cassel <niklass@axis.com>; Linus Walleij <linus.walleij@linaro.org>;
+> weiyongjun (A) <weiyongjun1@huawei.com>; linux-arm-kernel@axis.com;
+> linux-gpio@vger.kernel.org
+> Subject: Re: [PATCH -next] pinctrl: artpec6: Fix return value check in
+> artpec6_pmx_probe()
+> 
+> On Tue, Apr 25, 2017 at 03:29:45AM +0000, Wei Yongjun wrote:
+> > From: Wei Yongjun <weiyongjun1@huawei.com>
+> >
+> > In case of error, the function pinctrl_register() returns
+> > NULL not ERR_PTR(). The IS_ERR() test in the return value
+> > check should be replaced with NULL test.
+> 
+> Uh, the comment above reads as the exact opposite
+> of what the patch does. Your point is valid though,
+> but the comment needs rephrasing.
+> 
 
-Are you merging this through MFD?
+Oh, sorry, I will send the v2 patch with comment fixed soon.
+Thanks.
 
-Yours,
-Linus Walleij
+Wei Yongjun
