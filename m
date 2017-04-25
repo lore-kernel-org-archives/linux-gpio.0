@@ -1,64 +1,40 @@
-From: <onorcare@armman.org>
-Subject: 60048 linux-gpio
-Date: Tue, 25 Apr 2017 09:15:21 -0000
-Message-ID: <149311172157.15557.13613766339116472348@ranksitt.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
+Date: Tue, 25 Apr 2017 11:32:45 +0200
+Message-ID: <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
+References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com> <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="45918679116.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from [117.244.103.142] ([117.244.103.142]:39013 "HELO ranksitt.net"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1428436AbdDYJPb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Apr 2017 05:15:31 -0400
-Content-Disposition: attachment
+Received: from mail-io0-f176.google.com ([209.85.223.176]:36702 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1428429AbdDYJcr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 05:32:47 -0400
+Received: by mail-io0-f176.google.com with SMTP id p80so93101231iop.3
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Apr 2017 02:32:47 -0700 (PDT)
+In-Reply-To: <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-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
-AAABAAEAWwAAAN0JAAAAAA==
+On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+
+> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
+> This block is pretty trivial and supports setting GPIO direction
+> as Input/Output and in case of Output, supports setting value.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> V2: Use linux/gpio/driver.h instead of linux/gpio.h
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Are you merging this through MFD?
+
+Yours,
+Linus Walleij
