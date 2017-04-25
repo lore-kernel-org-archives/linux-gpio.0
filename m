@@ -1,42 +1,69 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
-Date: Tue, 25 Apr 2017 11:35:45 +0200
-Message-ID: <ae65d889-baf4-e24b-d72d-05f29bba4f87@gmail.com>
-References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
- <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
- <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 10/18] pinctrl: madera: Add driver for Cirrus Logic
+ Madera codecs
+Date: Tue, 25 Apr 2017 11:41:59 +0200
+Message-ID: <CACRpkdYtuu4mFf9bjz-z_kNhbgmuw7TQdQqBc66iWfFP5wp_fw@mail.gmail.com>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com> <1493050124-5970-11-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:38668 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1428813AbdDYJmB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 05:42:01 -0400
+Received: by mail-it0-f51.google.com with SMTP id f187so10322024ite.1
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Apr 2017 02:42:01 -0700 (PDT)
+In-Reply-To: <1493050124-5970-11-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 04/25/2017 11:32 AM, Linus Walleij wrote:
-> On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> 
->> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
->> This block is pretty trivial and supports setting GPIO direction
->> as Input/Output and in case of Output, supports setting value.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: linux-gpio@vger.kernel.org
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->> V2: Use linux/gpio/driver.h instead of linux/gpio.h
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Are you merging this through MFD?
+On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
+<rf@opensource.wolfsonmicro.com> wrote:
 
-I thought that was a question for Lee initially , IMO it'd make sense if
-this went through one tree.
+> These codecs have a variable number of I/O lines each of which
+> is individually selectable to a wide range of possible functions.
+>
+> The functionality is slightly different from the traditional muxed
+> GPIO since most of the functions can be mapped to any pin (and even
+> the same function to multiple pins). Most pins have a dedicated
+> "alternate" function that is only available on that pin. The
+> alternate functions are usually a group of signals, though it is
+> not always necessary to enable the full group, depending on the
+> alternate function and how it is to be used. The mapping between
+> alternate functions and GPIO pins varies between codecs depending
+> on the number of alternate functions and available pins.
+>
+> Note on the Kconfig options:
+> The formula "default y if..." is used for PINCTRL_MADERA so that its
+> select options will be processed, allowing us to group selects for
+> pinctrl into the pinctrl Kconfig where they logically belong instead
+> of accumulating under the parent MFD Kconfig.
+>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+(...)
 
--- 
-Best regards,
-Marek Vasut
+> Changes since V1:
+
+This is starting to look good!
+
+In fact, kind of finished. Except:
+
+> +       if (pdata) {
+> +               ret = pinctrl_register_mappings(pdata->gpio_configs,
+> +                                               pdata->n_gpio_configs);
+> +               if (ret) {
+> +                       dev_err(priv->dev,
+> +                               "Failed to register pdata mappings (%d)\n",
+> +                               ret);
+> +                       return ret;
+> +               }
+> +       }
+
+What is this? It looks like boardfile support which we do not like to
+encourage. Why are the mappings not exclusively set up from
+device tree or similar?
+
+Yours,
+Linus Walleij
