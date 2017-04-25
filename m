@@ -1,43 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 11/18] dt-bindings: pinctrl: Add
- bindings for Cirrus Logic Madera codecs
-Date: Tue, 25 Apr 2017 11:35:02 +0200
-Message-ID: <CACRpkdZrSr6Ws+r3JAz22C0GJ65i_R+o3uUKVYpiPqYF0igZBg@mail.gmail.com>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-12-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
+Date: Tue, 25 Apr 2017 11:35:45 +0200
+Message-ID: <ae65d889-baf4-e24b-d72d-05f29bba4f87@gmail.com>
+References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
+ <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
+ <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1493050124-5970-12-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
-<rf@opensource.wolfsonmicro.com> wrote:
+On 04/25/2017 11:32 AM, Linus Walleij wrote:
+> On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> 
+>> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
+>> This block is pretty trivial and supports setting GPIO direction
+>> as Input/Output and in case of Output, supports setting value.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: linux-gpio@vger.kernel.org
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>> V2: Use linux/gpio/driver.h instead of linux/gpio.h
+> 
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Are you merging this through MFD?
 
-> This is the binding description of the pinctrl driver for Cirru Logic
-> Madera codecs. The binding uses the generic pinctrl binding so  the main
-> purpose here is to describe the device-specific names for groups and
-> functions.
->
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> ---
-> Changes since V1:
-> - split out from main pinctrl patch into a separate patch
-> - fixed typo in pinctrl-names property description
+I thought that was a question for Lee initially , IMO it'd make sense if
+this went through one tree.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+-- 
+Best regards,
+Marek Vasut
