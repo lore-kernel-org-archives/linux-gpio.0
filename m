@@ -1,82 +1,51 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 10/18] pinctrl: madera: Add driver for
- Cirrus Logic Madera codecs
-Date: Tue, 25 Apr 2017 11:26:02 +0100
-Message-ID: <1493115962.4826.51.camel@rf-debian.wolfsonmicro.main>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-11-git-send-email-rf@opensource.wolfsonmicro.com>
- <CACRpkdYtuu4mFf9bjz-z_kNhbgmuw7TQdQqBc66iWfFP5wp_fw@mail.gmail.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next v2] pinctrl: artpec6: Fix return value check in artpec6_pmx_probe()
+Date: Tue, 25 Apr 2017 11:29:30 +0000
+Message-ID: <20170425112930.19555-1-weiyj.lk@gmail.com>
+References: <20170425032945.22157-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CACRpkdYtuu4mFf9bjz-z_kNhbgmuw7TQdQqBc66iWfFP5wp_fw@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open
- list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36738 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1031724AbdDYL3g (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 07:29:36 -0400
+Received: by mail-pg0-f66.google.com with SMTP id v1so3309685pgv.3
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Apr 2017 04:29:35 -0700 (PDT)
+In-Reply-To: <20170425032945.22157-1-weiyj.lk@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson <lars.persson@axis.com>, Niklas Cassel <niklas.cassel@axis.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org
 
-On Tue, 2017-04-25 at 11:41 +0200, Linus Walleij wrote:
-> On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
-> <rf@opensource.wolfsonmicro.com> wrote:
-> 
-> > These codecs have a variable number of I/O lines each of which
-> > is individually selectable to a wide range of possible functions.
-> >
-> > The functionality is slightly different from the traditional muxed
-> > GPIO since most of the functions can be mapped to any pin (and even
-> > the same function to multiple pins). Most pins have a dedicated
-> > "alternate" function that is only available on that pin. The
-> > alternate functions are usually a group of signals, though it is
-> > not always necessary to enable the full group, depending on the
-> > alternate function and how it is to be used. The mapping between
-> > alternate functions and GPIO pins varies between codecs depending
-> > on the number of alternate functions and available pins.
-> >
-> > Note on the Kconfig options:
-> > The formula "default y if..." is used for PINCTRL_MADERA so that its
-> > select options will be processed, allowing us to group selects for
-> > pinctrl into the pinctrl Kconfig where they logically belong instead
-> > of accumulating under the parent MFD Kconfig.
-> >
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> (...)
-> 
-> > Changes since V1:
-> 
-> This is starting to look good!
-> 
-> In fact, kind of finished. Except:
-> 
-> > +       if (pdata) {
-> > +               ret = pinctrl_register_mappings(pdata->gpio_configs,
-> > +                                               pdata->n_gpio_configs);
-> > +               if (ret) {
-> > +                       dev_err(priv->dev,
-> > +                               "Failed to register pdata mappings (%d)\n",
-> > +                               ret);
-> > +                       return ret;
-> > +               }
-> > +       }
-> 
-> What is this? It looks like boardfile support which we do not like to
-> encourage. Why are the mappings not exclusively set up from
-> device tree or similar?
-> 
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-We want to work on systems that don't use DT for configuration, so we
-offer pdata as a fallback across all the drivers. In that case the
-configuration is defined as part of the parent pdata struct and this
-applies it.
+In case of error, the function pinctrl_register() returns
+ERR_PTR() not NULL. The NULL test in the return value check
+should be replaced with IS_ERR().
 
-> Yours,
-> Linus Walleij
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+v1 -> v2: fix comment
+---
+ drivers/pinctrl/pinctrl-artpec6.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+index b5a2eff..6a16019 100644
+--- a/drivers/pinctrl/pinctrl-artpec6.c
++++ b/drivers/pinctrl/pinctrl-artpec6.c
+@@ -938,9 +938,9 @@ static int artpec6_pmx_probe(struct platform_device *pdev)
+ 	pmx->num_pin_groups = ARRAY_SIZE(artpec6_pin_groups);
+ 	pmx->pctl	    = pinctrl_register(&artpec6_desc, &pdev->dev, pmx);
+ 
+-	if (!pmx->pctl) {
++	if (IS_ERR(pmx->pctl)) {
+ 		dev_err(&pdev->dev, "could not register pinctrl driver\n");
+-		return -EINVAL;
++		return PTR_ERR(pmx->pctl);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, pmx);
+
