@@ -1,73 +1,62 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 12/18] gpio: madera: Support Cirrus
- Logic Madera class codecs
-Date: Tue, 25 Apr 2017 15:44:21 +0100
-Message-ID: <1493131461.4826.66.camel@rf-debian.wolfsonmicro.main>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-13-git-send-email-rf@opensource.wolfsonmicro.com>
- <CACRpkdbhgkwtPygfRL6JXc7syi4MqSUXx2jrVzp7q9FPOWX6OQ@mail.gmail.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Subject: Re: [PATCH 4/8] selftests: gpio: override clean in lib.mk to fix
+ warnings
+Date: Tue, 25 Apr 2017 09:02:02 -0600
+Message-ID: <f95aeee4-a5cf-6b66-c451-eac059cb0ca6@osg.samsung.com>
+References: <cover.1492815938.git.shuahkh@osg.samsung.com>
+ <b216b1808abff1e75c1b325a338a518b8477257a.1492815938.git.shuahkh@osg.samsung.com>
+ <87wpadyp8r.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CACRpkdbhgkwtPygfRL6JXc7syi4MqSUXx2jrVzp7q9FPOWX6OQ@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open
- list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:52362
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1948640AbdDYPCM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 11:02:12 -0400
+In-Reply-To: <87wpadyp8r.fsf@concordia.ellerman.id.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>, shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, dvhart@infradead.org
+Cc: viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, shuah Khan <shuahkh@osg.samsung.com>
 
-On Tue, 2017-04-25 at 16:13 +0200, Linus Walleij wrote:
-> On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
-> <rf@opensource.wolfsonmicro.com> wrote:
+On 04/21/2017 11:40 PM, Michael Ellerman wrote:
+> Shuah Khan <shuahkh@osg.samsung.com> writes:
 > 
-> > This adds support for the GPIOs on Cirrus Logic Madera class codecs.
-> > Any pins not used for special functions (see the pinctrl driver) can be
-> > used as general single-bit input or output lines. The number of available
-> > GPIOs varies between codecs.
-> >
-> > Signed-off-by: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > ---
-> > Changes from V1:
-> > - dt bindings moved to a separate patch
-> > - dependent on pinctrl driver instead of parent MFD
-> > - added get_direction function
-> > - added .request / .free / .set_config to work with pinctrl driver
-> > - register range with pinctrl driver
+>> Add override for lib.mk clean to fix the following warnings from clean
+>> target run.
+>>
+>> Makefile:11: warning: overriding recipe for target 'clean'
+>> ../lib.mk:55: warning: ignoring old recipe for target 'clean'
+>>
+>> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+>> ---
+>>  tools/testing/selftests/gpio/Makefile | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+>> index 205e4d1..4f6d9e0 100644
+>> --- a/tools/testing/selftests/gpio/Makefile
+>> +++ b/tools/testing/selftests/gpio/Makefile
+>> @@ -7,8 +7,9 @@ include ../lib.mk
+>>  
+>>  all: $(BINARIES)
+>>  
+>> -clean:
+>> +override define CLEAN
+>>  	$(RM) $(BINARIES)
+>> +endef
 > 
-> Nice, but...
+> This could be achieved more simply with:
 > 
-> > +       ret = gpiochip_add_pin_range(&madera_gpio->gpio_chip, "madera-pinctrl",
-> > +                                    0, 0, madera_gpio->gpio_chip.ngpio);
-> > +       if (ret) {
-> > +               dev_warn(&pdev->dev, "Failed to add pin range (%d)\n", ret);
-> > +               return ret;
-> > +       }
-> 
-> This is all fine, but we have generic code for adding ranges from
-> the device tree, see
-> Documentation/devicetree/bindings/gpio/gpio.txt
+> EXTRA_CLEAN := $(BINARIES)
 > 
 
-The range of gpio pins is a fixed property of the chip, and so is the
-combination of gpio+pinctrl drivers.
+gpio clean requires special handling. I have one more patch
+I sent out that handles that. So I am going to leave this
+patch the way with override.
 
-I think the general principle of the DT maintainers is that DT should be
-used for things that the drivers don't already know and can't figure
-out.
+thanks,
+-- Shuah
 
-> With that this range should not even be needed.
-> Apart from that it looks pretty solid.
-> 
-> Yours,
-> Linus Walleij
+
