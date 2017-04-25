@@ -1,71 +1,55 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
-Date: Tue, 25 Apr 2017 15:01:13 +0100
-Message-ID: <20170425140113.vnvhyhdgymcnm3tt@dell>
-References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
- <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
- <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
- <ae65d889-baf4-e24b-d72d-05f29bba4f87@gmail.com>
- <20170425122144.lxeuxohwg2rnw3zn@dell>
- <4710b052-0634-5779-4dcf-3523ced709f4@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 12/18] gpio: madera: Support Cirrus Logic Madera class codecs
+Date: Tue, 25 Apr 2017 16:13:57 +0200
+Message-ID: <CACRpkdbhgkwtPygfRL6JXc7syi4MqSUXx2jrVzp7q9FPOWX6OQ@mail.gmail.com>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com> <1493050124-5970-13-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4710b052-0634-5779-4dcf-3523ced709f4@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1493050124-5970-13-git-send-email-rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 25 Apr 2017, Marek Vasut wrote:
+On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
+<rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
 
-> On 04/25/2017 02:21 PM, Lee Jones wrote:
-> > On Tue, 25 Apr 2017, Marek Vasut wrote:
-> > 
-> >> On 04/25/2017 11:32 AM, Linus Walleij wrote:
-> >>> On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>
-> >>>> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
-> >>>> This block is pretty trivial and supports setting GPIO direction
-> >>>> as Input/Output and in case of Output, supports setting value.
-> >>>>
-> >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>> Cc: linux-gpio@vger.kernel.org
-> >>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>>> Cc: Linus Walleij <linus.walleij@linaro.org>
-> >>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >>>> ---
-> >>>> V2: Use linux/gpio/driver.h instead of linux/gpio.h
-> >>>
-> >>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >>>
-> >>> Are you merging this through MFD?
-> >>
-> >> I thought that was a question for Lee initially , IMO it'd make sense if
-> >> this went through one tree.
-> > 
-> > Because your mailer is broken, I know have no idea which thread this
-> > mail belongs to.  Please fix your mailer to reply 'threaded'.
-> 
-> You just were not on CC for the whole series, just the MFD part,
-> probably that was the mistake, sorry. PW links below:
+> This adds support for the GPIOs on Cirrus Logic Madera class codecs.
+> Any pins not used for special functions (see the pinctrl driver) can be
+> used as general single-bit input or output lines. The number of available
+> GPIOs varies between codecs.
+>
+> Signed-off-by: Nariman Poushin <nariman-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> Signed-off-by: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> ---
+> Changes from V1:
+> - dt bindings moved to a separate patch
+> - dependent on pinctrl driver instead of parent MFD
+> - added get_direction function
+> - added .request / .free / .set_config to work with pinctrl driver
+> - register range with pinctrl driver
 
-Okay, understood.
+Nice, but...
 
-> https://patchwork.kernel.org/patch/9696589/
-> https://patchwork.kernel.org/patch/9696591/
-> https://patchwork.kernel.org/patch/9696597/
-> https://patchwork.kernel.org/patch/9696593/
+> +       ret = gpiochip_add_pin_range(&madera_gpio->gpio_chip, "madera-pinctrl",
+> +                                    0, 0, madera_gpio->gpio_chip.ngpio);
+> +       if (ret) {
+> +               dev_warn(&pdev->dev, "Failed to add pin range (%d)\n", ret);
+> +               return ret;
+> +       }
 
-This is not the way we do business.  If you want me to take them (and
-there is a suitable reason for me to do so i.e. a build-time
-dependency), then you're going to have to submit them again as
-[RESEND]s with me in Cc.
+This is all fine, but we have generic code for adding ranges from
+the device tree, see
+Documentation/devicetree/bindings/gpio/gpio.txt
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+With that this range should not even be needed.
+Apart from that it looks pretty solid.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
