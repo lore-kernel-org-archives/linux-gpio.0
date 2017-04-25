@@ -1,51 +1,43 @@
-From: "weiyongjun (A)" <weiyongjun1@huawei.com>
-Subject: RE: [PATCH -next] pinctrl: artpec6: Fix return value check in
- artpec6_pmx_probe()
-Date: Tue, 25 Apr 2017 09:18:05 +0000
-Message-ID: <6AADFAC011213A4C87B956458587ADB47BDA03@SZXEMI508-MBX.china.huawei.com>
-References: <20170425032945.22157-1-weiyj.lk@gmail.com>
- <20170425083120.GI18509@axis.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 11/18] dt-bindings: pinctrl: Add
+ bindings for Cirrus Logic Madera codecs
+Date: Tue, 25 Apr 2017 11:35:02 +0200
+Message-ID: <CACRpkdZrSr6Ws+r3JAz22C0GJ65i_R+o3uUKVYpiPqYF0igZBg@mail.gmail.com>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1493050124-5970-12-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from szxga01-in.huawei.com ([45.249.212.187]:5798 "EHLO
-        dggrg01-dlp.huawei.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1428694AbdDYJeH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 05:34:07 -0400
-In-Reply-To: <20170425083120.GI18509@axis.com>
-Content-Language: zh-CN
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1493050124-5970-12-git-send-email-rf@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jesper Nilsson <jesper.nilsson@axis.com>, Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@axis.com" <linux-arm-kernel@axis.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
+On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
+<rf@opensource.wolfsonmicro.com> wrote:
 
+> This is the binding description of the pinctrl driver for Cirru Logic
+> Madera codecs. The binding uses the generic pinctrl binding so  the main
+> purpose here is to describe the device-specific names for groups and
+> functions.
+>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+> Changes since V1:
+> - split out from main pinctrl patch into a separate patch
+> - fixed typo in pinctrl-names property description
 
-> -----Original Message-----
-> From: Jesper Nilsson [mailto:jesper.nilsson@axis.com]
-> Sent: Tuesday, April 25, 2017 4:31 PM
-> To: Wei Yongjun <weiyj.lk@gmail.com>
-> Cc: Jesper Nilsson <jespern@axis.com>; Lars Persson <larper@axis.com>;
-> Niklas Cassel <niklass@axis.com>; Linus Walleij <linus.walleij@linaro.org>;
-> weiyongjun (A) <weiyongjun1@huawei.com>; linux-arm-kernel@axis.com;
-> linux-gpio@vger.kernel.org
-> Subject: Re: [PATCH -next] pinctrl: artpec6: Fix return value check in
-> artpec6_pmx_probe()
-> 
-> On Tue, Apr 25, 2017 at 03:29:45AM +0000, Wei Yongjun wrote:
-> > From: Wei Yongjun <weiyongjun1@huawei.com>
-> >
-> > In case of error, the function pinctrl_register() returns
-> > NULL not ERR_PTR(). The IS_ERR() test in the return value
-> > check should be replaced with NULL test.
-> 
-> Uh, the comment above reads as the exact opposite
-> of what the patch does. Your point is valid though,
-> but the comment needs rephrasing.
-> 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Oh, sorry, I will send the v2 patch with comment fixed soon.
-Thanks.
-
-Wei Yongjun
+Yours,
+Linus Walleij
