@@ -1,45 +1,58 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH] pinctrl: cherryview: Add terminate entry for dmi_system_id tables
-Date: Tue, 25 Apr 2017 06:22:05 +0000
-Message-ID: <20170425062205.22627-1-weiyj.lk@gmail.com>
+From: Benjamin Henrion <zoobab@gmail.com>
+Subject: Re: [PATCH v2 2/4] gpio - Add EXAR XRA1403 SPI GPIO expander driver
+Date: Tue, 25 Apr 2017 09:07:06 +0200
+Message-ID: <CANjd3ndZkVi5OA0eqDewrpqVLQpT11QbVOA98F=ghMhcwPu2hQ@mail.gmail.com>
+References: <cover.1492077070.git.nandor.han@ge.com> <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
+ <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com>
+Reply-To: zoobab@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36255 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S980737AbdDYGWQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 02:22:16 -0400
-Received: by mail-pf0-f196.google.com with SMTP id v14so6899481pfd.3
-        for <linux-gpio@vger.kernel.org>; Mon, 24 Apr 2017 23:22:11 -0700 (PDT)
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34451 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S941367AbdDYHHI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 03:07:08 -0400
+In-Reply-To: <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Nandor Han <nandor.han@ge.com>, Greg KH <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Semi Malinen <semi.malinen@ge.com>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+On Mon, Apr 24, 2017 at 3:47 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Apr 13, 2017 at 12:27 PM, Nandor Han <nandor.han@ge.com> wrote:
+>
+>> This is a simple driver that provides a /sys/class/gpio
+>> interface for controlling and configuring the GPIO lines.
+>> It does not provide support for chip select or interrupts.
+>>
+>> Signed-off-by: Nandor Han <nandor.han@ge.com>
+>> Signed-off-by: Semi Malinen <semi.malinen@ge.com>
+>
+> I almost want to make the driver depend on !GPIO_SYSFS because
+> of this commit message.
+>
+> DO NOT USE OR ENCOURAGE THE USE OF THE GPIO SYSFS
+> INTERFACE.
+>
+> Use the character device.
 
-Make sure dmi_system_id tables are NULL terminated.
+I doubt you will be able to convince the majority of people toggling
+GPIOs via a simple shell script to switch to write a complex C
+program. Not to mention cross compilation and the libraries
+dependencies here.
 
-Fixes: 703650278372 ("pinctrl: cherryview: Add a quirk to make Acer
-Chromebook keyboard work again")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Is there some good cli tools to access the new char device? If they
+are shipped with most distros, that would reduce the pain.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 9ff7901..1d09097 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1542,7 +1542,8 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Edgar"),
- 			DMI_MATCH(DMI_BIOS_DATE, "05/21/2016"),
- 		},
--	}
-+	},
-+	{}
- };
- 
- static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+Best,
 
+--
+Benjamin Henrion <bhenrion at ffii.org>
+FFII Brussels - +32-484-566109 - +32-2-3500762
+"In July 2005, after several failed attempts to legalise software
+patents in Europe, the patent establishment changed its strategy.
+Instead of explicitly seeking to sanction the patentability of
+software, they are now seeking to create a central European patent
+court, which would establish and enforce patentability rules in their
+favor, without any possibility of correction by competing courts or
+democratically elected legislators."
