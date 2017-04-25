@@ -1,54 +1,76 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 15/18] dt-bindings: sound: Add bindings
- for Cirrus Logic Madera codecs
-Date: Tue, 25 Apr 2017 17:27:44 +0100
-Message-ID: <1493137664.4826.75.camel@rf-debian.wolfsonmicro.main>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-16-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170425155257.s6m4wgrzxxsxcggo@sirena.org.uk>
+From: Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
+Date: Tue, 25 Apr 2017 20:33:30 +0200
+Message-ID: <4c5e1df7-bde3-a18c-a6db-4a3ae0de2174@gmail.com>
+References: <20170424152130.32410-1-marek.vasut+renesas@gmail.com>
+ <20170424152130.32410-3-marek.vasut+renesas@gmail.com>
+ <CACRpkdYR2mE6sOoP_WgsNtXsGvFhFE3bAgVDoNsaAQ7E4dZE=A@mail.gmail.com>
+ <ae65d889-baf4-e24b-d72d-05f29bba4f87@gmail.com>
+ <20170425122144.lxeuxohwg2rnw3zn@dell>
+ <4710b052-0634-5779-4dcf-3523ced709f4@gmail.com>
+ <20170425140113.vnvhyhdgymcnm3tt@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20170425155257.s6m4wgrzxxsxcggo@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, tglx@linutronix.de, lee.jones@linaro.org
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20170425140113.vnvhyhdgymcnm3tt@dell>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2017-04-25 at 16:52 +0100, Mark Brown wrote:
-> On Mon, Apr 24, 2017 at 05:08:41PM +0100, Richard Fitzgerald wrote:
-> > The Cirrus Logic Madera codecs are a family of related codecs with
-> > extensive digital and analogue I/O, digital mixing and routing,
-> > signal processing and programmable DSPs.
+On 04/25/2017 04:01 PM, Lee Jones wrote:
+> On Tue, 25 Apr 2017, Marek Vasut wrote:
 > 
-> Please submit patches using subject lines reflecting the style for the
-> subsystem.  This makes it easier for people to identify relevant
-> patches.  Look at what existing commits in the area you're changing are
-> doing and make sure your subject lines visually resemble what they're
-> doing.
+>> On 04/25/2017 02:21 PM, Lee Jones wrote:
+>>> On Tue, 25 Apr 2017, Marek Vasut wrote:
+>>>
+>>>> On 04/25/2017 11:32 AM, Linus Walleij wrote:
+>>>>> On Mon, Apr 24, 2017 at 5:21 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>>>
+>>>>>> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
+>>>>>> This block is pretty trivial and supports setting GPIO direction
+>>>>>> as Input/Output and in case of Output, supports setting value.
+>>>>>>
+>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>> Cc: linux-gpio@vger.kernel.org
+>>>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>>>> ---
+>>>>>> V2: Use linux/gpio/driver.h instead of linux/gpio.h
+>>>>>
+>>>>> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>>>>>
+>>>>> Are you merging this through MFD?
+>>>>
+>>>> I thought that was a question for Lee initially , IMO it'd make sense if
+>>>> this went through one tree.
+>>>
+>>> Because your mailer is broken, I know have no idea which thread this
+>>> mail belongs to.  Please fix your mailer to reply 'threaded'.
+>>
+>> You just were not on CC for the whole series, just the MFD part,
+>> probably that was the mistake, sorry. PW links below:
 > 
-> > +Required properties:
-> > +  - compatible : One of the following chip-specific strings:
-> > +        "cirrus,cs47l35-codec"
-> > +        "cirrus,cs47l85-codec"
-> > +        "cirrus,cs47l90-codec"
+> Okay, understood.
 > 
-> You shouldn't have compatible strings for subfunctions of a MFD unless
-> these represent meaningful reusable IPs that can exist separately from
-> the parent chip, that's clearly not the case here.  All you're doing
-> here is encoding Linux internal abstractions which aren't OS neutral and
-> might change in future (for example clocking might move more into the
-> clock API).
+>> https://patchwork.kernel.org/patch/9696589/
+>> https://patchwork.kernel.org/patch/9696591/
+>> https://patchwork.kernel.org/patch/9696597/
+>> https://patchwork.kernel.org/patch/9696593/
+> 
+> This is not the way we do business.
 
-While that's nice, the of_node doesn't get populated if there isn't a
-compatible string. And people don't like workarounds for the missing
-of_node.
+We?
+
+> If you want me to take them (and
+> there is a suitable reason for me to do so i.e. a build-time
+> dependency), then you're going to have to submit them again as
+> [RESEND]s with me in Cc.
+
+Done
+
+-- 
+Best regards,
+Marek Vasut
