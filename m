@@ -1,61 +1,63 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH 2/8] selftests: lib.mk: define CLEAN macro to allow
- Makefiles to override clean
-Date: Tue, 25 Apr 2017 07:36:40 -0600
-Message-ID: <9f62d597-e26c-e2c3-e666-975054409551@osg.samsung.com>
-References: <cover.1492815938.git.shuahkh@osg.samsung.com>
- <b39e21f8c47318d82be999aae310bdf6bcfc9bb9.1492815938.git.shuahkh@osg.samsung.com>
- <87zif9ypax.fsf@concordia.ellerman.id.au>
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Subject: Re: [PATCH -next v2] pinctrl: artpec6: Fix return value check in
+ artpec6_pmx_probe()
+Date: Tue, 25 Apr 2017 15:40:00 +0200
+Message-ID: <20170425134000.GN18509@axis.com>
+References: <20170425032945.22157-1-weiyj.lk@gmail.com>
+ <20170425112930.19555-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:51900
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S945842AbdDYNgw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Apr 2017 09:36:52 -0400
-In-Reply-To: <87zif9ypax.fsf@concordia.ellerman.id.au>
+Received: from bes.se.axis.com ([195.60.68.10]:41529 "EHLO bes.se.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S946043AbdDYNkH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Apr 2017 09:40:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20170425112930.19555-1-weiyj.lk@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, dvhart@infradead.org
-Cc: viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Shuah Khan <shuahkh@osg.samsung.com>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Linus Walleij <linus.walleij@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org
 
-On 04/21/2017 11:38 PM, Michael Ellerman wrote:
-> Shuah Khan <shuahkh@osg.samsung.com> writes:
+On Tue, Apr 25, 2017 at 11:29:30AM +0000, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
 > 
->> Define CLEAN macro to allow Makefiles to override common clean target
->> in lib.mk. This will help fix the following failures:
->>
->> warning: overriding recipe for target 'clean'
->> ../lib.mk:55: warning: ignoring old recipe for target 'clean'
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> In case of error, the function pinctrl_register() returns
+> ERR_PTR() not NULL. The NULL test in the return value check
+> should be replaced with IS_ERR().
 > 
-> Should probably have:
-> 
-> Fixes: 88baa78d1f31 ("selftests: remove duplicated all and clean target")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Amended the change log to add the above.
+Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
 
+Although I'm wondering if moving to pinctrl_register_and_init()
+would sense here. Linus?
+
+/Jesper
+
+> ---
+> v1 -> v2: fix comment
+> ---
+>  drivers/pinctrl/pinctrl-artpec6.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> 
-> In hindsight I'm not sure moving the clean target into lib.mk was
-> the best idea, but anyway it's a bit late to change our mind on that.
+> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+> index b5a2eff..6a16019 100644
+> --- a/drivers/pinctrl/pinctrl-artpec6.c
+> +++ b/drivers/pinctrl/pinctrl-artpec6.c
+> @@ -938,9 +938,9 @@ static int artpec6_pmx_probe(struct platform_device *pdev)
+>  	pmx->num_pin_groups = ARRAY_SIZE(artpec6_pin_groups);
+>  	pmx->pctl	    = pinctrl_register(&artpec6_desc, &pdev->dev, pmx);
+>  
+> -	if (!pmx->pctl) {
+> +	if (IS_ERR(pmx->pctl)) {
+>  		dev_err(&pdev->dev, "could not register pinctrl driver\n");
+> -		return -EINVAL;
+> +		return PTR_ERR(pmx->pctl);
+>  	}
+>  
+>  	platform_set_drvdata(pdev, pmx);
 
-Yeah. Moving clean target to lib.mk ended up to be problematic. However,
-there are some advantages as well. It will simplify some Makefiles. One
-thing that was missed was that not finding the Makefiles that require
-overrides. Anyway live and learn.
-
-> 
-> This patch is a good solution to fix the warnings.
-> 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-> 
-
-Thanks. I plan to apply the patch with the amended changelog and your
-Ack. Please let me know if you want to see v2 with the change sent out.
-
-thanks,
--- Shuah
-
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
