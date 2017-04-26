@@ -1,15 +1,15 @@
 From: <sean.wang@mediatek.com>
-Subject: [PATCH v2 17/30] arm: dts: mt7623: add ir nodes to the mt7623.dtsi file
-Date: Wed, 26 Apr 2017 17:26:01 +0800
-Message-ID: <1493198774-4478-18-git-send-email-sean.wang@mediatek.com>
+Subject: [PATCH v2 21/30] arm: dts: mt7623: add efuse nodes to the mt7623.dtsi file
+Date: Wed, 26 Apr 2017 17:26:05 +0800
+Message-ID: <1493198774-4478-22-git-send-email-sean.wang@mediatek.com>
 References: <1493198774-4478-1-git-send-email-sean.wang@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:15471 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2997118AbdDZJ1Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 05:27:16 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:43730 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2997126AbdDZJ1e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 05:27:34 -0400
 In-Reply-To: <1493198774-4478-1-git-send-email-sean.wang@mediatek.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -18,33 +18,35 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kern
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add ir nodes to the mt7623.dtsi file.
+Add efuse nodes to the mt7623.dtsi file.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- arch/arm/boot/dts/mt7623.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/mt7623.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-index ad7c50a..76e0840 100644
+index 0f82e1a..2289232 100644
 --- a/arch/arm/boot/dts/mt7623.dtsi
 +++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -171,6 +171,15 @@
- 		clock-names = "spi", "wrap";
+@@ -189,6 +189,17 @@
+ 		reg = <0 0x10200100 0 0x1c>;
  	};
  
-+	cir: cir@0x10013000 {
-+		compatible = "mediatek,mt7623-cir";
-+		reg = <0 0x10013000 0 0x1000>;
-+		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&infracfg CLK_INFRA_IRRX>;
-+		clock-names = "clk";
-+		status = "disabled";
++	efuse: efuse@10206000 {
++		compatible = "mediatek,mt7623-efuse",
++			     "mediatek,mt8173-efuse";
++		reg	   = <0 0x10206000 0 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		thermal_calibration_data: calib@424 {
++			reg = <0x424 0xc>;
++		};
 +	};
 +
- 	sysirq: interrupt-controller@10200100 {
- 		compatible = "mediatek,mt7623-sysirq",
- 			     "mediatek,mt6577-sysirq";
+ 	apmixedsys: syscon@10209000 {
+ 		compatible = "mediatek,mt7623-apmixedsys",
+ 			     "mediatek,mt2701-apmixedsys",
 -- 
 1.9.1
 
