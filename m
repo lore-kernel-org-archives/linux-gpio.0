@@ -1,34 +1,63 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] pinctrl: samsung: remove unneeded (void *) casts in of_match_table
-Date: Wed, 26 Apr 2017 09:21:45 +0200
-Message-ID: <CAJKOXPdfYjBw=LSfLOJ_CY2+bhY5QA--GbUHfqz3yBuydsO8Uw@mail.gmail.com>
-References: <1493156063-8446-1-git-send-email-yamada.masahiro@socionext.com> <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 2/2] gpio: DT bindings, move tca9554 from pcf857x to pca953x
+Date: Wed, 26 Apr 2017 09:56:36 +0200
+Message-ID: <CAMuHMdWnyfjViD=MvHJn7jFV3OdbUvR7TzqGMfx2igEVU6J+bw@mail.gmail.com>
+References: <20170421124631.19269-1-anders@chargestorm.se> <20170421124631.19269-2-anders@chargestorm.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:57488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1953163AbdDZHVt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 26 Apr 2017 03:21:49 -0400
-In-Reply-To: <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36752 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1956570AbdDZH4i (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 03:56:38 -0400
+In-Reply-To: <20170421124631.19269-2-anders@chargestorm.se>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Anders Darander <anders@chargestorm.se>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-On Tue, Apr 25, 2017 at 11:34 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> of_device_id::data is an opaque pointer.  No explicit cast is needed.
+On Fri, Apr 21, 2017 at 2:46 PM, Anders Darander <anders@chargestorm.se> wrote:
+> The TCA9554 is similar to the PCA9554. Update the DT binding docs.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Anders Darander <anders@chargestorm.se>
 > ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
+>  Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt | 1 -
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 >
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> index e63935710011..7f57271df2bc 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> @@ -26,6 +26,7 @@ Required properties:
+>         ti,tca6416
+>         ti,tca6424
+>         ti,tca9539
+> +       ti,tca9554
+>         onsemi,pca9654
+>         exar,xra1202
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+> index ada4e2973323..7d3bd631d011 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+> @@ -25,7 +25,6 @@ Required Properties:
+>      - "nxp,pcf8574": For the NXP PCF8574
+>      - "nxp,pcf8574a": For the NXP PCF8574A
+>      - "nxp,pcf8575": For the NXP PCF8575
+> -    - "ti,tca9554": For the TI TCA9554
+>
+>    - reg: I2C slave address.
 
-Looks correct. It is too late for me for v4.12 so I will pick it up
-for v4.13. For my reference:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+BTW, gpio-pca953x.txt seems to lack lots of gpio-controller-related properties.
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
