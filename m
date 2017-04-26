@@ -1,50 +1,34 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 1/2] pinctrl: rockchip: remove unneeded (void *) casts in of_match_table
-Date: Wed, 26 Apr 2017 00:11:32 +0200
-Message-ID: <59735505.eYpuzA7ihW@diego>
-References: <1493156063-8446-1-git-send-email-yamada.masahiro@socionext.com> <1493156063-8446-2-git-send-email-yamada.masahiro@socionext.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: remove unneeded (void *) casts in of_match_table
+Date: Wed, 26 Apr 2017 09:21:45 +0200
+Message-ID: <CAJKOXPdfYjBw=LSfLOJ_CY2+bhY5QA--GbUHfqz3yBuydsO8Uw@mail.gmail.com>
+References: <1493156063-8446-1-git-send-email-yamada.masahiro@socionext.com> <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:35442 "EHLO gloria.sntech.de"
+Received: from mail.kernel.org ([198.145.29.136]:57488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1432735AbdDYWLi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Apr 2017 18:11:38 -0400
-In-Reply-To: <1493156063-8446-2-git-send-email-yamada.masahiro@socionext.com>
+        id S1953163AbdDZHVt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Apr 2017 03:21:49 -0400
+In-Reply-To: <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Hi,
-
-Am Mittwoch, 26. April 2017, 06:34:22 CEST schrieb Masahiro Yamada:
+On Tue, Apr 25, 2017 at 11:34 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 > of_device_id::data is an opaque pointer.  No explicit cast is needed.
-> 
+>
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
-> 
->  drivers/pinctrl/pinctrl-rockchip.c | 20 ++++++++++----------
+>
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 20 ++++++++++----------
 >  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c
-> b/drivers/pinctrl/pinctrl-rockchip.c index 7813599..da1a38f 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -2769,25 +2769,25 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
-> 
->  static const struct of_device_id rockchip_pinctrl_dt_match[] = {
->  	{ .compatible = "rockchip,rk1108-pinctrl",
-> -		.data = (void *)&rk1108_pin_ctrl },
-> +		.data = &rk1108_pin_ctrl },
 
-You should base your pinctrl-patches on top of Linus' branch, especially
-as the rk1108->rv1108 is in there:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/drivers/pinctrl/pinctrl-rockchip.c?h=for-next&id=b9c6dcab265e93c47bdcd99ab7c6acda90ed669b
+Looks correct. It is too late for me for v4.12 so I will pick it up
+for v4.13. For my reference:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-With the above fixed:
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-
-Heiko
+Best regards,
+Krzysztof
