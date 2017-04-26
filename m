@@ -1,42 +1,71 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 5/8] gpio: gpio-wcove: use first level PMIC GPIO irq
-Date: Wed, 26 Apr 2017 18:40:55 +0300
-Message-ID: <CAHp75Vd486wZ=bmBL4e41r5VufhWqz_O_4g=P9dgR69EOTtxZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] platform: x86: intel_bxtwc_tmu: remove first level
+ irq unmask
+Date: Wed, 26 Apr 2017 18:44:43 +0300
+Message-ID: <CAHp75VebW8Fi2Hzkk=9z_Ktq=xc7MjUWUE00p72OeyxcP9826w@mail.gmail.com>
 References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <cd9ddab845e471758b5553fcdc060d6eecd24e93.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <CACRpkdYD8SiTDL1Bc4ordyi4E2fPSRpgbKY_DPd76oQYhXe11A@mail.gmail.com>
+ <93377b77b9493d79de48741b030fa1b03f80094f.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20170421220025.GC31650@fury> <d9ead97f-db7b-a0b0-4eb1-1c783ee1e841@linux.intel.com>
+ <CAHp75VeGQ=Zb=azNZCEfA25VdvuQcbMJoHuXkyQ24KOh4WQjRw@mail.gmail.com>
+ <20170424092401.uijlbkcxosoy4zmt@dell> <CAHp75Vd-V1jzPcEj1ZgA204gL_+ToeO7itbxjE_2e2ptki_PpQ@mail.gmail.com>
+ <20170424122439.nwrlincsvhjq4ljf@dell>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYD8SiTDL1Bc4ordyi4E2fPSRpgbKY_DPd76oQYhXe11A@mail.gmail.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, Eduardo Valentin <edubezval@gmail.com>, Darren Hart <dvhart@infradead.org>, Zhang Rui <rui.zhang@intel.com>, Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, platform-driver-x86 <platform-driver-x86@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36288 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936687AbdDZPou (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 11:44:50 -0400
+In-Reply-To: <20170424122439.nwrlincsvhjq4ljf@dell>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Darren Hart <dvhart@infradead.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "edubezval@gmail.com" <edubezval@gmail.com>, "Zhang, Rui" <rui.zhang@intel.com>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 
-On Mon, Apr 24, 2017 at 4:17 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sat, Apr 15, 2017 at 1:25 AM,
-> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+On Mon, Apr 24, 2017 at 3:24 PM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Mon, 24 Apr 2017, Andy Shevchenko wrote:
 >
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> On Mon, Apr 24, 2017 at 12:24 PM, Lee Jones <lee.jones@linaro.org> wrote:
+>> > On Sat, 22 Apr 2017, Andy Shevchenko wrote:
+>> >
+>> >> On Sat, Apr 22, 2017 at 1:34 AM, sathyanarayanan kuppuswamy
+>> >> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+>> >>
+>> >> > Thanks for brining it up. I was planning to ask either Andy or Lee regarding
+>> >> > this issue after all patches in the series are reviewed.
+>> >>
+>> >> Darren, I'm planning to review this soon.
+>> >>
+>> >> P.S. We have few series flying around regarding to Intel PMIC(s): my
+>> >> for Kconfig naming, Hans' for Crystal Cove (touches Kconfig as well),
+>> >> and Sathya's series. I hope Lee can collect them in proper order.
+>> >
+>> > That could be easier said than done.
 >>
->> PMIC mfd driver only exports first level irq for GPIO device.
->> But currently we are reading the irqs from the second level irq
->> chip, So this patch fixes this issue by adding support to use
->> first level PMIC GPIO irq.
+>> Some of them are already in your tree, then apply
+>> - my Kconfig patch which makes Broxton Whiskey Cove to be built
+>> independently of Crystal Cove (I didn't notice that patch in your
+>> tree, though some of your mail told it had been applied)
+>> - Hans' series regarding CherryTrail Whiskey Cove support (if it has all ACKs)
+>> - this series after my review.
 >>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> Does it sound doable?
 >
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> I guess this gets merged into MFD because of dependencies?
+> My Inbox is now empty, so all patches are now either applied or
+> waiting further Acks/Actions.
 
-Yes.
+I reviewed the series and found it suitable to apply.
+The GPIO Whiskey Cove patch will do a conflict (in GPIO tree is
+another patch that adds GPIO IRQ masks in a way by using GENMASK(),
+so, we might avoid this doing the same in patch 5 here).
 
-> If it compiles on its own and doesn't cause regressions I can
-> merged it into the GPIO tree.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-I guess it will break something if put it separately.
+for entire series.
+
+> I'm pretty certain that this set is not going in before v4.13.
+
+It is now on your side :-)
 
 -- 
 With Best Regards,
