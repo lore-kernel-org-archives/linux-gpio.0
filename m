@@ -1,58 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/4] gpio - Add EXAR XRA1403 SPI GPIO expander driver
-Date: Wed, 26 Apr 2017 16:42:18 +0200
-Message-ID: <CACRpkdb82RLyjTW8t-bWynSQH0tV2dnrq9AfefQfKzTEt_TFPw@mail.gmail.com>
-References: <cover.1492077070.git.nandor.han@ge.com> <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
- <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com> <CANjd3ndZkVi5OA0eqDewrpqVLQpT11QbVOA98F=ghMhcwPu2hQ@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: fix GPIO IRQ status mask
+Date: Wed, 26 Apr 2017 17:50:12 +0300
+Message-ID: <20170426145012.GC7152@lahna.fi.intel.com>
+References: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
+ <3257d22879148692da6887f89843389bd37ee877.1493060870.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:33984 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1434667AbdDZOmU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 10:42:20 -0400
-Received: by mail-io0-f178.google.com with SMTP id a103so4038120ioj.1
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Apr 2017 07:42:20 -0700 (PDT)
-In-Reply-To: <CANjd3ndZkVi5OA0eqDewrpqVLQpT11QbVOA98F=ghMhcwPu2hQ@mail.gmail.com>
+Received: from mga04.intel.com ([192.55.52.120]:14259 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1041178AbdDZOuX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Apr 2017 10:50:23 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Benjamin Henrion <zoobab@gmail.com>
-Cc: Nandor Han <nandor.han@ge.com>, Greg KH <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Semi Malinen <semi.malinen@ge.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Bin Gao <bin.gao@intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sathyaosid@gmail.com
 
-On Tue, Apr 25, 2017 at 9:07 AM, Benjamin Henrion <zoobab@gmail.com> wrote:
+On Wed, Apr 26, 2017 at 04:26:17PM +0200, Linus Walleij wrote:
+> On Mon, Apr 24, 2017 at 9:15 PM,
+> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+> 
+> > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> >
+> > According to Whiskey Cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
+> > battery IO. So we should skip this bit when checking for GPIO IRQ pending
+> > status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
+> > loop until IRQ "pending" status becomes 0. This patch fixes this issue.
+> >
+> > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+> Looks fine to me, tentatively applied.
+> 
+> Bin, Mika, Andy, OK?
 
-> I doubt you will be able to convince the majority of people toggling
-> GPIOs via a simple shell script to switch to write a complex C
-> program. Not to mention cross compilation and the libraries
-> dependencies here.
+Looks fine to me as well :)
 
-I do not need to convince anyone, I'm not into politics.
-
-The way to attract users to the character device is by offering better
-features... so we smack in the following goodies:
-
-- Need a userspace ABI? No more need to select CONFIG_GPIO_SYSFS!
-  The chardev is always there for any gpio chip in newer kernels!
-  Board vendors would have to actively delete core code to disable it!
-
-- Need open drain? The chardev will support that, the sysfs will never.
-
-- Need to set/get multiple lines with a single context switch? Chardev
-  does this. Also the set operation will turn into a single register write
-  if your driver implements .set_multiple()
-
-- All future needs: line biasing? Schmitt triggers? Drive strengths?
-  All that will use the character device, and the sysfs ABI will never
-  support any of it.
-
-> Is there some good cli tools to access the new char device? If they
-> are shipped with most distros, that would reduce the pain.
-
-I have those that come with the kernel:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/gpio
-
-Then libgpiod as mentioned:
-https://github.com/brgl/libgpiod/tree/master/src/tools
-
-Yours,
-Linus Walleij
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
