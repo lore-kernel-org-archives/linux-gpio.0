@@ -1,36 +1,36 @@
-From: "Gao, Bin" <bin.gao@intel.com>
-Subject: RE: [PATCH v2 1/1] gpio: gpio-wcove: fix GPIO IRQ status mask
-Date: Wed, 26 Apr 2017 16:42:02 +0000
-Message-ID: <4460FA1017EA3844B646E90DA4E984057E358D94@ORSMSX112.amr.corp.intel.com>
-References: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
- <3257d22879148692da6887f89843389bd37ee877.1493060870.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] gpio - Add EXAR XRA1403 SPI GPIO expander driver
+Date: Wed, 26 Apr 2017 20:50:46 +0300
+Message-ID: <CAHp75VeVPJfakw0GdsKXqZ0ecUNHB2XvEnw15aATuLR2B=vXRQ@mail.gmail.com>
+References: <cover.1492077070.git.nandor.han@ge.com> <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
+ <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com>
+ <CANjd3ndZkVi5OA0eqDewrpqVLQpT11QbVOA98F=ghMhcwPu2hQ@mail.gmail.com> <CAMuHMdUvQwqhuoWnS3h1S7p0q1K9m5BBFue54pkOykMgi+xmWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:56690 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751633AbdDZQmG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 26 Apr 2017 12:42:06 -0400
-In-Reply-To: <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMuHMdUvQwqhuoWnS3h1S7p0q1K9m5BBFue54pkOykMgi+xmWw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: zoobab-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Nandor Han <nandor.han-JJi787mZWgc@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Semi Malinen <semi.malinen-JJi787mZWgc@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sathyaosid@gmail.com" <sathyaosid@gmail.com>
 
-T24gV2VkLCBBcHJpbCAyNiwgMjAxNyBhdCA3OjI2IEFNLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-Pk9uIE1vbiwgQXByIDI0LCAyMDE3IGF0IDk6MTUgUE0sDQo+PHNhdGh5YW5hcmF5YW5hbi5rdXBw
-dXN3YW15QGxpbnV4LmludGVsLmNvbT4gd3JvdGU6DQo+DQo+PiBGcm9tOiBLdXBwdXN3YW15IFNh
-dGh5YW5hcmF5YW5hbiANCj4+IDxzYXRoeWFuYXJheWFuYW4ua3VwcHVzd2FteUBsaW51eC5pbnRl
-bC5jb20+DQo+Pg0KPj4gQWNjb3JkaW5nIHRvIFdoaXNrZXkgQ292ZSBQTUlDIHNwZWMsIGJpdCA3
-IG9mIEdQSU9JUlEwX1JFRyBiZWxvbmdzIHRvIA0KPj4gYmF0dGVyeSBJTy4gU28gd2Ugc2hvdWxk
-IHNraXAgdGhpcyBiaXQgd2hlbiBjaGVja2luZyBmb3IgR1BJTyBJUlEgDQo+PiBwZW5kaW5nIHN0
-YXR1cy4gT3RoZXJ3aXNlLCB3Y292ZV9ncGlvX2lycV9oYW5kbGVyKCkgbWlnaHQgZ28gaW50byB0
-aGUgDQo+PiBpbmZpbml0ZSBsb29wIHVudGlsIElSUSAicGVuZGluZyIgc3RhdHVzIGJlY29tZXMg
-MC4gVGhpcyBwYXRjaCBmaXhlcyB0aGlzIGlzc3VlLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEt1
-cHB1c3dhbXkgU2F0aHlhbmFyYXlhbmFuIA0KPj4gPHNhdGh5YW5hcmF5YW5hbi5rdXBwdXN3YW15
-QGxpbnV4LmludGVsLmNvbT4NCj4NCj5Mb29rcyBmaW5lIHRvIG1lLCB0ZW50YXRpdmVseSBhcHBs
-aWVkLg0KPg0KPkJpbiwgTWlrYSwgQW5keSwgT0s/DQo+DQo+WW91cnMsDQo+TGludXMgV2FsbGVp
-ag0KDQpMb29rcyByZWFzb25hYmxlIHRvIG1lLg0KDQpUaGFua3MsDQpCaW4NCg==
+On Tue, Apr 25, 2017 at 10:15 AM, Geert Uytterhoeven
+<geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> wrote:
+
+>> Is there some good cli tools to access the new char device? If they
+>> are shipped with most distros, that would reduce the pain.
+>
+> https://github.com/brgl/libgpiod
+>
+> A bit early to expect it to be shipped with all distros, though.
+
+Buildroot has it.
+For kernel development it is quite enough.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
