@@ -1,138 +1,28 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v4 7/7] ARM64: dts: marvell: armada37xx: add pinctrl definition
-Date: Wed, 26 Apr 2017 12:28:25 +0200
-Message-ID: <87mvb38nue.fsf@free-electrons.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-        <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-        <7b07bd69cd506effa716c41f8ec3dda7a7c6c563.1491405475.git-series.gregory.clement@free-electrons.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 2/8] selftests: lib.mk: define CLEAN macro to allow Makefiles to override clean
+Date: Wed, 26 Apr 2017 20:55:18 +1000
+Message-ID: <87inlr1lrd.fsf@concordia.ellerman.id.au>
+References: <cover.1492815938.git.shuahkh@osg.samsung.com> <b39e21f8c47318d82be999aae310bdf6bcfc9bb9.1492815938.git.shuahkh@osg.samsung.com> <87zif9ypax.fsf@concordia.ellerman.id.au> <9f62d597-e26c-e2c3-e666-975054409551@osg.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:45261 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2998105AbdDZK2h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 06:28:37 -0400
-In-Reply-To: <7b07bd69cd506effa716c41f8ec3dda7a7c6c563.1491405475.git-series.gregory.clement@free-electrons.com>
-        (Gregory CLEMENT's message of "Wed, 5 Apr 2017 17:18:08 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9f62d597-e26c-e2c3-e666-975054409551@osg.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, dvhart@infradead.org
+Cc: viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Shuah Khan <shuahkh@osg.samsung.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-Hi,
- 
- On mer., avril 05 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+Shuah Khan <shuahkh@osg.samsung.com> writes:
+> On 04/21/2017 11:38 PM, Michael Ellerman wrote:
+>> Shuah Khan <shuahkh@osg.samsung.com> writes:
 
-> Start to populate the device tree of the Armada 37xx with the pincontrol
-> configuration used on the board providing a dts.
+>> This patch is a good solution to fix the warnings.
+>> 
+>> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 >
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Thanks. I plan to apply the patch with the amended changelog and your
+> Ack. Please let me know if you want to see v2 with the change sent out.
 
-Applied on mvebu/dt64
+I don't really mind if you send it or not.
 
-Thanks,
-
-Gregory
-
-> ---
->  arch/arm64/boot/dts/marvell/armada-3720-db.dts |  8 +++++-
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi   | 31 +++++++++++++++++++-
->  2 files changed, 39 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-db.dts b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-> index 86602c907a61..e749c5727490 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-db.dts
-> @@ -63,6 +63,8 @@
->  };
->  
->  &i2c0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c1_pins>;
->  	status = "okay";
->  };
->  
-> @@ -73,6 +75,8 @@
->  
->  &spi0 {
->  	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&spi_quad_pins>;
->  
->  	m25p80@0 {
->  		compatible = "jedec,spi-nor";
-> @@ -103,6 +107,8 @@
->  
->  /* Exported on the micro USB connector CON32 through an FTDI */
->  &uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart1_pins>;
->  	status = "okay";
->  };
->  
-> @@ -128,6 +134,8 @@
->  };
->  
->  &eth0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&rgmii_pins>;
->  	phy-mode = "rgmii-id";
->  	phy = <&phy0>;
->  	status = "okay";
-> diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-> index c02b13479458..2ac25f54d01d 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
-> @@ -186,6 +186,31 @@
->  					clock-output-names = "xtal";
->  					#clock-cells = <0>;
->  				};
-> +
-> +				spi_quad_pins: spi-quad-pins {
-> +					groups = "spi_quad";
-> +					function = "spi";
-> +				};
-> +
-> +				i2c1_pins: i2c1-pins {
-> +					groups = "i2c1";
-> +					function = "i2c";
-> +				};
-> +
-> +				i2c2_pins: i2c2-pins {
-> +					groups = "i2c2";
-> +					function = "i2c";
-> +				};
-> +
-> +				uart1_pins: uart1-pins {
-> +					groups = "uart1";
-> +					function = "uart";
-> +				};
-> +
-> +				uart2_pins: uart2-pins {
-> +					groups = "uart2";
-> +					function = "uart";
-> +				};
->  			};
->  
->  			pinctrl_sb: pinctrl-sb@18800 {
-> @@ -203,6 +228,12 @@
->  					<GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
->  					<GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
->  				};
-> +
-> +				rgmii_pins: mii-pins {
-> +					groups = "rgmii";
-> +					function = "mii";
-> +				};
-> +
->  			};
->  
->  			eth0: ethernet@30000 {
-> -- 
-> git-series 0.9.1
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+cheers
