@@ -1,43 +1,44 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: fix GPIO IRQ status mask
-Date: Wed, 26 Apr 2017 17:52:09 +0300
-Message-ID: <CAHp75Ver8XQZd2sG4QDo+HmUFGHPMthe0jHROv+uJB74gzYJgQ@mail.gmail.com>
-References: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
- <3257d22879148692da6887f89843389bd37ee877.1493060870.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] gpio: f7188x: add missing break in switch statement
+Date: Wed, 26 Apr 2017 16:05:39 +0100
+Message-ID: <20170426150539.11261-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34171 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1955639AbdDZOwL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 10:52:11 -0400
-In-Reply-To: <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:36004 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1437726AbdDZPFl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 11:05:41 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Bin Gao <bin.gao@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
+To: Marty Plummer <netz.kernel@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Apr 26, 2017 at 5:26 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Apr 24, 2017 at 9:15 PM,
-> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
->
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> According to Whiskey Cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
->> battery IO. So we should skip this bit when checking for GPIO IRQ pending
->> status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
->> loop until IRQ "pending" status becomes 0. This patch fixes this issue.
->>
->> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->
-> Looks fine to me, tentatively applied.
->
-> Bin, Mika, Andy, OK?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, thanks!
+The case statement for f71889a is missing a break statement, add it.
 
+Detected with CoverityScan, CID#1431861 ("Missig break in switch")
 
+Fixes: d69843e416d31 ("gpio: f7188x: Add F71889A GPIO support.")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-f7188x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index c013ff5deb70..13350c9d7f5e 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -398,6 +398,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ 	case f71889a:
+ 		data->nr_bank = ARRAY_SIZE(f71889a_gpio_bank);
+ 		data->bank = f71889a_gpio_bank;
++		break;
+ 	case f71889f:
+ 		data->nr_bank = ARRAY_SIZE(f71889_gpio_bank);
+ 		data->bank = f71889_gpio_bank;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.11.0
+
