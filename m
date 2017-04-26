@@ -1,36 +1,34 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] gpio - Add EXAR XRA1403 SPI GPIO expander driver
-Date: Wed, 26 Apr 2017 20:50:46 +0300
-Message-ID: <CAHp75VeVPJfakw0GdsKXqZ0ecUNHB2XvEnw15aATuLR2B=vXRQ@mail.gmail.com>
-References: <cover.1492077070.git.nandor.han@ge.com> <f28eef264102786357ac5ed7205813619c508fb4.1492077070.git.nandor.han@ge.com>
- <CACRpkdZHMWH2W-i4MGZ7NKzPHUURRmC-5YwiK7cVLCHKDsb7sw@mail.gmail.com>
- <CANjd3ndZkVi5OA0eqDewrpqVLQpT11QbVOA98F=ghMhcwPu2hQ@mail.gmail.com> <CAMuHMdUvQwqhuoWnS3h1S7p0q1K9m5BBFue54pkOykMgi+xmWw@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] gpio: f7188x: Add a missing break
+Date: Wed, 26 Apr 2017 22:08:15 +0300
+Message-ID: <20170426190815.vi2v3ef4j7ruspkg@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMuHMdUvQwqhuoWnS3h1S7p0q1K9m5BBFue54pkOykMgi+xmWw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: zoobab-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Nandor Han <nandor.han-JJi787mZWgc@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Semi Malinen <semi.malinen-JJi787mZWgc@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:48429 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965725AbdDZTI1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 15:08:27 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Marty Plummer <netz.kernel@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Tue, Apr 25, 2017 at 10:15 AM, Geert Uytterhoeven
-<geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> wrote:
+A break statement was obviously intended here.
 
->> Is there some good cli tools to access the new char device? If they
->> are shipped with most distros, that would reduce the pain.
->
-> https://github.com/brgl/libgpiod
->
-> A bit early to expect it to be shipped with all distros, though.
+Fixes: d69843e416d3 ("gpio: f7188x: Add F71889A GPIO support.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Buildroot has it.
-For kernel development it is quite enough.
-
--- 
-With Best Regards,
-Andy Shevchenko
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
+index c013ff5deb70..13350c9d7f5e 100644
+--- a/drivers/gpio/gpio-f7188x.c
++++ b/drivers/gpio/gpio-f7188x.c
+@@ -398,6 +398,7 @@ static int f7188x_gpio_probe(struct platform_device *pdev)
+ 	case f71889a:
+ 		data->nr_bank = ARRAY_SIZE(f71889a_gpio_bank);
+ 		data->bank = f71889a_gpio_bank;
++		break;
+ 	case f71889f:
+ 		data->nr_bank = ARRAY_SIZE(f71889_gpio_bank);
+ 		data->bank = f71889_gpio_bank;
