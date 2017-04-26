@@ -1,90 +1,39 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v4 5/7] pinctrl: aramda-37xx: Add irqchip support
-Date: Wed, 26 Apr 2017 15:12:01 +0200
-Message-ID: <87inlr8g9q.fsf@free-electrons.com>
-References: <cover.65d0e6796fecf1fe6c5d07b981160b54dc9b4acd.1491405475.git-series.gregory.clement@free-electrons.com>
-        <70ffe3343c13d01737bf74e5de4898d0c0be07a0.1491405475.git-series.gregory.clement@free-electrons.com>
-        <CACRpkdZ=mVXBbVf1iHg8nQ6pYUkvpB+egH+stoMrkD8V_vaYpg@mail.gmail.com>
-        <87zif38qu2.fsf@free-electrons.com>
-        <CACRpkdYYRe4A+Zj+fDpC9SA1pgaVSgewYGB_vCNoWNRXWTtTGQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: fix GPIO IRQ status mask
+Date: Wed, 26 Apr 2017 16:26:17 +0200
+Message-ID: <CACRpkda-GxRLJ=RHhDLRiu_ub=mpibQ7UPXg0=p-7jwJKpK5kg@mail.gmail.com>
+References: <CAHp75VefVpwf-Ooom9Am3Gfmc8zR31fqWxTzYXest_+YTOk2yg@mail.gmail.com>
+ <3257d22879148692da6887f89843389bd37ee877.1493060870.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:49478 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1950716AbdDZNMN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 09:12:13 -0400
-In-Reply-To: <CACRpkdYYRe4A+Zj+fDpC9SA1pgaVSgewYGB_vCNoWNRXWTtTGQ@mail.gmail.com>
-        (Linus Walleij's message of "Wed, 26 Apr 2017 14:03:15 +0200")
+Received: from mail-it0-f41.google.com ([209.85.214.41]:38483 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1948988AbdDZO0T (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Apr 2017 10:26:19 -0400
+Received: by mail-it0-f41.google.com with SMTP id f187so3632861ite.1
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Apr 2017 07:26:19 -0700 (PDT)
+In-Reply-To: <3257d22879148692da6887f89843389bd37ee877.1493060870.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
+To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Bin Gao <bin.gao@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, sathyaosid@gmail.com
 
-Hi Linus,
- 
- On mer., avril 26 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
+On Mon, Apr 24, 2017 at 9:15 PM,
+<sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
 
-> On Wed, Apr 26, 2017 at 11:23 AM, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->>  On lun., avril 24 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 >
->>>> +               spin_lock_irqsave(&info->irq_lock, flags);
->>>> +               status = readl_relaxed(info->base + IRQ_STATUS + 4 * i);
->>>> +               /* Manage only the interrupt that was enabled */
->>>> +               status &= readl_relaxed(info->base + IRQ_EN + 4 * i);
->>>> +               spin_unlock_irqrestore(&info->irq_lock, flags);
->>>> +               while (status) {
->>>> +                       u32 hwirq = ffs(status) - 1;
->>>> +                       u32 virq = irq_find_mapping(d, hwirq +
->>>> +                                                    i * GPIO_PER_REG);
->>>> +
->>>> +                       generic_handle_irq(virq);
->>>> +                       status &= ~BIT(hwirq);
->>>> +               }
->>>
->>> You hae a problem here is a new IRQ appears while you are inside
->>> of this loop. You need to re-read the status register for each iteration
->>> (and &= with the IRQ_EN I guess).
->>
->> If a new IRQ appears during the loop, then the irq handler will be
->> called again because the cause of this new IRQ won't have been acked
->> yet. So I think we're fine here.
+> According to Whiskey Cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
+> battery IO. So we should skip this bit when checking for GPIO IRQ pending
+> status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
+> loop until IRQ "pending" status becomes 0. This patch fixes this issue.
 >
-> That *might* be true. It is true if the CPU gets a level IRQ from the
-> GPIO controller. But hardware dealing with edge IRQs can be very
-> quirky here, and just send a pulse on the line to the CPU if the
-> CPU-bound IRQ is also just edge triggered. And then that
-> pulse would potentially be missed while dealing with the current
-> IRQ in this handler. (And exactly this happened to us on other
-> hardware.)
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-OK thanks for sharing your experience, you convinced me, I am going to
-send a new version of the patch with this fix.
+Looks fine to me, tentatively applied.
 
+Bin, Mika, Andy, OK?
 
->
-> But anyway: why let the irq handler be called again if you can avoid
-> it?
-> You would avoid a double context switch by just checking it again
-> in the loop before exiting the handler. And that can be really nice
-> for latency-sensitive stuff.
-
-
-I wanted to avoid an uncached access in each loop if it was not
-necessary. But as we finally need it, I will do it.
-
-
-Gregory
-
-
-
->
-> Yours,
-> Linus Walleij
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Yours,
+Linus Walleij
