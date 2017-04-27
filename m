@@ -1,62 +1,53 @@
 From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH 3/8] selftests: futex: override clean in lib.mk to fix
- warnings
-Date: Thu, 27 Apr 2017 15:57:13 -0600
-Message-ID: <512c6179-00bd-180f-dff5-7b81d181ae81@osg.samsung.com>
+Subject: Re: [PATCH 0/8] Fix clean target warnings
+Date: Thu, 27 Apr 2017 16:02:29 -0600
+Message-ID: <831a9104-b186-bae7-be87-5f4adb664dcd@osg.samsung.com>
 References: <cover.1492815938.git.shuahkh@osg.samsung.com>
- <2ccc4e205a4e25e227e7a90c0037d9e6a6f99ed1.1492815938.git.shuahkh@osg.samsung.com>
- <20170427215437.GC29261@fury>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:34236
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:34264
         "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1030374AbdD0V5S (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Apr 2017 17:57:18 -0400
-In-Reply-To: <20170427215437.GC29261@fury>
+        with ESMTP id S1754292AbdD0WCd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Apr 2017 18:02:33 -0400
+In-Reply-To: <cover.1492815938.git.shuahkh@osg.samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>
-Cc: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, shuah Khan <shuahkh@osg.samsung.com>
+To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, dvhart@infradead.org
+Cc: viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 04/27/2017 03:54 PM, Darren Hart wrote:
-> On Fri, Apr 21, 2017 at 05:14:45PM -0600, Shuah Khan wrote:
->> Add override for lib.mk clean to fix the following warnings from clean
->> target run.
->>
->> Makefile:36: warning: overriding recipe for target 'clean'
->> ../lib.mk:55: warning: ignoring old recipe for target 'clean'
->>
->> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
->> ---
->>  tools/testing/selftests/futex/Makefile | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/futex/Makefile b/tools/testing/selftests/futex/Makefile
->> index c8095e6..e2fbb89 100644
->> --- a/tools/testing/selftests/futex/Makefile
->> +++ b/tools/testing/selftests/futex/Makefile
->> @@ -32,9 +32,10 @@ override define EMIT_TESTS
->>  	echo "./run.sh"
->>  endef
->>  
->> -clean:
->> +override define CLEAN
->>  	for DIR in $(SUBDIRS); do		\
->>  		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
->>  		mkdir $$BUILD_TARGET  -p;	\
->>  		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;\
->>  	done
->> +endef
+On 04/21/2017 05:14 PM, Shuah Khan wrote:
+> This patch series consists of changes to lib.mk to allow overriding
+> common clean target from Makefiles. This fixes warnings when clean
+> overriding and ignoring warnings. Also fixes splice clean target
+> removing a script that runs the test from its clean target.
 > 
-> Taking the move of clean into lib.mk as a given,
+> Shuah Khan (8):
+>   selftests: splice: fix clean target to not remove
+>     default_file_splice_read.sh
+>   selftests: lib.mk: define CLEAN macro to allow Makefiles to override
+>     clean
 
-Yeah I considered undoing that, and chose to fix the missed
-issues instead.
-> 
-> Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
-> 
+Applied with amended change log and Michael's ack to linux-kselftest next
+
+>   selftests: futex: override clean in lib.mk to fix warnings
+>   selftests: gpio: override clean in lib.mk to fix warnings
+>   selftests: powerpc: override clean in lib.mk to fix warnings
+
+Applied all of the above to linux-kseltftest next
+
+>   selftests: splice: override clean in lib.mk to fix warnings
+>   selftests: sync: override clean in lib.mk to fix warnings
+>   selftests: x86: override clean in lib.mk to fix warnings
+
+Applied v2s addressing Michael's comments to linux-kselftest next
+x86 fix also addresses not being able to build ldt_gdt
+
+make -C tools/testing/selftests/x86 ldt_gdt
+
 
 thanks,
 -- Shuah
+
+
