@@ -1,73 +1,278 @@
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv2 6/6] pinctrl: mcp23s08: drop pullup config from pdata
-Date: Thu, 27 Apr 2017 16:19:37 +0200
-Message-ID: <20170427141937.762-7-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv2 5/6] pinctrl: mcp23s08: add pinconf support
+Date: Thu, 27 Apr 2017 16:19:36 +0200
+Message-ID: <20170427141937.762-6-sebastian.reichel@collabora.co.uk>
 References: <20170427141937.762-1-sebastian.reichel@collabora.co.uk>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49999 "EHLO
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49993 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1034424AbdD0OUI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Apr 2017 10:20:08 -0400
+        with ESMTP id S1034414AbdD0OUF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Apr 2017 10:20:05 -0400
 In-Reply-To: <20170427141937.762-1-sebastian.reichel@collabora.co.uk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Steven Miao <realmz6@gmail.com>
 Cc: Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-mcp23s08 support configuration of the pullups using the
-pinconf framework. This removes the custom pullup configuration
-from platform data, which has no upstream users.
+mcp23xxx device have configurable 100k pullup resistors. This adds
+support for enabling them using pinctrl's pinconf interface.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 7 -------
- include/linux/spi/mcp23s08.h       | 1 -
- 2 files changed, 8 deletions(-)
+ drivers/pinctrl/Kconfig            |   1 +
+ drivers/pinctrl/pinctrl-mcp23s08.c | 199 ++++++++++++++++++++++++++++++++-----
+ 2 files changed, 176 insertions(+), 24 deletions(-)
 
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index cccff799a88a..2ff95fe3017d 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -142,6 +142,7 @@ config PINCTRL_MCP23S08
+ 	select GPIOLIB_IRQCHIP
+ 	select REGMAP_I2C if I2C
+ 	select REGMAP_SPI if SPI_MASTER
++	select GENERIC_PINCONF
+ 	help
+ 	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
+ 	  I/O expanders.
 diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 8aacedcf814c..7fad3a9e2222 100644
+index 2a57d024481d..8aacedcf814c 100644
 --- a/drivers/pinctrl/pinctrl-mcp23s08.c
 +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -782,11 +782,6 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 			goto fail;
- 	}
+@@ -24,6 +24,9 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_device.h>
+ #include <linux/regmap.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
  
--	/* configure ~100K pullups */
--	ret = mcp_write(mcp, MCP_GPPU, pdata->chip[cs].pullups);
--	if (ret < 0)
--		goto fail;
--
- 	ret = mcp_update_cache(mcp);
- 	if (ret < 0)
- 		goto fail;
-@@ -911,7 +906,6 @@ static int mcp230xx_probe(struct i2c_client *client,
- 	if (match) {
- 		pdata = &local_pdata;
- 		pdata->base = -1;
--		pdata->chip[0].pullups = 0;
- 		pdata->irq_controller =	of_property_read_bool(
- 					client->dev.of_node,
- 					"interrupt-controller");
-@@ -1031,7 +1025,6 @@ static int mcp23s08_probe(struct spi_device *spi)
- 		pdata = &local_pdata;
- 		pdata->base = -1;
- 		for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
--			pdata->chip[addr].pullups = 0;
- 			if (spi_present_mask & (1 << addr))
- 				chips++;
- 		}
-diff --git a/include/linux/spi/mcp23s08.h b/include/linux/spi/mcp23s08.h
-index aa07d7b32568..080ecc6bb270 100644
---- a/include/linux/spi/mcp23s08.h
-+++ b/include/linux/spi/mcp23s08.h
-@@ -3,7 +3,6 @@
+ /**
+  * MCP types supported by driver
+@@ -77,6 +80,9 @@ struct mcp23s08 {
  
- struct mcp23s08_chip_info {
- 	bool		is_present;	/* true if populated */
--	unsigned	pullups;	/* BIT(x) means enable pullup x */
+ 	struct regmap		*regmap;
+ 	struct device		*dev;
++
++	struct pinctrl_dev	*pctldev;
++	struct pinctrl_desc	pinctrl_desc;
  };
  
- struct mcp23s08_platform_data {
+ static const struct regmap_config mcp23x08_regmap = {
+@@ -96,6 +102,158 @@ static const struct regmap_config mcp23x17_regmap = {
+ 	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+ };
+ 
++static int mcp_read(struct mcp23s08 *mcp, unsigned int reg, unsigned int *val)
++{
++	return regmap_read(mcp->regmap, reg << mcp->reg_shift, val);
++}
++
++static int mcp_write(struct mcp23s08 *mcp, unsigned int reg, unsigned int val)
++{
++	return regmap_write(mcp->regmap, reg << mcp->reg_shift, val);
++}
++
++static int mcp_set_bit(struct mcp23s08 *mcp, unsigned int reg,
++		       unsigned int pin, bool enabled)
++{
++	u16 val  = enabled ? 0xffff : 0x0000;
++	u16 mask = BIT(pin);
++	return regmap_update_bits(mcp->regmap, reg << mcp->reg_shift,
++				  mask, val);
++}
++
++static int mcp_update_cache(struct mcp23s08 *mcp)
++{
++	int ret, reg, i;
++
++	for (i = 0; i < ARRAY_SIZE(mcp->cache); i++) {
++		ret = mcp_read(mcp, i, &reg);
++		if (ret < 0)
++			return ret;
++		mcp->cache[i] = reg;
++	}
++
++	return 0;
++}
++
++static const struct pinctrl_pin_desc mcp23x08_pins[] = {
++	PINCTRL_PIN(0, "gpio0"),
++	PINCTRL_PIN(1, "gpio1"),
++	PINCTRL_PIN(2, "gpio2"),
++	PINCTRL_PIN(3, "gpio3"),
++	PINCTRL_PIN(4, "gpio4"),
++	PINCTRL_PIN(5, "gpio5"),
++	PINCTRL_PIN(6, "gpio6"),
++	PINCTRL_PIN(7, "gpio7"),
++};
++
++static const struct pinctrl_pin_desc mcp23x17_pins[] = {
++	PINCTRL_PIN(0, "gpio0"),
++	PINCTRL_PIN(1, "gpio1"),
++	PINCTRL_PIN(2, "gpio2"),
++	PINCTRL_PIN(3, "gpio3"),
++	PINCTRL_PIN(4, "gpio4"),
++	PINCTRL_PIN(5, "gpio5"),
++	PINCTRL_PIN(6, "gpio6"),
++	PINCTRL_PIN(7, "gpio7"),
++	PINCTRL_PIN(8, "gpio8"),
++	PINCTRL_PIN(9, "gpio9"),
++	PINCTRL_PIN(10, "gpio10"),
++	PINCTRL_PIN(11, "gpio11"),
++	PINCTRL_PIN(12, "gpio12"),
++	PINCTRL_PIN(13, "gpio13"),
++	PINCTRL_PIN(14, "gpio14"),
++	PINCTRL_PIN(15, "gpio15"),
++};
++
++static int mcp_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
++{
++	return 0;
++}
++
++static const char *mcp_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
++						unsigned int group)
++{
++	return NULL;
++}
++
++static int mcp_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
++					unsigned int group,
++					const unsigned int **pins,
++					unsigned int *num_pins)
++{
++	return -ENOTSUPP;
++}
++
++static const struct pinctrl_ops mcp_pinctrl_ops = {
++	.get_groups_count = mcp_pinctrl_get_groups_count,
++	.get_group_name = mcp_pinctrl_get_group_name,
++	.get_group_pins = mcp_pinctrl_get_group_pins,
++#ifdef CONFIG_OF
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map = pinconf_generic_dt_free_map,
++#endif
++};
++
++static int mcp_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
++			      unsigned long *config)
++{
++	struct mcp23s08 *mcp = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param = pinconf_to_config_param(*config);
++	unsigned int data, status;
++	int ret;
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_PULL_UP:
++		ret = mcp_read(mcp, MCP_GPPU, &data);
++		if (ret < 0)
++			return ret;
++		status = (data & BIT(pin)) ? 1 : 0;
++		break;
++	default:
++		dev_err(mcp->dev, "Invalid config param %04x\n", param);
++		return -ENOTSUPP;
++	}
++
++	*config = 0;
++
++	return status ? 0 : -EINVAL;
++}
++
++static int mcp_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
++			      unsigned long *configs, unsigned int num_configs)
++{
++	struct mcp23s08 *mcp = pinctrl_dev_get_drvdata(pctldev);
++	enum pin_config_param param;
++	u32 arg, mask;
++	u16 val;
++	int ret = 0;
++	int i;
++
++	for (i = 0; i < num_configs; i++) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_PULL_UP:
++			val = arg ? 0xFFFF : 0x0000;
++			mask = BIT(pin);
++			ret = mcp_set_bit(mcp, MCP_GPPU, pin, arg);
++			break;
++		default:
++			dev_err(mcp->dev, "Invalid config param %04x\n", param);
++			return -ENOTSUPP;
++		}
++	}
++
++	return ret;
++}
++
++static const struct pinconf_ops mcp_pinconf_ops = {
++	.pin_config_get = mcp_pinconf_get,
++	.pin_config_set = mcp_pinconf_set,
++	.is_generic = true,
++};
++
+ /*----------------------------------------------------------------------*/
+ 
+ #ifdef CONFIG_SPI_MASTER
+@@ -158,30 +316,6 @@ static const struct regmap_bus mcp23sxx_spi_regmap = {
+ 
+ #endif /* CONFIG_SPI_MASTER */
+ 
+-static int mcp_read(struct mcp23s08 *mcp, unsigned int reg, unsigned int *val)
+-{
+-	return regmap_read(mcp->regmap, reg << mcp->reg_shift, val);
+-}
+-
+-static int mcp_write(struct mcp23s08 *mcp, unsigned int reg, unsigned int val)
+-{
+-	return regmap_write(mcp->regmap, reg << mcp->reg_shift, val);
+-}
+-
+-static int mcp_update_cache(struct mcp23s08 *mcp)
+-{
+-	int ret, reg, i;
+-
+-	for (i = 0; i < ARRAY_SIZE(mcp->cache); i++) {
+-		ret = mcp_read(mcp, i, &reg);
+-		if (ret < 0)
+-			return ret;
+-		mcp->cache[i] = reg;
+-	}
+-
+-	return 0;
+-}
+-
+ /*----------------------------------------------------------------------*/
+ 
+ /* A given spi_device can represent up to eight mcp23sxx chips
+@@ -682,6 +816,23 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
+ 		if (ret)
+ 			goto fail;
+ 	}
++
++	mcp->pinctrl_desc.name = "mcp23xxx-pinctrl";
++	mcp->pinctrl_desc.pctlops = &mcp_pinctrl_ops;
++	mcp->pinctrl_desc.confops = &mcp_pinconf_ops;
++	mcp->pinctrl_desc.npins = mcp->chip.ngpio;
++	if (mcp->pinctrl_desc.npins == 8)
++		mcp->pinctrl_desc.pins = mcp23x08_pins;
++	else if (mcp->pinctrl_desc.npins == 16)
++		mcp->pinctrl_desc.pins = mcp23x17_pins;
++	mcp->pinctrl_desc.owner = THIS_MODULE;
++
++	mcp->pctldev = pinctrl_register(&mcp->pinctrl_desc, dev, mcp);
++	if (IS_ERR(mcp->pctldev)) {
++		ret = PTR_ERR(mcp->pctldev);
++		goto fail;
++	}
++
+ fail:
+ 	if (ret < 0)
+ 		dev_dbg(dev, "can't setup chip %d, --> %d\n", addr, ret);
 -- 
 2.11.0
 
