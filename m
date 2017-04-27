@@ -1,36 +1,56 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv2 3/6] blackfin: defconfig: MCP23S08 config has been renamed
-Date: Thu, 27 Apr 2017 16:19:34 +0200
-Message-ID: <20170427141937.762-4-sebastian.reichel@collabora.co.uk>
-References: <20170427141937.762-1-sebastian.reichel@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170427141937.762-1-sebastian.reichel@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Steven Miao <realmz6@gmail.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+From: Anatolij Gustschin <agust@denx.de>
+Subject: Re: [PATCH v2] gpiolib: Add stubs for gpiod lookup table interface
+Date: Thu, 27 Apr 2017 16:25:34 +0200
+Message-ID: <20170427162534.0499344f@crub>
+References: <1493275956-14759-1-git-send-email-agust@denx.de>
+        <CAHp75Vc4yEaH8OvWthh0huBeZChE-MutHXPEH5vZgMHDNc4oaw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:43435 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932155AbdD0OZm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Apr 2017 10:25:42 -0400
+In-Reply-To: <CAHp75Vc4yEaH8OvWthh0huBeZChE-MutHXPEH5vZgMHDNc4oaw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The mcp23s08 driver now supports pinconf, so the config
-option has been renamed from CONFIG_GPIO_MCP23S08 to
-CONFIG_PINCTRL_MCP23S08.
+On Thu, 27 Apr 2017 17:07:23 +0300
+Andy Shevchenko andy.shevchenko@gmail.com wrote:
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
----
- arch/blackfin/configs/BF609-EZKIT_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>On Thu, Apr 27, 2017 at 9:52 AM, Anatolij Gustschin <agust@denx.de> wrote:
+>> Add stubs for gpiod_add_lookup_table() and gpiod_remove_lookup_table()
+>> for the !GPIOLIB case to prevent build errors. Also add prototypes.
+>>
+>> Signed-off-by: Anatolij Gustschin <agust@denx.de>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>  
+>
+>Oh, has to take my tag back. See below why.
+>
+>
+>> --- a/include/linux/gpio/consumer.h
+>> +++ b/include/linux/gpio/consumer.h  
+>
+>It is already defined in machine.h.
+>
+>What you basically need is to add stubs for !GPIOLIB case
+>
+>#ifdef ...
+>...existing prototypes...
+>#else /* GPIOLIB */
+>static inline void gpiod_add_lookup_table(struct gpiod_lookup_table *table) {}
+>static inline void gpiod_remove_lookup_table(struct gpiod_lookup_table
+>*table) {}
+>#endif /* !GPIOLIB */
+>
+>P.S. please notice how I put the stubs. It would be good to keep them
+>in two lines.
 
-diff --git a/arch/blackfin/configs/BF609-EZKIT_defconfig b/arch/blackfin/configs/BF609-EZKIT_defconfig
-index ba4267f658af..3ce77f07208a 100644
---- a/arch/blackfin/configs/BF609-EZKIT_defconfig
-+++ b/arch/blackfin/configs/BF609-EZKIT_defconfig
-@@ -105,7 +105,7 @@ CONFIG_SPI=y
- CONFIG_SPI_ADI_V3=y
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_SYSFS=y
--CONFIG_GPIO_MCP23S08=y
-+CONFIG_PINCTRL_MCP23S08=y
- # CONFIG_HWMON is not set
- CONFIG_WATCHDOG=y
- CONFIG_BFIN_WDT=y
--- 
-2.11.0
+this will exceed 80 char line limit.
+
+Thanks,
+
+Anatolij
