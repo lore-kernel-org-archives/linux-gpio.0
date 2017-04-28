@@ -1,37 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-Date: Fri, 28 Apr 2017 10:49:32 +0200
-Message-ID: <CACRpkdaiDMxaGM=vqeqVQ-6i3ecYhc+pudy4yt4zAZW-XZ4vCw@mail.gmail.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org> <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+From: Phil Reid <preid@electromag.com.au>
+Subject: gpio chrdev interface
+Date: Fri, 28 Apr 2017 17:14:40 +0800
+Message-ID: <e772cdac-e44b-27bf-32ab-93133b04fa8a@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anchovy1.45ru.net.au ([203.30.46.145]:45590 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750761AbdD1JVY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 05:21:24 -0400
+Content-Language: en-AU
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
+G'day All,
 
-> Add pin configuration subnode for ETHER ethernet controller.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-(...)
-> +               pins_bidir {
-> +                       pinmux = <RZA1_PINMUX(3, 3, 2)>;/* P3_3 = ET_MDIO  */
-> +                       bi-directional;
-> +               };
+In the device tree definition our hardwares GPIO I'd like to define some restictions on the gpio so the user space doesn't do anything dumb.
+ie: if the pin is input only prevent the user space application making it an output etc.
+Also specifying a initial state of high / low and output mode / polarity.
+So forcing open collector output to all ways be open collector etc.
+This then allows abstracting the gpio polarity mode etc to the hardware defintion and the user space application doesn't need to know
+the details of the hardware implement.
 
-So I'm against merging this until someone explains what "bi-directional"
-actually means, electrically speaking. What happens physically on this pin?
+gpio-hog setup seem to do something similar but then user space can't request the gpio.
+I get a busy error when tryingt o talk to the gpio.
 
-I think this just means open drain.
+Am I missing something obvious?
+Or is this not catered for at the moment?
+Is not is it something worth considering?
 
-It is dangerous to merge things we don't understand.
+Regards
+Phil
 
-Surely someone inside Renesas can answer this question.
 
-Yours,
-Linus Walleij
