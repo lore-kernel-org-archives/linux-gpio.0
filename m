@@ -1,65 +1,61 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 02/10] pinctrl: generic: Add macros to unpack properties
-Date: Fri, 28 Apr 2017 10:16:22 +0200
-Message-ID: <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg@mail.gmail.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org> <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Anatolij Gustschin <agust@denx.de>
+Subject: (unknown)
+Date: Fri, 28 Apr 2017 10:20:10 +0200
+Message-ID: <1493367610-7330-1-git-send-email-agust@denx.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f175.google.com ([209.85.223.175]:34935 "EHLO
-        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754383AbdD1IQY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 04:16:24 -0400
-Received: by mail-io0-f175.google.com with SMTP id r16so54119941ioi.2
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Apr 2017 01:16:23 -0700 (PDT)
-In-Reply-To: <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
+Received: from mail-out.m-online.net ([212.18.0.9]:53360 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032235AbdD1IUO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 04:20:14 -0400
+Subject: 
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linus.walleij@linaro.org, gnurou@gmail.com
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-<jacopo+renesas@jmondi.org> wrote:
+Subject: [PATCH v3] gpiolib: Add stubs for gpiod lookup table interface
 
-> Add PIN_CONF_UNPACK_PARAM and PIN_CONF_UNPACK_ARGS macros useful to
-> unpack generic properties and their arguments
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add stubs for gpiod_add_lookup_table() and gpiod_remove_lookup_table()
+for the !GPIOLIB case to prevent build errors. Also add prototypes.
 
-(...)
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+---
+Changes in v3:
+ - add stubs for !GPIOLIB case. Drop prototypes, these are
+   already in gpio/machine.h
 
-/*
-  * Helpful configuration macro to be used in tables etc.
+Changes in v2:
+ - move gpiod_lookup_table out of #ifdef
 
-Then this should say "macros" rather than "macro".
+ include/linux/gpio/consumer.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> -#define PIN_CONF_PACKED(p, a) ((a << 8) | ((unsigned long) p & 0xffUL))
-> +#define PIN_CONF_PACKED(p, a) (((a) << 8) | ((unsigned long) (p) & 0xffUL))
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 8f702fc..cf3fee2 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -41,6 +41,8 @@ enum gpiod_flags {
+ 			  GPIOD_FLAGS_BIT_DIR_VAL,
+ };
+ 
++struct gpiod_lookup_table;
++
+ #ifdef CONFIG_GPIOLIB
+ 
+ /* Return the number of GPIOs associated with a device / function */
+@@ -435,6 +437,12 @@ struct gpio_desc *devm_fwnode_get_index_gpiod_from_child(struct device *dev,
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
++static inline
++void gpiod_add_lookup_table(struct gpiod_lookup_table *table) {}
++
++static inline
++void gpiod_remove_lookup_table(struct gpiod_lookup_table *table) {}
++
+ #endif /* CONFIG_GPIOLIB */
+ 
+ static inline
+-- 
+2.7.4
 
-Also adding some extra parantheses I see.
-
-> +#define PIN_CONF_UNPACK_PARAM(c) ((c) & 0xffUL)
-> +#define PIN_CONF_UNPACK_ARGS(c) ((c) >> 8)
-
-But why.
-
-I have these two static inlines just below your new macros:
-
-static inline enum pin_config_param pinconf_to_config_param(unsigned
-long config)
-{
-        return (enum pin_config_param) (config & 0xffUL);
-}
-
-static inline u32 pinconf_to_config_argument(unsigned long config)
-{
-        return (u32) ((config >> 8) & 0xffffffUL);
-}
-
-Why can't you use this in your code instead of macros?
-
-We generally prefer static inlines over macros because they are easier
-to read.
-
-Yours,
-Linus Walleij
