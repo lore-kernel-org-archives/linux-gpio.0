@@ -1,61 +1,37 @@
 From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Date: Fri, 28 Apr 2017 13:18:06 +0000
-Message-ID: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+Date: Fri, 28 Apr 2017 13:50:32 +0000
+Message-ID: <SG2PR06MB11654ECED12BEB74701B53828A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
- <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdaiDMxaGM=vqeqVQ-6i3ecYhc+pudy4yt4zAZW-XZ4vCw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:8702 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1425945AbdD1NSO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 28 Apr 2017 09:18:14 -0400
-In-Reply-To: <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaiDMxaGM=vqeqVQ-6i3ecYhc+pudy4yt4zAZW-XZ4vCw@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0KPiA+IElu
-IHRoZSBSWi9BMSBIVyBtYW51YWwgeW91IGNhbiBraW5kIG9mIHNlZSB0aGF0IGluIDU0LjE4IFBv
-cnQgQ29udHJvbA0KPiBMb2dpY2FsIERpYWdyYW0gKGJ1dCB0aGF0IHdhc24ndCBvYnZpb3VzIHRv
-IG1lIGF0IGZpcnN0KS4NCj4gDQo+IFBsZWFzZSwgcG9zdCBhIGxpbmsgdG8gaXQgb3IgY29weSBl
-c3NlbnRpYWwgcGFydHMuDQoNCg0KVGhpcyBib2FyZCB0aGUgUlovQTEgR0VOTUFJIGJvYXJkLg0K
-aHR0cHM6Ly93d3cucmVuZXNhcy5jb20vZW4tdXMvcHJvZHVjdHMvc29mdHdhcmUtdG9vbHMvYm9h
-cmRzLWFuZC1raXRzL2V2YWx1YXRpb24tZGVtby1zb2x1dGlvbi1ib2FyZHMvZ2VubWFpLWNwdS1i
-b2FyZC1ydGs3NzIxMDBiYzAwMDAwYnIuaHRtbA0KDQoNClRoZSBzY2hlbWF0aWMgaXMgaW5jbHVk
-ZWQgaW4gdGhlICJVc2VyJ3MgbWFudWFsIg0KaHR0cHM6Ly93d3cucmVuZXNhcy5jb20vZW4tdXMv
-ZG9jL3Byb2R1Y3RzL3Rvb2wvZG9jLzAwMy9yMjB1dDI1OTZlal9yN3M3MjEwMGV2dW0ucGRmDQoN
-Cg0KVGhlIFJaL0ExSCBIYXJkd2FyZSBtYW51YWwgaXMgaGVyZToNCmh0dHBzOi8vd3d3LnJlbmVz
-YXMuY29tL2VuLXVzL2RvY3VtZW50L2h3LW1hbnVhbD9od0xheWVyU2hvd0ZsZz10cnVlJnByZExh
-eWVySWQ9MTg2Mzc0JmxheWVyTmFtZT1SWiUyNTJGQTFIJmNvcm9uclNlcnZpY2U9ZG9jdW1lbnQt
-cHJkLXNlYXJjaCZod0RvY1VybD0lMkZlbi11cyUyRmRvYyUyRnByb2R1Y3RzJTJGbXB1bWN1JTJG
-ZG9jJTJGcnolMkZyMDF1aDA0MDNlajAzMDBfcnpfYTFoLnBkZiZoYXNoS2V5PTU0ZjMzNTc1Mzc0
-MmI1YWRkNTI0ZDQ3MjViNzI0MmU2DQoNCg0KQ2hhcHRlciA1NCBpcyB0aGUgcG9ydC9waW4gY29u
-dHJvbGxlci4NCg0KIjU0LjE4IFBvcnQgQ29udHJvbCBMb2dpY2FsIERpYWdyYW0iIGlzIHRoZSBk
-aWFncmFtIEkgd2FzIHRhbGtpbmcgYWJvdXQuIE5vdGUgdGhhdCBpcyBzYXlzICJOb3RlOiBUaGlz
-IGZpZ3VyZSBzaG93cyB0aGUgbG9naWMgZm9yIHJlZmVyZW5jZSwgbm90IHRoZSBjaXJjdWl0LiIN
-Cg0KIjU0LjMuMTMgUG9ydCBCaWRpcmVjdGlvbiBDb250cm9sIFJlZ2lzdGVyIChQQkRDbikiIGlz
-IHRoZSBtYWdpYyByZWdpc3RlciBuZWVkZWQgdG8gZ2V0IHNvbWUgcGlucyB0byB3b3JrLg0KDQoN
-Cj4gSSdtIHF1aXRlIHNrZXB0aWNhbCAgdGhhdCBjaGVhcCBoYXJkd2FyZSBjYW4gaW1wbGVtZW50
-IHNvbWV0aGluZyBtb3JlDQo+IGNvc3RhYmxlIHRoYW4gc2ltcGxlc3Qgb3Blbi1zb3VyY2UgLyBv
-cGVuLWRyYWluICsgYmlhcw0KDQpJIGRvbid0IHRoaW5rIHRoaXMgaXMgYW4gb3Blbi1zb3VyY2Ug
-LyBvcGVuLWRyYWluICsgYmlhcyBpc3N1ZS4gSXQncyBhICJ0aGUgaW50ZXJuYWwgc2lnbmFsIHBh
-dGhzIGFyZSBub3QgZ2V0dGluZyBob29rZWQgdXAgY29ycmVjdGx5IiBpc3N1ZS4NCg0KDQpSZWdh
-cmRsZXNzLCBvbiB0aGlzIHBhcnQsIHdlIG5lZWRlZCBhIHdheSB0byBmbGFnIHRoYXQgc29tZSBw
-aW5zIHdoZW4gcHV0IGluIHNvbWUgZnVuY3Rpb24gbW9kZXMgbmVlZGVkICdhbiBleHRyYSByZWdp
-c3RlciBzZXR0aW5nJy4gQXQgZmlyc3Qgd2UgdHJpZWQgdG8gc25lYWsgdGhhdCBpbmZvIGluIHdp
-dGggYSBzaW1wbGUgI2RlZmluZSBpbiB0aGUgcGluL3Bpbm11eCBEVCBub2RlIHByb3BlcnRpZXMu
-IEJ1dCwgTGludXMgZGlkbid0IHdhbnQgaXQgdGhlcmUgc28gd2UgaGFkIHRvIG1ha2UgdXAgYSBu
-ZXcgZ2VuZXJpYyBwcm9wZXJ0eSBjYWxsZWQgImJpLWRpcmVjdGlvbmFsIi4NCg0KV2hhdCBpcyB5
-b3VyIGVuZCBnb2FsIGhlcmU/IEdldCAiYmktZGlyZWN0aW9uYWwiIGNoYW5nZWQgdG8gc29tZXRo
-aW5nIGVsc2U/DQoNCg0KQ2hyaXMNCg0K
+T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgTGludXMgV2FsbGVpaiB3cm90ZToNCj4gPiBBZGQg
+cGluIGNvbmZpZ3VyYXRpb24gc3Vibm9kZSBmb3IgRVRIRVIgZXRoZXJuZXQgY29udHJvbGxlci4N
+Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEphY29wbyBNb25kaSA8amFjb3BvK3JlbmVzYXNAam1v
+bmRpLm9yZz4NCj4gKC4uLikNCj4gPiArICAgICAgICAgICAgICAgcGluc19iaWRpciB7DQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgcGlubXV4ID0gPFJaQTFfUElOTVVYKDMsIDMsIDIpPjsv
+KiBQM18zID0NCj4gRVRfTURJTyAgKi8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBiaS1k
+aXJlY3Rpb25hbDsNCj4gPiArICAgICAgICAgICAgICAgfTsNCj4gDQo+IFNvIEknbSBhZ2FpbnN0
+IG1lcmdpbmcgdGhpcyB1bnRpbCBzb21lb25lIGV4cGxhaW5zIHdoYXQgImJpLWRpcmVjdGlvbmFs
+Ig0KPiBhY3R1YWxseSBtZWFucywgZWxlY3RyaWNhbGx5IHNwZWFraW5nLiBXaGF0IGhhcHBlbnMg
+cGh5c2ljYWxseSBvbiB0aGlzDQo+IHBpbj8NCj4gDQo+IEkgdGhpbmsgdGhpcyBqdXN0IG1lYW5z
+IG9wZW4gZHJhaW4uDQo+IA0KPiBJdCBpcyBkYW5nZXJvdXMgdG8gbWVyZ2UgdGhpbmdzIHdlIGRv
+bid0IHVuZGVyc3RhbmQuDQo+IA0KPiBTdXJlbHkgc29tZW9uZSBpbnNpZGUgUmVuZXNhcyBjYW4g
+YW5zd2VyIHRoaXMgcXVlc3Rpb24uDQoNCkkgZG9uJ3QgdGhpbmsgdGhpcyBoYXMgYW55dGhpbmcg
+dG8gZG8gd2l0aCBvcGVuIGRyYWluIGJlY2F1c2UgeW91IG5lZWQgaXQgZm9yIGFueSBwaW4gdGhh
+dCB0aGUgcGVyaXBoZXJhbCBJUCBibG9jayBuZWVkcyB0byB0cmFuc21pdCBhbmQgcmVjZWl2ZSBv
+dmVyIHRoZSBzYW1lIGxpbmUsIHJlZ2FyZGxlc3Mgb2YgaWYgaXQncyBhIFNESEksIEkyQywgRXRo
+ZXJuZXQgTURJTywgZXRjLi4uDQpJdCdzIG1vcmUgYWJvdXQgb2YgYWxsb3dpbmcgdGhlIGludGVy
+bmFsIElQIGJsb2NrIHNpZ25hbHMgdG8gZ2V0IGhvb2tlZCB1cCB0byB0aGUgSU8gcGFkIHNpZ25h
+bHMuDQoNCkNocmlzDQoNCg==
