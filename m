@@ -1,48 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 12/18] gpio: madera: Support Cirrus
-	Logic Madera class codecs
-Date: Fri, 28 Apr 2017 09:44:22 +0200
-Message-ID: <CACRpkdYBSaGzV7hzw+SJ+Oj-hdoFj7z0KiUrMnbnHZPEq0hNmA@mail.gmail.com>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-13-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH -next v2] pinctrl: artpec6: Fix return value check in artpec6_pmx_probe()
+Date: Fri, 28 Apr 2017 09:43:07 +0200
+Message-ID: <CACRpkdZCKcsk1aR00w5DCrkSrbkzUmt9qcrwwFtH4LDsY+B3gw@mail.gmail.com>
+References: <20170425032945.22157-1-weiyj.lk@gmail.com> <20170425112930.19555-1-weiyj.lk@gmail.com>
+ <20170425134000.GN18509@axis.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1493050124-5970-13-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f45.google.com ([209.85.214.45]:38867 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755081AbdD1HnJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 03:43:09 -0400
+Received: by mail-it0-f45.google.com with SMTP id f187so31682131ite.1
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Apr 2017 00:43:09 -0700 (PDT)
+In-Reply-To: <20170425134000.GN18509@axis.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jesper Nilsson <jesper.nilsson@axis.com>, ext Tony Lindgren <tony@atomide.com>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>, Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@axis.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 6:08 PM, Richard Fitzgerald
-<rf@opensource.wolfsonmicro.com> wrote:
-
-> This adds support for the GPIOs on Cirrus Logic Madera class codecs.
-> Any pins not used for special functions (see the pinctrl driver) can be
-> used as general single-bit input or output lines. The number of available
-> GPIOs varies between codecs.
+On Tue, Apr 25, 2017 at 3:40 PM, Jesper Nilsson <jesper.nilsson@axis.com> wrote:
+> On Tue, Apr 25, 2017 at 11:29:30AM +0000, Wei Yongjun wrote:
+>> From: Wei Yongjun <weiyongjun1@huawei.com>
+>>
+>> In case of error, the function pinctrl_register() returns
+>> ERR_PTR() not NULL. The NULL test in the return value check
+>> should be replaced with IS_ERR().
+>>
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 >
-> Signed-off-by: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
-> Changes from V1:
-> - dt bindings moved to a separate patch
-> - dependent on pinctrl driver instead of parent MFD
-> - added get_direction function
-> - added .request / .free / .set_config to work with pinctrl driver
-> - register range with pinctrl driver
+> Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+>
+> Although I'm wondering if moving to pinctrl_register_and_init()
+> would sense here. Linus?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+That depends, check on the commits introducing it for the
+usecase.
+
+OTOMH it was introduced for when you have hogs in drivers
+doing all set-up of groups and functions from the device tree.
+
+Tony?
 
 Yours,
 Linus Walleij
