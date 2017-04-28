@@ -1,41 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RESEND][PATCH V2 3/4] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
-Date: Fri, 28 Apr 2017 09:49:37 +0200
-Message-ID: <CACRpkdbpQ=Q6zt8uzfDCvOUU40S5aEvbvNd4OP4uVwBzQJhzQQ@mail.gmail.com>
-References: <20170425183210.30594-1-marek.vasut+renesas@gmail.com> <20170425183210.30594-3-marek.vasut+renesas@gmail.com>
+Subject: Re: [PATCH v2] gpio: omap: return error if requested debounce time is
+ not possible
+Date: Fri, 28 Apr 2017 09:51:05 +0200
+Message-ID: <CACRpkdYNCk9SdK+H4rTqdchvTZ+xyzMVVhpJJyD95iboSwaxEg@mail.gmail.com>
+References: <20170424225650.17566-1-drivshin@awxrd.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f180.google.com ([209.85.223.180]:35063 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbdD1Htj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 03:49:39 -0400
-Received: by mail-io0-f180.google.com with SMTP id r16so53360615ioi.2
-        for <linux-gpio@vger.kernel.org>; Fri, 28 Apr 2017 00:49:38 -0700 (PDT)
-In-Reply-To: <20170425183210.30594-3-marek.vasut+renesas@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170424225650.17566-1-drivshin@awxrd.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Rivshin <drivshin@awxrd.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Marek Vasut <marek.vasut+renesas@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Apr 25, 2017 at 8:32 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+On Tue, Apr 25, 2017 at 12:56 AM, David Rivshin <drivshin@awxrd.com> wrote:
 
-> Add driver for the GPIO block in the ROHM BD9571MWV-W MFD PMIC.
-> This block is pretty trivial and supports setting GPIO direction
-> as Input/Output and in case of Output, supports setting value.
+> From: David Rivshin <DRivshin@allworx.com>
 >
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> omap_gpio_debounce() does not validate that the requested debounce
+> is within a range it can handle. Instead it lets the register value
+> wrap silently, and always returns success.
+>
+> This can lead to all sorts of unexpected behavior, such as gpio_keys
+> asking for a too-long debounce, but getting a very short debounce in
+> practice.
+>
+> Fix this by returning -EINVAL if the requested value does not fit into
+> the register field. If there is no debounce clock available at all,
+> return -ENOTSUPP.
+>
+> Fixes: e85ec6c3047b ("gpio: omap: fix omap2_set_gpio_debounce")
+> Cc: <stable@vger.kernel.org> # 4.3+
+> Signed-off-by: David Rivshin <drivshin@allworx.com>
 > ---
-> V2: Use linux/gpio/driver.h instead of linux/gpio.h
+> Changes since v1 (https://lkml.org/lkml/2017/3/16/1094):
+> - Added dev_info() in omap_gpio_debounce() on error.
 
-I applied this for v4.12 to bring down the number of deps in
-v4.13. The guarding symbol makes it not compile until the MFD
-patch is there, the MFD_BD9571MWV is unlikely to change,
-and Marek will certainly go through with the driver submission.
+Patch applied with Grygorii's ACK.
 
 Yours,
 Linus Walleij
