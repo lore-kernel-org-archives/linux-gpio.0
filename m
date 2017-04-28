@@ -1,33 +1,53 @@
-From: Anatolij Gustschin <agust@denx.de>
-Subject: Re:
-Date: Fri, 28 Apr 2017 11:26:26 +0200
-Message-ID: <20170428112626.59b42dab@crub>
-References: <1493367610-7330-1-git-send-email-agust@denx.de>
-        <CACRpkda0PDE1b0nud9OLmLX1VWJtEtXfe2s6ryze5_BawFUHaQ@mail.gmail.com>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Subject: [PATCH 0/5] Add minimal boot support for IPQ8074
+Date: Fri, 28 Apr 2017 15:26:38 +0530
+Message-ID: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.10]:35803 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1165016AbdD1J0f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 05:26:35 -0400
-In-Reply-To: <CACRpkda0PDE1b0nud9OLmLX1VWJtEtXfe2s6ryze5_BawFUHaQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org, absahu@codeaurora.org, sjaganat@codeaurora.org, Varadarajan Narayanan <varada@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, 28 Apr 2017 10:43:19 +0200
-Linus Walleij linus.walleij@linaro.org wrote:
-...
->> --- a/include/linux/gpio/consumer.h
->> +++ b/include/linux/gpio/consumer.h  
->
->So why should the stubs be in <linux/gpio/consumer.h>
->and not in <linux/gpio/machine.h>?
+The IPQ8074 is Qualcomm’s High-capacity 802.11ax SoC for Routers,
+Gateways and Access Points.
 
-good question. I'll move them to machine.h.
+This series adds minimal board boot support for ipq8074-hk01
+board.
 
-Thanks,
-Anatolij
+Abhishek Sahu (2):
+  clk: qcom: ipq8074: Add Global Clock Controller support
+  arm64: defconfig: Enable QCOM IPQ8074 clock and pinctrl
+
+Varadarajan Narayanan (3):
+  pinctrl: qcom: Add ipq8074 pinctrl driver
+  dt-bindings: qcom: Add IPQ8074 bindings
+  arm64: dts: Add ipq8074 SoC and MTP board support
+
+ Documentation/devicetree/bindings/arm/qcom.txt     |    2 +
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  202 ++++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   48 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  153 +++
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq8074.c                     | 1033 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig                       |   10 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1220 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |  152 +++
+ 14 files changed, 2835 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq8074.h
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
