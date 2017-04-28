@@ -1,83 +1,35 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v5 00/10] Renesas RZ/A1 pin and gpio controller
-Date: Fri, 28 Apr 2017 09:31:30 +0200
-Message-ID: <20170428073129.GF10196@verge.net.au>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <CAMuHMdWw1JpFLT0QY4yQK6VH0oSeQOHUWMuKFSj6b6vrhHPCdA@mail.gmail.com>
- <20170428072457.GA4911@w540>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: cherryview: Add terminate entry for
+ dmi_system_id tables
+Date: Fri, 28 Apr 2017 09:36:43 +0200
+Message-ID: <CACRpkdYqKCfvCxjO3bOsHohRmLCy=UDLv5M6BvrZTY5dw+oKxQ@mail.gmail.com>
+References: <20170425062205.22627-1-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:46592 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1424309AbdD1Hbg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 03:31:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20170428072457.GA4911@w540>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:35939 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1424496AbdD1Hgo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 03:36:44 -0400
+Received: by mail-it0-f50.google.com with SMTP id g66so31627280ite.1
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Apr 2017 00:36:44 -0700 (PDT)
+In-Reply-To: <20170425062205.22627-1-weiyj.lk@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Wei Yongjun <weiyongjun1@huawei.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 09:24:57AM +0200, jmondi wrote:
-> Hi Geert, Simon,
-> 
-> On Thu, Apr 27, 2017 at 10:42:02AM +0200, Geert Uytterhoeven wrote:
-> > Hi Jacopo,
-> >
-> > On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-> > <jacopo+renesas@jmondi.org> wrote:
-> > >    this is 5th round of gpio/pincontroller for RZ/A1 devices.
-> > >
-> > > I have updated the pin controller driver to use the newly introduced
-> > > "pinctrl_enable()" function.
-> > > This is required since v4.11-rc7 as otherwise, as reported by Chris Brandt,
-> > > the pin controller does not start.
-> > >
-> > > I have incorporated your comments on the device tree bindings documentation,
-> > > and added to pinctrl-generic.h header file two macros to unpack generic
-> > > properties and their arguments.
-> > >
-> > > Tested with SCIF, RIIC, ETHER and gpio-leds on Genmai board.
-> >
-> > Thanks for the update!
-> >
-> > > Jacopo Mondi (10):
-> > >   pinctrl: generic: Add bi-directional and output-enable
-> >
-> > Already applied by LinusW.
-> >
-> > >   pinctrl: generic: Add macros to unpack properties
-> >
-> > LinusW: do you want me to queue this together with the driver for v4.13,
-> > or will you take this single patch for v4.12?
-> >
-> > >   pinctrl: Renesas RZ/A1 pin and gpio controller
-> > >   dt-bindings: pinctrl: Add RZ/A1 bindings doc
-> >
-> > Will queue in sh-pfc-for-v4.13.
-> >
-> > >   arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
-> > >   arm: dts: r7s72100: Add pin controller node
-> > >   arm: dts: genmai: Add SCIF2 pin group
-> > >   arm: dts: genmai: Add RIIC2 pin group
-> > >   arm: dts: genmai: Add user led device nodes
-> > >   arm: dts: genmai: Add ethernet pin group
-> >
-> > These are for Simon.
-> >
-> > Does applying the DTS changes before the driver introduce regressions?
-> > If no, Simon can queue them for v4.13.
-> > If yes, they'll have to wait for v4.14.
-> >
-> 
-> I tried reverting patch [03/10] which introduces the driver, and I
-> lose serial output on Genmai. So I guess the dts patches have to be
-> taken after the driver has been merged.
-> 
-> One question: why can't they be taken at the same time? (eg. for
-> v4.13?)
+On Tue, Apr 25, 2017 at 8:22 AM, Wei Yongjun <weiyj.lk@gmail.com> wrote:
 
-The problem is that the changes go through different trees. It may,
-however, be possible to arrange for both sets of changes to go into v4.13
-by negotiating with the ARM-SoC maintainers.
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+>
+> Make sure dmi_system_id tables are NULL terminated.
+>
+> Fixes: 703650278372 ("pinctrl: cherryview: Add a quirk to make Acer
+> Chromebook keyboard work again")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+
+Patch applied with Mika's ACK.
+
+Yours,
+Linus Walleij
