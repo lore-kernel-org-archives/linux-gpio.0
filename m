@@ -1,37 +1,33 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: gpio chrdev interface
-Date: Fri, 28 Apr 2017 17:14:40 +0800
-Message-ID: <e772cdac-e44b-27bf-32ab-93133b04fa8a@electromag.com.au>
+From: Anatolij Gustschin <agust@denx.de>
+Subject: Re:
+Date: Fri, 28 Apr 2017 11:26:26 +0200
+Message-ID: <20170428112626.59b42dab@crub>
+References: <1493367610-7330-1-git-send-email-agust@denx.de>
+        <CACRpkda0PDE1b0nud9OLmLX1VWJtEtXfe2s6ryze5_BawFUHaQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy1.45ru.net.au ([203.30.46.145]:45590 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750761AbdD1JVY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 05:21:24 -0400
-Content-Language: en-AU
+Received: from mail-out.m-online.net ([212.18.0.10]:35803 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1165016AbdD1J0f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 05:26:35 -0400
+In-Reply-To: <CACRpkda0PDE1b0nud9OLmLX1VWJtEtXfe2s6ryze5_BawFUHaQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-G'day All,
+On Fri, 28 Apr 2017 10:43:19 +0200
+Linus Walleij linus.walleij@linaro.org wrote:
+...
+>> --- a/include/linux/gpio/consumer.h
+>> +++ b/include/linux/gpio/consumer.h  
+>
+>So why should the stubs be in <linux/gpio/consumer.h>
+>and not in <linux/gpio/machine.h>?
 
-In the device tree definition our hardwares GPIO I'd like to define some restictions on the gpio so the user space doesn't do anything dumb.
-ie: if the pin is input only prevent the user space application making it an output etc.
-Also specifying a initial state of high / low and output mode / polarity.
-So forcing open collector output to all ways be open collector etc.
-This then allows abstracting the gpio polarity mode etc to the hardware defintion and the user space application doesn't need to know
-the details of the hardware implement.
+good question. I'll move them to machine.h.
 
-gpio-hog setup seem to do something similar but then user space can't request the gpio.
-I get a busy error when tryingt o talk to the gpio.
-
-Am I missing something obvious?
-Or is this not catered for at the moment?
-Is not is it something worth considering?
-
-Regards
-Phil
-
-
+Thanks,
+Anatolij
