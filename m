@@ -1,58 +1,74 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-Date: Fri, 28 Apr 2017 15:15:33 +0300
-Message-ID: <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+From: jmondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 02/10] pinctrl: generic: Add macros to unpack
+ properties
+Date: Fri, 28 Apr 2017 14:49:02 +0200
+Message-ID: <20170428124902.GA29046@w540>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com> <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
+ <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f169.google.com ([209.85.220.169]:35664 "EHLO
-        mail-qk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754113AbdD1MPf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 08:15:35 -0400
-In-Reply-To: <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 3:07 PM, Chris Brandt <Chris.Brandt@renesas.com> wr=
-ote:
-> On Friday, April 28, 2017, Linus Walleij wrote:
->> > For me it looks like you are trying to alias open-drain + bias or
->> > alike. Don't actually see the benefit of it.
->>
->> Andy is bringing up a valid point. And I remember asking about this befo=
-re.
->>
->> What does "bi-directional" really mean, electrically speaking?
+Hi Linus,
 
-> Take the SDHI data pins. You send AND receive data over those pins (and t=
-hey are not open drain).
+On Fri, Apr 28, 2017 at 10:16:22AM +0200, Linus Walleij wrote:
+> On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
+> <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
+>
+> > Add PIN_CONF_UNPACK_PARAM and PIN_CONF_UNPACK_ARGS macros useful to
+> > unpack generic properties and their arguments
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+>
+> (...)
+>
+> /*
+>   * Helpful configuration macro to be used in tables etc.
+>
+> Then this should say "macros" rather than "macro".
+>
+> > -#define PIN_CONF_PACKED(p, a) ((a << 8) | ((unsigned long) p & 0xffUL))
+> > +#define PIN_CONF_PACKED(p, a) (((a) << 8) | ((unsigned long) (p) & 0xffUL))
+>
+> Also adding some extra parantheses I see.
+>
+> > +#define PIN_CONF_UNPACK_PARAM(c) ((c) & 0xffUL)
+> > +#define PIN_CONF_UNPACK_ARGS(c) ((c) >> 8)
+>
+> But why.
+>
+> I have these two static inlines just below your new macros:
+>
+> static inline enum pin_config_param pinconf_to_config_param(unsigned
+> long config)
+> {
+>         return (enum pin_config_param) (config & 0xffUL);
+> }
+>
+> static inline u32 pinconf_to_config_argument(unsigned long config)
+> {
+>         return (u32) ((config >> 8) & 0xffffffUL);
+> }
+>
+> Why can't you use this in your code instead of macros?
+>
+> We generally prefer static inlines over macros because they are easier
+> to read.
+>
 
-Can you point to schematics and electrical characteristics of such buffer?
-(Yes, I can imagine one case where it's possible to have an
-"automatic" switch based on which current is bigger output of your
-side or remote's. But! I would like to see actual specifications to
-prove this or otherwise.)
+Right. I haven't noticed them.
+I'll drop this patch, sorry for noise
 
-> The issue is that the PFC HW that enables the connections between the SDH=
-I IP block and the I/O pad buffers can only enable one path/signal/directio=
-n to the buffer enables (in or out). So for a pin that needs both direction=
-s, the PFC enables output and the "bidirectional register" is used to enabl=
-e the input buffer as well.
-
-> In the RZ/A1 HW manual you can kind of see that in 54.18 Port Control Log=
-ical Diagram (but that wasn't obvious to me at first).
-
-Please, post a link to it or copy essential parts.
-I'm quite skeptical  that cheap hardware can implement something more
-costable than simplest open-source / open-drain + bias.
-
---=20
-With Best Regards,
-Andy Shevchenko
+> Yours,
+> Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
