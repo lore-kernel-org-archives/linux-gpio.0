@@ -1,314 +1,63 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH v5 1/1] pinctrl: armada-37xx: Add irqchip support
-Date: Fri, 28 Apr 2017 16:01:33 +0200
-Message-ID: <e7e0d7156844933efe5fdb997afa4cdca1ea6ec4.1493387770.git-series.gregory.clement@free-electrons.com>
-References: <cover.5e6e6649efd7d0482a5df17fb7f94fde29a54210.1493387770.git-series.gregory.clement@free-electrons.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH -next v2] pinctrl: artpec6: Fix return value check in
+ artpec6_pmx_probe()
+Date: Fri, 28 Apr 2017 07:26:14 -0700
+Message-ID: <20170428142613.GI3777@atomide.com>
+References: <20170425032945.22157-1-weiyj.lk@gmail.com>
+ <20170425112930.19555-1-weiyj.lk@gmail.com>
+ <20170425134000.GN18509@axis.com>
+ <CACRpkdZCKcsk1aR00w5DCrkSrbkzUmt9qcrwwFtH4LDsY+B3gw@mail.gmail.com>
+ <20170428075814.GE10068@axis.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:33963 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756675AbdD1OBk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 10:01:40 -0400
-In-Reply-To: <cover.5e6e6649efd7d0482a5df17fb7f94fde29a54210.1493387770.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.5e6e6649efd7d0482a5df17fb7f94fde29a54210.1493387770.git-series.gregory.clement@free-electrons.com>
-References: <cover.5e6e6649efd7d0482a5df17fb7f94fde29a54210.1493387770.git-series.gregory.clement@free-electrons.com>
+Received: from muru.com ([72.249.23.125]:45502 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S938127AbdD1O0S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 28 Apr 2017 10:26:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20170428075814.GE10068@axis.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jesper Nilsson <jespern@axis.com>, Wei Yongjun <weiyj.lk@gmail.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@axis.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-The Armada 37xx SoCs can handle interrupt through GPIO. However it can
-only manage the edge ones.
+* Jesper Nilsson <jesper.nilsson@axis.com> [170428 01:01]:
+> On Fri, Apr 28, 2017 at 09:43:07AM +0200, Linus Walleij wrote:
+> > On Tue, Apr 25, 2017 at 3:40 PM, Jesper Nilsson <jesper.nilsson@axis.com> wrote:
+> > > On Tue, Apr 25, 2017 at 11:29:30AM +0000, Wei Yongjun wrote:
+> > >> From: Wei Yongjun <weiyongjun1@huawei.com>
+> > >>
+> > >> In case of error, the function pinctrl_register() returns
+> > >> ERR_PTR() not NULL. The NULL test in the return value check
+> > >> should be replaced with IS_ERR().
+> > >>
+> > >> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> > >
+> > > Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
+> > >
+> > > Although I'm wondering if moving to pinctrl_register_and_init()
+> > > would sense here. Linus?
+> > 
+> > That depends, check on the commits introducing it for the
+> > usecase.
+> > 
+> > OTOMH it was introduced for when you have hogs in drivers
+> > doing all set-up of groups and functions from the device tree.
+> 
+> Yeah, so in this case it is not necessary, but
+> the comment above pinctrl_register() explicitly says:
+> "To avoid issues later on, please use the
+> new pinctrl_register_and_init() below instead."
+> Which to me indicates that it is recommended
+> to use the pinctrl_register_and_init() in future code...
+> 
+> > Tony?
 
-The way the interrupt are managed is classical so we can use the generic
-interrupt chip model.
+If you want to use GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS
+want or allocate pins dynamically in the driver, then init needs to be
+updated. So yeah I'd use that style init for any new code.
 
-The only unusual "feature" is that many interrupts are connected to the
-parent interrupt controller. But we do not take advantage of this and use
-the chained irq with all of them.
+Regards,
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 229 +++++++++++++++++++++-
- 1 file changed, 229 insertions(+)
-
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 5c96f5558310..001542f68627 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -13,7 +13,9 @@
- #include <linux/gpio/driver.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/of_irq.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -30,6 +32,11 @@
- #define OUTPUT_CTL	0x20
- #define SELECTION	0x30
- 
-+#define IRQ_EN		0x0
-+#define IRQ_POL		0x08
-+#define IRQ_STATUS	0x10
-+#define IRQ_WKUP	0x18
-+
- #define NB_FUNCS 2
- #define GPIO_PER_REG	32
- 
-@@ -75,9 +82,12 @@ struct armada_37xx_pmx_func {
- 
- struct armada_37xx_pinctrl {
- 	struct regmap			*regmap;
-+	void __iomem			*base;
- 	const struct armada_37xx_pin_data	*data;
- 	struct device			*dev;
- 	struct gpio_chip		gpio_chip;
-+	struct irq_chip			irq_chip;
-+	spinlock_t			irq_lock;
- 	struct pinctrl_desc		pctl;
- 	struct pinctrl_dev		*pctl_dev;
- 	struct armada_37xx_pin_group	*groups;
-@@ -346,6 +356,14 @@ static int armada_37xx_pmx_set(struct pinctrl_dev *pctldev,
- 	return armada_37xx_pmx_set_by_name(pctldev, name, grp);
- }
- 
-+static inline void armada_37xx_irq_update_reg(unsigned int *reg,
-+					  struct irq_data *d)
-+{
-+	int offset = irqd_to_hwirq(d);
-+
-+	armada_37xx_update_reg(reg, offset);
-+}
-+
- static int armada_37xx_gpio_direction_input(struct gpio_chip *chip,
- 					    unsigned int offset)
- {
-@@ -468,6 +486,214 @@ static const struct gpio_chip armada_37xx_gpiolib_chip = {
- 	.owner = THIS_MODULE,
- };
- 
-+static void armada_37xx_irq_ack(struct irq_data *d)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-+	u32 reg = IRQ_STATUS;
-+	unsigned long flags;
-+
-+	armada_37xx_irq_update_reg(&reg, d);
-+	spin_lock_irqsave(&info->irq_lock, flags);
-+	writel(d->mask, info->base + reg);
-+	spin_unlock_irqrestore(&info->irq_lock, flags);
-+}
-+
-+static void armada_37xx_irq_mask(struct irq_data *d)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-+	u32 val, reg = IRQ_EN;
-+	unsigned long flags;
-+
-+	armada_37xx_irq_update_reg(&reg, d);
-+	spin_lock_irqsave(&info->irq_lock, flags);
-+	val = readl(info->base + reg);
-+	writel(val & ~d->mask, info->base + reg);
-+	spin_unlock_irqrestore(&info->irq_lock, flags);
-+}
-+
-+static void armada_37xx_irq_unmask(struct irq_data *d)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-+	u32 val, reg = IRQ_EN;
-+	unsigned long flags;
-+
-+	armada_37xx_irq_update_reg(&reg, d);
-+	spin_lock_irqsave(&info->irq_lock, flags);
-+	val = readl(info->base + reg);
-+	writel(val | d->mask, info->base + reg);
-+	spin_unlock_irqrestore(&info->irq_lock, flags);
-+}
-+
-+static int armada_37xx_irq_set_wake(struct irq_data *d, unsigned int on)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-+	u32 val, reg = IRQ_WKUP;
-+	unsigned long flags;
-+
-+	armada_37xx_irq_update_reg(&reg, d);
-+	spin_lock_irqsave(&info->irq_lock, flags);
-+	val = readl(info->base + reg);
-+	if (on)
-+		val |= d->mask;
-+	else
-+		val &= ~d->mask;
-+	writel(val, info->base + reg);
-+	spin_unlock_irqrestore(&info->irq_lock, flags);
-+
-+	return 0;
-+}
-+
-+static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
-+	u32 val, reg = IRQ_POL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&info->irq_lock, flags);
-+	armada_37xx_irq_update_reg(&reg, d);
-+	val = readl(info->base + reg);
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		val &= ~d->mask;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		val |= d->mask;
-+		break;
-+	default:
-+		spin_unlock_irqrestore(&info->irq_lock, flags);
-+		return -EINVAL;
-+	}
-+	writel(val, info->base + reg);
-+	spin_unlock_irqrestore(&info->irq_lock, flags);
-+
-+	return 0;
-+}
-+
-+
-+static void armada_37xx_irq_handler(struct irq_desc *desc)
-+{
-+	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct armada_37xx_pinctrl *info = gpiochip_get_data(gc);
-+	struct irq_domain *d = gc->irqdomain;
-+	int i;
-+
-+	chained_irq_enter(chip, desc);
-+	for (i = 0; i <= d->revmap_size / GPIO_PER_REG; i++) {
-+		u32 status;
-+		unsigned long flags;
-+
-+		spin_lock_irqsave(&info->irq_lock, flags);
-+		status = readl_relaxed(info->base + IRQ_STATUS + 4 * i);
-+		/* Manage only the interrupt that was enabled */
-+		status &= readl_relaxed(info->base + IRQ_EN + 4 * i);
-+		spin_unlock_irqrestore(&info->irq_lock, flags);
-+		while (status) {
-+			u32 hwirq = ffs(status) - 1;
-+			u32 virq = irq_find_mapping(d, hwirq +
-+						     i * GPIO_PER_REG);
-+
-+			generic_handle_irq(virq);
-+
-+			/* Update status in case a new IRQ appears */
-+			spin_lock_irqsave(&info->irq_lock, flags);
-+			status = readl_relaxed(info->base +
-+					       IRQ_STATUS + 4 * i);
-+			/* Manage only the interrupt that was enabled */
-+			status &= readl_relaxed(info->base + IRQ_EN + 4 * i);
-+			spin_unlock_irqrestore(&info->irq_lock, flags);
-+		}
-+	}
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int armada_37xx_irqchip_register(struct platform_device *pdev,
-+					struct armada_37xx_pinctrl *info)
-+{
-+	struct device_node *np = info->dev->of_node;
-+	int nrirqs = info->data->nr_pins;
-+	struct gpio_chip *gc = &info->gpio_chip;
-+	struct irq_chip *irqchip = &info->irq_chip;
-+	struct resource res;
-+	int ret = -ENODEV, i, nr_irq_parent;
-+
-+	/* Check if we have at least one gpio-controller child node */
-+	for_each_child_of_node(info->dev->of_node, np) {
-+		if (of_property_read_bool(np, "gpio-controller")) {
-+			ret = 0;
-+			break;
-+		}
-+	};
-+	if (ret)
-+		return ret;
-+
-+	nr_irq_parent = of_irq_count(np);
-+	spin_lock_init(&info->irq_lock);
-+
-+	if (!nr_irq_parent) {
-+		dev_err(&pdev->dev, "Invalid or no IRQ\n");
-+		return 0;
-+	}
-+
-+	if (of_address_to_resource(info->dev->of_node, 1, &res)) {
-+		dev_err(info->dev, "cannot find IO resource\n");
-+		return -ENOENT;
-+	}
-+
-+	info->base = devm_ioremap_resource(info->dev, &res);
-+	if (IS_ERR(info->base))
-+		return PTR_ERR(info->base);
-+
-+	irqchip->irq_ack = armada_37xx_irq_ack;
-+	irqchip->irq_mask = armada_37xx_irq_mask;
-+	irqchip->irq_unmask = armada_37xx_irq_unmask;
-+	irqchip->irq_set_wake = armada_37xx_irq_set_wake;
-+	irqchip->irq_set_type = armada_37xx_irq_set_type;
-+	irqchip->name = info->data->name;
-+
-+	ret = gpiochip_irqchip_add(gc, irqchip, 0,
-+				   handle_edge_irq, IRQ_TYPE_NONE);
-+	if (ret) {
-+		dev_info(&pdev->dev, "could not add irqchip\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * Many interrupts are connected to the parent interrupt
-+	 * controller. But we do not take advantage of this and use
-+	 * the chained irq with all of them.
-+	 */
-+	for (i = 0; i < nrirqs; i++) {
-+		struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
-+
-+		/*
-+		 * The mask field is a "precomputed bitmask for
-+		 * accessing the chip registers" which was introduced
-+		 * for the generic irqchip framework. As we don't use
-+		 * this framework, we can reuse this field for our own
-+		 * usage.
-+		 */
-+		d->mask = BIT(i % GPIO_PER_REG);
-+	}
-+
-+	for (i = 0; i < nr_irq_parent; i++) {
-+		int irq = irq_of_parse_and_map(np, i);
-+
-+		if (irq < 0)
-+			continue;
-+
-+		gpiochip_set_chained_irqchip(gc, irqchip, irq,
-+					     armada_37xx_irq_handler);
-+	}
-+
-+	return 0;
-+}
-+
- static int armada_37xx_gpiochip_register(struct platform_device *pdev,
- 					struct armada_37xx_pinctrl *info)
- {
-@@ -496,6 +722,9 @@ static int armada_37xx_gpiochip_register(struct platform_device *pdev,
- 	ret = devm_gpiochip_add_data(&pdev->dev, gc, info);
- 	if (ret)
- 		return ret;
-+	ret = armada_37xx_irqchip_register(pdev, info);
-+	if (ret)
-+		return ret;
- 
- 	return 0;
- }
--- 
-git-series 0.9.1
+Tony
