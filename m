@@ -1,39 +1,43 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 07/30] arm: dts: mt7623: add pinctrl nodes to the
- mt7623 dtsi file
-Date: Fri, 28 Apr 2017 10:03:43 +0200
-Message-ID: <CACRpkda8bu3zT_kLWSbfx1SobHcQRxEOdJC=PEpW4=+LvcmiMA@mail.gmail.com>
-References: <1493198774-4478-1-git-send-email-sean.wang@mediatek.com> <1493198774-4478-8-git-send-email-sean.wang@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/9] pinctrl: Renesas RZ/A1 pin and gpio controller
+Date: Fri, 28 Apr 2017 10:06:16 +0200
+Message-ID: <CACRpkdapS5YNk0BKXfbMOOk21X1BFuBLvTxNXWzWPeB1+PRW_A@mail.gmail.com>
+References: <1491401247-7030-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1491401247-7030-3-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdUy3wo9x=nkpdSVSt34q5yaARc4+kFDC592V2LF7Cxzrg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1493198774-4478-8-git-send-email-sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdUy3wo9x=nkpdSVSt34q5yaARc4+kFDC592V2LF7Cxzrg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Apr 26, 2017 at 11:25 AM,  <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
-
-> From: John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
+On Wed, Apr 26, 2017 at 2:21 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Wed, Apr 5, 2017 at 4:07 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>> Add combined gpio and pin controller driver for Renesas RZ/A1
+>> r7s72100 SoC.
+>>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 >
-> Add pin controller node to the mt7623.dtsi file
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/pinctrl-rza1.c
 >
-> Signed-off-by: John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
-> Signed-off-by: Sean Wang <sean.wang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-(...)
-> +       pio: pinctrl@10005000 {
-> +               compatible = "mediatek,mt7623-pinctrl",
-> +                            "mediatek,mt2701-pinctrl";
+>> +/*
+>> + * Keep this up-to-date with pinconf-generic.h: it performs packing of
+>> + * pin conf flags and argument during pinconf_generic_parse_dt_config();
+>> + * we simply discard pinconf argument here
+>> + */
+>> +#define PIN_CONF_UNPACK(pinconf)       ((pinconf) & 0xffUL)
+>
+> Perhaps this should be moved to pinconf-generic.h, to make sure it stays
+> up-to-date?
 
-This looks right. And that is why we should not delete that compatible
-string.
+I agree. Use the generic macros.
 
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+If further processing is needed, make a static inline to discard config flags
+etc.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
