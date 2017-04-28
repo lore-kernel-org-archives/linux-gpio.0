@@ -1,8 +1,7 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Date: Fri, 28 Apr 2017 15:16:25 +0000
-Message-ID: <SG2PR06MB11658E6434EB343246ADC9F58A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
+Date: Fri, 28 Apr 2017 18:37:33 +0300
+Message-ID: <CAHp75VfYPfm_GKPzvX7Go010fRi99t12ub7VUPubB6z3HnsFLg@mail.gmail.com>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
  <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
@@ -10,44 +9,75 @@ References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
  <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+ <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com> <SG2PR06MB11658E6434EB343246ADC9F58A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:42388 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751957AbdD1PQc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 28 Apr 2017 11:16:32 -0400
-In-Reply-To: <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <SG2PR06MB11658E6434EB343246ADC9F58A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Chris Brandt <Chris.Brandt@renesas.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0KPiBIYWQg
-eW91IHJlYWQgdGhlIGZvbGxvd2luZywgZXNwLiBOb3RlIHRoZXJlPw0KPiANCj4gKiBAUElOX0NP
-TkZJR19JTlBVVF9FTkFCTEU6IGVuYWJsZSB0aGUgcGluJ3MgaW5wdXQuICBOb3RlIHRoYXQgdGhp
-cyBkb2VzDQo+IG5vdA0KPiAqICAgICAgYWZmZWN0IHRoZSBwaW4ncyBhYmlsaXR5IHRvIGRyaXZl
-IG91dHB1dC4gIDEgZW5hYmxlcyBpbnB1dCwgMA0KPiBkaXNhYmxlcw0KPiAqICAgICAgaW5wdXQu
-DQo+IA0KPiBGb3IgbWUgbWFudWFsIGlzIGNsZWFybHkgdGVsbHMgYWJvdXQgdGhpcyBzZXR0aW5n
-czoNCj4gIlRoaXMgcmVnaXN0ZXIgZW5hYmxlcyBvciBkaXNhYmxlcyB0aGUgaW5wdXQgYnVmZmVy
-IHdoaWxlIHRoZSBvdXRwdXQNCj4gYnVmZmVyIGlzIGVuYWJsZWQuIg0KDQoNCkJ1dCwgdGhlbiBp
-ZiB3ZSB1c2UgImlucHV0LWVuYWJsZSIgdG8gZ2V0IGJpLWRpcmVjdGlvbmFsIGZ1bmN0aW9uYWxp
-dHksIG5vdyB3ZSBuZWVkIHNvbWV0aGluZyB0byByZXBsYWNlIHdoYXQgd2Ugd2VyZSB1c2luZyAi
-aW5wdXQtZW5hYmxlIiBmb3IuDQpXZSB3ZXJlIHVzaW5nICJpbnB1dC1lbmFibGUiIHRvIHNpZ25h
-bCB3aGVuIHRoZSBwaW4gZnVuY3Rpb24gdGhhdCB3ZSBzZXQgYWxzbyBuZWVkcyB0byBiZSBmb3Jj
-aWJsZSBzZXQgdG8gaW5wdXQgYnkgdGhlIHNvZnR3YXJlIChvbmNlIGFnYWluLCBiZWNhdXNlIHRo
-ZSBIVyBpcyBub3Qgc21hcnQgZW5vdWdoIHRvIGRvIGl0IG9uIGl0cyBvd24pLCBidXQgaXMgZGlm
-ZmVyZW50IHRoYW4gdGhlIGJpLWRpcmVjdGlvbmFsIGZ1bmN0aW9uYWxpdHkgKGllLCBhIGRpZmZl
-cmVudCByZWdpc3RlciBzZXR0aW5nKS4NCg0KDQpTbywgaWYgd2UgcmVwbGFjZSAiYmktZGlyZWN0
-aW9uYWwiIHdpdGggImlucHV0LWVuYWJsZSIgKHNpbmNlIGxvZ2ljYWxseSBpbnRlcm5hbGx5IHRo
-YXQgaXMgd2hhdCBpcyBnb2luZyBvbiksIHdoYXQgZG8gd2UgdXNlIGZvciB0aGUgc3BlY2lhbCBw
-aW5zIHRoYXQgdGhlIEhXIG1hbnVhbCBzYXlzICJoZXksIHlvdSBuZWVkIHRvIG1hbnVhbGx5IHNl
-dCB0aGVzZSBwaW5zIHRvIGlucHV0IHdpdGggU1cgYmVjYXVzZSB0aGUgcGluIHNlbGVjdGlvbiBI
-VyBjYW4ndCBkbyBpdCBjb3JyZWN0bHkpIi4gTm90ZSB0aGF0IHdlIGFkZGVkIGEgZW5hYmxlLW91
-dHB1dCBmb3IgdGhlIHNhbWUgcmVhc29uLg0KU2VlIFJaL0ExSCBIVyBNYW51YWwgc2VjdGlvbiAi
-VGFibGUgNTQuNyBBbHRlcm5hdGl2ZSBGdW5jdGlvbnMgdGhhdCBQSVBDbi5QSVBDbm0gQml0IFNo
-b3VsZCBiZSBTZXQgdG8gMCINCg0KDQpDaHJpcw0K
+On Fri, Apr 28, 2017 at 6:16 PM, Chris Brandt <Chris.Brandt@renesas.com> wr=
+ote:
+> On Friday, April 28, 2017, Andy Shevchenko wrote:
+>> Had you read the following, esp. Note there?
+>>
+>> * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input.  Note that this does
+>> not
+>> *      affect the pin's ability to drive output.  1 enables input, 0
+>> disables
+>> *      input.
+>>
+>> For me manual is clearly tells about this settings:
+>> "This register enables or disables the input buffer while the output
+>> buffer is enabled."
+>
+>
+> But, then if we use "input-enable" to get bi-directional functionality,
+
+It seems you are missing the point from electrical prospective.
+Standard pin buffers (electrically) means input buffer and output
+buffer that are driven independently in most cases.
+
+Here is one example:
+https://electronics.stackexchange.com/questions/96932/internal-circuitry-of=
+-io-ports-in-mcu/96953#96953
+
+(That's what I asked before as a schematic)
+
+> now we need something to replace what we were using "input-enable" for.
+
+No.
+
+> We were using "input-enable" to signal when the pin function that we set =
+also needs to be forcible set to input by the software (once again, because=
+ the HW is not smart enough to do it on its own), but is different than the=
+ bi-directional functionality (ie, a different register setting).
+
+You are trying to introduce an abstraction, called BiDi, which is
+*not* a separate thing from a set of pin properties.
+
+> So, if we replace "bi-directional" with "input-enable" (since logically i=
+nternally that is what is going on), what do we use for the special pins th=
+at the HW manual says "hey, you need to manually set these pins to input wi=
+th SW because the pin selection HW can't do it correctly)".
+
+Yes.
+BiDi is an alias to output + input enable + other pin configuration
+parameters (a set depends on real HW needs).
+
+> Note that we added a enable-output for the same reason.
+> See RZ/A1H HW Manual section "Table 54.7 Alternative Functions that PIPCn=
+.PIPCnm Bit Should be Set to 0"
+
+Perhaps needs to be revisited as well.
+
+P.S. It looks like more and more software engineers are going far from
+real hardware when developing drivers...
+
+--=20
+With Best Regards,
+Andy Shevchenko
