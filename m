@@ -1,73 +1,53 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-Date: Fri, 28 Apr 2017 12:09:49 +0200
-Message-ID: <CAMuHMdXyWFw6YW=yruCijgzgapBZ_VAkFboTuWW=CMv+8npU4w@mail.gmail.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Fri, 28 Apr 2017 12:07:07 +0000
+Message-ID: <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
 References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com> <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34712 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968680AbdD1KJ4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 06:09:56 -0400
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
-
-On Fri, Apr 28, 2017 at 10:32 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Thu, Apr 27, 2017 at 4:56 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Thu, Apr 27, 2017 at 11:19 AM, Jacopo Mondi
->> <jacopo+renesas@jmondi.org> wrote:
->>> Add bi-directional and output-enable pin configuration properties.
->>>
->>> bi-directional allows to specify when a pin shall operate in input and
->>> output mode at the same time. This is particularly useful in platforms
->>> where input and output buffers have to be manually enabled.
->>>
->>> output-enable is just syntactic sugar to specify that a pin shall
->>> operate in output mode, ignoring the provided argument.
->>> This pairs with input-enable pin configuration option.
->>
->> For me it looks like you are trying to alias open-drain + bias or
->> alike. Don't actually see the benefit of it.
->
-> Andy is bringing up a valid point. And I remember asking about
-> this before.
->
-> What does "bi-directional" really mean, electrically speaking?
->
-> Does is just mean open drain and/or open source actually?
-> (See Documentation/gpio/driver.txt for an explanation of
-> how open drain/source works.)
->
-> When you set an output without setting a value, what happens
-> electrically?
->
-> Isn't this bias-high-impedance / High-Z?
->
-> Hopefully you can find the answer from Renesas hardware dept.
->
-> You can certainly call it whatever the datasheet calls it
-> in your driver #defines but for the DT bindings we would
-> ideally have the physical world things.
-
-FWIW, you have already applied v4.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgTGludXMgV2FsbGVpaiB3cm90ZToNCj4gPiBGb3Ig
+bWUgaXQgbG9va3MgbGlrZSB5b3UgYXJlIHRyeWluZyB0byBhbGlhcyBvcGVuLWRyYWluICsgYmlh
+cyBvcg0KPiA+IGFsaWtlLiBEb24ndCBhY3R1YWxseSBzZWUgdGhlIGJlbmVmaXQgb2YgaXQuDQo+
+IA0KPiBBbmR5IGlzIGJyaW5naW5nIHVwIGEgdmFsaWQgcG9pbnQuIEFuZCBJIHJlbWVtYmVyIGFz
+a2luZyBhYm91dCB0aGlzIGJlZm9yZS4NCj4gDQo+IFdoYXQgZG9lcyAiYmktZGlyZWN0aW9uYWwi
+IHJlYWxseSBtZWFuLCBlbGVjdHJpY2FsbHkgc3BlYWtpbmc/DQo+IA0KPiBEb2VzIGlzIGp1c3Qg
+bWVhbiBvcGVuIGRyYWluIGFuZC9vciBvcGVuIHNvdXJjZSBhY3R1YWxseT8NCj4gKFNlZSBEb2N1
+bWVudGF0aW9uL2dwaW8vZHJpdmVyLnR4dCBmb3IgYW4gZXhwbGFuYXRpb24gb2YgaG93IG9wZW4N
+Cj4gZHJhaW4vc291cmNlIHdvcmtzLikNCj4gDQo+IFdoZW4geW91IHNldCBhbiBvdXRwdXQgd2l0
+aG91dCBzZXR0aW5nIGEgdmFsdWUsIHdoYXQgaGFwcGVucyBlbGVjdHJpY2FsbHk/DQo+IA0KPiBJ
+c24ndCB0aGlzIGJpYXMtaGlnaC1pbXBlZGFuY2UgLyBIaWdoLVo/DQo+IA0KPiBIb3BlZnVsbHkg
+eW91IGNhbiBmaW5kIHRoZSBhbnN3ZXIgZnJvbSBSZW5lc2FzIGhhcmR3YXJlIGRlcHQuDQo+IA0K
+PiBZb3UgY2FuIGNlcnRhaW5seSBjYWxsIGl0IHdoYXRldmVyIHRoZSBkYXRhc2hlZXQgY2FsbHMg
+aXQgaW4geW91ciBkcml2ZXINCj4gI2RlZmluZXMgYnV0IGZvciB0aGUgRFQgYmluZGluZ3Mgd2Ug
+d291bGQgaWRlYWxseSBoYXZlIHRoZSBwaHlzaWNhbCB3b3JsZA0KPiB0aGluZ3MuDQoNClRoZSBt
+YWluIHJlYXNvbiBpcyB0aGlzIHBpbiBjb250cm9sbGVyIGlzIHRvbyBkdW1iIHRvIGRvIHdoYXQg
+aXQncyBzdXBwb3NlZCB0byB3aXRoIDEgcmVnaXN0ZXIgc2V0dGluZy4NCg0KDQpUYWtlIHRoZSBT
+REhJIGRhdGEgcGlucy4gWW91IHNlbmQgQU5EIHJlY2VpdmUgZGF0YSBvdmVyIHRob3NlIHBpbnMg
+KGFuZCB0aGV5IGFyZSBub3Qgb3BlbiBkcmFpbikuIFRoZSBpc3N1ZSBpcyB0aGF0IHRoZSBQRkMg
+SFcgdGhhdCBlbmFibGVzIHRoZSBjb25uZWN0aW9ucyBiZXR3ZWVuIHRoZSBTREhJIElQIGJsb2Nr
+IGFuZCB0aGUgSS9PIHBhZCBidWZmZXJzIGNhbiBvbmx5IGVuYWJsZSBvbmUgcGF0aC9zaWduYWwv
+ZGlyZWN0aW9uIHRvIHRoZSBidWZmZXIgZW5hYmxlcyAoaW4gb3Igb3V0KS4gU28gZm9yIGEgcGlu
+IHRoYXQgbmVlZHMgYm90aCBkaXJlY3Rpb25zLCB0aGUgUEZDIGVuYWJsZXMgb3V0cHV0IGFuZCB0
+aGUgImJpZGlyZWN0aW9uYWwgcmVnaXN0ZXIiIGlzIHVzZWQgdG8gZW5hYmxlIHRoZSBpbnB1dCBi
+dWZmZXIgYXMgd2VsbC4NCkluIHRoZSBSWi9BMSBIVyBtYW51YWwgeW91IGNhbiBraW5kIG9mIHNl
+ZSB0aGF0IGluIDU0LjE4IFBvcnQgQ29udHJvbCBMb2dpY2FsIERpYWdyYW0gKGJ1dCB0aGF0IHdh
+c24ndCBvYnZpb3VzIHRvIG1lIGF0IGZpcnN0KS4NCg0KIyBzaWRlIG5vdGUsIHRoZSB3YXkgdGhl
+IHJlZ2lzdGVycyBhcmUgYXJyYW5nZWQgaXMgYWxzbyByaWRpY3Vsb3VzIGluIG15IG9waW5pb24u
+IEknbSBub3QgYSBmYW4gb2YgdGhpcyBwYXJ0aWN1bGFyIElQLg0KDQpUaGUgZ29vZCBuZXdzIGlz
+IHRoZSBSWi9BMSBpcyB0aGUgb25seSBjaGlwIHNlcmllcyBJJ3ZlIHNlZW4gd2l0aCB0aGlzIFBG
+QyBJUCAoSSBjYW4ndCBldmVuIGZpZ3VyZSBvdXQgd2hlcmUgaXQgY2FtZSBmcm9tIGludGVybmFs
+bHkpLiBBbmQgYXMgZmFyIGFzIEkga25vdywgaXQgd2lsbCBub3QgYXBwZWFyIGluIGFueSBvdGhl
+ciBSWiBzZXJpZXMgY2hpcHMuDQoNCg0KDQpDaHJpcw0KDQo=
