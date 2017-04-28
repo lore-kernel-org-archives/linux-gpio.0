@@ -1,74 +1,79 @@
-From: jmondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 02/10] pinctrl: generic: Add macros to unpack
- properties
-Date: Fri, 28 Apr 2017 14:49:02 +0200
-Message-ID: <20170428124902.GA29046@w540>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-3-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2] pinctrl: rockchip: remove unneeded (void *) casts in
+ of_match_table
+Date: Fri, 28 Apr 2017 21:50:35 +0900
+Message-ID: <1493383835-1959-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbkBtJGJ_5MVy2QSAa0zcKVm=_H+vC_kH4AUcX58TiaLg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+of_device_id::data is an opaque pointer.  No explicit cast is needed.
 
-On Fri, Apr 28, 2017 at 10:16:22AM +0200, Linus Walleij wrote:
-> On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
-> <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
->
-> > Add PIN_CONF_UNPACK_PARAM and PIN_CONF_UNPACK_ARGS macros useful to
-> > unpack generic properties and their arguments
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
->
-> (...)
->
-> /*
->   * Helpful configuration macro to be used in tables etc.
->
-> Then this should say "macros" rather than "macro".
->
-> > -#define PIN_CONF_PACKED(p, a) ((a << 8) | ((unsigned long) p & 0xffUL))
-> > +#define PIN_CONF_PACKED(p, a) (((a) << 8) | ((unsigned long) (p) & 0xffUL))
->
-> Also adding some extra parantheses I see.
->
-> > +#define PIN_CONF_UNPACK_PARAM(c) ((c) & 0xffUL)
-> > +#define PIN_CONF_UNPACK_ARGS(c) ((c) >> 8)
->
-> But why.
->
-> I have these two static inlines just below your new macros:
->
-> static inline enum pin_config_param pinconf_to_config_param(unsigned
-> long config)
-> {
->         return (enum pin_config_param) (config & 0xffUL);
-> }
->
-> static inline u32 pinconf_to_config_argument(unsigned long config)
-> {
->         return (u32) ((config >> 8) & 0xffffffUL);
-> }
->
-> Why can't you use this in your code instead of macros?
->
-> We generally prefer static inlines over macros because they are easier
-> to read.
->
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
 
-Right. I haven't noticed them.
-I'll drop this patch, sorry for noise
+Changes in v2:
+  - Rebase on pinctrl subsystem tree
 
-> Yours,
-> Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/pinctrl/pinctrl-rockchip.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index f141aa0..5b4e1c44 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2998,27 +2998,27 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
+ 
+ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
+ 	{ .compatible = "rockchip,rv1108-pinctrl",
+-		.data = (void *)&rv1108_pin_ctrl },
++		.data = &rv1108_pin_ctrl },
+ 	{ .compatible = "rockchip,rk2928-pinctrl",
+-		.data = (void *)&rk2928_pin_ctrl },
++		.data = &rk2928_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3036-pinctrl",
+-		.data = (void *)&rk3036_pin_ctrl },
++		.data = &rk3036_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3066a-pinctrl",
+-		.data = (void *)&rk3066a_pin_ctrl },
++		.data = &rk3066a_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3066b-pinctrl",
+-		.data = (void *)&rk3066b_pin_ctrl },
++		.data = &rk3066b_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3188-pinctrl",
+-		.data = (void *)&rk3188_pin_ctrl },
++		.data = &rk3188_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3228-pinctrl",
+-		.data = (void *)&rk3228_pin_ctrl },
++		.data = &rk3228_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3288-pinctrl",
+-		.data = (void *)&rk3288_pin_ctrl },
++		.data = &rk3288_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3328-pinctrl",
+-		.data = (void *)&rk3328_pin_ctrl },
++		.data = &rk3328_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3368-pinctrl",
+-		.data = (void *)&rk3368_pin_ctrl },
++		.data = &rk3368_pin_ctrl },
+ 	{ .compatible = "rockchip,rk3399-pinctrl",
+-		.data = (void *)&rk3399_pin_ctrl },
++		.data = &rk3399_pin_ctrl },
+ 	{},
+ };
+ 
+-- 
+2.7.4
