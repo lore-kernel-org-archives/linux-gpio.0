@@ -1,79 +1,61 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH v2] pinctrl: rockchip: remove unneeded (void *) casts in
- of_match_table
-Date: Fri, 28 Apr 2017 21:50:35 +0900
-Message-ID: <1493383835-1959-1-git-send-email-yamada.masahiro@socionext.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Fri, 28 Apr 2017 13:18:06 +0000
+Message-ID: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
+ <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:8702 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1425945AbdD1NSO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 28 Apr 2017 09:18:14 -0400
+In-Reply-To: <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-of_device_id::data is an opaque pointer.  No explicit cast is needed.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
----
-
-Changes in v2:
-  - Rebase on pinctrl subsystem tree
-
- drivers/pinctrl/pinctrl-rockchip.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index f141aa0..5b4e1c44 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2998,27 +2998,27 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
- 
- static const struct of_device_id rockchip_pinctrl_dt_match[] = {
- 	{ .compatible = "rockchip,rv1108-pinctrl",
--		.data = (void *)&rv1108_pin_ctrl },
-+		.data = &rv1108_pin_ctrl },
- 	{ .compatible = "rockchip,rk2928-pinctrl",
--		.data = (void *)&rk2928_pin_ctrl },
-+		.data = &rk2928_pin_ctrl },
- 	{ .compatible = "rockchip,rk3036-pinctrl",
--		.data = (void *)&rk3036_pin_ctrl },
-+		.data = &rk3036_pin_ctrl },
- 	{ .compatible = "rockchip,rk3066a-pinctrl",
--		.data = (void *)&rk3066a_pin_ctrl },
-+		.data = &rk3066a_pin_ctrl },
- 	{ .compatible = "rockchip,rk3066b-pinctrl",
--		.data = (void *)&rk3066b_pin_ctrl },
-+		.data = &rk3066b_pin_ctrl },
- 	{ .compatible = "rockchip,rk3188-pinctrl",
--		.data = (void *)&rk3188_pin_ctrl },
-+		.data = &rk3188_pin_ctrl },
- 	{ .compatible = "rockchip,rk3228-pinctrl",
--		.data = (void *)&rk3228_pin_ctrl },
-+		.data = &rk3228_pin_ctrl },
- 	{ .compatible = "rockchip,rk3288-pinctrl",
--		.data = (void *)&rk3288_pin_ctrl },
-+		.data = &rk3288_pin_ctrl },
- 	{ .compatible = "rockchip,rk3328-pinctrl",
--		.data = (void *)&rk3328_pin_ctrl },
-+		.data = &rk3328_pin_ctrl },
- 	{ .compatible = "rockchip,rk3368-pinctrl",
--		.data = (void *)&rk3368_pin_ctrl },
-+		.data = &rk3368_pin_ctrl },
- 	{ .compatible = "rockchip,rk3399-pinctrl",
--		.data = (void *)&rk3399_pin_ctrl },
-+		.data = &rk3399_pin_ctrl },
- 	{},
- };
- 
--- 
-2.7.4
+T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgQW5keSBTaGV2Y2hlbmtvIHdyb3RlOg0KPiA+IElu
+IHRoZSBSWi9BMSBIVyBtYW51YWwgeW91IGNhbiBraW5kIG9mIHNlZSB0aGF0IGluIDU0LjE4IFBv
+cnQgQ29udHJvbA0KPiBMb2dpY2FsIERpYWdyYW0gKGJ1dCB0aGF0IHdhc24ndCBvYnZpb3VzIHRv
+IG1lIGF0IGZpcnN0KS4NCj4gDQo+IFBsZWFzZSwgcG9zdCBhIGxpbmsgdG8gaXQgb3IgY29weSBl
+c3NlbnRpYWwgcGFydHMuDQoNCg0KVGhpcyBib2FyZCB0aGUgUlovQTEgR0VOTUFJIGJvYXJkLg0K
+aHR0cHM6Ly93d3cucmVuZXNhcy5jb20vZW4tdXMvcHJvZHVjdHMvc29mdHdhcmUtdG9vbHMvYm9h
+cmRzLWFuZC1raXRzL2V2YWx1YXRpb24tZGVtby1zb2x1dGlvbi1ib2FyZHMvZ2VubWFpLWNwdS1i
+b2FyZC1ydGs3NzIxMDBiYzAwMDAwYnIuaHRtbA0KDQoNClRoZSBzY2hlbWF0aWMgaXMgaW5jbHVk
+ZWQgaW4gdGhlICJVc2VyJ3MgbWFudWFsIg0KaHR0cHM6Ly93d3cucmVuZXNhcy5jb20vZW4tdXMv
+ZG9jL3Byb2R1Y3RzL3Rvb2wvZG9jLzAwMy9yMjB1dDI1OTZlal9yN3M3MjEwMGV2dW0ucGRmDQoN
+Cg0KVGhlIFJaL0ExSCBIYXJkd2FyZSBtYW51YWwgaXMgaGVyZToNCmh0dHBzOi8vd3d3LnJlbmVz
+YXMuY29tL2VuLXVzL2RvY3VtZW50L2h3LW1hbnVhbD9od0xheWVyU2hvd0ZsZz10cnVlJnByZExh
+eWVySWQ9MTg2Mzc0JmxheWVyTmFtZT1SWiUyNTJGQTFIJmNvcm9uclNlcnZpY2U9ZG9jdW1lbnQt
+cHJkLXNlYXJjaCZod0RvY1VybD0lMkZlbi11cyUyRmRvYyUyRnByb2R1Y3RzJTJGbXB1bWN1JTJG
+ZG9jJTJGcnolMkZyMDF1aDA0MDNlajAzMDBfcnpfYTFoLnBkZiZoYXNoS2V5PTU0ZjMzNTc1Mzc0
+MmI1YWRkNTI0ZDQ3MjViNzI0MmU2DQoNCg0KQ2hhcHRlciA1NCBpcyB0aGUgcG9ydC9waW4gY29u
+dHJvbGxlci4NCg0KIjU0LjE4IFBvcnQgQ29udHJvbCBMb2dpY2FsIERpYWdyYW0iIGlzIHRoZSBk
+aWFncmFtIEkgd2FzIHRhbGtpbmcgYWJvdXQuIE5vdGUgdGhhdCBpcyBzYXlzICJOb3RlOiBUaGlz
+IGZpZ3VyZSBzaG93cyB0aGUgbG9naWMgZm9yIHJlZmVyZW5jZSwgbm90IHRoZSBjaXJjdWl0LiIN
+Cg0KIjU0LjMuMTMgUG9ydCBCaWRpcmVjdGlvbiBDb250cm9sIFJlZ2lzdGVyIChQQkRDbikiIGlz
+IHRoZSBtYWdpYyByZWdpc3RlciBuZWVkZWQgdG8gZ2V0IHNvbWUgcGlucyB0byB3b3JrLg0KDQoN
+Cj4gSSdtIHF1aXRlIHNrZXB0aWNhbCAgdGhhdCBjaGVhcCBoYXJkd2FyZSBjYW4gaW1wbGVtZW50
+IHNvbWV0aGluZyBtb3JlDQo+IGNvc3RhYmxlIHRoYW4gc2ltcGxlc3Qgb3Blbi1zb3VyY2UgLyBv
+cGVuLWRyYWluICsgYmlhcw0KDQpJIGRvbid0IHRoaW5rIHRoaXMgaXMgYW4gb3Blbi1zb3VyY2Ug
+LyBvcGVuLWRyYWluICsgYmlhcyBpc3N1ZS4gSXQncyBhICJ0aGUgaW50ZXJuYWwgc2lnbmFsIHBh
+dGhzIGFyZSBub3QgZ2V0dGluZyBob29rZWQgdXAgY29ycmVjdGx5IiBpc3N1ZS4NCg0KDQpSZWdh
+cmRsZXNzLCBvbiB0aGlzIHBhcnQsIHdlIG5lZWRlZCBhIHdheSB0byBmbGFnIHRoYXQgc29tZSBw
+aW5zIHdoZW4gcHV0IGluIHNvbWUgZnVuY3Rpb24gbW9kZXMgbmVlZGVkICdhbiBleHRyYSByZWdp
+c3RlciBzZXR0aW5nJy4gQXQgZmlyc3Qgd2UgdHJpZWQgdG8gc25lYWsgdGhhdCBpbmZvIGluIHdp
+dGggYSBzaW1wbGUgI2RlZmluZSBpbiB0aGUgcGluL3Bpbm11eCBEVCBub2RlIHByb3BlcnRpZXMu
+IEJ1dCwgTGludXMgZGlkbid0IHdhbnQgaXQgdGhlcmUgc28gd2UgaGFkIHRvIG1ha2UgdXAgYSBu
+ZXcgZ2VuZXJpYyBwcm9wZXJ0eSBjYWxsZWQgImJpLWRpcmVjdGlvbmFsIi4NCg0KV2hhdCBpcyB5
+b3VyIGVuZCBnb2FsIGhlcmU/IEdldCAiYmktZGlyZWN0aW9uYWwiIGNoYW5nZWQgdG8gc29tZXRo
+aW5nIGVsc2U/DQoNCg0KQ2hyaXMNCg0K
