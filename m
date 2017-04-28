@@ -1,53 +1,28 @@
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH 0/8] Fix clean target warnings
-Date: Thu, 27 Apr 2017 16:02:29 -0600
-Message-ID: <831a9104-b186-bae7-be87-5f4adb664dcd@osg.samsung.com>
-References: <cover.1492815938.git.shuahkh@osg.samsung.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v5 05/10] arm: dts: dt-bindings: Add Renesas RZ/A1
+ pinctrl header
+Date: Fri, 28 Apr 2017 07:19:38 +0200
+Message-ID: <20170428051937.GD18349@verge.net.au>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-6-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:34264
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754292AbdD0WCd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Apr 2017 18:02:33 -0400
-In-Reply-To: <cover.1492815938.git.shuahkh@osg.samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWwT6et+vRzeY1GiGYW-hS4w4ukWK8bUL+w-npMmdPkag@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: shuah@kernel.org, bamvor.zhangjian@linaro.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, dvhart@infradead.org
-Cc: viro@zeniv.linux.org.uk, emilio.lopez@collabora.co.uk, mingo@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com, dsafonov@virtuozzo.com, rkrcmar@redhat.com, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Shuah Khan <shuahkh@osg.samsung.com>
 
-On 04/21/2017 05:14 PM, Shuah Khan wrote:
-> This patch series consists of changes to lib.mk to allow overriding
-> common clean target from Makefiles. This fixes warnings when clean
-> overriding and ignoring warnings. Also fixes splice clean target
-> removing a script that runs the test from its clean target.
+On Thu, Apr 27, 2017 at 10:38:39AM +0200, Geert Uytterhoeven wrote:
+> On Thu, Apr 27, 2017 at 10:19 AM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+> > Add dt-bindings for Renesas r7s72100 pin controller header file.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > 
-> Shuah Khan (8):
->   selftests: splice: fix clean target to not remove
->     default_file_splice_read.sh
->   selftests: lib.mk: define CLEAN macro to allow Makefiles to override
->     clean
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied with amended change log and Michael's ack to linux-kselftest next
-
->   selftests: futex: override clean in lib.mk to fix warnings
->   selftests: gpio: override clean in lib.mk to fix warnings
->   selftests: powerpc: override clean in lib.mk to fix warnings
-
-Applied all of the above to linux-kseltftest next
-
->   selftests: splice: override clean in lib.mk to fix warnings
->   selftests: sync: override clean in lib.mk to fix warnings
->   selftests: x86: override clean in lib.mk to fix warnings
-
-Applied v2s addressing Michael's comments to linux-kselftest next
-x86 fix also addresses not being able to build ldt_gdt
-
-make -C tools/testing/selftests/x86 ldt_gdt
-
-
-thanks,
--- Shuah
-
-
+Thanks, I have queued this up.
