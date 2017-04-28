@@ -1,63 +1,46 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH -next v2] pinctrl: artpec6: Fix return value check in
- artpec6_pmx_probe()
-Date: Fri, 28 Apr 2017 07:26:14 -0700
-Message-ID: <20170428142613.GI3777@atomide.com>
-References: <20170425032945.22157-1-weiyj.lk@gmail.com>
- <20170425112930.19555-1-weiyj.lk@gmail.com>
- <20170425134000.GN18509@axis.com>
- <CACRpkdZCKcsk1aR00w5DCrkSrbkzUmt9qcrwwFtH4LDsY+B3gw@mail.gmail.com>
- <20170428075814.GE10068@axis.com>
+From: Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+Date: Fri, 28 Apr 2017 14:48:52 +0000
+Message-ID: <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+ <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:45502 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S938127AbdD1O0S (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 28 Apr 2017 10:26:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20170428075814.GE10068@axis.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jesper Nilsson <jesper.nilsson@axis.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jesper Nilsson <jespern@axis.com>, Wei Yongjun <weiyj.lk@gmail.com>, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@axis.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-* Jesper Nilsson <jesper.nilsson@axis.com> [170428 01:01]:
-> On Fri, Apr 28, 2017 at 09:43:07AM +0200, Linus Walleij wrote:
-> > On Tue, Apr 25, 2017 at 3:40 PM, Jesper Nilsson <jesper.nilsson@axis.com> wrote:
-> > > On Tue, Apr 25, 2017 at 11:29:30AM +0000, Wei Yongjun wrote:
-> > >> From: Wei Yongjun <weiyongjun1@huawei.com>
-> > >>
-> > >> In case of error, the function pinctrl_register() returns
-> > >> ERR_PTR() not NULL. The NULL test in the return value check
-> > >> should be replaced with IS_ERR().
-> > >>
-> > >> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> > >
-> > > Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
-> > >
-> > > Although I'm wondering if moving to pinctrl_register_and_init()
-> > > would sense here. Linus?
-> > 
-> > That depends, check on the commits introducing it for the
-> > usecase.
-> > 
-> > OTOMH it was introduced for when you have hogs in drivers
-> > doing all set-up of groups and functions from the device tree.
-> 
-> Yeah, so in this case it is not necessary, but
-> the comment above pinctrl_register() explicitly says:
-> "To avoid issues later on, please use the
-> new pinctrl_register_and_init() below instead."
-> Which to me indicates that it is recommended
-> to use the pinctrl_register_and_init() in future code...
-> 
-> > Tony?
-
-If you want to use GENERIC_PINCTRL_GROUPS or GENERIC_PINMUX_FUNCTIONS
-want or allocate pins dynamically in the driver, then init needs to be
-updated. So yeah I'd use that style init for any new code.
-
-Regards,
-
-Tony
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgQXByaWwgMjgsIDIwMTcsIEdlZXJ0IFV5dHRlcmhvZXZl
+biB3cm90ZToNCj4gPj4gU2hvdWxkbid0IHRoZSBpbnRlcnJ1cHQgKGNvbm5lY3RlZCB0byBQMV8x
+NSkgYmUgZGVzY3JpYmVkPw0KPiA+DQo+ID4gVGhhdCBpbnRlcnJ1cHQgcGluIGZyb20gdGhlIFBI
+WSBpcyBub3QgdXNlZC4gSXQgZGlkIG5vdCBuZWVkIHRvIGJlDQo+IGNvbm5lY3RlZC4NCj4gDQo+
+IEJ1dCBpdCBpcyBjb25uZWN0ZWQsIGFjY29yZGluZyB0byB0aGUgc2NoZW1hdGljcy4NCg0KUDFf
+MTUgY2FuIGJlIGNvbmZpZ3VyZWQgYXM6DQogKiBHUElPX0lODQogKiBBTjcNCiAqIEFWQl9DQVBU
+VVJFDQoNClNvLi4uSSBndWVzcyB5b3Ugd291bGQgJ2Rlc2NyaWJlJyBpdCBhcyBhbiBHUElPLWlu
+cHV0Lg0KDQoNCj4gRFQgZGVzY3JpYmVzIGhhcmR3YXJlLCBub3Qgc29mdHdhcmUgbGltaXRhdGlv
+bnMuDQoNCkRlc2NyaWJpbmcgdGhpbmdzIGlzIGZpbmUsIGJ1dCB0aGUga2VybmVsIGNvZGUgdGFr
+ZXMgdGhlIERUIGFuZCB0aGVuIHN0YXJ0IGNvbmZpZ3VyaW5nIHRoaW5ncyBiYXNlZCBvbiBpdC4N
+Cg0KRm9yIGV4YW1wbGUsIG9uIHRoZSBSU0sgYm9hcmQsIHRoYXQgbGluZSBpcyBjb25uZWN0ZWQg
+dG8gUDRfMTQuIFA0XzE0IGNhbiBiZSBjb25maWd1cmVkIGFzIElSUTYuLi5idXQgSVJRNiBjb21l
+cyBvdXQgaW4gOCBkaWZmZXJlbnQgcGluIGNob2ljZXMsIGFuZCBJIG1pZ2h0IHdhbnQgdG8gdXNl
+IG9uZSBvZiB0aG9zZSBvdGhlciBjaG9pY2VzLCBzbyBJIGRvbid0IHdhbnQgdG8gZGVzY3JpYmUg
+UDRfMTQgYXMgYW4gaW50ZXJydXB0Lg0KDQpJZiBpdCB3YXMganVzdCBkZXNjcmliaW5nIHRoYXQg
+InBpbiAxNSBvZiB0aGUgUEhZIGNoaXAgaXMgdGllZCB0byBwaW4gWTE5IG9mIHRoZSBSWi9BMUgi
+LCB0aGF0J3MgZmluZSBiZWNhdXNlIGl0J3MgaGFyZHdhcmUgY29ubmVjdGlvbiB0aGF0J3Mgbm90
+IGdvaW5nIHRvIGNoYW5nZS4NCkJ1dC4uLnRoZSBEVCBhbHNvIGRlZmluZXMgdGhlIHBpbiBtdXhp
+bmcuLi53aGljaCBpcyBhIHNvZnR3YXJlIGRlY2lzaW9uIChkbyBJIHdhbnQgdG8gZ2V0IGludGVy
+cnVwdCBvciBqdXN0IG1hbnVhbGx5IHBvbGwgb3Igc2ltcGxlIGlnbm9yZSBpdCkuDQpUaGlzIGlz
+IHRoZSBwYXJ0IG9mIHRoZSB3aG9sZSAiRFQgaXMgZm9yIGhhcmR3YXJlIGRlc2NyaXB0aW9uIG9u
+bHkiIHRoYXQgZG9lc24ndCByZWFsbHkgbWFrZSBzZW5zZSB0byBtZS4NCg0KDQpDaHJpcw0KDQo=
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
