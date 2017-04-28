@@ -1,37 +1,119 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
-Date: Fri, 28 Apr 2017 13:50:32 +0000
-Message-ID: <SG2PR06MB11654ECED12BEB74701B53828A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
- <CACRpkdaiDMxaGM=vqeqVQ-6i3ecYhc+pudy4yt4zAZW-XZ4vCw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaiDMxaGM=vqeqVQ-6i3ecYhc+pudy4yt4zAZW-XZ4vCw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH v5 0/1] Add support for pinctrl/gpio on Armada 37xx
+Date: Fri, 28 Apr 2017 16:01:32 +0200
+Message-ID: <cover.5e6e6649efd7d0482a5df17fb7f94fde29a54210.1493387770.git-series.gregory.clement@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:33956 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753390AbdD1OBk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Apr 2017 10:01:40 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-T24gRnJpZGF5LCBBcHJpbCAyOCwgMjAxNywgTGludXMgV2FsbGVpaiB3cm90ZToNCj4gPiBBZGQg
-cGluIGNvbmZpZ3VyYXRpb24gc3Vibm9kZSBmb3IgRVRIRVIgZXRoZXJuZXQgY29udHJvbGxlci4N
-Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEphY29wbyBNb25kaSA8amFjb3BvK3JlbmVzYXNAam1v
-bmRpLm9yZz4NCj4gKC4uLikNCj4gPiArICAgICAgICAgICAgICAgcGluc19iaWRpciB7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgcGlubXV4ID0gPFJaQTFfUElOTVVYKDMsIDMsIDIpPjsv
-KiBQM18zID0NCj4gRVRfTURJTyAgKi8NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBiaS1k
-aXJlY3Rpb25hbDsNCj4gPiArICAgICAgICAgICAgICAgfTsNCj4gDQo+IFNvIEknbSBhZ2FpbnN0
-IG1lcmdpbmcgdGhpcyB1bnRpbCBzb21lb25lIGV4cGxhaW5zIHdoYXQgImJpLWRpcmVjdGlvbmFs
-Ig0KPiBhY3R1YWxseSBtZWFucywgZWxlY3RyaWNhbGx5IHNwZWFraW5nLiBXaGF0IGhhcHBlbnMg
-cGh5c2ljYWxseSBvbiB0aGlzDQo+IHBpbj8NCj4gDQo+IEkgdGhpbmsgdGhpcyBqdXN0IG1lYW5z
-IG9wZW4gZHJhaW4uDQo+IA0KPiBJdCBpcyBkYW5nZXJvdXMgdG8gbWVyZ2UgdGhpbmdzIHdlIGRv
-bid0IHVuZGVyc3RhbmQuDQo+IA0KPiBTdXJlbHkgc29tZW9uZSBpbnNpZGUgUmVuZXNhcyBjYW4g
-YW5zd2VyIHRoaXMgcXVlc3Rpb24uDQoNCkkgZG9uJ3QgdGhpbmsgdGhpcyBoYXMgYW55dGhpbmcg
-dG8gZG8gd2l0aCBvcGVuIGRyYWluIGJlY2F1c2UgeW91IG5lZWQgaXQgZm9yIGFueSBwaW4gdGhh
-dCB0aGUgcGVyaXBoZXJhbCBJUCBibG9jayBuZWVkcyB0byB0cmFuc21pdCBhbmQgcmVjZWl2ZSBv
-dmVyIHRoZSBzYW1lIGxpbmUsIHJlZ2FyZGxlc3Mgb2YgaWYgaXQncyBhIFNESEksIEkyQywgRXRo
-ZXJuZXQgTURJTywgZXRjLi4uDQpJdCdzIG1vcmUgYWJvdXQgb2YgYWxsb3dpbmcgdGhlIGludGVy
-bmFsIElQIGJsb2NrIHNpZ25hbHMgdG8gZ2V0IGhvb2tlZCB1cCB0byB0aGUgSU8gcGFkIHNpZ25h
-bHMuDQoNCkNocmlzDQoNCg==
+Hi,
+
+This fifth version contain only one patch all the other ones have been
+applied on the pinctrl or the mvebu trees.
+
+For the record, this series adds support for the pin and gpio
+controllers present on the Armada 37xx SoCs.
+
+Each Armada 37xx SoC comes with 2 pin controllers: one on the south
+bridge (managing 28 pins) and one on the north bridge (managing 36 pins).
+
+At the hardware level the controller configure the pins by group and not
+pin by pin.
+
+The gpio controller is also capable to handle interrupt from gpio.
+
+Changelog
+
+v4 -> v5
+- Removed all the patches already applied
+
+- Rebased on linux-next
+
+- Applied binding changes asked by Rob by removing the -nb and -sb part
+
+- Use d->mask directly directly when possible
+
+- Add comment about the check  on gpio-controller child node
+
+- Use of_property_read_bool() instead of of_find_property()
+
+- Declared the armada_37xx_irq_*() functions as static
+
+- check status register for each iteration inside the irq handler
+
+v3 -> v4
+- Some group are configured by several bits in the register:
+  extend the armada_37xx_pin_group struct to manage it.
+
+- Fix the uart2 and cspi2/3 configuration
+
+- Document the armada_37xx_add_function(), armada_37xx_fill_group()
+  and armada_37xx_fill_funcs().
+
+- Use devm_gpiochip_add_data()
+
+- Use irq_find_mapping instead of irq_linear_revmap
+
+- Use handle_edge_irq instead of the wrong handle_level_irq
+
+- Add comment about the fact the we have multiple parent interrupt
+
+- Add comment about the mask usage of the irq_data struct
+
+- Use BIT() macro when possible
+
+- Select more CONFIG symbol needed for GPIO and interrupt support
+
+v2 -> v3
+ - use gpio-ranges (patch 4)
+
+ - Document gpio-ranges usage (patch 1)
+
+ - do not use anymore a global pin index (patch 3)
+
+v1 -> v2:
+- Update binding documentation making clear that mfd and syscon must
+  be used (patch 1).
+
+- Split the fist patch adding pin controller support for Armada 37xx
+  in arm64 part (for kconfig) and pinctrl part (patch 2 and 3)
+
+- Add MFD_SYSCON dependency (patch 3)
+
+- Add kerneldoc for the armada_37xx_pin_group struct (patch 3)
+
+- Rename _add_function() to armada_37xx_add_function() (patch 3)
+
+- Use an inline function to update the reg offset (patch 4)
+
+- Rename gpiolib_register to gpiochip_register (patch 4)
+
+- Add a comment about the two registers limit (patch 4)
+
+- Add explicit gpio node in the device tree (patch 4)
+
+- Convert the driver to use GPIOLIB_IRQCHIP (patch 5)
+
+- Add a critical section when accessing the hardware registers (patch 5)
+
+- Use the gpio subnode (patch 5)
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (1):
+  pinctrl: armada-37xx: Add irqchip support
+
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 229 +++++++++++++++++++++-
+ 1 file changed, 229 insertions(+)
+
+base-commit: 5ae46f24f9b42187beeb512a5203126789cc791b
+-- 
+git-series 0.9.1
