@@ -1,63 +1,109 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 29/30] dt-bindings: add vendor prefix for bananapi
-Date: Tue, 2 May 2017 08:52:49 -0500
-Message-ID: <CAL_JsqKHpWGviZ2H-xhGMzNWsCCRMj_O5ux8aguFfeVKBfJa_w@mail.gmail.com>
-References: <1493198774-4478-1-git-send-email-sean.wang@mediatek.com>
- <1493198774-4478-30-git-send-email-sean.wang@mediatek.com>
- <20170428203727.m6jm5w6nb2iirxih@rob-hp-laptop> <1493621880.32195.13.camel@mtkswgap22>
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add group for AVB MDIO and MII
+ pins
+Date: Tue, 2 May 2017 16:33:50 +0200
+Message-ID: <20170502143350.GM1532@bigcity.dyn.berto.se>
+References: <1492681746-20005-1-git-send-email-geert+renesas@glider.be>
+ <2338736.vqmUpXt7la@avalon>
+ <CAMuHMdWEMOXctK6F6fXeO+Y3S4_tkikJYUf=bA9u5yofD5ciQw@mail.gmail.com>
+ <5295991.u29V8BK3nd@avalon>
+ <CAMuHMdVvdDqo7yxGBc9L7iF4ZVRYNEFFmzuzU75t4+hXZpSUWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:47656 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750954AbdEBNxQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 2 May 2017 09:53:16 -0400
-In-Reply-To: <1493621880.32195.13.camel@mtkswgap22>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVvdDqo7yxGBc9L7iF4ZVRYNEFFmzuzU75t4+hXZpSUWA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sean Wang <sean.wang@mediatek.com>, "arm@kernel.org" <arm@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, John Crispin <john@phrozen.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-mediatek@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-+arm-soc
+Hi Geert and Laurent,
 
-On Mon, May 1, 2017 at 1:58 AM, Sean Wang <sean.wang@mediatek.com> wrote:
-> On Fri, 2017-04-28 at 15:37 -0500, Rob Herring wrote:
->> On Wed, Apr 26, 2017 at 05:26:13PM +0800, sean.wang@mediatek.com wrote:
->> > From: Sean Wang <sean.wang@mediatek.com>
->> >
->> > Banana Pi team in Sinovoip Co., Limited which are dedicated to
->> > design and manufacture open hardware product.
->> >
->> > Website: http://www.banana-pi.org/
->> >
->> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->> > ---
->> >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
->> > index ec0bfb9..8ca0f3c 100644
->> > --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
->> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
->> > @@ -44,6 +44,7 @@ avia      avia semiconductor
->> >  avic       Shanghai AVIC Optoelectronics Co., Ltd.
->> >  axentia    Axentia Technologies AB
->> >  axis       Axis Communications AB
->> > +bananapi Banana Pi SINOVOP CO., LIMITED
->>
->> s/SINOVOP/SINOVOIP/
->
-> Hi Rob,
->
-> thanks for your careful reviewing , i will correct it in the next
-> version.
->
-> BTW, Could those related dts changes go through your tree if everything
-> looks good? Because I find Matthias have been inactive for a while and
-> the latest branch in his tree seems still staying on 4.10.
+On 2017-04-20 13:47:19 +0200, Geert Uytterhoeven wrote:
+> Hi Laurent,
+> 
+> On Thu, Apr 20, 2017 at 1:44 PM, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > On Thursday 20 Apr 2017 13:37:27 Geert Uytterhoeven wrote:
+> >> On Thu, Apr 20, 2017 at 12:18 PM, Laurent Pinchart wrote:
+> >> > On Thursday 20 Apr 2017 12:11:41 Geert Uytterhoeven wrote:
+> >> >> On Thu, Apr 20, 2017 at 12:02 PM, Laurent Pinchart wrote:
+> >> >>> On Thursday 20 Apr 2017 11:49:06 Geert Uytterhoeven wrote:
+> >> >>>> Group the AVB pins into similar groups as found in other 
+> >> >>>> sh-pfc
+> >> >>>> drivers. The pins can not be muxed between functions other than AVB,
+> >> >>>> but their drive strengths can be controlled.
+> >> >>>>
+> >> >>>> The group avb_mdc containing ADV_MDC and ADV_MDIO is called avb_mdio
+> >> >>>> on other SoCs. In pfc-r8a7796 the avb_mdc group already existed and is
+> >> >>>> in use in DT. Therefore add the ADV_MDIO pin to the existing group
+> >> >>>> instead of renaming it.
+> >> >>>
+> >> >>> This clearly shows that we need a few kernel releases to test
+> >> >>> PFC-related code and DT before we can commit to an ABI. How do you
+> >> >>> think we should handle this ?
+> >> >>
+> >> >> That's a difficult question
+> >> >>
+> >> >> For now I'd like to treat R-Car M3-W the same as H3.
+> >> >
+> >> > I still believe we should introduce some kind of unstable period for DT
+> >> > bindings, during which they will be merged in mainline but still subject
+> >> > to modification. It could just be a few kernel releases.
+> >>
+> >> Like, from v4.4 (when avb_mdc was added for H3) until v4.12 (earliest
+> >> we can correct this)?
+> >
+> > Sorry, I misread you, I thought that H3 named the group mdio (you might want
+> > to clarify this in the commit message). I was referring to when M3 PFC support
+> 
+> Sorry, this was a bit unclear (I reused the description from the H3 patch).
+> This was actually referring to R-Car Gen2. Will fix.
+> 
+> > was introduced, which was v4.10, so that's just two releases. We obviously
+> > can't rename mdc to mdio on H3 if we want to keep backward compatibility.
+> 
+> And because of pin-compatibility and board sharing of H3 and M3-W, I
+> want both to use identical group naming.
 
-Happy to take binding doc changes, but I don't take dts changes
-because those go thru arm-soc. If the platform maintainer is not
-responsive, then we should replace or add maintainers.
+I also think it's a benefit if the group names are identical on H3 and 
+M3-W. And I think it is unfortunate that the name do not match Gen2 
+naming.
 
-Rob
+When adding the pins to r8a7795 I thought of instead adding AVB_MDIO to 
+the group avb_mdc add a new group with the Gen2 naming (avb_mdio) and 
+add both AVB_MDC and AVB_MDIO to this group but still also keep the 
+group avb_mdc. If I had done that it would be compatible with Gen2 
+naming and backward compatible with old H3 DT. Maybe I was wrong of not 
+doing it like this and perhaps that solution should be revisited? That 
+is keep avb_mdc as is on H3 for backward compatibility but add avb_mdio to 
+both H3 and M3-W and update H3 DT to use avb_mdio.
+
+In any case I reviewed the pins as it is identical to how it's done on 
+H3. So if you choose to move forward with this approach feel free to 
+add:
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+Regards,
+Niklas Söderlund
