@@ -1,45 +1,42 @@
-From: Joel Stanley <joel@jms.id.au>
-Subject: [PATCH] gpio: aspeed: Don't attempt to debounce if disabled
-Date: Tue,  2 May 2017 15:38:24 +0930
-Message-ID: <20170502060824.6457-1-joel@jms.id.au>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 0/9] pinctrl: Fine-tuning for some function implementations
+Date: Tue, 2 May 2017 11:20:48 +0200
+Message-ID: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34221 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750715AbdEBGIl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 2 May 2017 02:08:41 -0400
+Received: from mout.web.de ([217.72.192.78]:61610 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751188AbdEBJU5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 2 May 2017 05:20:57 -0400
+Content-Language: en-GB
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-We warn the user at driver probe time that debouncing is disabled.
-However, if they request debouncing later on we print a confusing error
-message:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 2 May 2017 11:16:54 +0200
 
- gpio_aspeed 1e780000.gpio: Failed to convert 5000us to cycles at 0Hz: -524
+Some update suggestions were taken into account
+from static source code analysis.
 
-Instead bail out when the clock is not present.
+Markus Elfring (9):
+  Use seq_putc() in three functions
+  Combine two seq_puts() calls into one call in two functions
+  Combine five seq_printf() calls into one call in pinconf_dbg_config_print()
+  Replace two seq_printf() calls by seq_puts() in pinconf_show_map()
+  Adjust five checks for null pointers
+  Combine substrings for a message in pin_config_group_get()
+  Add spaces for better code readability
+  core: Use seq_putc() in pinctrl_maps_show()
+  core: Adjust nine checks for null pointers
 
-Fixes: 5ae4cb94b3133 (gpio: aspeed: Add debounce support)
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/gpio/gpio-aspeed.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/core.c    | 20 ++++++++--------
+ drivers/pinctrl/pinconf.c | 61 ++++++++++++++++++++++++-----------------------
+ 2 files changed, 41 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index ccea609676ee..4ca436e66bdb 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -646,6 +646,9 @@ static int enable_debounce(struct gpio_chip *chip, unsigned int offset,
- 	int rc;
- 	int i;
- 
-+	if (!gpio->clk)
-+		return -EINVAL;
-+
- 	rc = usecs_to_cycles(gpio, usecs, &requested_cycles);
- 	if (rc < 0) {
- 		dev_warn(chip->parent, "Failed to convert %luus to cycles at %luHz: %d\n",
 -- 
-2.11.0
+2.12.2
 
