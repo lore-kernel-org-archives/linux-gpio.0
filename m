@@ -1,8 +1,8 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 3/9] pinctrl: Combine five seq_printf() calls into one call in
- pinconf_dbg_config_print()
-Date: Tue, 2 May 2017 11:23:34 +0200
-Message-ID: <fe725663-d873-b8e4-f364-9abec47ba17e@users.sourceforge.net>
+Subject: [PATCH 4/9] pinctrl: Replace two seq_printf() calls by seq_puts() in
+ pinconf_show_map()
+Date: Tue, 2 May 2017 11:24:18 +0200
+Message-ID: <68dee714-acb7-5c69-7764-3e302a335c38@users.sourceforge.net>
 References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -16,43 +16,34 @@ Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 1 May 2017 22:52:29 +0200
+Date: Tue, 2 May 2017 09:52:50 +0200
 
-Some data were put into a sequence by five separate function calls.
-Print the same data by a single function call instead.
+Strings which did not contain data format specifications should be put
+into a sequence. Thus use the corresponding function "seq_puts".
 
 This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinconf.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/pinctrl/pinconf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index a14ae8601b39..d37f98aafb4b 100644
+index d37f98aafb4b..dfa782e19f37 100644
 --- a/drivers/pinctrl/pinconf.c
 +++ b/drivers/pinctrl/pinconf.c
-@@ -441,12 +441,15 @@ static int pinconf_dbg_config_print(struct seq_file *s, void *d)
- 	}
+@@ -244,10 +244,10 @@ void pinconf_show_map(struct seq_file *s, struct pinctrl_map const *map)
  
- 	if (!found) {
--		seq_printf(s, "No config found for dev/state/pin, expected:\n");
--		seq_printf(s, "Searched dev:%s\n", dbg->dev_name);
--		seq_printf(s, "Searched state:%s\n", dbg->state_name);
--		seq_printf(s, "Searched pin:%s\n", dbg->pin_name);
--		seq_printf(s, "Use: modify config_pin <devname> "\
--				"<state> <pinname> <value>\n");
-+		seq_printf(s,
-+			   "No config found for dev/state/pin, expected:\n"
-+			   "Searched dev:%s\n"
-+			   "Searched state:%s\n"
-+			   "Searched pin:%s\n"
-+			   "Use: modify config_pin <devname> <state> <pinname> <value>\n",
-+			   dbg->dev_name,
-+			   dbg->state_name,
-+			   dbg->pin_name);
- 		goto exit;
- 	}
- 
+ 	switch (map->type) {
+ 	case PIN_MAP_TYPE_CONFIGS_PIN:
+-		seq_printf(s, "pin ");
++		seq_puts(s, "pin ");
+ 		break;
+ 	case PIN_MAP_TYPE_CONFIGS_GROUP:
+-		seq_printf(s, "group ");
++		seq_puts(s, "group ");
+ 		break;
+ 	default:
+ 		break;
 -- 
 2.12.2
