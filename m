@@ -1,12 +1,11 @@
 From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 4/9] pinctrl: Replace two seq_printf() calls by seq_puts() in
- pinconf_show_map()
-Date: Tue, 2 May 2017 11:24:18 +0200
-Message-ID: <68dee714-acb7-5c69-7764-3e302a335c38@users.sourceforge.net>
+Subject: [PATCH 5/9] pinctrl: Adjust five checks for null pointers
+Date: Tue, 2 May 2017 11:25:07 +0200
+Message-ID: <080f6ec0-7796-d802-7b64-8ea9b5488a7a@users.sourceforge.net>
 References: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <d8cce619-5a37-2f8b-1c07-a4c45443fb50@users.sourceforge.net>
 Content-Language: en-GB
@@ -16,34 +15,70 @@ Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 2 May 2017 09:52:50 +0200
+Date: Tue, 2 May 2017 10:01:57 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Strings which did not contain data format specifications should be put
-into a sequence. Thus use the corresponding function "seq_puts".
+The script “checkpatch.pl” pointed information out like the following.
 
-This issue was detected by using the Coccinelle software.
+Comparison to NULL could be written !…
+
+Thus fix the affected source code places.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 ---
- drivers/pinctrl/pinconf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/pinconf.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
-index d37f98aafb4b..dfa782e19f37 100644
+index dfa782e19f37..f2168b6e3418 100644
 --- a/drivers/pinctrl/pinconf.c
 +++ b/drivers/pinctrl/pinconf.c
-@@ -244,10 +244,10 @@ void pinconf_show_map(struct seq_file *s, struct pinctrl_map const *map)
+@@ -319,7 +319,7 @@ static int pinconf_pins_show(struct seq_file *s, void *what)
+ 		pin = pctldev->desc->pins[i].number;
+ 		desc = pin_desc_get(pctldev, pin);
+ 		/* Skip if we cannot search the pin */
+-		if (desc == NULL)
++		if (!desc)
+ 			continue;
  
- 	switch (map->type) {
- 	case PIN_MAP_TYPE_CONFIGS_PIN:
--		seq_printf(s, "pin ");
-+		seq_puts(s, "pin ");
- 		break;
- 	case PIN_MAP_TYPE_CONFIGS_GROUP:
--		seq_printf(s, "group ");
-+		seq_puts(s, "group ");
- 		break;
- 	default:
- 		break;
+ 		seq_printf(s, "pin %d (%s): ", pin, desc->name);
+@@ -528,7 +528,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get arg 'device_name' */
+ 	token = strsep(&b, " ");
+-	if (token == NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+@@ -536,7 +536,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get arg 'state_name' */
+ 	token = strsep(&b, " ");
+-	if (token == NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+@@ -544,7 +544,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get arg 'pin_name' */
+ 	token = strsep(&b, " ");
+-	if (token == NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
+@@ -552,7 +552,7 @@ static ssize_t pinconf_dbg_config_write(struct file *file,
+ 
+ 	/* get new_value of config' */
+ 	token = strsep(&b, " ");
+-	if (token == NULL)
++	if (!token)
+ 		return -EINVAL;
+ 	if (strlen(token) >= MAX_NAME_LEN)
+ 		return -EINVAL;
 -- 
 2.12.2
