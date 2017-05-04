@@ -1,68 +1,55 @@
-From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Subject: Re: [PATCH v2 03/10] pinctrl: sunxi: add A20 support to
- A10 driver
-Date: Thu, 04 May 2017 22:45:11 +0800
-Message-ID: <52C75207-6F41-4B3F-8953-F4F040358792@aosc.io>
-References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-4-icenowy@aosc.io> <20170504140220.26kguf3trz7ocylv@lukather> <83062089-19CD-4805-A6DC-2C25D75621FF@aosc.io> <20170504144152.34yzk424aqrizmbu@lukather>
-Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDS6XAN6ZADRBAP5VTEAKGQEJO6UG5I-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170504144152.34yzk424aqrizmbu@lukather>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/4] Meson8 pinctrl updates (PWM, I2S, SPDIF, AO pins)
+Date: Thu,  4 May 2017 20:49:28 +0200
+Message-ID: <20170504184932.5372-1-martin.blumenstingl@googlemail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:32826 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751738AbdEDStn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 May 2017 14:49:43 -0400
+Received: by mail-wr0-f196.google.com with SMTP id w50so2301526wrc.0
+        for <linux-gpio@vger.kernel.org>; Thu, 04 May 2017 11:49:42 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, carlo@caione.org, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+This adds a bunch of missing pins to the Meson8 pinctrl driver.
+The full pinctrl register documentation can be found in a file called
+"m8_gpio.csv" which is part of older Amlogic GPL kernel releases (one
+example is the GPL kernel source of the Odroid-C1, see [0]).
+
+To sum it up, this patch adds:
+- all pins with PWM function (PWM_A, PWM_B, PWM_C, PWM_D, PWM_E and PWM_F)
+- I2S input and output
+- SPDIF input and output
+- IR remote output ("IR blaster")
+- HDMI CEC in the AO domain
+
+This patch does NOT add:
+- PWM_VS (exposed on a lot of pins, as these cannot be driven by the PWM
+  controllers/pwm-meson driver - these seem to be used for the backlight?)
+- UART_TX_AO_A and UART_RX_AO_A on CARD_4 and CARD_5 (I'm not sure why
+  there is AO functionality on non-AO pins)
+- I2C_SDA_A and I2C_SCK_A on GPIOZ_9/GPIOZ_10 and GPIOZ_11/GPIOZ_12
+- CLK_24M_OUT on GPIOZ_6 and CLK_32K_INCLK_32K_OUT on GPIOAO_6 as we don't
+  have a driver (or documentation) how to configure the clock rate for
+  these pins
+- all pins for which I don't know the actual purpose (isp_led_en1 and
+  isp_led_en2, all TSout pins, all TSin pins, all DVP pins, all TCON pins)
 
 
+https://github.com/hardkernel/linux/blob/d1342c45452ebafb4903557f0c909f4517c90934/arch/arm/mach-meson8/tool/m8_gpio.csv
 
-=E4=BA=8E 2017=E5=B9=B45=E6=9C=884=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=8810:=
-41:52, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> =E5=86=99=E5=88=B0:
->On Thu, May 04, 2017 at 10:03:26PM +0800, Icenowy Zheng wrote:
->>=20
->>=20
->> =E4=BA=8E 2017=E5=B9=B45=E6=9C=884=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-10:02:20, Maxime Ripard
-><maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> =E5=86=99=E5=88=B0:
->> >On Thu, May 04, 2017 at 09:49:59PM +0800, Icenowy Zheng wrote:
->> >>  static const struct of_device_id sun4i_a10_pinctrl_match[] =3D {
->> >> -	{ .compatible =3D "allwinner,sun4i-a10-pinctrl", },
->> >> +	{
->> >> +		.compatible =3D "allwinner,sun4i-a10-pinctrl",
->> >> +		.data =3D (void *)PINCTRL_SUN4I_A10
->> >> +	},
->> >> +	{
->> >> +		.compatible =3D "allwinner,sun7i-a20-pinctrl",
->> >> +		.data =3D (void *)PINCTRL_SUN7I_A20
->> >> +	},
->> >>  	{}
->> >>  };
->> >
->> >This means you're going to have two drivers probing for the same
->> >device: this driver, and the old one. This is not ok, and probably
->> >introduces some corner cases.
->>=20
->> The A20 driver is dropped in the next commit.
->
->Yes, and that is an issue for bisectability. Anyone that will checkout
->between those two commits will have a broken kernel, and that is not
->ok. Any commit should be in a working state.
+Martin Blumenstingl (4):
+  pinctrl: meson: meson8b: add the PWM pins
+  pinctrl: meson: meson8: add support for the I2S and SPDIF pins
+  pinctrl: meson: meson8: add support for the AO remote output pin
+  pinctrl: meson: meson8: add the AO HDMI CEC pin
 
-Squash them together?
+ drivers/pinctrl/meson/pinctrl-meson8.c | 127 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 126 insertions(+), 1 deletion(-)
 
->
->Maxime
+-- 
+2.12.2
 
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
