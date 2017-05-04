@@ -1,34 +1,66 @@
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCH 2/2] pinctrl: mcp23s08: drop OF_GPIO dependency
-Date: Thu,  4 May 2017 15:24:11 +0200
-Message-ID: <20170504132411.10973-3-sebastian.reichel@collabora.co.uk>
-References: <20170504132411.10973-1-sebastian.reichel@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170504132411.10973-1-sebastian.reichel@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Subject: [PATCH v2 00/10] Initial Allwinner R40 support
+Date: Thu,  4 May 2017 21:49:56 +0800
+Message-ID: <20170504135006.16483-1-icenowy@aosc.io>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The driver compiles & works perfectly fine without OF_GPIO on x86,
-so lets drop the dependency.
+This is the first non-RFC version of this patchset, which added basical
+support including I2C, UART and MMC to the mainline Linux.
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
----
- drivers/pinctrl/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+The pinctrl driver of A20 is also merged into the one of A10 before
+R40 support is added into the A10 driver.
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 2ff95fe3017d..52a5e5881936 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -137,7 +137,6 @@ config PINCTRL_FALCON
- 
- config PINCTRL_MCP23S08
- 	tristate "Microchip MCP23xxx I/O expander"
--	depends on OF_GPIO
- 	depends on SPI_MASTER || I2C
- 	select GPIOLIB_IRQCHIP
- 	select REGMAP_I2C if I2C
+Chen-Yu Tsai (2):
+  ARM: dts: sun8i: Add basic dtsi file for Allwinner R40
+  ARM: dts: sun8i: Add board dts file for Banana Pi M2 Ultra
+
+Icenowy Zheng (8):
+  arm: sunxi: add support for R40 SoC
+  pinctrl: sunxi: add definitions for add A20 and R40 support to A10
+    driver
+  pinctrl: sunxi: add A20 support to A10 driver
+  pinctrl: sunxi: switch A20's pinctrl driver to use the A10 version
+  dt-bindings: add compatible string for Allwinner R40 pinctrl
+  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
+  dt-bindings: add compatible string for Allwinner R40 CCU
+  clk: sunxi-ng: support R40 SoC
+
+ Documentation/arm/sunxi/README                     |    4 +
+ Documentation/devicetree/bindings/arm/sunxi.txt    |    1 +
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  161 +++
+ arch/arm/boot/dts/sun8i-r40.dtsi                   |  404 +++++++
+ arch/arm/mach-sunxi/sunxi.c                        |    1 +
+ drivers/clk/sunxi-ng/Kconfig                       |   10 +
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c               | 1153 ++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h               |   68 ++
+ drivers/pinctrl/sunxi/Kconfig                      |    6 +-
+ drivers/pinctrl/sunxi/Makefile                     |    1 -
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c          |  449 ++++++--
+ drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c          | 1056 ------------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |    3 +
+ include/dt-bindings/clock/sun8i-r40-ccu.h          |  191 ++++
+ include/dt-bindings/reset/sun8i-r40-ccu.h          |  129 +++
+ 19 files changed, 2495 insertions(+), 1146 deletions(-)
+ create mode 100644 arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+ create mode 100644 arch/arm/boot/dts/sun8i-r40.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+ delete mode 100644 drivers/pinctrl/sunxi/pinctrl-sun7i-a20.c
+ create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+
 -- 
-2.11.0
+2.12.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
