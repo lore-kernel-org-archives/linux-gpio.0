@@ -1,84 +1,45 @@
-From: Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 2/4] ARM: dts: mvebu: Add PWM properties to .dtsi
- files
-Date: Fri, 5 May 2017 10:15:00 +0200
-Message-ID: <20170505101500.170001a8@gmail.com>
-References: <20170414154056.32055-1-ralph.sennhauser@gmail.com>
-        <20170414154056.32055-3-ralph.sennhauser@gmail.com>
-        <CACRpkdZE0wnotF+OdAmutJcU9JSE_LxNd7Lz7yXqcn_bq5VqgQ@mail.gmail.com>
-        <20170505094139.484db2e7@gmail.com>
-        <87lgqb7mje.fsf@free-electrons.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 10/10] arm: dts: genmai: Add ethernet pin group
+Date: Fri, 5 May 2017 14:06:01 +0200
+Message-ID: <CACRpkdbMpbr_eBnTYA+mBFN4YHUnn2VyuK8PGxz2-Cykv2j83w@mail.gmail.com>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-11-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdVHh_40pup1G-1qohS+wEYCFEn6jvOTCnYideQWMxSVLw@mail.gmail.com>
+ <SG2PR06MB1165D46E83254B1757C790498A100@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdU2CvipQQQ8-wxsiniHZJQmUMHv-t52Pw=sHD3YTd7Yug@mail.gmail.com> <SG2PR06MB11650F50D93653212039A4348A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87lgqb7mje.fsf-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <SG2PR06MB11650F50D93653212039A4348A130-ESzmfEwOt/xoAsOJh7vwSm0DtJ1/0DrXvxpqHgZTriW3zl9H0oFU5g@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "linux-pwm@vger.kernel.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 05 May 2017 10:09:09 +0200
-Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+On Fri, Apr 28, 2017 at 4:48 PM, Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org> wrote:
 
-> Hi Ralph,
->  
->  On ven., mai 05 2017, Ralph Sennhauser <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> wrote:
-> 
-> > On Mon, 24 Apr 2017 11:19:32 +0200
-> > Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> >  
-> >> On Fri, Apr 14, 2017 at 5:40 PM, Ralph Sennhauser
-> >> <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> >>   
-> >> > From: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
-> >> >
-> >> > Add properties to the GPIO nodes to allow them to be also used as
-> >> > PWM lines.
-> >> >
-> >> > Signed-off-by: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>
-> >> > URL: https://patchwork.ozlabs.org/patch/427294/
-> >> > [Ralph Sennhauser: Add new compatible string
-> >> > marvell,armada-370-xp-gpio] Signed-off-by: Ralph Sennhauser
-> >> > <ralph.sennhauser-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> Tested-by: Andrew Lunn
-> >> > <andrew-g2DYL2Zd6BY@public.gmane.org>    
-> >> 
-> >> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> >> 
-> >> Please funnel this through ARM SoC.  
-> >
-> > Hi Gregory,
-> >
-> > A reminder on the off chance you have missed this and it's not to
-> > late already, Linus Walleij took the driver and submitted it for
-> > inclusion in 4.12 [1]. So for completeness it be nice to have the
-> > dts(i) and defconfig changes in as well.  
-> 
-> Unfortunately it was too late to applied and to push it to arm-soc
-> when the gpio part was applied.
-> 
-> So I will apply when 4.12-rc1 will be released and it will be
-> included in the 4.13 release.
+I think this was written by me, not Geert...
 
-Such is life, thanks for the heads up.
+>> DT describes hardware, not software limitations.
+>
+> Describing things is fine, but the kernel code takes the DT and then start configuring things based on it.
+>
+> For example, on the RSK board, that line is connected to P4_14. P4_14 can be configured as IRQ6...but IRQ6 comes out in 8 different pin choices, and I might want to use one of those other choices, so I don't want to describe P4_14 as an interrupt.
+>
+> If it was just describing that "pin 15 of the PHY chip is tied to pin Y19 of the RZ/A1H", that's fine because it's hardware connection that's not going to change.
+> But...the DT also defines the pin muxing...which is a software decision (do I want to get interrupt or just manually poll or simple ignore it).
+> This is the part of the whole "DT is for hardware description only" that doesn't really make sense to me.
 
-Ralph
+OK yeah we do hardware description AND configuration.
 
-> 
-> Gregory
-> >
-> > Thanks
-> > Ralph
-> >
-> > [1] https://lkml.org/lkml/2017/5/4/82
-> >  
-> >> 
-> >> Yours,
-> >> Linus Walleij  
-> >  
-> 
+And we never do interpreted languages.
 
+And then there is a bunch of grayzone things. For example we have
+a linux,input binding for connecting keypresses to certain Linux input
+codes. That is really grayzone, but very useful.
+
+Yours,
+Linus Walleij
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
