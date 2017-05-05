@@ -1,198 +1,98 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/4] pinctrl: meson: meson8b: add the PWM pins
-Date: Thu,  4 May 2017 20:49:29 +0200
-Message-ID: <20170504184932.5372-2-martin.blumenstingl@googlemail.com>
-References: <20170504184932.5372-1-martin.blumenstingl@googlemail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34479 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751738AbdEDSto (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 4 May 2017 14:49:44 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z129so5268680wmb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 04 May 2017 11:49:44 -0700 (PDT)
-In-Reply-To: <20170504184932.5372-1-martin.blumenstingl@googlemail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH v2 01/10] arm: sunxi: add support for R40 SoC
+Date: Fri, 5 May 2017 11:35:53 +0800
+Message-ID: <CAGb2v67qVkQhsRoEb_EyX09KrgN7eQ756wSEVbnzuMf_tHRuhw@mail.gmail.com>
+References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-2-icenowy@aosc.io>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBMPGV7EAKGQEEGMG6IY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170504135006.16483-2-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, carlo@caione.org, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-This adds the missing pins for the PWM controllers found in Amlogic
-Meson8 SoCs. This includes the pins for PWM_A, PWM_B, PWM_C, PWM_D,
-PWM_E and PWM_F controllers.
-There is an additional PWM function with the name PWM_VS in the vendor
-kernel sources which seems to be used for external video input. Thus
-it's not part of this change as the IP block behind the pwm-meson driver
-is not responsible for these pins.
+On Thu, May 4, 2017 at 9:49 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+> From: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/pinctrl/meson/pinctrl-meson8.c | 62 ++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+Do you want to update your author email address?
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 07f1cb21c1b8..9d9ddd9c0f83 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -205,6 +205,9 @@ static const unsigned int i2c_sck_d0_pins[] = { PIN(GPIOX_17, 0) };
- static const unsigned int xtal_32k_out_pins[] = { PIN(GPIOX_10, 0) };
- static const unsigned int xtal_24m_out_pins[] = { PIN(GPIOX_11, 0) };
- 
-+static const unsigned int pwm_e_pins[] = { PIN(GPIOX_10, 0) };
-+static const unsigned int pwm_b_x_pins[] = { PIN(GPIOX_11, 0) };
-+
- /* bank Y */
- static const unsigned int uart_tx_c_pins[] = { PIN(GPIOY_0, 0) };
- static const unsigned int uart_rx_c_pins[] = { PIN(GPIOY_1, 0) };
-@@ -219,6 +222,8 @@ static const unsigned int pcm_clk_b_pins[] = { PIN(GPIOY_7, 0) };
- static const unsigned int i2c_sda_c0_pins[] = { PIN(GPIOY_0, 0) };
- static const unsigned int i2c_sck_c0_pins[] = { PIN(GPIOY_1, 0) };
- 
-+static const unsigned int pwm_a_y_pins[] = { PIN(GPIOY_16, 0) };
-+
- /* bank DV */
- static const unsigned int dvin_rgb_pins[] = { PIN(GPIODV_0, 0), PIN(GPIODV_1, 0),
- 					      PIN(GPIODV_2, 0), PIN(GPIODV_3, 0),
-@@ -264,6 +269,10 @@ static const unsigned int uart_rts_b1_pins[] = { PIN(GPIODV_27, 0) };
- static const unsigned int vga_vs_pins[] = { PIN(GPIODV_24, 0) };
- static const unsigned int vga_hs_pins[] = { PIN(GPIODV_25, 0) };
- 
-+static const unsigned int pwm_c_dv9_pins[] = { PIN(GPIODV_9, 0) };
-+static const unsigned int pwm_c_dv29_pins[] = { PIN(GPIODV_29, 0) };
-+static const unsigned int pwm_d_pins[] = { PIN(GPIODV_28, 0) };
-+
- /* bank H */
- static const unsigned int hdmi_hpd_pins[] = { PIN(GPIOH_0, 0) };
- static const unsigned int hdmi_sda_pins[] = { PIN(GPIOH_1, 0) };
-@@ -312,6 +321,11 @@ static const unsigned int i2c_sck_a1_pins[] = { PIN(GPIOZ_1, 0) };
- static const unsigned int i2c_sda_a2_pins[] = { PIN(GPIOZ_0, 0) };
- static const unsigned int i2c_sck_a2_pins[] = { PIN(GPIOZ_1, 0) };
- 
-+static const unsigned int pwm_a_z0_pins[] = { PIN(GPIOZ_0, 0) };
-+static const unsigned int pwm_a_z7_pins[] = { PIN(GPIOZ_7, 0) };
-+static const unsigned int pwm_b_z_pins[] = { PIN(GPIOZ_1, 0) };
-+static const unsigned int pwm_c_z_pins[] = { PIN(GPIOZ_8, 0) };
-+
- /* bank BOOT */
- static const unsigned int sd_d0_c_pins[] = { PIN(BOOT_0, 0) };
- static const unsigned int sd_d1_c_pins[] = { PIN(BOOT_1, 0) };
-@@ -382,6 +396,8 @@ static const unsigned int uart_rx_ao_b1_pins[] = { PIN(GPIOAO_5, AO_OFF) };
- static const unsigned int i2c_mst_sck_ao_pins[] = { PIN(GPIOAO_4, AO_OFF) };
- static const unsigned int i2c_mst_sda_ao_pins[] = { PIN(GPIOAO_5, AO_OFF) };
- 
-+static const unsigned int pwm_f_ao_pins[] = { PIN(GPIO_TEST_N, AO_OFF) };
-+
- static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GPIO_GROUP(GPIOX_0, 0),
- 	GPIO_GROUP(GPIOX_1, 0),
-@@ -523,6 +539,9 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GROUP(xtal_32k_out,	3,	22),
- 	GROUP(xtal_24m_out,	3,	23),
- 
-+	GROUP(pwm_e,		9,	19),
-+	GROUP(pwm_b_x,		2,	3),
-+
- 	/* bank Y */
- 	GROUP(uart_tx_c,	1,	19),
- 	GROUP(uart_rx_c,	1,	18),
-@@ -537,6 +556,8 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GROUP(i2c_sda_c0,	1,	15),
- 	GROUP(i2c_sck_c0,	1,	14),
- 
-+	GROUP(pwm_a_y,		9,	14),
-+
- 	/* bank DV */
- 	GROUP(dvin_rgb,		0,	6),
- 	GROUP(dvin_vs,		0,	9),
-@@ -571,6 +592,10 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GROUP(vga_vs,		0,	21),
- 	GROUP(vga_hs,		0,	20),
- 
-+	GROUP(pwm_c_dv9,	3,	24),
-+	GROUP(pwm_c_dv29,	3,	25),
-+	GROUP(pwm_d,		3,	26),
-+
- 	/* bank H */
- 	GROUP(hdmi_hpd,		1,	26),
- 	GROUP(hdmi_sda,		1,	25),
-@@ -619,6 +644,11 @@ static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GROUP(i2c_sda_a2,	5,	7),
- 	GROUP(i2c_sck_a2,	5,	6),
- 
-+	GROUP(pwm_a_z0,		9,	16),
-+	GROUP(pwm_a_z7,		2,	0),
-+	GROUP(pwm_b_z,		9,	15),
-+	GROUP(pwm_c_z,		2,	1),
-+
- 	/* bank BOOT */
- 	GROUP(sd_d0_c,		6,	29),
- 	GROUP(sd_d1_c,		6,	28),
-@@ -701,6 +731,8 @@ static struct meson_pmx_group meson8_aobus_groups[] = {
- 
- 	GROUP(i2c_mst_sck_ao,		0,	6),
- 	GROUP(i2c_mst_sda_ao,		0,	5),
-+
-+	GROUP(pwm_f_ao,			0,	19),
- };
- 
- static const char * const gpio_groups[] = {
-@@ -849,6 +881,26 @@ static const char * const nor_groups[] = {
- 	"nor_d", "nor_q", "nor_c", "nor_cs"
- };
- 
-+static const char * const pwm_a_groups[] = {
-+	"pwm_a_y", "pwm_a_z0", "pwm_a_z7"
-+};
-+
-+static const char * const pwm_b_groups[] = {
-+	"pwm_b_x", "pwm_b_z"
-+};
-+
-+static const char * const pwm_c_groups[] = {
-+	"pwm_c_dv9", "pwm_c_dv29", "pwm_c_z"
-+};
-+
-+static const char * const pwm_d_groups[] = {
-+	"pwm_d"
-+};
-+
-+static const char * const pwm_e_groups[] = {
-+	"pwm_e"
-+};
-+
- static const char * const sd_b_groups[] = {
- 	"sd_d1_b", "sd_d0_b", "sd_clk_b", "sd_cmd_b",
- 	"sd_d3_b", "sd_d2_b"
-@@ -878,6 +930,10 @@ static const char * const i2c_mst_ao_groups[] = {
- 	"i2c_mst_sck_ao", "i2c_mst_sda_ao"
- };
- 
-+static const char * const pwm_f_ao_groups[] = {
-+	"pwm_f"
-+};
-+
- static struct meson_pmx_func meson8_cbus_functions[] = {
- 	FUNCTION(gpio),
- 	FUNCTION(sd_a),
-@@ -905,6 +961,11 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
- 	FUNCTION(nor),
- 	FUNCTION(sd_b),
- 	FUNCTION(sdxc_b),
-+	FUNCTION(pwm_a),
-+	FUNCTION(pwm_b),
-+	FUNCTION(pwm_c),
-+	FUNCTION(pwm_d),
-+	FUNCTION(pwm_e),
- };
- 
- static struct meson_pmx_func meson8_aobus_functions[] = {
-@@ -913,6 +974,7 @@ static struct meson_pmx_func meson8_aobus_functions[] = {
- 	FUNCTION(i2c_slave_ao),
- 	FUNCTION(uart_ao_b),
- 	FUNCTION(i2c_mst_ao),
-+	FUNCTION(pwm_f_ao),
- };
- 
- static struct meson_bank meson8_cbus_banks[] = {
--- 
-2.12.2
+>
+> Allwinner R40 is a new SoC, with Quad Core Cortex-A7 and peripherals
+> like A20.
+>
+> Add support for it.
+>
+> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 
+Same here.
+
+For the subject, "ARM" should be uppercase.
+
+> ---
+>  Documentation/arm/sunxi/README                  | 4 ++++
+>  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+>  arch/arm/mach-sunxi/sunxi.c                     | 1 +
+>  3 files changed, 6 insertions(+)
+>
+> diff --git a/Documentation/arm/sunxi/README b/Documentation/arm/sunxi/README
+> index d7b1f016bd62..25c814adcd47 100644
+> --- a/Documentation/arm/sunxi/README
+> +++ b/Documentation/arm/sunxi/README
+> @@ -75,6 +75,10 @@ SunXi family
+>          + Datasheet
+>            http://linux-sunxi.org/File:Allwinner_V3s_Datasheet_V1.0.pdf
+>
+> +      - Allwinner R40 (sun8i)
+> +        + Datasheet Draft
+> +          http://linux-sunxi.org/File:Allwinner_R40_Datasheet_V0.1.pdf
+
+We have the official 1.0 version, don't we? Also please keep the README
+entries in alphabetical order
+
+
+Regards
+ChenYu
+
+> +
+>      * Quad ARM Cortex-A15, Quad ARM Cortex-A7 based SoCs
+>        - Allwinner A80
+>          + Datasheet
+> diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+> index d2c46449b4eb..b3ffe6cf821a 100644
+> --- a/Documentation/devicetree/bindings/arm/sunxi.txt
+> +++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+> @@ -14,6 +14,7 @@ using one of the following compatible strings:
+>    allwinner,sun8i-a83t
+>    allwinner,sun8i-h2-plus
+>    allwinner,sun8i-h3
+> +  allwinner-sun8i-r40
+>    allwinner,sun9i-a80
+>    allwinner,sun50i-a64
+>    nextthing,gr8
+> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> index f44e3acb5c90..aea616759451 100644
+> --- a/arch/arm/mach-sunxi/sunxi.c
+> +++ b/arch/arm/mach-sunxi/sunxi.c
+> @@ -66,6 +66,7 @@ static const char * const sun8i_board_dt_compat[] = {
+>         "allwinner,sun8i-h2-plus",
+>         "allwinner,sun8i-h3",
+>         "allwinner,sun8i-v3s",
+> +       "allwinner,sun8i-r40",
+>         NULL,
+>  };
+>
+> --
+> 2.12.2
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+> For more options, visit https://groups.google.com/d/optout.
