@@ -1,71 +1,60 @@
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/4] pinctrl: meson: meson8: add the AO HDMI CEC pin
-Date: Sat,  6 May 2017 18:57:51 +0200
-Message-ID: <20170506165751.12442-5-martin.blumenstingl@googlemail.com>
-References: <20170504184932.5372-1-martin.blumenstingl@googlemail.com>
- <20170506165751.12442-1-martin.blumenstingl@googlemail.com>
+From: Stafford Horne <shorne@gmail.com>
+Subject: Re: [PATCH] pinctrl: imx: Check for memory allocation failure
+Date: Sun, 7 May 2017 04:40:38 +0900
+Message-ID: <20170506194038.GI17317@lianli.shorne-pla.net>
+References: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36863 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750967AbdEFQ6L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 May 2017 12:58:11 -0400
-Received: by mail-wm0-f66.google.com with SMTP id u65so6915756wmu.3
-        for <linux-gpio@vger.kernel.org>; Sat, 06 May 2017 09:58:10 -0700 (PDT)
-In-Reply-To: <20170506165751.12442-1-martin.blumenstingl@googlemail.com>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:36520 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751396AbdEFTkl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 May 2017 15:40:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, carlo@caione.org, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linus.walleij@linaro.org, gary.bisson@boundarydevices.com, vladimir_zapolskiy@mentor.com, tony@atomide.com, vivien.didelot@savoirfairelinux.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-This adds another missing pin found in the Meson8 SoCs. Currently
-there's no driver which would use this pin yet.
+Hi Christophe,
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/pinctrl/meson/pinctrl-meson8.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Sat, May 06, 2017 at 10:23:59AM +0200, Christophe JAILLET wrote:
+> If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+> Return -ENOMEM instead, as done for the other memory allocation just a
+> few lines below.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 2716d991af8c..e1bdf1f3b75c 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -416,6 +416,8 @@ static const unsigned int i2s_ao_clk_out_ao_pins[] = { PIN(GPIOAO_9, AO_OFF) };
- static const unsigned int i2s_lr_clk_out_ao_pins[] = { PIN(GPIOAO_10, AO_OFF) };
- static const unsigned int i2s_out_ch01_ao_pins[] = { PIN(GPIOAO_11, AO_OFF) };
- 
-+static const unsigned int hdmi_cec_ao_pins[] = { PIN(GPIOAO_12, AO_OFF) };
-+
- static struct meson_pmx_group meson8_cbus_groups[] = {
- 	GPIO_GROUP(GPIOX_0, 0),
- 	GPIO_GROUP(GPIOX_1, 0),
-@@ -769,6 +771,8 @@ static struct meson_pmx_group meson8_aobus_groups[] = {
- 	GROUP(i2s_ao_clk_out_ao,	0,	29),
- 	GROUP(i2s_lr_clk_out_ao,	0,	28),
- 	GROUP(i2s_out_ch01_ao,		0,	27),
-+
-+	GROUP(hdmi_cec_ao,		0,	17),
- };
- 
- static const char * const gpio_groups[] = {
-@@ -985,6 +989,10 @@ static const char * const i2s_ao_groups[] = {
- 	"i2s_out_ch01_ao"
- };
- 
-+static const char * const hdmi_cec_ao_groups[] = {
-+	"hdmi_cec_ao"
-+};
-+
- static struct meson_pmx_func meson8_cbus_functions[] = {
- 	FUNCTION(gpio),
- 	FUNCTION(sd_a),
-@@ -1029,6 +1037,7 @@ static struct meson_pmx_func meson8_aobus_functions[] = {
- 	FUNCTION(i2c_mst_ao),
- 	FUNCTION(pwm_f_ao),
- 	FUNCTION(i2s_ao),
-+	FUNCTION(hdmi_cec_ao),
- };
- 
- static struct meson_bank meson8_cbus_banks[] = {
--- 
-2.12.2
+This looks fine.
 
+> BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
+
+Any reason for the devm_kcalloc change?  It looks like the next for loop
+does set all of the group_name values.
+
+-Stafford
+
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/pinctrl/freescale/pinctrl-imx.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index 74bd90dfd7b1..90a946c028ff 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -581,9 +581,10 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+>  		dev_err(info->dev, "no groups defined in %s\n", np->full_name);
+>  		return -EINVAL;
+>  	}
+> -	func->group_names = devm_kzalloc(info->dev,
+> -					 func->num_group_names *
+> +	func->group_names = devm_kcalloc(info->dev, func->num_group_names,
+>  					 sizeof(char *), GFP_KERNEL);
+> +	if (!func->group_names)
+> +		return -ENOMEM;
+>  
+>  	for_each_child_of_node(np, child) {
+>  		func->group_names[i] = child->name;
+> -- 
+> 2.11.0
+> 
