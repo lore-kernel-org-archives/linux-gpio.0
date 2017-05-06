@@ -1,64 +1,59 @@
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/4] Meson8 pinctrl updates (PWM, I2S, SPDIF, AO pins)
-Date: Sat,  6 May 2017 18:57:47 +0200
-Message-ID: <20170506165751.12442-1-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/4] pinctrl: meson: meson8: add support for the AO remote output pin
+Date: Sat,  6 May 2017 18:57:50 +0200
+Message-ID: <20170506165751.12442-4-martin.blumenstingl@googlemail.com>
 References: <20170504184932.5372-1-martin.blumenstingl@googlemail.com>
+ <20170506165751.12442-1-martin.blumenstingl@googlemail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34330 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751619AbdEFQ6H (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 May 2017 12:58:07 -0400
-Received: by mail-wr0-f194.google.com with SMTP id 6so3434734wrb.1
-        for <linux-gpio@vger.kernel.org>; Sat, 06 May 2017 09:58:06 -0700 (PDT)
-In-Reply-To: <20170504184932.5372-1-martin.blumenstingl@googlemail.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33790 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbdEFQ6K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 6 May 2017 12:58:10 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y10so6959978wmh.0
+        for <linux-gpio@vger.kernel.org>; Sat, 06 May 2017 09:58:09 -0700 (PDT)
+In-Reply-To: <20170506165751.12442-1-martin.blumenstingl@googlemail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org, carlo@caione.org, khilman@baylibre.com, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org
 Cc: linux-arm-kernel@lists.infradead.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-This adds a bunch of missing pins to the Meson8 pinctrl driver.
-The full pinctrl register documentation can be found in a file called
-"m8_gpio.csv" which is part of older Amlogic GPL kernel releases (one
-example is the GPL kernel source of the Odroid-C1, see [0]).
+This adds another missing pin found in the Meson8 SoCs. Currently
+there's no driver which would use this pin yet.
 
-To sum it up, this series adds:
-- all pins with PWM function (PWM_A, PWM_B, PWM_C, PWM_D, PWM_E and PWM_F)
-- I2S input and output
-- SPDIF input and output
-- IR remote output ("IR blaster")
-- HDMI CEC in the AO domain
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson8.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-This series does NOT add:
-- PWM_VS (exposed on a lot of pins, as these cannot be driven by the PWM
-  controllers/pwm-meson driver - these seem to be used for the backlight?)
-- UART_TX_AO_A and UART_RX_AO_A on CARD_4 and CARD_5 (I'm not sure why
-  there is AO functionality on non-AO pins)
-- I2C_SDA_A and I2C_SCK_A on GPIOZ_9/GPIOZ_10 and GPIOZ_11/GPIOZ_12
-- CLK_24M_OUT on GPIOZ_6 and CLK_32K_INCLK_32K_OUT on GPIOAO_6 as we don't
-  have a driver (or documentation) how to configure the clock rate for
-  these pins
-- all pins for which I don't know the actual purpose (isp_led_en1 and
-  isp_led_en2, all TSout pins, all TSin pins, all DVP pins, all TCON pins)
-
-
-Changes since v1:
-- fixed a typo in the subject of patch #1 (which said meson8b instead of
-  meson8)
-- fixed a typo in the pwm_f_ao_groups definition, it referenced a pin
-  with the name "pwm_f", however that pin is actually called "pwm_f_ao"
-
-
-[0] https://github.com/hardkernel/linux/blob/d1342c45452ebafb4903557f0c909f4517c90934/arch/arm/mach-meson8/tool/m8_gpio.csv
-
-Martin Blumenstingl (4):
-  pinctrl: meson: meson8: add the PWM pins
-  pinctrl: meson: meson8: add support for the I2S and SPDIF pins
-  pinctrl: meson: meson8: add support for the AO remote output pin
-  pinctrl: meson: meson8: add the AO HDMI CEC pin
-
- drivers/pinctrl/meson/pinctrl-meson8.c | 127 ++++++++++++++++++++++++++++++++-
- 1 file changed, 126 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
+index 6e36a9602999..2716d991af8c 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8.c
+@@ -395,6 +395,7 @@ static const unsigned int uart_cts_ao_a_pins[] = { PIN(GPIOAO_2, AO_OFF) };
+ static const unsigned int uart_rts_ao_a_pins[] = { PIN(GPIOAO_3, AO_OFF) };
+ 
+ static const unsigned int remote_input_pins[] = { PIN(GPIOAO_7, AO_OFF) };
++static const unsigned int remote_output_ao_pins[] = { PIN(GPIOAO_13, AO_OFF) };
+ 
+ static const unsigned int i2c_slave_sck_ao_pins[] = { PIN(GPIOAO_4, AO_OFF) };
+ static const unsigned int i2c_slave_sda_ao_pins[] = { PIN(GPIOAO_5, AO_OFF) };
+@@ -748,6 +749,7 @@ static struct meson_pmx_group meson8_aobus_groups[] = {
+ 	GROUP(uart_rts_ao_a,		0,	9),
+ 
+ 	GROUP(remote_input,		0,	0),
++	GROUP(remote_output_ao,		0,	31),
+ 
+ 	GROUP(i2c_slave_sck_ao,		0,	2),
+ 	GROUP(i2c_slave_sda_ao,		0,	1),
+@@ -959,7 +961,7 @@ static const char * const uart_ao_groups[] = {
+ };
+ 
+ static const char * const remote_groups[] = {
+-	"remote_input"
++	"remote_input", "remote_output_ao"
+ };
+ 
+ static const char * const i2c_slave_ao_groups[] = {
 -- 
 2.12.2
 
