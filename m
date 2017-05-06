@@ -1,52 +1,40 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7794: add R8A7745 support
-Date: Fri, 5 May 2017 14:56:19 -0500
-Message-ID: <20170505195619.he7tpdtrkkb3oafq@rob-hp-laptop>
-References: <20170428185245.428747882@cogentembedded.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35037 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbdEET4V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 5 May 2017 15:56:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20170428185245.428747882@cogentembedded.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] pinctrl: imx: Check for memory allocation failure
+Date: Sat,  6 May 2017 10:23:59 +0200
+Message-ID: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: linus.walleij@linaro.org, gary.bisson@boundarydevices.com, vladimir_zapolskiy@mentor.com, tony@atomide.com, vivien.didelot@savoirfairelinux.com
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Apr 28, 2017 at 09:52:35PM +0300, Sergei Shtylyov wrote:
-> Renesas RZ/G1E (R8A7745) is pin compatible with R-Car E2 (R8A7794),
-> however it doesn't have several automotive specific peripherals.
-> Annotate all the items that only exist on the R-Car SoCs...
-> 
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> ---
-> This patch is  against the 'devel' branch of Linus Walleij's 'linux-pinctrl.git'
-> repo plus 3 R8A7794 PFC driver fixes/cleanups posted today and  the R8A7743 PFC
-> support patch posted last week...
-> 
-> Changes in version 3:
-> - resolved rejects atop of the new R8A7794 driver patches renaming the IIC0/1
->   signals and removing reserved groups/signals;
-> - undid splitting of 'pinmux_{groups|functions}' arrays into the common and
->   R8A7794 specfic parts, updated the patch description accordingly;
-> - kill double spaces in the patch description.
-> 
-> Changes in version 2:
-> - fixed indentation to use tabs instead of spaces;
-> - updated the PFC bindings.
-> 
->  Documentation/devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt |    1 
+If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+Return -ENOMEM instead, as done for the other memory allocation just a
+few lines below.
+BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
->  drivers/pinctrl/sh-pfc/Kconfig                                    |    5 
->  drivers/pinctrl/sh-pfc/Makefile                                   |    1 
->  drivers/pinctrl/sh-pfc/core.c                                     |    6 
->  drivers/pinctrl/sh-pfc/pfc-r8a7794.c                              |  640 +++++-----
->  drivers/pinctrl/sh-pfc/sh_pfc.h                                   |    1 
->  6 files changed, 369 insertions(+), 285 deletions(-)
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 74bd90dfd7b1..90a946c028ff 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -581,9 +581,10 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
+ 		dev_err(info->dev, "no groups defined in %s\n", np->full_name);
+ 		return -EINVAL;
+ 	}
+-	func->group_names = devm_kzalloc(info->dev,
+-					 func->num_group_names *
++	func->group_names = devm_kcalloc(info->dev, func->num_group_names,
+ 					 sizeof(char *), GFP_KERNEL);
++	if (!func->group_names)
++		return -ENOMEM;
+ 
+ 	for_each_child_of_node(np, child) {
+ 		func->group_names[i] = child->name;
+-- 
+2.11.0
+
