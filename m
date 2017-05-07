@@ -1,16 +1,14 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
-Date: Sun, 7 May 2017 09:30:26 +0200
-Message-ID: <CACRpkdZeYXcXo5g-4wH8M7vK6gTFRHH4VMXqC7XJ_iwXUpL8HA@mail.gmail.com>
-References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
- <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
- <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
- <20170506203230.7ogwvdrzogvvlu67@pengutronix.de>
+Subject: Re: [PATCH 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Sun, 7 May 2017 09:45:53 +0200
+Message-ID: <CACRpkdbvUBMMnY90gmAUMrUiEx3+gSdvm_oLPTLYej3vJivf1A@mail.gmail.com>
+References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
+ <1493373403-23462-2-git-send-email-varada@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170506203230.7ogwvdrzogvvlu67@pengutronix.de>
+In-Reply-To: <1493373403-23462-2-git-send-email-varada@codeaurora.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -20,78 +18,24 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Chris Read <chrisrfq@gmail.com>, Arun Bharadwaj <arun@gumstix.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Johan Hovold <johan@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Manoharan Vijaya Raghavan <mraghava@codeaurora.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Michael Turquette <mturquette@baylibre.com>, sjaganat@codeaurora.org, Stephen Boyd <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, David Brown <david.brown@linaro.org>, absahu@codeaurora.org, Rob Herring <robh+dt@kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>, Sricharan R <sricharan@codeaurora.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-T24gU2F0LCBNYXkgNiwgMjAxNyBhdCAxMDozMiBQTSwgVXdlIEtsZWluZS1Lw7ZuaWcKPHUua2xl
-aW5lLWtvZW5pZ0BwZW5ndXRyb25peC5kZT4gd3JvdGU6Cgo+PiBJJ2Qgc3VnZ2VzdCB0aGUgZm9s
-bG93aW5nIGRlc2NyaXB0aW9uIGZvciB0aGVzZSBjYXNlczoKPj4KPj4gIGEpCj4+ICAgICAgIC8q
-Cj4+ICAgICAgICAqIGluaXRpYWxseSBjb25maWd1cmVkIGFzIGxvdyBvdXRwdXQuIENvbnN1bWVy
-IGNhbiBkbwo+PiAgICAgICAgKiBncGlvX3NldF92YWx1ZSguLi4sIDEpOyBidXQgbm90IGdwaW9f
-ZGlyZWN0aW9uX2lucHV0KC4uLik7Cj4+ICAgICAgICAqLwo+PiAgICAgICBub2RlbmFtZSB7Cj4+
-ICAgICAgICAgICAgICAgZ3Bpby1ob2c7Cj4+ICAgICAgICAgICAgICAgZ3Bpb3MgPSA8Li4uPjsK
-Pj4gICAgICAgICAgICAgICBvdXRwdXQtbG93LWluaXQ7Cj4+ICAgICAgIH07Cj4+Cj4+ICBiKQo+
-PiAgICAgICAvKgo+PiAgICAgICAgKiBpbml0aWFsbHkgY29uZmlndXJlZCBhcyBsb3cgb3V0cHV0
-LiBDb25zdW1lciBjYW4gZG8KPj4gICAgICAgICogZ3Bpb19zZXRfdmFsdWUoLi4uLCAxKTsgYW5k
-IGdwaW9fZGlyZWN0aW9uX2lucHV0KC4uLik7Cj4+ICAgICAgICAqLwo+PiAgICAgICBub2RlbmFt
-ZSB7Cj4+ICAgICAgICAgICAgICAgZ3Bpby1ob2c7Cj4+ICAgICAgICAgICAgICAgZ3Bpb3MgPSA8
-Li4uPjsKPj4gICAgICAgICAgICAgICBvdXRwdXQtaW5pdC1sb3c7Cj4+ICAgICAgIH07Cj4+Cj4+
-ICBjKQo+PiAgICAgICAvKgo+PiAgICAgICAgKiBpbml0aWFsbHkgY29uZmlndXJlZCBhcyBpbnB1
-dC4gQ29uc3VtZXIgY2FuIGRvCj4+ICAgICAgICAqIGdwaW9fZGlyZWN0aW9uX291dHB1dCguLi4s
-IC4uLikgYW5kIHRoZW4gc2V0IHRoZSB2YWx1ZQo+PiAgICAgICAgKiBmcmVlbHkuCj4+ICAgICAg
-ICAqLwo+PiAgICAgICAgbm9kZW5hbWUgewo+PiAgICAgICAgICAgICAgIGdwaW8taG9nOwo+PiAg
-ICAgICAgICAgICAgIGdwaW9zID0gPC4uLj47Cj4+ICAgICAgICAgICAgICAgaW5wdXQtaW5pdDsK
-Pj4gICAgICAgfTsKPgo+IEkgdGhvdWdodCBhIGJpdCBtb3JlIGFib3V0IHRoaXMgYW5kIHRoZSBj
-aGFuZ2VzIHRoYXQgd291bGQgYmUgbmVjZXNzYXJ5Cj4gdG8gYWNoaWV2ZSB0aGlzOgo+Cj4gIC0g
-aW50cm9kdWNlIG5ldyBmbGFncyBJU19GSVhFRF9ESVIgYW5kIElTX0ZJWEVEX1ZBTFVFIGZvciBz
-dHJ1Y3QKPiAgICBncGlvX2Rlc2M6OmZsYWdzIGFuZCBlcnJvciBvdXQgYWNjb3JkaW5nbHkgaW4g
-Z3Bpb2Rfc2V0X2RpcmVjdGlvbl8qCj4gICAgYW5kIGdwaW9kX3NldF92YWx1ZSByZXNwZWN0aXZl
-bHkuIFRoZW4gd2UgaGF2ZToKPgo+ICAgICAgICAgLSBhbHJlYWR5IGV4aXN0aW5nIGhvZ3M6IElT
-X0ZJWEVEX0RJUiB8IElTX0ZJWEVEX1ZBTFVFCj4gICAgICAgICAtIGEpIElTX0ZJWEVEX0RJUgo+
-ICAgICAgICAgLSBiKStjKSAwCj4gICAgICAgICAtIGQpIChpZiBkZXNpcmVkKSBJU19GSVhFRF9W
-QUxVRQoKSSBkb24ndCByZWFsbHkgdW5kZXJzdGFuZCBJU19GSVhFRF9ESVIsIGlmIHRoYXQgaXMg
-YSBwcm9wZXJ0eSBvZiB0aGUKaGFyZHdhcmUgdGhlbiB0aGF0IGlzIHNvbWV0aGluZyB0aGUgZHJp
-dmVyIHNob3VsZCBiZSBoYW5kbGluZywKaS5lLiB0aGUgZHJpdmVyIG11c3Qga25vdyBpZiBhIGxp
-bmUgaXMgZml4ZWQgZGlyZWN0aW9uIChvbmx5IGlucHV0IG9yIG9ubHkKb3V0cHV0KS4gU2FtZSBm
-b3IgSVNfRklYRURfVkFMVUUuCgpPciBkbyB5b3UgbWVhbiBpdCBpcyBzb21ldGhpbmcgZWxzZSwg
-bGlrZSB0aGVzZSBhcmUgb25seSBzb2Z0d2FyZQpmbGFncyBmb3IgaG9ncz8gVGhlbiB0aGV5IHNo
-b3VsZCBiZSBIT0dfSVNfRklYRURfRElSIGV0Yy4KCj4gIC0gZG9uJ3QgYXV0by1yZXF1ZXN0IGhv
-Z2dlZCBwaW5zCj4gICAgQ3VycmVudGx5IGhvZ2dlZCBwaW5zIGFyZSBub3QgYXZhaWxhYmxlIGZv
-ciBjb25zdW1lcnMgdG8gYmUKPiAgICByZXF1ZXN0ZWQuIFRoaXMgbmVlZHMgdG8gYmUgY2hhbmdl
-ZCBhdCBsZWFzdCBmb3IgdGhlIHRocmVlIChvciBmb3VyKQo+ICAgIG5ldyBjYXNlcy4KCkJ1dCBs
-b29rIGF0IHRoZSBkaWN0aW9uYXJ5IGRlZmluaXRpb24gb2YgImhvZyI6Cmh0dHBzOi8vZW4ud2lr
-dGlvbmFyeS5vcmcvd2lraS9ob2cKClRoZSB1c2FnZSBoZXJlIGlzIGFzIGluICJ0byBob2cgcmVz
-b3VyY2VzIiBzbzoKCjMuIEEgZ3JlZWR5IHBlcnNvbjsgb25lIHdobyByZWZ1c2VzIHRvIHNoYXJl
-LgoKQW5kIGNoZWNrIHRoZSB2ZXJiIGZvcm06CgoxLiBob2cgKHRoaXJkLXBlcnNvbiBzaW5ndWxh
-ciBzaW1wbGUgcHJlc2VudCBob2dzLCBwcmVzZW50IHBhcnRpY2lwbGUKICBob2dnaW5nLCBzaW1w
-bGUgcGFzdCBhbmQgcGFzdCBwYXJ0aWNpcGxlIGhvZ2dlZCkKKHRyYW5zaXRpdmUpIFRvIGdyZWVk
-aWx5IHRha2UgbW9yZSB0aGFuIG9uZSdzIHNoYXJlLCB0byB0YWtlIHByZWNlZGVuY2UKIGF0IHRo
-ZSBleHBlbnNlIG9mIGFub3RoZXIgb3Igb3RoZXJzLgpbcXVvdGF0aW9uc11IZXkhIFF1aXQgaG9n
-Z2luZyBhbGwgdGhlIGJsYW5rZXRzLgoKU28gb2YgY291cnNlIGhvZ3MgcmVxdWVzdCBhbmQgaG9s
-ZCB0aGUgbGluZXMuIFRoYXQgaXMgd2hhdCBob2dnaW5nCmlzIGFsbCBhYm91dC4KCj4gICAgSU1I
-TyBpdCBpcyBzZW5zaWJsZSB0byBhbGxvdyByZXF1ZXN0aW5nIGEgZ3BpbyB0aGF0IGlzIGNvbXBs
-ZXRlbHkKPiAgICBob2dnZWQgYW5kIGp1c3QgcHJldmVudCBjaGFuZ2luZyBkaXJlY3Rpb24gYW5k
-IChpZiBpdCdzIGFuIG91dHB1dCkKPiAgICB2YWx1ZS4KCk5vIGl0IGRvZXNuJ3QgbWFrZSBzZW5z
-ZSBhdCBhbGwgdG8gdGFrZSBzb21ldGhpbmcgdGhhdCBpcyBob2dnZWQKYmVjYXVzZSBpdCBpcyBj
-b21wbGV0ZWx5IHVuaW50dWl0aXZlIHRvIHRoZSB2ZXJ5IHdvcmQgImhvZyIuCgpBcyBJIGhhdmUg
-c2FpZCBiZWZvcmU6IGEgbmV3IHByb3BlcnR5LCBzb21ldGhpbmcgbGlrZQoiaW5pdGlhbC1kaXJl
-Y3Rpb25zIiBhbmQgImluaXRpYWwtdmFsdWVzIiBuZWVkIHRvIGJlIGNyZWF0ZWQgYW5kCmhhbmRs
-ZWQgc2VwYXJhdGVseSBmb3IgdGhpcywgd2l0aG91dCBldmVuIGludm9sdmluZyB0aGUgaG9nZ2lu
-ZwptZWNoYW5pc20uCgpZb3UgbmVlZCB0byBpbnRyb2R1Y2Ugc29tZXRoaW5nIGluIHBhcmFsbGVs
-IGZyb20gdGhlIGhvZ3MgdGhhdApkb2VzIG5vdCByZXF1ZXN0IHRoZSBsaW5lcywgYnV0IGp1c3Qg
-c2V0cyB1cCBpbml0aWFsIHZhbHVlcyBhbmQKZGlyZWN0aW9ucyBvbiB0aGVtIGFuZCB0aGVuIGxl
-YXZlIHRoZW0gdG8gYmUgYWNxdWlyZWQgbGF0ZXIuCgpXZSBhbHJlYWR5IGtlZXAgdHJhY2sgb2Yg
-dGhlIGRpcmVjdGlvbiBpbnNpZGUgdGhlIGdwaW9fZGVzYwphbmQgd2UgaGF2ZSBjYWxsYmFja3Mg
-dG8gcmVhZCB0aGF0IHVwIGZyb20gdGhlIGhhcmR3YXJlIGlmCnN1cHBvcnRlZCwgYW5kIEkgZ3Vl
-c3MgdGhlICBzYW1lIGdvZXMgZm9yIGluaXRpYWwgdmFsdWVzLgoKSSBqdXN0IGRvbid0IHNlZSB3
-aGF0IHlvdSBuZWVkIGhlcmUgYW5kIHdoeSB5b3Ugd2FudCB0byBleHBhbmQKdGhlIGhvZyBjb25j
-ZXB0IGJleW9uZCBpdHMgaW50dWl0aXZlIHVzZT8KCkkgc2F5IGRlZmluZSBzb21ldGhpbmcgbmV3
-IGluIGRldmljZSB0cmVlIHdpdGggYW4gaW50dWl0aXZlIG5hbWUsCnRoYXQgZG9lcyB3aGF0IHlv
-dSB3YW50IGl0IHRvIGRvOiBqdXN0IHNldHMgdXAgaW5pdGlhbCBkaXJlY3Rpb24gYW5kCm9wdGlv
-bmFsIHZhbHVlIChvbiBvdXRwdXRzKSB1c2luZyB0aGUgZXhpc3RpbmcgY2FsbGJhY2tzIGFuZCB0
-aGVuIGp1c3QKZ2V0cyBvdXQgb2YgdGhlIHdheS4gTm8gaG9nZ2luZy4KCllvdXJzLApMaW51cyBX
-YWxsZWlqCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwps
-aW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJh
-ZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51
-eC1hcm0ta2VybmVsCg==
+On Fri, Apr 28, 2017 at 11:56 AM, Varadarajan Narayanan
+<varada@codeaurora.org> wrote:
+
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq8074.
+>
+> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+
+Bjorn Andersson is the maintainer of the qcom pinctrl drivers so you need
+to put him on the To: line so he can review and comment on the patches
+for new qcom pin control drivers.
+
+Bjorn maybe you should patch MAINTAINERS so you do not get missed...
+
+Yours,
+Linus Walleij
