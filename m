@@ -1,47 +1,101 @@
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
         <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] gpio: fix description for gpio-ranges example
-Date: Mon,  8 May 2017 10:41:48 +0200
-Message-ID: <20170508084148.30286-1-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] ARM: dts: imx28: add gpio-ranges for internal gpio controller
+Date: Mon,  8 May 2017 10:59:25 +0200
+Message-ID: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:35155 "EHLO
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:54721 "EHLO
         metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751433AbdEHImA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 May 2017 04:42:00 -0400
+        by vger.kernel.org with ESMTP id S1751255AbdEHI7b (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 May 2017 04:59:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
-
-The length of the second entry is 20, so it affects GPIOs 10..29.
+To: Shawn Guo <shawnguo@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- Documentation/devicetree/bindings/gpio/gpio.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hello,
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-index 84ede036f73d..2209c163f2a5 100644
---- a/Documentation/devicetree/bindings/gpio/gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-@@ -280,12 +280,12 @@ Example 1:
- 		gpio-controller;
- 		gpio-ranges = <&pinctrl1 0 20 10>, <&pinctrl2 10 50 20>;
- 	};
+with this patch applied I get the following lines in dmesg which looks
+fine:
+
+	[    0.227913] gpio gpiochip0: (80018000.pinctrl:gpio@0): created GPIO range 0->31 ==> 80018000.pinctrl PIN 0->31
+	[    0.236100] gpio gpiochip1: (80018000.pinctrl:gpio@1): created GPIO range 0->31 ==> 80018000.pinctrl PIN 32->63
+	[    0.244463] gpio gpiochip2: (80018000.pinctrl:gpio@2): created GPIO range 0->31 ==> 80018000.pinctrl PIN 64->95
+	[    0.253020] gpio gpiochip3: (80018000.pinctrl:gpio@3): created GPIO range 0->31 ==> 80018000.pinctrl PIN 96->127
+	[    0.261639] gpio gpiochip4: (80018000.pinctrl:gpio@4): created GPIO range 0->31 ==> 80018000.pinctrl PIN 128->159
+
+But when looking at a used gpio
+
+	# cat /sys/kernel/debug/gpio
+	gpiochip0: GPIOs 0-31, parent: platform/80018000.pinctrl:gpio@0, 80018000.pinctrl:gpio@0:
+	...
+	 gpio-20  (LED4                |?                   ) out hi
+	...
+
+	# grep "pin 20 " /sys/kernel/debug/pinctrl/80018000.pinctrl/pinmux-pins
+	pin 20 (GPMI_RDY0): leds (GPIO UNCLAIMED) function leds group leds.0
+
+I wonder why there is still "GPIO UNCLAIMED". I would have expected that
+this disappears and somehow references the gpio_request issued by the
+led-gpio driver after my patch.
+
+What am I missing?
+
+Best regards
+Uwe
+
+ arch/arm/boot/dts/imx28.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx28.dtsi b/arch/arm/boot/dts/imx28.dtsi
+index 148fcf4d3b98..cfad2295cc46 100644
+--- a/arch/arm/boot/dts/imx28.dtsi
++++ b/arch/arm/boot/dts/imx28.dtsi
+@@ -182,6 +182,7 @@
+ 					#gpio-cells = <2>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
++					gpio-ranges = <&pinctrl 0 0 32>;
+ 				};
  
- Here, a single GPIO controller has GPIOs 0..9 routed to pin controller
--pinctrl1's pins 20..29, and GPIOs 10..19 routed to pin controller pinctrl2's
--pins 50..59.
-+pinctrl1's pins 20..29, and GPIOs 10..29 routed to pin controller pinctrl2's
-+pins 50..69.
+ 				gpio1: gpio@1 {
+@@ -192,6 +193,7 @@
+ 					#gpio-cells = <2>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
++					gpio-ranges = <&pinctrl 0 32 32>;
+ 				};
  
- Example 2:
+ 				gpio2: gpio@2 {
+@@ -202,6 +204,7 @@
+ 					#gpio-cells = <2>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
++					gpio-ranges = <&pinctrl 0 64 32>;
+ 				};
  
- 	gpio_pio_i: gpio-controller@14B0 {
- 		#gpio-cells = <2>;
+ 				gpio3: gpio@3 {
+@@ -212,6 +215,7 @@
+ 					#gpio-cells = <2>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
++					gpio-ranges = <&pinctrl 0 96 32>;
+ 				};
+ 
+ 				gpio4: gpio@4 {
+@@ -222,6 +226,7 @@
+ 					#gpio-cells = <2>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
++					gpio-ranges = <&pinctrl 0 128 32>;
+ 				};
+ 
+ 				duart_pins_a: duart@0 {
 -- 
 2.11.0
 
