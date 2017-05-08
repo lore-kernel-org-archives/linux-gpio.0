@@ -1,74 +1,47 @@
-From: Varadarajan Narayanan <varada@codeaurora.org>
-Subject: Re: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
-Date: Mon, 8 May 2017 13:02:20 +0530
-Message-ID: <a63b7ccf-51a6-5d10-47e1-aac9a27a1516@codeaurora.org>
-References: <1493373403-23462-1-git-send-email-varada@codeaurora.org>
- <1493373403-23462-5-git-send-email-varada@codeaurora.org>
- <20170428185825.75usyll55p3aclnm@latitude>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] gpio: fix description for gpio-ranges example
+Date: Mon,  8 May 2017 10:41:48 +0200
+Message-ID: <20170508084148.30286-1-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39688 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752775AbdEHHcb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 May 2017 03:32:31 -0400
-In-Reply-To: <20170428185825.75usyll55p3aclnm@latitude>
-Content-Language: en-US
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:35155 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751433AbdEHImA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 May 2017 04:42:00 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sricharan@codeaurora.org, absahu@codeaurora.org, sjaganat@codeaurora.org, Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, kernel@pengutronix.de
 
+The length of the second entry is 20, so it affects GPIOs 10..29.
 
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 4/29/2017 12:28 AM, Jonathan Neuschäfer wrote:
-> Hi,
-> 
-> On Fri, Apr 28, 2017 at 03:26:42PM +0530, Varadarajan Narayanan wrote:
->> Subject: [PATCH 4/5] arm64: dts: Add ipq8074 SoC and MTP board support
-> 
-> s/MTP/HK01/ ?
-
-Have posted v2 with MTP changed as HK01. Please refer to
-https://www.spinics.net/lists/arm-kernel/msg579470.html.
-
-Thanks
-Varada
-
-> 
->> Add initial device tree support for the Qualcomm IPQ8074 SoC and
->> HK01 evaluation board.
->>
->> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
->> ---
->>   arch/arm64/boot/dts/qcom/Makefile         |   1 +
->>   arch/arm64/boot/dts/qcom/ipq8074-hk01.dts |  48 ++++++++++
->>   arch/arm64/boot/dts/qcom/ipq8074.dtsi     | 153 ++++++++++++++++++++++++++++++
->>   3 files changed, 202 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
->>   create mode 100644 arch/arm64/boot/dts/qcom/ipq8074.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index cc0f02d..7c6963e 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8992-bullhead-rev-101.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
-> 
-> Maybe this list should be alphabetically sorted ('i' before 'm').
-> (I have no strong preference)
-> 
-> 
-> Thanks,
-> Jonathan Neuschäfer
-> 
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 84ede036f73d..2209c163f2a5 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -280,12 +280,12 @@ Example 1:
+ 		gpio-controller;
+ 		gpio-ranges = <&pinctrl1 0 20 10>, <&pinctrl2 10 50 20>;
+ 	};
+ 
+ Here, a single GPIO controller has GPIOs 0..9 routed to pin controller
+-pinctrl1's pins 20..29, and GPIOs 10..19 routed to pin controller pinctrl2's
+-pins 50..59.
++pinctrl1's pins 20..29, and GPIOs 10..29 routed to pin controller pinctrl2's
++pins 50..69.
+ 
+ Example 2:
+ 
+ 	gpio_pio_i: gpio-controller@14B0 {
+ 		#gpio-cells = <2>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum, a Linux Foundation Collaborative Project
+2.11.0
+
