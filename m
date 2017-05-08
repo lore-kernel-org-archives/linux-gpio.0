@@ -1,101 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 29/30] dt-bindings: add vendor prefix for bananapi
-Date: Mon, 8 May 2017 13:36:01 +0200
-Message-ID: <CAK8P3a3FpbGErEo93xaDLZMi0+XQvKk44dniZqrecQf=WJD1-g@mail.gmail.com>
-References: <1493198774-4478-1-git-send-email-sean.wang@mediatek.com>
- <1493198774-4478-30-git-send-email-sean.wang@mediatek.com>
- <20170428203727.m6jm5w6nb2iirxih@rob-hp-laptop> <1493621880.32195.13.camel@mtkswgap22>
- <CAL_JsqKHpWGviZ2H-xhGMzNWsCCRMj_O5ux8aguFfeVKBfJa_w@mail.gmail.com> <1494237213.9662.50.camel@mtkswgap22>
+From: jmondi <jacopo@jmondi.org>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Mon, 8 May 2017 18:01:20 +0200
+Message-ID: <20170508160120.GB25206@w540>
+References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
+ <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+ <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+ <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1494237213.9662.50.camel@mtkswgap22>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: Olof Johansson <olof@lixom.net>, RobHerring <robh@kernel.org>, "arm@kernel.org" <arm@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, John Crispin <john@phrozen.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-mediatek@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matthias Brugger <mbrugger@suse.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, May 8, 2017 at 11:53 AM, Sean Wang <sean.wang@mediatek.com> wrote:
-> Hi Rob,
+Hi Linus,
+
+On Sun, May 07, 2017 at 09:52:49AM +0200, Linus Walleij wrote:
+> On Fri, Apr 28, 2017 at 4:53 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 >
-> thanks for helping me looping in the right group
+> > Linus, for me it looks like better to revert that change, until we
+> > will have clear picture why existing configuration parameters can't
+> > work.
 >
+> Yeah I'll revert the binding for fixes.
 >
-> Hi Arnd and Olof
->
-> I found Matthias is inactive for a while (his branch in his tree seemed
-> to stop at 4.10 since the end of February) maybe he was busy at other
-> things. Is there a good way to break the stuck situation and keeping
-> linux-mediatek moving on?
->
-> I have the willing to fork his tree, prepare dt-for-4.12 and send
-> pull-requests to you.
 
-Hi Sean,
+As it seems we won't be able to proceed with the currently proposed solution,
+would that be acceptable now that we use the "pinmux" property to add
+flags as BIDIR and SWIO_[INPUT|OUTPUT] directly there?
+This was my original proposal, rejected because we were using the "pins"
+property at the time.
 
-Thanks for offering to help out. I've added Matthias' other email address
-to Cc here, let's see if he notices the discussion now. Ideally any
-important platform should have multiple maintainers so there is
-always a backup person when the primary contact is unavailable
-for any reason.
+Quoting to the description of "pinmux":
 
-I'm not sure how much we can still do for 4.12, if you can prepare a
-branch now we can definitely have a look and see what we can
-realistically take for a late merge, but as we are in the second half
-of the merge window already, we would normally put new features
-into a 4.13 branch and only take bug fixes for 4.12. If there are
-some entirely new files for additional boards, or only small changes
-to the existing files, we might make an exception this time.
+"Each individual pin controller driver bindings documentation shall
+specify how those values (pin IDs and pin multiplexing configuration)
+are defined and assembled together"
 
-> But I am worried in that way violating the reviewing process if
-> Matthias no reads it.
+Do you think the "flags" we have failed to describe as generic pin
+configuration properties, fit the definition of "pin multiplexing
+configuration" to be assembled with pin IDs?
 
-Don't worry about that at the moment, if Matthias cannot be reached
-at all, we have to find an alternative way to get patches in.
+As a reference this was the proposed bindings in v3:
+https://www.spinics.net/lists/linux-renesas-soc/msg12792.html
 
-        Arnd
+Have a look at Pin multiplexing sub-nodes examples 2 and 3, with
+"pinmux" in place of "renesas,pins" property.
 
-> On Tue, 2017-05-02 at 08:52 -0500, Rob Herring wrote:
->> +arm-soc
->>
->> On Mon, May 1, 2017 at 1:58 AM, Sean Wang <sean.wang@mediatek.com> wrote:
->> > On Fri, 2017-04-28 at 15:37 -0500, Rob Herring wrote:
->> >> On Wed, Apr 26, 2017 at 05:26:13PM +0800, sean.wang@mediatek.com wrote:
->> >> > From: Sean Wang <sean.wang@mediatek.com>
->> >> >
->> >> > Banana Pi team in Sinovoip Co., Limited which are dedicated to
->> >> > design and manufacture open hardware product.
->> >> >
->> >> > Website: http://www.banana-pi.org/
->> >> >
->> >> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->> >> > ---
->> >> >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->> >> >  1 file changed, 1 insertion(+)
->> >> >
->> >> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
->> >> > index ec0bfb9..8ca0f3c 100644
->> >> > --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
->> >> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
->> >> > @@ -44,6 +44,7 @@ avia      avia semiconductor
->> >> >  avic       Shanghai AVIC Optoelectronics Co., Ltd.
->> >> >  axentia    Axentia Technologies AB
->> >> >  axis       Axis Communications AB
->> >> > +bananapi Banana Pi SINOVOP CO., LIMITED
->> >>
->> >> s/SINOVOP/SINOVOIP/
->> >
->> > Hi Rob,
->> >
->> > thanks for your careful reviewing , i will correct it in the next
->> > version.
->> >
->> > BTW, Could those related dts changes go through your tree if everything
->> > looks good? Because I find Matthias have been inactive for a while and
->> > the latest branch in his tree seems still staying on 4.10.
->>
->> Happy to take binding doc changes, but I don't take dts changes
->> because those go thru arm-soc. If the platform maintainer is not
->> responsive, then we should replace or add maintainers.
->>
->> Rob
+Thanks
+   j
+
+> Yours,
+> Linus Walleij
