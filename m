@@ -1,10 +1,9 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+From: jmondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
  output-enable
-Date: Mon, 8 May 2017 17:02:02 +0000
-Message-ID: <SG2PR06MB1165C1109F74DF1F15E171D48AEE0@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
- <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+Date: Mon, 8 May 2017 19:25:16 +0200
+Message-ID: <20170508172516.GC25206@w540>
+References: <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
  <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
  <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
  <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
@@ -15,62 +14,93 @@ References: <1493281194-5200-1-git-send-email-jacopo+renesas@jmondi.org>
  <20170508160120.GB25206@w540>
  <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:14136 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752682AbdEHRCJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 8 May 2017 13:02:09 -0400
-In-Reply-To: <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, jmondi <jacopo@jmondi.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-T24gTW9uZGF5LCBNYXkgMDgsIDIwMTcsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gT24gTW9u
-LCBNYXkgOCwgMjAxNyBhdCA3OjAxIFBNLCBqbW9uZGkgPGphY29wb0BqbW9uZGkub3JnPiB3cm90
-ZToNCj4gPiBPbiBTdW4sIE1heSAwNywgMjAxNyBhdCAwOTo1Mjo0OUFNICswMjAwLCBMaW51cyBX
-YWxsZWlqIHdyb3RlOg0KPiA+PiBPbiBGcmksIEFwciAyOCwgMjAxNyBhdCA0OjUzIFBNLCBBbmR5
-IFNoZXZjaGVua28NCj4gPj4gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+IHdyb3RlOg0KPiA+
-Pg0KPiA+PiA+IExpbnVzLCBmb3IgbWUgaXQgbG9va3MgbGlrZSBiZXR0ZXIgdG8gcmV2ZXJ0IHRo
-YXQgY2hhbmdlLCB1bnRpbCB3ZQ0KPiA+PiA+IHdpbGwgaGF2ZSBjbGVhciBwaWN0dXJlIHdoeSBl
-eGlzdGluZyBjb25maWd1cmF0aW9uIHBhcmFtZXRlcnMgY2FuJ3QNCj4gPj4gPiB3b3JrLg0KPiA+
-Pg0KPiA+PiBZZWFoIEknbGwgcmV2ZXJ0IHRoZSBiaW5kaW5nIGZvciBmaXhlcy4NCj4gDQo+ID4g
-QXMgaXQgc2VlbXMgd2Ugd29uJ3QgYmUgYWJsZSB0byBwcm9jZWVkIHdpdGggdGhlIGN1cnJlbnRs
-eSBwcm9wb3NlZA0KPiBzb2x1dGlvbiwNCj4gPiB3b3VsZCB0aGF0IGJlIGFjY2VwdGFibGUgbm93
-IHRoYXQgd2UgdXNlIHRoZSAicGlubXV4IiBwcm9wZXJ0eSB0byBhZGQNCj4gPiBmbGFncyBhcyBC
-SURJUg0KPiANCj4gQ2FuIHlvdSBleHBsYWluIHdoYXQgZG9lcyB0aGlzICplbGVjdHJpY2FsbHkq
-IG1lYW4/DQoNCkJpLURpcmVjdGlvbmFsOg0KDQpGb3IgYW55IHBpbiB0aGF0IG5lZWRzIHRvIGRy
-aXZlIChzZW5kKSBvciBzZW5zZSAocmVjZWl2ZSkgc2lnbmFscywgdGhlIHBpbg0KbXV4IGNvbnRy
-b2xsZXIgY2FuIG9ubHkgZW5hYmxlIDEgZGlyZWN0aW9uIG9mIGJ1ZmZlcnMgKGluIHRoaXMgY2Fz
-ZSwgaXQNCm9ubHkgdGhlIG91dHB1dCBidWZmZXJzKS4gVGhlcmVmb3JlIHRoZSBhcHByb3ByaWF0
-ZSBiaXQgaW4gdGhlDQonYmktZGlyZWN0aW9uYWwnIHJlZ2lzdGVyIGlzIHNldCBpbiBvcmRlciB0
-byBlbmFibGUgdGhlIHNpZ25hbCBwYXRoIGluIGJvdGgNCmRpcmVjdGlvbnMgKGllLCBlbmFibGUg
-dGhlIGlucHV0IGJ1ZmZlcnMpLg0KDQoNCj4gPiAgYW5kIFNXSU9fW0lOUFVUfE9VVFBVVF0gZGly
-ZWN0bHkgdGhlcmU/DQoNCkluIHRoZSBoYXJkd2FyZSBtYW51YWwsIHRoZXJlIGlzIGEgbGlzdCBv
-ZiBwaW4gZnVuY3Rpb25zIHRoYXQgaWYgeW91IHdhbnQNCnRvIHVzZSwgeW91IGNhbm5vdCB1c2Ug
-dGhlIHN0YW5kIHBpbm11eCByZWdpc3RlciBtZXRob2QgdGhhdCB5b3UgdXNlIGZvcg0KYWxsIHRo
-ZSBvdGhlciBwaW5zLiBJbnN0ZWFkLCB5b3UgYXJlIGluc3RydWN0ZWQgdG8gZG8gYSBkaWZmZXJl
-bnQNCnByb2NlZHVyZS4gSWYgY291cnNlIGVsZWN0cmljYWxseSwgaW5wdXQvb3V0cHV0IGJ1ZmZl
-cnMgYXJlIHN0aWxsIHR1cm5lZA0Kb24vb2ZmIG9yIHdoYXRldmVyLCBidXQgdGhlIHJvb3QgcmVh
-c29uIG9mIHdoeSB5b3UgbmVlZCB0byBkbyB0aGlzDQpkaWZmZXJlbnRseSBmb3IgdGhlc2Ugc3Bl
-Y2lmaWMgcGluL2Z1bmN0aW9uIGlzIG5vdCBrbm93bi4NCg0KVGhlICJTV0lPXyIgcG9ydGlvbiBv
-ZiB0aGUgbmFtaW5nIGNvbWVzIGZyb20gdGhlIGhhcmR3YXJlIG1hbnVhbCB3aGljaA0KcmVmZXJz
-IHRvIHRoaXMgYXMgIlNvZnR3YXJlIEkvTyBDb250cm9sIEFsdGVybmF0aXZlIE1vZGUiICh3aGlj
-aCBpbiBteQ0Kb3BpbmlvbiBtZWFucyB0aGUgSFcgZ3V5cyBjb3VsZG4ndCBnZXQgdGhlIHBpbiBk
-aXJlY3Rpb25zL2J1ZmZlcnMgdG8gYmUgc2V0DQphdXRvbWF0aWNhbGx5IGZvciBzb21lIHJlYXNv
-biwgc28gdGhleSBkZWNpZGVkIGl0J3MgdGhlIFNXIGd1eXMgcHJvYmxlbSBub3cNCmZvciB0aG9z
-ZSBwaW5zKQ0KDQoNCj4gU2Vjb25kIHF1ZXN0aW9uLCB3aGF0IG1ha2VzIGl0IGRpZmZlciB0byB3
-aGF0IGFscmVhZHkgZXhpc3RzPw0KDQpXZSBoYXZlIDMgZGlmZmVyZW50IGZsYWdzIChwcm9wZXJ0
-aWVzKSB0aGF0IG5lZWQgdG8gYmUgc3BlY2lmaWVkIGZvciBzb21lDQpwaW5zIGluIHNvbWUgY2ly
-Y3Vtc3RhbmNlcy4NCkF0IGZpcnN0LCB3ZSBqdXN0IHRyaWVkIHRvIHBhc3MgdGhpcyBhZGRpdGlv
-bmFsIGluZm9ybWF0aW9uIGluIHdoZW4NCmRlZmluaW5nIHdoYXQgZnVuY3Rpb24gdGhlIHBpbiBz
-aG91bGQgYmUganVzdCBmb3IgdGhvc2UgcGlucyB3aG9zZQ0KZGlyZWN0aW9uIChpZSwgYnVmZmVy
-cykgd291bGQgbm90IGJlIHNldCB1cCBhdXRvbWF0aWNhbGx5Lg0KSG93ZXZlciwgdGhpcyB3YXMg
-cmVqZWN0ZWQgYW5kIHdlIHdlcmUgdG9sZCB0byBwaWNrIGZyb20gdGhlIGV4aXN0aW5nIHNldA0K
-Z2VuZXJpYyBwcm9wZXJ0aWVzLg0KQnV0LCAzIGRpZmZlcmVudCBnZW5lcmljIHBpbmN0cmwgcHJv
-cGVydGllcyB0aGF0IGZpdCB3aGF0IHdlIG5lZWRlZCBkaWRuJ3QNCmV4aXN0LiBTbywgd2UgdXNl
-ZCB0aGUgZXhpc3RpbmcgImlucHV0LWVuYWJsZSIgYW5kICJvdXRwdXQtZW5hYmxlIiwgYnV0DQp0
-aGVuIGNyZWF0ZWQgImJpLWRpcmVjdGlvbmFsIi4NCg0KDQpDaHJpcw0K
+Andy,
+
+On Mon, May 08, 2017 at 07:08:32PM +0300, Andy Shevchenko wrote:
+> On Mon, May 8, 2017 at 7:01 PM, jmondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org> wrote:
+> > On Sun, May 07, 2017 at 09:52:49AM +0200, Linus Walleij wrote:
+> >> On Fri, Apr 28, 2017 at 4:53 PM, Andy Shevchenko
+> >> <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >>
+> >> > Linus, for me it looks like better to revert that change, until we
+> >> > will have clear picture why existing configuration parameters can't
+> >> > work.
+> >>
+> >> Yeah I'll revert the binding for fixes.
+>
+> > As it seems we won't be able to proceed with the currently proposed solution,
+> > would that be acceptable now that we use the "pinmux" property to add
+> > flags as BIDIR
+>
+> Can you explain what does this *electrically* mean?
+
+I really don't know what to add to what Chris said in his 2 previous
+replies to the same question, and I don't know if I can even get this
+information as the most detailed drawing I can provide is what you
+have seen already at page 2696 Fig. 54.1 of the following document.
+
+https://www.renesas.com/en-us/doc/products/mpumcu/doc/rz/r01uh0403ej0300_rz_a1h.pdf?key=ccbb2d79446f1cbd015031061140507c
+
+>From my perspective these flags are configurations internal to the pin
+controller hardware used to enable/disable input buffers when a pin needs to
+perform in both direction.
+The level of detail I can provide on this is the logical diagram we have pointed
+you to already.
+
+As I assume you are trying to get this answer from us in order to
+avoid duplicating things in pin controller sub-system, and I
+understand this, but my question here was "can we have those flags as part
+of the pinmux property argument list, as that property description
+seems to allow us to do that, instead of making them generic pin
+configuration properties and upset other developers?"
+
+Anyway, I still fail to see why those configuration flags, only
+affecting the way the pin controller hardware enables/disables
+its internal buffers and its internal operations have to be
+described in term of their externally visible electrically characteristics.
+
+> Second question, what makes it differ to what already exists?
+
+To me, what already exists are pin configuration properties generic to
+the whole pin controller subsystem, and I understand you don't want to
+see duplication there.
+
+At the same time, to me, those flags are settings the pin controller
+wants to have specified by software to overcome its hw design flaws,
+and are intended to configure its internal buffers in a way it cannot
+do by itself for some very specific operation modes (they are listed
+in the hw reference manual, it's not something you can chose to
+configure or not, if you want a pin working in i2c mode, you HAVE to
+pass those flags to pin controller).
+
+Thanks
+   j
+
+Edit: I see Chris have now replied as well so I leave the SWIO part
+out, as his answer is already better than what I can give you.
+
+>
+> >  and SWIO_[INPUT|OUTPUT] directly there?
+>
+> Ditto.
+>
+> > This was my original proposal, rejected because we were using the "pins"
+> > property at the time.
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
