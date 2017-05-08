@@ -1,47 +1,101 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] gpio: mcp23s08: Use seq_putc() in mcp23s08_dbg_show()
-Date: Mon, 8 May 2017 12:50:13 +0200
-Message-ID: <78956b0e-7f06-487c-cd11-fea77a65e66a@users.sourceforge.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 29/30] dt-bindings: add vendor prefix for bananapi
+Date: Mon, 8 May 2017 13:36:01 +0200
+Message-ID: <CAK8P3a3FpbGErEo93xaDLZMi0+XQvKk44dniZqrecQf=WJD1-g@mail.gmail.com>
+References: <1493198774-4478-1-git-send-email-sean.wang@mediatek.com>
+ <1493198774-4478-30-git-send-email-sean.wang@mediatek.com>
+ <20170428203727.m6jm5w6nb2iirxih@rob-hp-laptop> <1493621880.32195.13.camel@mtkswgap22>
+ <CAL_JsqKHpWGviZ2H-xhGMzNWsCCRMj_O5ux8aguFfeVKBfJa_w@mail.gmail.com> <1494237213.9662.50.camel@mtkswgap22>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.17.11]:63577 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753052AbdEHKuX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 8 May 2017 06:50:23 -0400
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1494237213.9662.50.camel@mtkswgap22>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: Olof Johansson <olof@lixom.net>, RobHerring <robh@kernel.org>, "arm@kernel.org" <arm@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, John Crispin <john@phrozen.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-mediatek@lists.infradead.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Matthias Brugger <mbrugger@suse.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 8 May 2017 12:44:36 +0200
+On Mon, May 8, 2017 at 11:53 AM, Sean Wang <sean.wang@mediatek.com> wrote:
+> Hi Rob,
+>
+> thanks for helping me looping in the right group
+>
+>
+> Hi Arnd and Olof
+>
+> I found Matthias is inactive for a while (his branch in his tree seemed
+> to stop at 4.10 since the end of February) maybe he was busy at other
+> things. Is there a good way to break the stuck situation and keeping
+> linux-mediatek moving on?
+>
+> I have the willing to fork his tree, prepare dt-for-4.12 and send
+> pull-requests to you.
 
-A single character (line break) should be put into a sequence.
-Thus use the corresponding function "seq_putc".
+Hi Sean,
 
-This issue was detected by using the Coccinelle software.
+Thanks for offering to help out. I've added Matthias' other email address
+to Cc here, let's see if he notices the discussion now. Ideally any
+important platform should have multiple maintainers so there is
+always a backup person when the primary contact is unavailable
+for any reason.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/gpio/gpio-mcp23s08.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm not sure how much we can still do for 4.12, if you can prepare a
+branch now we can definitely have a look and see what we can
+realistically take for a late merge, but as we are in the second half
+of the merge window already, we would normally put new features
+into a 4.13 branch and only take bug fixes for 4.12. If there are
+some entirely new files for additional boards, or only small changes
+to the existing files, we might make an exception this time.
 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 2a57d024481d..51dff7e95a9e 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -519,7 +519,7 @@ static void mcp23s08_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 			(mcp->cache[MCP_GPIO] & mask) ? "hi" : "lo",
- 			(mcp->cache[MCP_GPPU] & mask) ? "up" : "  ");
- 		/* NOTE:  ignoring the irq-related registers */
--		seq_puts(s, "\n");
-+		seq_putc(s, '\n');
- 	}
- done:
- 	mutex_unlock(&mcp->lock);
--- 
-2.12.2
+> But I am worried in that way violating the reviewing process if
+> Matthias no reads it.
 
+Don't worry about that at the moment, if Matthias cannot be reached
+at all, we have to find an alternative way to get patches in.
+
+        Arnd
+
+> On Tue, 2017-05-02 at 08:52 -0500, Rob Herring wrote:
+>> +arm-soc
+>>
+>> On Mon, May 1, 2017 at 1:58 AM, Sean Wang <sean.wang@mediatek.com> wrote:
+>> > On Fri, 2017-04-28 at 15:37 -0500, Rob Herring wrote:
+>> >> On Wed, Apr 26, 2017 at 05:26:13PM +0800, sean.wang@mediatek.com wrote:
+>> >> > From: Sean Wang <sean.wang@mediatek.com>
+>> >> >
+>> >> > Banana Pi team in Sinovoip Co., Limited which are dedicated to
+>> >> > design and manufacture open hardware product.
+>> >> >
+>> >> > Website: http://www.banana-pi.org/
+>> >> >
+>> >> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+>> >> > ---
+>> >> >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>> >> >  1 file changed, 1 insertion(+)
+>> >> >
+>> >> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> >> > index ec0bfb9..8ca0f3c 100644
+>> >> > --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> >> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> >> > @@ -44,6 +44,7 @@ avia      avia semiconductor
+>> >> >  avic       Shanghai AVIC Optoelectronics Co., Ltd.
+>> >> >  axentia    Axentia Technologies AB
+>> >> >  axis       Axis Communications AB
+>> >> > +bananapi Banana Pi SINOVOP CO., LIMITED
+>> >>
+>> >> s/SINOVOP/SINOVOIP/
+>> >
+>> > Hi Rob,
+>> >
+>> > thanks for your careful reviewing , i will correct it in the next
+>> > version.
+>> >
+>> > BTW, Could those related dts changes go through your tree if everything
+>> > looks good? Because I find Matthias have been inactive for a while and
+>> > the latest branch in his tree seems still staying on 4.10.
+>>
+>> Happy to take binding doc changes, but I don't take dts changes
+>> because those go thru arm-soc. If the platform maintainer is not
+>> responsive, then we should replace or add maintainers.
+>>
+>> Rob
