@@ -1,98 +1,46 @@
-From: Phil Edworthy <phil.edworthy@renesas.com>
-Subject: RE: [PATCH/RFC 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl
- registration
-Date: Tue, 9 May 2017 15:53:31 +0000
-Message-ID: <HK2PR0601MB1393F1581E1650E06A5B78C0F5EF0@HK2PR0601MB1393.apcprd06.prod.outlook.com>
-References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
- <2601530.Ncn6bLinC5@avalon>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [ANNOUNCE] libgpiod v0.2
+Date: Tue, 9 May 2017 20:20:26 +0200
+Message-ID: <CAMRc=Mc77s8pEEgtoaVinCmawYrEWVMVmq=cNvW+8WCsXjWQdQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <2601530.Ncn6bLinC5@avalon>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Magnus Damm <magnus.damm@gmail.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
+I'm announcing the release of libgpiod v0.2.
 
-Thanks for the patches, sorry I can't test these either... It's been quite =
-a few
-years since I had an sh7264 or sh7269 board!
+The most prominent new feature is the test suite working together with
+the gpio-mockup module (requires improvements available in linux 4.11)
+which tests both the library code as well as the user space interface
+of the GPIO subsystem.
 
-Thanks
-Phil
+Below is a brief changelog:
 
------Original Message-----
-On: 09 May 2017 16:44, Laurent Pinchart wrote:
-Subject: Re: [PATCH/RFC 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl =
-registration
+New features:
+- relicensed under LGPLv2.1
+- implemented a unit testing framework together with a comprehensive
+  set of test cases
+- added a non-closing variant of the gpiochip iterator and foreach
+  macro [by Clemens Gruber]
+- added gpiod_chip_open_by_label()
 
-Hi Geert,
+Improvements:
+- Makefiles & build commands have been reworked [by Thierry Reding]
+- documentation updates
+- code shrinkage here and there
+- coding style fixes
+- removed all designated initializers from the header for better standards
+  compliance
 
-Thank you for the patches.
+Bug fixes:
+- fix the return value of gpiod_simple_event_loop()
+- don't try to process docs if doxygen is not installed
 
-On Tuesday 09 May 2017 16:11:53 Geert Uytterhoeven wrote:
-> 	Hi all,
->=20
-> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
->=20
->     sh-pfc pfc-sh7722: pin 0 already registered
->     sh-pfc pfc-sh7722: error during pin registration
->     sh-pfc pfc-sh7722: could not register: -22
->     sh-pfc: probe of pfc-sh7722 failed with error -22
->=20
-> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated=20
-> array initializers, where the GPIO_* enums serve as indices.
-> Apparently GPIO_PTQ7 was defined in the enum, but never used.
-> If enum values are defined, but never used, pinmux_pins[] contains
-> (zero-filled) holes.  Hence such entries are treated as pin zero,=20
-> which was registered before, and initialization fails.
->=20
-> I can't see how this ever worked, as at the time of commit=20
-> f5e25ae52feff2dc
-> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in=20
-> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and=20
-> drivers/pinctrl/core.c already had the check.
->=20
-> Some scripting revealed a few more broken drivers:
->   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
->   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
->     PINMUX_GPIO().
->=20
-> Patch 1 fixes the issue on sh7722, and was tested.
-> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested=20
-> due to lack of hardware.
+Get it from github[1]. Should soon be available in buildroot as well.
 
-This all looks good to me, even if I can't test or verify patches 2/4 to 4/=
-4 as I don't have access to the hardware or datasheet either. Given that th=
-ey're untested I wouldn't fake the error message in the commit log though, =
-but just refer to the problem noticed on sh7722.
+Best regards,
+Bartosz Golaszewski
 
-Apart from that, for the whole series,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> Thanks for your comments!
->=20
-> Geert Uytterhoeven (4):
->   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
->   [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix
->     pinctrl registration
->   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
->     registration
->   [RFC] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
->     registration
->=20
->  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +--- =20
-> arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +--- =20
-> arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +- =20
-> arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
->  4 files changed, 7 insertions(+), 11 deletions(-)
-
---
-Regards,
-
-Laurent Pinchart
+[1] https://github.com/brgl/libgpiod
