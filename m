@@ -1,107 +1,42 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-Date: Mon, 8 May 2017 23:19:32 +0200
-Message-ID: <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
-References: <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
- <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
- <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
- <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
- <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
- <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
- <20170508160120.GB25206@w540> <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] pinctrl: imx: Check for memory allocation failure
+Date: Tue, 9 May 2017 10:27:20 +0300
+Message-ID: <20170509072720.xq6pwuxe43wjbgox@mwanda>
+References: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
+ <20170506194038.GI17317@lianli.shorne-pla.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170508172516.GC25206@w540>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:48580 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbdEIH2F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 May 2017 03:28:05 -0400
+Content-Disposition: inline
+In-Reply-To: <20170506194038.GI17317@lianli.shorne-pla.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Stafford Horne <shorne@gmail.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linus.walleij@linaro.org, gary.bisson@boundarydevices.com, vladimir_zapolskiy@mentor.com, tony@atomide.com, vivien.didelot@savoirfairelinux.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Mon, May 8, 2017 at 7:25 PM, jmondi <jacopo@jmondi.org> wrote:
+On Sun, May 07, 2017 at 04:40:38AM +0900, Stafford Horne wrote:
+> Hi Christophe,
+> 
+> On Sat, May 06, 2017 at 10:23:59AM +0200, Christophe JAILLET wrote:
+> > If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+> > Return -ENOMEM instead, as done for the other memory allocation just a
+> > few lines below.
+> 
+> This looks fine.
+> 
+> > BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
+> 
+> Any reason for the devm_kcalloc change?  It looks like the next for loop
+> does set all of the group_name values.
+> 
 
-> From my perspective these flags are configurations internal to the pin
-> controller hardware used to enable/disable input buffers when a pin needs to
-> perform in both direction.
-> The level of detail I can provide on this is the logical diagram we have pointed
-> you to already.
->
-> As I assume you are trying to get this answer from us in order to
-> avoid duplicating things in pin controller sub-system, and I
-> understand this, but my question here was "can we have those flags as part
-> of the pinmux property argument list, as that property description
-> seems to allow us to do that, instead of making them generic pin
-> configuration properties and upset other developers?"
+The advantage of kcalloc() over kzalloc() is the integer overflow
+checking.  There is kmalloc_array() if we don't need to zero the memory.
 
-Pinmux with all it's magic flags baked into one is not any better
-or any more readable. The solution is already very pretty except
-for these two flags which I am sure we can agree on a way forward
-for.
+regards,
+dan carpenter
 
-What we choose between is not this or another less transparent
-pin configuration mechanism, the mechanism (whether magic bits
-to pinmux or reasonable properties) does not matter.
-
-There is a strong preference to use the generic bindings.
-
-So the discussion is whether to use:
-
-bi-directional;
-output-enable;
-
-Or some already defined config flags.
-
-If these are too idiomatic to be used by others, they should anyways
-look similar, like:
-
-renesas,bi-directional;
-renesas,output-enable;
-
-Like the Qualcomm weirdness found in drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-
-qcom,pull-up-strength = <..>;
-
-Check how they use
-#define PMIC_GPIO_CONF_PULL_UP                 (PIN_CONFIG_END + 1)
-
-Etc.
-
-> Anyway, I still fail to see why those configuration flags, only
-> affecting the way the pin controller hardware enables/disables
-> its internal buffers and its internal operations have to be
-> described in term of their externally visible electrically characteristics.
-
-To me internal vs external is not what matters. What matters is
-if this is likely to pop up in more platforms, and then the property
-should be generic.
-
-The generic pin config definitions are likely to be picked up by other
-standards and even be inspiration to hardware engineers so that
-is why it matters so much.
-
-> To me, what already exists are pin configuration properties generic to
-> the whole pin controller subsystem, and I understand you don't want to
-> see duplication there.
->
-> At the same time, to me, those flags are settings the pin controller
-> wants to have specified by software to overcome its hw design flaws,
-> and are intended to configure its internal buffers in a way it cannot
-> do by itself for some very specific operation modes (they are listed
-> in the hw reference manual, it's not something you can chose to
-> configure or not, if you want a pin working in i2c mode, you HAVE to
-> pass those flags to pin controller).
-
-Sounds like a case for
-
-renesas,bi-directional;
-renesas,output-enable;
-
-following the Qualcomm pattern in that case.
-
-But let's see if something else comes out of this discussion.
-
-Yours,
-Linus Walleij
