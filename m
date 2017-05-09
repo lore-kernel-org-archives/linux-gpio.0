@@ -1,7 +1,7 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl registration
-Date: Tue,  9 May 2017 16:11:55 +0200
-Message-ID: <1494339117-31221-3-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH 4/4] [RFC] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
+Date: Tue,  9 May 2017 16:11:57 +0200
+Message-ID: <1494339117-31221-5-git-send-email-geert+renesas@glider.be>
 References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
@@ -10,70 +10,41 @@ To: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
 Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-Commit 3810e96056ffddf6 ("sh: modify pinmux for SH7757 2nd cut") renamed
-GPIO_PT[JLNQ]7 to GPIO_PT[JLNQ]7_RESV, and removed the existing users
-from the pinmux_pins[] array.
+Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Such entries are treated as pin zero, which was
+registered before, thus leading to pinctrl registration failures:
 
-However, pinmux_pins[] is initialized through PINMUX_GPIO(), using
-designated array initializers, where the GPIO_* enums serve as indices.
-Hence entries were not really removed, but replaced by (zero-filled)
-holes.  Such entries are treated as pin zero, which was registered
-before, thus leading to initialization failures:
+    sh-pfc pfc-sh7269: pin 0 already registered
+    sh-pfc pfc-sh7269: error during pin registration
+    sh-pfc pfc-sh7269: could not register: -22
+    sh-pfc: probe of pfc-sh7269 failed with error -22
 
-    sh-pfc pfc-sh7757: pin 0 already registered
-    sh-pfc pfc-sh7757: error during pin registration
-    sh-pfc pfc-sh7757: could not register: -22
-    sh-pfc: probe of pfc-sh7757 failed with error -22
+Remove GPIO_PH[0-7] from the enum to fix this.
 
-Remove GPIO_PT[JLNQ]7_RESV from the enum to fix this.
-
-Fixes: 3810e96056ffddf6 ("sh: modify pinmux for SH7757 2nd cut")
+Fixes: ef0fa5331a73e479 ("sh: Add pinmux for sh7269")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Untested due to lack of hardware and datasheet.
+Untested due to lack of hardware.
 ---
- arch/sh/include/cpu-sh4/cpu/sh7757.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7757.h b/arch/sh/include/cpu-sh4/cpu/sh7757.h
-index 5340f3bc1863c389..b40fb541e72a78ae 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7757.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7757.h
-@@ -40,7 +40,7 @@ enum {
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+index 2a0ca8780f0d8c34..13c495a9fc0007b4 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+@@ -45,9 +45,7 @@ enum {
+ 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
+ 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
  
- 	/* PTJ */
- 	GPIO_PTJ0, GPIO_PTJ1, GPIO_PTJ2, GPIO_PTJ3,
--	GPIO_PTJ4, GPIO_PTJ5, GPIO_PTJ6, GPIO_PTJ7_RESV,
-+	GPIO_PTJ4, GPIO_PTJ5, GPIO_PTJ6,
+-	/* Port H */
+-	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
+-	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
++	/* Port H - Port H does not have a Data Register */
  
- 	/* PTK */
- 	GPIO_PTK0, GPIO_PTK1, GPIO_PTK2, GPIO_PTK3,
-@@ -48,7 +48,7 @@ enum {
+ 	/* Port I - not on device */
  
- 	/* PTL */
- 	GPIO_PTL0, GPIO_PTL1, GPIO_PTL2, GPIO_PTL3,
--	GPIO_PTL4, GPIO_PTL5, GPIO_PTL6, GPIO_PTL7_RESV,
-+	GPIO_PTL4, GPIO_PTL5, GPIO_PTL6,
- 
- 	/* PTM */
- 	GPIO_PTM0, GPIO_PTM1, GPIO_PTM2, GPIO_PTM3,
-@@ -56,7 +56,7 @@ enum {
- 
- 	/* PTN */
- 	GPIO_PTN0, GPIO_PTN1, GPIO_PTN2, GPIO_PTN3,
--	GPIO_PTN4, GPIO_PTN5, GPIO_PTN6, GPIO_PTN7_RESV,
-+	GPIO_PTN4, GPIO_PTN5, GPIO_PTN6,
- 
- 	/* PTO */
- 	GPIO_PTO0, GPIO_PTO1, GPIO_PTO2, GPIO_PTO3,
-@@ -68,7 +68,7 @@ enum {
- 
- 	/* PTQ */
- 	GPIO_PTQ0, GPIO_PTQ1, GPIO_PTQ2, GPIO_PTQ3,
--	GPIO_PTQ4, GPIO_PTQ5, GPIO_PTQ6, GPIO_PTQ7_RESV,
-+	GPIO_PTQ4, GPIO_PTQ5, GPIO_PTQ6,
- 
- 	/* PTR */
- 	GPIO_PTR0, GPIO_PTR1, GPIO_PTR2, GPIO_PTR3,
 -- 
 2.7.4
