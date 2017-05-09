@@ -1,16 +1,20 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
-Date: Tue,  9 May 2017 16:11:53 +0200
-Message-ID: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-sh-owner@vger.kernel.org>
-Sender: linux-sh-owner@vger.kernel.org
+Subject: [PATCH 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+Date: Tue,  9 May 2017 16:11:54 +0200
+Message-ID: <1494339117-31221-2-git-send-email-geert+renesas@glider.be>
+References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:38152 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753653AbdEIOMD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 May 2017 10:12:03 -0400
+In-Reply-To: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Phil Edworthy <phil.edworthy@renesas.com>
 Cc: linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: linux-gpio@vger.kernel.org
 
-	Hi all,
-
-Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+On sh7722/Migo-R, pinctrl registration fails with:
 
     sh-pfc pfc-sh7722: pin 0 already registered
     sh-pfc pfc-sh7722: error during pin registration
@@ -19,52 +23,35 @@ Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
 
 pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
 array initializers, where the GPIO_* enums serve as indices.
-Apparently GPIO_PTQ7 was defined in the enum, but never used.
-If enum values are defined, but never used, pinmux_pins[] contains
-(zero-filled) holes.  Hence such entries are treated as pin zero, which
-was registered before, and initialization fails.
+As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
+contains a (zero-filled) hole. Hence this entry is treated as pin zero,
+which was registered before, and initialization fails.
 
-I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
-("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
-drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
-drivers/pinctrl/core.c already had the check.
+According to the datasheet, port PTQ7 does not exist. Hence remove
+GPIO_PTQ7 from the enum to fix this.
 
-Some scripting revealed a few more broken drivers:
-  - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
-  - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
-    PINMUX_GPIO().
+Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
+Reported-by: Magnus Damm <magnus.damm@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Tested on sh7722/Migo-R.
+---
+ arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch 1 fixes the issue on sh7722, and was tested.
-Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
-to lack of hardware.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-  [RFC] sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix
-    pinctrl registration
-  sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-  [RFC] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
-    registration
-
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
- arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
- arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
- 4 files changed, 7 insertions(+), 11 deletions(-)
-
+diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
+--- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
++++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+@@ -67,7 +67,7 @@ enum {
+ 	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
+ 
+ 	/* PTQ */
+-	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
++	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
+ 	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
+ 
+ 	/* PTR */
 -- 
 2.7.4
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
