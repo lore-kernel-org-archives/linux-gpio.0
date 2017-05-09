@@ -1,159 +1,114 @@
-From: jmondi <jacopo@jmondi.org>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Date: Tue, 9 May 2017 11:55:44 +0200
-Message-ID: <20170509095544.GD25206@w540>
-References: <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
+Date: Tue, 9 May 2017 12:54:54 +0200
+Message-ID: <CAMuHMdXK9VmghZy1RounHWn-HDqgeT_12V_9RVihiuiajn+RDg@mail.gmail.com>
+References: <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
  <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
  <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
  <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
  <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
- <20170508160120.GB25206@w540>
- <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540>
- <CAHp75VeV2MqVSF9hxThyvw8WQM1s+pH2eNMgGtqhw_ihwM5S2w@mail.gmail.com>
+ <20170508160120.GB25206@w540> <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
+ <20170508172516.GC25206@w540> <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeV2MqVSF9hxThyvw8WQM1s+pH2eNMgGtqhw_ihwM5S2w@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:35927 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752689AbdEIKy4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 May 2017 06:54:56 -0400
+In-Reply-To: <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: jmondi <jacopo@jmondi.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Andy,
+Hi Linus et al,
 
-On Mon, May 08, 2017 at 08:47:17PM +0300, Andy Shevchenko wrote:
-> On Mon, May 8, 2017 at 8:25 PM, jmondi <jacopo@jmondi.org> wrote:
-> > Andy,
-> >
-> > On Mon, May 08, 2017 at 07:08:32PM +0300, Andy Shevchenko wrote:
-> >> On Mon, May 8, 2017 at 7:01 PM, jmondi <jacopo@jmondi.org> wrote:
-> >> > On Sun, May 07, 2017 at 09:52:49AM +0200, Linus Walleij wrote:
-> >> >> On Fri, Apr 28, 2017 at 4:53 PM, Andy Shevchenko
-> >> >> <andy.shevchenko@gmail.com> wrote:
-> >> >>
-> >> >> > Linus, for me it looks like better to revert that change, until we
-> >> >> > will have clear picture why existing configuration parameters can't
-> >> >> > work.
-> >> >>
-> >> >> Yeah I'll revert the binding for fixes.
-> >>
-> >> > As it seems we won't be able to proceed with the currently proposed solution,
-> >> > would that be acceptable now that we use the "pinmux" property to add
-> >> > flags as BIDIR
-> >>
-> >> Can you explain what does this *electrically* mean?
-> >
-> > I really don't know what to add to what Chris said in his 2 previous
-> > replies to the same question, and I don't know if I can even get this
-> > information as the most detailed drawing I can provide is what you
-> > have seen already at page 2696 Fig. 54.1 of the following document.
-> >
-> > https://www.renesas.com/en-us/doc/products/mpumcu/doc/rz/r01uh0403ej0300_rz_a1h.pdf?key=ccbb2d79446f1cbd015031061140507c
+On Mon, May 8, 2017 at 11:19 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, May 8, 2017 at 7:25 PM, jmondi <jacopo@jmondi.org> wrote:
+>> From my perspective these flags are configurations internal to the pin
+>> controller hardware used to enable/disable input buffers when a pin needs to
+>> perform in both direction.
+>> The level of detail I can provide on this is the logical diagram we have pointed
+>> you to already.
+>>
+>> As I assume you are trying to get this answer from us in order to
+>> avoid duplicating things in pin controller sub-system, and I
+>> understand this, but my question here was "can we have those flags as part
+>> of the pinmux property argument list, as that property description
+>> seems to allow us to do that, instead of making them generic pin
+>> configuration properties and upset other developers?"
 >
-> I didn't see before this document. (I had downloaded what Chris
-> referred to, which has less than 1200 pages).
+> Pinmux with all it's magic flags baked into one is not any better
+> or any more readable. The solution is already very pretty except
+> for these two flags which I am sure we can agree on a way forward
+> for.
 >
-> The figure you pointed to is really nice and explains it, thank you.
-
-Oh sorry, I thought you had seen this already :)
+> What we choose between is not this or another less transparent
+> pin configuration mechanism, the mechanism (whether magic bits
+> to pinmux or reasonable properties) does not matter.
 >
-> So, BiDi in this hardware is just helper to enable Input
-> simultaneously when you enable output.
+> There is a strong preference to use the generic bindings.
 >
-> This makes me wonder what prevents you to do this in two steps in software?
-> So, basically in terms of pin control framework you define this pin
-> configuration as
+> So the discussion is whether to use:
 >
-> 1. PIN_CONFIG_INPUT_ENABLE:
-> 2. PIN_CONFIG_OUTPUT:
+> bi-directional;
+> output-enable;
 >
-> (or wise versa)
+> Or some already defined config flags.
 >
-
-That could be doable, as when we're collecting generic pin
-configuration to apply to the pin I can simply check if both of them
-are enabled.
-
-That would feel un-natural in dts anyway, for someone that is not that
-into the pin controller sub system details.
-If I would have to do something like  this, not knowing all the
-reasonable pre-conditions we've been discussing about
-
-pins {
-    pinmux = < .. >;
-    input-enable;
-    output-high; /* or output-low, we can ignore the argument here */
-}
-
-In place of
-
-pins {
-   pinmux = < .. >;
-   renesas,bi-directional;
-}
-
-And the hardware manual speaks of "bi-directional" everywhere, I would
-be wondering what those guys implementing this were thinking :)
-
-> > From my perspective these flags are configurations internal to the pin
-> > controller hardware used to enable/disable input buffers when a pin needs to
-> > perform in both direction.
+> If these are too idiomatic to be used by others, they should anyways
+> look similar, like:
 >
-> > The level of detail I can provide on this is the logical diagram we have pointed
-> > you to already.
-> >
-> > As I assume you are trying to get this answer from us in order to
-> > avoid duplicating things in pin controller sub-system, and I
-> > understand this, but my question here was "can we have those flags as part
-> > of the pinmux property argument list, as that property description
-> > seems to allow us to do that, instead of making them generic pin
-> > configuration properties and upset other developers?"
+> renesas,bi-directional;
+> renesas,output-enable;
 >
-> I guess Linus is better than me could answer to this.
+> Like the Qualcomm weirdness found in drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
 >
-> > Anyway, I still fail to see why those configuration flags, only
-> > affecting the way the pin controller hardware enables/disables
-> > its internal buffers and its internal operations have to be
-> > described in term of their externally visible electrically characteristics.
-> >
-> >> Second question, what makes it differ to what already exists?
-> >
-> > To me, what already exists are pin configuration properties generic to
-> > the whole pin controller subsystem, and I understand you don't want to
-> > see duplication there.
-> >
-> > At the same time, to me, those flags are settings the pin controller
-> > wants to have specified by software to overcome its hw design flaws,
-> > and are intended to configure its internal buffers in a way it cannot
-> > do by itself for some very specific operation modes (they are listed
-> > in the hw reference manual, it's not something you can chose to
-> > configure or not, if you want a pin working in i2c mode, you HAVE to
-> > pass those flags to pin controller).
+> qcom,pull-up-strength = <..>;
 >
-> So, when you configuring pinmux to use group of pins to be i2c, what
-> does prevent you to apply those settings implicitly?
->
+> Check how they use
+> #define PMIC_GPIO_CONF_PULL_UP                 (PIN_CONFIG_END + 1)
 
-Chris already gave some valid reasons why it would be hard to do this
-considering the different part numbers this driver may handle, but I
-would also like to add that I have counted > 100 cases where
-bi-directional flag has to be applied just in the first 5 IO ports (on a
-total of 13).
+The question I'm asking myself is: are these settings related to pin
+configuration (i.e. depending on the use of the pin, and several settings
+are valid, depending on the use case), or are they related to pinmux
+(i.e. defined by the function)?
 
-As there are RZ systems out there running with just < 9MB of SRAM,
-adding a static table (or several, considering the different part numbers)
-with at least 300 entries, is a considerable waste :(
+Configuring drive strength or pull-up are clearly related to pin
+configuration.  Depending on what you connect, or on how you connect it,
+you want a different drive strength, or choose a different output buffer
+type (e.g. totem pole vs. open-collector). All of these are valid
+configurations, depending on the use case.
 
-For SWIO it would be easier, there are just 16 cases, all of them
-listed in the hardware reference manual as Chris said.
+But the settings RZ/A1H needs are different.  Some (e.g. "input-enable")
+may sound like related to pin configuration. However, the big discerning
+factor is that these settings are implied by the pinmux function. Their
+presence is purely dictated by the chosen pinmux function. There's no use
+case for doing otherwise (i.e. adding them when not needed, or removing
+them when needed, according to the datasheet).
 
-Thanks
-   j
+Note that e.g. the existing "input-enable" property is clearly a pin
+configuration property. This is even reflected in DT, as the property is
+not specified as part of the "pinmux" property, but in the surrounding pin
+subnode of the pin-controller.
 
-> --
-> With Best Regards,
-> Andy Shevchenko
+Hence I think we should not use generic pin properties, but consider these
+settings to be part of pinmux configuration.
+As having large tables in the driver is undesirable, I think storing the
+settings in the "pinmux" property (by encoding them as flags passed to the
+RZA1_PINMUX() macro) is our best option.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
