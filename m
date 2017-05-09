@@ -1,57 +1,49 @@
-From: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
-Subject: Re: Right amount of info in the DT
-Date: Tue, 9 May 2017 12:49:26 +0200
-Message-ID: <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
-References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
- <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
- <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
- <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
- <d8d9f35c-a901-dc77-646e-ea09836ee9cf@sigmadesigns.com>
- <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
+From: Stafford Horne <shorne@gmail.com>
+Subject: Re: [PATCH] pinctrl: imx: Check for memory allocation failure
+Date: Tue, 9 May 2017 21:31:58 +0900
+Message-ID: <20170509123158.GA2440@lianli.shorne-pla.net>
+References: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
+ <20170506194038.GI17317@lianli.shorne-pla.net>
+ <20170509072720.xq6pwuxe43wjbgox@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from us-smtp-delivery-212.mimecast.com ([216.205.24.212]:33338 "EHLO
-        us-smtp-delivery-212.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751554AbdEIK4G (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 May 2017 06:56:06 -0400
-In-Reply-To: <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33788 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752049AbdEIMcC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 9 May 2017 08:32:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20170509072720.xq6pwuxe43wjbgox@mwanda>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linus.walleij@linaro.org, gary.bisson@boundarydevices.com, vladimir_zapolskiy@mentor.com, tony@atomide.com, vivien.didelot@savoirfairelinux.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
+On Tue, May 09, 2017 at 10:27:20AM +0300, Dan Carpenter wrote:
+> On Sun, May 07, 2017 at 04:40:38AM +0900, Stafford Horne wrote:
+> > Hi Christophe,
+> > 
+> > On Sat, May 06, 2017 at 10:23:59AM +0200, Christophe JAILLET wrote:
+> > > If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
+> > > Return -ENOMEM instead, as done for the other memory allocation just a
+> > > few lines below.
+> > 
+> > This looks fine.
+> > 
+> > > BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
+> > 
+> > Any reason for the devm_kcalloc change?  It looks like the next for loop
+> > does set all of the group_name values.
+> > 
+> 
+> The advantage of kcalloc() over kzalloc() is the integer overflow
+> checking.  There is kmalloc_array() if we don't need to zero the memory.
 
+Right, usually its good to have a reason why in the commit log. i.e.
 
-On 05/07/2017 12:26 PM, Linus Walleij wrote:
-> Does all of these really have gpio controller functionality?
-> You do not have to compulsively add that. Just make it
-> a pin controller.
+ BTW, change the 'devm_kzalloc' into a 'devm_kcalloc' for overflow checking.
 
-Most of them have pin controller functionalities, because the pins
-can be muxed between GPIO and another function. Only the first group
-is GPIO only (dedicated pins). But apart from the choosing of the
-current function, the other properties (direction, value) are handled
-the same way.
-Regarding that, I was wondering what's the recommended approach to
-mutualize code:
-1. Having a driver under drivers/gpio and another on drivers/pinctrl
-   which depends on the first one.
-2. Having both drivers in the same file under drivers/pinctrl.
-3. Having only one pinctrl driver.
-For now I've taken approach 3, but isn't it strange to have pins
-dedicated to GPIO like this first group I mentioned controlled
-for a pinctrl driver?
-What is your opinion on this?
+Or switch to devm_kmalloc_array() and say: for overflow checking and no
+need for zeroing.
 
-> But I was not meaning you should collect them all under a
-> "pins" node like this, but inside each peripheral.
-
-OK, I will do that. Although not all alternate functions currently
-have a driver, nor a node in the device tree. I guess the best way
-to handle that is to declare the pins as GPIO only and not to worry
-about the alternate function; which brings me back to the question
-above. Do they need a separate GPIO driver?
-
+-Stafford
