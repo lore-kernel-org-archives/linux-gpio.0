@@ -1,284 +1,193 @@
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [PATCHv2 5/6] pinctrl: mcp23s08: add pinconf support
-Date: Wed, 10 May 2017 16:39:21 +0200
-Message-ID: <b6190212-8cbf-4eaf-acb3-4002ef81bc3d@collabora.com>
-References: <20170427141937.762-1-sebastian.reichel@collabora.co.uk>
- <20170427141937.762-6-sebastian.reichel@collabora.co.uk>
+From: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Subject: Re: [PATCH v2 09/18] irqchip: Add driver for Cirrus Logic Madera
+ codecs
+Date: Wed, 10 May 2017 17:03:46 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1705101634390.1979@nanos>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com> <1493050124-5970-10-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170427141937.762-6-sebastian.reichel@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Steven Miao <realmz6@gmail.com>
-Cc: Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1493050124-5970-10-git-send-email-rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Mon, 24 Apr 2017, Richard Fitzgerald wrote:
+> +
+> +struct madera_irq_priv {
+> +	struct device *dev;
+> +	int irq;
+> +	struct regmap_irq_chip_data *irq_data;
+> +	struct madera *madera;
 
-On 27/04/17 16:19, Sebastian Reichel wrote:
-> mcp23xxx device have configurable 100k pullup resistors. This adds
-> support for enabling them using pinctrl's pinconf interface.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> ---
->  drivers/pinctrl/Kconfig            |   1 +
->  drivers/pinctrl/pinctrl-mcp23s08.c | 199 ++++++++++++++++++++++++++++++++-----
->  2 files changed, 176 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index cccff799a88a..2ff95fe3017d 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -142,6 +142,7 @@ config PINCTRL_MCP23S08
->  	select GPIOLIB_IRQCHIP
->  	select REGMAP_I2C if I2C
->  	select REGMAP_SPI if SPI_MASTER
-> +	select GENERIC_PINCONF
->  	help
->  	  SPI/I2C driver for Microchip MCP23S08/MCP23S17/MCP23008/MCP23017
->  	  I/O expanders.
-> diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-> index 2a57d024481d..8aacedcf814c 100644
-> --- a/drivers/pinctrl/pinctrl-mcp23s08.c
-> +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-> @@ -24,6 +24,9 @@
->  #include <linux/of_irq.h>
->  #include <linux/of_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinconf.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
->  
->  /**
->   * MCP types supported by driver
-> @@ -77,6 +80,9 @@ struct mcp23s08 {
->  
->  	struct regmap		*regmap;
->  	struct device		*dev;
-> +
-> +	struct pinctrl_dev	*pctldev;
-> +	struct pinctrl_desc	pinctrl_desc;
->  };
->  
->  static const struct regmap_config mcp23x08_regmap = {
-> @@ -96,6 +102,158 @@ static const struct regmap_config mcp23x17_regmap = {
->  	.val_format_endian = REGMAP_ENDIAN_LITTLE,
->  };
->  
-> +static int mcp_read(struct mcp23s08 *mcp, unsigned int reg, unsigned int *val)
-> +{
-> +	return regmap_read(mcp->regmap, reg << mcp->reg_shift, val);
-> +}
-> +
-> +static int mcp_write(struct mcp23s08 *mcp, unsigned int reg, unsigned int val)
-> +{
-> +	return regmap_write(mcp->regmap, reg << mcp->reg_shift, val);
-> +}
-> +
-> +static int mcp_set_bit(struct mcp23s08 *mcp, unsigned int reg,
-> +		       unsigned int pin, bool enabled)
-> +{
-> +	u16 val  = enabled ? 0xffff : 0x0000;
-> +	u16 mask = BIT(pin);
-> +	return regmap_update_bits(mcp->regmap, reg << mcp->reg_shift,
-> +				  mask, val);
-> +}
-> +
-> +static int mcp_update_cache(struct mcp23s08 *mcp)
-> +{
-> +	int ret, reg, i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(mcp->cache); i++) {
-> +		ret = mcp_read(mcp, i, &reg);
-> +		if (ret < 0)
-> +			return ret;
-> +		mcp->cache[i] = reg;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pinctrl_pin_desc mcp23x08_pins[] = {
-> +	PINCTRL_PIN(0, "gpio0"),
-> +	PINCTRL_PIN(1, "gpio1"),
-> +	PINCTRL_PIN(2, "gpio2"),
-> +	PINCTRL_PIN(3, "gpio3"),
-> +	PINCTRL_PIN(4, "gpio4"),
-> +	PINCTRL_PIN(5, "gpio5"),
-> +	PINCTRL_PIN(6, "gpio6"),
-> +	PINCTRL_PIN(7, "gpio7"),
+Please write your struct definitions in a tabular fashion:
+
+struct madera_irq_priv {
+	struct device			*dev;
+	int				irq;
+	struct regmap_irq_chip_data	*irq_data;
+	struct madera			*madera;
+
 > +};
 > +
-> +static const struct pinctrl_pin_desc mcp23x17_pins[] = {
-> +	PINCTRL_PIN(0, "gpio0"),
-> +	PINCTRL_PIN(1, "gpio1"),
-> +	PINCTRL_PIN(2, "gpio2"),
-> +	PINCTRL_PIN(3, "gpio3"),
-> +	PINCTRL_PIN(4, "gpio4"),
-> +	PINCTRL_PIN(5, "gpio5"),
-> +	PINCTRL_PIN(6, "gpio6"),
-> +	PINCTRL_PIN(7, "gpio7"),
-> +	PINCTRL_PIN(8, "gpio8"),
-> +	PINCTRL_PIN(9, "gpio9"),
-> +	PINCTRL_PIN(10, "gpio10"),
-> +	PINCTRL_PIN(11, "gpio11"),
-> +	PINCTRL_PIN(12, "gpio12"),
-> +	PINCTRL_PIN(13, "gpio13"),
-> +	PINCTRL_PIN(14, "gpio14"),
-> +	PINCTRL_PIN(15, "gpio15"),
+> +static const struct regmap_irq madera_irqs[MADERA_NUM_IRQ] = {
+> +	[MADERA_IRQ_FLL1_LOCK] =  { .reg_offset = 0,
+> +				    .mask = MADERA_FLL1_LOCK_EINT1 },
+> +	[MADERA_IRQ_FLL2_LOCK] =  { .reg_offset = 0,
+> +				    .mask = MADERA_FLL2_LOCK_EINT1 },
+> +	[MADERA_IRQ_FLL3_LOCK] =  { .reg_offset = 0,
+> +				    .mask = MADERA_FLL3_LOCK_EINT1 },
+> +	[MADERA_IRQ_FLLAO_LOCK] = { .reg_offset = 0,
+> +				    .mask = MADERA_FLLAO_LOCK_EINT1 },
+> +
+> +	[MADERA_IRQ_MICDET1] = { .reg_offset = 4,
+> +				 .mask = MADERA_MICDET1_EINT1 },
+> +	[MADERA_IRQ_MICDET2] = { .reg_offset = 4,
+> +				 .mask = MADERA_MICDET2_EINT1 },
+> +	[MADERA_IRQ_HPDET] =   { .reg_offset = 4,
+> +				 .mask = MADERA_HPDET_EINT1 },
+> +
+> +	[MADERA_IRQ_MICD_CLAMP_RISE] = { .reg_offset = 5,
+> +					 .mask = MADERA_MICD_CLAMP_RISE_EINT1 },
+
+This is hard to read, makes my eyes hurt and takes way too many lines.
+
+#define REGMAP_IRQ(_irq, _off, _mask)                    	\
+        [MADERA_IRQ_##_irq] = { .reg_offset = (_off),	 	\
+			    	.mask = MADERA_##_irq_EINT1) }
+
+static const struct regmap_irq madera_irqs[MADERA_NUM_IRQ] = {
+	REGMAP_IRQ(FLL1_LOCK,		0),
+	REGMAP_IRQ(FLL2_LOCK,		0),
+	....
+	REGMAP_IRQ(MICD_CLAMP_RISE,	5),
+
+Hmm?
+
+> +
+> +static const struct regmap_irq_chip madera_irq = {
+> +	.name = "madera IRQ",
+
+Again. Tabluar fashion, please.
+
+> +	.status_base = MADERA_IRQ1_STATUS_2,
+> +	.mask_base = MADERA_IRQ1_MASK_2,
+> +	.ack_base = MADERA_IRQ1_STATUS_2,
+> +	.runtime_pm = true, /* codec must be resumed to read IRQ status */
+
+Please do not use tail comments. Aside of that this comment is superfluous.
+
+> +	.num_regs = 32,
+> +	.irqs = madera_irqs,
+> +	.num_irqs = ARRAY_SIZE(madera_irqs),
 > +};
 > +
-> +static int mcp_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
+> +static int madera_map_irq(struct madera *madera, int irq)
 > +{
-> +	return 0;
+> +	struct madera_irq_priv *priv = dev_get_drvdata(madera->irq_dev);
+> +
+> +	if (irq < 0)
+> +		return irq;
+
+Why would irq be < 0 ?
+
+> +
+> +	if (!madera->irq_dev)
+> +		return -ENOENT;
+> +
+> +	return regmap_irq_get_virq(priv->irq_data, irq);
 > +}
-> +
-> +static const char *mcp_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-> +						unsigned int group)
+
+> +static int madera_irq_probe(struct platform_device *pdev)
 > +{
-> +	return NULL;
-> +}
-> +
-> +static int mcp_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-> +					unsigned int group,
-> +					const unsigned int **pins,
-> +					unsigned int *num_pins)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static const struct pinctrl_ops mcp_pinctrl_ops = {
-> +	.get_groups_count = mcp_pinctrl_get_groups_count,
-> +	.get_group_name = mcp_pinctrl_get_group_name,
-> +	.get_group_pins = mcp_pinctrl_get_group_pins,
-> +#ifdef CONFIG_OF
-> +	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-> +	.dt_free_map = pinconf_generic_dt_free_map,
-> +#endif
-> +};
-> +
-> +static int mcp_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
-> +			      unsigned long *config)
-> +{
-> +	struct mcp23s08 *mcp = pinctrl_dev_get_drvdata(pctldev);
-> +	enum pin_config_param param = pinconf_to_config_param(*config);
-> +	unsigned int data, status;
+> +	struct madera *madera = dev_get_drvdata(pdev->dev.parent);
+> +	struct madera_irq_priv *priv;
+> +	struct irq_data *irq_data;
+> +	unsigned int irq_flags = madera->pdata.irqchip.irq_flags;
 > +	int ret;
 > +
-> +	switch (param) {
-> +	case PIN_CONFIG_BIAS_PULL_UP:
-> +		ret = mcp_read(mcp, MCP_GPPU, &data);
-> +		if (ret < 0)
-> +			return ret;
-> +		status = (data & BIT(pin)) ? 1 : 0;
-> +		break;
-> +	default:
-> +		dev_err(mcp->dev, "Invalid config param %04x\n", param);
-> +		return -ENOTSUPP;
+> +	dev_dbg(&pdev->dev, "probe\n");
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->dev = &pdev->dev;
+> +	priv->madera = madera;
+> +	priv->irq = madera->irq;
+> +
+> +	/* Read the flags from the interrupt controller if not specified */
+> +	if (!irq_flags) {
+> +		irq_data = irq_get_irq_data(priv->irq);
+> +		if (!irq_data) {
+> +			dev_err(priv->dev, "Invalid IRQ: %d\n", priv->irq);
+> +			return -EINVAL;
+> +		}
+> +
+> +		irq_flags = irqd_get_trigger_type(irq_data);
+> +		if (irq_flags == IRQ_TYPE_NONE)
+> +			irq_flags = IRQF_TRIGGER_LOW; /* Device default */
+
+Please do not use tail comments. They are horrible to parse and disturb the
+reading flow.
+
 > +	}
 > +
-> +	*config = 0;
+> +	if (irq_flags & (IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING)) {
+> +		dev_err(priv->dev,
+> +			"Host interrupt not level-triggered\n");
+> +		return -EINVAL;
+> +	}
 > +
-> +	return status ? 0 : -EINVAL;
-> +}
-> +
-> +static int mcp_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
-> +			      unsigned long *configs, unsigned int num_configs)
-> +{
-> +	struct mcp23s08 *mcp = pinctrl_dev_get_drvdata(pctldev);
-> +	enum pin_config_param param;
-> +	u32 arg, mask;
-> +	u16 val;
-> +	int ret = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < num_configs; i++) {
-> +		param = pinconf_to_config_param(configs[i]);
-> +		arg = pinconf_to_config_argument(configs[i]);
-> +
-> +		switch (param) {
-> +		case PIN_CONFIG_BIAS_PULL_UP:
-> +			val = arg ? 0xFFFF : 0x0000;
-> +			mask = BIT(pin);
-> +			ret = mcp_set_bit(mcp, MCP_GPPU, pin, arg);
-> +			break;
-> +		default:
-> +			dev_err(mcp->dev, "Invalid config param %04x\n", param);
-> +			return -ENOTSUPP;
+> +	if (irq_flags & IRQF_TRIGGER_HIGH) {
+> +		ret = regmap_update_bits(madera->regmap, MADERA_IRQ1_CTRL,
+> +					 MADERA_IRQ_POL_MASK, 0);
+> +		if (ret) {
+> +			dev_err(priv->dev,
+> +				"Failed to set IRQ polarity: %d\n", ret);
+> +			return ret;
 > +		}
 > +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct pinconf_ops mcp_pinconf_ops = {
-> +	.pin_config_get = mcp_pinconf_get,
-> +	.pin_config_set = mcp_pinconf_set,
-> +	.is_generic = true,
+
+What makes sure that the hardware is NOT set to TRIGGER_HIGH when you want
+to have TRIGGER_LOW?
+
+> +static struct platform_driver madera_irq_driver = {
+> +	.probe = madera_irq_probe,
+
+Tabular layout please
+
+> +	.remove = madera_irq_remove,
+> +	.driver = {
+> +		.name	= "madera-irq",
+> +		.pm = &madera_irq_pm_ops,
+> +	}
 > +};
 > +
->  /*----------------------------------------------------------------------*/
->  
->  #ifdef CONFIG_SPI_MASTER
-> @@ -158,30 +316,6 @@ static const struct regmap_bus mcp23sxx_spi_regmap = {
->  
->  #endif /* CONFIG_SPI_MASTER */
->  
-> -static int mcp_read(struct mcp23s08 *mcp, unsigned int reg, unsigned int *val)
-> -{
-> -	return regmap_read(mcp->regmap, reg << mcp->reg_shift, val);
-> -}
-> -
-> -static int mcp_write(struct mcp23s08 *mcp, unsigned int reg, unsigned int val)
-> -{
-> -	return regmap_write(mcp->regmap, reg << mcp->reg_shift, val);
-> -}
-> -
-> -static int mcp_update_cache(struct mcp23s08 *mcp)
-> -{
-> -	int ret, reg, i;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(mcp->cache); i++) {
-> -		ret = mcp_read(mcp, i, &reg);
-> -		if (ret < 0)
-> -			return ret;
-> -		mcp->cache[i] = reg;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  /*----------------------------------------------------------------------*/
->  
->  /* A given spi_device can represent up to eight mcp23sxx chips
-> @@ -682,6 +816,23 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->  		if (ret)
->  			goto fail;
->  	}
-> +
-> +	mcp->pinctrl_desc.name = "mcp23xxx-pinctrl";
-> +	mcp->pinctrl_desc.pctlops = &mcp_pinctrl_ops;
-> +	mcp->pinctrl_desc.confops = &mcp_pinconf_ops;
-> +	mcp->pinctrl_desc.npins = mcp->chip.ngpio;
-> +	if (mcp->pinctrl_desc.npins == 8)
-> +		mcp->pinctrl_desc.pins = mcp23x08_pins;
-> +	else if (mcp->pinctrl_desc.npins == 16)
-> +		mcp->pinctrl_desc.pins = mcp23x17_pins;
-> +	mcp->pinctrl_desc.owner = THIS_MODULE;
-> +
-> +	mcp->pctldev = pinctrl_register(&mcp->pinctrl_desc, dev, mcp);
-> +	if (IS_ERR(mcp->pctldev)) {
-> +		ret = PTR_ERR(mcp->pctldev);
-> +		goto fail;
-> +	}
-> +
->  fail:
->  	if (ret < 0)
->  		dev_dbg(dev, "can't setup chip %d, --> %d\n", addr, ret);
-> 
 
-Many thanks for this patch, tested on SL50 board by configuring the pins to read
-the hardware revision that needs to have the pullup confifured, it works as
-expected so,
+Pointless newline
 
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +module_platform_driver(madera_irq_driver);
+> +
+
+> --- /dev/null
+> +++ b/include/linux/irqchip/irq-madera-pdata.h
+> @@ -0,0 +1,19 @@
+> +
+> +struct madera_irqchip_pdata {
+> +	/** Mode for primary IRQ (defaults to active low) */
+
+If you want to document your structs, then please use proper kerneldoc
+style.
+
+> +	unsigned int irq_flags;
+> +};
+
+Thanks,
+
+	tglx
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
