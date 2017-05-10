@@ -1,46 +1,67 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [ANNOUNCE] libgpiod v0.2
-Date: Tue, 9 May 2017 20:20:26 +0200
-Message-ID: <CAMRc=Mc77s8pEEgtoaVinCmawYrEWVMVmq=cNvW+8WCsXjWQdQ@mail.gmail.com>
+From: jmondi <jacopo@jmondi.org>
+Subject: Re: [PATCH 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix
+ pinctrl registration
+Date: Wed, 10 May 2017 09:31:52 +0200
+Message-ID: <20170510073152.GA10602@w540>
+References: <1494339117-31221-1-git-send-email-geert+renesas@glider.be>
+ <1494339117-31221-2-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1494339117-31221-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-sh-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Phil Edworthy <phil.edworthy@renesas.com>, linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-I'm announcing the release of libgpiod v0.2.
+Hi Geert,
 
-The most prominent new feature is the test suite working together with
-the gpio-mockup module (requires improvements available in linux 4.11)
-which tests both the library code as well as the user space interface
-of the GPIO subsystem.
+On Tue, May 09, 2017 at 04:11:54PM +0200, Geert Uytterhoeven wrote:
+> On sh7722/Migo-R, pinctrl registration fails with:
+>
+>     sh-pfc pfc-sh7722: pin 0 already registered
+>     sh-pfc pfc-sh7722: error during pin registration
+>     sh-pfc pfc-sh7722: could not register: -22
+>     sh-pfc: probe of pfc-sh7722 failed with error -22
+>
+> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+> array initializers, where the GPIO_* enums serve as indices.
+> As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
+> contains a (zero-filled) hole. Hence this entry is treated as pin zero,
+> which was registered before, and initialization fails.
+>
+> According to the datasheet, port PTQ7 does not exist. Hence remove
+> GPIO_PTQ7 from the enum to fix this.
+>
+> Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
+> Reported-by: Magnus Damm <magnus.damm@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Below is a brief changelog:
+Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-New features:
-- relicensed under LGPLv2.1
-- implemented a unit testing framework together with a comprehensive
-  set of test cases
-- added a non-closing variant of the gpiochip iterator and foreach
-  macro [by Clemens Gruber]
-- added gpiod_chip_open_by_label()
+Thank you
+   j
 
-Improvements:
-- Makefiles & build commands have been reworked [by Thierry Reding]
-- documentation updates
-- code shrinkage here and there
-- coding style fixes
-- removed all designated initializers from the header for better standards
-  compliance
-
-Bug fixes:
-- fix the return value of gpiod_simple_event_loop()
-- don't try to process docs if doxygen is not installed
-
-Get it from github[1]. Should soon be available in buildroot as well.
-
-Best regards,
-Bartosz Golaszewski
-
-[1] https://github.com/brgl/libgpiod
+> ---
+> Tested on sh7722/Migo-R.
+> ---
+>  arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+> index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
+> --- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
+> +++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
+> @@ -67,7 +67,7 @@ enum {
+>  	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
+>
+>  	/* PTQ */
+> -	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
+> +	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
+>  	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
+>
+>  	/* PTR */
+> --
+> 2.7.4
+>
