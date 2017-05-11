@@ -1,100 +1,84 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 1/5] pintrl: meson: add interrupts to pinctrl data
-Date: Thu, 11 May 2017 18:08:06 +0200
-Message-ID: <1494518886.2375.15.camel@baylibre.com>
-References: <a4ca587b-d3e8-a22d-4d25-289871d2d095@gmail.com>
-         <3b4990ef-bfb4-c62c-f823-431adedc17f1@gmail.com>
-         <CACRpkdYx0j4Sjv8MhXRSuiF1TyW2Ht47r0+G1ga8mXW5LC7c=g@mail.gmail.com>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: Re: pinctrl-sx150x.c broken in 4.11
+Date: Thu, 11 May 2017 19:24:22 +0300
+Message-ID: <252b379a-d3fe-8020-5209-f1de43004b08@cogentembedded.com>
+References: <04424bd9-daba-e803-23ce-e7604bf41c71@cogentembedded.com>
+ <CACRpkdaVpOw+PbocW+wwy5kDp8Ud=Xow_+gnAhJ+eFWTLob7LQ@mail.gmail.com>
+ <20170511151647.GT3489@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:35731 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751866AbdEKQIK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 12:08:10 -0400
-Received: by mail-wm0-f43.google.com with SMTP id b84so46911455wmh.0
-        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 09:08:09 -0700 (PDT)
-In-Reply-To: <CACRpkdYx0j4Sjv8MhXRSuiF1TyW2Ht47r0+G1ga8mXW5LC7c=g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170511151647.GT3489@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Chris Healy <Chris.Healy@zii.aero>, Jeff White <Jeff.White@zii.aero>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Heiner Kallweit <hkallweit1@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, 2017-05-11 at 16:50 +0200, Linus Walleij wrote:
-> On Sun, May 7, 2017 at 6:34 PM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> 
-> > From: Jerome Brunet <jbrunet@baylibre.com>
-> > Add GPIO interrupt information to pinctrl data. Added to the original
-> > version from Jerome was data for Meson GXL.
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> 
-> So what this does is:
-> 
-> > diff --git a/drivers/pinctrl/meson/pinctrl-meson.h
-> > b/drivers/pinctrl/meson/pinctrl-meson.h
-> > index 1aa871d5..890f296f 100644
-> > --- a/drivers/pinctrl/meson/pinctrl-meson.h
-> > +++ b/drivers/pinctrl/meson/pinctrl-meson.h
-> > @@ -81,6 +81,7 @@ enum meson_reg_type {
-> >   * @name:      bank name
-> >   * @first:     first pin of the bank
-> >   * @last:      last pin of the bank
-> > + * @irq:       hwirq base number of the bank
-> >   * @regs:      array of register descriptors
-> >   *
-> >   * A bank represents a set of pins controlled by a contiguous set of
-> > @@ -92,6 +93,8 @@ struct meson_bank {
-> >         const char *name;
-> >         unsigned int first;
-> >         unsigned int last;
-> > +       int irq_first;
-> > +       int irq_last;
-> >         struct meson_reg_desc regs[NUM_REG];
-> >  };
-> 
-> ... adds a per-bank parent IRQ.
+> Hmm maybe yeah. I don't quite follow the above the "pinctrl-0 property
+> of sx150x device tree node, is misinterpreted as hog" part though.
 
-Hi Linus,
+sx150x is i2c-gpio device.  It has 16 GPIO lines that are communicated
+with via i2c bus, and an interrupt line.
 
-It does not add a per-bank parent IRQ. The meson gpio irq is an IP independent
-of the gpio/pinctrl subsystem. In a nutshell, we have 8 interrupts on the GIC
-and we can route the signal of almost any pin of any bank to these parent irqs.
-The fact that there 1 gpio-irq controller and several gpio controller make the
-design a bit tricky
+Interrupt line is typically connected to SoC's pin.
+This pin has to be configured.
+This is done by providing appropriate subnode in SoC's pinmux node, with
+information with pin configuration, and pinctrl-0 property in sx150x's
+node with phandle to that subnode:
 
-We already talked about this IP, here is the discussion :https://patchwork.ozlab
-s.org/patch/684208/
+...
+&i2c0 {
+	sx1503@20 {
+		compatible = "semtech,sx1503q";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_sx1503_20>;
+		...
+	};
+};
+...
+&iomuxc {
+	pinctrl_sx1503_20: pinctrl-sx1503-20 {
+		fsl,pins = <
+			VF610_PAD_PTB1__GPIO_23         0x219d
+		>;
+	};
+};
 
-At the time, the problem was that I was creating the mapping within the
-gpio_to_irq callback, which is wrong.
+This pin configuration is handled by driver core, i.e. before probe()
+for sx150x is called, core applies pin configuration.
 
-irq_first, irq_last were introduced because there is no way to have direct
-mapping between the gpio number and the hw interrupt number. (details are in our
-previous discussion). If a more generic solution can be used for this, it would
-be nice :)
+However sx150x driver is currently implemented as a pinctrl driver.
 
-While I think having a irqdomain in the gpio driver and using the
-request_resources callback to create the mapping in the underlying domain might
-be a solution to ressouce allocation problem we had, I think the meson-gpio-irq
-should be implemented has an independent driver because  it is an independent
-device. Eventually, this device should be the parent irq controller of the gpio
-controller.
+When it initializes, pinctrl searches for "hog", i.e. pin config that
+should be applied at driver registration time.
 
-I not sure that there is a reason for using syscon here, or if it is a good idea
-to have the data of this controller as globals for the gpio driver ... 
+While doing so, core searches for any registered pinctrl_map for device
+being register. Search loop is in create_pinctrl().
+
+In this case, this loop finds map that is defined above.
+
+This is *not* hog.  This is pin setting already applied in SoC's pinmux
+controller for sx1503 device.
+
+However code in create_pinctrl() tries to apply it, and use sx1503's
+methods to do so. Which is plain wrong and errors out.
+	
+
+> But at least with updating the probe to use pinctrl_register_and_init()
+> and pinctrl_enable() the driver can do something before the hogs are
+> claimed. I just don't know what the driver would here as I don't
+> understand the "misinterpreted as hog" part :)
+
+Tried to explain above :)
+
+I don't know whar can be done in sx1503 driver to avoid that scenario...
+perhaps port it back from pinctrl subsystem to gpio subsystem.  However
+I guess it was ported to pinctrl subsystem for a reason (that I don't know).
 
 
-> 
-> I am just discussing with Thierry that I would like to see some code
-> in the gpiolib core to deal with this mapping so we don't have to do a
-> whole lot of custom back mapping between parent IRQs and cascaded
-> IRQ in every driver that has a multiple-bank concept.
-> 
-> Please contribute to the discission, see thread subject:
-> "[PATCH v2] gpio: Add Tegra186 support"
-> 
-> Yours,
-> Linus Walleij
+> Anyways, care to test if the following patch fixes the issue somehow?
+
+No that patch does not help here.
+
+Nikita
