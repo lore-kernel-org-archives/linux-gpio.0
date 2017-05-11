@@ -1,34 +1,111 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/1] pinctrl: armada-37xx: Add irqchip support
-Date: Thu, 11 May 2017 09:34:21 +0200
-Message-ID: <CACRpkdb3iM4VUhwrH7GORtNRmQbaMCQ8s72VBWdghhXEXMtPsQ@mail.gmail.com>
-References: <cover.5e6e6649efd7d0482a5df17fb7f94fde29a54210.1493387770.git-series.gregory.clement@free-electrons.com>
- <e7e0d7156844933efe5fdb997afa4cdca1ea6ec4.1493387770.git-series.gregory.clement@free-electrons.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] ARM: dts: imx28: add gpio-ranges for internal gpio
+ controller
+Date: Thu, 11 May 2017 15:51:36 +0800
+Message-ID: <20170511075135.GF5833@dragon>
+References: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e7e0d7156844933efe5fdb997afa4cdca1ea6ec4.1493387770.git-series.gregory.clement@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:54054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754996AbdEKHvw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 11 May 2017 03:51:52 -0400
+Content-Disposition: inline
+In-Reply-To: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>
 
-On Fri, Apr 28, 2017 at 4:01 PM, Gregory CLEMENT
-<gregory.clement@free-electrons.com> wrote:
+On Mon, May 08, 2017 at 10:59:25AM +0200, Uwe Kleine-König wrote:
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
+> Hello,
+> 
+> with this patch applied I get the following lines in dmesg which looks
+> fine:
+> 
+> 	[    0.227913] gpio gpiochip0: (80018000.pinctrl:gpio@0): created GPIO range 0->31 ==> 80018000.pinctrl PIN 0->31
+> 	[    0.236100] gpio gpiochip1: (80018000.pinctrl:gpio@1): created GPIO range 0->31 ==> 80018000.pinctrl PIN 32->63
+> 	[    0.244463] gpio gpiochip2: (80018000.pinctrl:gpio@2): created GPIO range 0->31 ==> 80018000.pinctrl PIN 64->95
+> 	[    0.253020] gpio gpiochip3: (80018000.pinctrl:gpio@3): created GPIO range 0->31 ==> 80018000.pinctrl PIN 96->127
+> 	[    0.261639] gpio gpiochip4: (80018000.pinctrl:gpio@4): created GPIO range 0->31 ==> 80018000.pinctrl PIN 128->159
+> 
+> But when looking at a used gpio
+> 
+> 	# cat /sys/kernel/debug/gpio
+> 	gpiochip0: GPIOs 0-31, parent: platform/80018000.pinctrl:gpio@0, 80018000.pinctrl:gpio@0:
+> 	...
+> 	 gpio-20  (LED4                |?                   ) out hi
+> 	...
+> 
+> 	# grep "pin 20 " /sys/kernel/debug/pinctrl/80018000.pinctrl/pinmux-pins
+> 	pin 20 (GPMI_RDY0): leds (GPIO UNCLAIMED) function leds group leds.0
+> 
+> I wonder why there is still "GPIO UNCLAIMED". I would have expected that
+> this disappears and somehow references the gpio_request issued by the
+> led-gpio driver after my patch.
+> 
+> What am I missing?
 
-> The Armada 37xx SoCs can handle interrupt through GPIO. However it can
-> only manage the edge ones.
->
-> The way the interrupt are managed is classical so we can use the generic
-> interrupt chip model.
->
-> The only unusual "feature" is that many interrupts are connected to the
-> parent interrupt controller. But we do not take advantage of this and use
-> the chained irq with all of them.
->
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+It seems that's only the case where @strict of struct pinmux_ops is
+true.  We should set it true for pinctrl-mxs, I guess?
 
-Patch applied for v4.13.
+Shawn
 
-Yours,
-Linus Walleij
+> 
+> Best regards
+> Uwe
+> 
+>  arch/arm/boot/dts/imx28.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx28.dtsi b/arch/arm/boot/dts/imx28.dtsi
+> index 148fcf4d3b98..cfad2295cc46 100644
+> --- a/arch/arm/boot/dts/imx28.dtsi
+> +++ b/arch/arm/boot/dts/imx28.dtsi
+> @@ -182,6 +182,7 @@
+>  					#gpio-cells = <2>;
+>  					interrupt-controller;
+>  					#interrupt-cells = <2>;
+> +					gpio-ranges = <&pinctrl 0 0 32>;
+>  				};
+>  
+>  				gpio1: gpio@1 {
+> @@ -192,6 +193,7 @@
+>  					#gpio-cells = <2>;
+>  					interrupt-controller;
+>  					#interrupt-cells = <2>;
+> +					gpio-ranges = <&pinctrl 0 32 32>;
+>  				};
+>  
+>  				gpio2: gpio@2 {
+> @@ -202,6 +204,7 @@
+>  					#gpio-cells = <2>;
+>  					interrupt-controller;
+>  					#interrupt-cells = <2>;
+> +					gpio-ranges = <&pinctrl 0 64 32>;
+>  				};
+>  
+>  				gpio3: gpio@3 {
+> @@ -212,6 +215,7 @@
+>  					#gpio-cells = <2>;
+>  					interrupt-controller;
+>  					#interrupt-cells = <2>;
+> +					gpio-ranges = <&pinctrl 0 96 32>;
+>  				};
+>  
+>  				gpio4: gpio@4 {
+> @@ -222,6 +226,7 @@
+>  					#gpio-cells = <2>;
+>  					interrupt-controller;
+>  					#interrupt-cells = <2>;
+> +					gpio-ranges = <&pinctrl 0 128 32>;
+>  				};
+>  
+>  				duart_pins_a: duart@0 {
+> -- 
+> 2.11.0
+> 
