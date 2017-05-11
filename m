@@ -1,68 +1,91 @@
-From: Martin Blumenstingl <martin.blumenstingl-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [PATCH 0/5 RfC] pintrl: meson: add support for GPIO IRQs
-Date: Thu, 11 May 2017 22:52:48 +0200
-Message-ID: <CAFBinCBgNvyc_P_OSe1=wRB_jrCNUXWcRJzR8oGbqitQz3ntwQ@mail.gmail.com>
-References: <a4ca587b-d3e8-a22d-4d25-289871d2d095@gmail.com> <CACRpkdbeA9pwnOFjdryKjeyZewLWA7Q6ZRbxc=MreT0zJMbgQA@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] pinctrl: when claiming hog, skip maps not served by same
+ device
+Date: Thu, 11 May 2017 14:44:45 -0700
+Message-ID: <20170511214444.GB3489@atomide.com>
+References: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbeA9pwnOFjdryKjeyZewLWA7Q6ZRbxc=MreT0zJMbgQA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:47290 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755594AbdEKVou (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 11 May 2017 17:44:50 -0400
+Content-Disposition: inline
+In-Reply-To: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Healy <Chris.Healy@zii.aero>, Jeff.White@zii.aero
 
-Hi Linus,
+* Nikita Yushchenko <nikita.yoush@cogentembedded.com> [170511 13:05]:
+> When pinctrl device registers, it automatically claims hogs, that is,
+> maps that pinctrl device serves for itself.
+> 
+> It is possible that in addition to SoC's pinctrl device, other pinctrl
+> devices get registered. E.g. some gpio expander devies are registered
+> as pinctrl devices. For such devices, pinctrl maps could be defined
+> that set up SoC's pins (e.g. interrupt pin for gpio expander). Such
+> a map will have target device set to gpio expander.
+> 
+> Here is device tree snippet that causes this scenario:
+> 
+> &i2c0 {
+> 	sx1503@20 {
+> 		compatible = "semtech,sx1503q";
+> 		pinctrl-names = "default";
+> 		pinctrl-0 = <&pinctrl_sx1503_20>;
+> 		...
+> 	};
+> };
+> ...
+> &iomuxc {
+> 	pinctrl_sx1503_20: pinctrl-sx1503-20 {
+> 		fsl,pins = <
+> 			VF610_PAD_PTB1__GPIO_23         0x219d
+> 		>;
+> 	};
+> };
+> 
+> Such a map will have target device set to gpio expander. However is not
+> a hog, it is a regular map that is claimed by core before gpio expander
+> device is probed.
+> 
+> Thus when looking for hogs, it is not enough to check that map's target
+> device is set to pinctrl device being registered. Need also check that
+> map's control device is also set to the same.
+> 
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> ---
+>  drivers/pinctrl/core.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+> index 1653cbda6a82..682ebd360030 100644
+> --- a/drivers/pinctrl/core.c
+> +++ b/drivers/pinctrl/core.c
+> @@ -1038,6 +1038,16 @@ static struct pinctrl *create_pinctrl(struct device *dev,
+>  		/* Map must be for this device */
+>  		if (strcmp(map->dev_name, devname))
+>  			continue;
+> +		/*
+> +		 * If pctldev is not null, we are claiming hog for it,
+> +		 * that means, setting that is served by pctldev by itself.
+> +		 *
+> +		 * Thus we must skip map that is for this device but is served
+> +		 * by other device.
+> +		 */
+> +		if (pctldev &&
+> +		    strcmp(dev_name(pctldev->dev), map->ctrl_dev_name))
+> +			continue;
+>  
+>  		ret = add_setting(p, pctldev, map);
+>  		/*
+> -- 
 
-On Thu, May 11, 2017 at 4:34 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Sun, May 7, 2017 at 6:19 PM, Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
->> This patch series is partially based on a series Jerome Brunet
->> submitted about half a year ago. Due to open questions this series never
->> made it to mainline, see https://patchwork.kernel.org/patch/9384431/
->>
->> This new attempt uses GPIOLIB_IRQCHIP resulting in less needed code.
->> Included is also support for using two parent IRQs in case
->> of IRQ_TYPE_EDGE_BOTH, like in the vendor driver.
->>
->> Worth to be mentioned is also that I had to work around a strange
->> issue with spurious interrupts resulting in a deadlock.
->> The affected critical section in __setup_irq is executed with interrupts
->> disabled, nevertheless spurious GPIO IRQs result in a deadlock what
->> seems to indicate that they are handled on the same CPU.
->> I didn't find a better explanation than a possible HW flaw so far.
->>
->> The series was successfully tested on a Odroid-C2, e.g. with removing
->> polling for SD card insertion/removal from the mmc driver.
->>
->> Heiner Kallweit (5):
->>   pinctrl: meson: add interrupts to pinctrl data
->>   pinctrl: meson: document GPIO IRQ DT binding
->>   pinctrl: meson: add DT node for GPIO IRQ on Meson GX
->>   pinctrl: meson: add DT node for GPIO IRQ on Meson 8 / 8b
->>   pinctrl: meson: add support for GPIO interrupts
->
-> I just merged a bunch of patches from Martin Blumenstigl for this driver.
-thank you!
+Maybe add a comment saying pctldev is NULL in the regular case
+and only exists in the hog case?
 
-> Martin can you help out reviewing these patches?
-I think it would be nice to have GPIO interrupt support and I can
-certainly help testing this. however, I am neither a pinctrl nor an
-interrupt expert. I can have a look at the patches and give (limited)
-feedback, but these should certainly be reviewed by people with more
-knowledge of these (pinctrl and irq) subsystems.
+Other than that:
 
-Jerome has already spent (probably quite some...) time with the Meson
-GPIO interrupt support, he has already replied to patch #1.
-
-apart from that: thanks to anybody who dedicates time to this topic -
-this is probably one of the most exotic bits (and thus hard to
-implement) in the Meson SoCs!
-
-
-Regards,
-Martin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Tony Lindgren <tony@atomide.com>
