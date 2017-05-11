@@ -1,126 +1,65 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: pinctrl-sx150x.c broken in 4.11
-Date: Thu, 11 May 2017 08:16:47 -0700
-Message-ID: <20170511151647.GT3489@atomide.com>
-References: <04424bd9-daba-e803-23ce-e7604bf41c71@cogentembedded.com>
- <CACRpkdaVpOw+PbocW+wwy5kDp8Ud=Xow_+gnAhJ+eFWTLob7LQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Right amount of info in the DT
+Date: Thu, 11 May 2017 17:22:09 +0200
+Message-ID: <CACRpkdbB9kUaRbm-=1c_kzZ9p2ghh==HNb-8vkGkF3Zrx0rr_Q@mail.gmail.com>
+References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
+ <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
+ <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com> <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
+ <d8d9f35c-a901-dc77-646e-ea09836ee9cf@sigmadesigns.com> <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
+ <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaVpOw+PbocW+wwy5kDp8Ud=Xow_+gnAhJ+eFWTLob7LQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>, Chris Healy <Chris.Healy@zii.aero>, Jeff White <Jeff.White@zii.aero>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:36842 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756760AbdEKPWM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 11:22:12 -0400
+Received: by mail-it0-f42.google.com with SMTP id o5so45845564ith.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 08:22:12 -0700 (PDT)
+In-Reply-To: <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
 
-* Linus Walleij <linus.walleij@linaro.org> [170511 00:26]:
-> On Wed, May 10, 2017 at 9:32 PM, Nikita Yushchenko
-> <nikita.yoush@cogentembedded.com> wrote:
-> 
-> > Looks like recent pinctrl changes - possibly commit 99e4f67508e1
-> > ("pinctrl: core: Use delayed work for hogs") - breaks pinctrl-sx150x
-> > driver in all setups where it has any pinctrl settings in device tree.
-> >
-> > AFAIU, pinctrl-sx150x is not a real pinctrl/pinmux driver,
-> 
-> It's as real as it gets.
-> 
-> > but it uses
-> > pinctrl subsystem to provide control over GPIO lines it provides.  But
-> > for user, it is just a i2c-gpio device that is enabled via device tree,
-> > and, like other devices, can have pinctrl-0 that points to "real" pinmux
-> > configuration for involved hardware lines (i.e. line used for interrupt).
-> >
-> > Problem is that when pinctrl-sx150x driver registers itself via
-> > pinctrl_register(), pinctrl map that corresponds to pinctrl-0 property
-> > of sx150x device tree node, is misinterpreted as hog.  Corresponding
-> > call chain is
-> >
-> >   pinctrl_enable() ->
-> >     pinctrl_claim_hogs() ->
-> >       create_pinctrl()
-> >
-> > at this point, registered pinctrl maps are scanned and matched by device
-> > name only, without checking map's control device. Then map is passed to
-> > add_setting() with pctldev set to sx150x which does not provide
-> > pinmux_ops, which errors out:
-> >
-> > sx150x-pinctrl 10-0020: does not support mux function
-> > sx150x-pinctrl 10-0020: could not map pin config for "VF610_PAD_PTB1"
-> > sx150x-pinctrl 10-0020: error claiming hogs: -22
-> > sx150x-pinctrl 10-0020: could not claim hogs: -22
-> > sx150x-pinctrl 10-0020: Failed to register pinctrl device
-> > sx150x-pinctrl: probe of 10-0020 failed with error -22
-> >
-> > Before commit 99e4f67508e1 ("pinctrl: core: Use delayed work for hogs")
-> > problem was hidden by not passing pinctrl device to add_setting(), but
-> > instead getting that from map.
-> >
-> > What is proper fix for this?
-> 
-> I bet Tony has the answer to this.
-> 
-> I think something similar to:
-> commit 6118714275f0a313ecc296a87ed1af32d9691bed
-> "pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()"
-> is needed?
+On Tue, May 9, 2017 at 12:49 PM, Yves Lefloch
+<YvesMarie_Lefloch@sigmadesigns.com> wrote:
 
-Hmm maybe yeah. I don't quite follow the above the "pinctrl-0 property
-of sx150x device tree node, is misinterpreted as hog" part though.
+> I was wondering what's the recommended approach to
+> mutualize code:
+> 1. Having a driver under drivers/gpio and another on drivers/pinctrl
+>    which depends on the first one.
+> 2. Having both drivers in the same file under drivers/pinctrl.
+> 3. Having only one pinctrl driver.
 
-But at least with updating the probe to use pinctrl_register_and_init()
-and pinctrl_enable() the driver can do something before the hogs are
-claimed. I just don't know what the driver would here as I don't
-understand the "misinterpreted as hog" part :)
+All approaches exist. I have no strong opinion, but when possible
+try to make separation of concerns.
 
-Anyways, care to test if the following patch fixes the issue somehow?
-And also maybe try to see what is missing in the REVISIT part of
-the patch.. Compile tested only.
+> For now I've taken approach 3, but isn't it strange to have pins
+> dedicated to GPIO like this first group I mentioned controlled
+> for a pinctrl driver?
+> What is your opinion on this?
 
-Hmm maybe the driver can claim pinctrl-0 before the hogs are claimed
-then release it after the hogs are claimed? Just guessing though.
+Just make sure your driver also provides a gpio_chip and
+write good looking code.
 
-> Maybe we need to go over everything in drivers/pinctrl and check that
-> we don't have more of these broken hogs.
+>> But I was not meaning you should collect them all under a
+>> "pins" node like this, but inside each peripheral.
+>
+> OK, I will do that. Although not all alternate functions currently
+> have a driver, nor a node in the device tree. I guess the best way
+> to handle that is to declare the pins as GPIO only and not to worry
+> about the alternate function; which brings me back to the question
+> above. Do they need a separate GPIO driver?
 
-It would be probably best to update all the drivers to probe with
-pinctrl_register_and_init() with pinctrl_enable() as otherwise we'll
-never know where the issue is going to pop up again. Right now all
-it might take is configuring hogs for a driver in dts.. Anybody
-know coccinelle?
+Implement everything you have a data sheet for even if you
+do not use it right now. It is good to have.
 
-But let's first figure out what exactly is the problem here.
+Have you read the section "GPIO mode pitfalls" in the documentation?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/pinctrl.txt
 
-Regards,
+It is very important that you know for sure whether it is actual
+GPIO or just named that way by some hardware engineer.
 
-Tony
-
-8< ----------------------
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1225,13 +1225,16 @@ static int sx150x_probe(struct i2c_client *client,
- 	pctl->pinctrl_desc.npins = pctl->data->npins;
- 	pctl->pinctrl_desc.owner = THIS_MODULE;
- 
--	pctl->pctldev = pinctrl_register(&pctl->pinctrl_desc, dev, pctl);
--	if (IS_ERR(pctl->pctldev)) {
--		dev_err(dev, "Failed to register pinctrl device\n");
--		return PTR_ERR(pctl->pctldev);
-+	ret = pinctrl_register_and_init(&pctl->pinctrl_desc, dev,
-+					pctl, &pctl->pctldev);
-+	if (ret) {
-+		dev_err(dev, "Failed to register pinctrl\n");
-+		return ret;
- 	}
- 
--	return 0;
-+	/* REVISIT: Do something with pinctrl-0 misinterpreted as hog? */
-+
-+	return pinctrl_enable(pctl->pctldev);
- }
- 
- static struct i2c_driver sx150x_driver = {
--- 
-2.12.2
+Yours,
+Linus Walleij
