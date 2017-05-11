@@ -1,16 +1,16 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-Date: Thu, 11 May 2017 10:03:30 +0200
-Message-ID: <1494489813-27321-2-git-send-email-geert+renesas@glider.be>
-References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
+Date: Thu, 11 May 2017 10:03:29 +0200
+Message-ID: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
 To: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On sh7722/Migo-R, pinctrl registration fails with:
+	Hi Sato-san, Rich,
+
+Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
 
     sh-pfc pfc-sh7722: pin 0 already registered
     sh-pfc pfc-sh7722: error during pin registration
@@ -19,39 +19,56 @@ On sh7722/Migo-R, pinctrl registration fails with:
 
 pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
 array initializers, where the GPIO_* enums serve as indices.
-As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
-contains a (zero-filled) hole. Hence this entry is treated as pin zero,
-which was registered before, and pinctrl registration fails.
+Apparently GPIO_PTQ7 was defined in the enum, but never used.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Hence such entries are treated as pin zero, which
+was registered before, and pinctrl registration fails.
 
-According to the datasheet, port PTQ7 does not exist. Hence remove
-GPIO_PTQ7 from the enum to fix this.
+I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
+("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
+drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
+drivers/pinctrl/core.c already had the check.
 
-Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
-Reported-by: Magnus Damm <magnus.damm@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-Tested on sh7722/Migo-R.
+Some scripting revealed a few more broken drivers:
+  - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+  - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+    PINMUX_GPIO().
 
-v2:
+Patch 1 fixes the issue on sh7722, and was tested.
+Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
+to lack of hardware.
+
+Changes compared to v1:
+  - Replace fake error messages by references to sh7722,
   - Add Reviewed-by, Tested-by.
----
- arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
-index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
-@@ -67,7 +67,7 @@ enum {
- 	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
- 
- 	/* PTQ */
--	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
-+	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
- 	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
- 
- 	/* PTR */
+Thanks for applying!
+
+Geert Uytterhoeven (4):
+  sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+  sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
+    registration
+  sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+    registration
+  sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+    registration
+
+ arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+ arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
+ arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+ 4 files changed, 7 insertions(+), 11 deletions(-)
+
 -- 
 2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
