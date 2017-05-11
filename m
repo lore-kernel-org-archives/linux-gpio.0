@@ -1,116 +1,243 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Add group for AVB MDIO and MII pins
-Date: Thu, 11 May 2017 10:49:38 +0200
-Message-ID: <CAMuHMdXmsP-avOYtEYToZaiuMHFoc__xyCYaSurY9--No-bimQ@mail.gmail.com>
-References: <1492681746-20005-1-git-send-email-geert+renesas@glider.be>
- <2338736.vqmUpXt7la@avalon> <CAMuHMdWEMOXctK6F6fXeO+Y3S4_tkikJYUf=bA9u5yofD5ciQw@mail.gmail.com>
- <5295991.u29V8BK3nd@avalon> <CAMuHMdVvdDqo7yxGBc9L7iF4ZVRYNEFFmzuzU75t4+hXZpSUWA@mail.gmail.com>
- <20170502143350.GM1532@bigcity.dyn.berto.se>
+From: Varadarajan Narayanan <varada@codeaurora.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Thu, 11 May 2017 16:03:11 +0530
+Message-ID: <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+ <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170502143350.GM1532@bigcity.dyn.berto.se>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:34436 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755097AbdEKKdW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 06:33:22 -0400
+In-Reply-To: <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
 
-On Tue, May 2, 2017 at 4:33 PM, Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
-> On 2017-04-20 13:47:19 +0200, Geert Uytterhoeven wrote:
->> On Thu, Apr 20, 2017 at 1:44 PM, Laurent Pinchart
->> <laurent.pinchart@ideasonboard.com> wrote:
->> > On Thursday 20 Apr 2017 13:37:27 Geert Uytterhoeven wrote:
->> >> On Thu, Apr 20, 2017 at 12:18 PM, Laurent Pinchart wrote:
->> >> > On Thursday 20 Apr 2017 12:11:41 Geert Uytterhoeven wrote:
->> >> >> On Thu, Apr 20, 2017 at 12:02 PM, Laurent Pinchart wrote:
->> >> >>> On Thursday 20 Apr 2017 11:49:06 Geert Uytterhoeven wrote:
->> >> >>>> Group the AVB pins into similar groups as found in other
->> >> >>>> sh-pfc
->> >> >>>> drivers. The pins can not be muxed between functions other than =
-AVB,
->> >> >>>> but their drive strengths can be controlled.
->> >> >>>>
->> >> >>>> The group avb_mdc containing ADV_MDC and ADV_MDIO is called avb_=
-mdio
->> >> >>>> on other SoCs. In pfc-r8a7796 the avb_mdc group already existed =
-and is
->> >> >>>> in use in DT. Therefore add the ADV_MDIO pin to the existing gro=
-up
->> >> >>>> instead of renaming it.
->> >> >>>
->> >> >>> This clearly shows that we need a few kernel releases to test
->> >> >>> PFC-related code and DT before we can commit to an ABI. How do yo=
-u
->> >> >>> think we should handle this ?
->> >> >>
->> >> >> That's a difficult question
->> >> >>
->> >> >> For now I'd like to treat R-Car M3-W the same as H3.
->> >> >
->> >> > I still believe we should introduce some kind of unstable period fo=
-r DT
->> >> > bindings, during which they will be merged in mainline but still su=
-bject
->> >> > to modification. It could just be a few kernel releases.
->> >>
->> >> Like, from v4.4 (when avb_mdc was added for H3) until v4.12 (earliest
->> >> we can correct this)?
->> >
->> > Sorry, I misread you, I thought that H3 named the group mdio (you migh=
-t want
->> > to clarify this in the commit message). I was referring to when M3 PFC=
- support
+
+
+On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
+> On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
+> 
+>> Add initial pinctrl driver to support pin configuration with
+>> pinctrl framework for ipq8074.
 >>
->> Sorry, this was a bit unclear (I reused the description from the H3 patc=
-h).
->> This was actually referring to R-Car Gen2. Will fix.
+>> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+>> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+>> ---
+>>   .../bindings/pinctrl/qcom,ipq8074-pinctrl.txt      |  187 +++
+>>   drivers/pinctrl/qcom/Kconfig                       |   10 +
+>>   drivers/pinctrl/qcom/Makefile                      |    1 +
+>>   drivers/pinctrl/qcom/pinctrl-ipq8074.c             | 1217 ++++++++++++++++++++
+>>   4 files changed, 1415 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+>>   create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq8074.c
 >>
->> > was introduced, which was v4.10, so that's just two releases. We obvio=
-usly
->> > can't rename mdc to mdio on H3 if we want to keep backward compatibili=
-ty.
->>
->> And because of pin-compatibility and board sharing of H3 and M3-W, I
->> want both to use identical group naming.
->
-> I also think it's a benefit if the group names are identical on H3 and
-> M3-W. And I think it is unfortunate that the name do not match Gen2
-> naming.
->
-> When adding the pins to r8a7795 I thought of instead adding AVB_MDIO to
-> the group avb_mdc add a new group with the Gen2 naming (avb_mdio) and
-> add both AVB_MDC and AVB_MDIO to this group but still also keep the
-> group avb_mdc. If I had done that it would be compatible with Gen2
-> naming and backward compatible with old H3 DT. Maybe I was wrong of not
-> doing it like this and perhaps that solution should be revisited? That
-> is keep avb_mdc as is on H3 for backward compatibility but add avb_mdio t=
-o
-> both H3 and M3-W and update H3 DT to use avb_mdio.
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq8074-pinctrl.txt
+> [..]
+>> +- pins:
+>> +	Usage: required
+>> +	Value type: <string-array>
+>> +	Definition: List of gpio pins affected by the properties specified in
+>> +		    this subnode.  Valid pins are:
+>> +		    gpio0-gpio121,
+>> +		    sdc1_clk,
+>> +		    sdc1_cmd,
+>> +		    sdc1_data
+>> +		    sdc2_clk,
+>> +		    sdc2_cmd,
+>> +		    sdc2_data,
+>> +		    qdsd_cmd,
+>> +		    qdsd_data0,
+>> +		    qdsd_data1,
+>> +		    qdsd_data2,
+>> +		    qdsd_data3
+> 
+> These doesn't match the implementation.
 
-We can do that later... For now I like to move forward with M3-W like H3.
+Will remove them.
 
-> In any case I reviewed the pins as it is identical to how it's done on
-> H3. So if you choose to move forward with this approach feel free to
-> add:
->
-> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se=
->
+>> +
+>> +- function:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: Specify the alternative function to be configured for the
+>> +		    specified pins. Functions are only valid for gpio pins.
+>> +		    Valid values are:
+>> +	gpio, qpic_pad, blsp5_i2c, blsp5_spi, wci20, blsp3_spi3,
+>> +	burn0, pcm_zsi0, blsp5_uart, mac12, blsp3_spi0, burn1, mac01,
+>> +	qdss_cti_trig_out_b0, qdss_cti_trig_in_b0, qpic_pad4,
+>> +	blsp4_uart0, blsp4_i2c0, blsp4_spi0, mac21,
+>> +	qdss_cti_trig_out_b1, qpic_pad5, qdss_cti_trig_in_b1,
+>> +	qpic_pad6, qpic_pad7, cxc0, mac13, qdss_cti_trig_in_a1,
+>> +	qdss_cti_trig_out_a1, wci22, qdss_cti_trig_in_a0, qpic_pad1,
+>> +	qdss_cti_trig_out_a0, qpic_pad2, qpic_pad3, qdss_traceclk_b,
+>> +	qpic_pad0, qdss_tracectl_b, qpic_pad8, pcm_zsi1,
+>> +	qdss_tracedata_b, led0, pwm04, led1, pwm14, led2, pwm24,
+>> +	pwm00, blsp4_uart1, blsp4_i2c1, blsp4_spi1, wci23, mac11,
+>> +	blsp3_spi2, pwm10, pwm20, pwm30, audio_txmclk, pwm02,
+>> +	audio_txbclk, pwm12, audio_txfsync, pwm22, audio_txd, pwm32,
+>> +	audio_rxmclk, pwm03, atest_char0, audio_rxbclk, pwm13,
+>> +	atest_char1, audio_rxfsync, pwm23, atest_char2, audio_rxd,
+>> +	pwm33, atest_char3, pcm_drx, mac10, mac00, pcm_dtx, pcm_fsync,
+>> +	mac20, qdss_traceclk_a, pcm_pclk, qdss_tracectl_a, atest_char,
+>> +	qdss_tracedata_a, blsp0_uart, blsp0_i2c, blsp0_spi,
+>> +	blsp1_uart, blsp1_i2c, blsp1_spi, blsp2_uart, blsp2_i2c,
+>> +	blsp2_spi, blsp3_uart, blsp3_i2c, blsp3_spi, pta2_0, wci21,
+>> +	cxc1, blsp3_spi1, pta2_1, pta2_2, pcie0_clk, dbg_out,
+>> +	cri_trng0, pcie0_rst, cri_trng1, pcie0_wake, cri_trng,
+>> +	pcie1_clk, rx2, ldo_update, pcie1_rst, ldo_en, pcie1_wake,
+>> +	gcc_plltest, sd_card, pwm01, pta1_1, pwm11, rx1, pta1_2,
+>> +	gcc_tlmm, pta1_0, pwm21, prng_rosc, sd_write, pwm31, rx0,
+>> +	tsens_max, mdc, mdio, NA
+> 
+> Please indent these to the same level as the description.
 
-Thanks, applied to sh-pfc-for-v4.13 with reference to R-Car Gen2 SoC
-and Reviewed-by.
+Ok
 
-Gr{oetje,eeting}s,
+>> +
+> [..]
+>> +
+>> +- output-high:
+>> +	Usage: optional
+>> +	Value type: <none>
+>> +	Definition: The specified pins are configured in output mode, driven
+>> +		    high.
+>> +		    Not valid for sdc pins.
+> 
+> If you don't have any sdc pins, drop this.
 
-                        Geert
+Ok
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+>> +
+>> +- output-low:
+>> +	Usage: optional
+>> +	Value type: <none>
+>> +	Definition: The specified pins are configured in output mode, driven
+>> +		    low.
+>> +		    Not valid for sdc pins.
+> 
+> If you don't have any sdc pins, drop this.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Ok
+
+>> +
+>> +- drive-strength:
+>> +	Usage: optional
+>> +	Value type: <u32>
+>> +	Definition: Selects the drive strength for the specified pins, in mA.
+>> +		    Valid values are: 2, 4, 6, 8, 10, 12, 14 and 16
+>> +
+> [..]
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-ipq8074.c b/drivers/pinctrl/qcom/pinctrl-ipq8074.c
+> [..]
+>> +
+>> +enum ipq8074_functions {
+> 
+> Please keep these sorted alphabetically.
+
+Ok
+
+>> +	msm_mux_gpio,
+>> +	msm_mux_qpic_pad,
+>> +	msm_mux_blsp5_i2c,
+>> +	msm_mux_blsp5_spi,
+>> +	msm_mux_wci20,
+> 
+> What does "20" mean here?
+
+This is for Wireless Coex Interface. The same functionality can be muxed 
+on to different GPIOs. WCI2, is the 2nd edition of the WCI standard and 
+0, 1 are for the muxing to different GPIOs (alternate muxes).
+
+>> +	msm_mux_blsp3_spi3,
+>> +	msm_mux_burn0,
+>> +	msm_mux_pcm_zsi0,
+>> +	msm_mux_blsp5_uart,
+>> +	msm_mux_mac12,
+> 
+> What does "12" mean here?
+
+The SoC has three MAC cores. Each core has two pins for the smart 
+antenna feature. macXY indicates the function select for MAC no. X and 
+smart antenna no. Y.
+
+>> +	msm_mux_blsp3_spi0,
+>> +	msm_mux_burn1,
+>> +	msm_mux_mac01,
+>> +	msm_mux_qdss_cti_trig_out_b0,
+>> +	msm_mux_qdss_cti_trig_in_b0,
+>> +	msm_mux_qpic_pad4,
+> 
+> What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
+> alternative muxings...?
+
+This is for the NAND and LCD display. The pins listed are the 9 data pins.
+
+>> +	msm_mux_blsp4_uart0,
+>> +	msm_mux_blsp4_i2c0,
+>> +	msm_mux_blsp4_spi0,
+>> +	msm_mux_mac21,
+>> +	msm_mux_qdss_cti_trig_out_b1,
+>> +	msm_mux_qpic_pad5,
+>> +	msm_mux_qdss_cti_trig_in_b1,
+>> +	msm_mux_qpic_pad6,
+>> +	msm_mux_qpic_pad7,
+>> +	msm_mux_cxc0,
+>> +	msm_mux_mac13,
+>> +	msm_mux_qdss_cti_trig_in_a1,
+>> +	msm_mux_qdss_cti_trig_out_a1,
+>> +	msm_mux_wci22,
+>> +	msm_mux_qdss_cti_trig_in_a0,
+>> +	msm_mux_qpic_pad1,
+>> +	msm_mux_qdss_cti_trig_out_a0,
+>> +	msm_mux_qpic_pad2,
+>> +	msm_mux_qpic_pad3,
+>> +	msm_mux_qdss_traceclk_b,
+>> +	msm_mux_qpic_pad0,
+>> +	msm_mux_qdss_tracectl_b,
+>> +	msm_mux_qpic_pad8,
+>> +	msm_mux_pcm_zsi1,
+>> +	msm_mux_qdss_tracedata_b,
+>> +	msm_mux_led0,
+>> +	msm_mux_pwm04,
+> 
+> What does "04" mean here?
+
+There are 4 Pulse Width Modulation channels, pwmXY is pwm channel X and 
+pin Y.
+> 
+>> +	msm_mux_led1,
+>> +	msm_mux_pwm14,
+>> +	msm_mux_led2,
+>> +	msm_mux_pwm24,
+>> +	msm_mux_pwm00,
+>> +	msm_mux_blsp4_uart1,
+> 
+> Are uart0 vs uart1 alternative muxes?
+
+These are two different uarts available at two independent pins.
+
+> [..]
+>> +static const struct msm_function ipq8074_functions[] = {
+> 
+> Please keep these sorted alphabetically too.
+
+Ok
+
+Thanks
+Varada
+
+> Regards,
+> Bjorn
+> 
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum, a Linux Foundation Collaborative Project
