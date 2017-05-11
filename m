@@ -1,65 +1,100 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Right amount of info in the DT
-Date: Thu, 11 May 2017 17:22:09 +0200
-Message-ID: <CACRpkdbB9kUaRbm-=1c_kzZ9p2ghh==HNb-8vkGkF3Zrx0rr_Q@mail.gmail.com>
-References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
- <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
- <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com> <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
- <d8d9f35c-a901-dc77-646e-ea09836ee9cf@sigmadesigns.com> <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
- <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 1/5] pintrl: meson: add interrupts to pinctrl data
+Date: Thu, 11 May 2017 18:08:06 +0200
+Message-ID: <1494518886.2375.15.camel@baylibre.com>
+References: <a4ca587b-d3e8-a22d-4d25-289871d2d095@gmail.com>
+         <3b4990ef-bfb4-c62c-f823-431adedc17f1@gmail.com>
+         <CACRpkdYx0j4Sjv8MhXRSuiF1TyW2Ht47r0+G1ga8mXW5LC7c=g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:36842 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756760AbdEKPWM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 11:22:12 -0400
-Received: by mail-it0-f42.google.com with SMTP id o5so45845564ith.1
-        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 08:22:12 -0700 (PDT)
-In-Reply-To: <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35731 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751866AbdEKQIK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 12:08:10 -0400
+Received: by mail-wm0-f43.google.com with SMTP id b84so46911455wmh.0
+        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 09:08:09 -0700 (PDT)
+In-Reply-To: <CACRpkdYx0j4Sjv8MhXRSuiF1TyW2Ht47r0+G1ga8mXW5LC7c=g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Heiner Kallweit <hkallweit1@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, May 9, 2017 at 12:49 PM, Yves Lefloch
-<YvesMarie_Lefloch@sigmadesigns.com> wrote:
+On Thu, 2017-05-11 at 16:50 +0200, Linus Walleij wrote:
+> On Sun, May 7, 2017 at 6:34 PM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> 
+> > From: Jerome Brunet <jbrunet@baylibre.com>
+> > Add GPIO interrupt information to pinctrl data. Added to the original
+> > version from Jerome was data for Meson GXL.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> 
+> So what this does is:
+> 
+> > diff --git a/drivers/pinctrl/meson/pinctrl-meson.h
+> > b/drivers/pinctrl/meson/pinctrl-meson.h
+> > index 1aa871d5..890f296f 100644
+> > --- a/drivers/pinctrl/meson/pinctrl-meson.h
+> > +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+> > @@ -81,6 +81,7 @@ enum meson_reg_type {
+> >   * @name:      bank name
+> >   * @first:     first pin of the bank
+> >   * @last:      last pin of the bank
+> > + * @irq:       hwirq base number of the bank
+> >   * @regs:      array of register descriptors
+> >   *
+> >   * A bank represents a set of pins controlled by a contiguous set of
+> > @@ -92,6 +93,8 @@ struct meson_bank {
+> >         const char *name;
+> >         unsigned int first;
+> >         unsigned int last;
+> > +       int irq_first;
+> > +       int irq_last;
+> >         struct meson_reg_desc regs[NUM_REG];
+> >  };
+> 
+> ... adds a per-bank parent IRQ.
 
-> I was wondering what's the recommended approach to
-> mutualize code:
-> 1. Having a driver under drivers/gpio and another on drivers/pinctrl
->    which depends on the first one.
-> 2. Having both drivers in the same file under drivers/pinctrl.
-> 3. Having only one pinctrl driver.
+Hi Linus,
 
-All approaches exist. I have no strong opinion, but when possible
-try to make separation of concerns.
+It does not add a per-bank parent IRQ. The meson gpio irq is an IP independent
+of the gpio/pinctrl subsystem. In a nutshell, we have 8 interrupts on the GIC
+and we can route the signal of almost any pin of any bank to these parent irqs.
+The fact that there 1 gpio-irq controller and several gpio controller make the
+design a bit tricky
 
-> For now I've taken approach 3, but isn't it strange to have pins
-> dedicated to GPIO like this first group I mentioned controlled
-> for a pinctrl driver?
-> What is your opinion on this?
+We already talked about this IP, here is the discussion :https://patchwork.ozlab
+s.org/patch/684208/
 
-Just make sure your driver also provides a gpio_chip and
-write good looking code.
+At the time, the problem was that I was creating the mapping within the
+gpio_to_irq callback, which is wrong.
 
->> But I was not meaning you should collect them all under a
->> "pins" node like this, but inside each peripheral.
->
-> OK, I will do that. Although not all alternate functions currently
-> have a driver, nor a node in the device tree. I guess the best way
-> to handle that is to declare the pins as GPIO only and not to worry
-> about the alternate function; which brings me back to the question
-> above. Do they need a separate GPIO driver?
+irq_first, irq_last were introduced because there is no way to have direct
+mapping between the gpio number and the hw interrupt number. (details are in our
+previous discussion). If a more generic solution can be used for this, it would
+be nice :)
 
-Implement everything you have a data sheet for even if you
-do not use it right now. It is good to have.
+While I think having a irqdomain in the gpio driver and using the
+request_resources callback to create the mapping in the underlying domain might
+be a solution to ressouce allocation problem we had, I think the meson-gpio-irq
+should be implemented has an independent driver because  it is an independent
+device. Eventually, this device should be the parent irq controller of the gpio
+controller.
 
-Have you read the section "GPIO mode pitfalls" in the documentation?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/pinctrl.txt
+I not sure that there is a reason for using syscon here, or if it is a good idea
+to have the data of this controller as globals for the gpio driver ... 
 
-It is very important that you know for sure whether it is actual
-GPIO or just named that way by some hardware engineer.
 
-Yours,
-Linus Walleij
+> 
+> I am just discussing with Thierry that I would like to see some code
+> in the gpiolib core to deal with this mapping so we don't have to do a
+> whole lot of custom back mapping between parent IRQs and cascaded
+> IRQ in every driver that has a multiple-bank concept.
+> 
+> Please contribute to the discission, see thread subject:
+> "[PATCH v2] gpio: Add Tegra186 support"
+> 
+> Yours,
+> Linus Walleij
