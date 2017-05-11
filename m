@@ -1,111 +1,56 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH] ARM: dts: imx28: add gpio-ranges for internal gpio
- controller
-Date: Thu, 11 May 2017 15:51:36 +0800
-Message-ID: <20170511075135.GF5833@dragon>
-References: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754996AbdEKHvw (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 11 May 2017 03:51:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
+Date: Thu, 11 May 2017 10:03:33 +0200
+Message-ID: <1494489813-27321-5-git-send-email-geert+renesas@glider.be>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>
 
-On Mon, May 08, 2017 at 10:59:25AM +0200, Uwe Kleine-König wrote:
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ---
-> Hello,
-> 
-> with this patch applied I get the following lines in dmesg which looks
-> fine:
-> 
-> 	[    0.227913] gpio gpiochip0: (80018000.pinctrl:gpio@0): created GPIO range 0->31 ==> 80018000.pinctrl PIN 0->31
-> 	[    0.236100] gpio gpiochip1: (80018000.pinctrl:gpio@1): created GPIO range 0->31 ==> 80018000.pinctrl PIN 32->63
-> 	[    0.244463] gpio gpiochip2: (80018000.pinctrl:gpio@2): created GPIO range 0->31 ==> 80018000.pinctrl PIN 64->95
-> 	[    0.253020] gpio gpiochip3: (80018000.pinctrl:gpio@3): created GPIO range 0->31 ==> 80018000.pinctrl PIN 96->127
-> 	[    0.261639] gpio gpiochip4: (80018000.pinctrl:gpio@4): created GPIO range 0->31 ==> 80018000.pinctrl PIN 128->159
-> 
-> But when looking at a used gpio
-> 
-> 	# cat /sys/kernel/debug/gpio
-> 	gpiochip0: GPIOs 0-31, parent: platform/80018000.pinctrl:gpio@0, 80018000.pinctrl:gpio@0:
-> 	...
-> 	 gpio-20  (LED4                |?                   ) out hi
-> 	...
-> 
-> 	# grep "pin 20 " /sys/kernel/debug/pinctrl/80018000.pinctrl/pinmux-pins
-> 	pin 20 (GPMI_RDY0): leds (GPIO UNCLAIMED) function leds group leds.0
-> 
-> I wonder why there is still "GPIO UNCLAIMED". I would have expected that
-> this disappears and somehow references the gpio_request issued by the
-> led-gpio driver after my patch.
-> 
-> What am I missing?
+Pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+array initializers, where the GPIO_* enums serve as indices.
+If enum values are defined, but never used, pinmux_pins[] contains
+(zero-filled) holes.  Such entries are treated as pin zero, which was
+registered before, thus leading to pinctrl registration failures, as
+seen on sh7722:
 
-It seems that's only the case where @strict of struct pinmux_ops is
-true.  We should set it true for pinctrl-mxs, I guess?
+    sh-pfc pfc-sh7722: pin 0 already registered
+    sh-pfc pfc-sh7722: error during pin registration
+    sh-pfc pfc-sh7722: could not register: -22
+    sh-pfc: probe of pfc-sh7722 failed with error -22
 
-Shawn
+Remove GPIO_PH[0-7] from the enum to fix this.
 
-> 
-> Best regards
-> Uwe
-> 
->  arch/arm/boot/dts/imx28.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx28.dtsi b/arch/arm/boot/dts/imx28.dtsi
-> index 148fcf4d3b98..cfad2295cc46 100644
-> --- a/arch/arm/boot/dts/imx28.dtsi
-> +++ b/arch/arm/boot/dts/imx28.dtsi
-> @@ -182,6 +182,7 @@
->  					#gpio-cells = <2>;
->  					interrupt-controller;
->  					#interrupt-cells = <2>;
-> +					gpio-ranges = <&pinctrl 0 0 32>;
->  				};
->  
->  				gpio1: gpio@1 {
-> @@ -192,6 +193,7 @@
->  					#gpio-cells = <2>;
->  					interrupt-controller;
->  					#interrupt-cells = <2>;
-> +					gpio-ranges = <&pinctrl 0 32 32>;
->  				};
->  
->  				gpio2: gpio@2 {
-> @@ -202,6 +204,7 @@
->  					#gpio-cells = <2>;
->  					interrupt-controller;
->  					#interrupt-cells = <2>;
-> +					gpio-ranges = <&pinctrl 0 64 32>;
->  				};
->  
->  				gpio3: gpio@3 {
-> @@ -212,6 +215,7 @@
->  					#gpio-cells = <2>;
->  					interrupt-controller;
->  					#interrupt-cells = <2>;
-> +					gpio-ranges = <&pinctrl 0 96 32>;
->  				};
->  
->  				gpio4: gpio@4 {
-> @@ -222,6 +226,7 @@
->  					#gpio-cells = <2>;
->  					interrupt-controller;
->  					#interrupt-cells = <2>;
-> +					gpio-ranges = <&pinctrl 0 128 32>;
->  				};
->  
->  				duart_pins_a: duart@0 {
-> -- 
-> 2.11.0
-> 
+Fixes: ef0fa5331a73e479 ("sh: Add pinmux for sh7269")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+Untested due to lack of hardware.
+
+v2:
+  - Replace fake error messages by reference to sh7722,
+  - Add Reviewed-by.
+---
+ arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+index 2a0ca8780f0d8c34..13c495a9fc0007b4 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
+@@ -45,9 +45,7 @@ enum {
+ 	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
+ 	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
+ 
+-	/* Port H */
+-	GPIO_PH7, GPIO_PH6, GPIO_PH5, GPIO_PH4,
+-	GPIO_PH3, GPIO_PH2, GPIO_PH1, GPIO_PH0,
++	/* Port H - Port H does not have a Data Register */
+ 
+ 	/* Port I - not on device */
+ 
+-- 
+2.7.4
