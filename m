@@ -1,81 +1,189 @@
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] pinctrl: when claiming hog, skip maps not served by same device
-Date: Thu, 11 May 2017 23:02:11 +0300
-Message-ID: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:34978 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932590AbdEKUCa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 16:02:30 -0400
-Received: by mail-wm0-f41.google.com with SMTP id b84so53909734wmh.0
-        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 13:02:29 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 3/3] gpiolib: Add GPIO initialization
+Date: Thu, 11 May 2017 22:18:56 +0200
+Message-ID: <20170511201856.rfzemgnxk2no4tk2@pengutronix.de>
+References: <1440920686-6892-1-git-send-email-mpa@pengutronix.de>
+ <1440920686-6892-4-git-send-email-mpa@pengutronix.de>
+ <20170207110950.zy5pzo2hq6hrvmr5@pengutronix.de>
+ <20170506203230.7ogwvdrzogvvlu67@pengutronix.de>
+ <CACRpkdZeYXcXo5g-4wH8M7vK6gTFRHH4VMXqC7XJ_iwXUpL8HA@mail.gmail.com>
+ <20170507094524.vi4uhu52m67nlfa6@pengutronix.de>
+ <CACRpkdZPwH3vPjdCgCjYW4Q5OvbE5O0RLJ4bV-QLR2nVLy4kAQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZPwH3vPjdCgCjYW4Q5OvbE5O0RLJ4bV-QLR2nVLy4kAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Chris Read <chrisrfq-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arun Bharadwaj <arun-EiDWdcs9+yZBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Healy <Chris.Healy@zii.aero>, Jeff.White@zii.aero, Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
-When pinctrl device registers, it automatically claims hogs, that is,
-maps that pinctrl device serves for itself.
+Hello Linus,
 
-It is possible that in addition to SoC's pinctrl device, other pinctrl
-devices get registered. E.g. some gpio expander devies are registered
-as pinctrl devices. For such devices, pinctrl maps could be defined
-that set up SoC's pins (e.g. interrupt pin for gpio expander). Such
-a map will have target device set to gpio expander.
+On Thu, May 11, 2017 at 04:29:30PM +0200, Linus Walleij wrote:
+> On Sun, May 7, 2017 at 11:45 AM, Uwe Kleine-König
+> <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+> > [Me]
+> 
+> >> >    IMHO it is sensible to allow requesting a gpio that is completely
+> >> >    hogged and just prevent changing direction and (if it's an output)
+> >> >    value.
+> >>
+> >> No it doesn't make sense at all to take something that is hogged
+> >> because it is completely unintuitive to the very word "hog".
+> >
+> > What I want is that it is possible to restrict the usage of a GPIO more
+> > fine-grained. For example only fix the direction to input but allow a
+> > driver to still read out it's value. Or fix the direction to output but
+> > allow changing the level.
+> 
+> So let me understand this right.
+> 
+> For something input-only, return -EINVAL from .direction_output()
+> and vice versa mutatis mutandis for something output-only.
 
-Here is device tree snippet that causes this scenario:
-
-&i2c0 {
-	sx1503@20 {
-		compatible = "semtech,sx1503q";
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_sx1503_20>;
-		...
-	};
-};
-...
-&iomuxc {
-	pinctrl_sx1503_20: pinctrl-sx1503-20 {
-		fsl,pins = <
-			VF610_PAD_PTB1__GPIO_23         0x219d
-		>;
-	};
-};
-
-Such a map will have target device set to gpio expander. However is not
-a hog, it is a regular map that is claimed by core before gpio expander
-device is probed.
-
-Thus when looking for hogs, it is not enough to check that map's target
-device is set to pinctrl device being registered. Need also check that
-map's control device is also set to the same.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/pinctrl/core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 1653cbda6a82..682ebd360030 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1038,6 +1038,16 @@ static struct pinctrl *create_pinctrl(struct device *dev,
- 		/* Map must be for this device */
- 		if (strcmp(map->dev_name, devname))
- 			continue;
-+		/*
-+		 * If pctldev is not null, we are claiming hog for it,
-+		 * that means, setting that is served by pctldev by itself.
-+		 *
-+		 * Thus we must skip map that is for this device but is served
-+		 * by other device.
-+		 */
-+		if (pctldev &&
-+		    strcmp(dev_name(pctldev->dev), map->ctrl_dev_name))
-+			continue;
+Not sure if it's -EINVAL, but some error for sure, yes.
  
- 		ret = add_setting(p, pctldev, map);
- 		/*
--- 
-2.11.0
+> This semantic is set at runtime when using these functions.
+> 
+> Why can't you do this in the specific driver? Why does that have
 
+It's not known to the driver. On an i.MX28 based machine a certain pin
+of the SoC might be NC and so should be set as output-low. That's
+specific to that machine while the i.MX28 (and so the driver) could well
+operate that pin as input. It might also make sense to limit a line to
+input only if it is connected to another device that drives the line.
+
+> to be handled by the core? I mean of course we can add a
+> flag to the gpio_desc if you think it's gonna be a common case,
+> but then I want an indication that there is a bunch of drivers that
+> need this done in the core.
+
+So this is entirely independent of the driver in question.
+
+> > So the semantic of a hogged gpio as
+> > implemented today is a special case of my new use cases. So it seems
+> > naturally to extend the already existing concept.
+> 
+> I disagree
+
+I guess you disagree to the 2nd sentence only because the first is
+obviously true.
+
+>            and the DT maintainer Rob Herring already said he kind
+> of dislikes the hogs already, so let's not expand their use beyond
+> what is already being done, which is explicit hogging.
+> 
+> > And concerning the meaning of hogging: It still takes some freedom from
+> > others, just not everything because you can still request the line. So
+> > not being a native English speaker the word still fits for me.
+> 
+> IMO this breaks Rusty Russell's API Design Manifesto,
+> levels 7 and 6:
+> 
+> 7. The obvious use is (probably) the correct one.
+> 6. The name tells you how to use it.
+> 
+> In my case, just no. It is not obvuous and does not tell me how
+> to use it.
+> 
+> Something like gpio-line-initial-directions, gpio-line-initial-values
+> etc does.
+> 
+> > And technically it is sensible to implement the new use cases and
+> > today's hogging together and so it is also sensible IMHO to use the same
+> > mechanism in the device tree.
+> 
+> I disagree with that, sorry.
+
+gpio-hogs are a special case of my suggestion. So even if the binding
+looks different in the end, it doesn't make sense to have two
+implementations for the same thing.
+
+> > So to stick to your suggestion I would have in the end for two lines
+> > io12 that must be 0 for ESD reasons and io13 that drives the RST-line of
+> > a companion DSP that should be kept low until userspace is ready and
+> > then allow being driven high via gpioctl:
+> >
+> >         io12 {
+> >                 gpio-hog;
+> >                 gpio = <4 0>;
+> >                 output-low;
+> >         };
+> >
+> >         io13 {
+> >                 gpio-init;
+> >                 gpio = <5 0>;
+> >                 output-low;
+> >                 fixed-direction;
+> >         };
+> >
+> > For me it looks artificial to not use "gpio-hog" for the 2nd
+> > specification but if that is the compromise that we can agree on, that's
+> > ok for me.
+> 
+> This looks OK to me.
+
+This is my favourite binding among the stuff discussed given you don't
+want to "reuse" gpio-hog, but I'm open for better ones :-)
+
+The following looks nice:
+
+	io12 {
+		gpio;
+		gpio = <4 0>;
+		init-output-low;
+		fixed-direction;
+		fixed-value;
+	};
+
+but won't work because there is "gpio" twice.
+
+If you ask me, having
+
+	io12 {
+		gpio-init;
+		gpio = <4 0>;
+		output-low;
+		fixed-direction;
+		fixed-value;
+	};
+
+somehow makes it superfluous to be able to say
+
+	io12 {
+		gpio-hog;
+		gpio = <4 0>;
+		output-low;
+	};
+
+as the only difference would be that with the former the gpio could be
+requested while this isn't possible with the latter. (Which is also a
+difference that shouldn't be there in a hardware description.)
+
+> I think you will have a problem with Rob on this though, he's not
+> a big fan of these hogging nodes and I'm not sure he's gonna like
+> the gpio-init nodes much.
+
+Rob: IMHO it makes sense to describe limitations like "This pin should
+not be driven (as there is another driver)" or "This is an output pin
+with the safe initial level being low" (for a line that drives the reset
+pin of a device) or maybe even "This pin might be used as input or
+output, the safe value is input" (for a pin that is available on a
+pinheader with a pullup, so the usage is unknown) in the device tree. I
+don't really care about how they should be specified, so if you have a
+different idea, I'm all ears.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
