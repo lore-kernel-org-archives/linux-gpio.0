@@ -1,55 +1,74 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCHv2 0/6] mcp23s08 pinconf support
-Date: Thu, 11 May 2017 15:38:58 +0200
-Message-ID: <CACRpkdYo3M2_f-36KiYcRCJEwDXj6Mqpf=qpovmK=rhgVzbp0w@mail.gmail.com>
-References: <20170427141937.762-1-sebastian.reichel@collabora.co.uk>
- <CACRpkdZVQJ+KvoKVzfMjGeaPMJ4MT+uf3HSr5JixBx5MgJ8xeQ@mail.gmail.com> <20170428084344.exegdfcfblbx3k5w@earth>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 10/10] ARM: dts: sun8i: Add board dts
+ file for Banana Pi M2 Ultra
+Date: Thu, 11 May 2017 15:44:54 +0200
+Message-ID: <CACRpkdYg7jLymwi14BMJ3p6oeOwjt+PLzQFC1S8e01v9dtw3=w@mail.gmail.com>
+References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-11-icenowy@aosc.io>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:38067 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755481AbdEKNjA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 09:39:00 -0400
-Received: by mail-it0-f52.google.com with SMTP id e65so19775614ita.1
-        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 06:39:00 -0700 (PDT)
-In-Reply-To: <20170428084344.exegdfcfblbx3k5w@earth>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBWGV2HEAKGQEDMQQSMI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170504135006.16483-11-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Steven Miao <realmz6@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>, Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, adi-buildroot-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Apr 28, 2017 at 10:43 AM, Sebastian Reichel
-<sebastian.reichel@collabora.co.uk> wrote:
-> On Fri, Apr 28, 2017 at 10:22:24AM +0200, Linus Walleij wrote:
->> On Thu, Apr 27, 2017 at 4:19 PM, Sebastian Reichel
->> <sebastian.reichel@collabora.co.uk> wrote:
->>
->> > Back in January I sent patches adding pinconf support
->> > for configuring mcp23s08's pull-ups. Apart from my
->> > custom Raspberry Pi setup the pull-up support is also
->> > needed by Toby Churchill SL50.
->> >
->> > Changes since PATCHv1:
->> >  * Add patch moving mcp23s08 from gpio/ to pinctrl/
->> >  * Add patches updating config references in arch/
->> >  * Add patch removing pdata support for pullup config
->>
->> I like this and I would like to queue it early in the v4.13
->> development cycle.
+On Thu, May 4, 2017 at 3:50 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+
+> From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 >
-> Thanks.
+> The Banana Pi M2 Ultra is an SBC based on the Allwinner R40 SoC. The
+> form factor and position of various connectors, leds and buttons is
+> similar to the Banana Pi M1+, Banana Pi M3, and is exactly the same
+> as the latest Banana Pi M64.
+>
+> It features:
+>
+>   - X-Powers AXP221s PMIC connected to i2c0
+>   - 2 GB DDR3 DRAM
+>   - 8 GB eMMC
+>   - micro SD card slot
+>   - DC power jack
+>   - HDMI output
+>   - MIPI DSI connector
+>   - 2x USB 2.0 hosts
+>   - 1x USB 2.0 OTG
+>   - gigabit ethernet with Realtek RTL8211E transceiver
+>   - WiFi/Bluetooth with AP6212 chip, with external antenna connector
+>   - SATA and power connectors for native SATA support
+>   - camera sensor connector
+>   - consumer IR receiver
+>   - audio out headphone jack
+>   - onboard microphone
+>   - red, green, and blue LEDs
+>   - debug UART pins
+>   - Li-Po battery connector
+>   - Raspberry Pi B+ compatible GPIO header
+>   - power, reset, and boot control buttons
+>
+> This patch adds a dts file that enables debug UART and MMC support.
+>
+> Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+> Signed-off-by: Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
 
-I wanna queue this.
+Eric put a lot of time and effort into naming the GPIO lines on the
+other Pi board.
 
-Can you resend this patch set based on Torvald's HEAD or v4.12-rc1
-when that is out after the weekend and:
+So please follow the good example and name the GPIO lines on this board
+like in the other rpi boards, should be something like:
 
-- Request explicit ACKs from blackfin and ARM maintainers.
-  (The ARM people are at arm@kernel.org)
+&pio {
+    gpio-line-names = "...", "...";
+};
 
-- Include the regmap conversion in the last two patches you
-  sent.
+This is very helpful for users.
 
 Yours,
 Linus Walleij
