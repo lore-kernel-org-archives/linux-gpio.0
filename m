@@ -1,34 +1,64 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 04/10] pinctrl: sunxi: switch A20's
- pinctrl driver to use the A10 version
-Date: Thu, 11 May 2017 16:41:50 +0200
-Message-ID: <CACRpkdapcjoSaCpKev6tTuMVF5ZEQ61HkUMMAC3npJnnYWzNcA@mail.gmail.com>
-References: <20170504135006.16483-1-icenowy@aosc.io> <20170504135006.16483-5-icenowy@aosc.io>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/5] pintrl: meson: add interrupts to pinctrl data
+Date: Thu, 11 May 2017 16:50:17 +0200
+Message-ID: <CACRpkdYx0j4Sjv8MhXRSuiF1TyW2Ht47r0+G1ga8mXW5LC7c=g@mail.gmail.com>
+References: <a4ca587b-d3e8-a22d-4d25-289871d2d095@gmail.com> <3b4990ef-bfb4-c62c-f823-431adedc17f1@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBMHQ2HEAKGQEJLFAVAA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170504135006.16483-5-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:36757 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933088AbdEKOuT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 10:50:19 -0400
+Received: by mail-it0-f52.google.com with SMTP id o5so45204916ith.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 07:50:19 -0700 (PDT)
+In-Reply-To: <3b4990ef-bfb4-c62c-f823-431adedc17f1@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, May 4, 2017 at 3:50 PM, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org> wrote:
+On Sun, May 7, 2017 at 6:34 PM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
 
-> As we added A20 support to A10 pinctrl driver, now we can delete the
-> dedicated A20 pinctrl driver, and enable A10 driver for A20.
+> From: Jerome Brunet <jbrunet@baylibre.com>
+> Add GPIO interrupt information to pinctrl data. Added to the original
+> version from Jerome was data for Meson GXL.
 >
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 
-Looks all right to me but I'm waiting for Maxime's review on these
-patches.
+So what this does is:
+
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+> index 1aa871d5..890f296f 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+> @@ -81,6 +81,7 @@ enum meson_reg_type {
+>   * @name:      bank name
+>   * @first:     first pin of the bank
+>   * @last:      last pin of the bank
+> + * @irq:       hwirq base number of the bank
+>   * @regs:      array of register descriptors
+>   *
+>   * A bank represents a set of pins controlled by a contiguous set of
+> @@ -92,6 +93,8 @@ struct meson_bank {
+>         const char *name;
+>         unsigned int first;
+>         unsigned int last;
+> +       int irq_first;
+> +       int irq_last;
+>         struct meson_reg_desc regs[NUM_REG];
+>  };
+
+... adds a per-bank parent IRQ.
+
+I am just discussing with Thierry that I would like to see some code
+in the gpiolib core to deal with this mapping so we don't have to do a
+whole lot of custom back mapping between parent IRQs and cascaded
+IRQ in every driver that has a multiple-bank concept.
+
+Please contribute to the discission, see thread subject:
+"[PATCH v2] gpio: Add Tegra186 support"
 
 Yours,
 Linus Walleij
