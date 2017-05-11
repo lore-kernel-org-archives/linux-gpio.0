@@ -1,38 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic SoCs
-Date: Thu, 11 May 2017 13:08:55 +0200
-Message-ID: <CACRpkdaYRmB=i-=k4vfFYL6wHVrpNo1w11xnLGbu+6YPPmT8vA@mail.gmail.com>
-References: <20170402204244.14216-2-paul@crapouillou.net> <20170428200824.10906-1-paul@crapouillou.net>
- <20170428200824.10906-6-paul@crapouillou.net>
+Subject: Re: [PATCH] gpio: aspeed: Don't attempt to debounce if disabled
+Date: Thu, 11 May 2017 13:32:20 +0200
+Message-ID: <CACRpkdZwf2feNGCn6RNOXK82PeMXmxJ1MBL=0aBajLHTZ_WP_Q@mail.gmail.com>
+References: <20170502060824.6457-1-joel@jms.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20170428200824.10906-6-paul@crapouillou.net>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>"linux-mtd@lists.infradead.org" <li>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:36617 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751208AbdEKLcV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 07:32:21 -0400
+Received: by mail-io0-f170.google.com with SMTP id o12so19261889iod.3
+        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 04:32:21 -0700 (PDT)
+In-Reply-To: <20170502060824.6457-1-joel@jms.id.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Joel Stanley <joel@jms.id.au>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>
 
-On Fri, Apr 28, 2017 at 10:08 PM, Paul Cercueil <paul@crapouillou.net> wrote:
+On Tue, May 2, 2017 at 8:08 AM, Joel Stanley <joel@jms.id.au> wrote:
 
-> There is a pinctrl driver for each of the Ingenic SoCs supported by the
-> upstream Linux kernel. In order to switch away from the old GPIO
-> platform code, we now enable the pinctrl drivers by default for the
-> Ingenic SoCs.
+> We warn the user at driver probe time that debouncing is disabled.
+> However, if they request debouncing later on we print a confusing error
+> message:
 >
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  arch/mips/Kconfig | 1 +
+>  gpio_aspeed 1e780000.gpio: Failed to convert 5000us to cycles at 0Hz: -524
+>
+> Instead bail out when the clock is not present.
+>
+> Fixes: 5ae4cb94b3133 (gpio: aspeed: Add debounce support)
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-So please tell me your desired merge strategy for these bits. I can
-provide an immutable branch for pinctrl if you want to pull the deps in
-or we can just merge this orthogonally in the MIPS tree and let things
-smoothen together in the merge window.
-
-This goes for everything outside of pinctrl/gpio.
-
-If I should merge patches for other subsystems I need ACKs from
-the maintainers of MIPS etc.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
