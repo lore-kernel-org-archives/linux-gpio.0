@@ -1,122 +1,81 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH 1/5] pintrl: meson: add interrupts to pinctrl data
-Date: Thu, 11 May 2017 21:33:49 +0200
-Message-ID: <7ed5a88a-43dd-f7ab-2794-48ceb5a62a93@gmail.com>
-References: <a4ca587b-d3e8-a22d-4d25-289871d2d095@gmail.com>
- <3b4990ef-bfb4-c62c-f823-431adedc17f1@gmail.com>
- <CACRpkdYx0j4Sjv8MhXRSuiF1TyW2Ht47r0+G1ga8mXW5LC7c=g@mail.gmail.com>
- <1494518886.2375.15.camel@baylibre.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] pinctrl: when claiming hog, skip maps not served by same device
+Date: Thu, 11 May 2017 23:02:11 +0300
+Message-ID: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33275 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756046AbdEKTeD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 15:34:03 -0400
-In-Reply-To: <1494518886.2375.15.camel@baylibre.com>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:34978 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932590AbdEKUCa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 11 May 2017 16:02:30 -0400
+Received: by mail-wm0-f41.google.com with SMTP id b84so53909734wmh.0
+        for <linux-gpio@vger.kernel.org>; Thu, 11 May 2017 13:02:29 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Healy <Chris.Healy@zii.aero>, Jeff.White@zii.aero, Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
-Am 11.05.2017 um 18:08 schrieb Jerome Brunet:
-> On Thu, 2017-05-11 at 16:50 +0200, Linus Walleij wrote:
->> On Sun, May 7, 2017 at 6:34 PM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>
->>> From: Jerome Brunet <jbrunet@baylibre.com>
->>> Add GPIO interrupt information to pinctrl data. Added to the original
->>> version from Jerome was data for Meson GXL.
->>>
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>
->> So what this does is:
->>
->>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h
->>> b/drivers/pinctrl/meson/pinctrl-meson.h
->>> index 1aa871d5..890f296f 100644
->>> --- a/drivers/pinctrl/meson/pinctrl-meson.h
->>> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
->>> @@ -81,6 +81,7 @@ enum meson_reg_type {
->>>   * @name:      bank name
->>>   * @first:     first pin of the bank
->>>   * @last:      last pin of the bank
->>> + * @irq:       hwirq base number of the bank
->>>   * @regs:      array of register descriptors
->>>   *
->>>   * A bank represents a set of pins controlled by a contiguous set of
->>> @@ -92,6 +93,8 @@ struct meson_bank {
->>>         const char *name;
->>>         unsigned int first;
->>>         unsigned int last;
->>> +       int irq_first;
->>> +       int irq_last;
->>>         struct meson_reg_desc regs[NUM_REG];
->>>  };
->>
->> ... adds a per-bank parent IRQ.
-> 
-> Hi Linus,
-> 
-> It does not add a per-bank parent IRQ. The meson gpio irq is an IP independent
-> of the gpio/pinctrl subsystem. In a nutshell, we have 8 interrupts on the GIC
-> and we can route the signal of almost any pin of any bank to these parent irqs.
-> The fact that there 1 gpio-irq controller and several gpio controller make the
-> design a bit tricky
-> 
-> We already talked about this IP, here is the discussion :https://patchwork.ozlab
-> s.org/patch/684208/
-> 
-> At the time, the problem was that I was creating the mapping within the
-> gpio_to_irq callback, which is wrong.
-> 
-> irq_first, irq_last were introduced because there is no way to have direct
-> mapping between the gpio number and the hw interrupt number. (details are in our
-> previous discussion). If a more generic solution can be used for this, it would
-> be nice :)
-> 
-> While I think having a irqdomain in the gpio driver and using the
-> request_resources callback to create the mapping in the underlying domain might
-> be a solution to ressouce allocation problem we had, I think the meson-gpio-irq
-> should be implemented has an independent driver because  it is an independent
-> device.
+When pinctrl device registers, it automatically claims hogs, that is,
+maps that pinctrl device serves for itself.
 
-This kind of GPIO IRQ multiplexer doesn't really seem to match any use case
-covered by the GPIO / IRQ subsystems. Especially the needed dynamic mapping
-from the GPIOs to one of the eight GPIO GIC IRQs is tricky.
+It is possible that in addition to SoC's pinctrl device, other pinctrl
+devices get registered. E.g. some gpio expander devies are registered
+as pinctrl devices. For such devices, pinctrl maps could be defined
+that set up SoC's pins (e.g. interrupt pin for gpio expander). Such
+a map will have target device set to gpio expander.
 
-After Jerome's attempt from last year (using hierarchical IRQ domains) didn't
-make it due to concerns of the maintainers, I decided to go another way.
-I'm not stating at all that this is the right one ..
+Here is device tree snippet that causes this scenario:
 
-To re-use existing stuff as far as possible I go with GPIOLIB_IRQCHIP.
-So far I use one irqchip per gpiochip (we have two of them).
-I'll check whether I can use just one irqchip for both gpiochips.
+&i2c0 {
+	sx1503@20 {
+		compatible = "semtech,sx1503q";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_sx1503_20>;
+		...
+	};
+};
+...
+&iomuxc {
+	pinctrl_sx1503_20: pinctrl-sx1503-20 {
+		fsl,pins = <
+			VF610_PAD_PTB1__GPIO_23         0x219d
+		>;
+	};
+};
 
-> Eventually, this device should be the parent irq controller of the gpio
-> controller.
+Such a map will have target device set to gpio expander. However is not
+a hog, it is a regular map that is claimed by core before gpio expander
+device is probed.
 
-I think this is one of the central questions here, whether this device
-can be considered an irq controller.
-It just manages routing of IRQs, so I'd tend to say that the gpio controller
-is the irq controller with the GIC as parent.
+Thus when looking for hogs, it is not enough to check that map's target
+device is set to pinctrl device being registered. Need also check that
+map's control device is also set to the same.
 
-> 
-> I not sure that there is a reason for using syscon here, or if it is a good idea
-> to have the data of this controller as globals for the gpio driver ... 
-> 
-> 
->>
->> I am just discussing with Thierry that I would like to see some code
->> in the gpiolib core to deal with this mapping so we don't have to do a
->> whole lot of custom back mapping between parent IRQs and cascaded
->> IRQ in every driver that has a multiple-bank concept.
->>
->> Please contribute to the discission, see thread subject:
->> "[PATCH v2] gpio: Add Tegra186 support"
->>
->> Yours,
->> Linus Walleij
-> 
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/pinctrl/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 1653cbda6a82..682ebd360030 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1038,6 +1038,16 @@ static struct pinctrl *create_pinctrl(struct device *dev,
+ 		/* Map must be for this device */
+ 		if (strcmp(map->dev_name, devname))
+ 			continue;
++		/*
++		 * If pctldev is not null, we are claiming hog for it,
++		 * that means, setting that is served by pctldev by itself.
++		 *
++		 * Thus we must skip map that is for this device but is served
++		 * by other device.
++		 */
++		if (pctldev &&
++		    strcmp(dev_name(pctldev->dev), map->ctrl_dev_name))
++			continue;
+ 
+ 		ret = add_setting(p, pctldev, map);
+ 		/*
+-- 
+2.11.0
 
