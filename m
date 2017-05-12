@@ -1,46 +1,63 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] pinctrl: when claiming hog, skip maps not served by same
- device
-Date: Fri, 12 May 2017 07:03:19 -0700
-Message-ID: <20170512140319.GD3489@atomide.com>
-References: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
- <20170511214444.GB3489@atomide.com>
- <df9e82c4-10ef-55c2-abc9-de315dee73da@cogentembedded.com>
+From: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
+Subject: Re: Right amount of info in the DT
+Date: Fri, 12 May 2017 17:31:20 +0200
+Message-ID: <42ae4b79-9917-3f9d-8962-d09fbe8c9b1c@sigmadesigns.com>
+References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
+ <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
+ <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
+ <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
+ <d8d9f35c-a901-dc77-646e-ea09836ee9cf@sigmadesigns.com>
+ <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
+ <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
+ <CACRpkdbB9kUaRbm-=1c_kzZ9p2ghh==HNb-8vkGkF3Zrx0rr_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47334 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756316AbdELODY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 May 2017 10:03:24 -0400
-Content-Disposition: inline
-In-Reply-To: <df9e82c4-10ef-55c2-abc9-de315dee73da@cogentembedded.com>
+Received: from us-smtp-delivery-212.mimecast.com ([216.205.24.212]:38152 "EHLO
+        us-smtp-delivery-212.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757306AbdELPiG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 12 May 2017 11:38:06 -0400
+In-Reply-To: <CACRpkdbB9kUaRbm-=1c_kzZ9p2ghh==HNb-8vkGkF3Zrx0rr_Q@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Healy <Chris.Healy@zii.aero>, Jeff.White@zii.aero
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>, Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
 
-* Nikita Yushchenko <nikita.yoush@cogentembedded.com> [170512 01:22]:
-> >> +		/*
-> >> +		 * If pctldev is not null, we are claiming hog for it,
-> >> +		 * that means, setting that is served by pctldev by itself.
-> >> +		 *
-> >> +		 * Thus we must skip map that is for this device but is served
-> >> +		 * by other device.
-> >> +		 */
-> >> +		if (pctldev &&
-> >> +		    strcmp(dev_name(pctldev->dev), map->ctrl_dev_name))
-> >> +			continue;
-> >>  
-> >>  		ret = add_setting(p, pctldev, map);
-> >>  		/*
-> >> -- 
-> > 
-> > Maybe add a comment saying pctldev is NULL in the regular case
-> > and only exists in the hog case?
+On 05/11/2017 05:22 PM, Linus Walleij wrote:
+> Just make sure your driver also provides a gpio_chip and
+> write good looking code.
+
+OK, IMHO the code I attached earlier would do that.
+
+> Implement everything you have a data sheet for even if you
+> do not use it right now. It is good to have.
+
+Do you mean that I should submit a driver for every single device
+before I can declare its pins in the DT? That will surely take
+quite a long time, and I'm required to get GPIO functionality before
+that.
+
+Furthermore, even if I had a driver for a device whose pins can also
+be GPIOs, say smartcard. If the driver is built as a module, and has
+not been yet loaded in, then, since you want the pinctrl node has a
+child node, no gpiochip struct could have been registered, and the pins
+can't be used as GPIOs.
+Does this mean that to use the smartcard's pin as GPIOs, the smartcard
+driver must absolutely be loaded, even though smartcards are never used?
+
+> Have you read the section "GPIO mode pitfalls" in the documentation?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/pinctrl.txt
 > 
-> Isn't comment above saying exactly that?
+> It is very important that you know for sure whether it is actual
+> GPIO or just named that way by some hardware engineer.
 
-Yes it is, you're right :)
+I did read the documentation, and I'm pretty sure those pins are all
+actual GPIOs: once a pin's mode flag has been cleared, it can be
+arbitrarily set high or low, or listened to by kernel code.
 
-Tony
+Regards,
+Yves.
+
