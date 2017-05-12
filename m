@@ -1,28 +1,25 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: imx: Check for memory allocation failure
-Date: Fri, 12 May 2017 11:11:27 +0200
-Message-ID: <CACRpkdYAqmDDq-UgQUecfquBdSCVHR1=rd96Cx3LT=ySgBXqpg@mail.gmail.com>
-References: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v4] gpiolib: Add stubs for gpiod lookup table interface
+Date: Fri, 12 May 2017 11:27:42 +0200
+Message-ID: <CACRpkdbjFys_1j0QocZPLCgbbQ0_w+pahhA2WNyO7WD4wiNV2A@mail.gmail.com>
+References: <1494527071-6412-1-git-send-email-agust@denx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170506082359.6736-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1494527071-6412-1-git-send-email-agust@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Gary Bisson <gary.bisson@boundarydevices.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, ext Tony Lindgren <tony@atomide.com>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: Anatolij Gustschin <agust@denx.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, May 6, 2017 at 10:23 AM, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Thu, May 11, 2017 at 8:24 PM, Anatolij Gustschin <agust@denx.de> wrote:
 
-> If 'devm_kzalloc' fails, a NULL pointer will be dereferenced.
-> Return -ENOMEM instead, as done for the other memory allocation just a
-> few lines below.
-> BTW, change the 'devm_kzalloc' into a 'devm_kcalloc'.
+> Add stubs for gpiod_add_lookup_table() and gpiod_remove_lookup_table()
+> for the !GPIOLIB case to prevent build errors.
 >
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Anatolij Gustschin <agust@denx.de>
 
-Patch applied.
+Patch applied for fixes with Andy's Review tag.
 
 Yours,
 Linus Walleij
