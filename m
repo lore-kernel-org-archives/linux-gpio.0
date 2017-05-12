@@ -1,58 +1,48 @@
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic
- SoCs
-Date: Fri, 12 May 2017 19:00:15 +0200
-Message-ID: <421a30e7-1bfc-b1de-6db8-96216a65adcf@crapouillou.net>
-References: <20170402204244.14216-2-paul@crapouillou.net>
- <20170428200824.10906-1-paul@crapouillou.net>
- <20170428200824.10906-6-paul@crapouillou.net>
- <CACRpkdaYRmB=i-=k4vfFYL6wHVrpNo1w11xnLGbu+6YPPmT8vA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: [PATCH] MAINTAINERS: remove self from GPIO maintainers
+Date: Fri, 12 May 2017 10:01:18 -0700
+Message-ID: <20170512170118.15373-1-acourbot@chromium.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:43704 "EHLO
-        outils.crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751323AbdELRAV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2017 13:00:21 -0400
-In-Reply-To: <CACRpkdaYRmB=i-=k4vfFYL6wHVrpNo1w11xnLGbu+6YPPmT8vA@mail.gmail.com>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34393 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbdELRB1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2017 13:01:27 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>"linux-mtd@lists.infradead.org" <li>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-Hi,
+From: Alexandre Courbot <gnurou@gmail.com>
 
-On 11/05/2017 13:08, Linus Walleij wrote:
-> On Fri, Apr 28, 2017 at 10:08 PM, Paul Cercueil <paul@crapouillou.net> wrote:
->
->> There is a pinctrl driver for each of the Ingenic SoCs supported by the
->> upstream Linux kernel. In order to switch away from the old GPIO
->> platform code, we now enable the pinctrl drivers by default for the
->> Ingenic SoCs.
->>
->> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->> ---
->>   arch/mips/Kconfig | 1 +
-> So please tell me your desired merge strategy for these bits. I can
-> provide an immutable branch for pinctrl if you want to pull the deps in
-> or we can just merge this orthogonally in the MIPS tree and let things
-> smoothen together in the merge window.
->
-> This goes for everything outside of pinctrl/gpio.
->
-> If I should merge patches for other subsystems I need ACKs from
-> the maintainers of MIPS etc.
->
-> Yours,
-> Linus Walleij
->
-It is very unlikely that those patches will cause merge failures
-if you merge it in your tree, these drivers are touched very rarely;
-so I'd say you can merge them.
+I have not been able to dedicate time to the GPIO subsystem since quite
+some time, and I don't see the situation improving in the near future.
+Update the maintainers list to reflect this unfortunate fact.
 
-But to be sure I'd like Ralf's input on that.
+Signed-off-by: Alexandre Courbot <gnurou@gmail.com>
+---
+Linus,
 
-Regards,
--Paul
+I apologize for not being able to help you further (and not having done
+anything useful for way too long!). As I need to focus on other areas of
+the kernel (V4L) it is clear that I won't be able to be more active in
+the near future. If things improve I would be very happy to send a reverse
+patch someday though.
+
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 07a9a5906c59..946fa1a78b5e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5670,7 +5670,6 @@ F:	tools/testing/selftests/gpio/
+ 
+ GPIO SUBSYSTEM
+ M:	Linus Walleij <linus.walleij@linaro.org>
+-M:	Alexandre Courbot <gnurou@gmail.com>
+ L:	linux-gpio@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+ S:	Maintained
+-- 
+2.13.0.rc2.291.g57267f2277-goog
 
