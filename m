@@ -1,29 +1,89 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH] gpio: zynq: remove unneeded (void *) casts in
- of_match_table
-Date: Fri, 12 May 2017 09:36:42 -0700
-Message-ID: <20170512163641.ugh2fwqhrdhreeab@xsjsorenbubuntu.xilinx.com>
-References: <1494605925-6487-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 02/14] dt/bindings: Document gpio-ingenic
+Date: Fri, 12 May 2017 18:52:55 +0200
+Message-ID: <20170512165307.31369-2-paul@crapouillou.net>
+References: <20170428200824.10906-2-paul@crapouillou.net>
+ <20170512165307.31369-1-paul@crapouillou.net>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0072.outbound.protection.outlook.com ([104.47.38.72]:32016
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757998AbdELQg4 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 May 2017 12:36:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1494605925-6487-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from outils.crapouillou.net ([89.234.176.41]:43374 "EHLO
+        outils.crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756720AbdELQx3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 12 May 2017 12:53:29 -0400
+In-Reply-To: <20170512165307.31369-1-paul@crapouillou.net>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, Maarten ter Huurne <maarten@treewalker.org>, Paul Cercueil <paul@crapouillou.net>
 
-On Sat, 2017-05-13 at 01:18:45 +0900, Masahiro Yamada wrote:
-> of_device_id::data is an opaque pointer.  No explicit cast is needed.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Sören Brinkmann <soren.brinkmann@xilinx.com>
+This commit adds documentation for the devicetree bindings of the
+gpio-ingenic driver, which handles GPIOs of the Ingenic SoCs
+currently supported by the Linux kernel.
 
-	Sören
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/gpio/ingenic,gpio.txt      | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+
+ v2: New patch
+ v3: No changes
+ v4: Update for the v4 version of the gpio-ingenic driver
+ v5: Remove gpio-bank-... compatible strings, and add 'reg' property
+ v6: No changes
+
+diff --git a/Documentation/devicetree/bindings/gpio/ingenic,gpio.txt b/Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+new file mode 100644
+index 000000000000..7988aeb725f4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/ingenic,gpio.txt
+@@ -0,0 +1,46 @@
++Ingenic jz47xx GPIO controller
++
++That the Ingenic GPIO driver node must be a sub-node of the Ingenic pinctrl
++driver node.
++
++Required properties:
++--------------------
++
++ - compatible: Must contain one of:
++    - "ingenic,jz4740-gpio"
++    - "ingenic,jz4770-gpio"
++    - "ingenic,jz4780-gpio"
++ - reg: The GPIO bank number.
++ - interrupt-controller: Marks the device node as an interrupt controller.
++ - interrupts: Interrupt specifier for the controllers interrupt.
++ - #interrupt-cells: Should be 2. Refer to
++   ../interrupt-controller/interrupts.txt for more details.
++ - gpio-controller: Marks the device node as a GPIO controller.
++ - #gpio-cells: Should be 2. The first cell is the GPIO number and the second
++    cell specifies GPIO flags, as defined in <dt-bindings/gpio/gpio.h>. Only the
++    GPIO_ACTIVE_HIGH and GPIO_ACTIVE_LOW flags are supported.
++ - gpio-ranges: Range of pins managed by the GPIO controller. Refer to
++   'gpio.txt' in this directory for more details.
++
++Example:
++--------
++
++&pinctrl {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	gpa: gpio@0 {
++		compatible = "ingenic,jz4740-gpio";
++		reg = <0>;
++
++		gpio-controller;
++		gpio-ranges = <&pinctrl 0 0 32>;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <28>;
++	};
++};
+-- 
+2.11.0
+
