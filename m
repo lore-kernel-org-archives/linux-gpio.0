@@ -1,108 +1,58 @@
-From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH 2/5] pinctrl: pinctrl-imx: add soc specific mux_mode mask and shift property
-Date: Fri, 12 May 2017 20:38:03 +0800
-Message-ID: <1494592686-30967-4-git-send-email-aisheng.dong@nxp.com>
-References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Fri, 12 May 2017 12:57:27 +0000
+Message-ID: <SG2PR06MB1165C25E20836CB0B3423AF28AE20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <1493281194-5200-2-git-send-email-jacopo+renesas@jmondi.org>
+ <CAHp75Vcy1OE+9htFx9k3kQhGARQPT1C0gg3SEKZd7ULu_vkUMA@mail.gmail.com>
+ <CACRpkdayW0qPXDcc_JofkwtX5UHhDPxiY_8deZZ7+hPNJkjgeQ@mail.gmail.com>
+ <SG2PR06MB1165E7E651BE96CD7B7738B08A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75Vcp_eMWrjZRX-x3=Tt3JRXcL_wWG43MymF=oyLLP4EJwg@mail.gmail.com>
+ <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+ <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
+ <20170508160120.GB25206@w540>
+ <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
+ <20170508172516.GC25206@w540>
+ <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+ <CAMuHMdXK9VmghZy1RounHWn-HDqgeT_12V_9RVihiuiajn+RDg@mail.gmail.com>
+ <CACRpkdYsE1oeDp1HnYAFMKG2iPTg06cAtD41vxrmZPP70MJQdA@mail.gmail.com>
+ <CAMuHMdXK7YB2zN4fz9XiqTuydxp7VvVV+wSgXWUYBB0evkp8dw@mail.gmail.com>
+ <SG2PR06MB1165FF6C0F4DBD8987BC396A8AE20@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdWVsuq9eucz9hz47oBtEvBGW2sJ8-G7L4hDk53CNnxd2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam01on0068.outbound.protection.outlook.com ([104.47.32.68]:35488
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756412AbdELMiR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 12 May 2017 08:38:17 -0400
-In-Reply-To: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWVsuq9eucz9hz47oBtEvBGW2sJ8-G7L4hDk53CNnxd2A@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, jmondi <jacopo@jmondi.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>
 
-MX7ULP MUX mode mask and shift bit is different from VF610.
-Let's make it a platform specific property for the later easy of
-adding MX7ULP support.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/pinctrl/freescale/pinctrl-imx.c   | 10 +++++-----
- drivers/pinctrl/freescale/pinctrl-imx.h   |  4 ++++
- drivers/pinctrl/freescale/pinctrl-vf610.c |  2 ++
- 3 files changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 406881d..ef4951f 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -197,8 +197,8 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 		if (info->flags & SHARE_MUX_CONF_REG) {
- 			u32 reg;
- 			reg = readl(ipctl->base + pin_reg->mux_reg);
--			reg &= ~(0x7 << 20);
--			reg |= (pin->mux_mode << 20);
-+			reg &= ~info->mux_mask;
-+			reg |= (pin->mux_mode << info->mux_shift);
- 			writel(reg, ipctl->base + pin_reg->mux_reg);
- 		} else {
- 			writel(pin->mux_mode, ipctl->base + pin_reg->mux_reg);
-@@ -288,7 +288,7 @@ static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
- 
- mux_pin:
- 	reg = readl(ipctl->base + pin_reg->mux_reg);
--	reg &= ~(0x7 << 20);
-+	reg &= ~info->mux_mask;
- 	reg |= imx_pin->config;
- 	writel(reg, ipctl->base + pin_reg->mux_reg);
- 
-@@ -432,7 +432,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
- 	*config = readl(ipctl->base + pin_reg->conf_reg);
- 
- 	if (info->flags & SHARE_MUX_CONF_REG)
--		*config &= 0xffff;
-+		*config &= ~info->mux_mask;
- 
- 	return 0;
- }
-@@ -459,7 +459,7 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
- 		if (info->flags & SHARE_MUX_CONF_REG) {
- 			u32 reg;
- 			reg = readl(ipctl->base + pin_reg->conf_reg);
--			reg &= ~0xffff;
-+			reg &= info->mux_mask;
- 			reg |= configs[i];
- 			writel(reg, ipctl->base + pin_reg->conf_reg);
- 		} else {
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
-index b5c8fe1..eb0ce95 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.h
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-@@ -64,6 +64,10 @@ struct imx_pinctrl_soc_info {
- 	const char *gpr_compatible;
- 	struct mutex mutex;
- 
-+	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
-+	unsigned int mux_mask;
-+	u8 mux_shift;
-+
- 	/* generic pinconf */
- 	bool generic_pinconf;
- 	const struct pinconf_generic_params *custom_params;
-diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c b/drivers/pinctrl/freescale/pinctrl-vf610.c
-index 2b1e198..3bd8556 100644
---- a/drivers/pinctrl/freescale/pinctrl-vf610.c
-+++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
-@@ -299,6 +299,8 @@ static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
- 	.pins = vf610_pinctrl_pads,
- 	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
- 	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
-+	.mux_mask = 0x700000,
-+	.mux_shift = 20,
- };
- 
- static const struct of_device_id vf610_pinctrl_of_match[] = {
--- 
-2.7.4
-
+SGkgR2VlcnQsDQoNCk9uIEZyaWRheSwgTWF5IDEyLCAyMDE3LCBHZWVydCBVeXR0ZXJob2V2ZW4g
+d3JvdGU6DQo+IDEyIHggMTYgPSAxOTIsIG5vdCAzODQuDQoNCk9wcHMsIG15IG1hdGggd2FzIG9m
+ZiENCg0KICAoSSB0aGluayBJIG5lZWQgYW5vdGhlciBjdXAgb2YgY29mZmVlIHRoaXMgbW9ybmlu
+ZykNCg0KDQo+IERvIHlvdSBuZWVkIGFsbCBwb3NzaWJsZSBjb21iaW5hdGlvbnMgb2YgaW5wdXQs
+IG91dHB1dCwgYW5kIGJpLWRpcj8NCj4gSSBhc3N1bWVkIHRoZXkncmUgbXV0dWFsbHkgZXhjbHVz
+aXZlLiBJZiBub3QsIHlvdSBuZWVkIDMgYml0cy9waW4vZnVuY3Rpb24NCg0KWW91J3JlIHJpZ2h0
+LCB0aGV5IGFyZSBtdXR1YWxseSBleGNsdXNpdmUsIHNvIDIgYml0cyBhcmUgZmluZS4NCg0KQWxz
+bywgdGhlIG90aGVyIHBpbm91dCB2YXJpYXRpb25zIGNoaXBzIChSWi9BMUwsQTFMVSxBMUxDKSBv
+bmx5IGhhdmUgMTAgcG9ydHM6DQoNCiAxMiBwb3J0cyB4IDE2IHBpbnMgeCAyYml0cy1wZXItYml0
+ID0+IDM4NCBieXRlcw0KIDEwIHBvcnRzIHggMTYgcGlucyB4IDJiaXRzLXBlci1iaXQgPT4gMzIw
+IGJ5dGVzDQoNCiAzODQgKyAzMjAgPSA3MDQgYnl0ZXMgKG9mIGNvbnN0IGRhdGEpDQoNCg0KPiBX
+aXRoIHBhY2thZ2VzLCBkbyB5b3UgbWVhbiBlLmcuIFJaL0ExSCB2cy4gUlovQTFMPw0KDQpZZXMu
+DQoNCg0KPiBUaGVzZSBpbmRlZWQgZGlmZmVyLA0KPiBidXQNCj4gc2hvdWxkIHVzZSBkaWZmZXJl
+bnQgY29tcGF0aWJsZSB2YWx1ZXMuDQoNCk9LLiBTaW5jZSByN3M3MjEwMC5kdHNpIGhhcw0KICAg
+IGNvbXBhdGlibGUgPSAicmVuZXNhcyxyN3M3MjEwMC1wb3J0cyI7DQoNCldlJ2xsIGp1c3Qgb3Zl
+cnJpZGUgdGhhdCBpbiBzYXkgbXktcnphMWwtYm9hcmQuZHRzDQoNCiZwaW5jdHJsIHsNCgljb21w
+YXRpYmxlID0gInJlbmVzYXMscjdzNzIxMDItcG9ydHMiOw0KfTsNCgkNCiAgYW5kIHRoZW4gbG9v
+ayBmb3IgdGhhdCBpbiB0aGUgZHJpdmVyLg0KCQ0KDQo+IE9yIGRvIHlvdSBtZWFuIFFGUC9CR0Ey
+NTYgdnMuIEJHQTMyND8gSXNuJ3QgdGhlIGZvcm1lciBhIHN1YnNldCBvZiB0aGUNCj4gbGF0dGVy
+Pw0KDQpUaGUgInBhY2thZ2UiIGRvZXNuJ3QgbWF0dGVyLCBpdCdzIHRoZSBwaW4gYXNzaWdubWVu
+dHMgb24gdGhlIGRpZToNCiAgUlovQTFIID0gUlovQTFNID0gcGluIGFzc2lnbm1lbnRzICMxDQog
+IFJaL0ExTCA9IFJaL0ExTFUgPSBSWi9BMUxDID0gcGluIGFzc2lnbm1lbnRzICMyDQoNClRoZW4g
+ZWFjaCBvZiB0aG9zZSBwYXJ0cyBhYm92ZSBoYXZlIG11bHRpcGxlICdwYWNrYWdlIG9wdGlvbnMn
+LCBidXQgb2YNCmNvdXJzZSBkb2Vzbid0IGNoYW5nZSB0aGUgYWN0dWFsIHBpbi9mdW5jdGlvbiBh
+c3NpZ25tZW50cyAodGhhdCdzIHBhcnQNCm9mIHRoZSBzaWxpY29uIGRpZSkNCg0KQ2hyaXMNCg0K
