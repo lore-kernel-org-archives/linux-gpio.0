@@ -1,49 +1,61 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: qcom: ipq4019: add most other IPQ4019 pin
- functions and groups
-Date: Fri, 12 May 2017 19:10:37 -0500
-Message-ID: <20170513001037.tpqdrjh3r6aciskx@rob-hp-laptop>
-References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com>
- <20170510112712.14744-1-chunkeey@googlemail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170510112712.14744-1-chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH 2/8] gpio: exar: Fix passing in of parent PCI device
+Date: Sat, 13 May 2017 09:29:00 +0200
+Message-ID: <20f1d241d134f9f4932a26e4bd873ffc250affce.1494660546.git.jan.kiszka@siemens.com>
+References: <cover.1494660546.git.jan.kiszka@siemens.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1494660546.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1494660546.git.jan.kiszka@siemens.com>
+References: <cover.1494660546.git.jan.kiszka@siemens.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 10, 2017 at 01:27:11PM +0200, Christian Lamparter wrote:
-> This patch adds the remaining pin functions and mux groups.
-> It also fixes a typo in the existing binding document.
-> 
-> Cc: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
-> Signed-off-by: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-> ---
-> Note: These definitions were present in the original submission
-> <https://patchwork.kernel.org/patch/7630711/>
-> 
-> The DT patch was acked by Rob Herring back then. However,
-> I'm not sure if this is still valid or not. @Rob, can you
-> please comment?
+This fixes reloading of the driver for the same device: First of all,
+the driver sets drvdata to its own value during probing and does not
+restore the original value on exit. But this won't help anyway as the
+core clears drvdata after the driver left.
 
-Am I supposed to ack patch 1/2 or patch 1/2...? The first one has the 
-preferred subject prefix.
+Use stable platform_data instead.
 
-> 
-> Thanks.
-> 
-> (Link to Matthew McLintock's v3 that was merged)
-> <https://patchwork.kernel.org/patch/7662241/>
-> ---
->  .../bindings/pinctrl/qcom,ipq4019-pinctrl.txt      | 36 ++++++++++++++++++++--
->  1 file changed, 34 insertions(+), 2 deletions(-)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/gpio/gpio-exar.c            | 2 +-
+ drivers/tty/serial/8250/8250_exar.c | 8 ++++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index 081076771217..0a2085faf271 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -119,7 +119,7 @@ static int exar_direction_input(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int gpio_exar_probe(struct platform_device *pdev)
+ {
+-	struct pci_dev *pcidev = platform_get_drvdata(pdev);
++	struct pci_dev *pcidev = *(struct pci_dev **)pdev->dev.platform_data;
+ 	struct exar_gpio_chip *exar_gpio;
+ 	void __iomem *p;
+ 	int index, ret;
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+index b4fa585156c7..2d056d1eeca3 100644
+--- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -196,8 +196,12 @@ xr17v35x_register_gpio(struct pci_dev *pcidev)
+ 	if (!pdev)
+ 		return NULL;
+ 
+-	platform_set_drvdata(pdev, pcidev);
+-	if (platform_device_add(pdev) < 0) {
++	/*
++	 * platform_device_add_data kmemdups the data, therefore we can safely
++	 * pass a stack reference.
++	 */
++	if (platform_device_add_data(pdev, &pcidev, sizeof(pcidev)) < 0 ||
++	    platform_device_add(pdev) < 0) {
+ 		platform_device_put(pdev);
+ 		return NULL;
+ 	}
+-- 
+2.12.0
