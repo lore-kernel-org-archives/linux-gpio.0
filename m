@@ -1,180 +1,62 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH] gpio: crystalcove: Do not write regular gpio registers for virtual GPIOs
-Date: Sat, 13 May 2017 14:39:53 +0200
-Message-ID: <20170513123953.22142-1-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 2/8] gpio: exar: Fix passing in of parent PCI device
+Date: Sat, 13 May 2017 16:25:36 +0300
+Message-ID: <CAHp75VfCd4feKeHOe4QMM88nMQ5wnP4yk7iDJMXN7LcygXVObw@mail.gmail.com>
+References: <cover.1494660546.git.jan.kiszka@siemens.com> <20f1d241d134f9f4932a26e4bd873ffc250affce.1494660546.git.jan.kiszka@siemens.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:54584 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751877AbdEMMj6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 13 May 2017 08:39:58 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35871 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751519AbdEMNZi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 13 May 2017 09:25:38 -0400
+In-Reply-To: <20f1d241d134f9f4932a26e4bd873ffc250affce.1494660546.git.jan.kiszka@siemens.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-The Crystal Cove PMIC has 16 real GPIOs but the ACPI code for devices
-with this PMIC may address up to 95 GPIOs, these extra GPIOs are
-called virtual GPIOs and are used by the ACPI code as a method of
-accessing various non GPIO bits of PMIC.
+On Sat, May 13, 2017 at 10:29 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> This fixes reloading of the driver for the same device: First of all,
+> the driver sets drvdata to its own value during probing and does not
+> restore the original value on exit. But this won't help anyway as the
+> core clears drvdata after the driver left.
+>
+> Use stable platform_data instead.
 
-Commit dcdc3018d635 ("gpio: crystalcove: support virtual GPIO") added
-dummy support for these to avoid a bunch of ACPI errors, but instead of
-ignoring writes / reads to them by doing:
+>From the above I didn't clearly get what device you are talking about.
+GPIO?
 
-if (gpio >= CRYSTALCOVE_GPIO_NUM)
-	return 0;
+Can you provide step by step what you did and what bug you got?
 
-It accidentally introduced the following wrong check:
+Regarding below it looks to me a bit hackish.
 
-if (gpio > CRYSTALCOVE_VGPIO_NUM)
-	return 0;
+>  static int gpio_exar_probe(struct platform_device *pdev)
+>  {
+> -       struct pci_dev *pcidev = platform_get_drvdata(pdev);
+> +       struct pci_dev *pcidev = *(struct pci_dev **)pdev->dev.platform_data;
+>         struct exar_gpio_chip *exar_gpio;
+>         void __iomem *p;
+>         int index, ret;
+> diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+> index b4fa585156c7..2d056d1eeca3 100644
+> --- a/drivers/tty/serial/8250/8250_exar.c
+> +++ b/drivers/tty/serial/8250/8250_exar.c
+> @@ -196,8 +196,12 @@ xr17v35x_register_gpio(struct pci_dev *pcidev)
+>         if (!pdev)
+>                 return NULL;
+>
+> -       platform_set_drvdata(pdev, pcidev);
+> -       if (platform_device_add(pdev) < 0) {
+> +       /*
+> +        * platform_device_add_data kmemdups the data, therefore we can safely
+> +        * pass a stack reference.
+> +        */
+> +       if (platform_device_add_data(pdev, &pcidev, sizeof(pcidev)) < 0 ||
+> +           platform_device_add(pdev) < 0) {
+>                 platform_device_put(pdev);
+>                 return NULL;
 
-Which means that attempts by the ACPI code to access these gpios
-causes some arbitrary gpio to get touched through for example
-GPIO1P0CTLO + gpionr % 8.
-
-Since we do support input/output (but not interrupts) on the 0x5e
-virtual GPIO, this commit makes to_reg return -ENOTSUPP for unsupported
-virtual GPIOs so as to not have to check for (gpio >= CRYSTALCOVE_GPIO_NUM
-&& gpio != 0x5e) everywhere and to make it easier to add support for more
-virtual GPIOs in the future.
-
-It then adds a check for to_reg returning an error to all callers where
-this may happen fixing the ACPI code accessing virtual GPIOs accidentally
-causing changes to real GPIOs.
-
-Cc: Aaron Lu <aaron.lu@intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpio/gpio-crystalcove.c | 54 +++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
-index 2197368cc899..e60156ec0c18 100644
---- a/drivers/gpio/gpio-crystalcove.c
-+++ b/drivers/gpio/gpio-crystalcove.c
-@@ -90,8 +90,18 @@ static inline int to_reg(int gpio, enum ctrl_register reg_type)
- {
- 	int reg;
- 
--	if (gpio == 94)
--		return GPIOPANELCTL;
-+	if (gpio >= CRYSTALCOVE_GPIO_NUM) {
-+		/*
-+		 * Virtual GPIO called from ACPI, for now we only support
-+		 * the panel ctl.
-+		 */
-+		switch (gpio) {
-+		case 0x5e:
-+			return GPIOPANELCTL;
-+		default:
-+			return -EOPNOTSUPP;
-+		}
-+	}
- 
- 	if (reg_type == CTRL_IN) {
- 		if (gpio < 8)
-@@ -130,36 +140,36 @@ static void crystalcove_update_irq_ctrl(struct crystalcove_gpio *cg, int gpio)
- static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-+	int reg = to_reg(gpio, CTRL_OUT);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return 0;
- 
--	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
--			    CTLO_INPUT_SET);
-+	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
- }
- 
- static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
- 				    int value)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-+	int reg = to_reg(gpio, CTRL_OUT);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return 0;
- 
--	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
--			    CTLO_OUTPUT_SET | value);
-+	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET | value);
- }
- 
- static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
--	int ret;
- 	unsigned int val;
-+	int ret, reg = to_reg(gpio, CTRL_IN);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return 0;
- 
--	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
-+	ret = regmap_read(cg->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -170,14 +180,15 @@ static void crystalcove_gpio_set(struct gpio_chip *chip,
- 				 unsigned gpio, int value)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-+	int reg = to_reg(gpio, CTRL_OUT);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return;
- 
- 	if (value)
--		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
-+		regmap_update_bits(cg->regmap, reg, 1, 1);
- 	else
--		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 0);
-+		regmap_update_bits(cg->regmap, reg, 1, 0);
- }
- 
- static int crystalcove_irq_type(struct irq_data *data, unsigned type)
-@@ -185,6 +196,9 @@ static int crystalcove_irq_type(struct irq_data *data, unsigned type)
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
-+	if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
-+		return 0;
-+
- 	switch (type) {
- 	case IRQ_TYPE_NONE:
- 		cg->intcnt_value = CTLI_INTCNT_DIS;
-@@ -235,8 +249,10 @@ static void crystalcove_irq_unmask(struct irq_data *data)
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
--	cg->set_irq_mask = false;
--	cg->update |= UPDATE_IRQ_MASK;
-+	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
-+		cg->set_irq_mask = false;
-+		cg->update |= UPDATE_IRQ_MASK;
-+	}
- }
- 
- static void crystalcove_irq_mask(struct irq_data *data)
-@@ -244,8 +260,10 @@ static void crystalcove_irq_mask(struct irq_data *data)
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
--	cg->set_irq_mask = true;
--	cg->update |= UPDATE_IRQ_MASK;
-+	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
-+		cg->set_irq_mask = true;
-+		cg->update |= UPDATE_IRQ_MASK;
-+	}
- }
- 
- static struct irq_chip crystalcove_irqchip = {
 -- 
-2.12.2
-
+With Best Regards,
+Andy Shevchenko
