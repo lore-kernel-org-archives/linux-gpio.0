@@ -1,42 +1,180 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH 6/8] serial: uapi: Add support for bus termination
-Date: Sat, 13 May 2017 09:29:04 +0200
-Message-ID: <b10986467211e1c5b3b03f242e6601f65f4fc4b0.1494660546.git.jan.kiszka@siemens.com>
-References: <cover.1494660546.git.jan.kiszka@siemens.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1494660546.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1494660546.git.jan.kiszka@siemens.com>
-References: <cover.1494660546.git.jan.kiszka@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH] gpio: crystalcove: Do not write regular gpio registers for virtual GPIOs
+Date: Sat, 13 May 2017 14:39:53 +0200
+Message-ID: <20170513123953.22142-1-hdegoede@redhat.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:54584 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751877AbdEMMj6 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 13 May 2017 08:39:58 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
 
-The Siemens IOT2040 comes with a RS485 interface that allows to enable
-or disable bus termination via software. Add a bit to the flags field of
-serial_rs485 that applications can set in order to request this feature
-from the hardware. This seems generic enough to add it for everyone.
-Existing driver will simply ignore it when set.
+The Crystal Cove PMIC has 16 real GPIOs but the ACPI code for devices
+with this PMIC may address up to 95 GPIOs, these extra GPIOs are
+called virtual GPIOs and are used by the ACPI code as a method of
+accessing various non GPIO bits of PMIC.
 
-Signed-off-by: Sascha Weisenberger <sascha.weisenberger@siemens.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Commit dcdc3018d635 ("gpio: crystalcove: support virtual GPIO") added
+dummy support for these to avoid a bunch of ACPI errors, but instead of
+ignoring writes / reads to them by doing:
+
+if (gpio >= CRYSTALCOVE_GPIO_NUM)
+	return 0;
+
+It accidentally introduced the following wrong check:
+
+if (gpio > CRYSTALCOVE_VGPIO_NUM)
+	return 0;
+
+Which means that attempts by the ACPI code to access these gpios
+causes some arbitrary gpio to get touched through for example
+GPIO1P0CTLO + gpionr % 8.
+
+Since we do support input/output (but not interrupts) on the 0x5e
+virtual GPIO, this commit makes to_reg return -ENOTSUPP for unsupported
+virtual GPIOs so as to not have to check for (gpio >= CRYSTALCOVE_GPIO_NUM
+&& gpio != 0x5e) everywhere and to make it easier to add support for more
+virtual GPIOs in the future.
+
+It then adds a check for to_reg returning an error to all callers where
+this may happen fixing the ACPI code accessing virtual GPIOs accidentally
+causing changes to real GPIOs.
+
+Cc: Aaron Lu <aaron.lu@intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- include/uapi/linux/serial.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-crystalcove.c | 54 +++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
-diff --git a/include/uapi/linux/serial.h b/include/uapi/linux/serial.h
-index 5d59c3ebf459..d2667ecd54ac 100644
---- a/include/uapi/linux/serial.h
-+++ b/include/uapi/linux/serial.h
-@@ -122,6 +122,9 @@ struct serial_rs485 {
- #define SER_RS485_RTS_AFTER_SEND	(1 << 2)	/* Logical level for
- 							   RTS pin after sent*/
- #define SER_RS485_RX_DURING_TX		(1 << 4)
-+#define SER_RS485_TERMINATE_BUS		(1 << 5)	/* Enable bus
-+							   termination
-+							   (if supported) */
- 	__u32	delay_rts_before_send;	/* Delay before send (milliseconds) */
- 	__u32	delay_rts_after_send;	/* Delay after send (milliseconds) */
- 	__u32	padding[5];		/* Memory is cheap, new structs
+diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
+index 2197368cc899..e60156ec0c18 100644
+--- a/drivers/gpio/gpio-crystalcove.c
++++ b/drivers/gpio/gpio-crystalcove.c
+@@ -90,8 +90,18 @@ static inline int to_reg(int gpio, enum ctrl_register reg_type)
+ {
+ 	int reg;
+ 
+-	if (gpio == 94)
+-		return GPIOPANELCTL;
++	if (gpio >= CRYSTALCOVE_GPIO_NUM) {
++		/*
++		 * Virtual GPIO called from ACPI, for now we only support
++		 * the panel ctl.
++		 */
++		switch (gpio) {
++		case 0x5e:
++			return GPIOPANELCTL;
++		default:
++			return -EOPNOTSUPP;
++		}
++	}
+ 
+ 	if (reg_type == CTRL_IN) {
+ 		if (gpio < 8)
+@@ -130,36 +140,36 @@ static void crystalcove_update_irq_ctrl(struct crystalcove_gpio *cg, int gpio)
+ static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
++	int reg = to_reg(gpio, CTRL_OUT);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return 0;
+ 
+-	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
+-			    CTLO_INPUT_SET);
++	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
+ }
+ 
+ static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
+ 				    int value)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
++	int reg = to_reg(gpio, CTRL_OUT);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return 0;
+ 
+-	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
+-			    CTLO_OUTPUT_SET | value);
++	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET | value);
+ }
+ 
+ static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
+-	int ret;
+ 	unsigned int val;
++	int ret, reg = to_reg(gpio, CTRL_IN);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return 0;
+ 
+-	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
++	ret = regmap_read(cg->regmap, reg, &val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -170,14 +180,15 @@ static void crystalcove_gpio_set(struct gpio_chip *chip,
+ 				 unsigned gpio, int value)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
++	int reg = to_reg(gpio, CTRL_OUT);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return;
+ 
+ 	if (value)
+-		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
++		regmap_update_bits(cg->regmap, reg, 1, 1);
+ 	else
+-		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 0);
++		regmap_update_bits(cg->regmap, reg, 1, 0);
+ }
+ 
+ static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+@@ -185,6 +196,9 @@ static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+ 	struct crystalcove_gpio *cg =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
++	if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
++		return 0;
++
+ 	switch (type) {
+ 	case IRQ_TYPE_NONE:
+ 		cg->intcnt_value = CTLI_INTCNT_DIS;
+@@ -235,8 +249,10 @@ static void crystalcove_irq_unmask(struct irq_data *data)
+ 	struct crystalcove_gpio *cg =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
+-	cg->set_irq_mask = false;
+-	cg->update |= UPDATE_IRQ_MASK;
++	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
++		cg->set_irq_mask = false;
++		cg->update |= UPDATE_IRQ_MASK;
++	}
+ }
+ 
+ static void crystalcove_irq_mask(struct irq_data *data)
+@@ -244,8 +260,10 @@ static void crystalcove_irq_mask(struct irq_data *data)
+ 	struct crystalcove_gpio *cg =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
+-	cg->set_irq_mask = true;
+-	cg->update |= UPDATE_IRQ_MASK;
++	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
++		cg->set_irq_mask = true;
++		cg->update |= UPDATE_IRQ_MASK;
++	}
+ }
+ 
+ static struct irq_chip crystalcove_irqchip = {
 -- 
-2.12.0
+2.12.2
+
