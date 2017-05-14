@@ -1,76 +1,136 @@
-From: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: qcom: ipq4019: add most other IPQ4019 pin functions and groups
-Date: Sat, 13 May 2017 18:03:24 +0200
-Message-ID: <6106539.ylfJifP948@debian64>
-References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <20170510112712.14744-1-chunkeey@googlemail.com> <20170513001037.tpqdrjh3r6aciskx@rob-hp-laptop>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Sat, 13 May 2017 21:23:07 -0700
+Message-ID: <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
+References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
+ <1493898841-20583-2-git-send-email-varada@codeaurora.org>
+ <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
+ <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170513001037.tpqdrjh3r6aciskx@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday, May 12, 2017 7:10:37 PM CEST Rob Herring wrote:
-> On Wed, May 10, 2017 at 01:27:11PM +0200, Christian Lamparter wrote:
-> > This patch adds the remaining pin functions and mux groups.
-> > It also fixes a typo in the existing binding document.
-> > 
-> > Cc: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > Cc: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > Cc: Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > Cc: John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
-> > Signed-off-by: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-> > ---
-> > Note: These definitions were present in the original submission
-> > <https://patchwork.kernel.org/patch/7630711/>
-> > 
-> > The DT patch was acked by Rob Herring back then. However,
-> > I'm not sure if this is still valid or not. @Rob, can you
-> > please comment?
+On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
+
 > 
-> Am I supposed to ack patch 1/2 or patch 1/2...? The first one has the 
-> preferred subject prefix.
+> 
+> On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
+> > On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
+> > 
+[..]
+> > > +enum ipq8074_functions {
+> > 
+> > Please keep these sorted alphabetically.
+> 
+> Ok
+> 
+> > > +	msm_mux_gpio,
+> > > +	msm_mux_qpic_pad,
+> > > +	msm_mux_blsp5_i2c,
+> > > +	msm_mux_blsp5_spi,
+> > > +	msm_mux_wci20,
+> > 
+> > What does "20" mean here?
+> 
+> This is for Wireless Coex Interface. The same functionality can be muxed on
+> to different GPIOs. WCI2, is the 2nd edition of the WCI standard and 0, 1
+> are for the muxing to different GPIOs (alternate muxes).
+> 
 
-This was my fault. I decided to reword the patch and changed 
-the subject among a few other things. So, this patch was sent
-to the ML twice.
+In other Qualcomm platforms the alternative muxes are denoted by letters
+(a,b,c...). Would you mind picking up this naming scheme, or do you see
+any problems with that? (E.g. wci2a in this case)
 
-Bjorn commented that he has some comments.
-<http://www.spinics.net/lists/devicetree/msg176168.html>
 
-Unfortunately, he didn't say what exactly needs to be changed.
-So, I'm not really sure how to proceed.
+Btw, do you need any additional configuration for selecting alternative
+muxing or is that automagical these days?
 
-@Bjorn: can you please tell what you would like to see changed?
-I see what I can do about it. I do have access two a few IPQ4019/8
-and can ask a few people to run tests.
+> > > +	msm_mux_blsp3_spi3,
+> > > +	msm_mux_burn0,
+> > > +	msm_mux_pcm_zsi0,
+> > > +	msm_mux_blsp5_uart,
+> > > +	msm_mux_mac12,
+> > 
+> > What does "12" mean here?
+> 
+> The SoC has three MAC cores. Each core has two pins for the smart antenna
+> feature. macXY indicates the function select for MAC no. X and smart antenna
+> no. Y.
+> 
 
-@Rob:
+Ok
 
-I noticed that: 
+> > > +	msm_mux_blsp3_spi0,
+> > > +	msm_mux_burn1,
+> > > +	msm_mux_mac01,
+> > > +	msm_mux_qdss_cti_trig_out_b0,
+> > > +	msm_mux_qdss_cti_trig_in_b0,
+> > > +	msm_mux_qpic_pad4,
+> > 
+> > What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
+> > alternative muxings...?
+> 
+> This is for the NAND and LCD display. The pins listed are the 9 data pins.
+> 
 
-qcom,apq8064-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
-qcom,ipq4019-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
-qcom,ipq8064-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
-qcom,msm8660-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
-qcom,msm8974-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength.
+Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
+possible to reference a partial group in the DTS, if that's necessary)
 
-all have the same "bias-pull,up". I think I'll just do
-a separate patch for this to stop it from spreading :D.
+> > > +	msm_mux_blsp4_uart0,
+> > > +	msm_mux_blsp4_i2c0,
+> > > +	msm_mux_blsp4_spi0,
+> > > +	msm_mux_mac21,
+> > > +	msm_mux_qdss_cti_trig_out_b1,
+> > > +	msm_mux_qpic_pad5,
+> > > +	msm_mux_qdss_cti_trig_in_b1,
+> > > +	msm_mux_qpic_pad6,
+> > > +	msm_mux_qpic_pad7,
+> > > +	msm_mux_cxc0,
+> > > +	msm_mux_mac13,
+> > > +	msm_mux_qdss_cti_trig_in_a1,
+> > > +	msm_mux_qdss_cti_trig_out_a1,
+> > > +	msm_mux_wci22,
+> > > +	msm_mux_qdss_cti_trig_in_a0,
+> > > +	msm_mux_qpic_pad1,
+> > > +	msm_mux_qdss_cti_trig_out_a0,
+> > > +	msm_mux_qpic_pad2,
+> > > +	msm_mux_qpic_pad3,
+> > > +	msm_mux_qdss_traceclk_b,
+> > > +	msm_mux_qpic_pad0,
+> > > +	msm_mux_qdss_tracectl_b,
+> > > +	msm_mux_qpic_pad8,
+> > > +	msm_mux_pcm_zsi1,
+> > > +	msm_mux_qdss_tracedata_b,
+> > > +	msm_mux_led0,
+> > > +	msm_mux_pwm04,
+> > 
+> > What does "04" mean here?
+> 
+> There are 4 Pulse Width Modulation channels, pwmXY is pwm channel X and pin
+> Y.
+
+So Y is alternative mux? Can we use letters for this as well?
+
+> > 
+> > > +	msm_mux_led1,
+> > > +	msm_mux_pwm14,
+> > > +	msm_mux_led2,
+> > > +	msm_mux_pwm24,
+> > > +	msm_mux_pwm00,
+> > > +	msm_mux_blsp4_uart1,
+> > 
+> > Are uart0 vs uart1 alternative muxes?
+> 
+> These are two different uarts available at two independent pins.
+> 
+
+Ok, then I'm happy with the naming of this :)
 
 Thanks,
-Christian
-
-> > 
-> > (Link to Matthew McLintock's v3 that was merged)
-> > <https://patchwork.kernel.org/patch/7662241/>
-> > ---
-> >  .../bindings/pinctrl/qcom,ipq4019-pinctrl.txt      | 36 ++++++++++++++++++++--
-> >  1 file changed, 34 insertions(+), 2 deletions(-)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bjorn
