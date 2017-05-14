@@ -1,65 +1,70 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] ARM: dts: imx28: add gpio-ranges for internal gpio
- controller
-Date: Mon, 15 May 2017 09:16:08 +0200
-Message-ID: <20170515071608.auju66dhylzaexkw@pengutronix.de>
-References: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
- <20170511075135.GF5833@dragon>
- <20170511080916.gim5pyhj5jarzf4r@pengutronix.de>
- <20170512030536.GC8471@dragon>
- <20170512080150.uh5qmwu2tctpd6jk@pengutronix.de>
- <20170515022129.GJ8471@dragon>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 15/18] dt-bindings: sound: Add bindings for Cirrus
+ Logic Madera codecs
+Date: Sun, 14 May 2017 19:04:03 +0900
+Message-ID: <20170514100403.nocjlb77q5r3nvo2@sirena.org.uk>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1493050124-5970-16-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20170425155257.s6m4wgrzxxsxcggo@sirena.org.uk>
+ <1493137664.4826.75.camel@rf-debian.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cza46krmerc4eir5"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:38467 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752505AbdEOHQM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 May 2017 03:16:12 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48630 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759903AbdEOH4p (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2017 03:56:45 -0400
 Content-Disposition: inline
-In-Reply-To: <20170515022129.GJ8471@dragon>
+In-Reply-To: <1493137664.4826.75.camel@rf-debian.wolfsonmicro.main>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: lee.jones@linaro.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Shawn,
 
-On Mon, May 15, 2017 at 10:21:30AM +0800, Shawn Guo wrote:
-> On Fri, May 12, 2017 at 10:01:50AM +0200, Uwe Kleine-König wrote:
-> > On Fri, May 12, 2017 at 11:05:38AM +0800, Shawn Guo wrote:
-> > > I went through the code around requesting a pin, and found that we need
-> > > to call pinctrl_request_gpio() from gpio driver to get the result you
-> > > want.  In that case, pin_request() will be called with a valid
-> > > gpio_range as below.
-> > > 
-> > >     pinctrl_request_gpio()
-> > >         pinmux_request_gpio()
-> > >             pin_request(..., gpio_range)
-> > > 
-> > > Right now, pin_request() is being called with a NULL gpio_range from
-> > > pinmux_enable_setting().  That gets us the mux_owner rather than
-> > > gpio_owner for the pin.
-> > 
-> > But then again I cannot mux a pin to a different function when the gpio
-> > is requested, right?
+--cza46krmerc4eir5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-(Actually I intended to postpone this mail, but sent it instead by
-accident.)
- 
-> You will need to free the GPIO before muxing it to a different function,
-> I think.
+On Tue, Apr 25, 2017 at 05:27:44PM +0100, Richard Fitzgerald wrote:
+> On Tue, 2017-04-25 at 16:52 +0100, Mark Brown wrote:
 
-IMHO this is a bad concept. This makes GPIOs more special than for
-example PWMs or LEDs. And it breaks some configurations (for example the
-make-pins-highz-on-idle setup in my previous mails).
+> > > +Required properties:
+> > > +  - compatible : One of the following chip-specific strings:
+> > > +        "cirrus,cs47l35-codec"
+> > > +        "cirrus,cs47l85-codec"
+> > > +        "cirrus,cs47l90-codec"
 
-Best regards
-Uwe
+> > You shouldn't have compatible strings for subfunctions of a MFD unless
+> > these represent meaningful reusable IPs that can exist separately from
+> > the parent chip, that's clearly not the case here.  All you're doing
+> > here is encoding Linux internal abstractions which aren't OS neutral and
+> > might change in future (for example clocking might move more into the
+> > clock API).
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> While that's nice, the of_node doesn't get populated if there isn't a
+> compatible string. And people don't like workarounds for the missing
+> of_node.
+
+What workarounds are you referring to?  Why would this need any kind of
+workaround, there is no requirement for magic broken nodes like this in
+the subsystem and if there is we should fix that rather than bodge the
+ABI.
+
+--cza46krmerc4eir5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlkYK5IACgkQJNaLcl1U
+h9DG+Qf+MXO0kmiz04BZDxWrTzENEIBa0GMVAU39Xh5Kfnbf49VfGU7sb2DuAsv7
+AC2U9wLbIU+Anp5msmrw1LwLym1andkGKHhJu7TKx9QvlVZCkakVUQa3Trac8PGA
+8oFljIE1yossxLtxxz2wa3fIRkRyFIehXMZvxvGL74Y1tpPhU2mFfn6vgzUAMohH
+51As5HEODdIxqrH+PdNgJOPF472UqQsrj2aLrgjThjskeMBoprsr7x1mpvIZTXPY
+AOIzFYeSr4tWORWoMrXYFoiQcrlDh6oWhxcOUTthHOdaUjjAv/ehHzs4rLF966CT
+jDvebOibp9h2ir7DTcavUnGqiVZn3w==
+=hpjz
+-----END PGP SIGNATURE-----
+
+--cza46krmerc4eir5--
