@@ -1,234 +1,121 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH] gpio: crystalcove: Do not write regular gpio registers
- for virtual GPIOs
-Date: Mon, 15 May 2017 19:10:25 +0200
-Message-ID: <7a87b747-e187-0592-5415-815e8bd5b4ac@redhat.com>
-References: <20170513123953.22142-1-hdegoede@redhat.com>
- <1494838625.6967.48.camel@linux.intel.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
+Date: Mon, 15 May 2017 10:10:31 -0700
+Message-ID: <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
+References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
+ <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47560 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751364AbdEORKf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 May 2017 13:10:35 -0400
-In-Reply-To: <1494838625.6967.48.camel@linux.intel.com>
-Content-Language: en-US
+Received: from mail.kmu-office.ch ([178.209.48.109]:50925 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932080AbdEORLL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2017 13:11:11 -0400
+In-Reply-To: <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>
 
-Hi,
+On 2017-05-14 23:48, Dong Aisheng wrote:
+> iMX ULP has different IOB/OBE shift from Vibrid, so let's make
 
-On 15-05-17 10:57, Andy Shevchenko wrote:
-> On Sat, 2017-05-13 at 14:39 +0200, Hans de Goede wrote:
->> The Crystal Cove PMIC has 16 real GPIOs but the ACPI code for devices
->> with this PMIC may address up to 95 GPIOs, these extra GPIOs are
->> called virtual GPIOs and are used by the ACPI code as a method of
->> accessing various non GPIO bits of PMIC.
->>
->> Commit dcdc3018d635 ("gpio: crystalcove: support virtual GPIO") added
->> dummy support for these to avoid a bunch of ACPI errors, but instead
->> of
->> ignoring writes / reads to them by doing:
->>
->> if (gpio >= CRYSTALCOVE_GPIO_NUM)
->> 	return 0;
->>
->> It accidentally introduced the following wrong check:
->>
->> if (gpio > CRYSTALCOVE_VGPIO_NUM)
->> 	return 0;
->>
->> Which means that attempts by the ACPI code to access these gpios
->> causes some arbitrary gpio to get touched through for example
->> GPIO1P0CTLO + gpionr % 8.
->>
->> Since we do support input/output (but not interrupts) on the 0x5e
->> virtual GPIO, this commit makes to_reg return -ENOTSUPP for
->> unsupported
->> virtual GPIOs so as to not have to check for (gpio >=
->> CRYSTALCOVE_GPIO_NUM
->> && gpio != 0x5e) everywhere and to make it easier to add support for
->> more
->> virtual GPIOs in the future.
->>
->> It then adds a check for to_reg returning an error to all callers
->> where
->> this may happen fixing the ACPI code accessing virtual GPIOs
->> accidentally
->> causing changes to real GPIOs.
+s/Vibrid/Vybrid
+
+> it a SoC property.
 > 
-> Looks fine to me.
-> FWIW:
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Thank you.
-
-> P.S. Should it have Fixes tag?
-
-I guess that a:
-
-Fixes: dcdc3018d635 ("gpio: crystalcove: support virtual GPIO")
-
-Might be a good idea to add when merging.
-
-Regards,
-
-Hans
-
-
-
-
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Fugang Duan <fugang.duan@nxp.com>
+> Cc: Bai Ping <ping.bai@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/pinctrl/freescale/pinctrl-imx.c     | 8 ++++----
+>  drivers/pinctrl/freescale/pinctrl-imx.h     | 2 ++
+>  drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 ++
+>  drivers/pinctrl/freescale/pinctrl-vf610.c   | 2 ++
+>  4 files changed, 10 insertions(+), 4 deletions(-)
 > 
->>
->> Cc: Aaron Lu <aaron.lu@intel.com>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->>   drivers/gpio/gpio-crystalcove.c | 54 +++++++++++++++++++++++++++-----
->> ---------
->>   1 file changed, 36 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-
->> crystalcove.c
->> index 2197368cc899..e60156ec0c18 100644
->> --- a/drivers/gpio/gpio-crystalcove.c
->> +++ b/drivers/gpio/gpio-crystalcove.c
->> @@ -90,8 +90,18 @@ static inline int to_reg(int gpio, enum
->> ctrl_register reg_type)
->>   {
->>   	int reg;
->>   
->> -	if (gpio == 94)
->> -		return GPIOPANELCTL;
->> +	if (gpio >= CRYSTALCOVE_GPIO_NUM) {
->> +		/*
->> +		 * Virtual GPIO called from ACPI, for now we only
->> support
->> +		 * the panel ctl.
->> +		 */
->> +		switch (gpio) {
->> +		case 0x5e:
->> +			return GPIOPANELCTL;
->> +		default:
->> +			return -EOPNOTSUPP;
->> +		}
->> +	}
->>   
->>   	if (reg_type == CTRL_IN) {
->>   		if (gpio < 8)
->> @@ -130,36 +140,36 @@ static void crystalcove_update_irq_ctrl(struct
->> crystalcove_gpio *cg, int gpio)
->>   static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned
->> gpio)
->>   {
->>   	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
->> +	int reg = to_reg(gpio, CTRL_OUT);
->>   
->> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
->> +	if (reg < 0)
->>   		return 0;
->>   
->> -	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
->> -			    CTLO_INPUT_SET);
->> +	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
->>   }
->>   
->>   static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned
->> gpio,
->>   				    int value)
->>   {
->>   	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
->> +	int reg = to_reg(gpio, CTRL_OUT);
->>   
->> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
->> +	if (reg < 0)
->>   		return 0;
->>   
->> -	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
->> -			    CTLO_OUTPUT_SET | value);
->> +	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET |
->> value);
->>   }
->>   
->>   static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned
->> gpio)
->>   {
->>   	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
->> -	int ret;
->>   	unsigned int val;
->> +	int ret, reg = to_reg(gpio, CTRL_IN);
->>   
->> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
->> +	if (reg < 0)
->>   		return 0;
->>   
->> -	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
->> +	ret = regmap_read(cg->regmap, reg, &val);
->>   	if (ret)
->>   		return ret;
->>   
->> @@ -170,14 +180,15 @@ static void crystalcove_gpio_set(struct
->> gpio_chip *chip,
->>   				 unsigned gpio, int value)
->>   {
->>   	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
->> +	int reg = to_reg(gpio, CTRL_OUT);
->>   
->> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
->> +	if (reg < 0)
->>   		return;
->>   
->>   	if (value)
->> -		regmap_update_bits(cg->regmap, to_reg(gpio,
->> CTRL_OUT), 1, 1);
->> +		regmap_update_bits(cg->regmap, reg, 1, 1);
->>   	else
->> -		regmap_update_bits(cg->regmap, to_reg(gpio,
->> CTRL_OUT), 1, 0);
->> +		regmap_update_bits(cg->regmap, reg, 1, 0);
->>   }
->>   
->>   static int crystalcove_irq_type(struct irq_data *data, unsigned type)
->> @@ -185,6 +196,9 @@ static int crystalcove_irq_type(struct irq_data
->> *data, unsigned type)
->>   	struct crystalcove_gpio *cg =
->>   		gpiochip_get_data(irq_data_get_irq_chip_data(data));
->>   
->> +	if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
->> +		return 0;
->> +
->>   	switch (type) {
->>   	case IRQ_TYPE_NONE:
->>   		cg->intcnt_value = CTLI_INTCNT_DIS;
->> @@ -235,8 +249,10 @@ static void crystalcove_irq_unmask(struct
->> irq_data *data)
->>   	struct crystalcove_gpio *cg =
->>   		gpiochip_get_data(irq_data_get_irq_chip_data(data));
->>   
->> -	cg->set_irq_mask = false;
->> -	cg->update |= UPDATE_IRQ_MASK;
->> +	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
->> +		cg->set_irq_mask = false;
->> +		cg->update |= UPDATE_IRQ_MASK;
->> +	}
->>   }
->>   
->>   static void crystalcove_irq_mask(struct irq_data *data)
->> @@ -244,8 +260,10 @@ static void crystalcove_irq_mask(struct irq_data
->> *data)
->>   	struct crystalcove_gpio *cg =
->>   		gpiochip_get_data(irq_data_get_irq_chip_data(data));
->>   
->> -	cg->set_irq_mask = true;
->> -	cg->update |= UPDATE_IRQ_MASK;
->> +	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
->> +		cg->set_irq_mask = true;
->> +		cg->update |= UPDATE_IRQ_MASK;
->> +	}
->>   }
->>   
->>   static struct irq_chip crystalcove_irqchip = {
-> 
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
+> b/drivers/pinctrl/freescale/pinctrl-imx.c
+> index 57e1f7a..0d6aaca 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> @@ -331,8 +331,8 @@ static int imx_pmx_gpio_set_direction(struct
+> pinctrl_dev *pctldev,
+>  	u32 reg;
+>  
+>  	/*
+> -	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
+> -	 * They are part of the shared mux/conf register.
+> +	 * Only Vybrid and iMX ULP has the input/output buffer enable flags
+> +	 * (IBE/OBE) They are part of the shared mux/conf register.
+>  	 */
+>  	if (!(info->flags & SHARE_MUX_CONF_REG))
+>  		return 0;
+> @@ -344,9 +344,9 @@ static int imx_pmx_gpio_set_direction(struct
+> pinctrl_dev *pctldev,
+>  	/* IBE always enabled allows us to read the value "on the wire" */
+>  	reg = readl(ipctl->base + pin_reg->mux_reg);
+>  	if (input)
+> -		reg &= ~0x2;
+> +		reg = (reg & ~info->obe_bit) | info->ibe_bit;
+>  	else
+> -		reg |= 0x2;
+> +		reg = (reg & ~info->ibe_bit) | info->obe_bit;
+
+Why disabling IBE bit now? As the comment above states, it is really
+handy to leave the input buffer enabled so we can read back the true
+value on the wire...
+
+--
+Stefan
+
+>  	writel(reg, ipctl->base + pin_reg->mux_reg);
+>  
+>  	return 0;
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
+> b/drivers/pinctrl/freescale/pinctrl-imx.h
+> index eb0ce95..9ded65d 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx.h
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+> @@ -67,6 +67,8 @@ struct imx_pinctrl_soc_info {
+>  	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
+>  	unsigned int mux_mask;
+>  	u8 mux_shift;
+> +	u32 ibe_bit;
+> +	u32 obe_bit;
+>  
+>  	/* generic pinconf */
+>  	bool generic_pinconf;
+> diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> index dead416..f724a01 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> @@ -324,6 +324,8 @@ static struct imx_pinctrl_soc_info imx7ulp_pinctrl_info = {
+>  	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
+>  	.mux_mask = 0xf00,
+>  	.mux_shift = 8,
+> +	.ibe_bit = BIT(16),
+> +	.obe_bit = BIT(17),
+>  	.generic_pinconf = true,
+>  	.custom_params = imx7ulp_cfg_params,
+>  	.num_custom_params = ARRAY_SIZE(imx7ulp_cfg_params),
+> diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> index 3bd8556..c0823f9 100644
+> --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> @@ -301,6 +301,8 @@ static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
+>  	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
+>  	.mux_mask = 0x700000,
+>  	.mux_shift = 20,
+> +	.ibe_bit = BIT(0),
+> +	.obe_bit = BIT(1),
+>  };
+>  
+>  static const struct of_device_id vf610_pinctrl_of_match[] = {
