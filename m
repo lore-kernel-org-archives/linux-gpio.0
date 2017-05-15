@@ -1,33 +1,47 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v2 6/6] ARM: dts: rockchip: rename RK1108-evb to RV1108-evb
-Date: Sun, 14 May 2017 14:54:53 +0200
-Message-ID: <17588038.0Ltp2v6IRL@phil>
-References: <20170317171840.4683-1-heiko@sntech.de> <20170317171840.4683-7-heiko@sntech.de>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH] ARM: dts: imx28: add gpio-ranges for internal gpio
+ controller
+Date: Mon, 15 May 2017 10:21:30 +0800
+Message-ID: <20170515022129.GJ8471@dragon>
+References: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
+ <20170511075135.GF5833@dragon>
+ <20170511080916.gim5pyhj5jarzf4r@pengutronix.de>
+ <20170512030536.GC8471@dragon>
+ <20170512080150.uh5qmwu2tctpd6jk@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20170317171840.4683-7-heiko@sntech.de>
-Sender: linux-clk-owner@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, andy.yan@rock-chips.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:38590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751480AbdEOCVx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 14 May 2017 22:21:53 -0400
+Content-Disposition: inline
+In-Reply-To: <20170512080150.uh5qmwu2tctpd6jk@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-Am Freitag, 17. März 2017, 18:18:40 CEST schrieb Heiko Stuebner:
-> From: Andy Yan <andy.yan@rock-chips.com>
+On Fri, May 12, 2017 at 10:01:50AM +0200, Uwe Kleine-König wrote:
+> On Fri, May 12, 2017 at 11:05:38AM +0800, Shawn Guo wrote:
+> > I went through the code around requesting a pin, and found that we need
+> > to call pinctrl_request_gpio() from gpio driver to get the result you
+> > want.  In that case, pin_request() will be called with a valid
+> > gpio_range as below.
+> > 
+> >     pinctrl_request_gpio()
+> >         pinmux_request_gpio()
+> >             pin_request(..., gpio_range)
+> > 
+> > Right now, pin_request() is being called with a NULL gpio_range from
+> > pinmux_enable_setting().  That gets us the mux_owner rather than
+> > gpio_owner for the pin.
 > 
-> Rockchip finally named the SOC as RV1108, so change it
-> for compatible.
-> 
-> The rk1108/rv1108 is completely new to the market, so there no real
-> devices exist in the wild, only the Rockchip internal evaluation
-> board. Therefore we're not breaking any existing devices when
-> changing compatible values.
-> 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> [added paragraph about no real devices existing]
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> But then again I cannot mux a pin to a different function when the gpio
+> is requested, right?
 
-adapted for Makefile changes in 4.12-rc1 and applied for 4.13
+You will need to free the GPIO before muxing it to a different function,
+I think.
+
+Shawn
