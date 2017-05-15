@@ -1,80 +1,31 @@
-From: "A.S. Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
-Subject: RE: [PATCH 3/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
-Date: Mon, 15 May 2017 13:32:48 +0000
-Message-ID: <AM3PR04MB3067456191B5B2B2CEE69B380E10@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
- <1494592686-30967-5-git-send-email-aisheng.dong@nxp.com>
- <20170515133120.GX8471@dragon>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: remove unneeded (void *) casts in
+ of_match_table
+Date: Mon, 15 May 2017 19:04:53 +0200
+Message-ID: <20170515170453.s6ie5bu7o6o4dz6g@kozik-lap>
+References: <1493156063-8446-1-git-send-email-yamada.masahiro@socionext.com>
+ <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170515133120.GX8471@dragon>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andy Duan <fugang.duan-3arQi8VN3Tc@public.gmane.org>, Jacky Bai <ping.bai-3arQi8VN3Tc@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "stefan-XLVq0VzYD2Y@public.gmane.org" <stefan-XLVq0VzYD2Y@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1493156063-8446-3-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org]
-> Sent: Monday, May 15, 2017 9:31 PM
-> To: A.S. Dong
-> Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Mark Rutland; Andy Duan; Jacky Bai;
-> devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org; stefan-XLVq0VzYD2Y@public.gmane.org; Ro=
-b
-> Herring; kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org; linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Subject: Re: [PATCH 3/5] dt-bindings: pinctrl: add imx7ulp pinctrl bindin=
-g
-> doc
->=20
-> On Fri, May 12, 2017 at 08:38:04PM +0800, Dong Aisheng wrote:
-> > diff --git a/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h b/include/dt=
--
-> bindings/pinctrl/imx7ulp-pinfunc.h
-> > new file mode 100644
-> > index 0000000..b6db73f
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h
-> > @@ -0,0 +1,468 @@
-> > +/*
-> > + * Copyright 2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2017 NXP
-> > + *
-> > + * This program is free software; you can redistribute it and/or modif=
-y
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + */
-> > +
-> > +#ifndef __DTS_ULP1_PINFUNC_H
-> > +#define __DTS_ULP1_PINFUNC_H
-> > +
-> > +/*
-> > + * The pin function ID is a tuple of
-> > + * <mux_conf_reg conf_reg input_reg mux_mode input_val>
->=20
-> Forgot this one: it should have only 4 integers.
->=20
+On Wed, Apr 26, 2017 at 06:34:23AM +0900, Masahiro Yamada wrote:
+> of_device_id::data is an opaque pointer.  No explicit cast is needed.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
 
-Good catch!
-Thanks a lot
+Thanks, applied.
 
-Regards
-Dong Aisheng
-
-> Shawn
->=20
-> > + */
-> > +
-> > +#define ULP1_PAD_PTC0__PTC0
-> 0x0000 0x0000 0x1 0x0
-> > +#define ULP1_PAD_PTC0__TRACE_D15
-> 0x0000 0x0000 0xa 0x0
-> > +#define ULP1_PAD_PTC0__LPUART4_CTS_B
-> 0x0000 0x0244 0x4 0x1
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
