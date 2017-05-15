@@ -1,54 +1,68 @@
-From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH 5/5] pinctrl: imx: fix debug message for
- SHARE_MUX_CONF_REG case
-Date: Mon, 15 May 2017 12:08:22 +0000
-Message-ID: <AM3PR04MB306832D30685F0239BA37BC80E10@AM3PR04MB306.eurprd04.prod.outlook.com>
+From: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
+Date: Mon, 15 May 2017 20:20:33 +0800
+Message-ID: <20170515122032.GS8471@dragon>
 References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
- <1494592686-30967-7-git-send-email-aisheng.dong@nxp.com>
- <20170515120555.GR8471@dragon>
+ <1494592686-30967-5-git-send-email-aisheng.dong@nxp.com>
+ <20170515114319.GP8471@dragon>
+ <AM3PR04MB3069C90F23CF9C9CC84BA7580E10@AM3PR04MB306.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-eopbgr30044.outbound.protection.outlook.com ([40.107.3.44]:55938
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750937AbdEOMIY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 May 2017 08:08:24 -0400
-In-Reply-To: <20170515120555.GR8471@dragon>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <AM3PR04MB3069C90F23CF9C9CC84BA7580E10-f56W/S9L6NSIzFHTN1kKrAfhPeD8jYilXA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "A.S. Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Duan <fugang.duan-3arQi8VN3Tc@public.gmane.org>, Jacky Bai <ping.bai-3arQi8VN3Tc@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "stefan-XLVq0VzYD2Y@public.gmane.org" <stefan-XLVq0VzYD2Y@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Monday, May 15, 2017 8:06 PM
-> To: A.S. Dong
-> Cc: linux-gpio@vger.kernel.org; Andy Duan; Jacky Bai;
-> linus.walleij@linaro.org; stefan@agner.ch; kernel@pengutronix.de; linux-
-> arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH 5/5] pinctrl: imx: fix debug message for
-> SHARE_MUX_CONF_REG case
->=20
-> On Fri, May 12, 2017 at 08:38:06PM +0800, Dong Aisheng wrote:
-> > The original implemented debug message does not work for
-> > SHARE_MUX_CONF_REG case. This patch fixes it.
-> >
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Fixes: bf5a530971af ("pinctrl: imx: add VF610 support to imx pinctrl
-> > framework")
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
->=20
-> Fixes should go first in a patch series.
->=20
+On Mon, May 15, 2017 at 12:06:19PM +0000, A.S. Dong wrote:
+> > > @@ -0,0 +1,56 @@
+> > > +* Freescale i.MX7ULP IOMUX Controller
+> > > +
+> > > +Please refer to fsl,imx-pinctrl.txt in this directory for common
+> > > +binding part and usage.
+> > 
+> > Are imx7ulp-pinctrl bindings more alike to fsl,imx-pinctrl.txt or generic
+> > pinctrl-bindings.txt?  My personal feeling is that it might be better to
+> > take pinctrl-bindings.txt as the reference base and highlight how imx7ulp-
+> > pinctrl bindings differ from it.
+> > 
+> 
+> It seems still more like fsl,imx-pinctrl.txt.
+> 
+> I know fsl,imx-pinctrl.txt is a bit out of date, especially after we add
+> generic pinconf.
+> 
+> I plan to update it later after adding generic pin conf support to legacy
+> SoCs (MX6 & 7) as well, do you think it's ok?
 
-That's true.
-Thanks for the suggestion.
+Please do not.  Let's use generic pinconf support only for new SoCs, and
+not bother with legacy SoCs.
 
-Regards
-Dong Aisheng
+<snip>
 
-> Shawn
+> > > diff --git a/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h
+> > > b/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h
+> > > new file mode 100644
+> > > index 0000000..b6db73f
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h
+> > 
+> > The header will only be used by dts files, right?  If so,
+> > arch/arm/boot/dts is the better place.
+> > 
+> 
+> I can do it, but I'm just a bit confused that only IMX is still
+> Putting pinctrl headfile under arch/arm/boot/dts/.
+
+It makes sense to define DT constants in include/dt-bindings/pinctrl/
+only when they are referenced by both kernel and dts.  If it's only
+included by dts, arch/arm/boot/dts/ should definitely be the better
+place.
+
+Shawn
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
