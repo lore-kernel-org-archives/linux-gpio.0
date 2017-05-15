@@ -1,7 +1,7 @@
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 07/14] pinctrl: mcp23s08: use managed kzalloc for mcp
-Date: Mon, 15 May 2017 11:24:31 +0200
-Message-ID: <20170515092438.13076-8-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 10/14] pinctrl: mcp23s08: simplify spi pdata handling
+Date: Mon, 15 May 2017 11:24:34 +0200
+Message-ID: <20170515092438.13076-11-sebastian.reichel@collabora.co.uk>
 References: <20170515092438.13076-1-sebastian.reichel@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170515092438.13076-1-sebastian.reichel@collabora.co.uk>
@@ -10,52 +10,108 @@ To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 Cc: Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 List-Id: linux-gpio@vger.kernel.org
 
-Let's remove a few lines of code by using managed memory for mcp
-variable.
+Simplify spi pdata handling, so that it uses pdata when available
+and falls back to reading device properties otherwise.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/pinctrl/pinctrl-mcp23s08.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 67 ++++++++++++++++++--------------------
+ 1 file changed, 32 insertions(+), 35 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 94d2c19a6989..4d2e1c3c0e87 100644
+index aec2dad26560..541bf80a2a13 100644
 --- a/drivers/pinctrl/pinctrl-mcp23s08.c
 +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -1019,7 +1019,7 @@ static int mcp230xx_probe(struct i2c_client *client,
+@@ -1071,58 +1071,55 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 	u32				spi_present_mask = 0;
+ 
+ 	match = of_match_device(of_match_ptr(mcp23s08_spi_of_match), &spi->dev);
+-	if (match) {
++	if (match)
+ 		type = (int)(uintptr_t)match->data;
+-		status = of_property_read_u32(spi->dev.of_node,
+-			    "microchip,spi-present-mask", &spi_present_mask);
++	else
++		type = spi_get_device_id(spi)->driver_data;
++
++	pdata = dev_get_platdata(&spi->dev);
++	if (!pdata) {
++		pdata = &local_pdata;
++		pdata->base = -1;
++
++		pdata->irq_controller = device_property_read_bool(&spi->dev,
++			"interrupt-controller");
++		pdata->mirror = device_property_read_bool(&spi->dev,
++			"microchip,irq-mirror");
++
++		status = device_property_read_u32(&spi->dev,
++			"microchip,spi-present-mask", &spi_present_mask);
+ 		if (status) {
+-			status = of_property_read_u32(spi->dev.of_node,
+-				    "mcp,spi-present-mask", &spi_present_mask);
++			status = device_property_read_u32(&spi->dev,
++				"mcp,spi-present-mask", &spi_present_mask);
++
+ 			if (status) {
+-				dev_err(&spi->dev,
+-					"DT has no spi-present-mask\n");
++				dev_err(&spi->dev, "missing spi-present-mask");
+ 				return -ENODEV;
+ 			}
+ 		}
+-		if ((spi_present_mask <= 0) || (spi_present_mask >= 256)) {
+-			dev_err(&spi->dev, "invalid spi-present-mask\n");
+-			return -ENODEV;
+-		}
+-
+-		pdata = &local_pdata;
+-		pdata->base = -1;
+-		for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+-			if (spi_present_mask & (1 << addr))
+-				chips++;
+-		}
+-		pdata->irq_controller =	of_property_read_bool(
+-					spi->dev.of_node,
+-					"interrupt-controller");
+-		pdata->mirror = of_property_read_bool(spi->dev.of_node,
+-						      "microchip,irq-mirror");
+ 	} else {
+-		type = spi_get_device_id(spi)->driver_data;
+-		pdata = dev_get_platdata(&spi->dev);
+-		if (!pdata) {
+-			pdata = devm_kzalloc(&spi->dev,
+-					sizeof(struct mcp23s08_platform_data),
+-					GFP_KERNEL);
+-			pdata->base = -1;
+-		}
+-
+ 		for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+ 			if (!pdata->chip[addr].is_present)
+ 				continue;
+-			chips++;
+ 			if ((type == MCP_TYPE_S08) && (addr > 3)) {
+ 				dev_err(&spi->dev,
+-					"mcp23s08 only supports address 0..3\n");
++					"mcp23s08 only supports address 0..3");
+ 				return -EINVAL;
+ 			}
+-			spi_present_mask |= 1 << addr;
++			spi_present_mask |= BIT(addr);
  		}
  	}
  
--	mcp = kzalloc(sizeof(*mcp), GFP_KERNEL);
-+	mcp = devm_kzalloc(&client->dev, sizeof(*mcp), GFP_KERNEL);
- 	if (!mcp)
- 		return -ENOMEM;
++	if (!spi_present_mask || spi_present_mask >= 256) {
++		dev_err(&spi->dev, "invalid spi-present-mask");
++		return -ENODEV;
++	}
++
++	for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
++		if (spi_present_mask & BIT(addr))
++			chips++;
++	}
++
+ 	if (!chips)
+ 		return -ENODEV;
  
-@@ -1027,16 +1027,11 @@ static int mcp230xx_probe(struct i2c_client *client,
- 	status = mcp23s08_probe_one(mcp, &client->dev, client, client->addr,
- 				    id->driver_data, pdata, 0);
- 	if (status)
--		goto fail;
-+		return status;
- 
- 	i2c_set_clientdata(client, mcp);
- 
- 	return 0;
--
--fail:
--	kfree(mcp);
--
--	return status;
- }
- 
- static int mcp230xx_remove(struct i2c_client *client)
-@@ -1044,7 +1039,6 @@ static int mcp230xx_remove(struct i2c_client *client)
- 	struct mcp23s08 *mcp = i2c_get_clientdata(client);
- 
- 	gpiochip_remove(&mcp->chip);
--	kfree(mcp);
- 
- 	return 0;
- }
 -- 
 2.11.0
