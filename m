@@ -1,75 +1,52 @@
-From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH 1/5] pinctrl: imx: add generic pin config core support
-Date: Mon, 15 May 2017 11:16:57 +0000
-Message-ID: <AM3PR04MB3069DA0AEF0F56AB2F7808080E10@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
- <1494592686-30967-2-git-send-email-aisheng.dong@nxp.com>
- <20170515083500.GL8471@dragon>
- <AM3PR04MB3067B92ED9E3D62153536F880E10@AM3PR04MB306.eurprd04.prod.outlook.com>
- <20170515105615.GN8471@dragon>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 3/3] pinctrl: cherryview: Extend the Chromebook DMI quirk
+ to Intel_Strago systems
+Date: Mon, 15 May 2017 14:19:10 +0300
+Message-ID: <20170515111910.GY2768@lahna.fi.intel.com>
+References: <20170515110103.59765-1-mika.westerberg@linux.intel.com>
+ <20170515110103.59765-4-mika.westerberg@linux.intel.com>
+ <1494846878.6967.58.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0061.outbound.protection.outlook.com ([104.47.1.61]:37138
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934379AbdEOLRA (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 May 2017 07:17:00 -0400
-In-Reply-To: <20170515105615.GN8471@dragon>
-Content-Language: en-US
+Received: from mga04.intel.com ([192.55.52.120]:12960 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932311AbdEOLTb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 May 2017 07:19:31 -0400
+Content-Disposition: inline
+In-Reply-To: <1494846878.6967.58.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jean Delvare <jdelvare@suse.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, bbaude@redhat.com, mildred-bug.kernel@mildred.fr, barnacs@justletit.be, lvuksta@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> Sent: Monday, May 15, 2017 6:56 PM
-> To: A.S. Dong
-> Cc: Andy Duan; Jacky Bai; linus.walleij@linaro.org; stefan@agner.ch;
-> linux-gpio@vger.kernel.org; kernel@pengutronix.de; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [PATCH 1/5] pinctrl: imx: add generic pin config core suppor=
-t
->=20
-> On Mon, May 15, 2017 at 08:56:18AM +0000, A.S. Dong wrote:
-> > > > @@ -489,17 +547,29 @@ static int imx_pinctrl_parse_groups(struct
-> > > device_node *np,
-> > > >  		pin_size =3D SHARE_FSL_PIN_SIZE;
-> > > >  	else
-> > > >  		pin_size =3D FSL_PIN_SIZE;
-> > > > +
-> > > > +	if (info->generic_pinconf)
-> > > > +		pin_size -=3D 4;
-> > > > +
-> > > >  	/* Initialise group */
-> > > >  	grp->name =3D np->name;
-> > > >
-> > > >  	/*
-> > > > -	 * the binding format is fsl,pins =3D <PIN_FUNC_ID CONFIG ...>,
-> > > > +	 * the binding format is pins =3D <PIN_FUNC_ID CONFIG ...>,
-> > >
-> > > This is not correct for generic pinconf bindings.  CONIFIG shouldn't
-> > > be there.
-> > >
-> >
-> > Yes, that's for legacy stuff.
->=20
-> If that's for legacy bindings, you shouldn't change 'fsl,pins' to 'pins',
-> right?
->=20
+On Mon, May 15, 2017 at 02:14:38PM +0300, Andy Shevchenko wrote:
+> On Mon, 2017-05-15 at 14:01 +0300, Mika Westerberg wrote:
+> > It turns out there are quite many Chromebooks out there that have the
+> > same keyboard issue than Acer Chromebook. All of them are based on
+> > Intel_Strago reference and report their DMI_PRODUCT_FAMILY as
+> > "Intel_Strago" (Samsung Chromebook 3 and Cyan Chromebooks are
+> > exceptions
+> > for which we add separate entries).
+> > 
+> > Instead of adding each machine to the quirk table, we use
+> > DMI_PRODUCT_FAMILY of "Intel_Strago" that hopefully covers most of the
+> > machines out there currently.
+> > 
+> > 
+> 
+> > +		.ident = "Intel_Strago based Chromebooks",
+> 
+> > +		.ident = "Cyan Chromebook",
+> 
+> > +		.ident = "Samsung Chromebook 3",
+> 
+> I would do something like below (though I'm fine with current as well).
+> 
+> 	.ident = "Intel_Strago based Chromebooks (All models)",
+> 	.ident = "Intel_Strago based Chromebooks (Cyan)",
+> 	.ident = "Samsung Chromebook 3 (Celes)",
 
-I mean the binding format.
-For the legacy format, either the name of 'fsl,pins' or 'pins' is ok.
+Works for me :)
 
-But in order to increase the standard 'pins' priority, I change
-'fsl,pins' to 'pins' to make it more explicitly.
-
-I do can leave "fsl,pins' not changed, but I think the new one
-may be better, right?
-
-Regards
-Dong Aisheng
-
-> Shawn
+I will change this in v2 accordinly. Thanks.
