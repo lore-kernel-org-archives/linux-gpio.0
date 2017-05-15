@@ -1,216 +1,154 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] gpio: crystalcove: Do not write regular gpio registers
- for virtual GPIOs
-Date: Mon, 15 May 2017 11:57:05 +0300
-Message-ID: <1494838625.6967.48.camel@linux.intel.com>
-References: <20170513123953.22142-1-hdegoede@redhat.com>
+From: "A.S. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH 2/5] pinctrl: imx: add soc specific mux_mode mask and
+ shift property
+Date: Mon, 15 May 2017 09:00:32 +0000
+Message-ID: <AM3PR04MB306F70328E49CB7EE68E2C380E10@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
+ <1494592686-30967-3-git-send-email-aisheng.dong@nxp.com>
+ <20170515085236.GM8471@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:14657 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933490AbdEOJAV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 May 2017 05:00:21 -0400
-In-Reply-To: <20170513123953.22142-1-hdegoede@redhat.com>
+Received: from mail-eopbgr10071.outbound.protection.outlook.com ([40.107.1.71]:56672
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933560AbdEOJAl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 May 2017 05:00:41 -0400
+In-Reply-To: <20170515085236.GM8471@dragon>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Sat, 2017-05-13 at 14:39 +0200, Hans de Goede wrote:
-> The Crystal Cove PMIC has 16 real GPIOs but the ACPI code for devices
-> with this PMIC may address up to 95 GPIOs, these extra GPIOs are
-> called virtual GPIOs and are used by the ACPI code as a method of
-> accessing various non GPIO bits of PMIC.
-> 
-> Commit dcdc3018d635 ("gpio: crystalcove: support virtual GPIO") added
-> dummy support for these to avoid a bunch of ACPI errors, but instead
-> of
-> ignoring writes / reads to them by doing:
-> 
-> if (gpio >= CRYSTALCOVE_GPIO_NUM)
-> 	return 0;
-> 
-> It accidentally introduced the following wrong check:
-> 
-> if (gpio > CRYSTALCOVE_VGPIO_NUM)
-> 	return 0;
-> 
-> Which means that attempts by the ACPI code to access these gpios
-> causes some arbitrary gpio to get touched through for example
-> GPIO1P0CTLO + gpionr % 8.
-> 
-> Since we do support input/output (but not interrupts) on the 0x5e
-> virtual GPIO, this commit makes to_reg return -ENOTSUPP for
-> unsupported
-> virtual GPIOs so as to not have to check for (gpio >=
-> CRYSTALCOVE_GPIO_NUM
-> && gpio != 0x5e) everywhere and to make it easier to add support for
-> more
-> virtual GPIOs in the future.
-> 
-> It then adds a check for to_reg returning an error to all callers
-> where
-> this may happen fixing the ACPI code accessing virtual GPIOs
-> accidentally
-> causing changes to real GPIOs.
+> -----Original Message-----
+> From: Shawn Guo [mailto:shawnguo@kernel.org]
+> Sent: Monday, May 15, 2017 4:53 PM
+> To: A.S. Dong
+> Cc: linux-gpio@vger.kernel.org; Andy Duan; Jacky Bai;
+> linus.walleij@linaro.org; stefan@agner.ch; kernel@pengutronix.de; linux-
+> arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH 2/5] pinctrl: imx: add soc specific mux_mode mask and
+> shift property
+>=20
+> On Fri, May 12, 2017 at 08:38:02PM +0800, Dong Aisheng wrote:
+> > MX7ULP MUX mode mask and shift bit is different from VF610.
+> > Let's make it a platform specific property for the later easy of
+> > adding MX7ULP support.
+> >
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Stefan Agner <stefan@agner.ch>
+> > Cc: Bai Ping <ping.bai@nxp.com>
+> > Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> >  drivers/pinctrl/freescale/pinctrl-imx.c   | 10 +++++-----
+> >  drivers/pinctrl/freescale/pinctrl-imx.h   |  4 ++++
+> >  drivers/pinctrl/freescale/pinctrl-vf610.c |  2 ++
+> >  3 files changed, 11 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
+> > b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > index db76e9d..8347197 100644
+> > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > @@ -197,8 +197,8 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev,
+> unsigned selector,
+> >  		if (info->flags & SHARE_MUX_CONF_REG) {
+> >  			u32 reg;
+> >  			reg =3D readl(ipctl->base + pin_reg->mux_reg);
+> > -			reg &=3D ~(0x7 << 20);
+> > -			reg |=3D (pin->mux_mode << 20);
+> > +			reg &=3D ~info->mux_mask;
+> > +			reg |=3D (pin->mux_mode << info->mux_shift);
+> >  			writel(reg, ipctl->base + pin_reg->mux_reg);
+> >  		} else {
+> >  			writel(pin->mux_mode, ipctl->base + pin_reg->mux_reg);
+> @@ -288,7
+> > +288,7 @@ static int imx_pmx_gpio_request_enable(struct pinctrl_dev
+> > *pctldev,
+> >
+> >  mux_pin:
+> >  	reg =3D readl(ipctl->base + pin_reg->mux_reg);
+> > -	reg &=3D ~(0x7 << 20);
+> > +	reg &=3D ~info->mux_mask;
+> >  	reg |=3D imx_pin->config;
+> >  	writel(reg, ipctl->base + pin_reg->mux_reg);
+> >
+> > @@ -432,7 +432,7 @@ static int imx_pinconf_get(struct pinctrl_dev
+> *pctldev,
+> >  	*config =3D readl(ipctl->base + pin_reg->conf_reg);
+> >
+> >  	if (info->flags & SHARE_MUX_CONF_REG)
+> > -		*config &=3D 0xffff;
+> > +		*config &=3D ~info->mux_mask;
+>=20
+> It changes the way how code works.  We need a note in the commit log
+> explaining why it's safe.
+>=20
 
-Looks fine to me.
-FWIW:
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Well, that's Vybrid tricks that BIT[15-0] are all configs part.
+So it hardcoded 0xffff there.
 
-P.S. Should it have Fixes tag?
+But it's not true in ULP, so use mux_mask instead to address
+the difference.
 
-> 
-> Cc: Aaron Lu <aaron.lu@intel.com>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/gpio/gpio-crystalcove.c | 54 +++++++++++++++++++++++++++-----
-> ---------
->  1 file changed, 36 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-
-> crystalcove.c
-> index 2197368cc899..e60156ec0c18 100644
-> --- a/drivers/gpio/gpio-crystalcove.c
-> +++ b/drivers/gpio/gpio-crystalcove.c
-> @@ -90,8 +90,18 @@ static inline int to_reg(int gpio, enum
-> ctrl_register reg_type)
->  {
->  	int reg;
->  
-> -	if (gpio == 94)
-> -		return GPIOPANELCTL;
-> +	if (gpio >= CRYSTALCOVE_GPIO_NUM) {
-> +		/*
-> +		 * Virtual GPIO called from ACPI, for now we only
-> support
-> +		 * the panel ctl.
-> +		 */
-> +		switch (gpio) {
-> +		case 0x5e:
-> +			return GPIOPANELCTL;
-> +		default:
-> +			return -EOPNOTSUPP;
-> +		}
-> +	}
->  
->  	if (reg_type == CTRL_IN) {
->  		if (gpio < 8)
-> @@ -130,36 +140,36 @@ static void crystalcove_update_irq_ctrl(struct
-> crystalcove_gpio *cg, int gpio)
->  static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned
-> gpio)
->  {
->  	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-> +	int reg = to_reg(gpio, CTRL_OUT);
->  
-> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-> +	if (reg < 0)
->  		return 0;
->  
-> -	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
-> -			    CTLO_INPUT_SET);
-> +	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
->  }
->  
->  static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned
-> gpio,
->  				    int value)
->  {
->  	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-> +	int reg = to_reg(gpio, CTRL_OUT);
->  
-> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-> +	if (reg < 0)
->  		return 0;
->  
-> -	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
-> -			    CTLO_OUTPUT_SET | value);
-> +	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET |
-> value);
->  }
->  
->  static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned
-> gpio)
->  {
->  	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-> -	int ret;
->  	unsigned int val;
-> +	int ret, reg = to_reg(gpio, CTRL_IN);
->  
-> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-> +	if (reg < 0)
->  		return 0;
->  
-> -	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
-> +	ret = regmap_read(cg->regmap, reg, &val);
->  	if (ret)
->  		return ret;
->  
-> @@ -170,14 +180,15 @@ static void crystalcove_gpio_set(struct
-> gpio_chip *chip,
->  				 unsigned gpio, int value)
->  {
->  	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-> +	int reg = to_reg(gpio, CTRL_OUT);
->  
-> -	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-> +	if (reg < 0)
->  		return;
->  
->  	if (value)
-> -		regmap_update_bits(cg->regmap, to_reg(gpio,
-> CTRL_OUT), 1, 1);
-> +		regmap_update_bits(cg->regmap, reg, 1, 1);
->  	else
-> -		regmap_update_bits(cg->regmap, to_reg(gpio,
-> CTRL_OUT), 1, 0);
-> +		regmap_update_bits(cg->regmap, reg, 1, 0);
->  }
->  
->  static int crystalcove_irq_type(struct irq_data *data, unsigned type)
-> @@ -185,6 +196,9 @@ static int crystalcove_irq_type(struct irq_data
-> *data, unsigned type)
->  	struct crystalcove_gpio *cg =
->  		gpiochip_get_data(irq_data_get_irq_chip_data(data));
->  
-> +	if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
-> +		return 0;
-> +
->  	switch (type) {
->  	case IRQ_TYPE_NONE:
->  		cg->intcnt_value = CTLI_INTCNT_DIS;
-> @@ -235,8 +249,10 @@ static void crystalcove_irq_unmask(struct
-> irq_data *data)
->  	struct crystalcove_gpio *cg =
->  		gpiochip_get_data(irq_data_get_irq_chip_data(data));
->  
-> -	cg->set_irq_mask = false;
-> -	cg->update |= UPDATE_IRQ_MASK;
-> +	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
-> +		cg->set_irq_mask = false;
-> +		cg->update |= UPDATE_IRQ_MASK;
-> +	}
->  }
->  
->  static void crystalcove_irq_mask(struct irq_data *data)
-> @@ -244,8 +260,10 @@ static void crystalcove_irq_mask(struct irq_data
-> *data)
->  	struct crystalcove_gpio *cg =
->  		gpiochip_get_data(irq_data_get_irq_chip_data(data));
->  
-> -	cg->set_irq_mask = true;
-> -	cg->update |= UPDATE_IRQ_MASK;
-> +	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
-> +		cg->set_irq_mask = true;
-> +		cg->update |= UPDATE_IRQ_MASK;
-> +	}
->  }
->  
->  static struct irq_chip crystalcove_irqchip = {
+Regards
+Dong Aisheng
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> Shawn
+>=20
+> >
+> >  	return 0;
+> >  }
+> > @@ -459,7 +459,7 @@ static int imx_pinconf_set(struct pinctrl_dev
+> *pctldev,
+> >  		if (info->flags & SHARE_MUX_CONF_REG) {
+> >  			u32 reg;
+> >  			reg =3D readl(ipctl->base + pin_reg->conf_reg);
+> > -			reg &=3D ~0xffff;
+> > +			reg &=3D info->mux_mask;
+> >  			reg |=3D configs[i];
+> >  			writel(reg, ipctl->base + pin_reg->conf_reg);
+> >  		} else {
+> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
+> > b/drivers/pinctrl/freescale/pinctrl-imx.h
+> > index b5c8fe1..eb0ce95 100644
+> > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
+> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+> > @@ -64,6 +64,10 @@ struct imx_pinctrl_soc_info {
+> >  	const char *gpr_compatible;
+> >  	struct mutex mutex;
+> >
+> > +	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
+> > +	unsigned int mux_mask;
+> > +	u8 mux_shift;
+> > +
+> >  	/* generic pinconf */
+> >  	bool generic_pinconf;
+> >  	const struct pinconf_generic_params *custom_params; diff --git
+> > a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > index 2b1e198..3bd8556 100644
+> > --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > @@ -299,6 +299,8 @@ static struct imx_pinctrl_soc_info
+> vf610_pinctrl_info =3D {
+> >  	.pins =3D vf610_pinctrl_pads,
+> >  	.npins =3D ARRAY_SIZE(vf610_pinctrl_pads),
+> >  	.flags =3D SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
+> > +	.mux_mask =3D 0x700000,
+> > +	.mux_shift =3D 20,
+> >  };
+> >
+> >  static const struct of_device_id vf610_pinctrl_of_match[] =3D {
+> > --
+> > 2.7.4
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
