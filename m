@@ -1,48 +1,75 @@
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 14/14] pinctrl: mcp23s08: fix comment for mcp23s08_platform_data.base
-Date: Mon, 15 May 2017 11:24:38 +0200
-Message-ID: <20170515092438.13076-15-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 13/14] pinctrl: mcp23s08: drop comment about missing irq support
+Date: Mon, 15 May 2017 11:24:37 +0200
+Message-ID: <20170515092438.13076-14-sebastian.reichel@collabora.co.uk>
 References: <20170515092438.13076-1-sebastian.reichel@collabora.co.uk>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59894 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760622AbdEOJZc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2017 05:25:32 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170515092438.13076-1-sebastian.reichel@collabora.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Steven Miao <realmz6@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>
 Cc: Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+List-Id: linux-gpio@vger.kernel.org
 
-The comment does not match the driver, which actually supports
-automatic assignment. Fix this by updating the comment.
+The driver supports using mcp23xxx as interrupt controller, so
+let's drop all comments stating otherwise.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- include/linux/spi/mcp23s08.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 19 ++-----------------
+ include/linux/spi/mcp23s08.h       |  3 ---
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 29d9c1fd4309..3e40d4245512 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -1,14 +1,4 @@
+-/*
+- * MCP23S08 SPI/I2C GPIO gpio expander driver
+- *
+- * The inputs and outputs of the mcp23s08, mcp23s17, mcp23008 and mcp23017 are
+- * supported.
+- * For the I2C versions of the chips (mcp23008 and mcp23017) generation of
+- * interrupts is also supported.
+- * The hardware of the SPI versions of the chips (mcp23s08 and mcp23s17) is
+- * also capable of generating interrupts, but the linux driver does not
+- * support that yet.
+- */
++/* MCP23S08 SPI/I2C GPIO driver */
+ 
+ #include <linux/kernel.h>
+ #include <linux/device.h>
+@@ -27,7 +17,7 @@
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+ 
+-/**
++/*
+  * MCP types supported by driver
+  */
+ #define MCP_TYPE_S08	0
+@@ -1131,11 +1121,6 @@ static int mcp23s08_probe(struct spi_device *spi)
+ 	}
+ 	data->ngpio = ngpio;
+ 
+-	/* NOTE:  these chips have a relatively sane IRQ framework, with
+-	 * per-signal masking and level/edge triggering.  It's not yet
+-	 * handled here...
+-	 */
+-
+ 	return 0;
+ }
+ 
 diff --git a/include/linux/spi/mcp23s08.h b/include/linux/spi/mcp23s08.h
-index 4354beefd584..82d96a346e6f 100644
+index 211f3c0ef49c..4354beefd584 100644
 --- a/include/linux/spi/mcp23s08.h
 +++ b/include/linux/spi/mcp23s08.h
-@@ -7,11 +7,11 @@ struct mcp23s08_platform_data {
- 	 */
- 	u32 spi_present_mask;
- 
--	/* "base" is the number of the first GPIO.  Dynamic assignment is
--	 * not currently supported, and even if there are gaps in chip
--	 * addressing the GPIO numbers are sequential .. so for example
--	 * if only slaves 0 and 3 are present, their GPIOs range from
--	 * base to base+15 (or base+31 for s17 variant).
-+	/* "base" is the number of the first GPIO or -1 for dynamic
-+	 * assignment. If there are gaps in chip addressing the GPIO
-+	 * numbers are sequential .. so for example if only slaves 0
-+	 * and 3 are present, their GPIOs range from base to base+15
-+	 * (or base+31 for s17 variant).
- 	 */
- 	unsigned	base;
- };
+@@ -1,6 +1,3 @@
+-
+-/* FIXME driver should be able to handle IRQs...  */
+-
+ struct mcp23s08_platform_data {
+ 	/* For mcp23s08, up to 4 slaves (numbered 0..3) can share one SPI
+ 	 * chipselect, each providing 1 gpio_chip instance with 8 gpios.
 -- 
 2.11.0
-
