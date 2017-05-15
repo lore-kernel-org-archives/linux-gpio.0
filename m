@@ -1,95 +1,37 @@
-From: Nandor Han <nandor.han@ge.com>
-Subject: [PATCH v3 0/2] XRA1403,gpio - add XRA1403 gpio expander driver
-Date: Mon, 15 May 2017 08:58:24 +0300
-Message-ID: <cover.1494827688.git.nandor.han@ge.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, davem@davemloft.net, geert@linux-m68k.org, mchehab@kernel.org, daniel.vetter@ffwll.ch, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Nandor Han <nandor.han@ge.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 0/2] gpio: add imx7ulp gpio support
+Date: Mon, 15 May 2017 14:28:24 +0800
+Message-ID: <1494829706-5661-1-git-send-email-aisheng.dong@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bn3nam01on0043.outbound.protection.outlook.com ([104.47.33.43]:26186
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1759323AbdEOG2d (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 May 2017 02:28:33 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>
 
-The patchset will add a driver to support basic functionality for
-XRA1403 device. Features supported:
-        - get/set GPIO direction (input, output)
-        - get/set GPIO level (low, high)
+The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
+on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
+RGPIO2P has an extra Port Data Direction Register (PDDR) used
+to configure the individual port pins for input or output.
 
-Documentation: A gpio-xra1403.txt file was added to document the DTS
-	bindings related to driver.
+We introduce a FSL_GPIO_HAVE_PDDR with fsl_gpio_soc_data data
+to distinguish this differences. And we support getting the output
+status by checking the GPIO direction in PDDR.
 
-Testing:
+Dong Aisheng (2):
+  dt-bindings: gpio-vf610: add imx7ulp support
+  gpio: gpio-vf610: add imx7ulp support
 
-1.1 XRA1403 connected to iMX53 MCU
-1.2 Use the GPIO tools provided by kernel from tools/gpio dir
-
-2.1 `lsgpio`
-
-root@csmon ppd:~# lsgpio
-GPIO chip: gpiochip8, "xra1403", 16 GPIO lines
-        line  0: unnamed unused [output]
-        line  1: unnamed unused [output]
-        line  2: unnamed unused [output]
-        line  3: unnamed unused [output]
-        line  4: unnamed unused [output]
-        line  5: unnamed unused
-        line  6: unnamed unused
-        line  7: unnamed unused [output]
-        line  8: unnamed unused [output]
-        line  9: unnamed unused
-        line 10: unnamed unused [output]
-        line 11: unnamed unused
-        line 12: unnamed unused
-        line 13: unnamed unused
-        line 14: unnamed unused
-        line 15: unnamed unused [output]
-GPIO chip: gpiochip7, "xra1403", 16 GPIO lines
-        line  0: unnamed unused
-        line  1: unnamed unused
-        line  2: unnamed unused
-        line  3: unnamed unused
-        line  4: unnamed unused
-        line  5: unnamed unused
-        line  6: unnamed unused
-        line  7: unnamed unused
-        line  8: unnamed unused
-        line  9: unnamed unused
-        line 10: unnamed unused
-        line 11: unnamed unused
-        line 12: unnamed unused
-        line 13: unnamed unused
-        line 14: unnamed unused
-        line 15: unnamed unused
-
-3.1 `gpio-hammer`
-
-root@csmon ppd:~# gpio-hammer -n gpiochip8 -o0 -o1 -o2 -o3
-Hammer lines [0, 1, 2, 3] on gpiochip8, initial states: [0, 0, 0, 0]
-[\] [0: 0, 1: 0, 2: 0, 3: 0]
-...
-[\] [0: 1, 1: 1, 2: 1, 3: 1]
-
-When using `gpio-hammer` I also attached an oscilloscope to one of the pins and I was
-able to monitor and validate the GPIO status.
-
-
-Changes since v2: - improve the commit message by removing the "sysfs"
-                    dependency and be more clear.
-                  - include "seq_file.h" header.
-    Note: documentation patches were accepted already.
-
-Changes since v1: - use regmap for driver
-                  - small changes to documentation
-
-
-Nandor Han (2):
-  gpio - Add EXAR XRA1403 SPI GPIO expander driver
-  Add XRA1403 support to MAINTAINERS file
-
- MAINTAINERS                 |   8 ++
- drivers/gpio/Kconfig        |   5 +
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-xra1403.c | 237 ++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 251 insertions(+)
- create mode 100644 drivers/gpio/gpio-xra1403.c
+ .../devicetree/bindings/gpio/gpio-vf610.txt        |  4 +-
+ drivers/gpio/gpio-vf610.c                          | 49 ++++++++++++++++++++--
+ 2 files changed, 49 insertions(+), 4 deletions(-)
 
 -- 
-2.10.1
+2.7.4
+
