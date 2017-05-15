@@ -1,39 +1,51 @@
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCHv3 05/14] pinctrl: mcp23s08: drop OF_GPIO dependency
-Date: Mon, 15 May 2017 11:24:29 +0200
-Message-ID: <20170515092438.13076-6-sebastian.reichel@collabora.co.uk>
+Subject: [PATCHv3 06/14] pinctrl: mcp23s08: irq mapping is already done
+Date: Mon, 15 May 2017 11:24:30 +0200
+Message-ID: <20170515092438.13076-7-sebastian.reichel@collabora.co.uk>
 References: <20170515092438.13076-1-sebastian.reichel@collabora.co.uk>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59843 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759591AbdEOJZL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2017 05:25:11 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170515092438.13076-1-sebastian.reichel@collabora.co.uk>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Steven Miao <realmz6@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Sylvain Lemieux <slemieux.tyco@gmail.com>
 Cc: Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>, linux-gpio@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+List-Id: linux-gpio@vger.kernel.org
 
-The driver compiles & works perfectly fine without OF_GPIO on x86,
-so lets drop the dependency.
+i2c-core and spi-core already assign the irq, so we
+can drop the additional call from the mcp driver.
 
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 ---
- drivers/pinctrl/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/pinctrl/pinctrl-mcp23s08.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 1dabd1d79c1d..1c80b970554e 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -148,7 +148,6 @@ config PINCTRL_FALCON
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index be7ec7ddbce0..94d2c19a6989 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -21,7 +21,6 @@
+ #include <linux/slab.h>
+ #include <asm/byteorder.h>
+ #include <linux/interrupt.h>
+-#include <linux/of_irq.h>
+ #include <linux/of_device.h>
+ #include <linux/regmap.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -1008,7 +1007,6 @@ static int mcp230xx_probe(struct i2c_client *client,
+ 					"interrupt-controller");
+ 		pdata->mirror = of_property_read_bool(client->dev.of_node,
+ 						      "microchip,irq-mirror");
+-		client->irq = irq_of_parse_and_map(client->dev.of_node, 0);
+ 	} else {
+ 		pdata = dev_get_platdata(&client->dev);
+ 		if (!pdata) {
+@@ -1164,8 +1162,6 @@ static int mcp23s08_probe(struct spi_device *spi)
  
- config PINCTRL_MCP23S08
- 	tristate "Microchip MCP23xxx I/O expander"
--	depends on OF_GPIO
- 	depends on SPI_MASTER || I2C
- 	select GPIOLIB_IRQCHIP
- 	select REGMAP_I2C if I2C
+ 	spi_set_drvdata(spi, data);
+ 
+-	spi->irq = irq_of_parse_and_map(spi->dev.of_node, 0);
+-
+ 	for (addr = 0; addr < ARRAY_SIZE(pdata->chip); addr++) {
+ 		if (!(spi_present_mask & (1 << addr)))
+ 			continue;
 -- 
 2.11.0
-
