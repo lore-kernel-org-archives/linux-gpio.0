@@ -1,74 +1,33 @@
 From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 1/5] pinctrl: imx: add generic pin config core support
-Date: Mon, 15 May 2017 19:56:44 +0800
-Message-ID: <20170515115643.GQ8471@dragon>
+Subject: Re: [PATCH 5/5] pinctrl: imx: fix debug message for
+ SHARE_MUX_CONF_REG case
+Date: Mon, 15 May 2017 20:05:56 +0800
+Message-ID: <20170515120555.GR8471@dragon>
 References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
- <1494592686-30967-2-git-send-email-aisheng.dong@nxp.com>
- <20170515083500.GL8471@dragon>
- <AM3PR04MB3067B92ED9E3D62153536F880E10@AM3PR04MB306.eurprd04.prod.outlook.com>
- <20170515105615.GN8471@dragon>
- <AM3PR04MB3069DA0AEF0F56AB2F7808080E10@AM3PR04MB306.eurprd04.prod.outlook.com>
+ <1494592686-30967-7-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:44030 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:45046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752039AbdEOL5I (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 15 May 2017 07:57:08 -0400
+        id S1755042AbdEOMGa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 May 2017 08:06:30 -0400
 Content-Disposition: inline
-In-Reply-To: <AM3PR04MB3069DA0AEF0F56AB2F7808080E10@AM3PR04MB306.eurprd04.prod.outlook.com>
+In-Reply-To: <1494592686-30967-7-git-send-email-aisheng.dong@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "A.S. Dong" <aisheng.dong@nxp.com>
-Cc: Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "stefan@agner.ch" <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-gpio@vger.kernel.org, fugang.duan@nxp.com, ping.bai@nxp.com, linus.walleij@linaro.org, stefan@agner.ch, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 
-On Mon, May 15, 2017 at 11:16:57AM +0000, A.S. Dong wrote:
-> > -----Original Message-----
-> > From: Shawn Guo [mailto:shawnguo@kernel.org]
-> > Sent: Monday, May 15, 2017 6:56 PM
-> > To: A.S. Dong
-> > Cc: Andy Duan; Jacky Bai; linus.walleij@linaro.org; stefan@agner.ch;
-> > linux-gpio@vger.kernel.org; kernel@pengutronix.de; linux-arm-
-> > kernel@lists.infradead.org
-> > Subject: Re: [PATCH 1/5] pinctrl: imx: add generic pin config core support
-> > 
-> > On Mon, May 15, 2017 at 08:56:18AM +0000, A.S. Dong wrote:
-> > > > > @@ -489,17 +547,29 @@ static int imx_pinctrl_parse_groups(struct
-> > > > device_node *np,
-> > > > >  		pin_size = SHARE_FSL_PIN_SIZE;
-> > > > >  	else
-> > > > >  		pin_size = FSL_PIN_SIZE;
-> > > > > +
-> > > > > +	if (info->generic_pinconf)
-> > > > > +		pin_size -= 4;
-> > > > > +
-> > > > >  	/* Initialise group */
-> > > > >  	grp->name = np->name;
-> > > > >
-> > > > >  	/*
-> > > > > -	 * the binding format is fsl,pins = <PIN_FUNC_ID CONFIG ...>,
-> > > > > +	 * the binding format is pins = <PIN_FUNC_ID CONFIG ...>,
-> > > >
-> > > > This is not correct for generic pinconf bindings.  CONIFIG shouldn't
-> > > > be there.
-> > > >
-> > >
-> > > Yes, that's for legacy stuff.
-> > 
-> > If that's for legacy bindings, you shouldn't change 'fsl,pins' to 'pins',
-> > right?
-> > 
+On Fri, May 12, 2017 at 08:38:06PM +0800, Dong Aisheng wrote:
+> The original implemented debug message does not work for
+> SHARE_MUX_CONF_REG case. This patch fixes it.
 > 
-> I mean the binding format.
-> For the legacy format, either the name of 'fsl,pins' or 'pins' is ok.
-> 
-> But in order to increase the standard 'pins' priority, I change
-> 'fsl,pins' to 'pins' to make it more explicitly.
-> 
-> I do can leave "fsl,pins' not changed, but I think the new one
-> may be better, right?
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Fixes: bf5a530971af ("pinctrl: imx: add VF610 support to imx pinctrl framework")
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Please leave "fsl,pins' unchanged, and let's use 'fsl,pins' for legacy
-bindings and 'pins' for new one.
+Fixes should go first in a patch series.
 
 Shawn
