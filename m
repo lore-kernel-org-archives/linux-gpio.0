@@ -1,77 +1,52 @@
-From: "A.S. Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
-Subject: RE: [PATCH 3/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
-Date: Mon, 15 May 2017 13:12:25 +0000
-Message-ID: <AM3PR04MB3063C9CFC02E03DE2B4C2ED80E10@AM3PR04MB306.eurprd04.prod.outlook.com>
+From: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
+Date: Mon, 15 May 2017 21:31:21 +0800
+Message-ID: <20170515133120.GX8471@dragon>
 References: <1494592686-30967-1-git-send-email-aisheng.dong@nxp.com>
  <1494592686-30967-5-git-send-email-aisheng.dong@nxp.com>
- <20170515114319.GP8471@dragon>
- <AM3PR04MB3069C90F23CF9C9CC84BA7580E10@AM3PR04MB306.eurprd04.prod.outlook.com>
- <20170515122032.GS8471@dragon>
- <AM3PR04MB3069C788C96EE2854C2C68080E10@AM3PR04MB306.eurprd04.prod.outlook.com>
- <20170515125905.GV8471@dragon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170515125905.GV8471@dragon>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1494592686-30967-5-git-send-email-aisheng.dong-3arQi8VN3Tc@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Duan <fugang.duan-3arQi8VN3Tc@public.gmane.org>, Jacky Bai <ping.bai-3arQi8VN3Tc@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "stefan-XLVq0VzYD2Y@public.gmane.org" <stefan-XLVq0VzYD2Y@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, fugang.duan-3arQi8VN3Tc@public.gmane.org, ping.bai-3arQi8VN3Tc@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org]
-> Sent: Monday, May 15, 2017 8:59 PM
-> To: A.S. Dong
-> Cc: Mark Rutland; devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Andy Duan; Jacky Bai;
-> linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org; stefan-XLVq0VzYD2Y@public.gmane.org; linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Ro=
-b
-> Herring; kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org; linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Subject: Re: [PATCH 3/5] dt-bindings: pinctrl: add imx7ulp pinctrl bindin=
-g
-> doc
->=20
-> On Mon, May 15, 2017 at 12:41:09PM +0000, A.S. Dong wrote:
-> > > On Mon, May 15, 2017 at 12:06:19PM +0000, A.S. Dong wrote:
-> > > > > > @@ -0,0 +1,56 @@
-> > > > > > +* Freescale i.MX7ULP IOMUX Controller
-> > > > > > +
-> > > > > > +Please refer to fsl,imx-pinctrl.txt in this directory for
-> > > > > > +common binding part and usage.
-> > > > >
-> > > > > Are imx7ulp-pinctrl bindings more alike to fsl,imx-pinctrl.txt
-> > > > > or generic pinctrl-bindings.txt?  My personal feeling is that it
-> > > > > might be better to take pinctrl-bindings.txt as the reference
-> > > > > base and highlight how imx7ulp- pinctrl bindings differ from it.
-> > > > >
-> > > >
-> > > > It seems still more like fsl,imx-pinctrl.txt.
-> > > >
-> > > > I know fsl,imx-pinctrl.txt is a bit out of date, especially after
-> > > > we add generic pinconf.
-> > > >
-> > > > I plan to update it later after adding generic pin conf support to
-> > > > legacy SoCs (MX6 & 7) as well, do you think it's ok?
-> > >
-> > > Please do not.  Let's use generic pinconf support only for new SoCs,
-> > > and not bother with legacy SoCs.
-> > >
-> >
-> > I wonder there may be some guys interested more in generic Pinconfig
-> > format rather than old one when they add new board support, or someone
-> > else adding the support for legacy SoCs as the pinctrl-imx core
-> > already supports it after this patch series.
->=20
-> I would take this as an unnecessary churn on existing code and increase o=
-f
-> maintenance burden.  So that's definitely a NO from me.
->=20
+On Fri, May 12, 2017 at 08:38:04PM +0800, Dong Aisheng wrote:
+> diff --git a/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h b/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h
+> new file mode 100644
+> index 0000000..b6db73f
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/imx7ulp-pinfunc.h
+> @@ -0,0 +1,468 @@
+> +/*
+> + * Copyright 2016 Freescale Semiconductor, Inc.
+> + * Copyright 2017 NXP
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#ifndef __DTS_ULP1_PINFUNC_H
+> +#define __DTS_ULP1_PINFUNC_H
+> +
+> +/*
+> + * The pin function ID is a tuple of
+> + * <mux_conf_reg conf_reg input_reg mux_mode input_val>
 
-Okay, personally I would be with you!
+Forgot this one: it should have only 4 integers.
 
-Regards
-Dong Aisheng
+Shawn
+
+> + */
+> +
+> +#define ULP1_PAD_PTC0__PTC0                                       0x0000 0x0000 0x1 0x0
+> +#define ULP1_PAD_PTC0__TRACE_D15                                  0x0000 0x0000 0xa 0x0
+> +#define ULP1_PAD_PTC0__LPUART4_CTS_B                              0x0000 0x0244 0x4 0x1
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
