@@ -1,32 +1,170 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: remove self from GPIO maintainers
-Date: Mon, 15 May 2017 10:59:07 -0700
-Message-ID: <CAAVeFuJWhthBPaXPQg0Hv7+phSJmQrJj+4ND2_MNeKhzmVjRpg@mail.gmail.com>
-References: <20170512170118.15373-1-acourbot@chromium.org> <CAHp75Ve7zaN=AYWArxo+_uo=SA4Q1bGbm7ZgCmAx80eu5DTyzQ@mail.gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 2/2] gpio: gpio-vf610: add imx7ulp support
+Date: Mon, 15 May 2017 10:58:45 -0700
+Message-ID: <690d43f0314da9d340065b551700d6b7@agner.ch>
+References: <1494829706-5661-1-git-send-email-aisheng.dong@nxp.com>
+ <1494829706-5661-3-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Ve7zaN=AYWArxo+_uo=SA4Q1bGbm7ZgCmAx80eu5DTyzQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:51708 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933985AbdEOR7a (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2017 13:59:30 -0400
+In-Reply-To: <1494829706-5661-3-git-send-email-aisheng.dong@nxp.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>, Peter Chen <peter.chen@nxp.com>
 
-On Fri, May 12, 2017 at 12:00 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Fri, May 12, 2017 at 8:01 PM, Alexandre Courbot <gnurou@gmail.com> wrote:
->> From: Alexandre Courbot <gnurou@gmail.com>
->>
->> I have not been able to dedicate time to the GPIO subsystem since quite
->> some time, and I don't see the situation improving in the near future.
->> Update the maintainers list to reflect this unfortunate fact.
->
-> JFYI: we have a designated reviewer typo of status.
-> I'm just wondering if it fits your case.
+On 2017-05-14 23:28, Dong Aisheng wrote:
+> The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
+> on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
+> RGPIO2P has an extra Port Data Direction Register (PDDR) used
+> to configure the individual port pins for input or output.
+> 
+> We introduce a FSL_GPIO_HAVE_PDDR with fsl_gpio_soc_data data
+> to distinguish this differences. And we support getting the output
+> status by checking the GPIO direction in PDDR.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Fugang Duan <fugang.duan@nxp.com>
+> Cc: Peter Chen <peter.chen@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/gpio/gpio-vf610.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 46 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> index 521fbe3..a439d27 100644
+> --- a/drivers/gpio/gpio-vf610.c
+> +++ b/drivers/gpio/gpio-vf610.c
+> @@ -30,10 +30,15 @@
+>  
+>  #define VF610_GPIO_PER_PORT		32
+>  
+> +struct fsl_gpio_soc_data {
+> +	u32 flags;
+> +};
+> +
+>  struct vf610_gpio_port {
+>  	struct gpio_chip gc;
+>  	void __iomem *base;
+>  	void __iomem *gpio_base;
+> +	const struct fsl_gpio_soc_data *sdata;
+>  	u8 irqc[VF610_GPIO_PER_PORT];
+>  	int irq;
+>  };
+> @@ -43,6 +48,7 @@ struct vf610_gpio_port {
+>  #define GPIO_PCOR		0x08
+>  #define GPIO_PTOR		0x0c
+>  #define GPIO_PDIR		0x10
+> +#define GPIO_PDDR		0x14
+>  
+>  #define PORT_PCR(n)		((n) * 0x4)
+>  #define PORT_PCR_IRQC_OFFSET	16
+> @@ -59,10 +65,18 @@ struct vf610_gpio_port {
+>  #define PORT_INT_EITHER_EDGE	0xb
+>  #define PORT_INT_LOGIC_ONE	0xc
+>  
+> +/* SoC has a Port Data Direction Register (PDDR) */
+> +#define FSL_GPIO_HAVE_PDDR	BIT(0)
+> +
+>  static struct irq_chip vf610_gpio_irq_chip;
+>  
+> +static const struct fsl_gpio_soc_data imx_data = {
+> +	.flags = FSL_GPIO_HAVE_PDDR,
+> +};
+> +
+>  static const struct of_device_id vf610_gpio_dt_ids[] = {
+> -	{ .compatible = "fsl,vf610-gpio" },
+> +	{ .compatible = "fsl,vf610-gpio",	.data = NULL, },
+> +	{ .compatible = "fsl,imx7ulp-gpio",	.data = &imx_data, },
+>  	{ /* sentinel */ }
+>  };
+>  
+> @@ -79,8 +93,18 @@ static inline u32 vf610_gpio_readl(void __iomem *reg)
+>  static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+>  {
+>  	struct vf610_gpio_port *port = gpiochip_get_data(gc);
+> -
+> -	return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR) & BIT(gpio));
+> +	unsigned long mask = BIT(gpio);
+> +	void __iomem *addr;
+> +
+> +	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR) {
+> +		mask &= vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
+> +		addr = mask ? port->gpio_base + GPIO_PDOR :
+> +			      port->gpio_base + GPIO_PDIR;
+> +		return !!(vf610_gpio_readl(addr) & BIT(gpio));
+> +	} else {
+> +		return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR)
+> +					   & BIT(gpio));
+> +	}
 
-In practice that's basically what I was doing since I did not manage
-any tree - just doing reviews and stuff. But that's precisely what I
-cannot afford to do since a while, hence the withdrawal.
+I would rather prefer to read the actual value on the wire...
 
-OTOH I agree it would be nice if a few people active on the GPIO list
-could consider adding themselves as reviewers!
+>  }
+>  
+>  static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+> @@ -96,12 +120,28 @@ static void vf610_gpio_set(struct gpio_chip *gc,
+> unsigned int gpio, int val)
+>  
+>  static int vf610_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+>  {
+> +	struct vf610_gpio_port *port = gpiochip_get_data(chip);
+> +	unsigned long mask = BIT(gpio);
+> +	u32 val;
+> +
+> +	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR) {
+> +		val = vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
+> +		val &= ~mask;
+> +		vf610_gpio_writel(val, port->gpio_base + GPIO_PDDR);
+
+As mentioned in the pinctrl patchset review, if we can do this
+orthogonal, I would rather prefer to not involve pinctrl here in the
+i.MX 7ULP case. So I would make sure that
+pinctrl_gpio_direction_input/output does not get called at all (e.g.
+returning in this if case)...
+
+--
+Stefan
+
+> +	}
+> +
+>  	return pinctrl_gpio_direction_input(chip->base + gpio);
+>  }
+>  
+>  static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
+>  				       int value)
+>  {
+> +	struct vf610_gpio_port *port = gpiochip_get_data(chip);
+> +	unsigned long mask = BIT(gpio);
+> +
+> +	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR)
+> +		vf610_gpio_writel(mask, port->gpio_base + GPIO_PDDR);
+> +
+>  	vf610_gpio_set(chip, gpio, value);
+>  
+>  	return pinctrl_gpio_direction_output(chip->base + gpio);
+> @@ -216,6 +256,8 @@ static struct irq_chip vf610_gpio_irq_chip = {
+>  
+>  static int vf610_gpio_probe(struct platform_device *pdev)
+>  {
+> +	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
+> +							   &pdev->dev);
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct vf610_gpio_port *port;
+> @@ -227,6 +269,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+>  	if (!port)
+>  		return -ENOMEM;
+>  
+> +	port->sdata = of_id->data;
+>  	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	port->base = devm_ioremap_resource(dev, iores);
+>  	if (IS_ERR(port->base))
