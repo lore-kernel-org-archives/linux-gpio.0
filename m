@@ -1,43 +1,47 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7794: add R8A7745 support
-Date: Tue, 16 May 2017 13:53:06 +0200
-Message-ID: <CAMuHMdWJJghzfgZoSo15DSvOgs8dRL07R1RakcpUKevPA6_N1A@mail.gmail.com>
-References: <20170428185245.428747882@cogentembedded.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH 3/3] mfd: arizona: Update GPIO binding for newly supported flag
+Date: Tue, 16 May 2017 16:31:54 +0100
+Message-ID: <1494948714-15203-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+References: <1494948714-15203-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35904 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751087AbdEPLxI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 May 2017 07:53:08 -0400
-In-Reply-To: <20170428185245.428747882@cogentembedded.com>
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:36613 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751267AbdEPPap (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 16 May 2017 11:30:45 -0400
+In-Reply-To: <1494948714-15203-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linus.walleij@linaro.org
+Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-Hi Sergei,
+Update the device tree binding to show that the new GPIO_SLEEP flags are
+now supported in the flags field of the GPIO binding for Arizona
+devices.
 
-On Fri, Apr 28, 2017 at 8:52 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Renesas RZ/G1E (R8A7745) is pin compatible with R-Car E2 (R8A7794),
-> however it doesn't have several automotive specific peripherals.
-> Annotate all the items that only exist on the R-Car SoCs...
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
+ Documentation/devicetree/bindings/mfd/arizona.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thank you!
+diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+index 8f2e282..1729133 100644
+--- a/Documentation/devicetree/bindings/mfd/arizona.txt
++++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+@@ -30,7 +30,10 @@ Required properties:
+ 
+   - gpio-controller : Indicates this device is a GPIO controller.
+   - #gpio-cells : Must be 2. The first cell is the pin number and the
+-    second cell is used to specify optional parameters (currently unused).
++    second cell is used to specify optional parameters, the following flags
++    are supported:
++      "GPIO_SLEEP_MAY_LOOSE_OUTPUT" the output of this GPIO does not need to
++      be maintained whilst the CODEC is in low power mode.
+ 
+   - AVDD-supply, DBVDD1-supply, CPVDD-supply : Power supplies for the device,
+     as covered in Documentation/devicetree/bindings/regulator/regulator.txt
+-- 
+2.1.4
 
-Queuing in sh-pfc-for-v4.13 after dropping the annotations, as they are
-implied by pin groups/functions
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
