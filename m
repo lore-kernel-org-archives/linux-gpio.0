@@ -1,87 +1,60 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/5] pintrl: meson: document GPIO IRQ DT binding
-Date: Mon, 15 May 2017 19:31:26 -0500
-Message-ID: <CAL_JsqL_6NpCBLtnRgsyuikGCGdGf9ZEFEUyrreGiyrtHszCxQ@mail.gmail.com>
-References: <a4ca587b-d3e8-a22d-4d25-289871d2d095@gmail.com>
- <0d835130-7c6c-751c-af15-c2ab69edcb42@gmail.com> <20170512193806.trt7jbvfyygkqard@rob-hp-laptop>
- <b39f1742-0558-beaa-1e06-eed80d644424@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b39f1742-0558-beaa-1e06-eed80d644424-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] pinctrl: core: do not explicitly free on unregister
+Date: Mon, 15 May 2017 23:18:59 -0700
+Message-ID: <20170516061859.396-1-stefan@agner.ch>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:57771 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751137AbdEPGTN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 16 May 2017 02:19:13 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
 
-On Fri, May 12, 2017 at 4:41 PM, Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Am 12.05.2017 um 21:38 schrieb Rob Herring:
->> On Sun, May 07, 2017 at 06:34:09PM +0200, Heiner Kallweit wrote:
->>> Document the DT binding for GPIO IRQ support on Amlogic Meson SoC's.
->>>
->>> This documentation is intentionally not placed under
->>> interrupt-controllers as GPIO IRQ support on these SoC's acts more
->>> like an interrupt multiplexer.
->>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>  .../bindings/gpio/amlogic,meson-gpio-interrupt.txt | 30 ++++++++++++++++++++++
->>
->> Seems more like an irqchip?
->>
-> It is an irq_chip. Would you therefore prefer a different name or another location
-> for this binding documentation?
+When using the resource managed version of pinctrl, resources
+might already been freed when pinctrl_unregister is called by the
+devres framework. When calling devm_kfree on such a already freed
+resource, devres prints a warning:
+  WARNING: CPU: 0 PID: 1 at drivers/base/devres.c:891 pinmux_generic_free_functions+0xf4/0x128
+  ...
 
-bindings/interrupt-controller
+Solve this by not explicitly free resources. The two affected
+functions (pinmux_generic_free_functions/pinctrl_generic_free_groups)
+are only used in pinctrl_unregister. When not using the resource
+managed version of pinctrl, the underlying device will presumably
+get freed freed soon anyway.
 
->
->>>  1 file changed, 30 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/gpio/amlogic,meson-gpio-interrupt.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/gpio/amlogic,meson-gpio-interrupt.txt b/Documentation/devicetree/bindings/gpio/amlogic,meson-gpio-interrupt.txt
->>> new file mode 100644
->>> index 00000000..35a052b8
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/gpio/amlogic,meson-gpio-interrupt.txt
->>> @@ -0,0 +1,30 @@
->>> +Amlogic meson GPIO interrupt controller
->>> +
->>> +Meson SoCs contains an interrupt controller which is able watch the SoC pads
->>> +and generate an interrupt on edges or level. The controller is essentially a
->>> +256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
->>> +or level and polarity. We don't expose all 256 mux inputs because the
->>> +documentation shows that upper part is not mapped to any pad. The actual number
->>> +of interrupt exposed depends on the SoC.
->>> +
->>> +Required properties:
->>> +
->>> +- compatible : should be "amlogic,meson-gpio-interrupt", "syscon".
->>
->> Why syscon?
->>
-> Has been removed already in v2 of the patch.
->
->>> +- reg : Specifies base physical address and size of the registers.
->>> +- interrupts : list of GIC interrupts which can be used with the
->>> +           GPIO IRQ multiplexer
->>
->> What about interrupt-controller property?
->>
-> This HW is somewhat special, it's more or less a multiplexer between
-> 100+ GPIO's and 8 GIC IRQ's. And we have two GPIO domains, both having
-> a "gpio-controller".
-> It doesn't seem that the "interrupt-controller" property is right here.
-> I'd tend to say it should be added to the "gpio-controller" nodes.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/pinctrl/core.c   | 1 -
+ drivers/pinctrl/pinmux.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-I would say an interrupt controller is anything that controls
-routing/delivery of interrupts from source to cpu. This certainly
-meets that criteria.
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 1653cbda6a82..bc4c12008cd4 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -702,7 +702,6 @@ static void pinctrl_generic_free_groups(struct pinctrl_dev *pctldev)
+ 		group = radix_tree_lookup(&pctldev->pin_group_tree,
+ 					  indices[i]);
+ 		radix_tree_delete(&pctldev->pin_group_tree, indices[i]);
+-		devm_kfree(pctldev->dev, group);
+ 	}
+ 
+ 	pctldev->num_groups = 0;
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 9fd6d9087dc5..87098be84a3c 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -848,7 +848,6 @@ void pinmux_generic_free_functions(struct pinctrl_dev *pctldev)
+ 		function = radix_tree_lookup(&pctldev->pin_function_tree,
+ 					     indices[i]);
+ 		radix_tree_delete(&pctldev->pin_function_tree, indices[i]);
+-		devm_kfree(pctldev->dev, function);
+ 	}
+ 
+ 	pctldev->num_functions = 0;
+-- 
+2.13.0
 
-You could even use interrupt-map property to statically assign the
-sources to parent interrupts.
-
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
