@@ -1,53 +1,74 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: cherryview: Extend the Chromebook DMI quirk
- to Intel_Strago systems
-Date: Mon, 15 May 2017 15:26:19 -0700
-Message-ID: <CAKdAkRRp0M8sKHN+Q2icVkqk-CvUxTVh5cRkx2Jkn=pP=VtgKw@mail.gmail.com>
-References: <20170515110103.59765-1-mika.westerberg@linux.intel.com>
- <20170515110103.59765-4-mika.westerberg@linux.intel.com> <1494846878.6967.58.camel@linux.intel.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: ipq4019: add most other IPQ4019 pin
+ functions and groups
+Date: Mon, 15 May 2017 19:13:10 -0500
+Message-ID: <CAL_Jsq+cXPUu_cvEKS0EfBykyYBznrfL2fYdBhKfJQXegbKMag@mail.gmail.com>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com>
+ <20170510112712.14744-1-chunkeey@googlemail.com> <20170513001037.tpqdrjh3r6aciskx@rob-hp-laptop>
+ <6106539.ylfJifP948@debian64>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ua0-f180.google.com ([209.85.217.180]:35135 "EHLO
-        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751253AbdEOW0V (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 15 May 2017 18:26:21 -0400
-In-Reply-To: <1494846878.6967.58.camel@linux.intel.com>
+Received: from mail.kernel.org ([198.145.29.99]:45518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751970AbdEPANc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 15 May 2017 20:13:32 -0400
+In-Reply-To: <6106539.ylfJifP948@debian64>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jean Delvare <jdelvare@suse.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Wei Yongjun <weiyongjun1@huawei.com>, bbaude@redhat.com, mildred-bug.kernel@mildred.fr, barnacs@justletit.be, lvuksta@gmail.com, lkml <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Varadarajan Narayanan <varada@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ram Chandra Jangir <rjangir@codeaurora.org>, John Crispin <john@phrozen.org>
 
-On Mon, May 15, 2017 at 4:14 AM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, 2017-05-15 at 14:01 +0300, Mika Westerberg wrote:
->> It turns out there are quite many Chromebooks out there that have the
->> same keyboard issue than Acer Chromebook. All of them are based on
->> Intel_Strago reference and report their DMI_PRODUCT_FAMILY as
->> "Intel_Strago" (Samsung Chromebook 3 and Cyan Chromebooks are
->> exceptions
->> for which we add separate entries).
+On Sat, May 13, 2017 at 11:03 AM, Christian Lamparter
+<chunkeey@googlemail.com> wrote:
+> On Friday, May 12, 2017 7:10:37 PM CEST Rob Herring wrote:
+>> On Wed, May 10, 2017 at 01:27:11PM +0200, Christian Lamparter wrote:
+>> > This patch adds the remaining pin functions and mux groups.
+>> > It also fixes a typo in the existing binding document.
+>> >
+>> > Cc: Varadarajan Narayanan <varada@codeaurora.org>
+>> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> > Cc: Ram Chandra Jangir <rjangir@codeaurora.org>
+>> > Cc: John Crispin <john@phrozen.org>
+>> > Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+>> > ---
+>> > Note: These definitions were present in the original submission
+>> > <https://patchwork.kernel.org/patch/7630711/>
+>> >
+>> > The DT patch was acked by Rob Herring back then. However,
+>> > I'm not sure if this is still valid or not. @Rob, can you
+>> > please comment?
 >>
->> Instead of adding each machine to the quirk table, we use
->> DMI_PRODUCT_FAMILY of "Intel_Strago" that hopefully covers most of the
->> machines out there currently.
->>
->>
+>> Am I supposed to ack patch 1/2 or patch 1/2...? The first one has the
+>> preferred subject prefix.
 >
->> +             .ident = "Intel_Strago based Chromebooks",
+> This was my fault. I decided to reword the patch and changed
+> the subject among a few other things. So, this patch was sent
+> to the ML twice.
 >
->> +             .ident = "Cyan Chromebook",
+> Bjorn commented that he has some comments.
+> <http://www.spinics.net/lists/devicetree/msg176168.html>
 >
->> +             .ident = "Samsung Chromebook 3",
+> Unfortunately, he didn't say what exactly needs to be changed.
+> So, I'm not really sure how to proceed.
 >
-> I would do something like below (though I'm fine with current as well).
+> @Bjorn: can you please tell what you would like to see changed?
+> I see what I can do about it. I do have access two a few IPQ4019/8
+> and can ask a few people to run tests.
 >
->         .ident = "Intel_Strago based Chromebooks (All models)",
->         .ident = "Intel_Strago based Chromebooks (Cyan)",
+> @Rob:
+>
+> I noticed that:
+>
+> qcom,apq8064-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
+> qcom,ipq4019-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
+> qcom,ipq8064-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
+> qcom,msm8660-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength,
+> qcom,msm8974-pinctrl.txt: pins, function, bias-disable, bias-pull-down, bias-pull,up, drive-strength.
+>
+> all have the same "bias-pull,up". I think I'll just do
+> a separate patch for this to stop it from spreading :D.
 
-I think this one should be "Acer Chromebook R11 (Cyan)"
+Please do. Send it now and I'll apply for 4.12.
 
-Thanks.
-
--- 
-Dmitry
+Rob
