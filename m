@@ -1,156 +1,75 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Date: Wed, 17 May 2017 12:47:33 -0700
-Message-ID: <20170517194733.GG12920@tuxbook>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org>
- <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org>
- <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
- <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org>
- <4a39c13b-378d-08b5-a2fc-d3bdb32d106f@codeaurora.org>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH RfC v3 0/7] pintrl: meson: add support for GPIO IRQs
+Date: Wed, 17 May 2017 22:02:42 +0200
+Message-ID: <16950080-b19d-e25c-fb48-bc79cfe4acc0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4a39c13b-378d-08b5-a2fc-d3bdb32d106f@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:33310 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753308AbdEQUC4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2017 16:02:56 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On Mon 15 May 04:24 PDT 2017, Varadarajan Narayanan wrote:
+This patch series is partially based on a series Jerome Brunet
+submitted about half a year ago. Due to open questions this series never
+made it to mainline, see https://patchwork.kernel.org/patch/9384431/
 
-> 
-> 
-> On 5/15/2017 2:35 PM, Varadarajan Narayanan wrote:
-> > On 5/14/2017 9:53 AM, Bjorn Andersson wrote:
-> > > On Thu 11 May 03:33 PDT 2017, Varadarajan Narayanan wrote:
-> > > 
-> > > > On 5/11/2017 4:13 AM, Bjorn Andersson wrote:
-> > > > > On Thu 04 May 04:53 PDT 2017, Varadarajan Narayanan wrote:
-> > > > > 
-> > > [..]
-> > > > > > +enum ipq8074_functions {
-> > > > > 
-> > > > > Please keep these sorted alphabetically.
-> > > > 
-> > > > Ok
-> > > > 
-> > > > > > +    msm_mux_gpio,
-> > > > > > +    msm_mux_qpic_pad,
-> > > > > > +    msm_mux_blsp5_i2c,
-> > > > > > +    msm_mux_blsp5_spi,
-> > > > > > +    msm_mux_wci20,
-> > > > > 
-> > > > > What does "20" mean here?
-> > > > 
-> > > > This is for Wireless Coex Interface. The same functionality can
-> > > > be muxed on
-> > > > to different GPIOs. WCI2, is the 2nd edition of the WCI standard
-> > > > and 0, 1
-> > > > are for the muxing to different GPIOs (alternate muxes).
-> > > > 
-> > > 
-> > > In other Qualcomm platforms the alternative muxes are denoted by letters
-> > > (a,b,c...). Would you mind picking up this naming scheme, or do you see
-> > > any problems with that? (E.g. wci2a in this case)
-> > 
-> > Ok
-> > 
-> > > Btw, do you need any additional configuration for selecting alternative
-> > > muxing or is that automagical these days?
-> > 
-> > No additional configuration is needed.
-> > 
-> > > > > > +    msm_mux_blsp3_spi3,
-> > > > > > +    msm_mux_burn0,
-> > > > > > +    msm_mux_pcm_zsi0,
-> > > > > > +    msm_mux_blsp5_uart,
-> > > > > > +    msm_mux_mac12,
-> > > > > 
-> > > > > What does "12" mean here?
-> > > > 
-> > > > The SoC has three MAC cores. Each core has two pins for the
-> > > > smart antenna
-> > > > feature. macXY indicates the function select for MAC no. X and
-> > > > smart antenna
-> > > > no. Y.
-> > > > 
-> > > 
-> > > Ok
-> > > 
-> > > > > > +    msm_mux_blsp3_spi0,
-> > > > > > +    msm_mux_burn1,
-> > > > > > +    msm_mux_mac01,
-> > > > > > +    msm_mux_qdss_cti_trig_out_b0,
-> > > > > > +    msm_mux_qdss_cti_trig_in_b0,
-> > > > > > +    msm_mux_qpic_pad4,
-> > > > > 
-> > > > > What are qpic_pad and qpic_pad0 through qpic_pad8? Different functions,
-> > > > > alternative muxings...?
-> > > > 
-> > > > This is for the NAND and LCD display. The pins listed are the 9
-> > > > data pins.
-> > > > 
-> > > 
-> > > Then you can describe them all as "qpic_pad" (or simply "qpic"?). (It's
-> > > possible to reference a partial group in the DTS, if that's necessary)
-> > 
-> > There are two sets of 9 pins, either of which can go to NAND or LCD.
-> > Will rename qpic_pad as qpic_a and qpic_pad[0-8] as qpic_b.
-> > Is that ok?
-> > 
-> > > > > > +    msm_mux_blsp4_uart0,
-> > > > > > +    msm_mux_blsp4_i2c0,
-> > > > > > +    msm_mux_blsp4_spi0,
-> > > > > > +    msm_mux_mac21,
-> > > > > > +    msm_mux_qdss_cti_trig_out_b1,
-> > > > > > +    msm_mux_qpic_pad5,
-> > > > > > +    msm_mux_qdss_cti_trig_in_b1,
-> > > > > > +    msm_mux_qpic_pad6,
-> > > > > > +    msm_mux_qpic_pad7,
-> > > > > > +    msm_mux_cxc0,
-> > > > > > +    msm_mux_mac13,
-> > > > > > +    msm_mux_qdss_cti_trig_in_a1,
-> > > > > > +    msm_mux_qdss_cti_trig_out_a1,
-> > > > > > +    msm_mux_wci22,
-> > > > > > +    msm_mux_qdss_cti_trig_in_a0,
-> > > > > > +    msm_mux_qpic_pad1,
-> > > > > > +    msm_mux_qdss_cti_trig_out_a0,
-> > > > > > +    msm_mux_qpic_pad2,
-> > > > > > +    msm_mux_qpic_pad3,
-> > > > > > +    msm_mux_qdss_traceclk_b,
-> > > > > > +    msm_mux_qpic_pad0,
-> > > > > > +    msm_mux_qdss_tracectl_b,
-> > > > > > +    msm_mux_qpic_pad8,
-> > > > > > +    msm_mux_pcm_zsi1,
-> > > > > > +    msm_mux_qdss_tracedata_b,
-> > > > > > +    msm_mux_led0,
-> > > > > > +    msm_mux_pwm04,
-> > > > > 
-> > > > > What does "04" mean here?
-> > > > 
-> > > > There are 4 Pulse Width Modulation channels, pwmXY is pwm
-> > > > channel X and pin
-> > > > Y.
-> > > 
-> > > So Y is alternative mux? Can we use letters for this as well?
-> > 
-> > Ok
-> 
-> Sorry, actually they are not alternative muxes. There are 4 different PWM
-> instances. Each PWM instance can handle 'n' different GPIOs (for example,
-> that can be connected to LED etc.).
-> 
+This new attempt uses GPIOLIB_IRQCHIP resulting in less needed code.
+Included is also support for using two parent IRQs in case
+of IRQ_TYPE_EDGE_BOTH, like in the vendor driver.
 
-So we have 4 PWMs and the output from a single PWM can muxed to drive
-the output of 4 pins?
+The series was successfully tested on a Odroid-C2, e.g. with removing
+polling for SD card insertion/removal from the mmc driver.
 
-Then skip the last digit and just go pwm0, ... pwm3 and include all four
-pins that can be part of each instance. As the pingroup configuration is
-per pin in the TLMM it's possible to configure subsets of the pins in a
-group.
+Known open issues:
+- location of the irqchip driver and its DT binding documentation
 
-Regards,
-Bjorn
+Changes in v2:
+- separate the GPIO IRQ controller from the pinctrl driver
+- minor improvements to the GPIO IRQ controller
+
+Changes in v3:
+- replace the request_irq based allocation of parent irq's with
+  chained irq handling, this also fixes the spurious interrupts issue
+  and allows to remove the workaround code.
+  Last but not least the parent irq's are no longer visible in
+  /proc/interrupts.
+- minor improvements to the GPIO IRQ controller
+
+Heiner Kallweit (7):
+  pinctrl: meson: add interrupts to pinctrl data
+  pinctrl: meson: document GPIO IRQ DT binding
+  pinctrl: meson: add DT node for GPIO IRQ on Meson GX
+  pinctrl: meson: add DT node for GPIO IRQ on Meson 8 / 8b
+  pinctrl: meson: improve meson_get_bank and export it
+  pinctrl: meson: add support for GPIO interrupts
+  pinctrl: meson: add interrupt controller to GPIO DT nodes
+
+ .../bindings/gpio/amlogic,meson-gpio-interrupt.txt |  30 ++
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   4 +
+ arch/arm/boot/dts/meson8.dtsi                      |  15 +
+ arch/arm/boot/dts/meson8b.dtsi                     |  15 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |  13 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |   4 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |   4 +
+ drivers/pinctrl/Kconfig                            |   1 +
+ drivers/pinctrl/meson/Makefile                     |   2 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |  22 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c          |  20 +-
+ drivers/pinctrl/meson/pinctrl-meson-irq.c          | 320 +++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson.c              |  62 ++--
+ drivers/pinctrl/meson/pinctrl-meson.h              |  19 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c             |  20 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c            |  32 ++-
+ 16 files changed, 502 insertions(+), 81 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/amlogic,meson-gpio-interrupt.txt
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-irq.c
+
+-- 
+2.13.0
+
