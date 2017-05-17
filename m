@@ -1,240 +1,323 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH RfC v3 1/7] pinctrl: meson: add interrupts to pinctrl data
-Date: Wed, 17 May 2017 22:16:25 +0200
-Message-ID: <387c13a1-37f8-20d0-78f7-e99c31274ac1@gmail.com>
-References: <16950080-b19d-e25c-fb48-bc79cfe4acc0@gmail.com>
+Subject: Re: [PATCH v2 6/6] pintrl: meson: add support for GPIO interrupts
+Date: Wed, 17 May 2017 22:36:04 +0200
+Message-ID: <3dccae17-f811-bc26-e125-7ff3f0bffa7d@gmail.com>
+References: <36164ed8-aa59-2a77-b7fc-9adce03a2fc1@gmail.com>
+ <dc23b800-fe69-8143-6367-d3cd801cd6db@gmail.com>
+ <5e6d39fa-8f40-8233-6480-cb8306a4427a@baylibre.com>
+ <64a10dd2-a969-0251-b92f-3a1c40533373@gmail.com>
+ <4954c4b6-3cb7-3f2e-49dd-9a92359ae6e3@baylibre.com>
+ <fbaf536e-3416-3c4a-4902-05b56783f9c2@gmail.com>
+ <1494976589.2728.6.camel@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35604 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752995AbdEQURV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2017 16:17:21 -0400
-In-Reply-To: <16950080-b19d-e25c-fb48-bc79cfe4acc0@gmail.com>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35004 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753143AbdEQUgV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2017 16:36:21 -0400
+In-Reply-To: <1494976589.2728.6.camel@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, linux-amlogic@lists.infradead.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
-Add GPIO interrupt information to pinctrl data. Added to the original
-version from Jerome was data for Meson GXL.
+Am 17.05.2017 um 01:16 schrieb Jerome Brunet:
+> On Tue, 2017-05-16 at 20:31 +0200, Heiner Kallweit wrote:
+>> Am 16.05.2017 um 09:54 schrieb Neil Armstrong:
+>>> Hi Heiner,
+>>>
+>>> On 05/15/2017 09:00 PM, Heiner Kallweit wrote:
+>>>> Am 15.05.2017 um 10:05 schrieb Neil Armstrong:
+>>>>> On 05/12/2017 09:14 PM, Heiner Kallweit wrote:
+>>>>>> Add support for GPIO interrupts on Amlogic Meson SoC's.
+>>>>>>
+>>>>>> There's a limit of 8 parent interupts which can be used in total.
+>>>>>> Note that IRQ_TYPE_EDGE_BOTH interrupts reserve two parent IRQ's,
+>>>>>> one for each edge.
+>>>>>>
+>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>>>>> ---
+>>>>>> v2:
+>>>>>> - make the GPIO IRQ controller a separate driver
+>>>>>> - several smaller improvements
+>>>>>> ---
+>>>>>>  drivers/pinctrl/Kconfig                   |   1 +
+>>>>>>  drivers/pinctrl/meson/Makefile            |   2 +-
+>>>>>>  drivers/pinctrl/meson/pinctrl-meson-irq.c | 367
+>>>>>> ++++++++++++++++++++++++++++++
+>>>>>
+>>>>> Hi Heiner,
+>>>>>
+>>>>> This code has nothing to do with GPIOs on pinmux handling here, what we
+>>>>> figured with Jerome
+>>>>> is that this must be an independent IRQ Controller in drivers/irqchip.
+>>>>>
+>>>>
+>>>> I'm not convinced and would like to hear more opinions on that. I see it
+>>>> like this:
+>>>> The driver implements an irqchip, right. But it's not an interrupt
+>>>> controller.
+>>>> Due to using GPIOLIB_IRQCHIP the gpio controller now has an own irq domain
+>>>> (one for ao
+>>>> and one for periphs GPIO domain). Therefore the gpio-controller now also
+>>>> acts as
+>>>> interrupt-controller. And both gpio (and interrupt) controllers just use
+>>>> the irqchip
+>>>> exposed by the new driver.
+>>>> Last but not least the irqchip can be used with GPIOs only.
+>>>
+>>> In fact it's an interrupt controller since it can mask/unmask and control a
+>>> singal that
+>>> can wake up an interrupt for the ARM Core.
+>>>
+>>> Please look at the STM32 EXTI code, the design is quite similar except they
+>>> don't have a
+>>> dynamic management of links, but fixed ones.
+>>> They have a proper independant IRQCHIP driver and a link from the pinctrl
+>>> driver, and this
+>>> should be the right design.
+>>> They have a flaw since they do the mapping from the gpio_to_irq, and Linus
+>>> won't allow
+>>> this anymore.
+>>>
+>>
+>> At first I involve Rob as he also provided feedback regarding the DT part.
+>>
+>> I had a look at the STM32 EXTI code and it looks very similar to Jerome's
+>> version.
+>> Actually I'd assume that the first Meson driver attempt was modeled after
+>> STM32 EXTI.
+> Well, no. EXTI has been merged when I already submitted the RFC for this driver,
+> but that's not the point I suppose.
+> 
+>>
+>> As you just mentioned there are at least two issues:
+>> 1. The mapping can be requested via gpio_to_irq but it doesn't have to. A
+>> driver could
+> Maybe you missed it in our previous discussion with Linus but, no you can't
+> create mapping in gpio_to_irq. This callback is fast and creating mappings might
+> sleep because of the irq_domain mutex
+> 
+> https://patchwork.ozlabs.org/patch/684208/
+> 
+My comment was misunderstandable. What I meant was that a driver doesn't have to
+use gpio_to_irq to request an interrupt, this can also be done via DT.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-v2:
-- no changes
-v3:
-- no changes
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 22 ++++++++++----------
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 20 +++++++++----------
- drivers/pinctrl/meson/pinctrl-meson.h      | 15 +++++++++-----
- drivers/pinctrl/meson/pinctrl-meson8.c     | 20 +++++++++----------
- drivers/pinctrl/meson/pinctrl-meson8b.c    | 32 ++++++++++++++++++++----------
- 5 files changed, 63 insertions(+), 46 deletions(-)
+>>    also request a GPIO IRQ via DT.
+>> 2. Missing is the handling of IRQ_TYPE_EDGE_BOTH which requires the allocation
+>> of two
+>>    parent interrupts.
+>>
+>> When looking at the drivers under drivers/irqchip basically all of them
+>> implement not
+>> only an irqchip but also an IRQ domain. Providing an IRQ domain seems to me to
+>> be
+>> the main criteria whether something should be considered an interrupt
+>> controller
+>> (please correct me if this understanding is wrong).
+>>
+>> The STM32 EXTI drivers seems to me to be unnecessarily complex due to not
+>> using
+>> GPIOLIB_IRQCHIP. This GPIO framework extension can hide a significant part of
+>> the
+>> GPIO IRQ complexity.
+> I can only speculate regarding the design choice of STM EXTI, but I suppose the
+> EXTI controller is independent of the pinmux/gpio subsystem HW wise. It's only
+> weakly linked to the gpios, in the way that you have (or can create) a "map"
+> between the gpio and the irq line number provided.
+> 
+> That is also the case for the amlogic gpio-irq. I suppose that's why Neil
+> suggested to look at EXTI. That's also why I commented that this should be first
+> implemented as an independent controller of the gpio subsys  (so in
+> drivers/irqchip)
+> 
+> You may find it more complex, which is arguable, but it is a more accurate
+> representation of the HW.
+> 
+>>
+>> Coming back to my version:
+>> The new driver just implements an irqchip, no IRQ domain.
+>>  This irqchip then is
+>> provided to the IRQ domains bound to the respective gpio controllers (for AO
+>> and PERIPHS
+>> GPIO domain) - thanks to GPIOLIB_IRQCHIP handling of the IRQ domains comes for
+>> free.
+>>
+>> Adding the interrupt-controller property to the gpio-controller nodes is one
+>> thing
+>> still missing in my patch series. Then a driver can request a GPIO IRQ also
+>> via DT, e.g.:
+>>
+>> interrupt-parent = <&gpio>;
+>> interrupts = <GPIOZ_0 IRQ_TYPE_EDGE_BOTH>;
+>>
+>> interrupt-parent = <&gpio_ao>;
+>> interrupts = <GPIOAO_0 IRQ_TYPE_EDGE_BOTH>;
+>>
+> 
+> Which is also possible in the series, where the controller is gpio-irq device
+> itself. This is what the HW provide, so it should be possible. It would be nice
+> to have your way working as well, which I think is possible (PSB)
+> 
+>> Advantage of having an IRQ domain per GPIO controller is being able to to use
+>> the GPIO
+>> defines as is. Or in other words:
+>> GPIOAO_0 and GPIOZ_0 both have the value 0. This works here due to having one
+>> IRQ domain
+>> per GPIO controller (both using the same new irqchip).
+>>
+> 
+> I think you are onto something. As I told you previously, the problem was to
+> create the mappings in pinctrl w/o allocating the parent. I struggled with that
+> back in November and I had no time to really get back to it since.
+> 
+> Creating domains in each gpio controller, w/ all the mapping created at startup,
+>   stacked to the domain provided by the driver/irqchip would solve the problem.
+> 
+> We would just have to call find_mapping in gpio_to_irq, which is fine and
+> allocate the parent irq in the request_ressource callback.
+> 
+In request_resource we don't know the irq type yet (and therefore whether we need
+one or wo parent interrupts). IMHO we can't get completely rid of allocating
+parents in set_type.
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 9b00be15..e54dbeaa 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -782,20 +782,20 @@ static struct meson_pmx_func meson_gxbb_aobus_functions[] = {
- };
- 
- static struct meson_bank meson_gxbb_periphs_banks[] = {
--	/*   name    first                      last                    pullen  pull    dir     out     in  */
--	BANK("X",    PIN(GPIOX_0, EE_OFF),	PIN(GPIOX_22, EE_OFF),  4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
--	BANK("Y",    PIN(GPIOY_0, EE_OFF),	PIN(GPIOY_16, EE_OFF),  1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
--	BANK("DV",   PIN(GPIODV_0, EE_OFF),	PIN(GPIODV_29, EE_OFF), 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
--	BANK("H",    PIN(GPIOH_0, EE_OFF),	PIN(GPIOH_3, EE_OFF),   1, 20,  1, 20,  3, 20,  4, 20,  5, 20),
--	BANK("Z",    PIN(GPIOZ_0, EE_OFF),	PIN(GPIOZ_15, EE_OFF),  3,  0,  3,  0,  9,  0,  10, 0, 11,  0),
--	BANK("CARD", PIN(CARD_0, EE_OFF),	PIN(CARD_6, EE_OFF),    2, 20,  2, 20,  6, 20,  7, 20,  8, 20),
--	BANK("BOOT", PIN(BOOT_0, EE_OFF),	PIN(BOOT_17, EE_OFF),   2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
--	BANK("CLK",  PIN(GPIOCLK_0, EE_OFF),	PIN(GPIOCLK_3, EE_OFF), 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
-+	/*   name    first                      last                    irq       pullen  pull    dir     out     in  */
-+	BANK("X",    PIN(GPIOX_0, EE_OFF),	PIN(GPIOX_22, EE_OFF),  106, 128, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
-+	BANK("Y",    PIN(GPIOY_0, EE_OFF),	PIN(GPIOY_16, EE_OFF),   89, 105, 1,  0,  1,  0,  3,  0,  4,  0,  5,  0),
-+	BANK("DV",   PIN(GPIODV_0, EE_OFF),	PIN(GPIODV_29, EE_OFF),  59,  88, 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
-+	BANK("H",    PIN(GPIOH_0, EE_OFF),	PIN(GPIOH_3, EE_OFF),    30,  33, 1, 20,  1, 20,  3, 20,  4, 20,  5, 20),
-+	BANK("Z",    PIN(GPIOZ_0, EE_OFF),	PIN(GPIOZ_15, EE_OFF),   14,  29, 3,  0,  3,  0,  9,  0,  10, 0, 11,  0),
-+	BANK("CARD", PIN(CARD_0, EE_OFF),	PIN(CARD_6, EE_OFF),     52,  58, 2, 20,  2, 20,  6, 20,  7, 20,  8, 20),
-+	BANK("BOOT", PIN(BOOT_0, EE_OFF),	PIN(BOOT_17, EE_OFF),    34,  51, 2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
-+	BANK("CLK",  PIN(GPIOCLK_0, EE_OFF),	PIN(GPIOCLK_3, EE_OFF), 129, 132, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
- };
- 
- static struct meson_bank meson_gxbb_aobus_banks[] = {
--	/*   name    first              last               pullen  pull    dir     out     in  */
--	BANK("AO",   PIN(GPIOAO_0, 0),  PIN(GPIOAO_13, 0), 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
-+	/*   name    first              last               irq    pullen  pull    dir     out     in  */
-+	BANK("AO",   PIN(GPIOAO_0, 0),  PIN(GPIOAO_13, 0), 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
- struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 998210ea..bcd8da10 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -729,19 +729,19 @@ static struct meson_pmx_func meson_gxl_aobus_functions[] = {
- };
- 
- static struct meson_bank meson_gxl_periphs_banks[] = {
--	/*   name    first                      last                    pullen  pull    dir     out     in  */
--	BANK("X",    PIN(GPIOX_0, EE_OFF),	PIN(GPIOX_18, EE_OFF),  4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
--	BANK("DV",   PIN(GPIODV_0, EE_OFF),	PIN(GPIODV_29, EE_OFF), 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
--	BANK("H",    PIN(GPIOH_0, EE_OFF),	PIN(GPIOH_9, EE_OFF),   1, 20,  1, 20,  3, 20,  4, 20,  5, 20),
--	BANK("Z",    PIN(GPIOZ_0, EE_OFF),	PIN(GPIOZ_15, EE_OFF),  3,  0,  3,  0,  9,  0,  10, 0, 11,  0),
--	BANK("CARD", PIN(CARD_0, EE_OFF),	PIN(CARD_6, EE_OFF),    2, 20,  2, 20,  6, 20,  7, 20,  8, 20),
--	BANK("BOOT", PIN(BOOT_0, EE_OFF),	PIN(BOOT_15, EE_OFF),   2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
--	BANK("CLK",  PIN(GPIOCLK_0, EE_OFF),	PIN(GPIOCLK_1, EE_OFF), 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
-+	/*   name    first                      last                    irq	  pullen  pull    dir     out     in  */
-+	BANK("X",    PIN(GPIOX_0, EE_OFF),	PIN(GPIOX_18, EE_OFF),   89, 107, 4,  0,  4,  0,  12, 0,  13, 0,  14, 0),
-+	BANK("DV",   PIN(GPIODV_0, EE_OFF),	PIN(GPIODV_29, EE_OFF),  83,  88, 0,  0,  0,  0,  0,  0,  1,  0,  2,  0),
-+	BANK("H",    PIN(GPIOH_0, EE_OFF),	PIN(GPIOH_9, EE_OFF),    26,  35, 1, 20,  1, 20,  3, 20,  4, 20,  5, 20),
-+	BANK("Z",    PIN(GPIOZ_0, EE_OFF),	PIN(GPIOZ_15, EE_OFF),   10,  25, 3,  0,  3,  0,  9,  0,  10, 0, 11,  0),
-+	BANK("CARD", PIN(CARD_0, EE_OFF),	PIN(CARD_6, EE_OFF),     52,  58, 2, 20,  2, 20,  6, 20,  7, 20,  8, 20),
-+	BANK("BOOT", PIN(BOOT_0, EE_OFF),	PIN(BOOT_15, EE_OFF),    36,  51, 2,  0,  2,  0,  6,  0,  7,  0,  8,  0),
-+	BANK("CLK",  PIN(GPIOCLK_0, EE_OFF),	PIN(GPIOCLK_1, EE_OFF), 108, 109, 3, 28,  3, 28,  9, 28, 10, 28, 11, 28),
- };
- 
- static struct meson_bank meson_gxl_aobus_banks[] = {
--	/*   name    first              last              pullen  pull    dir     out     in  */
--	BANK("AO",   PIN(GPIOAO_0, 0),  PIN(GPIOAO_9, 0), 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
-+	/*   name    first              last              irq	pullen  pull    dir     out     in  */
-+	BANK("AO",   PIN(GPIOAO_0, 0),  PIN(GPIOAO_9, 0), 0, 9, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
- struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 1aa871d5..890f296f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -81,6 +81,7 @@ enum meson_reg_type {
-  * @name:	bank name
-  * @first:	first pin of the bank
-  * @last:	last pin of the bank
-+ * @irq:	hwirq base number of the bank
-  * @regs:	array of register descriptors
-  *
-  * A bank represents a set of pins controlled by a contiguous set of
-@@ -92,6 +93,8 @@ struct meson_bank {
- 	const char *name;
- 	unsigned int first;
- 	unsigned int last;
-+	int irq_first;
-+	int irq_last;
- 	struct meson_reg_desc regs[NUM_REG];
- };
- 
-@@ -147,12 +150,14 @@ struct meson_pinctrl {
- 		.num_groups = ARRAY_SIZE(fn ## _groups),		\
- 	}
- 
--#define BANK(n, f, l, per, peb, pr, pb, dr, db, or, ob, ir, ib)		\
-+#define BANK(n, f, l, fi, li, per, peb, pr, pb, dr, db, or, ob, ir, ib)	\
- 	{								\
--		.name	= n,						\
--		.first	= f,						\
--		.last	= l,						\
--		.regs	= {						\
-+		.name		= n,					\
-+		.first		= f,					\
-+		.last		= l,					\
-+		.irq_first	= fi,					\
-+		.irq_last	= li,					\
-+		.regs = {						\
- 			[REG_PULLEN]	= { per, peb },			\
- 			[REG_PULL]	= { pr, pb },			\
- 			[REG_DIR]	= { dr, db },			\
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 07f1cb21..32449820 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -916,19 +916,19 @@ static struct meson_pmx_func meson8_aobus_functions[] = {
- };
- 
- static struct meson_bank meson8_cbus_banks[] = {
--	/*   name    first             last                 pullen  pull    dir     out     in  */
--	BANK("X",    PIN(GPIOX_0, 0),  PIN(GPIOX_21, 0),    4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
--	BANK("Y",    PIN(GPIOY_0, 0),  PIN(GPIOY_16, 0),    3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
--	BANK("DV",   PIN(GPIODV_0, 0), PIN(GPIODV_29, 0),   0,  0,  0,  0,  7,  0,  8,  0,  9,  0),
--	BANK("H",    PIN(GPIOH_0, 0),  PIN(GPIOH_9, 0),     1, 16,  1, 16,  9, 19, 10, 19, 11, 19),
--	BANK("Z",    PIN(GPIOZ_0, 0),  PIN(GPIOZ_14, 0),    1,  0,  1,  0,  3, 17,  4, 17,  5, 17),
--	BANK("CARD", PIN(CARD_0, 0),   PIN(CARD_6, 0),      2, 20,  2, 20,  0, 22,  1, 22,  2, 22),
--	BANK("BOOT", PIN(BOOT_0, 0),   PIN(BOOT_18, 0),     2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
-+	/*   name    first             last                 irq       pullen  pull    dir     out     in  */
-+	BANK("X",    PIN(GPIOX_0, 0),  PIN(GPIOX_21, 0),    112, 133, 4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
-+	BANK("Y",    PIN(GPIOY_0, 0),  PIN(GPIOY_16, 0),    95,  111, 3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
-+	BANK("DV",   PIN(GPIODV_0, 0), PIN(GPIODV_29, 0),   65,   94, 0,  0,  0,  0,  7,  0,  8,  0,  9,  0),
-+	BANK("H",    PIN(GPIOH_0, 0),  PIN(GPIOH_9, 0),     29,   38, 1, 16,  1, 16,  9, 19, 10, 19, 11, 19),
-+	BANK("Z",    PIN(GPIOZ_0, 0),  PIN(GPIOZ_14, 0),    14,   28, 1,  0,  1,  0,  3, 17,  4, 17,  5, 17),
-+	BANK("CARD", PIN(CARD_0, 0),   PIN(CARD_6, 0),      58,   64, 2, 20,  2, 20,  0, 22,  1, 22,  2, 22),
-+	BANK("BOOT", PIN(BOOT_0, 0),   PIN(BOOT_18, 0),     39,   57, 2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
- };
- 
- static struct meson_bank meson8_aobus_banks[] = {
--	/*   name    first                  last                      pullen  pull    dir     out     in  */
--	BANK("AO",   PIN(GPIOAO_0, AO_OFF), PIN(GPIO_TEST_N, AO_OFF), 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
-+	/*   name    first                  last                      irq    pullen  pull    dir     out     in  */
-+	BANK("AO",   PIN(GPIOAO_0, AO_OFF), PIN(GPIO_TEST_N, AO_OFF), 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
- struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index bf747eb1..71f216b5 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -124,6 +124,12 @@ static const struct pinctrl_pin_desc meson8b_aobus_pins[] = {
- 	MESON_PIN(GPIOAO_11, AO_OFF),
- 	MESON_PIN(GPIOAO_12, AO_OFF),
- 	MESON_PIN(GPIOAO_13, AO_OFF),
-+
-+	/*
-+	 * The following 2 pins are not mentionned in the public datasheet
-+	 * According to this datasheet, they can't be used with the gpio
-+	 * interrupt controller
-+	 */
- 	MESON_PIN(GPIO_BSD_EN, AO_OFF),
- 	MESON_PIN(GPIO_TEST_N, AO_OFF),
- };
-@@ -881,19 +887,25 @@ static struct meson_pmx_func meson8b_aobus_functions[] = {
- };
- 
- static struct meson_bank meson8b_cbus_banks[] = {
--	/*   name    first                      last                   pullen  pull    dir     out     in  */
--	BANK("X",    PIN(GPIOX_0, 0),		PIN(GPIOX_21, 0),      4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
--	BANK("Y",    PIN(GPIOY_0, 0),		PIN(GPIOY_14, 0),      3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
--	BANK("DV",   PIN(GPIODV_9, 0),		PIN(GPIODV_29, 0),     0,  0,  0,  0,  7,  0,  8,  0,  9,  0),
--	BANK("H",    PIN(GPIOH_0, 0),		PIN(GPIOH_9, 0),       1, 16,  1, 16,  9, 19, 10, 19, 11, 19),
--	BANK("CARD", PIN(CARD_0, 0),		PIN(CARD_6, 0),        2, 20,  2, 20,  0, 22,  1, 22,  2, 22),
--	BANK("BOOT", PIN(BOOT_0, 0),		PIN(BOOT_18, 0),       2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
--	BANK("DIF",  PIN(DIF_0_P, 0),		PIN(DIF_4_N, 0),       5,  8,  5,  8, 12, 12, 13, 12, 14, 12),
-+	/*   name    first                      last                irq      pullen  pull    dir     out     in  */
-+	BANK("X",    PIN(GPIOX_0, 0),		PIN(GPIOX_21, 0),   97, 118, 4,  0,  4,  0,  0,  0,  1,  0,  2,  0),
-+	BANK("Y",    PIN(GPIOY_0, 0),		PIN(GPIOY_14, 0),   80,  96, 3,  0,  3,  0,  3,  0,  4,  0,  5,  0),
-+	BANK("DV",   PIN(GPIODV_9, 0),		PIN(GPIODV_29, 0),  59,  79, 0,  0,  0,  0,  7,  0,  8,  0,  9,  0),
-+	BANK("H",    PIN(GPIOH_0, 0),		PIN(GPIOH_9, 0),    14,  23, 1, 16,  1, 16,  9, 19, 10, 19, 11, 19),
-+	BANK("CARD", PIN(CARD_0, 0),		PIN(CARD_6, 0),     43,  49, 2, 20,  2, 20,  0, 22,  1, 22,  2, 22),
-+	BANK("BOOT", PIN(BOOT_0, 0),		PIN(BOOT_18, 0),    24,  42, 2,  0,  2,  0,  9,  0, 10,  0, 11,  0),
-+
-+	/*
-+	 * The following bank is not mentionned in the public datasheet
-+	 * There is no information whether it can be used with the gpio
-+	 * interrupt controller
-+	 */
-+	BANK("DIF",  PIN(DIF_0_P, 0),		PIN(DIF_4_N, 0),    -1,  -1, 5,  8,  5,  8, 12, 12, 13, 12, 14, 12),
- };
- 
- static struct meson_bank meson8b_aobus_banks[] = {
--	/*   name    first                  last                      pullen  pull    dir     out     in  */
--	BANK("AO",   PIN(GPIOAO_0, AO_OFF), PIN(GPIO_TEST_N, AO_OFF), 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
-+	/*   name    first                  last                      irq    pullen  pull    dir     out     in  */
-+	BANK("AO",   PIN(GPIOAO_0, AO_OFF), PIN(GPIO_TEST_N, AO_OFF), 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
- struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
--- 
-2.13.0
+>> And all I had to do is implementing one irq_chip and changing one line in the
+>> existing
+>> pinctrl driver.
+>> Whilst I have to admit that e.g. calling request_irq for a parent irq from the
+>> irq_set_type
+>> callback may be something people find ugly and hacky.
+>>
+> The fact is that the HW does not directly support IRQ_EDGE_BOTH. Yes, it would
+> be nice to find a way to support it anyway. There two possibilities for it:
+> * Change the change the edge type depending on the next expected edge: Marc
+> already stated that he is firmly against that. It is indeed not very robust
+> * Allocate and deallocate additional parent irq to get secondary irq in
+> set_type: This indeed looks hacky, I'd like to get the view of irq maintainers
+> on this.
+> 
+Support for IRQ_TYPE_EDGE_BOTH I'd consider a mandatory feature. It's needed
+e.g. by the SD card detection (drivers/mmc/slot-gpio.c).
 
+> 
+>> Compared to this implementation the STM32 EXTI drivers needs significantly
+>> more data
+>> structures, e.g. irqchip + irq domain in the irqchip driver, then hierarchical
+>> IRQ domain
+>> handling + further irqchip and irq domain + irq domain ops in the pinctrl
+>> driver.
+> 
+> Within reasonable limits, having more or less data, code lines does not make a
+> driver better or worse. 
+> 
+>>
+>> Last but not least coming back to the initial talk with Rob about where to
+>> best place the
+>> DT docu for this irqchip implementation:
+>> If acceptable I'd prefer to do it like .e.g in
+>> bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+>> or bindings/pinctrl/atmel,at91-pio4-pinctrl.txt.
+>> There the interrupt-controller properties are documented as part of the
+>> pinctrl driver and
+>> not separately under bindings/interrupt-controller.
+>>
+>> Maybe this explains a little bit better why I chose this approach.
+>>
+>> Rgds, Heiner
+>>
+>>>>
+>>>> In the irqchip implementation we need the SoC-specific mapping from GPIO
+>>>> number
+>>>> to internal GPIO IRQ number. Having to export this from
+>>>> drivers/pinctrl/meson for use
+>>>> under drivers/irqchip most likely would also cause objections.
+>>>
+>>> You won't need, this interrupt controller will take the number either from
+>>> DT either
+>>> from a mapping creating from the pinctrl driver. The link will only be
+>>> through the
+>>> irq subsystem.
+>>>
+>>>>
+>>>> So far my impression is that the very specific way GPIO IRQ's are handled
+>>>> on Meson
+>>>> doesn't fit perfectly into the current IRQ subsystem. Therefore the
+>>>> discussion
+>>>> about Jerome's version didn't result in the IRQ maintainers stating: do it
+>>>> this way ..
+>>>> Having said that most likely every possible approach is going to raise
+>>>> some concerns.
+>>>
+>>> It doesn't fit exactly, but the subsystem can certainly be used to achieve
+>>> it either by
+>>> using all it's capacity or by eventually discussing with the maintainers to
+>>> adapt it.
+>>>
+>>> Jerome has some hints hot to achieve the pinctrl part with everyone "happy".
+>>>
+>>>>
+>>>>> Please move it and make independent, you should be able to request irqs
+>>>>> without any links
+>>>>> to the pinmux/gpio since physically the GPIO lines input are always
+>>>>> connected to this
+>>>>> irq controller, and the pinmux has no impact on the interrupt management
+>>>>> here.
+>>>>>> From the GPIO-IRQ Controller perspective, the GPIOs are only a number
+>>>>>> and the pinmux code
+>>>>>
+>>>>> is only here to make the translation to a specific GPIO to a GPIO-IRQ
+>>>>> number.
+>>>>>
+>>>>> For more chance to have it upstreamed in the right way, we should :
+>>>>> 1) Collaborate, we can chat over IRC, maybe Slack, E-mail, skype,
+>>>>> forums, ...
+>>>>> 2) Push an independent IRQ controller that matches the capacity of the
+>>>>> HW
+>>>>> 3) Push a link from the pinctrl driver to have the to_gpio_irq mapping
+>>>>> done in the right way
+>>>>>
+>>>>> Jerome spent quite a lot of time and had a chat with the IRQ subsystem
+>>>>> maintainers to have s
+>>>>> clear image of how this should be implemented, and it would be a good
+>>>>> point to actually
+>>>>> have a chat with them to elaborate find a strong solution.
+>>>>>
+>>>>
+>>>> I know and I really appreciate Jerome's work and his discussion with the
+>>>> IRQ maintainers.
+>>>> My current attempt was inspired by his work.
+>>>> However the discussion last year ended w/o result and the topic of GPIO
+>>>> IRQs has been dead
+>>>> since then. And I think discussing approaches works best based on a
+>>>> concrete piece of code.
+>>>> Therefore I submitted my version as discussion basis. I didn't expect that
+>>>> everybody would
+>>>> be totally happy with it and it would go to mainline unchanged.
+>>>
+>>> Sure, thanks for the work,
+>>>
+>>>>
+>>>>> I'm sorry to say that pushing this code without really understanding how
+>>>>> and why will lead to
+>>>>> nothing expect frustration from everybody.
+>>>>>
+>>>>
+>>>> I can only speak for myself: I'm not frustrated and I can live with
+>>>> critical review comments.
+>>>
+>>> Great ! Anyway thanks for your work and I hope this will lead to mainline !
+>>>
+>>>> Regards, Heiner
+>>>>
+>>>>> Neil
+>>>
+>>> Neil
+>>>
+>>> [...]
+>>>
+>>
+>>
+> 
 
