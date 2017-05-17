@@ -1,20 +1,20 @@
 From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
-Date: Wed, 17 May 2017 06:13:55 +0000
-Message-ID: <AM3PR04MB30662FEAE88D7FE38055E9880E70@AM3PR04MB306.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is gpio
+Date: Wed, 17 May 2017 07:18:11 +0000
+Message-ID: <AM3PR04MB3061FB0760F94F2F816055A80E70@AM3PR04MB306.eurprd04.prod.outlook.com>
 References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
- <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
- <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
+ <1494830906-6442-3-git-send-email-aisheng.dong@nxp.com>
+ <6d47abc0527ae6f2214a9b37dfbeb154@agner.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-eopbgr20049.outbound.protection.outlook.com ([40.107.2.49]:14848
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr30071.outbound.protection.outlook.com ([40.107.3.71]:63776
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751005AbdEQGN7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 17 May 2017 02:13:59 -0400
-In-Reply-To: <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
+        id S1753243AbdEQHSO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 17 May 2017 03:18:14 -0400
+In-Reply-To: <6d47abc0527ae6f2214a9b37dfbeb154@agner.ch>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
@@ -23,20 +23,17 @@ Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel
 
 > -----Original Message-----
 > From: Stefan Agner [mailto:stefan@agner.ch]
-> Sent: Tuesday, May 16, 2017 1:11 AM
+> Sent: Tuesday, May 16, 2017 1:27 AM
 > To: A.S. Dong
 > Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
 > linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
 > kernel@pengutronix.de; Alexandre Courbot
-> Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
-> property
+> Subject: Re: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is gpi=
+o
 >=20
 > On 2017-05-14 23:48, Dong Aisheng wrote:
-> > iMX ULP has different IOB/OBE shift from Vibrid, so let's make
->=20
-> s/Vibrid/Vybrid
->=20
-> > it a SoC property.
+> > Do not assume MUX 0 is GPIO function in core driver as a different SoC
+> > may have different value. e.g. MX7ULP Mux 1 is GPIO.
 > >
 > > Cc: Linus Walleij <linus.walleij@linaro.org>
 > > Cc: Alexandre Courbot <gnurou@gmail.com>
@@ -46,62 +43,79 @@ Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel
 > > Cc: Bai Ping <ping.bai@nxp.com>
 > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 > > ---
-> >  drivers/pinctrl/freescale/pinctrl-imx.c     | 8 ++++----
-> >  drivers/pinctrl/freescale/pinctrl-imx.h     | 2 ++
-> >  drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 ++
-> >  drivers/pinctrl/freescale/pinctrl-vf610.c   | 2 ++
-> >  4 files changed, 10 insertions(+), 4 deletions(-)
+> >  drivers/pinctrl/freescale/pinctrl-imx.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
 > >
 > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
 > > b/drivers/pinctrl/freescale/pinctrl-imx.c
-> > index 57e1f7a..0d6aaca 100644
+> > index 0d6aaca..ed8ea32 100644
 > > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
 > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> > @@ -331,8 +331,8 @@ static int imx_pmx_gpio_set_direction(struct
+> > @@ -281,7 +281,7 @@ static int imx_pmx_gpio_request_enable(struct
 > > pinctrl_dev *pctldev,
-> >  	u32 reg;
-> >
-> >  	/*
-> > -	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
-> > -	 * They are part of the shared mux/conf register.
-> > +	 * Only Vybrid and iMX ULP has the input/output buffer enable flags
-> > +	 * (IBE/OBE) They are part of the shared mux/conf register.
-> >  	 */
-> >  	if (!(info->flags & SHARE_MUX_CONF_REG))
-> >  		return 0;
-> > @@ -344,9 +344,9 @@ static int imx_pmx_gpio_set_direction(struct
+> >  			continue;
+> >  		for (pin =3D 0; pin < grp->num_pins; pin++) {
+> >  			imx_pin =3D &((struct imx_pin *)(grp->data))[pin];
+> > -			if (imx_pin->pin =3D=3D offset && !imx_pin->mux_mode)
+> > +			if (imx_pin->pin =3D=3D offset)
+> >  				goto mux_pin;
+>=20
+> The reason I added that check was to make sure we pick a mux option which
+> is GPIO... With this change, any pinmux might be picked...
+>=20
+
+First of all, this seems to be wrong to me that GPIO mux mode is SoC
+Dependant and should not be put in pinctrl-imx core driver.
+
+Secondly, I think we may be over worried and it's not quite necessary
+As we did not do the sanity check for both raw config and mux data read
+>From Device tree, why only do it for GPIO?
+
+We may trust the data in device tree.
+
+> >  		}
+> >  	}
+> > @@ -292,6 +292,7 @@ static int imx_pmx_gpio_request_enable(struct
 > > pinctrl_dev *pctldev,
-> >  	/* IBE always enabled allows us to read the value "on the wire" */
 > >  	reg =3D readl(ipctl->base + pin_reg->mux_reg);
-> >  	if (input)
-> > -		reg &=3D ~0x2;
-> > +		reg =3D (reg & ~info->obe_bit) | info->ibe_bit;
-> >  	else
-> > -		reg |=3D 0x2;
-> > +		reg =3D (reg & ~info->ibe_bit) | info->obe_bit;
+> >  	reg &=3D ~info->mux_mask;
+> >  	reg |=3D imx_pin->config;
+> > +	reg |=3D imx_pin->mux_mode << info->mux_shift;
 >=20
-> Why disabling IBE bit now? As the comment above states, it is really hand=
-y
-> to leave the input buffer enabled so we can read back the true value on
-> the wire...
+> ... and muxed...
+>=20
+> Not sure if we want that.
+>=20
+> I had to control GPIO output/input through pinctrl since Vybrid does not
+> allow to control that from the GPIO block.
+>=20
+> However, according to your GPIO patchset, the i.MX 7ULP has a new registe=
+r
+> GPIO_PDDR to control output from the GPIO block. Is controlling the outpu=
+t
+> driver from IOMUXC still required?=20
+
+Yes, it's still required.
+
+> If not, I really would just not use all
+> that "find pinctrl config" hackery... e.g. add a new flag,
+> USE_IOMUXC_FOR_GPIO_OUTPUT, and set that only for Vybrid.
+>=20
+> This would also align much better with the other i.MX devices, where
+> pinmuxing and GPIO is completely orthogonal.
 >=20
 
-Does Vybrid reply on this bit to read the status of output from
-Port Data Input Register (GPIOx_PDIR)?
+Actually this patch came only because to make the exist code
+not break MX7ULP.
 
-Then, it is a bit strange that read status from input register when the GPI=
-O is
-Actually configured as output.
+Actually I'm wondering why we need implement=20
+imx_pmx_gpio_request_enable function?
 
-Probably it works on Vybrid, but I don't know if it's valid for MX7ULP.
+Per my understanding, IMX binding already set GPIO mux by
+Parsing MUX mode from device tree, so why need gpio_request_enable
+which looks like is duplicated.
 
-For MX7ULP, we will read input or output register accordingly by checking
-GPIO direction register (PDDR) and we will not enable Input buffer if the G=
-PIO
-is configured as output, this also save a bit power.
-
-I know Vybrid has no PDDR, probably that's why you enable IBE by default
-always.
+Can you help explain it?
 
 Regards
 Dong Aisheng
@@ -112,47 +126,3 @@ Dong Aisheng
 > >  	writel(reg, ipctl->base + pin_reg->mux_reg);
 > >
 > >  	return 0;
-> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
-> > b/drivers/pinctrl/freescale/pinctrl-imx.h
-> > index eb0ce95..9ded65d 100644
-> > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
-> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-> > @@ -67,6 +67,8 @@ struct imx_pinctrl_soc_info {
-> >  	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
-> >  	unsigned int mux_mask;
-> >  	u8 mux_shift;
-> > +	u32 ibe_bit;
-> > +	u32 obe_bit;
-> >
-> >  	/* generic pinconf */
-> >  	bool generic_pinconf;
-> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> > b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> > index dead416..f724a01 100644
-> > --- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> > +++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> > @@ -324,6 +324,8 @@ static struct imx_pinctrl_soc_info
-> imx7ulp_pinctrl_info =3D {
-> >  	.flags =3D ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
-> >  	.mux_mask =3D 0xf00,
-> >  	.mux_shift =3D 8,
-> > +	.ibe_bit =3D BIT(16),
-> > +	.obe_bit =3D BIT(17),
-> >  	.generic_pinconf =3D true,
-> >  	.custom_params =3D imx7ulp_cfg_params,
-> >  	.num_custom_params =3D ARRAY_SIZE(imx7ulp_cfg_params), diff --git
-> > a/drivers/pinctrl/freescale/pinctrl-vf610.c
-> > b/drivers/pinctrl/freescale/pinctrl-vf610.c
-> > index 3bd8556..c0823f9 100644
-> > --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
-> > +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
-> > @@ -301,6 +301,8 @@ static struct imx_pinctrl_soc_info
-> vf610_pinctrl_info =3D {
-> >  	.flags =3D SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
-> >  	.mux_mask =3D 0x700000,
-> >  	.mux_shift =3D 20,
-> > +	.ibe_bit =3D BIT(0),
-> > +	.obe_bit =3D BIT(1),
-> >  };
-> >
-> >  static const struct of_device_id vf610_pinctrl_of_match[] =3D {
