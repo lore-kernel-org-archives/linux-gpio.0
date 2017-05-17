@@ -1,90 +1,51 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v2 2/6] pintrl: meson: document GPIO IRQ DT binding
-Date: Wed, 17 May 2017 23:02:07 +0200
-Message-ID: <ec9310f1-10eb-789f-e6f7-67e0340f4c64@gmail.com>
-References: <36164ed8-aa59-2a77-b7fc-9adce03a2fc1@gmail.com>
- <c5ea65c5-f604-d890-4e73-f53bdd47bd31@gmail.com>
- <1494977339.2728.8.camel@baylibre.com>
+From: Brian Norris <briannorris@chromium.org>
+Subject: [4.12 REGRESSION] pinctrl: rockchip: sleeping function called from
+ atomic context
+Date: Wed, 17 May 2017 15:56:35 -0700
+Message-ID: <20170517225634.GA11404@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36622 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750944AbdEQVCS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2017 17:02:18 -0400
-In-Reply-To: <1494977339.2728.8.camel@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-pm-owner@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-Am 17.05.2017 um 01:28 schrieb Jerome Brunet:
-> On Fri, 2017-05-12 at 21:13 +0200, Heiner Kallweit wrote:
->> Document the DT binding for GPIO IRQ support on Amlogic Meson SoC's.
->>
->> This documentation is intentionally not placed under
->> interrupt-controllers as GPIO IRQ support on these SoC's acts more
->> like an interrupt multiplexer.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> ---
->> v2:
->> - remove syscon
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
->> b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
->> index 436b8750..44422b85 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
->> @@ -312,6 +312,19 @@
->>  				status = "disabled";
->>  			};
->>  
->> +			gpio_irq@9880 {
->> +				compatible = "amlogic,meson-gpio-interrupt";
->> +				reg = <0x0 0x09880 0x0 0x10>;
->> +				interrupts = <GIC_SPI 64 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 65 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 66 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 67 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 68 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 69 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 70 IRQ_TYPE_NONE>,
->> +					     <GIC_SPI 71 IRQ_TYPE_NONE>;
->> +			};
->> +
-> 
-> Already tried the same thing:
-> https://marc.info/?l=devicetree&m=147758174404359&w=2
-> 
-> Irq maintainers reminded me that this is not correct as the device is not able
-> to generate these particular irqs (it is merely routing the signal) and the
-> flags are meaning less here
-> 
-In one review comment to your patch series Rob mentioned to be fine with using
-the standard interrupts property.
-However other involved people might have had a different opinion, I didn't read
-all review comments.
+Hi,
 
-I think the standard interrupts property is the best way.
-We need mapped virq's to be used with the irq chaining. And for mapping an
-interrupt we need not only the hwirq but also the IRQ domain. The interrupts
-property and the related OF IRQ API calls like irq_of_parse_and_map provide
-exactly what we need.
+Looks like we've added a mutex in the ->bus_lock() callback for
+Rockchip's pinctrl irqchip, which triggers a CONFIG_DEBUG_ATOMIC_SLEEP
+warning when entering system suspend:
 
-If somebody has serious objections to using the interrupts property then we
-basically had to duplicate it and just give it a different name.
-And such code duplication to me seems to be worse than using the interrupts
-property slightly different than in the theory.
+[  151.406483] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:238
+[  151.420321] in_atomic(): 0, irqs_disabled(): 0, pid: 2447, name: cat
+[  151.427457] CPU: 2 PID: 2447 Comm: cat Tainted: G        W     4.12.0-rc1+
+[  151.435922] Hardware name: Google Kevin (DT)
+[  151.440687] Call trace:
+[  151.443440] [<ffffff900808b2fc>] dump_backtrace+0x0/0x2b8
+[  151.449485] [<ffffff900808b5d4>] show_stack+0x20/0x28
+[  151.455137] [<ffffff900848f738>] dump_stack+0xa4/0xcc
+[  151.460797] [<ffffff90080e3118>] ___might_sleep+0x16c/0x188
+[  151.467036] [<ffffff90080e31f4>] __might_sleep+0xc0/0xd4
+[  151.472979] [<ffffff9008a70ca0>] mutex_lock+0x2c/0x68
+[  151.478637] [<ffffff90084e806c>] rockchip_irq_bus_lock+0x48/0x54
+[  151.485364] [<ffffff900811e3ac>] __irq_get_desc_lock+0x9c/0xc8
+[  151.491895] [<ffffff900811fa3c>] irq_set_irq_wake+0x44/0x178
+[  151.498235] [<ffffff900860d190>] dev_pm_arm_wake_irq+0x78/0x84
+[  151.504769] [<ffffff90086137bc>] device_wakeup_arm_wake_irqs+0x48/0x70
+[  151.512077] [<ffffff90086109c8>] dpm_suspend_noirq+0x180/0x51c
+[  151.518608] [<ffffff90081171a4>] suspend_devices_and_enter+0x1dc/0xde4
+[  151.525914] [<ffffff90081187a4>] pm_suspend+0x9f8/0xa38
+[...]
 
-> 
->>  			watchdog@98d0 {
->>  				compatible = "amlogic,meson-gx-wdt",
->> "amlogic,meson-gxbb-wdt";
->>  				reg = <0x0 0x098d0 0x0 0x10>;
-> 
+The warning goes away if I revert commit 88bb94216f59 ("pinctrl:
+rockchip: avoid hardirq-unsafe functions in irq_chip").
 
+The thing is, the documentation (and apparent design) suggest that
+calling sleeping functions from ->irq_bus_lock() is perfectly valid. I'm
+not 100% following the ___might_sleep() logic, but is this complaining
+because of the RCU read locking in device_wakeup_arm_wake_irqs()? I have
+CONFIG_PREEMPT_RCU and CONFIG_PREEMPT enabled, FWIW.
+
+Brian
