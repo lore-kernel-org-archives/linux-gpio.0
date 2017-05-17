@@ -1,176 +1,104 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is gpio
-Date: Wed, 17 May 2017 11:16:13 -0700
-Message-ID: <e056a1185a4094e558fb20c7eb19da3d@agner.ch>
-References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
- <1494830906-6442-3-git-send-email-aisheng.dong@nxp.com>
- <6d47abc0527ae6f2214a9b37dfbeb154@agner.ch>
- <AM3PR04MB3061FB0760F94F2F816055A80E70@AM3PR04MB306.eurprd04.prod.outlook.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
+Date: Wed, 17 May 2017 12:24:20 -0700
+Message-ID: <20170517192420.GE12920@tuxbook>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com>
+ <3dac044cd9a879cad145f9a04dcc3d225721aa3c.1494415174.git.chunkeey@googlemail.com>
+ <20170510222328.GD45273@Bjorns-MacBook-Pro-2.local>
+ <2990002.PvbIJhg18q@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:56386 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751676AbdEQSQ4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2017 14:16:56 -0400
-In-Reply-To: <AM3PR04MB3061FB0760F94F2F816055A80E70@AM3PR04MB306.eurprd04.prod.outlook.com>
+Received: from mail-pg0-f48.google.com ([74.125.83.48]:35761 "EHLO
+        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbdEQTYT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 17 May 2017 15:24:19 -0400
+Received: by mail-pg0-f48.google.com with SMTP id q125so11461256pgq.2
+        for <linux-gpio@vger.kernel.org>; Wed, 17 May 2017 12:24:19 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <2990002.PvbIJhg18q@debian64>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "A.S. Dong" <aisheng.dong@nxp.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: John Crispin <john@phrozen.org>, linux-gpio@vger.kernel.org, Ram Chandra Jangir <rjangir@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, chrisrblake93@gmail.com
 
-On 2017-05-17 00:18, A.S. Dong wrote:
->> -----Original Message-----
->> From: Stefan Agner [mailto:stefan@agner.ch]
->> Sent: Tuesday, May 16, 2017 1:27 AM
->> To: A.S. Dong
->> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
->> kernel@pengutronix.de; Alexandre Courbot
->> Subject: Re: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is gpio
->>
->> On 2017-05-14 23:48, Dong Aisheng wrote:
->> > Do not assume MUX 0 is GPIO function in core driver as a different SoC
->> > may have different value. e.g. MX7ULP Mux 1 is GPIO.
->> >
->> > Cc: Linus Walleij <linus.walleij@linaro.org>
->> > Cc: Alexandre Courbot <gnurou@gmail.com>
->> > Cc: Shawn Guo <shawnguo@kernel.org>
->> > Cc: Stefan Agner <stefan@agner.ch>
->> > Cc: Fugang Duan <fugang.duan@nxp.com>
->> > Cc: Bai Ping <ping.bai@nxp.com>
->> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
->> > ---
->> >  drivers/pinctrl/freescale/pinctrl-imx.c | 3 ++-
->> >  1 file changed, 2 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
->> > b/drivers/pinctrl/freescale/pinctrl-imx.c
->> > index 0d6aaca..ed8ea32 100644
->> > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
->> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
->> > @@ -281,7 +281,7 @@ static int imx_pmx_gpio_request_enable(struct
->> > pinctrl_dev *pctldev,
->> >  			continue;
->> >  		for (pin = 0; pin < grp->num_pins; pin++) {
->> >  			imx_pin = &((struct imx_pin *)(grp->data))[pin];
->> > -			if (imx_pin->pin == offset && !imx_pin->mux_mode)
->> > +			if (imx_pin->pin == offset)
->> >  				goto mux_pin;
->>
->> The reason I added that check was to make sure we pick a mux option which
->> is GPIO... With this change, any pinmux might be picked...
->>
-> 
-> First of all, this seems to be wrong to me that GPIO mux mode is SoC
-> Dependant and should not be put in pinctrl-imx core driver.
+On Wed 17 May 08:44 PDT 2017, Christian Lamparter wrote:
 
-Hm, agree, we should consider to move
-imx_pmx_gpio_request_enable/disable_free and imx_pmx_gpio_set_direction
-into pinctrl-vf610.c
+> On Wednesday, May 10, 2017 3:23:28 PM CEST Bjorn Andersson wrote:
+> > On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
+> > 
+> > > From: Ram Chandra Jangir <rjangir@codeaurora.org>
+> > > 
+> > > Populate default values for various GPIO functions.
+> > > 
+> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > Cc: John Crispin <john@phrozen.org>
+> > > Signed-off-by: Ram Chandra Jangir <rjangir@codeaurora.org>
+> > 
+> > Thanks Christian for attempting to forward this, when doing so you
+> > should add your sob here.
+> Ok, will do that.
+> 
+> > I do however have some comments and requests for changes. @Ram would you
+> > be interested in this feedback and be willing to work on getting these
+> > additions upstream? Or do you have the ability to do this Christian?
+> I think this was enough time for Ram to comment.
+> 
+> @Bjorn, can you tell me what you want to see changed? 
 
-> 
-> Secondly, I think we may be over worried and it's not quite necessary
-> As we did not do the sanity check for both raw config and mux data read
-> From Device tree, why only do it for GPIO?
-> 
-> We may trust the data in device tree.
+I just wanted to make sure that someone was willing to follow up on my
+code review before spending the time looking through it.
 
-In Vybrid, there is no need to explicitly assign a pinmux to use a pin
-as GPIO. So the pinmux could be anything... The implemented semantics
-for Vyrbid is really different than i.MX, see below.
-
-> 
->> >  		}
->> >  	}
->> > @@ -292,6 +292,7 @@ static int imx_pmx_gpio_request_enable(struct
->> > pinctrl_dev *pctldev,
->> >  	reg = readl(ipctl->base + pin_reg->mux_reg);
->> >  	reg &= ~info->mux_mask;
->> >  	reg |= imx_pin->config;
->> > +	reg |= imx_pin->mux_mode << info->mux_shift;
->>
->> ... and muxed...
->>
->> Not sure if we want that.
->>
->> I had to control GPIO output/input through pinctrl since Vybrid does not
->> allow to control that from the GPIO block.
->>
->> However, according to your GPIO patchset, the i.MX 7ULP has a new register
->> GPIO_PDDR to control output from the GPIO block. Is controlling the output
->> driver from IOMUXC still required?
-> 
-> Yes, it's still required.
+> I didn't see any commments in the reply. As for my ability: I can do
+> development on my two customer routers: IPQ4018 (AVM FB4040) and IPQ4019
+> (Asus RT-AC58U). Furthermore, I can ask Chris Blake, he owns a IPQ4029
+> (Meraki MR33).
+>  
+> This should cover Ethernet (RMGII, PSGMII, MDIO and MDC), NAND,
+> PCIe, SPI0, UART0/1, I2C0/1. If John is willing to join, he could
+> verify emmc/sdio.
 > 
 
-That sounds weird, what is the GPIO_PDDR for then? Sure I  need to
-enable the output driver to drive the pin, but can I disable output just
-using GPIO_PDDR?
+I'm happy with this, will take a look at your patch!
 
-Maybe we have a miss understanding here:
-
-Lets assume we want to switch a GPIO between output and input:
-
-echo "output" > /sys/class/gpio/gpioN/direction
-..
-echo "input" > /sys/class/gpio/gpioN/direction
-
-Do I need to disable the output driver in the IOMUXC or can we just
-disable GPIO_PDDR and use the pin as input?
-
-If we can disable the output driver just using GPIO_PDDR, we can avoid
-the gpio_set_direction cross call.
-
-
->> If not, I really would just not use all
->> that "find pinctrl config" hackery... e.g. add a new flag,
->> USE_IOMUXC_FOR_GPIO_OUTPUT, and set that only for Vybrid.
->>
->> This would also align much better with the other i.MX devices, where
->> pinmuxing and GPIO is completely orthogonal.
->>
+> Thanks,
+> Christian
 > 
-> Actually this patch came only because to make the exist code
-> not break MX7ULP.
+> PS.: Last week, Ram has posted a update to pinctrl:
+> <http://www.mail-archive.com/lede-dev@lists.infradead.org/msg07387.html>
+> |From e77af7de404eb464f7da9e0daeb8b362cc66a7ba Mon Sep 17 00:00:00 2001
+> |From: Ram Chandra Jangir <rjan...@codeaurora.org>
+> |Date: Tue, 9 May 2017 11:45:00 +0530
+> |Subject: [PATCH] msm: pinctrl: Add support to configure ipq40xx GPIO_PULL bits
+> |
+> |GPIO_PULL bits configurations in TLMM_GPIO_CFG register
+> |differs for IPQ40xx from rest of the other qcom SoC's.
+> |This change add support to configure the msm_gpio_pull
+> |bits for ipq40xx, It is required to fix the proper
+> |configurations of gpio-pull bits for nand pins mux.
+> |
+> |IPQ40xx SoC:
+> |2'b10: Internal pull up enable.
+> |2'b11: Unsupport
+> |
+> |For other SoC's:
+> |2'b10: Keeper
+> |2'b11: Pull-Up
+> |[...]
+> I'll add this to the series as well.
 > 
-> Actually I'm wondering why we need implement 
-> imx_pmx_gpio_request_enable function?
-> 
-> Per my understanding, IMX binding already set GPIO mux by
-> Parsing MUX mode from device tree, so why need gpio_request_enable
-> which looks like is duplicated.
-> 
-> Can you help explain it?
 
-I suggest to read this clarification email wrt to pinctrl/gpio from
-Linus Walleij:
-https://lkml.org/lkml/2016/10/10/87
+I will give this some more thought, but initially I think the proposed
+solution is too verbose for my taste- so far this is the only platform
+I've seen having this.
 
-To summarize: We have different semantics in Vybrid: The GPIO subsystem
-automatically mux the GPIO for you. So in Vybrid, you do not have to mux
-a GPIO (but a valid entry in your device tree is needed, but does not
-assigned to any node).
+I think I would prefer if we extend the msm_pinctrl_soc_data with a
+single
 
-Is what the driver is doing for Vybrid wrong? It is different from i.MX,
-but afaik, it is not really wrong... Its a valid implementation
-according to the currently defined semantics...  Due to the *need* to
-touch pinctrl for direction, I had to implement cross calls anyway, so I
-thought I might as well go full mile and also mux the GPIO on request...
+  bool pull_no_keeper;
 
-So the question is, what semantic do we want for i.MX 7ULP? Since it is
-a i.MX device, we probably want the same semantics as i.MX 6/7 is
-already using for the sake of consistency. So in this case the
-gpio_request_enable/disable callbacks are not needed...
+and then check if this is set in the four places that matters
+pinctrl-msm.
 
-This is how I hope we can do the implementation for i.MX 7ULP:
-- Do not use gpio_request_enable/disable
-- Do not use gpio_set_direction either
-- Users using a GPIO should enable output driver in IOMUXC (just use a
-pin configuration where output driver is enabled)
-- The GPIO driver only enables/disables the output driver using its
-GPIO_PDDR register depending on GPIO direction
-
---
-Stefan
+Regards,
+Bjorn
