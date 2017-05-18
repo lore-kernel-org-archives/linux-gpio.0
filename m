@@ -1,60 +1,119 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 5/6] gpio-exar/8250-exar: Make set of exported GPIOs configurable
-Date: Thu, 18 May 2017 20:43:36 +0300
-Message-ID: <CAHp75VcOHq05ZHc=arV9URQ9C6_guLiERB=FQ7FQgBTBYNrvPQ@mail.gmail.com>
-References: <cover.1495119548.git.jan.kiszka@siemens.com> <357209721396d57cb871ae69d72308b1a7c9cbd7.1495119548.git.jan.kiszka@siemens.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
+Date: Thu, 18 May 2017 20:38:15 +0200
+Message-ID: <1975629.nrP45RYYW5@debian64>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <3dac044cd9a879cad145f9a04dcc3d225721aa3c.1494415174.git.chunkeey@googlemail.com> <20170517200729.GH12920@tuxbook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36774 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754505AbdERRni (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2017 13:43:38 -0400
-In-Reply-To: <357209721396d57cb871ae69d72308b1a7c9cbd7.1495119548.git.jan.kiszka@siemens.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36209 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756498AbdERSiT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2017 14:38:19 -0400
+In-Reply-To: <20170517200729.GH12920@tuxbook>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Ram Chandra Jangir <rjangir@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, John Crispin <john@phrozen.org>
 
-On Thu, May 18, 2017 at 5:59 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On the SIMATIC, IOT2040 only a single pin is exportable as GPIO, the
-> rest is required to operate the UART. To allow modeling this case,
-> expand the platform device data structure to specify a (consecutive) pin
-> subset for exporting by the gpio-exar driver.
+On Wednesday, May 17, 2017 1:07:29 PM CEST Bjorn Andersson wrote:
+> On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > index 743d1f458205..7219d1e33c71 100644
+> > --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > +	qca_mux_rmii0_refclk,
+> > +	qca_mux_wifi0_rfsilient0,
+> > +	qca_mux_wifi1_rfsilient0,
+> > +	qca_mux_smart2,
+> > +	qca_mux_led4,
+> 
+> What drives ledX? Is it 11 different LED controllers or is it a single
+> LED controller with 11 outputs.
 
-> +       unsigned int first_gpio;
+The latter. The IPQ40xx have one LED controller @ 0x1937000. 
+According to the driver (leds-ipq40xx.c in the SDK), it 
+does control up to 11 LEDs. A LED can either be muxed to
+one of the hardware sources (wifi, lan or wan-ports activity/linkspeed),
+or it can be operated by one of four software-programmable "blink"
+sources (each with a variable blink rate and duty cycle). 
+The driver labels each LED as "ipq40xx::led%d".
 
-Perhaps pin?
-Or shift?
+That said: ASUS, Cisco, Compex, Netgear, Zyxel... opted to either
+1. export the individual GPIOs with sysfs
+2. gpio-leds
 
-Because first_gpio a bit confusing with Linux side of GPIO.
+> [..]
+> > +	qca_mux_wifi01,
+> 
+> Please make these "wifi0" and include all "wifi0XY", rather than having
+> a group per pin.
+> 
+> > +	qca_mux_wifi11,
+> 
+> "wifi1"
 
-> -       unsigned int bank = offset / 8;
-> -       unsigned int addr;
-> +       struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
-> +       unsigned int bank, addr;
->
-> +       offset += exar_gpio->first_gpio;
-> +       bank = offset / 8;
+Ok. Can I leave wifi1_cal, _wci, uartX... the way they are?
+ 
+> > +	qca_mux_atest_char3,
+> > +	qca_mux_pmu0,
+> > +	qca_mux_boot8,
+> > +	qca_mux_tm1,
+> > +	qca_mux_atest_char2,
+> > +	qca_mux_pmu1,
+> > +	qca_mux_boot9,
+> > +	qca_mux_tm2,
+> > +	qca_mux_atest_char1,
+> > +	qca_mux_tm_ack,
+> > +	qca_mux_wifi03,
+> > +	qca_mux_wifi13,
+> > +	qca_mux_qpic_pad4,
+> 
+> Please keep an eye on the ipq8074 patch from Varadarajan and make this
+> follow the same scheme.
+Ok, I'll wait for how qca8074 plays out then.
+By the way, can you ask if the QCA8074 follows the IPQ40XX SoC's
+GPIO Pull-up config?
 
-Can't we instead do something like the following:
+I'm asking because Varadarajan was also involved in the
+pinctrl-ipq4019 back in 2015: <https://patchwork.kernel.org/patch/7662241/>
 
-struct exar_gpio_chip *exar_gpio = gpiochip_get_data(chip);
-unsigned int bank = (offset + exar_gpio->pin) / 8;
-unsigned int line = (offset + exar_gpio->pin) % 8;
+Back then, this wasn't mentioned anywhere. In fact, the special pull-up
+configuration was only discovered due to an issue with the NAND on the
+Cisco Meraki MR33. So I think it is better ask them now, when the devs
+are actually present/responding. 
 
+> > +	qca_mux_atest_char0,
+> > +	qca_mux_tm3,
+> > +	qca_mux_wifi02,
+> > +	qca_mux_wifi12,
+> > +	qca_mux_qpic_pad5,
+> > +	qca_mux_smart3,
+> > +	qca_mux_wcss0_dbg14,
+> 
+> Please squash these into "wcss0_dbg"
+Ok.
 
-> +       pdata.first_gpio = first_gpio;
-> +       pdata.ngpio = ngpio;
+> > +	qca_mux_tm4,
+> > +	qca_mux_wifi04,
+> > +	qca_mux_wifi14,
+> > +	qca_mux_qpic_pad6,
+> > +	qca_mux_wcss0_dbg15,
+> > +	qca_mux_qdss_tracectl_a,
+> > +	qca_mux_boot18,
+> 
+> Do you know what the "boot" function is and what 2, 4, 5, 7, 8, 9 11,
+> 14, 18, 19 and 20 means?
+Sadly no. That said, neither the u-boot nor the linux kernel
+sources set any pin to bootX. I think I'll remove it for now.
 
-Still thinking about device properties ("ngpios" and something like
-"exar8250,gpio-start").
+> [..]
+> > +	qca_mux_sdio0,
+> 
+> There are 8 of these, so that's more likely the 8 data pins in a single
+> function. Please squash them into "sdio_data".
+Yes, this is very likely. We know that this is the case for the qpic_padX.
 
-> +       unsigned int first_gpio;
-> +       unsigned int ngpio;
-
-u16 ?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Christian
