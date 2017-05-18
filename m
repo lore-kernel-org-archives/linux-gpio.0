@@ -1,66 +1,63 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 8/8] serial: exar: Add support for IOT2040 device
-Date: Thu, 18 May 2017 13:56:15 +0300
-Message-ID: <CAHp75VcapUvotWG7Ev_bVADa4SFMSLcPxDy31V_zcnG6bLAVeQ@mail.gmail.com>
-References: <cover.1494660546.git.jan.kiszka@siemens.com> <1d8ba1dea24da541389e8175097aa4f67eddc298.1494660546.git.jan.kiszka@siemens.com>
- <CAHp75VcG4rZiWoym9U4qaoEzUT_AY0m62oL+a8Zb-=3yBFV5Og@mail.gmail.com>
- <9c3fa989-b137-2935-23cd-d9c3a91c6ce6@siemens.com> <CAHp75VcKZumhYqc9SW_JM+8ecAEfi7mWbr6=d7kFVeEPA1_LkA@mail.gmail.com>
- <1ee7fc16-5bba-7be6-57b3-c6efaf9a1c6f@siemens.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1ee7fc16-5bba-7be6-57b3-c6efaf9a1c6f@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH v2 4/6] gpio: exar: Fix reading of directions and values
+Date: Thu, 18 May 2017 16:59:07 +0200
+Message-ID: <ace08e630ab57d08817c5e8669094c10a7c667ad.1495119548.git.jan.kiszka@siemens.com>
+References: <cover.1495119548.git.jan.kiszka@siemens.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from goliath.siemens.de ([192.35.17.28]:34632 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932717AbdERO7W (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2017 10:59:22 -0400
+In-Reply-To: <cover.1495119548.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1495119548.git.jan.kiszka@siemens.com>
+References: <cover.1495119548.git.jan.kiszka@siemens.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Thu, May 18, 2017 at 1:37 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On 2017-05-18 12:17, Andy Shevchenko wrote:
->> On Thu, May 18, 2017 at 8:06 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>> On 2017-05-13 15:54, Andy Shevchenko wrote:
+First, the logic for translating a register bit to the return code of
+exar_get_direction and exar_get_value were wrong. And second, there was
+a flip regarding the register bank in exar_get_direction.
 
->>>> Please, refactor that using properly formed DMI structrure and use its
->>>> callback and driver data facilities/
->>>
->>> Could you point to a specific example? The callback of the dmi_system_id
->>> structure is not designed to handle device initializations like this one
->>> - not to speak of having those two different initialization points here.
->>
->> Sure.
->>
->> drivers/platform/x86/dell-laptop.c:
->>
->> static const struct dmi_system_id dell_quirks[] __initconst = {
->>         {
->>                 .callback = dmi_matched,
->>                 .ident = "Dell Vostro V130",
->>                 .matches = {
->>                         DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
->>                         DMI_MATCH(DMI_PRODUCT_NAME, "Vostro V130"),
->>                 },
->>                 .driver_data = &quirk_dell_vostro_v130,
->>         },
->>
->>
->> (just in case, dmi_matched() is part of that module)
->>
->
-> OK, but that would basically replace the two lines for matching against
-> the DMI values with the structure above. We would still need the
-> existing hooks at the two points where we have them right now.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/gpio/gpio-exar.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Right.
-
-> Doesn't
-> look to me as if the code would become clearer or better separated or
-> easier extensible (the latter being hard anyway without knowing any
-> potential third special case).
-
-stmmac, that you chose as an example, should go that way in the first
-place because it was my though behind which is on-to-one to yours
-above.
-
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index 4ed1f8bdeda7..d8b6296c11de 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -69,7 +69,7 @@ static int exar_get(struct gpio_chip *chip, unsigned int reg)
+ 	value = readb(exar_gpio->regs + reg);
+ 	mutex_unlock(&exar_gpio->lock);
+ 
+-	return !!value;
++	return value;
+ }
+ 
+ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+@@ -79,7 +79,7 @@ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 	int val;
+ 
+ 	addr = bank ? EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
+-	val = exar_get(chip, addr) >> (offset % 8);
++	val = exar_get(chip, addr) & BIT(offset % 8);
+ 
+ 	return !!val;
+ }
+@@ -90,8 +90,8 @@ static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
+ 	unsigned int addr;
+ 	int val;
+ 
+-	addr = bank ? EXAR_OFFSET_MPIOLVL_LO : EXAR_OFFSET_MPIOLVL_HI;
+-	val = exar_get(chip, addr) >> (offset % 8);
++	addr = bank ? EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
++	val = exar_get(chip, addr) & BIT(offset % 8);
+ 
+ 	return !!val;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
+2.12.0
+
