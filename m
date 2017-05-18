@@ -1,51 +1,52 @@
-From: Brian Norris <briannorris@chromium.org>
-Subject: [4.12 REGRESSION] pinctrl: rockchip: sleeping function called from
- atomic context
-Date: Wed, 17 May 2017 15:56:35 -0700
-Message-ID: <20170517225634.GA11404@google.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [PATCH 8/8] serial: exar: Add support for IOT2040 device
+Date: Thu, 18 May 2017 07:06:58 +0200
+Message-ID: <9c3fa989-b137-2935-23cd-d9c3a91c6ce6@siemens.com>
+References: <cover.1494660546.git.jan.kiszka@siemens.com>
+ <1d8ba1dea24da541389e8175097aa4f67eddc298.1494660546.git.jan.kiszka@siemens.com>
+ <CAHp75VcG4rZiWoym9U4qaoEzUT_AY0m62oL+a8Zb-=3yBFV5Og@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-pm-owner@vger.kernel.org
-To: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from david.siemens.de ([192.35.17.14]:59683 "EHLO david.siemens.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754290AbdERFHN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 18 May 2017 01:07:13 -0400
+In-Reply-To: <CAHp75VcG4rZiWoym9U4qaoEzUT_AY0m62oL+a8Zb-=3yBFV5Og@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-Hi,
+On 2017-05-13 15:54, Andy Shevchenko wrote:
+> On Sat, May 13, 2017 at 10:29 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> This implements the setup of RS232 and the switch-over to RS485 or RS422
+>> for the Siemens IOT2040. That uses an EXAR XR17V352 with external logic
+>> to switch between the different modes. The external logic is controlled
+>> via MPIO pins of the EXAR controller.
+>>
+>> Only pin 10 can be exported as GPIO on the IOT2040. It is connected to
+>> an LED.
+>>
+>> As the XR17V352 used on the IOT2040 is not equipped with an external
+>> EEPROM, it cannot present itself as IOT2040-variant via subvendor/
+>> subdevice IDs. Thus, we have to check via DMI for the target platform.
+>>
+>> Co-developed with Sascha Weisenberger.
+>>
+> 
+> Please, refactor that using properly formed DMI structrure and use its
+> callback and driver data facilities/
 
-Looks like we've added a mutex in the ->bus_lock() callback for
-Rockchip's pinctrl irqchip, which triggers a CONFIG_DEBUG_ATOMIC_SLEEP
-warning when entering system suspend:
+Could you point to a specific example? The callback of the dmi_system_id
+structure is not designed to handle device initializations like this one
+- not to speak of having those two different initialization points here.
 
-[  151.406483] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:238
-[  151.420321] in_atomic(): 0, irqs_disabled(): 0, pid: 2447, name: cat
-[  151.427457] CPU: 2 PID: 2447 Comm: cat Tainted: G        W     4.12.0-rc1+
-[  151.435922] Hardware name: Google Kevin (DT)
-[  151.440687] Call trace:
-[  151.443440] [<ffffff900808b2fc>] dump_backtrace+0x0/0x2b8
-[  151.449485] [<ffffff900808b5d4>] show_stack+0x20/0x28
-[  151.455137] [<ffffff900848f738>] dump_stack+0xa4/0xcc
-[  151.460797] [<ffffff90080e3118>] ___might_sleep+0x16c/0x188
-[  151.467036] [<ffffff90080e31f4>] __might_sleep+0xc0/0xd4
-[  151.472979] [<ffffff9008a70ca0>] mutex_lock+0x2c/0x68
-[  151.478637] [<ffffff90084e806c>] rockchip_irq_bus_lock+0x48/0x54
-[  151.485364] [<ffffff900811e3ac>] __irq_get_desc_lock+0x9c/0xc8
-[  151.491895] [<ffffff900811fa3c>] irq_set_irq_wake+0x44/0x178
-[  151.498235] [<ffffff900860d190>] dev_pm_arm_wake_irq+0x78/0x84
-[  151.504769] [<ffffff90086137bc>] device_wakeup_arm_wake_irqs+0x48/0x70
-[  151.512077] [<ffffff90086109c8>] dpm_suspend_noirq+0x180/0x51c
-[  151.518608] [<ffffff90081171a4>] suspend_devices_and_enter+0x1dc/0xde4
-[  151.525914] [<ffffff90081187a4>] pm_suspend+0x9f8/0xa38
-[...]
+Thanks,
+Jan
 
-The warning goes away if I revert commit 88bb94216f59 ("pinctrl:
-rockchip: avoid hardirq-unsafe functions in irq_chip").
-
-The thing is, the documentation (and apparent design) suggest that
-calling sleeping functions from ->irq_bus_lock() is perfectly valid. I'm
-not 100% following the ___might_sleep() logic, but is this complaining
-because of the RCU read locking in device_wakeup_arm_wake_irqs()? I have
-CONFIG_PREEMPT_RCU and CONFIG_PREEMPT enabled, FWIW.
-
-Brian
+-- 
+Siemens AG, Corporate Technology, CT RDA ITP SES-DE
+Corporate Competence Center Embedded Linux
