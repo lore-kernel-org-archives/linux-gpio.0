@@ -1,66 +1,119 @@
 From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 0/5] pinctrl: imx: add generic pin config and imx7ulp support
-Date: Fri, 19 May 2017 15:05:40 +0800
-Message-ID: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V2 3/5] pinctrl: imx: add soc specific mux_mode mask and shift property
+Date: Fri, 19 May 2017 15:05:43 +0800
+Message-ID: <1495177545-23006-4-git-send-email-aisheng.dong@nxp.com>
+References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam03on0085.outbound.protection.outlook.com ([104.47.42.85]:3584
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+Received: from mail-sn1nam02on0047.outbound.protection.outlook.com ([104.47.36.47]:31379
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751003AbdESHFp (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 19 May 2017 03:05:45 -0400
+        id S1752827AbdESHFy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 19 May 2017 03:05:54 -0400
+In-Reply-To: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>
 
-This patch series intends to add the generic pin config support for imx
-platforms.
+MX7ULP MUX mode mask and shift bit is different from VF610.
+Let's make it a platform specific property for the later easy of
+adding MX7ULP support.
 
-The design is based on the exist architecture that the core will
-provide a uniformed way to decode the generic pin config into platform
-config register raw data according to the imx_cfg_params_decode maps
-registered by platform.
+One trick in exist code that Vybrid hardcoded the config part
+as 0xffff because its mux_config register BIT[15-0] are all configs
+part. But it's not true in ULP, so use mux_mask instead to address
+the difference.
 
-Two useful macros, IMX_CFG_PARAMS_DECODE and IMX_CFG_PARAMS_DECODE_INVERT,
-are created for platform to register decode map conveniently.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-In order to cope with some special case, a platform specific fixup()
-function is also available to use.
-
-The series also added the imx7ulp pinctrl support which only supports
-generic pin config.
-
+---
 ChangeLog:
 v1->v2:
- Minor changes including:
- * comments/commit messages improvement
- * add more descriptions in binding doc
- * move dt-bindings/pinctrl/imx7ulp-pinfunc.h to arch/arm/boot/dts
- See individual for details.
- * Patch 5 moved to patch 1 in new series
+ Minor changes:
+ * add more explanation about Vybrid trick in commit message.
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c   | 10 +++++-----
+ drivers/pinctrl/freescale/pinctrl-imx.h   |  4 ++++
+ drivers/pinctrl/freescale/pinctrl-vf610.c |  2 ++
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-Dong Aisheng (5):
-  pinctrl: imx: fix debug message for SHARE_MUX_CONF_REG case
-  pinctrl: imx: add generic pin config core support
-  pinctrl: imx: add soc specific mux_mode mask and shift property
-  dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
-  pinctrl: imx: add imx7ulp driver
-
- .../bindings/pinctrl/fsl,imx7ulp-pinctrl.txt       |  63 +++
- arch/arm/boot/dts/imx7ulp-pinfunc.h                | 468 +++++++++++++++++++++
- drivers/pinctrl/freescale/Kconfig                  |   9 +-
- drivers/pinctrl/freescale/Makefile                 |   1 +
- drivers/pinctrl/freescale/pinctrl-imx.c            | 130 +++++-
- drivers/pinctrl/freescale/pinctrl-imx.h            |  29 ++
- drivers/pinctrl/freescale/pinctrl-imx7ulp.c        | 358 ++++++++++++++++
- drivers/pinctrl/freescale/pinctrl-vf610.c          |   2 +
- 8 files changed, 1040 insertions(+), 20 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7ulp-pinctrl.txt
- create mode 100644 arch/arm/boot/dts/imx7ulp-pinfunc.h
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 6d5a517..bb7c625 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -197,8 +197,8 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
+ 		if (info->flags & SHARE_MUX_CONF_REG) {
+ 			u32 reg;
+ 			reg = readl(ipctl->base + pin_reg->mux_reg);
+-			reg &= ~(0x7 << 20);
+-			reg |= (pin->mux_mode << 20);
++			reg &= ~info->mux_mask;
++			reg |= (pin->mux_mode << info->mux_shift);
+ 			writel(reg, ipctl->base + pin_reg->mux_reg);
+ 			dev_dbg(ipctl->dev, "write: offset 0x%x val 0x%x\n",
+ 				pin_reg->mux_reg, reg);
+@@ -290,7 +290,7 @@ static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 
+ mux_pin:
+ 	reg = readl(ipctl->base + pin_reg->mux_reg);
+-	reg &= ~(0x7 << 20);
++	reg &= ~info->mux_mask;
+ 	reg |= imx_pin->config;
+ 	writel(reg, ipctl->base + pin_reg->mux_reg);
+ 
+@@ -434,7 +434,7 @@ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
+ 	*config = readl(ipctl->base + pin_reg->conf_reg);
+ 
+ 	if (info->flags & SHARE_MUX_CONF_REG)
+-		*config &= 0xffff;
++		*config &= ~info->mux_mask;
+ 
+ 	return 0;
+ }
+@@ -461,7 +461,7 @@ static int imx_pinconf_set(struct pinctrl_dev *pctldev,
+ 		if (info->flags & SHARE_MUX_CONF_REG) {
+ 			u32 reg;
+ 			reg = readl(ipctl->base + pin_reg->conf_reg);
+-			reg &= ~0xffff;
++			reg &= info->mux_mask;
+ 			reg |= configs[i];
+ 			writel(reg, ipctl->base + pin_reg->conf_reg);
+ 			dev_dbg(ipctl->dev, "write: offset 0x%x val 0x%x\n",
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index 38aa53c..880bba7 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -64,6 +64,10 @@ struct imx_pinctrl_soc_info {
+ 	const char *gpr_compatible;
+ 	struct mutex mutex;
+ 
++	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
++	unsigned int mux_mask;
++	u8 mux_shift;
++
+ 	/* generic pinconf */
+ 	bool generic_pinconf;
+ 	const struct pinconf_generic_params *custom_params;
+diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c b/drivers/pinctrl/freescale/pinctrl-vf610.c
+index 2b1e198..3bd8556 100644
+--- a/drivers/pinctrl/freescale/pinctrl-vf610.c
++++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+@@ -299,6 +299,8 @@ static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
+ 	.pins = vf610_pinctrl_pads,
+ 	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
+ 	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
++	.mux_mask = 0x700000,
++	.mux_shift = 20,
+ };
+ 
+ static const struct of_device_id vf610_pinctrl_of_match[] = {
 -- 
 2.7.4
 
