@@ -1,119 +1,113 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
-Date: Thu, 18 May 2017 20:38:15 +0200
-Message-ID: <1975629.nrP45RYYW5@debian64>
-References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <3dac044cd9a879cad145f9a04dcc3d225721aa3c.1494415174.git.chunkeey@googlemail.com> <20170517200729.GH12920@tuxbook>
+From: Mauro Carvalho Chehab <mchehab-JsYNTwtnfakRB7SZvlqPiA@public.gmane.org>
+Subject: [PATCH 00/29] Standardize doc formats - part 3
+Date: Thu, 18 May 2017 22:25:44 -0300
+Message-ID: <cover.1495157082.git.mchehab@s-opensource.com>
+Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36209 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756498AbdERSiT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 18 May 2017 14:38:19 -0400
-In-Reply-To: <20170517200729.GH12920@tuxbook>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <rtc-linux+bncBDN2TRMCWQGRBOUT7HEAKGQESX2WDPQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: Mauro Carvalho Chehab <mchehab-+2H6TX3emwOR5IQWS55C32Xnswh1EIUO@public.gmane.org>
+List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/rtc-linux
+List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/rtc-linux/subscribe>
+To: Linux Doc Mailing List <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Mauro Carvalho Chehab <mchehab-JsYNTwtnfakRB7SZvlqPiA@public.gmane.org>, Mauro Carvalho Chehab <mchehab-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Corbet <corbet-T1hC0tSOHrs@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Marek Vasut <marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Weinberger <richard-/L3Ra7n9ekc@public.gmane.org>, Cyrille Pitchen <cyrille.pitchen-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-remoteproc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kpreempt-tech-5NWGOfrQmneHXe+LvDLADg@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Ram Chandra Jangir <rjangir@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, John Crispin <john@phrozen.org>
 
-On Wednesday, May 17, 2017 1:07:29 PM CEST Bjorn Andersson wrote:
-> On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
-> > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> > index 743d1f458205..7219d1e33c71 100644
-> > --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> > +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> > +	qca_mux_rmii0_refclk,
-> > +	qca_mux_wifi0_rfsilient0,
-> > +	qca_mux_wifi1_rfsilient0,
-> > +	qca_mux_smart2,
-> > +	qca_mux_led4,
-> 
-> What drives ledX? Is it 11 different LED controllers or is it a single
-> LED controller with 11 outputs.
+Each document under Documentation/*.txt has its own format.
+Some follow markup notations, some don't even have a title!
 
-The latter. The IPQ40xx have one LED controller @ 0x1937000. 
-According to the driver (leds-ipq40xx.c in the SDK), it 
-does control up to 11 LEDs. A LED can either be muxed to
-one of the hardware sources (wifi, lan or wan-ports activity/linkspeed),
-or it can be operated by one of four software-programmable "blink"
-sources (each with a variable blink rate and duty cycle). 
-The driver labels each LED as "ipq40xx::led%d".
+In order to try to get some order on it, change the document
+style to the standard we're adopting after the adoption of
+ReStructured Text.
 
-That said: ASUS, Cisco, Compex, Netgear, Zyxel... opted to either
-1. export the individual GPIOs with sysfs
-2. gpio-leds
+The documents touched on this series now build fine with
+Sphinx, if renamed to *.rst extension.
 
-> [..]
-> > +	qca_mux_wifi01,
-> 
-> Please make these "wifi0" and include all "wifi0XY", rather than having
-> a group per pin.
-> 
-> > +	qca_mux_wifi11,
-> 
-> "wifi1"
+The main goal with this is to teach people by example about
+what format is expected on newer documents. It also helps
+to add those files to Kernel books.
 
-Ok. Can I leave wifi1_cal, _wci, uartX... the way they are?
- 
-> > +	qca_mux_atest_char3,
-> > +	qca_mux_pmu0,
-> > +	qca_mux_boot8,
-> > +	qca_mux_tm1,
-> > +	qca_mux_atest_char2,
-> > +	qca_mux_pmu1,
-> > +	qca_mux_boot9,
-> > +	qca_mux_tm2,
-> > +	qca_mux_atest_char1,
-> > +	qca_mux_tm_ack,
-> > +	qca_mux_wifi03,
-> > +	qca_mux_wifi13,
-> > +	qca_mux_qpic_pad4,
-> 
-> Please keep an eye on the ipq8074 patch from Varadarajan and make this
-> follow the same scheme.
-Ok, I'll wait for how qca8074 plays out then.
-By the way, can you ask if the QCA8074 follows the IPQ40XX SoC's
-GPIO Pull-up config?
+In order to make things more palatable, I'm spliting the
+conversion into three parts.
 
-I'm asking because Varadarajan was also involved in the
-pinctrl-ipq4019 back in 2015: <https://patchwork.kernel.org/patch/7662241/>
+This is	part 3.
 
-Back then, this wasn't mentioned anywhere. In fact, the special pull-up
-configuration was only discovered due to an issue with the NAND on the
-Cisco Meraki MR33. So I think it is better ask them now, when the devs
-are actually present/responding. 
+Mauro Carvalho Chehab (29):
+  pinctrl.txt: standardize document format
+  pnp.txt: standardize document format
+  preempt-locking.txt: standardize document format
+  printk-formats.txt: standardize document format
+  pwm.txt: standardize document format
+  rbtree.txt: standardize document format
+  remoteproc.txt: standardize document format
+  rfkill.txt: standardize document format
+  robust-futex-ABI.txt: standardize document format
+  robust-futexes.txt: standardize document format
+  rpmsg.txt: standardize document format
+  rtc.txt: standardize document format
+  SAK.txt: standardize document format
+  sgi-ioc4.txt: standardize document format
+  siphash.txt: standardize document format
+  SM501.txt: standardize document format
+  smsc_ece1099.txt: standardize document format
+  static-keys.txt: standardize document format
+  svga.txt: standardize document format
+  sync_file.txt: standardize document format
+  this_cpu_ops.txt: standardize document format
+  unaligned-memory-access.txt: standardize document format
+  vfio-mediated-device.txt: standardize document format
+  vfio.txt: standardize document format
+  video-output.txt: standardize document format
+  xillybus.txt: standardize document format
+  xz.txt: standardize document format
+  zorro.txt: standardize document format
+  dell_rbu.txt: standardize document format
 
-> > +	qca_mux_atest_char0,
-> > +	qca_mux_tm3,
-> > +	qca_mux_wifi02,
-> > +	qca_mux_wifi12,
-> > +	qca_mux_qpic_pad5,
-> > +	qca_mux_smart3,
-> > +	qca_mux_wcss0_dbg14,
-> 
-> Please squash these into "wcss0_dbg"
-Ok.
+ Documentation/SAK.txt                     |   65 +-
+ Documentation/SM501.txt                   |    9 +-
+ Documentation/dell_rbu.txt                |   81 ++-
+ Documentation/pinctrl.txt                 | 1104 +++++++++++++++--------------
+ Documentation/pnp.txt                     |  343 +++++----
+ Documentation/preempt-locking.txt         |   40 +-
+ Documentation/printk-formats.txt          |  416 ++++++-----
+ Documentation/pwm.txt                     |   46 +-
+ Documentation/rbtree.txt                  |   88 +--
+ Documentation/remoteproc.txt              |  320 +++++----
+ Documentation/rfkill.txt                  |   47 +-
+ Documentation/robust-futex-ABI.txt        |   14 +-
+ Documentation/robust-futexes.txt          |   12 +-
+ Documentation/rpmsg.txt                   |  340 +++++----
+ Documentation/rtc.txt                     |   44 +-
+ Documentation/sgi-ioc4.txt                |    4 +
+ Documentation/siphash.txt                 |  186 ++---
+ Documentation/smsc_ece1099.txt            |    4 +
+ Documentation/static-keys.txt             |  199 +++---
+ Documentation/svga.txt                    |  146 ++--
+ Documentation/sync_file.txt               |   23 +-
+ Documentation/this_cpu_ops.txt            |   49 +-
+ Documentation/unaligned-memory-access.txt |   57 +-
+ Documentation/vfio-mediated-device.txt    |  252 +++----
+ Documentation/vfio.txt                    |  261 +++----
+ Documentation/video-output.txt            |   54 +-
+ Documentation/xillybus.txt                |   29 +-
+ Documentation/xz.txt                      |  182 ++---
+ Documentation/zorro.txt                   |   59 +-
+ 29 files changed, 2437 insertions(+), 2037 deletions(-)
 
-> > +	qca_mux_tm4,
-> > +	qca_mux_wifi04,
-> > +	qca_mux_wifi14,
-> > +	qca_mux_qpic_pad6,
-> > +	qca_mux_wcss0_dbg15,
-> > +	qca_mux_qdss_tracectl_a,
-> > +	qca_mux_boot18,
-> 
-> Do you know what the "boot" function is and what 2, 4, 5, 7, 8, 9 11,
-> 14, 18, 19 and 20 means?
-Sadly no. That said, neither the u-boot nor the linux kernel
-sources set any pin to bootX. I think I'll remove it for now.
+-- 
+2.9.4
 
-> [..]
-> > +	qca_mux_sdio0,
-> 
-> There are 8 of these, so that's more likely the 8 data pins in a single
-> function. Please squash them into "sdio_data".
-Yes, this is very likely. We know that this is the case for the qpic_padX.
 
-Regards,
-Christian
+-- 
+You received this message because you are subscribed to "rtc-linux".
+Membership options at http://groups.google.com/group/rtc-linux .
+Please read http://groups.google.com/group/rtc-linux/web/checklist
+before submitting a driver.
+--- 
+You received this message because you are subscribed to the Google Groups "rtc-linux" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
