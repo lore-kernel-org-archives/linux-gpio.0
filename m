@@ -1,93 +1,43 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 01/29] pinctrl.txt: standardize document format
-Date: Fri, 19 May 2017 14:46:15 +0200
-Message-ID: <CAMuHMdXJ2Wc3MOCKY2QCm6xU1vOoZY_ttwORUVLHvj3rz0hyrQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, MTD Maling List <linux-mtd@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 1/9] MAINTAINERS: extend mvebu SoC entry with pinctrl drivers
+Date: Fri, 19 May 2017 18:04:43 +0200
+Message-ID: <93e35a2e47c794d2a74657c56469a42147857f9a.1495209664.git-series.gregory.clement@free-electrons.com>
+References: <cover.0dd8a92ae74fcec8d0470d0a7016035089e46eed.1495209664.git-series.gregory.clement@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:55535 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751208AbdESQFM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 19 May 2017 12:05:12 -0400
+In-Reply-To: <cover.0dd8a92ae74fcec8d0470d0a7016035089e46eed.1495209664.git-series.gregory.clement@free-electrons.com>
+In-Reply-To: <cover.0dd8a92ae74fcec8d0470d0a7016035089e46eed.1495209664.git-series.gregory.clement@free-electrons.com>
+References: <cover.0dd8a92ae74fcec8d0470d0a7016035089e46eed.1495209664.git-series.gregory.clement@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>
 
-Hi Mauro,
+There was no entry for the mvebu pinctrl drivers. As they are tightly
+linked to the SoCs and there is a lot of common code to support the
+various pinctrl of each SoCs, then add a new entry for the mvebu
+maintainers.
 
-On Fri, May 19, 2017 at 3:25 AM, Mauro Carvalho Chehab
-<mchehab@s-opensource.com> wrote:
-> Each text file under Documentation follows a different
-> format. Some doesn't even have titles!
->
-> Change its representation to follow the adopted standard,
-> using ReST markups for it to be parseable by Sphinx.
->
-> This document is almost following the standard stile.
->
-> There are only two things to adjust on it:
->
-> - promote the level of the document title;
-> - mark literal blocks as such.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for your patch!
-
-> --- a/Documentation/pinctrl.txt
-> +++ b/Documentation/pinctrl.txt
-> @@ -1,4 +1,7 @@
-> +===============================
->  PINCTRL (PIN CONTROL) subsystem
-> +===============================
-> +
->  This document outlines the pin control subsystem in Linux
->
->  This subsystem deals with:
-> @@ -33,7 +36,7 @@ When a PIN CONTROLLER is instantiated, it will register a descriptor to the
->  pin control framework, and this descriptor contains an array of pin descriptors
->  describing the pins handled by this specific pin controller.
->
-> -Here is an example of a PGA (Pin Grid Array) chip seen from underneath:
-> +Here is an example of a PGA (Pin Grid Array) chip seen from underneath::
->
->          A   B   C   D   E   F   G   H
->
-> @@ -54,39 +57,40 @@ Here is an example of a PGA (Pin Grid Array) chip seen from underneath:
->     1    o   o   o   o   o   o   o   o
->
->  To register a pin controller and name all the pins on this package we can do
-> -this in our driver:
-> +this in our driver::
->
-> -#include <linux/pinctrl/pinctrl.h>
-> +       #include <linux/pinctrl/pinctrl.h>
->
-> -const struct pinctrl_pin_desc foo_pins[] = {
-> -      PINCTRL_PIN(0, "A8"),
-> -      PINCTRL_PIN(1, "B8"),
-> -      PINCTRL_PIN(2, "C8"),
-> -      ...
-> -      PINCTRL_PIN(61, "F1"),
-> -      PINCTRL_PIN(62, "G1"),
-> -      PINCTRL_PIN(63, "H1"),
-> -};
-> +       const struct pinctrl_pin_desc foo_pins[] = {
-> +       PINCTRL_PIN(0, "A8"),
-> +       PINCTRL_PIN(1, "B8"),
-> +       PINCTRL_PIN(2, "C8"),
-> +       ...
-> +       PINCTRL_PIN(61, "F1"),
-> +       PINCTRL_PIN(62, "G1"),
-> +       PINCTRL_PIN(63, "H1"),
-> +       };
-
-The above block is no longer indented correctly.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f7d568b8f133..42befcdec846 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1496,6 +1496,7 @@ F:	arch/arm/boot/dts/armada*
+ F:	arch/arm/boot/dts/kirkwood*
+ F:	arch/arm64/boot/dts/marvell/armada*
+ F:	drivers/cpufreq/mvebu-cpufreq.c
++F:	drivers/pinctrl/mvebu/
+ F:	arch/arm/configs/mvebu_*_defconfig
+ 
+ ARM/Marvell Berlin SoC support
+-- 
+git-series 0.9.1
