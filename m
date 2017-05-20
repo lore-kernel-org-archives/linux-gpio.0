@@ -1,47 +1,136 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 5/6] gpio: mvebu: Add support for the Armada 7K/8K SoCs
-Date: Fri, 19 May 2017 19:05:52 +0200
-Message-ID: <20170519190552.744183b0@free-electrons.com>
-References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
-        <54efbdfb0a9800b2c72c6fa1d945c87182b242b4.1495210061.git-series.gregory.clement@free-electrons.com>
-        <20170519162410.GT22219@n2100.armlinux.org.uk>
-        <20170519162736.GU22219@n2100.armlinux.org.uk>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
+Date: Fri, 19 May 2017 22:08:24 -0700
+Message-ID: <20170520050824.GS12920@tuxbook>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com>
+ <3dac044cd9a879cad145f9a04dcc3d225721aa3c.1494415174.git.chunkeey@googlemail.com>
+ <20170517200729.GH12920@tuxbook>
+ <1975629.nrP45RYYW5@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170519162736.GU22219-l+eeeJia6m9URfEZ8mYm6t73F7V6hmMc@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
-Cc: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Omri Itach <omrii-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Neta Zur Hershkovits <neta-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Kostya Porotchkin <kostap-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Shadi Ammouri <shadi-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Marcin Wojtas <mw-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:33858 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755591AbdETFIQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 20 May 2017 01:08:16 -0400
+Received: by mail-qt0-f177.google.com with SMTP id c13so72090836qtc.1
+        for <linux-gpio@vger.kernel.org>; Fri, 19 May 2017 22:08:16 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1975629.nrP45RYYW5@debian64>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Ram Chandra Jangir <rjangir@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, John Crispin <john@phrozen.org>
 
-Hello,
+On Thu 18 May 11:38 PDT 2017, Christian Lamparter wrote:
 
-On Fri, 19 May 2017 17:27:36 +0100, Russell King - ARM Linux wrote:
+> On Wednesday, May 17, 2017 1:07:29 PM CEST Bjorn Andersson wrote:
+> > On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
+> > > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > index 743d1f458205..7219d1e33c71 100644
+> > > --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > +	qca_mux_rmii0_refclk,
+> > > +	qca_mux_wifi0_rfsilient0,
+> > > +	qca_mux_wifi1_rfsilient0,
+> > > +	qca_mux_smart2,
+> > > +	qca_mux_led4,
+> > 
+> > What drives ledX? Is it 11 different LED controllers or is it a single
+> > LED controller with 11 outputs.
+> 
+> The latter. The IPQ40xx have one LED controller @ 0x1937000. 
+> According to the driver (leds-ipq40xx.c in the SDK), it 
+> does control up to 11 LEDs. A LED can either be muxed to
+> one of the hardware sources (wifi, lan or wan-ports activity/linkspeed),
+> or it can be operated by one of four software-programmable "blink"
+> sources (each with a variable blink rate and duty cycle). 
+> The driver labels each LED as "ipq40xx::led%d".
+> 
 
-> Hmm, in fact, mvebu->offset always appears to be zero in this driver,
-> so I think the changes that add this member are entirely rendundant to
-> the function of this patch.
+As they all stem from the same hardware block I suggest we name the
+function "led".
 
->From PATCH 6/6:
+> That said: ASUS, Cisco, Compex, Netgear, Zyxel... opted to either
+> 1. export the individual GPIOs with sysfs
+> 2. gpio-leds
+> 
 
-+					offset = <0x1040>;
+For any software-driven LED control it makes sense to configure the pins
+as gpio and just rely on the gpio-leds driver.
 
-+					offset = <0x100>;
+But as you have both hardware driven control and hardware blink support
+it sounds like there's good reason to have a specific LED driver as
+well.
 
-+					offset = <0x140>;
+> > [..]
+> > > +	qca_mux_wifi01,
+> > 
+> > Please make these "wifi0" and include all "wifi0XY", rather than having
+> > a group per pin.
+> > 
+> > > +	qca_mux_wifi11,
+> > 
+> > "wifi1"
+> 
+> Ok. Can I leave wifi1_cal, _wci, uartX... the way they are?
+>  
 
-So, no mvchip->offset is not always 0.
+Yes, that sounds reasonable
 
-Best regards,
+> > > +	qca_mux_atest_char3,
+> > > +	qca_mux_pmu0,
+> > > +	qca_mux_boot8,
+> > > +	qca_mux_tm1,
+> > > +	qca_mux_atest_char2,
+> > > +	qca_mux_pmu1,
+> > > +	qca_mux_boot9,
+> > > +	qca_mux_tm2,
+> > > +	qca_mux_atest_char1,
+> > > +	qca_mux_tm_ack,
+> > > +	qca_mux_wifi03,
+> > > +	qca_mux_wifi13,
+> > > +	qca_mux_qpic_pad4,
+> > 
+> > Please keep an eye on the ipq8074 patch from Varadarajan and make this
+> > follow the same scheme.
+> Ok, I'll wait for how qca8074 plays out then.
+> By the way, can you ask if the QCA8074 follows the IPQ40XX SoC's
+> GPIO Pull-up config?
+> 
+> I'm asking because Varadarajan was also involved in the
+> pinctrl-ipq4019 back in 2015: <https://patchwork.kernel.org/patch/7662241/>
+> 
+> Back then, this wasn't mentioned anywhere. In fact, the special pull-up
+> configuration was only discovered due to an issue with the NAND on the
+> Cisco Meraki MR33. So I think it is better ask them now, when the devs
+> are actually present/responding. 
+> 
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I do unfortunately not have access to the specification or either
+platform, I would appreciate if you could post a reply on Varadarajan's
+IPQ8074 patch asking him to verify the layout of the config register.
+
+[..]
+> > > +	qca_mux_boot18,
+> > 
+> > Do you know what the "boot" function is and what 2, 4, 5, 7, 8, 9 11,
+> > 14, 18, 19 and 20 means?
+> Sadly no. That said, neither the u-boot nor the linux kernel
+> sources set any pin to bootX. I think I'll remove it for now.
+> 
+
+Better leave them out for now then.
+
+> > [..]
+> > > +	qca_mux_sdio0,
+> > 
+> > There are 8 of these, so that's more likely the 8 data pins in a single
+> > function. Please squash them into "sdio_data".
+> Yes, this is very likely. We know that this is the case for the qpic_padX.
+> 
+
+Sounds good.
+
+Regards,
+Bjorn
