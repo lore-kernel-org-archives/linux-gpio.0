@@ -1,45 +1,118 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH-RFT 2/2] pinctrl: samsung: Split Exynos drivers per ARMv7
- and ARMv8
-Date: Sat, 20 May 2017 19:14:42 +0200
-Message-ID: <20170520171442.scgss76fbawsmhjd@kozik-lap>
-References: <20170516200649.4730-1-krzk@kernel.org>
- <20170516200649.4730-3-krzk@kernel.org>
- <CACRpkdbfNu0SHPsPoRzAj2by3HGBcGwD2jLKr1sUHEA2scnyQw@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 7/9] pinctrl: mvebu: add driver for Armada AP806 pinctrl
+Date: Sat, 20 May 2017 15:04:22 -0400
+Message-ID: <CAP=VYLrpQJ+C+KaEVcv8Rjmp470UH9-+MKAsjErXYoh=AME-Qw@mail.gmail.com>
+References: <cover.0dd8a92ae74fcec8d0470d0a7016035089e46eed.1495209664.git-series.gregory.clement@free-electrons.com>
+ <5a190d4d71cb8626315b832c6f987e9e03da2fa9.1495209664.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbfNu0SHPsPoRzAj2by3HGBcGwD2jLKr1sUHEA2scnyQw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35041 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755962AbdETTEy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 20 May 2017 15:04:54 -0400
+In-Reply-To: <5a190d4d71cb8626315b832c6f987e9e03da2fa9.1495209664.git-series.gregory.clement@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>, Hanna Hawa <hannah@marvell.com>
 
-On Sat, May 20, 2017 at 07:12:13PM +0200, Linus Walleij wrote:
-> On Tue, May 16, 2017 at 10:06 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> 
-> > Exynos pinctrl drivers contain pretty big per-SoC data structures.  The
-> > pinctrl-exynos object file contained code and data for both ARMv7 and
-> > ARMv8 SoCs thus it grew big.  There will not be a shared image between
-> > ARMv7 and ARMv8 so there is no need to combine all of this into one
-> > driver.
-> >
-> > Splitting the data allows to make it more granular (e.g. code related to
-> > ARMv8 Exynos is self-contained), slightly speed up the compilation and
-> > reduce the effective size of compiled kernel.
-> >
-> > The common data structures and functions reside still in existing
-> > pinctrl-exynos.c.  Only the SoC-specific parts were moved out to new
-> > files.  Except marking few functions non-static and adding them to
-> > header, there were no functional changes in the code.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> I guess I will get this from you with a pull request?
+On Fri, May 19, 2017 at 12:04 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+> From: Hanna Hawa <hannah@marvell.com>
+>
+> This commit adds a pinctrl driver for the pin-muxing controller found in
+> the AP806 part of the Marvell Armada 7K and 8K SoCs. Its register
+> interface is compatible with the one used by previous mvebu pin
+> controllers, so the common logic in drivers/pinctrl/mvebu/pinctrl-mvebu.c
+> is used.
+>
+> Signed-off-by: Hanna Hawa <hannah@marvell.com>
+> Reviewed-by: Shadi Ammouri <shadi@marvell.com>
+> [updated for mvebu pinctrl changes
+>  - converted to simple_mmio
+>  - removed unimplemented .remove function
+>  - removed DTS description
+>   - converted  to use syscon/regmap
+>  --rmk]
+> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+>  drivers/pinctrl/mvebu/Kconfig                |   4 +-
+>  drivers/pinctrl/mvebu/Makefile               |   1 +-
+>  drivers/pinctrl/mvebu/pinctrl-armada-ap806.c | 145 ++++++++++++++++++++-
+>  3 files changed, 150 insertions(+)
+>  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
+>
+> diff --git a/drivers/pinctrl/mvebu/Kconfig b/drivers/pinctrl/mvebu/Kconfig
+> index 8cb444b60ae9..0e0b009f2b71 100644
+> --- a/drivers/pinctrl/mvebu/Kconfig
+> +++ b/drivers/pinctrl/mvebu/Kconfig
+> @@ -28,6 +28,10 @@ config PINCTRL_ARMADA_39X
+>         bool
+>         select PINCTRL_MVEBU
+>
+> +config PINCTRL_ARMADA_AP806
+> +       bool
+> +       select PINCTRL_MVEBU
 
-Yes, I'll send it to you with pull request.
+If this isn't going to be modular, can we remove all the uses
+of module.h and MODULE_ etc.   I've nearly got all of these
+cleaned up in pinctrl and it would be nice to not have new
+ones creep back in.
 
-Best regards,
-Krzysztof
+Thanks,
+Paul.
+--
+
+> +
+>  config PINCTRL_ARMADA_XP
+>         bool
+>         select PINCTRL_MVEBU
+> diff --git a/drivers/pinctrl/mvebu/Makefile b/drivers/pinctrl/mvebu/Makefile
+> index 60c245a60f39..455db274b53d 100644
+> --- a/drivers/pinctrl/mvebu/Makefile
+> +++ b/drivers/pinctrl/mvebu/Makefile
+> @@ -5,6 +5,7 @@ obj-$(CONFIG_PINCTRL_ARMADA_370) += pinctrl-armada-370.o
+>  obj-$(CONFIG_PINCTRL_ARMADA_375) += pinctrl-armada-375.o
+>  obj-$(CONFIG_PINCTRL_ARMADA_38X) += pinctrl-armada-38x.o
+>  obj-$(CONFIG_PINCTRL_ARMADA_39X) += pinctrl-armada-39x.o
+> +obj-$(CONFIG_PINCTRL_ARMADA_AP806) += pinctrl-armada-ap806.o
+>  obj-$(CONFIG_PINCTRL_ARMADA_XP)  += pinctrl-armada-xp.o
+>  obj-$(CONFIG_PINCTRL_ARMADA_37XX)  += pinctrl-armada-37xx.o
+>  obj-$(CONFIG_PINCTRL_ORION)  += pinctrl-orion.o
+> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-ap806.c b/drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
+> new file mode 100644
+> index 000000000000..269b1c1f53b1
+> --- /dev/null
+> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
+> @@ -0,0 +1,145 @@
+> +/*
+> + * Marvell Armada ap806 pinctrl driver based on mvebu pinctrl core
+> + *
+> + * Copyright (C) 2017 Marvell
+> + *
+> + * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> + * Hanna Hawa <hannah@marvell.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+
+[...]
+
+> +module_platform_driver(armada_ap806_pinctrl_driver);
+> +
+> +MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
+> +MODULE_DESCRIPTION("Marvell Armada ap806 pinctrl driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> git-series 0.9.1
