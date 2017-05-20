@@ -1,72 +1,45 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: single: use of_device_get_match_data() to get soc
- data
-Date: Sun, 21 May 2017 01:02:17 +0900
-Message-ID: <1495296137-6461-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH-RFT 2/2] pinctrl: samsung: Split Exynos drivers per ARMv7
+ and ARMv8
+Date: Sat, 20 May 2017 19:12:13 +0200
+Message-ID: <CACRpkdbfNu0SHPsPoRzAj2by3HGBcGwD2jLKr1sUHEA2scnyQw@mail.gmail.com>
+References: <20170516200649.4730-1-krzk@kernel.org> <20170516200649.4730-3-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f176.google.com ([209.85.223.176]:34941 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752475AbdETRMP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 20 May 2017 13:12:15 -0400
+Received: by mail-io0-f176.google.com with SMTP id f102so62029679ioi.2
+        for <linux-gpio@vger.kernel.org>; Sat, 20 May 2017 10:12:15 -0700 (PDT)
+In-Reply-To: <20170516200649.4730-3-krzk@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Use of_device_get_match_data() instead of of_match_device().
-It allows us to remove the forward declaration of pcs_of_match.
+On Tue, May 16, 2017 at 10:06 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> Exynos pinctrl drivers contain pretty big per-SoC data structures.  The
+> pinctrl-exynos object file contained code and data for both ARMv7 and
+> ARMv8 SoCs thus it grew big.  There will not be a shared image between
+> ARMv7 and ARMv8 so there is no need to combine all of this into one
+> driver.
+>
+> Splitting the data allows to make it more granular (e.g. code related to
+> ARMv8 Exynos is self-contained), slightly speed up the compilation and
+> reduce the effective size of compiled kernel.
+>
+> The common data structures and functions reside still in existing
+> pinctrl-exynos.c.  Only the SoC-specific parts were moved out to new
+> files.  Except marking few functions non-static and adding them to
+> header, there were no functional changes in the code.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
- drivers/pinctrl/pinctrl-single.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I guess I will get this from you with a pull request?
 
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index 9c267dc..b8b3d93 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -1270,8 +1270,6 @@ static void pcs_free_resources(struct pcs_device *pcs)
- #endif
- }
- 
--static const struct of_device_id pcs_of_match[];
--
- static int pcs_add_gpio_func(struct device_node *node, struct pcs_device *pcs)
- {
- 	const char *propname = "pinctrl-single,gpio-range";
-@@ -1637,15 +1635,14 @@ static int pcs_quirk_missing_pinctrl_cells(struct pcs_device *pcs,
- static int pcs_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	const struct of_device_id *match;
- 	struct pcs_pdata *pdata;
- 	struct resource *res;
- 	struct pcs_device *pcs;
- 	const struct pcs_soc_data *soc;
- 	int ret;
- 
--	match = of_match_device(pcs_of_match, &pdev->dev);
--	if (!match)
-+	soc = of_device_get_match_data(&pdev->dev);
-+	if (WARN_ON(!soc))
- 		return -EINVAL;
- 
- 	pcs = devm_kzalloc(&pdev->dev, sizeof(*pcs), GFP_KERNEL);
-@@ -1658,7 +1655,6 @@ static int pcs_probe(struct platform_device *pdev)
- 	raw_spin_lock_init(&pcs->lock);
- 	mutex_init(&pcs->mutex);
- 	INIT_LIST_HEAD(&pcs->gpiofuncs);
--	soc = match->data;
- 	pcs->flags = soc->flags;
- 	memcpy(&pcs->socdata, soc, sizeof(*soc));
- 
--- 
-2.7.4
+Yours,
+Linus Walleij
