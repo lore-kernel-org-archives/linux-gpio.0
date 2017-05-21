@@ -1,48 +1,61 @@
-From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-Subject: Re: gpio-exar: Why filtering out Commtech devices?
-Date: Sun, 21 May 2017 21:08:41 +0100
-Message-ID: <7a25751e-931f-b713-dcdd-7a7483aae115@codethink.co.uk>
-References: <18f4b5cb-cba0-aab4-7958-84a5b8d28935@siemens.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 0/3] gpio: move include files out of include/linux/i2c
+Date: Sun, 21 May 2017 23:57:24 +0200
+Message-ID: <20170521215727.1243-1-wsa@the-dreams.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from imap0.codethink.co.uk ([185.43.218.159]:57895 "EHLO
-        imap0.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752959AbdEUUIq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 21 May 2017 16:08:46 -0400
-In-Reply-To: <18f4b5cb-cba0-aab4-7958-84a5b8d28935@siemens.com>
+Received: from sauhun.de ([88.99.104.3]:55388 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932173AbdEUV5b (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 21 May 2017 17:57:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>, Matt Schulte <matts@commtech-fastcom.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
+To: linux-i2c@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, adi-buildroot-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
 
-Hi Jan,
+It doesn't make sense to use include/linux/i2c for client drivers which may in
+fact rather be hwmon or input or whatever devices. As a result, I want to
+deprecate include/linux/i2c for good. This series moves the include files to a
+better location, largely include/linux/platform_data because that is what most
+of the moved include files contain.
 
-On 21/05/17 12:46, Jan Kiszka wrote:
-> Hi Sudip,
->
-> why do we carry
->
-> 	if (pcidev->vendor != PCI_VENDOR_ID_EXAR)
-> 		return -ENODEV;
->
-> in gpio_exar_probe? This effectively prevents that
->
-> 	EXAR_DEVICE(COMMTECH, COMMTECH_4222PCIE, pbn_exar_XR17V35x),
-> 	EXAR_DEVICE(COMMTECH, COMMTECH_4224PCIE, pbn_exar_XR17V35x),
-> 	EXAR_DEVICE(COMMTECH, COMMTECH_4228PCIE, pbn_exar_XR17V35x),
->
-> gain GPIO support. Do those devices lack access to the pins? Or can we
-> drop the filter. I don't have access to those devices, just wondering
-> because the code is not explaining the reason.
+I prefer the series to go upstream via the subsystem tree; if you prefer that I
+take it via I2C, just let me know.
 
-Same here. I do not have these devices and have no idea if they support 
-the gpio pins or not.
+No runtime testing because of no HW, but buildbot is happy with this series at
+least. A branch can be found here:
 
-Adding Matt Schulte in the Cc list, maybe he can comment.
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/platform_data
 
+Thanks and kind regards,
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  gpio: max732x: move header file out of I2C realm
+  gpio: pcf857x: move header file out of I2C realm
+  gpio: adp5588: move header file out of I2C realm
+
+ arch/arm/mach-davinci/board-da830-evm.c        | 2 +-
+ arch/arm/mach-davinci/board-dm644x-evm.c       | 2 +-
+ arch/arm/mach-davinci/board-dm646x-evm.c       | 2 +-
+ arch/arm/mach-pxa/balloon3.c                   | 2 +-
+ arch/arm/mach-pxa/littleton.c                  | 2 +-
+ arch/arm/mach-pxa/stargate2.c                  | 2 +-
+ arch/blackfin/mach-bf537/boards/stamp.c        | 2 +-
+ arch/mips/ath79/mach-pb44.c                    | 2 +-
+ drivers/gpio/gpio-adp5588.c                    | 2 +-
+ drivers/gpio/gpio-max732x.c                    | 2 +-
+ drivers/gpio/gpio-pcf857x.c                    | 2 +-
+ drivers/input/keyboard/adp5588-keys.c          | 2 +-
+ include/linux/{i2c => platform_data}/adp5588.h | 0
+ include/linux/{i2c => platform_data}/max732x.h | 0
+ include/linux/{i2c => platform_data}/pcf857x.h | 0
+ 15 files changed, 12 insertions(+), 12 deletions(-)
+ rename include/linux/{i2c => platform_data}/adp5588.h (100%)
+ rename include/linux/{i2c => platform_data}/max732x.h (100%)
+ rename include/linux/{i2c => platform_data}/pcf857x.h (100%)
 
 -- 
-Regards
-Sudip
+2.11.0
+
