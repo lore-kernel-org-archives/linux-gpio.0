@@ -1,49 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/3] mfd: twl: move header file out of I2C realm
-Date: Mon, 22 May 2017 12:12:02 +0100
-Message-ID: <20170522111202.ho52rve7kwloytef@sirena.org.uk>
-References: <20170521220212.1404-1-wsa@the-dreams.de>
- <20170521220212.1404-4-wsa@the-dreams.de>
- <20170522095243.ff5uygzzrvo57jkd@sirena.org.uk>
- <20170522102812.GA1459@katana>
+From: "A.S. Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+Subject: RE: [PATCH V2 4/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding
+ doc
+Date: Mon, 22 May 2017 12:30:21 +0000
+Message-ID: <AM3PR04MB306C6E7EA4431A773B25CCF80F80@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
+ <1495177545-23006-5-git-send-email-aisheng.dong@nxp.com>
+ <CACRpkdb6B-f0uHUo9ecUmGCzY8GfFbCjNtJFeQJqtKEYwyB87A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3cgcyz2pgijsvimy"
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170522102812.GA1459@katana>
-Sender: linux-input-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dani
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdb6B-f0uHUo9ecUmGCzY8GfFbCjNtJFeQJqtKEYwyB87A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Jacky Bai <ping.bai-3arQi8VN3Tc@public.gmane.org>, Andy Duan <fugang.duan-3arQi8VN3Tc@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-
---3cgcyz2pgijsvimy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, May 22, 2017 at 12:28:12PM +0200, Wolfram Sang wrote:
-
-> If you were not CCed on the other patches, then you are likely not
-> listed as a maintainer for them?
-
-Right, but it does mean that the people who only get a subset of patches
-are missing context for how things are expected to be handled.
-Sometimes it's clear but often it isn't.
-
---3cgcyz2pgijsvimy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlkix4EACgkQJNaLcl1U
-h9AoyggAgaMjiKp5VVkDMDXvnk7mjJn0zZJkLTo8eRqXQezPfYpmF9xgddizz6aP
-amhuCFkOGq/szuZvUiqRuuZVR927HUTth5jHEI5oXJlpSzkD9GFYWKFb5DEGk7z8
-+PxlTwkovPNwkvLLRkPeYL1u3NxZoBQLflM5wU7L0F3xjIWeObAptv8O+LyUvt/A
-v6SKbNM3qYATkx0KYyJk/MoQQRJqW8D7dfzPqZ/0qNucWnI+XpQHW3zD7f1YujYn
-njy7ZP+ATutTod2ziOBAXUREZuMZCnY4xtyJvbMrUdcxlYYzqfvc5VswGE1V5Shq
-R0sjq6K15NBdpTXTAv89glr1IEeaRA==
-=Ko/9
------END PGP SIGNATURE-----
-
---3cgcyz2pgijsvimy--
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWls
+dG86bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBNb25kYXksIE1heSAyMiwgMjAx
+NyA1OjI3IFBNDQo+IFRvOiBBLlMuIERvbmc7IEphY29wbyBNb25kaTsgR2VlcnQgVXl0dGVyaG9l
+dmVuOyBDaHJpcyBCcmFuZHQ7IEFuZHkNCj4gU2hldmNoZW5rbw0KPiBDYzogbGludXgtZ3Bpb0B2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4g
+U2hhd24gR3VvOyBTdGVmYW4gQWduZXI7IEphY2t5IEJhaTsgQW5keSBEdWFuOyBTYXNjaGEgSGF1
+ZXI7IFJvYiBIZXJyaW5nOw0KPiBNYXJrIFJ1dGxhbmQ7IGRldmljZXRyZWVAdmdlci5rZXJuZWwu
+b3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjIgNC81XSBkdC1iaW5kaW5nczogcGluY3RybDog
+YWRkIGlteDd1bHAgcGluY3RybA0KPiBiaW5kaW5nIGRvYw0KPiANCj4gT24gRnJpLCBNYXkgMTks
+IDIwMTcgYXQgOTowNSBBTSwgRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4gd3Jv
+dGU6DQo+IA0KPiA+IGkuTVggN1VMUCBoYXMgdGhyZWUgSU9NVVhDIGluc3RhbmNlczogSU9NVVhD
+MCBmb3IgTTQgcG9ydHMsDQo+ID4gSU9NVVhDMSBmb3IgQTcgcG9ydHMgYW5kIElPTVVYQyBERFIg
+Zm9yIEREUiBpbnRlcmZhY2UuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGFkZHMgdGhlIElPTVVYQzEg
+c3VwcG9ydCBmb3IgQTcuDQo+ID4NCj4gPiBDYzogUm9iIEhlcnJpbmcgPHJvYmgrZHRAa2VybmVs
+Lm9yZz4NCj4gPiBDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT4NCj4gPiBD
+YzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogTGludXMgV2FsbGVpaiA8bGlu
+dXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiA+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5l
+bC5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhw
+LmNvbT4NCj4gDQo+ICguLi4pDQo+ID4gKz09PSBQaW4gQ29uZmlndXJhdGlvbiBOb2RlID09PQ0K
+PiA+ICstIHBpbnM6IE9uZSBpbnRlZ2VycyBhcnJheSwgcmVwcmVzZW50cyBhIGdyb3VwIG9mIHBp
+bnMgbXV4IHNldHRpbmcuDQo+ID4gKyAgICAgICBUaGUgZm9ybWF0IGlzIGZzbCxwaW5zID0gPFBJ
+Tl9GVU5DX0lEPiwgUElOX0ZVTkNfSUQgaXMgYSBwaW4NCj4gd29ya2luZyBvbg0KPiA+ICsgICAg
+ICAgYSBzcGVjaWZpYyBmdW5jdGlvbi4NCj4gPiArDQo+ID4gKyAgICAgICBOT1RFOiBpLk1YN1VM
+UCBQSU5fRlVOQ19JRCBjb25zaXN0cyBvZiA0IGludGVnZXJzIGFzIGl0IHNoYXJlcw0KPiBvbmUg
+bXV4DQo+ID4gKyAgICAgICBhbmQgY29uZmlnIHJlZ2lzdGVyIGFzIGZvbGxvd3M6DQo+ID4gKyAg
+ICAgICA8bXV4X2NvbmZfcmVnIGlucHV0X3JlZyBtdXhfbW9kZSBpbnB1dF92YWw+DQo+ID4gKw0K
+PiA+ICsgICAgICAgUmVmZXIgdG8gaW14N3VscC1waW5mdW5jLmggaW4gaW4gZGV2aWNlIHRyZWUg
+c291cmNlIGZvbGRlciBmb3INCj4gYWxsDQo+ID4gKyAgICAgICBhdmFpbGFibGUgaW14N3VscCBQ
+SU5fRlVOQ19JRC4NCj4gPiArDQo+ID4gK09wdGlvbmFsIFByb3BlcnRpZXM6DQo+ID4gKy0gbnhw
+LG91dHB1dC1idWZmZXItZW5hYmxlOiAgICBCb29sLiBPdXRwdXQgYnVmZmVyIGVuYWJsZWQNCj4g
+PiArLSBueHAsaW5wdXQtYnVmZmVyLWVuYWJsZTogICAgIEJvb2wuIElucHV0IGJ1ZmZlciBlbmFi
+bGVkDQo+ID4gKy0gZHJpdmUtc3RyZW5ndGggICAgICAgICAgICAgICBJbnRlZ2VyLiBDb250cm9s
+cyBEcml2ZSBTdHJlbmd0aA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAwOiBTdGFuZGFyZA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAxOiBIaSBEcml2ZXINCj4gKC4uLikNCj4gDQo+IFdFTEwgTE9PSyBBVCBUSEFUDQo+IA0K
+PiBDdXN0b20gaW5wdXQvb3V0cHV0IGJ1ZmZlciBlbmFibGUgcHJvcGVydGllcyBlaD8NCj4gDQo+
+IFdlIGhhZCB0aGlzIHJlYWxseSByZWFsbHkgbG9uZyBkaXNjdXNzaW9uIHdpdGggdGhlIFJlbmVz
+YXMgcGVvcGxlIGFib3V0DQo+IHdoZXRoZXIgdGhleSBtYWtlIHRoaXMgYSBjdXN0b20gcHJvcGVy
+dHkgb3IgYSBnZW5lcmljIG9uZSBvciB3aGV0aGVyDQo+IGFueW9uZSBlbHNlIHdvdWxkIGV2ZXIg
+aGF2ZSB0aGUgc2FtZSBuZWVkLg0KPiANCj4gVGhpcyB3b3VsZCBiZSBhIHZvdGUgZm9yIGFkZGlu
+ZyBvdXRwdXQtYnVmZmVyLWVuYWJsZSBhbmQgaW5wdXQtYnVmZmVyLQ0KPiBlbmFibGUgYXMgZ2Vu
+ZXJpYyBwcm9wZXJpZXMgaG0/DQo+IA0KDQpZZXMsIHRoYXQgd291bGQgYmUgZ29vZCBpZiB0aGV5
+J3JlIG1hZGUgZ2VuZXJpYyBwcm9wZXJ0aWVzLg0KDQo+IFVOTEVTUyB0aGUgZXhpc3RpbmcgZGV2
+aWNlIHRyZWUgcHJvcGVydGllcyBhbHJlYWR5IGNvdmVyIHRoZSB1c2VjYXNlcy4NCj4gDQo+IEFu
+ZHkgaGFzIG1hZGUgc29tZSBnb29kIHBvaW50cyB0aGVyZS4NCj4gDQo+IENhbiB5b3UgcGxlYXNl
+IHJlYWQgdXAgb24gdGhlIGRpc2N1c3Npb24gdGhyZWFkIGZvciBzdWJqZWN0ICJbUEFUQ0ggdjUN
+Cj4gMDEvMTBdIHBpbmN0cmw6IGdlbmVyaWM6IEFkZCBiaS1kaXJlY3Rpb25hbCBhbmQgb3V0cHV0
+LWVuYWJsZSINCj4gYW5kIGNvbnRyaWJ1dGUgdG8gdGhpcyBkaXNjdXNzaW9uPw0KPiANCg0KU3Vy
+ZSwgd2lsbCBmaW5kIHRpbWUgdG8gcmVhZCBpdC4NCg0KVGhhbmtzIGZvciB0aGUgcmVtaW5kZXIu
+DQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo=
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
