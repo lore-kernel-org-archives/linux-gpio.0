@@ -1,390 +1,255 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 3/3] mfd: twl: move header file out of I2C realm
-Date: Mon, 22 May 2017 21:34:08 +0100
-Message-ID: <20170522213408.0c5871d6@kernel.org>
-References: <20170521220212.1404-1-wsa@the-dreams.de>
-        <20170521220212.1404-4-wsa@the-dreams.de>
+From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Subject: [PATCH 2/3] pinctrl: tegra: clean up modular vs. non-modular distinctions
+Date: Mon, 22 May 2017 16:56:47 -0400
+Message-ID: <20170522205648.23545-3-paul.gortmaker@windriver.com>
+References: <20170522205648.23545-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20170521220212.1404-4-wsa@the-dreams.de>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee.jones@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Daniel
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170522205648.23545-1-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 22 May 2017 00:02:10 +0200
-Wolfram Sang <wsa@the-dreams.de> wrote:
+None of the Kconfigs for any of these drivers are tristate,
+meaning that they currently are not being built as a module by anyone.
 
-> include/linux/i2c is not for client devices. Move the header file to a
-> more appropriate location.
-> 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
->  arch/arm/mach-omap2/common.h            | 2 +-
->  arch/arm/mach-omap2/omap_twl.c          | 2 +-
->  drivers/gpio/gpio-twl4030.c             | 2 +-
+Lets remove the modular code that is essentially orphaned, so that
+when reading the drivers there is no doubt they are builtin-only.  All
+drivers get similar changes, so they are handled in batch.
 
->  drivers/iio/adc/twl4030-madc.c          | 2 +-
->  drivers/iio/adc/twl6030-gpadc.c         | 2 +-
-Acked-by: Jonathan Cameron <jic23@kernel.org>
+We remove module.h from code that isn't doing anything modular at
+all;  if they have __init sections, then replace it with init.h.
 
-Thanks,
->  drivers/input/keyboard/twl4030_keypad.c | 2 +-
->  drivers/input/misc/twl4030-pwrbutton.c  | 2 +-
->  drivers/input/misc/twl4030-vibra.c      | 2 +-
->  drivers/mfd/twl-core.c                  | 6 +++---
->  drivers/mfd/twl4030-audio.c             | 2 +-
->  drivers/mfd/twl4030-irq.c               | 2 +-
->  drivers/mfd/twl4030-power.c             | 2 +-
->  drivers/mfd/twl6030-irq.c               | 2 +-
->  drivers/phy/phy-twl4030-usb.c           | 2 +-
->  drivers/power/supply/twl4030_charger.c  | 2 +-
->  drivers/pwm/pwm-twl-led.c               | 2 +-
->  drivers/pwm/pwm-twl.c                   | 2 +-
->  drivers/regulator/twl-regulator.c       | 2 +-
->  drivers/regulator/twl6030-regulator.c   | 2 +-
->  drivers/rtc/rtc-twl.c                   | 2 +-
->  drivers/usb/phy/phy-twl6030-usb.c       | 2 +-
->  drivers/video/backlight/pandora_bl.c    | 2 +-
->  drivers/watchdog/twl4030_wdt.c          | 2 +-
->  include/linux/{i2c => mfd}/twl.h        | 0
->  sound/soc/codecs/twl4030.c              | 2 +-
->  25 files changed, 26 insertions(+), 26 deletions(-)
->  rename include/linux/{i2c => mfd}/twl.h (100%)
-> 
-> diff --git a/arch/arm/mach-omap2/common.h b/arch/arm/mach-omap2/common.h
-> index 8cc6338fcb1288..b5ad7fcb80ed24 100644
-> --- a/arch/arm/mach-omap2/common.h
-> +++ b/arch/arm/mach-omap2/common.h
-> @@ -29,7 +29,7 @@
->  #include <linux/irq.h>
->  #include <linux/delay.h>
->  #include <linux/i2c.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/i2c-omap.h>
->  #include <linux/reboot.h>
->  #include <linux/irqchip/irq-omap-intc.h>
-> diff --git a/arch/arm/mach-omap2/omap_twl.c b/arch/arm/mach-omap2/omap_twl.c
-> index 1346b3ab34a5e3..295124b248ae3f 100644
-> --- a/arch/arm/mach-omap2/omap_twl.c
-> +++ b/arch/arm/mach-omap2/omap_twl.c
-> @@ -16,7 +16,7 @@
->  #include <linux/err.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  #include "soc.h"
->  #include "voltage.h"
-> diff --git a/drivers/gpio/gpio-twl4030.c b/drivers/gpio/gpio-twl4030.c
-> index 24f388ed46d4c4..9b511df5450eb6 100644
-> --- a/drivers/gpio/gpio-twl4030.c
-> +++ b/drivers/gpio/gpio-twl4030.c
-> @@ -35,7 +35,7 @@
->  #include <linux/of.h>
->  #include <linux/irqdomain.h>
->  
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  /*
->   * The GPIO "subchip" supports 18 GPIOs which can be configured as
-> diff --git a/drivers/iio/adc/twl4030-madc.c b/drivers/iio/adc/twl4030-madc.c
-> index 0c74869a540ad3..5a64eda1652061 100644
-> --- a/drivers/iio/adc/twl4030-madc.c
-> +++ b/drivers/iio/adc/twl4030-madc.c
-> @@ -35,7 +35,7 @@
->  #include <linux/delay.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/i2c/twl4030-madc.h>
->  #include <linux/module.h>
->  #include <linux/stddef.h>
-> diff --git a/drivers/iio/adc/twl6030-gpadc.c b/drivers/iio/adc/twl6030-gpadc.c
-> index becbb0aef232b9..bc0e60b9da452e 100644
-> --- a/drivers/iio/adc/twl6030-gpadc.c
-> +++ b/drivers/iio/adc/twl6030-gpadc.c
-> @@ -33,7 +33,7 @@
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/of_platform.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
->  
-> diff --git a/drivers/input/keyboard/twl4030_keypad.c b/drivers/input/keyboard/twl4030_keypad.c
-> index 39e72b3219d8a4..f9f98ef1d98e3f 100644
-> --- a/drivers/input/keyboard/twl4030_keypad.c
-> +++ b/drivers/input/keyboard/twl4030_keypad.c
-> @@ -30,7 +30,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/input.h>
->  #include <linux/platform_device.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/slab.h>
->  #include <linux/of.h>
->  
-> diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
-> index 1c13005b228fa7..b307cca1702226 100644
-> --- a/drivers/input/misc/twl4030-pwrbutton.c
-> +++ b/drivers/input/misc/twl4030-pwrbutton.c
-> @@ -27,7 +27,7 @@
->  #include <linux/input.h>
->  #include <linux/interrupt.h>
->  #include <linux/platform_device.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  #define PWR_PWRON_IRQ (1 << 0)
->  
-> diff --git a/drivers/input/misc/twl4030-vibra.c b/drivers/input/misc/twl4030-vibra.c
-> index caa5a62c42fbe0..6c51d404874bbd 100644
-> --- a/drivers/input/misc/twl4030-vibra.c
-> +++ b/drivers/input/misc/twl4030-vibra.c
-> @@ -28,7 +28,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
->  #include <linux/workqueue.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/mfd/twl4030-audio.h>
->  #include <linux/input.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/mfd/twl-core.c b/drivers/mfd/twl-core.c
-> index c64615dca2bd33..2a09dde4ca6efc 100644
-> --- a/drivers/mfd/twl-core.c
-> +++ b/drivers/mfd/twl-core.c
-> @@ -44,7 +44,7 @@
->  #include <linux/regulator/machine.h>
->  
->  #include <linux/i2c.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  /* Register descriptions for audio */
->  #include <linux/mfd/twl4030-audio.h>
-> @@ -173,7 +173,7 @@ static struct twl_private *twl_priv;
->  static struct twl_mapping twl4030_map[] = {
->  	/*
->  	 * NOTE:  don't change this table without updating the
-> -	 * <linux/i2c/twl.h> defines for TWL4030_MODULE_*
-> +	 * <linux/mfd/twl.h> defines for TWL4030_MODULE_*
->  	 * so they continue to match the order in this table.
->  	 */
->  
-> @@ -344,7 +344,7 @@ static const struct regmap_config twl4030_regmap_config[4] = {
->  static struct twl_mapping twl6030_map[] = {
->  	/*
->  	 * NOTE:  don't change this table without updating the
-> -	 * <linux/i2c/twl.h> defines for TWL4030_MODULE_*
-> +	 * <linux/mfd/twl.h> defines for TWL4030_MODULE_*
->  	 * so they continue to match the order in this table.
->  	 */
->  
-> diff --git a/drivers/mfd/twl4030-audio.c b/drivers/mfd/twl4030-audio.c
-> index 0a1606480023f9..da16bf45fab43e 100644
-> --- a/drivers/mfd/twl4030-audio.c
-> +++ b/drivers/mfd/twl4030-audio.c
-> @@ -30,7 +30,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/twl4030-audio.h>
->  
-> diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
-> index b46c0cfc27d958..86f8fd8e81e4b5 100644
-> --- a/drivers/mfd/twl4030-irq.c
-> +++ b/drivers/mfd/twl4030-irq.c
-> @@ -33,7 +33,7 @@
->  #include <linux/slab.h>
->  #include <linux/of.h>
->  #include <linux/irqdomain.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  #include "twl-core.h"
->  
-> diff --git a/drivers/mfd/twl4030-power.c b/drivers/mfd/twl4030-power.c
-> index f4b2c29d77e330..6b36932263ba78 100644
-> --- a/drivers/mfd/twl4030-power.c
-> +++ b/drivers/mfd/twl4030-power.c
-> @@ -25,7 +25,7 @@
->  
->  #include <linux/module.h>
->  #include <linux/pm.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> diff --git a/drivers/mfd/twl6030-irq.c b/drivers/mfd/twl6030-irq.c
-> index 53574508a613f2..e3ec8dfa9f1ec0 100644
-> --- a/drivers/mfd/twl6030-irq.c
-> +++ b/drivers/mfd/twl6030-irq.c
-> @@ -35,7 +35,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/kthread.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/platform_device.h>
->  #include <linux/suspend.h>
->  #include <linux/of.h>
-> diff --git a/drivers/phy/phy-twl4030-usb.c b/drivers/phy/phy-twl4030-usb.c
-> index 2990b3965460e8..28f49902760d82 100644
-> --- a/drivers/phy/phy-twl4030-usb.c
-> +++ b/drivers/phy/phy-twl4030-usb.c
-> @@ -36,7 +36,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/usb/musb.h>
->  #include <linux/usb/ulpi.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/err.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/power/supply/twl4030_charger.c b/drivers/power/supply/twl4030_charger.c
-> index 2f82d0e9ec1bf7..390bfde86ae39b 100644
-> --- a/drivers/power/supply/twl4030_charger.c
-> +++ b/drivers/power/supply/twl4030_charger.c
-> @@ -18,7 +18,7 @@
->  #include <linux/err.h>
->  #include <linux/platform_device.h>
->  #include <linux/interrupt.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/power_supply.h>
->  #include <linux/notifier.h>
->  #include <linux/usb/otg.h>
-> diff --git a/drivers/pwm/pwm-twl-led.c b/drivers/pwm/pwm-twl-led.c
-> index 21eff991d0e355..01153622778bad 100644
-> --- a/drivers/pwm/pwm-twl-led.c
-> +++ b/drivers/pwm/pwm-twl-led.c
-> @@ -24,7 +24,7 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pwm.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/slab.h>
->  
->  /*
-> diff --git a/drivers/pwm/pwm-twl.c b/drivers/pwm/pwm-twl.c
-> index 9de617b766801b..b7a45be998153b 100644
-> --- a/drivers/pwm/pwm-twl.c
-> +++ b/drivers/pwm/pwm-twl.c
-> @@ -21,7 +21,7 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pwm.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/slab.h>
->  
->  /*
-> diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
-> index 6c9ec84121bde4..a4456db5849d06 100644
-> --- a/drivers/regulator/twl-regulator.c
-> +++ b/drivers/regulator/twl-regulator.c
-> @@ -20,7 +20,7 @@
->  #include <linux/regulator/driver.h>
->  #include <linux/regulator/machine.h>
->  #include <linux/regulator/of_regulator.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/delay.h>
->  
->  /*
-> diff --git a/drivers/regulator/twl6030-regulator.c b/drivers/regulator/twl6030-regulator.c
-> index 56aada38788776..219cbd910dbf52 100644
-> --- a/drivers/regulator/twl6030-regulator.c
-> +++ b/drivers/regulator/twl6030-regulator.c
-> @@ -21,7 +21,7 @@
->  #include <linux/regulator/driver.h>
->  #include <linux/regulator/machine.h>
->  #include <linux/regulator/of_regulator.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/delay.h>
->  
->  struct twlreg_info {
-> diff --git a/drivers/rtc/rtc-twl.c b/drivers/rtc/rtc-twl.c
-> index c18c39212ce680..3472e79f2b1782 100644
-> --- a/drivers/rtc/rtc-twl.c
-> +++ b/drivers/rtc/rtc-twl.c
-> @@ -31,7 +31,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/of.h>
->  
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  enum twl_class {
->  	TWL_4030 = 0,
-> diff --git a/drivers/usb/phy/phy-twl6030-usb.c b/drivers/usb/phy/phy-twl6030-usb.c
-> index 628b600b02b174..b5dc077ed7d3c6 100644
-> --- a/drivers/usb/phy/phy-twl6030-usb.c
-> +++ b/drivers/usb/phy/phy-twl6030-usb.c
-> @@ -28,7 +28,7 @@
->  #include <linux/usb/musb.h>
->  #include <linux/usb/phy_companion.h>
->  #include <linux/phy/omap_usb.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/err.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/video/backlight/pandora_bl.c b/drivers/video/backlight/pandora_bl.c
-> index 5d8bb8b201835d..a186bc677c7d80 100644
-> --- a/drivers/video/backlight/pandora_bl.c
-> +++ b/drivers/video/backlight/pandora_bl.c
-> @@ -16,7 +16,7 @@
->  #include <linux/delay.h>
->  #include <linux/fb.h>
->  #include <linux/backlight.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/err.h>
->  
->  #define TWL_PWM0_ON		0x00
-> diff --git a/drivers/watchdog/twl4030_wdt.c b/drivers/watchdog/twl4030_wdt.c
-> index 9bf3cc0f396106..569fe85e52da75 100644
-> --- a/drivers/watchdog/twl4030_wdt.c
-> +++ b/drivers/watchdog/twl4030_wdt.c
-> @@ -24,7 +24,7 @@
->  #include <linux/kernel.h>
->  #include <linux/watchdog.h>
->  #include <linux/platform_device.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  
->  #define TWL4030_WATCHDOG_CFG_REG_OFFS	0x3
->  
-> diff --git a/include/linux/i2c/twl.h b/include/linux/mfd/twl.h
-> similarity index 100%
-> rename from include/linux/i2c/twl.h
-> rename to include/linux/mfd/twl.h
-> diff --git a/sound/soc/codecs/twl4030.c b/sound/soc/codecs/twl4030.c
-> index a2104d68169d9e..bd86a2d78c5ff2 100644
-> --- a/sound/soc/codecs/twl4030.c
-> +++ b/sound/soc/codecs/twl4030.c
-> @@ -28,7 +28,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/of.h>
->  #include <linux/of_gpio.h>
-> -#include <linux/i2c/twl.h>
-> +#include <linux/mfd/twl.h>
->  #include <linux/slab.h>
->  #include <linux/gpio.h>
->  #include <sound/core.h>
+A couple drivers have module_exit() code that is essentially orphaned,
+and so we remove that.
+
+Quite a few bool drivers (hence non-modular) are converted over to
+to builtin_platform_driver().
+
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
+
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra.c    |  1 -
+ drivers/pinctrl/tegra/pinctrl-tegra114.c | 11 ++++-------
+ drivers/pinctrl/tegra/pinctrl-tegra124.c | 11 ++++-------
+ drivers/pinctrl/tegra/pinctrl-tegra20.c  | 11 ++++-------
+ drivers/pinctrl/tegra/pinctrl-tegra210.c |  9 ++-------
+ drivers/pinctrl/tegra/pinctrl-tegra30.c  | 11 ++++-------
+ 6 files changed, 18 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 277622b4b6fb..51716819129d 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -21,7 +21,6 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+-#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/machine.h>
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+index 952132ce5ea0..56b33fca1bfc 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+@@ -1,6 +1,8 @@
+ /*
+  * Pinctrl data for the NVIDIA Tegra114 pinmux
+  *
++ * Author: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
+  * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+@@ -13,7 +15,7 @@
+  * more details.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -1857,7 +1859,6 @@ static const struct of_device_id tegra114_pinctrl_of_match[] = {
+ 	{ .compatible = "nvidia,tegra114-pinmux", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra114_pinctrl_of_match);
+ 
+ static struct platform_driver tegra114_pinctrl_driver = {
+ 	.driver = {
+@@ -1866,8 +1867,4 @@ static struct platform_driver tegra114_pinctrl_driver = {
+ 	},
+ 	.probe = tegra114_pinctrl_probe,
+ };
+-module_platform_driver(tegra114_pinctrl_driver);
+-
+-MODULE_AUTHOR("Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra114 pinctrl driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(tegra114_pinctrl_driver);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+index bca239e3ae50..7bc998ace0d5 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+@@ -1,6 +1,8 @@
+ /*
+  * Pinctrl data for the NVIDIA Tegra124 pinmux
+  *
++ * Author: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
+  * Copyright (c) 2013-2014, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+@@ -13,7 +15,7 @@
+  * more details.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -2069,7 +2071,6 @@ static const struct of_device_id tegra124_pinctrl_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-pinmux", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra124_pinctrl_of_match);
+ 
+ static struct platform_driver tegra124_pinctrl_driver = {
+ 	.driver = {
+@@ -2078,8 +2079,4 @@ static struct platform_driver tegra124_pinctrl_driver = {
+ 	},
+ 	.probe = tegra124_pinctrl_probe,
+ };
+-module_platform_driver(tegra124_pinctrl_driver);
+-
+-MODULE_AUTHOR("Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra124 pinctrl driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(tegra124_pinctrl_driver);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index ad62451a5a9b..7e38ee9bae78 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -1,6 +1,8 @@
+ /*
+  * Pinctrl data for the NVIDIA Tegra20 pinmux
+  *
++ * Author: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
+  * Copyright (c) 2011-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Derived from code:
+@@ -17,7 +19,7 @@
+  * more details.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -2246,9 +2248,4 @@ static struct platform_driver tegra20_pinctrl_driver = {
+ 	},
+ 	.probe = tegra20_pinctrl_probe,
+ };
+-module_platform_driver(tegra20_pinctrl_driver);
+-
+-MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra20 pinctrl driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_DEVICE_TABLE(of, tegra20_pinctrl_of_match);
++builtin_platform_driver(tegra20_pinctrl_driver);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 2b70e93da9db..c244e5b17bd6 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -13,7 +13,7 @@
+  * more details.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -1573,7 +1573,6 @@ static const struct of_device_id tegra210_pinctrl_of_match[] = {
+ 	{ .compatible = "nvidia,tegra210-pinmux", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra210_pinctrl_of_match);
+ 
+ static struct platform_driver tegra210_pinctrl_driver = {
+ 	.driver = {
+@@ -1582,8 +1581,4 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
+-module_platform_driver(tegra210_pinctrl_driver);
+-
+-MODULE_AUTHOR("NVIDIA");
+-MODULE_DESCRIPTION("NVIDIA Tegra210 pinctrl driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(tegra210_pinctrl_driver);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+index 474ac6daf513..1f180a20f2ab 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+@@ -1,6 +1,8 @@
+ /*
+  * Pinctrl data for the NVIDIA Tegra30 pinmux
+  *
++ * Author: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
+  * Copyright (c) 2011-2012, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+@@ -13,7 +15,7 @@
+  * more details.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pinctrl/pinctrl.h>
+@@ -2492,7 +2494,6 @@ static const struct of_device_id tegra30_pinctrl_of_match[] = {
+ 	{ .compatible = "nvidia,tegra30-pinmux", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra30_pinctrl_of_match);
+ 
+ static struct platform_driver tegra30_pinctrl_driver = {
+ 	.driver = {
+@@ -2501,8 +2502,4 @@ static struct platform_driver tegra30_pinctrl_driver = {
+ 	},
+ 	.probe = tegra30_pinctrl_probe,
+ };
+-module_platform_driver(tegra30_pinctrl_driver);
+-
+-MODULE_AUTHOR("Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra30 pinctrl driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(tegra30_pinctrl_driver);
+-- 
+2.11.0
