@@ -1,29 +1,57 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 0/2] pinctrl: meson: Add SPICC pins
-Date: Mon, 22 May 2017 14:59:24 +0200
-Message-ID: <1495457966-2359-1-git-send-email-narmstrong@baylibre.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH] pinctrl: zte: fix group_desc initialization
+Date: Mon, 22 May 2017 21:59:35 +0800
+Message-ID: <1495461575-29488-1-git-send-email-shawnguo@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:34304 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933497AbdEVM7w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 08:59:52 -0400
-Received: by mail-wr0-f169.google.com with SMTP id l9so38093791wre.1
-        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2017 05:59:46 -0700 (PDT)
+Received: from mail.kernel.org ([198.145.29.99]:39436 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933667AbdEVOA0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 May 2017 10:00:26 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
 
-This serie adds the SPICC controller pin for GXBB and GXL pinctrl drivers.
+From: Shawn Guo <shawn.guo@linaro.org>
 
-Neil Armstrong (2):
-  pinctrl: meson-gxl: Add SPI pins for the SPICC controller
-  pinctrl: meson-gxbb: Add SPI pins for SPICC controller
+There are a couple of issues with group_desc initialization in function
+zx_pinctrl_build_state().
 
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 14 ++++++++++++++
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 14 ++++++++++++++
- 2 files changed, 28 insertions(+)
+ - num_pins is not initialized and remains zero.
+ - pins shouldn't be initialized with a pointer to variable in the
+   stack.
 
+With them fixed, pin_request() in pinmux_enable_setting() can be invoked
+correctly.
+
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+---
+Hi Linus,
+
+This is a fix for ZTE pinctrl driver that is queued on your devel branch.
+
+Shawn
+
+ drivers/pinctrl/zte/pinctrl-zx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/zte/pinctrl-zx.c b/drivers/pinctrl/zte/pinctrl-zx.c
+index 2aca4e4b3f1c..787e3967bd5c 100644
+--- a/drivers/pinctrl/zte/pinctrl-zx.c
++++ b/drivers/pinctrl/zte/pinctrl-zx.c
+@@ -282,10 +282,10 @@ static int zx_pinctrl_build_state(struct platform_device *pdev)
+ 	for (i = 0; i < ngroups; i++) {
+ 		const struct pinctrl_pin_desc *pindesc = info->pins + i;
+ 		struct group_desc *group = groups + i;
+-		int id = pindesc->number;
+ 
+ 		group->name = pindesc->name;
+-		group->pins = &id;
++		group->pins = (int *) &pindesc->number;
++		group->num_pins = 1;
+ 		radix_tree_insert(&pctldev->pin_group_tree, i, group);
+ 	}
+ 
 -- 
 1.9.1
 
