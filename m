@@ -1,35 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4] gpiolib: Add stubs for gpiod lookup table interface
-Date: Mon, 22 May 2017 10:54:56 +0200
-Message-ID: <CACRpkdYGjXi+CXcHVJp3p0Qa_Md5O2-9t+0Xu5hMN+LB+6WJSw@mail.gmail.com>
-References: <1494527071-6412-1-git-send-email-agust@denx.de>
- <CACRpkdbjFys_1j0QocZPLCgbbQ0_w+pahhA2WNyO7WD4wiNV2A@mail.gmail.com> <20170512113822.4776bf09@crub>
+From: Jayachandran C <jnair@caviumnetworks.com>
+Subject: [PATCH] gpio: xlp: update GPIO_XLP dependency
+Date: Mon, 22 May 2017 08:58:31 +0000
+Message-ID: <1495443511-82849-1-git-send-email-jnair@caviumnetworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:34626 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752343AbdEVIy6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 04:54:58 -0400
-Received: by mail-io0-f177.google.com with SMTP id k91so77079593ioi.1
-        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2017 01:54:58 -0700 (PDT)
-In-Reply-To: <20170512113822.4776bf09@crub>
+Received: from mail-sn1nam01on0075.outbound.protection.outlook.com ([104.47.32.75]:25312
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753268AbdEVI6n (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 22 May 2017 04:58:43 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Anatolij Gustschin <agust@denx.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jayachandran C <jnair@caviumnetworks.com>, linux-gpio@vger.kernel.org
 
-On Fri, May 12, 2017 at 11:38 AM, Anatolij Gustschin <agust@denx.de> wrote:
-> On Fri, 12 May 2017 11:27:42 +0200
-> Linus Walleij linus.walleij@linaro.org wrote:
-> ...
->>Patch applied for fixes with Andy's Review tag.
->
-> Thanks! What about this one https://lkml.org/lkml/2017/4/20/907 ?
-> Any issues with it? Or can it be queued for v4.13?
+Broadcom Vulcan (ARCH_VULCAN) has been discontinued and will be deleted
+soon. So, update the GPIO_XLP Kconfig entry to remove the ARCH_VULCAN
+dependency.
 
-It was probably not sent to me (just to the mailing list?) or some
-other hickup. I will try to find it min my mailbox.
+Also update the documentation to note that Cavium ThunderX2 uses this
+driver.
 
-Yours,
-Linus Walleij
+Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
+---
+
+Broadcom Vulcan is now Cavium ThunderX2, and the rest of the
+dependencies on ARCH_VULCAN has been moved to ARCH_THUNDER2 already.
+This is the last remaining dependency of ARCH_VULCAN in drivers/
+
+JC.
+
+ drivers/gpio/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 23ca51e..ab35f7e 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -504,12 +504,13 @@ config GPIO_XILINX
+ 
+ config GPIO_XLP
+ 	tristate "Netlogic XLP GPIO support"
+-	depends on OF_GPIO && (CPU_XLP || ARCH_VULCAN || ARCH_THUNDER2 || COMPILE_TEST)
++	depends on OF_GPIO && (CPU_XLP || ARCH_THUNDER2 || COMPILE_TEST)
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  This driver provides support for GPIO interface on Netlogic XLP MIPS64
+ 	  SoCs. Currently supported XLP variants are XLP8XX, XLP3XX, XLP2XX,
+-	  XLP9XX and XLP5XX.
++	  XLP9XX and XLP5XX. The same GPIO controller block is also present in
++	  Cavium's ThunderX2 CN99XX SoCs.
+ 
+ 	  If unsure, say N.
+ 
+-- 
+2.7.4
+
