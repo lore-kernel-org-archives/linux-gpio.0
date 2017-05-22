@@ -1,63 +1,49 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: Re: gpio-exar: Why filtering out Commtech devices?
-Date: Mon, 22 May 2017 07:51:05 +0200
-Message-ID: <fc74be3d-7f74-cec3-769e-5eb53b2556b3@siemens.com>
-References: <18f4b5cb-cba0-aab4-7958-84a5b8d28935@siemens.com>
- <7a25751e-931f-b713-dcdd-7a7483aae115@codethink.co.uk>
- <c7b03839-c2ab-fa3e-3af6-5d4678fa3bbd@siemens.com>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: [PATCH 3/6] pinctrl: sunxi: Fix SPDIF function name for A83T
+Date: Mon, 22 May 2017 14:25:49 +0800
+Message-ID: <20170522062552.19026-4-wens@csie.org>
+References: <20170522062552.19026-1-wens@csie.org>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from david.siemens.de ([192.35.17.14]:38683 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751157AbdEVFvM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 22 May 2017 01:51:12 -0400
-In-Reply-To: <c7b03839-c2ab-fa3e-3af6-5d4678fa3bbd@siemens.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBCMILY6JWQBBB74IRLEQKGQENFBX7GQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170522062552.19026-1-wens-jdAy2FN1RRM@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>, linux-gpio <linux-gpio@vger.kernel.org>
 
-On 2017-05-22 07:48, Jan Kiszka wrote:
-> On 2017-05-21 22:08, Sudip Mukherjee wrote:
->> Hi Jan,
->>
->> On 21/05/17 12:46, Jan Kiszka wrote:
->>> Hi Sudip,
->>>
->>> why do we carry
->>>
->>>     if (pcidev->vendor != PCI_VENDOR_ID_EXAR)
->>>         return -ENODEV;
->>>
->>> in gpio_exar_probe? This effectively prevents that
->>>
->>>     EXAR_DEVICE(COMMTECH, COMMTECH_4222PCIE, pbn_exar_XR17V35x),
->>>     EXAR_DEVICE(COMMTECH, COMMTECH_4224PCIE, pbn_exar_XR17V35x),
->>>     EXAR_DEVICE(COMMTECH, COMMTECH_4228PCIE, pbn_exar_XR17V35x),
->>>
->>> gain GPIO support. Do those devices lack access to the pins? Or can we
->>> drop the filter. I don't have access to those devices, just wondering
->>> because the code is not explaining the reason.
->>
->> Same here. I do not have these devices and have no idea if they support
->> the gpio pins or not.
->>
->> Adding Matt Schulte in the Cc list, maybe he can comment.
->>
->>
-> 
-> If we need to keep the condition, it should be moved over to 8250_exar:
-> there is no point in creating the platform device at all then. But let's
-> wait for Matt's comment.
+We use well known standard names for functions that have name, such as
+I2C, SPI, SPDIF, etc..
 
-Unfortunately, his account is no longer existing. Is there anyone else
-we can ask?
+Fix the function name of SPDIF, which was named OWA (One Wire Audio)
+based on Allwinner datasheets.
 
-Jan
+Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller
+		      support")
+Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+index 9aec1d2232dd..6624499eae72 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+@@ -394,7 +394,7 @@ static const struct sunxi_desc_pin sun8i_a83t_pins[] = {
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 18),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION(0x3, "owa")),		/* DOUT */
++		  SUNXI_FUNCTION(0x3, "spdif")),	/* DOUT */
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(E, 19),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out")),
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+2.11.0
