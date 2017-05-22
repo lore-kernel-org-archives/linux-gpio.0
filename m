@@ -1,42 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: dts: imx28: add gpio-ranges for internal gpio controller
-Date: Mon, 22 May 2017 17:54:58 +0200
-Message-ID: <CACRpkdYvQdDXfK5QkWM6x6F4+UEQ=4oX_1gqdbjkk9n7tM5FSQ@mail.gmail.com>
-References: <20170508085925.18342-1-u.kleine-koenig@pengutronix.de>
- <20170511075135.GF5833@dragon> <20170511080916.gim5pyhj5jarzf4r@pengutronix.de>
- <20170512030536.GC8471@dragon> <20170512080150.uh5qmwu2tctpd6jk@pengutronix.de>
- <20170515022129.GJ8471@dragon> <20170515071608.auju66dhylzaexkw@pengutronix.de>
+Subject: Re: [PATCH v3 1/2] gpio - Add EXAR XRA1403 SPI GPIO expander driver
+Date: Mon, 22 May 2017 17:49:37 +0200
+Message-ID: <CACRpkdb_xumeWzytL9Ot-1CO7QtBuCjpUui+Qj=yjg8+6QPLBQ@mail.gmail.com>
+References: <cover.1494827688.git.nandor.han@ge.com> <37d5ebe778f6d6f4ae07e50966e82446eb79e2dd.1494827688.git.nandor.han@ge.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:37041 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935583AbdEVPzB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 11:55:01 -0400
-Received: by mail-it0-f46.google.com with SMTP id g126so15779ith.0
-        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2017 08:55:00 -0700 (PDT)
-In-Reply-To: <20170515071608.auju66dhylzaexkw@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <37d5ebe778f6d6f4ae07e50966e82446eb79e2dd.1494827688.git.nandor.han@ge.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nandor Han <nandor.han@ge.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Semi Malinen <semi.malinen@ge.com>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>
 
-On Mon, May 15, 2017 at 9:16 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Mon, May 15, 2017 at 10:21:30AM +0800, Shawn Guo wrote:
+On Mon, May 15, 2017 at 7:58 AM, Nandor Han <nandor.han@ge.com> wrote:
 
->> You will need to free the GPIO before muxing it to a different function,
->> I think.
+> This driver support basic XRA1403 functionalities:
+>     - set gpio direction
+>     - get gpio direction
+>     - set gpio high/low
+>     - get gpio status
 >
-> IMHO this is a bad concept. This makes GPIOs more special than for
-> example PWMs or LEDs. And it breaks some configurations (for example the
-> make-pins-highz-on-idle setup in my previous mails).
+> Signed-off-by: Nandor Han <nandor.han@ge.com>
+> Signed-off-by: Semi Malinen <semi.malinen@ge.com>
 
-So this is the reason why pin controllers can choose to be strict
-or not: people disagree on the semantics.
-
-But it's good if the driver maintainers agree for a certain driver :D
+Patch applied for kernel v4.13.
 
 Yours,
 Linus Walleij
