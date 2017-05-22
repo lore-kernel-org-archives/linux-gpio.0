@@ -1,38 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 6/6] serial: exar: Add support for IOT2040 device
-Date: Mon, 22 May 2017 17:46:24 +0200
-Message-ID: <CACRpkdbeXdOWiYpmtQTU1B66mxq1gGpukZWvUepgzNk5LLa1PQ@mail.gmail.com>
-References: <cover.1495119548.git.jan.kiszka@siemens.com> <f0d2245527bc5700be7a4ac707a81db798cb5519.1495119548.git.jan.kiszka@siemens.com>
+Subject: Re: [PATCH v3 2/2] Add XRA1403 support to MAINTAINERS file
+Date: Mon, 22 May 2017 17:51:19 +0200
+Message-ID: <CACRpkdaTVW0fyojGYzpSFb-ovZ48iUQMH8sYm=OzwiseQWqmkQ@mail.gmail.com>
+References: <cover.1494827688.git.nandor.han@ge.com> <f1e912e9a36fea575903db455ed321e50171f62b.1494827688.git.nandor.han@ge.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f0d2245527bc5700be7a4ac707a81db798cb5519.1495119548.git.jan.kiszka@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:36820 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752908AbdEVPvb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 11:51:31 -0400
+Received: by mail-it0-f50.google.com with SMTP id o5so154467679ith.1
+        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2017 08:51:30 -0700 (PDT)
+In-Reply-To: <f1e912e9a36fea575903db455ed321e50171f62b.1494827688.git.nandor.han@ge.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Nandor Han <nandor.han@ge.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, May 18, 2017 at 4:59 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+On Mon, May 15, 2017 at 7:58 AM, Nandor Han <nandor.han@ge.com> wrote:
 
-> This implements the setup of RS232 and the switch-over to RS485 or RS422
-> for the Siemens IOT2040. That uses an EXAR XR17V352 with external logic
-> to switch between the different modes. The external logic is controlled
-> via MPIO pins of the EXAR controller.
+> Add XRA1403 support to MAINTAINERS list.
 >
-> Only pin 10 can be exported as GPIO on the IOT2040. It is connected to
-> an LED.
->
-> As the XR17V352 used on the IOT2040 is not equipped with an external
-> EEPROM, it cannot present itself as IOT2040-variant via subvendor/
-> subdevice IDs. Thus, we have to check via DMI for the target platform.
->
-> Co-developed with Sascha Weisenberger.
->
-> Signed-off-by: Sascha Weisenberger <sascha.weisenberger@siemens.com>
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Signed-off-by: Nandor Han <nandor.han@ge.com>
 
-Will this thing collide with your fixups so that Greg should take all
-exar patches or can this be applied to the serial tree orthogonally?
+Patch applied for kernel v4.13.
 
 Yours,
 Linus Walleij
