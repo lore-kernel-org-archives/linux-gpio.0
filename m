@@ -1,73 +1,75 @@
-From: "A.S. Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
-Subject: RE: [PATCH V2 4/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding
- doc
-Date: Mon, 22 May 2017 12:30:21 +0000
-Message-ID: <AM3PR04MB306C6E7EA4431A773B25CCF80F80@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
- <1495177545-23006-5-git-send-email-aisheng.dong@nxp.com>
- <CACRpkdb6B-f0uHUo9ecUmGCzY8GfFbCjNtJFeQJqtKEYwyB87A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdb6B-f0uHUo9ecUmGCzY8GfFbCjNtJFeQJqtKEYwyB87A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Jacky Bai <ping.bai-3arQi8VN3Tc@public.gmane.org>, Andy Duan <fugang.duan-3arQi8VN3Tc@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 1/2] pinctrl: meson-gxl: Add SPI pins for the SPICC controller
+Date: Mon, 22 May 2017 14:59:25 +0200
+Message-ID: <1495457966-2359-2-git-send-email-narmstrong@baylibre.com>
+References: <1495457966-2359-1-git-send-email-narmstrong@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:34308 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933434AbdEVM7m (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 08:59:42 -0400
+Received: by mail-wr0-f175.google.com with SMTP id l9so38093997wre.1
+        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2017 05:59:42 -0700 (PDT)
+In-Reply-To: <1495457966-2359-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWls
-dG86bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBNb25kYXksIE1heSAyMiwgMjAx
-NyA1OjI3IFBNDQo+IFRvOiBBLlMuIERvbmc7IEphY29wbyBNb25kaTsgR2VlcnQgVXl0dGVyaG9l
-dmVuOyBDaHJpcyBCcmFuZHQ7IEFuZHkNCj4gU2hldmNoZW5rbw0KPiBDYzogbGludXgtZ3Bpb0B2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4g
-U2hhd24gR3VvOyBTdGVmYW4gQWduZXI7IEphY2t5IEJhaTsgQW5keSBEdWFuOyBTYXNjaGEgSGF1
-ZXI7IFJvYiBIZXJyaW5nOw0KPiBNYXJrIFJ1dGxhbmQ7IGRldmljZXRyZWVAdmdlci5rZXJuZWwu
-b3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjIgNC81XSBkdC1iaW5kaW5nczogcGluY3RybDog
-YWRkIGlteDd1bHAgcGluY3RybA0KPiBiaW5kaW5nIGRvYw0KPiANCj4gT24gRnJpLCBNYXkgMTks
-IDIwMTcgYXQgOTowNSBBTSwgRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4gd3Jv
-dGU6DQo+IA0KPiA+IGkuTVggN1VMUCBoYXMgdGhyZWUgSU9NVVhDIGluc3RhbmNlczogSU9NVVhD
-MCBmb3IgTTQgcG9ydHMsDQo+ID4gSU9NVVhDMSBmb3IgQTcgcG9ydHMgYW5kIElPTVVYQyBERFIg
-Zm9yIEREUiBpbnRlcmZhY2UuDQo+ID4NCj4gPiBUaGlzIHBhdGNoIGFkZHMgdGhlIElPTVVYQzEg
-c3VwcG9ydCBmb3IgQTcuDQo+ID4NCj4gPiBDYzogUm9iIEhlcnJpbmcgPHJvYmgrZHRAa2VybmVs
-Lm9yZz4NCj4gPiBDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT4NCj4gPiBD
-YzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogTGludXMgV2FsbGVpaiA8bGlu
-dXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiA+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5l
-bC5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhw
-LmNvbT4NCj4gDQo+ICguLi4pDQo+ID4gKz09PSBQaW4gQ29uZmlndXJhdGlvbiBOb2RlID09PQ0K
-PiA+ICstIHBpbnM6IE9uZSBpbnRlZ2VycyBhcnJheSwgcmVwcmVzZW50cyBhIGdyb3VwIG9mIHBp
-bnMgbXV4IHNldHRpbmcuDQo+ID4gKyAgICAgICBUaGUgZm9ybWF0IGlzIGZzbCxwaW5zID0gPFBJ
-Tl9GVU5DX0lEPiwgUElOX0ZVTkNfSUQgaXMgYSBwaW4NCj4gd29ya2luZyBvbg0KPiA+ICsgICAg
-ICAgYSBzcGVjaWZpYyBmdW5jdGlvbi4NCj4gPiArDQo+ID4gKyAgICAgICBOT1RFOiBpLk1YN1VM
-UCBQSU5fRlVOQ19JRCBjb25zaXN0cyBvZiA0IGludGVnZXJzIGFzIGl0IHNoYXJlcw0KPiBvbmUg
-bXV4DQo+ID4gKyAgICAgICBhbmQgY29uZmlnIHJlZ2lzdGVyIGFzIGZvbGxvd3M6DQo+ID4gKyAg
-ICAgICA8bXV4X2NvbmZfcmVnIGlucHV0X3JlZyBtdXhfbW9kZSBpbnB1dF92YWw+DQo+ID4gKw0K
-PiA+ICsgICAgICAgUmVmZXIgdG8gaW14N3VscC1waW5mdW5jLmggaW4gaW4gZGV2aWNlIHRyZWUg
-c291cmNlIGZvbGRlciBmb3INCj4gYWxsDQo+ID4gKyAgICAgICBhdmFpbGFibGUgaW14N3VscCBQ
-SU5fRlVOQ19JRC4NCj4gPiArDQo+ID4gK09wdGlvbmFsIFByb3BlcnRpZXM6DQo+ID4gKy0gbnhw
-LG91dHB1dC1idWZmZXItZW5hYmxlOiAgICBCb29sLiBPdXRwdXQgYnVmZmVyIGVuYWJsZWQNCj4g
-PiArLSBueHAsaW5wdXQtYnVmZmVyLWVuYWJsZTogICAgIEJvb2wuIElucHV0IGJ1ZmZlciBlbmFi
-bGVkDQo+ID4gKy0gZHJpdmUtc3RyZW5ndGggICAgICAgICAgICAgICBJbnRlZ2VyLiBDb250cm9s
-cyBEcml2ZSBTdHJlbmd0aA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAwOiBTdGFuZGFyZA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAxOiBIaSBEcml2ZXINCj4gKC4uLikNCj4gDQo+IFdFTEwgTE9PSyBBVCBUSEFUDQo+IA0K
-PiBDdXN0b20gaW5wdXQvb3V0cHV0IGJ1ZmZlciBlbmFibGUgcHJvcGVydGllcyBlaD8NCj4gDQo+
-IFdlIGhhZCB0aGlzIHJlYWxseSByZWFsbHkgbG9uZyBkaXNjdXNzaW9uIHdpdGggdGhlIFJlbmVz
-YXMgcGVvcGxlIGFib3V0DQo+IHdoZXRoZXIgdGhleSBtYWtlIHRoaXMgYSBjdXN0b20gcHJvcGVy
-dHkgb3IgYSBnZW5lcmljIG9uZSBvciB3aGV0aGVyDQo+IGFueW9uZSBlbHNlIHdvdWxkIGV2ZXIg
-aGF2ZSB0aGUgc2FtZSBuZWVkLg0KPiANCj4gVGhpcyB3b3VsZCBiZSBhIHZvdGUgZm9yIGFkZGlu
-ZyBvdXRwdXQtYnVmZmVyLWVuYWJsZSBhbmQgaW5wdXQtYnVmZmVyLQ0KPiBlbmFibGUgYXMgZ2Vu
-ZXJpYyBwcm9wZXJpZXMgaG0/DQo+IA0KDQpZZXMsIHRoYXQgd291bGQgYmUgZ29vZCBpZiB0aGV5
-J3JlIG1hZGUgZ2VuZXJpYyBwcm9wZXJ0aWVzLg0KDQo+IFVOTEVTUyB0aGUgZXhpc3RpbmcgZGV2
-aWNlIHRyZWUgcHJvcGVydGllcyBhbHJlYWR5IGNvdmVyIHRoZSB1c2VjYXNlcy4NCj4gDQo+IEFu
-ZHkgaGFzIG1hZGUgc29tZSBnb29kIHBvaW50cyB0aGVyZS4NCj4gDQo+IENhbiB5b3UgcGxlYXNl
-IHJlYWQgdXAgb24gdGhlIGRpc2N1c3Npb24gdGhyZWFkIGZvciBzdWJqZWN0ICJbUEFUQ0ggdjUN
-Cj4gMDEvMTBdIHBpbmN0cmw6IGdlbmVyaWM6IEFkZCBiaS1kaXJlY3Rpb25hbCBhbmQgb3V0cHV0
-LWVuYWJsZSINCj4gYW5kIGNvbnRyaWJ1dGUgdG8gdGhpcyBkaXNjdXNzaW9uPw0KPiANCg0KU3Vy
-ZSwgd2lsbCBmaW5kIHRpbWUgdG8gcmVhZCBpdC4NCg0KVGhhbmtzIGZvciB0aGUgcmVtaW5kZXIu
-DQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo=
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The SPICC controller has dedicated SPI pins, this patchs add the pins
+definition in the GXL pinctrl driver.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+index 998210e..719ff1b 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
++++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+@@ -141,6 +141,11 @@
+ static const unsigned int nor_c_pins[]		= { PIN(BOOT_13, EE_OFF) };
+ static const unsigned int nor_cs_pins[]		= { PIN(BOOT_15, EE_OFF) };
+ 
++static const unsigned int spi_mosi_pins[]	= { PIN(GPIOX_8, EE_OFF) };
++static const unsigned int spi_miso_pins[]	= { PIN(GPIOX_9, EE_OFF) };
++static const unsigned int spi_ss0_pins[]	= { PIN(GPIOX_10, EE_OFF) };
++static const unsigned int spi_sclk_pins[]	= { PIN(GPIOX_11, EE_OFF) };
++
+ static const unsigned int sdcard_d0_pins[] = { PIN(CARD_1, EE_OFF) };
+ static const unsigned int sdcard_d1_pins[] = { PIN(CARD_0, EE_OFF) };
+ static const unsigned int sdcard_d2_pins[] = { PIN(CARD_5, EE_OFF) };
+@@ -405,6 +410,10 @@
+ 	GROUP(pwm_a,		5,	25),
+ 	GROUP(pwm_e,		5,	15),
+ 	GROUP(pwm_f_x,		5,	14),
++	GROUP(spi_mosi,		5,	3),
++	GROUP(spi_miso,		5,	2),
++	GROUP(spi_ss0,		5,	1),
++	GROUP(spi_sclk,		5,	0),
+ 
+ 	/* Bank Z */
+ 	GROUP(eth_mdio,		4,	23),
+@@ -560,6 +569,10 @@
+ 	"nor_d", "nor_q", "nor_c", "nor_cs",
+ };
+ 
++static const char * const spi_groups[] = {
++	"spi_mosi", "spi_miso", "spi_ss0", "spi_sclk",
++};
++
+ static const char * const sdcard_groups[] = {
+ 	"sdcard_d0", "sdcard_d1", "sdcard_d2", "sdcard_d3",
+ 	"sdcard_cmd", "sdcard_clk",
+@@ -693,6 +706,7 @@
+ 	FUNCTION(gpio_periphs),
+ 	FUNCTION(emmc),
+ 	FUNCTION(nor),
++	FUNCTION(spi),
+ 	FUNCTION(sdcard),
+ 	FUNCTION(sdio),
+ 	FUNCTION(nand),
+-- 
+1.9.1
+
