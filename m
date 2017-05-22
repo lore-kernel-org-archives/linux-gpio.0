@@ -1,138 +1,70 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 7/9] pinctrl: mvebu: add driver for Armada AP806 pinctrl
-Date: Mon, 22 May 2017 16:37:12 +0200
-Message-ID: <87k2590xgn.fsf@free-electrons.com>
-References: <cover.0dd8a92ae74fcec8d0470d0a7016035089e46eed.1495209664.git-series.gregory.clement@free-electrons.com>
-        <5a190d4d71cb8626315b832c6f987e9e03da2fa9.1495209664.git-series.gregory.clement@free-electrons.com>
-        <CAP=VYLrpQJ+C+KaEVcv8Rjmp470UH9-+MKAsjErXYoh=AME-Qw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: when claiming hog, skip maps not served by same device
+Date: Mon, 22 May 2017 17:07:11 +0200
+Message-ID: <CACRpkdZx4TgqtZujSsr-J171J90ot9kznrUAheNaU=wkTQAjPQ@mail.gmail.com>
+References: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:44081 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934639AbdEVOhO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 10:37:14 -0400
-In-Reply-To: <CAP=VYLrpQJ+C+KaEVcv8Rjmp470UH9-+MKAsjErXYoh=AME-Qw@mail.gmail.com>
-        (Paul Gortmaker's message of "Sat, 20 May 2017 15:04:22 -0400")
+Received: from mail-io0-f175.google.com ([209.85.223.175]:33533 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933734AbdEVPHM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 11:07:12 -0400
+Received: by mail-io0-f175.google.com with SMTP id p24so83157817ioi.0
+        for <linux-gpio@vger.kernel.org>; Mon, 22 May 2017 08:07:12 -0700 (PDT)
+In-Reply-To: <20170511200211.20985-1-nikita.yoush@cogentembedded.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>, Hanna Hawa <hannah@marvell.com>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Tony Lindgren <tony@atomide.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Healy <Chris.Healy@zii.aero>, Jeff White <Jeff.White@zii.aero>
 
-Hi Paul,
- 
- On sam., mai 20 2017, Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+On Thu, May 11, 2017 at 10:02 PM, Nikita Yushchenko
+<nikita.yoush@cogentembedded.com> wrote:
 
-> On Fri, May 19, 2017 at 12:04 PM, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->> From: Hanna Hawa <hannah@marvell.com>
->>
->> This commit adds a pinctrl driver for the pin-muxing controller found in
->> the AP806 part of the Marvell Armada 7K and 8K SoCs. Its register
->> interface is compatible with the one used by previous mvebu pin
->> controllers, so the common logic in drivers/pinctrl/mvebu/pinctrl-mvebu.c
->> is used.
->>
->> Signed-off-by: Hanna Hawa <hannah@marvell.com>
->> Reviewed-by: Shadi Ammouri <shadi@marvell.com>
->> [updated for mvebu pinctrl changes
->>  - converted to simple_mmio
->>  - removed unimplemented .remove function
->>  - removed DTS description
->>   - converted  to use syscon/regmap
->>  --rmk]
->> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
->> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
->> ---
->>  drivers/pinctrl/mvebu/Kconfig                |   4 +-
->>  drivers/pinctrl/mvebu/Makefile               |   1 +-
->>  drivers/pinctrl/mvebu/pinctrl-armada-ap806.c | 145 ++++++++++++++++++++-
->>  3 files changed, 150 insertions(+)
->>  create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
->>
->> diff --git a/drivers/pinctrl/mvebu/Kconfig b/drivers/pinctrl/mvebu/Kconfig
->> index 8cb444b60ae9..0e0b009f2b71 100644
->> --- a/drivers/pinctrl/mvebu/Kconfig
->> +++ b/drivers/pinctrl/mvebu/Kconfig
->> @@ -28,6 +28,10 @@ config PINCTRL_ARMADA_39X
->>         bool
->>         select PINCTRL_MVEBU
->>
->> +config PINCTRL_ARMADA_AP806
->> +       bool
->> +       select PINCTRL_MVEBU
+> When pinctrl device registers, it automatically claims hogs, that is,
+> maps that pinctrl device serves for itself.
 >
-> If this isn't going to be modular, can we remove all the uses
-> of module.h and MODULE_ etc.   I've nearly got all of these
-> cleaned up in pinctrl and it would be nice to not have new
-> ones creep back in.
-
-Indeed it won't be modular, so I will remove it in this driver and the
-next one.
-
-Thanks,
-
-Gregory
-
+> It is possible that in addition to SoC's pinctrl device, other pinctrl
+> devices get registered. E.g. some gpio expander devies are registered
+> as pinctrl devices. For such devices, pinctrl maps could be defined
+> that set up SoC's pins (e.g. interrupt pin for gpio expander). Such
+> a map will have target device set to gpio expander.
 >
-> Thanks,
-> Paul.
-> --
+> Here is device tree snippet that causes this scenario:
 >
->> +
->>  config PINCTRL_ARMADA_XP
->>         bool
->>         select PINCTRL_MVEBU
->> diff --git a/drivers/pinctrl/mvebu/Makefile b/drivers/pinctrl/mvebu/Makefile
->> index 60c245a60f39..455db274b53d 100644
->> --- a/drivers/pinctrl/mvebu/Makefile
->> +++ b/drivers/pinctrl/mvebu/Makefile
->> @@ -5,6 +5,7 @@ obj-$(CONFIG_PINCTRL_ARMADA_370) += pinctrl-armada-370.o
->>  obj-$(CONFIG_PINCTRL_ARMADA_375) += pinctrl-armada-375.o
->>  obj-$(CONFIG_PINCTRL_ARMADA_38X) += pinctrl-armada-38x.o
->>  obj-$(CONFIG_PINCTRL_ARMADA_39X) += pinctrl-armada-39x.o
->> +obj-$(CONFIG_PINCTRL_ARMADA_AP806) += pinctrl-armada-ap806.o
->>  obj-$(CONFIG_PINCTRL_ARMADA_XP)  += pinctrl-armada-xp.o
->>  obj-$(CONFIG_PINCTRL_ARMADA_37XX)  += pinctrl-armada-37xx.o
->>  obj-$(CONFIG_PINCTRL_ORION)  += pinctrl-orion.o
->> diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-ap806.c b/drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
->> new file mode 100644
->> index 000000000000..269b1c1f53b1
->> --- /dev/null
->> +++ b/drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
->> @@ -0,0 +1,145 @@
->> +/*
->> + * Marvell Armada ap806 pinctrl driver based on mvebu pinctrl core
->> + *
->> + * Copyright (C) 2017 Marvell
->> + *
->> + * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
->> + * Hanna Hawa <hannah@marvell.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + */
->> +
->> +#include <linux/err.h>
->> +#include <linux/init.h>
->> +#include <linux/io.h>
->> +#include <linux/module.h>
+> &i2c0 {
+>         sx1503@20 {
+>                 compatible = "semtech,sx1503q";
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&pinctrl_sx1503_20>;
+>                 ...
+>         };
+> };
+> ...
+> &iomuxc {
+>         pinctrl_sx1503_20: pinctrl-sx1503-20 {
+>                 fsl,pins = <
+>                         VF610_PAD_PTB1__GPIO_23         0x219d
+>                 >;
+>         };
+> };
 >
-> [...]
+> Such a map will have target device set to gpio expander. However is not
+> a hog, it is a regular map that is claimed by core before gpio expander
+> device is probed.
 >
->> +module_platform_driver(armada_ap806_pinctrl_driver);
->> +
->> +MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
->> +MODULE_DESCRIPTION("Marvell Armada ap806 pinctrl driver");
->> +MODULE_LICENSE("GPL v2");
->> --
->> git-series 0.9.1
+> Thus when looking for hogs, it is not enough to check that map's target
+> device is set to pinctrl device being registered. Need also check that
+> map's control device is also set to the same.
+>
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Oh that looks logically correct, good find.
+
+I guess I tested multiple pin control devices on a system but
+not with also using hogs on them...
+
+Patch applied with Tony's ACK.
+
+Yours,
+Linus Walleij
