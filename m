@@ -1,175 +1,84 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/3] pinctrl: bcm: clean up modular vs. non-modular distinctions
-Date: Mon, 22 May 2017 16:56:48 -0400
-Message-ID: <20170522205648.23545-4-paul.gortmaker@windriver.com>
-References: <20170522205648.23545-1-paul.gortmaker@windriver.com>
+Subject: [PATCH 0/3] pinctrl: bcm/samsung/tegra: make bool code non-modular
+Date: Mon, 22 May 2017 16:56:45 -0400
+Message-ID: <20170522205648.23545-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:57964 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759786AbdEVU5r (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 16:57:47 -0400
-In-Reply-To: <20170522205648.23545-1-paul.gortmaker@windriver.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Jon Mason <jonmason@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Sherman Yin <syin@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexandre Courbot <gnurou@gmail.com>, Ashwini Ghuge <aghuge@nvidia.com>, bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Jon Mason <jonmason@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Pritesh Raithatha <praithatha@nvidia.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Sherman Yin <syin@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@v
+List-Id: linux-gpio@vger.kernel.org
 
-Fixups here tend to be more of a conglomerate of some of the other
-repeated/systematic ones we've seen in the earlier pinctrl cleanups.
+This is the last of the pinctrl cleanups I have in my queue.  So
+hopefully once these are in and any current but out-of-tree drivers
+are submitted, there won't be any more examples of non-modular code
+using modular infrastructure for people to inadvertently copy off of.
 
-We remove module.h from code that isn't doing anything modular at
-all;  if they have __init sections, then replace it with init.h
+Nothing really new here -- if the Kconfig and/or the Makefile does
+not allow building the code as modular, then we don't need to be
+using module_xyz() functions and/or MODULE_XYZ macros.
 
-One driver has a .remove that would be dispatched on module_exit,
-and as that code is essentially orphaned, so we remove it.  In case
-anyone was previously doing the (pointless) unbind to get to that
-function, we disable unbind for this one driver as well.
+Here we audit and remove such instances in three subdirectories of
+the pinctrl subsystem: bcm, samsung, and tegra, which allows us
+to have a positive net removal of unused code as per the diffstat.
 
-A couple bool drivers (hence non-modular) are converted over to
-to builtin_platform_driver().
+Rather than do one commit per driver, we take advantage of the
+fact that the drivers are grouped already and bundle the changes
+per family, since the changes are not really deeply technical.
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Build tested for allmodconfig on linux-next for arm, arm64; also
+explicitly compiled each file for both arch to ensure nobody got
+missed on the allmodconfig.  (there are missing renesas_sdhi syms
+in today's linux-next arm but that is not caused by these changes.)
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+Linus - thanks for your patience in merging all these to date.
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
+Paul.
 
+---
+
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Ashwini Ghuge <aghuge@nvidia.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
 Cc: Eric Anholt <eric@anholt.net>
 Cc: Florian Fainelli <f.fainelli@gmail.com>
 Cc: Jon Mason <jonmason@broadcom.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Pritesh Raithatha <praithatha@nvidia.com>
 Cc: Ray Jui <rjui@broadcom.com>
 Cc: Scott Branden <sbranden@broadcom.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
 Cc: Sherman Yin <syin@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: linux-gpio@vger.kernel.org
 Cc: linux-rpi-kernel@lists.infradead.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/pinctrl/bcm/pinctrl-bcm281xx.c   | 16 ++++++++--------
- drivers/pinctrl/bcm/pinctrl-bcm2835.c    | 20 +++-----------------
- drivers/pinctrl/bcm/pinctrl-cygnus-mux.c | 11 +++++------
- 3 files changed, 16 insertions(+), 31 deletions(-)
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-index 810a81786f62..e630f4d5f4c7 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
-@@ -1,4 +1,10 @@
- /*
-+ * Broadcom BCM281xx pinctrl driver
-+ *
-+ * Author(s):
-+ *	Sherman Yin <syin@broadcom.com>
-+ *	Broadcom Corporation <bcm-kernel-feedback-list@broadcom.com>
-+ *
-  * Copyright (C) 2013 Broadcom Corporation
-  *
-  * This program is free software; you can redistribute it and/or
-@@ -12,7 +18,7 @@
-  */
- #include <linux/err.h>
- #include <linux/io.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -1444,10 +1450,4 @@ static struct platform_driver bcm281xx_pinctrl_driver = {
- 		.of_match_table = bcm281xx_pinctrl_of_match,
- 	},
- };
--
--module_platform_driver_probe(bcm281xx_pinctrl_driver, bcm281xx_pinctrl_probe);
--
--MODULE_AUTHOR("Broadcom Corporation <bcm-kernel-feedback-list@broadcom.com>");
--MODULE_AUTHOR("Sherman Yin <syin@broadcom.com>");
--MODULE_DESCRIPTION("Broadcom BCM281xx pinctrl driver");
--MODULE_LICENSE("GPL v2");
-+builtin_platform_driver_probe(bcm281xx_pinctrl_driver, bcm281xx_pinctrl_probe);
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 85d009112864..1eb7a1a5a4bb 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -27,7 +27,7 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/irqdesc.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-@@ -1075,31 +1075,17 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int bcm2835_pinctrl_remove(struct platform_device *pdev)
--{
--	struct bcm2835_pinctrl *pc = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&pc->gpio_chip);
--
--	return 0;
--}
--
- static const struct of_device_id bcm2835_pinctrl_match[] = {
- 	{ .compatible = "brcm,bcm2835-gpio" },
- 	{}
- };
--MODULE_DEVICE_TABLE(of, bcm2835_pinctrl_match);
- 
- static struct platform_driver bcm2835_pinctrl_driver = {
- 	.probe = bcm2835_pinctrl_probe,
--	.remove = bcm2835_pinctrl_remove,
- 	.driver = {
- 		.name = MODULE_NAME,
- 		.of_match_table = bcm2835_pinctrl_match,
-+		.suppress_bind_attrs = true,
- 	},
- };
--module_platform_driver(bcm2835_pinctrl_driver);
--
--MODULE_AUTHOR("Chris Boot, Simon Arlott, Stephen Warren");
--MODULE_DESCRIPTION("BCM2835 Pin control driver");
--MODULE_LICENSE("GPL");
-+builtin_platform_driver(bcm2835_pinctrl_driver);
-diff --git a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-index d31c95701a92..3684cca277ad 100644
---- a/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-+++ b/drivers/pinctrl/bcm/pinctrl-cygnus-mux.c
-@@ -1,4 +1,8 @@
--/* Copyright (C) 2014-2015 Broadcom Corporation
-+/*
-+ * Broadcom Cygnus IOMUX driver
-+ *
-+ * Author: Ray Jui <rjui@broadcom.com>
-+ * Copyright (C) 2014-2015 Broadcom Corporation
-  *
-  * This program is free software; you can redistribute it and/or
-  * modify it under the terms of the GNU General Public License as
-@@ -17,7 +21,6 @@
- 
- #include <linux/err.h>
- #include <linux/io.h>
--#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/platform_device.h>
-@@ -1016,7 +1019,3 @@ static int __init cygnus_pinmux_init(void)
- 	return platform_driver_register(&cygnus_pinmux_driver);
- }
- arch_initcall(cygnus_pinmux_init);
--
--MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
--MODULE_DESCRIPTION("Broadcom Cygnus IOMUX driver");
--MODULE_LICENSE("GPL v2");
+Paul Gortmaker (3):
+  pinctrl: samsung: clean up modular vs. non-modular distinctions
+  pinctrl: tegra: clean up modular vs. non-modular distinctions
+  pinctrl: bcm: clean up modular vs. non-modular distinctions
+
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c       | 16 ++++++++--------
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c        | 20 +++-----------------
+ drivers/pinctrl/bcm/pinctrl-cygnus-mux.c     | 11 +++++------
+ drivers/pinctrl/samsung/pinctrl-exynos.c     |  1 -
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c | 15 +++------------
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c    |  2 +-
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  2 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c    | 13 +------------
+ drivers/pinctrl/tegra/pinctrl-tegra.c        |  1 -
+ drivers/pinctrl/tegra/pinctrl-tegra114.c     | 11 ++++-------
+ drivers/pinctrl/tegra/pinctrl-tegra124.c     | 11 ++++-------
+ drivers/pinctrl/tegra/pinctrl-tegra20.c      | 11 ++++-------
+ drivers/pinctrl/tegra/pinctrl-tegra210.c     |  9 ++-------
+ drivers/pinctrl/tegra/pinctrl-tegra30.c      | 11 ++++-------
+ 14 files changed, 40 insertions(+), 94 deletions(-)
+
 -- 
 2.11.0
-
