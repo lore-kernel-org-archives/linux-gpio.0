@@ -1,104 +1,56 @@
-From: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
-Date: Tue, 23 May 2017 18:58:53 +0200
-Message-ID: <2018547.lycQhaDrJg@debian64>
-References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <1975629.nrP45RYYW5@debian64> <20170520050824.GS12920@tuxbook>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170520050824.GS12920@tuxbook>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 01/12] gpiolib: Export gpiod_configure_flags() to internal users
+Date: Tue, 23 May 2017 20:03:16 +0300
+Message-ID: <20170523170327.18055-2-andriy.shevchenko@linux.intel.com>
+References: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:28227 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760688AbdEWRDd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 May 2017 13:03:33 -0400
+In-Reply-To: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jagadish Krishnamoorthy <jagadish.krishnamoorthy@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Friday, May 19, 2017 10:08:24 PM CEST Bjorn Andersson wrote:
-> On Thu 18 May 11:38 PDT 2017, Christian Lamparter wrote:
-> > On Wednesday, May 17, 2017 1:07:29 PM CEST Bjorn Andersson wrote:
-> > > On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
-> > > > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> > > > index 743d1f458205..7219d1e33c71 100644
-> > > > --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> > > > +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
-> > > > +	qca_mux_rmii0_refclk,
-> > > > +	qca_mux_wifi0_rfsilient0,
-> > > > +	qca_mux_wifi1_rfsilient0,
-> > > > +	qca_mux_smart2,
-> > > > +	qca_mux_led4,
-> > > 
-> > > What drives ledX? Is it 11 different LED controllers or is it a single
-> > > LED controller with 11 outputs.
-> > 
-> > The latter. The IPQ40xx have one LED controller @ 0x1937000. 
-> > According to the driver (leds-ipq40xx.c in the SDK), it 
-> > does control up to 11 LEDs. A LED can either be muxed to
-> > one of the hardware sources (wifi, lan or wan-ports activity/linkspeed),
-> > or it can be operated by one of four software-programmable "blink"
-> > sources (each with a variable blink rate and duty cycle). 
-> > The driver labels each LED as "ipq40xx::led%d".
-> > 
-> 
-> As they all stem from the same hardware block I suggest we name the
-> function "led".
+This is preparatory patch for enabling GPIO ACPI to configure a pin
+accordingly.
 
-This is going to be a problem for Pin 36:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/gpio/gpiolib.c | 2 +-
+ drivers/gpio/gpiolib.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-PINGROUP(36, rmii0, *led2*, *led0*, NA, ...)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 5db44139cef8..99e07a2b7e02 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3212,7 +3212,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_optional);
+  * requested function and/or index, or another IS_ERR() code if an error
+  * occurred while trying to acquire the GPIO.
+  */
+-static int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
++int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+ 		unsigned long lflags, enum gpiod_flags dflags)
+ {
+ 	int status;
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 2495b7ee1b42..e36a0bdc7740 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -199,6 +199,8 @@ struct gpio_desc {
+ 
+ int gpiod_request(struct gpio_desc *desc, const char *label);
+ void gpiod_free(struct gpio_desc *desc);
++int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
++		unsigned long lflags, enum gpiod_flags dflags);
+ int gpiod_hog(struct gpio_desc *desc, const char *name,
+ 		unsigned long lflags, enum gpiod_flags dflags);
+ 
+-- 
+2.11.0
 
-I checked the other pins too, but this seems to be the only time two 
-LED-lines share the same pin. What's the recommended/prefered option
-in this case? Something like led_alt, or should I keep the led0-led11?
-
-There are a few more collisions with other functions as well:
-smartX, i2s_*, wifi1_uart*:
-
-PINGROUP(58, qpic, led2, blsp_i2c0, *smart3*, *smart1*,
-         i2s_rx_mclk, NA, wcss0_dbg, tm4, wifi0, wifi1, NA, NA, NA),
-
-PINGROUP(60, qpic, blsp_uart0, smart1, smart3, led0,
-         *i2s_tx_bclk*, *i2s_rx_bclk*, atest_char, NA, wcss0_dbg,
-         qdss_traceclk_a, NA, tm6, NA),
-
-PINGROUP(61, qpic, blsp_uart0, *smart1*, *smart3*, led1, *i2s_tx_fsync*,
-         *i2s_rx_fsync*, NA, NA, wcss0_dbg, qdss_cti_trig_out_a0,
-         NA, tm7, NA),
-
-PINGROUP(63, qpic, wifi0_uart1, *wifi1_uart1*, *wifi1_uart*, *i2s_td1*,
-         *i2s_rxd*, *i2s_spdif_out*, *i2s_spdif_in*, NA, wcss0_dbg,
-         wcss1_dbg, NA, tm, NA),
-...
-> > > > +	qca_mux_qpic_pad4,
-> > > 
-> > > Please keep an eye on the ipq8074 patch from Varadarajan and make this
-> > > follow the same scheme.
-> > Ok, I'll wait for how qca8074 plays out then.
-
-<https://www.spinics.net/lists/arm-kernel/msg582958.html>:
-| On Sat, May 20, 2017 at 7:54 AM, Bjorn Andersson wrote:
-| [...]
-| > If you consider that you are defining the available functions for this
-| > pinmuxer and then define the sets of pins exposing these available
-| > functions it does make sense to just name it "qpic".
-| >
-| > I think that naming them _common, _lcd and _nand is just adding
-| > confusion when it comes to writing the dts files.
-| >
-| > @Linus, do you have a different preference here?
-|
-|No I pretty much trust the driver maintainer to know this best.
-|
-|Yours,
-|Linus Walleij
-
-Thanks for the answer, I'll go with "qpic" then.
-I'll also combine the various sdio_* to sdio and look at the other candidates
-(rgmii*, rmii0/1*, pmuX, pcie_clk*, jtag*, tmX, audio_pwmX). Unless someone
-comes up with a good reason not to.
-
-Regards,
-Christian
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
