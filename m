@@ -1,53 +1,31 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v6 3/4] ARM: mvebu: Enable SENSORS_PWM_FAN in defconfig
-Date: Tue, 23 May 2017 16:00:25 +0200
-Message-ID: <87lgpny8p2.fsf@free-electrons.com>
-References: <20170414154056.32055-1-ralph.sennhauser@gmail.com>
-        <20170414154056.32055-4-ralph.sennhauser@gmail.com>
-        <CACRpkda6P026U4pBXPuEJ=cYu+Hz9N_-snXcOXr5c0Q9g4jBig@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda6P026U4pBXPuEJ=cYu+Hz9N_-snXcOXr5c0Q9g4jBig@mail.gmail.com>
-        (Linus Walleij's message of "Mon, 24 Apr 2017 11:20:02 +0200")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/2] pinctrl: meson: Add missing GPIODV_18 pin for GXBB and GXL
+Date: Tue, 23 May 2017 16:09:17 +0200
+Message-ID: <1495548559-22261-1-git-send-email-narmstrong@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:38193 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936266AbdEWOJc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 10:09:32 -0400
+Received: by mail-wm0-f50.google.com with SMTP id e127so30088444wmg.1
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 07:09:31 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi,
- 
- On lun., avril 24 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
+For unknown reasons, GPIODV_18 pin was missing in the GXBB driver and then
+was copied into the GXL driver.
+This patchset fixes the pin list for GXBB and GXL.
 
-> On Fri, Apr 14, 2017 at 5:40 PM, Ralph Sennhauser
-> <ralph.sennhauser@gmail.com> wrote:
->
->> From: Andrew Lunn <andrew@lunn.ch>
->>
->> Now that the GPIO driver also supports PWM operation, enable the PWM
->> framework and fan driver in mvebu_v7_defconfig.
->>
->> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
->> URL: https://patchwork.ozlabs.org/patch/427297/
->> [Ralph Sennhauser: add fan driver to defconfig]
->> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
->> Tested-by: Andrew Lunn <andrew@lunn.ch>
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Please funnel this through ARM SoC.
+Neil Armstrong (2):
+  pinctrl: meson-gxl: Add missing GPIODV_18 pin entry
+  pinctrl: meson-gxbb: Add missing GPIODV_18 pin entry
 
-Applied on mvebu/defconfig
-
-Thanks,
-
-Gregory
->
-> Yours,
-> Linus Walleij
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 1 +
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 1 +
+ 2 files changed, 2 insertions(+)
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+1.9.1
+
