@@ -1,42 +1,104 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: core: do not explicitly free on unregister
-Date: Tue, 23 May 2017 10:20:31 +0200
-Message-ID: <CACRpkdZoiZU5GGQixZ3d_Qp3enJY2-E7j_+t0TVZCDpGgJHUQQ@mail.gmail.com>
-References: <20170516061859.396-1-stefan@agner.ch>
+From: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH v2 2/6] pintrl: meson: document GPIO IRQ DT binding
+Date: Tue, 23 May 2017 10:35:59 +0200
+Message-ID: <1495528559.2344.9.camel@baylibre.com>
+References: <36164ed8-aa59-2a77-b7fc-9adce03a2fc1@gmail.com>
+         <c5ea65c5-f604-d890-4e73-f53bdd47bd31@gmail.com>
+         <1494977339.2728.8.camel@baylibre.com>
+         <ec9310f1-10eb-789f-e6f7-67e0340f4c64@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35043 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966655AbdEWIUd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 04:20:33 -0400
-Received: by mail-it0-f46.google.com with SMTP id c15so14954915ith.0
-        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 01:20:33 -0700 (PDT)
-In-Reply-To: <20170516061859.396-1-stefan@agner.ch>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <ec9310f1-10eb-789f-e6f7-67e0340f4c64-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, ext Tony Lindgren <tony@atomide.com>
 
-On Tue, May 16, 2017 at 8:18 AM, Stefan Agner <stefan@agner.ch> wrote:
+On Wed, 2017-05-17 at 23:02 +0200, Heiner Kallweit wrote:
+> Am 17.05.2017 um 01:28 schrieb Jerome Brunet:
+> > On Fri, 2017-05-12 at 21:13 +0200, Heiner Kallweit wrote:
+> > > Document the DT binding for GPIO IRQ support on Amlogic Meson SoC's.
+> > > 
+> > > This documentation is intentionally not placed under
+> > > interrupt-controllers as GPIO IRQ support on these SoC's acts more
+> > > like an interrupt multiplexer.
+> > > 
+> > > Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> > > ---
+> > > v2:
+> > > - remove syscon
+> > > ---
+> > >  arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> > > b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> > > index 436b8750..44422b85 100644
+> > > --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> > > +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> > > @@ -312,6 +312,19 @@
+> > >  				status = "disabled";
+> > >  			};
+> > >  
+> > > +			gpio_irq@9880 {
+> > > +				compatible = "amlogic,meson-gpio-
+> > > interrupt";
+> > > +				reg = <0x0 0x09880 0x0 0x10>;
+> > > +				interrupts = <GIC_SPI 64 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 65 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 66 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 67 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 68 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 69 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 70 IRQ_TYPE_NONE>,
+> > > +					     <GIC_SPI 71 IRQ_TYPE_NONE>;
+> > > +			};
+> > > +
+> > 
+> > Already tried the same thing:
+> > https://marc.info/?l=devicetree&m=147758174404359&w=2
+> > 
+> > Irq maintainers reminded me that this is not correct as the device is not
+> > able
+> > to generate these particular irqs (it is merely routing the signal) and the
+> > flags are meaning less here
+> > 
+> 
+> In one review comment to your patch series Rob mentioned to be fine with using
+> the standard interrupts property.
+> However other involved people might have had a different opinion, I didn't
+> read
+> all review comments.
+> 
+> I think the standard interrupts property is the best way.
+> We need mapped virq's to be used with the irq chaining. And for mapping an
+> interrupt we need not only the hwirq but also the IRQ domain. The interrupts
+> property and the related OF IRQ API calls like irq_of_parse_and_map provide
+> exactly what we need.
+> 
+> If somebody has serious objections to using the interrupts property then we
+> basically had to duplicate it and just give it a different name.
 
-> When using the resource managed version of pinctrl, resources
-> might already been freed when pinctrl_unregister is called by the
-> devres framework. When calling devm_kfree on such a already freed
-> resource, devres prints a warning:
->   WARNING: CPU: 0 PID: 1 at drivers/base/devres.c:891 pinmux_generic_free_functions+0xf4/0x128
->   ...
->
-> Solve this by not explicitly free resources. The two affected
-> functions (pinmux_generic_free_functions/pinctrl_generic_free_groups)
-> are only used in pinctrl_unregister. When not using the resource
-> managed version of pinctrl, the underlying device will presumably
-> get freed freed soon anyway.
->
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+You got the objections in my previous comment.
+* This driver does *not* generate these irq, it just route them
+* IRQ_TYPE_NONE in meaningless here
 
-I think this is no longer needed after the fix from Tony
-"pinctrl: core: Fix warning by removing bogus code"
+This comments initially came from Mark and Marc, on the first RFC I sent lastyear. 
 
-Yours,
-Linus Walleij
+> And such code duplication to me seems to be worse than using the interrupts
+> property slightly different than in the theory.
+> 
+> > 
+> > >  			watchdog@98d0 {
+> > >  				compatible = "amlogic,meson-gx-wdt",
+> > > "amlogic,meson-gxbb-wdt";
+> > >  				reg = <0x0 0x098d0 0x0 0x10>;
+> 
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
