@@ -1,43 +1,60 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH RfC v3 2/7] pinctrl: meson: document GPIO IRQ driver DT
- binding
-Date: Mon, 22 May 2017 19:56:01 -0500
-Message-ID: <20170523005601.h6nupyplymv2ieng@rob-hp-laptop>
-References: <16950080-b19d-e25c-fb48-bc79cfe4acc0@gmail.com>
- <7c09969b-ac04-cfa4-7459-7ad25b7c5cbf@gmail.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v2 3/8] thermal: intel_bxt_pmic_thermal: use first level
+ PMIC thermal irq
+Date: Tue, 23 May 2017 14:24:12 +0800
+Message-ID: <1495520652.2303.0.camel@intel.com>
+References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+         <fda73b083e5e67e8fcc9fc2d01a590f689a06c91.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36576 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759434AbdEWA4I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 20:56:08 -0400
-Content-Disposition: inline
-In-Reply-To: <7c09969b-ac04-cfa4-7459-7ad25b7c5cbf@gmail.com>
+Received: from mga11.intel.com ([192.55.52.93]:45645 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936218AbdEWGYT (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 May 2017 02:24:19 -0400
+In-Reply-To: <fda73b083e5e67e8fcc9fc2d01a590f689a06c91.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: sathyanarayanan.kuppuswamy@linux.intel.com, gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, lee.jones@linaro.org, andy@infradead.org
+Cc: linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com
 
-On Wed, May 17, 2017 at 10:16:35PM +0200, Heiner Kallweit wrote:
-> Document the DT binding for GPIO IRQ support on Amlogic Meson SoC's.
+On Fri, 2017-04-14 at 16:25 -0700,
+sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.in
+> tel.com>
 > 
-> This documentation is intentionally not placed under
-> interrupt-controllers as GPIO IRQ support on these SoC's acts more
-> like an interrupt multiplexer.
-
-I've not seen anything in the discussion that indicates this is a better 
-fit as gpio. Seems to me multiple people including me have said this 
-sounds like an interrupt controller.
-
+> PMIC mfd driver only exports first level irq for thermal device.
+> But currently we are reading the irqs from the second level irq
+> chip, So this patch fixes this issue by adding support to use
+> first level PMIC thermal irq.
 > 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Signed-off-by: Kuppuswamy Sathyanarayanan
+> <sathyanarayanan.kuppuswamy@linux.intel.com>
+
+Acked-by: Zhang Rui <rui.zhang@intel.com>
+
+-rui
 > ---
-> v2:
-> - remove syscon
-> v3:
-> - no changes
-> ---
->  .../bindings/gpio/amlogic,meson-gpio-interrupt.txt | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/amlogic,meson-gpio-interrupt.txt
+>  drivers/thermal/intel_bxt_pmic_thermal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Changes since v1:
+>  * None
+> 
+> diff --git a/drivers/thermal/intel_bxt_pmic_thermal.c
+> b/drivers/thermal/intel_bxt_pmic_thermal.c
+> index 0f19a39..ef6b322 100644
+> --- a/drivers/thermal/intel_bxt_pmic_thermal.c
+> +++ b/drivers/thermal/intel_bxt_pmic_thermal.c
+> @@ -241,7 +241,7 @@ static int pmic_thermal_probe(struct
+> platform_device *pdev)
+>  	}
+>  
+>  	regmap = pmic->regmap;
+> -	regmap_irq_chip = pmic->irq_chip_data_level2;
+> +	regmap_irq_chip = pmic->irq_chip_data;
+>  
+>  	pmic_irq_count = 0;
+>  	while ((irq = platform_get_irq(pdev, pmic_irq_count)) !=
+> -ENXIO) {
