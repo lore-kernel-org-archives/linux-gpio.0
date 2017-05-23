@@ -1,81 +1,40 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio controllers on Armada 7K/8K
-Date: Tue, 23 May 2017 15:06:04 +0200
-Message-ID: <878tlnzps3.fsf@free-electrons.com>
-References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
-        <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
-        <CACRpkdY97DDcwec+J-4X1AT5a7Mbo4GnWUJmuAOYhNzOA8_HZQ@mail.gmail.com>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] gpio: Add new flags to control sleep status of GPIOs
+Date: Tue, 23 May 2017 08:38:18 -0500
+Message-ID: <CAL_Jsq+cTTkGH7ywQmkjM7sEfJ+jivVv3vY5eMK2etO209Rc9w@mail.gmail.com>
+References: <1494948714-15203-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <CACRpkdbiyZ9jPnuaX9OuYjVbrUYxtpqO-XMqb75ScCEH-=kOEg@mail.gmail.com> <20170523085102.hgr7yovshqy5arkq@dell>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:40199 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759998AbdEWNG2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 09:06:28 -0400
-In-Reply-To: <CACRpkdY97DDcwec+J-4X1AT5a7Mbo4GnWUJmuAOYhNzOA8_HZQ@mail.gmail.com>
-        (Linus Walleij's message of "Tue, 23 May 2017 11:20:19 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170523085102.hgr7yovshqy5arkq@dell>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marci
 
-Hi Linus,
- 
- On mar., mai 23 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> On Fri, May 19, 2017 at 6:09 PM, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
+On Tue, May 23, 2017 at 3:51 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Tue, 23 May 2017, Linus Walleij wrote:
 >
->> Document the device tree binding for the gpio controllers found on the
->> Marvell Armada 7K and Armada 8K SoCs.
+>> On Tue, May 16, 2017 at 5:31 PM, Charles Keepax
+>> <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
 >>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> > Add new flags to allow users to specify that they are not concerned with
+>> > the status of GPIOs whilst in a sleep/low power state.
+>> >
+>> > Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+>>
+>> Would be nice to have some opinion from the DT maintainers about
+>> this but seems all right to me.
 >
-> This does not apply at all to the GPIO "devel" branch.
-> And that is a fairly clean v4.12-rc2.
->
-> Please rebase and resend the rest of the patches.
+> Not sure if it makes a difference, but Rob Acked the bindings already.
 
-Actually I was wrong with my assumption that there was no dependency.
-For the binding documentation there is dependecy accross the series I
-sent.
+Seems PW doesn't pick-up header only patches, so I missed this.
 
-This patch depends on "pinctrl: dt-bindings: add documentation for AP806
-pin controllers" [1] and "pinctrl: dt-bindings: add documentation for
-CP110 pin controllers" [3] from the series "Add support for the pin
-controllers on the Marvell Armada 7K/8K".
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-As you are maintainer of both gpio and pinctrl subsystem it will be easy
-to resolv.
-
-But these last patches depend also on "clk: mvebu: ap806: introduce a
-new binding" [3] in the clock series "Improve ap806 clk support on
-Marvell Armada 7K/8K" and on "clk: mvebu: cp110: introduce a new
-binding" [4] in the clock series "Improve cp110 clk support on Marvell
-Armada 7K/8K".
-
-So for these particular patches, either I rebase them on the v4.12-rc2
-and there will be a small merge conflict during the merge window for
-v4.13, or we can ask a stable branch with only these few patches (I am
-adding the clock maintainer to this email).
-
-If we chose this last option I can split the clock patches to have patch
-modifying only the binding documentation.
-
-Gregory
-
-[1]: http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507399.html
-[2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507398.html
-[3]: http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507393.html
-[4]: http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/507384.html
-
-> Would be nice with a DT ACK but no controversial changes here.
->
-> Yours,
-> Linus Walleij
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
