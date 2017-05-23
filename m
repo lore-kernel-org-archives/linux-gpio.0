@@ -1,91 +1,48 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 09/12] gpio: acpi: Split out acpi_gpio_get_irq_resource() helper
-Date: Tue, 23 May 2017 20:03:24 +0300
-Message-ID: <20170523170327.18055-10-andriy.shevchenko@linux.intel.com>
-References: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-acpi@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jagadish Krishnamoorthy <jagadish.krishnamoorthy@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v3 3/8] thermal: intel_bxt_pmic_thermal: use first level PMIC thermal irq
+Date: Tue, 23 May 2017 10:30:01 -0700
+Message-ID: <040f4eb6192c0e591de2c8a5c31f0a219f473a9b.1495559980.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <20170523072615.r4widzjc6apwxpwb@dell>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20170523072615.r4widzjc6apwxpwb@dell>
+In-Reply-To: <75e12563a835dc4f8e8dab26ecea46822262604b.1495559980.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <75e12563a835dc4f8e8dab26ecea46822262604b.1495559980.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, lee.jones@linaro.org, andy@infradead.org
+Cc: linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The helper does retrieve pointer to struct acpi_resource_gpio from
-struct acpi_resource if it represents GpioInt() resource.
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-It will be used by PNP code later on.
+PMIC mfd driver only exports first level irq for thermal device.
+But currently we are reading the irqs from the second level irq
+chip, So this patch fixes this issue by adding support to use
+first level PMIC thermal irq.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Acked-by: Zhang Rui <rui.zhang@intel.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 23 ++++++++++++++++++-----
- include/linux/acpi.h        |  7 +++++++
- 2 files changed, 25 insertions(+), 5 deletions(-)
+ drivers/thermal/intel_bxt_pmic_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index e431222edc2b..6bea176b066c 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -165,6 +165,23 @@ static void acpi_gpio_chip_dh(acpi_handle handle, void *data)
- 	/* The address of this function is used as a key. */
- }
+Changes since v1:
+ * None
+
+Changes since v2: 
+ * Rebased on top of latest release.
+
+diff --git a/drivers/thermal/intel_bxt_pmic_thermal.c b/drivers/thermal/intel_bxt_pmic_thermal.c
+index 0f19a39..ef6b322 100644
+--- a/drivers/thermal/intel_bxt_pmic_thermal.c
++++ b/drivers/thermal/intel_bxt_pmic_thermal.c
+@@ -241,7 +241,7 @@ static int pmic_thermal_probe(struct platform_device *pdev)
+ 	}
  
-+bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
-+				struct acpi_resource_gpio **agpio)
-+{
-+	struct acpi_resource_gpio *gpio;
-+
-+	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
-+		return false;
-+
-+	gpio = &ares->data.gpio;
-+	if (gpio->connection_type != ACPI_RESOURCE_GPIO_TYPE_INT)
-+		return false;
-+
-+	*agpio = gpio;
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(acpi_gpio_get_irq_resource);
-+
- static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 						   void *context)
- {
-@@ -178,11 +195,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 	unsigned long irqflags;
- 	int ret, pin, irq;
+ 	regmap = pmic->regmap;
+-	regmap_irq_chip = pmic->irq_chip_data_level2;
++	regmap_irq_chip = pmic->irq_chip_data;
  
--	if (ares->type != ACPI_RESOURCE_TYPE_GPIO)
--		return AE_OK;
--
--	agpio = &ares->data.gpio;
--	if (agpio->connection_type != ACPI_RESOURCE_GPIO_TYPE_INT)
-+	if (!acpi_gpio_get_irq_resource(ares, &agpio))
- 		return AE_OK;
- 
- 	handle = ACPI_HANDLE(chip->parent);
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 137e4a3d89c5..d5aa3c42f64d 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -964,6 +964,8 @@ int devm_acpi_dev_add_driver_gpios(struct device *dev,
- 				   const struct acpi_gpio_mapping *gpios);
- void devm_acpi_dev_remove_driver_gpios(struct device *dev);
- 
-+bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
-+				struct acpi_resource_gpio **agpio);
- int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index);
- #else
- static inline int acpi_dev_add_driver_gpios(struct acpi_device *adev,
-@@ -980,6 +982,11 @@ static inline int devm_acpi_dev_add_driver_gpios(struct device *dev,
- }
- static inline void devm_acpi_dev_remove_driver_gpios(struct device *dev) {}
- 
-+static inline bool acpi_gpio_get_irq_resource(struct acpi_resource *ares,
-+					      struct acpi_resource_gpio **agpio)
-+{
-+	return false;
-+}
- static inline int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- {
- 	return -ENXIO;
+ 	pmic_irq_count = 0;
+ 	while ((irq = platform_get_irq(pdev, pmic_irq_count)) != -ENXIO) {
 -- 
-2.11.0
+2.7.4
