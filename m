@@ -1,85 +1,32 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 3/3] gpio: adp5588: move header file out of I2C realm
-Date: Mon, 22 May 2017 16:40:26 -0700
-Message-ID: <20170522234026.GD12016@dtor-ws>
-References: <20170521215727.1243-1-wsa@the-dreams.de>
- <20170521215727.1243-4-wsa@the-dreams.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/3] mfd: arizona: Update GPIO binding for newly
+ supported flag
+Date: Mon, 22 May 2017 19:16:07 -0500
+Message-ID: <20170523001607.rarxleh7dxobrfr6@rob-hp-laptop>
+References: <1494948714-15203-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1494948714-15203-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32877 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759148AbdEWAQJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 22 May 2017 20:16:09 -0400
 Content-Disposition: inline
-In-Reply-To: <20170521215727.1243-4-wsa@the-dreams.de>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, Steven Miao <realmz6@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org
+In-Reply-To: <1494948714-15203-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linus.walleij@linaro.org, lee.jones@linaro.org, mark.rutland@arm.com, gnurou@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-On Sun, May 21, 2017 at 11:57:27PM +0200, Wolfram Sang wrote:
-> include/linux/i2c is not for client devices. Move the header file to a
-> more appropriate location.
+On Tue, May 16, 2017 at 04:31:54PM +0100, Charles Keepax wrote:
+> Update the device tree binding to show that the new GPIO_SLEEP flags are
+> now supported in the flags field of the GPIO binding for Arizona
+> devices.
 > 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > ---
-> 
-> This driver could also go via the input-tree or my tree. I don't really care
-> and just picked some subsystem :) Let me know if you are okay with that.
+>  Documentation/devicetree/bindings/mfd/arizona.txt | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-> 
->  arch/blackfin/mach-bf537/boards/stamp.c        | 2 +-
->  drivers/gpio/gpio-adp5588.c                    | 2 +-
->  drivers/input/keyboard/adp5588-keys.c          | 2 +-
->  include/linux/{i2c => platform_data}/adp5588.h | 0
->  4 files changed, 3 insertions(+), 3 deletions(-)
->  rename include/linux/{i2c => platform_data}/adp5588.h (100%)
-> 
-> diff --git a/arch/blackfin/mach-bf537/boards/stamp.c b/arch/blackfin/mach-bf537/boards/stamp.c
-> index eaec7b4832a29a..24985e658c19cd 100644
-> --- a/arch/blackfin/mach-bf537/boards/stamp.c
-> +++ b/arch/blackfin/mach-bf537/boards/stamp.c
-> @@ -22,7 +22,7 @@
->  #include <linux/usb/isp1362.h>
->  #endif
->  #include <linux/i2c.h>
-> -#include <linux/i2c/adp5588.h>
-> +#include <linux/platform_data/adp5588.h>
->  #include <linux/etherdevice.h>
->  #include <linux/ata_platform.h>
->  #include <linux/irq.h>
-> diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
-> index c0f718b1231727..e717f8dc39667c 100644
-> --- a/drivers/gpio/gpio-adp5588.c
-> +++ b/drivers/gpio/gpio-adp5588.c
-> @@ -16,7 +16,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  
-> -#include <linux/i2c/adp5588.h>
-> +#include <linux/platform_data/adp5588.h>
->  
->  #define DRV_NAME	"adp5588-gpio"
->  
-> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-> index 53fe9a3fb6204d..f9d273c8b30695 100644
-> --- a/drivers/input/keyboard/adp5588-keys.c
-> +++ b/drivers/input/keyboard/adp5588-keys.c
-> @@ -20,7 +20,7 @@
->  #include <linux/gpio.h>
->  #include <linux/slab.h>
->  
-> -#include <linux/i2c/adp5588.h>
-> +#include <linux/platform_data/adp5588.h>
->  
->  /* Key Event Register xy */
->  #define KEY_EV_PRESSED		(1 << 7)
-> diff --git a/include/linux/i2c/adp5588.h b/include/linux/platform_data/adp5588.h
-> similarity index 100%
-> rename from include/linux/i2c/adp5588.h
-> rename to include/linux/platform_data/adp5588.h
-> -- 
-> 2.11.0
-> 
-
--- 
-Dmitry
+Acked-by: Rob Herring <robh@kernel.org>
