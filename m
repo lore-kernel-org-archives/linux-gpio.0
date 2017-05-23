@@ -1,68 +1,35 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH] gpio: davinci: Handle return value of clk_prepare_enable
-Date: Tue, 23 May 2017 14:48:57 +0530
-Message-ID: <1fe4ff39a277a29c8a1c72cfd333f49419fb1a3b.1495530935.git.arvind.yadav.cs@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, gnurou@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/6] gpio: mvebu: allow building driver for Armada 7K/8K
+Date: Tue, 23 May 2017 11:21:54 +0200
+Message-ID: <CACRpkdZ-gA7Zy0S3md=dO6uJrVpX27uzSKu1ze9YLzJwpNM-iQ@mail.gmail.com>
+References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
+ <ed816f275537bf4e0d4557ed53b685b4f3186605.1495210061.git-series.gregory.clement@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:36823 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759853AbdEWJV4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 05:21:56 -0400
+Received: by mail-it0-f51.google.com with SMTP id o5so15668054ith.1
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 02:21:56 -0700 (PDT)
+In-Reply-To: <ed816f275537bf4e0d4557ed53b685b4f3186605.1495210061.git-series.gregory.clement@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@ma>
 
-clk_prepare_enable() can fail here and we must check its return value.
+On Fri, May 19, 2017 at 6:09 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/gpio/gpio-davinci.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+> The mvebu gpio driver can also be used on arm64 mvebu SoC such as the
+> Armada 7K/8K. This commit allows to build the driver for them (when only
+> ARCH_MVEBU is defined)
+>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index ac17357..65cb359 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -437,6 +437,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- {
- 	unsigned	gpio, bank;
- 	int		irq;
-+	int		ret;
- 	struct clk	*clk;
- 	u32		binten = 0;
- 	unsigned	ngpio, bank_irq;
-@@ -480,12 +481,15 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 		       PTR_ERR(clk));
- 		return PTR_ERR(clk);
- 	}
--	clk_prepare_enable(clk);
-+	ret = clk_prepare_enable(clk);
-+	if (ret)
-+		return ret;
- 
- 	if (!pdata->gpio_unbanked) {
- 		irq = devm_irq_alloc_descs(dev, -1, 0, ngpio, 0);
- 		if (irq < 0) {
- 			dev_err(dev, "Couldn't allocate IRQ numbers\n");
-+			clk_disable_unprepare(clk);
- 			return irq;
- 		}
- 
-@@ -494,6 +498,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 							chips);
- 		if (!irq_domain) {
- 			dev_err(dev, "Couldn't register an IRQ domain\n");
-+			clk_disable_unprepare(clk);
- 			return -ENODEV;
- 		}
- 	}
-@@ -562,8 +567,10 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 				       sizeof(struct
- 					      davinci_gpio_irq_data),
- 					      GFP_KERNEL);
--		if (!irqdata)
-+		if (!irqdata) {
-+			clk_disable_unprepare(clk);
- 			return -ENOMEM;
-+		}
- 
- 		irqdata->regs = g;
- 		irqdata->bank_num = bank;
--- 
-1.9.1
+Patch applied.
+
+Yours,
+Linus Walleij
