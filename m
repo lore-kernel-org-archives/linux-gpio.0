@@ -1,45 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/29] pinctrl.txt: standardize document format
-Date: Tue, 23 May 2017 11:12:43 +0200
-Message-ID: <CACRpkdaDZQQ7fprGkSvXiUHfqdM_zGkPe4_T3R-p55asCDeQCw@mail.gmail.com>
-References: <cover.1495157082.git.mchehab@s-opensource.com> <d16c41b5f7022add66672d43b5d595af74a1db34.1495157082.git.mchehab@s-opensource.com>
+Subject: Re: [PATCH 1/6] gpio: mvebu: sort header include
+Date: Tue, 23 May 2017 11:15:24 +0200
+Message-ID: <CACRpkdbpvWik_zY5jK+L8hOHdAO3pxf2rrGuU6crGkjCwW982A@mail.gmail.com>
+References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
+ <91fd5ea411ae61145768a0c940ba231b290d57ef.1495210061.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:36218 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762706AbdEWJMp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 05:12:45 -0400
-Received: by mail-it0-f45.google.com with SMTP id o5so15558493ith.1
-        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 02:12:44 -0700 (PDT)
-In-Reply-To: <d16c41b5f7022add66672d43b5d595af74a1db34.1495157082.git.mchehab@s-opensource.com>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:36764 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762274AbdEWJPZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 05:15:25 -0400
+Received: by mail-io0-f171.google.com with SMTP id o12so93518685iod.3
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 02:15:25 -0700 (PDT)
+In-Reply-To: <91fd5ea411ae61145768a0c940ba231b290d57ef.1495210061.git-series.gregory.clement@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@ma>
 
-On Fri, May 19, 2017 at 3:25 AM, Mauro Carvalho Chehab
-<mchehab@s-opensource.com> wrote:
+On Fri, May 19, 2017 at 6:09 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-> Each text file under Documentation follows a different
-> format. Some doesn't even have titles!
+> This commit sorts alphabetically the header files.
 >
-> Change its representation to follow the adopted standard,
-> using ReST markups for it to be parseable by Sphinx.
->
-> This document is almost following the standard stile.
->
-> There are only two things to adjust on it:
->
-> - promote the level of the document title;
-> - mark literal blocks as such.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-I applied the patch fixing some of the indentation mistakes pointed
-out by Geert.
-
-Should the file be renamed pinctrl.rst now?
+Patch applied.
 
 Yours,
 Linus Walleij
