@@ -1,45 +1,51 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/5] pinctrl: qcom: Add ipq8074 pinctrl driver
-Date: Tue, 23 May 2017 11:26:24 +0200
-Message-ID: <CACRpkdaiXq9ivmPOcAS4UVM-7Fz1aPYuqPw5bOHjOn2PJvSKzw@mail.gmail.com>
-References: <1493898841-20583-1-git-send-email-varada@codeaurora.org>
- <1493898841-20583-2-git-send-email-varada@codeaurora.org> <20170510224355.GE45273@Bjorns-MacBook-Pro-2.local>
- <1f4c9974-f6a4-bee7-4f37-ad8795e442a3@codeaurora.org> <20170514042307.GE69278@Bjorns-MacBook-Pro-2.local>
- <7afc7191-bcb1-a566-eac5-a4fe1293c773@codeaurora.org> <20170517193315.GF12920@tuxbook>
- <f5a3da8b-c3a4-3cb3-9f5f-0cbdb87688ed@codeaurora.org> <20170520055430.GU12920@tuxbook>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: mxs: atomically switch mux and drive strength config
+Date: Tue, 23 May 2017 11:28:37 +0200
+Message-ID: <CACRpkdZ01BNbdNbEqvfaxnOYbS64bgJ=FU_sbf==rJUympSs3w@mail.gmail.com>
+References: <20170518092355.6735-1-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170520055430.GU12920@tuxbook>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Manoharan Vijaya Raghavan <mraghava-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sjaganat-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Brown <david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sricharan R <sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:36695 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933326AbdEWJ2j (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 05:28:39 -0400
+Received: by mail-io0-f181.google.com with SMTP id o12so93687655iod.3
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 02:28:38 -0700 (PDT)
+In-Reply-To: <20170518092355.6735-1-u.kleine-koenig@pengutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Sascha Hauer <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, May 20, 2017 at 7:54 AM, Bjorn Andersson
-<bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Thu 18 May 01:39 PDT 2017, Varadarajan Narayanan wrote:
+On Thu, May 18, 2017 at 11:23 AM, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
->> There are 18 pins. 15 pins are common between LCD and NAND. The QPIC
->> controller arbitrates between LCD and NAND. Of the remaining 4, 2 are for
->> NAND and 2 are for LCD exclusively. We plan to group the qpic pins into 3
->> groups namely, qpic_common, qpic_nand and qpic_lcd. Is that ok?
->>
+> To set the mux mode of a pin two bits must be set. Up to now this is
+> implemented using the following idiom:
 >
-> If you consider that you are defining the available functions for this
-> pinmuxer and then define the sets of pins exposing these available
-> functions it does make sense to just name it "qpic".
+>         writel(mask, reg + CLR);
+>         writel(value, reg + SET);
 >
-> I think that naming them _common, _lcd and _nand is just adding
-> confusion when it comes to writing the dts files.
+> . This however results in the mux mode being 0 between the two writes.
 >
-> @Linus, do you have a different preference here?
+> On my machine there is an IC's reset pin connected to LCD_D20. The
+> bootloader configures this pin as GPIO output-high (i.e. not holding the
+> IC in reset). When Linux reconfigures the pin to GPIO the short time
+> LCD_D20 is muxed as LCD_D20 instead of GPIO_1_20 is enough to confuse
+> the connected IC.
+>
+> The same problem is present for the pin's drive strength setting which is
+> reset to low drive strength before using the right value.
+>
+> So instead of relying on the hardware to modify the register setting
+> using two writes implement the bit toggling using read-modify-write.
+>
+> Fixes: 17723111e64f ("pinctrl: add pinctrl-mxs support")
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-No I pretty much trust the driver maintainer to know this best.
+Patch applied for fixes with Shawn's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
