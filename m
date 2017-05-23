@@ -1,205 +1,127 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
-Date: Tue, 23 May 2017 12:16:01 -0700
-Message-ID: <0e430fc802cb89a4bd793e95dee57501@agner.ch>
-References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
- <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
- <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
- <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
+Date: Tue, 23 May 2017 12:28:57 -0700
+Message-ID: <20170523192857.GW12920@tuxbook>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com>
+ <1975629.nrP45RYYW5@debian64>
+ <20170520050824.GS12920@tuxbook>
+ <2018547.lycQhaDrJg@debian64>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:42339 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934892AbdEWTQv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 15:16:51 -0400
-In-Reply-To: <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:34082 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758082AbdEWT2h (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 15:28:37 -0400
+Received: by mail-pf0-f171.google.com with SMTP id 9so123703934pfj.1
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 12:28:36 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <2018547.lycQhaDrJg@debian64>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "A.S. Dong" <aisheng.dong@nxp.com>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>
+To: Christian Lamparter <chunkeey@googlemail.com>, Ram Chandra Jangir <rjangir@codeaurora.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, John Crispin <john@phrozen.org>
 
-On 2017-05-23 05:06, A.S. Dong wrote:
-> Hi Stefan,
-> 
->> -----Original Message-----
->> From: A.S. Dong
->> Sent: Wednesday, May 17, 2017 2:14 PM
->> To: 'Stefan Agner'
->> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
->> kernel@pengutronix.de; Alexandre Courbot
->> Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
->> property
->>
->> > -----Original Message-----
->> > From: Stefan Agner [mailto:stefan@agner.ch]
->> > Sent: Tuesday, May 16, 2017 1:11 AM
->> > To: A.S. Dong
->> > Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> > linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
->> > kernel@pengutronix.de; Alexandre Courbot
->> > Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
->> > property
->> >
->> > On 2017-05-14 23:48, Dong Aisheng wrote:
->> > > iMX ULP has different IOB/OBE shift from Vibrid, so let's make
->> >
->> > s/Vibrid/Vybrid
->> >
->> > > it a SoC property.
->> > >
->> > > Cc: Linus Walleij <linus.walleij@linaro.org>
->> > > Cc: Alexandre Courbot <gnurou@gmail.com>
->> > > Cc: Shawn Guo <shawnguo@kernel.org>
->> > > Cc: Stefan Agner <stefan@agner.ch>
->> > > Cc: Fugang Duan <fugang.duan@nxp.com>
->> > > Cc: Bai Ping <ping.bai@nxp.com>
->> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
->> > > ---
->> > >  drivers/pinctrl/freescale/pinctrl-imx.c     | 8 ++++----
->> > >  drivers/pinctrl/freescale/pinctrl-imx.h     | 2 ++
->> > >  drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 ++
->> > >  drivers/pinctrl/freescale/pinctrl-vf610.c   | 2 ++
->> > >  4 files changed, 10 insertions(+), 4 deletions(-)
->> > >
->> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
->> > > b/drivers/pinctrl/freescale/pinctrl-imx.c
->> > > index 57e1f7a..0d6aaca 100644
->> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
->> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
->> > > @@ -331,8 +331,8 @@ static int imx_pmx_gpio_set_direction(struct
->> > > pinctrl_dev *pctldev,
->> > >  	u32 reg;
->> > >
->> > >  	/*
->> > > -	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
->> > > -	 * They are part of the shared mux/conf register.
->> > > +	 * Only Vybrid and iMX ULP has the input/output buffer enable flags
->> > > +	 * (IBE/OBE) They are part of the shared mux/conf register.
->> > >  	 */
->> > >  	if (!(info->flags & SHARE_MUX_CONF_REG))
->> > >  		return 0;
->> > > @@ -344,9 +344,9 @@ static int imx_pmx_gpio_set_direction(struct
->> > > pinctrl_dev *pctldev,
->> > >  	/* IBE always enabled allows us to read the value "on the wire" */
->> > >  	reg = readl(ipctl->base + pin_reg->mux_reg);
->> > >  	if (input)
->> > > -		reg &= ~0x2;
->> > > +		reg = (reg & ~info->obe_bit) | info->ibe_bit;
->> > >  	else
->> > > -		reg |= 0x2;
->> > > +		reg = (reg & ~info->ibe_bit) | info->obe_bit;
->> >
->> > Why disabling IBE bit now? As the comment above states, it is really
->> > handy to leave the input buffer enabled so we can read back the true
->> > value on the wire...
->> >
->>
->> Does Vybrid reply on this bit to read the status of output from Port Data
->> Input Register (GPIOx_PDIR)?
->>
->> Then, it is a bit strange that read status from input register when the
->> GPIO is Actually configured as output.
->>
->> Probably it works on Vybrid, but I don't know if it's valid for MX7ULP.
->>
->> For MX7ULP, we will read input or output register accordingly by checking
->> GPIO direction register (PDDR) and we will not enable Input buffer if the
->> GPIO is configured as output, this also save a bit power.
->>
->> I know Vybrid has no PDDR, probably that's why you enable IBE by default
->> always.
->>
+On Tue 23 May 09:58 PDT 2017, Christian Lamparter wrote:
 
-The main reason I enable input buffer by default is so that software has
-a chance to see the actual state of the GPIO. E.g. when a GPIO is
-connected to GND, and you set it high, you can read back a 0... (of
-course you should not connect a GPIO to GND and set it high! But that is
-exactly the point, with enabling the input buffer you actually see that
-something is wrong!)
+> On Friday, May 19, 2017 10:08:24 PM CEST Bjorn Andersson wrote:
+> > On Thu 18 May 11:38 PDT 2017, Christian Lamparter wrote:
+> > > On Wednesday, May 17, 2017 1:07:29 PM CEST Bjorn Andersson wrote:
+> > > > On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
+> > > > > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > > > index 743d1f458205..7219d1e33c71 100644
+> > > > > --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > > > +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > > > +	qca_mux_rmii0_refclk,
+> > > > > +	qca_mux_wifi0_rfsilient0,
+> > > > > +	qca_mux_wifi1_rfsilient0,
+> > > > > +	qca_mux_smart2,
+> > > > > +	qca_mux_led4,
+> > > > 
+> > > > What drives ledX? Is it 11 different LED controllers or is it a single
+> > > > LED controller with 11 outputs.
+> > > 
+> > > The latter. The IPQ40xx have one LED controller @ 0x1937000. 
+> > > According to the driver (leds-ipq40xx.c in the SDK), it 
+> > > does control up to 11 LEDs. A LED can either be muxed to
+> > > one of the hardware sources (wifi, lan or wan-ports activity/linkspeed),
+> > > or it can be operated by one of four software-programmable "blink"
+> > > sources (each with a variable blink rate and duty cycle). 
+> > > The driver labels each LED as "ipq40xx::led%d".
+> > > 
+> > 
+> > As they all stem from the same hardware block I suggest we name the
+> > function "led".
+> 
+> This is going to be a problem for Pin 36:
+> 
+> PINGROUP(36, rmii0, *led2*, *led0*, NA, ...)
+> 
+> I checked the other pins too, but this seems to be the only time two 
+> LED-lines share the same pin. What's the recommended/prefered option
+> in this case? Something like led_alt, or should I keep the led0-led11?
+> 
+> There are a few more collisions with other functions as well:
+> smartX, i2s_*, wifi1_uart*:
+> 
 
-Can we not do this for iMX7ULP too?
+Looks like we're stuck with individually named functions for these
+then...
 
+> PINGROUP(58, qpic, led2, blsp_i2c0, *smart3*, *smart1*,
+>          i2s_rx_mclk, NA, wcss0_dbg, tm4, wifi0, wifi1, NA, NA, NA),
 > 
-> We need make a decision on how to address the difference between Vybrid
-> And IMX7ULP.
+> PINGROUP(60, qpic, blsp_uart0, smart1, smart3, led0,
+>          *i2s_tx_bclk*, *i2s_rx_bclk*, atest_char, NA, wcss0_dbg,
+>          qdss_traceclk_a, NA, tm6, NA),
 > 
-> If Vybrid wants to keep input buffer enabled, we probably could invent
-> A IMX_PINCONF_HAVE_PDDR just like GPIO driver and only disable IBE for IMX?
+> PINGROUP(61, qpic, blsp_uart0, *smart1*, *smart3*, led1, *i2s_tx_fsync*,
+>          *i2s_rx_fsync*, NA, NA, wcss0_dbg, qdss_cti_trig_out_a0,
+>          NA, tm7, NA),
+> 
+> PINGROUP(63, qpic, wifi0_uart1, *wifi1_uart1*, *wifi1_uart*, *i2s_td1*,
+>          *i2s_rxd*, *i2s_spdif_out*, *i2s_spdif_in*, NA, wcss0_dbg,
+>          wcss1_dbg, NA, tm, NA),
+> ...
 
-That would be one option yes. You also need a flag so you can opt out
-from imx_pmx_gpio_enable/disable_free...
+This makes me wonder what wifi1_uart (and uart1) actually is...
 
-The more involved version would be to somehow move imx_pmx_gpio_* to
-pinctrl-vf610.c, e.g. store the callbacks in imx_pinctrl_soc_info and
-set them dynamically in imx_pinctrl_probe (you have to unconst
-pinmux_ops). With that you can provide no
-imx_pmx_gpio_enable/disable_free for iMX7ULP and your own
-imx_pmx_gpio_set_direction...
+The wifi\d_uart seems to have 5 pins in its group and wifi\d_uart\d
+seems to be two sets of two pins. So perhaps this is some alternative
+routing and wifi0_uart0 and wifi0_uart1 is actually the same function?
 
---
-Stefan
+@Ram, can you help us out here?
 
+> > > > > +	qca_mux_qpic_pad4,
+> > > > 
+> > > > Please keep an eye on the ipq8074 patch from Varadarajan and make this
+> > > > follow the same scheme.
+> > > Ok, I'll wait for how qca8074 plays out then.
 > 
-> Do you think it's ok?
+> <https://www.spinics.net/lists/arm-kernel/msg582958.html>:
+> | On Sat, May 20, 2017 at 7:54 AM, Bjorn Andersson wrote:
+> | [...]
+> | > If you consider that you are defining the available functions for this
+> | > pinmuxer and then define the sets of pins exposing these available
+> | > functions it does make sense to just name it "qpic".
+> | >
+> | > I think that naming them _common, _lcd and _nand is just adding
+> | > confusion when it comes to writing the dts files.
+> | >
+> | > @Linus, do you have a different preference here?
+> |
+> |No I pretty much trust the driver maintainer to know this best.
+> |
+> |Yours,
+> |Linus Walleij
 > 
+> Thanks for the answer, I'll go with "qpic" then.
+> I'll also combine the various sdio_* to sdio and look at the other candidates
+> (rgmii*, rmii0/1*, pmuX, pcie_clk*, jtag*, tmX, audio_pwmX). Unless someone
+> comes up with a good reason not to.
 > 
-> Regards
-> Dong Aisheng
-> 
-> 
->> Regards
->> Dong Aisheng
->>
->> > --
->> > Stefan
->> >
->> > >  	writel(reg, ipctl->base + pin_reg->mux_reg);
->> > >
->> > >  	return 0;
->> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
->> > > b/drivers/pinctrl/freescale/pinctrl-imx.h
->> > > index eb0ce95..9ded65d 100644
->> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
->> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
->> > > @@ -67,6 +67,8 @@ struct imx_pinctrl_soc_info {
->> > >  	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
->> > >  	unsigned int mux_mask;
->> > >  	u8 mux_shift;
->> > > +	u32 ibe_bit;
->> > > +	u32 obe_bit;
->> > >
->> > >  	/* generic pinconf */
->> > >  	bool generic_pinconf;
->> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
->> > > b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
->> > > index dead416..f724a01 100644
->> > > --- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
->> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
->> > > @@ -324,6 +324,8 @@ static struct imx_pinctrl_soc_info
->> > imx7ulp_pinctrl_info = {
->> > >  	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
->> > >  	.mux_mask = 0xf00,
->> > >  	.mux_shift = 8,
->> > > +	.ibe_bit = BIT(16),
->> > > +	.obe_bit = BIT(17),
->> > >  	.generic_pinconf = true,
->> > >  	.custom_params = imx7ulp_cfg_params,
->> > >  	.num_custom_params = ARRAY_SIZE(imx7ulp_cfg_params), diff --git
->> > > a/drivers/pinctrl/freescale/pinctrl-vf610.c
->> > > b/drivers/pinctrl/freescale/pinctrl-vf610.c
->> > > index 3bd8556..c0823f9 100644
->> > > --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
->> > > +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
->> > > @@ -301,6 +301,8 @@ static struct imx_pinctrl_soc_info
->> > vf610_pinctrl_info = {
->> > >  	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
->> > >  	.mux_mask = 0x700000,
->> > >  	.mux_shift = 20,
->> > > +	.ibe_bit = BIT(0),
->> > > +	.obe_bit = BIT(1),
->> > >  };
->> > >
->> > >  static const struct of_device_id vf610_pinctrl_of_match[] = {
+
+Sounds good!
+
+Regards,
+Bjorn
