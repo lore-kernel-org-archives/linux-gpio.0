@@ -1,47 +1,90 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] gpio: Add new flags to control sleep status of GPIOs
-Date: Tue, 23 May 2017 10:39:26 +0200
-Message-ID: <CACRpkdbiyZ9jPnuaX9OuYjVbrUYxtpqO-XMqb75ScCEH-=kOEg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] gpio: arizona: Add support for GPIOs that need to be maintained
+Date: Tue, 23 May 2017 10:46:29 +0200
+Message-ID: <CACRpkdZHVWrHWBon+TubnV_B5mCAoOtmcJKyXt4C5iP01OSQuQ@mail.gmail.com>
 References: <1494948714-15203-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1494948714-15203-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1494948714-15203-1-git-send-email-ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f179.google.com ([209.85.223.179]:35457 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965122AbdEWIqb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 04:46:31 -0400
+Received: by mail-io0-f179.google.com with SMTP id f102so92385472ioi.2
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 01:46:30 -0700 (PDT)
+In-Reply-To: <1494948714-15203-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>
 
 On Tue, May 16, 2017 at 5:31 PM, Charles Keepax
-<ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
+<ckeepax@opensource.wolfsonmicro.com> wrote:
 
-> Add new flags to allow users to specify that they are not concerned with
-> the status of GPIOs whilst in a sleep/low power state.
+> The Arizona devices only maintain the state of output GPIOs whilst the
+> CODEC is active, this can cause issues if the CODEC suspends whilst
+> something is relying on the state of one of its GPIOs. However, in
+> many systems the CODEC GPIOs are used for audio related features
+> and thus the state of the GPIOs is unimportant whilst the CODEC is
+> suspended. Often keeping the CODEC resumed in such a system would
+> incur a power impact that is unacceptable.
 >
-> Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-
-Would be nice to have some opinion from the DT maintainers about
-this but seems all right to me.
-
-> +++ b/include/dt-bindings/gpio/gpio.h
-> @@ -21,6 +21,10 @@
->  #define GPIO_LINE_OPEN_SOURCE 0
->  #define GPIO_LINE_OPEN_DRAIN 4
+> Allow the user to select whether a GPIO output should keep the
+> CODEC resumed, by adding a flag through the second cell of the GPIO
+> specifier in device tree.
 >
-> +/* Bit 3 express GPIO suspend/resume persistence */
-> +#define GPIO_SLEEP_MAINTAIN_VALUE 0
-> +#define GPIO_SLEEP_MAY_LOOSE_VALUE 8
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+
+This adds the handling locally in the driver for a certain Arizona chip.
+
+And then the next time you have to duplicate the code again and again.
+
+That's not working, put this in the core.
+
+>  static int arizona_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
+>  {
+>         struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
+>         struct arizona *arizona = arizona_gpio->arizona;
+> +       int status = arizona_gpio->status[offset];
+
+Don't use a local array for this.
+
+This should be something like gpiochip_get_sleep_persistance(chip, offset)
+
+> +       if (change && !(status & GPIO_SLEEP_MAY_LOOSE_VALUE)) {
+
+That us a dt-binfings header define, that is not a Linux constant.
+
+Add FLAG_MAY_LOOSE_VALUE_DURING_SLEEP or something in
+drivers/gpio/gpiolib.h, store this inside the struct gpio_desc like all
+other flags and retrieve it from there.
+
+Augment the code in gpiolib.c and gpiolib-of.c to parse this and
+store it properly in the gpio_desc and use it as described above.
+
+Then it is reusable for others.
+
+> +#ifdef CONFIG_OF_GPIO
+> +static int arizona_gpio_of_xlate(struct gpio_chip *chip,
+> +                                const struct of_phandle_args *gpiospec,
+> +                                u32 *flags)
+> +{
+> +       struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
+> +       int offset;
 > +
->  /*
->   * Open Drain/Collector is the combination of single-ended open drain interface.
->   * Open Source/Emitter is the combination of single-ended open source interface.
+> +       offset = of_gpio_simple_xlate(chip, gpiospec, flags);
+> +       if (offset < 0)
+> +               return offset;
+> +
+> +       if (flags)
+> +               arizona_gpio->status[offset] = *flags;
+> +
+> +       return offset;
+> +}
+> +#endif
 
-Please move the define below the comment and macros below it,
-that is using the defines right above...
+No need for this hackery if you move the parsing to the core, so do that.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
