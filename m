@@ -1,69 +1,104 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 1/3] pinctrl: samsung: clean up modular vs. non-modular
- distinctions
-Date: Tue, 23 May 2017 11:54:44 -0400
-Message-ID: <20170523155444.GE11504@windriver.com>
-References: <20170522205648.23545-1-paul.gortmaker@windriver.com>
- <20170522205648.23545-2-paul.gortmaker@windriver.com>
- <CAJKOXPcJDFw2-EW+dGvL1AtVwXWkxAQ6cnF0o6GGgaaxeqBqug@mail.gmail.com>
+From: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
+Date: Tue, 23 May 2017 18:58:53 +0200
+Message-ID: <2018547.lycQhaDrJg@debian64>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <1975629.nrP45RYYW5@debian64> <20170520050824.GS12920@tuxbook>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPcJDFw2-EW+dGvL1AtVwXWkxAQ6cnF0o6GGgaaxeqBqug@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170520050824.GS12920@tuxbook>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-[Re: [PATCH 1/3] pinctrl: samsung: clean up modular vs. non-modular distinctions] On 23/05/2017 (Tue 16:51) Krzysztof Kozlowski wrote:
-
-> On Mon, May 22, 2017 at 10:56 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
-> > Fixups here tend to be more all over the map vs. some of the other
-> > repeated/systematic ones we've seen elsewhere.
-> >
-> > We remove module.h from code that isn't doing anything modular at
-> > all;  if they have __init sections, then replace it with init.h
-> >
-> > A couple drivers have module_exit() code that is essentially orphaned,
-> > and so we remove that.
-> >
-> > There are no module_init replacements, so we have no concerns wrt.
-> > initcall ordering changes as per some of the other cleanups.
-> >
-> > Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> >
-> > We also delete the MODULE_LICENSE tag etc. since all that information
-> > was (or is now) contained at the top of the file in the comments.
-> >
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Thomas Abraham <thomas.ab@samsung.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-gpio@vger.kernel.org
-> > Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+On Friday, May 19, 2017 10:08:24 PM CEST Bjorn Andersson wrote:
+> On Thu 18 May 11:38 PDT 2017, Christian Lamparter wrote:
+> > On Wednesday, May 17, 2017 1:07:29 PM CEST Bjorn Andersson wrote:
+> > > On Wed 10 May 04:27 PDT 2017, Christian Lamparter wrote:
+> > > > diff --git a/drivers/pinctrl/qcom/pinctrl-ipq4019.c b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > > index 743d1f458205..7219d1e33c71 100644
+> > > > --- a/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > > +++ b/drivers/pinctrl/qcom/pinctrl-ipq4019.c
+> > > > +	qca_mux_rmii0_refclk,
+> > > > +	qca_mux_wifi0_rfsilient0,
+> > > > +	qca_mux_wifi1_rfsilient0,
+> > > > +	qca_mux_smart2,
+> > > > +	qca_mux_led4,
+> > > 
+> > > What drives ledX? Is it 11 different LED controllers or is it a single
+> > > LED controller with 11 outputs.
+> > 
+> > The latter. The IPQ40xx have one LED controller @ 0x1937000. 
+> > According to the driver (leds-ipq40xx.c in the SDK), it 
+> > does control up to 11 LEDs. A LED can either be muxed to
+> > one of the hardware sources (wifi, lan or wan-ports activity/linkspeed),
+> > or it can be operated by one of four software-programmable "blink"
+> > sources (each with a variable blink rate and duty cycle). 
+> > The driver labels each LED as "ipq40xx::led%d".
+> > 
 > 
-> These are quite old entries of maintainers. I guess you add Cc-entries
-> once per git commit but no problem - I have it from the lists.
+> As they all stem from the same hardware block I suggest we name the
+> function "led".
 
-Actually what happend is it got sent quite some time ago, but Linus
-didn't merge it because he wanted some Acks[1] and a resend.  Shortly
-after Sylwester provided an ack.
+This is going to be a problem for Pin 36:
 
-So with that in mind, I decided to restart with the most simple pinctrl
-patches 1st, and hence it took a while to finally get back to this one
-in the final series.  But I didn't want to change an ack'd patch.
+PINGROUP(36, rmii0, *led2*, *led0*, NA, ...)
 
-Not that it matters, but just in case you were curious.
+I checked the other pins too, but this seems to be the only time two 
+LED-lines share the same pin. What's the recommended/prefered option
+in this case? Something like led_alt, or should I keep the led0-led11?
 
-Thanks,
-Paul.
+There are a few more collisions with other functions as well:
+smartX, i2s_*, wifi1_uart*:
 
-[1] https://marc.info/?l=linux-kernel&m=145803185919692&w=2
+PINGROUP(58, qpic, led2, blsp_i2c0, *smart3*, *smart1*,
+         i2s_rx_mclk, NA, wcss0_dbg, tm4, wifi0, wifi1, NA, NA, NA),
 
-> 
-> Thanks, applied.
-> 
-> Best regards, Krzysztof
+PINGROUP(60, qpic, blsp_uart0, smart1, smart3, led0,
+         *i2s_tx_bclk*, *i2s_rx_bclk*, atest_char, NA, wcss0_dbg,
+         qdss_traceclk_a, NA, tm6, NA),
+
+PINGROUP(61, qpic, blsp_uart0, *smart1*, *smart3*, led1, *i2s_tx_fsync*,
+         *i2s_rx_fsync*, NA, NA, wcss0_dbg, qdss_cti_trig_out_a0,
+         NA, tm7, NA),
+
+PINGROUP(63, qpic, wifi0_uart1, *wifi1_uart1*, *wifi1_uart*, *i2s_td1*,
+         *i2s_rxd*, *i2s_spdif_out*, *i2s_spdif_in*, NA, wcss0_dbg,
+         wcss1_dbg, NA, tm, NA),
+...
+> > > > +	qca_mux_qpic_pad4,
+> > > 
+> > > Please keep an eye on the ipq8074 patch from Varadarajan and make this
+> > > follow the same scheme.
+> > Ok, I'll wait for how qca8074 plays out then.
+
+<https://www.spinics.net/lists/arm-kernel/msg582958.html>:
+| On Sat, May 20, 2017 at 7:54 AM, Bjorn Andersson wrote:
+| [...]
+| > If you consider that you are defining the available functions for this
+| > pinmuxer and then define the sets of pins exposing these available
+| > functions it does make sense to just name it "qpic".
+| >
+| > I think that naming them _common, _lcd and _nand is just adding
+| > confusion when it comes to writing the dts files.
+| >
+| > @Linus, do you have a different preference here?
+|
+|No I pretty much trust the driver maintainer to know this best.
+|
+|Yours,
+|Linus Walleij
+
+Thanks for the answer, I'll go with "qpic" then.
+I'll also combine the various sdio_* to sdio and look at the other candidates
+(rgmii*, rmii0/1*, pmuX, pcie_clk*, jtag*, tmX, audio_pwmX). Unless someone
+comes up with a good reason not to.
+
+Regards,
+Christian
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
