@@ -1,60 +1,205 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/3] pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem
-Date: Tue, 23 May 2017 20:41:41 +0200
-Message-ID: <20170523184141.24284-3-krzk@kernel.org>
-References: <20170523184141.24284-1-krzk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170523184141.24284-1-krzk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
+Date: Tue, 23 May 2017 12:16:01 -0700
+Message-ID: <0e430fc802cb89a4bd793e95dee57501@agner.ch>
+References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
+ <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
+ <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
+ <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:42339 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934892AbdEWTQv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 15:16:51 -0400
+In-Reply-To: <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "A.S. Dong" <aisheng.dong@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>
 
-For S5Pv210 retention control, the driver stores the iomem pointer from
-of_iomap() under void pointer priv member.  This makes sparse unhappy:
+On 2017-05-23 05:06, A.S. Dong wrote:
+> Hi Stefan,
+> 
+>> -----Original Message-----
+>> From: A.S. Dong
+>> Sent: Wednesday, May 17, 2017 2:14 PM
+>> To: 'Stefan Agner'
+>> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+>> kernel@pengutronix.de; Alexandre Courbot
+>> Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
+>> property
+>>
+>> > -----Original Message-----
+>> > From: Stefan Agner [mailto:stefan@agner.ch]
+>> > Sent: Tuesday, May 16, 2017 1:11 AM
+>> > To: A.S. Dong
+>> > Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> > linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+>> > kernel@pengutronix.de; Alexandre Courbot
+>> > Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
+>> > property
+>> >
+>> > On 2017-05-14 23:48, Dong Aisheng wrote:
+>> > > iMX ULP has different IOB/OBE shift from Vibrid, so let's make
+>> >
+>> > s/Vibrid/Vybrid
+>> >
+>> > > it a SoC property.
+>> > >
+>> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+>> > > Cc: Alexandre Courbot <gnurou@gmail.com>
+>> > > Cc: Shawn Guo <shawnguo@kernel.org>
+>> > > Cc: Stefan Agner <stefan@agner.ch>
+>> > > Cc: Fugang Duan <fugang.duan@nxp.com>
+>> > > Cc: Bai Ping <ping.bai@nxp.com>
+>> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+>> > > ---
+>> > >  drivers/pinctrl/freescale/pinctrl-imx.c     | 8 ++++----
+>> > >  drivers/pinctrl/freescale/pinctrl-imx.h     | 2 ++
+>> > >  drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 ++
+>> > >  drivers/pinctrl/freescale/pinctrl-vf610.c   | 2 ++
+>> > >  4 files changed, 10 insertions(+), 4 deletions(-)
+>> > >
+>> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
+>> > > b/drivers/pinctrl/freescale/pinctrl-imx.c
+>> > > index 57e1f7a..0d6aaca 100644
+>> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+>> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+>> > > @@ -331,8 +331,8 @@ static int imx_pmx_gpio_set_direction(struct
+>> > > pinctrl_dev *pctldev,
+>> > >  	u32 reg;
+>> > >
+>> > >  	/*
+>> > > -	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
+>> > > -	 * They are part of the shared mux/conf register.
+>> > > +	 * Only Vybrid and iMX ULP has the input/output buffer enable flags
+>> > > +	 * (IBE/OBE) They are part of the shared mux/conf register.
+>> > >  	 */
+>> > >  	if (!(info->flags & SHARE_MUX_CONF_REG))
+>> > >  		return 0;
+>> > > @@ -344,9 +344,9 @@ static int imx_pmx_gpio_set_direction(struct
+>> > > pinctrl_dev *pctldev,
+>> > >  	/* IBE always enabled allows us to read the value "on the wire" */
+>> > >  	reg = readl(ipctl->base + pin_reg->mux_reg);
+>> > >  	if (input)
+>> > > -		reg &= ~0x2;
+>> > > +		reg = (reg & ~info->obe_bit) | info->ibe_bit;
+>> > >  	else
+>> > > -		reg |= 0x2;
+>> > > +		reg = (reg & ~info->ibe_bit) | info->obe_bit;
+>> >
+>> > Why disabling IBE bit now? As the comment above states, it is really
+>> > handy to leave the input buffer enabled so we can read back the true
+>> > value on the wire...
+>> >
+>>
+>> Does Vybrid reply on this bit to read the status of output from Port Data
+>> Input Register (GPIOx_PDIR)?
+>>
+>> Then, it is a bit strange that read status from input register when the
+>> GPIO is Actually configured as output.
+>>
+>> Probably it works on Vybrid, but I don't know if it's valid for MX7ULP.
+>>
+>> For MX7ULP, we will read input or output register accordingly by checking
+>> GPIO direction register (PDDR) and we will not enable Input buffer if the
+>> GPIO is configured as output, this also save a bit power.
+>>
+>> I know Vybrid has no PDDR, probably that's why you enable IBE by default
+>> always.
+>>
 
-    drivers/pinctrl/samsung/pinctrl-exynos.c:664:36: warning: incorrect type in argument 1 (different address spaces)
-    drivers/pinctrl/samsung/pinctrl-exynos.c:664:36:    expected void const volatile [noderef] <asn:2>*addr
-    drivers/pinctrl/samsung/pinctrl-exynos.c:664:36:    got void *
+The main reason I enable input buffer by default is so that software has
+a chance to see the actual state of the GPIO. E.g. when a GPIO is
+connected to GND, and you set it high, you can read back a 0... (of
+course you should not connect a GPIO to GND and set it high! But that is
+exactly the point, with enabling the input buffer you actually see that
+something is wrong!)
 
-The iomem pointer is used safely (stored under priv by
-s5pv210_retention_init(), used by s5pv210_retention_disable() thus we
-can add explicit casts to iomem silence the warning.
+Can we not do this for iMX7ULP too?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> We need make a decision on how to address the difference between Vybrid
+> And IMX7ULP.
+> 
+> If Vybrid wants to keep input buffer enabled, we probably could invent
+> A IMX_PINCONF_HAVE_PDDR just like GPIO driver and only disable IBE for IMX?
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 66122627b3ed..a870af943bc7 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -656,7 +656,7 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
- 
- static void s5pv210_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- {
--	void *clk_base = drvdata->retention_ctrl->priv;
-+	void __iomem *clk_base = (void __iomem *)drvdata->retention_ctrl->priv;
- 	u32 tmp;
- 
- 	tmp = __raw_readl(clk_base + S5P_OTHERS);
-@@ -671,7 +671,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
- {
- 	struct samsung_retention_ctrl *ctrl;
- 	struct device_node *np;
--	void *clk_base;
-+	void __iomem *clk_base;
- 
- 	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
- 	if (!ctrl)
-@@ -690,7 +690,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	ctrl->priv = clk_base;
-+	ctrl->priv = (void __force *)clk_base;
- 	ctrl->disable = s5pv210_retention_disable;
- 
- 	return ctrl;
--- 
-2.9.3
+That would be one option yes. You also need a flag so you can opt out
+from imx_pmx_gpio_enable/disable_free...
+
+The more involved version would be to somehow move imx_pmx_gpio_* to
+pinctrl-vf610.c, e.g. store the callbacks in imx_pinctrl_soc_info and
+set them dynamically in imx_pinctrl_probe (you have to unconst
+pinmux_ops). With that you can provide no
+imx_pmx_gpio_enable/disable_free for iMX7ULP and your own
+imx_pmx_gpio_set_direction...
+
+--
+Stefan
+
+> 
+> Do you think it's ok?
+> 
+> 
+> Regards
+> Dong Aisheng
+> 
+> 
+>> Regards
+>> Dong Aisheng
+>>
+>> > --
+>> > Stefan
+>> >
+>> > >  	writel(reg, ipctl->base + pin_reg->mux_reg);
+>> > >
+>> > >  	return 0;
+>> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
+>> > > b/drivers/pinctrl/freescale/pinctrl-imx.h
+>> > > index eb0ce95..9ded65d 100644
+>> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
+>> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+>> > > @@ -67,6 +67,8 @@ struct imx_pinctrl_soc_info {
+>> > >  	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
+>> > >  	unsigned int mux_mask;
+>> > >  	u8 mux_shift;
+>> > > +	u32 ibe_bit;
+>> > > +	u32 obe_bit;
+>> > >
+>> > >  	/* generic pinconf */
+>> > >  	bool generic_pinconf;
+>> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+>> > > b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+>> > > index dead416..f724a01 100644
+>> > > --- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+>> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+>> > > @@ -324,6 +324,8 @@ static struct imx_pinctrl_soc_info
+>> > imx7ulp_pinctrl_info = {
+>> > >  	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
+>> > >  	.mux_mask = 0xf00,
+>> > >  	.mux_shift = 8,
+>> > > +	.ibe_bit = BIT(16),
+>> > > +	.obe_bit = BIT(17),
+>> > >  	.generic_pinconf = true,
+>> > >  	.custom_params = imx7ulp_cfg_params,
+>> > >  	.num_custom_params = ARRAY_SIZE(imx7ulp_cfg_params), diff --git
+>> > > a/drivers/pinctrl/freescale/pinctrl-vf610.c
+>> > > b/drivers/pinctrl/freescale/pinctrl-vf610.c
+>> > > index 3bd8556..c0823f9 100644
+>> > > --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
+>> > > +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+>> > > @@ -301,6 +301,8 @@ static struct imx_pinctrl_soc_info
+>> > vf610_pinctrl_info = {
+>> > >  	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
+>> > >  	.mux_mask = 0x700000,
+>> > >  	.mux_shift = 20,
+>> > > +	.ibe_bit = BIT(0),
+>> > > +	.obe_bit = BIT(1),
+>> > >  };
+>> > >
+>> > >  static const struct of_device_id vf610_pinctrl_of_match[] = {
