@@ -1,41 +1,39 @@
-From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V2 0/5] pinctrl: imx: add generic pin config and imx7ulp
- support
-Date: Tue, 23 May 2017 09:17:19 +0000
-Message-ID: <DBXPR04MB320028F986D2E9B1FE1DDBB80F90@DBXPR04MB320.eurprd04.prod.outlook.com>
-References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
- <CACRpkdY2--+JCaPA0zBGrF66DwgOPd6m4=QvCgkO50x35TCzzw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio
+ controllers on Armada 7K/8K
+Date: Tue, 23 May 2017 11:20:19 +0200
+Message-ID: <CACRpkdY97DDcwec+J-4X1AT5a7Mbo4GnWUJmuAOYhNzOA8_HZQ@mail.gmail.com>
+References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
+ <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-eopbgr30081.outbound.protection.outlook.com ([40.107.3.81]:61161
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935239AbdEWJRW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 May 2017 05:17:22 -0400
-In-Reply-To: <CACRpkdY2--+JCaPA0zBGrF66DwgOPd6m4=QvCgkO50x35TCzzw@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-io0-f173.google.com ([209.85.223.173]:35796 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759091AbdEWJUV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 05:20:21 -0400
+Received: by mail-io0-f173.google.com with SMTP id f102so92825978ioi.2
+        for <linux-gpio@vger.kernel.org>; Tue, 23 May 2017 02:20:20 -0700 (PDT)
+In-Reply-To: <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, Sascha Hauer <kernel@pengutronix.de>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@ma>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMaW51cyBXYWxsZWlqIFttYWls
-dG86bGludXMud2FsbGVpakBsaW5hcm8ub3JnXQ0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMjMsIDIw
-MTcgMzo0MSBQTQ0KPiBUbzogQS5TLiBEb25nDQo+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBTaGF3biBHdW87
-IFN0ZWZhbiBBZ25lcjsgSmFja3kgQmFpOyBBbmR5IER1YW47IFNhc2NoYSBIYXVlcg0KPiBTdWJq
-ZWN0OiBSZTogW1BBVENIIFYyIDAvNV0gcGluY3RybDogaW14OiBhZGQgZ2VuZXJpYyBwaW4gY29u
-ZmlnIGFuZA0KPiBpbXg3dWxwIHN1cHBvcnQNCj4gDQo+IE9uIEZyaSwgTWF5IDE5LCAyMDE3IGF0
-IDk6MDUgQU0sIERvbmcgQWlzaGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+IHdyb3RlOg0KPiAN
-Cj4gPiBUaGlzIHBhdGNoIHNlcmllcyBpbnRlbmRzIHRvIGFkZCB0aGUgZ2VuZXJpYyBwaW4gY29u
-ZmlnIHN1cHBvcnQgZm9yDQo+ID4gaW14IHBsYXRmb3Jtcy4NCj4gDQo+IEkgYXBwbGllZCBwYXRj
-aGVzIDEsMiwzIGFzIHlvdSd2ZSBzZWVuLCBzbyBwbGVhc2UgcmViYXNlIG9uIG15ICJkZXZlbCIN
-Cj4gYnJhbmNoIGluIHBpbiBjb250cm9sIGFuZCBvbmx5IHJlc2VuZCB0aGUgdGhpbmdzIHdlIGFy
-ZSBzdGlsbCBkaXNjdXNzaW5nLg0KPiANCg0KR290IGl0LCB0aGFua3MgZm9yIHRoZSByZW1pbmRl
-ci4NCg0KPiBJIHNlZSB0aGVyZSBhcmUgc29tZSBvdGhlciBwYXRjaGVzIGZseWluZyBmb3IgaW14
-IHBpbiBjb250cm9sIGFuZCBHUElPLCBpZg0KPiB0aGUgcGF0Y2hlcyBhcmUgZGVwZW5kZW50IG9u
-IGVhY2ggb3RoZXIgY29uc2lkZXIgcHV0dGluZyBpdCBhbGwgaW50byBvbmUNCj4gc2VyaWVzLiBJ
-ZiB0aGV5IGFyZSBub3QgZGVwZW5kZW50LCB0aGVuIGRvbid0Lg0KPiANCg0KSSB3aWxsIGNvbnNp
-ZGVyIGl0Lg0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
+On Fri, May 19, 2017 at 6:09 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
+
+> Document the device tree binding for the gpio controllers found on the
+> Marvell Armada 7K and Armada 8K SoCs.
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+
+This does not apply at all to the GPIO "devel" branch.
+And that is a fairly clean v4.12-rc2.
+
+Please rebase and resend the rest of the patches.
+
+Would be nice with a DT ACK but no controversial changes here.
+
+Yours,
+Linus Walleij
