@@ -1,422 +1,180 @@
-From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V3 2/2] pinctrl: imx: add imx7ulp driver
-Date: Tue, 23 May 2017 19:43:49 +0800
-Message-ID: <1495539829-23345-2-git-send-email-aisheng.dong@nxp.com>
-References: <1495539829-23345-1-git-send-email-aisheng.dong@nxp.com>
+From: "A.S. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
+Date: Tue, 23 May 2017 12:06:14 +0000
+Message-ID: <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
+ <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
+ <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam03on0045.outbound.protection.outlook.com ([104.47.42.45]:37568
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+Received: from mail-db5eur01on0050.outbound.protection.outlook.com ([104.47.2.50]:10816
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1762551AbdEWLoN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 May 2017 07:44:13 -0400
-In-Reply-To: <1495539829-23345-1-git-send-email-aisheng.dong@nxp.com>
+        id S1763824AbdEWMGS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 May 2017 08:06:18 -0400
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>
+To: "A.S. Dong" <aisheng.dong@nxp.com>, Stefan Agner <stefan@agner.ch>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>
 
-i.MX 7ULP has three IOMUXC instances: IOMUXC0 for M4 ports,
-IOMUXC1 for A7 ports and IOMUXC DDR for DDR interface.
+Hi Stefan,
 
-This patch adds the IOMUXC1 support for A7.
-It only supports generic pin config.
+> -----Original Message-----
+> From: A.S. Dong
+> Sent: Wednesday, May 17, 2017 2:14 PM
+> To: 'Stefan Agner'
+> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+> kernel@pengutronix.de; Alexandre Courbot
+> Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
+> property
+>=20
+> > -----Original Message-----
+> > From: Stefan Agner [mailto:stefan@agner.ch]
+> > Sent: Tuesday, May 16, 2017 1:11 AM
+> > To: A.S. Dong
+> > Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+> > kernel@pengutronix.de; Alexandre Courbot
+> > Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
+> > property
+> >
+> > On 2017-05-14 23:48, Dong Aisheng wrote:
+> > > iMX ULP has different IOB/OBE shift from Vibrid, so let's make
+> >
+> > s/Vibrid/Vybrid
+> >
+> > > it a SoC property.
+> > >
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Alexandre Courbot <gnurou@gmail.com>
+> > > Cc: Shawn Guo <shawnguo@kernel.org>
+> > > Cc: Stefan Agner <stefan@agner.ch>
+> > > Cc: Fugang Duan <fugang.duan@nxp.com>
+> > > Cc: Bai Ping <ping.bai@nxp.com>
+> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > > ---
+> > >  drivers/pinctrl/freescale/pinctrl-imx.c     | 8 ++++----
+> > >  drivers/pinctrl/freescale/pinctrl-imx.h     | 2 ++
+> > >  drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 ++
+> > >  drivers/pinctrl/freescale/pinctrl-vf610.c   | 2 ++
+> > >  4 files changed, 10 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
+> > > b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > > index 57e1f7a..0d6aaca 100644
+> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> > > @@ -331,8 +331,8 @@ static int imx_pmx_gpio_set_direction(struct
+> > > pinctrl_dev *pctldev,
+> > >  	u32 reg;
+> > >
+> > >  	/*
+> > > -	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
+> > > -	 * They are part of the shared mux/conf register.
+> > > +	 * Only Vybrid and iMX ULP has the input/output buffer enable flags
+> > > +	 * (IBE/OBE) They are part of the shared mux/conf register.
+> > >  	 */
+> > >  	if (!(info->flags & SHARE_MUX_CONF_REG))
+> > >  		return 0;
+> > > @@ -344,9 +344,9 @@ static int imx_pmx_gpio_set_direction(struct
+> > > pinctrl_dev *pctldev,
+> > >  	/* IBE always enabled allows us to read the value "on the wire" */
+> > >  	reg =3D readl(ipctl->base + pin_reg->mux_reg);
+> > >  	if (input)
+> > > -		reg &=3D ~0x2;
+> > > +		reg =3D (reg & ~info->obe_bit) | info->ibe_bit;
+> > >  	else
+> > > -		reg |=3D 0x2;
+> > > +		reg =3D (reg & ~info->ibe_bit) | info->obe_bit;
+> >
+> > Why disabling IBE bit now? As the comment above states, it is really
+> > handy to leave the input buffer enabled so we can read back the true
+> > value on the wire...
+> >
+>=20
+> Does Vybrid reply on this bit to read the status of output from Port Data
+> Input Register (GPIOx_PDIR)?
+>=20
+> Then, it is a bit strange that read status from input register when the
+> GPIO is Actually configured as output.
+>=20
+> Probably it works on Vybrid, but I don't know if it's valid for MX7ULP.
+>=20
+> For MX7ULP, we will read input or output register accordingly by checking
+> GPIO direction register (PDDR) and we will not enable Input buffer if the
+> GPIO is configured as output, this also save a bit power.
+>=20
+> I know Vybrid has no PDDR, probably that's why you enable IBE by default
+> always.
+>=20
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bai Ping <ping.bai@nxp.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+We need make a decision on how to address the difference between Vybrid
+And IMX7ULP.
 
----
-ChangeLog:
-v2->v3:
- * Removed custom nxp,[output|input]-buffer-enable properties,
-   instead, use generic input-enable and output enable.
-v1->v2:
- * no changes
----
- drivers/pinctrl/freescale/Kconfig           |   7 +
- drivers/pinctrl/freescale/Makefile          |   1 +
- drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 338 ++++++++++++++++++++++++++++
- 3 files changed, 346 insertions(+)
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+If Vybrid wants to keep input buffer enabled, we probably could invent
+A IMX_PINCONF_HAVE_PDDR just like GPIO driver and only disable IBE for IMX?
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 0b266b2..4dbc576 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -103,6 +103,13 @@ config PINCTRL_IMX7D
- 	help
- 	  Say Y here to enable the imx7d pinctrl driver
- 
-+config PINCTRL_IMX7ULP
-+	bool "IMX7ULP pinctrl driver"
-+	depends on SOC_IMX7ULP
-+	select PINCTRL_IMX
-+	help
-+	  Say Y here to enable the imx7ulp pinctrl driver
-+
- config PINCTRL_VF610
- 	bool "Freescale Vybrid VF610 pinctrl driver"
- 	depends on SOC_VF610
-diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
-index d44c9e2..525a5ff 100644
---- a/drivers/pinctrl/freescale/Makefile
-+++ b/drivers/pinctrl/freescale/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_PINCTRL_IMX6SL)	+= pinctrl-imx6sl.o
- obj-$(CONFIG_PINCTRL_IMX6SX)	+= pinctrl-imx6sx.o
- obj-$(CONFIG_PINCTRL_IMX6UL)	+= pinctrl-imx6ul.o
- obj-$(CONFIG_PINCTRL_IMX7D)	+= pinctrl-imx7d.o
-+obj-$(CONFIG_PINCTRL_IMX7ULP)	+= pinctrl-imx7ulp.o
- obj-$(CONFIG_PINCTRL_VF610)	+= pinctrl-vf610.o
- obj-$(CONFIG_PINCTRL_MXS)	+= pinctrl-mxs.o
- obj-$(CONFIG_PINCTRL_IMX23)	+= pinctrl-imx23.o
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-new file mode 100644
-index 0000000..3d8bd7c
---- /dev/null
-+++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-@@ -0,0 +1,338 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright (C) 2017 NXP
-+ *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-imx.h"
-+
-+enum imx7ulp_pads {
-+	ULP1_PAD_PTC0 = 0,
-+	ULP1_PAD_PTC1,
-+	ULP1_PAD_PTC2,
-+	ULP1_PAD_PTC3,
-+	ULP1_PAD_PTC4,
-+	ULP1_PAD_PTC5,
-+	ULP1_PAD_PTC6,
-+	ULP1_PAD_PTC7,
-+	ULP1_PAD_PTC8,
-+	ULP1_PAD_PTC9,
-+	ULP1_PAD_PTC10,
-+	ULP1_PAD_PTC11,
-+	ULP1_PAD_PTC12,
-+	ULP1_PAD_PTC13,
-+	ULP1_PAD_PTC14,
-+	ULP1_PAD_PTC15,
-+	ULP1_PAD_PTC16,
-+	ULP1_PAD_PTC17,
-+	ULP1_PAD_PTC18,
-+	ULP1_PAD_PTC19,
-+	ULP1_PAD_RESERVE0,
-+	ULP1_PAD_RESERVE1,
-+	ULP1_PAD_RESERVE2,
-+	ULP1_PAD_RESERVE3,
-+	ULP1_PAD_RESERVE4,
-+	ULP1_PAD_RESERVE5,
-+	ULP1_PAD_RESERVE6,
-+	ULP1_PAD_RESERVE7,
-+	ULP1_PAD_RESERVE8,
-+	ULP1_PAD_RESERVE9,
-+	ULP1_PAD_RESERVE10,
-+	ULP1_PAD_RESERVE11,
-+	ULP1_PAD_PTD0,
-+	ULP1_PAD_PTD1,
-+	ULP1_PAD_PTD2,
-+	ULP1_PAD_PTD3,
-+	ULP1_PAD_PTD4,
-+	ULP1_PAD_PTD5,
-+	ULP1_PAD_PTD6,
-+	ULP1_PAD_PTD7,
-+	ULP1_PAD_PTD8,
-+	ULP1_PAD_PTD9,
-+	ULP1_PAD_PTD10,
-+	ULP1_PAD_PTD11,
-+	ULP1_PAD_RESERVE12,
-+	ULP1_PAD_RESERVE13,
-+	ULP1_PAD_RESERVE14,
-+	ULP1_PAD_RESERVE15,
-+	ULP1_PAD_RESERVE16,
-+	ULP1_PAD_RESERVE17,
-+	ULP1_PAD_RESERVE18,
-+	ULP1_PAD_RESERVE19,
-+	ULP1_PAD_RESERVE20,
-+	ULP1_PAD_RESERVE21,
-+	ULP1_PAD_RESERVE22,
-+	ULP1_PAD_RESERVE23,
-+	ULP1_PAD_RESERVE24,
-+	ULP1_PAD_RESERVE25,
-+	ULP1_PAD_RESERVE26,
-+	ULP1_PAD_RESERVE27,
-+	ULP1_PAD_RESERVE28,
-+	ULP1_PAD_RESERVE29,
-+	ULP1_PAD_RESERVE30,
-+	ULP1_PAD_RESERVE31,
-+	ULP1_PAD_PTE0,
-+	ULP1_PAD_PTE1,
-+	ULP1_PAD_PTE2,
-+	ULP1_PAD_PTE3,
-+	ULP1_PAD_PTE4,
-+	ULP1_PAD_PTE5,
-+	ULP1_PAD_PTE6,
-+	ULP1_PAD_PTE7,
-+	ULP1_PAD_PTE8,
-+	ULP1_PAD_PTE9,
-+	ULP1_PAD_PTE10,
-+	ULP1_PAD_PTE11,
-+	ULP1_PAD_PTE12,
-+	ULP1_PAD_PTE13,
-+	ULP1_PAD_PTE14,
-+	ULP1_PAD_PTE15,
-+	ULP1_PAD_RESERVE32,
-+	ULP1_PAD_RESERVE33,
-+	ULP1_PAD_RESERVE34,
-+	ULP1_PAD_RESERVE35,
-+	ULP1_PAD_RESERVE36,
-+	ULP1_PAD_RESERVE37,
-+	ULP1_PAD_RESERVE38,
-+	ULP1_PAD_RESERVE39,
-+	ULP1_PAD_RESERVE40,
-+	ULP1_PAD_RESERVE41,
-+	ULP1_PAD_RESERVE42,
-+	ULP1_PAD_RESERVE43,
-+	ULP1_PAD_RESERVE44,
-+	ULP1_PAD_RESERVE45,
-+	ULP1_PAD_RESERVE46,
-+	ULP1_PAD_RESERVE47,
-+	ULP1_PAD_PTF0,
-+	ULP1_PAD_PTF1,
-+	ULP1_PAD_PTF2,
-+	ULP1_PAD_PTF3,
-+	ULP1_PAD_PTF4,
-+	ULP1_PAD_PTF5,
-+	ULP1_PAD_PTF6,
-+	ULP1_PAD_PTF7,
-+	ULP1_PAD_PTF8,
-+	ULP1_PAD_PTF9,
-+	ULP1_PAD_PTF10,
-+	ULP1_PAD_PTF11,
-+	ULP1_PAD_PTF12,
-+	ULP1_PAD_PTF13,
-+	ULP1_PAD_PTF14,
-+	ULP1_PAD_PTF15,
-+	ULP1_PAD_PTF16,
-+	ULP1_PAD_PTF17,
-+	ULP1_PAD_PTF18,
-+	ULP1_PAD_PTF19,
-+};
-+
-+/* Pad names for the pinmux subsystem */
-+static const struct pinctrl_pin_desc imx7ulp_pinctrl_pads[] = {
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC0),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC1),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC2),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC3),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC4),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC5),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC6),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC7),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC8),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC9),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC10),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC11),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC12),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC13),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC14),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC15),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC16),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC17),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC18),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTC19),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE0),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE1),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE2),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE3),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE4),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE5),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE6),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE7),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE8),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE9),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE10),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE11),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD0),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD1),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD2),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD3),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD4),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD5),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD6),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD7),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD8),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD9),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD10),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTD11),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE12),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE13),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE14),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE15),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE16),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE17),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE18),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE19),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE20),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE21),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE22),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE23),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE24),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE25),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE26),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE27),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE28),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE29),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE30),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE31),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE0),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE1),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE2),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE3),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE4),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE5),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE6),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE7),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE8),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE9),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE10),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE11),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE12),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE13),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE14),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTE15),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE32),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE33),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE34),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE35),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE36),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE37),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE38),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE39),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE40),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE41),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE42),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE43),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE44),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE45),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE46),
-+	IMX_PINCTRL_PIN(ULP1_PAD_RESERVE47),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF0),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF1),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF2),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF3),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF4),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF5),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF6),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF7),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF8),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF9),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF10),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF11),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF12),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF13),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF14),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF15),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF16),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF17),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF18),
-+	IMX_PINCTRL_PIN(ULP1_PAD_PTF19),
-+};
-+
-+#define BM_LK_ENABLED		BIT(15)
-+#define BM_PULL_ENABLED		BIT(1)
-+
-+struct imx_cfg_params_decode imx7ulp_cfg_decodes[] = {
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_OUTPUT,			BIT(17), 17),
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_INPUT_ENABLE,			BIT(16), 16),
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_DRIVE_STRENGTH, 		BIT(6), 6),
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_DRIVE_PUSH_PULL,		BIT(5), 5),
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_SLEW_RATE,			BIT(2), 2),
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_BIAS_DISABLE,			BIT(1), 1),
-+	IMX_CFG_PARAMS_DECODE(PIN_CONFIG_BIAS_PULL_UP,			BIT(0), 0),
-+
-+	IMX_CFG_PARAMS_DECODE_INVERT(PIN_CONFIG_DRIVE_OPEN_DRAIN,	BIT(5), 5),
-+	IMX_CFG_PARAMS_DECODE_INVERT(PIN_CONFIG_BIAS_PULL_DOWN,		BIT(0), 0),
-+};
-+
-+static void imx7ulp_cfg_params_fixup(unsigned long *configs,
-+				    unsigned int num_configs,
-+				    u32 *raw_config)
-+{
-+	enum pin_config_param param;
-+	u32 param_val;
-+	int i;
-+
-+	/* lock field disabled */
-+	*raw_config &= ~BM_LK_ENABLED;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		param_val = pinconf_to_config_argument(configs[i]);
-+
-+		if ((param == PIN_CONFIG_BIAS_PULL_UP) ||
-+		    (param == PIN_CONFIG_BIAS_PULL_DOWN)) {
-+			/* pull enabled */
-+			*raw_config |= BM_PULL_ENABLED;
-+
-+			return;
-+		}
-+	}
-+}
-+
-+static struct imx_pinctrl_soc_info imx7ulp_pinctrl_info = {
-+	.pins = imx7ulp_pinctrl_pads,
-+	.npins = ARRAY_SIZE(imx7ulp_pinctrl_pads),
-+	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
-+	.mux_mask = 0xf00,
-+	.mux_shift = 8,
-+	.generic_pinconf = true,
-+	.decodes = imx7ulp_cfg_decodes,
-+	.num_decodes = ARRAY_SIZE(imx7ulp_cfg_decodes),
-+	.fixup = imx7ulp_cfg_params_fixup,
-+};
-+
-+static const struct of_device_id imx7ulp_pinctrl_of_match[] = {
-+	{ .compatible = "fsl,imx7ulp-iomuxc1", },
-+	{ /* sentinel */ }
-+};
-+
-+static int imx7ulp_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return imx_pinctrl_probe(pdev, &imx7ulp_pinctrl_info);
-+}
-+
-+static struct platform_driver imx7ulp_pinctrl_driver = {
-+	.driver = {
-+		.name = "imx7ulp-pinctrl",
-+		.of_match_table = of_match_ptr(imx7ulp_pinctrl_of_match),
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = imx7ulp_pinctrl_probe,
-+};
-+
-+static int __init imx7ulp_pinctrl_init(void)
-+{
-+	return platform_driver_register(&imx7ulp_pinctrl_driver);
-+}
-+arch_initcall(imx7ulp_pinctrl_init);
--- 
-2.7.4
+Do you think it's ok?
 
+
+Regards
+Dong Aisheng
+
+
+> Regards
+> Dong Aisheng
+>=20
+> > --
+> > Stefan
+> >
+> > >  	writel(reg, ipctl->base + pin_reg->mux_reg);
+> > >
+> > >  	return 0;
+> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
+> > > b/drivers/pinctrl/freescale/pinctrl-imx.h
+> > > index eb0ce95..9ded65d 100644
+> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
+> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+> > > @@ -67,6 +67,8 @@ struct imx_pinctrl_soc_info {
+> > >  	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
+> > >  	unsigned int mux_mask;
+> > >  	u8 mux_shift;
+> > > +	u32 ibe_bit;
+> > > +	u32 obe_bit;
+> > >
+> > >  	/* generic pinconf */
+> > >  	bool generic_pinconf;
+> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> > > b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> > > index dead416..f724a01 100644
+> > > --- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+> > > @@ -324,6 +324,8 @@ static struct imx_pinctrl_soc_info
+> > imx7ulp_pinctrl_info =3D {
+> > >  	.flags =3D ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
+> > >  	.mux_mask =3D 0xf00,
+> > >  	.mux_shift =3D 8,
+> > > +	.ibe_bit =3D BIT(16),
+> > > +	.obe_bit =3D BIT(17),
+> > >  	.generic_pinconf =3D true,
+> > >  	.custom_params =3D imx7ulp_cfg_params,
+> > >  	.num_custom_params =3D ARRAY_SIZE(imx7ulp_cfg_params), diff --git
+> > > a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > > b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > > index 3bd8556..c0823f9 100644
+> > > --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > > +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+> > > @@ -301,6 +301,8 @@ static struct imx_pinctrl_soc_info
+> > vf610_pinctrl_info =3D {
+> > >  	.flags =3D SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
+> > >  	.mux_mask =3D 0x700000,
+> > >  	.mux_shift =3D 20,
+> > > +	.ibe_bit =3D BIT(0),
+> > > +	.obe_bit =3D BIT(1),
+> > >  };
+> > >
+> > >  static const struct of_device_id vf610_pinctrl_of_match[] =3D {
