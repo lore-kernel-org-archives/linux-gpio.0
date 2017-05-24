@@ -1,137 +1,70 @@
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
-Date: Wed, 24 May 2017 10:59:52 +0200
-Message-ID: <20170524105952.62760b1f@ipc1.ka-ro>
-References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
- <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
- <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
- <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
- <0e430fc802cb89a4bd793e95dee57501@agner.ch>
- <AM3PR04MB306FDB343CC46DFE7766D3D80FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
+From: Thibaud Cornic <thibaud_cornic@sigmadesigns.com>
+Subject: Re: Right amount of info in the DT
+Date: Wed, 24 May 2017 11:41:28 +0200
+Message-ID: <526a19bc-932a-3f84-eaf7-03c0b67bae2f@sigmadesigns.com>
+References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
+ <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
+ <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com>
+ <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
+ <d8d9f35c-a901-dc77-646e-ea09836ee9cf@sigmadesigns.com>
+ <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
+ <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com>
+ <CACRpkdbB9kUaRbm-=1c_kzZ9p2ghh==HNb-8vkGkF3Zrx0rr_Q@mail.gmail.com>
+ <42ae4b79-9917-3f9d-8962-d09fbe8c9b1c@sigmadesigns.com>
+ <CACRpkdZg--owpSdpyGUzHKNDS+Wk9juvobGiCNt4vsMEytNPaQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <AM3PR04MB306FDB343CC46DFE7766D3D80FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "A.S. Dong" <aisheng.dong@nxp.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Stefan Agner <stefan@agner.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from us-smtp-delivery-212.mimecast.com ([63.128.21.212]:53077 "EHLO
+        us-smtp-delivery-212.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751643AbdEXJsG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 May 2017 05:48:06 -0400
+In-Reply-To: <CACRpkdZg--owpSdpyGUzHKNDS+Wk9juvobGiCNt4vsMEytNPaQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>
 
-IkEuUy4gRG9uZyIgPGFpc2hlbmcuZG9uZ0BueHAuY29tPiB3cm90ZToKCj4gSGkgU3RlZmFuLAo+
-IAo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiA+IEZyb206IFN0ZWZhbiBBZ25lciBb
-bWFpbHRvOnN0ZWZhbkBhZ25lci5jaF0KPiA+IFNlbnQ6IFdlZG5lc2RheSwgTWF5IDI0LCAyMDE3
-IDM6MTYgQU0KPiA+IFRvOiBBLlMuIERvbmcKPiA+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOwo+ID4gbGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBKYWNreSBCYWk7IEFuZHkgRHVh
-bjsKPiA+IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgQWxleGFuZHJlIENvdXJib3QKPiA+IFN1Ympl
-Y3Q6IFJlOiBbUEFUQ0ggMS8yXSBwaW5jdHJsOiBwaW5jdHJsLWlteDogYWRkIElCRSBhbmQgT0JF
-IFNvQwo+ID4gcHJvcGVydHkKPiA+IAo+ID4gT24gMjAxNy0wNS0yMyAwNTowNiwgQS5TLiBEb25n
-IHdyb3RlOgo+ID4gPiBIaSBTdGVmYW4sCj4gPiA+Cj4gPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3Nh
-Z2UtLS0tLQo+ID4gPj4gRnJvbTogQS5TLiBEb25nCj4gPiA+PiBTZW50OiBXZWRuZXNkYXksIE1h
-eSAxNywgMjAxNyAyOjE0IFBNCj4gPiA+PiBUbzogJ1N0ZWZhbiBBZ25lcicKPiA+ID4+IENjOiBs
-aW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnOwo+ID4gPj4gbGludXMud2FsbGVpakBsaW5hcm8ub3JnOyBzaGF3bmd1b0BrZXJuZWwu
-b3JnOyBKYWNreSBCYWk7IEFuZHkgRHVhbjsKPiA+ID4+IGtlcm5lbEBwZW5ndXRyb25peC5kZTsg
-QWxleGFuZHJlIENvdXJib3QKPiA+ID4+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggMS8yXSBwaW5jdHJs
-OiBwaW5jdHJsLWlteDogYWRkIElCRSBhbmQgT0JFIFNvQwo+ID4gPj4gcHJvcGVydHkKPiA+ID4+
-Cj4gPiA+PiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gPiA+PiA+IEZyb206IFN0ZWZh
-biBBZ25lciBbbWFpbHRvOnN0ZWZhbkBhZ25lci5jaF0KPiA+ID4+ID4gU2VudDogVHVlc2RheSwg
-TWF5IDE2LCAyMDE3IDE6MTEgQU0KPiA+ID4+ID4gVG86IEEuUy4gRG9uZwo+ID4gPj4gPiBDYzog
-bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc7Cj4gPiA+PiA+IGxpbnV4LWFybS1rZXJuZWxAbGlz
-dHMuaW5mcmFkZWFkLm9yZzsKPiA+ID4+ID4gbGludXMud2FsbGVpakBsaW5hcm8ub3JnOyBzaGF3
-bmd1b0BrZXJuZWwub3JnOyBKYWNreSBCYWk7IEFuZHkKPiA+ID4+ID4gRHVhbjsga2VybmVsQHBl
-bmd1dHJvbml4LmRlOyBBbGV4YW5kcmUgQ291cmJvdAo+ID4gPj4gPiBTdWJqZWN0OiBSZTogW1BB
-VENIIDEvMl0gcGluY3RybDogcGluY3RybC1pbXg6IGFkZCBJQkUgYW5kIE9CRSBTb0MKPiA+ID4+
-ID4gcHJvcGVydHkKPiA+ID4+ID4KPiA+ID4+ID4gT24gMjAxNy0wNS0xNCAyMzo0OCwgRG9uZyBB
-aXNoZW5nIHdyb3RlOgo+ID4gPj4gPiA+IGlNWCBVTFAgaGFzIGRpZmZlcmVudCBJT0IvT0JFIHNo
-aWZ0IGZyb20gVmlicmlkLCBzbyBsZXQncyBtYWtlCj4gPiA+PiA+Cj4gPiA+PiA+IHMvVmlicmlk
-L1Z5YnJpZAo+ID4gPj4gPgo+ID4gPj4gPiA+IGl0IGEgU29DIHByb3BlcnR5Lgo+ID4gPj4gPiA+
-Cj4gPiA+PiA+ID4gQ2M6IExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4K
-PiA+ID4+ID4gPiBDYzogQWxleGFuZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+Cj4gPiA+
-PiA+ID4gQ2M6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4KPiA+ID4+ID4gPiBDYzog
-U3RlZmFuIEFnbmVyIDxzdGVmYW5AYWduZXIuY2g+Cj4gPiA+PiA+ID4gQ2M6IEZ1Z2FuZyBEdWFu
-IDxmdWdhbmcuZHVhbkBueHAuY29tPgo+ID4gPj4gPiA+IENjOiBCYWkgUGluZyA8cGluZy5iYWlA
-bnhwLmNvbT4KPiA+ID4+ID4gPiBTaWduZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcu
-ZG9uZ0BueHAuY29tPgo+ID4gPj4gPiA+IC0tLQo+ID4gPj4gPiA+ICBkcml2ZXJzL3BpbmN0cmwv
-ZnJlZXNjYWxlL3BpbmN0cmwtaW14LmMgICAgIHwgOCArKysrLS0tLQo+ID4gPj4gPiA+ICBkcml2
-ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14LmggICAgIHwgMiArKwo+ID4gPj4gPiA+
-ICBkcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtaW14N3VscC5jIHwgMiArKwo+ID4g
-Pj4gPiA+ICBkcml2ZXJzL3BpbmN0cmwvZnJlZXNjYWxlL3BpbmN0cmwtdmY2MTAuYyAgIHwgMiAr
-Kwo+ID4gPj4gPiA+ICA0IGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDQgZGVsZXRp
-b25zKC0pCj4gPiA+PiA+ID4KPiA+ID4+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJs
-L2ZyZWVzY2FsZS9waW5jdHJsLWlteC5jCj4gPiA+PiA+ID4gYi9kcml2ZXJzL3BpbmN0cmwvZnJl
-ZXNjYWxlL3BpbmN0cmwtaW14LmMKPiA+ID4+ID4gPiBpbmRleCA1N2UxZjdhLi4wZDZhYWNhIDEw
-MDY0NAo+ID4gPj4gPiA+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1p
-bXguYwo+ID4gPj4gPiA+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9mcmVlc2NhbGUvcGluY3RybC1p
-bXguYwo+ID4gPj4gPiA+IEBAIC0zMzEsOCArMzMxLDggQEAgc3RhdGljIGludCBpbXhfcG14X2dw
-aW9fc2V0X2RpcmVjdGlvbihzdHJ1Y3QKPiA+ID4+ID4gPiBwaW5jdHJsX2RldiAqcGN0bGRldiwK
-PiA+ID4+ID4gPiAgCXUzMiByZWc7Cj4gPiA+PiA+ID4KPiA+ID4+ID4gPiAgCS8qCj4gPiA+PiA+
-ID4gLQkgKiBPbmx5IFZ5YnJpZCBoYXMgdGhlIGlucHV0L291dHB1dCBidWZmZXIgZW5hYmxlIGZs
-YWdzCj4gPiAoSUJFL09CRSkKPiA+ID4+ID4gPiAtCSAqIFRoZXkgYXJlIHBhcnQgb2YgdGhlIHNo
-YXJlZCBtdXgvY29uZiByZWdpc3Rlci4KPiA+ID4+ID4gPiArCSAqIE9ubHkgVnlicmlkIGFuZCBp
-TVggVUxQIGhhcyB0aGUgaW5wdXQvb3V0cHV0IGJ1ZmZlciBlbmFibGUKPiA+IGZsYWdzCj4gPiA+
-PiA+ID4gKwkgKiAoSUJFL09CRSkgVGhleSBhcmUgcGFydCBvZiB0aGUgc2hhcmVkIG11eC9jb25m
-IHJlZ2lzdGVyLgo+ID4gPj4gPiA+ICAJICovCj4gPiA+PiA+ID4gIAlpZiAoIShpbmZvLT5mbGFn
-cyAmIFNIQVJFX01VWF9DT05GX1JFRykpCj4gPiA+PiA+ID4gIAkJcmV0dXJuIDA7Cj4gPiA+PiA+
-ID4gQEAgLTM0NCw5ICszNDQsOSBAQCBzdGF0aWMgaW50IGlteF9wbXhfZ3Bpb19zZXRfZGlyZWN0
-aW9uKHN0cnVjdAo+ID4gPj4gPiA+IHBpbmN0cmxfZGV2ICpwY3RsZGV2LAo+ID4gPj4gPiA+ICAJ
-LyogSUJFIGFsd2F5cyBlbmFibGVkIGFsbG93cyB1cyB0byByZWFkIHRoZSB2YWx1ZSAib24gdGhl
-Cj4gPiB3aXJlIiAqLwo+ID4gPj4gPiA+ICAJcmVnID0gcmVhZGwoaXBjdGwtPmJhc2UgKyBwaW5f
-cmVnLT5tdXhfcmVnKTsKPiA+ID4+ID4gPiAgCWlmIChpbnB1dCkKPiA+ID4+ID4gPiAtCQlyZWcg
-Jj0gfjB4MjsKPiA+ID4+ID4gPiArCQlyZWcgPSAocmVnICYgfmluZm8tPm9iZV9iaXQpIHwgaW5m
-by0+aWJlX2JpdDsKPiA+ID4+ID4gPiAgCWVsc2UKPiA+ID4+ID4gPiAtCQlyZWcgfD0gMHgyOwo+
-ID4gPj4gPiA+ICsJCXJlZyA9IChyZWcgJiB+aW5mby0+aWJlX2JpdCkgfCBpbmZvLT5vYmVfYml0
-Owo+ID4gPj4gPgo+ID4gPj4gPiBXaHkgZGlzYWJsaW5nIElCRSBiaXQgbm93PyBBcyB0aGUgY29t
-bWVudCBhYm92ZSBzdGF0ZXMsIGl0IGlzCj4gPiA+PiA+IHJlYWxseSBoYW5keSB0byBsZWF2ZSB0
-aGUgaW5wdXQgYnVmZmVyIGVuYWJsZWQgc28gd2UgY2FuIHJlYWQgYmFjawo+ID4gPj4gPiB0aGUg
-dHJ1ZSB2YWx1ZSBvbiB0aGUgd2lyZS4uLgo+ID4gPj4gPgo+ID4gPj4KPiA+ID4+IERvZXMgVnli
-cmlkIHJlcGx5IG9uIHRoaXMgYml0IHRvIHJlYWQgdGhlIHN0YXR1cyBvZiBvdXRwdXQgZnJvbSBQ
-b3J0Cj4gPiA+PiBEYXRhIElucHV0IFJlZ2lzdGVyIChHUElPeF9QRElSKT8KPiA+ID4+Cj4gPiA+
-PiBUaGVuLCBpdCBpcyBhIGJpdCBzdHJhbmdlIHRoYXQgcmVhZCBzdGF0dXMgZnJvbSBpbnB1dCBy
-ZWdpc3RlciB3aGVuCj4gPiA+PiB0aGUgR1BJTyBpcyBBY3R1YWxseSBjb25maWd1cmVkIGFzIG91
-dHB1dC4KPiA+ID4+Cj4gPiA+PiBQcm9iYWJseSBpdCB3b3JrcyBvbiBWeWJyaWQsIGJ1dCBJIGRv
-bid0IGtub3cgaWYgaXQncyB2YWxpZCBmb3IgTVg3VUxQLgo+ID4gPj4KPiA+ID4+IEZvciBNWDdV
-TFAsIHdlIHdpbGwgcmVhZCBpbnB1dCBvciBvdXRwdXQgcmVnaXN0ZXIgYWNjb3JkaW5nbHkgYnkK
-PiA+ID4+IGNoZWNraW5nIEdQSU8gZGlyZWN0aW9uIHJlZ2lzdGVyIChQRERSKSBhbmQgd2Ugd2ls
-bCBub3QgZW5hYmxlIElucHV0Cj4gPiA+PiBidWZmZXIgaWYgdGhlIEdQSU8gaXMgY29uZmlndXJl
-ZCBhcyBvdXRwdXQsIHRoaXMgYWxzbyBzYXZlIGEgYml0IHBvd2VyLgo+ID4gPj4KPiA+ID4+IEkg
-a25vdyBWeWJyaWQgaGFzIG5vIFBERFIsIHByb2JhYmx5IHRoYXQncyB3aHkgeW91IGVuYWJsZSBJ
-QkUgYnkKPiA+ID4+IGRlZmF1bHQgYWx3YXlzLgo+ID4gPj4KPiA+IAo+ID4gVGhlIG1haW4gcmVh
-c29uIEkgZW5hYmxlIGlucHV0IGJ1ZmZlciBieSBkZWZhdWx0IGlzIHNvIHRoYXQgc29mdHdhcmUg
-aGFzIGEKPiA+IGNoYW5jZSB0byBzZWUgdGhlIGFjdHVhbCBzdGF0ZSBvZiB0aGUgR1BJTy4gRS5n
-LiB3aGVuIGEgR1BJTyBpcyBjb25uZWN0ZWQKPiA+IHRvIEdORCwgYW5kIHlvdSBzZXQgaXQgaGln
-aCwgeW91IGNhbiByZWFkIGJhY2sgYSAwLi4uIChvZiBjb3Vyc2UgeW91Cj4gPiBzaG91bGQgbm90
-IGNvbm5lY3QgYSBHUElPIHRvIEdORCBhbmQgc2V0IGl0IGhpZ2ghIEJ1dCB0aGF0IGlzIGV4YWN0
-bHkgdGhlCj4gPiBwb2ludCwgd2l0aCBlbmFibGluZyB0aGUgaW5wdXQgYnVmZmVyIHlvdSBhY3R1
-YWxseSBzZWUgdGhhdCBzb21ldGhpbmcgaXMKPiA+IHdyb25nISkKPiA+IAo+ID4gQ2FuIHdlIG5v
-dCBkbyB0aGlzIGZvciBpTVg3VUxQIHRvbz8KPiA+IAo+IAo+IEhtbS4uIEkgcHJvYmFibHkgd291
-bGQgdGhpbmsgaXQgcmV2ZXJzZWx5Lgo+IEZvciBtZSwgSSdkIHByZWZlciB0aGUgZ3BpbyB2YWx1
-ZSByZWFkIGJhY2sgcmVmbGVjdCB0aGUgcmVhbCB2YWx1ZSBzZXQgaW4KPiBHUElPIGNvbnRyb2xs
-ZXIsIG5vdCB0aGUgYWN0dWFsIHN0YXRlIG9uIHRoZSBsaW5lLgo+IEl0IGF0IGxlYXN0IHRlbGxz
-ICJIZXksIHlvdXIgR1BJTyBTVyBzZXR0aW5nIGlzIG9rYXksIGNoZWNrIEhXIC4uIi4KPiAKPiBV
-c2VycyBjb3VsZCBtZWFzdXJlIHRoZSBhY3R1YWwgc3RhdGUgaWYgc29tZXRoaW5nIGlzIHdyb25n
-Lgo+IApUaGlzIGRvZXNuJ3QgYnV5IHRoZSB1c2VyIGFueXRoaW5nLiBZb3UgY2FuIHNhZmVseSBh
-c3N1bWUsIHRoYXQgd3JpdGluZwpzb21lIHZhbHVlIHRvIGEgcmVnaXN0ZXIgd2lsbCBhY3R1YWxs
-eSBzZXQgdGhlIGRlc2lnbmF0ZWQgYml0cyBpbiB0aGF0CnJlZ2lzdGVyLiBUaGVyZSBpcyBubyBu
-ZWVkIHRvIGNvbmZpcm0gdGhhdCBieSByZWFkaW5nIGJhY2suCldoYXQncyBtb3JlIGludGVyZXN0
-aW5nIGlzIHdoZXRoZXIgdGhlIGNoYW5nZSBpbiB0aGUgcmVnaXN0ZXIgc2V0dGluZwpoYWQgdGhl
-IGRlc2lyZWQgZWZmZWN0IG9uIHRoZSBoYXJkd2FyZSBvdXRzaWRlIHRoZSBjaGlwIQoKCkxvdGhh
-ciBXYcOfbWFubgotLSAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KCkthLVJvIGVsZWN0cm9uaWNzIEdtYkggfCBQYXNjYWxzdHJhw59l
-IDIyIHwgRCAtIDUyMDc2IEFhY2hlbgpQaG9uZTogKzQ5IDI0MDggMTQwMi0wIHwgRmF4OiArNDkg
-MjQwOCAxNDAyLTEwCkdlc2Now6RmdHNmw7xocmVyOiBNYXR0aGlhcyBLYXVzc2VuCkhhbmRlbHNy
-ZWdpc3RlcmVpbnRyYWc6IEFtdHNnZXJpY2h0IEFhY2hlbiwgSFJCIDQ5OTYKCnd3dy5rYXJvLWVs
-ZWN0cm9uaWNzLmRlIHwgaW5mb0BrYXJvLWVsZWN0cm9uaWNzLmRlCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxp
-bmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3Rz
-LmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On 22/05/2017 17:12, Linus Walleij wrote:
+> On Fri, May 12, 2017 at 5:31 PM, Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com> wrote:
+>> On 05/11/2017 05:22 PM, Linus Walleij wrote: 
+>>> Implement everything you have a data sheet for even if you do not use it right now. It is good to have. 
+>> Do you mean that I should submit a driver for every single device before I can declare its pins in the DT? That will surely take quite a long time, and I'm required to get GPIO functionality before that. 
+> I mean that when you write a GPIO driver, i.e. ONE driver for ONE GPIO controlling hardware, you should implement all the functionality for THAT GPIO block.
+Right now, Yves works on the GPIOs, and he'd like to be able to support all the GPIOs of the chip, even those
+which are muxed with the UART/smart card/other IPs pins.
+For example, we have a UART2 IP, which pins can be used as GPIOs or for the UART functionality.
+The registers which toggle the GPIO/UART "mode" of these pins are in the address range of the UART block.
+Does your answer mean that you won't allow any other code than a UART driver to touch those registers?
+Which would mean that to be able to use those pins as GPIOs, Yves must first submit the UART driver and DT node,
+then modify it to somehow expose a GPIO functionality?
+
+>> Furthermore, even if I had a driver for a device whose pins can also be GPIOs, say smartcard. If the driver is built as a module, and has not been yet loaded in, then, since you want the pinctrl node has a child node, no gpiochip struct could have been registered, and the pins can't be used as GPIOs. Does this mean that to use the smartcard's pin as GPIOs, the smartcard driver must absolutely be loaded, even though smartcards are never used? 
+> I do not understand this remark. If the GPIOs are provided by the smartcard IP block inside your chip, yes then it makes sense to spawn the GPIO driver as part of the smartcard driver.
+Let's talk about UART instead (as there's no real use case for a dynamic switch of pin usage on the board between
+the smart card and something else).
+The remark is: when the UART driver is loaded, it will start using the pins in the UART mode. And this driver is not
+designed to serve GPIO requests. It seems like a big modification to add this (like a wrapper completely disabling the
+function for which that driver has been written).
+Do we need to do this for all the drivers which control pins which can be used as GPIOs?
+
+I had imagined that the pin controller driver would be the one writing in the "pin mode" registers, wherever they might
+be located, and we would add "pin request" calls in the other drivers (UART, smart card) which would tell the pin
+controller to put those pins in the UART/smart card mode, and not allow gpio requests to them.
+
+> Usually the GPIO hardware is a separate IP block from any others (such as smartcard) so this situation seldom occurs.
+Really? I imagine we're not the only company adding muxes to use certain IP pins as GPIOs. And those muxes a necessarily
+placed in those IP blocks, which (depending on the interconnect) will force the mux register address to be in the IP address range.
+
+> Is you system such that there is an IO range for something like a smart card, and then that IO range also contains registers for reusing some or all pins as GPIO?
+Yes exactly. It contains the register to reuse the smart card pins as GPIOs.
+And let's say the ethernet IO range contains the regs to reuse the ethernet pins.
+
+> Then yes, we usually write a driver for this whole IP block and let it expose a gpiochip as part of its main function.
+On top of my other remarks above, what if the driver is completely standard?
+
+Regards,
+Thibaud Cornic
+
