@@ -1,77 +1,72 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio
-Date: Wed, 24 May 2017 13:43:34 +0200
-Message-ID: <1495626214-15502-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
+Date: Wed, 24 May 2017 13:47:55 +0200
+Message-ID: <CAMuHMdWghZYQ+Mx-AMsu3yERNwChz4xXHKs3D5fshnG5trLMbg@mail.gmail.com>
+References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de> <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:35206 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965586AbdEXLnn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 07:43:43 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:32936 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965899AbdEXLr5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 07:47:57 -0400
+In-Reply-To: <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Configuration of the lcd0 pinmux group and GPIO hog for the external
-GPIO mux are done using a single device node, causing the "output-high"
-property to be applied to both.  This will fail for the pinmux group,
-but doesn't cause any harm, as the failure is ignored silently.
+Hi Wolfram,
 
-However, after "pinctrl: sh-pfc: propagate errors on group config", the
-failure will become fatal, leading to a broken display:
+On Tue, Jun 21, 2016 at 3:11 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Jun 20, 2016 at 8:40 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> On group configuration, bail out if setting one of the individual pins
+>> fails. We don't need to roll-back, the pinctrl core will do this for us.
+>>
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
+>>
+>> Tested on a Lager and Salvator-X without problems. Needs probably more testing
+>> on various HW to avoid regressions?
+>
+> Your patch causes the display to fail on r8a7740/armadillo.
+>
+> Disabling the error propagation and adding more debug prints reveals:
+>
+> +sh_pfc_pinconf_validate: pin 58: 15 not supported
+> +sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
+> +sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
+> pin 0 of group lcd0_data24_0
+> +sh_pfc_pinconf_validate: pin 57: 15 not supported
+> +sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
+> +sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
+> pin 1 of group lcd0_data24_0
+> +sh_pfc_pinconf_validate: pin 56: 15 not supported
+> +sh_pfc_pinconf_set:694: config 0: sh_pfc_pinconf_validate() failed
+> +sh_pfc_pinconf_group_set:781: sh_pfc_pinconf_set() failed -524 for
+> pin 2 of group lcd0_data24_0
+>  ...
+>
+> 15 = PIN_CONFIG_OUTPUT
+>
+> No idea why this is set for all pins of the lcd0_data24_0 group (and not for any
+> other pin or group on any other SoC).
 
-    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
-    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
-    sh-pfc e6050000.pin-controller: failed to select default state
+This is caused by the "output-high" property for the GPIO hog.
+Due to both lcd0 pinmux and GPIO hog being part of the same device node,
+"output-high" is also applied to the lcd0 pins, which fails.
 
-Split the configuration in two subnodes, and replace the GPIO hog by a
-pull-up pin bias to fix this.
+RFC fix in "[PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio"
+(https://patchwork.kernel.org/patch/9745831/)/
 
-Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
-group config" (https://patchwork.kernel.org/patch/9186713/).
+Gr{oetje,eeting}s,
 
-Notes:
-  1. Just keeping the GPIO hog doesn't work, as the sh-pfc driver
-     requires each pinctrl (sub)node to have at least one "pins" or
-     "groups" property,
-  2. Keeping "output-high" doesn't work, as the sh-pfc driver does not
-     implement PIN_CONFIG_OUTPUT.
+                        Geert
 
-Should I fix 1 and/or 2 instead?
----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-index 44b335b9f035436d..7feedc86f6915654 100644
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -267,13 +267,16 @@
- 	};
- 
- 	lcd0_pins: lcd0 {
--		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
--		function = "lcd0";
-+		mux {
-+			groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
-+			function = "lcd0";
-+		};
- 
--		/* DBGMD/LCDC0/FSIA MUX */
--		gpio-hog;
--		gpios = <176 0>;
--		output-high;
-+		gpio {
-+			/* DBGMD/LCDC0/FSIA MUX */
-+			pins = "PORT176";
-+			bias-pull-up;
-+		};
- 	};
- };
- 
--- 
-2.7.4
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
