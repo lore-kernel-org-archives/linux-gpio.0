@@ -1,91 +1,314 @@
 From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V3 1/2] dt-bindings: pinctrl: add imx7ulp pinctrl binding
- doc
-Date: Wed, 24 May 2017 03:10:12 +0000
-Message-ID: <AM3PR04MB3065626F1B45C8459E5765580FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1495539829-23345-1-git-send-email-aisheng.dong@nxp.com>
- <20170523182321.GA13664@w540>
+Subject: RE: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is gpio
+Date: Wed, 24 May 2017 05:40:57 +0000
+Message-ID: <AM3PR04MB3061E2A290228D2FC5E1AC780FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
+ <1494830906-6442-3-git-send-email-aisheng.dong@nxp.com>
+ <6d47abc0527ae6f2214a9b37dfbeb154@agner.ch>
+ <AM3PR04MB3061FB0760F94F2F816055A80E70@AM3PR04MB306.eurprd04.prod.outlook.com>
+ <e056a1185a4094e558fb20c7eb19da3d@agner.ch>
+ <DBXPR04MB320067F5C96D376B61730E780F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+ <1fdef56e7e0d7786789922db9f952a7a@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-db5eur01on0057.outbound.protection.outlook.com ([104.47.2.57]:29152
+Received: from mail-db5eur01on0071.outbound.protection.outlook.com ([104.47.2.71]:42678
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754630AbdEXDKQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 23 May 2017 23:10:16 -0400
-In-Reply-To: <20170523182321.GA13664@w540>
+        id S933821AbdEXFlC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 May 2017 01:41:02 -0400
+In-Reply-To: <1fdef56e7e0d7786789922db9f952a7a@agner.ch>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "stefan@agner.ch" <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>
 
-SGkgSg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGptb25kaSBbbWFp
-bHRvOmphY29wb0BqbW9uZGkub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIE1heSAyNCwgMjAxNyAy
-OjI0IEFNDQo+IFRvOiBBLlMuIERvbmcNCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3Jn
-OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxpbnVzLndhbGxlaWpA
-bGluYXJvLm9yZzsgc2hhd25ndW9Aa2VybmVsLm9yZzsgc3RlZmFuQGFnbmVyLmNoOyBKYWNreSBC
-YWk7DQo+IEFuZHkgRHVhbjsga2VybmVsQHBlbmd1dHJvbml4LmRlOyBSb2IgSGVycmluZzsgTWFy
-ayBSdXRsYW5kOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTog
-W1BBVENIIFYzIDEvMl0gZHQtYmluZGluZ3M6IHBpbmN0cmw6IGFkZCBpbXg3dWxwIHBpbmN0cmwN
-Cj4gYmluZGluZyBkb2MNCj4gDQo+IEhpIERvbmcsDQo+IA0KPiBPbiBUdWUsIE1heSAyMywgMjAx
-NyBhdCAwNzo0Mzo0OFBNICswODAwLCBEb25nIEFpc2hlbmcgd3JvdGU6DQo+ID4gaS5NWCA3VUxQ
-IGhhcyB0aHJlZSBJT01VWEMgaW5zdGFuY2VzOiBJT01VWEMwIGZvciBNNCBwb3J0cywNCj4gPiBJ
-T01VWEMxIGZvciBBNyBwb3J0cyBhbmQgSU9NVVhDIEREUiBmb3IgRERSIGludGVyZmFjZS4NCj4g
-Pg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgSU9NVVhDMSBzdXBwb3J0IGZvciBBNy4NCj4gPg0K
-PiA+IENjOiBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPg0KPiA+IENjOiBNYXJrIFJ1
-dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPg0KPiA+IENjOiBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZw0KPiA+IENjOiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
-DQo+ID4gQWNrZWQtYnk6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+DQo+ID4g
-LS0tDQo+ID4gQ2hhbmdlTG9nOg0KPiA+IHYyLT52MzoNCj4gPiAgKiBzd2l0Y2ggdG8gZ2VuZXJp
-YyBpbnB1dC9vdXRwdXQtZW5hYmxlIHByb3BlcnR5DQo+ID4gdjEtPnYyOg0KPiA+ICAqIGFkZCBt
-b3JlIGRlc2NyaXB0aW9ucyBpbiBiaW5kaW5nIGRvYw0KPiA+ICAqIGFkZCBtaXNzZWQgcHJlZml4
-IGZvciBwcml2YXRlIHByb3BlcnRpZXMuDQo+ID4gICogbW92ZSBkdC1iaW5kaW5ncy9waW5jdHJs
-L2lteDd1bHAtcGluZnVuYy5oIHRvIGFyY2gvYXJtL2Jvb3QvZHRzDQo+ID4gLS0tDQo+ID4gIC4u
-Li9iaW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg3dWxwLXBpbmN0cmwudHh0ICAgICAgIHwgIDYzICsr
-Kw0KPiA+ICBhcmNoL2FybS9ib290L2R0cy9pbXg3dWxwLXBpbmZ1bmMuaCAgICAgICAgICAgICAg
-ICB8IDQ2OA0KPiArKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA1
-MzEgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiBEb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9mc2wsaW14N3VscC1waW5jdHJsLnR4dA0K
-PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9vdC9kdHMvaW14N3VscC1waW5mdW5j
-LmgNCj4gPg0KPiA+IGRpZmYgLS1naXQNCj4gPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg3dWxwLXBpbmN0cmwudHh0DQo+ID4gYi9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9mc2wsaW14N3VscC1waW5jdHJsLnR4dA0K
-PiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMC4uNjdlNGQxZQ0KPiA+
-IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvcGluY3RybC9mc2wsaW14N3VscC1waW5jdHJsLnR4DQo+ID4gKysrIHQNCj4gPiBAQCAtMCww
-ICsxLDYzIEBADQo+ID4gKyogRnJlZXNjYWxlIGkuTVg3VUxQIElPTVVYIENvbnRyb2xsZXINCj4g
-PiArDQo+ID4gK2kuTVggN1VMUCBoYXMgdGhyZWUgSU9NVVhDIGluc3RhbmNlczogSU9NVVhDMCBm
-b3IgTTQgcG9ydHMsIElPTVVYQzENCj4gPiArZm9yIEE3IHBvcnRzIGFuZCBJT01VWEMgRERSIGZv
-ciBERFIgaW50ZXJmYWNlLg0KPiA+ICsNCj4gPiArTm90ZToNCj4gPiArVGhpcyBiaW5kaW5nIGRv
-YyBpcyBvbmx5IGZvciB0aGUgSU9NVVhDMSBzdXBwb3J0IGluIEE3IERvbWFpbiBhbmQgaXQNCj4g
-PiArb25seSBzdXBwb3J0cyBnZW5lcmljIHBpbiBjb25maWcuDQo+ID4gKw0KPiA+ICtQbGVhc2Ug
-YWxzbyByZWZlciB0byBmc2wsaW14LXBpbmN0cmwudHh0IGluIHRoaXMgZGlyZWN0b3J5IGZvciBJ
-TVgNCj4gPiArY29tbW9uIGJpbmRpbmcgcGFydCBhbmQgcGluY3RybC1iaW5kaW5ncy50eHQgZm9y
-IHRoZSBnZW5lcmljIGNvbmZpZw0KPiBiaW5kaW5nLg0KPiA+ICsNCj4gPiArPT09IFBpbiBDb250
-cm9sbGVyIE5vZGUgPT09DQo+ID4gKw0KPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICst
-IGNvbXBhdGlibGU6CSJmc2wsaW14N3VscC1pb211eGMxIg0KPiA+ICstIHJlZzoJCVNob3VsZCBj
-b250YWluIHRoZSBiYXNlIHBoeXNpY2FsIGFkZHJlc3MgYW5kIHNpemUgb2YgdGhlDQo+IGlvbXV4
-Yw0KPiA+ICsJCXJlZ2lzdGVycy4NCj4gPiArDQo+ID4gKz09PSBQaW4gQ29uZmlndXJhdGlvbiBO
-b2RlID09PQ0KPiA+ICstIHBpbnM6IE9uZSBpbnRlZ2VycyBhcnJheSwgcmVwcmVzZW50cyBhIGdy
-b3VwIG9mIHBpbnMgbXV4IHNldHRpbmcuDQo+ID4gKwlUaGUgZm9ybWF0IGlzIGZzbCxwaW5zID0g
-PFBJTl9GVU5DX0lEPiwgUElOX0ZVTkNfSUQgaXMgYSBwaW4gd29ya2luZw0KPiBvbg0KPiA+ICsJ
-YSBzcGVjaWZpYyBmdW5jdGlvbi4NCj4gPiArDQo+ID4gKwlOT1RFOiBpLk1YN1VMUCBQSU5fRlVO
-Q19JRCBjb25zaXN0cyBvZiA0IGludGVnZXJzIGFzIGl0IHNoYXJlcyBvbmUNCj4gbXV4DQo+ID4g
-KwlhbmQgY29uZmlnIHJlZ2lzdGVyIGFzIGZvbGxvd3M6DQo+ID4gKwk8bXV4X2NvbmZfcmVnIGlu
-cHV0X3JlZyBtdXhfbW9kZSBpbnB1dF92YWw+DQo+IA0KPiBBcyB5b3VyIFBJTl9GVU5DX0lEIHNw
-ZWNpZmllcyBib3RoIHRoZSBwaW4gaWRzIGFuZCB0aGVpciBtdXggc2V0dGluZ3MsDQo+IHNob3Vs
-ZG4ndCB5b3UgdXNlIHRoZSBuZXdseSBkb2N1bWVudGVkICdwaW5tdXgnIHByb3BlcnR5IGluIHBs
-YWNlIG9mDQo+ICdwaW5zJz8NCj4gDQo+IFBsZWFzZSBzZWUNCj4gaHR0cHM6Ly9naXQua2VybmVs
-Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8N
-Cj4gP2lkPThkNWU3YzVkZjBhNmM0NDIzNzM2MjhiZTUyMjEzMjExNzJiMWJhZGYNCj4gDQo+IFRo
-ZSBjdXJyZW50IGRvY3VtZW50YXRpb24gc3BlY2lmaWVzIHBpbiBpZHMgYW5kIG11eCBzZXR0aW5n
-cyBoYXZlIHRvIGJlDQo+IGFzc2VtYmxlZCBpbiBvbmUgc2luZ2xlIGludGVnZXIsIHdoaWNoIGlz
-IG5vdCB5b3VyIGNhc2UsIGJ1dCB0aGF0IGNhbiBiZQ0KPiBjaGFuZ2VkIHRvIG1ha2UgaXQgYWNj
-ZXB0IGFuIGFycmF5IG9mIGludGVnZXJzIHZhbHVlcyBpZiBuZWVkZWQuDQo+IA0KDQpUaGFua3Mg
-Zm9yIHRoZSBpbmZvLg0KTG9va3MgZ29vZCB0byBtZS4NCg0KU2hhd24gJiBMaW51cywNCkFyZSB5
-b3Ugb2theSB3aXRoIHRoaXM/DQoNCklmIHllcywgSSBjYW4gZXh0ZW5kIHRoZSBzdGFuZGFyZCAn
-cGlubXV4JyBwcm9wZXJ0eSB0byBzdXBwb3J0IGludGVnZXIgYXJyYXkNCmFuZCByZW5ldyB0aGUg
-cGF0Y2ggc2VyaWVzIHRvIHVzZSBpdC4NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
+> -----Original Message-----
+> From: Stefan Agner [mailto:stefan@agner.ch]
+> Sent: Wednesday, May 24, 2017 3:55 AM
+> To: A.S. Dong
+> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+> kernel@pengutronix.de; Alexandre Courbot
+> Subject: Re: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is gpi=
+o
+>=20
+> On 2017-05-23 03:23, A.S. Dong wrote:
+> > Hi Stefan,
+> >
+> >> -----Original Message-----
+> >> From: A.S. Dong
+> >> Sent: Thursday, May 18, 2017 3:00 PM
+> >> To: 'Stefan Agner'
+> >> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> >> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+> >> kernel@pengutronix.de; Alexandre Courbot
+> >> Subject: RE: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0 is
+> >> gpio
+> >>
+> >> > -----Original Message-----
+> >> > From: Stefan Agner [mailto:stefan@agner.ch]
+> >> > Sent: Thursday, May 18, 2017 2:16 AM
+> >> > To: A.S. Dong
+> >> > Cc: linux-gpio@vger.kernel.org;
+> >> > linux-arm-kernel@lists.infradead.org;
+> >> > linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy
+> >> > Duan; kernel@pengutronix.de; Alexandre Courbot
+> >> > Subject: Re: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux 0
+> >> > is gpio
+> >> >
+> >> > On 2017-05-17 00:18, A.S. Dong wrote:
+> >> > >> -----Original Message-----
+> >> > >> From: Stefan Agner [mailto:stefan@agner.ch]
+> >> > >> Sent: Tuesday, May 16, 2017 1:27 AM
+> >> > >> To: A.S. Dong
+> >> > >> Cc: linux-gpio@vger.kernel.org;
+> >> > >> linux-arm-kernel@lists.infradead.org;
+> >> > >> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy
+> >> > >> Duan; kernel@pengutronix.de; Alexandre Courbot
+> >> > >> Subject: Re: [PATCH 2/2] pinctrl: pinctrl-imx: do not assume mux
+> >> > >> 0 is gpio
+> >> > >>
+> >> > >> On 2017-05-14 23:48, Dong Aisheng wrote:
+> >> > >> > Do not assume MUX 0 is GPIO function in core driver as a
+> >> > >> > different SoC may have different value. e.g. MX7ULP Mux 1 is
+> GPIO.
+> >> > >> >
+> >> > >> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> >> > >> > Cc: Alexandre Courbot <gnurou@gmail.com>
+> >> > >> > Cc: Shawn Guo <shawnguo@kernel.org>
+> >> > >> > Cc: Stefan Agner <stefan@agner.ch>
+> >> > >> > Cc: Fugang Duan <fugang.duan@nxp.com>
+> >> > >> > Cc: Bai Ping <ping.bai@nxp.com>
+> >> > >> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> >> > >> > ---
+> >> > >> >  drivers/pinctrl/freescale/pinctrl-imx.c | 3 ++-
+> >> > >> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >> > >> >
+> >> > >> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
+> >> > >> > b/drivers/pinctrl/freescale/pinctrl-imx.c
+> >> > >> > index 0d6aaca..ed8ea32 100644
+> >> > >> > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
+> >> > >> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+> >> > >> > @@ -281,7 +281,7 @@ static int
+> >> > >> > imx_pmx_gpio_request_enable(struct
+> >> > >> > pinctrl_dev *pctldev,
+> >> > >> >  			continue;
+> >> > >> >  		for (pin =3D 0; pin < grp->num_pins; pin++) {
+> >> > >> >  			imx_pin =3D &((struct imx_pin *)(grp->data))[pin];
+> >> > >> > -			if (imx_pin->pin =3D=3D offset && !imx_pin->mux_mode)
+> >> > >> > +			if (imx_pin->pin =3D=3D offset)
+> >> > >> >  				goto mux_pin;
+> >> > >>
+> >> > >> The reason I added that check was to make sure we pick a mux
+> >> > >> option which is GPIO... With this change, any pinmux might be
+> picked...
+> >> > >>
+> >> > >
+> >> > > First of all, this seems to be wrong to me that GPIO mux mode is
+> >> > > SoC Dependant and should not be put in pinctrl-imx core driver.
+> >> >
+> >> > Hm, agree, we should consider to move
+> >> > imx_pmx_gpio_request_enable/disable_free and
+> >> > imx_pmx_gpio_set_direction into pinctrl-vf610.c
+> >> >
+> >>
+> >> IMX7ULP may want to use imx_pmx_gpio_set_direction as well to support
+> >> dynamically change GPIO from output to input.
+> >>
+> >> > >
+> >> > > Secondly, I think we may be over worried and it's not quite
+> >> > > necessary As we did not do the sanity check for both raw config
+> >> > > and mux data read From Device tree, why only do it for GPIO?
+> >> > >
+> >> > > We may trust the data in device tree.
+> >> >
+> >> > In Vybrid, there is no need to explicitly assign a pinmux to use a
+> >> > pin as GPIO. So the pinmux could be anything... The implemented
+> >> > semantics for Vyrbid is really different than i.MX, see below.
+> >> >
+> >>
+> >> Strange, I do see Vybrid assigning pinmux to GPIO in device tree.
+> >> e.g.
+> >> arch/arm/boot/dts/vf-colibri.dtsi
+> >> pinctrl_esdhc1: esdhc1grp {
+> >>         fsl,pins =3D <
+> >>                 VF610_PAD_PTA24__ESDHC1_CLK     0x31ef
+> >>                 VF610_PAD_PTA25__ESDHC1_CMD     0x31ef
+> >>                 VF610_PAD_PTA26__ESDHC1_DAT0    0x31ef
+> >>                 VF610_PAD_PTA27__ESDHC1_DAT1    0x31ef
+> >>                 VF610_PAD_PTA28__ESDHC1_DATA2   0x31ef
+> >>                 VF610_PAD_PTA29__ESDHC1_DAT3    0x31ef
+> >>                 VF610_PAD_PTB20__GPIO_42        0x219d
+> >>         >;
+> >> };
+> >>
+> >> > >
+> >> > >> >  		}
+> >> > >> >  	}
+> >> > >> > @@ -292,6 +292,7 @@ static int
+> >> > >> > imx_pmx_gpio_request_enable(struct
+> >> > >> > pinctrl_dev *pctldev,
+> >> > >> >  	reg =3D readl(ipctl->base + pin_reg->mux_reg);
+> >> > >> >  	reg &=3D ~info->mux_mask;
+> >> > >> >  	reg |=3D imx_pin->config;
+> >> > >> > +	reg |=3D imx_pin->mux_mode << info->mux_shift;
+> >> > >>
+> >> > >> ... and muxed...
+> >> > >>
+> >> > >> Not sure if we want that.
+> >> > >>
+> >> > >> I had to control GPIO output/input through pinctrl since Vybrid
+> >> > >> does not allow to control that from the GPIO block.
+> >> > >>
+> >> > >> However, according to your GPIO patchset, the i.MX 7ULP has a
+> >> > >> new register GPIO_PDDR to control output from the GPIO block. Is
+> >> > >> controlling the output driver from IOMUXC still required?
+> >> > >
+> >> > > Yes, it's still required.
+> >> > >
+> >> >
+> >> > That sounds weird, what is the GPIO_PDDR for then? Sure I  need to
+> >> > enable the output driver to drive the pin, but can I disable output
+> >> > just using GPIO_PDDR?
+> >>
+> >> No, to fully disable a output, you must disable OBE as well.
+> >>
+> >> >
+> >> > Maybe we have a miss understanding here:
+> >> >
+> >> > Lets assume we want to switch a GPIO between output and input:
+> >> >
+> >> > echo "output" > /sys/class/gpio/gpioN/direction ..
+> >> > echo "input" > /sys/class/gpio/gpioN/direction
+> >> >
+> >> > Do I need to disable the output driver in the IOMUXC or can we just
+> >> > disable GPIO_PDDR and use the pin as input?
+> >> >
+> >>
+> >> OBE should also be disabled. Otherwise the input may not function well=
+.
+> >>
+> >> > If we can disable the output driver just using GPIO_PDDR, we can
+> >> > avoid the gpio_set_direction cross call.
+> >> >
+> >> >
+> >> > >> If not, I really would just not use all that "find pinctrl config=
+"
+> >> > >> hackery... e.g. add a new flag, USE_IOMUXC_FOR_GPIO_OUTPUT, and
+> >> > >> set that only for Vybrid.
+> >> > >>
+> >> > >> This would also align much better with the other i.MX devices,
+> >> > >> where pinmuxing and GPIO is completely orthogonal.
+> >> > >>
+> >> > >
+> >> > > Actually this patch came only because to make the exist code not
+> >> > > break MX7ULP.
+> >> > >
+> >> > > Actually I'm wondering why we need implement
+> >> > > imx_pmx_gpio_request_enable function?
+> >> > >
+> >> > > Per my understanding, IMX binding already set GPIO mux by Parsing
+> >> > > MUX mode from device tree, so why need gpio_request_enable which
+> >> > > looks like is duplicated.
+> >> > >
+> >> > > Can you help explain it?
+> >> >
+> >> > I suggest to read this clarification email wrt to pinctrl/gpio from
+> >> > Linus
+> >> > Walleij:
+> >> > https://lkml.org/lkml/2016/10/10/87
+> >> >
+> >> > To summarize: We have different semantics in Vybrid: The GPIO
+> >> > subsystem automatically mux the GPIO for you. So in Vybrid, you do
+> >> > not have to mux a GPIO (but a valid entry in your device tree is
+> >> > needed, but does not assigned to any node).
+> >>
+> >> Okay, Clearer now.
+> >>
+> >> But I do see the users of GPIO pads in Vybrid dts.
+> >> Above is an example which make me confuse at first.
+> >>
+> >> >
+> >> > Is what the driver is doing for Vybrid wrong? It is different from
+> >> > i.MX, but afaik, it is not really wrong... Its a valid
+> >> > implementation according to the currently defined semantics...  Due
+> >> > to the *need* to touch pinctrl for direction, I had to implement
+> >> > cross calls anyway, so I thought I might as well go full mile and
+> >> > also mux the GPIO on
+> >> request...
+> >> >
+> >>
+> >> It's not strickly wrong.
+> >> Just a bit confuse that gpio_request_enable seems not quite necessary
+> >> As we actually already and must define GPIO mux in device tree
+> >> according To standard IMX binding format.
+> >> e.g. VF610_PAD_PTB20__GPIO_42 in above sd pad group.
+> >> That means pinctrl already does the GPIO mux when enable sd function.
+> >>
+> >> > So the question is, what semantic do we want for i.MX 7ULP? Since
+> >> > it is a i.MX device, we probably want the same semantics as i.MX
+> >> > 6/7 is already using for the sake of consistency. So in this case
+> >> > the gpio_request_enable/disable callbacks are not needed...
+> >> >
+> >> > This is how I hope we can do the implementation for i.MX 7ULP:
+> >> > - Do not use gpio_request_enable/disable
+> >>
+> >> Yes, we do want that.
+> >>
+> >> > - Do not use gpio_set_direction either
+> >>
+> >> Not, ULP needs it to support GPIO direction switch.
+> >>
+> >> > - Users using a GPIO should enable output driver in IOMUXC (just
+> >> > use a pin configuration where output driver is enabled)
+> >>
+> >> Users still need configure OBE/IBE in devicetree for statically
+> assignment.
+> >>
+> >> > - The GPIO driver only enables/disables the output driver using its
+> >> > GPIO_PDDR register depending on GPIO direction
+> >>
+> >> No, same reason as the second question.
+> >>
+> >>
+> >> So, finnaly, I think the solution may be:
+> >> 1. If Vybrid does not use gpio_request_enable/disable, we can simply
+> >> remove it. Both driver keeps using pinctrl gpio_set_direction.
+> >>
+> >> Or.
+> >>
+> >> 2. Make gpio_request_enable/disable and gpio_set_direction As
+> >> pinctrl-imx core driver callbacks. And only assign gpio_set_direction
+> >> For IMX7ULP platform driver while assign both for Vybrid.
+> >>
+> >> Which one would you prefer?
+>=20
+> 1 would mean a semantic change.
+>=20
+> For all GPIO I checked in upstream device trees we assign a pinctrl to th=
+e
+> same node, so in all cases gpio_request_enable/disable is really
+> unnecessary.
+>=20
+> And since the current implementation has adversarial effects for I2C
+> recovery (https://patchwork.kernel.org/patch/9351401/), we use the
+> orthogonal semantic in the closely related i.MX SoCs and it even
+> simplifies the driver, I am ok to change the semantic.
+>=20
+
+I checked the I2C recovery issue you mentioned above, it looks
+Changing the semantic as I proposed may fix it as well.
+
+> Can you prepare such a patchset so that we can further test that on Vybri=
+d?
+>=20
+
+I will prepare it.
+
+Thanks
+
+Regards
+Dong Aisheng
