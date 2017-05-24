@@ -1,39 +1,82 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH] gpio: mvebu: Select REGMAP_MMIO now that regmap is used
-Date: Wed, 24 May 2017 16:32:06 +0200
-Message-ID: <20170524143206.9727-1-gregory.clement@free-electrons.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: samsung: Split per ARMv7/v8 arch
+Date: Wed, 24 May 2017 22:09:19 +0530
+Message-ID: <CAGOxZ53-NrSzGUJ-Fk1fx+3jqESK1wHTwerT6PuYY_nb3DQ0Hw@mail.gmail.com>
+References: <20170516200649.4730-1-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42384 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752136AbdEXOcd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 10:32:33 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34539 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbdEXQkB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 12:40:01 -0400
+In-Reply-To: <20170516200649.4730-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-gpio@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Since the commit "gpio: mvebu: switch to regmap for register access" the
-driver use the regmap. Explicitly select the REGMAP_MMIO symbol to fix
-build error.
+Hi Krzysztof,
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, May 17, 2017 at 1:36 AM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Hi,
+>
+> There will not be a shared image between ARMv7 and ARMv8 so there is no need to
+> combine all of this into one driver.
+>
+> Splitting the data allows to make it more granular (e.g. code related to
+> ARMv8 Exynos is self-contained), slightly speed up the compilation and
+> reduce the effective size of compiled kernel.
+>
+> Diff of second patch is not nice... but it is the best I created.
+> Experimenting with -B and -M resulted in detection of copy/rename but end
+> diff was 60% bigger in lines of patch.
+>
+> Tests on ARMv8 would be much appreciated.
+>
+>
+> Best regards,
+> Krzysztof
+>
+>
+> Krzysztof Kozlowski (2):
+>   pinctrl: samsung: Add include guard to local header
+>   pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8
+>
+Patch: 2/2 was not applying cleanly on 4.12-rc1. Sorry if I am missing
+any dependent patches.
+Anyway with a minor conflict fix for 4.12-rc1, I am able to test this
+series on exynos7 espresso board.
+Looks good to me.
+Feel free to add
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 45ed9acfd095..68d9e6bde14d 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -339,6 +339,7 @@ config GPIO_MVEBU
- 	depends on PLAT_ORION
- 	depends on OF_GPIO
- 	select GENERIC_IRQ_CHIP
-+	select REGMAP_MMIO
- 
- config GPIO_MXC
- 	def_bool y
+As this works on exynos7, tested SD/eMMC card detection which depends
+on pinctrl configs. So
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+
+>  drivers/pinctrl/samsung/Kconfig                |   10 +
+>  drivers/pinctrl/samsung/Makefile               |    2 +
+>  drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |  815 +++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  399 ++++++++
+>  drivers/pinctrl/samsung/pinctrl-exynos.c       | 1163 +-----------------------
+>  drivers/pinctrl/samsung/pinctrl-exynos.h       |   13 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.c      |    8 +-
+>  7 files changed, 1250 insertions(+), 1160 deletions(-)
+>  create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+>  create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+>
+> --
+> 2.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-2.11.0
-
+Regards,
+Alim
