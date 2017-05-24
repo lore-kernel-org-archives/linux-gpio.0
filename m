@@ -1,72 +1,62 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v5] gpio: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Wed, 24 May 2017 14:10:17 +0200
-Message-ID: <ac3f6fd1-7994-341d-9b4c-25afd0c25601@redhat.com>
-References: <20170524104216.23643-1-hdegoede@redhat.com>
- <1495625003.6967.93.camel@linux.intel.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
+Date: Wed, 24 May 2017 14:21:39 +0200
+Message-ID: <20170524122139.GB1463@katana>
+References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
+ <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
+ <CAMuHMdWghZYQ+Mx-AMsu3yERNwChz4xXHKs3D5fshnG5trLMbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1495625003.6967.93.camel@linux.intel.com>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWghZYQ+Mx-AMsu3yERNwChz4xXHKs3D5fshnG5trLMbg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi,
 
-On 24-05-17 13:23, Andy Shevchenko wrote:
-> On Wed, 2017-05-24 at 12:42 +0200, Hans de Goede wrote:
->> Some peripherals on Bay Trail and Cherry Trail platforms signal PME to
->> the
->> PMC to wakeup the system. When this happens software needs to clear
->> the
->> PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm on IRQ
->> 9.
->>
->> This is modeled in ACPI through the INT0002 ACPI Virtual GPIO device.
->>
->> This commit adds a driver which registers the Virtual GPIOs expected
->> by the DSDT on these devices, letting gpiolib-acpi claim the
->> virtual GPIO and install a GPIO-interrupt handler which call the _L02
->> handler as it would for a real GPIO controller.
->>
->> Cc: joeyli <jlee@suse.com>
->> Cc: Takashi Iwai <tiwai@suse.de>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> In addition to my comment to v4 (if you are going to apply it) couple of
-> nits below. (I'm fine with current version, as tag says, though consider
-> them anyway)
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I prefer to stick with the current version (v5) unless something
-bigger comes up.
+Hi Geert,
+
+> This is caused by the "output-high" property for the GPIO hog.
+> Due to both lcd0 pinmux and GPIO hog being part of the same device node,
+> "output-high" is also applied to the lcd0 pins, which fails.
+>=20
+> RFC fix in "[PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio"
+> (https://patchwork.kernel.org/patch/9745831/)/
+
+Cool, thanks! So, if this issue could get resolved, there are chances to
+revive the original patch?
 
 Regards,
 
-Hans
+   Wolfram
 
 
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
->> +#define GPE0A_PME_B0_STS_BIT		BIT(13)
->> +#define GPE0A_PME_B0_EN_BIT		BIT(13)
->> +#define GPE0A_STS_PORT			0x420
->> +#define GPE0A_EN_PORT			0x428
-> 
-> Perhaps squeeze bits after actual ports like
-> 
-> ADDRESSa
-> ADDRa_BITa
-> 
-> ADDRESSb
-> ADDRb_BITa
-> 
->> +	for (i = 0; i < GPE0A_PME_B0_VIRT_GPIO_PIN; i++)
->> +		clear_bit(i, chip->irq_valid_mask);
-> 
-> bitmap_zero() ?
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlkletMACgkQFA3kzBSg
+Kbb9/w/+PrTBxjRHSo8558U/bGcCXpMLmZtwgLEtZoIN4M5kJQHfgF1Xk15k4fhC
+7HPCfnDOw7jXqlgbWKeo0g4SnE7NE7SD8gKl0fFjEbZZRGWbUTUiSLBxxtHu/7qB
+C2Sjt8fYt8bnbFfBRpc0jgCAcU3Ib9IzdrMV4AYEe+gjz3DN4u9XfkGZR7AfPPE6
+xi2/Qeo+GGWqPyZOsrHAn2fGHJg7gChbiEFAEjJUKtdSg7eBnL4IVhAHl+E70mSA
+4TKSVVDqdVHzNN7US5xZrN8So0cmJgknJqXuH/RGxbGVZE4bRgNoISxwgaCcCYHF
+kVL98vip51os6vt7+x8ZpV1lygAdL5KiPRjEqSRHzfaKYgQjUAy5WR9qeQVyOeIE
+HJ9q6qCWEb5v8ETXm6LnJ7M5pH1tDQW1oLP2kENIANGW8bxWapx9K9Ne5Z0Azme0
+AiLkeLKOWs+Vdoa5MskDPSh+YXO/szMMVdpfYlvuSc337ZE8ncn4dIH5TgkGOc+3
+9vX7zXtoKvgDK+FjFkaiHltFwJkdWK4ULd1lPsuXc8uw54XpPAWY70hoUo4Yc9mP
+HQcKqyi9HuXNji/aUFwrLOeabsS06M1uA7CnMz/PcpOvQmHlz3Cm+zywHVIsJ9zq
+S1dHHM5cZR53/Hqt22zFIRfnCSNaGxOX+09eY3H4C7kxNCWqCJQ=
+=2FJP
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
