@@ -1,79 +1,91 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: bcm: clean up modular vs. non-modular
- distinctions
-Date: Tue, 23 May 2017 17:42:39 -0700
-Message-ID: <290c657d-5c40-882a-5a74-b5844709ada5@gmail.com>
-References: <20170522205648.23545-1-paul.gortmaker@windriver.com>
- <20170522205648.23545-4-paul.gortmaker@windriver.com>
- <804d9519-5e1b-d9b1-4591-010dcafa2ff1@broadcom.com>
- <20170524001230.GJ11504@windriver.com>
- <f653cf1f-87d9-7549-6e3b-aa0ca388579c@gmail.com>
- <89839690-ab46-c091-dff6-30b50aea499b@broadcom.com>
+From: "A.S. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH V3 1/2] dt-bindings: pinctrl: add imx7ulp pinctrl binding
+ doc
+Date: Wed, 24 May 2017 03:10:12 +0000
+Message-ID: <AM3PR04MB3065626F1B45C8459E5765580FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1495539829-23345-1-git-send-email-aisheng.dong@nxp.com>
+ <20170523182321.GA13664@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36117 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752571AbdEXAmr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 23 May 2017 20:42:47 -0400
-In-Reply-To: <89839690-ab46-c091-dff6-30b50aea499b@broadcom.com>
+Received: from mail-db5eur01on0057.outbound.protection.outlook.com ([104.47.2.57]:29152
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754630AbdEXDKQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 23 May 2017 23:10:16 -0400
+In-Reply-To: <20170523182321.GA13664@w540>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Scott Branden <scott.branden@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>, Jon Mason <jonmason@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>, Sherman Yin <syin@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+To: jmondi <jacopo@jmondi.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "stefan@agner.ch" <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 05/23/2017 05:37 PM, Scott Branden wrote:
-> 
-> 
-> On 17-05-23 05:25 PM, Florian Fainelli wrote:
->> On 05/23/2017 05:12 PM, Paul Gortmaker wrote:
->>> [Re: [PATCH 3/3] pinctrl: bcm: clean up modular vs. non-modular
->>> distinctions] On 23/05/2017 (Tue 15:15) Scott Branden wrote:
->>>
->>>> Hi Paul,
->>>>
->>>> Some comments - leave our file headers intact.  If you want to add a
->>>> new
->>>> comment do so after the existing file header in another comment. 
->>>> But, I
->>>> don't think any of that information is needed by us.
->>> OK, no problem, if that is what is desired for your driver.  I just
->>> normally move the author information from the bottom of the file to the
->>> top of the file.  As a lot of the linux driver work was (is?) done for
->>> kudos and not for career, I can't just delete author information.  That
->>> would not be fair to most of those contributors.
->>>
->>> It hasn't been a problem before in all of the other similar commits I've
->>> made, but I can imagine a tool that does a check on the comment block on
->>> the top of a file and complains if it changes, or similar.
->>>
->>> Would you prefer something like this instead?  It leaves your header
->>> completely untouched, and still gives credit to the original author,
->>> and those lines are also untouched.
->> This looks horrible, sorry. Scott, what's the matter with moving the
->> authors listed in MODULE_AUTHOR() into the header?
-> We have tools for scanning headers.  Mucking with the headers
-> is not desirable as tools may need to change.  Just place additional
-> comments in new comments blocks.
-
-That's a pretty moot explanation. These tools will have to deal with
-random changes being done to the kernel as the project keeps seeing more
-changes.
-
-Plus, you may get Paul to do what you him to do here and not put
-anything in the header, but there is no guarantee someone else won't be
-doing it, and even if you are CC'd on the patches, what if you are not,
-and what if you can't defend this "breaks our tools" position, does not
-scale to me.
-
-If it's an internal tool, it can certainly be fixed, if it's coming from
-an external vendor, I'd be seriously concerned if their scanning/logic
-started to break in 4.13 because Paul's patches got included...
-
-At any rate, I'd just drop the MODULE_AUTHOR() altogether, we can use
-the SCM to tell us who did what exactly in a much more powerful way
-(like line by line).
--- 
-Florian
+SGkgSg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGptb25kaSBbbWFp
+bHRvOmphY29wb0BqbW9uZGkub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIE1heSAyNCwgMjAxNyAy
+OjI0IEFNDQo+IFRvOiBBLlMuIERvbmcNCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3Jn
+OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxpbnVzLndhbGxlaWpA
+bGluYXJvLm9yZzsgc2hhd25ndW9Aa2VybmVsLm9yZzsgc3RlZmFuQGFnbmVyLmNoOyBKYWNreSBC
+YWk7DQo+IEFuZHkgRHVhbjsga2VybmVsQHBlbmd1dHJvbml4LmRlOyBSb2IgSGVycmluZzsgTWFy
+ayBSdXRsYW5kOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIIFYzIDEvMl0gZHQtYmluZGluZ3M6IHBpbmN0cmw6IGFkZCBpbXg3dWxwIHBpbmN0cmwN
+Cj4gYmluZGluZyBkb2MNCj4gDQo+IEhpIERvbmcsDQo+IA0KPiBPbiBUdWUsIE1heSAyMywgMjAx
+NyBhdCAwNzo0Mzo0OFBNICswODAwLCBEb25nIEFpc2hlbmcgd3JvdGU6DQo+ID4gaS5NWCA3VUxQ
+IGhhcyB0aHJlZSBJT01VWEMgaW5zdGFuY2VzOiBJT01VWEMwIGZvciBNNCBwb3J0cywNCj4gPiBJ
+T01VWEMxIGZvciBBNyBwb3J0cyBhbmQgSU9NVVhDIEREUiBmb3IgRERSIGludGVyZmFjZS4NCj4g
+Pg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgSU9NVVhDMSBzdXBwb3J0IGZvciBBNy4NCj4gPg0K
+PiA+IENjOiBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3JnPg0KPiA+IENjOiBNYXJrIFJ1
+dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPg0KPiA+IENjOiBkZXZpY2V0cmVlQHZnZXIua2Vy
+bmVsLm9yZw0KPiA+IENjOiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+
+DQo+ID4gQWNrZWQtYnk6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4NCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+DQo+ID4g
+LS0tDQo+ID4gQ2hhbmdlTG9nOg0KPiA+IHYyLT52MzoNCj4gPiAgKiBzd2l0Y2ggdG8gZ2VuZXJp
+YyBpbnB1dC9vdXRwdXQtZW5hYmxlIHByb3BlcnR5DQo+ID4gdjEtPnYyOg0KPiA+ICAqIGFkZCBt
+b3JlIGRlc2NyaXB0aW9ucyBpbiBiaW5kaW5nIGRvYw0KPiA+ICAqIGFkZCBtaXNzZWQgcHJlZml4
+IGZvciBwcml2YXRlIHByb3BlcnRpZXMuDQo+ID4gICogbW92ZSBkdC1iaW5kaW5ncy9waW5jdHJs
+L2lteDd1bHAtcGluZnVuYy5oIHRvIGFyY2gvYXJtL2Jvb3QvZHRzDQo+ID4gLS0tDQo+ID4gIC4u
+Li9iaW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg3dWxwLXBpbmN0cmwudHh0ICAgICAgIHwgIDYzICsr
+Kw0KPiA+ICBhcmNoL2FybS9ib290L2R0cy9pbXg3dWxwLXBpbmZ1bmMuaCAgICAgICAgICAgICAg
+ICB8IDQ2OA0KPiArKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA1
+MzEgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9mc2wsaW14N3VscC1waW5jdHJsLnR4dA0K
+PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vYm9vdC9kdHMvaW14N3VscC1waW5mdW5j
+LmgNCj4gPg0KPiA+IGRpZmYgLS1naXQNCj4gPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg3dWxwLXBpbmN0cmwudHh0DQo+ID4gYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9mc2wsaW14N3VscC1waW5jdHJsLnR4dA0K
+PiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMC4uNjdlNGQxZQ0KPiA+
+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvcGluY3RybC9mc2wsaW14N3VscC1waW5jdHJsLnR4DQo+ID4gKysrIHQNCj4gPiBAQCAtMCww
+ICsxLDYzIEBADQo+ID4gKyogRnJlZXNjYWxlIGkuTVg3VUxQIElPTVVYIENvbnRyb2xsZXINCj4g
+PiArDQo+ID4gK2kuTVggN1VMUCBoYXMgdGhyZWUgSU9NVVhDIGluc3RhbmNlczogSU9NVVhDMCBm
+b3IgTTQgcG9ydHMsIElPTVVYQzENCj4gPiArZm9yIEE3IHBvcnRzIGFuZCBJT01VWEMgRERSIGZv
+ciBERFIgaW50ZXJmYWNlLg0KPiA+ICsNCj4gPiArTm90ZToNCj4gPiArVGhpcyBiaW5kaW5nIGRv
+YyBpcyBvbmx5IGZvciB0aGUgSU9NVVhDMSBzdXBwb3J0IGluIEE3IERvbWFpbiBhbmQgaXQNCj4g
+PiArb25seSBzdXBwb3J0cyBnZW5lcmljIHBpbiBjb25maWcuDQo+ID4gKw0KPiA+ICtQbGVhc2Ug
+YWxzbyByZWZlciB0byBmc2wsaW14LXBpbmN0cmwudHh0IGluIHRoaXMgZGlyZWN0b3J5IGZvciBJ
+TVgNCj4gPiArY29tbW9uIGJpbmRpbmcgcGFydCBhbmQgcGluY3RybC1iaW5kaW5ncy50eHQgZm9y
+IHRoZSBnZW5lcmljIGNvbmZpZw0KPiBiaW5kaW5nLg0KPiA+ICsNCj4gPiArPT09IFBpbiBDb250
+cm9sbGVyIE5vZGUgPT09DQo+ID4gKw0KPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICst
+IGNvbXBhdGlibGU6CSJmc2wsaW14N3VscC1pb211eGMxIg0KPiA+ICstIHJlZzoJCVNob3VsZCBj
+b250YWluIHRoZSBiYXNlIHBoeXNpY2FsIGFkZHJlc3MgYW5kIHNpemUgb2YgdGhlDQo+IGlvbXV4
+Yw0KPiA+ICsJCXJlZ2lzdGVycy4NCj4gPiArDQo+ID4gKz09PSBQaW4gQ29uZmlndXJhdGlvbiBO
+b2RlID09PQ0KPiA+ICstIHBpbnM6IE9uZSBpbnRlZ2VycyBhcnJheSwgcmVwcmVzZW50cyBhIGdy
+b3VwIG9mIHBpbnMgbXV4IHNldHRpbmcuDQo+ID4gKwlUaGUgZm9ybWF0IGlzIGZzbCxwaW5zID0g
+PFBJTl9GVU5DX0lEPiwgUElOX0ZVTkNfSUQgaXMgYSBwaW4gd29ya2luZw0KPiBvbg0KPiA+ICsJ
+YSBzcGVjaWZpYyBmdW5jdGlvbi4NCj4gPiArDQo+ID4gKwlOT1RFOiBpLk1YN1VMUCBQSU5fRlVO
+Q19JRCBjb25zaXN0cyBvZiA0IGludGVnZXJzIGFzIGl0IHNoYXJlcyBvbmUNCj4gbXV4DQo+ID4g
+KwlhbmQgY29uZmlnIHJlZ2lzdGVyIGFzIGZvbGxvd3M6DQo+ID4gKwk8bXV4X2NvbmZfcmVnIGlu
+cHV0X3JlZyBtdXhfbW9kZSBpbnB1dF92YWw+DQo+IA0KPiBBcyB5b3VyIFBJTl9GVU5DX0lEIHNw
+ZWNpZmllcyBib3RoIHRoZSBwaW4gaWRzIGFuZCB0aGVpciBtdXggc2V0dGluZ3MsDQo+IHNob3Vs
+ZG4ndCB5b3UgdXNlIHRoZSBuZXdseSBkb2N1bWVudGVkICdwaW5tdXgnIHByb3BlcnR5IGluIHBs
+YWNlIG9mDQo+ICdwaW5zJz8NCj4gDQo+IFBsZWFzZSBzZWUNCj4gaHR0cHM6Ly9naXQua2VybmVs
+Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8N
+Cj4gP2lkPThkNWU3YzVkZjBhNmM0NDIzNzM2MjhiZTUyMjEzMjExNzJiMWJhZGYNCj4gDQo+IFRo
+ZSBjdXJyZW50IGRvY3VtZW50YXRpb24gc3BlY2lmaWVzIHBpbiBpZHMgYW5kIG11eCBzZXR0aW5n
+cyBoYXZlIHRvIGJlDQo+IGFzc2VtYmxlZCBpbiBvbmUgc2luZ2xlIGludGVnZXIsIHdoaWNoIGlz
+IG5vdCB5b3VyIGNhc2UsIGJ1dCB0aGF0IGNhbiBiZQ0KPiBjaGFuZ2VkIHRvIG1ha2UgaXQgYWNj
+ZXB0IGFuIGFycmF5IG9mIGludGVnZXJzIHZhbHVlcyBpZiBuZWVkZWQuDQo+IA0KDQpUaGFua3Mg
+Zm9yIHRoZSBpbmZvLg0KTG9va3MgZ29vZCB0byBtZS4NCg0KU2hhd24gJiBMaW51cywNCkFyZSB5
+b3Ugb2theSB3aXRoIHRoaXM/DQoNCklmIHllcywgSSBjYW4gZXh0ZW5kIHRoZSBzdGFuZGFyZCAn
+cGlubXV4JyBwcm9wZXJ0eSB0byBzdXBwb3J0IGludGVnZXIgYXJyYXkNCmFuZCByZW5ldyB0aGUg
+cGF0Y2ggc2VyaWVzIHRvIHVzZSBpdC4NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
