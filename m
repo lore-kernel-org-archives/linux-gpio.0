@@ -1,245 +1,241 @@
-From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
-Date: Wed, 24 May 2017 05:48:28 +0000
-Message-ID: <AM3PR04MB306FDB343CC46DFE7766D3D80FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1494830906-6442-1-git-send-email-aisheng.dong@nxp.com>
- <1494830906-6442-2-git-send-email-aisheng.dong@nxp.com>
- <6560bc05ac21060efb5d39d81a662a7a@agner.ch>
- <DBXPR04MB3205CEE820B4E130ACCE79280F90@DBXPR04MB320.eurprd04.prod.outlook.com>
- <0e430fc802cb89a4bd793e95dee57501@agner.ch>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v3] gpio: Add driver for ACPI INT0002 Virtual GPIO device
+Date: Wed, 24 May 2017 09:50:45 +0200
+Message-ID: <5d207e0b-72d1-ee46-9e90-a98744768ced@redhat.com>
+References: <20170523201241.27520-1-hdegoede@redhat.com>
+ <1568110.8i5Lk7glZA@aspire.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-eopbgr00051.outbound.protection.outlook.com ([40.107.0.51]:27328
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S938289AbdEXFsc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 24 May 2017 01:48:32 -0400
-In-Reply-To: <0e430fc802cb89a4bd793e95dee57501@agner.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1568110.8i5Lk7glZA@aspire.rjw.lan>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-acpi@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>
 
-Hi Stefan,
+Hi,
 
-> -----Original Message-----
-> From: Stefan Agner [mailto:stefan@agner.ch]
-> Sent: Wednesday, May 24, 2017 3:16 AM
-> To: A.S. Dong
-> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
-> kernel@pengutronix.de; Alexandre Courbot
-> Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
-> property
->=20
-> On 2017-05-23 05:06, A.S. Dong wrote:
-> > Hi Stefan,
-> >
-> >> -----Original Message-----
-> >> From: A.S. Dong
-> >> Sent: Wednesday, May 17, 2017 2:14 PM
-> >> To: 'Stefan Agner'
-> >> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> >> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
-> >> kernel@pengutronix.de; Alexandre Courbot
-> >> Subject: RE: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
-> >> property
-> >>
-> >> > -----Original Message-----
-> >> > From: Stefan Agner [mailto:stefan@agner.ch]
-> >> > Sent: Tuesday, May 16, 2017 1:11 AM
-> >> > To: A.S. Dong
-> >> > Cc: linux-gpio@vger.kernel.org;
-> >> > linux-arm-kernel@lists.infradead.org;
-> >> > linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy
-> >> > Duan; kernel@pengutronix.de; Alexandre Courbot
-> >> > Subject: Re: [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC
-> >> > property
-> >> >
-> >> > On 2017-05-14 23:48, Dong Aisheng wrote:
-> >> > > iMX ULP has different IOB/OBE shift from Vibrid, so let's make
-> >> >
-> >> > s/Vibrid/Vybrid
-> >> >
-> >> > > it a SoC property.
-> >> > >
-> >> > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> >> > > Cc: Alexandre Courbot <gnurou@gmail.com>
-> >> > > Cc: Shawn Guo <shawnguo@kernel.org>
-> >> > > Cc: Stefan Agner <stefan@agner.ch>
-> >> > > Cc: Fugang Duan <fugang.duan@nxp.com>
-> >> > > Cc: Bai Ping <ping.bai@nxp.com>
-> >> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> >> > > ---
-> >> > >  drivers/pinctrl/freescale/pinctrl-imx.c     | 8 ++++----
-> >> > >  drivers/pinctrl/freescale/pinctrl-imx.h     | 2 ++
-> >> > >  drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 2 ++
-> >> > >  drivers/pinctrl/freescale/pinctrl-vf610.c   | 2 ++
-> >> > >  4 files changed, 10 insertions(+), 4 deletions(-)
-> >> > >
-> >> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> >> > > b/drivers/pinctrl/freescale/pinctrl-imx.c
-> >> > > index 57e1f7a..0d6aaca 100644
-> >> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> >> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> >> > > @@ -331,8 +331,8 @@ static int imx_pmx_gpio_set_direction(struct
-> >> > > pinctrl_dev *pctldev,
-> >> > >  	u32 reg;
-> >> > >
-> >> > >  	/*
-> >> > > -	 * Only Vybrid has the input/output buffer enable flags
-> (IBE/OBE)
-> >> > > -	 * They are part of the shared mux/conf register.
-> >> > > +	 * Only Vybrid and iMX ULP has the input/output buffer enable
-> flags
-> >> > > +	 * (IBE/OBE) They are part of the shared mux/conf register.
-> >> > >  	 */
-> >> > >  	if (!(info->flags & SHARE_MUX_CONF_REG))
-> >> > >  		return 0;
-> >> > > @@ -344,9 +344,9 @@ static int imx_pmx_gpio_set_direction(struct
-> >> > > pinctrl_dev *pctldev,
-> >> > >  	/* IBE always enabled allows us to read the value "on the
-> wire" */
-> >> > >  	reg =3D readl(ipctl->base + pin_reg->mux_reg);
-> >> > >  	if (input)
-> >> > > -		reg &=3D ~0x2;
-> >> > > +		reg =3D (reg & ~info->obe_bit) | info->ibe_bit;
-> >> > >  	else
-> >> > > -		reg |=3D 0x2;
-> >> > > +		reg =3D (reg & ~info->ibe_bit) | info->obe_bit;
-> >> >
-> >> > Why disabling IBE bit now? As the comment above states, it is
-> >> > really handy to leave the input buffer enabled so we can read back
-> >> > the true value on the wire...
-> >> >
-> >>
-> >> Does Vybrid reply on this bit to read the status of output from Port
-> >> Data Input Register (GPIOx_PDIR)?
-> >>
-> >> Then, it is a bit strange that read status from input register when
-> >> the GPIO is Actually configured as output.
-> >>
-> >> Probably it works on Vybrid, but I don't know if it's valid for MX7ULP=
-.
-> >>
-> >> For MX7ULP, we will read input or output register accordingly by
-> >> checking GPIO direction register (PDDR) and we will not enable Input
-> >> buffer if the GPIO is configured as output, this also save a bit power=
-.
-> >>
-> >> I know Vybrid has no PDDR, probably that's why you enable IBE by
-> >> default always.
-> >>
->=20
-> The main reason I enable input buffer by default is so that software has =
-a
-> chance to see the actual state of the GPIO. E.g. when a GPIO is connected
-> to GND, and you set it high, you can read back a 0... (of course you
-> should not connect a GPIO to GND and set it high! But that is exactly the
-> point, with enabling the input buffer you actually see that something is
-> wrong!)
->=20
-> Can we not do this for iMX7ULP too?
->=20
+On 24-05-17 01:58, Rafael J. Wysocki wrote:
+> On Tuesday, May 23, 2017 10:12:41 PM Hans de Goede wrote:
+>> Some peripherals on Baytrail and Cherrytrail platforms signal PME to the
+>> PMC to wakeup the system. When this happens software needs to clear the
+>> PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm on IRQ 9.
+>>
+>> This is modelled in ACPI through the INT0002 ACPI Virtual GPIO device.
+>>
+>> This commit adds a driver which registers the Virtual GPIOs expected
+>> by the DSDT on these devices, this will make gpiolib-acpi claim the
+>> virtual GPIO and execute _L02 when the PME_B0_STS bit is set, avoiding
+>> the irq storm.
+>>
+>> Cc: joeyli <jlee@suse.com>
+>> Cc: Takashi Iwai <tiwai@suse.de>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>> Changes in v2:
+>> -Remove dev_err after malloc failure
+>> -Remove unused empty runtime pm callbacks
+>> -s/GPE0A_PME_/GPE0A_PME_B0_/
+>> -Fixed some checkpatch warnings (I forgot to run checkpatch on v1)
+>> Changes in v3:
+>> -Rewrite as gpiochip driver letting gpiolib-acpi deal with claiming the pin
+>>   0x0002 and calling the _L02 event handler when the virtual gpio-irq triggers
+>> -Rebase on 4.12-rc1
+>> ---
+>>   drivers/gpio/Kconfig        |  14 +++
+>>   drivers/gpio/Makefile       |   1 +
+>>   drivers/gpio/gpio-int0002.c | 211 ++++++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 226 insertions(+)
+>>   create mode 100644 drivers/gpio/gpio-int0002.c
+>>
+>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>> index 23ca51e..11e7f9b 100644
+>> --- a/drivers/gpio/Kconfig
+>> +++ b/drivers/gpio/Kconfig
+>> @@ -608,6 +608,20 @@ config GPIO_GPIO_MM
+>>   	  The base port addresses for the devices may be configured via the base
+>>   	  array module parameter.
+>>   
+>> +config GPIO_INT0002
+>> +	tristate "Intel ACPI INT0002 Virtual GPIO"
+>> +	depends on ACPI
+>> +	select GPIOLIB_IRQCHIP
+>> +	---help---
+>> +	  Some peripherals on Baytrail and Cherrytrail platforms signal
+>> +	  PME to the PMC to wakeup the system. When this happens software
+>> +	  needs to explicitly clear the interrupt source to avoid an IRQ
+>> +	  storm on IRQ 9. This is modelled in ACPI through the INT0002
+>> +	  Virtual GPIO ACPI device.
+>> +
+>> +	  To compile this driver as a module, choose M here: the module will
+>> +	  be called gpio_int0002.
+>> +
+>>   config GPIO_IT87
+>>   	tristate "IT87xx GPIO support"
+>>   	help
+>> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+>> index 68b9627..1f76c56 100644
+>> --- a/drivers/gpio/Makefile
+>> +++ b/drivers/gpio/Makefile
+>> @@ -55,6 +55,7 @@ obj-$(CONFIG_GPIO_GPIO_MM)	+= gpio-gpio-mm.o
+>>   obj-$(CONFIG_GPIO_GRGPIO)	+= gpio-grgpio.o
+>>   obj-$(CONFIG_HTC_EGPIO)		+= gpio-htc-egpio.o
+>>   obj-$(CONFIG_GPIO_ICH)		+= gpio-ich.o
+>> +obj-$(CONFIG_GPIO_INT0002)	+= gpio-int0002.o
+>>   obj-$(CONFIG_GPIO_IOP)		+= gpio-iop.o
+>>   obj-$(CONFIG_GPIO_IT87)		+= gpio-it87.o
+>>   obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
+>> diff --git a/drivers/gpio/gpio-int0002.c b/drivers/gpio/gpio-int0002.c
+>> new file mode 100644
+>> index 0000000..e73664d
+>> --- /dev/null
+>> +++ b/drivers/gpio/gpio-int0002.c
+>> @@ -0,0 +1,211 @@
+>> +/*
+>> + * Intel INT0002 "Virtual GPIO" driver
+>> + *
+>> + * Copyright (C) 2017 Hans de Goede <hdegoede@redhat.com>
+>> + *
+>> + * Loosely based on android x86 kernel code which is:
+>> + *
+>> + * Copyright (c) 2014, Intel Corporation.
+>> + *
+>> + * Author: Dyut Kumar Sil <dyut.k.sil@intel.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * Some peripherals on Baytrail and Cherrytrail platforms signal PME to the
+>> + * PMC to wakeup the system. When this happens software needs to clear the
+>> + * PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm on IRQ 9.
+>> + *
+>> + * This is modelled in ACPI through the INT0002 ACPI device, which is
+>> + * called a "Virtual GPIO controller" in ACPI because it defines the event
+>> + * handler to call when the PME triggers through _AEI and _L02 / _E02
+>> + * methods as would be done for a real GPIO interrupt in ACPI.
+>> + *
+>> + * This driver will bind to the INT0002 device, and register as a GPIO
+>> + * controller, letting gpiolib-acpi.c call the _L02 handler as it would
+>> + * for a real GPIO controller.
+>> + */
+>> +
+>> +#include <asm/cpu_device_id.h>
+>> +#include <asm/intel-family.h>
+>> +#include <linux/acpi.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#define DRV_NAME			"INT0002 Virtual GPIO"
+>> +
+>> +/* For some reason the virtual GPIO pin tied to the GPE is numbered pin 2 */
+>> +#define GPE0A_PME_B0_VIRT_GPIO_PIN	2
+>> +
+>> +#define GPE0A_PME_B0_STS_BIT		0x2000
+>> +#define GPE0A_PME_B0_EN_BIT		0x2000
+>> +#define GPE0A_STS_PORT			0x420
+>> +#define GPE0A_EN_PORT			0x428
+>> +
+>> +#define ICPU(model)	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
+>> +
+>> +static const struct x86_cpu_id int0002_cpu_ids[] = {
+>> +/*
+>> + * Limit ourselves to Cherry Trail for now, until testing shows we
+>> + * need to handle the INT0002 device on Baytrail too.
+>> + *	ICPU(INTEL_FAM6_ATOM_SILVERMONT1),	 * Valleyview, Bay Trail *
+>> + */
+>> +	ICPU(INTEL_FAM6_ATOM_AIRMONT),		/* Braswell, Cherry Trail */
+>> +	{}
+>> +};
+>> +
+>> +static int int0002_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static void int0002_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>> +			     int value)
+>> +{
+>> +}
+>> +
+>> +static int int0002_gpio_direction_output(struct gpio_chip *chip,
+>> +					 unsigned int offset, int value)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +static void int0002_irq_ack(struct irq_data *data)
+>> +{
+>> +	outl(GPE0A_PME_B0_STS_BIT, GPE0A_STS_PORT);
+>> +}
+>> +
+>> +static void int0002_irq_unmask(struct irq_data *data)
+>> +{
+>> +	u32 gpe_en_reg;
+>> +
+>> +	gpe_en_reg = inl(GPE0A_EN_PORT);
+>> +	gpe_en_reg |= GPE0A_PME_B0_EN_BIT;
+>> +	outl(gpe_en_reg, GPE0A_EN_PORT);
+>> +}
+>> +
+>> +static void int0002_irq_mask(struct irq_data *data)
+>> +{
+>> +	u32 gpe_en_reg;
+>> +
+>> +	gpe_en_reg = inl(GPE0A_EN_PORT);
+>> +	gpe_en_reg &= ~GPE0A_PME_B0_EN_BIT;
+>> +	outl(gpe_en_reg, GPE0A_EN_PORT);
+>> +}
+>> +
+>> +static irqreturn_t int0002_irq(int irq, void *data)
+>> +{
+>> +	struct gpio_chip *chip = data;
+>> +	u32 gpe_sts_reg;
+>> +
+>> +	gpe_sts_reg = inl(GPE0A_STS_PORT);
+>> +	if (!(gpe_sts_reg & GPE0A_PME_B0_STS_BIT))
+>> +		return IRQ_NONE;
+>> +
+>> +	generic_handle_irq(irq_find_mapping(chip->irqdomain,
+>> +					    GPE0A_PME_B0_VIRT_GPIO_PIN));
+>> +
+>> +	pm_wakeup_hard_event(chip->parent);
+> 
+> It may be better to just do pm_system_wakeup() here and drop the
+> device_init_wakeup() from _probe().
 
-Hmm.. I probably would think it reversely.
-For me, I'd prefer the gpio value read back reflect the real value set in
-GPIO controller, not the actual state on the line.
-It at least tells "Hey, your GPIO SW setting is okay, check HW ..".
+Ok, I've given this a try and it works fine, so I will send a v4 with
+this changed.
 
-Users could measure the actual state if something is wrong.
+> The reason why is that device_init_wakeup() allows user space to disable
+> this wakeup source via sysfs which probably never is a good idea, because
+> this thing is just for clearing PME status which should be done regardless
+> and the actual wakeup is triggered by something else.
 
-> >
-> > We need make a decision on how to address the difference between
-> > Vybrid And IMX7ULP.
-> >
-> > If Vybrid wants to keep input buffer enabled, we probably could invent
-> > A IMX_PINCONF_HAVE_PDDR just like GPIO driver and only disable IBE for
-> IMX?
->=20
-> That would be one option yes. You also need a flag so you can opt out fro=
-m
-> imx_pmx_gpio_enable/disable_free...
->=20
-> The more involved version would be to somehow move imx_pmx_gpio_* to
-> pinctrl-vf610.c, e.g. store the callbacks in imx_pinctrl_soc_info and set
-> them dynamically in imx_pinctrl_probe (you have to unconst pinmux_ops).
-> With that you can provide no imx_pmx_gpio_enable/disable_free for iMX7ULP
-> and your own imx_pmx_gpio_set_direction...
->=20
+Ack.
 
-Since we've got an agreement to remove gpio_enable/disable_free in another
-mail I just replied, I will remove it and only keep gpio_set_direction,
-but re-implement it as platform specific callback API.
+> Also in theory pm_system_wakeup() should not really be necessary for
+> wakeup via USB keyboard to work, because that should be signaled via
+> acpi_pm_notify_handler(), at least in principle.
 
-Regards
-Dong Aisheng
+Earlier versions of the int0002 driver did not call any wakeup() function
+at all and with 4.11 that worked fine, my initial testing with 4.12-rc1 also
+did not include a wakeup() call but that resulted in USB-keyboard wakeup
+not working and the system not responding to other wakeup sources like
+the power-button after the attempted USB-keyb wakeup. To be sure I've
+retried my current int0002 code with the wakeup call commented out, that
+leads to the same result (unwakeable system) so it seems we really need
+to do the pm_system_wakeup() call.
 
-> --
-> Stefan
->=20
-> >
-> > Do you think it's ok?
-> >
-> >
-> > Regards
-> > Dong Aisheng
-> >
-> >
-> >> Regards
-> >> Dong Aisheng
-> >>
-> >> > --
-> >> > Stefan
-> >> >
-> >> > >  	writel(reg, ipctl->base + pin_reg->mux_reg);
-> >> > >
-> >> > >  	return 0;
-> >> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h
-> >> > > b/drivers/pinctrl/freescale/pinctrl-imx.h
-> >> > > index eb0ce95..9ded65d 100644
-> >> > > --- a/drivers/pinctrl/freescale/pinctrl-imx.h
-> >> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-> >> > > @@ -67,6 +67,8 @@ struct imx_pinctrl_soc_info {
-> >> > >  	/* MUX_MODE shift and mask in case SHARE_MUX_CONF_REG */
-> >> > >  	unsigned int mux_mask;
-> >> > >  	u8 mux_shift;
-> >> > > +	u32 ibe_bit;
-> >> > > +	u32 obe_bit;
-> >> > >
-> >> > >  	/* generic pinconf */
-> >> > >  	bool generic_pinconf;
-> >> > > diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> >> > > b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> >> > > index dead416..f724a01 100644
-> >> > > --- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> >> > > +++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-> >> > > @@ -324,6 +324,8 @@ static struct imx_pinctrl_soc_info
-> >> > imx7ulp_pinctrl_info =3D {
-> >> > >  	.flags =3D ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
-> >> > >  	.mux_mask =3D 0xf00,
-> >> > >  	.mux_shift =3D 8,
-> >> > > +	.ibe_bit =3D BIT(16),
-> >> > > +	.obe_bit =3D BIT(17),
-> >> > >  	.generic_pinconf =3D true,
-> >> > >  	.custom_params =3D imx7ulp_cfg_params,
-> >> > >  	.num_custom_params =3D ARRAY_SIZE(imx7ulp_cfg_params), diff --
-> git
-> >> > > a/drivers/pinctrl/freescale/pinctrl-vf610.c
-> >> > > b/drivers/pinctrl/freescale/pinctrl-vf610.c
-> >> > > index 3bd8556..c0823f9 100644
-> >> > > --- a/drivers/pinctrl/freescale/pinctrl-vf610.c
-> >> > > +++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
-> >> > > @@ -301,6 +301,8 @@ static struct imx_pinctrl_soc_info
-> >> > vf610_pinctrl_info =3D {
-> >> > >  	.flags =3D SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
-> >> > >  	.mux_mask =3D 0x700000,
-> >> > >  	.mux_shift =3D 20,
-> >> > > +	.ibe_bit =3D BIT(0),
-> >> > > +	.obe_bit =3D BIT(1),
-> >> > >  };
-> >> > >
-> >> > >  static const struct of_device_id vf610_pinctrl_of_match[] =3D {
+v4 coming up.
+
+Regards,
+
+Hans
