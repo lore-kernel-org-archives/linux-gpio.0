@@ -1,50 +1,38 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 2/5] pinctrl: meson-gxl: Fix typo in AO SPDIF pins
-Date: Wed, 24 May 2017 10:42:14 +0200
-Message-ID: <1495615334.14589.7.camel@baylibre.com>
-References: <1495614042-2676-1-git-send-email-narmstrong@baylibre.com>
-         <1495614042-2676-3-git-send-email-narmstrong@baylibre.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v2 4/5] gpio: of: Add documentation of new sleep standard
+ GPIO specifiers
+Date: Wed, 24 May 2017 14:12:30 +0530
+Message-ID: <59254776.2000901@nvidia.com>
+References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com> <1495550852-3672-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1495614042-2676-3-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2561 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S939075AbdEXImk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 04:42:40 -0400
+In-Reply-To: <1495550852-3672-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, linus.walleij@linaro.org
+Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com, frowand.list@gmail.com
 
-On Wed, 2017-05-24 at 10:20 +0200, Neil Armstrong wrote:
-> The AO SPDIF pins were incorrectly defined with the EE pin offset.
-> 
 
-Thx for catching this !
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Fixes: b840d649f9ec ("pinctrl: meson: gxl: add spdif output pins")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+On Tuesday 23 May 2017 08:17 PM, Charles Keepax wrote:
+> Add documentation of new GPIO specifiers indicating if the state of an
+> output pin should be maintained during sleep/low-power mode.
+>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > ---
->  drivers/pinctrl/meson/pinctrl-meson-gxl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> index 9af8e6a..454d73f 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> @@ -279,8 +279,8 @@
->  static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_8, 0) };
->  static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_9, 0) };
->  
-> -static const unsigned int spdif_out_ao_6_pins[]	= { PIN(GPIOAO_6,
-> EE_OFF) };
-> -static const unsigned int spdif_out_ao_9_pins[]	= { PIN(GPIOAO_9,
-> EE_OFF) };
-> +static const unsigned int spdif_out_ao_6_pins[]	= { PIN(GPIOAO_6, 0)
-> };
-> +static const unsigned int spdif_out_ao_9_pins[]	= { PIN(GPIOAO_9, 0)
-> };
->  
->  static struct meson_pmx_group meson_gxl_periphs_groups[] = {
->  	GPIO_GROUP(GPIOZ_0, EE_OFF),
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+
+Thanks,
+Laxman
+
+-----------------------------------------------------------------------------------
+This email message is for the sole use of the intended recipient(s) and may contain
+confidential information.  Any unauthorized review, use, disclosure or distribution
+is prohibited.  If you are not the intended recipient, please contact the sender by
+reply email and destroy all copies of the original message.
+-----------------------------------------------------------------------------------
