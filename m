@@ -1,60 +1,77 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v5] gpio: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Wed, 24 May 2017 14:23:23 +0300
-Message-ID: <1495625003.6967.93.camel@linux.intel.com>
-References: <20170524104216.23643-1-hdegoede@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170524104216.23643-1-hdegoede@redhat.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Date: Wed, 24 May 2017 13:43:34 +0200
+Message-ID: <1495626214-15502-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from michel.telenet-ops.be ([195.130.137.88]:35206 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965586AbdEXLnn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 07:43:43 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Wed, 2017-05-24 at 12:42 +0200, Hans de Goede wrote:
-> Some peripherals on Bay Trail and Cherry Trail platforms signal PME to
-> the
-> PMC to wakeup the system. When this happens software needs to clear
-> the
-> PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm on IRQ
-> 9.
-> 
-> This is modeled in ACPI through the INT0002 ACPI Virtual GPIO device.
-> 
-> This commit adds a driver which registers the Virtual GPIOs expected
-> by the DSDT on these devices, letting gpiolib-acpi claim the
-> virtual GPIO and install a GPIO-interrupt handler which call the _L02
-> handler as it would for a real GPIO controller.
-> 
-> Cc: joeyli <jlee@suse.com>
-> Cc: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Configuration of the lcd0 pinmux group and GPIO hog for the external
+GPIO mux are done using a single device node, causing the "output-high"
+property to be applied to both.  This will fail for the pinmux group,
+but doesn't cause any harm, as the failure is ignored silently.
 
-In addition to my comment to v4 (if you are going to apply it) couple of
-nits below. (I'm fine with current version, as tag says, though consider
-them anyway)
+However, after "pinctrl: sh-pfc: propagate errors on group config", the
+failure will become fatal, leading to a broken display:
 
-> +#define GPE0A_PME_B0_STS_BIT		BIT(13)
-> +#define GPE0A_PME_B0_EN_BIT		BIT(13)
-> +#define GPE0A_STS_PORT			0x420
-> +#define GPE0A_EN_PORT			0x428
+    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
+    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
+    sh-pfc e6050000.pin-controller: failed to select default state
 
-Perhaps squeeze bits after actual ports like
+Split the configuration in two subnodes, and replace the GPIO hog by a
+pull-up pin bias to fix this.
 
-ADDRESSa
-ADDRa_BITa
+Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
+group config" (https://patchwork.kernel.org/patch/9186713/).
 
-ADDRESSb
-ADDRb_BITa
+Notes:
+  1. Just keeping the GPIO hog doesn't work, as the sh-pfc driver
+     requires each pinctrl (sub)node to have at least one "pins" or
+     "groups" property,
+  2. Keeping "output-high" doesn't work, as the sh-pfc driver does not
+     implement PIN_CONFIG_OUTPUT.
 
-> +	for (i = 0; i < GPE0A_PME_B0_VIRT_GPIO_PIN; i++)
-> +		clear_bit(i, chip->irq_valid_mask);
+Should I fix 1 and/or 2 instead?
+---
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-bitmap_zero() ?
-
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 44b335b9f035436d..7feedc86f6915654 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -267,13 +267,16 @@
+ 	};
+ 
+ 	lcd0_pins: lcd0 {
+-		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+-		function = "lcd0";
++		mux {
++			groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
++			function = "lcd0";
++		};
+ 
+-		/* DBGMD/LCDC0/FSIA MUX */
+-		gpio-hog;
+-		gpios = <176 0>;
+-		output-high;
++		gpio {
++			/* DBGMD/LCDC0/FSIA MUX */
++			pins = "PORT176";
++			bias-pull-up;
++		};
+ 	};
+ };
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.7.4
+
