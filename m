@@ -1,63 +1,66 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 3/5] pinctrl: meson-gxbb: Add CEC pins
-Date: Wed, 24 May 2017 10:20:40 +0200
-Message-ID: <1495614042-2676-4-git-send-email-narmstrong@baylibre.com>
-References: <1495614042-2676-1-git-send-email-narmstrong@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1495614042-2676-1-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 5/5] mfd: arizona: Update GPIO binding for newly
+ supported specifiers
+Date: Wed, 24 May 2017 09:35:19 +0100
+Message-ID: <20170524083519.mi7n6nw6ysc5xdeb@dell>
+References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1495550852-3672-5-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:34254 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760622AbdEXIff (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 04:35:35 -0400
+Received: by mail-lf0-f48.google.com with SMTP id 99so62987117lfu.1
+        for <linux-gpio@vger.kernel.org>; Wed, 24 May 2017 01:35:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1495550852-3672-5-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com, frowand.list@gmail.com, ldewangan@nvidia.com
 
-Add the AO and EE domain CEC pins for the Amlogic Meson GXBB SoCs.
+On Tue, 23 May 2017, Charles Keepax wrote:
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> Link to the generic GPIO specifier bindings now that the second cell of
+> the binding has some support in the driver.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+> 
+> Changes since v1:
+>  - Now just points at the standard gpio binding stuff
+> 
+> Thanks,
+> Charles
+> 
+>  Documentation/devicetree/bindings/mfd/arizona.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 3ccb0f4f..b44314a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -295,6 +295,9 @@
- static const unsigned int spdif_out_ao_6_pins[]	= { PIN(GPIOAO_6, 0) };
- static const unsigned int spdif_out_ao_13_pins[] = { PIN(GPIOAO_13, 0) };
- 
-+static const unsigned int ao_cec_pins[]          = { PIN(GPIOAO_12, 0) };
-+static const unsigned int ee_cec_pins[]          = { PIN(GPIOAO_12, 0) };
-+
- static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0, EE_OFF),
- 	GPIO_GROUP(GPIOZ_1, EE_OFF),
-@@ -560,6 +563,8 @@
- 	GROUP(i2s_out_ch45_ao,	1,	1),
- 	GROUP(spdif_out_ao_6,	0,	16),
- 	GROUP(spdif_out_ao_13,	0,	4),
-+	GROUP(ao_cec,           0,      15),
-+	GROUP(ee_cec,           0,      14),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -752,6 +757,10 @@
- 	"spdif_out_ao_6", "spdif_out_ao_13",
- };
- 
-+static const char * const cec_ao_groups[] = {
-+	"ao_cec", "ee_cec",
-+};
-+
- static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
- 	FUNCTION(gpio_periphs),
- 	FUNCTION(emmc),
-@@ -793,6 +802,7 @@
- 	FUNCTION(pwm_ao_b),
- 	FUNCTION(i2s_out_ao),
- 	FUNCTION(spdif_out_ao),
-+	FUNCTION(cec_ao),
- };
- 
- static struct meson_bank meson_gxbb_periphs_banks[] = {
+I'll take this if/when the GPIO changes are merged.
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+  
+> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+> index 8f2e282..b37bdde 100644
+> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
+> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+> @@ -30,7 +30,8 @@ Required properties:
+>  
+>    - gpio-controller : Indicates this device is a GPIO controller.
+>    - #gpio-cells : Must be 2. The first cell is the pin number and the
+> -    second cell is used to specify optional parameters (currently unused).
+> +    second cell is used to specify optional parameters, see ../gpio/gpio.txt
+> +    for details.
+>  
+>    - AVDD-supply, DBVDD1-supply, CPVDD-supply : Power supplies for the device,
+>      as covered in Documentation/devicetree/bindings/regulator/regulator.txt
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
