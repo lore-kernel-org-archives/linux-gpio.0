@@ -1,38 +1,80 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v2 4/5] gpio: of: Add documentation of new sleep standard
- GPIO specifiers
-Date: Wed, 24 May 2017 14:12:30 +0530
-Message-ID: <59254776.2000901@nvidia.com>
-References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com> <1495550852-3672-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 3/5] pinctrl: meson-gxbb: Add CEC pins
+Date: Wed, 24 May 2017 10:53:20 +0200
+Message-ID: <1495616000.14589.10.camel@baylibre.com>
+References: <1495614042-2676-1-git-send-email-narmstrong@baylibre.com>
+         <1495614042-2676-4-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:2561 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S939075AbdEXImk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 04:42:40 -0400
-In-Reply-To: <1495550852-3672-4-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1495614042-2676-4-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, linus.walleij@linaro.org
-Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com, frowand.list@gmail.com
 
+On Wed, 2017-05-24 at 10:20 +0200, Neil Armstrong wrote:
+> Add the AO and EE domain CEC pins for the Amlogic Meson GXBB SoCs.
 
-On Tuesday 23 May 2017 08:17 PM, Charles Keepax wrote:
-> Add documentation of new GPIO specifiers indicating if the state of an
-> output pin should be maintained during sleep/low-power mode.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+The patch is correct but a slightly longer blurb would have been nice :)
+
+Here AO and EE are not referring to the GPIO controller like they usually do in
+our patches to pinctrl.
+They refer to the 2 different CEC controllers, located in each power domain and
+both connected to AO GPIO controller (same pin actually)
+
+Not sure if this worth a resent though.
+
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
-
-Thanks,
-Laxman
-
------------------------------------------------------------------------------------
-This email message is for the sole use of the intended recipient(s) and may contain
-confidential information.  Any unauthorized review, use, disclosure or distribution
-is prohibited.  If you are not the intended recipient, please contact the sender by
-reply email and destroy all copies of the original message.
------------------------------------------------------------------------------------
+>  drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> index 3ccb0f4f..b44314a 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+> @@ -295,6 +295,9 @@
+>  static const unsigned int spdif_out_ao_6_pins[]	= { PIN(GPIOAO_6, 0)
+> };
+>  static const unsigned int spdif_out_ao_13_pins[] = { PIN(GPIOAO_13, 0) };
+>  
+> +static const unsigned int ao_cec_pins[]          = { PIN(GPIOAO_12, 0) };
+> +static const unsigned int ee_cec_pins[]          = { PIN(GPIOAO_12, 0) };
+> +
+>  static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
+>  	GPIO_GROUP(GPIOZ_0, EE_OFF),
+>  	GPIO_GROUP(GPIOZ_1, EE_OFF),
+> @@ -560,6 +563,8 @@
+>  	GROUP(i2s_out_ch45_ao,	1,	1),
+>  	GROUP(spdif_out_ao_6,	0,	16),
+>  	GROUP(spdif_out_ao_13,	0,	4),
+> +	GROUP(ao_cec,           0,      15),
+> +	GROUP(ee_cec,           0,      14),
+>  };
+>  
+>  static const char * const gpio_periphs_groups[] = {
+> @@ -752,6 +757,10 @@
+>  	"spdif_out_ao_6", "spdif_out_ao_13",
+>  };
+>  
+> +static const char * const cec_ao_groups[] = {
+> +	"ao_cec", "ee_cec",
+> +};
+> +
+>  static struct meson_pmx_func meson_gxbb_periphs_functions[] = {
+>  	FUNCTION(gpio_periphs),
+>  	FUNCTION(emmc),
+> @@ -793,6 +802,7 @@
+>  	FUNCTION(pwm_ao_b),
+>  	FUNCTION(i2s_out_ao),
+>  	FUNCTION(spdif_out_ao),
+> +	FUNCTION(cec_ao),
+>  };
+>  
+>  static struct meson_bank meson_gxbb_periphs_banks[] = {
