@@ -1,66 +1,43 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 5/5] mfd: arizona: Update GPIO binding for newly
- supported specifiers
-Date: Wed, 24 May 2017 09:35:19 +0100
-Message-ID: <20170524083519.mi7n6nw6ysc5xdeb@dell>
-References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1495550852-3672-5-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH 1/2] pinctrl: meson-gxl: Add missing GPIODV_18 pin entry
+Date: Wed, 24 May 2017 10:38:09 +0200
+Message-ID: <1495615089.14589.0.camel@baylibre.com>
+References: <1495548559-22261-1-git-send-email-narmstrong@baylibre.com>
+ <1495548559-22261-2-git-send-email-narmstrong@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:34254 "EHLO
-        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760622AbdEXIff (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 04:35:35 -0400
-Received: by mail-lf0-f48.google.com with SMTP id 99so62987117lfu.1
-        for <linux-gpio@vger.kernel.org>; Wed, 24 May 2017 01:35:34 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1495550852-3672-5-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1495548559-22261-2-git-send-email-narmstrong@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com, frowand.list@gmail.com, ldewangan@nvidia.com
 
-On Tue, 23 May 2017, Charles Keepax wrote:
-
-> Link to the generic GPIO specifier bindings now that the second cell of
-> the binding has some support in the driver.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
-> 
-> Changes since v1:
->  - Now just points at the standard gpio binding stuff
-> 
-> Thanks,
-> Charles
-> 
->  Documentation/devicetree/bindings/mfd/arizona.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-
-I'll take this if/when the GPIO changes are merged.
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-  
-> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
-> index 8f2e282..b37bdde 100644
-> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
-> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
-> @@ -30,7 +30,8 @@ Required properties:
->  
->    - gpio-controller : Indicates this device is a GPIO controller.
->    - #gpio-cells : Must be 2. The first cell is the pin number and the
-> -    second cell is used to specify optional parameters (currently unused).
-> +    second cell is used to specify optional parameters, see ../gpio/gpio.txt
-> +    for details.
->  
->    - AVDD-supply, DBVDD1-supply, CPVDD-supply : Power supplies for the device,
->      as covered in Documentation/devicetree/bindings/regulator/regulator.txt
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+T24gVHVlLCAyMDE3LTA1LTIzIGF0IDE2OjA5ICswMjAwLCBOZWlsIEFybXN0cm9uZyB3cm90ZToK
+PiBHUElPRFZfMTggZW50cnkgd2FzIG1pc3NpbmcgaW4gdGhlIG9yaWdpbmFsIGRyaXZlciBwdXNo
+Lgo+IAoKUmV2aWV3ZWQtYnk6IEplcm9tZSBCcnVuZXQgPGpicnVuZXRAYmF5bGlicmUuY29tPgoK
+PiBGaXhlczogMGYxNWY1MDBmZjJjICgicGluY3RybDogbWVzb246IEFkZCBHWEwgcGluY3RybCBk
+ZWZpbml0aW9ucyIpCj4gU2lnbmVkLW9mZi1ieTogTmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdA
+YmF5bGlicmUuY29tPgo+IC0tLQo+IMKgZHJpdmVycy9waW5jdHJsL21lc29uL3BpbmN0cmwtbWVz
+b24tZ3hsLmMgfCAxICsKPiDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQo+IAo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVzb24vcGluY3RybC1tZXNvbi1neGwuYwo+IGIv
+ZHJpdmVycy9waW5jdHJsL21lc29uL3BpbmN0cmwtbWVzb24tZ3hsLmMKPiBpbmRleCA3MTlmZjFi
+Li4yYmMxZTNkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9tZXNvbi9waW5jdHJsLW1l
+c29uLWd4bC5jCj4gKysrIGIvZHJpdmVycy9waW5jdHJsL21lc29uL3BpbmN0cmwtbWVzb24tZ3hs
+LmMKPiBAQCAtODksNiArODksNyBAQAo+IMKgCU1FU09OX1BJTihHUElPRFZfMTUsIEVFX09GRiks
+Cj4gwqAJTUVTT05fUElOKEdQSU9EVl8xNiwgRUVfT0ZGKSwKPiDCoAlNRVNPTl9QSU4oR1BJT0RW
+XzE3LCBFRV9PRkYpLAo+ICsJTUVTT05fUElOKEdQSU9EVl8xOCwgRUVfT0ZGKSwKPiDCoAlNRVNP
+Tl9QSU4oR1BJT0RWXzE5LCBFRV9PRkYpLAo+IMKgCU1FU09OX1BJTihHUElPRFZfMjAsIEVFX09G
+RiksCj4gwqAJTUVTT05fUElOKEdQSU9EVl8yMSwgRUVfT0ZGKSwKCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
+bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
+ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
