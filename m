@@ -1,45 +1,107 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC] pinctrl: sh-pfc: propagate errors on group config
-Date: Wed, 24 May 2017 14:27:51 +0200
-Message-ID: <CAMuHMdVFiC=n57zZwoL+YFjQD-WffjHsX-VmnMndds9UEhRV9w@mail.gmail.com>
-References: <1466404822-2540-1-git-send-email-wsa@the-dreams.de>
- <CAMuHMdXWwZaCoLz8TTLBVg8qmKpiw0wKGUawd6ti0wg3X5e6xA@mail.gmail.com>
- <CAMuHMdWghZYQ+Mx-AMsu3yERNwChz4xXHKs3D5fshnG5trLMbg@mail.gmail.com> <20170524122139.GB1463@katana>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Date: Wed, 24 May 2017 15:57:49 +0300
+Message-ID: <2806448.cAnmeTWMfp@avalon>
+References: <1495626214-15502-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:37965 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1763455AbdEXM1z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 08:27:55 -0400
-In-Reply-To: <20170524122139.GB1463@katana>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:51211 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761714AbdEXM5b (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 08:57:31 -0400
+In-Reply-To: <1495626214-15502-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Hi Wolfram,
+Hi Geert,
 
-On Wed, May 24, 2017 at 2:21 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->> This is caused by the "output-high" property for the GPIO hog.
->> Due to both lcd0 pinmux and GPIO hog being part of the same device node,
->> "output-high" is also applied to the lcd0 pins, which fails.
->>
->> RFC fix in "[PATCH/RFC] ARM: dts: armadillo800eva: Split LCD mux and gpio"
->> (https://patchwork.kernel.org/patch/9745831/)/
->
-> Cool, thanks! So, if this issue could get resolved, there are chances to
-> revive the original patch?
+Thank you for the patch.
 
-Yep, that's the plan.
+On Wednesday 24 May 2017 13:43:34 Geert Uytterhoeven wrote:
+> Configuration of the lcd0 pinmux group and GPIO hog for the external
+> GPIO mux are done using a single device node, causing the "output-hig=
+h"
+> property to be applied to both.  This will fail for the pinmux group,=
 
-Gr{oetje,eeting}s,
+> but doesn't cause any harm, as the failure is ignored silently.
+>=20
+> However, after "pinctrl: sh-pfc: propagate errors on group config", t=
+he
+> failure will become fatal, leading to a broken display:
+>=20
+>     sh-pfc e6050000.pin-controller: pin_config_group_set op failed fo=
+r group
+> 102 sh-pfc e6050000.pin-controller: Error applying setting, reverse t=
+hings
+> back sh-pfc e6050000.pin-controller: failed to select default state
+>=20
+> Split the configuration in two subnodes, and replace the GPIO hog by =
+a
+> pull-up pin bias to fix this.
+>=20
+> Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pin=
+ctrl
+> and gpio-hog for lcdc0") Signed-off-by: Geert Uytterhoeven
+> <geert+renesas@glider.be>
+> ---
+> This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
+> group config" (https://patchwork.kernel.org/patch/9186713/).
+>=20
+> Notes:
+>   1. Just keeping the GPIO hog doesn't work, as the sh-pfc driver
+>      requires each pinctrl (sub)node to have at least one "pins" or
+>      "groups" property,
+>   2. Keeping "output-high" doesn't work, as the sh-pfc driver does no=
+t
+>      implement PIN_CONFIG_OUTPUT.
+>=20
+> Should I fix 1 and/or 2 instead?
+> ---
+>  arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+> b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts index
+> 44b335b9f035436d..7feedc86f6915654 100644
+> --- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+> +++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+> @@ -267,13 +267,16 @@
+>  =09};
+>=20
+>  =09lcd0_pins: lcd0 {
+> -=09=09groups =3D "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+> -=09=09function =3D "lcd0";
+> +=09=09mux {
+> +=09=09=09groups =3D "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+> +=09=09=09function =3D "lcd0";
+> +=09=09};
+>=20
+> -=09=09/* DBGMD/LCDC0/FSIA MUX */
+> -=09=09gpio-hog;
+> -=09=09gpios =3D <176 0>;
+> -=09=09output-high;
+> +=09=09gpio {
+> +=09=09=09/* DBGMD/LCDC0/FSIA MUX */
+> +=09=09=09pins =3D "PORT176";
+> +=09=09=09bias-pull-up;
 
-                        Geert
+The signal is pulled low through a 10k=CE=A9 resistor, so a pull-up is =
+a bit weak.=20
+You'll end up with an intermediate voltage level that could result in m=
+eta-
+stability and/or latch-up. I think we need to really drive the output t=
+o 1.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +=09=09};
+>  =09};
+>  };
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+Regards,
+
+Laurent Pinchart
+
