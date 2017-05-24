@@ -1,48 +1,43 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 1/5] pinctrl: meson-gxl: Fix typo in AO I2S pins
-Date: Wed, 24 May 2017 10:41:11 +0200
-Message-ID: <1495615271.14589.6.camel@baylibre.com>
-References: <1495614042-2676-1-git-send-email-narmstrong@baylibre.com>
-         <1495614042-2676-2-git-send-email-narmstrong@baylibre.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH v2 1/5] gpio: of: Reflect decoupling of open collector
+ and active low/high
+Date: Wed, 24 May 2017 14:10:48 +0530
+Message-ID: <59254710.30101@nvidia.com>
+References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1495614042-2676-2-git-send-email-narmstrong@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>, linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2745 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935728AbdEXIlO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 24 May 2017 04:41:14 -0400
+In-Reply-To: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, linus.walleij@linaro.org
+Cc: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, patches@opensource.wolfsonmicro.com, frowand.list@gmail.com
 
-On Wed, 2017-05-24 at 10:20 +0200, Neil Armstrong wrote:
-> The AO I2S pins were incorrectly defined with the EE pin offset.
 
-Thx for catching this!
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-> 
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Fixes: 2899adf0422 ("pinctrl: meson: gxl: add i2s output pins")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+On Tuesday 23 May 2017 08:17 PM, Charles Keepax wrote:
+> Commit 4c0facddb7d8 ("gpio: core: Decouple open drain/source flag with
+> active low/high") decoupled the open collector outputs from active
+> low/high but did not update the documentation.
+>
+> Update the device tree documentation to correctly reflect this new
+> separation between the two concepts.
+>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > ---
->  drivers/pinctrl/meson/pinctrl-meson-gxl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> index 719ff1b..9af8e6a 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-> @@ -276,8 +276,8 @@
->  static const unsigned int pwm_ao_b_pins[]	= { PIN(GPIOAO_9, 0) };
->  static const unsigned int pwm_ao_b_6_pins[]	= { PIN(GPIOAO_6, 0) };
->  
-> -static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_8, EE_OFF) };
-> -static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_9, EE_OFF) };
-> +static const unsigned int i2s_out_ch23_ao_pins[] = { PIN(GPIOAO_8, 0) };
-> +static const unsigned int i2s_out_ch45_ao_pins[] = { PIN(GPIOAO_9, 0) };
->  
->  static const unsigned int spdif_out_ao_6_pins[]	= { PIN(GPIOAO_6,
-> EE_OFF) };
->  static const unsigned int spdif_out_ao_9_pins[]	= { PIN(GPIOAO_9,
-> EE_OFF) };
+
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+
+Thanks,
+Laxman
+
+-----------------------------------------------------------------------------------
+This email message is for the sole use of the intended recipient(s) and may contain
+confidential information.  Any unauthorized review, use, disclosure or distribution
+is prohibited.  If you are not the intended recipient, please contact the sender by
+reply email and destroy all copies of the original message.
+-----------------------------------------------------------------------------------
