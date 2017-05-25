@@ -1,51 +1,51 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v5] gpio: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Thu, 25 May 2017 01:12:37 +0200
-Message-ID: <CAJZ5v0jogwciZcKG0HaK_40AjJF+kf7BEfZbV_U4N1ci327kaw@mail.gmail.com>
-References: <20170524104216.23643-1-hdegoede@redhat.com>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH V2 4/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding
+ doc
+Date: Thu, 25 May 2017 11:16:21 +0800
+Message-ID: <20170525031620.GS26102@dragon>
+References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
+ <1495177545-23006-5-git-send-email-aisheng.dong@nxp.com>
+ <5e78ef100319f229a87e33804384e5b3@agner.ch>
+ <DBXPR04MB320A55DE4386DE561A1D4DC80F90@DBXPR04MB320.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170524104216.23643-1-hdegoede@redhat.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:40942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S941405AbdEYDRN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 24 May 2017 23:17:13 -0400
+Content-Disposition: inline
+In-Reply-To: <DBXPR04MB320A55DE4386DE561A1D4DC80F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "A.S. Dong" <aisheng.dong@nxp.com>
+Cc: Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, May 24, 2017 at 12:42 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Some peripherals on Bay Trail and Cherry Trail platforms signal PME to the
-> PMC to wakeup the system. When this happens software needs to clear the
-> PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm on IRQ 9.
->
-> This is modeled in ACPI through the INT0002 ACPI Virtual GPIO device.
->
-> This commit adds a driver which registers the Virtual GPIOs expected
-> by the DSDT on these devices, letting gpiolib-acpi claim the
-> virtual GPIO and install a GPIO-interrupt handler which call the _L02
-> handler as it would for a real GPIO controller.
->
-> Cc: joeyli <jlee@suse.com>
-> Cc: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> Changes in v2:
-> -Remove dev_err after malloc failure
-> -Remove unused empty runtime pm callbacks
-> -s/GPE0A_PME_/GPE0A_PME_B0_/
-> -Fixed some checkpatch warnings (I forgot to run checkpatch on v1)
-> Changes in v3:
-> -Rewrite as gpiochip driver letting gpiolib-acpi deal with claiming the pin
->  0x0002 and calling the _L02 event handler when the virtual gpio-irq triggers
-> -Rebase on 4.12-rc1
-> Changes in v4:
-> -Drop device_init_wakeup() from _probe(), use pm_system_wakeup() instead
->  of pm_wakeup_hard_event(chip->parent)
-> -Improve commit message
-> Changes in v5:
-> -Use BIT() macro for FOO_BIT defines
-> -Drop unneeded ACPI_PTR macro usage
+On Tue, May 23, 2017 at 10:37:27AM +0000, A.S. Dong wrote:
+> > > +#ifndef __DTS_IMX7ULP_PINFUNC_H
+> > > +#define __DTS_IMX7ULP_PINFUNC_H
+> > > +
+> > > +/*
+> > > + * The pin function ID is a tuple of
+> > > + * <mux_conf_reg input_reg mux_mode input_val>  */
+> > > +
+> > > +#define ULP1_PAD_PTC0__PTC0
+> > > 0x0000 0x0000 0x1 0x0
+> > 
+> > 
+> > For consistency with other SoCs, can we add MX7 to the define? E.g.
+> > MX7ULP1?
+> > 
+> 
+> ULP1 is another SoC name of IMX7ULP.
+> And there will be ULP0, ULPx in the future..
 
-LGTM
+What is the external/formal SoC name for ULP0 and ULPx?
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> It looks like not big issue, so I did not change it.
+
+It's an easy change to make things more obvious, so +1 on Stefan's
+opinion.
+
+Shawn
