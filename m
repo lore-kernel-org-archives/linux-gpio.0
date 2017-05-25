@@ -1,106 +1,52 @@
-From: "A.S. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V3 1/2] dt-bindings: pinctrl: add imx7ulp pinctrl binding
+From: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 4/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding
  doc
-Date: Thu, 25 May 2017 05:06:56 +0000
-Message-ID: <AM3PR04MB306BB77DD89C680DC42636D80FF0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1495539829-23345-1-git-send-email-aisheng.dong@nxp.com>
- <20170523182321.GA13664@w540>
- <AM3PR04MB3065626F1B45C8459E5765580FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
+Date: Thu, 25 May 2017 14:23:49 +0800
+Message-ID: <20170525062347.GT26102@dragon>
+References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
+ <1495177545-23006-5-git-send-email-aisheng.dong@nxp.com>
+ <5e78ef100319f229a87e33804384e5b3@agner.ch>
+ <DBXPR04MB320A55DE4386DE561A1D4DC80F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+ <20170525031620.GS26102@dragon>
+ <AM3PR04MB3068FA0B94C9B0D6269FC9C80FF0@AM3PR04MB306.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0073.outbound.protection.outlook.com ([104.47.1.73]:4297
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S941893AbdEYFHC (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 25 May 2017 01:07:02 -0400
-In-Reply-To: <AM3PR04MB3065626F1B45C8459E5765580FE0@AM3PR04MB306.eurprd04.prod.outlook.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <AM3PR04MB3068FA0B94C9B0D6269FC9C80FF0-f56W/S9L6NSIzFHTN1kKrAfhPeD8jYilXA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "A.S. Dong" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+Cc: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Duan <fugang.duan-3arQi8VN3Tc@public.gmane.org>, Jacky Bai <ping.bai-3arQi8VN3Tc@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: "A.S. Dong" <aisheng.dong@nxp.com>, 'jmondi' <jacopo@jmondi.org>, "'linus.walleij@linaro.org'" <linus.walleij@linaro.org>, "'shawnguo@kernel.org'" <shawnguo@kernel.org>
-Cc: "'linux-gpio@vger.kernel.org'" <linux-gpio@vger.kernel.org>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>, "'stefan@agner.ch'" <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "'kernel@pengutronix.de'" <kernel@pengutronix.de>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, "'devicetree@vger.kernel.org'" <devicetree@vger.kernel.org>
 
-SGkgU2hhd24gJiBMaW51cywNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9t
-OiBBLlMuIERvbmcNCj4gU2VudDogV2VkbmVzZGF5LCBNYXkgMjQsIDIwMTcgMTE6MTAgQU0NCj4g
-VG86IGptb25kaTsgbGludXMud2FsbGVpakBsaW5hcm8ub3JnOyBzaGF3bmd1b0BrZXJuZWwub3Jn
-DQo+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0
-cy5pbmZyYWRlYWQub3JnOw0KPiBzdGVmYW5AYWduZXIuY2g7IEphY2t5IEJhaTsgQW5keSBEdWFu
-OyBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IFJvYiBIZXJyaW5nOw0KPiBNYXJrIFJ1dGxhbmQ7IGRl
-dmljZXRyZWVAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggVjMgMS8yXSBk
-dC1iaW5kaW5nczogcGluY3RybDogYWRkIGlteDd1bHAgcGluY3RybA0KPiBiaW5kaW5nIGRvYw0K
-PiANCj4gSGkgSg0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206
-IGptb25kaSBbbWFpbHRvOmphY29wb0BqbW9uZGkub3JnXQ0KPiA+IFNlbnQ6IFdlZG5lc2RheSwg
-TWF5IDI0LCAyMDE3IDI6MjQgQU0NCj4gPiBUbzogQS5TLiBEb25nDQo+ID4gQ2M6IGxpbnV4LWdw
-aW9Admdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7
-DQo+ID4gbGludXMud2FsbGVpakBsaW5hcm8ub3JnOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBzdGVm
-YW5AYWduZXIuY2g7IEphY2t5DQo+ID4gQmFpOyBBbmR5IER1YW47IGtlcm5lbEBwZW5ndXRyb25p
-eC5kZTsgUm9iIEhlcnJpbmc7IE1hcmsgUnV0bGFuZDsNCj4gPiBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZw0KPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjMgMS8yXSBkdC1iaW5kaW5nczogcGlu
-Y3RybDogYWRkIGlteDd1bHAgcGluY3RybA0KPiA+IGJpbmRpbmcgZG9jDQo+ID4NCj4gPiBIaSBE
-b25nLA0KPiA+DQo+ID4gT24gVHVlLCBNYXkgMjMsIDIwMTcgYXQgMDc6NDM6NDhQTSArMDgwMCwg
-RG9uZyBBaXNoZW5nIHdyb3RlOg0KPiA+ID4gaS5NWCA3VUxQIGhhcyB0aHJlZSBJT01VWEMgaW5z
-dGFuY2VzOiBJT01VWEMwIGZvciBNNCBwb3J0cywNCj4gPiA+IElPTVVYQzEgZm9yIEE3IHBvcnRz
-IGFuZCBJT01VWEMgRERSIGZvciBERFIgaW50ZXJmYWNlLg0KPiA+ID4NCj4gPiA+IFRoaXMgcGF0
-Y2ggYWRkcyB0aGUgSU9NVVhDMSBzdXBwb3J0IGZvciBBNy4NCj4gPiA+DQo+ID4gPiBDYzogUm9i
-IEhlcnJpbmcgPHJvYmgrZHRAa2VybmVsLm9yZz4NCj4gPiA+IENjOiBNYXJrIFJ1dGxhbmQgPG1h
-cmsucnV0bGFuZEBhcm0uY29tPg0KPiA+ID4gQ2M6IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3Jn
-DQo+ID4gPiBDYzogTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiA+
-ID4gQWNrZWQtYnk6IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVsLm9yZz4NCj4gPiA+IFNpZ25l
-ZC1vZmYtYnk6IERvbmcgQWlzaGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+DQo+ID4gPg0KPiA+
-ID4gLS0tDQo+ID4gPiBDaGFuZ2VMb2c6DQo+ID4gPiB2Mi0+djM6DQo+ID4gPiAgKiBzd2l0Y2gg
-dG8gZ2VuZXJpYyBpbnB1dC9vdXRwdXQtZW5hYmxlIHByb3BlcnR5DQo+ID4gPiB2MS0+djI6DQo+
-ID4gPiAgKiBhZGQgbW9yZSBkZXNjcmlwdGlvbnMgaW4gYmluZGluZyBkb2MNCj4gPiA+ICAqIGFk
-ZCBtaXNzZWQgcHJlZml4IGZvciBwcml2YXRlIHByb3BlcnRpZXMuDQo+ID4gPiAgKiBtb3ZlIGR0
-LWJpbmRpbmdzL3BpbmN0cmwvaW14N3VscC1waW5mdW5jLmggdG8gYXJjaC9hcm0vYm9vdC9kdHMN
-Cj4gPiA+IC0tLQ0KPiA+ID4gIC4uLi9iaW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg3dWxwLXBpbmN0
-cmwudHh0ICAgICAgIHwgIDYzICsrKw0KPiA+ID4gIGFyY2gvYXJtL2Jvb3QvZHRzL2lteDd1bHAt
-cGluZnVuYy5oICAgICAgICAgICAgICAgIHwgNDY4DQo+ID4gKysrKysrKysrKysrKysrKysrKysr
-DQo+ID4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA1MzEgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NA0KPiA+ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Bp
-bmN0cmwvZnNsLGlteDd1bHAtcGluY3RybC50eHQNCj4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-YXJjaC9hcm0vYm9vdC9kdHMvaW14N3VscC1waW5mdW5jLmgNCj4gPiA+DQo+ID4gPiBkaWZmIC0t
-Z2l0DQo+ID4gPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL2Zz
-bCxpbXg3dWxwLXBpbmN0cmwudHh0DQo+ID4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9waW5jdHJsL2ZzbCxpbXg3dWxwLXBpbmN0cmwudHh0DQo+ID4gPiBuZXcgZmlsZSBt
-b2RlIDEwMDY0NA0KPiA+ID4gaW5kZXggMDAwMDAwMC4uNjdlNGQxZQ0KPiA+ID4gLS0tIC9kZXYv
-bnVsbA0KPiA+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0
-cmwvZnNsLGlteDd1bHAtcGluY3RybC4NCj4gPiA+ICsrKyB0eA0KPiA+ID4gKysrIHQNCj4gPiA+
-IEBAIC0wLDAgKzEsNjMgQEANCj4gPiA+ICsqIEZyZWVzY2FsZSBpLk1YN1VMUCBJT01VWCBDb250
-cm9sbGVyDQo+ID4gPiArDQo+ID4gPiAraS5NWCA3VUxQIGhhcyB0aHJlZSBJT01VWEMgaW5zdGFu
-Y2VzOiBJT01VWEMwIGZvciBNNCBwb3J0cywgSU9NVVhDMQ0KPiA+ID4gK2ZvciBBNyBwb3J0cyBh
-bmQgSU9NVVhDIEREUiBmb3IgRERSIGludGVyZmFjZS4NCj4gPiA+ICsNCj4gPiA+ICtOb3RlOg0K
-PiA+ID4gK1RoaXMgYmluZGluZyBkb2MgaXMgb25seSBmb3IgdGhlIElPTVVYQzEgc3VwcG9ydCBp
-biBBNyBEb21haW4gYW5kDQo+ID4gPiAraXQgb25seSBzdXBwb3J0cyBnZW5lcmljIHBpbiBjb25m
-aWcuDQo+ID4gPiArDQo+ID4gPiArUGxlYXNlIGFsc28gcmVmZXIgdG8gZnNsLGlteC1waW5jdHJs
-LnR4dCBpbiB0aGlzIGRpcmVjdG9yeSBmb3IgSU1YDQo+ID4gPiArY29tbW9uIGJpbmRpbmcgcGFy
-dCBhbmQgcGluY3RybC1iaW5kaW5ncy50eHQgZm9yIHRoZSBnZW5lcmljIGNvbmZpZw0KPiA+IGJp
-bmRpbmcuDQo+ID4gPiArDQo+ID4gPiArPT09IFBpbiBDb250cm9sbGVyIE5vZGUgPT09DQo+ID4g
-PiArDQo+ID4gPiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4gPiA+ICstIGNvbXBhdGlibGU6CSJm
-c2wsaW14N3VscC1pb211eGMxIg0KPiA+ID4gKy0gcmVnOgkJU2hvdWxkIGNvbnRhaW4gdGhlIGJh
-c2UgcGh5c2ljYWwgYWRkcmVzcyBhbmQgc2l6ZSBvZiB0aGUNCj4gPiBpb211eGMNCj4gPiA+ICsJ
-CXJlZ2lzdGVycy4NCj4gPiA+ICsNCj4gPiA+ICs9PT0gUGluIENvbmZpZ3VyYXRpb24gTm9kZSA9
-PT0NCj4gPiA+ICstIHBpbnM6IE9uZSBpbnRlZ2VycyBhcnJheSwgcmVwcmVzZW50cyBhIGdyb3Vw
-IG9mIHBpbnMgbXV4IHNldHRpbmcuDQo+ID4gPiArCVRoZSBmb3JtYXQgaXMgZnNsLHBpbnMgPSA8
-UElOX0ZVTkNfSUQ+LCBQSU5fRlVOQ19JRCBpcyBhIHBpbg0KPiA+ID4gK3dvcmtpbmcNCj4gPiBv
-bg0KPiA+ID4gKwlhIHNwZWNpZmljIGZ1bmN0aW9uLg0KPiA+ID4gKw0KPiA+ID4gKwlOT1RFOiBp
-Lk1YN1VMUCBQSU5fRlVOQ19JRCBjb25zaXN0cyBvZiA0IGludGVnZXJzIGFzIGl0IHNoYXJlcyBv
-bmUNCj4gPiBtdXgNCj4gPiA+ICsJYW5kIGNvbmZpZyByZWdpc3RlciBhcyBmb2xsb3dzOg0KPiA+
-ID4gKwk8bXV4X2NvbmZfcmVnIGlucHV0X3JlZyBtdXhfbW9kZSBpbnB1dF92YWw+DQo+ID4NCj4g
-PiBBcyB5b3VyIFBJTl9GVU5DX0lEIHNwZWNpZmllcyBib3RoIHRoZSBwaW4gaWRzIGFuZCB0aGVp
-ciBtdXggc2V0dGluZ3MsDQo+ID4gc2hvdWxkbid0IHlvdSB1c2UgdGhlIG5ld2x5IGRvY3VtZW50
-ZWQgJ3Bpbm11eCcgcHJvcGVydHkgaW4gcGxhY2Ugb2YNCj4gPiAncGlucyc/DQo+ID4NCj4gPiBQ
-bGVhc2Ugc2VlDQo+ID4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbQ0KPiA+IG1pdC8gP2lkPThkNWU3YzVkZjBhNmM0
-NDIzNzM2MjhiZTUyMjEzMjExNzJiMWJhZGYNCj4gPg0KPiA+IFRoZSBjdXJyZW50IGRvY3VtZW50
-YXRpb24gc3BlY2lmaWVzIHBpbiBpZHMgYW5kIG11eCBzZXR0aW5ncyBoYXZlIHRvDQo+ID4gYmUg
-YXNzZW1ibGVkIGluIG9uZSBzaW5nbGUgaW50ZWdlciwgd2hpY2ggaXMgbm90IHlvdXIgY2FzZSwg
-YnV0IHRoYXQNCj4gPiBjYW4gYmUgY2hhbmdlZCB0byBtYWtlIGl0IGFjY2VwdCBhbiBhcnJheSBv
-ZiBpbnRlZ2VycyB2YWx1ZXMgaWYgbmVlZGVkLg0KPiA+DQo+IA0KPiBUaGFua3MgZm9yIHRoZSBp
-bmZvLg0KPiBMb29rcyBnb29kIHRvIG1lLg0KPiANCj4gU2hhd24gJiBMaW51cywNCj4gQXJlIHlv
-dSBva2F5IHdpdGggdGhpcz8NCj4gDQo+IElmIHllcywgSSBjYW4gZXh0ZW5kIHRoZSBzdGFuZGFy
-ZCAncGlubXV4JyBwcm9wZXJ0eSB0byBzdXBwb3J0IGludGVnZXINCj4gYXJyYXkgYW5kIHJlbmV3
-IHRoZSBwYXRjaCBzZXJpZXMgdG8gdXNlIGl0Lg0KPiANCg0KV291bGQgeW91IGNvbW1lbnQgb24g
-dGhpcyBxdWVzdGlvbj8NCg0KVGhlbiBJIGNhbiBkZWNpZGUgd2hldGhlciBzZW50IGEgbmV3IHNl
-cmllcyBiYXNlZCBvbiBpdC4NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
+On Thu, May 25, 2017 at 05:04:58AM +0000, A.S. Dong wrote:
+> If we really want to change, 'IMX7ULP1' may be a little strange as 'IMX7ULP' is
+> the official external name and all other places are using it.
+> So IMX7ULP may be more suitable.
+
+Yes, I actually meant IMX7ULP, which matches how we name the SoC
+elsewhere in the kernel.
+
+> 
+> Then next generation may be:
+> IMX7ULP0_PAD_PTC0_PTC0.
+> Vs
+> IMX7ULP_PAD_PTC0_PTC0
+> 
+> Just not much better than:
+> ULP1_PAD_PTC0_PTC0.
+> vs
+> ULP0_PAD_PTC0_PTC0
+> 
+> That's why I did not do it initially.
+> 
+> However, if you do want the change, i'm okay to do it.
+
+For the next generation, we will have a name for it in the kernel
+anyway.  The pinctrl macro simply follows that name.
+
+Shawn
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
