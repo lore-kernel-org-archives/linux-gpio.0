@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/3] gpio: sta2x11: check the return value of irq_alloc_generic_chip()
-Date: Thu, 25 May 2017 10:37:37 +0200
-Message-ID: <1495701458-12444-3-git-send-email-brgl@bgdev.pl>
+Subject: [PATCH 3/3] gpio: ml-ioh: check the return value of irq_alloc_generic_chip()
+Date: Thu, 25 May 2017 10:37:38 +0200
+Message-ID: <1495701458-12444-4-git-send-email-brgl@bgdev.pl>
 References: <1495701458-12444-1-git-send-email-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1495701458-12444-1-git-send-email-brgl@bgdev.pl>
@@ -15,51 +15,55 @@ the returned pointer.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-sta2x11.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-ml-ioh.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-sta2x11.c b/drivers/gpio/gpio-sta2x11.c
-index 39df062..9e70516 100644
---- a/drivers/gpio/gpio-sta2x11.c
-+++ b/drivers/gpio/gpio-sta2x11.c
-@@ -320,13 +320,16 @@ static irqreturn_t gsta_gpio_handler(int irq, void *dev_id)
+diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+index 78896a8..74fdce0 100644
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -385,14 +385,18 @@ static irqreturn_t ioh_gpio_handler(int irq, void *dev_id)
  	return ret;
  }
  
--static void gsta_alloc_irq_chip(struct gsta_gpio *chip)
-+static int gsta_alloc_irq_chip(struct gsta_gpio *chip)
+-static void ioh_gpio_alloc_generic_chip(struct ioh_gpio *chip,
+-				unsigned int irq_start, unsigned int num)
++static int ioh_gpio_alloc_generic_chip(struct ioh_gpio *chip,
++				       unsigned int irq_start,
++				       unsigned int num)
  {
  	struct irq_chip_generic *gc;
  	struct irq_chip_type *ct;
  
- 	gc = irq_alloc_generic_chip(KBUILD_MODNAME, 1, chip->irq_base,
- 				     chip->reg_base, handle_simple_irq);
+ 	gc = irq_alloc_generic_chip("ioh_gpio", 1, irq_start, chip->base,
+ 				    handle_simple_irq);
 +	if (!gc)
 +		return -ENOMEM;
 +
  	gc->private = chip;
  	ct = gc->chip_types;
  
-@@ -350,6 +353,8 @@ static void gsta_alloc_irq_chip(struct gsta_gpio *chip)
- 		}
- 		gc->irq_cnt = i - gc->irq_base;
- 	}
+@@ -404,6 +408,8 @@ static void ioh_gpio_alloc_generic_chip(struct ioh_gpio *chip,
+ 
+ 	irq_setup_generic_chip(gc, IRQ_MSK(num), IRQ_GC_INIT_MASK_CACHE,
+ 			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
 +
 +	return 0;
  }
  
- /* The platform device used here is instantiated by the MFD device */
-@@ -400,7 +405,10 @@ static int gsta_probe(struct platform_device *dev)
- 		return err;
- 	}
- 	chip->irq_base = err;
--	gsta_alloc_irq_chip(chip);
+ static int ioh_gpio_probe(struct pci_dev *pdev,
+@@ -468,7 +474,11 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 			goto err_gpiochip_add;
+ 		}
+ 		chip->irq_base = irq_base;
+-		ioh_gpio_alloc_generic_chip(chip, irq_base, num_ports[j]);
 +
-+	err = gsta_alloc_irq_chip(chip);
-+	if (err)
-+		return err;
++		ret = ioh_gpio_alloc_generic_chip(chip,
++						  irq_base, num_ports[j]);
++		if (ret)
++			goto err_gpiochip_add;
+ 	}
  
- 	err = devm_request_irq(&dev->dev, pdev->irq, gsta_gpio_handler,
- 			       IRQF_SHARED, KBUILD_MODNAME, chip);
+ 	chip = chip_save;
 -- 
 2.9.3
