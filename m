@@ -1,78 +1,89 @@
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] pinctrl: amd: don't load pinctrl-amd on Gigabyte AM4 boards
-Date: Thu, 25 May 2017 12:00:06 +0800
-Message-ID: <20170525040006.22654-1-kai.heng.feng@canonical.com>
+From: "A.S. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH V2 4/5] dt-bindings: pinctrl: add imx7ulp pinctrl binding
+ doc
+Date: Thu, 25 May 2017 05:04:58 +0000
+Message-ID: <AM3PR04MB3068FA0B94C9B0D6269FC9C80FF0@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1495177545-23006-1-git-send-email-aisheng.dong@nxp.com>
+ <1495177545-23006-5-git-send-email-aisheng.dong@nxp.com>
+ <5e78ef100319f229a87e33804384e5b3@agner.ch>
+ <DBXPR04MB320A55DE4386DE561A1D4DC80F90@DBXPR04MB320.eurprd04.prod.outlook.com>
+ <20170525031620.GS26102@dragon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:59156 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750744AbdEYEAS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 25 May 2017 00:00:18 -0400
+Received: from mail-ve1eur01on0065.outbound.protection.outlook.com ([104.47.1.65]:37120
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S941893AbdEYFFD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 25 May 2017 01:05:03 -0400
+In-Reply-To: <20170525031620.GS26102@dragon>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Andy Duan <fugang.duan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Gigabyte AM4 boards, pinctrl-amd generates tons of irq, makes the
-system not able to boot properly.
+> -----Original Message-----
+> From: Shawn Guo [mailto:shawnguo@kernel.org]
+> Sent: Thursday, May 25, 2017 11:16 AM
+> To: A.S. Dong
+> Cc: Stefan Agner; Mark Rutland; devicetree@vger.kernel.org; Andy Duan;
+> Jacky Bai; linus.walleij@linaro.org; linux-gpio@vger.kernel.org; Rob
+> Herring; kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH V2 4/5] dt-bindings: pinctrl: add imx7ulp pinctrl
+> binding doc
+>=20
+> On Tue, May 23, 2017 at 10:37:27AM +0000, A.S. Dong wrote:
+> > > > +#ifndef __DTS_IMX7ULP_PINFUNC_H
+> > > > +#define __DTS_IMX7ULP_PINFUNC_H
+> > > > +
+> > > > +/*
+> > > > + * The pin function ID is a tuple of
+> > > > + * <mux_conf_reg input_reg mux_mode input_val>  */
+> > > > +
+> > > > +#define ULP1_PAD_PTC0__PTC0
+> > > > 0x0000 0x0000 0x1 0x0
+> > >
+> > >
+> > > For consistency with other SoCs, can we add MX7 to the define? E.g.
+> > > MX7ULP1?
+> > >
+> >
+> > ULP1 is another SoC name of IMX7ULP.
+> > And there will be ULP0, ULPx in the future..
+>=20
+> What is the external/formal SoC name for ULP0 and ULPx?
+>=20
 
-Don't load the module until Gigabyte fixes the issue.
+I don't know, it's still a plan.
+Maybe IMX7ULP0, just can't sure.
 
-BugLink: https://bugs.launchpad.net/bugs/1671360
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/pinctrl/pinctrl-amd.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> >
+> > It looks like not big issue, so I did not change it.
+>=20
+> It's an easy change to make things more obvious, so +1 on Stefan's opinio=
+n.
+>=20
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 1482d132fbb8..5b015d3552b8 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -29,6 +29,7 @@
- #include <linux/interrupt.h>
- #include <linux/list.h>
- #include <linux/bitops.h>
-+#include <linux/dmi.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinconf-generic.h>
- 
-@@ -739,6 +740,26 @@ static struct pinctrl_desc amd_pinctrl_desc = {
- 	.owner = THIS_MODULE,
- };
- 
-+static bool amd_gpio_is_gigabyte_am4(void)
-+{
-+	const char *board_name;
-+
-+	if (!dmi_match(DMI_BOARD_VENDOR, "Gigabyte Technology Co., Ltd."))
-+		return false;
-+
-+	board_name = dmi_get_system_info(DMI_BOARD_NAME);
-+
-+	if (!board_name)
-+		return false;
-+
-+	if (strstr(board_name, "A320") ||
-+		strstr(board_name, "B350") ||
-+		strstr(board_name, "X370"))
-+		return true;
-+
-+	return false;
-+}
-+
- static int amd_gpio_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
-@@ -746,6 +767,10 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct amd_gpio *gpio_dev;
- 
-+	/* Don't load this module if it's a Gigabyte AM4 board */
-+	if (amd_gpio_is_gigabyte_am4())
-+		return -ENODEV;
-+
- 	gpio_dev = devm_kzalloc(&pdev->dev,
- 				sizeof(struct amd_gpio), GFP_KERNEL);
- 	if (!gpio_dev)
--- 
-2.13.0
+If we really want to change, 'IMX7ULP1' may be a little strange as 'IMX7ULP=
+' is
+the official external name and all other places are using it.
+So IMX7ULP may be more suitable.
 
+Then next generation may be:
+IMX7ULP0_PAD_PTC0_PTC0.
+Vs
+IMX7ULP_PAD_PTC0_PTC0
+
+Just not much better than:
+ULP1_PAD_PTC0_PTC0.
+vs
+ULP0_PAD_PTC0_PTC0
+
+That's why I did not do it initially.
+
+However, if you do want the change, i'm okay to do it.
+=20
+Regards
+Dong Aisheng
