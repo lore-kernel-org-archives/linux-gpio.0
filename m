@@ -1,90 +1,70 @@
-From: David Wu <david.wu@rock-chips.com>
-Subject: [PATCH v2 4/4] pinctrl: rockchip: Add iomux-route switching support for rk3399
-Date: Fri, 26 May 2017 15:20:23 +0800
-Message-ID: <1495783223-28857-5-git-send-email-david.wu@rock-chips.com>
-References: <1495783223-28857-1-git-send-email-david.wu@rock-chips.com>
+From: "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
+Subject: RE: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
+Date: Fri, 26 May 2017 09:33:10 +0000
+Message-ID: <BLUPR12MB0721B0824892B985DC807471A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+References: <alpine.DEB.2.20.1705232307330.2409@nanos>
+ <BLUPR12MB07212D4797B68DB06C3A6D40A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+ <alpine.DEB.2.20.1705260841250.1902@nanos>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.132]:50590 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967296AbdEZHR0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 May 2017 03:17:26 -0400
-In-Reply-To: <1495783223-28857-1-git-send-email-david.wu@rock-chips.com>
+Received: from mail-sn1nam02on0068.outbound.protection.outlook.com ([104.47.36.68]:9472
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S971052AbdEZJdO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 26 May 2017 05:33:14 -0400
+In-Reply-To: <alpine.DEB.2.20.1705260841250.1902@nanos>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: heiko@sntech.de, linus.walleij@linaro.org
-Cc: huangtao@rock-chips.com, dianders@chromium.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, David Wu <david.wu@rock-chips.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, "Xue, Ken" <Ken.Xue@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 
-There are 2 IP blocks pin routes need to be switched, that are
-uart2dbg, pcie_clkreq.
+Hi Thomas,
 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
----
-Change in v2:
- - calculate the per-bank value dynamically (Heiko)
+Thanks  for the prompt reply. Agree on points.
 
- drivers/pinctrl/pinctrl-rockchip.c | 41 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 2563959..6690883 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -816,6 +816,45 @@ static void rk3328_recalc_mux(u8 bank_num, int pin, int *reg,
- 	},
- };
- 
-+static struct rockchip_mux_route_data rk3399_mux_route_data[] = {
-+	{
-+		/* uart2dbga_rx */
-+		.bank_num = 4,
-+		.pin = 8,
-+		.func = 2,
-+		.route_offset = 0xe21c,
-+		.route_val = BIT(16 + 10) | BIT(16 + 11),
-+	}, {
-+		/* uart2dbgb_rx */
-+		.bank_num = 4,
-+		.pin = 16,
-+		.func = 2,
-+		.route_offset = 0xe21c,
-+		.route_val = BIT(16 + 10) | BIT(16 + 11) | BIT(10),
-+	}, {
-+		/* uart2dbgc_rx */
-+		.bank_num = 4,
-+		.pin = 19,
-+		.func = 1,
-+		.route_offset = 0xe21c,
-+		.route_val = BIT(16 + 10) | BIT(16 + 11) | BIT(11),
-+	}, {
-+		/* pcie_clkreqn */
-+		.bank_num = 2,
-+		.pin = 26,
-+		.func = 2,
-+		.route_offset = 0xe21c,
-+		.route_val = BIT(16 + 14),
-+	}, {
-+		/* pcie_clkreqnb */
-+		.bank_num = 4,
-+		.pin = 24,
-+		.func = 1,
-+		.route_offset = 0xe21c,
-+		.route_val = BIT(16 + 14) | BIT(14),
-+	},
-+};
-+
- static bool rockchip_get_mux_route(struct rockchip_pin_bank *bank, int pin,
- 				   int mux, u32 *reg, u32 *value)
- {
-@@ -3270,6 +3309,8 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 		.pmu_mux_offset		= 0x0,
- 		.grf_drv_offset		= 0xe100,
- 		.pmu_drv_offset		= 0x80,
-+		.iomux_routes		= rk3399_mux_route_data,
-+		.niomux_routes		= ARRAY_SIZE(rk3399_mux_route_data),
- 		.pull_calc_reg		= rk3399_calc_pull_reg_and_bit,
- 		.drv_calc_reg		= rk3399_calc_drv_reg_and_bit,
- };
--- 
-1.9.1
+we will validate at our end and shall provide the update.
 
 
+Nehal
+-----Original Message-----
+From: Thomas Gleixner [mailto:tglx@linutronix.de]=20
+Sent: Friday, May 26, 2017 12:19 PM
+To: Shah, Nehal-bakulchandra <Nehal-bakulchandra.Shah@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>; Linus Walleij <linus.walleij@linar=
+o.org>; linux-gpio@vger.kernel.org; Borislav Petkov <bp@alien8.de>; Xue, Ke=
+n <Ken.Xue@amd.com>; S-k, Shyam-sundar <Shyam-sundar.S-k@amd.com>; stable@v=
+ger.kernel.org
+Subject: RE: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
+
+Nehal,
+
+On Fri, 26 May 2017, Shah, Nehal-bakulchandra wrote:
+> Thanks for the patch. However, we have received this issue from=20
+> multiple people and different disro but it occurs only on Gigabyte=20
+> hardware. With reference AM4 ryzen board we are not facing this issue. =20
+> We are in discussion with gigabyte to check the BIOS part. Once we=20
+> have clarity on that, we can consider driver part. Also, this code is=20
+> running on multiple platform of different customers so changing=20
+> directly at this point of time may be risky in my point of view.=20
+> Requesting you to hold this patch till we get clarity on bios end.
+
+It does not matter at all whether this is a problem only on GB hardware. Fa=
+ct is, that this happened and it will happen again.
+
+The patch does not change any functionality of the driver, it merily makes =
+it more robust and spares users the bloody annoying experience of a non boo=
+ting machine and the tedious task of figuring out why.
+
+The main objective of the kernel is robustness and not pleasing the ego of =
+silicon vendors. We can't prevent the stupidity of BIOS people, we merily c=
+an deal with it.
+
+That patch should go into mainline ASAP and backported to stable in order t=
+o help those people who bought wreckaged hardware.
+
+Thanks,
+
+	tglx
