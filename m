@@ -1,64 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/8] serial: exar: Preconfigure xr17v35x MPIOs as output
-Date: Fri, 26 May 2017 20:38:14 +0200
-Message-ID: <20170526183814.GD16490@kroah.com>
-References: <cover.1494660546.git.jan.kiszka@siemens.com>
- <6155891d19531be018d30fd55ffd6d42493af8c1.1494660546.git.jan.kiszka@siemens.com>
- <9bb8d972-6535-1611-8fa7-f5fe89760531@siemens.com>
+From: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v2 0/4] Add iomux-route switching support
+Date: Sat, 27 May 2017 00:19:26 +0200
+Message-ID: <3296473.EV6dOggqEx@phil>
+References: <1495783223-28857-1-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44932 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932235AbdEZSiZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 May 2017 14:38:25 -0400
-Content-Disposition: inline
-In-Reply-To: <9bb8d972-6535-1611-8fa7-f5fe89760531@siemens.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1495783223-28857-1-git-send-email-david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: David Wu <david.wu-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Fri, May 26, 2017 at 03:04:26PM +0200, Jan Kiszka wrote:
-> Greg,
+Hi David,
+
+Am Freitag, 26. Mai 2017, 15:20:19 CEST schrieb David Wu:
+> The rk3228, rk3328, rk3399 have an interesting new feature,
+> some things like one specific uart can use multiple pins to
+> output data, but control of that seems to be split. The actual
+> pin config is identical for all pins - each needs to be configured
+> to function 2.
 > 
-> On 2017-05-13 09:28, Jan Kiszka wrote:
-> > This is the safe default for GPIOs with unknown external wiring.
-> > 
-> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > ---
-> >  drivers/tty/serial/8250/8250_exar.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-> > index 1270ff163f63..b4fa585156c7 100644
-> > --- a/drivers/tty/serial/8250/8250_exar.c
-> > +++ b/drivers/tty/serial/8250/8250_exar.c
-> > @@ -177,13 +177,13 @@ static void setup_gpio(u8 __iomem *p)
-> >  	writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
-> >  	writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
-> >  	writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
-> > -	writeb(0x00, p + UART_EXAR_MPIOSEL_7_0);
-> > +	writeb(0xff, p + UART_EXAR_MPIOSEL_7_0);
-> >  	writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
-> >  	writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
-> >  	writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
-> >  	writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
-> >  	writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
-> > -	writeb(0x00, p + UART_EXAR_MPIOSEL_15_8);
-> > +	writeb(0xff, p + UART_EXAR_MPIOSEL_15_8);
-> >  	writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
-> >  }
-> >  
-> > 
+> Use one pin of a specifc group to be set to its special pinmux function,
+> then configure the corresponding routing bits. If the pinmux setting is
+> wrong for that pin the ip block won't work correctly anyway.
+
+
+the approach looks nice now, the whole series
+Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+
+
+Thanks
+Heiko
+
+
+> David Wu (4):
+>   pinctrl: rockchip: Add iomux-route switching support
+>   pinctrl: rockchip: Add iomux-route switching support for rk3228
+>   pinctrl: rockchip: Add iomux-route switching support for rk3328
+>   pinctrl: rockchip: Add iomux-route switching support for rk3399
 > 
-> Please drop from this tty-next, it may break Commtech adapters. I have
-> an update ready.
+>  drivers/pinctrl/pinctrl-rockchip.c | 321 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 320 insertions(+), 1 deletion(-)
 > 
-> I may also send a fix on top if that is preferred, just let me know.
-
-I need a fixup patch, I can't drop a patch, only revert it.
-
-thanks,
-
-greg k-h
+> 
