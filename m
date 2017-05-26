@@ -1,38 +1,39 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
-Date: Fri, 26 May 2017 11:57:20 +0200
-Message-ID: <20170526095720.lhwcrorqwk2xya2c@pd.tnic>
-References: <alpine.DEB.2.20.1705232307330.2409@nanos>
- <BLUPR12MB07212D4797B68DB06C3A6D40A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
- <alpine.DEB.2.20.1705260841250.1902@nanos>
- <BLUPR12MB0721B0824892B985DC807471A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] pinctrl: amd: don't load pinctrl-amd on Gigabyte AM4
+ boards
+Date: Fri, 26 May 2017 12:09:20 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1705261206180.1902@nanos>
+References: <20170525040006.22654-1-kai.heng.feng@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.skyhub.de ([5.9.137.197]:38918 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030831AbdEZJ5Z (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 26 May 2017 05:57:25 -0400
-Content-Disposition: inline
-In-Reply-To: <BLUPR12MB0721B0824892B985DC807471A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+Received: from Galois.linutronix.de ([146.0.238.70]:40723 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1761857AbdEZKJX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 26 May 2017 06:09:23 -0400
+In-Reply-To: <20170525040006.22654-1-kai.heng.feng@canonical.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Xue, Ken" <Ken.Xue@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
 
-On Fri, May 26, 2017 at 09:33:10AM +0000, Shah, Nehal-bakulchandra wrote:
-> Hi Thomas,
+On Thu, 25 May 2017, Kai-Heng Feng wrote:
+
+> On Gigabyte AM4 boards, pinctrl-amd generates tons of irq, makes the
+> system not able to boot properly.
 > 
-> Thanks  for the prompt reply. Agree on points.
-> 
-> we will validate at our end and shall provide the update.
+> Don't load the module until Gigabyte fixes the issue.
 
-First of all, please do not top-post.
+NAK. 
 
-What update are you talking about? The patch needs to go in regardless.
+That's the completely wrong approach. This crap will surface on a gazillion
+of other boards and will hit users faster than you can keep that DMI list
+up to date.
 
--- 
-Regards/Gruss,
-    Boris.
+There is a proper solution to this problem:
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+http://lkml.kernel.org/r/alpine.DEB.2.20.1705232307330.2409@nanos
+
+Thanks,
+
+	tglx
