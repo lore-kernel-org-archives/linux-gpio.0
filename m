@@ -1,57 +1,53 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 10/10] serial: exar: Add support for IOT2040 device
-Date: Sat, 27 May 2017 16:52:28 +0300
-Message-ID: <CAHp75VeH-3+k+xvMw--vk1DBtYj6Qdnczh7z77H3fboDzMScRQ@mail.gmail.com>
-References: <cover.1495814557.git.jan.kiszka@siemens.com> <8d2c0204ee4ab6040787cb953b30284940eaa2bc.1495814557.git.jan.kiszka@siemens.com>
+Subject: Re: [PATCH 01/10] gpio: mockup: fix direction values
+Date: Sat, 27 May 2017 19:43:44 +0300
+Message-ID: <CAHp75Ven54kF8dfq-efQg5ANkaeaQa0o=K+K8rHmO_U48jqn-Q@mail.gmail.com>
+References: <1495701227-28809-1-git-send-email-brgl@bgdev.pl> <1495701227-28809-2-git-send-email-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33878 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754020AbdE0Nw3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 27 May 2017 09:52:29 -0400
-In-Reply-To: <8d2c0204ee4ab6040787cb953b30284940eaa2bc.1495814557.git.jan.kiszka@siemens.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1495701227-28809-2-git-send-email-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Fri, May 26, 2017 at 7:02 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> This implements the setup of RS232 and the switch-over to RS485 or RS422
-> for the Siemens IOT2040. That uses an EXAR XR17V352 with external logic
-> to switch between the different modes. The external logic is controlled
-> via MPIO pins of the EXAR controller.
+On Thu, May 25, 2017 at 11:33 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> The comment in linux/gpio/driver.h says:
 >
-> Only pin 10 can be exported as GPIO on the IOT2040. It is connected to
-> an LED.
+>  @get_direction: returns direction for signal "offset", 0=out, 1=in
 >
-> As the XR17V352 used on the IOT2040 is not equipped with an external
-> EEPROM, it cannot present itself as IOT2040-variant via subvendor/
-> subdevice IDs. Thus, we have to check via DMI for the target platform.
+> We got those switched at some point. Fix the values.
 
->  static void *
-> -xr17v35x_register_gpio(struct pci_dev *pcidev, unsigned int first_pin,
-> -                      unsigned int npins)
-> +__xr17v35x_register_gpio(struct pci_dev *pcidev, unsigned int first_pin,
-> +                        unsigned int npins)
+Shouldn't it have a Fixes tag?
 
-> +static int xr17v35x_register_gpio(struct pci_dev *pcidev,
-> +                                 struct uart_8250_port *port)
-> +{
-> +       if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
-> +               port->port.private_data =
-> +                       __xr17v35x_register_gpio(pcidev, 0, 16);
-> +
-> +       return 0;
-> +}
 
-> -               if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
-> -                       port->port.private_data =
-> -                               xr17v35x_register_gpio(pcidev, 0, 16);
-> +               ret = platform->register_gpio(pcidev, port);
->         }
+>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  drivers/gpio/gpio-mockup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index c6dadac..c18d011 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -29,8 +29,8 @@
+>  #define        GPIO_MOCKUP_MAX_GC      10
+>
+>  enum {
+> -       DIR_IN = 0,
+> -       DIR_OUT,
+> +       DIR_OUT = 0,
+> +       DIR_IN = 1,
+>  };
+>
+>  /*
+> --
+> 2.9.3
+>
 
-Can't you move at least some of this to the patch where you move the check?
+
 
 -- 
 With Best Regards,
