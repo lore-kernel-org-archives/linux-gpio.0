@@ -1,71 +1,75 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: Re: [PATCH v3 10/10] serial: exar: Add support for IOT2040 device
-Date: Sun, 28 May 2017 18:41:52 +0200
-Message-ID: <da64f581-5e91-bcf8-81d1-435941ee75dd@siemens.com>
-References: <cover.1495814557.git.jan.kiszka@siemens.com>
- <8d2c0204ee4ab6040787cb953b30284940eaa2bc.1495814557.git.jan.kiszka@siemens.com>
- <CAHp75VeH-3+k+xvMw--vk1DBtYj6Qdnczh7z77H3fboDzMScRQ@mail.gmail.com>
+From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH RfC v4 0/6] pintrl: meson: add support for GPIO IRQs
+Date: Sun, 28 May 2017 20:40:30 +0200
+Message-ID: <49ab677f-3165-d6f5-75f5-a963879e8ecf@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from thoth.sbs.de ([192.35.17.2]:39114 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750878AbdE1QmB (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 28 May 2017 12:42:01 -0400
-In-Reply-To: <CAHp75VeH-3+k+xvMw--vk1DBtYj6Qdnczh7z77H3fboDzMScRQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On 2017-05-27 15:52, Andy Shevchenko wrote:
-> On Fri, May 26, 2017 at 7:02 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->> This implements the setup of RS232 and the switch-over to RS485 or RS422
->> for the Siemens IOT2040. That uses an EXAR XR17V352 with external logic
->> to switch between the different modes. The external logic is controlled
->> via MPIO pins of the EXAR controller.
->>
->> Only pin 10 can be exported as GPIO on the IOT2040. It is connected to
->> an LED.
->>
->> As the XR17V352 used on the IOT2040 is not equipped with an external
->> EEPROM, it cannot present itself as IOT2040-variant via subvendor/
->> subdevice IDs. Thus, we have to check via DMI for the target platform.
-> 
->>  static void *
->> -xr17v35x_register_gpio(struct pci_dev *pcidev, unsigned int first_pin,
->> -                      unsigned int npins)
->> +__xr17v35x_register_gpio(struct pci_dev *pcidev, unsigned int first_pin,
->> +                        unsigned int npins)
-> 
->> +static int xr17v35x_register_gpio(struct pci_dev *pcidev,
->> +                                 struct uart_8250_port *port)
->> +{
->> +       if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
->> +               port->port.private_data =
->> +                       __xr17v35x_register_gpio(pcidev, 0, 16);
->> +
->> +       return 0;
->> +}
-> 
->> -               if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
->> -                       port->port.private_data =
->> -                               xr17v35x_register_gpio(pcidev, 0, 16);
->> +               ret = platform->register_gpio(pcidev, port);
->>         }
-> 
-> Can't you move at least some of this to the patch where you move the check?
-> 
+This patch series is partially based on a series Jerome Brunet
+submitted about half a year ago. Due to open questions this series never
+made it to mainline, see https://patchwork.kernel.org/patch/9384431/
 
-This change is unrelated to that patch.
+This new attempt uses GPIOLIB_IRQCHIP resulting in less needed code.
+Included is also support for using two parent IRQs in case
+of IRQ_TYPE_EDGE_BOTH, like in the vendor driver.
 
-What I can offer is a separate patch to factor this out, but I'm not
-sure it would buy us much.
+The series was successfully tested on a Odroid-C2, e.g. with removing
+polling for SD card insertion/removal from the mmc driver.
 
-Jan
+Changes in v2:
+- separate the GPIO IRQ controller from the pinctrl driver
+- minor improvements to the GPIO IRQ controller
+
+Changes in v3:
+- replace the request_irq based allocation of parent irq's with
+  chained irq handling, this also fixes the spurious interrupts issue
+  and allows to remove the workaround code.
+  Last but not least the parent irq's are no longer visible in
+  /proc/interrupts.
+- minor improvements to the GPIO IRQ controller
+
+Changes in v4:
+- separate the gpio-independent interrupt controller part and make
+  it a driver under drivers/irqchip
+
+Heiner Kallweit (7):
+  pinctrl: meson: add interrupts to pinctrl data
+  irqchip: add Amlogic Meson GPIO irqchip driver
+  dt-bindings: add Amlogic Meson GPIO interrupt-controller DT binding documentation
+  ARM(64): dts: meson: add GPIO interrupt-controller support
+  pinctrl: meson: add support for GPIO interrupts
+  ARM(64): dts: meson: mark gpio controllers as interrupt controllers and update binding documentation
+
+.../amlogic,meson-gpio-intc.txt                    |  26 ++
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   4 +
+ arch/arm/boot/dts/meson8.dtsi                      |  12 +
+ arch/arm/boot/dts/meson8b.dtsi                     |  12 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |   4 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |   4 +
+ drivers/irqchip/Kconfig                            |   3 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-meson-gpio.c                   | 280 +++++++++++++++++++++
+ drivers/pinctrl/Kconfig                            |   2 +
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |  22 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c          |  20 +-
+ drivers/pinctrl/meson/pinctrl-meson.c              | 164 +++++++++++-
+ drivers/pinctrl/meson/pinctrl-meson.h              |  15 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c             |  20 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c            |  32 ++-
+ 17 files changed, 582 insertions(+), 47 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+ create mode 100644 drivers/irqchip/irq-meson-gpio.c
 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+2.13.0
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
