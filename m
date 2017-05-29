@@ -1,48 +1,32 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] mfd: arizona: Update GPIO binding for newly
- supported specifiers
-Date: Mon, 29 May 2017 11:11:43 +0200
-Message-ID: <CACRpkdZVwQzDZ6Khaef5CU3b+bz19EcyM=E-N+XUGq-z4wfhRQ@mail.gmail.com>
-References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1495550852-3672-5-git-send-email-ckeepax@opensource.wolfsonmicro.com> <20170524083519.mi7n6nw6ysc5xdeb@dell>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 02/12] gpio: acpi: Align acpi_find_gpio() with DT version
+Date: Mon, 29 May 2017 11:16:38 +0200
+Message-ID: <CACRpkdazvNSVCGCXL4G0QBZvFo7-G+Ch_fqEa-5H7q5xrzLGzw@mail.gmail.com>
+References: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com> <20170523170327.18055-3-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170524083519.mi7n6nw6ysc5xdeb@dell>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170523170327.18055-3-andriy.shevchenko@linux.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jagadish Krishnamoorthy <jagadish.krishnamoorthy@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 24, 2017 at 10:35 AM, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Tue, 23 May 2017, Charles Keepax wrote:
->
->> Link to the generic GPIO specifier bindings now that the second cell of
->> the binding has some support in the driver.
->>
->> Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
->> ---
->>
->> Changes since v1:
->>  - Now just points at the standard gpio binding stuff
->>
->> Thanks,
->> Charles
->>
->>  Documentation/devicetree/bindings/mfd/arizona.txt | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> I'll take this if/when the GPIO changes are merged.
->
-> For my own reference:
->   Acked-for-MFD-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+On Tue, May 23, 2017 at 7:03 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-I merged them today.
-Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> By some reason acpi_find_gpio() and acpi_gpio_count() have compared
+> connection ID to "gpios" when tries to check if suffix is needed or not.
+>
+> Don't do any assumptions about what connection ID can be and, when defined,
+> use it only with suffix as it's done in the device tree version.
+>
+> Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Patch applied.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
