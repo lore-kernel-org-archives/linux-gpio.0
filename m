@@ -1,33 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: single: use of_device_get_match_data() to get
- soc data
-Date: Mon, 29 May 2017 10:19:26 +0200
-Message-ID: <CACRpkdaM_p7QUq8afD03tCkWExZn9y8MXP5BDPXbV_atofTvsg@mail.gmail.com>
-References: <1495296137-6461-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 1/3] pinctrl: samsung: clean up modular vs. non-modular distinctions
+Date: Mon, 29 May 2017 10:24:07 +0200
+Message-ID: <CACRpkdb_4_9884AWCxv6OYFPzcRdS9YHAe8YrJ7hPxHvzDuf=g@mail.gmail.com>
+References: <20170522205648.23545-1-paul.gortmaker@windriver.com> <20170522205648.23545-2-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:38786 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbdE2IT2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 04:19:28 -0400
-Received: by mail-it0-f52.google.com with SMTP id r63so23356015itc.1
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 01:19:28 -0700 (PDT)
-In-Reply-To: <1495296137-6461-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170522205648.23545-2-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Haojian Zhuang <haojian.zhuang@linaro.org>
 
-On Sat, May 20, 2017 at 6:02 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, May 22, 2017 at 10:56 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
 
-> Use of_device_get_match_data() instead of of_match_device().
-> It allows us to remove the forward declaration of pcs_of_match.
+> Fixups here tend to be more all over the map vs. some of the other
+> repeated/systematic ones we've seen elsewhere.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> We remove module.h from code that isn't doing anything modular at
+> all;  if they have __init sections, then replace it with init.h
+>
+> A couple drivers have module_exit() code that is essentially orphaned,
+> and so we remove that.
+>
+> There are no module_init replacements, so we have no concerns wrt.
+> initcall ordering changes as per some of the other cleanups.
+>
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+>
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-Patch applied with Tony's ACK.
+Krzysztof is sub-submainter for the Samsung stuff in pinctrl so I
+leave it to him to figure out how to bend, twist and merge this, then
+I will get the result back from him with a pull request.
+
+It looks good to me though.
 
 Yours,
 Linus Walleij
