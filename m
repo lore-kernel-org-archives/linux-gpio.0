@@ -1,29 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 05/10] gpio: mockup: improve the debugfs input sanitization
-Date: Mon, 29 May 2017 13:32:16 +0200
-Message-ID: <CACRpkdarjDT5+SUku9ZfbwYi0TdgM2Yv14Hi347gWkw4N0q7GQ@mail.gmail.com>
-References: <1495701227-28809-1-git-send-email-brgl@bgdev.pl> <1495701227-28809-6-git-send-email-brgl@bgdev.pl>
+Subject: Re: [PATCH 1/3] gpio: pch: check the return value of irq_alloc_generic_chip()
+Date: Mon, 29 May 2017 13:33:22 +0200
+Message-ID: <CACRpkdYcePwF=FDGePAhfotfoOJGRPmBP91JQyuuyVVuKvt7yA@mail.gmail.com>
+References: <1495701458-12444-1-git-send-email-brgl@bgdev.pl> <1495701458-12444-2-git-send-email-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1495701227-28809-6-git-send-email-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:32862 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbdE2LdY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:33:24 -0400
+Received: by mail-it0-f48.google.com with SMTP id w68so7220126itc.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 04:33:24 -0700 (PDT)
+In-Reply-To: <1495701458-12444-2-git-send-email-brgl@bgdev.pl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, May 25, 2017 at 10:33 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Thu, May 25, 2017 at 10:37 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> We're currently only checking the first character of the input to the
-> debugfs event files, so a string like '0sdfdsf' is valid and indicates
-> a falling edge event.
->
-> Be more strict and only allow '0', '1', '0\n' & '1\n'.
+> This function can fail, so check the return value before dereferencing
+> the returned pointer.
 >
 > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-Since I applied patches 1-4 you only need to resend from this point
-when posting v2.
+Patch applied.
 
 Yours,
 Linus Walleij
