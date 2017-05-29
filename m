@@ -1,35 +1,38 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 5/5] pinctrl: meson-gxl: Add Ethernet PHY LEDS pins
-Date: Mon, 29 May 2017 11:17:09 +0200
-Message-ID: <a0f0bf3e-a23c-eec2-03a0-a6c35125028f@baylibre.com>
-References: <1495614042-2676-1-git-send-email-narmstrong@baylibre.com>
- <1495614042-2676-6-git-send-email-narmstrong@baylibre.com>
- <CACRpkdY6rwx=Z2YZRA=DUjvRDe6cCc7cyFrdb3JbiisHVK+kCQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 06/12] gpio: acpi: Explain how to get GPIO descriptors
+ in ACPI case
+Date: Mon, 29 May 2017 11:20:26 +0200
+Message-ID: <CACRpkdaa2PcJ6DFigyXpNXK2e0YBWm-o0bnnesz=PjaZecwf7Q@mail.gmail.com>
+References: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com> <20170523170327.18055-7-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY6rwx=Z2YZRA=DUjvRDe6cCc7cyFrdb3JbiisHVK+kCQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:37119 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751194AbdE2JU1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 05:20:27 -0400
+Received: by mail-it0-f50.google.com with SMTP id g126so24029461ith.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 02:20:27 -0700 (PDT)
+In-Reply-To: <20170523170327.18055-7-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jagadish Krishnamoorthy <jagadish.krishnamoorthy@intel.com>
 
-On 05/29/2017 11:01 AM, Linus Walleij wrote:
-> On Wed, May 24, 2017 at 10:20 AM, Neil Armstrong
-> <narmstrong@baylibre.com> wrote:
-> 
->> The Amlogic Meson GXL SoCs embeds an 10/100 Ethernet PHY, this patchs enables
->> the Link and Activity LEDs signals.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> Patch applied with Jerome's review tag.
-> 
-> Yours,
-> Linus Walleij
-> 
+On Tue, May 23, 2017 at 7:03 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Thanks Linus !
+> Documentation lacks of explanation how we actually use device properties
+> for GPIO resources.
+>
+> Add a section to the documentation about that.
+>
+> Suggested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Neil
+Patch applied.
+
+Yours,
+Linus Walleij
