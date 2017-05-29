@@ -1,35 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 4/4] pinctrl: rockchip: Add iomux-route switching
- support for rk3399
-Date: Mon, 29 May 2017 14:28:54 +0200
-Message-ID: <CACRpkdb9pMvXiroSGDV3W9mP8qickaVQ+L_-tcbYynEMRvG40Q@mail.gmail.com>
-References: <1495783223-28857-1-git-send-email-david.wu@rock-chips.com> <1495783223-28857-5-git-send-email-david.wu@rock-chips.com>
+Subject: Re: [PATCH v3 02/10] gpio-exar/8250-exar: Do not even instantiate a
+ GPIO device for Commtech cards
+Date: Mon, 29 May 2017 14:30:46 +0200
+Message-ID: <CACRpkdaKNdsSM9zR++TFYiCjMqAq3a3yFzkMOG=DjCOBZBYGow@mail.gmail.com>
+References: <cover.1495814557.git.jan.kiszka@siemens.com> <096688442ac54d85b6a3e0577592bc2a6891569b.1495814557.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35880 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750966AbdE2M2z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 08:28:55 -0400
-Received: by mail-it0-f46.google.com with SMTP id o5so26190035ith.1
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 05:28:55 -0700 (PDT)
-In-Reply-To: <1495783223-28857-5-git-send-email-david.wu@rock-chips.com>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:33416 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750925AbdE2Mas (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 08:30:48 -0400
+Received: by mail-io0-f178.google.com with SMTP id p24so40452821ioi.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 05:30:48 -0700 (PDT)
+In-Reply-To: <096688442ac54d85b6a3e0577592bc2a6891569b.1495814557.git.jan.kiszka@siemens.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Wu <david.wu@rock-chips.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Tao Huang <huangtao@rock-chips.com>, Doug Anderson <dianders@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Fri, May 26, 2017 at 9:20 AM, David Wu <david.wu@rock-chips.com> wrote:
+On Fri, May 26, 2017 at 6:02 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-> There are 2 IP blocks pin routes need to be switched, that are
-> uart2dbg, pcie_clkreq.
+> Commtech adapters need the MPIOs for internal purposes, and the
+> gpio-exar driver already refused to pick them up. But there is actually
+> no point in even creating the underlying platform device.
 >
-> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> ---
-> Change in v2:
->  - calculate the per-bank value dynamically (Heiko)
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 
-Patch applied with Heiko's ACK.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
