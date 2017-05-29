@@ -1,33 +1,134 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 11/12] PNP / ACPI: join strings back for better maintenance
-Date: Mon, 29 May 2017 11:28:06 +0200
-Message-ID: <CACRpkdarF2VHP8rSAdLML1fcjDejMN8DfhBMSarZanLQ4NEnAg@mail.gmail.com>
-References: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com> <20170523170327.18055-12-andriy.shevchenko@linux.intel.com>
+From: jmondi <jacopo@jmondi.org>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Mon, 29 May 2017 19:42:29 +0900
+Message-ID: <20170529104229.GB21347@w540>
+References: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
+ <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
+ <20170508160120.GB25206@w540>
+ <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
+ <20170508172516.GC25206@w540>
+ <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+ <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
+ <20170523183735.GC13664@w540>
+ <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f175.google.com ([209.85.223.175]:33531 "EHLO
-        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdE2J2I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 05:28:08 -0400
-Received: by mail-io0-f175.google.com with SMTP id p24so38322081ioi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 02:28:07 -0700 (PDT)
-In-Reply-To: <20170523170327.18055-12-andriy.shevchenko@linux.intel.com>
+Received: from slow1-d.mail.gandi.net ([217.70.178.86]:47516 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbdE2Kri (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 06:47:38 -0400
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+        by slow1-d.mail.gandi.net (Postfix) with ESMTP id 410A047FC17
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 12:42:49 +0200 (CEST)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jagadish Krishnamoorthy <jagadish.krishnamoorthy@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Dong Aisheng <dongas86@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Brandt <Chris.Brandt@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, May 23, 2017 at 7:03 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+Hi Linus,
 
-> Simply join string literals back for better maintenance and debugging.
+On Mon, May 29, 2017 at 10:45:44AM +0200, Linus Walleij wrote:
+> On Tue, May 23, 2017 at 8:37 PM, jmondi <jacopo@jmondi.org> wrote:
 >
-> No functional changes intended.
+> >> I did not follow too much.
+> >> But it seems IMX7ULP/Vybrid to be also a fan of generic
+> >> output-enable/input-enable
+> >> property.
+> >>
+> >> See:
+> >> Figure 5-2. GPIO PAD in Page 241
+> >> http://www.nxp.com/assets/documents/data/en/reference-manuals/VFXXXRM.pdf
+> >>
+> >> It has separate register bits to control input buffer enable and
+> >> output buffer enable
+> >> and we need set it property for GPIO function.
+> >
+> > As it seems we have another user for 'output-enable' here, what if we just
+> > add that one to the generic bindings properties list, and we keep
+> > 'bi-directional' (which seems to be the most debated property we have
+> > added) out of generic properties?
+> >
+> > We can handle 'bi-directional' pins with static tables in our pin
+> > controller driver and not have it anywhere in DT.
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> This sounds like a viable approach.
+>
+> I just want to know if "output-enable" is the right name?
+> "output-buffer-enable"?
 
-Patch applied with Mika's review tag.
+Great! Thanks!
 
-Yours,
-Linus Walleij
+On naming: if we need "output-buffer-enable" should we add
+"input-buffer-enable" as well?
+
+Currently we are using "input-enable" to pair with "output-enable",
+but as you said, just "output-enable" when "output-high" and
+"output-low" are there already seems a bit confusing.
+At the same time "input-buffer-enable" seems to actually be just
+electrically equivalent to "input-enable", so adding it is a bit of a
+waste as well.
+
+I see three options here:
+
+1) Add "output-buffer-enable" and "input-buffer-enable"
+we end up with
+"output-high"
+"output-low"
+"input-enable"
+"output-buffer-enable"
+"input-buffer-enable"
+
+2) Add "output-buffer-enable" only
+we end up with
+"output-high"
+"output-low"
+"input-enable"
+"output-buffer-enable"
+
+Binding may be confusing as in one case we use "output-buffer-enable"
+while in the other "input-enable"
+
+3) Add "output-enable" only
+"output-high"
+"output-low"
+"input-enable"
+"output-enable"
+
+As you, I don't like "output-enable" that much but it pairs better with
+"input-enable".
+
+I'll let you and DT people decide on this, as it's really an ABI definition
+problem and you have better judgment there.
+
+>
+> > I see commit 42d5a11200d0[1] has not been reverted yet as Andy asked
+> > in some previous email.
+>
+> I'm just overloaded. I sent that revert to Torvalds today.
+
+Thank you. Didn't want to put pressure ;)
+>
+> > I can send another version of that patch with
+> > only 'output-enable' if you wish.
+>
+> That's what we want.
+>
+> > Once we reach consesus, I can then send v6 of our pin controller driver
+> > based on that.
+>
+> OK sounds like a plan.
+>
+> Sorry for the mess, I'm just trying to get this right :/
+
+Not a mess, and thanks for your effort in maintaining  all of this
+
+Thanks
+   j
+>
+> Yours,
+> Linus Walleij
