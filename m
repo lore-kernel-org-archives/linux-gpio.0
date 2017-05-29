@@ -1,50 +1,81 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
-Date: Mon, 29 May 2017 13:55:57 +0200
-Message-ID: <CACRpkdbkEnLpZtLKz+x6FLQZTdsyxKsFexFa_UQwNxgZJGDExQ@mail.gmail.com>
-References: <alpine.DEB.2.20.1705232307330.2409@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.13
+Date: Mon, 29 May 2017 13:57:52 +0200
+Message-ID: <1496059072-13102-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:36131 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbdE2Lz7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:55:59 -0400
-Received: by mail-it0-f50.google.com with SMTP id o5so25791110ith.1
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 04:55:59 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.20.1705232307330.2409@nanos>
+Received: from xavier.telenet-ops.be ([195.130.132.52]:58164 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750986AbdE2L6L (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:58:11 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, Ken Xue <Ken.Xue@amd.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, May 23, 2017 at 11:23 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+	Hi Linus,
 
-> The AMD pinctrl driver uses a chained interrupt to demultiplex the GPIO
-> interrupts. Kevin Vandeventer reported, that his new AMD Ryzen locks up
-> hard on boot when the AMD pinctrl driver is initialized. The reason is an
-> interrupt storm. It's not clear whether that's caused by hardware or
-> firmware or both.
->
-> Using chained interrupts on X86 is a dangerous endavour. If a system is
-> misconfigured or the hardware buggy there is no safety net to catch an
-> interrupt storm.
->
-> Convert the driver to use a regular interrupt for the demultiplex
-> handler. This allows the interrupt storm detector to catch the malfunction
-> and lets the system boot up.
->
-> This should be backported to stable because it's likely that more users run
-> into this problem as the AMD Ryzen machines are spreading.
->
-> Reported-by: Kevin Vandeventer
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=1034261
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
 
-Patch applied for fixes.
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
 
-Hm, I wonder if there is a bunch of other x86 drivers that should just
-request the IRQ?
+are available in the git repository at:
 
-Yours,
-Linus Walleij
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.13-tag1
+
+for you to fetch changes up to c8bac70f079bb3ecaf9a716f141f3d85cef27231:
+
+  pinctrl: sh-pfc: r8a7794: Add R8A7745 support (2017-05-16 13:53:15 +0200)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.13
+
+  - Add PWM, AVB MDIO/MII, and sound pin groups on R-Car M3-W,
+  - Add support for RZ/G1M and RZ/G1E,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      pinctrl: sh-pfc: r8a7796: Add group for AVB MDIO and MII pins
+
+Kuninori Morimoto (6):
+      pinctrl: sh-pfc: r8a7796: Rename SSI_{WS,SCK}0129 to SSI_{WS,SCK}01239
+      pinctrl: sh-pfc: r8a7796: Rename SSI_{WS,SCK}34 to SSI_{WS,SCK}349
+      pinctrl: sh-pfc: r8a7796: Add Audio SSI pin support
+      pinctrl: sh-pfc: r8a7796: Add Audio clock pin support
+      pinctrl: sh-pfc: r8a7795: Rename SSI_{WS,SCK}34 to SSI_{WS,SCK}349
+      pinctrl: sh-pfc: r8a7795-es1: Rename SSI_{WS,SCK}34 to SSI_{WS,SCK}349
+
+Sergei Shtylyov (6):
+      pinctrl: sh-pfc: r8a7791: Grand I2C rename
+      pinctrl: sh-pfc: r8a7791: Add R8A7743 support
+      pinctrl: sh-pfc: r8a7794: Rename some I2C signals
+      pinctrl: sh-pfc: r8a7794: Remove AVB_AVTP_* groups
+      pinctrl: sh-pfc: r8a7794: Remove reserved bits
+      pinctrl: sh-pfc: r8a7794: Add R8A7745 support
+
+Takeshi Kihara (1):
+      pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    2 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |   10 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    2 +
+ drivers/pinctrl/sh-pfc/core.c                      |   12 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 1341 ++++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c               | 1256 +++++++++---------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           |   30 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |   20 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  606 ++++++++-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |    2 +
+ 10 files changed, 1928 insertions(+), 1353 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
