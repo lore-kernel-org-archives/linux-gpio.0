@@ -1,81 +1,44 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.13
-Date: Mon, 29 May 2017 13:57:52 +0200
-Message-ID: <1496059072-13102-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/4] pinctrl: rockchip: Add iomux-route switching support
+Date: Mon, 29 May 2017 14:25:11 +0200
+Message-ID: <CACRpkdb7t5DWq3punafcsf3Kjqpwcvfyb2VyH59iUBX1EAx8eg@mail.gmail.com>
+References: <1495783223-28857-1-git-send-email-david.wu@rock-chips.com> <1495783223-28857-2-git-send-email-david.wu@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58164 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750986AbdE2L6L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:58:11 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:37246 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751011AbdE2MZN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 08:25:13 -0400
+Received: by mail-it0-f43.google.com with SMTP id g126so26036132ith.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 05:25:12 -0700 (PDT)
+In-Reply-To: <1495783223-28857-2-git-send-email-david.wu@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: David Wu <david.wu@rock-chips.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Tao Huang <huangtao@rock-chips.com>, Doug Anderson <dianders@chromium.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-	Hi Linus,
+On Fri, May 26, 2017 at 9:20 AM, David Wu <david.wu@rock-chips.com> wrote:
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> On the some rockchip SOCS, some things like rk3399 specific uart2 can use
+> multiple pins. Somewhere between the pin io-cells and the uart it seems
+> to have some sort of switch to decide to which pin to actually route the
+> data.
+>
+> +-------+    +--------+  /- GPIO4_B0 (pinmux 2)
+>
+> | uart2 | -- | switch | --- GPIO4_C0 (pinmux 2)
+>
+> +-------+    +--------+  \- GPIO4_C3 (pinmux 2)
+> (switch selects one of the 3 pins base on the GRF_SOC_CON7[BIT0, BIT1])
+>
+> The routing switch is determined by one pin of a specific group to be set
+> to its special pinmux function. If the pinmux setting is wrong for that
+> pin the ip block won't work correctly anyway.
+>
+> Signed-off-by: David Wu <david.wu@rock-chips.com>
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+Patch applied with Heiko's ACK.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.13-tag1
-
-for you to fetch changes up to c8bac70f079bb3ecaf9a716f141f3d85cef27231:
-
-  pinctrl: sh-pfc: r8a7794: Add R8A7745 support (2017-05-16 13:53:15 +0200)
-
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.13
-
-  - Add PWM, AVB MDIO/MII, and sound pin groups on R-Car M3-W,
-  - Add support for RZ/G1M and RZ/G1E,
-  - Small fixes and cleanups.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      pinctrl: sh-pfc: r8a7796: Add group for AVB MDIO and MII pins
-
-Kuninori Morimoto (6):
-      pinctrl: sh-pfc: r8a7796: Rename SSI_{WS,SCK}0129 to SSI_{WS,SCK}01239
-      pinctrl: sh-pfc: r8a7796: Rename SSI_{WS,SCK}34 to SSI_{WS,SCK}349
-      pinctrl: sh-pfc: r8a7796: Add Audio SSI pin support
-      pinctrl: sh-pfc: r8a7796: Add Audio clock pin support
-      pinctrl: sh-pfc: r8a7795: Rename SSI_{WS,SCK}34 to SSI_{WS,SCK}349
-      pinctrl: sh-pfc: r8a7795-es1: Rename SSI_{WS,SCK}34 to SSI_{WS,SCK}349
-
-Sergei Shtylyov (6):
-      pinctrl: sh-pfc: r8a7791: Grand I2C rename
-      pinctrl: sh-pfc: r8a7791: Add R8A7743 support
-      pinctrl: sh-pfc: r8a7794: Rename some I2C signals
-      pinctrl: sh-pfc: r8a7794: Remove AVB_AVTP_* groups
-      pinctrl: sh-pfc: r8a7794: Remove reserved bits
-      pinctrl: sh-pfc: r8a7794: Add R8A7745 support
-
-Takeshi Kihara (1):
-      pinctrl: sh-pfc: r8a7796: Add PWM pins, groups and functions
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    2 +
- drivers/pinctrl/sh-pfc/Kconfig                     |   10 +
- drivers/pinctrl/sh-pfc/Makefile                    |    2 +
- drivers/pinctrl/sh-pfc/core.c                      |   12 +
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c               | 1341 ++++++++++----------
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c               | 1256 +++++++++---------
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           |   30 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |   20 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  606 ++++++++-
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |    2 +
- 10 files changed, 1928 insertions(+), 1353 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Yours,
+Linus Walleij
