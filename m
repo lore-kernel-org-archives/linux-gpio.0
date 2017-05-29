@@ -1,31 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: ml-ioh: check the return value of irq_alloc_generic_chip()
-Date: Mon, 29 May 2017 13:34:44 +0200
-Message-ID: <CACRpkdb+otANCC78tUK7xdX1pBGWgY76o2P1Y_BJMH+M3PH3kg@mail.gmail.com>
-References: <1495701458-12444-1-git-send-email-brgl@bgdev.pl> <1495701458-12444-4-git-send-email-brgl@bgdev.pl>
+Subject: Re: [PATCH 3/3] gpio: adp5588: move header file out of I2C realm
+Date: Mon, 29 May 2017 13:37:27 +0200
+Message-ID: <CACRpkdbFvN=Xzb3znQLVgjTcAW+stkeNCDLAHrmZWorTWU-kpQ@mail.gmail.com>
+References: <20170521215727.1243-1-wsa@the-dreams.de> <20170521215727.1243-4-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:37555 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbdE2Leq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:34:46 -0400
-Received: by mail-it0-f44.google.com with SMTP id g126so25461696ith.0
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 04:34:45 -0700 (PDT)
-In-Reply-To: <1495701458-12444-4-git-send-email-brgl@bgdev.pl>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <20170521215727.1243-4-wsa@the-dreams.de>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Steven Miao <realmz6@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, May 25, 2017 at 10:37 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Sun, May 21, 2017 at 11:57 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-> This function can fail, so check the return value before dereferencing
-> the returned pointer.
+> include/linux/i2c is not for client devices. Move the header file to a
+> more appropriate location.
 >
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+>
+> This driver could also go via the input-tree or my tree. I don't really care
+> and just picked some subsystem :) Let me know if you are okay with that.
 
-Patch applied.
+Patch applied to the GPIO tree with Dmitry's ACK.
 
 Yours,
 Linus Walleij
