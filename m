@@ -1,19 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 04/10] gpio: exar: Allocate resources on behalf of the
- platform device
-Date: Mon, 29 May 2017 14:32:05 +0200
-Message-ID: <CACRpkdbZYHCehHU+SaS7U2y9zAV=wSLLYzCgt-bJd-Uo9VijHA@mail.gmail.com>
-References: <cover.1495814557.git.jan.kiszka@siemens.com> <be82bb59d303876de7b16aa49cf7cda6b080e0e7.1495814557.git.jan.kiszka@siemens.com>
+Subject: Re: [PATCH v3 05/10] gpio: exar: Fix iomap request
+Date: Mon, 29 May 2017 14:32:39 +0200
+Message-ID: <CACRpkdYUrzByYGT+5JgwZRSENv_rt4HRacxmb9+tJqXLbcUAbg@mail.gmail.com>
+References: <cover.1495814557.git.jan.kiszka@siemens.com> <c21343907d05284978a19aaa09491fd873c708ff.1495814557.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:34567 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751068AbdE2McH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 08:32:07 -0400
-Received: by mail-io0-f179.google.com with SMTP id k91so40383734ioi.1
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 05:32:07 -0700 (PDT)
-In-Reply-To: <be82bb59d303876de7b16aa49cf7cda6b080e0e7.1495814557.git.jan.kiszka@siemens.com>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:32941 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750986AbdE2Mck (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 08:32:40 -0400
+Received: by mail-io0-f178.google.com with SMTP id p24so40477060ioi.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 05:32:40 -0700 (PDT)
+In-Reply-To: <c21343907d05284978a19aaa09491fd873c708ff.1495814557.git.jan.kiszka@siemens.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jan Kiszka <jan.kiszka@siemens.com>
@@ -21,9 +20,8 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@g
 
 On Fri, May 26, 2017 at 6:02 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-> Do not allocate resources on behalf of the parent device but on our own.
-> Otherwise, cleanup does not properly work if gpio-exar is removed but
-> not the parent device.
+> The UART driver already maps the resource for us. Trying to do this here
+> only fails and leaves us with a non-working device.
 >
 > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
