@@ -1,37 +1,36 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/2] pinctrl: ingenic: add CONFIG_OF dependency
-Date: Mon, 29 May 2017 14:57:49 +0200
-Message-ID: <20170529125802.163127-2-arnd@arndb.de>
-References: <20170529125802.163127-1-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170529125802.163127-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 00/12] gpio: acpi: Make it working
+Date: Mon, 29 May 2017 16:09:08 +0300
+Message-ID: <1496063348.28981.17.camel@linux.intel.com>
+References: <20170523170327.18055-1-andriy.shevchenko@linux.intel.com>
+         <CACRpkdZN33vNUg6of-2KdC0y1uB3DfY9NgeZnXtLTPVpW6e40Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZN33vNUg6of-2KdC0y1uB3DfY9NgeZnXtLTPVpW6e40Q@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>, Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Jagadish Krishnamoorthy <jagadish.krishnamoorthy@intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The driver failts to build when CONFIG_OF is disabled:
+On Mon, 2017-05-29 at 11:31 +0200, Linus Walleij wrote:
+> On Tue, May 23, 2017 at 7:03 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > This is second iteration of the fix of GPIO ACPI library to make it
+> > robust against different ACPI specification generations and thus
+> > firmwares.
+> 
+> I applied it all so we get some rotation.
+> 
+> Was a bit worried about hitting drivers/pnp/* but I suspect that is
+> actually your turf so I just applied it.
+> 
 
-drivers/pinctrl/pinctrl-ingenic.c:467:20: error: 'pinconf_generic_dt_node_to_map_all' undeclared here (not in a function); did you mean 'pinconf_generic_dump_config'?
-drivers/pinctrl/pinctrl-ingenic.c:468:17: error: 'pinconf_generic_dt_free_map' undeclared here (not in a function); did you mean 'pinconf_generic_params'?
+Thanks!
 
-Fixes: b5c23aa46537 ("pinctrl: add a pinctrl driver for the Ingenic jz47xx SoCs")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index abc1cef7ad96..332bd303da36 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -313,6 +313,7 @@ config PINCTRL_INGENIC
- 	bool "Pinctrl driver for the Ingenic JZ47xx SoCs"
- 	default y
- 	depends on MACH_INGENIC || COMPILE_TEST
-+	depends on OF
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
 -- 
-2.9.0
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
