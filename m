@@ -1,29 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: adp5588: move header file out of I2C realm
-Date: Mon, 29 May 2017 13:37:27 +0200
-Message-ID: <CACRpkdbFvN=Xzb3znQLVgjTcAW+stkeNCDLAHrmZWorTWU-kpQ@mail.gmail.com>
-References: <20170521215727.1243-1-wsa@the-dreams.de> <20170521215727.1243-4-wsa@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20170521215727.1243-4-wsa@the-dreams.de>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Steven Miao <realmz6@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, adi-buildroot-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
+Subject: [PATCH] gpio/pinctrl: ingenic: depend on OF
+Date: Mon, 29 May 2017 13:42:11 +0200
+Message-ID: <20170529114211.8683-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:33473 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdE2LmS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:42:18 -0400
+Received: by mail-lf0-f45.google.com with SMTP id m18so33424368lfj.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 04:42:17 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Cercueil <paul@crapouillou.net>
 
-On Sun, May 21, 2017 at 11:57 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+Fix compile errors due to missing OF.
 
-> include/linux/i2c is not for client devices. Move the header file to a
-> more appropriate location.
->
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
->
-> This driver could also go via the input-tree or my tree. I don't really care
-> and just picked some subsystem :) Let me know if you are okay with that.
+Cc: Paul Cercueil <paul@crapouillou.net>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/Kconfig    | 1 +
+ drivers/pinctrl/Kconfig | 1 +
+ 2 files changed, 2 insertions(+)
 
-Patch applied to the GPIO tree with Dmitry's ACK.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 64bc995df191..395c85df48fd 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -244,6 +244,7 @@ config GPIO_ICH
+ 
+ config GPIO_INGENIC
+ 	tristate "Ingenic JZ47xx SoCs GPIO support"
++	depends on OF
+ 	depends on MACH_INGENIC || COMPILE_TEST
+ 	select GPIOLIB_IRQCHIP
+ 	help
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index abc1cef7ad96..7ae04a97e530 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -312,6 +312,7 @@ config PINCTRL_ZYNQ
+ config PINCTRL_INGENIC
+ 	bool "Pinctrl driver for the Ingenic JZ47xx SoCs"
+ 	default y
++	depends on OF
+ 	depends on MACH_INGENIC || COMPILE_TEST
+ 	select GENERIC_PINCONF
+ 	select GENERIC_PINCTRL_GROUPS
+-- 
+2.9.4
 
-Yours,
-Linus Walleij
