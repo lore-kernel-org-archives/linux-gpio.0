@@ -1,36 +1,46 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/5] gpio: Add new flags to control sleep status of GPIOs
-Date: Mon, 29 May 2017 11:08:30 +0200
-Message-ID: <CACRpkdYAX+Rx-KCjFn_UMnxNF21eYgW_PcGgCEAZpiic7dkwmQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/5] gpio: arizona: Add support for GPIOs that need to
+ be maintained
+Date: Mon, 29 May 2017 11:09:29 +0200
+Message-ID: <CACRpkdaCcDKH=8u6XhbQ1C40stjJ15YdEjbzTD8rCC397ZXD_w@mail.gmail.com>
 References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
- <1495550852-3672-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1495550852-3672-3-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:33250 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbdE2JIb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 05:08:31 -0400
-Received: by mail-io0-f177.google.com with SMTP id p24so38091575ioi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 02:08:31 -0700 (PDT)
-In-Reply-To: <1495550852-3672-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1495550852-3672-3-git-send-email-ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, Frank Rowand <frowand.list@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>
 
 On Tue, May 23, 2017 at 4:47 PM, Charles Keepax
-<ckeepax@opensource.wolfsonmicro.com> wrote:
+<ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
 
-> Add new flags to allow users to specify that they are not concerned with
-> the status of GPIOs whilst in a sleep/low power state.
+> The Arizona devices only maintain the state of output GPIOs whilst the
+> CODEC is active, this can cause issues if the CODEC suspends whilst
+> something is relying on the state of one of its GPIOs. However, in
+> many systems the CODEC GPIOs are used for audio related features
+> and thus the state of the GPIOs is unimportant whilst the CODEC is
+> suspended. Often keeping the CODEC resumed in such a system would
+> incur a power impact that is unacceptable.
 >
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+> Allow the user to select whether a GPIO output should keep the
+> CODEC resumed, by adding a flag through the second cell of the GPIO
+> specifier in device tree.
+>
+> Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> ---
+>
+> Changes since v1:
+>  - Use the new gpiolib features to determine if the pin is
+>    persistent or not.
 
-Yes! Exactly like this, awesome job.
-
-Patch applied.
+Patch applied!
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
