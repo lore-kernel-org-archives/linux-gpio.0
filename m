@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpio: of: Reflect decoupling of open collector and
- active low/high
-Date: Mon, 29 May 2017 11:06:17 +0200
-Message-ID: <CACRpkdYJf=DhdBbSMbyMg8yW2KQCN2PG5uRPLWY=pvWUcWbhNw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: Add new flags to control sleep status of GPIOs
+Date: Mon, 29 May 2017 11:08:30 +0200
+Message-ID: <CACRpkdYAX+Rx-KCjFn_UMnxNF21eYgW_PcGgCEAZpiic7dkwmQ@mail.gmail.com>
 References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1495550852-3672-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:33662 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750942AbdE2JGT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 05:06:19 -0400
-Received: by mail-io0-f172.google.com with SMTP id p24so38065497ioi.0
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 02:06:18 -0700 (PDT)
-In-Reply-To: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:33250 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbdE2JIb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 05:08:31 -0400
+Received: by mail-io0-f177.google.com with SMTP id p24so38091575ioi.0
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 02:08:31 -0700 (PDT)
+In-Reply-To: <1495550852-3672-2-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
@@ -22,16 +22,15 @@ Cc: Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rut
 On Tue, May 23, 2017 at 4:47 PM, Charles Keepax
 <ckeepax@opensource.wolfsonmicro.com> wrote:
 
-> Commit 4c0facddb7d8 ("gpio: core: Decouple open drain/source flag with
-> active low/high") decoupled the open collector outputs from active
-> low/high but did not update the documentation.
->
-> Update the device tree documentation to correctly reflect this new
-> separation between the two concepts.
+> Add new flags to allow users to specify that they are not concerned with
+> the status of GPIOs whilst in a sleep/low power state.
 >
 > Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Awesome, patch applied.
+Yes! Exactly like this, awesome job.
+
+Patch applied.
 
 Yours,
 Linus Walleij
