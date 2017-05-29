@@ -1,146 +1,35 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH RfC v4 6/6] ARM(64): dts: meson: mark gpio controllers as
- interrupt controllers and update binding documentation
-Date: Sun, 28 May 2017 21:13:07 +0200
-Message-ID: <ff109063-e412-ed2d-0ccc-d17012d07f45@gmail.com>
-References: <49ab677f-3165-d6f5-75f5-a963879e8ecf@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Martin Schiller <ms@dev.tdt.de>
+Subject: [PATCH] pinctrl: xway: fix copy/paste error in xrx200_grps
+Date: Mon, 29 May 2017 06:08:38 +0200
+Message-ID: <1496030918-3840-1-git-send-email-ms@dev.tdt.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35586 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750896AbdE1TNV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 28 May 2017 15:13:21 -0400
-In-Reply-To: <49ab677f-3165-d6f5-75f5-a963879e8ecf@gmail.com>
+Received: from ms.tdt.de ([195.243.126.94]:53502 "EHLO mail.dev.tdt.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750837AbdE2ERd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 29 May 2017 00:17:33 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linus.walleij@linaro.org, john@phrozen.org, Martin Schiller <ms@dev.tdt.de>
 
-Make the GPIO controllers act as interrupt controllers and
-update the related DT binding documentation.
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
 ---
- Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 4 ++++
- arch/arm/boot/dts/meson8.dtsi                               | 4 ++++
- arch/arm/boot/dts/meson8b.dtsi                              | 4 ++++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi                 | 4 ++++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                  | 4 ++++
- 5 files changed, 20 insertions(+)
+ drivers/pinctrl/pinctrl-xway.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-index 2392557e..49a8118a 100644
---- a/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt
-@@ -24,6 +24,8 @@ Required properties for sub-nodes are:
-    when it is missing the "pull" registers are used instead
-  - gpio-controller: identifies the node as a gpio controller
-  - #gpio-cells: must be 2
-+ - interrupt-controller: identifies the node as interrupt controller
-+ - #interrupt-cells: must be 2
- 
- === Other sub-nodes ===
- 
-@@ -62,6 +64,8 @@ pinctrl-bindings.txt
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-                };
- 
- 		nand {
-diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
-index b4c4175d..a645257b 100644
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -106,6 +106,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 120 16>;
- 		};
- 
-@@ -149,6 +151,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_cbus 0 0 120>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index 1bce64a6..49233917 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -99,6 +99,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 130 16>;
- 		};
- 
-@@ -174,6 +176,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_cbus 0 0 130>;
- 		};
- 	};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 6f8b3011..a771dae8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -111,6 +111,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 0 14>;
- 		};
- 
-@@ -356,6 +358,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_periphs 0 14 120>;
- 		};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 3efad5f0..16b584f5 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -80,6 +80,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 0 14>;
- 		};
- 
-@@ -244,6 +246,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_periphs 0 14 101>;
- 		};
- 
+diff --git a/drivers/pinctrl/pinctrl-xway.c b/drivers/pinctrl/pinctrl-xway.c
+index d4167e2..f9e98a7 100644
+--- a/drivers/pinctrl/pinctrl-xway.c
++++ b/drivers/pinctrl/pinctrl-xway.c
+@@ -1028,7 +1028,7 @@ static const struct ltq_pin_group xrx200_grps[] = {
+ 	GRP_MUX("spi_cs5", SPI, xrx200_pins_spi_cs5),
+ 	GRP_MUX("spi_cs6", SPI, xrx200_pins_spi_cs6),
+ 	GRP_MUX("usif uart_rx", USIF, xrx200_pins_usif_uart_rx),
+-	GRP_MUX("usif uart_rx", USIF, xrx200_pins_usif_uart_tx),
++	GRP_MUX("usif uart_tx", USIF, xrx200_pins_usif_uart_tx),
+ 	GRP_MUX("usif uart_rts", USIF, xrx200_pins_usif_uart_rts),
+ 	GRP_MUX("usif uart_cts", USIF, xrx200_pins_usif_uart_cts),
+ 	GRP_MUX("usif uart_dtr", USIF, xrx200_pins_usif_uart_dtr),
 -- 
-2.13.0
-
+2.1.4
 
