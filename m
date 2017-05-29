@@ -1,53 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] gpio/pinctrl: ingenic: depend on OF
-Date: Mon, 29 May 2017 13:42:11 +0200
-Message-ID: <20170529114211.8683-1-linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
+Date: Mon, 29 May 2017 13:55:57 +0200
+Message-ID: <CACRpkdbkEnLpZtLKz+x6FLQZTdsyxKsFexFa_UQwNxgZJGDExQ@mail.gmail.com>
+References: <alpine.DEB.2.20.1705232307330.2409@nanos>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:33473 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdE2LmS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:42:18 -0400
-Received: by mail-lf0-f45.google.com with SMTP id m18so33424368lfj.0
-        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 04:42:17 -0700 (PDT)
+Received: from mail-it0-f50.google.com ([209.85.214.50]:36131 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbdE2Lz7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 29 May 2017 07:55:59 -0400
+Received: by mail-it0-f50.google.com with SMTP id o5so25791110ith.1
+        for <linux-gpio@vger.kernel.org>; Mon, 29 May 2017 04:55:59 -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.20.1705232307330.2409@nanos>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, Ken Xue <Ken.Xue@amd.com>
 
-Fix compile errors due to missing OF.
+On Tue, May 23, 2017 at 11:23 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Cc: Paul Cercueil <paul@crapouillou.net>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig    | 1 +
- drivers/pinctrl/Kconfig | 1 +
- 2 files changed, 2 insertions(+)
+> The AMD pinctrl driver uses a chained interrupt to demultiplex the GPIO
+> interrupts. Kevin Vandeventer reported, that his new AMD Ryzen locks up
+> hard on boot when the AMD pinctrl driver is initialized. The reason is an
+> interrupt storm. It's not clear whether that's caused by hardware or
+> firmware or both.
+>
+> Using chained interrupts on X86 is a dangerous endavour. If a system is
+> misconfigured or the hardware buggy there is no safety net to catch an
+> interrupt storm.
+>
+> Convert the driver to use a regular interrupt for the demultiplex
+> handler. This allows the interrupt storm detector to catch the malfunction
+> and lets the system boot up.
+>
+> This should be backported to stable because it's likely that more users run
+> into this problem as the AMD Ryzen machines are spreading.
+>
+> Reported-by: Kevin Vandeventer
+> Link: https://bugzilla.suse.com/show_bug.cgi?id=1034261
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 64bc995df191..395c85df48fd 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -244,6 +244,7 @@ config GPIO_ICH
- 
- config GPIO_INGENIC
- 	tristate "Ingenic JZ47xx SoCs GPIO support"
-+	depends on OF
- 	depends on MACH_INGENIC || COMPILE_TEST
- 	select GPIOLIB_IRQCHIP
- 	help
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index abc1cef7ad96..7ae04a97e530 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -312,6 +312,7 @@ config PINCTRL_ZYNQ
- config PINCTRL_INGENIC
- 	bool "Pinctrl driver for the Ingenic JZ47xx SoCs"
- 	default y
-+	depends on OF
- 	depends on MACH_INGENIC || COMPILE_TEST
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
--- 
-2.9.4
+Patch applied for fixes.
 
+Hm, I wonder if there is a bunch of other x86 drivers that should just
+request the IRQ?
+
+Yours,
+Linus Walleij
