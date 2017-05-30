@@ -1,60 +1,35 @@
-From: "Han, Nandor (GE Healthcare)" <nandor.han@ge.com>
-Subject: RE: [PATCH] gpio: xra1403: select REGMAP_SPI
-Date: Tue, 30 May 2017 11:48:39 +0000
-Message-ID: <AM5P101MB0226C24A1E490246EC77B064E6F00@AM5P101MB0226.NAMP101.PROD.OUTLOOK.COM>
-References: <20170530111332.3829080-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:59128 "EHLO
-        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751220AbdE3LtA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 30 May 2017 07:49:00 -0400
-In-Reply-To: <20170530111332.3829080-1-arnd@arndb.de>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+From: Richard Genoud <richard.genoud@gmail.com>
+Subject: [PATCH 1/2] gpio: mvebu: fix blink counter register selection
+Date: Tue, 30 May 2017 14:28:47 +0200
+Message-ID: <20170530122848.2803-1-richard.genoud@gmail.com>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Richard Genoud <richard.genoud@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+The blink counter A was always selected because 0 was forced in the
+blink select counter register.
+The variable 'set' was obviously there to be used as the register value,
+selecting the B counter when id==1 and A counter when id==0.
 
+Tested on clearfog-pro (Marvell 88F6828)
 
-> -----Original Message-----
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: 30 May 2017 14:13
-> To: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Han, Nandor (GE Healthcare) <nandor.han@ge.com>; Arnd Bergmann <arnd@arndb.de>; linux-gpio@vger.kernel.org;
-> linux-kernel@vger.kernel.org
-> Subject: EXT: [PATCH] gpio: xra1403: select REGMAP_SPI
-> 
-> Without the regmap code, we get a link error:
-> 
-> drivers/gpio/built-in.o: In function `xra1403_probe':
-> (.text+0x132e0): undefined reference to `__devm_regmap_init_spi'
-> 
-> Fixes: 5704520d7880 ("gpio: xra1403: Add EXAR XRA1403 SPI GPIO expander driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+---
+ drivers/gpio/gpio-mvebu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by:  Nandor Han <nandor.han@ge.com>
-
-> ---
->  drivers/gpio/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 66d1f353ca73..238fc231081a 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1241,6 +1241,7 @@ config GPIO_PISOSR
-> 
->  config GPIO_XRA1403
->  	tristate "EXAR XRA1403 16-bit GPIO expander"
-> +	select REGMAP_SPI
->  	help
->  	  GPIO driver for EXAR XRA1403 16-bit SPI-based GPIO expander.
-> 
-> --
-> 2.9.0
-
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 19a92efabbef..cdef2c78cb3b 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -747,7 +747,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 		set = U32_MAX;
+ 	else
+ 		return -EINVAL;
+-	writel_relaxed(0, mvebu_gpioreg_blink_counter_select(mvchip));
++	writel_relaxed(set, mvebu_gpioreg_blink_counter_select(mvchip));
+ 
+ 	mvpwm = devm_kzalloc(dev, sizeof(struct mvebu_pwm), GFP_KERNEL);
+ 	if (!mvpwm)
