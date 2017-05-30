@@ -1,88 +1,54 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 1/2] gpio: mvebu: fix blink counter register selection
-Date: Tue, 30 May 2017 15:06:13 +0200
-Message-ID: <8737bmv6ii.fsf@free-electrons.com>
-References: <20170530122848.2803-1-richard.genoud@gmail.com>
-        <877f0yv6qa.fsf@free-electrons.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH][V2] gpiolib: remove unused variable 'i'
+Date: Tue, 30 May 2017 16:12:27 +0300
+Message-ID: <CAHp75Vf2NuqPOGak4az41L3LHR0F2Mcerw4b-1p5gNLyLxctZA@mail.gmail.com>
+References: <20170530110206.785-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <877f0yv6qa.fsf@free-electrons.com> (Gregory CLEMENT's message of
-        "Tue, 30 May 2017 15:01:33 +0200")
-Sender: linux-pwm-owner@vger.kernel.org
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, Russell King <linux@armlinux.org.uk>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:33953 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbdE3NM2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 09:12:28 -0400
+In-Reply-To: <20170530110206.785-1-colin.king@canonical.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi again,
- 
- On mar., mai 30 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+On Tue, May 30, 2017 at 2:02 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Fixes smatch warning:unused variable 'i' [-Wunused-variable]
 
-> Hi Richard,
->  
->  On mar., mai 30 2017, Richard Genoud <richard.genoud@gmail.com> wrote:
->
->> The blink counter A was always selected because 0 was forced in the
->> blink select counter register.
->> The variable 'set' was obviously there to be used as the register value,
->> selecting the B counter when id==1 and A counter when id==0.
->>
->> Tested on clearfog-pro (Marvell 88F6828)
->>
->> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
->
-> Looks good for me:
->
-> Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
->
-> I thinks this one should go to v4.12-rc as it is a fix.
->
-> As I modified the same part of the code in my series, I think I will
-> have to rebase my series on top of this patch as soon as Linus Walleij
-> will have accepted it.
+Arnd was faster :)
 
-I think we could also add:
-Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
-
-Gregory
+https://lkml.org/lkml/2017/5/30/224
 
 >
-> Thanks,
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpio/gpiolib.c                   | 2 --
+>  sound/soc/generic/audio-graph-scu-card.c | 2 +-
+>  2 files changed, 1 insertion(+), 3 deletions(-)
 >
-> Gregory
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index be8097097326..62ffb4e293d2 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1471,8 +1471,6 @@ static struct gpio_chip *find_chip_by_name(const char *name)
+>
+>  static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
+>  {
+> -       int i;
+> -
+>         if (!gpiochip->irq_need_valid_mask)
+>                 return 0;
 >
 >
->> ---
->>  drivers/gpio/gpio-mvebu.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
->> index 19a92efabbef..cdef2c78cb3b 100644
->> --- a/drivers/gpio/gpio-mvebu.c
->> +++ b/drivers/gpio/gpio-mvebu.c
->> @@ -747,7 +747,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
->>  		set = U32_MAX;
->>  	else
->>  		return -EINVAL;
->> -	writel_relaxed(0, mvebu_gpioreg_blink_counter_select(mvchip));
->> +	writel_relaxed(set, mvebu_gpioreg_blink_counter_select(mvchip));
->>  
->>  	mvpwm = devm_kzalloc(dev, sizeof(struct mvebu_pwm), GFP_KERNEL);
->>  	if (!mvpwm)
->
-> -- 
-> Gregory Clement, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+With Best Regards,
+Andy Shevchenko
