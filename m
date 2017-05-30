@@ -1,62 +1,44 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Date: Tue, 30 May 2017 14:12:25 +0000
-Message-ID: <SG2PR06MB1165939E9F77006316ACECE68AF00@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <SG2PR06MB11658EC3A3A80C57E6F539AC8A130@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAHp75VeLtOuty=iaxuCaH43rnBZDTT03iH7JyjDJBQhTD-EjzA@mail.gmail.com>
- <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
- <20170508160120.GB25206@w540>
- <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540>
- <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
- <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
- <20170523183735.GC13664@w540>
- <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
- <20170529104229.GB21347@w540>
+From: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH] pinctrl: stm32: Fix bad function call
+Date: Tue, 30 May 2017 16:43:04 +0200
+Message-ID: <1496155384-30711-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170529104229.GB21347@w540>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Dong Aisheng <dongas86@gmail.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, dan.carpenter@oracle.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGVsbG8gSmFjb3BvIGFuZCBMaW51cywNCg0KT24gTW9uZGF5LCBNYXkgMjksIDIwMTcsIGptb25k
-aSB3cm90ZToNCj4gPiA+IFdlIGNhbiBoYW5kbGUgJ2JpLWRpcmVjdGlvbmFsJyBwaW5zIHdpdGgg
-c3RhdGljIHRhYmxlcyBpbiBvdXIgcGluDQo+ID4gPiBjb250cm9sbGVyIGRyaXZlciBhbmQgbm90
-IGhhdmUgaXQgYW55d2hlcmUgaW4gRFQuDQo+ID4NCj4gPiBUaGlzIHNvdW5kcyBsaWtlIGEgdmlh
-YmxlIGFwcHJvYWNoLg0KPiA+DQo+ID4gSSBqdXN0IHdhbnQgdG8ga25vdyBpZiAib3V0cHV0LWVu
-YWJsZSIgaXMgdGhlIHJpZ2h0IG5hbWU/DQo+ID4gIm91dHB1dC1idWZmZXItZW5hYmxlIj8NCj4g
-DQo+IEdyZWF0ISBUaGFua3MhDQo+IA0KPiBPbiBuYW1pbmc6IGlmIHdlIG5lZWQgIm91dHB1dC1i
-dWZmZXItZW5hYmxlIiBzaG91bGQgd2UgYWRkDQo+ICJpbnB1dC1idWZmZXItZW5hYmxlIiBhcyB3
-ZWxsPw0KPiANCj4gQ3VycmVudGx5IHdlIGFyZSB1c2luZyAiaW5wdXQtZW5hYmxlIiB0byBwYWly
-IHdpdGggIm91dHB1dC1lbmFibGUiLA0KPiBidXQgYXMgeW91IHNhaWQsIGp1c3QgIm91dHB1dC1l
-bmFibGUiIHdoZW4gIm91dHB1dC1oaWdoIiBhbmQNCj4gIm91dHB1dC1sb3ciIGFyZSB0aGVyZSBh
-bHJlYWR5IHNlZW1zIGEgYml0IGNvbmZ1c2luZy4NCj4gQXQgdGhlIHNhbWUgdGltZSAiaW5wdXQt
-YnVmZmVyLWVuYWJsZSIgc2VlbXMgdG8gYWN0dWFsbHkgYmUganVzdA0KPiBlbGVjdHJpY2FsbHkg
-ZXF1aXZhbGVudCB0byAiaW5wdXQtZW5hYmxlIiwgc28gYWRkaW5nIGl0IGlzIGEgYml0IG9mIGEN
-Cj4gd2FzdGUgYXMgd2VsbC4NCg0KSGVyZSBpcyB3aGF0IEkgdGhpbms6DQoNCg0KSW4gdGhlIGNh
-c2Ugb2YgdGhpcyBkcml2ZXIsIGFmdGVyIHdlIHJlbW92ZSB0aGUgJ2JpLWRpcmVjdGlvbmFsJw0K
-cHJvcGVydGllcyBhbmQgaGlkZSB0aGUgb3RoZXIgb2RkLWJhbGwgcGluIGNvbmZpZ3VyYXRpb25z
-IGluIGFuIGludGVybmFsDQp0YWJsZSwgd2UgYXJlIGxlZnQgd2l0aCB0aGUgTVRVMiB0aW1lciBw
-aW5zIHRoYXQgY2FuIGJlIGVpdGhlciBpbnB1dCBvcg0Kb3V0cHV0IGRlcGVuZGluZyBvbiB3aGF0
-IHlvdSB3YW50IHRvIGRvIHdpdGggdGhlbS4NCg0KICogSWYgeW91IHdhbnQgdG8gdXNlIGEgTVRV
-MiBjaGFubmVsIGFzIGEgUFdNLCB5b3Ugc2V0IHRoZSBwaW4gYXMgYW4NCiAgIG91dHB1dC4NCiAq
-IElmIHlvdSB3YW50IHRvIHVzZSBhIE1UVTIgY2hhbm5lbCBhcyBhIGlucHV0IGNhcHR1cmUsIHlv
-dSBzZXQgdGhlDQogICBwaW4gYXMgYW4gaW5wdXQuDQoNClRoZXkgYXJlIHNpbXBseSAiZGlyZWN0
-aW9uLWlucHV0IiBhbmQgImRpcmVjdGlvbi1vdXRwdXQiIHByb3BlcnRpZXMgdGhhdA0KZG9uJ3Qg
-cmVhbGx5IG5lZWQgdG8gdGFsayBhYm91dCAiYnVmZmVycyIuDQoNCg0KQnV0LCBpbnN0ZWFkIG9m
-IG1ha2luZyBhbnkgbmV3IHByb3BlcnRpZXMsIGZvciB0aGUgUmVuZXNhcyBkcml2ZXIsIGxldCdz
-DQpqdXN0IHN0aWNrIHdpdGggd2hhdCBhbHJlYWR5IGV4aXN0cyB0b2RheTogDQogKiBJZiB5b3Ug
-d2FudCBhIE1UVTIgY2hhbm5lbCBhcyBhIFBXTTogc2VsZWN0ICJvdXRwdXQtbG93Ig0KICogSWYg
-eW91IHdhbnQgYSBNVFUyIGNoYW5uZWwgYXMgYSBpbnB1dCBjYXB0dXJlOiBzZWxlY3QgImlucHV0
-LWVuYWJsZSINCg0KDQpTaWRlIE5vdGU6IFlvdSBjYW4gYWxzbyB1c2Ugb3V0cHV0LWhpZ2ggaW4g
-YWRkaXRpb24gdG8gb3V0cHV0LWxvdw0KICBiZWNhdXNlIGl0IGRvZXNuJ3QgbWF0dGVyICh0aGUg
-ZHJpdmVyIGNhbid0IHNldCB0aGUgcGluIGxldmVsIGFueXdheQ0KICBiZWNhdXNlIGFzIHNvb24g
-YXMgeW91IGFzc2lnbiB0aGUgcGluIHRvIE1UVTIsIHRoZSBNVFUyIGNvbnRyb2xzIHRoZQ0KICBw
-aW4sIG5vdCB0aGUgUEZDKS4gU28gdGhlIFJlbmVzYXMgZHJpdmVyIGNhbiBjaGVjayBmb3IgYm90
-aC4NCg0KDQoNCkNocmlzDQo=
+In stm32_pconf_parse_conf function, stm32_pmx_gpio_set_direction is
+called with wrong parameter value. Indeed, using NULL value for range
+will raise an oops.
+
+Fixes: aceb16dc2da5 ("pinctrl: Add STM32 MCUs support")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
+
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index d3c5f5d..222b668 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -798,7 +798,7 @@ static int stm32_pconf_parse_conf(struct pinctrl_dev *pctldev,
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		__stm32_gpio_set(bank, offset, arg);
+-		ret = stm32_pmx_gpio_set_direction(pctldev, NULL, pin, false);
++		ret = stm32_pmx_gpio_set_direction(pctldev, range, pin, false);
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+-- 
+1.9.1
