@@ -1,24 +1,34 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/8] mfd: intel_soc_pmic_bxtwc: fix TMU interrupt index
-Date: Tue, 30 May 2017 09:54:23 +0100
-Message-ID: <20170530085423.bcqy4f3omrmf4rxg@dell>
-References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, andy@infradead.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/7] gpio: mockup: updates for 4.13
+Date: Tue, 30 May 2017 10:58:33 +0200
+Message-ID: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-For future reference, when submitting a patch-set, you really should
-provide a cover letter ([PATCH 00/XX]).
+This series contains a couple bug fixes and other minor updates for
+the GPIO testing module.
+
+v1 -> v2:
+- omit applied patches
+- use kstrtoint_from_user() for debugfs input sanitization
+- add a patch improving the code in gpio_mockup_event_write()
+- bail out from gpio_mockup_event_write() on invalid input even when
+  nobody is listening for events
+
+Bartosz Golaszewski (7):
+  gpio: mockup: improve the debugfs input sanitization
+  gpio: mockup: tweak gpio_mockup_event_write()
+  gpio: mockup: refuse to accept an odd number of GPIO ranges
+  gpio: mockup: improve readability
+  gpio: mockup: don't return magic numbers from probe()
+  gpio: mockup: improve the error message
+  gpio: mockup: add myself as author
+
+ drivers/gpio/gpio-mockup.c | 61 ++++++++++++++++++++++++----------------------
+ 1 file changed, 32 insertions(+), 29 deletions(-)
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.9.3
