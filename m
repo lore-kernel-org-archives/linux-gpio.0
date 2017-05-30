@@ -1,33 +1,82 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v2 6/7] gpio: mockup: improve the error message
-Date: Tue, 30 May 2017 21:59:05 +0300
-Message-ID: <CAHp75VdiCsE2nHXHjvYfeG43oVCF0i8x8-hk=uTTLBOdH91U6Q@mail.gmail.com>
-References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl> <1496134720-5363-7-git-send-email-brgl@bgdev.pl>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v5 0/9] pinctrl: meson: add support for GPIO IRQs
+Date: Tue, 30 May 2017 22:03:18 +0200
+Message-ID: <66c57893-0a9e-4f8c-a017-ab346abbdfd0@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:36434 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbdE3S7G (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 14:59:06 -0400
-In-Reply-To: <1496134720-5363-7-git-send-email-brgl@bgdev.pl>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35496 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750815AbdE3UDe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 16:03:34 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> Indicate the error number and make the message a bit more elaborate.
+This patch series is partially based on a series Jerome Brunet
+submitted about half a year ago. Due to open questions this series never
+made it to mainline, see https://patchwork.kernel.org/patch/9384431/
 
-> +                       dev_err(dev,
-> +                               "adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
-> +                               ret, base, base < 0 ? ngpio : base + ngpio);
+This new attempt uses GPIOLIB_IRQCHIP resulting in less needed code.
+Included is also support for using two parent IRQs in case
+of IRQ_TYPE_EDGE_BOTH, like in the vendor driver.
 
-You may consider to use
-'gpio_mockup_add' instead of 'adding gpiochip'. The latter points the
-reader first to gpiochip_add family of functions while you run a
-wrapper on top of it.
+The series was successfully tested on a Odroid-C2, e.g. with removing
+polling for SD card insertion/removal from the mmc driver.
+
+Changes in v2:
+- separate the GPIO IRQ controller from the pinctrl driver
+- minor improvements to the GPIO IRQ controller
+
+Changes in v3:
+- replace the request_irq based allocation of parent irq's with
+  chained irq handling, this also fixes the spurious interrupts issue
+  and allows to remove the workaround code.
+  Last but not least the parent irq's are no longer visible in
+  /proc/interrupts.
+- minor improvements to the GPIO IRQ controller
+
+Changes in v4:
+- separate the gpio-independent interrupt controller part and make
+  it a driver under drivers/irqchip
+
+Changes in v5:
+- smaller changes based on review comments
+- split DT patches per ARM / ARM64
+
+Heiner Kallweit (7):
+  pinctrl: meson: add interrupts to pinctrl data
+  irqchip: add Amlogic Meson GPIO irqchip driver
+  dt-bindings: add Amlogic Meson GPIO interrupt-controller DT binding documentation
+  ARM: dts: meson: add GPIO interrupt-controller support
+  ARM64: dts: meson: add GPIO interrupt-controller support
+  pinctrl: meson: add support for GPIO interrupts
+  pinctrl: meson: update DT binding documentation
+  ARM: dts: meson: mark gpio controllers as interrupt controllers
+  ARM64: dts: meson: mark gpio controllers as interrupt controllers
+
+.../amlogic,meson-gpio-intc.txt                    |  26 ++
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   4 +
+ arch/arm/boot/dts/meson8.dtsi                      |  12 +
+ arch/arm/boot/dts/meson8b.dtsi                     |  12 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |   4 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |   4 +
+ drivers/irqchip/Kconfig                            |   5 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-meson-gpio.c                   | 296 +++++++++++++++++++++
+ drivers/pinctrl/Kconfig                            |   1 +
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |  22 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c          |  20 +-
+ drivers/pinctrl/meson/pinctrl-meson.c              | 170 +++++++++++-
+ drivers/pinctrl/meson/pinctrl-meson.h              |  15 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c             |  20 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c            |  32 ++-
+ 17 files changed, 605 insertions(+), 47 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+ create mode 100644 drivers/irqchip/irq-meson-gpio.c
 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.0
