@@ -1,86 +1,68 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 4/7] gpio: mockup: improve readability
-Date: Tue, 30 May 2017 10:58:37 +0200
-Message-ID: <1496134720-5363-5-git-send-email-brgl@bgdev.pl>
+Subject: [PATCH v2 2/7] gpio: mockup: tweak gpio_mockup_event_write()
+Date: Tue, 30 May 2017 10:58:35 +0200
+Message-ID: <1496134720-5363-3-git-send-email-brgl@bgdev.pl>
 References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:34578 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751333AbdE3I6w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 04:58:52 -0400
-Received: by mail-wm0-f46.google.com with SMTP id 123so25863065wmg.1
-        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2017 01:58:51 -0700 (PDT)
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:35149 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbdE3I6t (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 04:58:49 -0400
+Received: by mail-wm0-f52.google.com with SMTP id b84so83131683wmh.0
+        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2017 01:58:49 -0700 (PDT)
 In-Reply-To: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 
-We currently shift bits here and there without actually explaining
-what we're doing. Add some helper variables with names indicating
-their purpose to improve the code readability.
+Invert the logic of the irq_enabled check and only access the private
+data after the input is sanitized.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-mockup.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index d95d37a..0cb6cba 100644
+index da76267..d78e8e0 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -27,6 +27,11 @@
+@@ -210,24 +210,23 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 	struct gpio_chip *gc;
+ 	int rv, val;
  
- #define GPIO_MOCKUP_NAME	"gpio-mockup"
- #define	GPIO_MOCKUP_MAX_GC	10
-+/*
-+ * We're storing two values per chip: the GPIO base and the number
-+ * of GPIO lines.
-+ */
-+#define GPIO_MOCKUP_MAX_RANGES	(GPIO_MOCKUP_MAX_GC * 2)
- 
- enum {
- 	GPIO_MOCKUP_DIR_OUT = 0,
-@@ -62,7 +67,7 @@ struct gpio_mockup_dbgfs_private {
- 	int offset;
- };
- 
--static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_GC << 1];
-+static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
- static int gpio_mockup_params_nr;
- module_param_array(gpio_mockup_ranges, int, &gpio_mockup_params_nr, 0400);
- 
-@@ -329,23 +334,24 @@ static int gpio_mockup_add(struct device *dev,
- 
- static int gpio_mockup_probe(struct platform_device *pdev)
- {
--	struct gpio_mockup_chip *chips;
-+	int ret, i, base, ngpio, num_chips;
- 	struct device *dev = &pdev->dev;
--	int ret, i, base, ngpio;
-+	struct gpio_mockup_chip *chips;
- 	char *chip_name;
- 
- 	if (gpio_mockup_params_nr < 2 || (gpio_mockup_params_nr % 2))
+-	sfile = file->private_data;
+-	priv = sfile->private;
+-	desc = priv->desc;
+-	chip = priv->chip;
+-	gc = &chip->gc;
+-
+ 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
+ 	if (rv)
+ 		return rv;
+ 	if (val != 0 && val != 1)
  		return -EINVAL;
  
--	chips = devm_kzalloc(dev,
--			     sizeof(*chips) * (gpio_mockup_params_nr >> 1),
--			     GFP_KERNEL);
-+	/* Each chip is described by two values. */
-+	num_chips = gpio_mockup_params_nr / 2;
-+
-+	chips = devm_kzalloc(dev, sizeof(*chips) * num_chips, GFP_KERNEL);
- 	if (!chips)
- 		return -ENOMEM;
+-	if (!chip->lines[priv->offset].irq_enabled)
+-		return size;
++	sfile = file->private_data;
++	priv = sfile->private;
++	desc = priv->desc;
++	chip = priv->chip;
++	gc = &chip->gc;
  
- 	platform_set_drvdata(pdev, chips);
+-	gpiod_set_value_cansleep(desc, val);
+-	priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
+-	irq_work_queue(&priv->chip->irq_ctx.work);
++	if (chip->lines[priv->offset].irq_enabled) {
++		gpiod_set_value_cansleep(desc, val);
++		priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
++		irq_work_queue(&priv->chip->irq_ctx.work);
++	}
  
--	for (i = 0; i < gpio_mockup_params_nr >> 1; i++) {
-+	for (i = 0; i < num_chips; i++) {
- 		base = gpio_mockup_ranges[i * 2];
- 
- 		if (base == -1)
+ 	return size;
+ }
 -- 
 2.9.3
 
