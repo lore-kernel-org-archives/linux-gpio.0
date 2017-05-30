@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 7/7] gpio: mockup: add myself as author
-Date: Tue, 30 May 2017 10:58:40 +0200
-Message-ID: <1496134720-5363-8-git-send-email-brgl@bgdev.pl>
+Subject: [PATCH v2 6/7] gpio: mockup: improve the error message
+Date: Tue, 30 May 2017 10:58:39 +0200
+Message-ID: <1496134720-5363-7-git-send-email-brgl@bgdev.pl>
 References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
@@ -10,31 +10,28 @@ To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.co
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-Just taking credit for the recent changes and new features. :)
+Indicate the error number and make the message a bit more elaborate.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-mockup.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 2f4fe41..536a229 100644
+index ab2d38e..2f4fe41 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -3,6 +3,7 @@
-  *
-  * Copyright (C) 2014  Kamlakant Patel <kamlakant.patel@broadcom.com>
-  * Copyright (C) 2015-2016  Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-+ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-  *
-  * This program is free software; you can redistribute  it and/or modify it
-  * under  the terms of  the GNU General  Public License as published by the
-@@ -432,5 +433,6 @@ module_exit(mock_device_exit);
+@@ -373,8 +373,9 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 		}
  
- MODULE_AUTHOR("Kamlakant Patel <kamlakant.patel@broadcom.com>");
- MODULE_AUTHOR("Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>");
-+MODULE_AUTHOR("Bartosz Golaszewski <brgl@bgdev.pl>");
- MODULE_DESCRIPTION("GPIO Testing driver");
- MODULE_LICENSE("GPL v2");
+ 		if (ret) {
+-			dev_err(dev, "gpio<%d..%d> add failed\n",
+-				base, base < 0 ? ngpio : base + ngpio);
++			dev_err(dev,
++				"adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
++				ret, base, base < 0 ? ngpio : base + ngpio);
+ 
+ 			return ret;
+ 		}
 -- 
 2.9.3
