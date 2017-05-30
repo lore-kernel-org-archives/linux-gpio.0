@@ -1,30 +1,68 @@
-From: sathyanarayanan kuppuswamy
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: Re: [PATCH v2 1/8] mfd: intel_soc_pmic_bxtwc: fix TMU interrupt index
-Date: Tue, 30 May 2017 11:00:58 -0700
-Message-ID: <dfe2b88c-2470-b014-563d-2c82efc7a216@linux.intel.com>
-References: <0e4d82ca9cdc41c9d2a8b45258cd72659b4c2063.1492210847.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20170530085423.bcqy4f3omrmf4rxg@dell>
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v4 2/9] gpio-exar/8250-exar: Do not even instantiate a
+ GPIO device for Commtech cards
+Date: Tue, 30 May 2017 21:33:35 +0300
+Message-ID: <CAHp75Vc0t5t8O5cPaxX_oQJQKsN3OWNFfqnA_K3GW4qpfY+N5Q@mail.gmail.com>
+References: <cover.1496127684.git.jan.kiszka@siemens.com> <f7e7da1ae81aab7f53faa32260d4ee0f930048fe.1496127684.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20170530085423.bcqy4f3omrmf4rxg@dell>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, andy@infradead.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35522 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750761AbdE3Sdg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 14:33:36 -0400
+In-Reply-To: <f7e7da1ae81aab7f53faa32260d4ee0f930048fe.1496127684.git.jan.kiszka@siemens.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-Thanks Lee.
+On Tue, May 30, 2017 at 10:01 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> Commtech adapters need the MPIOs for internal purposes, and the
+> gpio-exar driver already refused to pick them up. But there is actually
+> no point in even creating the underlying platform device.
 
+It still feels that partially you may do stuff here, like
+renaming to
+__xr17v35x_register_gpio()
+and creating
+xr17v35x_register_gpio() wrapper.
 
-On 05/30/2017 01:54 AM, Lee Jones wrote:
-> For future reference, when submitting a patch-set, you really should
-> provide a cover letter ([PATCH 00/XX]).
-Will do.
+> diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+> index 081076771217..006a9a67c2a4 100644
+> --- a/drivers/gpio/gpio-exar.c
+> +++ b/drivers/gpio/gpio-exar.c
+> @@ -124,9 +124,6 @@ static int gpio_exar_probe(struct platform_device *pdev)
+>         void __iomem *p;
+>         int index, ret;
+>
+> -       if (pcidev->vendor != PCI_VENDOR_ID_EXAR)
+> -               return -ENODEV;
+> -
+>         /*
+>          * Map the pci device to get the register addresses.
+>          * We will need to read and write those registers to control
+> diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+> index 8984e8b2d524..c29c7e675890 100644
+> --- a/drivers/tty/serial/8250/8250_exar.c
+> +++ b/drivers/tty/serial/8250/8250_exar.c
+> @@ -245,7 +245,9 @@ pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+>                 /* Setup Multipurpose Input/Output pins. */
+>                 setup_gpio(pcidev, p);
+>
+> -               port->port.private_data = xr17v35x_register_gpio(pcidev);
+> +               if (pcidev->vendor == PCI_VENDOR_ID_EXAR)
+> +                       port->port.private_data =
+> +                               xr17v35x_register_gpio(pcidev);
+>         }
+>
+>         return 0;
+> --
+> 2.12.3
 >
 
+
+
 -- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+With Best Regards,
+Andy Shevchenko
