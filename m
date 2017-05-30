@@ -1,54 +1,74 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH][V2] gpiolib: remove unused variable 'i'
-Date: Tue, 30 May 2017 16:12:27 +0300
-Message-ID: <CAHp75Vf2NuqPOGak4az41L3LHR0F2Mcerw4b-1p5gNLyLxctZA@mail.gmail.com>
-References: <20170530110206.785-1-colin.king@canonical.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 2/2] gpio: mvebu: fix gpio bank registration when pwm is used
+Date: Tue, 30 May 2017 15:16:59 +0200
+Message-ID: <87y3tetrg4.fsf@free-electrons.com>
+References: <20170530122848.2803-1-richard.genoud@gmail.com>
+        <20170530122848.2803-2-richard.genoud@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:33953 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750890AbdE3NM2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 09:12:28 -0400
-In-Reply-To: <20170530110206.785-1-colin.king@canonical.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:50731 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbdE3NRL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 09:17:11 -0400
+In-Reply-To: <20170530122848.2803-2-richard.genoud@gmail.com> (Richard
+        Genoud's message of "Tue, 30 May 2017 14:28:48 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ralph Sennhauser <ralph.sennhauser@gmail.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
 
-On Tue, May 30, 2017 at 2:02 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+Hi Richard,
+ 
+ On mar., mai 30 2017, Richard Genoud <richard.genoud@gmail.com> wrote:
+
+> If more than one gpio bank has the "pwm" property, only one will be
+> registered successfully, all the others will fail with:
+> mvebu-gpio: probe of f1018140.gpio failed with error -17
 >
-> Fixes smatch warning:unused variable 'i' [-Wunused-variable]
-
-Arnd was faster :)
-
-https://lkml.org/lkml/2017/5/30/224
-
+> That's because in alloc_pwms(), the chip->base (aka "int pwm"), was not
+> set (thus, ==0) ; and 0 is a meaningful start value in alloc_pwm().
+> What was intended is chip->base = -1.
+> Like that, the numbering will be done auto-magically
 >
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Tested on clearfog-pro (Marvell 88F6828)
+>
+> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
 > ---
->  drivers/gpio/gpiolib.c                   | 2 --
->  sound/soc/generic/audio-graph-scu-card.c | 2 +-
->  2 files changed, 1 insertion(+), 3 deletions(-)
+>  drivers/gpio/gpio-mvebu.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index be8097097326..62ffb4e293d2 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -1471,8 +1471,6 @@ static struct gpio_chip *find_chip_by_name(const char *name)
->
->  static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
->  {
-> -       int i;
-> -
->         if (!gpiochip->irq_need_valid_mask)
->                 return 0;
->
->
+> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+> index cdef2c78cb3b..4734923e11fd 100644
+> --- a/drivers/gpio/gpio-mvebu.c
+> +++ b/drivers/gpio/gpio-mvebu.c
+> @@ -768,6 +768,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+>  	mvpwm->chip.dev = dev;
+>  	mvpwm->chip.ops = &mvebu_pwm_ops;
+>  	mvpwm->chip.npwm = mvchip->chip.ngpio;
+> +	mvpwm->chip.base = -1;
 
+Why not using
+mvpwm->chip.base = id * MVEBU_MAX_GPIO_PER_BANK;
+as it is done in the mvebu_gpio_probe() function?
 
+I think that if you use base = -1, then the number start from (512 -
+number of pin already use). So starting from a low number for one
+compatible and a high number for an other compatible could be confusing.
+
+Besides that I agree that mvpwm->chip.base must be initialized and here
+again for adding mor context to this patch, we could add:
+
+Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
+
+Gregory
+
+>  
+>  	spin_lock_init(&mvpwm->lock);
+>  
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
