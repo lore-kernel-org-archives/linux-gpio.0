@@ -1,60 +1,61 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH v4 6/9] gpio: exar: Fix reading of directions and values
-Date: Tue, 30 May 2017 09:01:21 +0200
-Message-ID: <c0d05abf00776a7f868edf65021c3dcbdd6a3087.1496127684.git.jan.kiszka@siemens.com>
-References: <cover.1496127684.git.jan.kiszka@siemens.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1496127684.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1496127684.git.jan.kiszka@siemens.com>
-References: <cover.1496127684.git.jan.kiszka@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] mfd: arizona: Update GPIO binding for newly
+ supported specifiers
+Date: Tue, 30 May 2017 08:17:58 +0100
+Message-ID: <20170530071758.gqwu7jkg6akss2kf@dell>
+References: <1495550852-3672-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+ <1495550852-3672-5-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1495550852-3672-5-git-send-email-ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-First, the logic for translating a register bit to the return code of
-exar_get_direction and exar_get_value were wrong. And second, there was
-a flip regarding the register bank in exar_get_direction.
+On Tue, 23 May 2017, Charles Keepax wrote:
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/gpio-exar.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Link to the generic GPIO specifier bindings now that the second cell of
+> the binding has some support in the driver.
+> 
+> Signed-off-by: Charles Keepax <ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> ---
+> 
+> Changes since v1:
+>  - Now just points at the standard gpio binding stuff
+> 
+> Thanks,
+> Charles
+> 
+>  Documentation/devicetree/bindings/mfd/arizona.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index b29890b143ce..f3585a184f39 100644
---- a/drivers/gpio/gpio-exar.c
-+++ b/drivers/gpio/gpio-exar.c
-@@ -68,7 +68,7 @@ static int exar_get(struct gpio_chip *chip, unsigned int reg)
- 	value = readb(exar_gpio->regs + reg);
- 	mutex_unlock(&exar_gpio->lock);
- 
--	return !!value;
-+	return value;
- }
- 
- static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
-@@ -78,7 +78,7 @@ static int exar_get_direction(struct gpio_chip *chip, unsigned int offset)
- 	int val;
- 
- 	addr = bank ? EXAR_OFFSET_MPIOSEL_HI : EXAR_OFFSET_MPIOSEL_LO;
--	val = exar_get(chip, addr) >> (offset % 8);
-+	val = exar_get(chip, addr) & BIT(offset % 8);
- 
- 	return !!val;
- }
-@@ -89,8 +89,8 @@ static int exar_get_value(struct gpio_chip *chip, unsigned int offset)
- 	unsigned int addr;
- 	int val;
- 
--	addr = bank ? EXAR_OFFSET_MPIOLVL_LO : EXAR_OFFSET_MPIOLVL_HI;
--	val = exar_get(chip, addr) >> (offset % 8);
-+	addr = bank ? EXAR_OFFSET_MPIOLVL_HI : EXAR_OFFSET_MPIOLVL_LO;
-+	val = exar_get(chip, addr) & BIT(offset % 8);
- 
- 	return !!val;
- }
+Applied, thanks.
+
+> diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
+> index 8f2e282..b37bdde 100644
+> --- a/Documentation/devicetree/bindings/mfd/arizona.txt
+> +++ b/Documentation/devicetree/bindings/mfd/arizona.txt
+> @@ -30,7 +30,8 @@ Required properties:
+>  
+>    - gpio-controller : Indicates this device is a GPIO controller.
+>    - #gpio-cells : Must be 2. The first cell is the pin number and the
+> -    second cell is used to specify optional parameters (currently unused).
+> +    second cell is used to specify optional parameters, see ../gpio/gpio.txt
+> +    for details.
+>  
+>    - AVDD-supply, DBVDD1-supply, CPVDD-supply : Power supplies for the device,
+>      as covered in Documentation/devicetree/bindings/regulator/regulator.txt
+
 -- 
-2.12.3
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
