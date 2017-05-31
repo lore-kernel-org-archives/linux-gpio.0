@@ -1,110 +1,53 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio controllers on
- Armada 7K/8K
-Date: Wed, 31 May 2017 19:43:40 +0900
-Message-ID: <149622742055.34003.14963361587324682626@resonance>
-References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
- <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
- <CACRpkdY97DDcwec+J-4X1AT5a7Mbo4GnWUJmuAOYhNzOA8_HZQ@mail.gmail.com>
- <878tlnzps3.fsf@free-electrons.com>
- <CACRpkdbW3T5auXCMrqH_tTzcVseGbiV+y53fJ2xN5p-VbGz7rA@mail.gmail.com>
- <20170530222358.abta3srv5emz7wtp@rob-hp-laptop>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 1/7] gpio: mockup: improve the debugfs input sanitization
+Date: Wed, 31 May 2017 12:52:13 +0200
+Message-ID: <CAMRc=MeEFLyLzEeAy552mk+-CSSR6e_cu0kmpQEqEOF2_7zkSA@mail.gmail.com>
+References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
+ <1496134720-5363-2-git-send-email-brgl@bgdev.pl> <CAHp75VeJdqsXJ_ASTABijcj=-6BWkbAy8PofFyFTZ_1rtGVjQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:32939 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751058AbdEaKnv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2017 06:43:51 -0400
-Received: by mail-pg0-f49.google.com with SMTP id u187so6249494pgb.0
-        for <linux-gpio@vger.kernel.org>; Wed, 31 May 2017 03:43:51 -0700 (PDT)
-In-Reply-To: <20170530222358.abta3srv5emz7wtp@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VeJdqsXJ_ASTABijcj=-6BWkbAy8PofFyFTZ_1rtGVjQg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
-Quoting Rob Herring (2017-05-31 07:23:58)
-> On Mon, May 29, 2017 at 10:08:16AM +0200, Linus Walleij wrote:
-> > On Tue, May 23, 2017 at 3:06 PM, Gregory CLEMENT
-> > <gregory.clement@free-electrons.com> wrote:
-> > >  On mar., mai 23 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > =
+2017-05-30 20:52 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> We're currently only checking the first character of the input to the
+>> debugfs event files, so a string like '0sdfdsf' is valid and indicates
+>> a falling edge event.
+>>
+>> Be more strict and only allow '0', '1', '0\n' & '1\n'.
+>>
+>> While we're at it: move the sanitization code before the irq_enabled
+>> check so that we indicate an error on invalid input even if nobody is
+>> waiting for events.
+>
+>> -       int val;
+>> -       char buf;
+>> +       int rv, val;
+>
+>> +       rv = kstrtoint_from_user(usr_buf, size, 0, &val);
+>> +       if (rv)
+>> +               return rv;
+>
+>> +       if (val != 0 && val != 1)
+>
+> Wouldn't be easier to have
+>
+> u8 rv;
+>
+> ret = kstrtu8_from_user();
+> if (ret >= 2)
+>  return ...;
+>
+> ?
 
-> > >> Please rebase and resend the rest of the patches.
-> > >
-> > > Actually I was wrong with my assumption that there was no dependency.
-> > > For the binding documentation there is dependecy accross the series I
-> > > sent.
-> > >
-> > > This patch depends on "pinctrl: dt-bindings: add documentation for AP=
-806
-> > > pin controllers" [1] and "pinctrl: dt-bindings: add documentation for
-> > > CP110 pin controllers" [3] from the series "Add support for the pin
-> > > controllers on the Marvell Armada 7K/8K".
-> > >
-> > > As you are maintainer of both gpio and pinctrl subsystem it will be e=
-asy
-> > > to resolv.
-> > =
+kstrtu8_from_user() doesn't return the converted value, so you won't
+skip an if anyway and by using the int variant, we're avoiding a cast.
+I'd prefer it this way frankly.
 
-> > Please send all patches in one big series in that case, so I can apply
-> > them all to a branch and merge that branch into both trees.
-> > =
-
-> > > But these last patches depend also on "clk: mvebu: ap806: introduce a
-> > > new binding" [3] in the clock series "Improve ap806 clk support on
-> > > Marvell Armada 7K/8K" and on "clk: mvebu: cp110: introduce a new
-> > > binding" [4] in the clock series "Improve cp110 clk support on Marvell
-> > > Armada 7K/8K".
-> > =
-
-> > That sounds messy.
-> > =
-
-> > > So for these particular patches, either I rebase them on the v4.12-rc2
-> > > and there will be a small merge conflict during the merge window for
-> > > v4.13, or we can ask a stable branch with only these few patches (I am
-> > > adding the clock maintainer to this email).
-> > >
-> > > If we chose this last option I can split the clock patches to have pa=
-tch
-> > > modifying only the binding documentation.
-> > =
-
-> > I think you can make a patch just modifying the binding documentation
-> > and then apply that patch to *both* trees, just make sure the patch
-> > is *final* and not applied in different versions in clk and pinctrl.
-> =
-
-> I thought we try to avoid doing that.
-> =
-
-> > I think cross-tree branches for documentation clashes is too much
-> > bureaucracy.
-> =
-
-> I can just take all the doc patches separately. Or you can take the =
-
-> clock one too.
-
-Stephen and I have started making a -dt branch for each new clk driver
-which. This stable branch has only the dt bindings/headers in it (no
-driver code).
-
-I'll make such a branch for ap806 this week and everyone can merge that
-in as a dep.
-
-Regards,
-Mike
-
-> =
-
-> > Make sure your clock patch is finalized and preferably also applied
-> > to the clk tree then put it in the bottom of the patch set you send
-> > to me as well and I will proceed like above.
-> > =
-
-> > Yours,
-> > Linus Walleij
+Thanks,
+Bartosz
