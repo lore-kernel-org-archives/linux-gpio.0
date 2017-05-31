@@ -1,33 +1,50 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: stm32: Fix bad function call
-Date: Wed, 31 May 2017 02:27:17 +0200
-Message-ID: <CACRpkdbsZ3hh=7cdwhVg6r2d1xCRd1QHNAwOk-8JBURAUMP8jQ@mail.gmail.com>
-References: <1496155384-30711-1-git-send-email-alexandre.torgue@st.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO, Thermal and X86
+ due for the v4.13 merge window
+Date: Wed, 31 May 2017 13:38:26 +1000
+Message-ID: <20170531133826.3bee86a0@canb.auug.org.au>
+References: <20170523072615.r4widzjc6apwxpwb@dell>
+        <75e12563a835dc4f8e8dab26ecea46822262604b.1495559980.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        <20170530085306.s4hlijutbz7gp3ay@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1496155384-30711-1-git-send-email-alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
-Cc: Maxime Coquelin <mcoquelin.stm32-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <20170530085306.s4hlijutbz7gp3ay@dell>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: sathyanarayanan.kuppuswamy@linux.intel.com, gnurou@gmail.com, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, andy@infradead.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, sathyaosid@gmail.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, May 30, 2017 at 4:43 PM, Alexandre TORGUE
-<alexandre.torgue-qxv4g6HH51o@public.gmane.org> wrote:
+Hi all,
 
-> In stm32_pconf_parse_conf function, stm32_pmx_gpio_set_direction is
-> called with wrong parameter value. Indeed, using NULL value for range
-> will raise an oops.
+On Tue, 30 May 2017 09:53:06 +0100 Lee Jones <lee.jones@linaro.org> wrote:
 >
-> Fixes: aceb16dc2da5 ("pinctrl: Add STM32 MCUs support")
-> Reported-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue-qxv4g6HH51o@public.gmane.org>
+> Dear fellow Maintainers,
+> 
+> Enjoy!
+> 
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> 
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-gpio-thermal-x86-v4.13
+> 
+> for you to fetch changes up to 6aa60f67c11c10540e43bbe5a6377f7a0231501e:
+> 
+>   platform: x86: intel_bxtwc_tmu: remove first level irq unmask (2017-05-30 09:34:08 +0100)
+> 
+> ----------------------------------------------------------------
+> Immutable branch between MFD, GPIO, Thermal and X86 due for the v4.13 merge window
+> 
+> ----------------------------------------------------------------
+> Kuppuswamy Sathyanarayanan (8):
+>       mfd: intel_soc_pmic_bxtwc: Use chained irqs for second level irq chips
 
-Patch applied for fixes.
+See my other bug report on this commit ...
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Cheers,
+Stephen Rothwell
