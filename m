@@ -1,103 +1,45 @@
-From: Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: sprd: Add Spreadtrum pin control driver
-Date: Wed, 31 May 2017 16:00:12 +0800
-Message-ID: <20170531080012.GB31518@spreadtrum.com>
-References: <a1fa5b612de318213bab4404997d133ed118f5d2.1495863824.git.baolin.wang@spreadtrum.com>
- <58b4b6fb2765ab9d5d3ac77f3854d0a88a0973bd.1495863824.git.baolin.wang@spreadtrum.com>
- <CACRpkdaBcGNTeUDCcVgK9JKZUPKD-qfO8PVHURR2F_pgvEgViQ@mail.gmail.com>
+From: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH] pinctrl: stm32: remove useless check
+Date: Wed, 31 May 2017 11:10:43 +0200
+Message-ID: <1496221843-10697-1-git-send-email-alexandre.torgue@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaBcGNTeUDCcVgK9JKZUPKD-qfO8PVHURR2F_pgvEgViQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Patrice Chotard <patrice.chotard@st.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, amelie.delaunay@st.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+There is no link between the number of elements of tab which contains all
+pin desc (located in each pinctrl-stm32xxxx.c files) and the pin number
+(defined in the tab).
 
-On 一,  5月 29, 2017 at 06:28:49下午 +0200, Linus Walleij wrote:
-> On Sat, May 27, 2017 at 7:56 AM, Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org> wrote:
-> 
-> > This patch adds the pin control driver for Spreadtrum SC9860 platform.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
-> 
-> Overall I see that you want to store functions and groups in the device tree
-> using the current helpers from Tony. That is OK if you want to take that
-> approach, though I prefer the pins/groups/function encoding in plaintext.
-> 
-> But when it comes to pin config:
-> 
-> > +static int sprd_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin_id,
-> > +                           unsigned long *config)
-> > +{
-> > +       struct sprd_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-> > +       struct sprd_pin *pin = sprd_pinctrl_get_pin_by_id(pctl, pin_id);
-> > +
-> > +       if (!pin)
-> > +               return -EINVAL;
-> > +
-> > +       if (pin->type == GLOBAL_CTRL_PIN) {
-> > +               *config = (readl((void __iomem *)pin->reg) >>
-> > +                          pin->bit_offset) & PINCTRL_BIT_MASK(pin->bit_width);
-> > +       } else {
-> > +               *config = readl((void __iomem *)pin->reg);
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sprd_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin_id,
-> > +                           unsigned long *configs, unsigned int num_configs)
-> > +{
-> > +       struct sprd_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-> > +       struct sprd_pin *pin = sprd_pinctrl_get_pin_by_id(pctl, pin_id);
-> > +       unsigned long reg;
-> > +       int i;
-> > +
-> > +       if (!pin)
-> > +               return -EINVAL;
-> > +
-> > +       for (i = 0; i < num_configs; i++) {
-> > +               if (pin->type == GLOBAL_CTRL_PIN) {
-> > +                       reg = readl((void __iomem *)pin->reg);
-> > +                       reg &= ~(PINCTRL_BIT_MASK(pin->bit_width)
-> > +                               << pin->bit_offset);
-> > +                       reg |= (configs[i] & PINCTRL_BIT_MASK(pin->bit_width))
-> > +                               << pin->bit_offset;
-> > +                       writel(reg, (void __iomem *)pin->reg);
-> > +               } else {
-> > +                       writel(configs[i], (void __iomem *)pin->reg);
-> > +               }
-> > +               pin->config = configs[i];
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> 
-> This is just hammering the register values, you have effectively defined your
-> register layout as your device tree ABI.
-> 
-> Please don't do this, please use genric pin config and use the approach
-> other drivers take with explicit strings encoding the pin configuration.
+Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
 
-Make sense. I will try to use genric pin config instead of the magic number.
-Thanks for your comments.
-
-> 
-> Even pinctrl-single that maintain quite a bit of muxing data in the device
-> tree still use the generic pin config API, see:
-> drivers/pinctrl/pinctrl-single.c
-> pcs_pinconf_get(), pcs_pinconf_set()
-> 
-> Same for group config.
-> 
-> Yours,
-> Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index d3c5f5d..8be7ebd 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -411,11 +411,6 @@ static int stm32_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		pin = STM32_GET_PIN_NO(pinfunc);
+ 		func = STM32_GET_PIN_FUNC(pinfunc);
+ 
+-		if (pin >= pctl->match_data->npins) {
+-			dev_err(pctl->dev, "invalid pin number.\n");
+-			return -EINVAL;
+-		}
+-
+ 		if (!stm32_pctrl_is_function_valid(pctl, pin, func)) {
+ 			dev_err(pctl->dev, "invalid function.\n");
+ 			return -EINVAL;
+-- 
+1.9.1
