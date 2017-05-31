@@ -1,113 +1,53 @@
-From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio controllers on Armada 7K/8K
-Date: Wed, 31 May 2017 16:41:26 +0200
-Message-ID: <877f0xt7ft.fsf@free-electrons.com>
-References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
-        <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
-        <CACRpkdY97DDcwec+J-4X1AT5a7Mbo4GnWUJmuAOYhNzOA8_HZQ@mail.gmail.com>
-        <878tlnzps3.fsf@free-electrons.com>
-        <CACRpkdbW3T5auXCMrqH_tTzcVseGbiV+y53fJ2xN5p-VbGz7rA@mail.gmail.com>
-        <20170530222358.abta3srv5emz7wtp@rob-hp-laptop>
-        <149622742055.34003.14963361587324682626@resonance>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 4/7] gpio: mockup: improve readability
+Date: Wed, 31 May 2017 17:57:03 +0300
+Message-ID: <CAHp75VemkM4wMR8NcHoWTFvL9heUvpwb37Uqf5FC-R2URppELQ@mail.gmail.com>
+References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
+ <1496134720-5363-5-git-send-email-brgl@bgdev.pl> <CAHp75VfKEUeNEf1xJ_9+wi0UREznfUxs6Pu1EZWbmuoB15bZ9Q@mail.gmail.com>
+ <CAMRc=MfdX+XMuUfpW33Qc7Xi4kKkJfCQLp0TaShijQbOUC4+vA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <149622742055.34003.14963361587324682626@resonance> (Michael
-        Turquette's message of "Wed, 31 May 2017 19:43:40 +0900")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <rmk+kernel-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Kostya Porotchkin <kostap-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta@marvell.>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34419 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751053AbdEaO5F (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2017 10:57:05 -0400
+In-Reply-To: <CAMRc=MfdX+XMuUfpW33Qc7Xi4kKkJfCQLp0TaShijQbOUC4+vA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Michael,
- 
- On mer., mai 31 2017, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
+On Wed, May 31, 2017 at 1:53 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 2017-05-30 20:55 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+>> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>> We currently shift bits here and there without actually explaining
+>>> what we're doing. Add some helper variables with names indicating
+>>> their purpose to improve the code readability.
+>>
+>>> +       /* Each chip is described by two values. */
+>>> +       num_chips = gpio_mockup_params_nr / 2;
+>>> +
+>>> +       chips = devm_kzalloc(dev, sizeof(*chips) * num_chips, GFP_KERNEL);
+>>
+>> It's effectively
+>> devm_kcalloc()
+>> or
+>> devm_kmalloc_array()
+>> depending on the requirement of zeroing a memory chunks.
 
-> Quoting Rob Herring (2017-05-31 07:23:58)
->> On Mon, May 29, 2017 at 10:08:16AM +0200, Linus Walleij wrote:
->> > On Tue, May 23, 2017 at 3:06 PM, Gregory CLEMENT
->> > <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->> > >  On mar., mai 23 2017, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> > 
->> > >> Please rebase and resend the rest of the patches.
->> > >
->> > > Actually I was wrong with my assumption that there was no dependency.
->> > > For the binding documentation there is dependecy accross the series I
->> > > sent.
->> > >
->> > > This patch depends on "pinctrl: dt-bindings: add documentation for AP806
->> > > pin controllers" [1] and "pinctrl: dt-bindings: add documentation for
->> > > CP110 pin controllers" [3] from the series "Add support for the pin
->> > > controllers on the Marvell Armada 7K/8K".
->> > >
->> > > As you are maintainer of both gpio and pinctrl subsystem it will be easy
->> > > to resolv.
->> > 
->> > Please send all patches in one big series in that case, so I can apply
->> > them all to a branch and merge that branch into both trees.
->> > 
->> > > But these last patches depend also on "clk: mvebu: ap806: introduce a
->> > > new binding" [3] in the clock series "Improve ap806 clk support on
->> > > Marvell Armada 7K/8K" and on "clk: mvebu: cp110: introduce a new
->> > > binding" [4] in the clock series "Improve cp110 clk support on Marvell
->> > > Armada 7K/8K".
->> > 
->> > That sounds messy.
->> > 
->> > > So for these particular patches, either I rebase them on the v4.12-rc2
->> > > and there will be a small merge conflict during the merge window for
->> > > v4.13, or we can ask a stable branch with only these few patches (I am
->> > > adding the clock maintainer to this email).
->> > >
->> > > If we chose this last option I can split the clock patches to have patch
->> > > modifying only the binding documentation.
->> > 
->> > I think you can make a patch just modifying the binding documentation
->> > and then apply that patch to *both* trees, just make sure the patch
->> > is *final* and not applied in different versions in clk and pinctrl.
->> 
->> I thought we try to avoid doing that.
->> 
->> > I think cross-tree branches for documentation clashes is too much
->> > bureaucracy.
->> 
->> I can just take all the doc patches separately. Or you can take the 
->> clock one too.
->
-> Stephen and I have started making a -dt branch for each new clk driver
-> which. This stable branch has only the dt bindings/headers in it (no
-> driver code).
->
-> I'll make such a branch for ap806 this week and everyone can merge that
-> in as a dep.
+> Is there any advantage to using one of these here?
 
-So please use the version 2 I've just submitted. I split each patch to
-allow you to have a dt binding only branch. See
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509832.html
+Yes, though subtle one in this case. The caller will not care about
+(possible) overflow in multiplication.
+Other (micro)optimizations might be in place in the future as well,
+but I dunno about this.
 
-I did the same for the cp110:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509816.html
+I would suggest to change.
 
-Gregory
-
->
-> Regards,
-> Mike
->
->> 
->> > Make sure your clock patch is finalized and preferably also applied
->> > to the clk tree then put it in the bottom of the patch set you send
->> > to me as well and I will proceed like above.
->> > 
->> > Yours,
->> > Linus Walleij
+P.S. And of course if you don't need zeroed area it would be (slight?)
+performance impact I suppose.
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With Best Regards,
+Andy Shevchenko
