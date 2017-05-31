@@ -1,52 +1,46 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] pinctrl: samsung: Fix missing object for S5Pv210
-Date: Wed, 31 May 2017 19:42:44 +0200
-Message-ID: <20170531174244.31861-1-krzk@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2 1/7] gpio: mockup: improve the debugfs input sanitization
+Date: Wed, 31 May 2017 20:58:51 +0300
+Message-ID: <CAHp75VdcNDa++5D6znb8+Dha80tmwPetsGjZ3pafj=D84Fi6TQ@mail.gmail.com>
+References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
+ <1496134720-5363-2-git-send-email-brgl@bgdev.pl> <CAHp75VeJdqsXJ_ASTABijcj=-6BWkbAy8PofFyFTZ_1rtGVjQg@mail.gmail.com>
+ <CAMRc=MeEFLyLzEeAy552mk+-CSSR6e_cu0kmpQEqEOF2_7zkSA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMRc=MeEFLyLzEeAy552mk+-CSSR6e_cu0kmpQEqEOF2_7zkSA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-While splitting Samsung pinctrl drivers per ARMv7 and ARMv8
-architectures, the necessary CONFIG_PINCTRL_EXYNOS_ARM is not selected
-when building for S5Pv210 family of SoCs thus pinctrl was missing there
-entirely.
+On Wed, May 31, 2017 at 1:52 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 2017-05-30 20:52 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+>> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>> +       if (val != 0 && val != 1)
+>>
+>> Wouldn't be easier to have
+>>
+>> u8 rv;
+>>
+>> ret = kstrtu8_from_user();
+>> if (ret >= 2)
+>>  return ...;
+>>
+>> ?
+>
+> kstrtu8_from_user() doesn't return the converted value, so you won't
+> skip an if anyway
 
----
+Oh, yes.
 
-Fixes: 16340fd6dbc1 ("pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8")
+> and by using the int variant, we're avoiding a cast.
+> I'd prefer it this way frankly.
 
-Fixed commit is in my tree but already applied and sitting in next for
-some time. This should be squashed though.
----
- drivers/pinctrl/samsung/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fair enough. (Though I would go with (val < 0 && val > 1) condition,
+of course it's matter of taste)
 
-diff --git a/drivers/pinctrl/samsung/Kconfig b/drivers/pinctrl/samsung/Kconfig
-index c33ee6293c30..0357f9701eb9 100644
---- a/drivers/pinctrl/samsung/Kconfig
-+++ b/drivers/pinctrl/samsung/Kconfig
-@@ -10,7 +10,7 @@ config PINCTRL_EXYNOS
- 	bool "Pinctrl driver data for Samsung EXYNOS SoCs other than 5440"
- 	depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
- 	select PINCTRL_SAMSUNG
--	select PINCTRL_EXYNOS_ARM if ARM && ARCH_EXYNOS
-+	select PINCTRL_EXYNOS_ARM if ARM && (ARCH_EXYNOS || ARCH_S5PV210)
- 	select PINCTRL_EXYNOS_ARM64 if ARM64 && ARCH_EXYNOS
- 
- config PINCTRL_EXYNOS_ARM
 -- 
-2.9.3
+With Best Regards,
+Andy Shevchenko
