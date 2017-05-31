@@ -1,34 +1,66 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 6/7] gpio: mockup: improve the error message
-Date: Wed, 31 May 2017 12:54:22 +0200
-Message-ID: <CAMRc=MfDL_4ExbzAYkus3M7=Cwoee6kV=XXX5kVbvU6j2c7XXA@mail.gmail.com>
-References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
- <1496134720-5363-7-git-send-email-brgl@bgdev.pl> <CAHp75VdiCsE2nHXHjvYfeG43oVCF0i8x8-hk=uTTLBOdH91U6Q@mail.gmail.com>
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: Re: [PATCH v6 1/4] gpio: mvebu: Add limited PWM support
+Date: Wed, 31 May 2017 14:26:14 +0200
+Message-ID: <20170531142614.5f32fca6@gmail.com>
+References: <20170414154056.32055-1-ralph.sennhauser@gmail.com>
+        <20170414154056.32055-2-ralph.sennhauser@gmail.com>
+        <CACRpkdYPp6pBemTT_a4V6a-Qbk2475qOOxWJOhfVaEz=cojOvA@mail.gmail.com>
+        <87tw42tqdr.fsf@free-electrons.com>
+        <20170530165101.73ae0bf6@gmail.com>
+        <CACQ1gAhhVEem9=We3mTJwhDbLDNw+_uyr2LpAyjQSk0iJ4O6Ew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdiCsE2nHXHjvYfeG43oVCF0i8x8-hk=uTTLBOdH91U6Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CACQ1gAhhVEem9=We3mTJwhDbLDNw+_uyr2LpAyjQSk0iJ4O6Ew@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Richard Genoud <richard.genoud@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2017-05-30 20:59 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
-> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> Indicate the error number and make the message a bit more elaborate.
->
->> +                       dev_err(dev,
->> +                               "adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
->> +                               ret, base, base < 0 ? ngpio : base + ngpio);
->
-> You may consider to use
-> 'gpio_mockup_add' instead of 'adding gpiochip'. The latter points the
-> reader first to gpiochip_add family of functions while you run a
-> wrapper on top of it.
->
+On Tue, 30 May 2017 17:35:33 +0200
+Richard Genoud <richard.genoud@gmail.com> wrote:
+ =20
+> Hi Ralph,
+>=20
+> I have the functional spec (no NDA needed, but it's not the full
+> one) : A38x-Functional-Spec-PU0A.pdf
+> https://marvellcorp.wufoo.com/forms/marvell-armada-38x-functional-specifi=
+cations/
+> (just an email needed, no blood signing nor chicken slaughtering)
+> There are the GPIO Blink Counter A/B is ON/OFF Duration Registers as
+> well as the Blink Enable Registers.
+>=20
 
-But this message can also be emitted if the module params are invalid,
-in which case we don't even enter gpio_mockup_add().
+Hi Richard,
 
-Thanks,
-Bartosz
+Thanks for the link, as the terms only talk about materials obtained
+from www.marvell.com this one from wufoo.com should be exempt ;)
+Also at a glance looks like the complete one. Also says "Functional
+Specifications =E2=80=93 Unrestricted". Maybe you want to re-download it.
+
+Regardless, as you said the blinking registers are all described. So
+it's probably safe to assume 39x will have them as well.
+
+> I've done a pwm with different periods (8ms, 4ms, 100ns).
+> Looking at the scope, it seems to work pretty well :)
+>=20
+> >>
+> >> And it makes me realized that I missed the bad naming of the
+> >> compatible string. We don't use family name for the compatible
+> >> string, but the name of the first SoC compatible with. So in this
+> >> case we should use "marvell,armada-370", as it is still in rc and
+> >> not yet deployed. What about fixing the name now? =20
+
+Gregory,
+
+Knowing it's not limited to 370/XP makes "marvell,armada-370-gpio" an
+obviously better choice for the compatible string. Guess you didn't
+mean to drop the "-gpio" suffix.
+
+Will work on a patch changing the compatible string / documentation for
+4.12 and an updated patch for armada 370/XP dtsi as well as a patch
+adding the properties to 38x for 4.13+. Expect them tomorrow, probably
+won't get around to it today anymore.
+
+Ralph
