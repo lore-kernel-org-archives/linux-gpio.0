@@ -1,88 +1,113 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v6 1/4] gpio: mvebu: Add limited PWM support
-Date: Wed, 31 May 2017 14:36:21 +0200
-Message-ID: <87bmq9td8a.fsf@free-electrons.com>
-References: <20170414154056.32055-1-ralph.sennhauser@gmail.com>
-        <20170414154056.32055-2-ralph.sennhauser@gmail.com>
-        <CACRpkdYPp6pBemTT_a4V6a-Qbk2475qOOxWJOhfVaEz=cojOvA@mail.gmail.com>
-        <87tw42tqdr.fsf@free-electrons.com>
-        <20170530165101.73ae0bf6@gmail.com>
-        <CACQ1gAhhVEem9=We3mTJwhDbLDNw+_uyr2LpAyjQSk0iJ4O6Ew@mail.gmail.com>
-        <20170531142614.5f32fca6@gmail.com>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio controllers on Armada 7K/8K
+Date: Wed, 31 May 2017 16:41:26 +0200
+Message-ID: <877f0xt7ft.fsf@free-electrons.com>
+References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
+        <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
+        <CACRpkdY97DDcwec+J-4X1AT5a7Mbo4GnWUJmuAOYhNzOA8_HZQ@mail.gmail.com>
+        <878tlnzps3.fsf@free-electrons.com>
+        <CACRpkdbW3T5auXCMrqH_tTzcVseGbiV+y53fJ2xN5p-VbGz7rA@mail.gmail.com>
+        <20170530222358.abta3srv5emz7wtp@rob-hp-laptop>
+        <149622742055.34003.14963361587324682626@resonance>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20170531142614.5f32fca6@gmail.com> (Ralph Sennhauser's message
-        of "Wed, 31 May 2017 14:26:14 +0200")
-Sender: linux-pwm-owner@vger.kernel.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Richard Genoud <richard.genoud@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <149622742055.34003.14963361587324682626@resonance> (Michael
+        Turquette's message of "Wed, 31 May 2017 19:43:40 +0900")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio@vger.kernel.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <rmk+kernel-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Kostya Porotchkin <kostap-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Neta Zur Hershkovits <neta@marvell.>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Ralph,
+Hi Michael,
  
- On mer., mai 31 2017, Ralph Sennhauser <ralph.sennhauser@gmail.com> wrote:
+ On mer., mai 31 2017, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
 
-> On Tue, 30 May 2017 17:35:33 +0200
-> Richard Genoud <richard.genoud@gmail.com> wrote:
->   
->> Hi Ralph,
+> Quoting Rob Herring (2017-05-31 07:23:58)
+>> On Mon, May 29, 2017 at 10:08:16AM +0200, Linus Walleij wrote:
+>> > On Tue, May 23, 2017 at 3:06 PM, Gregory CLEMENT
+>> > <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>> > >  On mar., mai 23 2017, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> > 
+>> > >> Please rebase and resend the rest of the patches.
+>> > >
+>> > > Actually I was wrong with my assumption that there was no dependency.
+>> > > For the binding documentation there is dependecy accross the series I
+>> > > sent.
+>> > >
+>> > > This patch depends on "pinctrl: dt-bindings: add documentation for AP806
+>> > > pin controllers" [1] and "pinctrl: dt-bindings: add documentation for
+>> > > CP110 pin controllers" [3] from the series "Add support for the pin
+>> > > controllers on the Marvell Armada 7K/8K".
+>> > >
+>> > > As you are maintainer of both gpio and pinctrl subsystem it will be easy
+>> > > to resolv.
+>> > 
+>> > Please send all patches in one big series in that case, so I can apply
+>> > them all to a branch and merge that branch into both trees.
+>> > 
+>> > > But these last patches depend also on "clk: mvebu: ap806: introduce a
+>> > > new binding" [3] in the clock series "Improve ap806 clk support on
+>> > > Marvell Armada 7K/8K" and on "clk: mvebu: cp110: introduce a new
+>> > > binding" [4] in the clock series "Improve cp110 clk support on Marvell
+>> > > Armada 7K/8K".
+>> > 
+>> > That sounds messy.
+>> > 
+>> > > So for these particular patches, either I rebase them on the v4.12-rc2
+>> > > and there will be a small merge conflict during the merge window for
+>> > > v4.13, or we can ask a stable branch with only these few patches (I am
+>> > > adding the clock maintainer to this email).
+>> > >
+>> > > If we chose this last option I can split the clock patches to have patch
+>> > > modifying only the binding documentation.
+>> > 
+>> > I think you can make a patch just modifying the binding documentation
+>> > and then apply that patch to *both* trees, just make sure the patch
+>> > is *final* and not applied in different versions in clk and pinctrl.
 >> 
->> I have the functional spec (no NDA needed, but it's not the full
->> one) : A38x-Functional-Spec-PU0A.pdf
->> https://marvellcorp.wufoo.com/forms/marvell-armada-38x-functional-specifications/
->> (just an email needed, no blood signing nor chicken slaughtering)
->> There are the GPIO Blink Counter A/B is ON/OFF Duration Registers as
->> well as the Blink Enable Registers.
+>> I thought we try to avoid doing that.
 >> 
->
-> Hi Richard,
->
-> Thanks for the link, as the terms only talk about materials obtained
-> from www.marvell.com this one from wufoo.com should be exempt ;)
-> Also at a glance looks like the complete one. Also says "Functional
-> Specifications – Unrestricted". Maybe you want to re-download it.
->
-> Regardless, as you said the blinking registers are all described. So
-> it's probably safe to assume 39x will have them as well.
-
-I guess you meant 38x. (But I suppose it is also true for 39x)
-
-
->
->> I've done a pwm with different periods (8ms, 4ms, 100ns).
->> Looking at the scope, it seems to work pretty well :)
+>> > I think cross-tree branches for documentation clashes is too much
+>> > bureaucracy.
 >> 
->> >>
->> >> And it makes me realized that I missed the bad naming of the
->> >> compatible string. We don't use family name for the compatible
->> >> string, but the name of the first SoC compatible with. So in this
->> >> case we should use "marvell,armada-370", as it is still in rc and
->> >> not yet deployed. What about fixing the name now?  
+>> I can just take all the doc patches separately. Or you can take the 
+>> clock one too.
 >
-> Gregory,
+> Stephen and I have started making a -dt branch for each new clk driver
+> which. This stable branch has only the dt bindings/headers in it (no
+> driver code).
 >
-> Knowing it's not limited to 370/XP makes "marvell,armada-370-gpio" an
-> obviously better choice for the compatible string. Guess you didn't
-> mean to drop the "-gpio" suffix.
+> I'll make such a branch for ap806 this week and everyone can merge that
+> in as a dep.
 
-You're right I meant "marvell,armada-370-gpio".
+So please use the version 2 I've just submitted. I split each patch to
+allow you to have a dt binding only branch. See
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509832.html
 
->
-> Will work on a patch changing the compatible string / documentation for
-> 4.12 and an updated patch for armada 370/XP dtsi as well as a patch
-> adding the properties to 38x for 4.13+. Expect them tomorrow, probably
-> won't get around to it today anymore.
-
-Great!
-
-Thanks,
+I did the same for the cp110:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2017-May/509816.html
 
 Gregory
+
+>
+> Regards,
+> Mike
+>
+>> 
+>> > Make sure your clock patch is finalized and preferably also applied
+>> > to the clk tree then put it in the bottom of the patch set you send
+>> > to me as well and I will proceed like above.
+>> > 
+>> > Yours,
+>> > Linus Walleij
 
 -- 
 Gregory Clement, Free Electrons
 Kernel, drivers, real-time and embedded Linux
 development, consulting, training and support.
 http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
