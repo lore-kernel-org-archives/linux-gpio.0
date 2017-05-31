@@ -1,56 +1,53 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 4/7] gpio: mockup: improve readability
-Date: Wed, 31 May 2017 17:06:20 +0200
-Message-ID: <CAMRc=MfNP-MN4e+VUxocxvs82372GU=5M78Gx2Yh=Ptjg4etqg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] gpio: mockup: improve the error message
+Date: Wed, 31 May 2017 17:26:25 +0200
+Message-ID: <CAMRc=MfgowT2sEaEkx6rObfMEEfN-_0srvb61GxT=BUqxY7-4w@mail.gmail.com>
 References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
- <1496134720-5363-5-git-send-email-brgl@bgdev.pl> <CAHp75VfKEUeNEf1xJ_9+wi0UREznfUxs6Pu1EZWbmuoB15bZ9Q@mail.gmail.com>
- <CAMRc=MfdX+XMuUfpW33Qc7Xi4kKkJfCQLp0TaShijQbOUC4+vA@mail.gmail.com> <CAHp75VemkM4wMR8NcHoWTFvL9heUvpwb37Uqf5FC-R2URppELQ@mail.gmail.com>
+ <1496134720-5363-7-git-send-email-brgl@bgdev.pl> <CAHp75VdiCsE2nHXHjvYfeG43oVCF0i8x8-hk=uTTLBOdH91U6Q@mail.gmail.com>
+ <CAMRc=MfDL_4ExbzAYkus3M7=Cwoee6kV=XXX5kVbvU6j2c7XXA@mail.gmail.com> <CAHp75Ve8gs-VcRRU=qioErxVurP+TYejV9=PV_eZc__=2q7YLQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:35723 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751033AbdEaPGW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2017 11:06:22 -0400
-Received: by mail-oi0-f54.google.com with SMTP id l18so18910546oig.2
-        for <linux-gpio@vger.kernel.org>; Wed, 31 May 2017 08:06:22 -0700 (PDT)
-In-Reply-To: <CAHp75VemkM4wMR8NcHoWTFvL9heUvpwb37Uqf5FC-R2URppELQ@mail.gmail.com>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:33554 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbdEaP00 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2017 11:26:26 -0400
+Received: by mail-oi0-f48.google.com with SMTP id w10so19769412oif.0
+        for <linux-gpio@vger.kernel.org>; Wed, 31 May 2017 08:26:26 -0700 (PDT)
+In-Reply-To: <CAHp75Ve8gs-VcRRU=qioErxVurP+TYejV9=PV_eZc__=2q7YLQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2017-05-31 16:57 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
-> On Wed, May 31, 2017 at 1:53 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2017-05-30 20:55 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+2017-05-31 17:00 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+> On Wed, May 31, 2017 at 1:54 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> 2017-05-30 20:59 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
 >>> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>> We currently shift bits here and there without actually explaining
->>>> what we're doing. Add some helper variables with names indicating
->>>> their purpose to improve the code readability.
+>>>> Indicate the error number and make the message a bit more elaborate.
 >>>
->>>> +       /* Each chip is described by two values. */
->>>> +       num_chips = gpio_mockup_params_nr / 2;
->>>> +
->>>> +       chips = devm_kzalloc(dev, sizeof(*chips) * num_chips, GFP_KERNEL);
+>>>> +                       dev_err(dev,
+>>>> +                               "adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
+>>>> +                               ret, base, base < 0 ? ngpio : base + ngpio);
 >>>
->>> It's effectively
->>> devm_kcalloc()
->>> or
->>> devm_kmalloc_array()
->>> depending on the requirement of zeroing a memory chunks.
+>>> You may consider to use
+>>> 'gpio_mockup_add' instead of 'adding gpiochip'. The latter points the
+>>> reader first to gpiochip_add family of functions while you run a
+>>> wrapper on top of it.
+>>>
+>>
+>> But this message can also be emitted if the module params are invalid,
+>> in which case we don't even enter gpio_mockup_add().
 >
->> Is there any advantage to using one of these here?
->
-> Yes, though subtle one in this case. The caller will not care about
-> (possible) overflow in multiplication.
-> Other (micro)optimizations might be in place in the future as well,
-> but I dunno about this.
->
-> I would suggest to change.
+> ...which unveils bad phrasing in the message. In that case "adding
+> gpiochip" is also misleading.
 >
 
-Ok, I'll change it both for the lines and for the chips arrays and add
-a separate patch.
+Not really. You can pass an invalid value later in the list which will
+only become apparent when it's reached. In that case previous
+gpiochips will be added correctly but probe will fail with -EINVAL
+after reaching the bad one in which case the message is right. I hope
+I'm being clear.
 
 Thanks,
 Bartosz
