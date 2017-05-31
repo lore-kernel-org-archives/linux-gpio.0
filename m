@@ -1,37 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.13
-Date: Wed, 31 May 2017 02:10:40 +0200
-Message-ID: <CACRpkdb_uNvO3ZbaXEEk5jrmcKG9K-BVGAiTreRjupuELobtPQ@mail.gmail.com>
-References: <1496059072-13102-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] gpio: xra1403: select REGMAP_SPI
+Date: Wed, 31 May 2017 02:14:14 +0200
+Message-ID: <CACRpkdbE7q=DNO6Cdmq4v_uO-6DWm7-yS0Rnu22-buAQe+3-xw@mail.gmail.com>
+References: <20170530111332.3829080-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1496059072-13102-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:34513 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbdEaAOQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 30 May 2017 20:14:16 -0400
+Received: by mail-io0-f182.google.com with SMTP id k91so2838149ioi.1
+        for <linux-gpio@vger.kernel.org>; Tue, 30 May 2017 17:14:16 -0700 (PDT)
+In-Reply-To: <20170530111332.3829080-1-arnd@arndb.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nandor Han <nandor.han@ge.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, May 29, 2017 at 1:57 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, May 30, 2017 at 1:13 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
->         Hi Linus,
+> Without the regmap code, we get a link error:
 >
-> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> drivers/gpio/built-in.o: In function `xra1403_probe':
+> (.text+0x132e0): undefined reference to `__devm_regmap_init_spi'
 >
->   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.13-tag1
->
-> for you to fetch changes up to c8bac70f079bb3ecaf9a716f141f3d85cef27231:
->
->   pinctrl: sh-pfc: r8a7794: Add R8A7745 support (2017-05-16 13:53:15 +0200)
+> Fixes: 5704520d7880 ("gpio: xra1403: Add EXAR XRA1403 SPI GPIO expander driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Awesome, good work as usual.
-
-Pulled to my pinctrl devel branch.
+Patch applied.
 
 Yours,
 Linus Walleij
