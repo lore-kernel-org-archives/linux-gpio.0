@@ -1,100 +1,55 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v2 1/3] firmware: dmi: Add DMI_PRODUCT_FAMILY
- identification string
-Date: Thu, 1 Jun 2017 13:09:40 +0300
-Message-ID: <20170601100940.GJ2784@lahna.fi.intel.com>
-References: <20170517102514.89744-1-mika.westerberg@linux.intel.com>
- <20170517102514.89744-2-mika.westerberg@linux.intel.com>
- <20170601112926.78fa218a@endymion>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:1871 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751346AbdFAKJr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 1 Jun 2017 06:09:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20170601112926.78fa218a@endymion>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Date: Thu,  1 Jun 2017 12:27:00 +0200
+Message-ID: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, bbaude@redhat.com, mildred-bug.kernel@mildred.fr, barnacs@justletit.be, lvuksta@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Kelly French <kfrench@federalhill.net>
 
-On Thu, Jun 01, 2017 at 11:29:26AM +0200, Jean Delvare wrote:
-> Hi all,
-> 
-> Sorry for the late reply.
-> 
-> On Wed, 17 May 2017 13:25:12 +0300, Mika Westerberg wrote:
-> > Sometimes it is more convenient to be able to match a whole family of
-> > products, like in case of bunch of Chromebooks based on Intel_Strago to
-> > apply a driver quirk instead of quirking each machine one-by-one.
-> > 
-> > This adds support for DMI_PRODUCT_FAMILY identification string and also
-> > exports it to the userspace through sysfs attribute just like the
-> > existing ones.
-> 
-> dmidecode currently provides no direct access to this string. Do you
-> think it should?
+Configuration of the lcd0 pinmux group and GPIO hog for the external
+GPIO mux are done using a single device node, causing the "output-high"
+property to be applied to both.  This will fail for the pinmux group,
+but doesn't cause any harm, as the failure is ignored silently.
 
-Yeah, why not. I always just run "dmidecode" without any arguments and
-that field is printed nicely among others :)
+However, after "pinctrl: sh-pfc: propagate errors on group config", the
+failure will become fatal, leading to a broken display:
 
-> > Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > ---
-> >  drivers/firmware/dmi-id.c       | 2 ++
-> >  drivers/firmware/dmi_scan.c     | 1 +
-> >  include/linux/mod_devicetable.h | 1 +
-> >  3 files changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/firmware/dmi-id.c b/drivers/firmware/dmi-id.c
-> > index 44c01390d035..dc269cb288c2 100644
-> > --- a/drivers/firmware/dmi-id.c
-> > +++ b/drivers/firmware/dmi-id.c
-> > (...)
-> > @@ -191,6 +192,7 @@ static void __init dmi_id_init_attr_table(void)
-> >  	ADD_DMI_ATTR(product_version,   DMI_PRODUCT_VERSION);
-> >  	ADD_DMI_ATTR(product_serial,    DMI_PRODUCT_SERIAL);
-> >  	ADD_DMI_ATTR(product_uuid,      DMI_PRODUCT_UUID);
-> > +	ADD_DMI_ATTR(product_family,      DMI_PRODUCT_FAMILY);
-> 
-> Alignment, please!
+    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
+    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
+    sh-pfc e6050000.pin-controller: failed to select default state
 
-The patch is already applied and I suppose merged in v4.12-rc3+. Should
-I send a fixup patch to fix this?
+Move the GPIO hog to its own node to fix this.
 
-> 
-> >  	ADD_DMI_ATTR(board_vendor,      DMI_BOARD_VENDOR);
-> >  	ADD_DMI_ATTR(board_name,        DMI_BOARD_NAME);
-> >  	ADD_DMI_ATTR(board_version,     DMI_BOARD_VERSION);
-> > diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-> > index 54be60ead08f..93f7acdaac7a 100644
-> > --- a/drivers/firmware/dmi_scan.c
-> > +++ b/drivers/firmware/dmi_scan.c
-> > @@ -430,6 +430,7 @@ static void __init dmi_decode(const struct dmi_header *dm, void *dummy)
-> >  		dmi_save_ident(dm, DMI_PRODUCT_VERSION, 6);
-> >  		dmi_save_ident(dm, DMI_PRODUCT_SERIAL, 7);
-> >  		dmi_save_uuid(dm, DMI_PRODUCT_UUID, 8);
-> > +		dmi_save_ident(dm, DMI_PRODUCT_FAMILY, 26);
-> 
-> This field only exists since SMBIOS 2.4. For older implementations, you
-> are accessing a random location of the DMI table. Most likely you'll
-> hit a character in one of the strings associated with the system
-> information structure. In turn this character will be interpreted as a
-> DMI string number. With some luck, number will be >= 32, so you'll get
-> a non-existent string and dmi_string will return "". But you could hit
-> a string terminator (0) and return the 1st string of the structure
-> instead (most likely the system manufacturer.)
-> 
-> Note that the problem is not specific to this field, it is just more
-> likely to break because all other fields are defined by SMBIOS 2.0, or
-> for the product UUID, SMBIOS 2.1. The fact that all dmi_save_*
-> functions blindly assume that the structure is long enough to contain
-> all the fields they want to save is problematic. This should be fixed
-> separately.
+Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
+group config" (https://patchwork.kernel.org/patch/9186713/).
 
-I see. Since you are more familiar with the DMI code, do you have time
-to do that or should I try?
+v2:
+  - Keep the GPIO hog, but move it to its own node, instead of using
+    another level of subnodes.  As the GPIO hog node is not referenced from
+    a pinctrl-0 property, pinconf doesn't fail with "No pin or group
+    provided in DT node".
+---
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks.
+diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+index 297b1f10f7346a9f..8c85d3ee5f5e7bfd 100644
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -273,7 +273,9 @@
+ 	lcd0_pins: lcd0 {
+ 		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+ 		function = "lcd0";
++	};
+ 
++	lcd0_mux {
+ 		/* DBGMD/LCDC0/FSIA MUX */
+ 		gpio-hog;
+ 		gpios = <176 0>;
+-- 
+2.7.4
