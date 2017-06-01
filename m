@@ -1,54 +1,103 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v2 6/7] gpio: mockup: improve the error message
-Date: Thu, 1 Jun 2017 09:14:49 +0200
-Message-ID: <CAMRc=Mfbxzk-Ezmi5y8HVwvmb3vcZ8TzMBxuGg+=E84gj806yQ@mail.gmail.com>
-References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
- <1496134720-5363-7-git-send-email-brgl@bgdev.pl> <CAHp75VdiCsE2nHXHjvYfeG43oVCF0i8x8-hk=uTTLBOdH91U6Q@mail.gmail.com>
- <CAMRc=MfDL_4ExbzAYkus3M7=Cwoee6kV=XXX5kVbvU6j2c7XXA@mail.gmail.com>
- <CAHp75Ve8gs-VcRRU=qioErxVurP+TYejV9=PV_eZc__=2q7YLQ@mail.gmail.com> <CAMRc=MfgowT2sEaEkx6rObfMEEfN-_0srvb61GxT=BUqxY7-4w@mail.gmail.com>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH v2 1/3] firmware: dmi: Add DMI_PRODUCT_FAMILY
+ identification string
+Date: Thu, 1 Jun 2017 11:29:26 +0200
+Message-ID: <20170601112926.78fa218a@endymion>
+References: <20170517102514.89744-1-mika.westerberg@linux.intel.com>
+        <20170517102514.89744-2-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMRc=MfgowT2sEaEkx6rObfMEEfN-_0srvb61GxT=BUqxY7-4w@mail.gmail.com>
+In-Reply-To: <20170517102514.89744-2-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, bbaude@redhat.com, mildred-bug.kernel@mildred.fr, barnacs@justletit.be, lvuksta@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Kelly French <kfrench@federalhill.net>
 List-Id: linux-gpio@vger.kernel.org
 
-2017-05-31 17:26 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> 2017-05-31 17:00 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
->> On Wed, May 31, 2017 at 1:54 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>> 2017-05-30 20:59 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
->>>> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>> Indicate the error number and make the message a bit more elaborate.
->>>>
->>>>> +                       dev_err(dev,
->>>>> +                               "adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
->>>>> +                               ret, base, base < 0 ? ngpio : base + ngpio);
->>>>
->>>> You may consider to use
->>>> 'gpio_mockup_add' instead of 'adding gpiochip'. The latter points the
->>>> reader first to gpiochip_add family of functions while you run a
->>>> wrapper on top of it.
->>>>
->>>
->>> But this message can also be emitted if the module params are invalid,
->>> in which case we don't even enter gpio_mockup_add().
->>
->> ...which unveils bad phrasing in the message. In that case "adding
->> gpiochip" is also misleading.
->>
->
-> Not really. You can pass an invalid value later in the list which will
-> only become apparent when it's reached. In that case previous
-> gpiochips will be added correctly but probe will fail with -EINVAL
-> after reaching the bad one in which case the message is right. I hope
-> I'm being clear.
->
+Hi all,
 
-Which made me think: maybe the next step would be to parse the
-arguments in the module init function and probe each dummy gpiochip
-separately...
+Sorry for the late reply.
 
-Best regards,
-Bartosz Golaszewski
+On Wed, 17 May 2017 13:25:12 +0300, Mika Westerberg wrote:
+> Sometimes it is more convenient to be able to match a whole family of
+> products, like in case of bunch of Chromebooks based on Intel_Strago to
+> apply a driver quirk instead of quirking each machine one-by-one.
+> 
+> This adds support for DMI_PRODUCT_FAMILY identification string and also
+> exports it to the userspace through sysfs attribute just like the
+> existing ones.
+
+dmidecode currently provides no direct access to this string. Do you
+think it should?
+
+> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  drivers/firmware/dmi-id.c       | 2 ++
+>  drivers/firmware/dmi_scan.c     | 1 +
+>  include/linux/mod_devicetable.h | 1 +
+>  3 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/firmware/dmi-id.c b/drivers/firmware/dmi-id.c
+> index 44c01390d035..dc269cb288c2 100644
+> --- a/drivers/firmware/dmi-id.c
+> +++ b/drivers/firmware/dmi-id.c
+> (...)
+> @@ -191,6 +192,7 @@ static void __init dmi_id_init_attr_table(void)
+>  	ADD_DMI_ATTR(product_version,   DMI_PRODUCT_VERSION);
+>  	ADD_DMI_ATTR(product_serial,    DMI_PRODUCT_SERIAL);
+>  	ADD_DMI_ATTR(product_uuid,      DMI_PRODUCT_UUID);
+> +	ADD_DMI_ATTR(product_family,      DMI_PRODUCT_FAMILY);
+
+Alignment, please!
+
+>  	ADD_DMI_ATTR(board_vendor,      DMI_BOARD_VENDOR);
+>  	ADD_DMI_ATTR(board_name,        DMI_BOARD_NAME);
+>  	ADD_DMI_ATTR(board_version,     DMI_BOARD_VERSION);
+> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
+> index 54be60ead08f..93f7acdaac7a 100644
+> --- a/drivers/firmware/dmi_scan.c
+> +++ b/drivers/firmware/dmi_scan.c
+> @@ -430,6 +430,7 @@ static void __init dmi_decode(const struct dmi_header *dm, void *dummy)
+>  		dmi_save_ident(dm, DMI_PRODUCT_VERSION, 6);
+>  		dmi_save_ident(dm, DMI_PRODUCT_SERIAL, 7);
+>  		dmi_save_uuid(dm, DMI_PRODUCT_UUID, 8);
+> +		dmi_save_ident(dm, DMI_PRODUCT_FAMILY, 26);
+
+This field only exists since SMBIOS 2.4. For older implementations, you
+are accessing a random location of the DMI table. Most likely you'll
+hit a character in one of the strings associated with the system
+information structure. In turn this character will be interpreted as a
+DMI string number. With some luck, number will be >= 32, so you'll get
+a non-existent string and dmi_string will return "". But you could hit
+a string terminator (0) and return the 1st string of the structure
+instead (most likely the system manufacturer.)
+
+Note that the problem is not specific to this field, it is just more
+likely to break because all other fields are defined by SMBIOS 2.0, or
+for the product UUID, SMBIOS 2.1. The fact that all dmi_save_*
+functions blindly assume that the structure is long enough to contain
+all the fields they want to save is problematic. This should be fixed
+separately.
+
+>  		break;
+>  	case 2:		/* Base Board Information */
+>  		dmi_save_ident(dm, DMI_BOARD_VENDOR, 4);
+> diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+> index 566fda587fcf..3f74ef2281e8 100644
+> --- a/include/linux/mod_devicetable.h
+> +++ b/include/linux/mod_devicetable.h
+> @@ -467,6 +467,7 @@ enum dmi_field {
+>  	DMI_PRODUCT_VERSION,
+>  	DMI_PRODUCT_SERIAL,
+>  	DMI_PRODUCT_UUID,
+> +	DMI_PRODUCT_FAMILY,
+>  	DMI_BOARD_VENDOR,
+>  	DMI_BOARD_NAME,
+>  	DMI_BOARD_VERSION,
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
