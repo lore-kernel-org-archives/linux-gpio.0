@@ -1,114 +1,104 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio controllers on Armada 7K/8K
-Date: Thu, 01 Jun 2017 19:33:27 +0200
-Message-ID: <87zidrr4t4.fsf@free-electrons.com>
-References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
-        <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
-        <20170530222907.ysx53p3efyxudyqp@rob-hp-laptop>
-        <87fufltk76.fsf@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:44530 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbdFARda (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2017 13:33:30 -0400
-In-Reply-To: <87fufltk76.fsf@free-electrons.com> (Gregory CLEMENT's message of
-        "Wed, 31 May 2017 12:05:49 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Subject: [PATCH] gpio: mvebu: change compatible string for PWM support
+Date: Thu,  1 Jun 2017 22:08:20 +0200
+Message-ID: <20170601200820.22396-1-ralph.sennhauser@gmail.com>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Richard Genoud <richard.genoud@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Ralph Sennhauser <ralph.sennhauser@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Omri Itach <omrii@marvell.com>, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Neta Zur Hershkovits <neta@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Shadi Ammouri <shadi@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Russell King <rmk+kernel@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-Hi Rob,
+As it turns out more than just Armada 370 and XP support using GPIO
+lines as PWM lines. For example the Armada 38x family has the same
+hardware support. As such "marvell,armada-370-xp-gpio" for the
+compatible string is a misnomer.
+
+Change the compatible string to "marvell,armada-370-gpio" before the
+driver makes it out of the -rc stage. This also follows the practice of
+using only the first device family supported as part of the name.
+
+Also update the documentation and comments in the code accordingly.
+
+Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
+Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+
+---
+
+Hi everyone,
+
+The suggestion to change the compatible string last minute comes from
+Gregory CLEMENT after we realized the bad choice of name due to Richard
+Genoud reporting an issue when he used the driver with an Armada-388.
+
+Rob Herring just requested to use a separate compatible string but not
+what it should look like. So I assume he is fine with the new one as
+well. The rest of this patch is rather minor.
+
+Nothing in tree is using this driver so far, first consumers will be
+added with 4.13.
+
+Ralph
+
+---
+ Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 6 +++---
+ drivers/gpio/gpio-mvebu.c                             | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+index 42c3bb2..01e331a 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
+@@ -41,9 +41,9 @@ Required properties:
+ Optional properties:
  
- On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
-
-> Hi Rob,
->  
->  On mer., mai 31 2017, Rob Herring <robh@kernel.org> wrote:
->>>  
->>>  Required properties:
->>>  
->>> -- compatible : Should be "marvell,orion-gpio", "marvell,mv78200-gpio"
->>> -  or "marvell,armadaxp-gpio". "marvell,orion-gpio" should be used for
->>> -  Orion, Kirkwood, Dove, Discovery (except MV78200) and Armada
->>> -  370. "marvell,mv78200-gpio" should be used for the Discovery
->>> -  MV78200. "marvel,armadaxp-gpio" should be used for all Armada XP
->>> -  SoCs (MV78230, MV78260, MV78460).
->>> +- compatible : Should be "marvell,orion-gpio", "marvell,mv78200-gpio",
->>> +  "marvell,armadaxp-gpio" or "marvell,armada-8k-gpio".
->>> +
->>> +    "marvell,orion-gpio" should be used for Orion, Kirkwood, Dove,
->>> +    Discovery (except MV78200) and Armada 370. "marvell,mv78200-gpio"
->>> +    should be used for the Discovery MV78200.
->>> +
->>> +    "marvel,armadaxp-gpio" should be used for all Armada XP SoCs
->>> +    (MV78230, MV78260, MV78460).
->>> +
->>> +    "marvell,armada-8k-gpio" should be used for the Armada 7K and 8K
->>> +    SoCs (either from AP or CP), see
->>> +    Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
->>> +    and
->>> +    Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
->>> +    for specific details about the offset property.
->>>  
->>>  - reg: Address and length of the register set for the device. Only one
->>>    entry is expected, except for the "marvell,armadaxp-gpio" variant
->>>    for which two entries are expected: one for the general registers,
->>> -  one for the per-cpu registers.
->>> +  one for the per-cpu registers. Not used for marvell,armada-8k-gpio.
->>
->> Why can't use you use reg instead of offset?
->
-> I looked for how the other syscon user did, and I found the offset
-> usage. So I assumed it was the way to do it. But if you wan I can use a
-> reg property.
-
-I had a closer looked to the binding when syscon is used with several
-subnodes. And actually the reg usage is very uncommon, I only find it in
-drivers/regulator/pbias-regulator.c but for legacy.
-
-I am not sure that we have any benefit with this reg property: we won't
-use the length of the register and we need to add a range property in
-the parent node.
-
-An other way to pass this information is to have a different compatible
-string which will match the different offset available. In this case the
-reg property won't be used in a syscon node. However, while it makes
-sens for the difference between AP806 and CP110, it would be strange to
-have a different compatible string for gpio bank 1 and gpio bank 2.
-
-So, in the end I would prefer to use the offset. From my point of view
-it is better to not use the reg property for two different purposes:
-mmio address vs offset in a syscon.
-
-But if you think that from the point of view of the device tree
-compliance we have to use the reg property, of course I will change it.
-
-Thanks,
-
-Gregory
-
->
-> Gregory
->
->>
->> Rob
->
-> -- 
-> Gregory Clement, Free Electrons
-> Kernel, drivers, real-time and embedded Linux
-> development, consulting, training and support.
-> http://free-electrons.com
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+ In order to use the GPIO lines in PWM mode, some additional optional
+-properties are required. Only Armada 370 and XP support these properties.
++properties are required.
+ 
+-- compatible: Must contain "marvell,armada-370-xp-gpio"
++- compatible: Must contain "marvell,armada-370-gpio"
+ 
+ - reg: an additional register set is needed, for the GPIO Blink
+   Counter on/off registers.
+@@ -71,7 +71,7 @@ Example:
+ 		};
+ 
+ 		gpio1: gpio@18140 {
+-			compatible = "marvell,armada-370-xp-gpio";
++			compatible = "marvell,armada-370-gpio";
+ 			reg = <0x18140 0x40>, <0x181c8 0x08>;
+ 			reg-names = "gpio", "pwm";
+ 			ngpios = <17>;
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 19a92ef..f94fd47 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -721,7 +721,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 	u32 set;
+ 
+ 	if (!of_device_is_compatible(mvchip->chip.of_node,
+-				     "marvell,armada-370-xp-gpio"))
++				     "marvell,armada-370-gpio"))
+ 		return 0;
+ 
+ 	if (IS_ERR(mvchip->clk))
+@@ -845,7 +845,7 @@ static const struct of_device_id mvebu_gpio_of_match[] = {
+ 		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ARMADAXP,
+ 	},
+ 	{
+-		.compatible = "marvell,armada-370-xp-gpio",
++		.compatible = "marvell,armada-370-gpio",
+ 		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ORION,
+ 	},
+ 	{
+@@ -1121,7 +1121,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
+ 						 mvchip);
+ 	}
+ 
+-	/* Armada 370/XP has simple PWM support for GPIO lines */
++	/* Some MVEBU SoCs have simple PWM support for GPIO lines */
+ 	if (IS_ENABLED(CONFIG_PWM))
+ 		return mvebu_pwm_probe(pdev, mvchip, id);
+ 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.10.2
