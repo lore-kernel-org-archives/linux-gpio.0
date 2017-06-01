@@ -1,261 +1,54 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH] gpio: lp87565: Add support for GPIO
-Date: Thu, 1 Jun 2017 08:40:31 +0530
-Message-ID: <1496286631-6295-1-git-send-email-j-keerthy@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 6/7] gpio: mockup: improve the error message
+Date: Thu, 1 Jun 2017 09:14:49 +0200
+Message-ID: <CAMRc=Mfbxzk-Ezmi5y8HVwvmb3vcZ8TzMBxuGg+=E84gj806yQ@mail.gmail.com>
+References: <1496134720-5363-1-git-send-email-brgl@bgdev.pl>
+ <1496134720-5363-7-git-send-email-brgl@bgdev.pl> <CAHp75VdiCsE2nHXHjvYfeG43oVCF0i8x8-hk=uTTLBOdH91U6Q@mail.gmail.com>
+ <CAMRc=MfDL_4ExbzAYkus3M7=Cwoee6kV=XXX5kVbvU6j2c7XXA@mail.gmail.com>
+ <CAHp75Ve8gs-VcRRU=qioErxVurP+TYejV9=PV_eZc__=2q7YLQ@mail.gmail.com> <CAMRc=MfgowT2sEaEkx6rObfMEEfN-_0srvb61GxT=BUqxY7-4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:44040 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbdFADMC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 31 May 2017 23:12:02 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMRc=MfgowT2sEaEkx6rObfMEEfN-_0srvb61GxT=BUqxY7-4w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: j-keerthy@ti.com, lee.jones@linaro.org, linux-gpio@vger.kernel.org, t-kristo@ti.com, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, afd@ti.com
 
-Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
-and can be configured in Open-drain output or Push-pull output.
+2017-05-31 17:26 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> 2017-05-31 17:00 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+>> On Wed, May 31, 2017 at 1:54 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>> 2017-05-30 20:59 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+>>>> On Tue, May 30, 2017 at 11:58 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>>>> Indicate the error number and make the message a bit more elaborate.
+>>>>
+>>>>> +                       dev_err(dev,
+>>>>> +                               "adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
+>>>>> +                               ret, base, base < 0 ? ngpio : base + ngpio);
+>>>>
+>>>> You may consider to use
+>>>> 'gpio_mockup_add' instead of 'adding gpiochip'. The latter points the
+>>>> reader first to gpiochip_add family of functions while you run a
+>>>> wrapper on top of it.
+>>>>
+>>>
+>>> But this message can also be emitted if the module params are invalid,
+>>> in which case we don't even enter gpio_mockup_add().
+>>
+>> ...which unveils bad phrasing in the message. In that case "adding
+>> gpiochip" is also misleading.
+>>
+>
+> Not really. You can pass an invalid value later in the list which will
+> only become apparent when it's reached. In that case previous
+> gpiochips will be added correctly but probe will fail with -EINVAL
+> after reaching the bad one in which case the message is right. I hope
+> I'm being clear.
+>
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+Which made me think: maybe the next step would be to parse the
+arguments in the module init function and probe each dummy gpiochip
+separately...
 
-The latest version of mfd driver for this pmic is posted:
-
-https://lkml.org/lkml/2017/5/30/463
-
-
- drivers/gpio/Kconfig        |  10 +++
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-lp87565.c | 186 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 197 insertions(+)
- create mode 100644 drivers/gpio/gpio-lp87565.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index fe25de1..3200130 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -963,6 +963,16 @@ config GPIO_LP873X
- 	  This driver can also be built as a module. If so, the module will be
-           called gpio-lp873x.
- 
-+config GPIO_LP87565
-+	tristate "TI LP87565 GPIO"
-+	depends on MFD_TI_LP87565
-+	help
-+	  This driver supports the GPIO on TI Lp873565 PMICs. 3 GPIOs are present
-+	  on LP87565 PMICs.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called gpio-lp87565.
-+
- config GPIO_MAX77620
- 	tristate "GPIO support for PMIC MAX77620 and MAX20024"
- 	depends on MFD_MAX77620
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index bcd0a0b..a9fda6c 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -67,6 +67,7 @@ obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
- obj-$(CONFIG_GPIO_LPC18XX)	+= gpio-lpc18xx.o
- obj-$(CONFIG_ARCH_LPC32XX)	+= gpio-lpc32xx.o
- obj-$(CONFIG_GPIO_LP873X)	+= gpio-lp873x.o
-+obj-$(CONFIG_GPIO_LP87565)	+= gpio-lp87565.o
- obj-$(CONFIG_GPIO_LYNXPOINT)	+= gpio-lynxpoint.o
- obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
- obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
-diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
-new file mode 100644
-index 0000000..686fdb8
---- /dev/null
-+++ b/drivers/gpio/gpio-lp87565.c
-@@ -0,0 +1,186 @@
-+/*
-+ * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
-+ *	Keerthy <j-keerthy@ti.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether expressed or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License version 2 for more details.
-+ *
-+ * Based on the LP873X driver
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/mfd/lp87565.h>
-+
-+struct lp87565_gpio {
-+	struct gpio_chip chip;
-+	struct lp87565 *lp87565;
-+};
-+
-+static int lp87565_gpio_get_direction(struct gpio_chip *chip,
-+				      unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+	int ret, val;
-+
-+	ret = regmap_read(gpio->lp87565->regmap, LP87565_REG_GPIO_CONFIG, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !(val & BIT(offset));
-+}
-+
-+static int lp87565_gpio_direction_input(struct gpio_chip *chip,
-+					unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+
-+	return regmap_update_bits(gpio->lp87565->regmap,
-+				  LP87565_REG_GPIO_CONFIG,
-+				  BIT(offset), 0);
-+}
-+
-+static int lp87565_gpio_direction_output(struct gpio_chip *chip,
-+					 unsigned int offset, int value)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+
-+	return regmap_update_bits(gpio->lp87565->regmap,
-+				  LP87565_REG_GPIO_CONFIG,
-+				  BIT(offset), !value ? BIT(offset) : 0);
-+}
-+
-+static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+	int ret, val;
-+
-+	ret = regmap_read(gpio->lp87565->regmap, LP87565_REG_GPIO_IN, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return val & BIT(offset);
-+}
-+
-+static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			     int value)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+
-+	regmap_update_bits(gpio->lp87565->regmap, LP87565_REG_GPIO_OUT,
-+			   BIT(offset), value ? BIT(offset) : 0);
-+}
-+
-+static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(gc);
-+	int ret;
-+
-+	switch (offset) {
-+	case 0:
-+	case 1:
-+	case 2:
-+		/* Setup the GPIO*_SEL MUX to GPIO mode */
-+		ret = regmap_update_bits(gpio->lp87565->regmap,
-+					 LP87565_REG_PIN_FUNCTION,
-+					 BIT(offset), BIT(offset));
-+		if (ret)
-+			return ret;
-+
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int lp87565_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(gc);
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(gpio->lp87565->regmap,
-+					  LP87565_REG_GPIO_CONFIG,
-+					  BIT(offset +
-+					      __ffs(LP87565_GOIO1_OD)),
-+					  BIT(offset +
-+					      __ffs(LP87565_GOIO1_OD)));
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(gpio->lp87565->regmap,
-+					  LP87565_REG_GPIO_CONFIG,
-+					  BIT(offset +
-+					      __ffs(LP87565_GOIO1_OD)), 0);
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
-+static const struct gpio_chip template_chip = {
-+	.label			= "lp87565-gpio",
-+	.owner			= THIS_MODULE,
-+	.request		= lp87565_gpio_request,
-+	.get_direction		= lp87565_gpio_get_direction,
-+	.direction_input	= lp87565_gpio_direction_input,
-+	.direction_output	= lp87565_gpio_direction_output,
-+	.get			= lp87565_gpio_get,
-+	.set			= lp87565_gpio_set,
-+	.set_config		= lp87565_gpio_set_config,
-+	.base			= -1,
-+	.ngpio			= 3,
-+	.can_sleep		= true,
-+};
-+
-+static int lp87565_gpio_probe(struct platform_device *pdev)
-+{
-+	struct lp87565_gpio *gpio;
-+	int ret;
-+
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, gpio);
-+
-+	gpio->lp87565 = dev_get_drvdata(pdev->dev.parent);
-+	gpio->chip = template_chip;
-+	gpio->chip.parent = gpio->lp87565->dev;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id lp87565_gpio_id_table[] = {
-+	{ "lp87565-q1-gpio", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(platform, lp87565_gpio_id_table);
-+
-+static struct platform_driver lp87565_gpio_driver = {
-+	.driver = {
-+		.name = "lp87565-gpio",
-+	},
-+	.probe = lp87565_gpio_probe,
-+	.id_table = lp87565_gpio_id_table,
-+};
-+module_platform_driver(lp87565_gpio_driver);
-+
-+MODULE_AUTHOR("Keerthy <j-keerthy@ti.com>");
-+MODULE_DESCRIPTION("LP87565 GPIO driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
-
+Best regards,
+Bartosz Golaszewski
