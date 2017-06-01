@@ -1,49 +1,114 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v5] gpio: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Thu, 1 Jun 2017 18:35:16 +0200
-Message-ID: <CAJZ5v0ihTiuU1-Yiryt7CUsScFZn_3oLm4tNxQJceb_8o_FosQ@mail.gmail.com>
-References: <20170524104216.23643-1-hdegoede@redhat.com> <CACRpkdan9Ayd6qGioQc2N+x9S2WxfXs2WGg4imAApLRxOwrfmQ@mail.gmail.com>
- <9fae1e2f-9d5b-2ba8-3bf5-4e1516e06332@redhat.com> <CACRpkdZ2u8mxCCCNCPpL3d6LACSjjHTCOyok9NWM0WuW0XY3HA@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 3/6] gpio: dt-bindings: Add documentation for gpio controllers on Armada 7K/8K
+Date: Thu, 01 Jun 2017 19:33:27 +0200
+Message-ID: <87zidrr4t4.fsf@free-electrons.com>
+References: <cover.e10718b9c0f9fdd07327ae14e213be8da5b1f7ef.1495210061.git-series.gregory.clement@free-electrons.com>
+        <306395ff39de3d3d3c8f55e5da4de8def29ae8d1.1495210061.git-series.gregory.clement@free-electrons.com>
+        <20170530222907.ysx53p3efyxudyqp@rob-hp-laptop>
+        <87fufltk76.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ2u8mxCCCNCPpL3d6LACSjjHTCOyok9NWM0WuW0XY3HA@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:44530 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbdFARda (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 1 Jun 2017 13:33:30 -0400
+In-Reply-To: <87fufltk76.fsf@free-electrons.com> (Gregory CLEMENT's message of
+        "Wed, 31 May 2017 12:05:49 +0200")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linus.walleij@linaro.org>, Omri Itach <omrii@marvell.com>, linux-kernel@vger.kernel.org, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Neta Zur Hershkovits <neta@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Shadi Ammouri <shadi@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Russell King <rmk+kernel@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 
-On Thu, Jun 1, 2017 at 5:29 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 1, 2017 at 5:20 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+Hi Rob,
+ 
+ On mer., mai 31 2017, Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+
+> Hi Rob,
+>  
+>  On mer., mai 31 2017, Rob Herring <robh@kernel.org> wrote:
+>>>  
+>>>  Required properties:
+>>>  
+>>> -- compatible : Should be "marvell,orion-gpio", "marvell,mv78200-gpio"
+>>> -  or "marvell,armadaxp-gpio". "marvell,orion-gpio" should be used for
+>>> -  Orion, Kirkwood, Dove, Discovery (except MV78200) and Armada
+>>> -  370. "marvell,mv78200-gpio" should be used for the Discovery
+>>> -  MV78200. "marvel,armadaxp-gpio" should be used for all Armada XP
+>>> -  SoCs (MV78230, MV78260, MV78460).
+>>> +- compatible : Should be "marvell,orion-gpio", "marvell,mv78200-gpio",
+>>> +  "marvell,armadaxp-gpio" or "marvell,armada-8k-gpio".
+>>> +
+>>> +    "marvell,orion-gpio" should be used for Orion, Kirkwood, Dove,
+>>> +    Discovery (except MV78200) and Armada 370. "marvell,mv78200-gpio"
+>>> +    should be used for the Discovery MV78200.
+>>> +
+>>> +    "marvel,armadaxp-gpio" should be used for all Armada XP SoCs
+>>> +    (MV78230, MV78260, MV78460).
+>>> +
+>>> +    "marvell,armada-8k-gpio" should be used for the Armada 7K and 8K
+>>> +    SoCs (either from AP or CP), see
+>>> +    Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt
+>>> +    and
+>>> +    Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+>>> +    for specific details about the offset property.
+>>>  
+>>>  - reg: Address and length of the register set for the device. Only one
+>>>    entry is expected, except for the "marvell,armadaxp-gpio" variant
+>>>    for which two entries are expected: one for the general registers,
+>>> -  one for the per-cpu registers.
+>>> +  one for the per-cpu registers. Not used for marvell,armada-8k-gpio.
+>>
+>> Why can't use you use reg instead of offset?
 >
->>> So again, the reason this - which is not a GPIO controller at all -
->>> should anyways
->>> be in drivers/gpio/ is that some firmware person think it's convenien >
->>> Shouldn't this rather be in drivers/platform/x86?
->>
->>
->> That is where it started, I'm fine with putting it back there.
->>
->>> You can still use the gpio driver abstraction.
->>
->> Ack, if you're ok with using the gpio driver abstraction while
->> putting the driver in drivers/platform/x86 that might be the
->> best way to deal with this.
+> I looked for how the other syscon user did, and I found the offset
+> usage. So I assumed it was the way to do it. But if you wan I can use a
+> reg property.
+
+I had a closer looked to the binding when syscon is used with several
+subnodes. And actually the reg usage is very uncommon, I only find it in
+drivers/regulator/pbias-regulator.c but for legacy.
+
+I am not sure that we have any benefit with this reg property: we won't
+use the length of the register and we need to add a range property in
+the parent node.
+
+An other way to pass this information is to have a different compatible
+string which will match the different offset available. In this case the
+reg property won't be used in a syscon node. However, while it makes
+sens for the difference between AP806 and CP110, it would be strange to
+have a different compatible string for gpio bank 1 and gpio bank 2.
+
+So, in the end I would prefer to use the offset. From my point of view
+it is better to not use the reg property for two different purposes:
+mmio address vs offset in a syscon.
+
+But if you think that from the point of view of the device tree
+compliance we have to use the reg property, of course I will change it.
+
+Thanks,
+
+Gregory
+
 >
-> OK let's proceed like that.
+> Gregory
+>
+>>
+>> Rob
+>
+> -- 
+> Gregory Clement, Free Electrons
+> Kernel, drivers, real-time and embedded Linux
+> development, consulting, training and support.
+> http://free-electrons.com
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-Cool.
-
-Well, I actually overlooked the "virtual" part somehow, sorry about that.
-
-Yes, it totally should be platform/x86.
-
-> I guess I could be hopeless and require that it reimplement
-> the ACPI parser and whatnot just because it's not GPIO but
-> code duplication is a greater evil and thus modelling this as a
-> "GPIO" is the lesser evil, so I just have to accept it as such.
-
-Thanks for looking into this!
-
-Cheers,
-Rafael
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
