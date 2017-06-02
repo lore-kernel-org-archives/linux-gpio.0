@@ -1,47 +1,59 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5 10/11] gpio-exar/8250-exar: Make set of exported GPIOs configurable
-Date: Fri, 2 Jun 2017 13:32:53 +0300
-Message-ID: <CAHp75Vfd4bmFCEpE8B0cNgKcmYVrJ=KjijY6Qq2HVtPPzOxoLA@mail.gmail.com>
-References: <cover.1496388533.git.jan.kiszka@siemens.com> <f8b03cad4ea23bf64f9e1fe29f38a1998b458293.1496388533.git.jan.kiszka@siemens.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v5] gpio: Add driver for ACPI INT0002 Virtual GPIO device
+Date: Fri, 02 Jun 2017 14:10:33 +0300
+Message-ID: <1496401833.28981.48.camel@linux.intel.com>
+References: <20170524104216.23643-1-hdegoede@redhat.com>
+         <CACRpkdb9C0+3SLm9guYqHA_e+F4Tt3mbJJA00+d5PsjeuwzrpA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:34487 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751138AbdFBKcz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Jun 2017 06:32:55 -0400
-In-Reply-To: <f8b03cad4ea23bf64f9e1fe29f38a1998b458293.1496388533.git.jan.kiszka@siemens.com>
+Received: from mga04.intel.com ([192.55.52.120]:45141 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750910AbdFBLKi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 2 Jun 2017 07:10:38 -0400
+In-Reply-To: <CACRpkdb9C0+3SLm9guYqHA_e+F4Tt3mbJJA00+d5PsjeuwzrpA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
 
-On Fri, Jun 2, 2017 at 10:28 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On the SIMATIC, IOT2040 only a single pin is exportable as GPIO, the
-> rest is required to operate the UART. To allow modeling this case,
-> expand the platform device data structure to specify a (consecutive) pin
-> subset for exporting by the gpio-exar driver.
+On Thu, 2017-06-01 at 17:23 +0200, Linus Walleij wrote:
+> On Wed, May 24, 2017 at 12:42 PM, Hans de Goede <hdegoede@redhat.com>
+> wrote:
+> 
+> Please move this thing to drivers/platform/x86.
 
-> +       if (device_property_read_u32(&pdev->dev, "gpio-exar,first-pin",
-> +                                    &first_pin) < 0 ||
-> +           device_property_read_u32(&pdev->dev, "ngpios", &ngpios) < 0)
-> +               return -EINVAL;
+I'm fine to take it as long it has your Ack.
 
-You shadow an error.
+> > +         Some peripherals on Baytrail and Cherrytrail platforms
+> > signal
+> > +         PME to the PMC to wakeup the system. When this happens
+> > software
+> 
+> Spell out the acronyms.
 
-Please use
-ret = device_property_...;
-if (ret)
- return ret;
+PME is standard of PCI, Power Management Event.
 
-ret = ...
-...
+PMC — Power Management Controller
 
-Moreover, I missed how you named first property, I would go rather
-with "linux," prefix to show that is _internal_ / Linux only property.
+PME_B0 — PME Bus 0
 
-Perhaps something like "linux,first-pin" ?
+STS — status (obviously :-) )
+
+GPE — General Purpose Event (in ACPI terms)
+
+> (...)
+> > + * Some peripherals on Bay Trail and Cherry Trail platforms signal
+> > PME to the
+> > + * PMC to wakeup the system. When this happens software needs to
+> > clear the
+> > + * PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm
+> > on IRQ 9.
+> 
+> Spell out acronyms.
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
