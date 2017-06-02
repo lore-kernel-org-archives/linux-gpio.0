@@ -1,59 +1,39 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v5] gpio: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Fri, 02 Jun 2017 14:10:33 +0300
-Message-ID: <1496401833.28981.48.camel@linux.intel.com>
-References: <20170524104216.23643-1-hdegoede@redhat.com>
-         <CACRpkdb9C0+3SLm9guYqHA_e+F4Tt3mbJJA00+d5PsjeuwzrpA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+From: Tobias Klauser <tklauser@distanz.ch>
+Subject: [PATCH] pinctrl: sunxi: constify irq_domain_ops
+Date: Fri,  2 Jun 2017 13:29:58 +0200
+Message-ID: <20170602112958.3882-1-tklauser@distanz.ch>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:45141 "EHLO mga04.intel.com"
+Received: from mail.zhinst.com ([212.126.164.98]:48688 "EHLO mail.zhinst.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750910AbdFBLKi (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 2 Jun 2017 07:10:38 -0400
-In-Reply-To: <CACRpkdb9C0+3SLm9guYqHA_e+F4Tt3mbJJA00+d5PsjeuwzrpA@mail.gmail.com>
+        id S1751126AbdFBLaE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 2 Jun 2017 07:30:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Alexandre Courbot <gnurou@gmail.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2017-06-01 at 17:23 +0200, Linus Walleij wrote:
-> On Wed, May 24, 2017 at 12:42 PM, Hans de Goede <hdegoede@redhat.com>
-> wrote:
-> 
-> Please move this thing to drivers/platform/x86.
+struct irq_domain_ops is not modified, so it can be made const.
 
-I'm fine to take it as long it has your Ack.
+Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > +         Some peripherals on Baytrail and Cherrytrail platforms
-> > signal
-> > +         PME to the PMC to wakeup the system. When this happens
-> > software
-> 
-> Spell out the acronyms.
-
-PME is standard of PCI, Power Management Event.
-
-PMC — Power Management Controller
-
-PME_B0 — PME Bus 0
-
-STS — status (obviously :-) )
-
-GPE — General Purpose Event (in ACPI terms)
-
-> (...)
-> > + * Some peripherals on Bay Trail and Cherry Trail platforms signal
-> > PME to the
-> > + * PMC to wakeup the system. When this happens software needs to
-> > clear the
-> > + * PME_B0_STS bit in the GPE0a_STS register to avoid an IRQ storm
-> > on IRQ 9.
-> 
-> Spell out acronyms.
-
-
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 58774acfc814..0dfd7fa66c48 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -979,7 +979,7 @@ static int sunxi_pinctrl_irq_of_xlate(struct irq_domain *d,
+ 	return 0;
+ }
+ 
+-static struct irq_domain_ops sunxi_pinctrl_irq_domain_ops = {
++static const struct irq_domain_ops sunxi_pinctrl_irq_domain_ops = {
+ 	.xlate		= sunxi_pinctrl_irq_of_xlate,
+ };
+ 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.13.0
+
+
