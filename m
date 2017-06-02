@@ -1,104 +1,77 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: [PATCH] gpio: mvebu: change compatible string for PWM support
-Date: Thu,  1 Jun 2017 22:08:20 +0200
-Message-ID: <20170601200820.22396-1-ralph.sennhauser@gmail.com>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Sender: linux-pwm-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Richard Genoud <richard.genoud@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Ralph Sennhauser <ralph.sennhauser@gmail.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Date: Fri, 02 Jun 2017 08:53:26 +0300
+Message-ID: <38369176.p2s9nCEmhA@avalon>
+References: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-As it turns out more than just Armada 370 and XP support using GPIO
-lines as PWM lines. For example the Armada 38x family has the same
-hardware support. As such "marvell,armada-370-xp-gpio" for the
-compatible string is a misnomer.
+Hi Geert,
 
-Change the compatible string to "marvell,armada-370-gpio" before the
-driver makes it out of the -rc stage. This also follows the practice of
-using only the first device family supported as part of the name.
+Thank you for the patch.
 
-Also update the documentation and comments in the code accordingly.
+On Thursday 01 Jun 2017 12:27:00 Geert Uytterhoeven wrote:
+> Configuration of the lcd0 pinmux group and GPIO hog for the external
+> GPIO mux are done using a single device node, causing the "output-high"
+> property to be applied to both.  This will fail for the pinmux group,
+> but doesn't cause any harm, as the failure is ignored silently.
+> 
+> However, after "pinctrl: sh-pfc: propagate errors on group config", the
+> failure will become fatal, leading to a broken display:
+> 
+>     sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group
+> 102 sh-pfc e6050000.pin-controller: Error applying setting, reverse things
+> back sh-pfc e6050000.pin-controller: failed to select default state
+> 
+> Move the GPIO hog to its own node to fix this.
+> 
+> Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl
+> and gpio-hog for lcdc0") Signed-off-by: Geert Uytterhoeven
+> <geert+renesas@glider.be>
+> ---
+> This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
+> group config" (https://patchwork.kernel.org/patch/9186713/).
+> 
+> v2:
+>   - Keep the GPIO hog, but move it to its own node, instead of using
+>     another level of subnodes.  As the GPIO hog node is not referenced from
+>     a pinctrl-0 property, pinconf doesn't fail with "No pin or group
+>     provided in DT node".
 
-Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
-Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+I like this approach better, it allows us to drive the output instead of 
+pulling it up, without requiring a full implementation of output drive control 
+in the pfc driver.
 
----
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Hi everyone,
+> ---
+>  arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+> b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts index
+> 297b1f10f7346a9f..8c85d3ee5f5e7bfd 100644
+> --- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+> +++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+> @@ -273,7 +273,9 @@
+>  	lcd0_pins: lcd0 {
+>  		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+>  		function = "lcd0";
+> +	};
+> 
+> +	lcd0_mux {
+>  		/* DBGMD/LCDC0/FSIA MUX */
+>  		gpio-hog;
+>  		gpios = <176 0>;
 
-The suggestion to change the compatible string last minute comes from
-Gregory CLEMENT after we realized the bad choice of name due to Richard
-Genoud reporting an issue when he used the driver with an Armada-388.
-
-Rob Herring just requested to use a separate compatible string but not
-what it should look like. So I assume he is fine with the new one as
-well. The rest of this patch is rather minor.
-
-Nothing in tree is using this driver so far, first consumers will be
-added with 4.13.
-
-Ralph
-
----
- Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 6 +++---
- drivers/gpio/gpio-mvebu.c                             | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-index 42c3bb2..01e331a 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-@@ -41,9 +41,9 @@ Required properties:
- Optional properties:
- 
- In order to use the GPIO lines in PWM mode, some additional optional
--properties are required. Only Armada 370 and XP support these properties.
-+properties are required.
- 
--- compatible: Must contain "marvell,armada-370-xp-gpio"
-+- compatible: Must contain "marvell,armada-370-gpio"
- 
- - reg: an additional register set is needed, for the GPIO Blink
-   Counter on/off registers.
-@@ -71,7 +71,7 @@ Example:
- 		};
- 
- 		gpio1: gpio@18140 {
--			compatible = "marvell,armada-370-xp-gpio";
-+			compatible = "marvell,armada-370-gpio";
- 			reg = <0x18140 0x40>, <0x181c8 0x08>;
- 			reg-names = "gpio", "pwm";
- 			ngpios = <17>;
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 19a92ef..f94fd47 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -721,7 +721,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
- 	u32 set;
- 
- 	if (!of_device_is_compatible(mvchip->chip.of_node,
--				     "marvell,armada-370-xp-gpio"))
-+				     "marvell,armada-370-gpio"))
- 		return 0;
- 
- 	if (IS_ERR(mvchip->clk))
-@@ -845,7 +845,7 @@ static const struct of_device_id mvebu_gpio_of_match[] = {
- 		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ARMADAXP,
- 	},
- 	{
--		.compatible = "marvell,armada-370-xp-gpio",
-+		.compatible = "marvell,armada-370-gpio",
- 		.data	    = (void *) MVEBU_GPIO_SOC_VARIANT_ORION,
- 	},
- 	{
-@@ -1121,7 +1121,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 						 mvchip);
- 	}
- 
--	/* Armada 370/XP has simple PWM support for GPIO lines */
-+	/* Some MVEBU SoCs have simple PWM support for GPIO lines */
- 	if (IS_ENABLED(CONFIG_PWM))
- 		return mvebu_pwm_probe(pdev, mvchip, id);
- 
 -- 
-2.10.2
+Regards,
+
+Laurent Pinchart
