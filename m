@@ -1,73 +1,179 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH v2 03/11] pinctrl: mvebu: remove the offset property for regmap
-Date: Fri,  2 Jun 2017 16:23:10 +0200
-Message-ID: <f171b34fb075c67215da2224265e470ef9376528.1496413293.git-series.gregory.clement@free-electrons.com>
-References: <cover.8fe5f7c62a787452878ca071fa00b953e96988ef.1496413293.git-series.gregory.clement@free-electrons.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42837 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbdFBOXs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 2 Jun 2017 10:23:48 -0400
-In-Reply-To: <cover.8fe5f7c62a787452878ca071fa00b953e96988ef.1496413293.git-series.gregory.clement@free-electrons.com>
-In-Reply-To: <cover.8fe5f7c62a787452878ca071fa00b953e96988ef.1496413293.git-series.gregory.clement@free-electrons.com>
-References: <cover.8fe5f7c62a787452878ca071fa00b953e96988ef.1496413293.git-series.gregory.clement@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH v3 07/17] regulator: arizona-micsupp: Add
+	support for Cirrus Logic Madera codecs
+Date: Fri, 2 Jun 2017 16:03:00 +0100
+Message-ID: <1496415790-19164-8-git-send-email-rf@opensource.wolfsonmicro.com>
+References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net
+Cc: linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>
 
-The offset property of the pinctrl node, when a regmap is used in the
-device tree, was never used nor documented in the binding. Moreover, the
-compatible string is enough to let the driver know which offset using.
+This adds a new driver identity "madera-micsupp" and probe function
+so that this driver can be used to control the micsupp regulator on
+Cirrus Logic Madera codecs.
 
-So this patch removes the property and move the information at the driver
-level.
-
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 ---
- drivers/pinctrl/mvebu/pinctrl-mvebu.c | 6 +-----
- drivers/pinctrl/mvebu/pinctrl-mvebu.h | 2 +-
- 2 files changed, 2 insertions(+), 6 deletions(-)
+No changes since V2
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.c b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-index e4dda12d371a..163d4614b0f8 100644
---- a/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.c
-@@ -810,21 +810,17 @@ int mvebu_regmap_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data,
+ .../bindings/regulator/arizona-regulator.txt       |  3 +-
+ drivers/regulator/Kconfig                          |  7 ++-
+ drivers/regulator/arizona-micsupp.c                | 71 +++++++++++++++++++++-
+ 3 files changed, 76 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/regulator/arizona-regulator.txt b/Documentation/devicetree/bindings/regulator/arizona-regulator.txt
+index 443564d..91b00f9 100644
+--- a/Documentation/devicetree/bindings/regulator/arizona-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/arizona-regulator.txt
+@@ -5,7 +5,8 @@ of analogue I/O.
+ 
+ This document lists regulator specific bindings, see the primary binding
+ document:
+-  ../mfd/arizona.txt
++  For Wolfson Arizona codecs: ../mfd/arizona.txt
++  For Cirrus Logic Madera codecs: ../mfd/madera.txt
+ 
+ Optional properties:
+   - wlf,ldoena : GPIO specifier for the GPIO controlling LDOENA
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 7c34ff8..72c926c 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -134,11 +134,12 @@ config REGULATOR_ARIZONA_LDO1
+ 	  devices.
+ 
+ config REGULATOR_ARIZONA_MICSUPP
+-	tristate "Wolfson Arizona class devices MICSUPP"
+-	depends on MFD_ARIZONA
++	tristate "Cirrus Madera and Wolfson Arizona class devices MICSUPP"
++	depends on MFD_ARIZONA || MFD_MADERA
+ 	depends on SND_SOC
+ 	help
+-	  Support for the MICSUPP regulators found on Wolfson Arizona class
++	  Support for the MICSUPP regulators found on Cirrus Logic Madera codecs
++	  and Wolfson Arizona codecs
+ 	  devices.
+ 
+ config REGULATOR_AS3711
+diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
+index 120de94..36bf73c 100644
+--- a/drivers/regulator/arizona-micsupp.c
++++ b/drivers/regulator/arizona-micsupp.c
+@@ -30,6 +30,10 @@
+ #include <linux/mfd/arizona/pdata.h>
+ #include <linux/mfd/arizona/registers.h>
+ 
++#include <linux/mfd/madera/core.h>
++#include <linux/mfd/madera/pdata.h>
++#include <linux/mfd/madera/registers.h>
++
+ #include <linux/regulator/arizona-micsupp.h>
+ 
+ struct arizona_micsupp {
+@@ -205,6 +209,28 @@ static int arizona_micsupp_set_bypass(struct regulator_dev *rdev, bool ena)
+ 	.num_consumer_supplies = 1,
+ };
+ 
++static const struct regulator_desc madera_micsupp = {
++	.name = "MICVDD",
++	.supply_name = "CPVDD1",
++	.type = REGULATOR_VOLTAGE,
++	.n_voltages = 40,
++	.ops = &arizona_micsupp_ops,
++
++	.vsel_reg = MADERA_LDO2_CONTROL_1,
++	.vsel_mask = MADERA_LDO2_VSEL_MASK,
++	.enable_reg = MADERA_MIC_CHARGE_PUMP_1,
++	.enable_mask = MADERA_CPMIC_ENA,
++	.bypass_reg = MADERA_MIC_CHARGE_PUMP_1,
++	.bypass_mask = MADERA_CPMIC_BYPASS,
++
++	.linear_ranges = arizona_micsupp_ext_ranges,
++	.n_linear_ranges = ARRAY_SIZE(arizona_micsupp_ext_ranges),
++
++	.enable_time = 3000,
++
++	.owner = THIS_MODULE,
++};
++
+ static int arizona_micsupp_of_get_pdata(struct arizona_micsupp_pdata *pdata,
+ 					struct regulator_config *config,
+ 					const struct regulator_desc *desc)
+@@ -321,6 +347,24 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+ 					   &arizona->pdata.micvdd);
  }
  
- int mvebu_pinctrl_simple_regmap_probe(struct platform_device *pdev,
--				      struct device *syscon_dev)
-+				      struct device *syscon_dev, u32 offset)
- {
- 	struct mvebu_pinctrl_soc_info *soc = dev_get_platdata(&pdev->dev);
- 	struct mvebu_mpp_ctrl_data *mpp_data;
- 	struct regmap *regmap;
--	u32 offset;
- 	int i;
++static int madera_micsupp_probe(struct platform_device *pdev)
++{
++	struct madera *madera = dev_get_drvdata(pdev->dev.parent);
++	struct arizona_micsupp *micsupp;
++
++	micsupp = devm_kzalloc(&pdev->dev, sizeof(*micsupp), GFP_KERNEL);
++	if (!micsupp)
++		return -ENOMEM;
++
++	micsupp->regmap = madera->regmap;
++	micsupp->dapm = &madera->dapm;
++	micsupp->dev = madera->dev;
++	micsupp->init_data = arizona_micsupp_ext_default;
++
++	return arizona_micsupp_common_init(pdev, micsupp, &madera_micsupp,
++					   &madera->pdata.micvdd);
++}
++
+ static struct platform_driver arizona_micsupp_driver = {
+ 	.probe = arizona_micsupp_probe,
+ 	.driver		= {
+@@ -328,10 +372,35 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+ 	},
+ };
  
- 	regmap = syscon_node_to_regmap(syscon_dev->of_node);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
+-module_platform_driver(arizona_micsupp_driver);
++static struct platform_driver madera_micsupp_driver = {
++	.probe = madera_micsupp_probe,
++	.driver		= {
++		.name	= "madera-micsupp",
++	},
++};
++
++static struct platform_driver * const arizona_micsupp_drivers[] = {
++	&arizona_micsupp_driver,
++	&madera_micsupp_driver,
++};
++
++static int __init arizona_micsupp_init(void)
++{
++	return platform_register_drivers(arizona_micsupp_drivers,
++					 ARRAY_SIZE(arizona_micsupp_drivers));
++}
++module_init(arizona_micsupp_init);
++
++static void __exit arizona_micsupp_exit(void)
++{
++	platform_unregister_drivers(arizona_micsupp_drivers,
++				    ARRAY_SIZE(arizona_micsupp_drivers));
++}
++module_exit(arizona_micsupp_exit);
  
--	if (of_property_read_u32(pdev->dev.of_node, "offset", &offset))
--		return -EINVAL;
--
- 	mpp_data = devm_kcalloc(&pdev->dev, soc->ncontrols, sizeof(*mpp_data),
- 				GFP_KERNEL);
- 	if (!mpp_data)
-diff --git a/drivers/pinctrl/mvebu/pinctrl-mvebu.h b/drivers/pinctrl/mvebu/pinctrl-mvebu.h
-index c90704e74884..75bba436bf59 100644
---- a/drivers/pinctrl/mvebu/pinctrl-mvebu.h
-+++ b/drivers/pinctrl/mvebu/pinctrl-mvebu.h
-@@ -210,6 +210,6 @@ int mvebu_regmap_mpp_ctrl_set(struct mvebu_mpp_ctrl_data *data, unsigned pid,
- int mvebu_pinctrl_probe(struct platform_device *pdev);
- int mvebu_pinctrl_simple_mmio_probe(struct platform_device *pdev);
- int mvebu_pinctrl_simple_regmap_probe(struct platform_device *pdev,
--				      struct device *syscon_dev);
-+				      struct device *syscon_dev, u32 offset);
- 
- #endif
+ /* Module information */
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("Arizona microphone supply driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:arizona-micsupp");
++MODULE_ALIAS("platform:madera-micsupp");
 -- 
-git-series 0.9.1
+1.9.1
