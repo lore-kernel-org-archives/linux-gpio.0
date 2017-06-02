@@ -1,77 +1,69 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2] ARM: dts: armadillo800eva: Split LCD mux and gpio
-Date: Fri, 02 Jun 2017 08:53:26 +0300
-Message-ID: <38369176.p2s9nCEmhA@avalon>
-References: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1496312820-27237-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH v5 01/11] serial: exar: Leave MPIOs as output for Commtech adapters
+Date: Fri,  2 Jun 2017 09:28:44 +0200
+Message-ID: <0c7b59cdc5a4cb7035656b081e36457eb675fc29.1496388533.git.jan.kiszka@siemens.com>
+References: <cover.1496388533.git.jan.kiszka@siemens.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1496388533.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1496388533.git.jan.kiszka@siemens.com>
+References: <cover.1496388533.git.jan.kiszka@siemens.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert,
+Commtech adapters apparently need the original setting as outputs, see
+https://marc.info/?l=linux-gpio&m=149557425201323&w=2. Account for that.
 
-Thank you for the patch.
+Fixes: 7dea8165f1d6 ("serial: exar: Preconfigure xr17v35x MPIOs as output")
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/tty/serial/8250/8250_exar.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-On Thursday 01 Jun 2017 12:27:00 Geert Uytterhoeven wrote:
-> Configuration of the lcd0 pinmux group and GPIO hog for the external
-> GPIO mux are done using a single device node, causing the "output-high"
-> property to be applied to both.  This will fail for the pinmux group,
-> but doesn't cause any harm, as the failure is ignored silently.
-> 
-> However, after "pinctrl: sh-pfc: propagate errors on group config", the
-> failure will become fatal, leading to a broken display:
-> 
->     sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group
-> 102 sh-pfc e6050000.pin-controller: Error applying setting, reverse things
-> back sh-pfc e6050000.pin-controller: failed to select default state
-> 
-> Move the GPIO hog to its own node to fix this.
-> 
-> Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl
-> and gpio-hog for lcdc0") Signed-off-by: Geert Uytterhoeven
-> <geert+renesas@glider.be>
-> ---
-> This is a hard dependency for "pinctrl: sh-pfc: propagate errors on
-> group config" (https://patchwork.kernel.org/patch/9186713/).
-> 
-> v2:
->   - Keep the GPIO hog, but move it to its own node, instead of using
->     another level of subnodes.  As the GPIO hog node is not referenced from
->     a pinctrl-0 property, pinconf doesn't fail with "No pin or group
->     provided in DT node".
-
-I like this approach better, it allows us to drive the output instead of 
-pulling it up, without requiring a full implementation of output drive control 
-in the pfc driver.
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  arch/arm/boot/dts/r8a7740-armadillo800eva.dts | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-> b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts index
-> 297b1f10f7346a9f..8c85d3ee5f5e7bfd 100644
-> --- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-> +++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-> @@ -273,7 +273,9 @@
->  	lcd0_pins: lcd0 {
->  		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
->  		function = "lcd0";
-> +	};
-> 
-> +	lcd0_mux {
->  		/* DBGMD/LCDC0/FSIA MUX */
->  		gpio-hog;
->  		gpios = <176 0>;
-
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+index b4fa585156c7..8984e8b2d524 100644
+--- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -171,19 +171,26 @@ pci_xr17c154_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+ 	return default_setup(priv, pcidev, idx, offset, port);
+ }
+ 
+-static void setup_gpio(u8 __iomem *p)
++static void setup_gpio(struct pci_dev *pcidev, u8 __iomem *p)
+ {
++	/*
++	 * The Commtech adapters required the MPIOs to be driven low. The Exar
++	 * devices will export them as GPIOs, so we pre-configure them safely
++	 * as inputs.
++	 */
++	u8 dir = pcidev->vendor == PCI_VENDOR_ID_EXAR ? 0xff : 0x00;
++
+ 	writeb(0x00, p + UART_EXAR_MPIOINT_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOLVL_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIO3T_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOINV_7_0);
+-	writeb(0xff, p + UART_EXAR_MPIOSEL_7_0);
++	writeb(dir,  p + UART_EXAR_MPIOSEL_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOOD_7_0);
+ 	writeb(0x00, p + UART_EXAR_MPIOINT_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOLVL_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIO3T_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOINV_15_8);
+-	writeb(0xff, p + UART_EXAR_MPIOSEL_15_8);
++	writeb(dir,  p + UART_EXAR_MPIOSEL_15_8);
+ 	writeb(0x00, p + UART_EXAR_MPIOOD_15_8);
+ }
+ 
+@@ -236,7 +243,7 @@ pci_xr17v35x_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+ 
+ 	if (idx == 0) {
+ 		/* Setup Multipurpose Input/Output pins. */
+-		setup_gpio(p);
++		setup_gpio(pcidev, p);
+ 
+ 		port->port.private_data = xr17v35x_register_gpio(pcidev);
+ 	}
 -- 
-Regards,
-
-Laurent Pinchart
+2.12.3
