@@ -1,51 +1,65 @@
-From: Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH v4 2/6] dt-bindings: qcom: Add ipq8074 bindings
-Date: Sat,  3 Jun 2017 12:57:51 +0530
-Message-ID: <1496474875-7190-3-git-send-email-varada@codeaurora.org>
-References: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 3/8] thermal: intel_bxt_pmic_thermal: Use first level
+ PMIC thermal irq
+Date: Sat, 3 Jun 2017 16:00:52 +0300
+Message-ID: <CAHp75Vd5uPmz-0uyPcwYaqyGZhC7caHWj5PbfMJTzSQ6G+1o3w@mail.gmail.com>
+References: <cover.1496266871.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20170531070225.bymdhhpclidwwtpt@dell> <3e58ab749a67cce5c956ef13db8563fb0a8bc190.1496266871.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1496474875-7190-1-git-send-email-varada@codeaurora.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org
-Cc: absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, varada@codeaurora.org, mraghava@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+In-Reply-To: <3e58ab749a67cce5c956ef13db8563fb0a8bc190.1496266871.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "edubezval@gmail.com" <edubezval@gmail.com>, "dvhart@infradead.org" <dvhart@infradead.org>, "Zhang, Rui" <rui.zhang@intel.com>, Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, USB <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
----
- Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Jun 1, 2017 at 1:37 AM,
+<sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>
+> PMIC mfd driver only exports first level irq for thermal device.
+> But currently we are reading the irqs from the second level irq
+> chip, So this patch fixes this issue by adding support to use
+> first level PMIC thermal irq.
+>
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.txt b/Documentation/devicetree/bindings/arm/qcom.txt
-index 028d16e..0ed4d39 100644
---- a/Documentation/devicetree/bindings/arm/qcom.txt
-+++ b/Documentation/devicetree/bindings/arm/qcom.txt
-@@ -25,6 +25,7 @@ The 'SoC' element must be one of the following strings:
- 	msm8994
- 	msm8996
- 	mdm9615
-+	ipq8074
- 
- The 'board' element must be one of the following strings:
- 
-@@ -33,6 +34,7 @@ The 'board' element must be one of the following strings:
- 	dragonboard
- 	mtp
- 	sbc
-+	hk01
- 
- The 'soc_version' and 'board_version' elements take the form of v<Major>.<Minor>
- where the minor number may be omitted when it's zero, i.e.  v1.0 is the same
+Shouldn't be this squashed to patch 2?
+
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Acked-by: Zhang Rui <rui.zhang@intel.com>
+> ---
+>  drivers/thermal/intel_bxt_pmic_thermal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Changes since v1:
+>  * None
+>
+> Changes since v2:
+>  * Rebased on top of latest release.
+>
+> Changes since v3:
+>  * Rebased on top of latest release.
+>
+> diff --git a/drivers/thermal/intel_bxt_pmic_thermal.c b/drivers/thermal/intel_bxt_pmic_thermal.c
+> index 0f19a39..ef6b322 100644
+> --- a/drivers/thermal/intel_bxt_pmic_thermal.c
+> +++ b/drivers/thermal/intel_bxt_pmic_thermal.c
+> @@ -241,7 +241,7 @@ static int pmic_thermal_probe(struct platform_device *pdev)
+>         }
+>
+>         regmap = pmic->regmap;
+> -       regmap_irq_chip = pmic->irq_chip_data_level2;
+> +       regmap_irq_chip = pmic->irq_chip_data;
+>
+>         pmic_irq_count = 0;
+>         while ((irq = platform_get_irq(pdev, pmic_irq_count)) != -ENXIO) {
+> --
+> 2.7.4
+>
+
+
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+With Best Regards,
+Andy Shevchenko
