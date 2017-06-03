@@ -1,45 +1,110 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v5 3/8] thermal: intel_bxt_pmic_thermal: Use first level
- PMIC thermal irq
-Date: Sat, 3 Jun 2017 21:18:13 +0300
-Message-ID: <CAHp75VcQfSkn7NAWSC2Vq=8RCC0M1p9zvVFjJFLyEo17GDvHsA@mail.gmail.com>
-References: <cover.1496266871.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20170531070225.bymdhhpclidwwtpt@dell> <3e58ab749a67cce5c956ef13db8563fb0a8bc190.1496266871.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <CAHp75Vd5uPmz-0uyPcwYaqyGZhC7caHWj5PbfMJTzSQ6G+1o3w@mail.gmail.com>
- <CAENHMvOzo0e5gs+DzK3ZNL7BbenhpZZCCbmT5kAjpWq-679UOQ@mail.gmail.com>
- <CAHp75VdQyCMzTyPVkbfr6teEugxEmKuDOe5Qk51bDvoNjTay+w@mail.gmail.com> <CAENHMvMF8yOsezMRSYp+4TsVTD9Nnbfm8LJWuX7YccbSL+bsGQ@mail.gmail.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Sat, 03 Jun 2017 20:55:23 +0200
+Message-ID: <2668868.v3IoKk0Lz9@debian64>
+References: <1496474875-7190-1-git-send-email-varada@codeaurora.org> <1496474875-7190-2-git-send-email-varada@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAENHMvMF8yOsezMRSYp+4TsVTD9Nnbfm8LJWuX7YccbSL+bsGQ@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
-Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Alexandre Courbot <gnurou@gmail.com>, "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, "edubezval@gmail.com" <edubezval@gmail.com>, "dvhart@infradead.org" <dvhart@infradead.org>, "Zhang, Rui" <rui.zhang@intel.com>, Lee Jones <lee.jones@linaro.org>, Andy Shevchenko <andy@infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, USB <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36265 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750991AbdFCSz2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 3 Jun 2017 14:55:28 -0400
+In-Reply-To: <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org, Ram Chandra Jangir <rjangir@codeaurora.org>
 
-On Sat, Jun 3, 2017 at 8:53 PM, Sathyanarayanan Kuppuswamy Natarajan
-<sathyaosid@gmail.com> wrote:
-> On Sat, Jun 3, 2017 at 10:32 AM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Sat, Jun 3, 2017 at 8:28 PM, Sathyanarayanan Kuppuswamy Natarajan
->> <sathyaosid@gmail.com> wrote:
+On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq8074.
+> 
+> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> ---
+> +- bias-disable:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as no pull.
+> +
+> +- bias-pull-down:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull down.
+> +
+> +- bias-pull-up:
+> +	Usage: optional
+> +	Value type: <none>
+> +	Definition: The specified pins should be configued as pull up.
+> +
+> +#define REG_SIZE 0x1000
+> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
+> +	{					        \
+> +		.name = "gpio" #id,			\
+> +		.pins = gpio##id##_pins,		\
+> +		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
+> +		.funcs = (int[]){			\
+> +			msm_mux_gpio, /* gpio mode */	\
+> +			msm_mux_##f1,			\
+> +			msm_mux_##f2,			\
+> +			msm_mux_##f3,			\
+> +			msm_mux_##f4,			\
+> +			msm_mux_##f5,			\
+> +			msm_mux_##f6,			\
+> +			msm_mux_##f7,			\
+> +			msm_mux_##f8,			\
+> +			msm_mux_##f9			\
+> +		},				        \
+> +		.nfuncs = 10,				\
+> +		.ctl_reg = REG_SIZE * id,		\
+> +		.io_reg = 0x4 + REG_SIZE * id,		\
+> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
+> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
+> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
+> +		.mux_bit = 2,			\
+> +		.pull_bit = 0,			\
+> +		.drv_bit = 6,			\
+> +		.oe_bit = 9,			\
+> +		.in_bit = 0,			\
+> +		.out_bit = 1,			\
+> +		.intr_enable_bit = 0,		\
+> +		.intr_status_bit = 0,		\
+> +		.intr_target_bit = 5,		\
+> +		.intr_raw_status_bit = 4,	\
+> +		.intr_polarity_bit = 1,		\
+> +		.intr_detection_bit = 2,	\
+> +		.intr_detection_width = 2,	\
+> +	}
+> +
+Hello,
 
->> Let's assume we applied patches 1 and 2, does it mean the regression
->> to the existing behaviour?
->
-> Yes, Just applying patch 1 & 2 and not apply patch 3 will create
-> regression in thermal driver.
->
-> Since there is no compilation dependency between patch 2 & 3 and they
-> are from two different domains, I submitted them separately to make it
-> easier for review.
+Back in May, Ram Chandra Jangir posted a rather interesting patch on
+the LEDE Mailing-List:
+<https://www.mail-archive.com/lede-dev@lists.infradead.org/msg07691.html>
+|GPIO_PULL bits configurations in TLMM_GPIO_CFG register
+|differs for IPQ40xx from rest of the other qcom SoC's.
+|This change add support to configure the msm_gpio_pull
+|bits for ipq40xx, It is required to fix the proper
+|configurations of gpio-pull bits for nand pins mux.
+|
+|IPQ40xx SoC:
+|2'b10: Internal pull up enable.
+|2'b11: Unsupport
+|
+|For other SoC's:
+|2'b10: Keeper
+|2'b11: Pull-Up
 
-And this is exactly bisectability (level 2 :-) ) issue.
-Basically you confirmed you need to squash them like I said.
+This information wasn't mentioned anywhere. In fact, the special pull-up
+configuration was only discovered due to an issue with the qpic NAND on
+the Cisco Meraki MR33. So I wonder what does the gpio-pull look like for
+the IPQ8074? Is it the same as the IPQ40XX or does it follow the older 
+SoCs?
 
->> (For example, device worked improperly in some cases -> stopped
->> working completely)
+I'm asking this because I'm preparing a modified version of this patch
+that will be posted once the IPQ8074 is ready.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Christian
