@@ -1,197 +1,91 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: [PATCH 2/3] pinctrl: sunxi: Add support for A83T R_PIO
-Date: Sat,  3 Jun 2017 22:44:26 +0800
-Message-ID: <20170603144427.22855-3-wens@csie.org>
-References: <20170603144427.22855-1-wens@csie.org>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [GIT PULL] Immutable branch between MFD, GPIO, Thermal and X86
+ due for the v4.13 merge window
+Date: Sat, 3 Jun 2017 10:01:47 -0700
+Message-ID: <20170603170147.GA4854@fury>
+References: <20170523072615.r4widzjc6apwxpwb@dell>
+ <75e12563a835dc4f8e8dab26ecea46822262604b.1495559980.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20170530085306.s4hlijutbz7gp3ay@dell>
+ <20170531133826.3bee86a0@canb.auug.org.au>
+ <CAENHMvOFEh_57eFcHM-58i4vPso9-dPc5Y63cQ2Rm0jX2G=yKQ@mail.gmail.com>
+ <20170531065723.yhdgki6zgvbtmine@dell>
+ <cd6f226f-772b-cff6-dd80-f969021ba730@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBTUWZPEQKGQEV74SDRQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170603144427.22855-1-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <cd6f226f-772b-cff6-dd80-f969021ba730@linux.intel.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: sathyanarayanan kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, rui.zhang@intel.com, Andy Shevchenko <andy@infradead.org>, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Platform Driver <platform-driver-x86@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The R_PIO on the A83T is almost the same as the one found on the A64,
-except that the CIR_RX function was moved from pin PL11 to pin PL12.
+On Wed, May 31, 2017 at 03:33:48PM -0700, sathyanarayanan kuppuswamy wrote:
+> Hi Lee,
+> 
+> 
+> On 05/30/2017 11:57 PM, Lee Jones wrote:
+> > On Tue, 30 May 2017, Sathyanarayanan Kuppuswamy Natarajan wrote:
+> > 
+> > > Hi All,
+> > > 
+> > > On Tue, May 30, 2017 at 8:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > > Hi all,
+> > > > 
+> > > > On Tue, 30 May 2017 09:53:06 +0100 Lee Jones <lee.jones@linaro.org> wrote:
+> > > > > Dear fellow Maintainers,
+> > > > > 
+> > > > > Enjoy!
+> > > > > 
+> > > > > The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> > > > > 
+> > > > >    Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> > > > > 
+> > > > > are available in the git repository at:
+> > > > > 
+> > > > >    git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-gpio-thermal-x86-v4.13
+> > > > > 
+> > > > > for you to fetch changes up to 6aa60f67c11c10540e43bbe5a6377f7a0231501e:
+> > > > > 
+> > > > >    platform: x86: intel_bxtwc_tmu: remove first level irq unmask (2017-05-30 09:34:08 +0100)
+> > > > > 
+> > > > > ----------------------------------------------------------------
+> > > > > Immutable branch between MFD, GPIO, Thermal and X86 due for the v4.13 merge window
+> > > > > 
+> > > > > ----------------------------------------------------------------
+> > > > > Kuppuswamy Sathyanarayanan (8):
+> > > > >        mfd: intel_soc_pmic_bxtwc: Use chained irqs for second level irq chips
+> > > > See my other bug report on this commit ...
+> > > Sorry, its a mistake from my end. It looks like typec wcove driver got
+> > > merged recently and I missed to add it to my cleanup patch set.
+> > > 
+> > > Lee,
+> > > 
+> > > I have created a patch to fix this issue.
+> > > 
+> > > Do you want me to send the entire series again with this fix or just
+> > > send the fix alone.
+> > This highlights the fact that this patch-set is not actually
+> > bisectable.
+> Except for the last patch set ( which has fix for typec driver compilation
+> issue) that I sent yesterday,
+> all other patch set versions are bisectable.
+> 
+> The problem was when I first created this patch set, typec wcove driver was
+> not merged upstream.
+> After creating the initial set, I was just improving the patch set and
+> forgot to re-check for
+> child devices that depend of PMIC MFD driver.  Thats why we came across this
+> compilation issue.
+> 
+> In future, I will try to avoid these kind of issues. I think adding
+> "allyesconfig" and "allmodconfig"
+> compilation tests to my patch submit criteria should prevent these kind of
+> issues.
 
-Add a driver for it.
+We do this as well as 32 and 64b for the platform driver tree, I have found it
+to be a reasonable sanity test.
 
-Signed-off-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
----
- drivers/pinctrl/sunxi/Kconfig                |   4 +
- drivers/pinctrl/sunxi/Makefile               |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c | 128 +++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index 624d84e6c936..31f85ca92669 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -35,6 +35,10 @@ config PINCTRL_SUN8I_A83T
- 	def_bool MACH_SUN8I
- 	select PINCTRL_SUNXI
- 
-+config PINCTRL_SUN8I_A83T_R
-+	def_bool MACH_SUN8I
-+	select PINCTRL_SUNXI
-+
- config PINCTRL_SUN8I_A23_R
- 	def_bool MACH_SUN8I
- 	depends on RESET_CONTROLLER
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index efe1e64ef4f1..dc6c9619e41c 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -12,6 +12,7 @@ obj-$(CONFIG_PINCTRL_SUN8I_A33)		+= pinctrl-sun8i-a33.o
- obj-$(CONFIG_PINCTRL_SUN50I_A64)	+= pinctrl-sun50i-a64.o
- obj-$(CONFIG_PINCTRL_SUN50I_A64_R)	+= pinctrl-sun50i-a64-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
-+obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
- obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-new file mode 100644
-index 000000000000..6531cf67958e
---- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t-r.c
-@@ -0,0 +1,128 @@
-+/*
-+ * Allwinner A83T SoCs special pins pinctrl driver.
-+ *
-+ * Copyright (C) 2017 Chen-Yu Tsai
-+ * Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-+ *
-+ * Based on pinctrl-sun50i-a64-r.c
-+ *
-+ * Copyright (C) 2016 Icenowy Zheng
-+ * Icenowy Zheng <icenowy-ymACFijhrKM@public.gmane.org>
-+ *
-+ * Copyright (C) 2014 Chen-Yu Tsai
-+ * Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-+ *
-+ * Copyright (C) 2014 Boris Brezillon
-+ * Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-+ *
-+ * Copyright (C) 2014 Maxime Ripard
-+ * Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-+ *
-+ * This file is licensed under the terms of the GNU General Public
-+ * License version 2.  This program is licensed "as is" without any
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "pinctrl-sunxi.h"
-+
-+static const struct sunxi_desc_pin sun8i_a83t_r_pins[] = {
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_pwm"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 11),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 11)),	/* PL_EINT11 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 12),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_cir_rx"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 12)),	/* PL_EINT12 */
-+};
-+
-+static const struct sunxi_pinctrl_desc sun8i_a83t_r_pinctrl_data = {
-+	.pins = sun8i_a83t_r_pins,
-+	.npins = ARRAY_SIZE(sun8i_a83t_r_pins),
-+	.pin_base = PL_BASE,
-+	.irq_banks = 1,
-+};
-+
-+static int sun8i_a83t_r_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return sunxi_pinctrl_init(pdev,
-+				  &sun8i_a83t_r_pinctrl_data);
-+}
-+
-+static const struct of_device_id sun8i_a83t_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun8i-a83t-r-pinctrl", },
-+	{}
-+};
-+
-+static struct platform_driver sun8i_a83t_r_pinctrl_driver = {
-+	.probe	= sun8i_a83t_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun8i-a83t-r-pinctrl",
-+		.of_match_table	= sun8i_a83t_r_pinctrl_match,
-+	},
-+};
-+builtin_platform_driver(sun8i_a83t_r_pinctrl_driver);
 -- 
-2.11.0
+Darren Hart
+VMware Open Source Technology Center
