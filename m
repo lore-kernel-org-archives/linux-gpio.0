@@ -1,110 +1,52 @@
 From: Christian Lamparter <chunkeey@googlemail.com>
 Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
-Date: Sat, 03 Jun 2017 20:55:23 +0200
-Message-ID: <2668868.v3IoKk0Lz9@debian64>
+Date: Sun, 04 Jun 2017 02:33:50 +0200
+Message-ID: <3316949.YG4fliAlpW@debian64>
 References: <1496474875-7190-1-git-send-email-varada@codeaurora.org> <1496474875-7190-2-git-send-email-varada@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36265 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbdFCSz2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 3 Jun 2017 14:55:28 -0400
+Return-path: <linux-clk-owner@vger.kernel.org>
 In-Reply-To: <1496474875-7190-2-git-send-email-varada@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org, Ram Chandra Jangir <rjangir@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org
+List-Id: linux-gpio@vger.kernel.org
 
 On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
-> Add initial pinctrl driver to support pin configuration with
-> pinctrl framework for ipq8074.
-> 
-> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
-> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
-> ---
-> +- bias-disable:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins should be configued as no pull.
-> +
-> +- bias-pull-down:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins should be configued as pull down.
-> +
-> +- bias-pull-up:
-> +	Usage: optional
-> +	Value type: <none>
-> +	Definition: The specified pins should be configued as pull up.
-> +
-> +#define REG_SIZE 0x1000
-> +#define PINGROUP(id, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
-> +	{					        \
-> +		.name = "gpio" #id,			\
-> +		.pins = gpio##id##_pins,		\
-> +		.npins = (unsigned int)ARRAY_SIZE(gpio##id##_pins),	\
-> +		.funcs = (int[]){			\
-> +			msm_mux_gpio, /* gpio mode */	\
-> +			msm_mux_##f1,			\
-> +			msm_mux_##f2,			\
-> +			msm_mux_##f3,			\
-> +			msm_mux_##f4,			\
-> +			msm_mux_##f5,			\
-> +			msm_mux_##f6,			\
-> +			msm_mux_##f7,			\
-> +			msm_mux_##f8,			\
-> +			msm_mux_##f9			\
-> +		},				        \
-> +		.nfuncs = 10,				\
-> +		.ctl_reg = REG_SIZE * id,		\
-> +		.io_reg = 0x4 + REG_SIZE * id,		\
-> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,		\
-> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
-> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-> +		.mux_bit = 2,			\
-> +		.pull_bit = 0,			\
-> +		.drv_bit = 6,			\
-> +		.oe_bit = 9,			\
-> +		.in_bit = 0,			\
-> +		.out_bit = 1,			\
-> +		.intr_enable_bit = 0,		\
-> +		.intr_status_bit = 0,		\
-> +		.intr_target_bit = 5,		\
-> +		.intr_raw_status_bit = 4,	\
-> +		.intr_polarity_bit = 1,		\
-> +		.intr_detection_bit = 2,	\
-> +		.intr_detection_width = 2,	\
-> +	}
-> +
-Hello,
+> +- function:
+> +       Usage: required
+> +       Value type: <string>
+> +       Definition: Specify the alternative function to be configured for the
+> +                   specified pins. Functions are only valid for gpio pins.
+> +                   Valid values are:
+> +                   atest_char, atest_char0, atest_char1, atest_char2,
+> +                   atest_char3, audio_rxbclk, audio_rxd, audio_rxfsync,
+> +                   audio_rxmclk, audio_txbclk, audio_txd, audio_txfsync,
+> +                   audio_txmclk, blsp0_i2c, blsp0_spi, blsp0_uart, blsp1_i2c,
+> +                   blsp1_spi, blsp1_uart, blsp2_i2c, blsp2_spi, blsp2_uart,
+> +                   blsp3_i2c, blsp3_spi, blsp3_spi0, blsp3_spi1, blsp3_spi2,
+> +                   blsp3_spi3, blsp3_uart, blsp4_i2c0, blsp4_i2c1, blsp4_spi0,
+> +                   blsp4_spi1, blsp4_uart0, blsp4_uart1, blsp5_i2c, blsp5_spi,
+> +                   blsp5_uart, burn0, burn1, cri_trng, cri_trng0, cri_trng1,
+> +                   cxc0, cxc1, dbg_out, gcc_plltest, gcc_tlmm, gpio, ldo_en,
+> +                   ldo_update, led0, led1, led2, mac0_sa0, mac0_sa1, mac1_sa0,
+> +                   mac1_sa1, mac1_sa2, mac1_sa3, mac2_sa0, mac2_sa1, mdc,
+> +                   mdio, NA, pcie0_clk, pcie0_rst, pcie0_wake, pcie1_clk,
+> +                   pcie1_rst, pcie1_wake, pcm_drx, pcm_dtx, pcm_fsync,
+> +                   pcm_pclk, pcm_zsi0, pcm_zsi1, prng_rosc, pta1_0, pta1_1,
+> +                   pta1_2, pta2_0, pta2_1, pta2_2, pwm0, pwm1, pwm2, pwm3,
+> +                   qdss_cti_trig_in_a0, qdss_cti_trig_in_a1,
+> +                   qdss_cti_trig_in_b0, qdss_cti_trig_in_b1,
+> +                   qdss_cti_trig_out_a0, qdss_cti_trig_out_a1,
+> +                   qdss_cti_trig_out_b0, qdss_cti_trig_out_b1,
+> +                   qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a,
+> +                   qdss_tracectl_b, qdss_tracedata_a, qdss_tracedata_b,
+> +                   qpic, rx0, rx1, rx2, sd_card, sd_write, tsens_max, wci2a,
+> +                   wci2b, wci2c, wci2d, NA
 
-Back in May, Ram Chandra Jangir posted a rather interesting patch on
-the LEDE Mailing-List:
-<https://www.mail-archive.com/lede-dev@lists.infradead.org/msg07691.html>
-|GPIO_PULL bits configurations in TLMM_GPIO_CFG register
-|differs for IPQ40xx from rest of the other qcom SoC's.
-|This change add support to configure the msm_gpio_pull
-|bits for ipq40xx, It is required to fix the proper
-|configurations of gpio-pull bits for nand pins mux.
-|
-|IPQ40xx SoC:
-|2'b10: Internal pull up enable.
-|2'b11: Unsupport
-|
-|For other SoC's:
-|2'b10: Keeper
-|2'b11: Pull-Up
+The "NA" function is listed twice. It should be there at all.
 
-This information wasn't mentioned anywhere. In fact, the special pull-up
-configuration was only discovered due to an issue with the qpic NAND on
-the Cisco Meraki MR33. So I wonder what does the gpio-pull look like for
-the IPQ8074? Is it the same as the IPQ40XX or does it follow the older 
-SoCs?
 
-I'm asking this because I'm preparing a modified version of this patch
-that will be posted once the IPQ8074 is ready.
 
-Regards,
-Christian
+
