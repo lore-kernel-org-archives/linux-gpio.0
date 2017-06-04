@@ -1,52 +1,98 @@
-From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: Re: [PATCH v4 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
-Date: Sun, 04 Jun 2017 02:33:50 +0200
-Message-ID: <3316949.YG4fliAlpW@debian64>
-References: <1496474875-7190-1-git-send-email-varada@codeaurora.org> <1496474875-7190-2-git-send-email-varada@codeaurora.org>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+Subject: [RFC PATCH] gpio: use "output-active" and "output-inactive" for gpio-hogs
+Date: Sun,  4 Jun 2017 12:10:49 +0200
+Message-ID: <20170604101049.4592-1-uwe@kleine-koenig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1496474875-7190-2-git-send-email-varada@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Varadarajan Narayanan <varada@codeaurora.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bjorn.andersson@linaro.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:42839 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750847AbdFDKK7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 4 Jun 2017 06:10:59 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, Andrey Smirnov <andrew.smirnov@gmail.com>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
-On Saturday, June 3, 2017 12:57:50 PM CEST Varadarajan Narayanan wrote:
-> +- function:
-> +       Usage: required
-> +       Value type: <string>
-> +       Definition: Specify the alternative function to be configured for the
-> +                   specified pins. Functions are only valid for gpio pins.
-> +                   Valid values are:
-> +                   atest_char, atest_char0, atest_char1, atest_char2,
-> +                   atest_char3, audio_rxbclk, audio_rxd, audio_rxfsync,
-> +                   audio_rxmclk, audio_txbclk, audio_txd, audio_txfsync,
-> +                   audio_txmclk, blsp0_i2c, blsp0_spi, blsp0_uart, blsp1_i2c,
-> +                   blsp1_spi, blsp1_uart, blsp2_i2c, blsp2_spi, blsp2_uart,
-> +                   blsp3_i2c, blsp3_spi, blsp3_spi0, blsp3_spi1, blsp3_spi2,
-> +                   blsp3_spi3, blsp3_uart, blsp4_i2c0, blsp4_i2c1, blsp4_spi0,
-> +                   blsp4_spi1, blsp4_uart0, blsp4_uart1, blsp5_i2c, blsp5_spi,
-> +                   blsp5_uart, burn0, burn1, cri_trng, cri_trng0, cri_trng1,
-> +                   cxc0, cxc1, dbg_out, gcc_plltest, gcc_tlmm, gpio, ldo_en,
-> +                   ldo_update, led0, led1, led2, mac0_sa0, mac0_sa1, mac1_sa0,
-> +                   mac1_sa1, mac1_sa2, mac1_sa3, mac2_sa0, mac2_sa1, mdc,
-> +                   mdio, NA, pcie0_clk, pcie0_rst, pcie0_wake, pcie1_clk,
-> +                   pcie1_rst, pcie1_wake, pcm_drx, pcm_dtx, pcm_fsync,
-> +                   pcm_pclk, pcm_zsi0, pcm_zsi1, prng_rosc, pta1_0, pta1_1,
-> +                   pta1_2, pta2_0, pta2_1, pta2_2, pwm0, pwm1, pwm2, pwm3,
-> +                   qdss_cti_trig_in_a0, qdss_cti_trig_in_a1,
-> +                   qdss_cti_trig_in_b0, qdss_cti_trig_in_b1,
-> +                   qdss_cti_trig_out_a0, qdss_cti_trig_out_a1,
-> +                   qdss_cti_trig_out_b0, qdss_cti_trig_out_b1,
-> +                   qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a,
-> +                   qdss_tracectl_b, qdss_tracedata_a, qdss_tracedata_b,
-> +                   qpic, rx0, rx1, rx2, sd_card, sd_write, tsens_max, wci2a,
-> +                   wci2b, wci2c, wci2d, NA
+Using the following gpio hog:
 
-The "NA" function is listed twice. It should be there at all.
+	{
+		gpio-hog;
+		gpios = <17 GPIO_ACTIVE_LOW>;
+		output-high;
+	}
 
+results in the gpio to be set to (physically) low value, which is
+surprising. So support "output-active" which makes the semantic more
+obvious. The old semantic is still supported for backward compatibility.
 
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+Hello,
 
+the next logical step would be to go through all in-tree dts files and
+substitute the old properties by the new ones. I can do this as soon as
+the idea is discussed and considered to be good.
+
+Maybe the same idea can be applied to the cpp definitions GPIOD_OUT_LOW
+and GPIOD_OUT_HIGH.
+
+And btw I wondered about the binding that defines what should happen in
+this case:
+
+	{
+		gpio-hog;
+		gpios = <...>;
+		output-high;
+		output-low;
+	}
+
+I would have defined as undefined instead of inactive.
+
+Best regards
+Uwe
+
+ Documentation/devicetree/bindings/gpio/gpio.txt | 10 ++++++----
+ drivers/gpio/gpiolib-of.c                       |  4 ++++
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 68d28f62a6f4..4d29e0b33435 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -196,10 +196,12 @@ This means that when multiple properties are present they will be searched
+ in the order presented below and the first match is taken as the intended
+ configuration.
+ - input:      A property specifying to set the GPIO direction as input.
+-- output-low  A property specifying to set the GPIO direction as output with
+-	      the value low.
+-- output-high A property specifying to set the GPIO direction as output with
+-	      the value high.
++- output-inactive: A property specifying to set the GPIO direction as output
++	      using the inactive level as value.
++- output-active: A property specifying to set the GPIO direction as output
++	      using the active level as value.
++- output-low  A deprecated alias for "output-inactive".
++- output-high A deprecated alias for "output-active".
+ 
+ Optional properties:
+ - line-name:  The GPIO label name. If not present the node name is used.
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 193f15d50bba..c465511eae8a 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -209,6 +209,10 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+ 
+ 	if (of_property_read_bool(np, "input"))
+ 		*dflags |= GPIOD_IN;
++	else if (of_property_read_bool(np, "output-inactive"))
++		*dflags |= GPIOD_OUT_LOW;
++	else if (of_property_read_bool(np, "output-active"))
++		*dflags |= GPIOD_OUT_HIGH;
+ 	else if (of_property_read_bool(np, "output-low"))
+ 		*dflags |= GPIOD_OUT_LOW;
+ 	else if (of_property_read_bool(np, "output-high"))
+-- 
+2.11.0
 
