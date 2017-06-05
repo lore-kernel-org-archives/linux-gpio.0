@@ -1,30 +1,25 @@
-From: rpjday@crashcourse.ca
-Subject: "Cannonlake", not "Cannon Lake"?
-Date: Mon, 05 Jun 2017 11:29:37 -0400
-Message-ID: <20170605112937.Horde.lAX5A7XlCfWTMhoMbly8BCK@crashcourse.ca>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/5] dt-bindings: qcom: Add IPQ8074 bindings
+Date: Mon, 5 Jun 2017 11:54:14 -0500
+Message-ID: <20170605165414.zbcwbvto77awdk45@rob-hp-laptop>
+References: <1496316482-25468-1-git-send-email-varada@codeaurora.org>
+ <1496316482-25468-3-git-send-email-varada@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cpanel2.indieserve.net ([199.212.143.6]:50186 "EHLO
-        cpanel2.indieserve.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbdFEQkq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jun 2017 12:40:46 -0400
-Received: from [::1] (port=40664 helo=cpanel2.indieserve.net)
-        by cpanel2.indieserve.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.89)
-        (envelope-from <rpjday@crashcourse.ca>)
-        id 1dHtwn-0001OF-9c
-        for linux-gpio@vger.kernel.org; Mon, 05 Jun 2017 11:29:37 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <1496316482-25468-3-git-send-email-varada@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, mraghava@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
 
-   apologies for not being able to reply properly to the thread, i  
-just noticed the
-patch for Cannonlake GPIO, but for proper searching, isn't the proper codename
-"Cannonlake", and not "Cannon Lake"? or is it both?
+On Thu, Jun 01, 2017 at 04:57:59PM +0530, Varadarajan Narayanan wrote:
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-rday
+I acked v2. Please add acks when posting new versions.
 
-
+Rob
