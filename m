@@ -1,93 +1,34 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 2/3] pinctrl: intel: Make it possible to specify mode per pin in a group
-Date: Mon,  5 Jun 2017 15:56:49 +0300
-Message-ID: <20170605125650.64188-3-mika.westerberg@linux.intel.com>
-References: <20170605125650.64188-1-mika.westerberg@linux.intel.com>
+Subject: [PATCH 0/3] pinctrl: Add support for Intel Cannon Lake PCH
+Date: Mon,  5 Jun 2017 15:56:47 +0300
+Message-ID: <20170605125650.64188-1-mika.westerberg@linux.intel.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170605125650.64188-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On some SoCs not all pins in a group use the same mode when a certain
-function is muxed out of them. This makes it possible to specify mode per
-pin as an array instead in addition to single integer.
+Hi,
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c |  6 +++++-
- drivers/pinctrl/intel/pinctrl-intel.h | 28 +++++++++++++++++++++-------
- 2 files changed, 26 insertions(+), 8 deletions(-)
+This series adds support for the pinctrl and GPIO hardware found on the
+next generation Intel Cannon Lake CPUs. We also update the Intel core
+pinctrl driver with a concept of hardware pad groups that are needed by the
+new driver and make it possible to specify mode per pin instead of the
+whole group.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index dd2e2ee7fc92..cc60db483dfa 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -398,7 +398,11 @@ static int intel_pinmux_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 		value = readl(padcfg0);
- 
- 		value &= ~PADCFG0_PMODE_MASK;
--		value |= grp->mode << PADCFG0_PMODE_SHIFT;
-+
-+		if (grp->modes)
-+			value |= grp->modes[i] << PADCFG0_PMODE_SHIFT;
-+		else
-+			value |= grp->mode << PADCFG0_PMODE_SHIFT;
- 
- 		writel(value, padcfg0);
- 	}
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index fc7b3dc15eec..8298fc2230cf 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -22,13 +22,16 @@ struct device;
-  * @name: Name of the groups
-  * @pins: All pins in this group
-  * @npins: Number of pins in this groups
-- * @mode: Native mode in which the group is muxed out @pins
-+ * @mode: Native mode in which the group is muxed out @pins. Used if @modes
-+ *        is %NULL.
-+ * @modes: If not %NULL this will hold mode for each pin in @pins
-  */
- struct intel_pingroup {
- 	const char *name;
- 	const unsigned *pins;
- 	size_t npins;
- 	unsigned short mode;
-+	const unsigned *modes;
- };
- 
- /**
-@@ -111,12 +114,23 @@ struct intel_community {
- #define PINCTRL_FEATURE_DEBOUNCE	BIT(0)
- #define PINCTRL_FEATURE_1K_PD		BIT(1)
- 
--#define PIN_GROUP(n, p, m)			\
--	{					\
--		.name = (n),			\
--		.pins = (p),			\
--		.npins = ARRAY_SIZE((p)),	\
--		.mode = (m),			\
-+/**
-+ * PIN_GROUP - Declare a pin group
-+ * @n: Name of the group
-+ * @p: An array of pins this group consists
-+ * @m: Mode which the pins are put when this group is active. Can be either
-+ *     a single integer or an array of integers in which case mode is per
-+ *     pin.
-+ */
-+#define PIN_GROUP(n, p, m)					\
-+	{							\
-+		.name = (n),					\
-+		.pins = (p),					\
-+		.npins = ARRAY_SIZE((p)),			\
-+		.mode = __builtin_choose_expr(			\
-+			__builtin_constant_p((m)), (m), 0),	\
-+		.modes = __builtin_choose_expr(			\
-+			__builtin_constant_p((m)), NULL, (m)),	\
- 	}
- 
- #define FUNCTION(n, g)				\
+Mika Westerberg (3):
+  pinctrl: intel: Add support for variable size pad groups
+  pinctrl: intel: Make it possible to specify mode per pin in a group
+  pinctrl: intel: Add Intel Cannon Lake PCH pin controller support
+
+ drivers/pinctrl/intel/Kconfig                |   8 +
+ drivers/pinctrl/intel/Makefile               |   1 +
+ drivers/pinctrl/intel/pinctrl-cannonlake.c   | 442 +++++++++++++++++++++++++++
+ drivers/pinctrl/intel/pinctrl-intel.c        | 195 ++++++++----
+ drivers/pinctrl/intel/pinctrl-intel.h        |  64 +++-
+ drivers/pinctrl/intel/pinctrl-sunrisepoint.c |   1 +
+ 6 files changed, 647 insertions(+), 64 deletions(-)
+ create mode 100644 drivers/pinctrl/intel/pinctrl-cannonlake.c
+
 -- 
 2.11.0
