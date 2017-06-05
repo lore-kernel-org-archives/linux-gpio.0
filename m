@@ -1,63 +1,68 @@
-From: =?UTF-8?B?6ZmI5pmT5YWJ?= <xgchenshy@gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: fix missing first irq for edgeboth irq type
-Date: Mon, 5 Jun 2017 14:50:20 +0800
-Message-ID: <CAEj2FWPBvsp9Prr1dt-zNXVHR-z95_BD3O9vBUCG5n6aicpUcg@mail.gmail.com>
-References: <20170601232715.2788-1-xgchenshy@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 06/17] mfd: madera: Register map tables
+ for Cirrus Logic CS47L90/91
+Date: Mon, 5 Jun 2017 11:05:41 +0100
+Message-ID: <20170605100541.rxfswhiyloiahnwl@dell>
+References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1496415790-19164-7-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36453 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbdFEGuV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jun 2017 02:50:21 -0400
-Received: by mail-it0-f67.google.com with SMTP id i206so20797693ita.3
-        for <linux-gpio@vger.kernel.org>; Sun, 04 Jun 2017 23:50:21 -0700 (PDT)
-In-Reply-To: <20170601232715.2788-1-xgchenshy@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <1496415790-19164-7-git-send-email-rf@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, Xiaoguang Chen <xgchenshy@gmail.com>
 
-Hi, Guys
-Any comments for this change?
-
-
-Thanks
-Xiaoguang
-
-2017-06-02 7:27 GMT+08:00  <xgchenshy@gmail.com>:
-> From: Xiaoguang Chen <xgchenshy@gmail.com>
->
-> dwapb_irq_set_type overwrites polarity register value for
-> IRQ_TYPE_EDGE_BOTH case. If the polarity of one gpio is 0
-> by default, then it will set falling edge irq trigger.
-> and the gpio may requires rising edge irq for the first time,
-> and it will be missed.
->
-> Do not overwrite polarity register for IRQ_TYPE_EDGE_BOTH case
-> can solve this issue.
->
-> Signed-off-by: Xiaoguang Chen <xgchenshy@gmail.com>
-> ---
->  drivers/gpio/gpio-dwapb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index f051c45..80913e4 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -288,7 +288,8 @@ static int dwapb_irq_set_type(struct irq_data *d, u32=
- type)
->         irq_setup_alt_chip(d, type);
->
->         dwapb_write(gpio, GPIO_INTTYPE_LEVEL, level);
-> -       dwapb_write(gpio, GPIO_INT_POLARITY, polarity);
-> +       if =EF=BC=88type !=3D IRQ_TYPE_EDGE_BOTH=EF=BC=89
-> +               dwapb_write(gpio, GPIO_INT_POLARITY, polarity);
->         spin_unlock_irqrestore(&gc->bgpio_lock, flags);
->
->         return 0;
-> --
-> 2.8.4 (Apple Git-73)
->
+T24gRnJpLCAwMiBKdW4gMjAxNywgUmljaGFyZCBGaXR6Z2VyYWxkIHdyb3RlOgoKPiBSZWdtYXAg
+Y29uZmlndXJhdGlvbiB0YWJsZXMgZm9yIENpcnJ1cyBMb2dpYyBDUzQ3TDkwIGFuZCBDUzQ3TDkx
+IGNvZGVjcy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBOaWtlc2ggT3N3YWwgPG5pa2VzaEBvcGVuc291
+cmNlLndvbGZzb25taWNyby5jb20+Cj4gU2lnbmVkLW9mZi1ieTogUmljaGFyZCBGaXR6Z2VyYWxk
+IDxyZkBvcGVuc291cmNlLndvbGZzb25taWNyby5jb20+Cj4gU2lnbmVkLW9mZi1ieTogQ2hhcmxl
+cyBLZWVwYXggPGNrZWVwYXhAb3BlbnNvdXJjZS53b2xmc29ubWljcm8uY29tPgo+IC0tLQo+IE5v
+IGNoYW5nZXMgc2luY2UgVjIKPiAKPiAgZHJpdmVycy9tZmQvS2NvbmZpZyAgICAgICAgICB8ICAg
+IDcgKwo+ICBkcml2ZXJzL21mZC9NYWtlZmlsZSAgICAgICAgIHwgICAgMyArCj4gIGRyaXZlcnMv
+bWZkL2NzNDdsOTAtdGFibGVzLmMgfCAyODMwICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKwo+ICAzIGZpbGVzIGNoYW5nZWQsIDI4NDAgaW5zZXJ0aW9ucygrKQo+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZmQvY3M0N2w5MC10YWJsZXMuYwo+IAo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL21mZC9LY29uZmlnIGIvZHJpdmVycy9tZmQvS2NvbmZpZwo+IGluZGV4
+IDZmODMzMTYuLmE1OWY0ODggMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9tZmQvS2NvbmZpZwo+ICsr
+KyBiL2RyaXZlcnMvbWZkL0tjb25maWcKPiBAQCAtMjQyLDYgKzI0MiwxMyBAQCBjb25maWcgTUZE
+X0NTNDdMODUKPiAgCWhlbHAKPiAgCSAgU3VwcG9ydCBmb3IgQ2lycnVzIExvZ2ljIENTNDdMODUg
+U21hcnQgQ29kZWMKPiAgCj4gK2NvbmZpZyBNRkRfQ1M0N0w5MAo+ICsJYm9vbCAiQ2lycnVzIExv
+Z2ljIENTNDdMOTAvOTEiCj4gKwlzZWxlY3QgUElOQ1RSTF9DUzQ3TDkwCj4gKwlkZXBlbmRzIG9u
+IE1GRF9NQURFUkEKPiArCWhlbHAKPiArCSAgU3VwcG9ydCBmb3IgQ2lycnVzIExvZ2ljIENTNDdM
+OTAgYW5kIENTNDdMOTEgU21hcnQgQ29kZWNzCj4gKwo+ICBjb25maWcgTUZEX0FTSUMzCj4gIAli
+b29sICJDb21wYXEgQVNJQzMiCj4gIAlkZXBlbmRzIG9uIEdQSU9MSUIgJiYgQVJNCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvbWZkL01ha2VmaWxlIGIvZHJpdmVycy9tZmQvTWFrZWZpbGUKPiBpbmRl
+eCBlNTIyNzc0Li41N2VhMzRlIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvbWZkL01ha2VmaWxlCj4g
+KysrIGIvZHJpdmVycy9tZmQvTWFrZWZpbGUKPiBAQCAtNzksNiArNzksOSBAQCBlbmRpZgo+ICBp
+ZmVxICgkKENPTkZJR19NRkRfQ1M0N0w4NSkseSkKPiAgb2JqLSQoQ09ORklHX01GRF9NQURFUkEp
+CSs9IGNzNDdsODUtdGFibGVzLm8KPiAgZW5kaWYKPiAraWZlcSAoJChDT05GSUdfTUZEX0NTNDdM
+OTApLHkpCj4gK29iai0kKENPTkZJR19NRkRfTUFERVJBKQkrPSBjczQ3bDkwLXRhYmxlcy5vCj4g
+K2VuZGlmCj4gIG9iai0kKENPTkZJR19NRkRfTUFERVJBX0kyQykJKz0gbWFkZXJhLWkyYy5vCj4g
+IG9iai0kKENPTkZJR19NRkRfTUFERVJBX1NQSSkJKz0gbWFkZXJhLXNwaS5vCj4gIAo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL21mZC9jczQ3bDkwLXRhYmxlcy5jIGIvZHJpdmVycy9tZmQvY3M0N2w5
+MC10YWJsZXMuYwo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMC4uNTJjZTUw
+Zgo+IC0tLSAvZGV2L251bGwKPiArKysgYi9kcml2ZXJzL21mZC9jczQ3bDkwLXRhYmxlcy5jCj4g
+QEAgLTAsMCArMSwyODMwIEBACj4gKy8qCj4gKyAqIFJlZ21hcCB0YWJsZXMgZm9yIENTNDdMOTAg
+Y29kZWMKPiArICoKPiArICogQ29weXJpZ2h0IDIwMTUtMjAxNiBDaXJydXMgTG9naWMKClRoaXMg
+aXMgb3V0IG9mIGRhdGUuCgpCZXNpZGVzIHRoYXQgYW5kIHRoZSBmYWN0IHRoYXQgSC9XIHBhdGNo
+ZXMgU1VDSzoKCkZvciBteSBvd24gcmVmZXJlbmNlOgogIEFja2VkLWZvci1NRkQtYnk6IExlZSBK
+b25lcyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+CgpbLi4uXQoKLS0gCkxlZSBKb25lcwpMaW5hcm8g
+U1RNaWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4g
+c291cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3
+aXR0ZXIgfCBCbG9nCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCkFsc2EtZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpo
+dHRwOi8vbWFpbG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZl
+bAo=
