@@ -1,16 +1,16 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: intel: Add support for variable size pad groups
-Date: Mon, 5 Jun 2017 18:11:06 +0300
-Message-ID: <CAHp75Vc_Qa8gs6V4ZxrrxYVM1iX8pO+xvED=C0ywen8hhFJTPw@mail.gmail.com>
-References: <20170605125650.64188-1-mika.westerberg@linux.intel.com> <20170605125650.64188-2-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 0/3] pinctrl: Add support for Intel Cannon Lake PCH
+Date: Mon, 5 Jun 2017 18:20:50 +0300
+Message-ID: <CAHp75VedMd9+-Z+1m49AqBOzHj3qPxw08B4BKOpyKvNntTU_bg@mail.gmail.com>
+References: <20170605125650.64188-1-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36510 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751169AbdFEPLS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jun 2017 11:11:18 -0400
-In-Reply-To: <20170605125650.64188-2-mika.westerberg@linux.intel.com>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:36759 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751215AbdFEPU4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jun 2017 11:20:56 -0400
+In-Reply-To: <20170605125650.64188-1-mika.westerberg@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Mika Westerberg <mika.westerberg@linux.intel.com>
@@ -18,81 +18,36 @@ Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@l
 
 On Mon, Jun 5, 2017 at 3:56 PM, Mika Westerberg
 <mika.westerberg@linux.intel.com> wrote:
-> The Intel GPIO hardware has a concept of pad groups, which means 1 to 32
-> pads occupying their own GPI_IS, GPI_IE, PAD_OWN and so on registers. The
-> existing hardware has the same amount of pads in each pad group (except the
-> last one) so it is possible to use community->gpp_size to calculate start
-> offset of each register.
+> Hi,
 >
-> With the next generation SoCs the pad group size is not always the same
-> anymore which means we cannot use community->gpp_size for register offset
-> calculations directly.
+> This series adds support for the pinctrl and GPIO hardware found on the
+> next generation Intel Cannon Lake CPUs. We also update the Intel core
+> pinctrl driver with a concept of hardware pad groups that are needed by the
+> new driver and make it possible to specify mode per pin instead of the
+> whole group.
 >
-> To support variable size pad groups we introduce struct intel_padgroup that
-> can be filled in by the client drivers according the hardware pad group
-> layout. The core driver will always use these when it performs calculations
-> for pad register offsets. The core driver will automatically populate pad
-> groups based on community->gpp_size if the driver does not provide any.
-> This makes sure the existing drivers still work as expected.
 
-> +static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
-> +                                      struct intel_community *community)
-> +{
-> +       struct intel_padgroup *gpps;
-> +       unsigned npins = community->npins;
-> +       unsigned padown_num = 0;
-> +       size_t ngpps, i;
-> +
-> +       if (community->gpps)
-> +               ngpps = community->ngpps;
-> +       else
-> +               ngpps = DIV_ROUND_UP(community->npins, community->gpp_size);
-> +
-> +       gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
-> +       if (!gpps)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < ngpps; i++) {
-> +               if (community->gpps) {
-> +                       gpps[i] = community->gpps[i];
-> +               } else {
-> +                       gpps[i].reg_num = i;
-> +                       gpps[i].base = community->pin_base +
-> +                                      i * community->gpp_size;
-> +                       gpps[i].size = min(community->gpp_size, npins);
-> +                       npins -= gpps[i].size;
-> +               }
-> +
-> +               if (gpps[i].size > 32)
-> +                       return -EINVAL;
-> +
-> +               gpps[i].padown_num = padown_num;
-> +
+One comment to be considered, otherwise
 
-> +               if (community->padown_fixed)
-> +                       padown_num += ALIGN(DIV_ROUND_UP(gpps[i].size, 8), 4);
-> +               else
-> +                       padown_num += DIV_ROUND_UP(gpps[i].size, 8);
-> +       }
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-It looks to me like you are trying to calculate 32-bit registers
-needed for gpps of given size. Taking into account that each pad takes
-4 bits you may rewrote entire conditional to be simple and clearer:
-
-DIV_ROUND_UP(size, 32) * 4,
-
-where 32 - is a _fixed_ length of the IO register and 4 is _fixed_
-amount of bits per pad.
-
-Please, check if it would work with all hardware we have.
-Perhaps little comment also would be nice to have.
-
-> +
-> +       community->ngpps = ngpps;
-> +       community->gpps = gpps;
-> +
-> +       return 0;
-> +}
+> Mika Westerberg (3):
+>   pinctrl: intel: Add support for variable size pad groups
+>   pinctrl: intel: Make it possible to specify mode per pin in a group
+>   pinctrl: intel: Add Intel Cannon Lake PCH pin controller support
+>
+>  drivers/pinctrl/intel/Kconfig                |   8 +
+>  drivers/pinctrl/intel/Makefile               |   1 +
+>  drivers/pinctrl/intel/pinctrl-cannonlake.c   | 442 +++++++++++++++++++++++++++
+>  drivers/pinctrl/intel/pinctrl-intel.c        | 195 ++++++++----
+>  drivers/pinctrl/intel/pinctrl-intel.h        |  64 +++-
+>  drivers/pinctrl/intel/pinctrl-sunrisepoint.c |   1 +
+>  6 files changed, 647 insertions(+), 64 deletions(-)
+>  create mode 100644 drivers/pinctrl/intel/pinctrl-cannonlake.c
+>
+> --
+> 2.11.0
+>
 
 
 
