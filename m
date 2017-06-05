@@ -1,51 +1,101 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 0/3] pinctrl: sun8i: Add support for A83T R_PIO
-Date: Mon, 5 Jun 2017 15:51:28 +0200
-Message-ID: <20170605135128.cjease7t25kjc6lp@flea.lan>
-References: <20170603144427.22855-1-wens@csie.org>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: intel: Add support for variable size pad groups
+Date: Mon, 5 Jun 2017 18:11:06 +0300
+Message-ID: <CAHp75Vc_Qa8gs6V4ZxrrxYVM1iX8pO+xvED=C0ywen8hhFJTPw@mail.gmail.com>
+References: <20170605125650.64188-1-mika.westerberg@linux.intel.com> <20170605125650.64188-2-mika.westerberg@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3v3y4wumdnqyymgd"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBYOD2XEQKGQEOVCVJLY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170603144427.22855-1-wens-jdAy2FN1RRM@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-List-Id: linux-gpio@vger.kernel.org
-
-
---3v3y4wumdnqyymgd
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:36510 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbdFEPLS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 5 Jun 2017 11:11:18 -0400
+In-Reply-To: <20170605125650.64188-2-mika.westerberg@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Jun 03, 2017 at 10:44:24PM +0800, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> This series adds support for the R_PIO pin controller on the A83T.
-> The pins managed this controller are mainly used for communicating
-> with the PMIC and codec, and various GPIOs for enabling power switches
-> for USB ports and WiFi.
-> 
-> Patch 1 updates the sunxi pinctrl bindings.
-> 
-> Patch 2 adds the pinctrl driver.
-> 
-> Patch 3 adds a device node for the pin controller.
+On Mon, Jun 5, 2017 at 3:56 PM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> The Intel GPIO hardware has a concept of pad groups, which means 1 to 32
+> pads occupying their own GPI_IS, GPI_IE, PAD_OWN and so on registers. The
+> existing hardware has the same amount of pads in each pad group (except the
+> last one) so it is possible to use community->gpp_size to calculate start
+> offset of each register.
+>
+> With the next generation SoCs the pad group size is not always the same
+> anymore which means we cannot use community->gpp_size for register offset
+> calculations directly.
+>
+> To support variable size pad groups we introduce struct intel_padgroup that
+> can be filled in by the client drivers according the hardware pad group
+> layout. The core driver will always use these when it performs calculations
+> for pad register offsets. The core driver will automatically populate pad
+> groups based on community->gpp_size if the driver does not provide any.
+> This makes sure the existing drivers still work as expected.
 
-Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> +static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
+> +                                      struct intel_community *community)
+> +{
+> +       struct intel_padgroup *gpps;
+> +       unsigned npins = community->npins;
+> +       unsigned padown_num = 0;
+> +       size_t ngpps, i;
+> +
+> +       if (community->gpps)
+> +               ngpps = community->ngpps;
+> +       else
+> +               ngpps = DIV_ROUND_UP(community->npins, community->gpp_size);
+> +
+> +       gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
+> +       if (!gpps)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < ngpps; i++) {
+> +               if (community->gpps) {
+> +                       gpps[i] = community->gpps[i];
+> +               } else {
+> +                       gpps[i].reg_num = i;
+> +                       gpps[i].base = community->pin_base +
+> +                                      i * community->gpp_size;
+> +                       gpps[i].size = min(community->gpp_size, npins);
+> +                       npins -= gpps[i].size;
+> +               }
+> +
+> +               if (gpps[i].size > 32)
+> +                       return -EINVAL;
+> +
+> +               gpps[i].padown_num = padown_num;
+> +
 
-Maxime
+> +               if (community->padown_fixed)
+> +                       padown_num += ALIGN(DIV_ROUND_UP(gpps[i].size, 8), 4);
+> +               else
+> +                       padown_num += DIV_ROUND_UP(gpps[i].size, 8);
+> +       }
+
+It looks to me like you are trying to calculate 32-bit registers
+needed for gpps of given size. Taking into account that each pad takes
+4 bits you may rewrote entire conditional to be simple and clearer:
+
+DIV_ROUND_UP(size, 32) * 4,
+
+where 32 - is a _fixed_ length of the IO register and 4 is _fixed_
+amount of bits per pad.
+
+Please, check if it would work with all hardware we have.
+Perhaps little comment also would be nice to have.
+
+> +
+> +       community->ngpps = ngpps;
+> +       community->gpps = gpps;
+> +
+> +       return 0;
+> +}
+
+
 
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---3v3y4wumdnqyymgd--
+With Best Regards,
+Andy Shevchenko
