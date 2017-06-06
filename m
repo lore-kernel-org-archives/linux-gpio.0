@@ -1,78 +1,71 @@
-From: Baolin Wang <baolin.wang@spreadtrum.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: sprd: Add Spreadtrum pin control driver
-Date: Tue, 6 Jun 2017 15:40:24 +0800
-Message-ID: <20170606074023.GB11506@spreadtrum.com>
-References: <ee404d190712f5826662c7b079caf75dba455145.1496664241.git.baolin.wang@spreadtrum.com>
- <201706060334.Gr0opyQJ%fengguang.wu@intel.com>
- <20170606072055.GA11506@spreadtrum.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v6 5/6] mfd: intel_soc_pmic_bxtwc: Use chained IRQs for
+ second level IRQ chips
+Date: Tue, 6 Jun 2017 12:29:03 +0300
+Message-ID: <20170606092903.GK26659@kuha.fi.intel.com>
+References: <cover.1496687716.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <9881880e5aac28a53398b40db468c704763e941a.1496687716.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:25466 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1750755AbdFFHnI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2017 03:43:08 -0400
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170606072055.GA11506@spreadtrum.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <9881880e5aac28a53398b40db468c704763e941a.1496687716.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: sathyanarayanan.kuppuswamy@linux.intel.com
+Cc: gnurou@gmail.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, lee.jones@linaro.org, andy@infradead.org, platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, sathyaosid@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>, kbuild-all@01.org, linus.walleij@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org
 
-Hi,
+On Mon, Jun 05, 2017 at 12:08:05PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+> Whishkey cove PMIC has support to mask/unmask interrupts at two levels.
+> At first level we can mask/unmask interrupt domains like TMU, GPIO, ADC,
+> CHGR, BCU THERMAL and PWRBTN and at second level, it provides facility
+> to mask/unmask individual interrupts belong each of this domain. For
+> example, in case of TMU, at first level we have TMU interrupt domain,
+> and at second level we have two interrupts, wake alarm, system alarm that
+> belong to the TMU interrupt domain.
+> 
+> Currently, in this driver all first level IRQs are registered as part of
+> IRQ chip(bxtwc_regmap_irq_chip). By default, after you register the IRQ
+> chip from your driver, all IRQs in that chip will masked and can only be
+> enabled if that IRQ is requested using request_irq() call. This is the
+> default Linux IRQ behavior model. And whenever a dependent device that
+> belongs to PMIC requests only the second level IRQ and not explicitly
+> unmask the first level IRQ, then in essence the second level IRQ will
+> still be disabled. For example, if TMU device driver request wake_alarm
+> IRQ and not explicitly unmask TMU level 1 IRQ then according to the default
+> Linux IRQ model,  wake_alarm IRQ will still be disabled. So the proper
+> solution to fix this issue is to use the chained IRQ chip concept. We
+> should chain all the second level chip IRQs to the corresponding first
+> level IRQ. To do this, we need to create separate IRQ chips for every
+> group of second level IRQs.
+> 
+> In case of TMU, when adding second level IRQ chip, instead of using PMIC
+> IRQ we should use the corresponding first level IRQ. So the following
+> code will change from
+> 
+> ret = regmap_add_irq_chip(pmic->regmap, pmic->irq, ...)
+> 
+> to,
+> 
+> virq = regmap_irq_get_virq(&pmic->irq_chip_data, BXTWC_TMU_LVL1_IRQ);
+> 
+> ret = regmap_add_irq_chip(pmic->regmap, virq, ...)
+> 
+> In case of Whiskey Cove Type-C driver, Since USBC IRQ is moved under
+> charger level2 IRQ chip. We should use charger IRQ chip(irq_chip_data_chgr)
+> to get the USBC virtual IRQ number.
+> 
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-O 二,  6月 06, 2017 at 03:20:55下午 +0800, Baolin Wang wrote:
-> Hi,
-> 
-> O 二,  6月 06, 2017 at 03:07:22上午 +0800, kbuild test robot wrote:
-> > Hi Baolin,
-> > 
-> > [auto build test WARNING on robh/for-next]
-> > [also build test WARNING on v4.12-rc4]
-> > [cannot apply to pinctrl/devel next-20170605]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Baolin-Wang/DT-pinctrl-Add-binding-documentation-for-Spreadtrum-pin-controller/20170605-222351
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-> > config: i386-allmodconfig (attached as .config)
-> > compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-> > reproduce:
-> >         # save the attached .config to linux build tree
-> >         make ARCH=i386 
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> >    drivers/pinctrl/sprd/pinctrl-sprd.c: In function 'sprd_pinconf_set':
-> > >> drivers/pinctrl/sprd/pinctrl-sprd.c:484:4: warning: case value '129' not in enumerated type 'enum pin_config_param' [-Wswitch]
-> >        case SPRD_PIN_CONFIG_SLEEP_MODE:
-> >        ^~~~
-> >    drivers/pinctrl/sprd/pinctrl-sprd.c:497:4: warning: case value '131' not in enumerated type 'enum pin_config_param' [-Wswitch]
-> >        case SPRD_PIN_CONFIG_INPUT_SLEEP:
-> >        ^~~~
-> >    drivers/pinctrl/sprd/pinctrl-sprd.c:502:4: warning: case value '132' not in enumerated type 'enum pin_config_param' [-Wswitch]
-> >        case SPRD_PIN_CONFIG_OUTPUT_SLEEP:
-> >        ^~~~
-> >    drivers/pinctrl/sprd/pinctrl-sprd.c:534:4: warning: case value '130' not in enumerated type 'enum pin_config_param' [-Wswitch]
-> >        case SPRD_PIN_CONFIG_PULLUP:
-> >        ^~~~
-> >    drivers/pinctrl/sprd/pinctrl-sprd.c:543:4: warning: case value '133' not in enumerated type 'enum pin_config_param' [-Wswitch]
-> >        case SPRD_PIN_CONFIG_PULLUP_SLEEP:
-> >        ^~~~
-> >    drivers/pinctrl/sprd/pinctrl-sprd.c:548:4: warning: case value '134' not in enumerated type 'enum pin_config_param' [-Wswitch]
-> >        case SPRD_PIN_CONFIG_PULLDOWN_SLEEP:
-> >        ^~~~
-> 
-> From kernel doc for 'enum pin_config_param', user need use
-> PIN_CONFIG_END + 1 as the base offset if the user need to
-> pass in custom configuration to the pin controller. So I do
-> not think I need to fix this warning. Thanks.
+For the typec_wcove.c part:
 
-Sorry for misunderstanding the warning, I've found the reason
-of the warning and I will fix it in next version. Thanks.
+Revieved-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> 
-> > ---
-> > 0-DAY kernel test infrastructure                Open Source Technology Center
-> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
-> 
+
+Thanks,
+
+-- 
+heikki
