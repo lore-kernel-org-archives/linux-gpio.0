@@ -1,474 +1,109 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v2 1/3] pinctrl: intel: Add support for variable size pad groups
-Date: Tue,  6 Jun 2017 16:18:17 +0300
-Message-ID: <20170606131819.39845-2-mika.westerberg@linux.intel.com>
-References: <20170606131819.39845-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:10040 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751345AbdFFNT2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 6 Jun 2017 09:19:28 -0400
-In-Reply-To: <20170606131819.39845-1-mika.westerberg@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v1 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Tue, 6 Jun 2017 17:15:55 +0300
+Message-ID: <CAHp75Vc6PSDqc=Vxj2z-d49p+E-7tciunhki=8a7HPjQGuSwXQ@mail.gmail.com>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com> <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-The Intel GPIO hardware has a concept of pad groups, which means 1 to 32
-pads occupying their own GPI_IS, GPI_IE, PAD_OWN and so on registers. The
-existing hardware has the same amount of pads in each pad group (except the
-last one) so it is possible to use community->gpp_size to calculate start
-offset of each register.
+On Tue, Jun 6, 2017 at 2:55 PM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
+> This patch adds support for TPS68470 GPIOs.
+> There are 7 GPIOs and a few sensor related GPIOs.
+> These GPIOs can be requested and configured as
+> appropriate.
 
-With the next generation SoCs the pad group size is not always the same
-anymore which means we cannot use community->gpp_size for register offset
-calculations directly.
+Besides my below comments, just put it here that I recommended earlier
+to provide 2 GPIO chips (one per bank of GPIOs).
+It's up to Linus to decide since you didn't follow the recommendation.
 
-To support variable size pad groups we introduce struct intel_padgroup that
-can be filled in by the client drivers according the hardware pad group
-layout. The core driver will always use these when it performs calculations
-for pad register offsets. The core driver will automatically populate pad
-groups based on community->gpp_size if the driver does not provide any.
-This makes sure the existing drivers still work as expected.
+> +#include <linux/gpio.h>
+> +#include <linux/gpio/machine.h>
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Chuah, Kim Tatt <kim.tatt.chuah@intel.com>
-Signed-off-by: Tan Jui Nee <jui.nee.tan@intel.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c        | 194 ++++++++++++++++++++-------
- drivers/pinctrl/intel/pinctrl-intel.h        |  37 ++++-
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c |   1 +
- 3 files changed, 176 insertions(+), 56 deletions(-)
+These shouldn't be in the driver.
+Instead use
+#include <linux/gpio/driver.h>
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 592b465e981e..78c48497c9e6 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -117,6 +117,7 @@ struct intel_pinctrl {
- };
- 
- #define pin_to_padno(c, p)	((p) - (c)->pin_base)
-+#define padgroup_offset(g, p)	((p) - (g)->base)
- 
- static struct intel_community *intel_get_community(struct intel_pinctrl *pctrl,
- 						   unsigned pin)
-@@ -135,6 +136,22 @@ static struct intel_community *intel_get_community(struct intel_pinctrl *pctrl,
- 	return NULL;
- }
- 
-+static const struct intel_padgroup *
-+intel_community_get_padgroup(const struct intel_community *community,
-+			     unsigned pin)
-+{
-+	int i;
-+
-+	for (i = 0; i < community->ngpps; i++) {
-+		const struct intel_padgroup *padgrp = &community->gpps[i];
-+
-+		if (pin >= padgrp->base && pin < padgrp->base + padgrp->size)
-+			return padgrp;
-+	}
-+
-+	return NULL;
-+}
-+
- static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl, unsigned pin,
- 				      unsigned reg)
- {
-@@ -158,7 +175,8 @@ static void __iomem *intel_get_padcfg(struct intel_pinctrl *pctrl, unsigned pin,
- static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
- {
- 	const struct intel_community *community;
--	unsigned padno, gpp, offset, group;
-+	const struct intel_padgroup *padgrp;
-+	unsigned gpp, offset, gpp_offset;
- 	void __iomem *padown;
- 
- 	community = intel_get_community(pctrl, pin);
-@@ -167,19 +185,23 @@ static bool intel_pad_owned_by_host(struct intel_pinctrl *pctrl, unsigned pin)
- 	if (!community->padown_offset)
- 		return true;
- 
--	padno = pin_to_padno(community, pin);
--	group = padno / community->gpp_size;
--	gpp = PADOWN_GPP(padno % community->gpp_size);
--	offset = community->padown_offset + 0x10 * group + gpp * 4;
-+	padgrp = intel_community_get_padgroup(community, pin);
-+	if (!padgrp)
-+		return false;
-+
-+	gpp_offset = padgroup_offset(padgrp, pin);
-+	gpp = PADOWN_GPP(gpp_offset);
-+	offset = community->padown_offset + padgrp->padown_num * 4 + gpp * 4;
- 	padown = community->regs + offset;
- 
--	return !(readl(padown) & PADOWN_MASK(padno));
-+	return !(readl(padown) & PADOWN_MASK(gpp_offset));
- }
- 
- static bool intel_pad_acpi_mode(struct intel_pinctrl *pctrl, unsigned pin)
- {
- 	const struct intel_community *community;
--	unsigned padno, gpp, offset;
-+	const struct intel_padgroup *padgrp;
-+	unsigned offset, gpp_offset;
- 	void __iomem *hostown;
- 
- 	community = intel_get_community(pctrl, pin);
-@@ -188,18 +210,22 @@ static bool intel_pad_acpi_mode(struct intel_pinctrl *pctrl, unsigned pin)
- 	if (!community->hostown_offset)
- 		return false;
- 
--	padno = pin_to_padno(community, pin);
--	gpp = padno / community->gpp_size;
--	offset = community->hostown_offset + gpp * 4;
-+	padgrp = intel_community_get_padgroup(community, pin);
-+	if (!padgrp)
-+		return true;
-+
-+	gpp_offset = padgroup_offset(padgrp, pin);
-+	offset = community->hostown_offset + padgrp->reg_num * 4;
- 	hostown = community->regs + offset;
- 
--	return !(readl(hostown) & BIT(padno % community->gpp_size));
-+	return !(readl(hostown) & BIT(gpp_offset));
- }
- 
- static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
- {
- 	struct intel_community *community;
--	unsigned padno, gpp, offset;
-+	const struct intel_padgroup *padgrp;
-+	unsigned offset, gpp_offset;
- 	u32 value;
- 
- 	community = intel_get_community(pctrl, pin);
-@@ -208,22 +234,25 @@ static bool intel_pad_locked(struct intel_pinctrl *pctrl, unsigned pin)
- 	if (!community->padcfglock_offset)
- 		return false;
- 
--	padno = pin_to_padno(community, pin);
--	gpp = padno / community->gpp_size;
-+	padgrp = intel_community_get_padgroup(community, pin);
-+	if (!padgrp)
-+		return true;
-+
-+	gpp_offset = padgroup_offset(padgrp, pin);
- 
- 	/*
- 	 * If PADCFGLOCK and PADCFGLOCKTX bits are both clear for this pad,
- 	 * the pad is considered unlocked. Any other case means that it is
- 	 * either fully or partially locked and we don't touch it.
- 	 */
--	offset = community->padcfglock_offset + gpp * 8;
-+	offset = community->padcfglock_offset + padgrp->reg_num * 8;
- 	value = readl(community->regs + offset);
--	if (value & BIT(pin % community->gpp_size))
-+	if (value & BIT(gpp_offset))
- 		return true;
- 
--	offset = community->padcfglock_offset + 4 + gpp * 8;
-+	offset = community->padcfglock_offset + 4 + padgrp->reg_num * 8;
- 	value = readl(community->regs + offset);
--	if (value & BIT(pin % community->gpp_size))
-+	if (value & BIT(gpp_offset))
- 		return true;
- 
- 	return false;
-@@ -777,18 +806,22 @@ static void intel_gpio_irq_ack(struct irq_data *d)
- 	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
- 
--	raw_spin_lock(&pctrl->lock);
--
- 	community = intel_get_community(pctrl, pin);
- 	if (community) {
--		unsigned padno = pin_to_padno(community, pin);
--		unsigned gpp_offset = padno % community->gpp_size;
--		unsigned gpp = padno / community->gpp_size;
-+		const struct intel_padgroup *padgrp;
-+		unsigned gpp, gpp_offset;
-+
-+		padgrp = intel_community_get_padgroup(community, pin);
-+		if (!padgrp)
-+			return;
-+
-+		gpp = padgrp->reg_num;
-+		gpp_offset = padgroup_offset(padgrp, pin);
- 
-+		raw_spin_lock(&pctrl->lock);
- 		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
-+		raw_spin_unlock(&pctrl->lock);
- 	}
--
--	raw_spin_unlock(&pctrl->lock);
- }
- 
- static void intel_gpio_irq_enable(struct irq_data *d)
-@@ -797,27 +830,30 @@ static void intel_gpio_irq_enable(struct irq_data *d)
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
- 	community = intel_get_community(pctrl, pin);
- 	if (community) {
--		unsigned padno = pin_to_padno(community, pin);
--		unsigned gpp_size = community->gpp_size;
--		unsigned gpp_offset = padno % gpp_size;
--		unsigned gpp = padno / gpp_size;
-+		const struct intel_padgroup *padgrp;
-+		unsigned gpp, gpp_offset;
-+		unsigned long flags;
- 		u32 value;
- 
-+		padgrp = intel_community_get_padgroup(community, pin);
-+		if (!padgrp)
-+			return;
-+
-+		gpp = padgrp->reg_num;
-+		gpp_offset = padgroup_offset(padgrp, pin);
-+
-+		raw_spin_lock_irqsave(&pctrl->lock, flags);
- 		/* Clear interrupt status first to avoid unexpected interrupt */
- 		writel(BIT(gpp_offset), community->regs + GPI_IS + gpp * 4);
- 
- 		value = readl(community->regs + community->ie_offset + gpp * 4);
- 		value |= BIT(gpp_offset);
- 		writel(value, community->regs + community->ie_offset + gpp * 4);
-+		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- 	}
--
--	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- }
- 
- static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
-@@ -826,28 +862,33 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
- 	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
- 	const struct intel_community *community;
- 	unsigned pin = irqd_to_hwirq(d);
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
- 	community = intel_get_community(pctrl, pin);
- 	if (community) {
--		unsigned padno = pin_to_padno(community, pin);
--		unsigned gpp_offset = padno % community->gpp_size;
--		unsigned gpp = padno / community->gpp_size;
-+		const struct intel_padgroup *padgrp;
-+		unsigned gpp, gpp_offset;
-+		unsigned long flags;
- 		void __iomem *reg;
- 		u32 value;
- 
-+		padgrp = intel_community_get_padgroup(community, pin);
-+		if (!padgrp)
-+			return;
-+
-+		gpp = padgrp->reg_num;
-+		gpp_offset = padgroup_offset(padgrp, pin);
-+
- 		reg = community->regs + community->ie_offset + gpp * 4;
-+
-+		raw_spin_lock_irqsave(&pctrl->lock, flags);
- 		value = readl(reg);
- 		if (mask)
- 			value &= ~BIT(gpp_offset);
- 		else
- 			value |= BIT(gpp_offset);
- 		writel(value, reg);
-+		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- 	}
--
--	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
- }
- 
- static void intel_gpio_irq_mask(struct irq_data *d)
-@@ -938,23 +979,20 @@ static irqreturn_t intel_gpio_community_irq_handler(struct intel_pinctrl *pctrl,
- 	int gpp;
- 
- 	for (gpp = 0; gpp < community->ngpps; gpp++) {
-+		const struct intel_padgroup *padgrp = &community->gpps[gpp];
- 		unsigned long pending, enabled, gpp_offset;
- 
--		pending = readl(community->regs + GPI_IS + gpp * 4);
-+		pending = readl(community->regs + GPI_IS + padgrp->reg_num * 4);
- 		enabled = readl(community->regs + community->ie_offset +
--				gpp * 4);
-+				padgrp->reg_num * 4);
- 
- 		/* Only interrupts that are enabled */
- 		pending &= enabled;
- 
--		for_each_set_bit(gpp_offset, &pending, community->gpp_size) {
-+		for_each_set_bit(gpp_offset, &pending, padgrp->size) {
- 			unsigned padno, irq;
- 
--			/*
--			 * The last group in community can have less pins
--			 * than NPADS_IN_GPP.
--			 */
--			padno = gpp_offset + gpp * community->gpp_size;
-+			padno = padgrp->base - community->pin_base + gpp_offset;
- 			if (padno >= community->npins)
- 				break;
- 
-@@ -1045,6 +1083,56 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
- 	return 0;
- }
- 
-+static int intel_pinctrl_add_padgroups(struct intel_pinctrl *pctrl,
-+				       struct intel_community *community)
-+{
-+	struct intel_padgroup *gpps;
-+	unsigned npins = community->npins;
-+	unsigned padown_num = 0;
-+	size_t ngpps, i;
-+
-+	if (community->gpps)
-+		ngpps = community->ngpps;
-+	else
-+		ngpps = DIV_ROUND_UP(community->npins, community->gpp_size);
-+
-+	gpps = devm_kcalloc(pctrl->dev, ngpps, sizeof(*gpps), GFP_KERNEL);
-+	if (!gpps)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ngpps; i++) {
-+		if (community->gpps) {
-+			gpps[i] = community->gpps[i];
-+		} else {
-+			unsigned gpp_size = community->gpp_size;
-+
-+			gpps[i].reg_num = i;
-+			gpps[i].base = community->pin_base + i * gpp_size;
-+			gpps[i].size = min(gpp_size, npins);
-+			npins -= gpps[i].size;
-+		}
-+
-+		if (gpps[i].size > 32)
-+			return -EINVAL;
-+
-+		gpps[i].padown_num = padown_num;
-+
-+		/*
-+		 * In older hardware the number of padown registers per
-+		 * group is fixed regardless of the group size.
-+		 */
-+		if (community->gpp_num_padown_regs)
-+			padown_num += community->gpp_num_padown_regs;
-+		else
-+			padown_num += DIV_ROUND_UP(gpps[i].size * 4, 32);
-+	}
-+
-+	community->ngpps = ngpps;
-+	community->gpps = gpps;
-+
-+	return 0;
-+}
-+
- static int intel_pinctrl_pm_init(struct intel_pinctrl *pctrl)
- {
- #ifdef CONFIG_PM_SLEEP
-@@ -1142,8 +1230,10 @@ int intel_pinctrl_probe(struct platform_device *pdev,
- 
- 		community->regs = regs;
- 		community->pad_regs = regs + padbar;
--		community->ngpps = DIV_ROUND_UP(community->npins,
--						community->gpp_size);
-+
-+		ret = intel_pinctrl_add_padgroups(pctrl, community);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.h b/drivers/pinctrl/intel/pinctrl-intel.h
-index fe9521f345b5..b251a9e86970 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.h
-+++ b/drivers/pinctrl/intel/pinctrl-intel.h
-@@ -44,6 +44,23 @@ struct intel_function {
- };
- 
- /**
-+ * struct intel_padgroup - Hardware pad group information
-+ * @reg_num: GPI_IS register number
-+ * @base: Starting pin of this group
-+ * @size: Size of this group (maximum is 32).
-+ * @padown_num: PAD_OWN register number (assigned by the core driver)
-+ *
-+ * If pad groups of a community are not the same size, use this structure
-+ * to specify them.
-+ */
-+struct intel_padgroup {
-+	unsigned reg_num;
-+	unsigned base;
-+	unsigned size;
-+	unsigned padown_num;
-+};
-+
-+/**
-  * struct intel_community - Intel pin community description
-  * @barno: MMIO BAR number where registers for this community reside
-  * @padown_offset: Register offset of PAD_OWN register from @regs. If %0
-@@ -56,13 +73,22 @@ struct intel_function {
-  * @ie_offset: Register offset of GPI_IE from @regs.
-  * @pin_base: Starting pin of pins in this community
-  * @gpp_size: Maximum number of pads in each group, such as PADCFGLOCK,
-- *            HOSTSW_OWN,  GPI_IS, GPI_IE, etc.
-+ *            HOSTSW_OWN,  GPI_IS, GPI_IE, etc. Used when @gpps is %NULL.
-+ * @gpp_num_padown_regs: Number of pad registers each pad group consumes at
-+ *			 minimum. Use %0 if the number of registers can be
-+ *			 determined by the size of the group.
-  * @npins: Number of pins in this community
-  * @features: Additional features supported by the hardware
-+ * @gpps: Pad groups if the controller has variable size pad groups
-+ * @ngpps: Number of pad groups in this community
-  * @regs: Community specific common registers (reserved for core driver)
-  * @pad_regs: Community specific pad registers (reserved for core driver)
-- * @ngpps: Number of groups (hw groups) in this community (reserved for
-- *         core driver)
-+ *
-+ * Most Intel GPIO host controllers this driver supports each pad group is
-+ * of equal size (except the last one). In that case the driver can just
-+ * fill in @gpp_size field and let the core driver to handle the rest. If
-+ * the controller has pad groups of variable size the client driver can
-+ * pass custom @gpps and @ngpps instead.
-  */
- struct intel_community {
- 	unsigned barno;
-@@ -72,11 +98,14 @@ struct intel_community {
- 	unsigned ie_offset;
- 	unsigned pin_base;
- 	unsigned gpp_size;
-+	unsigned gpp_num_padown_regs;
- 	size_t npins;
- 	unsigned features;
-+	const struct intel_padgroup *gpps;
-+	size_t ngpps;
-+	/* Reserved for the core driver */
- 	void __iomem *regs;
- 	void __iomem *pad_regs;
--	size_t ngpps;
- };
- 
- /* Additional features supported by the hardware */
-diff --git a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-index 9877526c0807..8870a4100164 100644
---- a/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-+++ b/drivers/pinctrl/intel/pinctrl-sunrisepoint.c
-@@ -31,6 +31,7 @@
- 		.hostown_offset = SPT_HOSTSW_OWN,	\
- 		.ie_offset = SPT_GPI_IE,		\
- 		.gpp_size = 24,				\
-+		.gpp_num_padown_regs = 4,		\
- 		.pin_base = (s),			\
- 		.npins = ((e) - (s) + 1),		\
- 	}
+> +#include <linux/mfd/tps68470.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+
+> +       if (offset >= TPS68470_N_REGULAR_GPIO) {
+> +               offset -= TPS68470_N_REGULAR_GPIO;
+> +               reg = TPS68470_REG_SGPO;
+> +       }
+
+Two GPIO chips makes this gone.
+
+> +struct gpiod_lookup_table gpios_table = {
+> +       .dev_id = NULL,
+> +       .table = {
+> +                 GPIO_LOOKUP("tps68470-gpio", 0, "gpio.0", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 1, "gpio.1", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 2, "gpio.2", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 3, "gpio.3", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 4, "gpio.4", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 5, "gpio.5", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 6, "gpio.6", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 7, "s_enable", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 8, "s_idle", GPIO_ACTIVE_HIGH),
+> +                 GPIO_LOOKUP("tps68470-gpio", 9, "s_resetn", GPIO_ACTIVE_HIGH),
+> +                 {},
+> +       },
+> +};
+
+This doesn't belong to the driver.
+
+> +static int tps68470_gpio_probe(struct platform_device *pdev)
+> +{
+> +       struct tps68470 *tps68470 = dev_get_drvdata(pdev->dev.parent);
+> +       struct tps68470_gpio_data *tps68470_gpio;
+
+> +       int i, ret;
+
+unsingned int i;
+
+> +       ret = gpiochip_add(&tps68470_gpio->gc);
+
+devm_ ?
+
+> +       gpiod_add_lookup_table(&gpios_table);
+
+Doesn't belong to the driver either.
+I suppose it's a part of MFD (patch 1)
+
+> +       /*
+> +        * Initialize all the GPIOs to 0, just to make sure all
+> +        * GPIOs start with known default values. This protects against
+> +        * any GPIOs getting set with a value of 1, after TPS68470 reset
+
+So, this is hardware bug. Right? Or misconfiguration of the chip we may avoid?
+
+> +        */
+> +       for (i = 0; i < tps68470_gpio->gc.ngpio; i++)
+> +               tps68470_gpio_set(&tps68470_gpio->gc, i, 0);
+> +
+> +       return ret;
+> +}
+
+> +
+> +static int tps68470_gpio_remove(struct platform_device *pdev)
+> +{
+> +       struct tps68470_gpio_data *tps68470_gpio = platform_get_drvdata(pdev);
+> +
+> +       gpiod_remove_lookup_table(&gpios_table);
+> +       gpiochip_remove(&tps68470_gpio->gc);
+> +
+> +       return 0;
+> +}
+
+Should gone after devm_ in use.
+
 -- 
-2.11.0
-
+With Best Regards,
+Andy Shevchenko
