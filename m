@@ -1,131 +1,171 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/3] mfd: Add new mfd device TPS68470
-Date: Tue, 6 Jun 2017 15:59:49 +0300
-Message-ID: <CAHp75VfiTM2t=WxWpG4+kUfGA3DrfGfMOwxP6Cs42nGwHjAp7w@mail.gmail.com>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com> <1496750118-5570-2-git-send-email-rajmohan.mani@intel.com>
+From: Baolin Wang <baolin.wang@spreadtrum.com>
+Subject: [PATCH v3 1/2] DT: pinctrl: Add binding documentation for Spreadtrum pin controller
+Date: Tue, 6 Jun 2017 21:03:13 +0800
+Message-ID: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496753918.git.baolin.wang@spreadtrum.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1496750118-5570-2-git-send-email-rajmohan.mani@intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Rajmohan Mani <rajmohan.mani@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:27939 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1751305AbdFFNHh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2017 09:07:37 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, mark.rutland@arm.com, robh+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org, baolin.wang@spreadtrum.com
 
-On Tue, Jun 6, 2017 at 2:55 PM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
-> The TPS68470 device is an advanced power management
-> unit that powers a Compact Camera Module (CCM),
-> generates clocks for image sensors, drives a dual
-> LED for Flash and incorporates two LED drivers for
-> general purpose indicators.
->
-> This patch adds support for TPS68470 mfd device.
+This patch adds the binding documentation for Spreadtrum SC9860 pin
+controller device.
 
-I dunno why you decide to send this out now, see my comments below.
+Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
+---
+Changes since v2:
+ - No updates.
 
-> +static int tps68470_chip_init(struct tps68470 *tps)
-> +{
-> +       unsigned int version;
-> +       int ret;
+Changes since v1:
+ - Remove magic numbers and get to use the standard bindings.
+ - Fix some typos.
+---
+ .../devicetree/bindings/pinctrl/sprd,pinctrl.txt   |   56 +++++++++++++++++
+ .../bindings/pinctrl/sprd,sc9860-pinctrl.txt       |   66 ++++++++++++++++++++
+ 2 files changed, 122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt
 
-> +       /* FIXME: configure these dynamically */
-
-So, what prevents you to fix this?
-
-> +       /* Enable Daisy Chain LDO and configure relevant GPIOs as output */
-
-> +}
-
-> +static int tps68470_probe(struct i2c_client *client)
-> +{
-> +       struct tps68470 *tps;
-> +       int ret;
-> +
-> +       tps = devm_kzalloc(&client->dev, sizeof(*tps), GFP_KERNEL);
-> +       if (!tps)
-> +               return -ENOMEM;
-> +
-> +       mutex_init(&tps->lock);
-> +       i2c_set_clientdata(client, tps);
-> +       tps->dev = &client->dev;
-> +
-> +       tps->regmap = devm_regmap_init_i2c(client, &tps68470_regmap_config);
-> +       if (IS_ERR(tps->regmap)) {
-> +               dev_err(tps->dev, "devm_regmap_init_i2c Error %d\n", ret);
-> +               return PTR_ERR(tps->regmap);
-> +       }
-> +
-
-> +       ret = mfd_add_devices(tps->dev, -1, tps68470s,
-> +                             ARRAY_SIZE(tps68470s), NULL, 0, NULL);
-
-devm_?
-
-> +       if (ret < 0) {
-> +               dev_err(tps->dev, "mfd_add_devices failed: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret = tps68470_chip_init(tps);
-> +       if (ret < 0) {
-> +               dev_err(tps->dev, "TPS68470 Init Error %d\n", ret);
-> +               goto fail;
-> +       }
-> +
-> +       return 0;
-
-> +fail:
-> +       mutex_lock(&tps->lock);
-
-I'm not sure you need this mutex to be held here.
-Otherwise your code has a bug with locking.
-
-> +       mfd_remove_devices(tps->dev);
-> +       mutex_unlock(&tps->lock);
-> +
-> +       return ret;
-
-Taking above into consideration I suggest to clarify your locking scheme.
-
-> +}
-> +
-> +static int tps68470_remove(struct i2c_client *client)
-> +{
-> +       struct tps68470 *tps = i2c_get_clientdata(client);
-> +
-
-> +       mutex_lock(&tps->lock);
-> +       mfd_remove_devices(tps->dev);
-> +       mutex_unlock(&tps->lock);
-
-Ditto.
-
-> +       return 0;
-> +}
-
-> +/**
-> + * struct tps68470 - tps68470 sub-driver chip access routines
-> + *
-
-kbuild bot will be unhappy. You need to file a description per field.
-
-> + * Device data may be used to access the TPS68470 chip
-> + */
-> +
-> +struct tps68470 {
-> +       struct device *dev;
-> +       struct regmap *regmap;
-
-> +       /*
-> +        * Used to synchronize access to tps68470_ operations
-> +        * and addition and removal of mfd devices
-> +        */
-
-Move it to kernel-doc above.
-
-> +       struct mutex lock;
-> +};
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt
+new file mode 100644
+index 0000000..2f544cd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/sprd,pinctrl.txt
+@@ -0,0 +1,56 @@
++* Spreadtrum Pin Controller
++
++The Spreadtrum pin controller are organized in 3 blocks (types).
++
++The first block comprises some global control registers, and each
++register contains several bit fields with one bit or several bits
++to configure for some global common configuration, such as domain
++pad driving level, system control select and so on. We recognise
++every fields comprising one bit or several bits in one global control
++register as one pin, thus we should record every pin's bit offset,
++bit width and register offset to configure this field (pin). Since
++this type pins' configuration are very tricky and different for each
++register, we introduce "sprd,ctrl" property to set the various global
++control configuration.
++
++The second block comprises some common registers which have unified
++register definition, and each register described one pin is used
++to configure the pin sleep mode and function select. Now we have 4
++systems on SC9860 SoC: AP system, PUBCP system, TGLDSP system and
++AGDSP system. In some situation we have some pin-sleep related
++configuration need to set when one of system goes into deep sleep
++mode. For example, if we set the pin sleep mode as AP_SLEEP, which
++means when AP system goes into deep sleep mode, this pin's sleep
++related properties (input/output or pullup/down) will be set
++automatically. Thus we intoduce "sprd,sleep_mode" to set pin sleep
++mode.
++
++The last block comprises some misc registers which also have unified
++register definition, and each register described one pin is used to
++configure drive strength, pull up/down and so on. Especially for pull
++up, we introduce "sprd,pullup" property for two kind configuration:
++PULLUP_20K or PULLUP_4_7K, which means the pullup resistor is 20K or
++4.7K.
++
++Required properties for Spreadtrum pin controller:
++- compatible: "sprd,<soc>-pinctrl"
++  Please refer to each sprd,<soc>-pinctrl.txt binding doc for supported SoCs.
++- reg: The register address of pin controller device.
++- pins : An array of pin names.
++
++Optional properties:
++- function: Specified the function name.
++- drive-strength: Drive strength in mA.
++- input-schmitt-disable: Enable schmitt-trigger mode.
++- input-schmitt-enable: Disable schmitt-trigger mode.
++- bias-disable: Disable pin bias.
++- bias-pull-down: Pull down on pin.
++- sprd,ctrl: Control values referring to databook for global control pins.
++- sprd,sleep_mode: Sleep mode selection.
++- sprd,pullup: Pull up on pin.
++- sprd,input-sleep: Input enable when system goes into deep sleep mode.
++- sprd,output-sleep: Output enable when system goes into deep sleep mode.
++- sprd,pullup_sleep: Pull up enable when system goes into deep sleep mode.
++- sprd,pulldown_sleep: Pull down enable when system goes into deep sleep mode.
++
++Please refer to each sprd,<soc>-pinctrl.txt binding doc for supported values.
+diff --git a/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt
+new file mode 100644
+index 0000000..10b77e1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/sprd,sc9860-pinctrl.txt
+@@ -0,0 +1,66 @@
++* Spreadtrum SC9860 Pin Controller
++
++Please refer to sprd,pinctrl.txt in this directory for common binding part
++and usage.
++
++Required properties:
++- compatible: Must be "sprd,sc9860-pinctrl".
++- reg: The register address of pin controller device.
++- pins : An array of strings, each string containing the name of a pin.
++
++Optional properties:
++- function: A string containing the name of the function, values must be
++  one of: "func1", "func2", "func3" and "func4".
++- drive-strength: Drive strength in mA. Supported values: 2, 4, 6, 8, 10,
++  12, 14, 16, 20, 21, 24, 25, 27, 29, 31 and 33.
++- input-schmitt-disable: Enable schmitt-trigger mode.
++- input-schmitt-enable: Disable schmitt-trigger mode.
++- bias-disable: Disable pin bias.
++- bias-pull-down: Pull down on pin.
++- sprd,ctrl: Control values referring to databook for global control pins.
++- sprd,sleep_mode: Choose the pin sleep mode, and supported values are:
++  AP_SLEEP, PUBCP_SLEEP, TGLDSP_SLEEP and AGDSP_SLEEP.
++- sprd,pullup: Pull up on pin, the value should be PULLUP_20K or PULLUP_4_7K.
++- sprd,input-sleep: Input enable when system goes into deep sleep mode.
++- sprd,output-sleep: Output enable when system goes into deep sleep mode.
++- sprd,pullup_sleep: Pull up enable when system goes into deep sleep mode.
++- sprd,pulldown_sleep: Pull down enable when system goes into deep sleep mode.
++
++Pin sleep mode definition:
++enum pin_sleep_mode {
++	AP_SLEEP = BIT(0),
++	PUBCP_SLEEP = BIT(1),
++	TGLDSP_SLEEP = BIT(2),
++	AGDSP_SLEEP = BIT(3),
++};
++
++Pin pullup mode definition:
++enum pin_pullup_sel {
++	PULLUP_20K,
++	PULLUP_4_7K,
++};
++
++Example:
++pin_controller: pinctrl@402a0000 {
++	compatible = "sprd,sc9860-pinctrl";
++	reg = <0x402a0000 0x10000>;
++
++	grp1: sd0 {
++		pins = "SC9860_VIO_SD2_IRTE", "SC9860_VIO_SD0_IRTE";
++		sprd,ctrl = <0x1>;
++	};
++
++	grp2: rfctl_33 {
++		pins = "SC9860_RFCTL33";
++		function = "func2";
++		sprd,sleep_mode = <AP_SLEEP | PUBCP_SLEEP>;
++		sprd,output-sleep;
++	};
++
++	grp3: rfctl_misc_20 {
++		pins = "SC9860_RFCTL20_MISC";
++		drive-strength = <10>;
++		sprd,pullup = <PULLUP_4_7K>;
++		sprd,pullup-sleep;
++	};
++};
 -- 
-With Best Regards,
-Andy Shevchenko
+1.7.9.5
+
