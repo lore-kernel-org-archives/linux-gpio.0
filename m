@@ -1,36 +1,57 @@
-From: rpjday@crashcourse.ca
-Subject: why is gpiolib-legacy.o automatically compiled into gpiolib?
-Date: Tue, 06 Jun 2017 06:59:55 -0400
-Message-ID: <20170606065955.Horde.XoxPxs0B5NDB-5t0Ifgyr2E@crashcourse.ca>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+From: Rajmohan Mani <rajmohan.mani@intel.com>
+Subject: [PATCH v1 0/3] TPS68470 PMIC drivers
+Date: Tue,  6 Jun 2017 04:55:15 -0700
+Message-ID: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cpanel2.indieserve.net ([199.212.143.6]:50270 "EHLO
-        cpanel2.indieserve.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbdFFK75 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 6 Jun 2017 06:59:57 -0400
-Received: from [::1] (port=47960 helo=cpanel2.indieserve.net)
-        by cpanel2.indieserve.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.89)
-        (envelope-from <rpjday@crashcourse.ca>)
-        id 1dICDM-000142-2D
-        for linux-gpio@vger.kernel.org; Tue, 06 Jun 2017 06:59:56 -0400
-Content-Disposition: inline
+Received: from mga02.intel.com ([134.134.136.20]:62030 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751345AbdFFMCU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 6 Jun 2017 08:02:20 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Rajmohan Mani <rajmohan.mani@intel.com>
 
+This is the patch series for TPS68470 PMIC that works as a camera PMIC.
 
-   for the first time, going through the docs to learn about the descriptor
-interface for GPIO, and while the Doc directory seems to suggest that the
-"legacy" interface is deprecated, the drivers/gpio/Makefile contains the
-line:
+The patch series provide the following 3 drivers.
 
-   obj-$(CONFIG_GPIOLIB)		+= gpiolib-legacy.o
+TPS68470 MFD driver:
+This is the multi function driver that initializes the TPS68470
+PMIC and supports the GPIO and Op Region functions.
 
-so is that "legacy" file still required for descriptor-based interface?
-i'm sure i'll figure it out if i keep reading, but a quick clarification
-would not go unappreciated.
+TPS68470 GPIO driver:
+This is the PMIC GPIO driver that will be used by the OS GPIO layer,
+when the BIOS / firmware triggered GPIO access is done.
 
-rday
+TPS68470 Op Region driver:
+This is the driver that will be invoked, when the BIOS / firmware
+configures the voltage / clock for the sensors / vcm devices
+connected to the PMIC.
+
+---
+
+Rajmohan Mani (3):
+  mfd: Add new mfd device TPS68470
+  gpio: Add support for TPS68470 GPIOs
+  ACPI / PMIC: Add TI PMIC TPS68470 operation region driver
+
+ drivers/acpi/Kconfig              |  12 +
+ drivers/acpi/Makefile             |   2 +
+ drivers/acpi/pmic/pmic_tps68470.c | 454 ++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/Kconfig              |  10 +
+ drivers/gpio/Makefile             |   1 +
+ drivers/gpio/gpio-tps68470.c      | 185 ++++++++++++++++
+ drivers/mfd/Kconfig               |  12 +
+ drivers/mfd/Makefile              |   1 +
+ drivers/mfd/tps68470.c            | 227 +++++++++++++++++++
+ include/linux/mfd/tps68470.h      | 167 ++++++++++++++
+ 10 files changed, 1071 insertions(+)
+ create mode 100644 drivers/acpi/pmic/pmic_tps68470.c
+ create mode 100644 drivers/gpio/gpio-tps68470.c
+ create mode 100644 drivers/mfd/tps68470.c
+ create mode 100644 include/linux/mfd/tps68470.h
+
+-- 
+1.9.1
 
