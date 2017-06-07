@@ -1,346 +1,263 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Wed, 7 Jun 2017 17:53:38 +0300
-Message-ID: <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
-References: <20170602151507.22391-1-hdegoede@redhat.com> <20170602151507.22391-2-hdegoede@redhat.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Subject: Re: [PATCH v6 3/6] irqdomain: Add irq_domain_{push,pop}_irq() functions.
+Date: Wed, 7 Jun 2017 09:09:29 -0700
+Message-ID: <CAJ+vNU2ejbQUTBGnJsLr+pYdJsUc=yHZvbrKNm0bo5nZL=DhBw@mail.gmail.com>
+References: <1491931269-15650-1-git-send-email-david.daney@cavium.com>
+ <1491931269-15650-4-git-send-email-david.daney@cavium.com> <CACRpkdZ8byO6=rWS-TJDJ21-duvyau_EQpN2hWj27DF8ur6fnQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170602151507.22391-2-hdegoede@redhat.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Darren Hart <dvhart@infradead.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZ8byO6=rWS-TJDJ21-duvyau_EQpN2hWj27DF8ur6fnQ@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Daney <david.daney@cavium.com>, Bjorn Helgaas <helgaas@kernel.org>, linux-pci <linux-pci@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Some peripherals on Bay Trail and Cherry Trail platforms signal a
-> Power Management Event (PME) to the Power Management Controller (PMC)
-> to wakeup the system. When this happens software needs to explicitly
-> clear the PME bus 0 status bit in the GPE0a_STS register to avoid an
-> IRQ storm on IRQ 9.
+On Mon, Apr 24, 2017 at 6:05 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Sorry for top posting but we need to loop in Bjorn Helgass and the
+> linux-pci mailing list on this patch, at least so they see it, and can
+> recognize similar cases in the future.
 >
-> This is modelled in ACPI through the INT0002 ACPI device, which is
-> called a "Virtual GPIO controller" in ACPI because it defines the
-> event handler to call when the PME triggers through _AEI and _L02
-> methods as would be done for a real GPIO interrupt in ACPI.
+> (The patch set if very nice.)
 >
-> This commit adds a driver which registers the Virtual GPIOs expected
-> by the DSDT on these devices, letting gpiolib-acpi claim the
-> virtual GPIO and install a GPIO-interrupt handler which call the _L02
-> handler as it would for a real GPIO controller.
+> Yours,
+> Linus Walleij
 >
-
-Pushed to testing w/o Linus' tag (there is no one yet)
-
-Linus, if you have objections, tell me.
-
-> Cc: joeyli <jlee@suse.com>
-> Cc: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> Changes in v2:
-> -Remove dev_err after malloc failure
-> -Remove unused empty runtime pm callbacks
-> -s/GPE0A_PME_/GPE0A_PME_B0_/
-> -Fixed some checkpatch warnings (I forgot to run checkpatch on v1)
-> Changes in v3:
-> -Rewrite as gpiochip driver letting gpiolib-acpi deal with claiming the pin
->  0x0002 and calling the _L02 event handler when the virtual gpio-irq triggers
-> -Rebase on 4.12-rc1
-> Changes in v4:
-> -Drop device_init_wakeup() from _probe(), use pm_system_wakeup() instead
->  of pm_wakeup_hard_event(chip->parent)
-> -Improve commit message
-> Changes in v5:
-> -Use BIT() macro for FOO_BIT defines
-> -Drop unneeded ACPI_PTR macro usage
-> Changes in v6:
-> -Move back to drivers/platform/x86
-> -Expand certain acronyms (PME, PMC)
-> -Use linux/gpio/driver.h include instead of linux/gpio.h
-> -Document why the get / set / direction_output functions are dummys
-> -No functional changes
-> ---
->  drivers/platform/x86/Kconfig               |  19 +++
->  drivers/platform/x86/Makefile              |   1 +
->  drivers/platform/x86/intel_int0002_vgpio.c | 218 +++++++++++++++++++++++++++++
->  3 files changed, 238 insertions(+)
->  create mode 100644 drivers/platform/x86/intel_int0002_vgpio.c
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 8489020..a3ccc3c 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -794,6 +794,25 @@ config INTEL_CHT_INT33FE
->           This driver instantiates i2c-clients for these, so that standard
->           i2c drivers for these chips can bind to the them.
->
-> +config INTEL_INT0002_VGPIO
-> +       tristate "Intel ACPI INT0002 Virtual GPIO driver"
-> +       depends on GPIOLIB && ACPI
-> +       select GPIOLIB_IRQCHIP
-> +       ---help---
-> +         Some peripherals on Bay Trail and Cherry Trail platforms signal a
-> +         Power Management Event (PME) to the Power Management Controller (PMC)
-> +         to wakeup the system. When this happens software needs to explicitly
-> +         clear the PME bus 0 status bit in the GPE0a_STS register to avoid an
-> +         IRQ storm on IRQ 9.
-> +
-> +         This is modelled in ACPI through the INT0002 ACPI device, which is
-> +         called a "Virtual GPIO controller" in ACPI because it defines the
-> +         event handler to call when the PME triggers through _AEI and _L02
-> +         methods as would be done for a real GPIO interrupt in ACPI.
-> +
-> +         To compile this driver as a module, choose M here: the module will
-> +         be called intel_int0002_vgpio.
-> +
->  config INTEL_HID_EVENT
->         tristate "INTEL HID Event"
->         depends on ACPI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index 182a3ed..ab22ce7 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -46,6 +46,7 @@ obj-$(CONFIG_TOSHIBA_BT_RFKILL)       += toshiba_bluetooth.o
->  obj-$(CONFIG_TOSHIBA_HAPS)     += toshiba_haps.o
->  obj-$(CONFIG_TOSHIBA_WMI)      += toshiba-wmi.o
->  obj-$(CONFIG_INTEL_CHT_INT33FE)        += intel_cht_int33fe.o
-> +obj-$(CONFIG_INTEL_INT0002_VGPIO) += intel_int0002_vgpio.o
->  obj-$(CONFIG_INTEL_HID_EVENT)  += intel-hid.o
->  obj-$(CONFIG_INTEL_VBTN)       += intel-vbtn.o
->  obj-$(CONFIG_INTEL_SCU_IPC)    += intel_scu_ipc.o
-> diff --git a/drivers/platform/x86/intel_int0002_vgpio.c b/drivers/platform/x86/intel_int0002_vgpio.c
-> new file mode 100644
-> index 0000000..e524b49
-> --- /dev/null
-> +++ b/drivers/platform/x86/intel_int0002_vgpio.c
-> @@ -0,0 +1,218 @@
-> +/*
-> + * Intel INT0002 "Virtual GPIO" driver
-> + *
-> + * Copyright (C) 2017 Hans de Goede <hdegoede@redhat.com>
-> + *
-> + * Loosely based on android x86 kernel code which is:
-> + *
-> + * Copyright (c) 2014, Intel Corporation.
-> + *
-> + * Author: Dyut Kumar Sil <dyut.k.sil@intel.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * Some peripherals on Bay Trail and Cherry Trail platforms signal a Power
-> + * Management Event (PME) to the Power Management Controller (PMC) to wakeup
-> + * the system. When this happens software needs to clear the PME bus 0 status
-> + * bit in the GPE0a_STS register to avoid an IRQ storm on IRQ 9.
-> + *
-> + * This is modelled in ACPI through the INT0002 ACPI device, which is
-> + * called a "Virtual GPIO controller" in ACPI because it defines the event
-> + * handler to call when the PME triggers through _AEI and _L02 / _E02
-> + * methods as would be done for a real GPIO interrupt in ACPI. Note this
-> + * is a hack to define an AML event handler for the PME while using existing
-> + * ACPI mechanisms, this is not a real GPIO at all.
-> + *
-> + * This driver will bind to the INT0002 device, and register as a GPIO
-> + * controller, letting gpiolib-acpi.c call the _L02 handler as it would
-> + * for a real GPIO controller.
-> + */
-> +
-> +#include <asm/cpu_device_id.h>
-> +#include <asm/intel-family.h>
-> +#include <linux/acpi.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/suspend.h>
-> +
-> +#define DRV_NAME                       "INT0002 Virtual GPIO"
-> +
-> +/* For some reason the virtual GPIO pin tied to the GPE is numbered pin 2 */
-> +#define GPE0A_PME_B0_VIRT_GPIO_PIN     2
-> +
-> +#define GPE0A_PME_B0_STS_BIT           BIT(13)
-> +#define GPE0A_PME_B0_EN_BIT            BIT(13)
-> +#define GPE0A_STS_PORT                 0x420
-> +#define GPE0A_EN_PORT                  0x428
-> +
-> +#define ICPU(model)    { X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
-> +
-> +static const struct x86_cpu_id int0002_cpu_ids[] = {
-> +/*
-> + * Limit ourselves to Cherry Trail for now, until testing shows we
-> + * need to handle the INT0002 device on Baytrail too.
-> + *     ICPU(INTEL_FAM6_ATOM_SILVERMONT1),       * Valleyview, Bay Trail *
-> + */
-> +       ICPU(INTEL_FAM6_ATOM_AIRMONT),          /* Braswell, Cherry Trail */
-> +       {}
-> +};
-> +
-> +/*
-> + * As this is not a real GPIO at all, but just a hack to model an event in
-> + * APCI the get / set functions are dummy functions.
-> + */
-> +
-> +static int int0002_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       return 0;
-> +}
-> +
-> +static void int0002_gpio_set(struct gpio_chip *chip, unsigned int offset,
-> +                            int value)
-> +{
-> +}
-> +
-> +static int int0002_gpio_direction_output(struct gpio_chip *chip,
-> +                                        unsigned int offset, int value)
-> +{
-> +       return 0;
-> +}
-> +
-> +static void int0002_irq_ack(struct irq_data *data)
-> +{
-> +       outl(GPE0A_PME_B0_STS_BIT, GPE0A_STS_PORT);
-> +}
-> +
-> +static void int0002_irq_unmask(struct irq_data *data)
-> +{
-> +       u32 gpe_en_reg;
-> +
-> +       gpe_en_reg = inl(GPE0A_EN_PORT);
-> +       gpe_en_reg |= GPE0A_PME_B0_EN_BIT;
-> +       outl(gpe_en_reg, GPE0A_EN_PORT);
-> +}
-> +
-> +static void int0002_irq_mask(struct irq_data *data)
-> +{
-> +       u32 gpe_en_reg;
-> +
-> +       gpe_en_reg = inl(GPE0A_EN_PORT);
-> +       gpe_en_reg &= ~GPE0A_PME_B0_EN_BIT;
-> +       outl(gpe_en_reg, GPE0A_EN_PORT);
-> +}
-> +
-> +static irqreturn_t int0002_irq(int irq, void *data)
-> +{
-> +       struct gpio_chip *chip = data;
-> +       u32 gpe_sts_reg;
-> +
-> +       gpe_sts_reg = inl(GPE0A_STS_PORT);
-> +       if (!(gpe_sts_reg & GPE0A_PME_B0_STS_BIT))
-> +               return IRQ_NONE;
-> +
-> +       generic_handle_irq(irq_find_mapping(chip->irqdomain,
-> +                                           GPE0A_PME_B0_VIRT_GPIO_PIN));
-> +
-> +       pm_system_wakeup();
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static struct irq_chip int0002_irqchip = {
-> +       .name                   = DRV_NAME,
-> +       .irq_ack                = int0002_irq_ack,
-> +       .irq_mask               = int0002_irq_mask,
-> +       .irq_unmask             = int0002_irq_unmask,
-> +};
-> +
-> +static int int0002_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       const struct x86_cpu_id *cpu_id;
-> +       struct gpio_chip *chip;
-> +       int i, irq, ret;
-> +
-> +       /* Menlow has a different INT0002 device? <sigh> */
-> +       cpu_id = x86_match_cpu(int0002_cpu_ids);
-> +       if (!cpu_id)
-> +               return -ENODEV;
-> +
-> +       irq = platform_get_irq(pdev, 0);
-> +       if (irq < 0) {
-> +               dev_err(dev, "Error getting IRQ: %d\n", irq);
-> +               return irq;
-> +       }
-> +
-> +       chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> +       if (!chip)
-> +               return -ENOMEM;
-> +
-> +       chip->label = DRV_NAME;
-> +       chip->parent = dev;
-> +       chip->owner = THIS_MODULE;
-> +       chip->get = int0002_gpio_get;
-> +       chip->set = int0002_gpio_set;
-> +       chip->direction_input = int0002_gpio_get;
-> +       chip->direction_output = int0002_gpio_direction_output;
-> +       chip->base = -1;
-> +       chip->ngpio = GPE0A_PME_B0_VIRT_GPIO_PIN + 1;
-> +       chip->irq_need_valid_mask = true;
-> +
-> +       ret = devm_gpiochip_add_data(&pdev->dev, chip, NULL);
-> +       if (ret) {
-> +               dev_err(dev, "Error adding gpio chip: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       for (i = 0; i < GPE0A_PME_B0_VIRT_GPIO_PIN; i++)
-> +               clear_bit(i, chip->irq_valid_mask);
-> +
-> +       /*
-> +        * We manually request the irq here instead of passing a flow-handler
-> +        * to gpiochip_set_chained_irqchip, because the irq is shared.
-> +        */
-> +       ret = devm_request_irq(dev, irq, int0002_irq,
-> +                              IRQF_SHARED | IRQF_NO_THREAD, "INT0002", chip);
-> +       if (ret) {
-> +               dev_err(dev, "Error requesting IRQ %d: %d\n", irq, ret);
-> +               return ret;
-> +       }
-> +
-> +       ret = gpiochip_irqchip_add(chip, &int0002_irqchip, 0, handle_edge_irq,
-> +                                  IRQ_TYPE_NONE);
-> +       if (ret) {
-> +               dev_err(dev, "Error adding irqchip: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       gpiochip_set_chained_irqchip(chip, &int0002_irqchip, irq, NULL);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct acpi_device_id int0002_acpi_ids[] = {
-> +       { "INT0002", 0 },
-> +       { },
-> +};
-> +MODULE_DEVICE_TABLE(acpi, int0002_acpi_ids);
-> +
-> +static struct platform_driver int0002_driver = {
-> +       .driver = {
-> +               .name                   = DRV_NAME,
-> +               .acpi_match_table       = int0002_acpi_ids,
-> +       },
-> +       .probe  = int0002_probe,
-> +};
-> +
-> +module_platform_driver(int0002_driver);
-> +
-> +MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-> +MODULE_DESCRIPTION("Intel INT0002 Virtual GPIO driver");
-> +MODULE_LICENSE("GPL");
+> On Tue, Apr 11, 2017 at 7:21 PM, David Daney <david.daney@cavium.com> wrote:
+>> For an already existing irqdomain hierarchy, as might be obtained via
+>> a call to pci_enable_msix_range(), a PCI driver wishing to add an
+>> additional irqdomain to the hierarchy needs to be able to insert the
+>> irqdomain to that already initialized hierarchy.  Calling
+>> irq_domain_create_hierarchy() allows the new irqdomain to be created,
+>> but no existing code allows for initializing the associated irq_data.
+>>
+>> Add a couple of helper functions (irq_domain_push_irq() and
+>> irq_domain_pop_irq()) to initialize the irq_data for the new
+>> irqdomain added to an existing hierarchy.
+>>
+>> Signed-off-by: David Daney <david.daney@cavium.com>
+>> ---
+>>  include/linux/irqdomain.h |   3 +
+>>  kernel/irq/irqdomain.c    | 178 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 181 insertions(+)
+>>
+>> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+>> index 9f36160..0316846 100644
+>> --- a/include/linux/irqdomain.h
+>> +++ b/include/linux/irqdomain.h
+>> @@ -425,6 +425,9 @@ extern void irq_domain_free_irqs_common(struct irq_domain *domain,
+>>  extern void irq_domain_free_irqs_top(struct irq_domain *domain,
+>>                                      unsigned int virq, unsigned int nr_irqs);
+>>
+>> +extern int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg);
+>> +extern int irq_domain_pop_irq(struct irq_domain *domain, int virq);
+>> +
+>>  extern int irq_domain_alloc_irqs_parent(struct irq_domain *domain,
+>>                                         unsigned int irq_base,
+>>                                         unsigned int nr_irqs, void *arg);
+>> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+>> index 31805f2..ea9d30d 100644
+>> --- a/kernel/irq/irqdomain.c
+>> +++ b/kernel/irq/irqdomain.c
+>> @@ -1304,6 +1304,184 @@ int __irq_domain_alloc_irqs(struct irq_domain *domain, int irq_base,
+>>         return ret;
+>>  }
+>>
+>> +/* The irq_data was moved, fix the revmap to refer to the new location */
+>> +static void irq_domain_fix_revmap(struct irq_data *d)
+>> +{
+>> +       void **slot;
+>> +
+>> +       if (d->hwirq < d->domain->revmap_size)
+>> +               return; /* Not using radix tree. */
+>> +
+>> +       /* Fix up the revmap. */
+>> +       mutex_lock(&revmap_trees_mutex);
+>> +       slot = radix_tree_lookup_slot(&d->domain->revmap_tree, d->hwirq);
+>> +       if (slot)
+>> +               radix_tree_replace_slot(&d->domain->revmap_tree, slot, d);
+>> +       mutex_unlock(&revmap_trees_mutex);
+>> +}
+>> +
+>> +/**
+>> + * irq_domain_push_irq() - Push a domain in to the top of a hierarchy.
+>> + * @domain:    Domain to push.
+>> + * @virq:      Irq to push the domain in to.
+>> + * @arg:       Passed to the irq_domain_ops alloc() function.
+>> + *
+>> + * For an already existing irqdomain hierarchy, as might be obtained
+>> + * via a call to pci_enable_msix(), add an additional domain to the
+>> + * head of the processing chain.  Must be called before request_irq()
+>> + * has been called.
+>> + */
+>> +int irq_domain_push_irq(struct irq_domain *domain, int virq, void *arg)
+>> +{
+>> +       struct irq_data *child_irq_data;
+>> +       struct irq_data *root_irq_data = irq_get_irq_data(virq);
+>> +       struct irq_desc *desc;
+>> +       int rv = 0;
+>> +
+>> +       /*
+>> +        * Check that no action has been set, which indicates the virq
+>> +        * is in a state where this function doesn't have to deal with
+>> +        * races between interrupt handling and maintaining the
+>> +        * hierarchy.  This will catch gross misuse.  Attempting to
+>> +        * make the check race free would require holding locks across
+>> +        * calls to struct irq_domain_ops->alloc(), which could lead
+>> +        * to deadlock, so we just do a simple check before starting.
+>> +        */
+>> +       desc = irq_to_desc(virq);
+>> +       if (!desc)
+>> +               return -EINVAL;
+>> +       if (WARN_ON(desc->action))
+>> +               return -EBUSY;
+>> +
+>> +       if (domain == NULL)
+>> +               return -EINVAL;
+>> +
+>> +       if (WARN_ON(!domain->ops->alloc))
+>> +               return -EINVAL;
+>> +
+>> +       if (!root_irq_data)
+>> +               return -EINVAL;
+>> +
+>> +       child_irq_data = kzalloc_node(sizeof(*child_irq_data), GFP_KERNEL,
+>> +                                     irq_data_get_node(root_irq_data));
+>> +       if (!child_irq_data)
+>> +               return -ENOMEM;
+>> +
+>> +       mutex_lock(&irq_domain_mutex);
+>> +
+>> +       /* Copy the original irq_data. */
+>> +       *child_irq_data = *root_irq_data;
+>> +
+>> +       irq_domain_fix_revmap(child_irq_data);
+>> +
+>> +       /*
+>> +        * Overwrite the root_irq_data, which is embedded in struct
+>> +        * irq_desc, with values for this domain.
+>> +        */
+>> +       root_irq_data->parent_data = child_irq_data;
+>> +       root_irq_data->domain = domain;
+>> +       root_irq_data->mask = 0;
+>> +       root_irq_data->hwirq = 0;
+>> +       root_irq_data->chip = NULL;
+>> +       root_irq_data->chip_data = NULL;
+>> +       rv = domain->ops->alloc(domain, virq, 1, arg);
+>> +       if (rv) {
+>> +               /* Restore the original irq_data. */
+>> +               *root_irq_data = *child_irq_data;
+>> +               irq_domain_fix_revmap(root_irq_data);
+>> +               goto error;
+>> +       }
+>> +
+>> +       if (root_irq_data->hwirq < domain->revmap_size) {
+>> +               domain->linear_revmap[root_irq_data->hwirq] = virq;
+>> +       } else {
+>> +               mutex_lock(&revmap_trees_mutex);
+>> +               radix_tree_insert(&domain->revmap_tree,
+>> +                                 root_irq_data->hwirq, root_irq_data);
+>> +               mutex_unlock(&revmap_trees_mutex);
+>> +       }
+>> +error:
+>> +       mutex_unlock(&irq_domain_mutex);
+>> +
+>> +       return rv;
+>> +}
+>> +EXPORT_SYMBOL_GPL(irq_domain_push_irq);
+>> +
+>> +/**
+>> + * irq_domain_pop_irq() - Remove a domain from the top of a hierarchy.
+>> + * @domain:    Domain to remove.
+>> + * @virq:      Irq to remove the domain from.
+>> + *
+>> + * Undo the effects of a call to irq_domain_push_irq().  Must be
+>> + * called either before request_irq() or after free_irq().
+>> + */
+>> +int irq_domain_pop_irq(struct irq_domain *domain, int virq)
+>> +{
+>> +       struct irq_data *root_irq_data = irq_get_irq_data(virq);
+>> +       struct irq_data *child_irq_data;
+>> +       struct irq_data *tmp_irq_data;
+>> +       struct irq_desc *desc;
+>> +
+>> +       /*
+>> +        * Check that no action is set, which indicates the virq is in
+>> +        * a state where this function doesn't have to deal with races
+>> +        * between interrupt handling and maintaining the hierarchy.
+>> +        * This will catch gross misuse.  Attempting to make the check
+>> +        * race free would require holding locks across calls to
+>> +        * struct irq_domain_ops->free(), which could lead to
+>> +        * deadlock, so we just do a simple check before starting.
+>> +        */
+>> +       desc = irq_to_desc(virq);
+>> +       if (!desc)
+>> +               return -EINVAL;
+>> +       if (WARN_ON(desc->action))
+>> +               return -EBUSY;
+>> +
+>> +       if (domain == NULL)
+>> +               return -EINVAL;
+>> +
+>> +       if (!root_irq_data)
+>> +               return -EINVAL;
+>> +
+>> +       tmp_irq_data = irq_domain_get_irq_data(domain, virq);
+>> +
+>> +       /* We can only "pop" if this domain is at the top of the list */
+>> +       if (WARN_ON(root_irq_data != tmp_irq_data))
+>> +               return -EINVAL;
+>> +
+>> +       if (WARN_ON(root_irq_data->domain != domain))
+>> +               return -EINVAL;
+>> +
+>> +       child_irq_data = root_irq_data->parent_data;
+>> +       if (WARN_ON(!child_irq_data))
+>> +               return -EINVAL;
+>> +
+>> +       mutex_lock(&irq_domain_mutex);
+>> +
+>> +       root_irq_data->parent_data = NULL;
+>> +
+>> +       if (root_irq_data->hwirq >= domain->revmap_size) {
+>> +               mutex_lock(&revmap_trees_mutex);
+>> +               radix_tree_delete(&domain->revmap_tree, root_irq_data->hwirq);
+>> +               mutex_unlock(&revmap_trees_mutex);
+>> +       }
+>> +
+>> +       if (domain->ops->free)
+>> +               domain->ops->free(domain, virq, 1);
+>> +
+>> +       /* Restore the original irq_data. */
+>> +       *root_irq_data = *child_irq_data;
+>> +
+>> +       irq_domain_fix_revmap(root_irq_data);
+>> +
+>> +       mutex_unlock(&irq_domain_mutex);
+>> +
+>> +       kfree(child_irq_data);
+>> +
+>> +       return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(irq_domain_pop_irq);
+>> +
+>>  /**
+>>   * irq_domain_free_irqs - Free IRQ number and associated data structures
+>>   * @virq:      base IRQ number
+>> --
+>> 1.8.3.1
+>>
 > --
-> 2.9.4
->
+> To unsubscribe from this list: send the line "unsubscribe linux-gpio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
+Linus,
 
+It looks like we are still waiting on ACK's for this from the IRQ
+folk. Are the right people cc'd? Seem's like there's been an adequate
+review period with no response.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+
+Tim
