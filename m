@@ -1,37 +1,43 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: Fix missing object for S5Pv210
-Date: Wed, 7 Jun 2017 20:43:10 +0200
-Message-ID: <20170607184310.g4a7da5ems375klu@kozik-lap>
-References: <20170531174244.31861-1-krzk@kernel.org>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
+ region driver
+Date: Wed, 7 Jun 2017 23:06:17 +0300
+Message-ID: <20170607200617.GD1019@valkosipuli.retiisi.org.uk>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-4-git-send-email-rajmohan.mani@intel.com>
+ <20170607120730.GZ1019@valkosipuli.retiisi.org.uk>
+ <CAHp75Ve1GnJZH0KJDMdjHiEjNtpcsZgF6WnBHz+Bb9CDX2zYaQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170531174244.31861-1-krzk@kernel.org>
+In-Reply-To: <CAHp75Ve1GnJZH0KJDMdjHiEjNtpcsZgF6WnBHz+Bb9CDX2zYaQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Rajmohan Mani <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, May 31, 2017 at 07:42:44PM +0200, Krzysztof Kozlowski wrote:
-> While splitting Samsung pinctrl drivers per ARMv7 and ARMv8
-> architectures, the necessary CONFIG_PINCTRL_EXYNOS_ARM is not selected
-> when building for S5Pv210 family of SoCs thus pinctrl was missing there
-> entirely.
+On Wed, Jun 07, 2017 at 04:37:12PM +0300, Andy Shevchenko wrote:
+> >> +static acpi_status ti_pmic_common_handler(u32 function,
+> > +                                       acpi_physical_address address,
+> > +                                       u32 bits, u64 *value,
+> > +                                       void *handler_context,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > handler_context is unused.
 > 
-> ---
+> >> +                                                  int, int, u64 *),
+> >> +                                       int (*update)(struct regmap *,
+> >> +                                                     int, int, u64),
+> >> +                                       struct ti_pmic_table *table,
+> >> +                                       int table_size)
 > 
-> Fixes: 16340fd6dbc1 ("pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8")
-> 
-> Fixed commit is in my tree but already applied and sitting in next for
-> some time. This should be squashed though.
-> ---
->  drivers/pinctrl/samsung/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+> I would even split this to have separate update() and get() paths
+> instead of having such a monster of parameters.
 
-Applied and squashed with 16340fd6dbc1.
+I'm not really worried about the two callbacks --- you have the compexity,
+which is agruably rather manageable, split into a number of caller
+functions. I'd rather keep it as-is.
 
-Best regards,
-Krzysztof
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
