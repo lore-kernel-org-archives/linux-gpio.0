@@ -1,50 +1,73 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
- region driver
-Date: Thu, 8 Jun 2017 00:12:56 +0300
-Message-ID: <20170607211256.GF1019@valkosipuli.retiisi.org.uk>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-4-git-send-email-rajmohan.mani@intel.com>
- <CAHp75VcvV_AbLJCq9Rm_8yab3nViPm6ikxxme4oyw9vm4Kz7Gg@mail.gmail.com>
- <20170607121503.GA1019@valkosipuli.retiisi.org.uk>
- <CAHp75Vef=c54O8Xd+aM+eWWVt7nLsczT48WbgrdiOVyWv6xMcg@mail.gmail.com>
- <20170607201050.GE1019@valkosipuli.retiisi.org.uk>
- <CAHp75Vfz=5Siysbzmtyv8TUKs+S+EMBHd8T7zSV-vF+-FEoSaA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 3/9] dt-bindings: add Amlogic Meson GPIO
+ interrupt-controller DT binding documentation
+Date: Wed, 7 Jun 2017 16:13:12 -0500
+Message-ID: <20170607211312.av5osk5xxa5k5pr2@rob-hp-laptop>
+References: <66c57893-0a9e-4f8c-a017-ab346abbdfd0@gmail.com>
+ <c190f764-b3af-8982-00e3-87e28eabecca@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34947 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbdFGVNe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jun 2017 17:13:34 -0400
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vfz=5Siysbzmtyv8TUKs+S+EMBHd8T7zSV-vF+-FEoSaA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Rajmohan Mani <rajmohan.mani@intel.com>, Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+In-Reply-To: <c190f764-b3af-8982-00e3-87e28eabecca@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Neil Armstrong <narmstrong@baylibre.com>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On Wed, Jun 07, 2017 at 11:40:27PM +0300, Andy Shevchenko wrote:
-> On Wed, Jun 7, 2017 at 11:10 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > On Wed, Jun 07, 2017 at 04:40:13PM +0300, Andy Shevchenko wrote:
-> >> On Wed, Jun 7, 2017 at 3:15 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> >> > On Tue, Jun 06, 2017 at 05:23:56PM +0300, Andy Shevchenko wrote:
+On Tue, May 30, 2017 at 10:26:33PM +0200, Heiner Kallweit wrote:
+> Add dt binding documentation for Amlogic meson GPIO interrupt controller.
 > 
-> >> >> Follow the pattern, please, I suppose
-> >> >> ti_pmic_tps68470.c
-> >>
-> >> Would it work for you?
-> >
-> > This is still a different driver from the tps68470 driver which is an MFD
-> > driver. For clarity, I'd keep pmic as part of the name (and I'd use
-> > tps68470_pmic_ prefix for internal symbols, too).
-> >
-> > As PMICs are typically linked to the kernel (vs. being modules), there's no
-> > issue with the module name. I would suppose few if any PMICs will be
-> > compiled as modules in general.
-> >
-> > It's not a big deal though. I'm fine either way.
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+> v5:
+> - added Reviewed-by
+> ---
+>  .../amlogic,meson-gpio-intc.txt                    | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
 > 
-> Okay, let's agree on  tps68470_pmic for internal prefix and for file name?
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+> new file mode 100644
+> index 00000000..2f20d212
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+> @@ -0,0 +1,26 @@
+> +Amlogic meson GPIO interrupt controller
+> +
+> +Meson SoCs contains an interrupt controller which is able watch the SoC pads
+> +and generate an interrupt on edges or level. The controller is essentially a
+> +256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
+> +or level and polarity. The actual number of interrupt exposed depends on the
+> +SoC.
+> +
+> +Required properties:
+> +
+> +- compatible : should be "amlogic,meson-gpio-intc".
+> +- reg : Specifies base physical address and size of the registers.
+> +- interrupt-controller : Identifies the node as an interrupt controller.
+> +- #interrupt-cells : should be 2.
+> +- parent-interrupts : list of GIC interrupts which can be used with the
+> +		      GPIO IRQ multiplexer
 
-Ack. Thanks!
+Just use "interrupts" here.
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
+> +
+> +Example:
+> +
+> +gpio_intc: interrupt-controller@9880 {
+> +	compatible = "amlogic,meson-gpio-intc";
+> +	reg = <0x0 0x09880 0x0 0x10>;
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +	parent-interrupts = <64 65 66 67 68 69 70 71>;
+> +};
+> -- 
+> 2.13.0
+> 
+> 
