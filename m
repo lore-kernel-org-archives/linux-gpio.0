@@ -1,35 +1,57 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 7/9] pinctrl: meson: update DT binding documentation
-Date: Wed, 7 Jun 2017 16:13:58 -0500
-Message-ID: <20170607211358.6xn2rnxiov7v2jp4@rob-hp-laptop>
-References: <66c57893-0a9e-4f8c-a017-ab346abbdfd0@gmail.com>
- <7bcb2099-c7e6-e06a-d451-44108f958ef0@gmail.com>
+Subject: Re: [PATCH] gpio: mvebu: change compatible string for PWM support
+Date: Wed, 7 Jun 2017 17:13:32 -0500
+Message-ID: <20170607221332.vu2xnzyhtr7x6yoe@rob-hp-laptop>
+References: <20170601200820.22396-1-ralph.sennhauser@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34717 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751530AbdFGVOA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jun 2017 17:14:00 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:34602 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbdFGWNe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 7 Jun 2017 18:13:34 -0400
 Content-Disposition: inline
-In-Reply-To: <7bcb2099-c7e6-e06a-d451-44108f958ef0@gmail.com>
+In-Reply-To: <20170601200820.22396-1-ralph.sennhauser@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Neil Armstrong <narmstrong@baylibre.com>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Richard Genoud <richard.genoud@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 30, 2017 at 10:26:53PM +0200, Heiner Kallweit wrote:
-> The GPIO controllers act as interrupt controllers now,
-> therefore update the related DT binding documentation.
+On Thu, Jun 01, 2017 at 10:08:20PM +0200, Ralph Sennhauser wrote:
+> As it turns out more than just Armada 370 and XP support using GPIO
+> lines as PWM lines. For example the Armada 38x family has the same
+> hardware support. As such "marvell,armada-370-xp-gpio" for the
+> compatible string is a misnomer.
 > 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> Change the compatible string to "marvell,armada-370-gpio" before the
+> driver makes it out of the -rc stage. This also follows the practice of
+> using only the first device family supported as part of the name.
+> 
+> Also update the documentation and comments in the code accordingly.
+> 
+> Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
+> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+> 
 > ---
-> v5:
-> - separate documentation update from actual DT update
-> - add Reviewed-by
+> 
+> Hi everyone,
+> 
+> The suggestion to change the compatible string last minute comes from
+> Gregory CLEMENT after we realized the bad choice of name due to Richard
+> Genoud reporting an issue when he used the driver with an Armada-388.
+> 
+> Rob Herring just requested to use a separate compatible string but not
+> what it should look like. So I assume he is fine with the new one as
+> well. The rest of this patch is rather minor.
+> 
+> Nothing in tree is using this driver so far, first consumers will be
+> added with 4.13.
+> 
+> Ralph
+> 
 > ---
->  Documentation/devicetree/bindings/pinctrl/meson,pinctrl.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+>  Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 6 +++---
+>  drivers/gpio/gpio-mvebu.c                             | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
 
 Acked-by: Rob Herring <robh@kernel.org>
