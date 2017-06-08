@@ -1,84 +1,33 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v6 9/9] ARM64: dts: meson: mark gpio controllers as interrupt
- controllers
-Date: Thu, 8 Jun 2017 21:39:34 +0200
-Message-ID: <7d610fbe-243a-9bc4-4c78-a461e9cb49e1@gmail.com>
-References: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: sunxi: Add compatible string
+ for A83T R_PIO
+Date: Thu, 8 Jun 2017 17:22:07 -0500
+Message-ID: <20170608222207.gi2m5gjetmtxiyxj@rob-hp-laptop>
+References: <20170603144427.22855-1-wens@csie.org>
+ <20170603144427.22855-2-wens@csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36424 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751655AbdFHTkA (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 15:40:00 -0400
-In-Reply-To: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36691 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbdFHWWJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 18:22:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20170603144427.22855-2-wens@csie.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
 
-Make the GPIO controllers act as interrupt controllers.
+On Sat, Jun 03, 2017 at 10:44:25PM +0800, Chen-Yu Tsai wrote:
+> The R_PIO on the A83T is almost the same as the one found on the A64,
+> except that the CIR_RX function was moved from pin PL11 to pin PL12.
+> 
+> Add a compatible string for it.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
----
-v5:
-- separate ARM / ARM64 DT changes
-- add Reviewed-by
-v6:
-- no changes
----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 6f8b3011..a771dae8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -111,6 +111,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 0 14>;
- 		};
- 
-@@ -356,6 +358,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_periphs 0 14 120>;
- 		};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 3efad5f0..16b584f5 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -80,6 +80,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 0 14>;
- 		};
- 
-@@ -244,6 +246,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_periphs 0 14 101>;
- 		};
- 
--- 
-2.13.0
-
-
-
+Acked-by: Rob Herring <robh@kernel.org>
