@@ -1,72 +1,58 @@
 From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v6 3/9] dt-bindings: add Amlogic Meson GPIO
- interrupt-controller DT binding documentation
-Date: Thu, 8 Jun 2017 21:38:50 +0200
-Message-ID: <deadf248-5dc4-3cac-a108-3057944c135e@gmail.com>
+Subject: [PATCH v6 5/9] ARM64: dts: meson: add GPIO interrupt-controller
+ support
+Date: Thu, 8 Jun 2017 21:39:04 +0200
+Message-ID: <0c1cd8dd-ff54-1272-1d11-7594dda84a47@gmail.com>
 References: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36394 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbdFHTjv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 15:39:51 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33930 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751655AbdFHTjy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 15:39:54 -0400
 In-Reply-To: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
 Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-Add dt binding documentation for Amlogic meson GPIO interrupt controller.
+Add support for the GPIO interupt controller of certain Amlogic Meson
+Soc's.
 
 Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
 v5:
+- split ARM and ARM64 into separate patches
 - added Reviewed-by
 v6:
-- rename parent-interrupts to interrupts
+- change parent-interrupts to interrupts
 ---
- .../amlogic,meson-gpio-intc.txt                    | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
-new file mode 100644
-index 00000000..2f20d212
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
-@@ -0,0 +1,26 @@
-+Amlogic meson GPIO interrupt controller
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index 436b8750..66dde761 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -312,6 +312,14 @@
+ 				status = "disabled";
+ 			};
+ 
++			gpio_intc: interrupt-controller@9880 {
++				compatible = "amlogic,meson-gpio-intc";
++				reg = <0x0 0x09880 0x0 0x10>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupts = <64 65 66 67 68 79 70 71>;
++			};
 +
-+Meson SoCs contains an interrupt controller which is able watch the SoC pads
-+and generate an interrupt on edges or level. The controller is essentially a
-+256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
-+or level and polarity. The actual number of interrupt exposed depends on the
-+SoC.
-+
-+Required properties:
-+
-+- compatible : should be "amlogic,meson-gpio-intc".
-+- reg : Specifies base physical address and size of the registers.
-+- interrupt-controller : Identifies the node as an interrupt controller.
-+- #interrupt-cells : should be 2.
-+- interrupts : list of GIC interrupts which can be used with the
-+	       GPIO IRQ multiplexer
-+
-+Example:
-+
-+gpio_intc: interrupt-controller@9880 {
-+	compatible = "amlogic,meson-gpio-intc";
-+	reg = <0x0 0x09880 0x0 0x10>;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	interrupts = <64 65 66 67 68 69 70 71>;
-+};
+ 			watchdog@98d0 {
+ 				compatible = "amlogic,meson-gx-wdt", "amlogic,meson-gxbb-wdt";
+ 				reg = <0x0 0x098d0 0x0 0x10>;
 -- 
 2.13.0
-
 
 
