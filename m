@@ -1,44 +1,39 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Thu, 8 Jun 2017 20:40:32 +0300
-Message-ID: <CAHp75Vc-Vz-QRAkrq2z3B9MaAPFEVX06ePAJuxjwqcLULjRbFw@mail.gmail.com>
-References: <20170602151507.22391-1-hdegoede@redhat.com> <20170602151507.22391-2-hdegoede@redhat.com>
- <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
- <20170608154541.GH32509@fury> <d41ff55b-e28f-85bf-d088-392e363fb41f@redhat.com>
- <CAJZ5v0jw3Rzjkb3J2_XE7TPBjT+7FUW90B7kg15z6_WpdNGjzA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 02/17] mfd: madera: Add DT bindings for Cirrus Logic
+ Madera codecs
+Date: Thu, 8 Jun 2017 14:12:52 -0500
+Message-ID: <20170608191252.enk4bmxibnum24ni@rob-hp-laptop>
+References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1496415790-19164-3-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0jw3Rzjkb3J2_XE7TPBjT+7FUW90B7kg15z6_WpdNGjzA@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:35924 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751448AbdFHTMy (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 15:12:54 -0400
+Content-Disposition: inline
+In-Reply-To: <1496415790-19164-3-git-send-email-rf@opensource.wolfsonmicro.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, tglx@linutronix.de, jason@lakedaemon.net, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 8, 2017 at 8:15 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Thu, Jun 8, 2017 at 6:45 PM, Hans de Goede <hdegoede@redhat.com> wrote:
->> On 06/08/2017 05:45 PM, Darren Hart wrote:
->>> On Wed, Jun 07, 2017 at 05:53:38PM +0300, Andy Shevchenko wrote:
->>>> On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redhat.com>
->>>> wrote:
+On Fri, Jun 02, 2017 at 04:02:55PM +0100, Richard Fitzgerald wrote:
+> Specification of the bindings for the parent MFD driver component
+> of the Cirrus Logic Madera codec drivers.
+> 
+> Note that although the interrupt controller and GPIO are child
+> drivers their required bindings are trivial, mandatory, and exist
+> within the parent MFD node so are documented here.
+> 
+> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> ---
+> Changes since V2:
+> - Moved the gpio driver bindings into the main MFD binding doc
+> 
+>  Documentation/devicetree/bindings/mfd/madera.txt | 102 +++++++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
 
->>> Will you be taking this through fixes Andy? For a 4.12-rc* target per
->>> Hans'
->>> response to the cover letter?
-
->> Note that Rafael is planning to drop (revert) the commit which makes
->> it (extra) desirable for this driver to get into 4.12, so we should
->> perhaps reconsider that. I'm fine either way, but the primary reason
->> to push this as a fix for 4.12 is no longer valid AFAICT.
->
-> Maybe I will just queue it up along with this series:
-> http://marc.info/?l=linux-kernel&m=149688087904433&w=2
-> if Andy and Darren agree?
-
-Looks like it has ties to your series, so, I see no obstacles to go via PM tree.
-Darren?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Rob Herring <robh@kernel.org>
