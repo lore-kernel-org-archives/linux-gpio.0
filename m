@@ -1,33 +1,92 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: sunxi: Add compatible string
- for A83T R_PIO
-Date: Thu, 8 Jun 2017 17:22:07 -0500
-Message-ID: <20170608222207.gi2m5gjetmtxiyxj@rob-hp-laptop>
-References: <20170603144427.22855-1-wens@csie.org>
- <20170603144427.22855-2-wens@csie.org>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH] gpio: use "output-active" and "output-inactive" for
+ gpio-hogs
+Date: Thu, 8 Jun 2017 17:33:46 -0500
+Message-ID: <20170608223346.unfwdh32v3kt2y52@rob-hp-laptop>
+References: <20170604101049.4592-1-uwe@kleine-koenig.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36691 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbdFHWWJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 18:22:09 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20170603144427.22855-2-wens@csie.org>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <20170604101049.4592-1-uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nikita Yushchenko <nikita.yoush-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
 
-On Sat, Jun 03, 2017 at 10:44:25PM +0800, Chen-Yu Tsai wrote:
-> The R_PIO on the A83T is almost the same as the one found on the A64,
-> except that the CIR_RX function was moved from pin PL11 to pin PL12.
+On Sun, Jun 04, 2017 at 12:10:49PM +0200, Uwe Kleine-König wrote:
+> Using the following gpio hog:
 > 
-> Add a compatible string for it.
+> 	{
+> 		gpio-hog;
+> 		gpios = <17 GPIO_ACTIVE_LOW>;
+> 		output-high;
+> 	}
 > 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> results in the gpio to be set to (physically) low value, which is
+> surprising. So support "output-active" which makes the semantic more
+> obvious. The old semantic is still supported for backward compatibility.
+
+Ugg. Can't say I'm a fan of the Linux GPIO subsystem inverting the logic 
+for GPIO_ACTIVE_LOW...
+
+> 
+> Signed-off-by: Uwe Kleine-König <uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>
 > ---
->  Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Hello,
+> 
+> the next logical step would be to go through all in-tree dts files and
+> substitute the old properties by the new ones. I can do this as soon as
+> the idea is discussed and considered to be good.
+> 
+> Maybe the same idea can be applied to the cpp definitions GPIOD_OUT_LOW
+> and GPIOD_OUT_HIGH.
+> 
+> And btw I wondered about the binding that defines what should happen in
+> this case:
+> 
+> 	{
+> 		gpio-hog;
+> 		gpios = <...>;
+> 		output-high;
+> 		output-low;
+> 	}
+> 
+> I would have defined as undefined instead of inactive.
+> 
+> Best regards
+> Uwe
+> 
+>  Documentation/devicetree/bindings/gpio/gpio.txt | 10 ++++++----
+>  drivers/gpio/gpiolib-of.c                       |  4 ++++
+>  2 files changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+> index 68d28f62a6f4..4d29e0b33435 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+> @@ -196,10 +196,12 @@ This means that when multiple properties are present they will be searched
+>  in the order presented below and the first match is taken as the intended
+>  configuration.
+>  - input:      A property specifying to set the GPIO direction as input.
+> -- output-low  A property specifying to set the GPIO direction as output with
+> -	      the value low.
+> -- output-high A property specifying to set the GPIO direction as output with
+> -	      the value high.
+> +- output-inactive: A property specifying to set the GPIO direction as output
+> +	      using the inactive level as value.
+> +- output-active: A property specifying to set the GPIO direction as output
+> +	      using the active level as value.
+> +- output-low  A deprecated alias for "output-inactive".
+> +- output-high A deprecated alias for "output-active".
 
-Acked-by: Rob Herring <robh@kernel.org>
+The question is was this really what was expected. I guess based on the 
+code it was. I would have expected these gave low or high voltage 
+levels. Seems like Linuxisms defining the binding.
+
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
