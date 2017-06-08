@@ -1,66 +1,93 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual GPIO device
-Date: Thu, 8 Jun 2017 19:15:39 +0200
-Message-ID: <CAJZ5v0jw3Rzjkb3J2_XE7TPBjT+7FUW90B7kg15z6_WpdNGjzA@mail.gmail.com>
-References: <20170602151507.22391-1-hdegoede@redhat.com> <20170602151507.22391-2-hdegoede@redhat.com>
- <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
- <20170608154541.GH32509@fury> <d41ff55b-e28f-85bf-d088-392e363fb41f@redhat.com>
+From: Soren Brinkmann <soren.brinkmann@xilinx.com>
+Subject: [PATCH] gpio: zynq: Clarify quirk and provide helper function
+Date: Thu, 8 Jun 2017 10:32:07 -0700
+Message-ID: <20170608173207.30056-1-soren.brinkmann@xilinx.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35782 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbdFHRPk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 13:15:40 -0400
-In-Reply-To: <d41ff55b-e28f-85bf-d088-392e363fb41f@redhat.com>
+Received: from mail-sn1nam01on0086.outbound.protection.outlook.com ([104.47.32.86]:2178
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751331AbdFHRcs (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 8 Jun 2017 13:32:48 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+To: linus.walleij@linaro.org, Michal Simek <michal.simek@xilinx.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Soren Brinkmann <soren.brinkmann@xilinx.com>
 
-On Thu, Jun 8, 2017 at 6:45 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Hi,
->
-> On 06/08/2017 05:45 PM, Darren Hart wrote:
->>
->> On Wed, Jun 07, 2017 at 05:53:38PM +0300, Andy Shevchenko wrote:
->>>
->>> On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redhat.com>
->>> wrote:
->>>>
->>>> Some peripherals on Bay Trail and Cherry Trail platforms signal a
->>>> Power Management Event (PME) to the Power Management Controller (PMC)
->>>> to wakeup the system. When this happens software needs to explicitly
->>>> clear the PME bus 0 status bit in the GPE0a_STS register to avoid an
->>>> IRQ storm on IRQ 9.
->>>>
->>>> This is modelled in ACPI through the INT0002 ACPI device, which is
->>>> called a "Virtual GPIO controller" in ACPI because it defines the
->>>> event handler to call when the PME triggers through _AEI and _L02
->>>> methods as would be done for a real GPIO interrupt in ACPI.
->>>>
->>>> This commit adds a driver which registers the Virtual GPIOs expected
->>>> by the DSDT on these devices, letting gpiolib-acpi claim the
->>>> virtual GPIO and install a GPIO-interrupt handler which call the _L02
->>>> handler as it would for a real GPIO controller.
->>>>
->>>
->>> Pushed to testing w/o Linus' tag (there is no one yet)
->>
->>
->> Will you be taking this through fixes Andy? For a 4.12-rc* target per
->> Hans'
->> response to the cover letter?
->
->
-> Note that Rafael is planning to drop (revert) the commit which makes
-> it (extra) desirable for this driver to get into 4.12, so we should
-> perhaps reconsider that. I'm fine either way, but the primary reason
-> to push this as a fix for 4.12 is no longer valid AFAICT.
+The one quirk used in the zynq GPIO driver was called FOO which is not
+very descriptive. Rename the quirk to IS_ZYNQ as it indicates whether
+the HW is a zynq or zynqmp device to allow handling of device-specific
+differences of the HW.
+Also provide a helper function to test whether the HW is zynq or zynqmp.
 
-Maybe I will just queue it up along with this series:
-http://marc.info/?l=linux-kernel&m=149688087904433&w=2
-if Andy and Darren agree?
+Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+---
+ drivers/gpio/gpio-zynq.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index ed87c9a6e0e6..df0851464006 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -96,8 +96,8 @@
+ /* GPIO upper 16 bit mask */
+ #define ZYNQ_GPIO_UPPER_MASK 0xFFFF0000
+ 
+-/* For GPIO quirks */
+-#define ZYNQ_GPIO_QUIRK_FOO	BIT(0)
++/* set to differentiate zynq from zynqmp, 0=zynqmp, 1=zynq */
++#define ZYNQ_GPIO_QUIRK_IS_ZYNQ	BIT(0)
+ 
+ /**
+  * struct zynq_gpio - gpio device private data structure
+@@ -136,6 +136,17 @@ static struct irq_chip zynq_gpio_level_irqchip;
+ static struct irq_chip zynq_gpio_edge_irqchip;
+ 
+ /**
++ * zynq_gpio_is_zynq - test if HW is zynq or zynqmp
++ * @gpio:	Pointer to driver data struct
++ *
++ * Return: 0 if zynqmp, 1 if zynq.
++ */
++static int zynq_gpio_is_zynq(struct zynq_gpio *gpio)
++{
++	return !!(gpio->p_data->quirks & ZYNQ_GPIO_QUIRK_IS_ZYNQ);
++}
++
++/**
+  * zynq_gpio_get_bank_pin - Get the bank number and pin number within that bank
+  * for a given pin in the GPIO device
+  * @pin_num:	gpio pin number within the device
+@@ -242,18 +253,16 @@ static void zynq_gpio_set_value(struct gpio_chip *chip, unsigned int pin,
+ static int zynq_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
+ {
+ 	u32 reg;
+-	bool is_zynq_gpio;
+ 	unsigned int bank_num, bank_pin_num;
+ 	struct zynq_gpio *gpio = gpiochip_get_data(chip);
+ 
+-	is_zynq_gpio = gpio->p_data->quirks & ZYNQ_GPIO_QUIRK_FOO;
+ 	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
+ 
+ 	/*
+ 	 * On zynq bank 0 pins 7 and 8 are special and cannot be used
+ 	 * as inputs.
+ 	 */
+-	if (is_zynq_gpio && bank_num == 0 &&
++	if (zynq_gpio_is_zynq(gpio) && bank_num == 0 &&
+ 		(bank_pin_num == 7 || bank_pin_num == 8))
+ 		return -EINVAL;
+ 
+@@ -637,7 +646,7 @@ static const struct zynq_platform_data zynqmp_gpio_def = {
+ 
+ static const struct zynq_platform_data zynq_gpio_def = {
+ 	.label = "zynq_gpio",
+-	.quirks = ZYNQ_GPIO_QUIRK_FOO,
++	.quirks = ZYNQ_GPIO_QUIRK_IS_ZYNQ,
+ 	.ngpio = ZYNQ_GPIO_NR_GPIOS,
+ 	.max_bank = ZYNQ_GPIO_MAX_BANK,
+ 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(),
+-- 
+2.13.1.3.g25490cb03
+
