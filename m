@@ -1,79 +1,68 @@
-From: Jianhong Chen <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Subject: [PATCH v6 12/12] gpio: dt-bindings: add bindings for Rockchip RK805
- PMIC
-Date: Thu,  8 Jun 2017 15:33:13 +0800
-Message-ID: <1496907193-29294-1-git-send-email-chenjh@rock-chips.com>
-References: <1496905959-29202-1-git-send-email-chenjh@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1496905959-29202-1-git-send-email-chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, zhangqing-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, tony.xie-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, w.egorov-guT5V/WYfQezQB+pC5nmwQ@public.gmane.org, chenjh <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 5/7] gpio: use class_groups instead of class_attrs
+Date: Thu,  8 Jun 2017 10:12:40 +0200
+Message-ID: <20170608081242.27061-6-gregkh@linuxfoundation.org>
+References: <20170608081242.27061-1-gregkh@linuxfoundation.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39348 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751785AbdFHING (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 8 Jun 2017 04:13:06 -0400
+In-Reply-To: <20170608081242.27061-1-gregkh@linuxfoundation.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-From: chenjh <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+The class_attrs pointer is long depreciated, and is about to be finally
+removed, so move to use the class_groups pointer instead.
 
-Add device tree bindings documentation for Rockchip's RK805 PMIC
-
-Signed-off-by: chenjh <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: <linux-gpio@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .../devicetree/bindings/gpio/gpio-rk805.txt        | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rk805.txt
+ drivers/gpio/gpiolib-sysfs.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-rk805.txt b/Documentation/devicetree/bindings/gpio/gpio-rk805.txt
-new file mode 100644
-index 0000000..98b75fa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-rk805.txt
-@@ -0,0 +1,37 @@
-+RK805 GPIO controller
-+
-+This driver follows the usual GPIO bindings found in
-+Documentation/devicetree/bindings/gpio/gpio.txt
-+
-+Required properties:
-+- #gpio-cells: Should be two. The first cell is the pin number and the
-+  second is the GPIO flags.
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+These properties must be added in the RK805 PMIC node, documented in
-+Documentation/devicetree/bindings/mfd/rk808.txt
-+
-+Example:
-+
-+rk805: pmic@18 {
-+	compatible = "rockchip,rk808";
-+	clock-output-names = "xin32k", "rk808-clkout2";
-+	interrupt-parent = <&gpio0>;
-+	interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
-+	reg = <0x1a>;
-+	rockchip,system-power-controller;
-+	wakeup-source;
-+	#clock-cells = <1>;
-+	...
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+};
-+
-+
-+Example of a peripheral using the PMIC GPIOs:
-+
-+wireless-bluetooth {
-+		compatible = "bluetooth-platdata";
-+		...
-+		gpios = <&rk805 0 GPIO_ACTIVE_HIGH>, <&rk805 1 GPIO_ACTIVE_HIGH>;
-+};
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 4b44dd97c07f..16fe9742597b 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -479,6 +479,7 @@ static ssize_t export_store(struct class *class,
+ 		pr_debug("%s: status %d\n", __func__, status);
+ 	return status ? : len;
+ }
++static CLASS_ATTR_WO(export);
+ 
+ static ssize_t unexport_store(struct class *class,
+ 				struct class_attribute *attr,
+@@ -514,18 +515,20 @@ static ssize_t unexport_store(struct class *class,
+ 		pr_debug("%s: status %d\n", __func__, status);
+ 	return status ? : len;
+ }
++static CLASS_ATTR_WO(unexport);
+ 
+-static struct class_attribute gpio_class_attrs[] = {
+-	__ATTR(export, 0200, NULL, export_store),
+-	__ATTR(unexport, 0200, NULL, unexport_store),
+-	__ATTR_NULL,
++static struct attribute *gpio_class_attrs[] = {
++	&class_attr_export.attr,
++	&class_attr_unexport.attr,
++	NULL,
+ };
++ATTRIBUTE_GROUPS(gpio_class);
+ 
+ static struct class gpio_class = {
+ 	.name =		"gpio",
+ 	.owner =	THIS_MODULE,
+ 
+-	.class_attrs =	gpio_class_attrs,
++	.class_groups = gpio_class_groups,
+ };
+ 
+ 
 -- 
-1.9.1
+2.13.1
+
