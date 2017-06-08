@@ -1,93 +1,93 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation region
- driver
-Date: Thu, 8 Jun 2017 09:03:50 +0200
-Message-ID: <00ae0f71-a83e-ff54-eaad-77e835e1dba7@redhat.com>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-4-git-send-email-rajmohan.mani@intel.com>
- <CAHp75VcvV_AbLJCq9Rm_8yab3nViPm6ikxxme4oyw9vm4Kz7Gg@mail.gmail.com>
- <20170607121503.GA1019@valkosipuli.retiisi.org.uk>
- <CAHp75Vef=c54O8Xd+aM+eWWVt7nLsczT48WbgrdiOVyWv6xMcg@mail.gmail.com>
- <20170607201050.GE1019@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750822AbdFHHDy (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 8 Jun 2017 03:03:54 -0400
-In-Reply-To: <20170607201050.GE1019@valkosipuli.retiisi.org.uk>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jianhong Chen <chenjh@rock-chips.com>
+Subject: [PATCH v6 00/12] rk808: Add RK805 support
+Date: Thu,  8 Jun 2017 15:12:27 +0800
+Message-ID: <1496905959-29202-1-git-send-email-chenjh@rock-chips.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, tony.xie@rock-chips.com, zhangqing@rock-chips.com, devicetree@vger.kernel.org, w.egorov@phytec.de, lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, chenjh <chenjh@rock-chips.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Rajmohan Mani <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 
-Hi,
+From: chenjh <chenjh@rock-chips.com>
 
-On 07-06-17 22:10, Sakari Ailus wrote:
-> Hi Andy,
-> 
-> On Wed, Jun 07, 2017 at 04:40:13PM +0300, Andy Shevchenko wrote:
->> On Wed, Jun 7, 2017 at 3:15 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
->>> On Tue, Jun 06, 2017 at 05:23:56PM +0300, Andy Shevchenko wrote:
->>>> Follow the pattern, please, I suppose
->>>> ti_pmic_tps68470.c
->>>
->>> This pattern is weird. "ti" in front of the file name is redundant, and in
->>> very few places the vendor prefix is used anyway. Especially when the chip
->>> has a proper name --- as this one does.
->>>
->>> I assume for the Intel PMICs it could be there for a couple of reasons which
->>> are
->>>
->>> 1) lack of a clearly unique chip ID and
->>>
->>> 2) the use of common frameworklet for Intel PMICs.
->>>
->>> There are also no other PMIC chips supported currently.
->>>
->>> The pmic_tps68470 naming is in line with the GPIO driver (apart from the
->>> dash / underscore difference).
->>
->> Since
->>
->> % git ls-files *pmic*
->>
->> returns somewhat interesting results, I would even go further and use
->>
->> tps68470.c here
->>
->> and
->>
->> s/ti_pmic/tps6840/g
->>
->> inside the file.
->>
->> Would it work for you?
-> 
-> This is still a different driver from the tps68470 driver which is an MFD
-> driver. For clarity, I'd keep pmic as part of the name (and I'd use
-> tps68470_pmic_ prefix for internal symbols, too).
-> 
-> As PMICs are typically linked to the kernel (vs. being modules), there's no
-> issue with the module name. I would suppose few if any PMICs will be
-> compiled as modules in general.
+change in v6:
+patch1~7 no changed in V6.
+add patch 8~12 for gpio and powerkey func for rk805.
 
-Good point about the OpRegion driver usually being built-in, in my experience
-it MUST always be built-in, so the Kconfig option should be a bool. Note this
-is useless unless the mfd driver is also a bool (I would advice to go that
-route) and the mfd driver's Kconfig should select the right i2c bus driver
-to make sure that is built-in too, see for example:
+change in v5:
+PATCH V5 1/7: NO change in V5
+PATCH V5 2/7: fix the rk805 reg addr in numerical order
+PATCH V5 3/7: NO change in V5
+PATCH V5 4/7: fix up the rk805_device_shutdown func
+PATCH V5 5/7: NO change in V5
+PATCH V5 6/7: NO change in V5
+PATCH V5 7/7: fix up the description of the rk805
 
-https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=for-mfd-next&id=2f91ded5f8f4fdd67d8daae514b0d434c98ab1e0
-https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=for-mfd-next&id=c5065d8625ebdc164199b99d838ac0636faa7f0b
-https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=for-mfd-next&id=5f125f1f570568a29edf783fba1ebb606d5c6b24
+change in v4:
+PATCH V4 1/7: NO change in V4
+PATCH V4 2/7: rename the commit message
+PATCH V4 3/7: NO change in V4
+PATCH V4 4/7: Split this patch up into subsystems patch 5/7 6/7
+PATCH V4 5/7: new added
+PATCH V4 6/7: new added
+PATCH V4 7/7: NO change in V4
 
-Which are all recent commits from me dealing with making the mfd driver
-built-in / selecting the i2c bus driver.
 
-Regards,
+change in V3:
+PATCH V3 1/5: NO change in V3
+PATCH V3 2/5: add rk805 RTC INT MASK define
+PATCH V3 3/5: RK805 set suspend enable and disable is different from rk808
+              use rk805_regs_ops and rk805_switch_ops
+PATCH V3 4/5: fix up the shutdown func
+              use pm_shutdown_prepare_fn to prepare shutdown
+              and pm_pwroff_fn pull down gpio to shut down rk805
+              it will update in the future(after rk808 support gpio func)
+PATCH V3 5/5: NO change in V3
 
-Hans
+change in V2:
+PATCH V2 1/5: NO change in V2
+PATCH V2 2/5: add rk805 BUCK ILMAX define
+PATCH V2 3/5: NO change in V2
+PATCH V2 4/5: setting RK805 BUCK ILMAX in pre init
+PATCH V2 5/5: Add RK805 device tree bindings document
+
+Elaine Zhang (7):
+  mfd: rk808: fix up the chip id get failed
+  mfd: rk808: add rk805 regs addr and ID
+  regulator: rk808: Add regulator driver for RK805
+  mfd: rk808: Add RK805 support
+  clk: Kconfig: Name RK805 in Kconfig for COMMON_CLK_RK808
+  rtc: Kconfig: Name RK805 in Kconfig for RTC_DRV_RK808
+  mfd: dt-bindings: Add RK805 device tree bindings document
+
+chenjh (5):
+  gpio: Add GPIO driver for the RK805 PMIC
+  Input: Add power key driver for Rockchip RK805 PMIC
+  mfd: rk808: Add RK805 gpio support
+  mfd: rk808: Add RK805 power key support
+  gpio: dt-bindings: add bindings for Rockchip RK805 PMIC
+
+ .../devicetree/bindings/gpio/gpio-rk805.txt        |  37 ++++
+ Documentation/devicetree/bindings/mfd/rk808.txt    |  22 +-
+ drivers/clk/Kconfig                                |   4 +-
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-rk805.c                          | 234 +++++++++++++++++++++
+ drivers/input/misc/Kconfig                         |   6 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/rk805-pwrkey.c                  | 111 ++++++++++
+ drivers/mfd/Kconfig                                |   4 +-
+ drivers/mfd/rk808.c                                | 147 ++++++++++++-
+ drivers/regulator/Kconfig                          |   4 +-
+ drivers/regulator/rk808-regulator.c                | 130 ++++++++++++
+ drivers/rtc/Kconfig                                |   4 +-
+ include/linux/mfd/rk808.h                          | 121 +++++++++++
+ 15 files changed, 817 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rk805.txt
+ create mode 100644 drivers/gpio/gpio-rk805.c
+ create mode 100644 drivers/input/misc/rk805-pwrkey.c
+
+-- 
+1.9.1
+
+
