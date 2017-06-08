@@ -1,29 +1,45 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 09/11] gpio: dt-bindings: Add documentation for gpio
- controllers on Armada 7K/8K
-Date: Thu, 8 Jun 2017 09:18:04 -0500
-Message-ID: <20170608141804.fm72esb5lpbqcp4m@rob-hp-laptop>
-References: <cover.8fe5f7c62a787452878ca071fa00b953e96988ef.1496413293.git-series.gregory.clement@free-electrons.com>
- <7b92aabfb7309eb0b138c149cc3fc61e8f64cd61.1496413293.git-series.gregory.clement@free-electrons.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual
+ GPIO device
+Date: Thu, 8 Jun 2017 08:45:41 -0700
+Message-ID: <20170608154541.GH32509@fury>
+References: <20170602151507.22391-1-hdegoede@redhat.com>
+ <20170602151507.22391-2-hdegoede@redhat.com>
+ <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7b92aabfb7309eb0b138c149cc3fc61e8f64cd61.1496413293.git-series.gregory.clement@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>
+In-Reply-To: <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 02, 2017 at 04:23:16PM +0200, Gregory CLEMENT wrote:
-> Document the device tree binding for the gpio controllers found on the
-> Marvell Armada 7K and Armada 8K SoCs.
+On Wed, Jun 07, 2017 at 05:53:38PM +0300, Andy Shevchenko wrote:
+> On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> > Some peripherals on Bay Trail and Cherry Trail platforms signal a
+> > Power Management Event (PME) to the Power Management Controller (PMC)
+> > to wakeup the system. When this happens software needs to explicitly
+> > clear the PME bus 0 status bit in the GPE0a_STS register to avoid an
+> > IRQ storm on IRQ 9.
+> >
+> > This is modelled in ACPI through the INT0002 ACPI device, which is
+> > called a "Virtual GPIO controller" in ACPI because it defines the
+> > event handler to call when the PME triggers through _AEI and _L02
+> > methods as would be done for a real GPIO interrupt in ACPI.
+> >
+> > This commit adds a driver which registers the Virtual GPIOs expected
+> > by the DSDT on these devices, letting gpiolib-acpi claim the
+> > virtual GPIO and install a GPIO-interrupt handler which call the _L02
+> > handler as it would for a real GPIO controller.
+> >
 > 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
->  Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt  | 20 ++++++++++++++++++++
->  Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0.txt | 24 +++++++++++++++++++++++-
->  Documentation/devicetree/bindings/gpio/gpio-mvebu.txt                      | 24 +++++++++++++++++-------
->  3 files changed, 60 insertions(+), 8 deletions(-)
+> Pushed to testing w/o Linus' tag (there is no one yet)
 
-Acked-by: Rob Herring <robh@kernel.org>
+Will you be taking this through fixes Andy? For a 4.12-rc* target per Hans'
+response to the cover letter?
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
