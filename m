@@ -1,71 +1,92 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
-Date: Fri,  9 Jun 2017 18:48:27 +0200
-Message-ID: <20170609164827.2231-1-krzk@kernel.org>
+From: <gregkh@linuxfoundation.org>
+Subject: patch "gpio: use class_groups instead of class_attrs" added to driver-core-next
+Date: Fri, 09 Jun 2017 20:08:15 +0200
+Message-ID: <149703169515551@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:60354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751650AbdFIQsj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 9 Jun 2017 12:48:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59470 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751538AbdFISIp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 14:08:45 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-
-Hi,
-
-Few cleanups, code improvements and minor fixes. Description along
-with a tag.
-
-Best regards,
-Krzysztof
+To: gregkh@linuxfoundation.org, gnurou@gmail.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+This is a note to let you know that I've just added the patch titled
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+    gpio: use class_groups instead of class_attrs
 
-are available in the git repository at:
+to my driver-core git tree which can be found at
+    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+in the driver-core-next branch.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
+The patch will show up in the next release of the linux-next tree
+(usually sometime within the next 24 hours during the week.)
 
-for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
+The patch will also be merged in the next major kernel release
+during the merge window.
 
-  pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
+If you have any questions about this process, please let me know.
 
-----------------------------------------------------------------
-Samsung pinctrl drivers update for v4.13:
-1. Split drivers per ARMv7 and ARMv8 architectures because there
-   is no need to compile everything on each of them.
-2. Fix for possible NULL-pointer dereference after memory allocation
-   failure.
-3. Cleanups (silencing cast warnings, constify, removal of unneeded
-   casts, removal of modular boiler-plate).
 
-----------------------------------------------------------------
-Krzysztof Kozlowski (5):
-      pinctrl: samsung: Add include guard to local header
-      pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8
-      pinctrl: samsung: Constify wakeup driver specific data
-      pinctrl: samsung: Handle memory allocation failure during wakeup banks init
-      pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem
+>From d83bb159f4c6af4a7465ed457d554d30df95e890 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 8 Jun 2017 10:12:40 +0200
+Subject: gpio: use class_groups instead of class_attrs
 
-Masahiro Yamada (1):
-      pinctrl: samsung: Remove unneeded (void *) casts in of_match_table
+The class_attrs pointer is long depreciated, and is about to be finally
+removed, so move to use the class_groups pointer instead.
 
-Paul Gortmaker (1):
-      pinctrl: samsung: Clean up modular vs. non-modular distinctions
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: <linux-gpio@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/gpio/gpiolib-sysfs.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
- drivers/pinctrl/samsung/Kconfig                |   10 +
- drivers/pinctrl/samsung/Makefile               |    2 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |  815 +++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  399 ++++++++
- drivers/pinctrl/samsung/pinctrl-exynos.c       | 1169 +-----------------------
- drivers/pinctrl/samsung/pinctrl-exynos.h       |   13 +
- drivers/pinctrl/samsung/pinctrl-exynos5440.c   |   15 +-
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c      |    2 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c      |    2 +-
- drivers/pinctrl/samsung/pinctrl-samsung.c      |   39 +-
- 10 files changed, 1269 insertions(+), 1197 deletions(-)
- create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm.c
- create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 4b44dd97c07f..16fe9742597b 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -479,6 +479,7 @@ static ssize_t export_store(struct class *class,
+ 		pr_debug("%s: status %d\n", __func__, status);
+ 	return status ? : len;
+ }
++static CLASS_ATTR_WO(export);
+ 
+ static ssize_t unexport_store(struct class *class,
+ 				struct class_attribute *attr,
+@@ -514,18 +515,20 @@ static ssize_t unexport_store(struct class *class,
+ 		pr_debug("%s: status %d\n", __func__, status);
+ 	return status ? : len;
+ }
++static CLASS_ATTR_WO(unexport);
+ 
+-static struct class_attribute gpio_class_attrs[] = {
+-	__ATTR(export, 0200, NULL, export_store),
+-	__ATTR(unexport, 0200, NULL, unexport_store),
+-	__ATTR_NULL,
++static struct attribute *gpio_class_attrs[] = {
++	&class_attr_export.attr,
++	&class_attr_unexport.attr,
++	NULL,
+ };
++ATTRIBUTE_GROUPS(gpio_class);
+ 
+ static struct class gpio_class = {
+ 	.name =		"gpio",
+ 	.owner =	THIS_MODULE,
+ 
+-	.class_attrs =	gpio_class_attrs,
++	.class_groups = gpio_class_groups,
+ };
+ 
+ 
+-- 
+2.13.1
+
+
