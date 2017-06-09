@@ -1,92 +1,54 @@
-From: <gregkh@linuxfoundation.org>
-Subject: patch "gpio: use class_groups instead of class_attrs" added to driver-core-next
-Date: Fri, 09 Jun 2017 20:08:15 +0200
-Message-ID: <149703169515551@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: 8bit
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH v6 03/10] gpio: exar: Allocate resources on behalf of the platform device
+Date: Fri,  9 Jun 2017 20:33:11 +0200
+Message-ID: <5e21502713a4a65b91a6366e67ab361f650d4b3c.1497033197.git.jan.kiszka@siemens.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59470 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751538AbdFISIp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 14:08:45 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:59720 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751538AbdFISd2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jun 2017 14:33:28 -0400
+In-Reply-To: <cover.1497033197.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1497033197.git.jan.kiszka@siemens.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: gregkh@linuxfoundation.org, gnurou@gmail.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
+Do not allocate resources on behalf of the parent device but on our own.
+Otherwise, cleanup does not properly work if gpio-exar is removed but
+not the parent device.
 
-This is a note to let you know that I've just added the patch titled
-
-    gpio: use class_groups instead of class_attrs
-
-to my driver-core git tree which can be found at
-    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-in the driver-core-next branch.
-
-The patch will show up in the next release of the linux-next tree
-(usually sometime within the next 24 hours during the week.)
-
-The patch will also be merged in the next major kernel release
-during the merge window.
-
-If you have any questions about this process, please let me know.
-
-
->From d83bb159f4c6af4a7465ed457d554d30df95e890 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 8 Jun 2017 10:12:40 +0200
-Subject: gpio: use class_groups instead of class_attrs
-
-The class_attrs pointer is long depreciated, and is about to be finally
-removed, so move to use the class_groups pointer instead.
-
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: <linux-gpio@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib-sysfs.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/gpio/gpio-exar.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 4b44dd97c07f..16fe9742597b 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -479,6 +479,7 @@ static ssize_t export_store(struct class *class,
- 		pr_debug("%s: status %d\n", __func__, status);
- 	return status ? : len;
- }
-+static CLASS_ATTR_WO(export);
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index da4550bb9939..65126fa1e512 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -136,7 +136,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	if (!p)
+ 		return -ENOMEM;
  
- static ssize_t unexport_store(struct class *class,
- 				struct class_attribute *attr,
-@@ -514,18 +515,20 @@ static ssize_t unexport_store(struct class *class,
- 		pr_debug("%s: status %d\n", __func__, status);
- 	return status ? : len;
- }
-+static CLASS_ATTR_WO(unexport);
+-	exar_gpio = devm_kzalloc(&pcidev->dev, sizeof(*exar_gpio), GFP_KERNEL);
++	exar_gpio = devm_kzalloc(&pdev->dev, sizeof(*exar_gpio), GFP_KERNEL);
+ 	if (!exar_gpio)
+ 		return -ENOMEM;
  
--static struct class_attribute gpio_class_attrs[] = {
--	__ATTR(export, 0200, NULL, export_store),
--	__ATTR(unexport, 0200, NULL, unexport_store),
--	__ATTR_NULL,
-+static struct attribute *gpio_class_attrs[] = {
-+	&class_attr_export.attr,
-+	&class_attr_unexport.attr,
-+	NULL,
- };
-+ATTRIBUTE_GROUPS(gpio_class);
+@@ -157,7 +157,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	exar_gpio->regs = p;
+ 	exar_gpio->index = index;
  
- static struct class gpio_class = {
- 	.name =		"gpio",
- 	.owner =	THIS_MODULE,
- 
--	.class_attrs =	gpio_class_attrs,
-+	.class_groups = gpio_class_groups,
- };
- 
- 
+-	ret = devm_gpiochip_add_data(&pcidev->dev,
++	ret = devm_gpiochip_add_data(&pdev->dev,
+ 				     &exar_gpio->gpio_chip, exar_gpio);
+ 	if (ret)
+ 		goto err_destroy;
 -- 
-2.13.1
-
+2.12.3
 
