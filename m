@@ -1,60 +1,53 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH v2] gpio: mvebu: fix regmap_update_bits usage
-Date: Fri,  9 Jun 2017 12:09:17 +0200
-Message-ID: <20170609100917.26660-1-gregory.clement@free-electrons.com>
+Subject: Re: [REGRESSION next] gpio-keys broken with commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register access")
+Date: Fri, 09 Jun 2017 12:12:24 +0200
+Message-ID: <87vao5o4fr.fsf@free-electrons.com>
+References: <20170609085038.4af4f038@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:35339 "EHLO
+Received: from mail.free-electrons.com ([62.4.15.54]:35448 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751524AbdFIKJf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 06:09:35 -0400
+        with ESMTP id S1751515AbdFIKM0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 06:12:26 -0400
+In-Reply-To: <20170609085038.4af4f038@gmail.com> (Ralph Sennhauser's message
+        of "Fri, 9 Jun 2017 08:50:38 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Chris Packham <Chris.Packham@alliedtelesis.co.nz>, Ralph Sennhauser <ralph.sennhauser@gmail.com>
+To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-In some place in the driver regmap_update_bits was misused. Indeed the
-last argument is not the value of the bit (or group of bits) itself but
-the mask value inside the register.
+Hi Ralph,
+ 
+ On ven., juin 09 2017, Ralph Sennhauser <ralph.sennhauser@gmail.com> wrote:
 
-So when setting the bit N, then the value must be BIT(N) and not 1.
+> Hi Thomas,
+>
+> Commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register
+> access") in next-20170607 breaks gpio-keys on an armada-385 (Linksys
+> WRT3200ACM), noticed due to missing /dev/input/event0 and the below
+> dmesg output.
+>
+>   # dmesg -l 0,1,2,3
+>   [    2.421130] genirq: Setting trigger mode 3 for irq 49 failed (mvebu_gpio_irq_set_type+0x0/0x168)
+>   [    2.429953] gpio-keys gpio-keys: Unable to claim irq 49; error -22
+>
+>
+> After reverting the offending commit all works again.
 
-CC: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-CC: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
-Hi,
+I found the bug and I've just sent a fix for it (use the v2 as the first
+version was wrong).
 
-In this second version I fixed the improper changed pointed by Thomas.
-
-Dorry for the noise,
+Thanks for the report,
 
 Gregory
 
- drivers/gpio/gpio-mvebu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 3d03740a20e7..877a3edffa47 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -341,7 +341,7 @@ static int mvebu_gpio_direction_input(struct gpio_chip *chip, unsigned int pin)
- 		return ret;
- 
- 	regmap_update_bits(mvchip->regs, GPIO_IO_CONF_OFF,
--			   BIT(pin), 1);
-+			   BIT(pin), BIT(pin));
- 
- 	return 0;
- }
-@@ -503,7 +503,7 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	case IRQ_TYPE_EDGE_FALLING:
- 	case IRQ_TYPE_LEVEL_LOW:
- 		regmap_update_bits(mvchip->regs, GPIO_IN_POL_OFF,
--				   BIT(pin), 1);
-+				   BIT(pin), BIT(pin));
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH: {
- 		u32 data_in, in_pol, val;
+>
+> Ralph
+
 -- 
-2.11.0
-
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
