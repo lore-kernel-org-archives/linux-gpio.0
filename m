@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 7/8] gpio: mockup: add myself as author
-Date: Fri,  9 Jun 2017 13:41:31 +0200
-Message-ID: <1497008492-14907-8-git-send-email-brgl@bgdev.pl>
+Subject: [PATCH v3 4/8] gpio: mockup: improve readability
+Date: Fri,  9 Jun 2017 13:41:28 +0200
+Message-ID: <1497008492-14907-5-git-send-email-brgl@bgdev.pl>
 References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
@@ -10,31 +10,70 @@ To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@li
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-Just taking credit for the recent changes and new features. :)
+We currently shift bits here and there without actually explaining
+what we're doing. Add some helper variables with names indicating
+their purpose to improve the code readability.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-mockup.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 2f4fe41..536a229 100644
+index d95d37a..0cb6cba 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -3,6 +3,7 @@
-  *
-  * Copyright (C) 2014  Kamlakant Patel <kamlakant.patel@broadcom.com>
-  * Copyright (C) 2015-2016  Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-+ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-  *
-  * This program is free software; you can redistribute  it and/or modify it
-  * under  the terms of  the GNU General  Public License as published by the
-@@ -432,5 +433,6 @@ module_exit(mock_device_exit);
+@@ -27,6 +27,11 @@
  
- MODULE_AUTHOR("Kamlakant Patel <kamlakant.patel@broadcom.com>");
- MODULE_AUTHOR("Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>");
-+MODULE_AUTHOR("Bartosz Golaszewski <brgl@bgdev.pl>");
- MODULE_DESCRIPTION("GPIO Testing driver");
- MODULE_LICENSE("GPL v2");
+ #define GPIO_MOCKUP_NAME	"gpio-mockup"
+ #define	GPIO_MOCKUP_MAX_GC	10
++/*
++ * We're storing two values per chip: the GPIO base and the number
++ * of GPIO lines.
++ */
++#define GPIO_MOCKUP_MAX_RANGES	(GPIO_MOCKUP_MAX_GC * 2)
+ 
+ enum {
+ 	GPIO_MOCKUP_DIR_OUT = 0,
+@@ -62,7 +67,7 @@ struct gpio_mockup_dbgfs_private {
+ 	int offset;
+ };
+ 
+-static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_GC << 1];
++static int gpio_mockup_ranges[GPIO_MOCKUP_MAX_RANGES];
+ static int gpio_mockup_params_nr;
+ module_param_array(gpio_mockup_ranges, int, &gpio_mockup_params_nr, 0400);
+ 
+@@ -329,23 +334,24 @@ static int gpio_mockup_add(struct device *dev,
+ 
+ static int gpio_mockup_probe(struct platform_device *pdev)
+ {
+-	struct gpio_mockup_chip *chips;
++	int ret, i, base, ngpio, num_chips;
+ 	struct device *dev = &pdev->dev;
+-	int ret, i, base, ngpio;
++	struct gpio_mockup_chip *chips;
+ 	char *chip_name;
+ 
+ 	if (gpio_mockup_params_nr < 2 || (gpio_mockup_params_nr % 2))
+ 		return -EINVAL;
+ 
+-	chips = devm_kzalloc(dev,
+-			     sizeof(*chips) * (gpio_mockup_params_nr >> 1),
+-			     GFP_KERNEL);
++	/* Each chip is described by two values. */
++	num_chips = gpio_mockup_params_nr / 2;
++
++	chips = devm_kzalloc(dev, sizeof(*chips) * num_chips, GFP_KERNEL);
+ 	if (!chips)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, chips);
+ 
+-	for (i = 0; i < gpio_mockup_params_nr >> 1; i++) {
++	for (i = 0; i < num_chips; i++) {
+ 		base = gpio_mockup_ranges[i * 2];
+ 
+ 		if (base == -1)
 -- 
 2.9.3
