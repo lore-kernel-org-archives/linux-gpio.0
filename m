@@ -1,171 +1,343 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add EtherAVB pins, groups and function
-Date: Fri,  9 Jun 2017 13:51:23 +0200
-Message-ID: <1497009083-4369-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:41036 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbdFILv3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:51:29 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v7] platform/x86: Add driver for ACPI INT0002 Virtual GPIO device
+Date: Fri,  9 Jun 2017 13:56:02 +0200
+Message-ID: <20170609115602.32029-1-hdegoede@redhat.com>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add pins, groups, and a function for EtherAVB on R-Car H3 ES2.0.
+Some peripherals on Bay Trail and Cherry Trail platforms signal a
+Power Management Event (PME) to the Power Management Controller (PMC)
+to wakeup the system. When this happens software needs to explicitly
+clear the PME bus 0 status bit in the GPE0a_STS register to avoid an
+IRQ storm on IRQ 9.
 
-Extracted from a big patch in the BSP by Takeshi Kihara.
+This is modelled in ACPI through the INT0002 ACPI device, which is
+called a "Virtual GPIO controller" in ACPI because it defines the
+event handler to call when the PME triggers through _AEI and _L02
+methods as would be done for a real GPIO interrupt in ACPI.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This commit adds a driver which registers the Virtual GPIOs expected
+by the DSDT on these devices, letting gpiolib-acpi claim the
+virtual GPIO and install a GPIO-interrupt handler which call the _L02
+handler as it would for a real GPIO controller.
+
+Cc: joeyli <jlee@suse.com>
+Cc: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-To be queued in sh-pfc-for-v4.13.
+Changes in v2:
+-Remove dev_err after malloc failure
+-Remove unused empty runtime pm callbacks
+-s/GPE0A_PME_/GPE0A_PME_B0_/
+-Fixed some checkpatch warnings (I forgot to run checkpatch on v1)
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 111 +++++++++++++++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+Changes in v3:
+-Rewrite as gpiochip driver letting gpiolib-acpi deal with claiming the pin
+ 0x0002 and calling the _L02 event handler when the virtual gpio-irq triggers
+-Rebase on 4.12-rc1
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index c31881ba4f8de9c7..f220bf124ca17f96 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1576,6 +1576,93 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
- };
+Changes in v4:
+-Drop device_init_wakeup() from _probe(), use pm_system_wakeup() instead
+ of pm_wakeup_hard_event(chip->parent)
+-Improve commit message
+
+Changes in v5:
+-Use BIT() macro for FOO_BIT defines
+-Drop unneeded ACPI_PTR macro usage
+
+Changes in v6:
+-Move back to drivers/platform/x86
+-Expand certain acronyms (PME, PMC)
+-Use linux/gpio/driver.h include instead of linux/gpio.h
+-Document why the get / set / direction_output functions are dummys
+-No functional changes
+
+Changes in v7:
+-Some minor cleanups from Andy:
+ -Move asm/ includes below linux/ includes
+ -s/APCI/ACPI/
+ -Use bitmap_clear on chip->irq_valid_mask
+-Add Linus Walleij's Reviewed-by
+---
+ drivers/platform/x86/Kconfig               |  19 +++
+ drivers/platform/x86/Makefile              |   1 +
+ drivers/platform/x86/intel_int0002_vgpio.c | 219 +++++++++++++++++++++++++++++
+ 3 files changed, 239 insertions(+)
+ create mode 100644 drivers/platform/x86/intel_int0002_vgpio.c
+
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 8489020ecf44..a3ccc3c795a5 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -794,6 +794,25 @@ config INTEL_CHT_INT33FE
+ 	  This driver instantiates i2c-clients for these, so that standard
+ 	  i2c drivers for these chips can bind to the them.
  
-+/* - EtherAVB --------------------------------------------------------------- */
-+static const unsigned int avb_link_pins[] = {
-+	/* AVB_LINK */
-+	RCAR_GP_PIN(2, 12),
++config INTEL_INT0002_VGPIO
++	tristate "Intel ACPI INT0002 Virtual GPIO driver"
++	depends on GPIOLIB && ACPI
++	select GPIOLIB_IRQCHIP
++	---help---
++	  Some peripherals on Bay Trail and Cherry Trail platforms signal a
++	  Power Management Event (PME) to the Power Management Controller (PMC)
++	  to wakeup the system. When this happens software needs to explicitly
++	  clear the PME bus 0 status bit in the GPE0a_STS register to avoid an
++	  IRQ storm on IRQ 9.
++
++	  This is modelled in ACPI through the INT0002 ACPI device, which is
++	  called a "Virtual GPIO controller" in ACPI because it defines the
++	  event handler to call when the PME triggers through _AEI and _L02
++	  methods as would be done for a real GPIO interrupt in ACPI.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called intel_int0002_vgpio.
++
+ config INTEL_HID_EVENT
+ 	tristate "INTEL HID Event"
+ 	depends on ACPI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 182a3ed6605a..ab22ce77fb66 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -46,6 +46,7 @@ obj-$(CONFIG_TOSHIBA_BT_RFKILL)	+= toshiba_bluetooth.o
+ obj-$(CONFIG_TOSHIBA_HAPS)	+= toshiba_haps.o
+ obj-$(CONFIG_TOSHIBA_WMI)	+= toshiba-wmi.o
+ obj-$(CONFIG_INTEL_CHT_INT33FE)	+= intel_cht_int33fe.o
++obj-$(CONFIG_INTEL_INT0002_VGPIO) += intel_int0002_vgpio.o
+ obj-$(CONFIG_INTEL_HID_EVENT)	+= intel-hid.o
+ obj-$(CONFIG_INTEL_VBTN)	+= intel-vbtn.o
+ obj-$(CONFIG_INTEL_SCU_IPC)	+= intel_scu_ipc.o
+diff --git a/drivers/platform/x86/intel_int0002_vgpio.c b/drivers/platform/x86/intel_int0002_vgpio.c
+new file mode 100644
+index 000000000000..92dc230ef5b2
+--- /dev/null
++++ b/drivers/platform/x86/intel_int0002_vgpio.c
+@@ -0,0 +1,219 @@
++/*
++ * Intel INT0002 "Virtual GPIO" driver
++ *
++ * Copyright (C) 2017 Hans de Goede <hdegoede@redhat.com>
++ *
++ * Loosely based on android x86 kernel code which is:
++ *
++ * Copyright (c) 2014, Intel Corporation.
++ *
++ * Author: Dyut Kumar Sil <dyut.k.sil@intel.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Some peripherals on Bay Trail and Cherry Trail platforms signal a Power
++ * Management Event (PME) to the Power Management Controller (PMC) to wakeup
++ * the system. When this happens software needs to clear the PME bus 0 status
++ * bit in the GPE0a_STS register to avoid an IRQ storm on IRQ 9.
++ *
++ * This is modelled in ACPI through the INT0002 ACPI device, which is
++ * called a "Virtual GPIO controller" in ACPI because it defines the event
++ * handler to call when the PME triggers through _AEI and _L02 / _E02
++ * methods as would be done for a real GPIO interrupt in ACPI. Note this
++ * is a hack to define an AML event handler for the PME while using existing
++ * ACPI mechanisms, this is not a real GPIO at all.
++ *
++ * This driver will bind to the INT0002 device, and register as a GPIO
++ * controller, letting gpiolib-acpi.c call the _L02 handler as it would
++ * for a real GPIO controller.
++ */
++
++#include <linux/acpi.h>
++#include <linux/bitmap.h>
++#include <linux/gpio/driver.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/suspend.h>
++
++#include <asm/cpu_device_id.h>
++#include <asm/intel-family.h>
++
++#define DRV_NAME			"INT0002 Virtual GPIO"
++
++/* For some reason the virtual GPIO pin tied to the GPE is numbered pin 2 */
++#define GPE0A_PME_B0_VIRT_GPIO_PIN	2
++
++#define GPE0A_PME_B0_STS_BIT		BIT(13)
++#define GPE0A_PME_B0_EN_BIT		BIT(13)
++#define GPE0A_STS_PORT			0x420
++#define GPE0A_EN_PORT			0x428
++
++#define ICPU(model)	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
++
++static const struct x86_cpu_id int0002_cpu_ids[] = {
++/*
++ * Limit ourselves to Cherry Trail for now, until testing shows we
++ * need to handle the INT0002 device on Baytrail too.
++ *	ICPU(INTEL_FAM6_ATOM_SILVERMONT1),	 * Valleyview, Bay Trail *
++ */
++	ICPU(INTEL_FAM6_ATOM_AIRMONT),		/* Braswell, Cherry Trail */
++	{}
 +};
-+static const unsigned int avb_link_mux[] = {
-+	AVB_LINK_MARK,
++
++/*
++ * As this is not a real GPIO at all, but just a hack to model an event in
++ * ACPI the get / set functions are dummy functions.
++ */
++
++static int int0002_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	return 0;
++}
++
++static void int0002_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			     int value)
++{
++}
++
++static int int0002_gpio_direction_output(struct gpio_chip *chip,
++					 unsigned int offset, int value)
++{
++	return 0;
++}
++
++static void int0002_irq_ack(struct irq_data *data)
++{
++	outl(GPE0A_PME_B0_STS_BIT, GPE0A_STS_PORT);
++}
++
++static void int0002_irq_unmask(struct irq_data *data)
++{
++	u32 gpe_en_reg;
++
++	gpe_en_reg = inl(GPE0A_EN_PORT);
++	gpe_en_reg |= GPE0A_PME_B0_EN_BIT;
++	outl(gpe_en_reg, GPE0A_EN_PORT);
++}
++
++static void int0002_irq_mask(struct irq_data *data)
++{
++	u32 gpe_en_reg;
++
++	gpe_en_reg = inl(GPE0A_EN_PORT);
++	gpe_en_reg &= ~GPE0A_PME_B0_EN_BIT;
++	outl(gpe_en_reg, GPE0A_EN_PORT);
++}
++
++static irqreturn_t int0002_irq(int irq, void *data)
++{
++	struct gpio_chip *chip = data;
++	u32 gpe_sts_reg;
++
++	gpe_sts_reg = inl(GPE0A_STS_PORT);
++	if (!(gpe_sts_reg & GPE0A_PME_B0_STS_BIT))
++		return IRQ_NONE;
++
++	generic_handle_irq(irq_find_mapping(chip->irqdomain,
++					    GPE0A_PME_B0_VIRT_GPIO_PIN));
++
++	pm_system_wakeup();
++
++	return IRQ_HANDLED;
++}
++
++static struct irq_chip int0002_irqchip = {
++	.name			= DRV_NAME,
++	.irq_ack		= int0002_irq_ack,
++	.irq_mask		= int0002_irq_mask,
++	.irq_unmask		= int0002_irq_unmask,
 +};
-+static const unsigned int avb_magic_pins[] = {
-+	/* AVB_MAGIC_ */
-+	RCAR_GP_PIN(2, 10),
-+};
-+static const unsigned int avb_magic_mux[] = {
-+	AVB_MAGIC_MARK,
-+};
-+static const unsigned int avb_phy_int_pins[] = {
-+	/* AVB_PHY_INT */
-+	RCAR_GP_PIN(2, 11),
-+};
-+static const unsigned int avb_phy_int_mux[] = {
-+	AVB_PHY_INT_MARK,
-+};
-+static const unsigned int avb_mdc_pins[] = {
-+	/* AVB_MDC, AVB_MDIO */
-+	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
-+};
-+static const unsigned int avb_mdc_mux[] = {
-+	AVB_MDC_MARK, AVB_MDIO_MARK,
-+};
-+static const unsigned int avb_mii_pins[] = {
++
++static int int0002_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct x86_cpu_id *cpu_id;
++	struct gpio_chip *chip;
++	int irq, ret;
++
++	/* Menlow has a different INT0002 device? <sigh> */
++	cpu_id = x86_match_cpu(int0002_cpu_ids);
++	if (!cpu_id)
++		return -ENODEV;
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(dev, "Error getting IRQ: %d\n", irq);
++		return irq;
++	}
++
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++
++	chip->label = DRV_NAME;
++	chip->parent = dev;
++	chip->owner = THIS_MODULE;
++	chip->get = int0002_gpio_get;
++	chip->set = int0002_gpio_set;
++	chip->direction_input = int0002_gpio_get;
++	chip->direction_output = int0002_gpio_direction_output;
++	chip->base = -1;
++	chip->ngpio = GPE0A_PME_B0_VIRT_GPIO_PIN + 1;
++	chip->irq_need_valid_mask = true;
++
++	ret = devm_gpiochip_add_data(&pdev->dev, chip, NULL);
++	if (ret) {
++		dev_err(dev, "Error adding gpio chip: %d\n", ret);
++		return ret;
++	}
++
++	bitmap_clear(chip->irq_valid_mask, 0, GPE0A_PME_B0_VIRT_GPIO_PIN);
++
 +	/*
-+	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
-+	 * AVB_TD1, AVB_TD2, AVB_TD3,
-+	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
-+	 * AVB_RD1, AVB_RD2, AVB_RD3,
-+	 * AVB_TXCREFCLK
++	 * We manually request the irq here instead of passing a flow-handler
++	 * to gpiochip_set_chained_irqchip, because the irq is shared.
 +	 */
-+	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
-+	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
-+	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
-+	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
-+	PIN_NUMBER('A', 12),
++	ret = devm_request_irq(dev, irq, int0002_irq,
++			       IRQF_SHARED | IRQF_NO_THREAD, "INT0002", chip);
++	if (ret) {
++		dev_err(dev, "Error requesting IRQ %d: %d\n", irq, ret);
++		return ret;
++	}
 +
++	ret = gpiochip_irqchip_add(chip, &int0002_irqchip, 0, handle_edge_irq,
++				   IRQ_TYPE_NONE);
++	if (ret) {
++		dev_err(dev, "Error adding irqchip: %d\n", ret);
++		return ret;
++	}
++
++	gpiochip_set_chained_irqchip(chip, &int0002_irqchip, irq, NULL);
++
++	return 0;
++}
++
++static const struct acpi_device_id int0002_acpi_ids[] = {
++	{ "INT0002", 0 },
++	{ },
 +};
-+static const unsigned int avb_mii_mux[] = {
-+	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
-+	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
-+	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
-+	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
-+	AVB_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb_avtp_pps_pins[] = {
-+	/* AVB_AVTP_PPS */
-+	RCAR_GP_PIN(2, 6),
-+};
-+static const unsigned int avb_avtp_pps_mux[] = {
-+	AVB_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb_avtp_match_a_pins[] = {
-+	/* AVB_AVTP_MATCH_A */
-+	RCAR_GP_PIN(2, 13),
-+};
-+static const unsigned int avb_avtp_match_a_mux[] = {
-+	AVB_AVTP_MATCH_A_MARK,
-+};
-+static const unsigned int avb_avtp_capture_a_pins[] = {
-+	/* AVB_AVTP_CAPTURE_A */
-+	RCAR_GP_PIN(2, 14),
-+};
-+static const unsigned int avb_avtp_capture_a_mux[] = {
-+	AVB_AVTP_CAPTURE_A_MARK,
-+};
-+static const unsigned int avb_avtp_match_b_pins[] = {
-+	/*  AVB_AVTP_MATCH_B */
-+	RCAR_GP_PIN(1, 8),
-+};
-+static const unsigned int avb_avtp_match_b_mux[] = {
-+	AVB_AVTP_MATCH_B_MARK,
-+};
-+static const unsigned int avb_avtp_capture_b_pins[] = {
-+	/* AVB_AVTP_CAPTURE_B */
-+	RCAR_GP_PIN(1, 11),
-+};
-+static const unsigned int avb_avtp_capture_b_mux[] = {
-+	AVB_AVTP_CAPTURE_B_MARK,
++MODULE_DEVICE_TABLE(acpi, int0002_acpi_ids);
++
++static struct platform_driver int0002_driver = {
++	.driver = {
++		.name			= DRV_NAME,
++		.acpi_match_table	= int0002_acpi_ids,
++	},
++	.probe	= int0002_probe,
 +};
 +
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX, TX */
-@@ -1790,6 +1877,16 @@ static const unsigned int scif_clk_b_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb_link),
-+	SH_PFC_PIN_GROUP(avb_magic),
-+	SH_PFC_PIN_GROUP(avb_phy_int),
-+	SH_PFC_PIN_GROUP(avb_mdc),
-+	SH_PFC_PIN_GROUP(avb_mii),
-+	SH_PFC_PIN_GROUP(avb_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
-+	SH_PFC_PIN_GROUP(avb_avtp_match_b),
-+	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1821,6 +1918,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif_clk_b),
- };
- 
-+static const char * const avb_groups[] = {
-+	"avb_link",
-+	"avb_magic",
-+	"avb_phy_int",
-+	"avb_mdc",
-+	"avb_mii",
-+	"avb_avtp_pps",
-+	"avb_avtp_match_a",
-+	"avb_avtp_capture_a",
-+	"avb_avtp_match_b",
-+	"avb_avtp_capture_b",
-+};
++module_platform_driver(int0002_driver);
 +
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -1872,6 +1982,7 @@ static const char * const scif_clk_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif2),
++MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
++MODULE_DESCRIPTION("Intel INT0002 Virtual GPIO driver");
++MODULE_LICENSE("GPL");
 -- 
-2.7.4
+2.13.0
 
