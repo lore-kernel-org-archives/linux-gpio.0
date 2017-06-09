@@ -1,35 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: zynq: Clarify quirk and provide helper function
-Date: Fri, 9 Jun 2017 15:46:16 +0200
-Message-ID: <CACRpkdaZr3iMdeQ+51F6bXa1EVc2jgGyJZhReVF8whn=R=fOog@mail.gmail.com>
-References: <20170608173207.30056-1-soren.brinkmann@xilinx.com>
+Subject: Re: [RFC PATCH] gpio: use "output-active" and "output-inactive" for gpio-hogs
+Date: Fri, 9 Jun 2017 15:53:10 +0200
+Message-ID: <CACRpkdY2ECd6e=kE3HWOP3xJFUm6VbrF+0Ds10ax7XsybRkQLA@mail.gmail.com>
+References: <20170604101049.4592-1-uwe@kleine-koenig.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:33653 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751527AbdFINqR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 09:46:17 -0400
-Received: by mail-it0-f50.google.com with SMTP id x129so1617328ite.0
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 06:46:17 -0700 (PDT)
-In-Reply-To: <20170608173207.30056-1-soren.brinkmann@xilinx.com>
+Received: from mail-it0-f47.google.com ([209.85.214.47]:35318 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751628AbdFINxL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 09:53:11 -0400
+Received: by mail-it0-f47.google.com with SMTP id m62so137138896itc.0
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 06:53:11 -0700 (PDT)
+In-Reply-To: <20170604101049.4592-1-uwe@kleine-koenig.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Soren Brinkmann <soren.brinkmann@xilinx.com>
-Cc: Michal Simek <michal.simek@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Andrey Smirnov <andrew.smirnov@gmail.com>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
-On Thu, Jun 8, 2017 at 7:32 PM, Soren Brinkmann
-<soren.brinkmann@xilinx.com> wrote:
+On Sun, Jun 4, 2017 at 12:10 PM, Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.o=
+rg> wrote:
 
-> The one quirk used in the zynq GPIO driver was called FOO which is not
-> very descriptive. Rename the quirk to IS_ZYNQ as it indicates whether
-> the HW is a zynq or zynqmp device to allow handling of device-specific
-> differences of the HW.
-> Also provide a helper function to test whether the HW is zynq or zynqmp.
->
-> Signed-off-by: Soren Brinkmann <soren.brinkmann@xilinx.com>
+>  - input:      A property specifying to set the GPIO direction as input.
+> -- output-low  A property specifying to set the GPIO direction as output =
+with
+> -             the value low.
+> -- output-high A property specifying to set the GPIO direction as output =
+with
+> -             the value high.
+> +- output-inactive: A property specifying to set the GPIO direction as ou=
+tput
+> +             using the inactive level as value.
+> +- output-active: A property specifying to set the GPIO direction as outp=
+ut
+> +             using the active level as value.
+> +- output-low  A deprecated alias for "output-inactive".
+> +- output-high A deprecated alias for "output-active".
 
-Patch applied.
+Wouldn't "output-asserted" / "output-deasserted" be more to the point?
+
+If the majority prefers "active" I can live with that too.
 
 Yours,
 Linus Walleij
