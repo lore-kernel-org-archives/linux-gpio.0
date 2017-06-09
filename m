@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 8/8] gpio: mockup: use devm_kcalloc() where applicable
-Date: Fri,  9 Jun 2017 13:41:32 +0200
-Message-ID: <1497008492-14907-9-git-send-email-brgl@bgdev.pl>
+Subject: [PATCH v3 7/8] gpio: mockup: add myself as author
+Date: Fri,  9 Jun 2017 13:41:31 +0200
+Message-ID: <1497008492-14907-8-git-send-email-brgl@bgdev.pl>
 References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
@@ -10,46 +10,31 @@ To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@li
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-When allocating a zeroed array of objects use devm_kcalloc() instead
-of manually calculating the required size and using devm_kzalloc().
+Just taking credit for the recent changes and new features. :)
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-mockup.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 536a229..a6565e1 100644
+index 2f4fe41..536a229 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -128,7 +128,7 @@ static int gpio_mockup_name_lines(struct device *dev,
- 	char **names;
- 	int i;
+@@ -3,6 +3,7 @@
+  *
+  * Copyright (C) 2014  Kamlakant Patel <kamlakant.patel@broadcom.com>
+  * Copyright (C) 2015-2016  Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
++ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
+  *
+  * This program is free software; you can redistribute  it and/or modify it
+  * under  the terms of  the GNU General  Public License as published by the
+@@ -432,5 +433,6 @@ module_exit(mock_device_exit);
  
--	names = devm_kzalloc(dev, sizeof(char *) * gc->ngpio, GFP_KERNEL);
-+	names = devm_kcalloc(dev, gc->ngpio, sizeof(char *), GFP_KERNEL);
- 	if (!names)
- 		return -ENOMEM;
- 
-@@ -308,8 +308,8 @@ static int gpio_mockup_add(struct device *dev,
- 	gc->get_direction = gpio_mockup_get_direction;
- 	gc->to_irq = gpio_mockup_to_irq;
- 
--	chip->lines = devm_kzalloc(dev, sizeof(*chip->lines) * gc->ngpio,
--				   GFP_KERNEL);
-+	chip->lines = devm_kcalloc(dev, gc->ngpio,
-+				   sizeof(*chip->lines), GFP_KERNEL);
- 	if (!chip->lines)
- 		return -ENOMEM;
- 
-@@ -346,7 +346,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 	/* Each chip is described by two values. */
- 	num_chips = gpio_mockup_params_nr / 2;
- 
--	chips = devm_kzalloc(dev, sizeof(*chips) * num_chips, GFP_KERNEL);
-+	chips = devm_kcalloc(dev, num_chips, sizeof(*chips), GFP_KERNEL);
- 	if (!chips)
- 		return -ENOMEM;
- 
+ MODULE_AUTHOR("Kamlakant Patel <kamlakant.patel@broadcom.com>");
+ MODULE_AUTHOR("Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>");
++MODULE_AUTHOR("Bartosz Golaszewski <brgl@bgdev.pl>");
+ MODULE_DESCRIPTION("GPIO Testing driver");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.9.3
