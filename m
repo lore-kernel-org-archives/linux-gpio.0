@@ -1,46 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH] gpio: use "output-active" and "output-inactive" for gpio-hogs
-Date: Fri, 9 Jun 2017 15:53:10 +0200
-Message-ID: <CACRpkdY2ECd6e=kE3HWOP3xJFUm6VbrF+0Ds10ax7XsybRkQLA@mail.gmail.com>
-References: <20170604101049.4592-1-uwe@kleine-koenig.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v1 1/1] gpio: of: provide option generic property for initial line states
+Date: Fri,  9 Jun 2017 16:16:22 +0200
+Message-ID: <20170609141622.21502-1-o.rempel@pengutronix.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:35318 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751628AbdFINxL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 09:53:11 -0400
-Received: by mail-it0-f47.google.com with SMTP id m62so137138896itc.0
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 06:53:11 -0700 (PDT)
-In-Reply-To: <20170604101049.4592-1-uwe@kleine-koenig.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:38347 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751534AbdFIOQ2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 10:16:28 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Andrey Smirnov <andrew.smirnov@gmail.com>, Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: kernel@pengutronix.de, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, barebox@lists.infradead.org
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
 
-On Sun, Jun 4, 2017 at 12:10 PM, Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.o=
-rg> wrote:
+This property is needed for barebox or may be other bootloaders
+to set proper gpio configuration as early as possible.
 
->  - input:      A property specifying to set the GPIO direction as input.
-> -- output-low  A property specifying to set the GPIO direction as output =
-with
-> -             the value low.
-> -- output-high A property specifying to set the GPIO direction as output =
-with
-> -             the value high.
-> +- output-inactive: A property specifying to set the GPIO direction as ou=
-tput
-> +             using the inactive level as value.
-> +- output-active: A property specifying to set the GPIO direction as outp=
-ut
-> +             using the active level as value.
-> +- output-low  A deprecated alias for "output-inactive".
-> +- output-high A deprecated alias for "output-active".
+This example is mainly based on "lines-initial-states" property
+from this binding documentation:
+Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
 
-Wouldn't "output-asserted" / "output-deasserted" be more to the point?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ Documentation/devicetree/bindings/gpio/gpio.txt | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-If the majority prefers "active" I can live with that too.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
+index 84ede036f73d..60f8e8d8ab32 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio.txt
+@@ -181,6 +181,26 @@ gpio-controller@00000000 {
+ 		"poweroff", "reset";
+ }
+ 
++Optionally, a GPIO controller may have a "gpio-lines-initial-states" property.
++This is an array of values that specifies the initial state of each line. When
++a value is set to one, the corresponding line will be initialized to the input
++(pulled-up) state. When the values is set to two, the line will be initialized
++the low-level output state. If values is set to zero the line will be
++initialized to the input state.
++If the property is not specified no specific configuration will be set. Driver
++should reuse HW configuration provided by bootloader or other system.
++
++Example:
++
++gpio-controller@00000000 {
++	compatible = "foo";
++	reg = <0x00000000 0x1000>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	ngpios = <9>;
++	gpio-lines-initial-states = <0>, <1>, <2>, <0>, <0>, <2>, <2>, <1>, <1>;
++}
++
+ The GPIO chip may contain GPIO hog definitions. GPIO hogging is a mechanism
+ providing automatic GPIO request and configuration as part of the
+ gpio-controller's driver probe function.
+-- 
+2.11.0
 
-Yours,
-Linus Walleij
