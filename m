@@ -1,44 +1,36 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 6/8] gpio: mockup: improve the error message
-Date: Fri,  9 Jun 2017 13:41:30 +0200
-Message-ID: <1497008492-14907-7-git-send-email-brgl@bgdev.pl>
+Subject: [PATCH v3 3/8] gpio: mockup: refuse to accept an odd number of GPIO ranges
+Date: Fri,  9 Jun 2017 13:41:27 +0200
+Message-ID: <1497008492-14907-4-git-send-email-brgl@bgdev.pl>
 References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:35539 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751755AbdFILls (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:41:48 -0400
-Received: by mail-wr0-f180.google.com with SMTP id q97so30084848wrb.2
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:41:47 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+List-Id: linux-gpio@vger.kernel.org
 
-Indicate the error number and make the message a bit more elaborate.
+Currently we ignore the last odd range value, since each chip is
+described by two values. Be more strict and require the user to
+pass an even number of ranges.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-mockup.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mockup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index ab2d38e..2f4fe41 100644
+index d78e8e0..d95d37a 100644
 --- a/drivers/gpio/gpio-mockup.c
 +++ b/drivers/gpio/gpio-mockup.c
-@@ -373,8 +373,9 @@ static int gpio_mockup_probe(struct platform_device *pdev)
- 		}
+@@ -334,7 +334,7 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 	int ret, i, base, ngpio;
+ 	char *chip_name;
  
- 		if (ret) {
--			dev_err(dev, "gpio<%d..%d> add failed\n",
--				base, base < 0 ? ngpio : base + ngpio);
-+			dev_err(dev,
-+				"adding gpiochip failed: %d (base: %d, ngpio: %d)\n",
-+				ret, base, base < 0 ? ngpio : base + ngpio);
+-	if (gpio_mockup_params_nr < 2)
++	if (gpio_mockup_params_nr < 2 || (gpio_mockup_params_nr % 2))
+ 		return -EINVAL;
  
- 			return ret;
- 		}
+ 	chips = devm_kzalloc(dev,
 -- 
 2.9.3
-
