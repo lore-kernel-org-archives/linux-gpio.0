@@ -1,56 +1,71 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v3 0/8] gpio: mockup: updates for 4.13
-Date: Fri, 9 Jun 2017 18:46:17 +0300
-Message-ID: <CAHp75VehEo9XSXO3RueNiN2WcZ7K2fPE3a7U90Bd0nH91Vi7FQ@mail.gmail.com>
-References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
+Date: Fri,  9 Jun 2017 18:48:27 +0200
+Message-ID: <20170609164827.2231-1-krzk@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33037 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751562AbdFIPqS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 11:46:18 -0400
-In-Reply-To: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
+Received: from mail.kernel.org ([198.145.29.99]:60354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751650AbdFIQsj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jun 2017 12:48:39 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Fri, Jun 9, 2017 at 2:41 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> v1 -> v2:
-> - omit applied patches
-> - use kstrtoint_from_user() for debugfs input sanitization
-> - add a patch improving the code in gpio_mockup_event_write()
-> - bail out from gpio_mockup_event_write() on invalid input even when
->   nobody is listening for events
->
-> v2 -> v3:
-> - added the patch replacing devm_kzalloc() with devm_kcalloc() where
->   applicable
->
+Hi,
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Few cleanups, code improvements and minor fixes. Description along
+with a tag.
 
-> Bartosz Golaszewski (8):
->   gpio: mockup: improve the debugfs input sanitization
->   gpio: mockup: tweak gpio_mockup_event_write()
->   gpio: mockup: refuse to accept an odd number of GPIO ranges
->   gpio: mockup: improve readability
->   gpio: mockup: don't return magic numbers from probe()
->   gpio: mockup: improve the error message
->   gpio: mockup: add myself as author
->   gpio: mockup: use devm_kcalloc() where applicable
->
->  drivers/gpio/gpio-mockup.c | 67 ++++++++++++++++++++++++----------------------
->  1 file changed, 35 insertions(+), 32 deletions(-)
->
-> --
-> 2.9.3
->
+Best regards,
+Krzysztof
 
 
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
+
+for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
+
+  pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl drivers update for v4.13:
+1. Split drivers per ARMv7 and ARMv8 architectures because there
+   is no need to compile everything on each of them.
+2. Fix for possible NULL-pointer dereference after memory allocation
+   failure.
+3. Cleanups (silencing cast warnings, constify, removal of unneeded
+   casts, removal of modular boiler-plate).
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (5):
+      pinctrl: samsung: Add include guard to local header
+      pinctrl: samsung: Split Exynos drivers per ARMv7 and ARMv8
+      pinctrl: samsung: Constify wakeup driver specific data
+      pinctrl: samsung: Handle memory allocation failure during wakeup banks init
+      pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem
+
+Masahiro Yamada (1):
+      pinctrl: samsung: Remove unneeded (void *) casts in of_match_table
+
+Paul Gortmaker (1):
+      pinctrl: samsung: Clean up modular vs. non-modular distinctions
+
+ drivers/pinctrl/samsung/Kconfig                |   10 +
+ drivers/pinctrl/samsung/Makefile               |    2 +
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |  815 +++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |  399 ++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 1169 +-----------------------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |   13 +
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c   |   15 +-
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c      |    2 +-
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c      |    2 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |   39 +-
+ 10 files changed, 1269 insertions(+), 1197 deletions(-)
+ create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+ create mode 100644 drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
