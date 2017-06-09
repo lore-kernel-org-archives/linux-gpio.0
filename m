@@ -1,109 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 08/12] gpio: Add GPIO driver for the RK805 PMIC
-Date: Fri, 9 Jun 2017 13:37:26 +0200
-Message-ID: <CACRpkdZRKWPgFoM=Owo+EXU3bA_oymn5_3WRS9cuMr3G7Hdi6Q@mail.gmail.com>
-References: <1496905959-29202-1-git-send-email-chenjh@rock-chips.com> <1496907001-27107-1-git-send-email-chenjh@rock-chips.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1496907001-27107-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jianhong Chen <chenjh@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tao Huang <huangtao@rock-chips.com>, tony.xie@rock-chips.com, zhangqing@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, w.egorov@phytec.de, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 0/8] gpio: mockup: updates for 4.13
+Date: Fri,  9 Jun 2017 13:41:24 +0200
+Message-ID: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:36176 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751524AbdFILll (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:41:41 -0400
+Received: by mail-wr0-f176.google.com with SMTP id v111so30018930wrc.3
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:41:41 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 
-Heiko, can you please look at this patch.
+v1 -> v2:
+- omit applied patches
+- use kstrtoint_from_user() for debugfs input sanitization
+- add a patch improving the code in gpio_mockup_event_write()
+- bail out from gpio_mockup_event_write() on invalid input even when
+  nobody is listening for events
 
-On Thu, Jun 8, 2017 at 9:30 AM, Jianhong Chen <chenjh@rock-chips.com> wrote:
+v2 -> v3:
+- added the patch replacing devm_kzalloc() with devm_kcalloc() where
+  applicable
 
-> From: chenjh <chenjh@rock-chips.com>
+Bartosz Golaszewski (8):
+  gpio: mockup: improve the debugfs input sanitization
+  gpio: mockup: tweak gpio_mockup_event_write()
+  gpio: mockup: refuse to accept an odd number of GPIO ranges
+  gpio: mockup: improve readability
+  gpio: mockup: don't return magic numbers from probe()
+  gpio: mockup: improve the error message
+  gpio: mockup: add myself as author
+  gpio: mockup: use devm_kcalloc() where applicable
 
-Full name please.
+ drivers/gpio/gpio-mockup.c | 67 ++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 32 deletions(-)
 
-> RK805 has two configurable GPIOs that can be used for several
-> purposes. These are output only.
->
-> This driver is generic for other Rockchip PMICs to be added.
->
-> Signed-off-by: chenjh <chenjh@rock-chips.com>
+-- 
+2.9.3
 
-Dito.
-
-Your commit message says they are output-only, yet you implement
-.direction_input(). So what is is going to be?
-
-> +#include <linux/i2c.h>
-> +#include <linux/gpio.h>
-
-Only use:
-#include <linux/gpio/driver.h>
-
-> +/*
-> + * @mode: supported modes for this gpio, i.e. OUTPUT_MODE, OUTPUT_MODE...
-
-Are you saying this should be an enum or a set of flags?
-
-> +static int rk805_gpio_get(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       int ret, val;
-> +       struct rk805_gpio *gpio = gpiochip_get_data(chip);
-> +
-> +       ret = regmap_read(gpio->rk808->regmap, gpio->pins[offset].reg, &val);
-> +       if (ret) {
-> +               dev_err(gpio->dev, "gpio%d not support output mode\n", offset);
-> +               return ret;
-> +       }
-> +
-> +       return (val & gpio->pins[offset].val_msk) ? 1 : 0;
-
-Do this:
-
-return !!(val & gpio->pins[offset].val_msk)
-
-> +static int rk805_gpio_request(struct gpio_chip *chip, unsigned offset)
-> +{
-> +       int ret;
-> +       struct rk805_gpio *gpio = gpiochip_get_data(chip);
-> +
-> +       /* switch to gpio mode */
-> +       if (gpio->pins[offset].func_mask) {
-> +               ret = regmap_update_bits(gpio->rk808->regmap,
-> +                                        gpio->pins[offset].reg,
-> +                                        gpio->pins[offset].func_mask,
-> +                                        gpio->pins[offset].func_mask);
-> +               if (ret) {
-> +                       dev_err(gpio->dev, "set gpio%d func failed\n", offset);
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-
-This is pin control. Why don't you implement a proper pin control
-driver for this chip?
-
-If you don't, this will just come back and haunt you.
-
-Why not merge the driver into drivers/pinctrl/* and name it
-pinctrl-rk805.c to begin with?
-
-> +static const struct gpio_chip rk805_chip = {
-> +       .label                  = "rk805-gpio",
-> +       .owner                  = THIS_MODULE,
-> +       .direction_input        = rk805_gpio_direction_input,
-> +       .direction_output       = rk805_gpio_direction_output,
-
-Please implement .get_direction()
-
-> +       .get                    = rk805_gpio_get,
-> +       .set                    = rk805_gpio_set,
-> +       .request                = rk805_gpio_request,
-> +       .base                   = -1,
-> +       .ngpio                  = 2,
-> +       .can_sleep              = true,
-
-Consider assigning the .names[] array some pin names.
-
-Yours,
-Linus Walleij
