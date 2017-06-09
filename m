@@ -1,92 +1,40 @@
-From: <gregkh@linuxfoundation.org>
-Subject: patch "gpio: use class_groups instead of class_attrs" added to driver-core-testing
-Date: Fri, 09 Jun 2017 10:41:18 +0200
-Message-ID: <149699767815952@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/3] pinctrl: cherryview: Add terminate entry for
+ dmi_system_id tables
+Date: Fri, 9 Jun 2017 10:53:19 +0200
+Message-ID: <CACRpkdaELvhyNQOhJB=_UeiThwK65HLuTRFakDovJZ3Kvi2pLg@mail.gmail.com>
+References: <20170517102514.89744-1-mika.westerberg@linux.intel.com>
+ <20170517102514.89744-3-mika.westerberg@linux.intel.com> <20170601113050.6b216736@endymion>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40496 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751600AbdFIIlx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 04:41:53 -0400
+Received: from mail-io0-f174.google.com ([209.85.223.174]:34526 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751633AbdFIIxV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 04:53:21 -0400
+Received: by mail-io0-f174.google.com with SMTP id i7so30439915ioe.1
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 01:53:20 -0700 (PDT)
+In-Reply-To: <20170601113050.6b216736@endymion>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: gregkh@linuxfoundation.org, gnurou@gmail.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, bbaude@redhat.com, mildred-bug.kernel@mildred.fr, barnacs@justletit.be, lvuksta@gmail.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kelly French <kfrench@federalhill.net>
 
+On Thu, Jun 1, 2017 at 11:30 AM, Jean Delvare <jdelvare@suse.de> wrote:
+> On Wed, 17 May 2017 13:25:13 +0300, Mika Westerberg wrote:
+>> From: Wei Yongjun <weiyongjun1@huawei.com>
+>>
+>> Make sure dmi_system_id tables are NULL terminated.
+>>
+>> Fixes: 703650278372 ("pinctrl: cherryview: Add a quirk to make Acer Chromebook keyboard work again")
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+(...)
+>
+> This should go to stable trees IMHO.
 
-This is a note to let you know that I've just added the patch titled
+It is already upstream, but you can suggest directly to Greg to pick it to
+the stable trees.
 
-    gpio: use class_groups instead of class_attrs
-
-to my driver-core git tree which can be found at
-    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-in the driver-core-testing branch.
-
-The patch will show up in the next release of the linux-next tree
-(usually sometime within the next 24 hours during the week.)
-
-The patch will be merged to the driver-core-next branch sometime soon,
-after it passes testing, and the merge window is open.
-
-If you have any questions about this process, please let me know.
-
-
->From d83bb159f4c6af4a7465ed457d554d30df95e890 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Thu, 8 Jun 2017 10:12:40 +0200
-Subject: gpio: use class_groups instead of class_attrs
-
-The class_attrs pointer is long depreciated, and is about to be finally
-removed, so move to use the class_groups pointer instead.
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: <linux-gpio@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpio/gpiolib-sysfs.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 4b44dd97c07f..16fe9742597b 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -479,6 +479,7 @@ static ssize_t export_store(struct class *class,
- 		pr_debug("%s: status %d\n", __func__, status);
- 	return status ? : len;
- }
-+static CLASS_ATTR_WO(export);
- 
- static ssize_t unexport_store(struct class *class,
- 				struct class_attribute *attr,
-@@ -514,18 +515,20 @@ static ssize_t unexport_store(struct class *class,
- 		pr_debug("%s: status %d\n", __func__, status);
- 	return status ? : len;
- }
-+static CLASS_ATTR_WO(unexport);
- 
--static struct class_attribute gpio_class_attrs[] = {
--	__ATTR(export, 0200, NULL, export_store),
--	__ATTR(unexport, 0200, NULL, unexport_store),
--	__ATTR_NULL,
-+static struct attribute *gpio_class_attrs[] = {
-+	&class_attr_export.attr,
-+	&class_attr_unexport.attr,
-+	NULL,
- };
-+ATTRIBUTE_GROUPS(gpio_class);
- 
- static struct class gpio_class = {
- 	.name =		"gpio",
- 	.owner =	THIS_MODULE,
- 
--	.class_attrs =	gpio_class_attrs,
-+	.class_groups = gpio_class_groups,
- };
- 
- 
--- 
-2.13.1
-
-
+Yours,
+Linus Walleij
