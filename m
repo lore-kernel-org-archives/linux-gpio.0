@@ -1,48 +1,78 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: Re: [PATCH] gpio: mvebu: change compatible string for PWM support
-Date: Fri, 9 Jun 2017 22:12:37 +0200
-Message-ID: <20170609221237.311cfb5c@gmail.com>
-References: <20170601200820.22396-1-ralph.sennhauser@gmail.com>
-        <CACRpkdY7yy=U1DgFHXGd06UXg0hh5eC7mBKHLr7hq01hR__q8g@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 3/9] dt-bindings: add Amlogic Meson GPIO
+ interrupt-controller DT binding documentation
+Date: Fri, 9 Jun 2017 15:58:20 -0500
+Message-ID: <CAL_JsqLnBqVDPq6DGaFvxv1emXBZy4o+hWH0+8146EoeJ2BRKA@mail.gmail.com>
+References: <66c57893-0a9e-4f8c-a017-ab346abbdfd0@gmail.com>
+ <c190f764-b3af-8982-00e3-87e28eabecca@gmail.com> <20170607211312.av5osk5xxa5k5pr2@rob-hp-laptop>
+ <5bfb15b0-8625-85cc-53d6-90171c9e098d@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY7yy=U1DgFHXGd06UXg0hh5eC7mBKHLr7hq01hR__q8g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, Richard Genoud <richard.genoud@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:48558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751558AbdFIU6m (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 9 Jun 2017 16:58:42 -0400
+In-Reply-To: <5bfb15b0-8625-85cc-53d6-90171c9e098d@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-amlogic@lists.infradead.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On Fri, 9 Jun 2017 09:42:26 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+On Fri, Jun 9, 2017 at 2:50 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> On 06/07/2017 11:13 PM, Rob Herring wrote:
+>> On Tue, May 30, 2017 at 10:26:33PM +0200, Heiner Kallweit wrote:
+>>> Add dt binding documentation for Amlogic meson GPIO interrupt controller.
+>>>
+>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+>>> ---
+>>> v5:
+>>> - added Reviewed-by
+>>> ---
+>>>  .../amlogic,meson-gpio-intc.txt                    | 26 ++++++++++++++++++++++
+>>>  1 file changed, 26 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+>>> new file mode 100644
+>>> index 00000000..2f20d212
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+>>> @@ -0,0 +1,26 @@
+>>> +Amlogic meson GPIO interrupt controller
+>>> +
+>>> +Meson SoCs contains an interrupt controller which is able watch the SoC pads
+>>> +and generate an interrupt on edges or level. The controller is essentially a
+>>> +256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
+>>> +or level and polarity. The actual number of interrupt exposed depends on the
+>>> +SoC.
+>>> +
+>>> +Required properties:
+>>> +
+>>> +- compatible : should be "amlogic,meson-gpio-intc".
+>>> +- reg : Specifies base physical address and size of the registers.
+>>> +- interrupt-controller : Identifies the node as an interrupt controller.
+>>> +- #interrupt-cells : should be 2.
+>>> +- parent-interrupts : list of GIC interrupts which can be used with the
+>>> +                  GPIO IRQ multiplexer
+>>
+>> Just use "interrupts" here.
+>
+> Hi Rob,
+>
+> If the "interrupts" property is used here like this, it breaks the interrupts binding !
 
-> On Thu, Jun 1, 2017 at 10:08 PM, Ralph Sennhauser
-> <ralph.sennhauser@gmail.com> wrote:
-> 
-> > As it turns out more than just Armada 370 and XP support using GPIO
-> > lines as PWM lines. For example the Armada 38x family has the same
-> > hardware support. As such "marvell,armada-370-xp-gpio" for the
-> > compatible string is a misnomer.
-> >
-> > Change the compatible string to "marvell,armada-370-gpio" before the
-> > driver makes it out of the -rc stage. This also follows the
-> > practice of using only the first device family supported as part of
-> > the name.
-> >
-> > Also update the documentation and comments in the code accordingly.
-> >
-> > Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
-> > Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>  
-> 
-> Patch applied for next with the tags.
+Really!? Looking closer at the series, in fact the dts files are
+already correct:
 
-Hi Linus,
++       gpio_intc: interrupt-controller@9880 {
++               compatible = "amlogic,meson-gpio-intc";
++               reg = <0x9880 0x10>;
++               interrupt-controller;
++               #interrupt-cells = <2>;
++               interrupts = <64 65 66 67 68 79 70 71>;
++       };
++
 
-As Richard already correctly pointed out this needs to go into 4.12 as
-we can't really change the compatible string after 4.12 final was
-released. So this commit was pushed to the wrong branch. Sorry for
-not having been more explicit in my wording.
-
-Thanks
-Ralph
+Rob
