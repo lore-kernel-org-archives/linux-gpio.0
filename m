@@ -1,33 +1,33 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: [REGRESSION next] gpio-keys broken with commit 2233bf7a92e7 ("gpio:
- mvebu: switch to regmap for register access")
-Date: Fri, 9 Jun 2017 08:50:38 +0200
-Message-ID: <20170609085038.4af4f038@gmail.com>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: Re: [RFC PATCH] gpio: use "output-active" and "output-inactive" for
+ gpio-hogs
+Date: Fri, 9 Jun 2017 10:10:15 +0300
+Message-ID: <34157a2b-9657-e591-5ad8-a26b0d93ce29@cogentembedded.com>
+References: <20170604101049.4592-1-uwe@kleine-koenig.org>
+ <20170608223346.unfwdh32v3kt2y52@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34768 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751506AbdFIGum (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 02:50:42 -0400
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:35829 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751761AbdFIHKU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 03:10:20 -0400
+Received: by mail-lf0-f42.google.com with SMTP id p189so26245507lfe.2
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 00:10:19 -0700 (PDT)
+In-Reply-To: <20170608223346.unfwdh32v3kt2y52@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: Rob Herring <robh@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Hi Thomas,
+>> Maybe the same idea can be applied to the cpp definitions GPIOD_OUT_LOW
+>> and GPIOD_OUT_HIGH.
 
-Commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register
-access") in next-20170607 breaks gpio-keys on an armada-385 (Linksys
-WRT3200ACM), noticed due to missing /dev/input/event0 and the below
-dmesg output.
+I'd say it was quite bad idea to introduce ACTIVE_LOW thing while still
+same "high" / "low" names all over the API. Now this is causing
+confusion in every other use case.
 
-  # dmesg -l 0,1,2,3
-  [    2.421130] genirq: Setting trigger mode 3 for irq 49 failed (mvebu_gpio_irq_set_type+0x0/0x168)
-  [    2.429953] gpio-keys gpio-keys: Unable to claim irq 49; error -22
-
-
-After reverting the offending commit all works again.
-
-Ralph
+The only way to clean up this mess now without breaking things is to
+rename everything, and deprecate all currently-exisitng identifiers
+containing "high" and "low" substrings.
