@@ -1,40 +1,39 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: Re: [PATCH v2] gpio: mvebu: fix regmap_update_bits usage
-Date: Fri, 9 Jun 2017 14:21:44 +0200
-Message-ID: <20170609142144.5f6c916b@gmail.com>
-References: <20170609100917.26660-1-gregory.clement@free-electrons.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 0/3] pinctrl: sun8i: Add support for A83T R_PIO
+Date: Fri, 9 Jun 2017 20:24:07 +0800
+Message-ID: <CAGb2v67Fs0_npNvaCFrr4bK1U5VcO-YZ9DY-Vyfk=esdQMVZuw@mail.gmail.com>
+References: <20170603144427.22855-1-wens@csie.org> <20170605135128.cjease7t25kjc6lp@flea.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36748 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbdFIMVs (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 08:21:48 -0400
-In-Reply-To: <20170609100917.26660-1-gregory.clement@free-electrons.com>
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:54510 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751530AbdFIMYc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 08:24:32 -0400
+In-Reply-To: <20170605135128.cjease7t25kjc6lp@flea.lan>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Fri,  9 Jun 2017 12:09:17 +0200
-Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+On Mon, Jun 5, 2017 at 9:51 PM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> On Sat, Jun 03, 2017 at 10:44:24PM +0800, Chen-Yu Tsai wrote:
+>> Hi,
+>>
+>> This series adds support for the R_PIO pin controller on the A83T.
+>> The pins managed this controller are mainly used for communicating
+>> with the PMIC and codec, and various GPIOs for enabling power switches
+>> for USB ports and WiFi.
+>>
+>> Patch 1 updates the sunxi pinctrl bindings.
+>>
+>> Patch 2 adds the pinctrl driver.
+>>
+>> Patch 3 adds a device node for the pin controller.
+>
+> Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 
-> In some place in the driver regmap_update_bits was misused. Indeed the
-> last argument is not the value of the bit (or group of bits) itself
-> but the mask value inside the register.
-> 
-> So when setting the bit N, then the value must be BIT(N) and not 1.
-> 
-> CC: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-> CC: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> ---
+Applied the device tree changes.
 
-Hi Gregory,
-
-Tested-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-
-Thanks for the prompt fix
-Ralph
-
+ChenYu
