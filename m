@@ -1,33 +1,35 @@
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: Re: [RFC PATCH] gpio: use "output-active" and "output-inactive" for
- gpio-hogs
-Date: Fri, 9 Jun 2017 10:10:15 +0300
-Message-ID: <34157a2b-9657-e591-5ad8-a26b0d93ce29@cogentembedded.com>
-References: <20170604101049.4592-1-uwe@kleine-koenig.org>
- <20170608223346.unfwdh32v3kt2y52@rob-hp-laptop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 01/11] serial: exar: Leave MPIOs as output for Commtech adapters
+Date: Fri, 9 Jun 2017 09:20:43 +0200
+Message-ID: <CACRpkdYeTGkp1e1gGAzhwXjS8dBCJiWror68Wov-j4g4t4zt2Q@mail.gmail.com>
+References: <cover.1496388533.git.jan.kiszka@siemens.com> <0c7b59cdc5a4cb7035656b081e36457eb675fc29.1496388533.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:35829 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbdFIHKU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 03:10:20 -0400
-Received: by mail-lf0-f42.google.com with SMTP id p189so26245507lfe.2
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 00:10:19 -0700 (PDT)
-In-Reply-To: <20170608223346.unfwdh32v3kt2y52@rob-hp-laptop>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:33827 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbdFIHUp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 03:20:45 -0400
+Received: by mail-io0-f171.google.com with SMTP id i7so29697324ioe.1
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 00:20:44 -0700 (PDT)
+In-Reply-To: <0c7b59cdc5a4cb7035656b081e36457eb675fc29.1496388533.git.jan.kiszka@siemens.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
->> Maybe the same idea can be applied to the cpp definitions GPIOD_OUT_LOW
->> and GPIOD_OUT_HIGH.
+On Fri, Jun 2, 2017 at 9:28 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-I'd say it was quite bad idea to introduce ACTIVE_LOW thing while still
-same "high" / "low" names all over the API. Now this is causing
-confusion in every other use case.
+> Commtech adapters apparently need the original setting as outputs, see
+> https://marc.info/?l=linux-gpio&m=149557425201323&w=2. Account for that.
+>
+> Fixes: 7dea8165f1d6 ("serial: exar: Preconfigure xr17v35x MPIOs as output")
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-The only way to clean up this mess now without breaking things is to
-rename everything, and deprecate all currently-exisitng identifiers
-containing "high" and "low" substrings.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Greg can you pick this up for fixes?
+
+Yours,
+Linus Walleij
