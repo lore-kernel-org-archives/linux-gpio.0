@@ -1,92 +1,49 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH] gpio: use "output-active" and "output-inactive" for
- gpio-hogs
-Date: Thu, 8 Jun 2017 17:33:46 -0500
-Message-ID: <20170608223346.unfwdh32v3kt2y52@rob-hp-laptop>
-References: <20170604101049.4592-1-uwe@kleine-koenig.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual GPIO device
+Date: Fri, 9 Jun 2017 02:30:14 +0200
+Message-ID: <CAJZ5v0guq1zRwU8ETe5+n6QSj+ytg_HewnrP7h2TsJFQNE9gxg@mail.gmail.com>
+References: <20170602151507.22391-1-hdegoede@redhat.com> <20170602151507.22391-2-hdegoede@redhat.com>
+ <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
+ <20170608154541.GH32509@fury> <d41ff55b-e28f-85bf-d088-392e363fb41f@redhat.com>
+ <CAJZ5v0jw3Rzjkb3J2_XE7TPBjT+7FUW90B7kg15z6_WpdNGjzA@mail.gmail.com> <CAHp75Vc-Vz-QRAkrq2z3B9MaAPFEVX06ePAJuxjwqcLULjRbFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170604101049.4592-1-uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Andrey Smirnov <andrew.smirnov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nikita Yushchenko <nikita.yoush-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAHp75Vc-Vz-QRAkrq2z3B9MaAPFEVX06ePAJuxjwqcLULjRbFw@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Jun 04, 2017 at 12:10:49PM +0200, Uwe Kleine-König wrote:
-> Using the following gpio hog:
-> 
-> 	{
-> 		gpio-hog;
-> 		gpios = <17 GPIO_ACTIVE_LOW>;
-> 		output-high;
-> 	}
-> 
-> results in the gpio to be set to (physically) low value, which is
-> surprising. So support "output-active" which makes the semantic more
-> obvious. The old semantic is still supported for backward compatibility.
+On Thu, Jun 8, 2017 at 7:40 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Thu, Jun 8, 2017 at 8:15 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>> On Thu, Jun 8, 2017 at 6:45 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+>>> On 06/08/2017 05:45 PM, Darren Hart wrote:
+>>>> On Wed, Jun 07, 2017 at 05:53:38PM +0300, Andy Shevchenko wrote:
+>>>>> On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redhat.com>
+>>>>> wrote:
+>
+>>>> Will you be taking this through fixes Andy? For a 4.12-rc* target per
+>>>> Hans'
+>>>> response to the cover letter?
+>
+>>> Note that Rafael is planning to drop (revert) the commit which makes
+>>> it (extra) desirable for this driver to get into 4.12, so we should
+>>> perhaps reconsider that. I'm fine either way, but the primary reason
+>>> to push this as a fix for 4.12 is no longer valid AFAICT.
+>>
+>> Maybe I will just queue it up along with this series:
+>> http://marc.info/?l=linux-kernel&m=149688087904433&w=2
+>> if Andy and Darren agree?
+>
+> Looks like it has ties to your series, so, I see no obstacles to go via PM tree.
 
-Ugg. Can't say I'm a fan of the Linux GPIO subsystem inverting the logic 
-for GPIO_ACTIVE_LOW...
+OK, thanks!
 
-> 
-> Signed-off-by: Uwe Kleine-König <uwe-rXY34ruvC2xidJT2blvkqNi2O/JbrIOy@public.gmane.org>
-> ---
-> Hello,
-> 
-> the next logical step would be to go through all in-tree dts files and
-> substitute the old properties by the new ones. I can do this as soon as
-> the idea is discussed and considered to be good.
-> 
-> Maybe the same idea can be applied to the cpp definitions GPIOD_OUT_LOW
-> and GPIOD_OUT_HIGH.
-> 
-> And btw I wondered about the binding that defines what should happen in
-> this case:
-> 
-> 	{
-> 		gpio-hog;
-> 		gpios = <...>;
-> 		output-high;
-> 		output-low;
-> 	}
-> 
-> I would have defined as undefined instead of inactive.
-> 
-> Best regards
-> Uwe
-> 
->  Documentation/devicetree/bindings/gpio/gpio.txt | 10 ++++++----
->  drivers/gpio/gpiolib-of.c                       |  4 ++++
->  2 files changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio.txt b/Documentation/devicetree/bindings/gpio/gpio.txt
-> index 68d28f62a6f4..4d29e0b33435 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -196,10 +196,12 @@ This means that when multiple properties are present they will be searched
->  in the order presented below and the first match is taken as the intended
->  configuration.
->  - input:      A property specifying to set the GPIO direction as input.
-> -- output-low  A property specifying to set the GPIO direction as output with
-> -	      the value low.
-> -- output-high A property specifying to set the GPIO direction as output with
-> -	      the value high.
-> +- output-inactive: A property specifying to set the GPIO direction as output
-> +	      using the inactive level as value.
-> +- output-active: A property specifying to set the GPIO direction as output
-> +	      using the active level as value.
-> +- output-low  A deprecated alias for "output-inactive".
-> +- output-high A deprecated alias for "output-active".
+> Darren?
 
-The question is was this really what was expected. I guess based on the 
-code it was. I would have expected these gave low or high voltage 
-levels. Seems like Linuxisms defining the binding.
+An ACK or equivalent from Linus W would be good to have too ...
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Rafael
