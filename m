@@ -1,71 +1,31 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual
- GPIO device
-Date: Fri, 09 Jun 2017 11:22:32 +0300
-Message-ID: <1496996552.22624.60.camel@linux.intel.com>
-References: <20170602151507.22391-1-hdegoede@redhat.com>
-         <20170602151507.22391-2-hdegoede@redhat.com>
-         <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
-         <20170608154541.GH32509@fury>
-         <d41ff55b-e28f-85bf-d088-392e363fb41f@redhat.com>
-         <CAJZ5v0jw3Rzjkb3J2_XE7TPBjT+7FUW90B7kg15z6_WpdNGjzA@mail.gmail.com>
-         <CAHp75Vc-Vz-QRAkrq2z3B9MaAPFEVX06ePAJuxjwqcLULjRbFw@mail.gmail.com>
-         <CAJZ5v0guq1zRwU8ETe5+n6QSj+ytg_HewnrP7h2TsJFQNE9gxg@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5 03/11] gpio-exar/8250-exar: Fix passing in of parent
+ PCI device
+Date: Fri, 9 Jun 2017 10:29:11 +0200
+Message-ID: <20170609082911.GA29675@kroah.com>
+References: <cover.1496388533.git.jan.kiszka@siemens.com>
+ <63100617e55d78ab881baaa6baf44e8d74d0e816.1496388533.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0guq1zRwU8ETe5+n6QSj+ytg_HewnrP7h2TsJFQNE9gxg@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <63100617e55d78ab881baaa6baf44e8d74d0e816.1496388533.git.jan.kiszka@siemens.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, 2017-06-09 at 02:30 +0200, Rafael J. Wysocki wrote:
-> On Thu, Jun 8, 2017 at 7:40 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Thu, Jun 8, 2017 at 8:15 PM, Rafael J. Wysocki <rafael@kernel.org
-> > > wrote:
-> > > On Thu, Jun 8, 2017 at 6:45 PM, Hans de Goede <hdegoede@redhat.com
-> > > > wrote:
-> > > > On 06/08/2017 05:45 PM, Darren Hart wrote:
-> > > > > On Wed, Jun 07, 2017 at 05:53:38PM +0300, Andy Shevchenko
-> > > > > wrote:
-> > > > > > On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redh
-> > > > > > at.com>
-> > > > > > wrote:
-> > > > > Will you be taking this through fixes Andy? For a 4.12-rc*
-> > > > > target per
-> > > > > Hans'
-> > > > > response to the cover letter?
-> > > > Note that Rafael is planning to drop (revert) the commit which
-> > > > makes
-> > > > it (extra) desirable for this driver to get into 4.12, so we
-> > > > should
-> > > > perhaps reconsider that. I'm fine either way, but the primary
-> > > > reason
-> > > > to push this as a fix for 4.12 is no longer valid AFAICT.
-> > > 
-> > > Maybe I will just queue it up along with this series:
-> > > http://marc.info/?l=linux-kernel&m=149688087904433&w=2
-> > > if Andy and Darren agree?
-> > 
-> > Looks like it has ties to your series, so, I see no obstacles to go
-> > via PM tree.
+On Fri, Jun 02, 2017 at 09:28:46AM +0200, Jan Kiszka wrote:
+> This fixes reloading of the GPIO driver for the same platform device
+> instance as created by the exar UART driver: First of all, the driver
+> sets drvdata to its own value during probing and does not restore the
+> original value on exit. But this won't help anyway as the core clears
+> drvdata after the driver left.
 > 
-> OK, thanks!
-
-I removed it from our testing branch, feel free to apply any time.
-
-> > Darren?
+> Set the platform device parent instead.
 > 
-> An ACK or equivalent from Linus W would be good to have too ...
-> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-I was waiting for it about week and decided to proceed w.o. one.
-Linus is overloaded by something, though he appears from time to time in
-mailing lists.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
