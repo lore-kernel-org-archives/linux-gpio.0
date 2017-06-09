@@ -1,78 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Right amount of info in the DT
-Date: Fri, 9 Jun 2017 10:14:52 +0200
-Message-ID: <CACRpkda-ZMMR5WbgVF-BXx1HiYY8VrkLN1QC64fvY4xS4zNUJA@mail.gmail.com>
-References: <29e00f75-9f30-8a6f-c2da-43a59cc1f134@sigmadesigns.com>
- <CACRpkdZ_QmZ=Sjub8DPfHkCkU5m=PYxfWgVPzBCFbYvj-BH4HQ@mail.gmail.com>
- <815d2f8e-2e85-31d7-4f69-b89b7be79d9e@sigmadesigns.com> <CACRpkdY2Q1tcX40C8JLfa110pyMhzpxmJj41RqTt+MOwcoFxyw@mail.gmail.com>
- <d8d9f35c-a901-dc77-646e-ea09836ee9cf@sigmadesigns.com> <CACRpkdaZWh24SSCSeaM3NeLkiLSkyTYzDVkQmzj33=6m4qMraw@mail.gmail.com>
- <0409ece2-dce3-d77f-f8e5-50fe96aaea1a@sigmadesigns.com> <CACRpkdbB9kUaRbm-=1c_kzZ9p2ghh==HNb-8vkGkF3Zrx0rr_Q@mail.gmail.com>
- <42ae4b79-9917-3f9d-8962-d09fbe8c9b1c@sigmadesigns.com> <CACRpkdZg--owpSdpyGUzHKNDS+Wk9juvobGiCNt4vsMEytNPaQ@mail.gmail.com>
- <526a19bc-932a-3f84-eaf7-03c0b67bae2f@sigmadesigns.com> <CACRpkdY8Lfum4ahKrmvbtNDn9JZeZ1xi0eAsXdF9-8h4+VKaRA@mail.gmail.com>
- <64acfa45-b9ac-450a-96e5-a28c96790ff3@sigmadesigns.com> <CACRpkdaKHf+OZJCv-nCuihakv9Vcg=rN-NwGwk4N+FeEWDm9mg@mail.gmail.com>
- <d6ac5fea-5324-7321-744f-6b248ac7320c@sigmadesigns.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v6] platform/x86: Add driver for ACPI INT0002 Virtual
+ GPIO device
+Date: Fri, 09 Jun 2017 11:22:32 +0300
+Message-ID: <1496996552.22624.60.camel@linux.intel.com>
+References: <20170602151507.22391-1-hdegoede@redhat.com>
+         <20170602151507.22391-2-hdegoede@redhat.com>
+         <CAHp75Vcdznj2mB+msNvysrvRi3L-0j4c6vthOS8oAv1S9iYWKA@mail.gmail.com>
+         <20170608154541.GH32509@fury>
+         <d41ff55b-e28f-85bf-d088-392e363fb41f@redhat.com>
+         <CAJZ5v0jw3Rzjkb3J2_XE7TPBjT+7FUW90B7kg15z6_WpdNGjzA@mail.gmail.com>
+         <CAHp75Vc-Vz-QRAkrq2z3B9MaAPFEVX06ePAJuxjwqcLULjRbFw@mail.gmail.com>
+         <CAJZ5v0guq1zRwU8ETe5+n6QSj+ytg_HewnrP7h2TsJFQNE9gxg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:33496 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751639AbdFIIOy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 04:14:54 -0400
-Received: by mail-io0-f177.google.com with SMTP id t87so10373691ioe.0
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 01:14:53 -0700 (PDT)
-In-Reply-To: <d6ac5fea-5324-7321-744f-6b248ac7320c@sigmadesigns.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAJZ5v0guq1zRwU8ETe5+n6QSj+ytg_HewnrP7h2TsJFQNE9gxg@mail.gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Darren Hart <dvhart@infradead.org>, "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, joeyli <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Yves Lefloch <YvesMarie_Lefloch@sigmadesigns.com>
-Cc: Thibaud Cornic <thibaud_cornic@sigmadesigns.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Mason <slash.tmp@free.fr>
 
-On Wed, May 31, 2017 at 6:36 PM, Yves Lefloch
-<YvesMarie_Lefloch@sigmadesigns.com> wrote:
+On Fri, 2017-06-09 at 02:30 +0200, Rafael J. Wysocki wrote:
+> On Thu, Jun 8, 2017 at 7:40 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Thu, Jun 8, 2017 at 8:15 PM, Rafael J. Wysocki <rafael@kernel.org
+> > > wrote:
+> > > On Thu, Jun 8, 2017 at 6:45 PM, Hans de Goede <hdegoede@redhat.com
+> > > > wrote:
+> > > > On 06/08/2017 05:45 PM, Darren Hart wrote:
+> > > > > On Wed, Jun 07, 2017 at 05:53:38PM +0300, Andy Shevchenko
+> > > > > wrote:
+> > > > > > On Fri, Jun 2, 2017 at 6:15 PM, Hans de Goede <hdegoede@redh
+> > > > > > at.com>
+> > > > > > wrote:
+> > > > > Will you be taking this through fixes Andy? For a 4.12-rc*
+> > > > > target per
+> > > > > Hans'
+> > > > > response to the cover letter?
+> > > > Note that Rafael is planning to drop (revert) the commit which
+> > > > makes
+> > > > it (extra) desirable for this driver to get into 4.12, so we
+> > > > should
+> > > > perhaps reconsider that. I'm fine either way, but the primary
+> > > > reason
+> > > > to push this as a fix for 4.12 is no longer valid AFAICT.
+> > > 
+> > > Maybe I will just queue it up along with this series:
+> > > http://marc.info/?l=linux-kernel&m=149688087904433&w=2
+> > > if Andy and Darren agree?
+> > 
+> > Looks like it has ties to your series, so, I see no obstacles to go
+> > via PM tree.
+> 
+> OK, thanks!
 
-> I tried to carry on and add the other IPs' pins, and I've got a question
-> regarding pin requesting.
-> See, adding the smartcard's pins was easy because we don't have a driver for
-> it yet, so the pins are just straightforward GPIOs, which the user-space can
-> request using /sys/class/gpio/export.
+I removed it from our testing branch, feel free to apply any time.
 
-Please do not use sysfs for userspace tests, familiarize yourself with
-tools/gpio in the kernel and use these for testing using the ioctl()s.
+> > Darren?
+> 
+> An ACK or equivalent from Linus W would be good to have too ...
+> 
 
-> But that's not the case for the ethernet device, whose pins are already in
-> use, although not requested explicitly by its driver
-> (drivers/net/ethernet/aurora/nb8800.c). Which means user-space can also
-> request/set them within the sysfs, and that is wrong.
+I was waiting for it about week and decided to proceed w.o. one.
+Linus is overloaded by something, though he appears from time to time in
+mailing lists.
 
-It is common that a device allows simultaneous use of a pin for
-GPIO and a certain device. (E.g. so that GPIO can "spy" on the pin
-or similar.)
-
-If on a certain system, this is not allowed, one shall set
-.strict = true on the struct pinmux_ops, see
-include/linux/pinctrl/pinmux.h
-
-> - Is there a mechanism in the device tree to automatically request some pins
-> for a driver once it gets loaded? I have looked at the `stateN_nodeM' thing
-> in the documentation, but that doesn't seem to do the job without changes in
-> the ethernet driver's code.
-
-Yes those are called pin control hogs. Then the pins get associated with the
-pin controller itself. Try first to associate the pins with the device actually
-using them if possible.
-
-> - Should the pins be declared at all if we know they are not going to be used
-> for anything else than, for instance, ethernet? What about some removable
-> device then, for instance UART as Thibaud pointed out previously?
-
-I guess it depends on how much control of things you need in your system.
-
-Also you might not need it now, but later on it turns out that in order to
-properly deal with things like suspend/resume, you all of a sudden need
-to switch pin control states when going to sleep and then it is nice if
-the driver can handle these pins.
-
-When in doubt, implement a driver for everything you have hardware
-registers for, anything that is software controlled, I guess.
-
-Yours,
-Linus Walleij
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
