@@ -1,41 +1,30 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] gpio: mockup: use devm_kcalloc() where applicable
-Date: Fri, 9 Jun 2017 13:29:49 +0200
-Message-ID: <CAMRc=Md4Wne5zBzC25YHyESC91SRiQvUX-5kVhBtMy5dT9VY_Q@mail.gmail.com>
-References: <1496317623-24026-1-git-send-email-brgl@bgdev.pl>
- <1496317623-24026-2-git-send-email-brgl@bgdev.pl> <CACRpkdZbvhqd0LETS3CJ_V5D_aqsmezC-ehhgyXcsfHU9J_2hQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 12/12] gpio: dt-bindings: add bindings for Rockchip
+ RK805 PMIC
+Date: Fri, 9 Jun 2017 13:30:22 +0200
+Message-ID: <CACRpkdY1-yX0sA0ZQJnRRpZKqq-WAr0MySEN9PYMpMJyLeRfzA@mail.gmail.com>
+References: <1496905959-29202-1-git-send-email-chenjh@rock-chips.com> <1496907193-29294-1-git-send-email-chenjh@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33836 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751554AbdFIL3u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:29:50 -0400
-Received: by mail-oi0-f46.google.com with SMTP id o65so29535599oif.1
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:29:50 -0700 (PDT)
-In-Reply-To: <CACRpkdZbvhqd0LETS3CJ_V5D_aqsmezC-ehhgyXcsfHU9J_2hQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1496907193-29294-1-git-send-email-chenjh@rock-chips.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Jianhong Chen <chenjh@rock-chips.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tao Huang <huangtao@rock-chips.com>, tony.xie@rock-chips.com, zhangqing@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, w.egorov@phytec.de, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2017-06-09 10:06 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Thu, Jun 1, 2017 at 1:47 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
->> When allocating a zeroed array of objects use devm_kcalloc() instead
->> of manually calculating the required size and using devm_kzalloc().
->>
->> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->
-> This does not apply on the GPIO "devel" branch in my tree,
-> probably because of other patches from you :)
->
-> Could you rebase and resend?
->
-> Yours,
-> Linus Walleij
+On Thu, Jun 8, 2017 at 9:33 AM, Jianhong Chen <chenjh@rock-chips.com> wrote:
 
-I thought you would apply the previous patches first, but sure, I'll resend.
+> From: chenjh <chenjh@rock-chips.com>
+>
+> Add device tree bindings documentation for Rockchip's RK805 PMIC
+>
+> Signed-off-by: chenjh <chenjh@rock-chips.com>
 
-Thanks,
-Bartosz
+This looks good.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Just waiting for the DT maintainer to look at this.
+
+Yours,
+Linus Walleij
