@@ -1,43 +1,61 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 0/8] gpio: mockup: updates for 4.13
-Date: Fri,  9 Jun 2017 13:41:24 +0200
-Message-ID: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:36176 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751524AbdFILll (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:41:41 -0400
-Received: by mail-wr0-f176.google.com with SMTP id v111so30018930wrc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:41:41 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH v3 2/8] gpio: mockup: tweak gpio_mockup_event_write()
+Date: Fri,  9 Jun 2017 13:41:26 +0200
+Message-ID: <1497008492-14907-3-git-send-email-brgl@bgdev.pl>
+References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+List-Id: linux-gpio@vger.kernel.org
 
-v1 -> v2:
-- omit applied patches
-- use kstrtoint_from_user() for debugfs input sanitization
-- add a patch improving the code in gpio_mockup_event_write()
-- bail out from gpio_mockup_event_write() on invalid input even when
-  nobody is listening for events
+Invert the logic of the irq_enabled check and only access the private
+data after the input is sanitized.
 
-v2 -> v3:
-- added the patch replacing devm_kzalloc() with devm_kcalloc() where
-  applicable
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/gpio/gpio-mockup.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-Bartosz Golaszewski (8):
-  gpio: mockup: improve the debugfs input sanitization
-  gpio: mockup: tweak gpio_mockup_event_write()
-  gpio: mockup: refuse to accept an odd number of GPIO ranges
-  gpio: mockup: improve readability
-  gpio: mockup: don't return magic numbers from probe()
-  gpio: mockup: improve the error message
-  gpio: mockup: add myself as author
-  gpio: mockup: use devm_kcalloc() where applicable
-
- drivers/gpio/gpio-mockup.c | 67 ++++++++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 32 deletions(-)
-
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index da76267..d78e8e0 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -210,24 +210,23 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 	struct gpio_chip *gc;
+ 	int rv, val;
+ 
+-	sfile = file->private_data;
+-	priv = sfile->private;
+-	desc = priv->desc;
+-	chip = priv->chip;
+-	gc = &chip->gc;
+-
+ 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
+ 	if (rv)
+ 		return rv;
+ 	if (val != 0 && val != 1)
+ 		return -EINVAL;
+ 
+-	if (!chip->lines[priv->offset].irq_enabled)
+-		return size;
++	sfile = file->private_data;
++	priv = sfile->private;
++	desc = priv->desc;
++	chip = priv->chip;
++	gc = &chip->gc;
+ 
+-	gpiod_set_value_cansleep(desc, val);
+-	priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
+-	irq_work_queue(&priv->chip->irq_ctx.work);
++	if (chip->lines[priv->offset].irq_enabled) {
++		gpiod_set_value_cansleep(desc, val);
++		priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
++		irq_work_queue(&priv->chip->irq_ctx.work);
++	}
+ 
+ 	return size;
+ }
 -- 
 2.9.3
-
