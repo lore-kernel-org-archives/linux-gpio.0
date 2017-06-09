@@ -1,69 +1,171 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 1/8] gpio: mockup: improve the debugfs input sanitization
-Date: Fri,  9 Jun 2017 13:41:25 +0200
-Message-ID: <1497008492-14907-2-git-send-email-brgl@bgdev.pl>
-References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1497008492-14907-1-git-send-email-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add EtherAVB pins, groups and function
+Date: Fri,  9 Jun 2017 13:51:23 +0200
+Message-ID: <1497009083-4369-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41036 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbdFILv3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:51:29 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-We're currently only checking the first character of the input to the
-debugfs event files, so a string like '0sdfdsf' is valid and indicates
-a falling edge event.
+Add pins, groups, and a function for EtherAVB on R-Car H3 ES2.0.
 
-Be more strict and only allow '0', '1', '0\n' & '1\n'.
+Extracted from a big patch in the BSP by Takeshi Kihara.
 
-While we're at it: move the sanitization code before the irq_enabled
-check so that we indicate an error on invalid input even if nobody is
-waiting for events.
-
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpio/gpio-mockup.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+To be queued in sh-pfc-for-v4.13.
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index ba8d62a..da76267 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -208,8 +208,7 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	struct seq_file *sfile;
- 	struct gpio_desc *desc;
- 	struct gpio_chip *gc;
--	int val;
--	char buf;
-+	int rv, val;
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 111 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index c31881ba4f8de9c7..f220bf124ca17f96 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1576,6 +1576,93 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('T'), 30, ASEBRK, CFG_FLAGS),
+ };
  
- 	sfile = file->private_data;
- 	priv = sfile->private;
-@@ -217,19 +216,15 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	chip = priv->chip;
- 	gc = &chip->gc;
- 
-+	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
-+	if (rv)
-+		return rv;
-+	if (val != 0 && val != 1)
-+		return -EINVAL;
++/* - EtherAVB --------------------------------------------------------------- */
++static const unsigned int avb_link_pins[] = {
++	/* AVB_LINK */
++	RCAR_GP_PIN(2, 12),
++};
++static const unsigned int avb_link_mux[] = {
++	AVB_LINK_MARK,
++};
++static const unsigned int avb_magic_pins[] = {
++	/* AVB_MAGIC_ */
++	RCAR_GP_PIN(2, 10),
++};
++static const unsigned int avb_magic_mux[] = {
++	AVB_MAGIC_MARK,
++};
++static const unsigned int avb_phy_int_pins[] = {
++	/* AVB_PHY_INT */
++	RCAR_GP_PIN(2, 11),
++};
++static const unsigned int avb_phy_int_mux[] = {
++	AVB_PHY_INT_MARK,
++};
++static const unsigned int avb_mdc_pins[] = {
++	/* AVB_MDC, AVB_MDIO */
++	RCAR_GP_PIN(2, 9), PIN_NUMBER('A', 9),
++};
++static const unsigned int avb_mdc_mux[] = {
++	AVB_MDC_MARK, AVB_MDIO_MARK,
++};
++static const unsigned int avb_mii_pins[] = {
++	/*
++	 * AVB_TX_CTL, AVB_TXC, AVB_TD0,
++	 * AVB_TD1, AVB_TD2, AVB_TD3,
++	 * AVB_RX_CTL, AVB_RXC, AVB_RD0,
++	 * AVB_RD1, AVB_RD2, AVB_RD3,
++	 * AVB_TXCREFCLK
++	 */
++	PIN_NUMBER('A', 8), PIN_NUMBER('A', 19), PIN_NUMBER('A', 18),
++	PIN_NUMBER('B', 18), PIN_NUMBER('A', 17), PIN_NUMBER('B', 17),
++	PIN_NUMBER('A', 16), PIN_NUMBER('B', 19), PIN_NUMBER('A', 13),
++	PIN_NUMBER('B', 13), PIN_NUMBER('A', 14), PIN_NUMBER('B', 14),
++	PIN_NUMBER('A', 12),
 +
- 	if (!chip->lines[priv->offset].irq_enabled)
- 		return size;
++};
++static const unsigned int avb_mii_mux[] = {
++	AVB_TX_CTL_MARK, AVB_TXC_MARK, AVB_TD0_MARK,
++	AVB_TD1_MARK, AVB_TD2_MARK, AVB_TD3_MARK,
++	AVB_RX_CTL_MARK, AVB_RXC_MARK, AVB_RD0_MARK,
++	AVB_RD1_MARK, AVB_RD2_MARK, AVB_RD3_MARK,
++	AVB_TXCREFCLK_MARK,
++};
++static const unsigned int avb_avtp_pps_pins[] = {
++	/* AVB_AVTP_PPS */
++	RCAR_GP_PIN(2, 6),
++};
++static const unsigned int avb_avtp_pps_mux[] = {
++	AVB_AVTP_PPS_MARK,
++};
++static const unsigned int avb_avtp_match_a_pins[] = {
++	/* AVB_AVTP_MATCH_A */
++	RCAR_GP_PIN(2, 13),
++};
++static const unsigned int avb_avtp_match_a_mux[] = {
++	AVB_AVTP_MATCH_A_MARK,
++};
++static const unsigned int avb_avtp_capture_a_pins[] = {
++	/* AVB_AVTP_CAPTURE_A */
++	RCAR_GP_PIN(2, 14),
++};
++static const unsigned int avb_avtp_capture_a_mux[] = {
++	AVB_AVTP_CAPTURE_A_MARK,
++};
++static const unsigned int avb_avtp_match_b_pins[] = {
++	/*  AVB_AVTP_MATCH_B */
++	RCAR_GP_PIN(1, 8),
++};
++static const unsigned int avb_avtp_match_b_mux[] = {
++	AVB_AVTP_MATCH_B_MARK,
++};
++static const unsigned int avb_avtp_capture_b_pins[] = {
++	/* AVB_AVTP_CAPTURE_B */
++	RCAR_GP_PIN(1, 11),
++};
++static const unsigned int avb_avtp_capture_b_mux[] = {
++	AVB_AVTP_CAPTURE_B_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1790,6 +1877,16 @@ static const unsigned int scif_clk_b_mux[] = {
+ };
  
--	if (copy_from_user(&buf, usr_buf, 1))
--		return -EFAULT;
--
--	if (buf == '0')
--		val = 0;
--	else if (buf == '1')
--		val = 1;
--	else
--		return -EINVAL;
--
- 	gpiod_set_value_cansleep(desc, val);
- 	priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
- 	irq_work_queue(&priv->chip->irq_ctx.work);
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(avb_link),
++	SH_PFC_PIN_GROUP(avb_magic),
++	SH_PFC_PIN_GROUP(avb_phy_int),
++	SH_PFC_PIN_GROUP(avb_mdc),
++	SH_PFC_PIN_GROUP(avb_mii),
++	SH_PFC_PIN_GROUP(avb_avtp_pps),
++	SH_PFC_PIN_GROUP(avb_avtp_match_a),
++	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
++	SH_PFC_PIN_GROUP(avb_avtp_match_b),
++	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1821,6 +1918,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scif_clk_b),
+ };
+ 
++static const char * const avb_groups[] = {
++	"avb_link",
++	"avb_magic",
++	"avb_phy_int",
++	"avb_mdc",
++	"avb_mii",
++	"avb_avtp_pps",
++	"avb_avtp_match_a",
++	"avb_avtp_capture_a",
++	"avb_avtp_match_b",
++	"avb_avtp_capture_b",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -1872,6 +1982,7 @@ static const char * const scif_clk_groups[] = {
+ };
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
 -- 
-2.9.3
+2.7.4
+
