@@ -1,40 +1,84 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
- region driver
-Date: Fri, 9 Jun 2017 22:20:59 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BECD0@FMSMSX114.amr.corp.intel.com>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-4-git-send-email-rajmohan.mani@intel.com>
- <CAHp75VcvV_AbLJCq9Rm_8yab3nViPm6ikxxme4oyw9vm4Kz7Gg@mail.gmail.com>
- <831b2236-29d9-ecaf-e7ca-74e6d1686080@redhat.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v6 2/9] irqchip: add Amlogic Meson GPIO irqchip driver
+Date: Sat, 10 Jun 2017 00:30:14 +0200
+Message-ID: <702e4608-8592-41fe-b79c-fef985c49be7@gmail.com>
+References: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
+ <89d02a38-7386-fcdc-4dce-ea7e531c90b4@gmail.com>
+ <1496999266.3552.61.camel@baylibre.com> <m2vao46ewu.fsf@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <831b2236-29d9-ecaf-e7ca-74e6d1686080@redhat.com>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:33610 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751578AbdFIWa2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 18:30:28 -0400
+In-Reply-To: <m2vao46ewu.fsf@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-SGkgSGFucywNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBIYW5zIGRl
-IEdvZWRlIFttYWlsdG86aGRlZ29lZGVAcmVkaGF0LmNvbV0NCj4gU2VudDogVHVlc2RheSwgSnVu
-ZSAwNiwgMjAxNyA4OjIyIEFNDQo+IFRvOiBBbmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5r
-b0BnbWFpbC5jb20+OyBNYW5pLCBSYWptb2hhbg0KPiA8cmFqbW9oYW4ubWFuaUBpbnRlbC5jb20+
-DQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1ncGlvQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgtDQo+IGFjcGlAdmdlci5rZXJuZWwub3JnOyBMZWUgSm9uZXMgPGxlZS5q
-b25lc0BsaW5hcm8ub3JnPjsgTGludXMgV2FsbGVpag0KPiA8bGludXMud2FsbGVpakBsaW5hcm8u
-b3JnPjsgQWxleGFuZHJlIENvdXJib3QgPGdudXJvdUBnbWFpbC5jb20+OyBSYWZhZWwgSi4NCj4g
-V3lzb2NraSA8cmp3QHJqd3lzb2NraS5uZXQ+OyBMZW4gQnJvd24gPGxlbmJAa2VybmVsLm9yZz4N
-Cj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MSAzLzNdIEFDUEkgLyBQTUlDOiBBZGQgVEkgUE1JQyBU
-UFM2ODQ3MCBvcGVyYXRpb24NCj4gcmVnaW9uIGRyaXZlcg0KPiANCj4gSGksDQo+IA0KPiBPbiAw
-Ni8wNi8yMDE3IDA0OjIzIFBNLCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+ID4gK0NjIEhhbnMg
-KHRoYXQncyB3aHkgZGlkbid0IGRlbGV0ZSBhbnl0aGluZyBmcm9tIG9yaWdpbmFsIG1haWwsIGp1
-c3QNCj4gPiBhZGRpbmcgbXkgY29tbWVudHMpLg0KPiA+DQo+ID4gSGFucywgaWYgeW91IGhhdmUg
-ZmV3IG1pbnV0ZXMgaXQgd291bGQgYmUgYXBwcmVjaWF0ZWQgdG8gZ2xhbmNlIG9uIHRoZQ0KPiA+
-IGJlbG93IGZvciBzb21lIGlzc3VlcyBpZiBhbnkgc2luY2UgeW91IGRpZCBwYXNzIHF1aXRlIGEg
-Z29vZCBxdWVzdA0KPiA+IHdpdGggb3RoZXIgUE1JQyBkcml2ZXJzLg0KPiANCj4gSSd2ZSBnb25l
-IG92ZXIgdGhpcyBkcml2ZXIsIG5vdGhpbmcgc3RhbmRzIG91dCBpbiBhIGJhZCB3YXkgdG8gbWUs
-IElPVyB0aGlzDQo+IHNlZW1zIGxpa2UgYSBub3JtYWwgUE1JQyBPcFJlZ2lvbiBoYW5kbGVyIHRv
-IG1lLg0KPiANCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3cyBhbmQgdGltZS4NCg==
+Am 09.06.2017 um 23:15 schrieb Kevin Hilman:
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+> 
+>> On Thu, 2017-06-08 at 21:38 +0200, Heiner Kallweit wrote:
+>>> Add a driver supporting the GPIO interrupt controller on certain
+>>> Amlogic meson SoC's.
+>>>
+>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> 
+> [...]
+> 
+>>> +static unsigned int meson_irq_startup(struct irq_data *data)
+>>> +{
+>>> +	irq_chip_unmask_parent(data);
+>>> +	/*
+>>> +	 * An extra bit was added to allow having the same gpio hwirq twice
+>>> +	 * for handling IRQ_TYPE_EDGE_BOTH. Remove this bit to get the
+>>> +	 * gpio hwirq.
+>>> +	 */
+>>> +	meson_irq_set_hwirq(data, data->hwirq >> 1);
+>>
+>> Please keep in mind that any device can use this controller as irq parent.
+>> It has to make sense, even when not serving the gpio driver.
+>>
+>> This hack means that, in DT, we'd have to multiply by 2 the values given under
+>> section "22.3 GPIO interrupts" of the datasheet. This is an example Linux
+>> specific stuff in DT.
+>> It also means that the controller declares a lot more lines that it really has
+>> ... 
+>>
+>> This is all to accommodate your hack around IRQ_TYPE_BOTH and creating the
+>> mapping from the irq_set_type callback of the GPIO driver, which is still think
+>> should be dropped at this point.
+> 
+> +1
+> 
+> Please drop the hack for IRQ_TYPE_BOTH so we can reach agreement on the
+> basic design and functionality.  The gymnastics required to support this
+> hack (due to broken hardware) are getting in the way of getting basic
+> functionality merged.
+> 
+I haven't heard any feedback on the other proposal yet:
+Always reserve two parent irq's in the request_resources callback,
+then set_type is easy. How about this one?
+
+Having max. 4 gpio irq's should be a fair price for a cleaner design.
+
+Rgds, Heiner
+
+> Also, we already know from previous discussions between Jerome and the
+> IRQ maintainers that hacks for IRQ_TYPE_BOTH like this have been very
+> thoroughly rejected.  So while the IRQ maintainers haven't chimed in on
+> this series, we have a very good idea what they will say when they do.
+> 
+> So please, pretty please, let's avoid giving the IRQ maintainers a fun
+> reason to NAK, and drop the IRQ_TYPE_BOTH stuff until we have an agreed
+> upon way to support the hardware that actually works.
+> 
+> Thanks,
+> 
+> Kevin
+> 
+
