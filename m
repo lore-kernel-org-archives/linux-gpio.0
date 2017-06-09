@@ -1,78 +1,275 @@
-From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v6 2/9] irqchip: add Amlogic Meson GPIO irqchip driver
-Date: Fri, 09 Jun 2017 14:15:45 -0700
-Message-ID: <m2vao46ewu.fsf@baylibre.com>
-References: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
-        <89d02a38-7386-fcdc-4dce-ea7e531c90b4@gmail.com>
-        <1496999266.3552.61.camel@baylibre.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v1 1/3] mfd: Add new mfd device TPS68470
+Date: Fri, 9 Jun 2017 22:04:21 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BEC8F@FMSMSX114.amr.corp.intel.com>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-2-git-send-email-rajmohan.mani@intel.com>
+ <20170606124848.GA10936@kuha.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1496999266.3552.61.camel-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> (Jerome Brunet's message
-        of "Fri, 09 Jun 2017 11:07:46 +0200")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "thierry.reding@gmail.com" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170606124848.GA10936@kuha.fi.intel.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Alan Cox <alan@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> writes:
+Hi Heikki,
 
-> On Thu, 2017-06-08 at 21:38 +0200, Heiner Kallweit wrote:
->> Add a driver supporting the GPIO interrupt controller on certain
->> Amlogic meson SoC's.
->>=20
->> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Thanks for the reviews and patience.
 
-[...]
+> -----Original Message-----
+> From: Heikki Krogerus [mailto:heikki.krogerus@linux.intel.com]
+> Sent: Tuesday, June 06, 2017 5:49 AM
+> To: Mani, Rajmohan <rajmohan.mani@intel.com>
+> Cc: linux-kernel@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
+> acpi@vger.kernel.org; Lee Jones <lee.jones@linaro.org>; Linus Walleij
+> <linus.walleij@linaro.org>; Alexandre Courbot <gnurou@gmail.com>; Rafael J.
+> Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>
+> Subject: Re: [PATCH v1 1/3] mfd: Add new mfd device TPS68470
+> 
+> Hi Rajmohan,
+> 
+> On Tue, Jun 06, 2017 at 04:55:16AM -0700, Rajmohan Mani wrote:
+> > +/*
+> > + * tps68470_reg_read: Read a single tps68470 register.
+> > + *
+> > + * @tps: Device to read from.
+> > + * @reg: Register to read.
+> > + * @val: Contains the value
+> > + */
+> > +int tps68470_reg_read(struct tps68470 *tps, unsigned int reg,
+> > +			unsigned int *val)
+> > +{
+> > +	int ret;
+> > +
+> > +	mutex_lock(&tps->lock);
+> > +	ret = regmap_read(tps->regmap, reg, val);
+> > +	mutex_unlock(&tps->lock);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(tps68470_reg_read);
+> > +
+> > +/*
+> > + * tps68470_reg_write: Write a single tps68470 register.
+> > + *
+> > + * @tps68470: Device to write to.
+> > + * @reg: Register to write to.
+> > + * @val: Value to write.
+> > + */
+> > +int tps68470_reg_write(struct tps68470 *tps, unsigned int reg,
+> > +			unsigned int val)
+> > +{
+> > +	int ret;
+> > +
+> > +	mutex_lock(&tps->lock);
+> > +	ret = regmap_write(tps->regmap, reg, val);
+> > +	mutex_unlock(&tps->lock);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(tps68470_reg_write);
+> > +
+> > +/*
+> > + * tps68470_update_bits: Modify bits w.r.t mask and val.
+> > + *
+> > + * @tps68470: Device to write to.
+> > + * @reg: Register to read-write to.
+> > + * @mask: Mask.
+> > + * @val: Value to write.
+> > + */
+> > +int tps68470_update_bits(struct tps68470 *tps, unsigned int reg,
+> > +				unsigned int mask, unsigned int val) {
+> > +	int ret;
+> > +
+> > +	mutex_lock(&tps->lock);
+> > +	ret = regmap_update_bits(tps->regmap, reg, mask, val);
+> > +	mutex_unlock(&tps->lock);
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(tps68470_update_bits);
+> 
+> I'm not sure you need those above wrappers at all, regmap is handling locking in
+> any case.
+> 
 
->> +static unsigned int meson_irq_startup(struct irq_data *data)
->> +{
->> +	irq_chip_unmask_parent(data);
->> +	/*
->> +	=C2=A0* An extra bit was added to allow having the same gpio hwirq twi=
-ce
->> +	=C2=A0* for handling IRQ_TYPE_EDGE_BOTH. Remove this bit to get the
->> +	=C2=A0* gpio hwirq.
->> +	=C2=A0*/
->> +	meson_irq_set_hwirq(data, data->hwirq >> 1);
->
-> Please keep in mind that any device can use this controller as irq parent.
-> It has to make sense, even when not serving the gpio driver.
->
-> This hack means that, in DT, we'd have to multiply by 2 the values given =
-under
-> section "22.3 GPIO interrupts" of the datasheet. This is an example Linux
-> specific stuff in DT.
-> It also means that the controller declares a lot more lines that it reall=
-y has
-> ...=20
->
-> This is all to accommodate your hack around IRQ_TYPE_BOTH and creating the
-> mapping from the irq_set_type callback of the GPIO driver, which is still=
- think
-> should be dropped at this point.
+I had this following question from Alan Cox on the original code without these wrappers.
 
-+1
+"What is the model for insuring that no interrupt or thread of a driver is not in parallel issuing a tps68470_ operation when the device goes away (eg if I down the i2c controller) ?"
 
-Please drop the hack for IRQ_TYPE_BOTH so we can reach agreement on the
-basic design and functionality.  The gymnastics required to support this
-hack (due to broken hardware) are getting in the way of getting basic
-functionality merged.
+To address the above concerns, I got extra cautious and implemented locks around the regmap_* calls.
+Now, I have been asked from more than one reviewer about the necessity of the same.
+With the use of devm_* calls, tps68470_remove() goes away and leaves the driver just with regmap_* calls.
+Unless I hear from Alan or other reviewers otherwise, I will drop these wrappers around regmap_* calls.
 
-Also, we already know from previous discussions between Jerome and the
-IRQ maintainers that hacks for IRQ_TYPE_BOTH like this have been very
-thoroughly rejected.  So while the IRQ maintainers haven't chimed in on
-this series, we have a very good idea what they will say when they do.
+> > +static const struct regmap_config tps68470_regmap_config = {
+> > +	.reg_bits = 8,
+> > +	.val_bits = 8,
+> > +	.max_register = TPS68470_REG_MAX,
+> > +};
+> > +
+> > +static int tps68470_chip_init(struct tps68470 *tps) {
+> > +	unsigned int version;
+> > +	int ret;
+> > +
+> > +	ret = tps68470_reg_read(tps, TPS68470_REG_REVID, &version);
+> > +	if (ret < 0) {
+> > +		dev_err(tps->dev,
+> > +			"Failed to read revision register: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	dev_info(tps->dev, "TPS68470 REVID: 0x%x\n", version);
+> > +
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_RESET, 0xff);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	/* FIXME: configure these dynamically */
+> > +	/* Enable Daisy Chain LDO and configure relevant GPIOs as output */
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_S_I2C_CTL, 2);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_GPCTL4A, 2);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_GPCTL5A, 2);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_GPCTL6A, 2);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	/*
+> > +	 * When SDA and SCL are routed to GPIO1 and GPIO2, the mode
+> > +	 * for these GPIOs must be configured using their respective
+> > +	 * GPCTLxA registers as inputs with no pull-ups.
+> > +	 */
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_GPCTL1A, 0);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = tps68470_reg_write(tps, TPS68470_REG_GPCTL2A, 0);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	/* Enable daisy chain */
+> > +	ret = tps68470_update_bits(tps, TPS68470_REG_S_I2C_CTL, 1, 1);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	usleep_range(TPS68470_DAISY_CHAIN_DELAY_US,
+> > +			TPS68470_DAISY_CHAIN_DELAY_US + 10);
+> > +	return 0;
+> > +}
+> > +
+> > +static int tps68470_probe(struct i2c_client *client) {
+> > +	struct tps68470 *tps;
+> > +	int ret;
+> > +
+> > +	tps = devm_kzalloc(&client->dev, sizeof(*tps), GFP_KERNEL);
+> > +	if (!tps)
+> > +		return -ENOMEM;
+> > +
+> > +	mutex_init(&tps->lock);
+> > +	i2c_set_clientdata(client, tps);
+> > +	tps->dev = &client->dev;
+> > +
+> > +	tps->regmap = devm_regmap_init_i2c(client,
+> &tps68470_regmap_config);
+> > +	if (IS_ERR(tps->regmap)) {
+> > +		dev_err(tps->dev, "devm_regmap_init_i2c Error %d\n", ret);
+> > +		return PTR_ERR(tps->regmap);
+> > +	}
+> > +
+> > +	ret = mfd_add_devices(tps->dev, -1, tps68470s,
+> > +			      ARRAY_SIZE(tps68470s), NULL, 0, NULL);
+> > +	if (ret < 0) {
+> > +		dev_err(tps->dev, "mfd_add_devices failed: %d\n", ret);
+> > +		return ret;
+> > +	}
+> 
+> devm_mfd_add_devices()?
+> 
 
-So please, pretty please, let's avoid giving the IRQ maintainers a fun
-reason to NAK, and drop the IRQ_TYPE_BOTH stuff until we have an agreed
-upon way to support the hardware that actually works.
+Ack
 
-Thanks,
+> > +	ret = tps68470_chip_init(tps);
+> > +	if (ret < 0) {
+> > +		dev_err(tps->dev, "TPS68470 Init Error %d\n", ret);
+> > +		goto fail;
+> > +	}
+> > +
+> > +	return 0;
+> > +fail:
+> > +	mutex_lock(&tps->lock);
+> 
+> Why do you need to lock here?
+> 
 
-Kevin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Same as explained above (to address Alan's comments)
+
+> > +	mfd_remove_devices(tps->dev);
+> > +	mutex_unlock(&tps->lock);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int tps68470_remove(struct i2c_client *client) {
+> > +	struct tps68470 *tps = i2c_get_clientdata(client);
+> > +
+> > +	mutex_lock(&tps->lock);
+> > +	mfd_remove_devices(tps->dev);
+> > +	mutex_unlock(&tps->lock);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct acpi_device_id tps68470_acpi_ids[] = {
+> > +	{"INT3472"},
+> > +	{},
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(acpi, tps68470_acpi_ids);
+> > +
+> > +static struct i2c_driver tps68470_driver = {
+> > +	.driver = {
+> > +		   .name = "tps68470",
+> > +		   .acpi_match_table = ACPI_PTR(tps68470_acpi_ids),
+> > +	},
+> > +	.probe_new = tps68470_probe,
+> > +	.remove = tps68470_remove,
+> > +};
+> 
+> <snip>
+> 
+> > +/**
+> > + * struct tps68470 - tps68470 sub-driver chip access routines
+> > + *
+> > + * Device data may be used to access the TPS68470 chip  */
+> > +
+> > +struct tps68470 {
+> > +	struct device *dev;
+> > +	struct regmap *regmap;
+> > +	/*
+> > +	 * Used to synchronize access to tps68470_ operations
+> > +	 * and addition and removal of mfd devices
+> > +	 */
+> > +	struct mutex lock;
+> 
+> Is this lock really necessary at all? Actually, you probable don't even need this
+> structure at all if you just rely on regmap functions in the drivers.
+> 
+
+Ack
+I am looking into this and will get back with v2.
+
+> 
+> Thanks,
+> 
+> --
+> heikki
