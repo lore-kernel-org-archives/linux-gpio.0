@@ -1,53 +1,157 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [REGRESSION next] gpio-keys broken with commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register access")
-Date: Fri, 09 Jun 2017 12:12:24 +0200
-Message-ID: <87vao5o4fr.fsf@free-electrons.com>
-References: <20170609085038.4af4f038@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] DT: pinctrl: Add binding documentation for
+ Spreadtrum pin controller
+Date: Fri, 9 Jun 2017 13:00:17 +0200
+Message-ID: <CACRpkdbtuPKr=tWGoJC-sg2Oj47rYMpo6fs_Us=Nynew1Wkz=w@mail.gmail.com>
+References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:35448 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751515AbdFIKM0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 06:12:26 -0400
-In-Reply-To: <20170609085038.4af4f038@gmail.com> (Ralph Sennhauser's message
-        of "Fri, 9 Jun 2017 08:50:38 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Baolin Wang <baolin.wang@spreadtrum.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Ralph,
- 
- On ven., juin 09 2017, Ralph Sennhauser <ralph.sennhauser@gmail.com> wrote:
+On Mon, Jun 5, 2017 at 2:11 PM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
 
-> Hi Thomas,
+> This patch adds the binding documentation for Spreadtrum SC9860 pin
+> controller device.
 >
-> Commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register
-> access") in next-20170607 breaks gpio-keys on an armada-385 (Linksys
-> WRT3200ACM), noticed due to missing /dev/input/event0 and the below
-> dmesg output.
->
->   # dmesg -l 0,1,2,3
->   [    2.421130] genirq: Setting trigger mode 3 for irq 49 failed (mvebu_gpio_irq_set_type+0x0/0x168)
->   [    2.429953] gpio-keys gpio-keys: Unable to claim irq 49; error -22
->
->
-> After reverting the offending commit all works again.
+> Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
 
-I found the bug and I've just sent a fix for it (use the v2 as the first
-version was wrong).
+Good improvements since last iteration!
 
-Thanks for the report,
+(...)
 
-Gregory
+> +The Spreadtrum pin controller are organized in 3 blocks (types).
+> +
+> +The first block comprises some global control registers, and each
+> +register contains several bit fields with one bit or several bits
+> +to configure for some global common configuration, such as domain
+> +pad driving level, system control select and so on.
 
+Insert your explanations about domain pads and system
+control from the other mail here.
 
->
-> Ralph
+> + We recognise
+> +every fields comprising one bit or several bits in one global control
+> +register as one pin, thus we should record every pin's bit offset,
+> +bit width and register offset to configure this field (pin). Since
+> +this type pins' configuration are very tricky and different for each
+> +register, we introduce "sprd,ctrl" property to set the various global
+> +control configuration.
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Hm I still don't fully understand this property.
+
+> + In some situation we have some pin-sleep related
+> +configuration need to set when one of system goes into deep sleep
+> +mode. For example, if we set the pin sleep mode as AP_SLEEP, which
+> +means when AP system goes into deep sleep mode, this pin's sleep
+> +related properties (input/output or pullup/down) will be set
+> +automatically. Thus we intoduce "sprd,sleep_mode" to set pin sleep
+> +mode.
+
+So what you mean is that there is a special register for the sleep
+mode, so that we do not need to write the sleep mode explicitly,
+it will instead hit the hardware automatically when the system
+switches to sleep mode on some global level?
+
+Please detail this.
+
+This is not a spreadtrum-specific feature. Look for example in:
+include/dt-bindings/pinctrl/nomadik.h
+
+We have things like this:
+
+#define SLPM_DISABLED           0
+#define SLPM_ENABLED            1
+#define SLPM_INPUT_NOPULL       0
+#define SLPM_INPUT_PULLUP       1
+#define SLPM_INPUT_PULLDOWN     2
+#define SLPM_DIR_INPUT          3
+#define SLPM_OUTPUT_LOW         0
+#define SLPM_OUTPUT_HIGH        1
+#define SLPM_DIR_OUTPUT         2
+#define SLPM_WAKEUP_DISABLE     0
+#define SLPM_WAKEUP_ENABLE      1
+
+These (also custom) properties predate the generic pin config,
+and that is why it was done like this.
+
+But moving forward, we may need to think about coming up with
+something generic for this.
+
+I think this kind of overlaps the pin control states "default"
+and "sleep".
+
+What we want to do is read out both "default" and "sleep" modes
+from the device tree and program *both* into the hardware
+when "default" is normally initialized.
+
+This is better, because then the device tree looks the same
+whether we use hardware-backed switch from "default" to
+"sleep" and back or not.
+
+I don't know how to do this practically unfortunately, it may need
+some modifications of the pin control core code so that drivers
+can get the "sleep" mode configuration out and program it.
+
+> +The last block comprises some misc registers which also have unified
+> +register definition, and each register described one pin is used to
+> +configure drive strength, pull up/down and so on.
+
+OK
+
+> + Especially for pull
+> +up, we introduce "sprd,pullup" property for two kind configuration:
+> +PULLUP_20K or PULLUP_4_7K, which means the pullup resistor is 20K or
+> +4.7K.
+
+Do not use this. The generic bias-pull-up already supports an
+argument.
+
+Use this:
+
+bias-pull-up = <20000>;
+bias-pull-up = <4700>;
+
+Just unpack the argument in the .set_config() callback and deny
+it setting anything else than 20000 or 4700 Ohms.
+
+> +Optional properties:
+> +- function: Specified the function name.
+> +- drive-strength: Drive strength in mA.
+> +- input-schmitt-disable: Enable schmitt-trigger mode.
+> +- input-schmitt-enable: Disable schmitt-trigger mode.
+> +- bias-disable: Disable pin bias.
+> +- bias-pull-down: Pull down on pin.
+
+OK
+
+> +- sprd,ctrl: Control values referring to databook for global control pins.
+
+Uncertain on this.
+
+> +- sprd,sleep_mode: Sleep mode selection.
+> +- sprd,pullup: Pull up on pin.
+
+Switch to bias-pull-up as per above.
+
+> +- sprd,input-sleep: Input enable when system goes into deep sleep mode.
+> +- sprd,output-sleep: Output enable when system goes into deep sleep mode.
+> +- sprd,pullup_sleep: Pull up enable when system goes into deep sleep mode.
+> +- sprd,pulldown_sleep: Pull down enable when system goes into deep sleep mode.
+
+This is not good. We need to handle these using the standard
+
+input-enable
+output-enable
+bias-pull-up
+bias-pull-down
+
+Just inside a state named "sleep" and then let the driver read and program
+this state into the sleep registers at first convenience.
+
+Yours,
+Linus Walleij
