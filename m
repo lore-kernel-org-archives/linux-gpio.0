@@ -1,85 +1,63 @@
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH v5 3/9] dt-bindings: add Amlogic Meson GPIO
- interrupt-controller DT binding documentation
-Date: Fri, 9 Jun 2017 09:50:49 +0200
-Message-ID: <5bfb15b0-8625-85cc-53d6-90171c9e098d@baylibre.com>
-References: <66c57893-0a9e-4f8c-a017-ab346abbdfd0@gmail.com>
- <c190f764-b3af-8982-00e3-87e28eabecca@gmail.com>
- <20170607211312.av5osk5xxa5k5pr2@rob-hp-laptop>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] DT: pinctrl: Add binding documentation for Spreadtrum
+ pin controller
+Date: Fri, 9 Jun 2017 09:59:03 +0200
+Message-ID: <CACRpkdaqCPLsmGWXXrfVdOgBqWHQO5pTSjgd6hZhjNFrjanKQA@mail.gmail.com>
+References: <a1fa5b612de318213bab4404997d133ed118f5d2.1495863824.git.baolin.wang@spreadtrum.com>
+ <CACRpkdZFUDrfoyvk-CramNP2OVwVAazVsw3S-wCayx8HP6cSZQ@mail.gmail.com> <20170531075827.GA31518@spreadtrum.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:36819 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751540AbdFIHu4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 03:50:56 -0400
-Received: by mail-wm0-f41.google.com with SMTP id 7so151232086wmo.1
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 00:50:56 -0700 (PDT)
-In-Reply-To: <20170607211312.av5osk5xxa5k5pr2@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170531075827.GA31518-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On 06/07/2017 11:13 PM, Rob Herring wrote:
-> On Tue, May 30, 2017 at 10:26:33PM +0200, Heiner Kallweit wrote:
->> Add dt binding documentation for Amlogic meson GPIO interrupt controller.
+On Wed, May 31, 2017 at 9:58 AM, Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org> w=
+rote:
+> On =E4=B8=80,  5=E6=9C=88 29, 2017 at 06:18:29=E4=B8=8B=E5=8D=88 +0200, L=
+inus Walleij wrote:
+
+>> > +pad driving level, system control select
 >>
->> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->> v5:
->> - added Reviewed-by
->> ---
->>  .../amlogic,meson-gpio-intc.txt                    | 26 ++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
->> new file mode 100644
->> index 00000000..2f20d212
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
->> @@ -0,0 +1,26 @@
->> +Amlogic meson GPIO interrupt controller
->> +
->> +Meson SoCs contains an interrupt controller which is able watch the SoC pads
->> +and generate an interrupt on edges or level. The controller is essentially a
->> +256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
->> +or level and polarity. The actual number of interrupt exposed depends on the
->> +SoC.
->> +
->> +Required properties:
->> +
->> +- compatible : should be "amlogic,meson-gpio-intc".
->> +- reg : Specifies base physical address and size of the registers.
->> +- interrupt-controller : Identifies the node as an interrupt controller.
->> +- #interrupt-cells : should be 2.
->> +- parent-interrupts : list of GIC interrupts which can be used with the
->> +		      GPIO IRQ multiplexer
-> 
-> Just use "interrupts" here.
+>> Actually I do not understand at all what "domain pad driving level"
+>> or "system control select" means, those are very generic terms.
+>> Can you describe precisely what it means? What domain? What
+>> is a domain pad? What kind of system control? What is it selecting
+>> between?
+>
+> I try to explain what they are on Spreadtrum platform. One pin can output
+> 3.0v or 1.8v, depending on the related domain pad driving selection, if
+> the related domain pad slect 3.0v, then the pin can output 3.0v.
 
-Hi Rob,
+This can probably use the generic pin control property
+PIN_CONFIG_POWER_SOURCE (see include/linux/pinctrl/pinconf-generic.h)
+and the corresponding DT binding "power-source" see
+drivers/pinctrl/pinconf-generic.c and
+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 
-If the "interrupts" property is used here like this, it breaks the interrupts binding !
+> "system control" is used to choose this function (like: UART0) for which
+> system, since we have several systems (AP/CP/CM4) on one SoC.
 
-Neil
+Aha, that sounds like a very spreadtrum-specific feature actually.
 
-> 
->> +
->> +Example:
->> +
->> +gpio_intc: interrupt-controller@9880 {
->> +	compatible = "amlogic,meson-gpio-intc";
->> +	reg = <0x0 0x09880 0x0 0x10>;
->> +	interrupt-controller;
->> +	#interrupt-cells = <2>;
->> +	parent-interrupts = <64 65 66 67 68 69 70 71>;
->> +};
->> -- 
->> 2.13.0
->>
->>
+> Since we have lots of different pin configuration to set, it will be hard=
+ to
+> use the standard pin config describing in binding files. But I will try t=
+o
+> remove the magic number and use the common pin config.
 
+It is possible to use generic config and add a few custom bindings
+"on top" of it. See for example:
+Documentation/devicetree/bindings/pinctrl/qcom,pmic-mpp.txt
+mixing a few generic and Qualcomm-specific pin config things,
+and their driver is here:
+drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
