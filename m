@@ -1,34 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/3] pinctrl: intel: Add Intel Cannon Lake PCH pin
- controller support
-Date: Fri, 9 Jun 2017 13:04:36 +0200
-Message-ID: <CACRpkdaW97oNekTRZkBc9A_b+tutqMMJ8FiQg9XBe=rW-mqxZQ@mail.gmail.com>
-References: <20170606131819.39845-1-mika.westerberg@linux.intel.com> <20170606131819.39845-4-mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v3 1/2] DT: pinctrl: Add binding documentation for
+ Spreadtrum pin controller
+Date: Fri, 9 Jun 2017 13:08:28 +0200
+Message-ID: <CACRpkdYzefkRNH9D0554Nzw_gJAUCMWgT15-k9zSaqg07x98FA@mail.gmail.com>
+References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496753918.git.baolin.wang@spreadtrum.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f180.google.com ([209.85.223.180]:36162 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbdFILEi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:04:38 -0400
-Received: by mail-io0-f180.google.com with SMTP id y77so31554568ioe.3
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:04:38 -0700 (PDT)
-In-Reply-To: <20170606131819.39845-4-mika.westerberg@linux.intel.com>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:33505 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbdFILIa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:08:30 -0400
+Received: by mail-it0-f49.google.com with SMTP id x129so1276230ite.0
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:08:29 -0700 (PDT)
+In-Reply-To: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496753918.git.baolin.wang@spreadtrum.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Baolin Wang <baolin.wang@spreadtrum.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@linaro.org>
 
-On Tue, Jun 6, 2017 at 3:18 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+On Tue, Jun 6, 2017 at 3:03 PM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
 
-> This adds pinctrl/GPIO support for Intel Cannon Lake PCH. The Cannon
-> Lake PCH GPIO is based on newer version of the Intel GPIO hardware.
+> This patch adds the binding documentation for Spreadtrum SC9860 pin
+> controller device.
 >
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
+> ---
+> Changes since v2:
+>  - No updates.
 
-Patch applied.
+Same comments as v3, sorry for my slowness in review :(
 
 Yours,
 Linus Walleij
