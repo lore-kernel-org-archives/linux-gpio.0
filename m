@@ -1,32 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] gpio: merrifield: Remove unused header
-Date: Fri, 9 Jun 2017 13:16:42 +0200
-Message-ID: <CACRpkdb3yQUzbReER7HhdomyZkFf1S53uyqd7GVEmPkHDh6cpQ@mail.gmail.com>
-References: <20170606142851.76094-1-andriy.shevchenko@linux.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] gpio: mockup: use devm_kcalloc() where applicable
+Date: Fri, 9 Jun 2017 13:29:49 +0200
+Message-ID: <CAMRc=Md4Wne5zBzC25YHyESC91SRiQvUX-5kVhBtMy5dT9VY_Q@mail.gmail.com>
+References: <1496317623-24026-1-git-send-email-brgl@bgdev.pl>
+ <1496317623-24026-2-git-send-email-brgl@bgdev.pl> <CACRpkdZbvhqd0LETS3CJ_V5D_aqsmezC-ehhgyXcsfHU9J_2hQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:34817 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbdFILQn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:16:43 -0400
-Received: by mail-io0-f177.google.com with SMTP id k93so31683394ioi.2
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:16:43 -0700 (PDT)
-In-Reply-To: <20170606142851.76094-1-andriy.shevchenko@linux.intel.com>
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:33836 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbdFIL3u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 07:29:50 -0400
+Received: by mail-oi0-f46.google.com with SMTP id o65so29535599oif.1
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 04:29:50 -0700 (PDT)
+In-Reply-To: <CACRpkdZbvhqd0LETS3CJ_V5D_aqsmezC-ehhgyXcsfHU9J_2hQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 6, 2017 at 4:28 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-
-> I don't remember how linux/gpio.h made the source, now it seems unused.
-> Remove it.
+2017-06-09 10:06 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Thu, Jun 1, 2017 at 1:47 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 >
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> When allocating a zeroed array of objects use devm_kcalloc() instead
+>> of manually calculating the required size and using devm_kzalloc().
+>>
+>> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>
+> This does not apply on the GPIO "devel" branch in my tree,
+> probably because of other patches from you :)
+>
+> Could you rebase and resend?
+>
+> Yours,
+> Linus Walleij
 
-Patch applied.
+I thought you would apply the previous patches first, but sure, I'll resend.
 
-Yours,
-Linus Walleij
+Thanks,
+Bartosz
