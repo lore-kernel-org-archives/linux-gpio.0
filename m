@@ -1,54 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 12/17] gpio: madera: Support Cirrus
-	Logic Madera class codecs
-Date: Fri, 9 Jun 2017 11:08:25 +0200
-Message-ID: <CACRpkdYxbGcEd0wSAC8EyARSvc7Q6LJb0SLks+GPDvjKbG4=8g@mail.gmail.com>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1496415790-19164-13-git-send-email-rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/1] pinctrl: bcm: cleanup Broadcom license headers
+Date: Fri, 9 Jun 2017 11:10:25 +0200
+Message-ID: <CACRpkdaEOT+OVcaBU0GfNqXXnhWprd7mKqt6VMsQLV_huooftA@mail.gmail.com>
+References: <1496429541-5348-1-git-send-email-scott.branden@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1496415790-19164-13-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Jason Cooper <jason@lakedaemon.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1496429541-5348-1-git-send-email-scott.branden@broadcom.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Scott Branden <scott.branden@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Paul Gortmaker <paul.gortmaker@windriver.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 2, 2017 at 5:03 PM, Richard Fitzgerald
-<rf@opensource.wolfsonmicro.com> wrote:
+On Fri, Jun 2, 2017 at 8:52 PM, Scott Branden
+<scott.branden@broadcom.com> wrote:
 
-> This adds support for the GPIOs on Cirrus Logic Madera class codecs.
-> Any pins not used for special functions (see the pinctrl driver) can be
-> used as general single-bit input or output lines. The number of available
-> GPIOs varies between codecs.
+> Use consistent license headers for Broadcom files by
+> placing additional comments outside of standard legal header.
 >
-> Signed-off-by: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
-> Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
-> Changes since V2:
-> - Minor change now to use the parent MFD DT node for out DT bindings
+> Also, update legal header to 2017 format as "Broadcom Corporation"
+> has changed to "Broadcom".
+>
+> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 
-This looks good to me
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-I can also merge it through the GPIO tree once it is clear that the
-MFD portions are getting merged.
-
-> +config GPIO_MADERA
-> +       bool "Cirrus Logic Madera class codecs"
-> +       depends on PINCTRL_MADERA
-
-As this guards compilation until the MFD driver arrives.
+Patch applied with Florian's review tag.
 
 Yours,
 Linus Walleij
