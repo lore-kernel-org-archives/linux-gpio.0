@@ -1,96 +1,65 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v6 2/9] irqchip: add Amlogic Meson GPIO irqchip driver
-Date: Fri, 09 Jun 2017 16:30:07 -0700
-Message-ID: <m2tw3o4u4g.fsf@baylibre.com>
-References: <04378047-4194-bb0f-3da3-e1d62345a86b@gmail.com>
-        <89d02a38-7386-fcdc-4dce-ea7e531c90b4@gmail.com>
-        <1496999266.3552.61.camel@baylibre.com> <m2vao46ewu.fsf@baylibre.com>
-        <702e4608-8592-41fe-b79c-fef985c49be7@gmail.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
+ region driver
+Date: Fri, 9 Jun 2017 23:38:33 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BED10@FMSMSX114.amr.corp.intel.com>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-4-git-send-email-rajmohan.mani@intel.com>
+ <CAHp75VcvV_AbLJCq9Rm_8yab3nViPm6ikxxme4oyw9vm4Kz7Gg@mail.gmail.com>
+ <20170607121503.GA1019@valkosipuli.retiisi.org.uk>
+ <CAHp75Vef=c54O8Xd+aM+eWWVt7nLsczT48WbgrdiOVyWv6xMcg@mail.gmail.com>
+ <20170607201050.GE1019@valkosipuli.retiisi.org.uk>
+ <CAHp75Vfz=5Siysbzmtyv8TUKs+S+EMBHd8T7zSV-vF+-FEoSaA@mail.gmail.com>
+ <20170607211256.GF1019@valkosipuli.retiisi.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:33962 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751676AbdFIXaM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 19:30:12 -0400
-Received: by mail-pg0-f51.google.com with SMTP id v18so30747618pgb.1
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 16:30:12 -0700 (PDT)
-In-Reply-To: <702e4608-8592-41fe-b79c-fef985c49be7@gmail.com> (Heiner
-        Kallweit's message of "Sat, 10 Jun 2017 00:30:14 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20170607211256.GF1019@valkosipuli.retiisi.org.uk>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@iki.fi>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-Heiner Kallweit <hkallweit1@gmail.com> writes:
+Hi Sakari, Andy,
 
-> Am 09.06.2017 um 23:15 schrieb Kevin Hilman:
->> Jerome Brunet <jbrunet@baylibre.com> writes:
->> 
->>> On Thu, 2017-06-08 at 21:38 +0200, Heiner Kallweit wrote:
->>>> Add a driver supporting the GPIO interrupt controller on certain
->>>> Amlogic meson SoC's.
->>>>
->>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->> 
->> [...]
->> 
->>>> +static unsigned int meson_irq_startup(struct irq_data *data)
->>>> +{
->>>> +	irq_chip_unmask_parent(data);
->>>> +	/*
->>>> +	 * An extra bit was added to allow having the same gpio hwirq twice
->>>> +	 * for handling IRQ_TYPE_EDGE_BOTH. Remove this bit to get the
->>>> +	 * gpio hwirq.
->>>> +	 */
->>>> +	meson_irq_set_hwirq(data, data->hwirq >> 1);
->>>
->>> Please keep in mind that any device can use this controller as irq parent.
->>> It has to make sense, even when not serving the gpio driver.
->>>
->>> This hack means that, in DT, we'd have to multiply by 2 the values given under
->>> section "22.3 GPIO interrupts" of the datasheet. This is an example Linux
->>> specific stuff in DT.
->>> It also means that the controller declares a lot more lines that it really has
->>> ... 
->>>
->>> This is all to accommodate your hack around IRQ_TYPE_BOTH and creating the
->>> mapping from the irq_set_type callback of the GPIO driver, which is still think
->>> should be dropped at this point.
->> 
->> +1
->> 
->> Please drop the hack for IRQ_TYPE_BOTH so we can reach agreement on the
->> basic design and functionality.  The gymnastics required to support this
->> hack (due to broken hardware) are getting in the way of getting basic
->> functionality merged.
->> 
-> I haven't heard any feedback on the other proposal yet:
-> Always reserve two parent irq's in the request_resources callback,
-> then set_type is easy. How about this one?
+> -----Original Message-----
+> From: Sakari Ailus [mailto:sakari.ailus@iki.fi]
+> Sent: Wednesday, June 07, 2017 2:13 PM
+> To: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Mani, Rajmohan <rajmohan.mani@intel.com>; Hans de Goede
+> <hdegoede@redhat.com>; linux-kernel@vger.kernel.org; linux-
+> gpio@vger.kernel.org; linux-acpi@vger.kernel.org; Lee Jones
+> <lee.jones@linaro.org>; Linus Walleij <linus.walleij@linaro.org>; Alexandre
+> Courbot <gnurou@gmail.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len
+> Brown <lenb@kernel.org>
+> Subject: Re: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
+> region driver
+> 
+> On Wed, Jun 07, 2017 at 11:40:27PM +0300, Andy Shevchenko wrote:
+> > On Wed, Jun 7, 2017 at 11:10 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> > > On Wed, Jun 07, 2017 at 04:40:13PM +0300, Andy Shevchenko wrote:
+> > >> On Wed, Jun 7, 2017 at 3:15 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> > >> > On Tue, Jun 06, 2017 at 05:23:56PM +0300, Andy Shevchenko wrote:
+> >
+> > >> >> Follow the pattern, please, I suppose ti_pmic_tps68470.c
+> > >>
+> > >> Would it work for you?
+> > >
+> > > This is still a different driver from the tps68470 driver which is
+> > > an MFD driver. For clarity, I'd keep pmic as part of the name (and
+> > > I'd use tps68470_pmic_ prefix for internal symbols, too).
+> > >
+> > > As PMICs are typically linked to the kernel (vs. being modules),
+> > > there's no issue with the module name. I would suppose few if any
+> > > PMICs will be compiled as modules in general.
+> > >
+> > > It's not a big deal though. I'm fine either way.
+> >
+> > Okay, let's agree on  tps68470_pmic for internal prefix and for file name?
+> 
+> Ack. Thanks!
+> 
 
-The feedback is the same: let's consider that after getting the basics
-reviewed, accepted and merged.
-
-> Having max. 4 gpio irq's should be a fair price for a cleaner design.
-
-Yuck, but better than no support for both _BOTH I guess.
-
-But again, discussion of hacks for the hardware limitation is getting in
-the way discussing and merging the basics.  Let's get the basics right
-first, then add functionality.  
-
-I understand it can be rather frustrating to give up features and/or
-functionality for having something "clean", but unfortunately, that's
-how the upstream linux kernel community has always worked.
-
-Most maintainers prefer clean, well-designed and maintainable code that
-comes in small, easily reviewable chunks over something that's difficult
-to understand with hacks and workarounds.  Even if that means a limited
-feature set initially.
-
-Additional functionality (even if hacky) is much easier to review,
-discuss and maintain *later* when it's on top of a starting point that
-is clean.
-
-Kevin
+Ack
