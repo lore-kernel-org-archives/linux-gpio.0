@@ -1,147 +1,92 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: lp87565: Add support for GPIO
-Date: Fri, 9 Jun 2017 10:36:25 +0200
-Message-ID: <CACRpkdZFYSj0=O1PpPzWpcgV+k7WoKCDRPW3fcQ5+B-pDvEWEw@mail.gmail.com>
-References: <1496286631-6295-1-git-send-email-j-keerthy@ti.com>
+From: <gregkh@linuxfoundation.org>
+Subject: patch "gpio: use class_groups instead of class_attrs" added to driver-core-testing
+Date: Fri, 09 Jun 2017 10:41:18 +0200
+Message-ID: <149699767815952@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:33088 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbdFIIg1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 04:36:27 -0400
-Received: by mail-io0-f177.google.com with SMTP id t87so10548569ioe.0
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Jun 2017 01:36:26 -0700 (PDT)
-In-Reply-To: <1496286631-6295-1-git-send-email-j-keerthy@ti.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40496 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbdFIIlx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 9 Jun 2017 04:41:53 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>
+To: gregkh@linuxfoundation.org, gnurou@gmail.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
 
-On Thu, Jun 1, 2017 at 5:10 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-> Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
-> and can be configured in Open-drain output or Push-pull output.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+This is a note to let you know that I've just added the patch titled
 
-(...)
-> The latest version of mfd driver for this pmic is posted:
-> https://lkml.org/lkml/2017/5/30/463
-(...)
-> +config GPIO_LP87565
-> +       tristate "TI LP87565 GPIO"
-> +       depends on MFD_TI_LP87565
+    gpio: use class_groups instead of class_attrs
 
-Hm I guess that means I could merge it since it will only compile once
-that symbol turns up in the kernel tree.
+to my driver-core git tree which can be found at
+    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+in the driver-core-testing branch.
 
-> +#include <linux/gpio.h>
+The patch will show up in the next release of the linux-next tree
+(usually sometime within the next 24 hours during the week.)
 
-Please use
-#include <linux/gpio/driver.h>
-only.
+The patch will be merged to the driver-core-next branch sometime soon,
+after it passes testing, and the merge window is open.
 
-> +#include <linux/mfd/lp87565.h>
+If you have any questions about this process, please let me know.
 
-Is this API stable enough that I could merge this and count on it to
-"just work" once the MFD driver lands?
 
-> +struct lp87565_gpio {
-> +       struct gpio_chip chip;
-> +       struct lp87565 *lp87565;
-> +};
+>From d83bb159f4c6af4a7465ed457d554d30df95e890 Mon Sep 17 00:00:00 2001
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Thu, 8 Jun 2017 10:12:40 +0200
+Subject: gpio: use class_groups instead of class_attrs
 
-It seems the code would be easier to read if you store the struct regmap *map
-pointer here instead of the whole struct lp87565.
+The class_attrs pointer is long depreciated, and is about to be finally
+removed, so move to use the class_groups pointer instead.
 
-But it's no strong preference.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: <linux-gpio@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/gpio/gpiolib-sysfs.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-> +static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-> +       int ret, val;
-> +
-> +       ret = regmap_read(gpio->lp87565->regmap, LP87565_REG_GPIO_IN, &val);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return val & BIT(offset);
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 4b44dd97c07f..16fe9742597b 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -479,6 +479,7 @@ static ssize_t export_store(struct class *class,
+ 		pr_debug("%s: status %d\n", __func__, status);
+ 	return status ? : len;
+ }
++static CLASS_ATTR_WO(export);
+ 
+ static ssize_t unexport_store(struct class *class,
+ 				struct class_attribute *attr,
+@@ -514,18 +515,20 @@ static ssize_t unexport_store(struct class *class,
+ 		pr_debug("%s: status %d\n", __func__, status);
+ 	return status ? : len;
+ }
++static CLASS_ATTR_WO(unexport);
+ 
+-static struct class_attribute gpio_class_attrs[] = {
+-	__ATTR(export, 0200, NULL, export_store),
+-	__ATTR(unexport, 0200, NULL, unexport_store),
+-	__ATTR_NULL,
++static struct attribute *gpio_class_attrs[] = {
++	&class_attr_export.attr,
++	&class_attr_unexport.attr,
++	NULL,
+ };
++ATTRIBUTE_GROUPS(gpio_class);
+ 
+ static struct class gpio_class = {
+ 	.name =		"gpio",
+ 	.owner =	THIS_MODULE,
+ 
+-	.class_attrs =	gpio_class_attrs,
++	.class_groups = gpio_class_groups,
+ };
+ 
+ 
+-- 
+2.13.1
 
-return !!(val & BIT(offset));
 
-please, so it's clear that we clamp to [0,1].
-
-> +static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
-> +{
-> +       struct lp87565_gpio *gpio = gpiochip_get_data(gc);
-> +       int ret;
-> +
-> +       switch (offset) {
-> +       case 0:
-> +       case 1:
-> +       case 2:
-> +               /* Setup the GPIO*_SEL MUX to GPIO mode */
-> +               ret = regmap_update_bits(gpio->lp87565->regmap,
-> +                                        LP87565_REG_PIN_FUNCTION,
-> +                                        BIT(offset), BIT(offset));
-
-Hm. Hm.
-
-If this IC has several function modes for the pins it should also
-be a pin controller... I know it is a lot of upfront code, but... it will
-benefit you in the long run. Is it really just these three pins?
-
-Maybe we should merge it into
-drivers/pinctrl/pinctrl-lp87565.c so that at least file placement does
-not become a problem later?
-
-> +static int lp87565_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-> +                                  unsigned long config)
-> +{
-> +       struct lp87565_gpio *gpio = gpiochip_get_data(gc);
-> +
-> +       switch (pinconf_to_config_param(config)) {
-> +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-> +               return regmap_update_bits(gpio->lp87565->regmap,
-> +                                         LP87565_REG_GPIO_CONFIG,
-> +                                         BIT(offset +
-> +                                             __ffs(LP87565_GOIO1_OD)),
-> +                                         BIT(offset +
-> +                                             __ffs(LP87565_GOIO1_OD)));
-> +       case PIN_CONFIG_DRIVE_PUSH_PULL:
-> +               return regmap_update_bits(gpio->lp87565->regmap,
-> +                                         LP87565_REG_GPIO_CONFIG,
-> +                                         BIT(offset +
-> +                                             __ffs(LP87565_GOIO1_OD)), 0);
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
-> +}
-
-Nice.
-
-If this was a split GPIO+pin control driver this would just be a call
-into the pinctrl back-end from the GPIO controller, like
-drivers/pinctrl/intel/pinctrl-intel.c does with just using
-gpiochip_generic_config().
-
-> +static int lp87565_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct lp87565_gpio *gpio;
-> +       int ret;
-> +
-> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-> +       if (!gpio)
-> +               return -ENOMEM;
-> +
-> +       platform_set_drvdata(pdev, gpio);
-
-Is this pointer used anywhere?
-
-> +       gpio->lp87565 = dev_get_drvdata(pdev->dev.parent);
-
-So maybe assign the regmap instead.
-
-Yours,
-Linus Walleij
