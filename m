@@ -1,55 +1,84 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
- region driver
-Date: Sat, 10 Jun 2017 00:10:41 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BED6B@FMSMSX114.amr.corp.intel.com>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-4-git-send-email-rajmohan.mani@intel.com>
- <CAHp75VcvV_AbLJCq9Rm_8yab3nViPm6ikxxme4oyw9vm4Kz7Gg@mail.gmail.com>
- <20170607121503.GA1019@valkosipuli.retiisi.org.uk>
- <CAHp75Vef=c54O8Xd+aM+eWWVt7nLsczT48WbgrdiOVyWv6xMcg@mail.gmail.com>
- <20170607201050.GE1019@valkosipuli.retiisi.org.uk>
- <CAHp75Vfz=5Siysbzmtyv8TUKs+S+EMBHd8T7zSV-vF+-FEoSaA@mail.gmail.com>
- <20170607211256.GF1019@valkosipuli.retiisi.org.uk>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH v7 0/9] pinctrl: meson: add support for GPIO IRQs
+Date: Sat, 10 Jun 2017 23:37:18 +0200
+Message-ID: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170607211256.GF1019@valkosipuli.retiisi.org.uk>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35119 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751642AbdFJVhn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 10 Jun 2017 17:37:43 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-Hi Sakari, Andy,
+This patch series is partially based on a series Jerome Brunet
+submitted about half a year ago. Due to open questions this series never
+made it to mainline, see https://patchwork.kernel.org/patch/9384431/
 
-> Subject: Re: [PATCH v1 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
-> region driver
-> 
-> On Wed, Jun 07, 2017 at 11:40:27PM +0300, Andy Shevchenko wrote:
-> > On Wed, Jun 7, 2017 at 11:10 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > > On Wed, Jun 07, 2017 at 04:40:13PM +0300, Andy Shevchenko wrote:
-> > >> On Wed, Jun 7, 2017 at 3:15 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > >> > On Tue, Jun 06, 2017 at 05:23:56PM +0300, Andy Shevchenko wrote:
-> >
-> > >> >> Follow the pattern, please, I suppose ti_pmic_tps68470.c
-> > >>
-> > >> Would it work for you?
-> > >
-> > > This is still a different driver from the tps68470 driver which is
-> > > an MFD driver. For clarity, I'd keep pmic as part of the name (and
-> > > I'd use tps68470_pmic_ prefix for internal symbols, too).
-> > >
-> > > As PMICs are typically linked to the kernel (vs. being modules),
-> > > there's no issue with the module name. I would suppose few if any
-> > > PMICs will be compiled as modules in general.
-> > >
-> > > It's not a big deal though. I'm fine either way.
-> >
-> > Okay, let's agree on  tps68470_pmic for internal prefix and for file name?
-> 
-> Ack. Thanks!
-> 
+This new attempt uses GPIOLIB_IRQCHIP resulting in less needed code.
 
-Ack
+The series was successfully tested on a Odroid-C2.
+
+Changes in v2:
+- separate the GPIO IRQ controller from the pinctrl driver
+- minor improvements to the GPIO IRQ controller
+
+Changes in v3:
+- replace the request_irq based allocation of parent irq's with
+  chained irq handling, this also fixes the spurious interrupts issue
+  and allows to remove the workaround code.
+  Last but not least the parent irq's are no longer visible in
+  /proc/interrupts.
+- minor improvements to the GPIO IRQ controller
+
+Changes in v4:
+- separate the gpio-independent interrupt controller part and make
+  it a driver under drivers/irqchip
+
+Changes in v5:
+- smaller changes based on review comments
+- split DT patches per ARM / ARM64
+
+Changes in v6:
+- based on suggestion by Rob Herring: rename DT property parent-interrupts to interrupts
+
+Changes in v7:
+- remove patch 1 as it was applied to the pinctrl tree already
+- add patch 5 as prerequisite for reworked patch 6
+- remove IRQ_TYPE_EDGE_BOTH support from patch 6
+
+Heiner Kallweit (7):
+  irqchip: add Amlogic Meson GPIO irqchip driver
+  dt-bindings: add Amlogic Meson GPIO interrupt-controller DT binding documentation
+  ARM: dts: meson: add GPIO interrupt-controller support
+  ARM64: dts: meson: add GPIO interrupt-controller support
+  gpiolib: export gpiochip_irq_reqres and gpiochip_irq_relres
+  pinctrl: meson: add support for GPIO interrupts
+  pinctrl: meson: update DT binding documentation
+  ARM: dts: meson: mark gpio controllers as interrupt controllers
+  ARM64: dts: meson: mark gpio controllers as interrupt controllers
+
+.../amlogic,meson-gpio-intc.txt                    |  26 ++
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   4 +
+ arch/arm/boot/dts/meson8.dtsi                      |  12 +
+ arch/arm/boot/dts/meson8b.dtsi                     |  12 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi          |   8 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi        |   4 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |   4 +
+ drivers/gpio/gpiolib.c                             |   6 +-
+ drivers/irqchip/Kconfig                            |   5 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-meson-gpio.c                   | 295 +++++++++++++++++++++
+ drivers/pinctrl/Kconfig                            |   1 +
+ drivers/pinctrl/meson/pinctrl-meson.c              | 176 +++++++++++-
+ include/linux/gpio/driver.h                        |   3 +
+ 14 files changed, 554 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+ create mode 100644 drivers/irqchip/irq-meson-gpio.c
+
+-- 
+2.13.1
