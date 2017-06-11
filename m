@@ -1,48 +1,74 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 2/3] gpio: Add support for TPS68470 GPIOs
-Date: Sun, 11 Jun 2017 22:43:31 +0300
-Message-ID: <CAHp75VcyPy5kO+Ra-fPqaXZOp66sTe=L6W4UF00JWA6LP_KGeQ@mail.gmail.com>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
- <CAHp75Vc6PSDqc=Vxj2z-d49p+E-7tciunhki=8a7HPjQGuSwXQ@mail.gmail.com>
- <6F87890CF0F5204F892DEA1EF0D77A59725BF110@FMSMSX114.amr.corp.intel.com>
- <20170611113007.GV1019@valkosipuli.retiisi.org.uk> <CAHp75VeJaQjWb1834Nt7178GL72rcym=d3zV8tPpvJ5qKDuM_Q@mail.gmail.com>
- <20170611165028.GA12407@valkosipuli.retiisi.org.uk>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH v1 1/1] gpio: of: provide option generic property for
+ initial line states
+Date: Sun, 11 Jun 2017 22:57:18 +0300
+Message-ID: <2432df7e-5d20-42c9-ddc0-044c2ca5ce2b@mentor.com>
+References: <20170609141622.21502-1-o.rempel@pengutronix.de>
+ <CAL_JsqJeSCN88JnVnofb2Ncy4bDyXiKQbLniHmvbE4j854ZePA@mail.gmail.com>
+ <20170611061919.jsbc7x67ut4segj5@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35120 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751794AbdFKTnd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Jun 2017 15:43:33 -0400
-In-Reply-To: <20170611165028.GA12407@valkosipuli.retiisi.org.uk>
+Received: from relay1.mentorg.com ([192.94.38.131]:55899 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751794AbdFKT52 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Jun 2017 15:57:28 -0400
+In-Reply-To: <20170611061919.jsbc7x67ut4segj5@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: "Mani, Rajmohan" <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+To: Oleksij Rempel <ore@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, barebox@lists.infradead.org
 
-On Sun, Jun 11, 2017 at 7:50 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> On Sun, Jun 11, 2017 at 04:40:16PM +0300, Andy Shevchenko wrote:
->> On Sun, Jun 11, 2017 at 2:30 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+Hi Oleksij,
 
->> > Again, I'm not really worried about this driver, but the ACPI tables. How
->> > does the difference show there?
+On 06/11/2017 09:19 AM, Oleksij Rempel wrote:
+> Hi Rob,
+> 
+> On Fri, Jun 09, 2017 at 10:41:30AM -0500, Rob Herring wrote:
+>> On Fri, Jun 9, 2017 at 9:16 AM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>>> This property is needed for barebox or may be other bootloaders
+>>> to set proper gpio configuration as early as possible.
+>>>
+>>> This example is mainly based on "lines-initial-states" property
+>>> from this binding documentation:
+>>> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
 >>
->> Same way. You will have common numbering over the chip [0, 9]. It will
->> be just an abstraction inside the driver.
->
-> Oh, in that case that should be a non-issue.
+>> Don't we have a binding for this already based on gpio-hogs.
+> 
+> Markus Pargmann was working on this topic before and suddenly was not
+> able to finish it.
 
->> Above states the opposite, so, it's clear to me that abstraction of 2
->> GPIO chips over 1 can be utilized here.
->
-> Sounds fine to me, taken that this does not add complications to ACPI
-> tables.
+that's fine, but the proposed extension is supposedly not wanted.
 
-They just need to share the same ACPI_HANDLE (it might require to do
-this in generic way in gpiolib) and have a continuous numbering (easy
-to achieve with carefully chosen bases).
+> I found only some not finished discussions and no code or documentation
+> in linux kernel upstream.
+> 
+> So far, I was able to find fallowing patches and discussions:
+> patch 23.08.2015, last comment 11.05.2017:
+> https://patchwork.kernel.org/patch/7096721/
+> 
+> patch 23.02.2016, last comment 09.03.2016:
+> https://patchwork.ozlabs.org/patch/586743/
+> 
+> Since there was objections about node-like design for gpio-initval, I
+> provided an array property, which is similar to initval properties already used
+> for different other device nodes. For example:
+> 
+> Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
+> qcom,ath10k-calibration-data
+> 
+> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+> lines-initial-states
 
--- 
-With Best Regards,
-Andy Shevchenko
+It'd rather be better to fix the drivers and remove the properties
+from these found device tree binding descriptions.
+
+> 
+> Please fixme if I miss something.
+
+Why is GPIO hogging mechanism not good enough for your purpose?
+
+--
+With best wishes,
+Vladimir
