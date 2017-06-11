@@ -1,64 +1,131 @@
-From: Oleksij Rempel <ore@pengutronix.de>
-Subject: Re: [PATCH v1 1/1] gpio: of: provide option generic property for
- initial line states
-Date: Sun, 11 Jun 2017 08:19:19 +0200
-Message-ID: <20170611061919.jsbc7x67ut4segj5@pengutronix.de>
-References: <20170609141622.21502-1-o.rempel@pengutronix.de>
- <CAL_JsqJeSCN88JnVnofb2Ncy4bDyXiKQbLniHmvbE4j854ZePA@mail.gmail.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v1 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Sun, 11 Jun 2017 14:30:07 +0300
+Message-ID: <20170611113007.GV1019@valkosipuli.retiisi.org.uk>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
+ <CAHp75Vc6PSDqc=Vxj2z-d49p+E-7tciunhki=8a7HPjQGuSwXQ@mail.gmail.com>
+ <6F87890CF0F5204F892DEA1EF0D77A59725BF110@FMSMSX114.amr.corp.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:50839 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751671AbdFKGTZ (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40822 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751565AbdFKLar (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 11 Jun 2017 02:19:25 -0400
+        Sun, 11 Jun 2017 07:30:47 -0400
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJeSCN88JnVnofb2Ncy4bDyXiKQbLniHmvbE4j854ZePA@mail.gmail.com>
+In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725BF110@FMSMSX114.amr.corp.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, barebox@lists.infradead.org
+To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 
-Hi Rob,
+Hi Rajmohan and Andy,
 
-On Fri, Jun 09, 2017 at 10:41:30AM -0500, Rob Herring wrote:
-> On Fri, Jun 9, 2017 at 9:16 AM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> > This property is needed for barebox or may be other bootloaders
-> > to set proper gpio configuration as early as possible.
-> >
-> > This example is mainly based on "lines-initial-states" property
-> > from this binding documentation:
-> > Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+On Sun, Jun 11, 2017 at 03:49:18AM +0000, Mani, Rajmohan wrote:
+> Hi Andy,
 > 
-> Don't we have a binding for this already based on gpio-hogs.
+> Thanks for the reviews and patience.
+> 
+> > 
+> > On Tue, Jun 6, 2017 at 2:55 PM, Rajmohan Mani <rajmohan.mani@intel.com>
+> > wrote:
+> > > This patch adds support for TPS68470 GPIOs.
+> > > There are 7 GPIOs and a few sensor related GPIOs.
+> > > These GPIOs can be requested and configured as appropriate.
+> > 
+> > Besides my below comments, just put it here that I recommended earlier to
+> > provide 2 GPIO chips (one per bank of GPIOs).
+> > It's up to Linus to decide since you didn't follow the recommendation.
+> > 
+> 
+> Ack.
+> Did you mean to add this in Kconfig or this source file?
+> 
+> Here's some more details on these GPIOs.
+> Each of these 7 GPIOs has 2 registers to control the mode, level, drive strength, polarity, hysteresis control among other things. Also there are GPDI and GPDO registers to control the input and output values of these 7 GPIOs. These GPIOs are numbered 0 through 6.
+> The remaining 3 GPIOs are more of special purpose GPIOs that are output only, with one register to control all of their output values and drive strengths. These GPIOs are named with a special purpose (ENABLE, IDLE and RESET of the sensor).
+> 
+> > > +#include <linux/gpio.h>
+> > > +#include <linux/gpio/machine.h>
+> > 
+> > These shouldn't be in the driver.
+> > Instead use
+> > #include <linux/gpio/driver.h>
+> > 
+> 
+> Ack
+> 
+> > > +#include <linux/mfd/tps68470.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/platform_device.h>
+> > 
+> > > +       if (offset >= TPS68470_N_REGULAR_GPIO) {
+> > > +               offset -= TPS68470_N_REGULAR_GPIO;
+> > > +               reg = TPS68470_REG_SGPO;
+> > > +       }
+> > 
+> > Two GPIO chips makes this gone.
 
-Markus Pargmann was working on this topic before and suddenly was not
-able to finish it.
-I found only some not finished discussions and no code or documentation
-in linux kernel upstream.
+Again, I'm not really worried about this driver, but the ACPI tables. How
+does the difference show there?
 
-So far, I was able to find fallowing patches and discussions:
-patch 23.08.2015, last comment 11.05.2017:
-https://patchwork.kernel.org/patch/7096721/
+The outputs (s_enable, s_idle and s_resetn) are not numbered in the
+documentation. There grouped, though, but the order in that grouping varies.
 
-patch 23.02.2016, last comment 09.03.2016:
-https://patchwork.ozlabs.org/patch/586743/
+> > > +struct gpiod_lookup_table gpios_table = {
+> > > +       .dev_id = NULL,
+> > > +       .table = {
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 0, "gpio.0", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 1, "gpio.1", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 2, "gpio.2", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 3, "gpio.3", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 4, "gpio.4", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 5, "gpio.5", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 6, "gpio.6", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 7, "s_enable",
+> > GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 8, "s_idle", GPIO_ACTIVE_HIGH),
+> > > +                 GPIO_LOOKUP("tps68470-gpio", 9, "s_resetn",
+> > GPIO_ACTIVE_HIGH),
+> > > +                 {},
+> > > +       },
+> > > +};
+> > 
+> > This doesn't belong to the driver.
+> > 
+> 
+> Ack
+> I have moved this code to the MFD driver
 
-Since there was objections about node-like design for gpio-initval, I
-provided an array property, which is similar to initval properties already used
-for different other device nodes. For example:
+This information should come from the ACPI tables, it should not be present
+in drivers. Why do you need it?
 
-Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-qcom,ath10k-calibration-data
+> > > +       /*
+> > > +        * Initialize all the GPIOs to 0, just to make sure all
+> > > +        * GPIOs start with known default values. This protects against
+> > > +        * any GPIOs getting set with a value of 1, after TPS68470
+> > > + reset
+> > 
+> > So, this is hardware bug. Right? Or misconfiguration of the chip we may avoid?
+> > 
+> 
+> The tps68470 PMIC upon reset, does not have the "power on reset" values.
+> We just initialize the GPIOs with their known default values.
 
-Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-lines-initial-states
+If that was the case, I bet you could expect interesting behaviour from the
+hardware connected to these pins.
 
-Please fixme if I miss something.
+For what it's worth, the chip documentation states that the reset value for
+the SGPO and GPDO registers is zero, as well as that GPIOs are configured as
+input and the reset value of the s_* outputs is low.
+
+In other words, I don't think that explicitly setting the values to zero has
+an effect.
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
