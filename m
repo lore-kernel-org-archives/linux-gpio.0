@@ -1,88 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-Date: Sun, 11 Jun 2017 23:45:49 +0200
-Message-ID: <CACRpkdZ=hNJLyV94FyRBSR3Dk8NLe-jEo3qbUKDya6ruqG3KNQ@mail.gmail.com>
-References: <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
- <20170508160120.GB25206@w540> <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540> <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
- <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
- <20170523183735.GC13664@w540> <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
- <20170529104229.GB21347@w540> <CAA+hA=T56WHugmA+5V5ZC6TTxeSUVt1hr0v53YuDsUYgBcvKTw@mail.gmail.com>
- <20170609075028.GE15739@w540>
+Subject: Re: [PATCHv2 1/2] gpio: mvebu: fix blink counter register selection
+Date: Sun, 11 Jun 2017 23:48:34 +0200
+Message-ID: <CACRpkdbH4L=k+RjP7wpmpUQC4kthBF07Brk6K+sxXyf+G1Ke9g@mail.gmail.com>
+References: <20170601121826.14685-1-richard.genoud@gmail.com>
+ <20170601121826.14685-2-richard.genoud@gmail.com> <CACRpkdbRN3pgNqUJXHimpMjSOMeZepjxACveTSVzYJWneM9hOQ@mail.gmail.com>
+ <20170609100322.765adf7f@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170609075028.GE15739@w540>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Dong Aisheng <dongas86@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Chris Brandt <Chris.Brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170609100322.765adf7f@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ralph Sennhauser <ralph.sennhauser@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: Richard Genoud <richard.genoud@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 9, 2017 at 9:50 AM, jmondi <jacopo@jmondi.org> wrote:
-> On Fri, Jun 09, 2017 at 03:26:57PM +0800, Dong Aisheng wrote:
-
->> > I see three options here:
->> >
->> > 1) Add "output-buffer-enable" and "input-buffer-enable"
->> > we end up with
->> > "output-high"
->> > "output-low"
->> > "input-enable"
->> > "output-buffer-enable"
->> > "input-buffer-enable"
->> >
->> > 2) Add "output-buffer-enable" only
->> > we end up with
->> > "output-high"
->> > "output-low"
->> > "input-enable"
->> > "output-buffer-enable"
->> >
->> > Binding may be confusing as in one case we use "output-buffer-enable"
->> > while in the other "input-enable"
->> >
->> > 3) Add "output-enable" only
->> > "output-high"
->> > "output-low"
->> > "input-enable"
->> > "output-enable"
->> >
->> > As you, I don't like "output-enable" that much but it pairs better with
->> > "input-enable".
->> >
->> > I'll let you and DT people decide on this, as it's really an ABI definition
->> > problem and you have better judgment there.
->> >
->>
->> What's the final decision of this?
+On Fri, Jun 9, 2017 at 10:03 AM, Ralph Sennhauser
+<ralph.sennhauser@gmail.com> wrote:
+> On Fri, 9 Jun 2017 09:37:55 +0200
+> Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> I admit a was buying a bit of time and post-poned the gentle ping for
-> any final word on this. But since you're asking I'll second your
-> question :)
+>> On Thu, Jun 1, 2017 at 2:18 PM, Richard Genoud
+>> <richard.genoud@gmail.com> wrote:
+>>
+>> > The blink counter A was always selected because 0 was forced in the
+>> > blink select counter register.
+>> > The variable 'set' was obviously there to be used as the register
+>> > value, selecting the B counter when id==1 and A counter when id==0.
+>> >
+>> > Tested on clearfog-pro (Marvell 88F6828)
+>> >
+>> > Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
+>> > Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>> > Reviewed-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+>> > Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+>>
+>> Patch applied for fixes.
+>>
+>> It appears this will clash with patches on the development branch :(
+>
+> Hi Linus,
+>
+> The commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register
+> access") which you likely mean breaks gpio-keys, reported about an hour
+> ago, so you might just want to drop that one for now instead as it
+> needs mor work anyway.
 
-I suspect it is time to quote
-Documentation/process/management-style.rst
-(Torvalds):
+I would like to get an indication from Thomas and/or Gregory if they think
+it is a good idea to revert or if they just wanna fix it.
 
-1) Decisions
-
-Everybody thinks managers make decisions, and that decision-making is
-important.  The bigger and more painful the decision, the bigger the
-manager must be to make it.  That's very deep and obvious, but it's not
-actually true.
-
-The name of the game is to **avoid** having to make a decision.  In
-particular, if somebody tells you "choose (a) or (b), we really need you
-to decide on this", you're in trouble as a manager.  The people you
-manage had better know the details better than you, so if they come to
-you for a technical decision, you're screwed.  You're clearly not
-competent to make that decision for them.
-
-(It goes on, it's the best part of the entire Documentation/* dir in my
-opinion, please take the time to read it in full.)
-
-So: what do you guys, using this feature, and Andy, who raised serious
-concerns, think is the right binding? That is what *I* need to know.
+We still have development time before we even start merging for v4.13
+and then we have all the release candidates. No point to throw up hands
+this early?
 
 Yours,
 Linus Walleij
