@@ -1,74 +1,88 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH v1 1/1] gpio: of: provide option generic property for
- initial line states
-Date: Sun, 11 Jun 2017 22:57:18 +0300
-Message-ID: <2432df7e-5d20-42c9-ddc0-044c2ca5ce2b@mentor.com>
-References: <20170609141622.21502-1-o.rempel@pengutronix.de>
- <CAL_JsqJeSCN88JnVnofb2Ncy4bDyXiKQbLniHmvbE4j854ZePA@mail.gmail.com>
- <20170611061919.jsbc7x67ut4segj5@pengutronix.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
+Date: Sun, 11 Jun 2017 23:45:49 +0200
+Message-ID: <CACRpkdZ=hNJLyV94FyRBSR3Dk8NLe-jEo3qbUKDya6ruqG3KNQ@mail.gmail.com>
+References: <CACRpkdZkNGSUvTrEdjbGKO1hr799QpJBGSHPVbsBibph7Jx61A@mail.gmail.com>
+ <20170508160120.GB25206@w540> <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
+ <20170508172516.GC25206@w540> <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+ <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
+ <20170523183735.GC13664@w540> <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
+ <20170529104229.GB21347@w540> <CAA+hA=T56WHugmA+5V5ZC6TTxeSUVt1hr0v53YuDsUYgBcvKTw@mail.gmail.com>
+ <20170609075028.GE15739@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:55899 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751794AbdFKT52 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Jun 2017 15:57:28 -0400
-In-Reply-To: <20170611061919.jsbc7x67ut4segj5@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20170609075028.GE15739@w540>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jmondi <jacopo@jmondi.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Dong Aisheng <dongas86@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Chris Brandt <Chris.Brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Oleksij Rempel <ore@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, barebox@lists.infradead.org
 
-Hi Oleksij,
+On Fri, Jun 9, 2017 at 9:50 AM, jmondi <jacopo@jmondi.org> wrote:
+> On Fri, Jun 09, 2017 at 03:26:57PM +0800, Dong Aisheng wrote:
 
-On 06/11/2017 09:19 AM, Oleksij Rempel wrote:
-> Hi Rob,
-> 
-> On Fri, Jun 09, 2017 at 10:41:30AM -0500, Rob Herring wrote:
->> On Fri, Jun 9, 2017 at 9:16 AM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->>> This property is needed for barebox or may be other bootloaders
->>> to set proper gpio configuration as early as possible.
->>>
->>> This example is mainly based on "lines-initial-states" property
->>> from this binding documentation:
->>> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
+>> > I see three options here:
+>> >
+>> > 1) Add "output-buffer-enable" and "input-buffer-enable"
+>> > we end up with
+>> > "output-high"
+>> > "output-low"
+>> > "input-enable"
+>> > "output-buffer-enable"
+>> > "input-buffer-enable"
+>> >
+>> > 2) Add "output-buffer-enable" only
+>> > we end up with
+>> > "output-high"
+>> > "output-low"
+>> > "input-enable"
+>> > "output-buffer-enable"
+>> >
+>> > Binding may be confusing as in one case we use "output-buffer-enable"
+>> > while in the other "input-enable"
+>> >
+>> > 3) Add "output-enable" only
+>> > "output-high"
+>> > "output-low"
+>> > "input-enable"
+>> > "output-enable"
+>> >
+>> > As you, I don't like "output-enable" that much but it pairs better with
+>> > "input-enable".
+>> >
+>> > I'll let you and DT people decide on this, as it's really an ABI definition
+>> > problem and you have better judgment there.
+>> >
 >>
->> Don't we have a binding for this already based on gpio-hogs.
-> 
-> Markus Pargmann was working on this topic before and suddenly was not
-> able to finish it.
+>> What's the final decision of this?
+>
+> I admit a was buying a bit of time and post-poned the gentle ping for
+> any final word on this. But since you're asking I'll second your
+> question :)
 
-that's fine, but the proposed extension is supposedly not wanted.
+I suspect it is time to quote
+Documentation/process/management-style.rst
+(Torvalds):
 
-> I found only some not finished discussions and no code or documentation
-> in linux kernel upstream.
-> 
-> So far, I was able to find fallowing patches and discussions:
-> patch 23.08.2015, last comment 11.05.2017:
-> https://patchwork.kernel.org/patch/7096721/
-> 
-> patch 23.02.2016, last comment 09.03.2016:
-> https://patchwork.ozlabs.org/patch/586743/
-> 
-> Since there was objections about node-like design for gpio-initval, I
-> provided an array property, which is similar to initval properties already used
-> for different other device nodes. For example:
-> 
-> Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
-> qcom,ath10k-calibration-data
-> 
-> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
-> lines-initial-states
+1) Decisions
 
-It'd rather be better to fix the drivers and remove the properties
-from these found device tree binding descriptions.
+Everybody thinks managers make decisions, and that decision-making is
+important.  The bigger and more painful the decision, the bigger the
+manager must be to make it.  That's very deep and obvious, but it's not
+actually true.
 
-> 
-> Please fixme if I miss something.
+The name of the game is to **avoid** having to make a decision.  In
+particular, if somebody tells you "choose (a) or (b), we really need you
+to decide on this", you're in trouble as a manager.  The people you
+manage had better know the details better than you, so if they come to
+you for a technical decision, you're screwed.  You're clearly not
+competent to make that decision for them.
 
-Why is GPIO hogging mechanism not good enough for your purpose?
+(It goes on, it's the best part of the entire Documentation/* dir in my
+opinion, please take the time to read it in full.)
 
---
-With best wishes,
-Vladimir
+So: what do you guys, using this feature, and Andy, who raised serious
+concerns, think is the right binding? That is what *I* need to know.
+
+Yours,
+Linus Walleij
