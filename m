@@ -1,179 +1,101 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH] gpio: lp87565: Add support for GPIO
-Date: Sun, 11 Jun 2017 09:57:02 +0530
-Message-ID: <74fd6c53-7801-73eb-5236-d7a72c93d715@ti.com>
-References: <1496286631-6295-1-git-send-email-j-keerthy@ti.com>
- <CACRpkdZFYSj0=O1PpPzWpcgV+k7WoKCDRPW3fcQ5+B-pDvEWEw@mail.gmail.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v1 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Sun, 11 Jun 2017 05:04:27 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BF127@FMSMSX114.amr.corp.intel.com>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
+ <CACRpkda4v=QaFzAsR1903Ybx3+2Faz-q+YrPN5dBiLDsRMj5TA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:13136 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751601AbdFKE1J (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 11 Jun 2017 00:27:09 -0400
-In-Reply-To: <CACRpkdZFYSj0=O1PpPzWpcgV+k7WoKCDRPW3fcQ5+B-pDvEWEw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkda4v=QaFzAsR1903Ybx3+2Faz-q+YrPN5dBiLDsRMj5TA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-
-
-On Friday 09 June 2017 02:06 PM, Linus Walleij wrote:
-> On Thu, Jun 1, 2017 at 5:10 AM, Keerthy <j-keerthy@ti.com> wrote:
-> 
->> Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
->> and can be configured in Open-drain output or Push-pull output.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> 
-> (...)
->> The latest version of mfd driver for this pmic is posted:
->> https://lkml.org/lkml/2017/5/30/463
-> (...)
->> +config GPIO_LP87565
->> +       tristate "TI LP87565 GPIO"
->> +       depends on MFD_TI_LP87565
-> 
-> Hm I guess that means I could merge it since it will only compile once
-> that symbol turns up in the kernel tree.
-
-Yes.
-
-> 
->> +#include <linux/gpio.h>
-> 
-> Please use
-> #include <linux/gpio/driver.h>
-> only.
-
-Okay
-
-> 
->> +#include <linux/mfd/lp87565.h>
-> 
-> Is this API stable enough that I could merge this and count on it to
-> "just work" once the MFD driver lands?
-> 
->> +struct lp87565_gpio {
->> +       struct gpio_chip chip;
->> +       struct lp87565 *lp87565;
->> +};
-> 
-> It seems the code would be easier to read if you store the struct regmap *map
-> pointer here instead of the whole struct lp87565.
-> 
-> But it's no strong preference.
-
-Okay
-
-> 
->> +static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
->> +{
->> +       struct lp87565_gpio *gpio = gpiochip_get_data(chip);
->> +       int ret, val;
->> +
->> +       ret = regmap_read(gpio->lp87565->regmap, LP87565_REG_GPIO_IN, &val);
->> +       if (ret < 0)
->> +               return ret;
->> +
->> +       return val & BIT(offset);
-> 
-> return !!(val & BIT(offset));
-> 
-> please, so it's clear that we clamp to [0,1].
-
-Okay
-
-> 
->> +static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
->> +{
->> +       struct lp87565_gpio *gpio = gpiochip_get_data(gc);
->> +       int ret;
->> +
->> +       switch (offset) {
->> +       case 0:
->> +       case 1:
->> +       case 2:
->> +               /* Setup the GPIO*_SEL MUX to GPIO mode */
->> +               ret = regmap_update_bits(gpio->lp87565->regmap,
->> +                                        LP87565_REG_PIN_FUNCTION,
->> +                                        BIT(offset), BIT(offset));
-> 
-> Hm. Hm.
-> 
-> If this IC has several function modes for the pins it should also
-> be a pin controller... I know it is a lot of upfront code, but... it will
-> benefit you in the long run. Is it really just these three pins?
-> 
-> Maybe we should merge it into
-> drivers/pinctrl/pinctrl-lp87565.c so that at least file placement does
-> not become a problem later?
-
-No Linus. Only 2 modes. So went along the lines of
-drivers/gpio/gpio-lp873x.c. If you are not okay with this. I can as well
-remove this part.
-
-> 
->> +static int lp87565_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
->> +                                  unsigned long config)
->> +{
->> +       struct lp87565_gpio *gpio = gpiochip_get_data(gc);
->> +
->> +       switch (pinconf_to_config_param(config)) {
->> +       case PIN_CONFIG_DRIVE_OPEN_DRAIN:
->> +               return regmap_update_bits(gpio->lp87565->regmap,
->> +                                         LP87565_REG_GPIO_CONFIG,
->> +                                         BIT(offset +
->> +                                             __ffs(LP87565_GOIO1_OD)),
->> +                                         BIT(offset +
->> +                                             __ffs(LP87565_GOIO1_OD)));
->> +       case PIN_CONFIG_DRIVE_PUSH_PULL:
->> +               return regmap_update_bits(gpio->lp87565->regmap,
->> +                                         LP87565_REG_GPIO_CONFIG,
->> +                                         BIT(offset +
->> +                                             __ffs(LP87565_GOIO1_OD)), 0);
->> +       default:
->> +               return -ENOTSUPP;
->> +       }
->> +}
-> 
-> Nice.
-> 
-> If this was a split GPIO+pin control driver this would just be a call
-> into the pinctrl back-end from the GPIO controller, like
-> drivers/pinctrl/intel/pinctrl-intel.c does with just using
-> gpiochip_generic_config().
-
-okay. These are the two modes. Do you prefer have the driver split. I
-took the reference of lp873x and tps65218. So let me know.
-
-> 
->> +static int lp87565_gpio_probe(struct platform_device *pdev)
->> +{
->> +       struct lp87565_gpio *gpio;
->> +       int ret;
->> +
->> +       gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
->> +       if (!gpio)
->> +               return -ENOMEM;
->> +
->> +       platform_set_drvdata(pdev, gpio);
-> 
-> Is this pointer used anywhere?
-
-Actually no. I can remove this.
-
-> 
->> +       gpio->lp87565 = dev_get_drvdata(pdev->dev.parent);
-> 
-> So maybe assign the regmap instead.
-
-Sure. Seems that is the only thing i am using out of the lp87565
-structure. I will do that.
-
-> 
-> Yours,
-> Linus Walleij
-> 
+SGkgTGludXMsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlld3MuDQoNCj4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCj4gRnJvbTogTGludXMgV2FsbGVpaiBbbWFpbHRvOmxpbnVzLndhbGxlaWpA
+bGluYXJvLm9yZ10NCj4gU2VudDogRnJpZGF5LCBKdW5lIDA5LCAyMDE3IDQ6MTUgQU0NCj4gVG86
+IE1hbmksIFJham1vaGFuIDxyYWptb2hhbi5tYW5pQGludGVsLmNvbT4NCj4gQ2M6IGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWdwaW9Admdlci5rZXJuZWwub3JnOyBBQ1BJIERl
+dmVsDQo+IE1hbGluZyBMaXN0IDxsaW51eC1hY3BpQHZnZXIua2VybmVsLm9yZz47IExlZSBKb25l
+cyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+Ow0KPiBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdt
+YWlsLmNvbT47IFJhZmFlbCBKLiBXeXNvY2tpDQo+IDxyandAcmp3eXNvY2tpLm5ldD47IExlbiBC
+cm93biA8bGVuYkBrZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYxIDIvM10gZ3Bp
+bzogQWRkIHN1cHBvcnQgZm9yIFRQUzY4NDcwIEdQSU9zDQo+IA0KPiBPbiBUdWUsIEp1biA2LCAy
+MDE3IGF0IDE6NTUgUE0sIFJham1vaGFuIE1hbmkgPHJham1vaGFuLm1hbmlAaW50ZWwuY29tPg0K
+PiB3cm90ZToNCj4gDQo+ID4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIFRQUzY4NDcwIEdQ
+SU9zLg0KPiA+IFRoZXJlIGFyZSA3IEdQSU9zIGFuZCBhIGZldyBzZW5zb3IgcmVsYXRlZCBHUElP
+cy4NCj4gPiBUaGVzZSBHUElPcyBjYW4gYmUgcmVxdWVzdGVkIGFuZCBjb25maWd1cmVkIGFzIGFw
+cHJvcHJpYXRlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFqbW9oYW4gTWFuaSA8cmFqbW9o
+YW4ubWFuaUBpbnRlbC5jb20+DQo+IA0KPiBTYW1lIGNvbW1lbnRzIGFzIEFuZHkgYWxyZWFkeSBz
+ZW50LCBwbHVzOg0KPiANCj4gPiArc3RhdGljIGlubGluZSBzdHJ1Y3QgdHBzNjg0NzBfZ3Bpb19k
+YXRhICp0b19ncGlvX2RhdGEoc3RydWN0DQo+ID4gK2dwaW9fY2hpcCAqZ3Bpb2NocCkgew0KPiA+
+ICsgICAgICAgcmV0dXJuIGNvbnRhaW5lcl9vZihncGlvY2hwLCBzdHJ1Y3QgdHBzNjg0NzBfZ3Bp
+b19kYXRhLCBnYyk7IH0NCj4gDQo+IFBsZWFzZSB1c2UgdGhlIGRhdGEgcG9pbnRlIGluc2lkZSBn
+cGlvX2NoaXAuDQo+IA0KDQpUaGlzIGlzIG5vdCBjbGVhciB0byBtZS4NClRoZSBkcml2ZXIgYWxy
+ZWFkeSBnZXRzIHRoZSBkYXRhIHBvaW50ZXIgaW5zaWRlIGdwaW9fY2hpcCAod2hpY2ggaXMgZ3Bp
+b2NocCkNCklzIHRoZSBuYW1lIGdwaW9jaHAgbWlzbGVhZGluZz8gDQpJIGhhZCB0byBnZXQgcmlk
+IG9mICJpIiBpbiBncGlvY2hpcCwgdG8gbWVldCA4MCBjaGFyIGxpbWl0Lg0KDQo+IHN0cnVjdCB0
+cHM2ODQ3MF9ncGlvX2RhdGEgKmZvbyA9IGdwaW9jaGlwX2dldF9kYXRhKGdjKTsNCj4gDQo+ID4g
+KyAgICAgICByZXQgPSB0cHM2ODQ3MF9yZWdfcmVhZCh0cHMsIHJlZywgJnZhbCk7DQo+ICguLi4p
+DQo+ID4gKyAgICAgICB0cHM2ODQ3MF91cGRhdGVfYml0cyh0cHMsIHJlZywgQklUKG9mZnNldCks
+IHZhbHVlID8NCj4gPiArIEJJVChvZmZzZXQpIDogMCk7DQo+ICguLi4pDQo+ID4gKyAgICAgICBy
+ZXR1cm4gdHBzNjg0NzBfdXBkYXRlX2JpdHModHBzLCBUUFM2ODQ3MF9HUElPX0NUTF9SRUdfQShv
+ZmZzZXQpLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRQUzY4NDcwX0dQ
+SU9fTU9ERV9NQVNLLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFRQUzY4
+NDcwX0dQSU9fTU9ERV9PVVRfQ01PUyk7DQo+ICguLi4pDQo+ID4gKyAgICAgICByZXR1cm4gdHBz
+Njg0NzBfdXBkYXRlX2JpdHModHBzLCBUUFM2ODQ3MF9HUElPX0NUTF9SRUdfQShvZmZzZXQpLA0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgVFBTNjg0NzBfR1BJT19NT0RF
+X01BU0ssIDB4MDApOw0KPiANCj4gVGhpcyBsb29rcyBsaWtlIGEgcmVpbXBsZW1lbnRhdGlvbiBv
+ZiByZWdtYXAuIElzIGl0IG5vdCBwb3NzaWJsZSB0byBjcmVhdGUgYQ0KPiByZWdtYXAgaW4gdGhl
+IE1GRCBkcml2ZXIgYW5kIHBhc3MgdGhhdCBhcm91bmQgaW5zdGVhZD8NCj4gDQoNCkFjaw0KV2ls
+bCBiZSBhZGRyZXNzZWQgaW4gdjIgb2YgdGhpcyBwYXRjaCBzZXJpZXMuDQoNCj4gPiArc3RydWN0
+IGdwaW9kX2xvb2t1cF90YWJsZSBncGlvc190YWJsZSA9IHsNCj4gPiArICAgICAgIC5kZXZfaWQg
+PSBOVUxMLA0KPiA+ICsgICAgICAgLnRhYmxlID0gew0KPiA+ICsgICAgICAgICAgICAgICAgIEdQ
+SU9fTE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgMCwgImdwaW8uMCIsIEdQSU9fQUNUSVZFX0hJR0gp
+LA0KPiA+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgMSwg
+ImdwaW8uMSIsIEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+ICsgICAgICAgICAgICAgICAgIEdQSU9f
+TE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgMiwgImdwaW8uMiIsIEdQSU9fQUNUSVZFX0hJR0gpLA0K
+PiA+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgMywgImdw
+aW8uMyIsIEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9P
+S1VQKCJ0cHM2ODQ3MC1ncGlvIiwgNCwgImdwaW8uNCIsIEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+
+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgNSwgImdwaW8u
+NSIsIEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9PS1VQ
+KCJ0cHM2ODQ3MC1ncGlvIiwgNiwgImdwaW8uNiIsIEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+ICsg
+ICAgICAgICAgICAgICAgIEdQSU9fTE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgNywgInNfZW5hYmxl
+IiwNCj4gR1BJT19BQ1RJVkVfSElHSCksDQo+ID4gKyAgICAgICAgICAgICAgICAgR1BJT19MT09L
+VVAoInRwczY4NDcwLWdwaW8iLCA4LCAic19pZGxlIiwgR1BJT19BQ1RJVkVfSElHSCksDQo+ID4g
+KyAgICAgICAgICAgICAgICAgR1BJT19MT09LVVAoInRwczY4NDcwLWdwaW8iLCA5LCAic19yZXNl
+dG4iLA0KPiBHUElPX0FDVElWRV9ISUdIKSwNCj4gPiArICAgICAgICAgICAgICAgICB7fSwNCj4g
+PiArICAgICAgIH0sDQo+ID4gK307DQo+IA0KPiBIbSB0aGF0J3Mgd2h5IHlvdSBpbmNsdWRlIDxs
+aW51eC9ncGlvL21hY2hpbmUuaD4gSSBndWVzcy4NCj4gDQoNCkFjaw0KDQo+IFRoaXMgd2FycmFu
+dHMgYSBiaWcgY29tbWVudCBhYm92ZSBpdCBleHBsYWluaW5nIHdoeSB0aGlzIGlzIGRvbmUgbGlr
+ZSB0aGF0IGFuZA0KPiB3aGF0IHRoZSB1c2UgaXMgaW5zaWRlIGFueSBzeXN0ZW0gd2l0aCB0aGlz
+IGNoaXAgbW91bnRlZC4NCj4gDQoNCkFjaw0KSSBoYXZlIGFkZGVkIGNvbW1lbnRzIGluIHRoZSBN
+RkQgZHJpdmVyLCBpbnNpZGUgd2hpY2ggdGhlIGxvb2t1cCB0YWJsZSBoYXMgbW92ZWQuDQoNCj4g
+PiArICAgICAgIHRwczY4NDcwX2dwaW8tPmdjLmxhYmVsID0gInRwczY4NDcwLWdwaW8iOw0KPiA+
+ICsgICAgICAgdHBzNjg0NzBfZ3Bpby0+Z2Mub3duZXIgPSBUSElTX01PRFVMRTsNCj4gPiArICAg
+ICAgIHRwczY4NDcwX2dwaW8tPmdjLmRpcmVjdGlvbl9pbnB1dCA9IHRwczY4NDcwX2dwaW9faW5w
+dXQ7DQo+ID4gKyAgICAgICB0cHM2ODQ3MF9ncGlvLT5nYy5kaXJlY3Rpb25fb3V0cHV0ID0gdHBz
+Njg0NzBfZ3Bpb19vdXRwdXQ7DQo+IA0KPiBQbGVhc2UgaW1wbGVtZW50IC5nZXRfZGlyZWN0aW9u
+KCkNCj4gDQoNCkFjaw0KDQo+ID4gKyAgICAgICB0cHM2ODQ3MF9ncGlvLT5nYy5nZXQgPSB0cHM2
+ODQ3MF9ncGlvX2dldDsNCj4gPiArICAgICAgIHRwczY4NDcwX2dwaW8tPmdjLnNldCA9IHRwczY4
+NDcwX2dwaW9fc2V0Ow0KPiA+ICsgICAgICAgdHBzNjg0NzBfZ3Bpby0+Z2MuY2FuX3NsZWVwID0g
+dHJ1ZTsNCj4gPiArICAgICAgIHRwczY4NDcwX2dwaW8tPmdjLm5ncGlvID0gVFBTNjg0NzBfTl9H
+UElPOw0KPiA+ICsgICAgICAgdHBzNjg0NzBfZ3Bpby0+Z2MuYmFzZSA9IC0xOw0KPiA+ICsgICAg
+ICAgdHBzNjg0NzBfZ3Bpby0+Z2MucGFyZW50ID0gJnBkZXYtPmRldjsNCj4gDQo+IENvbnNpZGVy
+IGFzc2lnbmluZyB0aGUgLm5hbWVzKCkgYXJyYXkgc29tZSBzZW5zaWJsZSBsaW5lIG5hbWVzLg0K
+PiANCg0KQWNrDQoNCj4gPiArc3RhdGljIGludCB0cHM2ODQ3MF9ncGlvX3JlbW92ZShzdHJ1Y3Qg
+cGxhdGZvcm1fZGV2aWNlICpwZGV2KSB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgdHBzNjg0NzBfZ3Bp
+b19kYXRhICp0cHM2ODQ3MF9ncGlvID0NCj4gPiArcGxhdGZvcm1fZ2V0X2RydmRhdGEocGRldik7
+DQo+ID4gKw0KPiA+ICsgICAgICAgZ3Bpb2RfcmVtb3ZlX2xvb2t1cF90YWJsZSgmZ3Bpb3NfdGFi
+bGUpOw0KPiA+ICsgICAgICAgZ3Bpb2NoaXBfcmVtb3ZlKCZ0cHM2ODQ3MF9ncGlvLT5nYyk7DQo+
+IA0KPiBZb3UgY2FuJ3QgdXNlIGRldm1fZ3Bpb2NoaXBfYWRkKCk/DQo+IA0KDQpPcmlnaW5hbGx5
+IEkgY291bGRuJ3QsIGJlY2F1c2UgdGhlIGRyaXZlciBjYW4gbm90IHJlbW92ZSB0aGUgbG9va3Vw
+IHRhYmxlIHVwb24gZXhpdC9yZW1vdmFsLiBJIG1vdmVkIHRoaXMgY29kZSBpbnNpZGUgdGhlIE1G
+RCBkcml2ZXIsIHdoaWNoIGlzIG1vZGlmaWVkIHRvIHVzZSAuc2h1dGRvd24oKSB0byByZW1vdmUg
+dGhlIGxvb2t1cCB0YWJsZSwgc28gaXQgY2FuIHVzZSBkZXZfbWZkXyogY2FsbC4NCg0K
