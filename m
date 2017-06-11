@@ -1,85 +1,108 @@
-From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v7 8/9] ARM: dts: meson: mark gpio controllers as interrupt
- controllers
-Date: Sat, 10 Jun 2017 23:58:44 +0200
-Message-ID: <fe6fb55b-ed7a-db0d-a57e-71d076262866@gmail.com>
-References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v1 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Sun, 11 Jun 2017 03:49:18 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BF110@FMSMSX114.amr.corp.intel.com>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
+ <CAHp75Vc6PSDqc=Vxj2z-d49p+E-7tciunhki=8a7HPjQGuSwXQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5b352c8d-a426-fa73-58b7-0c935979492b-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAHp75Vc6PSDqc=Vxj2z-d49p+E-7tciunhki=8a7HPjQGuSwXQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Make the GPIO controllers act as interrupt controllers.
-
-Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Reviewed-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
----
-v5:
-- separate ARM / ARM64 DT changes
-- add Reviewed-by
-v6:
-- no changes
-v7:
-- no changes
----
- arch/arm/boot/dts/meson8.dtsi  | 4 ++++
- arch/arm/boot/dts/meson8b.dtsi | 4 ++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
-index 6c3a68af..952dad3d 100644
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -106,6 +106,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 120 16>;
- 		};
- 
-@@ -149,6 +151,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_cbus 0 0 120>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index 64d02932..570a347e 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -99,6 +99,8 @@
- 			reg-names = "mux", "pull", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_aobus 0 130 16>;
- 		};
- 
-@@ -174,6 +176,8 @@
- 			reg-names = "mux", "pull", "pull-enable", "gpio";
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
- 			gpio-ranges = <&pinctrl_cbus 0 0 130>;
- 		};
- 	};
--- 
-2.13.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgQW5keSwNCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3cyBhbmQgcGF0aWVuY2UuDQoNCj4gDQo+
+IE9uIFR1ZSwgSnVuIDYsIDIwMTcgYXQgMjo1NSBQTSwgUmFqbW9oYW4gTWFuaSA8cmFqbW9oYW4u
+bWFuaUBpbnRlbC5jb20+DQo+IHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBzdXBwb3J0IGZv
+ciBUUFM2ODQ3MCBHUElPcy4NCj4gPiBUaGVyZSBhcmUgNyBHUElPcyBhbmQgYSBmZXcgc2Vuc29y
+IHJlbGF0ZWQgR1BJT3MuDQo+ID4gVGhlc2UgR1BJT3MgY2FuIGJlIHJlcXVlc3RlZCBhbmQgY29u
+ZmlndXJlZCBhcyBhcHByb3ByaWF0ZS4NCj4gDQo+IEJlc2lkZXMgbXkgYmVsb3cgY29tbWVudHMs
+IGp1c3QgcHV0IGl0IGhlcmUgdGhhdCBJIHJlY29tbWVuZGVkIGVhcmxpZXIgdG8NCj4gcHJvdmlk
+ZSAyIEdQSU8gY2hpcHMgKG9uZSBwZXIgYmFuayBvZiBHUElPcykuDQo+IEl0J3MgdXAgdG8gTGlu
+dXMgdG8gZGVjaWRlIHNpbmNlIHlvdSBkaWRuJ3QgZm9sbG93IHRoZSByZWNvbW1lbmRhdGlvbi4N
+Cj4gDQoNCkFjay4NCkRpZCB5b3UgbWVhbiB0byBhZGQgdGhpcyBpbiBLY29uZmlnIG9yIHRoaXMg
+c291cmNlIGZpbGU/DQoNCkhlcmUncyBzb21lIG1vcmUgZGV0YWlscyBvbiB0aGVzZSBHUElPcy4N
+CkVhY2ggb2YgdGhlc2UgNyBHUElPcyBoYXMgMiByZWdpc3RlcnMgdG8gY29udHJvbCB0aGUgbW9k
+ZSwgbGV2ZWwsIGRyaXZlIHN0cmVuZ3RoLCBwb2xhcml0eSwgaHlzdGVyZXNpcyBjb250cm9sIGFt
+b25nIG90aGVyIHRoaW5ncy4gQWxzbyB0aGVyZSBhcmUgR1BESSBhbmQgR1BETyByZWdpc3RlcnMg
+dG8gY29udHJvbCB0aGUgaW5wdXQgYW5kIG91dHB1dCB2YWx1ZXMgb2YgdGhlc2UgNyBHUElPcy4g
+VGhlc2UgR1BJT3MgYXJlIG51bWJlcmVkIDAgdGhyb3VnaCA2Lg0KVGhlIHJlbWFpbmluZyAzIEdQ
+SU9zIGFyZSBtb3JlIG9mIHNwZWNpYWwgcHVycG9zZSBHUElPcyB0aGF0IGFyZSBvdXRwdXQgb25s
+eSwgd2l0aCBvbmUgcmVnaXN0ZXIgdG8gY29udHJvbCBhbGwgb2YgdGhlaXIgb3V0cHV0IHZhbHVl
+cyBhbmQgZHJpdmUgc3RyZW5ndGhzLiBUaGVzZSBHUElPcyBhcmUgbmFtZWQgd2l0aCBhIHNwZWNp
+YWwgcHVycG9zZSAoRU5BQkxFLCBJRExFIGFuZCBSRVNFVCBvZiB0aGUgc2Vuc29yKS4NCg0KPiA+
+ICsjaW5jbHVkZSA8bGludXgvZ3Bpby5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvZ3Bpby9tYWNo
+aW5lLmg+DQo+IA0KPiBUaGVzZSBzaG91bGRuJ3QgYmUgaW4gdGhlIGRyaXZlci4NCj4gSW5zdGVh
+ZCB1c2UNCj4gI2luY2x1ZGUgPGxpbnV4L2dwaW8vZHJpdmVyLmg+DQo+IA0KDQpBY2sNCg0KPiA+
+ICsjaW5jbHVkZSA8bGludXgvbWZkL3RwczY4NDcwLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9t
+b2R1bGUuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPiANCj4g
+PiArICAgICAgIGlmIChvZmZzZXQgPj0gVFBTNjg0NzBfTl9SRUdVTEFSX0dQSU8pIHsNCj4gPiAr
+ICAgICAgICAgICAgICAgb2Zmc2V0IC09IFRQUzY4NDcwX05fUkVHVUxBUl9HUElPOw0KPiA+ICsg
+ICAgICAgICAgICAgICByZWcgPSBUUFM2ODQ3MF9SRUdfU0dQTzsNCj4gPiArICAgICAgIH0NCj4g
+DQo+IFR3byBHUElPIGNoaXBzIG1ha2VzIHRoaXMgZ29uZS4NCj4gDQoNCkFjay4NCk9uIGEgY2xv
+c2VyIGxvb2ssIGNyZWF0aW5nIHR3byBHUElPIGNoaXBzIG1ha2VzIHRoaW5ncyBjbGVhcmVyLiAN
+CkJ1dCwgdGhpcyBjb21lcyBhdCB0aGUgY29zdCBvZiBhIG5ldyBzZXQgb2YgZ3Bpb19nZXQvc2V0
+LCANCmdwaW9fb3V0cHV0L2lucHV0IGZ1bmN0aW9ucyBmb3IgdGhlIG5ldyBHUElPIGNoaXAuIFRo
+aXMgcmVzdWx0cyBpbiANCm5ldyBjb2RlIGZvciB0aGUgc2Vjb25kIEdQSU8gY2hpcCwgd2hpY2gg
+aXMgcHJldHR5IG11Y2ggDQpnb2luZyB0byBiZSB0aGUgY29weSBvZiBmaXJzdCBHUElPIGNoaXAs
+IGV4Y2VwdCBmb3IgaW5pdGlhbGl6aW5nIA0KdGhlICJyZWciIHZhcmlhYmxlIHdpdGggR1BETyBv
+ciBTR1BPIHJlZ2lzdGVyLiBJZiB3ZSBkZWNpZGUgdG8gDQpyZXVzZSB0aGUgZXhpc3RpbmcgY29k
+ZSBvZiB0aGUgZmlyc3QgR1BJTyBjaGlwIGZvciB0aGUgbmV3L3NlY29uZCANCkdQSU8gY2hpcCwg
+d2Ugd291bGQgc3RpbGwgbmVlZCB0byBhZGQgYSBjaGVjaywgd2hpY2ggd291bGQgYmUgDQplZmZl
+Y3RpdmVseSB0aGUgc2FtZSBhcyB0aGUgZXhpc3RpbmcgY29kZSwgd2l0aCB0aGUgb25seSBhZHZh
+bnRhZ2UgDQpvZiBub3QgaGF2aW5nIHRvIGluaXRpYWxpemUgdGhlICJvZmZzZXQiIHZhcmlhYmxl
+ICh3aGljaCBob2xkcyB0aGUgDQpHUElPIG9mZnNldCkuIEdpdmVuIHRoZSBhYm92ZSwgaXQgc2Vl
+bXMgb2sgdG8gcmV0YWluIHRoZSBleGlzdGluZyANCm1vZGVsIG9mIGEgc2luZ2xlIGNoaXAgd2l0
+aCB0aGUgYWRqdXN0bWVudHMgZm9yIG9mZnNldCwgcmVnIA0KdmFyaWFibGVzIHBlciB0aGUgR1BJ
+TyBvZmZzZXQsIHRvIGtlZXAgdGhlIHdob2xlIHBpY3R1cmUgc2ltcGxlLg0KDQo+ID4gK3N0cnVj
+dCBncGlvZF9sb29rdXBfdGFibGUgZ3Bpb3NfdGFibGUgPSB7DQo+ID4gKyAgICAgICAuZGV2X2lk
+ID0gTlVMTCwNCj4gPiArICAgICAgIC50YWJsZSA9IHsNCj4gPiArICAgICAgICAgICAgICAgICBH
+UElPX0xPT0tVUCgidHBzNjg0NzAtZ3BpbyIsIDAsICJncGlvLjAiLCBHUElPX0FDVElWRV9ISUdI
+KSwNCj4gPiArICAgICAgICAgICAgICAgICBHUElPX0xPT0tVUCgidHBzNjg0NzAtZ3BpbyIsIDEs
+ICJncGlvLjEiLCBHUElPX0FDVElWRV9ISUdIKSwNCj4gPiArICAgICAgICAgICAgICAgICBHUElP
+X0xPT0tVUCgidHBzNjg0NzAtZ3BpbyIsIDIsICJncGlvLjIiLCBHUElPX0FDVElWRV9ISUdIKSwN
+Cj4gPiArICAgICAgICAgICAgICAgICBHUElPX0xPT0tVUCgidHBzNjg0NzAtZ3BpbyIsIDMsICJn
+cGlvLjMiLCBHUElPX0FDVElWRV9ISUdIKSwNCj4gPiArICAgICAgICAgICAgICAgICBHUElPX0xP
+T0tVUCgidHBzNjg0NzAtZ3BpbyIsIDQsICJncGlvLjQiLCBHUElPX0FDVElWRV9ISUdIKSwNCj4g
+PiArICAgICAgICAgICAgICAgICBHUElPX0xPT0tVUCgidHBzNjg0NzAtZ3BpbyIsIDUsICJncGlv
+LjUiLCBHUElPX0FDVElWRV9ISUdIKSwNCj4gPiArICAgICAgICAgICAgICAgICBHUElPX0xPT0tV
+UCgidHBzNjg0NzAtZ3BpbyIsIDYsICJncGlvLjYiLCBHUElPX0FDVElWRV9ISUdIKSwNCj4gPiAr
+ICAgICAgICAgICAgICAgICBHUElPX0xPT0tVUCgidHBzNjg0NzAtZ3BpbyIsIDcsICJzX2VuYWJs
+ZSIsDQo+IEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9P
+S1VQKCJ0cHM2ODQ3MC1ncGlvIiwgOCwgInNfaWRsZSIsIEdQSU9fQUNUSVZFX0hJR0gpLA0KPiA+
+ICsgICAgICAgICAgICAgICAgIEdQSU9fTE9PS1VQKCJ0cHM2ODQ3MC1ncGlvIiwgOSwgInNfcmVz
+ZXRuIiwNCj4gR1BJT19BQ1RJVkVfSElHSCksDQo+ID4gKyAgICAgICAgICAgICAgICAge30sDQo+
+ID4gKyAgICAgICB9LA0KPiA+ICt9Ow0KPiANCj4gVGhpcyBkb2Vzbid0IGJlbG9uZyB0byB0aGUg
+ZHJpdmVyLg0KPiANCg0KQWNrDQpJIGhhdmUgbW92ZWQgdGhpcyBjb2RlIHRvIHRoZSBNRkQgZHJp
+dmVyDQoNCj4gPiArc3RhdGljIGludCB0cHM2ODQ3MF9ncGlvX3Byb2JlKHN0cnVjdCBwbGF0Zm9y
+bV9kZXZpY2UgKnBkZXYpIHsNCj4gPiArICAgICAgIHN0cnVjdCB0cHM2ODQ3MCAqdHBzNjg0NzAg
+PSBkZXZfZ2V0X2RydmRhdGEocGRldi0+ZGV2LnBhcmVudCk7DQo+ID4gKyAgICAgICBzdHJ1Y3Qg
+dHBzNjg0NzBfZ3Bpb19kYXRhICp0cHM2ODQ3MF9ncGlvOw0KPiANCj4gPiArICAgICAgIGludCBp
+LCByZXQ7DQo+IA0KPiB1bnNpbmduZWQgaW50IGk7DQo+IA0KPiA+ICsgICAgICAgcmV0ID0gZ3Bp
+b2NoaXBfYWRkKCZ0cHM2ODQ3MF9ncGlvLT5nYyk7DQo+IA0KPiBkZXZtXyA/DQo+IA0KDQpBY2sN
+Cg0KPiA+ICsgICAgICAgZ3Bpb2RfYWRkX2xvb2t1cF90YWJsZSgmZ3Bpb3NfdGFibGUpOw0KPiAN
+Cj4gRG9lc24ndCBiZWxvbmcgdG8gdGhlIGRyaXZlciBlaXRoZXIuDQo+IEkgc3VwcG9zZSBpdCdz
+IGEgcGFydCBvZiBNRkQgKHBhdGNoIDEpDQo+IA0KDQpBY2sNCg0KPiA+ICsgICAgICAgLyoNCj4g
+PiArICAgICAgICAqIEluaXRpYWxpemUgYWxsIHRoZSBHUElPcyB0byAwLCBqdXN0IHRvIG1ha2Ug
+c3VyZSBhbGwNCj4gPiArICAgICAgICAqIEdQSU9zIHN0YXJ0IHdpdGgga25vd24gZGVmYXVsdCB2
+YWx1ZXMuIFRoaXMgcHJvdGVjdHMgYWdhaW5zdA0KPiA+ICsgICAgICAgICogYW55IEdQSU9zIGdl
+dHRpbmcgc2V0IHdpdGggYSB2YWx1ZSBvZiAxLCBhZnRlciBUUFM2ODQ3MA0KPiA+ICsgcmVzZXQN
+Cj4gDQo+IFNvLCB0aGlzIGlzIGhhcmR3YXJlIGJ1Zy4gUmlnaHQ/IE9yIG1pc2NvbmZpZ3VyYXRp
+b24gb2YgdGhlIGNoaXAgd2UgbWF5IGF2b2lkPw0KPiANCg0KVGhlIHRwczY4NDcwIFBNSUMgdXBv
+biByZXNldCwgZG9lcyBub3QgaGF2ZSB0aGUgInBvd2VyIG9uIHJlc2V0IiB2YWx1ZXMuDQpXZSBq
+dXN0IGluaXRpYWxpemUgdGhlIEdQSU9zIHdpdGggdGhlaXIga25vd24gZGVmYXVsdCB2YWx1ZXMu
+DQoNCj4gPiArICAgICAgICAqLw0KPiA+ICsgICAgICAgZm9yIChpID0gMDsgaSA8IHRwczY4NDcw
+X2dwaW8tPmdjLm5ncGlvOyBpKyspDQo+ID4gKyAgICAgICAgICAgICAgIHRwczY4NDcwX2dwaW9f
+c2V0KCZ0cHM2ODQ3MF9ncGlvLT5nYywgaSwgMCk7DQo+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJu
+IHJldDsNCj4gPiArfQ0KPiANCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgdHBzNjg0NzBfZ3Bpb19y
+ZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgew0KPiA+ICsgICAgICAgc3RydWN0
+IHRwczY4NDcwX2dwaW9fZGF0YSAqdHBzNjg0NzBfZ3BpbyA9DQo+ID4gK3BsYXRmb3JtX2dldF9k
+cnZkYXRhKHBkZXYpOw0KPiA+ICsNCj4gPiArICAgICAgIGdwaW9kX3JlbW92ZV9sb29rdXBfdGFi
+bGUoJmdwaW9zX3RhYmxlKTsNCj4gPiArICAgICAgIGdwaW9jaGlwX3JlbW92ZSgmdHBzNjg0NzBf
+Z3Bpby0+Z2MpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAwOw0KPiA+ICt9DQo+IA0KPiBT
+aG91bGQgZ29uZSBhZnRlciBkZXZtXyBpbiB1c2UuDQo+IA0KDQpBY2sNCg==
