@@ -1,56 +1,117 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH] gpio: lp87565: Add support for GPIO
-Date: Mon, 12 Jun 2017 20:01:15 +0530
-Message-ID: <167f263d-b339-10e0-8ae2-3dea11874894@ti.com>
-References: <1496286631-6295-1-git-send-email-j-keerthy@ti.com>
- <CACRpkdZFYSj0=O1PpPzWpcgV+k7WoKCDRPW3fcQ5+B-pDvEWEw@mail.gmail.com>
- <74fd6c53-7801-73eb-5236-d7a72c93d715@ti.com>
- <CACRpkdadg9im1OXbZkqMa0Bi6NqrNN7hzRWixTtNbHZsqk3WPw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:35675 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752317AbdFLOb3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jun 2017 10:31:29 -0400
-In-Reply-To: <CACRpkdadg9im1OXbZkqMa0Bi6NqrNN7hzRWixTtNbHZsqk3WPw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH v3 0/9] Add support for the pin and gpio controllers on the Marvell Armada 7K/8K
+Date: Mon, 12 Jun 2017 17:34:51 +0200
+Message-ID: <cover.d003a5e862e6d732d901a61d1765a349c9a89eef.1497281623.git-series.gregory.clement@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>
 
+Hi,
 
+This third version would allow to apply the series without any
+conflict:
 
-On Monday 12 June 2017 07:34 PM, Linus Walleij wrote:
-> On Sun, Jun 11, 2017 at 6:27 AM, Keerthy <j-keerthy@ti.com> wrote:
->> On Friday 09 June 2017 02:06 PM, Linus Walleij wrote:
-> 
->>> If this IC has several function modes for the pins it should also
->>> be a pin controller... I know it is a lot of upfront code, but... it will
->>> benefit you in the long run. Is it really just these three pins?
->>>
->>> Maybe we should merge it into
->>> drivers/pinctrl/pinctrl-lp87565.c so that at least file placement does
->>> not become a problem later?
->>
->> No Linus. Only 2 modes. So went along the lines of
->> drivers/gpio/gpio-lp873x.c. If you are not okay with this. I can as well
->> remove this part.
-> 
-> It's fine. Sometimes implementing things strictly in very generic frameworks
-> will become a burden because of unnecessary complexities.
-> 
-> Can you just document it with some comments so it is clear what
-> is happening here and what the two modes are? And keep it like this
-> otherwise.
+- This time the series is rebased on gpio/for-next to avoid conflict
+  with already applied patches.
 
-Okay sure. I will do that in v2.
+- The documentation part has been removed from this series and I will
+  asked to Rob Herring to apply through the device tree subsystem.
+
+Thanks to this there is no external dependencies except the dts part
+that have to be merged through the mvebu tree.
+
+The first patch is a fix that was already posted.
+
+Then the first part of the series is adding the support for the pin
+controllers found on the Marvell Armada 7K/8K.
+
+These controllers are compatible with the ones found on the ARM32
+mvebu SoCs. However, the pinctrl node in the device tree of theses
+SoCs are child of a syscon. So for them we will reuse the regmap
+support introduced by Russell King.
+
+Each component of the Armada 7K and 8K comes with their own pin
+controller, that's why we have 2 new drivers: one for the CP110 and
+one for the AP806.
+
+The second part of the series extends the mvebu gpio driver to support
+the gpio controllers found on the Marvell Armada 7K/8K SoCs.
+
+The gpio controllers used on the Marvell Armada 7K/8K SoCs are the
+same that the ones used on the ARM32 mvebu SoCs. However, the pinctrl
+node in the device tree of theses SoCs are child of a syscon.
 
 Thanks,
-Keerthy
 
-> 
-> Yours,
-> Linus Walleij
-> 
+Gregory
+
+Changelog:
+v2 -> v3
+
+- Rebased on gpio/for-next.
+
+- Added the fix "gpio: mvebu: fix regmap_update_bits usage" with the
+  tested-by and reviewed-by flag
+
+- Removed the binding documentation patch that will be applied through
+  an other path.
+
+v1 -> v2:
+
+- Merged of the pinctrl and gpio series.
+
+- Rebased on next-20170531 (which contains gpio and pinctrl commit
+  already applied).
+
+- Removed already applied patches.
+
+- Remove the modular support of the drivers, suggested by Paul
+  Gortmaker.
+
+- Added tested-by from Thomas Petazzoni.
+
+- Added acked-by from Rob Herring.
+
+Gregory CLEMENT (6):
+  gpio: mvebu: fix regmap_update_bits usage
+  pinctrl: mvebu: remove the offset property for regmap
+  arm64: marvell: enable the Armada 7K/8K pinctrl driver
+  arm64: dts: marvell: add pinctrl support for Armada 7K/8K
+  gpio: mvebu: Add support for the Armada 7K/8K SoCs
+  arm64: dts: marvell: add gpio support for Armada 7K/8K
+
+Hanna Hawa (2):
+  pinctrl: mvebu: add driver for Armada AP806 pinctrl
+  pinctrl: mvebu: add driver for Armada CP110 pinctrl
+
+Russell King (1):
+  pinctrl: avoid PLAT_ORION dependency
+
+ arch/arm64/Kconfig.platforms                         |   2 +-
+ arch/arm64/boot/dts/marvell/armada-7020.dtsi         |   2 +-
+ arch/arm64/boot/dts/marvell/armada-7040.dtsi         |   2 +-
+ arch/arm64/boot/dts/marvell/armada-70x0.dtsi         |  68 +-
+ arch/arm64/boot/dts/marvell/armada-8020.dtsi         |   3 +-
+ arch/arm64/boot/dts/marvell/armada-8040.dtsi         |   3 +-
+ arch/arm64/boot/dts/marvell/armada-80x0.dtsi         |  76 +-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi        |  14 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-master.dtsi |  21 +-
+ arch/arm64/boot/dts/marvell/armada-cp110-slave.dtsi  |  22 +-
+ drivers/gpio/gpio-mvebu.c                            | 216 ++--
+ drivers/pinctrl/mvebu/Kconfig                        |  12 +-
+ drivers/pinctrl/mvebu/Makefile                       |   2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-ap806.c         | 140 ++-
+ drivers/pinctrl/mvebu/pinctrl-armada-cp110.c         | 687 ++++++++++++-
+ drivers/pinctrl/mvebu/pinctrl-mvebu.c                |   6 +-
+ drivers/pinctrl/mvebu/pinctrl-mvebu.h                |   2 +-
+ 17 files changed, 1189 insertions(+), 89 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/marvell/armada-70x0.dtsi
+ create mode 100644 arch/arm64/boot/dts/marvell/armada-80x0.dtsi
+ create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-ap806.c
+ create mode 100644 drivers/pinctrl/mvebu/pinctrl-armada-cp110.c
+
+base-commit: 77fd50d14eb4a48d00cee84a7beae174f8011157
+-- 
+git-series 0.9.1
