@@ -1,26 +1,66 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v1 2/3] gpio: Add support for TPS68470 GPIOs
-Date: Mon, 12 Jun 2017 00:18:29 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BF227@FMSMSX114.amr.corp.intel.com>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-3-git-send-email-rajmohan.mani@intel.com>
- <CACRpkda4v=QaFzAsR1903Ybx3+2Faz-q+YrPN5dBiLDsRMj5TA@mail.gmail.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: Re: [PATCH] gpio: dwapb: fix missing first irq for edgeboth irq
+ type
+Date: Mon, 12 Jun 2017 13:05:30 +0800
+Message-ID: <20170612130530.724305b5@xhacker>
+References: <20170601232715.2788-1-xgchenshy@gmail.com>
+        <CACRpkdbnXOab-wn3z9BQrs7RVrqag8wtdwsmUvekYLY29rxdVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CACRpkda4v=QaFzAsR1903Ybx3+2Faz-q+YrPN5dBiLDsRMj5TA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:38870 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752002AbdFLFKT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 12 Jun 2017 01:10:19 -0400
+In-Reply-To: <CACRpkdbnXOab-wn3z9BQrs7RVrqag8wtdwsmUvekYLY29rxdVw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: xgchenshy@gmail.com, Hoan Tran <hotran@apm.com>, Jiang Qiu <qiujiang@huawei.com>, Jamie Iles <jamie@jamieiles.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-SGkgTGludXMsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MSAyLzNdIGdwaW86IEFkZCBzdXBw
-b3J0IGZvciBUUFM2ODQ3MCBHUElPcw0KDQo+ID4gK3N0YXRpYyBpbmxpbmUgc3RydWN0IHRwczY4
-NDcwX2dwaW9fZGF0YSAqdG9fZ3Bpb19kYXRhKHN0cnVjdA0KPiA+ICtncGlvX2NoaXAgKmdwaW9j
-aHApIHsNCj4gPiArICAgICAgIHJldHVybiBjb250YWluZXJfb2YoZ3Bpb2NocCwgc3RydWN0IHRw
-czY4NDcwX2dwaW9fZGF0YSwgZ2MpOyB9DQo+IA0KPiBQbGVhc2UgdXNlIHRoZSBkYXRhIHBvaW50
-ZSBpbnNpZGUgZ3Bpb19jaGlwLg0KPiANCg0KTXkgYmFkLiBJIGNvbXBsZXRlbHkgbWlzc2VkIHRo
-ZSBmb2xsb3dpbmcgbGluZS4gV2lsbCBmaXggaXQgdjMuDQoNCj4gc3RydWN0IHRwczY4NDcwX2dw
-aW9fZGF0YSAqZm9vID0gZ3Bpb2NoaXBfZ2V0X2RhdGEoZ2MpOw0KPiANCg==
+On Fri, 9 Jun 2017 11:26:19 +0200 Linus Walleij wrote:
+
+> 
+> On Fri, Jun 2, 2017 at 1:27 AM,  <xgchenshy@gmail.com> wrote:
+> > From: Xiaoguang Chen <xgchenshy@gmail.com>
+> >
+> > dwapb_irq_set_type overwrites polarity register value for
+> > IRQ_TYPE_EDGE_BOTH case. If the polarity of one gpio is 0
+> > by default, then it will set falling edge irq trigger.
+> > and the gpio may requires rising edge irq for the first time,
+> > and it will be missed.
+> >
+> > Do not overwrite polarity register for IRQ_TYPE_EDGE_BOTH case
+> > can solve this issue.
+
+I think this is a correct fix.
+
+> >
+> > Signed-off-by: Xiaoguang Chen <xgchenshy@gmail.com>
+
+Tested-by: Jisheng Zhang <jszhang@marvell.com>
+
+> > ---
+> >  drivers/gpio/gpio-dwapb.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> > index f051c45..80913e4 100644
+> > --- a/drivers/gpio/gpio-dwapb.c
+> > +++ b/drivers/gpio/gpio-dwapb.c
+> > @@ -288,7 +288,8 @@ static int dwapb_irq_set_type(struct irq_data *d, u32 type)
+> >         irq_setup_alt_chip(d, type);
+> >
+> >         dwapb_write(gpio, GPIO_INTTYPE_LEVEL, level);
+> > -       dwapb_write(gpio, GPIO_INT_POLARITY, polarity);
+> > +       if （type != IRQ_TYPE_EDGE_BOTH）
+> > +               dwapb_write(gpio, GPIO_INT_POLARITY, polarity);
+> >         spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+> >
+> >         return 0;
+> > --
+> > 2.8.4 (Apple Git-73)
+> >  
+
