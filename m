@@ -1,35 +1,39 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v3 1/3] mfd: Add new mfd device TPS68470
-Date: Mon, 12 Jun 2017 10:06:57 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725BF4CE@FMSMSX114.amr.corp.intel.com>
-References: <1497259612-38401-1-git-send-email-rajmohan.mani@intel.com>
- <1497259612-38401-2-git-send-email-rajmohan.mani@intel.com>
- <CAHp75Ve+fPR95D8Fbee1HCDd=CegAN9TZ3zEbUZShyaoEZ-gHw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: lp87565: Add support for GPIO
+Date: Mon, 12 Jun 2017 16:04:16 +0200
+Message-ID: <CACRpkdadg9im1OXbZkqMa0Bi6NqrNN7hzRWixTtNbHZsqk3WPw@mail.gmail.com>
+References: <1496286631-6295-1-git-send-email-j-keerthy@ti.com>
+ <CACRpkdZFYSj0=O1PpPzWpcgV+k7WoKCDRPW3fcQ5+B-pDvEWEw@mail.gmail.com> <74fd6c53-7801-73eb-5236-d7a72c93d715@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Ve+fPR95D8Fbee1HCDd=CegAN9TZ3zEbUZShyaoEZ-gHw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <74fd6c53-7801-73eb-5236-d7a72c93d715@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Andrew F. Davis" <afd@ti.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgQW5keSwNCg0KPiBPbiBNb24sIEp1biAxMiwgMjAxNyBhdCAxMjoyNiBQTSwgUmFqbW9oYW4g
-TWFuaQ0KPiA8cmFqbW9oYW4ubWFuaUBpbnRlbC5jb20+IHdyb3RlOg0KPiA+IFRoZSBUUFM2ODQ3
-MCBkZXZpY2UgaXMgYW4gYWR2YW5jZWQgcG93ZXIgbWFuYWdlbWVudCB1bml0IHRoYXQgcG93ZXJz
-IGENCj4gPiBDb21wYWN0IENhbWVyYSBNb2R1bGUgKENDTSksIGdlbmVyYXRlcyBjbG9ja3MgZm9y
-IGltYWdlIHNlbnNvcnMsDQo+ID4gZHJpdmVzIGEgZHVhbCBMRUQgZm9yIEZsYXNoIGFuZCBpbmNv
-cnBvcmF0ZXMgdHdvIExFRCBkcml2ZXJzIGZvcg0KPiA+IGdlbmVyYWwgcHVycG9zZSBpbmRpY2F0
-b3JzLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIFRQUzY4NDcwIG1mZCBk
-ZXZpY2UuDQo+IA0KPiA+ICsjaW5jbHVkZSA8bGludXgvaTJjLmg+DQo+IA0KPiBJZiB5b3UgYXJl
-IGdvaW5nIHRvIGlnbm9yZSByZXZpZXdlcnMnIGNvbW1lbnRzIHlvdSBtYXkgZGVsYXkgdGhlIHBh
-dGNoDQo+IHVwc3RyZWFtaW5nIGZvciBxdWl0ZSBhIGJpdC4NCj4gDQoNClNvcnJ5LiBUaGUgY2hh
-bmdlcyB3ZXJlIGluIG15IGdpdCByZXBvLCBidXQgZGlkbid0IG1ha2UgaXQgdG8gdGhlIHYzIHBh
-dGNoIGxpc3QgKHNpbmNlIEkgZGlkbid0IGNvbW1pdCBhbmQgYW1lbmQgdGhlIHBhdGNoKS4NCkkg
-d2lsbCBob2xkIG9udG8gdGhpcyBmb3Igbm93IChpbnN0ZWFkIG9mIHB1c2hpbmcgdjQgd2l0aCBq
-dXN0IHRoaXMgY2hhbmdlKS4NCg0KPiBQLlMuIEZvciBub3cgSSBkb24ndCBzZWUgYW55IHByaW9y
-aXR5IHRvIHJldmlldyB2My4NCj4gSSBub3RlZCBtb3JlIGlzc3VlcyB0aGF0IHdlcmVuJ3QgYWRk
-cmVzc2VkLg0KPiANCj4gU29ycnkuDQo+IA0KPiAtLQ0KPiBXaXRoIEJlc3QgUmVnYXJkcywNCj4g
-QW5keSBTaGV2Y2hlbmtvDQo=
+On Sun, Jun 11, 2017 at 6:27 AM, Keerthy <j-keerthy@ti.com> wrote:
+> On Friday 09 June 2017 02:06 PM, Linus Walleij wrote:
+
+>> If this IC has several function modes for the pins it should also
+>> be a pin controller... I know it is a lot of upfront code, but... it will
+>> benefit you in the long run. Is it really just these three pins?
+>>
+>> Maybe we should merge it into
+>> drivers/pinctrl/pinctrl-lp87565.c so that at least file placement does
+>> not become a problem later?
+>
+> No Linus. Only 2 modes. So went along the lines of
+> drivers/gpio/gpio-lp873x.c. If you are not okay with this. I can as well
+> remove this part.
+
+It's fine. Sometimes implementing things strictly in very generic frameworks
+will become a burden because of unnecessary complexities.
+
+Can you just document it with some comments so it is clear what
+is happening here and what the two modes are? And keep it like this
+otherwise.
+
+Yours,
+Linus Walleij
