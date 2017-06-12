@@ -1,59 +1,46 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v1 1/3] mfd: Add new mfd device TPS68470
-Date: Mon, 12 Jun 2017 09:20:38 +0100
-Message-ID: <20170612082038.x6z3rx2bknxmfyfp@dell>
-References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
- <1496750118-5570-2-git-send-email-rajmohan.mani@intel.com>
- <CAHp75VfiTM2t=WxWpG4+kUfGA3DrfGfMOwxP6Cs42nGwHjAp7w@mail.gmail.com>
- <20170607115827.GY1019@valkosipuli.retiisi.org.uk>
- <6F87890CF0F5204F892DEA1EF0D77A59725BECB0@FMSMSX114.amr.corp.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725BECB0@FMSMSX114.amr.corp.intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] MAINTAINERS: Take maintainership for GPIO ACPI support
+Date: Mon, 12 Jun 2017 11:52:12 +0300
+Message-ID: <20170612085212.64831-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:41588 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750730AbdFLIwq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 12 Jun 2017 04:52:46 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Fri, 09 Jun 2017, Mani, Rajmohan wrote:
+We will help Linus to maintain GPIO ACPI support.
 
-> Hi Andy,
-> 
-> > On Tue, Jun 06, 2017 at 03:59:49PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Jun 6, 2017 at 2:55 PM, Rajmohan Mani
-> > <rajmohan.mani@intel.com> wrote:
-> > > > The TPS68470 device is an advanced power management unit that powers
-> > > > a Compact Camera Module (CCM), generates clocks for image sensors,
-> > > > drives a dual LED for Flash and incorporates two LED drivers for
-> > > > general purpose indicators.
-> > > >
-> > > > This patch adds support for TPS68470 mfd device.
-> > >
-> > > I dunno why you decide to send this out now, see my comments below.
-> > >
-> > > > +static int tps68470_chip_init(struct tps68470 *tps) {
-> > > > +       unsigned int version;
-> > > > +       int ret;
-> > >
-> > > > +       /* FIXME: configure these dynamically */
-> > >
-> > > So, what prevents you to fix this?
-> > 
-> > Nothing I suppose. They're however not needed right now and can be
-> > implemented later on if they're ever needed.
-> > 
-> 
-> Ack
+Append a dedicated record to the MAINTAINERS data base.
 
-What does this mean?  Is the plan to fix it or not?  I don't want
-FIXMEs in the code that a) can be fixed right away or b) might never
-be fixed.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0037e75bc3f8..166660958f0a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5738,6 +5738,15 @@ F:	include/asm-generic/gpio.h
+ F:	include/uapi/linux/gpio.h
+ F:	tools/gpio/
+ 
++GPIO ACPI SUPPORT
++M:	Mika Westerberg <mika.westerberg@linux.intel.com>
++M:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
++L:	linux-gpio@vger.kernel.org
++L:	linux-acpi@vger.kernel.org
++S:	Maintained
++F:	Documentation/acpi/gpio-properties.txt
++F:	drivers/gpio/gpiolib-acpi.c
++
+ GRE DEMULTIPLEXER DRIVER
+ M:	Dmitry Kozlov <xeb@mail.ru>
+ L:	netdev@vger.kernel.org
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
+
