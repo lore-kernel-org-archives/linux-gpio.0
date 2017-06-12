@@ -1,73 +1,59 @@
-From: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-Subject: Re: [PATCHv2 1/2] gpio: mvebu: fix blink counter register selection
-Date: Mon, 12 Jun 2017 09:17:21 +0200
-Message-ID: <20170612091721.6c7d4f48@gmail.com>
-References: <20170601121826.14685-1-richard.genoud@gmail.com>
-        <20170601121826.14685-2-richard.genoud@gmail.com>
-        <CACRpkdbRN3pgNqUJXHimpMjSOMeZepjxACveTSVzYJWneM9hOQ@mail.gmail.com>
-        <20170609100322.765adf7f@gmail.com>
-        <CACRpkdbH4L=k+RjP7wpmpUQC4kthBF07Brk6K+sxXyf+G1Ke9g@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v1 1/3] mfd: Add new mfd device TPS68470
+Date: Mon, 12 Jun 2017 09:20:38 +0100
+Message-ID: <20170612082038.x6z3rx2bknxmfyfp@dell>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-2-git-send-email-rajmohan.mani@intel.com>
+ <CAHp75VfiTM2t=WxWpG4+kUfGA3DrfGfMOwxP6Cs42nGwHjAp7w@mail.gmail.com>
+ <20170607115827.GY1019@valkosipuli.retiisi.org.uk>
+ <6F87890CF0F5204F892DEA1EF0D77A59725BECB0@FMSMSX114.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbH4L=k+RjP7wpmpUQC4kthBF07Brk6K+sxXyf+G1Ke9g@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Gregory Clement <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Richard Genoud <richard.genoud@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725BECB0@FMSMSX114.amr.corp.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+On Fri, 09 Jun 2017, Mani, Rajmohan wrote:
 
-On Sun, 11 Jun 2017 23:48:34 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> On Fri, Jun 9, 2017 at 10:03 AM, Ralph Sennhauser
-> <ralph.sennhauser@gmail.com> wrote:
-> > On Fri, 9 Jun 2017 09:37:55 +0200
-> > Linus Walleij <linus.walleij@linaro.org> wrote:
-> >  
-> >> On Thu, Jun 1, 2017 at 2:18 PM, Richard Genoud
-> >> <richard.genoud@gmail.com> wrote:
-> >>  
-> >> > The blink counter A was always selected because 0 was forced in
-> >> > the blink select counter register.
-> >> > The variable 'set' was obviously there to be used as the register
-> >> > value, selecting the B counter when id==1 and A counter when
-> >> > id==0.
-> >> >
-> >> > Tested on clearfog-pro (Marvell 88F6828)
-> >> >
-> >> > Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
-> >> > Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-> >> > Reviewed-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
-> >> > Signed-off-by: Richard Genoud <richard.genoud@gmail.com>  
-> >>
-> >> Patch applied for fixes.
-> >>
-> >> It appears this will clash with patches on the development
-> >> branch :(  
-> >
-> > Hi Linus,
-> >
-> > The commit 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register
-> > access") which you likely mean breaks gpio-keys, reported about an
-> > hour ago, so you might just want to drop that one for now instead
-> > as it needs mor work anyway.  
+> Hi Andy,
 > 
-> I would like to get an indication from Thomas and/or Gregory if they
-> think it is a good idea to revert or if they just wanna fix it.
+> > On Tue, Jun 06, 2017 at 03:59:49PM +0300, Andy Shevchenko wrote:
+> > > On Tue, Jun 6, 2017 at 2:55 PM, Rajmohan Mani
+> > <rajmohan.mani@intel.com> wrote:
+> > > > The TPS68470 device is an advanced power management unit that powers
+> > > > a Compact Camera Module (CCM), generates clocks for image sensors,
+> > > > drives a dual LED for Flash and incorporates two LED drivers for
+> > > > general purpose indicators.
+> > > >
+> > > > This patch adds support for TPS68470 mfd device.
+> > >
+> > > I dunno why you decide to send this out now, see my comments below.
+> > >
+> > > > +static int tps68470_chip_init(struct tps68470 *tps) {
+> > > > +       unsigned int version;
+> > > > +       int ret;
+> > >
+> > > > +       /* FIXME: configure these dynamically */
+> > >
+> > > So, what prevents you to fix this?
+> > 
+> > Nothing I suppose. They're however not needed right now and can be
+> > implemented later on if they're ever needed.
+> > 
+> 
+> Ack
 
-A fix patch by Gregory exists by now ([PATCH v2] gpio: mvebu: fix
-regmap_update_bits usage).
- 
-> We still have development time before we even start merging for v4.13
-> and then we have all the release candidates. No point to throw up
-> hands this early?
+What does this mean?  Is the plan to fix it or not?  I don't want
+FIXMEs in the code that a) can be fixed right away or b) might never
+be fixed.
 
-Ah, not throwing hands. Just thought the author might prefer to rebase
-the patch himself when fixing the bug so there is just one clean patch
-for the change as there is still enough time for that before the merge
-window opens.
-
-Ralph
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
