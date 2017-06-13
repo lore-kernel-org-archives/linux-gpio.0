@@ -1,1094 +1,555 @@
-From: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v6 4/6] clk: qcom: Add ipq8074 Global Clock Controller
- support
-Date: Tue, 13 Jun 2017 10:51:44 +0530
-Message-ID: <d4d980f7-6aa1-d61f-7b47-6e8a8a68f7c2@codeaurora.org>
-References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
- <1497001319-30353-5-git-send-email-varada@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1497001319-30353-5-git-send-email-varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sjaganat-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+From: fenglinw@codeaurora.org
+Subject: [PATCH V1 1/3] pinctrl: qcom: spmi-gpio: Add support for GPIO LV/MV subtype
+Date: Tue, 13 Jun 2017 14:16:03 +0800
+Message-ID: <20170613061707.13892-2-fenglinw@codeaurora.org>
+References: <20170613061707.13892-1-fenglinw@codeaurora.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20170613061707.13892-1-fenglinw@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Fenglin Wu <fenglinw@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: collinsd@quicinc.com, aghayal@qti.qualcomm.com, wruan@quicinc.com, kgunda@qti.qualcomm.com
 List-Id: linux-gpio@vger.kernel.org
 
-Stephen,
+From: Fenglin Wu <fenglinw@codeaurora.org>
 
-On 6/9/2017 3:11 PM, Varadarajan Narayanan wrote:
-> From: Abhishek Sahu <absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> 
-> This patch adds support for the global clock controller found on
-> the ipq8074 based devices. This includes UART, I2C, SPI etc.
-> 
-> Signed-off-by: Abhishek Sahu <absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Signed-off-by: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> ---
->   drivers/clk/qcom/Kconfig       |    9 +
->   drivers/clk/qcom/Makefile      |    1 +
->   drivers/clk/qcom/gcc-ipq8074.c | 1007 ++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 1017 insertions(+)
->   create mode 100644 drivers/clk/qcom/gcc-ipq8074.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 5fb8d74..9f6c278 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -82,6 +82,15 @@ config IPQ_LCC_806X
->   	  Say Y if you want to use audio devices such as i2s, pcm,
->   	  S/PDIF, etc.
->   
-> +config IPQ_GCC_8074
-> +	tristate "IPQ8074 Global Clock Controller"
-> +	depends on COMMON_CLK_QCOM
-> +	help
-> +	  Support for global clock controller on ipq8074 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  i2c, USB, SD/eMMC, etc. Select this for the root clock
-> +	  of ipq8074.
-> +
->   config MSM_GCC_8660
->   	tristate "MSM8660 Global Clock Controller"
->   	depends on COMMON_CLK_QCOM
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 1c3e222..3f3aff2 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -17,6 +17,7 @@ obj-$(CONFIG_APQ_GCC_8084) += gcc-apq8084.o
->   obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
->   obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
-> +obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->   obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
->   obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
->   obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
-> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-> new file mode 100644
-> index 0000000..0f735d3
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-ipq8074.c
-> @@ -0,0 +1,1007 @@
-> +/*
-> + * Copyright (c) 2017, The Linux Foundation. All rights reserved.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,gcc-ipq8074.h>
-> +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-branch.h"
-> +#include "clk-alpha-pll.h"
-> +#include "reset.h"
-> +
-> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-> +
-> +enum {
-> +	P_XO,
-> +	P_GPLL0,
-> +	P_GPLL0_DIV2,
-> +};
-> +
-> +static const char * const gcc_xo_gpll0_gpll0_out_main_div2[] = {
-> +	"xo",
-> +	"gpll0",
-> +	"gpll0_out_main_div2",
-> +};
-> +
-> +static const struct parent_map gcc_xo_gpll0_gpll0_out_main_div2_map[] = {
-> +	{ P_XO, 0 },
-> +	{ P_GPLL0, 1 },
-> +	{ P_GPLL0_DIV2, 4 },
-> +};
-> +
-> +static struct clk_alpha_pll gpll0_main = {
-> +	.offset = 0x21000,
-> +	.clkr = {
-> +		.enable_reg = 0x0b000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gpll0_main",
-> +			.parent_names = (const char *[]){
-> +				"xo"
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor gpll0_out_main_div2 = {
-> +	.mult = 1,
-> +	.div = 2,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "gpll0_out_main_div2",
-> +		.parent_names = (const char *[]){
-> +			"gpll0_main"
-> +		},
-> +		.num_parents = 1,
-> +		.ops = &clk_fixed_factor_ops,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +static struct clk_alpha_pll_postdiv gpll0 = {
-> +	.offset = 0x21000,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "gpll0",
-> +		.parent_names = (const char *[]){
-> +			"gpll0_main"
-> +		},
-> +		.num_parents = 1,
-> +		.ops = &clk_alpha_pll_postdiv_ops,
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_pcnoc_bfdcd_clk_src[] = {
-> +	F(19200000, P_XO, 1, 0, 0),
-> +	F(50000000, P_GPLL0, 16, 0, 0),
-> +	F(100000000, P_GPLL0, 8, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
-> +	.cmd_rcgr = 0x27000,
-> +	.freq_tbl = ftbl_pcnoc_bfdcd_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "pcnoc_bfdcd_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +		.flags = CLK_IS_CRITICAL,
-> +	},
-> +};
-> +
-> +static struct clk_fixed_factor pcnoc_clk_src = {
-> +	.mult = 1,
-> +	.div = 1,
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "pcnoc_clk_src",
-> +		.parent_names = (const char *[]){
-> +			"pcnoc_bfdcd_clk_src"
-> +		},
-> +		.num_parents = 1,
-> +		.ops = &clk_fixed_factor_ops,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_sleep_clk_src = {
-> +	.halt_reg = 0x30000,
-> +	.clkr = {
-> +		.enable_reg = 0x30000,
-> +		.enable_mask = BIT(1),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_sleep_clk_src",
-> +			.parent_names = (const char *[]){
-> +				"sleep_clk"
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_blsp1_qup_i2c_apps_clk_src[] = {
-> +	F(19200000, P_XO, 1, 0, 0),
-> +	F(25000000, P_GPLL0_DIV2, 16, 0, 0),
-> +	F(50000000, P_GPLL0, 16, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
-> +	.cmd_rcgr = 0x0200c,
-> +	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup1_i2c_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_blsp1_qup_spi_apps_clk_src[] = {
-> +	F(960000, P_XO, 10, 1, 2),
-> +	F(4800000, P_XO, 4, 0, 0),
-> +	F(9600000, P_XO, 2, 0, 0),
-> +	F(12500000, P_GPLL0_DIV2, 16, 1, 2),
-> +	F(16000000, P_GPLL0, 10, 1, 5),
-> +	F(19200000, P_XO, 1, 0, 0),
-> +	F(25000000, P_GPLL0, 16, 1, 2),
-> +	F(50000000, P_GPLL0, 16, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup1_spi_apps_clk_src = {
-> +	.cmd_rcgr = 0x02024,
-> +	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup1_spi_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup2_i2c_apps_clk_src = {
-> +	.cmd_rcgr = 0x03000,
-> +	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup2_i2c_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup2_spi_apps_clk_src = {
-> +	.cmd_rcgr = 0x03014,
-> +	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup2_spi_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup3_i2c_apps_clk_src = {
-> +	.cmd_rcgr = 0x04000,
-> +	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup3_i2c_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup3_spi_apps_clk_src = {
-> +	.cmd_rcgr = 0x04014,
-> +	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup3_spi_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup4_i2c_apps_clk_src = {
-> +	.cmd_rcgr = 0x05000,
-> +	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup4_i2c_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup4_spi_apps_clk_src = {
-> +	.cmd_rcgr = 0x05014,
-> +	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup4_spi_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup5_i2c_apps_clk_src = {
-> +	.cmd_rcgr = 0x06000,
-> +	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup5_i2c_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup5_spi_apps_clk_src = {
-> +	.cmd_rcgr = 0x06014,
-> +	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup5_spi_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup6_i2c_apps_clk_src = {
-> +	.cmd_rcgr = 0x07000,
-> +	.freq_tbl = ftbl_blsp1_qup_i2c_apps_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup6_i2c_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_qup6_spi_apps_clk_src = {
-> +	.cmd_rcgr = 0x07014,
-> +	.freq_tbl = ftbl_blsp1_qup_spi_apps_clk_src,
-> +	.mnd_width = 8,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_qup6_spi_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static const struct freq_tbl ftbl_blsp1_uart_apps_clk_src[] = {
-> +	F(3686400, P_GPLL0_DIV2, 1, 144, 15625),
-> +	F(7372800, P_GPLL0_DIV2, 1, 288, 15625),
-> +	F(14745600, P_GPLL0_DIV2, 1, 576, 15625),
-> +	F(16000000, P_GPLL0_DIV2, 5, 1, 5),
-> +	F(19200000, P_XO, 1, 0, 0),
-> +	F(24000000, P_GPLL0, 1, 3, 100),
-> +	F(25000000, P_GPLL0, 16, 1, 2),
-> +	F(32000000, P_GPLL0, 1, 1, 25),
-> +	F(40000000, P_GPLL0, 1, 1, 20),
-> +	F(46400000, P_GPLL0, 1, 29, 500),
-> +	F(48000000, P_GPLL0, 1, 3, 50),
-> +	F(51200000, P_GPLL0, 1, 8, 125),
-> +	F(56000000, P_GPLL0, 1, 7, 100),
-> +	F(58982400, P_GPLL0, 1, 1152, 15625),
-> +	F(60000000, P_GPLL0, 1, 3, 40),
-> +	F(64000000, P_GPLL0, 12.5, 1, 1),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 blsp1_uart1_apps_clk_src = {
-> +	.cmd_rcgr = 0x02044,
-> +	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-> +	.mnd_width = 16,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_uart1_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_uart2_apps_clk_src = {
-> +	.cmd_rcgr = 0x03034,
-> +	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-> +	.mnd_width = 16,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_uart2_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_uart3_apps_clk_src = {
-> +	.cmd_rcgr = 0x04034,
-> +	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-> +	.mnd_width = 16,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_uart3_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_uart4_apps_clk_src = {
-> +	.cmd_rcgr = 0x05034,
-> +	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-> +	.mnd_width = 16,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_uart4_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_uart5_apps_clk_src = {
-> +	.cmd_rcgr = 0x06034,
-> +	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-> +	.mnd_width = 16,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_uart5_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_rcg2 blsp1_uart6_apps_clk_src = {
-> +	.cmd_rcgr = 0x07034,
-> +	.freq_tbl = ftbl_blsp1_uart_apps_clk_src,
-> +	.mnd_width = 16,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "blsp1_uart6_apps_clk_src",
-> +		.parent_names = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = 3,
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_ahb_clk = {
-> +	.halt_reg = 0x01008,
-> +	.clkr = {
-> +		.enable_reg = 0x01008,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_ahb_clk",
-> +			.parent_names = (const char *[]){
-> +				"pcnoc_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup1_i2c_apps_clk = {
-> +	.halt_reg = 0x02008,
-> +	.clkr = {
-> +		.enable_reg = 0x02008,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup1_i2c_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup1_i2c_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup1_spi_apps_clk = {
-> +	.halt_reg = 0x02004,
-> +	.clkr = {
-> +		.enable_reg = 0x02004,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup1_spi_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup1_spi_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup2_i2c_apps_clk = {
-> +	.halt_reg = 0x03010,
-> +	.clkr = {
-> +		.enable_reg = 0x03010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup2_i2c_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup2_i2c_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup2_spi_apps_clk = {
-> +	.halt_reg = 0x0300c,
-> +	.clkr = {
-> +		.enable_reg = 0x0300c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup2_spi_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup2_spi_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup3_i2c_apps_clk = {
-> +	.halt_reg = 0x04010,
-> +	.clkr = {
-> +		.enable_reg = 0x04010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup3_i2c_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup3_i2c_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup3_spi_apps_clk = {
-> +	.halt_reg = 0x0400c,
-> +	.clkr = {
-> +		.enable_reg = 0x0400c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup3_spi_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup3_spi_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup4_i2c_apps_clk = {
-> +	.halt_reg = 0x05010,
-> +	.clkr = {
-> +		.enable_reg = 0x05010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup4_i2c_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup4_i2c_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup4_spi_apps_clk = {
-> +	.halt_reg = 0x0500c,
-> +	.clkr = {
-> +		.enable_reg = 0x0500c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup4_spi_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup4_spi_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup5_i2c_apps_clk = {
-> +	.halt_reg = 0x06010,
-> +	.clkr = {
-> +		.enable_reg = 0x06010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup5_i2c_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup5_i2c_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup5_spi_apps_clk = {
-> +	.halt_reg = 0x0600c,
-> +	.clkr = {
-> +		.enable_reg = 0x0600c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup5_spi_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup5_spi_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup6_i2c_apps_clk = {
-> +	.halt_reg = 0x07010,
-> +	.clkr = {
-> +		.enable_reg = 0x07010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup6_i2c_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup6_i2c_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_qup6_spi_apps_clk = {
-> +	.halt_reg = 0x0700c,
-> +	.clkr = {
-> +		.enable_reg = 0x0700c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_qup6_spi_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_qup6_spi_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_uart1_apps_clk = {
-> +	.halt_reg = 0x0203c,
-> +	.clkr = {
-> +		.enable_reg = 0x0203c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_uart1_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_uart1_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_uart2_apps_clk = {
-> +	.halt_reg = 0x0302c,
-> +	.clkr = {
-> +		.enable_reg = 0x0302c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_uart2_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_uart2_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_uart3_apps_clk = {
-> +	.halt_reg = 0x0402c,
-> +	.clkr = {
-> +		.enable_reg = 0x0402c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_uart3_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_uart3_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_uart4_apps_clk = {
-> +	.halt_reg = 0x0502c,
-> +	.clkr = {
-> +		.enable_reg = 0x0502c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_uart4_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_uart4_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_uart5_apps_clk = {
-> +	.halt_reg = 0x0602c,
-> +	.clkr = {
-> +		.enable_reg = 0x0602c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_uart5_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_uart5_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_blsp1_uart6_apps_clk = {
-> +	.halt_reg = 0x0702c,
-> +	.clkr = {
-> +		.enable_reg = 0x0702c,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_blsp1_uart6_apps_clk",
-> +			.parent_names = (const char *[]){
-> +				"blsp1_uart6_apps_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_prng_ahb_clk = {
-> +	.halt_reg = 0x13004,
-> +	.halt_check = BRANCH_HALT_VOTED,
-> +	.clkr = {
-> +		.enable_reg = 0x0b004,
-> +		.enable_mask = BIT(8),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_prng_ahb_clk",
-> +			.parent_names = (const char *[]){
-> +				"pcnoc_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_qpic_ahb_clk = {
-> +	.halt_reg = 0x57024,
-> +	.clkr = {
-> +		.enable_reg = 0x57024,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_qpic_ahb_clk",
-> +			.parent_names = (const char *[]){
-> +				"pcnoc_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_qpic_clk = {
-> +	.halt_reg = 0x57020,
-> +	.clkr = {
-> +		.enable_reg = 0x57020,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_qpic_clk",
-> +			.parent_names = (const char *[]){
-> +				"pcnoc_clk_src"
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_hw *gcc_ipq8074_hws[] = {
-> +	&gpll0_out_main_div2.hw,
-> +	&pcnoc_clk_src.hw,
-> +};
-> +
-> +static struct clk_regmap *gcc_ipq8074_clks[] = {
-> +	[GPLL0_MAIN] = &gpll0_main.clkr,
-> +	[GPLL0] = &gpll0.clkr,
-> +	[PCNOC_BFDCD_CLK_SRC] = &pcnoc_bfdcd_clk_src.clkr,
-> +	[GCC_SLEEP_CLK_SRC] = &gcc_sleep_clk_src.clkr,
-> +	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
-> +	[BLSP1_QUP1_SPI_APPS_CLK_SRC] = &blsp1_qup1_spi_apps_clk_src.clkr,
-> +	[BLSP1_QUP2_I2C_APPS_CLK_SRC] = &blsp1_qup2_i2c_apps_clk_src.clkr,
-> +	[BLSP1_QUP2_SPI_APPS_CLK_SRC] = &blsp1_qup2_spi_apps_clk_src.clkr,
-> +	[BLSP1_QUP3_I2C_APPS_CLK_SRC] = &blsp1_qup3_i2c_apps_clk_src.clkr,
-> +	[BLSP1_QUP3_SPI_APPS_CLK_SRC] = &blsp1_qup3_spi_apps_clk_src.clkr,
-> +	[BLSP1_QUP4_I2C_APPS_CLK_SRC] = &blsp1_qup4_i2c_apps_clk_src.clkr,
-> +	[BLSP1_QUP4_SPI_APPS_CLK_SRC] = &blsp1_qup4_spi_apps_clk_src.clkr,
-> +	[BLSP1_QUP5_I2C_APPS_CLK_SRC] = &blsp1_qup5_i2c_apps_clk_src.clkr,
-> +	[BLSP1_QUP5_SPI_APPS_CLK_SRC] = &blsp1_qup5_spi_apps_clk_src.clkr,
-> +	[BLSP1_QUP6_I2C_APPS_CLK_SRC] = &blsp1_qup6_i2c_apps_clk_src.clkr,
-> +	[BLSP1_QUP6_SPI_APPS_CLK_SRC] = &blsp1_qup6_spi_apps_clk_src.clkr,
-> +	[BLSP1_UART1_APPS_CLK_SRC] = &blsp1_uart1_apps_clk_src.clkr,
-> +	[BLSP1_UART2_APPS_CLK_SRC] = &blsp1_uart2_apps_clk_src.clkr,
-> +	[BLSP1_UART3_APPS_CLK_SRC] = &blsp1_uart3_apps_clk_src.clkr,
-> +	[BLSP1_UART4_APPS_CLK_SRC] = &blsp1_uart4_apps_clk_src.clkr,
-> +	[BLSP1_UART5_APPS_CLK_SRC] = &blsp1_uart5_apps_clk_src.clkr,
-> +	[BLSP1_UART6_APPS_CLK_SRC] = &blsp1_uart6_apps_clk_src.clkr,
-> +	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
-> +	[GCC_BLSP1_QUP1_I2C_APPS_CLK] = &gcc_blsp1_qup1_i2c_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP1_SPI_APPS_CLK] = &gcc_blsp1_qup1_spi_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP2_I2C_APPS_CLK] = &gcc_blsp1_qup2_i2c_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP2_SPI_APPS_CLK] = &gcc_blsp1_qup2_spi_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP3_I2C_APPS_CLK] = &gcc_blsp1_qup3_i2c_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP3_SPI_APPS_CLK] = &gcc_blsp1_qup3_spi_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP4_I2C_APPS_CLK] = &gcc_blsp1_qup4_i2c_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP4_SPI_APPS_CLK] = &gcc_blsp1_qup4_spi_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP5_I2C_APPS_CLK] = &gcc_blsp1_qup5_i2c_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP5_SPI_APPS_CLK] = &gcc_blsp1_qup5_spi_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP6_I2C_APPS_CLK] = &gcc_blsp1_qup6_i2c_apps_clk.clkr,
-> +	[GCC_BLSP1_QUP6_SPI_APPS_CLK] = &gcc_blsp1_qup6_spi_apps_clk.clkr,
-> +	[GCC_BLSP1_UART1_APPS_CLK] = &gcc_blsp1_uart1_apps_clk.clkr,
-> +	[GCC_BLSP1_UART2_APPS_CLK] = &gcc_blsp1_uart2_apps_clk.clkr,
-> +	[GCC_BLSP1_UART3_APPS_CLK] = &gcc_blsp1_uart3_apps_clk.clkr,
-> +	[GCC_BLSP1_UART4_APPS_CLK] = &gcc_blsp1_uart4_apps_clk.clkr,
-> +	[GCC_BLSP1_UART5_APPS_CLK] = &gcc_blsp1_uart5_apps_clk.clkr,
-> +	[GCC_BLSP1_UART6_APPS_CLK] = &gcc_blsp1_uart6_apps_clk.clkr,
-> +	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
-> +	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
-> +	[GCC_QPIC_CLK] = &gcc_qpic_clk.clkr,
-> +};
-> +
-> +static const struct qcom_reset_map gcc_ipq8074_resets[] = {
-> +	[GCC_BLSP1_BCR] = { 0x01000, 0 },
-> +	[GCC_BLSP1_QUP1_BCR] = { 0x02000, 0 },
-> +	[GCC_BLSP1_UART1_BCR] = { 0x02038, 0 },
-> +	[GCC_BLSP1_QUP2_BCR] = { 0x03008, 0 },
-> +	[GCC_BLSP1_UART2_BCR] = { 0x03028, 0 },
-> +	[GCC_BLSP1_QUP3_BCR] = { 0x04008, 0 },
-> +	[GCC_BLSP1_UART3_BCR] = { 0x04028, 0 },
-> +	[GCC_BLSP1_QUP4_BCR] = { 0x05008, 0 },
-> +	[GCC_BLSP1_UART4_BCR] = { 0x05028, 0 },
-> +	[GCC_BLSP1_QUP5_BCR] = { 0x06008, 0 },
-> +	[GCC_BLSP1_UART5_BCR] = { 0x06028, 0 },
-> +	[GCC_BLSP1_QUP6_BCR] = { 0x07008, 0 },
-> +	[GCC_BLSP1_UART6_BCR] = { 0x07028, 0 },
-> +	[GCC_IMEM_BCR] = { 0x0e000, 0 },
-> +	[GCC_SMMU_BCR] = { 0x12000, 0 },
-> +	[GCC_APSS_TCU_BCR] = { 0x12050, 0 },
-> +	[GCC_SMMU_XPU_BCR] = { 0x12054, 0 },
-> +	[GCC_PCNOC_TBU_BCR] = { 0x12058, 0 },
-> +	[GCC_SMMU_CFG_BCR] = { 0x1208c, 0 },
-> +	[GCC_PRNG_BCR] = { 0x13000, 0 },
-> +	[GCC_BOOT_ROM_BCR] = { 0x13008, 0 },
-> +	[GCC_CRYPTO_BCR] = { 0x16000, 0 },
-> +	[GCC_WCSS_BCR] = { 0x18000, 0 },
-> +	[GCC_WCSS_Q6_BCR] = { 0x18100, 0 },
-> +	[GCC_NSS_BCR] = { 0x19000, 0 },
-> +	[GCC_SEC_CTRL_BCR] = { 0x1a000, 0 },
-> +	[GCC_ADSS_BCR] = { 0x1c000, 0 },
-> +	[GCC_DDRSS_BCR] = { 0x1e000, 0 },
-> +	[GCC_SYSTEM_NOC_BCR] = { 0x26000, 0 },
-> +	[GCC_PCNOC_BCR] = { 0x27018, 0 },
-> +	[GCC_TCSR_BCR] = { 0x28000, 0 },
-> +	[GCC_QDSS_BCR] = { 0x29000, 0 },
-> +	[GCC_DCD_BCR] = { 0x2a000, 0 },
-> +	[GCC_MSG_RAM_BCR] = { 0x2b000, 0 },
-> +	[GCC_MPM_BCR] = { 0x2c000, 0 },
-> +	[GCC_SPMI_BCR] = { 0x2e000, 0 },
-> +	[GCC_SPDM_BCR] = { 0x2f000, 0 },
-> +	[GCC_RBCPR_BCR] = { 0x33000, 0 },
-> +	[GCC_RBCPR_MX_BCR] = { 0x33014, 0 },
-> +	[GCC_TLMM_BCR] = { 0x34000, 0 },
-> +	[GCC_RBCPR_WCSS_BCR] = { 0x3a000, 0 },
-> +	[GCC_USB0_PHY_BCR] = { 0x3e034, 0 },
-> +	[GCC_USB3PHY_0_PHY_BCR] = { 0x3e03c, 0 },
-> +	[GCC_USB0_BCR] = { 0x3e070, 0 },
-> +	[GCC_USB1_PHY_BCR] = { 0x3f034, 0 },
-> +	[GCC_USB3PHY_1_PHY_BCR] = { 0x3f03c, 0 },
-> +	[GCC_USB1_BCR] = { 0x3f070, 0 },
-> +	[GCC_QUSB2_0_PHY_BCR] = { 0x4103c, 0 },
-> +	[GCC_QUSB2_1_PHY_BCR] = { 0x41040, 0 },
-> +	[GCC_SDCC1_BCR] = { 0x42000, 0 },
-> +	[GCC_SDCC2_BCR] = { 0x43000, 0 },
-> +	[GCC_SNOC_BUS_TIMEOUT0_BCR] = { 0x47000, 0 },
-> +	[GCC_SNOC_BUS_TIMEOUT2_BCR] = { 0x47008, 0 },
-> +	[GCC_SNOC_BUS_TIMEOUT3_BCR] = { 0x47010, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT0_BCR] = { 0x48000, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT1_BCR] = { 0x48008, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT2_BCR] = { 0x48010, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT3_BCR] = { 0x48018, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT4_BCR] = { 0x48020, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT5_BCR] = { 0x48028, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT6_BCR] = { 0x48030, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT7_BCR] = { 0x48038, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT8_BCR] = { 0x48040, 0 },
-> +	[GCC_PCNOC_BUS_TIMEOUT9_BCR] = { 0x48048, 0 },
-> +	[GCC_UNIPHY0_BCR] = { 0x56000, 0 },
-> +	[GCC_UNIPHY1_BCR] = { 0x56100, 0 },
-> +	[GCC_UNIPHY2_BCR] = { 0x56200, 0 },
-> +	[GCC_CMN_12GPLL_BCR] = { 0x56300, 0 },
-> +	[GCC_QPIC_BCR] = { 0x57018, 0 },
-> +	[GCC_MDIO_BCR] = { 0x58000, 0 },
-> +	[GCC_PCIE1_TBU_BCR] = { 0x65000, 0 },
-> +	[GCC_WCSS_CORE_TBU_BCR] = { 0x66000, 0 },
-> +	[GCC_WCSS_Q6_TBU_BCR] = { 0x67000, 0 },
-> +	[GCC_USB0_TBU_BCR] = { 0x6a000, 0 },
-> +	[GCC_USB1_TBU_BCR] = { 0x6a004, 0 },
-> +	[GCC_PCIE0_TBU_BCR] = { 0x6b000, 0 },
-> +	[GCC_NSS_NOC_TBU_BCR] = { 0x6e000, 0 },
-> +	[GCC_PCIE0_BCR] = { 0x75004, 0 },
-> +	[GCC_PCIE0_PHY_BCR] = { 0x75038, 0 },
-> +	[GCC_PCIE0PHY_PHY_BCR] = { 0x7503c, 0 },
-> +	[GCC_PCIE0_LINK_DOWN_BCR] = { 0x75044, 0 },
-> +	[GCC_PCIE1_BCR] = { 0x76004, 0 },
-> +	[GCC_PCIE1_PHY_BCR] = { 0x76038, 0 },
-> +	[GCC_PCIE1PHY_PHY_BCR] = { 0x7603c, 0 },
-> +	[GCC_PCIE1_LINK_DOWN_BCR] = { 0x76044, 0 },
-> +	[GCC_DCC_BCR] = { 0x77000, 0 },
-> +	[GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x78000, 0 },
-> +	[GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR] = { 0x79000, 0 },
-> +	[GCC_SMMU_CATS_BCR] = { 0x7c000, 0 },
-> +};
-> +
-> +static const struct of_device_id gcc_ipq8074_match_table[] = {
-> +	{ .compatible = "qcom,gcc-ipq8074" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, gcc_ipq8074_match_table);
-> +
-> +static const struct regmap_config gcc_ipq8074_regmap_config = {
-> +	.reg_bits       = 32,
-> +	.reg_stride     = 4,
-> +	.val_bits       = 32,
-> +	.max_register   = 0x7fffc,
-> +	.fast_io	= true,
-> +};
-> +
-> +static const struct qcom_cc_desc gcc_ipq8074_desc = {
-> +	.config = &gcc_ipq8074_regmap_config,
-> +	.clks = gcc_ipq8074_clks,
-> +	.num_clks = ARRAY_SIZE(gcc_ipq8074_clks),
-> +	.resets = gcc_ipq8074_resets,
-> +	.num_resets = ARRAY_SIZE(gcc_ipq8074_resets),
-> +};
-> +
-> +static int gcc_ipq8074_probe(struct platform_device *pdev)
-> +{
-> +	int ret, i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(gcc_ipq8074_hws); i++) {
-> +		ret = devm_clk_hw_register(&pdev->dev, gcc_ipq8074_hws[i]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return qcom_cc_probe(pdev, &gcc_ipq8074_desc);
-> +}
-> +
-> +static struct platform_driver gcc_ipq8074_driver = {
-> +	.probe = gcc_ipq8074_probe,
-> +	.driver = {
-> +		.name   = "qcom,gcc-ipq8074",
-> +		.of_match_table = gcc_ipq8074_match_table,
-> +	},
-> +};
-> +
-> +static int __init gcc_ipq8074_init(void)
-> +{
-> +	return platform_driver_register(&gcc_ipq8074_driver);
-> +}
-> +core_initcall(gcc_ipq8074_init);
-> +
-> +static void __exit gcc_ipq8074_exit(void)
-> +{
-> +	platform_driver_unregister(&gcc_ipq8074_driver);
-> +}
-> +module_exit(gcc_ipq8074_exit);
-> +
-> +MODULE_DESCRIPTION("QCOM GCC IPQ8074 Driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:gcc-ipq8074");
-> 
+GPIO LV (low voltage)/MV (medium voltage) subtypes have different
+features and register mappings than 4CH/8CH subtypes. Add support
+for LV and MV subtypes.
 
-Do you have anymore comments on this?
+Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |  28 ++-
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 269 ++++++++++++++++++---
+ include/dt-bindings/pinctrl/qcom,pmic-gpio.h       |   9 +
+ 3 files changed, 264 insertions(+), 42 deletions(-)
 
-Thanks
-Varada
-
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index 8d893a8..1493c0a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -91,14 +91,18 @@ to specify in a pin configuration subnode:
+ 	Value type: <string>
+ 	Definition: Specify the alternative function to be configured for the
+ 		    specified pins.  Valid values are:
+-		    "normal",
+-		    "paired",
+-		    "func1",
+-		    "func2",
+-		    "dtest1",
+-		    "dtest2",
+-		    "dtest3",
+-		    "dtest4"
++			"normal",
++			"paired",
++			"func1",
++			"func2",
++			"dtest1",
++			"dtest2",
++			"dtest3",
++			"dtest4",
++		    And following values are supported by LV/MV GPIO subtypes:
++			"func3",
++			"func4",
++			"analog"
+ 
+ - bias-disable:
+ 	Usage: optional
+@@ -183,6 +187,14 @@ to specify in a pin configuration subnode:
+ 	Value type: <none>
+ 	Definition: The specified pins are configured in open-source mode.
+ 
++- qcom,atest:
++	Usage: optional
++	Value type: <u32>
++	Definition: Selects ATEST rail to route to GPIO when it's configured
++		    in analog-pass-through mode by specifying "analog" function.
++		    Valid values are 0-3 corresponding to PMIC_GPIO_AOUT_ATESTx
++		    defined in <dt-bindings/pinctrl/qcom,pmic-gpio.h>.
++
+ Example:
+ 
+ 	pm8921_gpio: gpio@150 {
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 664b641..caa07e9 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -40,6 +40,8 @@
+ #define PMIC_GPIO_SUBTYPE_GPIOC_4CH		0x5
+ #define PMIC_GPIO_SUBTYPE_GPIO_8CH		0x9
+ #define PMIC_GPIO_SUBTYPE_GPIOC_8CH		0xd
++#define PMIC_GPIO_SUBTYPE_GPIO_LV		0x10
++#define PMIC_GPIO_SUBTYPE_GPIO_MV		0x11
+ 
+ #define PMIC_MPP_REG_RT_STS			0x10
+ #define PMIC_MPP_REG_RT_STS_VAL_MASK		0x1
+@@ -48,8 +50,10 @@
+ #define PMIC_GPIO_REG_MODE_CTL			0x40
+ #define PMIC_GPIO_REG_DIG_VIN_CTL		0x41
+ #define PMIC_GPIO_REG_DIG_PULL_CTL		0x42
++#define PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL	0x44
+ #define PMIC_GPIO_REG_DIG_OUT_CTL		0x45
+ #define PMIC_GPIO_REG_EN_CTL			0x46
++#define PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL	0x4A
+ 
+ /* PMIC_GPIO_REG_MODE_CTL */
+ #define PMIC_GPIO_REG_MODE_VALUE_SHIFT		0x1
+@@ -58,6 +62,13 @@
+ #define PMIC_GPIO_REG_MODE_DIR_SHIFT		4
+ #define PMIC_GPIO_REG_MODE_DIR_MASK		0x7
+ 
++#define PMIC_GPIO_MODE_DIGITAL_INPUT		0
++#define PMIC_GPIO_MODE_DIGITAL_OUTPUT		1
++#define PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT	2
++#define PMIC_GPIO_MODE_ANALOG_PASS_THRU		3
++
++#define PMIC_GPIO_REG_LV_MV_MODE_DIR_MASK	0x3
++
+ /* PMIC_GPIO_REG_DIG_VIN_CTL */
+ #define PMIC_GPIO_REG_VIN_SHIFT			0
+ #define PMIC_GPIO_REG_VIN_MASK			0x7
+@@ -69,6 +80,11 @@
+ #define PMIC_GPIO_PULL_DOWN			4
+ #define PMIC_GPIO_PULL_DISABLE			5
+ 
++/* PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL for LV/MV */
++#define PMIC_GPIO_LV_MV_OUTPUT_INVERT		0x80
++#define PMIC_GPIO_LV_MV_OUTPUT_INVERT_SHIFT	7
++#define PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK	0xF
++
+ /* PMIC_GPIO_REG_DIG_OUT_CTL */
+ #define PMIC_GPIO_REG_OUT_STRENGTH_SHIFT	0
+ #define PMIC_GPIO_REG_OUT_STRENGTH_MASK		0x3
+@@ -88,9 +104,28 @@
+ 
+ #define PMIC_GPIO_PHYSICAL_OFFSET		1
+ 
++/* PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL */
++#define PMIC_GPIO_LV_MV_ANA_MUX_SEL_MASK		0x3
++
+ /* Qualcomm specific pin configurations */
+ #define PMIC_GPIO_CONF_PULL_UP			(PIN_CONFIG_END + 1)
+ #define PMIC_GPIO_CONF_STRENGTH			(PIN_CONFIG_END + 2)
++#define PMIC_GPIO_CONF_ATEST			(PIN_CONFIG_END + 3)
++
++/* The index of each function in pmic_gpio_functions[] array */
++enum pmic_gpio_func_index {
++	PMIC_GPIO_FUNC_INDEX_NORMAL	= 0x00,
++	PMIC_GPIO_FUNC_INDEX_PAIRED	= 0x01,
++	PMIC_GPIO_FUNC_INDEX_FUNC1	= 0x02,
++	PMIC_GPIO_FUNC_INDEX_FUNC2	= 0x03,
++	PMIC_GPIO_FUNC_INDEX_FUNC3	= 0x04,
++	PMIC_GPIO_FUNC_INDEX_FUNC4	= 0x05,
++	PMIC_GPIO_FUNC_INDEX_DTEST1	= 0x06,
++	PMIC_GPIO_FUNC_INDEX_DTEST2	= 0x07,
++	PMIC_GPIO_FUNC_INDEX_DTEST3	= 0x08,
++	PMIC_GPIO_FUNC_INDEX_DTEST4	= 0x09,
++	PMIC_GPIO_FUNC_INDEX_ANALOG	= 0x10,
++};
+ 
+ /**
+  * struct pmic_gpio_pad - keep current GPIO settings
+@@ -102,12 +137,14 @@
+  *	open-drain or open-source mode.
+  * @output_enabled: Set to true if GPIO output logic is enabled.
+  * @input_enabled: Set to true if GPIO input buffer logic is enabled.
++ * @lv_mv_type: Set to true if GPIO subtype is GPIO_LV(0x10) or GPIO_MV(0x11).
+  * @num_sources: Number of power-sources supported by this GPIO.
+  * @power_source: Current power-source used.
+  * @buffer_type: Push-pull, open-drain or open-source.
+  * @pullup: Constant current which flow trough GPIO output buffer.
+  * @strength: No, Low, Medium, High
+  * @function: See pmic_gpio_functions[]
++ * @atest: the ATEST selection for GPIO analog-pass-through mode
+  */
+ struct pmic_gpio_pad {
+ 	u16		base;
+@@ -117,12 +154,14 @@ struct pmic_gpio_pad {
+ 	bool		have_buffer;
+ 	bool		output_enabled;
+ 	bool		input_enabled;
++	bool		lv_mv_type;
+ 	unsigned int	num_sources;
+ 	unsigned int	power_source;
+ 	unsigned int	buffer_type;
+ 	unsigned int	pullup;
+ 	unsigned int	strength;
+ 	unsigned int	function;
++	unsigned int	atest;
+ };
+ 
+ struct pmic_gpio_state {
+@@ -135,12 +174,14 @@ struct pmic_gpio_state {
+ static const struct pinconf_generic_params pmic_gpio_bindings[] = {
+ 	{"qcom,pull-up-strength",	PMIC_GPIO_CONF_PULL_UP,		0},
+ 	{"qcom,drive-strength",		PMIC_GPIO_CONF_STRENGTH,	0},
++	{"qcom,atest",			PMIC_GPIO_CONF_ATEST,	0},
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+ static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
+ 	PCONFDUMP(PMIC_GPIO_CONF_PULL_UP,  "pull up strength", NULL, true),
+ 	PCONFDUMP(PMIC_GPIO_CONF_STRENGTH, "drive-strength", NULL, true),
++	PCONFDUMP(PMIC_GPIO_CONF_ATEST, "atest", NULL, true),
+ };
+ #endif
+ 
+@@ -152,11 +193,25 @@ struct pmic_gpio_state {
+ 	"gpio30", "gpio31", "gpio32", "gpio33", "gpio34", "gpio35", "gpio36",
+ };
+ 
++/*
++ * Treat LV/MV GPIO analog-pass-through mode as a function, add it
++ * to the end of the function list. Add placeholder for the reserved
++ * functions defined in LV/MV OUTPUT_SOURCE_SEL register.
++ */
+ static const char *const pmic_gpio_functions[] = {
+-	PMIC_GPIO_FUNC_NORMAL, PMIC_GPIO_FUNC_PAIRED,
+-	PMIC_GPIO_FUNC_FUNC1, PMIC_GPIO_FUNC_FUNC2,
+-	PMIC_GPIO_FUNC_DTEST1, PMIC_GPIO_FUNC_DTEST2,
+-	PMIC_GPIO_FUNC_DTEST3, PMIC_GPIO_FUNC_DTEST4,
++	[PMIC_GPIO_FUNC_INDEX_NORMAL]	= PMIC_GPIO_FUNC_NORMAL,
++	[PMIC_GPIO_FUNC_INDEX_PAIRED]	= PMIC_GPIO_FUNC_PAIRED,
++	[PMIC_GPIO_FUNC_INDEX_FUNC1]	= PMIC_GPIO_FUNC_FUNC1,
++	[PMIC_GPIO_FUNC_INDEX_FUNC2]	= PMIC_GPIO_FUNC_FUNC2,
++	[PMIC_GPIO_FUNC_INDEX_FUNC3]	= PMIC_GPIO_FUNC_FUNC3,
++	[PMIC_GPIO_FUNC_INDEX_FUNC4]	= PMIC_GPIO_FUNC_FUNC4,
++	[PMIC_GPIO_FUNC_INDEX_DTEST1]	= PMIC_GPIO_FUNC_DTEST1,
++	[PMIC_GPIO_FUNC_INDEX_DTEST2]	= PMIC_GPIO_FUNC_DTEST2,
++	[PMIC_GPIO_FUNC_INDEX_DTEST3]	= PMIC_GPIO_FUNC_DTEST3,
++	[PMIC_GPIO_FUNC_INDEX_DTEST4]	= PMIC_GPIO_FUNC_DTEST4,
++	"reserved-a", "reserved-b", "reserved-c",
++	"reserved-d", "reserved-e", "reserved-f",
++	[PMIC_GPIO_FUNC_INDEX_ANALOG]	= PMIC_GPIO_FUNC_ANALOG,
+ };
+ 
+ static int pmic_gpio_read(struct pmic_gpio_state *state,
+@@ -248,21 +303,74 @@ static int pmic_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+ 
+ 	pad->function = function;
+ 
+-	val = 0;
++	val = PMIC_GPIO_MODE_DIGITAL_INPUT;
+ 	if (pad->output_enabled) {
+ 		if (pad->input_enabled)
+-			val = 2;
++			val = PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT;
+ 		else
+-			val = 1;
++			val = PMIC_GPIO_MODE_DIGITAL_OUTPUT;
+ 	}
+ 
+-	val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
+-	val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
+-	val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++	if (function > PMIC_GPIO_FUNC_INDEX_DTEST4 &&
++			function < PMIC_GPIO_FUNC_INDEX_ANALOG) {
++		pr_err("reserved function: %s hasn't been enabled\n",
++				pmic_gpio_functions[function]);
++		return -EINVAL;
++	}
+ 
+-	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
+-	if (ret < 0)
+-		return ret;
++	if (pad->lv_mv_type) {
++		if (pad->function == PMIC_GPIO_FUNC_INDEX_ANALOG) {
++			val = PMIC_GPIO_MODE_ANALOG_PASS_THRU;
++			ret = pmic_gpio_write(state, pad,
++					PMIC_GPIO_REG_MODE_CTL, val);
++			if (ret < 0)
++				return ret;
++
++			ret = pmic_gpio_write(state, pad,
++					PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL,
++					pad->atest);
++			if (ret < 0)
++				return ret;
++		} else {
++			ret = pmic_gpio_write(state, pad,
++					PMIC_GPIO_REG_MODE_CTL, val);
++			if (ret < 0)
++				return ret;
++
++			val = pad->out_value
++				<< PMIC_GPIO_LV_MV_OUTPUT_INVERT_SHIFT;
++			val |= pad->function
++				& PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK;
++			ret = pmic_gpio_write(state, pad,
++				PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL, val);
++			if (ret < 0)
++				return ret;
++		}
++	} else {
++		/*
++		 * GPIO not of LV/MV subtype doesn't have "func3", "func4"
++		 * "analog" functions, and "dtest1" to "dtest4" functions
++		 * have register value 2 bits lower than the function index
++		 * in pmic_gpio_functions[].
++		 */
++		if (function == PMIC_GPIO_FUNC_INDEX_FUNC3
++				|| function == PMIC_GPIO_FUNC_INDEX_FUNC4
++				|| function == PMIC_GPIO_FUNC_INDEX_ANALOG) {
++			return -EINVAL;
++		} else if (function >= PMIC_GPIO_FUNC_INDEX_DTEST1 &&
++				function <= PMIC_GPIO_FUNC_INDEX_DTEST4) {
++			pad->function -= (PMIC_GPIO_FUNC_INDEX_DTEST1 -
++					PMIC_GPIO_FUNC_INDEX_FUNC3);
++		}
++
++		val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
++		val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
++		val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++
++		ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
+ 
+@@ -322,6 +430,9 @@ static int pmic_gpio_config_get(struct pinctrl_dev *pctldev,
+ 	case PMIC_GPIO_CONF_STRENGTH:
+ 		arg = pad->strength;
+ 		break;
++	case PMIC_GPIO_CONF_ATEST:
++		arg = pad->atest;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -396,6 +507,11 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 				return -EINVAL;
+ 			pad->strength = arg;
+ 			break;
++		case PMIC_GPIO_CONF_ATEST:
++			if (arg > PMIC_GPIO_AOUT_ATEST4)
++				return -EINVAL;
++			pad->atest = arg;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -420,19 +536,53 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	val = 0;
++	val = PMIC_GPIO_MODE_DIGITAL_INPUT;
+ 	if (pad->output_enabled) {
+ 		if (pad->input_enabled)
+-			val = 2;
++			val = PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT;
+ 		else
+-			val = 1;
++			val = PMIC_GPIO_MODE_DIGITAL_OUTPUT;
+ 	}
+ 
+-	val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
+-	val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
+-	val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++	if (pad->lv_mv_type) {
++		if (pad->function == PMIC_GPIO_FUNC_INDEX_ANALOG) {
++			val = PMIC_GPIO_MODE_ANALOG_PASS_THRU;
++			ret = pmic_gpio_write(state, pad,
++					PMIC_GPIO_REG_MODE_CTL, val);
++			if (ret < 0)
++				return ret;
+ 
+-	return pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
++			ret = pmic_gpio_write(state, pad,
++					PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL,
++					pad->atest);
++			if (ret < 0)
++				return ret;
++		} else {
++			ret = pmic_gpio_write(state, pad,
++					PMIC_GPIO_REG_MODE_CTL, val);
++			if (ret < 0)
++				return ret;
++
++			val = pad->out_value
++				<< PMIC_GPIO_LV_MV_OUTPUT_INVERT_SHIFT;
++			val |= pad->function
++				& PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK;
++			ret = pmic_gpio_write(state, pad,
++				PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL, val);
++			if (ret < 0)
++				return ret;
++		}
++	} else {
++		val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
++		val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
++		val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++
++		ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
++		if (ret < 0)
++			return ret;
++	}
++
++	return ret;
+ }
+ 
+ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+@@ -440,7 +590,7 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ {
+ 	struct pmic_gpio_state *state = pinctrl_dev_get_drvdata(pctldev);
+ 	struct pmic_gpio_pad *pad;
+-	int ret, val;
++	int ret, val, function;
+ 
+ 	static const char *const biases[] = {
+ 		"pull-up 30uA", "pull-up 1.5uA", "pull-up 31.5uA",
+@@ -471,9 +621,21 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ 			ret &= PMIC_MPP_REG_RT_STS_VAL_MASK;
+ 			pad->out_value = ret;
+ 		}
++		/*
++		 * For GPIO not of LV/MV subtypes, the register value of
++		 * the function mapping from "dtest1" to "dtest4" is 2 bits
++		 * lower than the function index in pmic_gpio_functions[].
++		 */
++		if (!pad->lv_mv_type &&
++				pad->function >= PMIC_GPIO_FUNC_INDEX_FUNC3) {
++			function = pad->function + (PMIC_GPIO_FUNC_INDEX_DTEST1
++					- PMIC_GPIO_FUNC_INDEX_FUNC3);
++		} else {
++			function = pad->function;
++		}
+ 
+ 		seq_printf(s, " %-4s", pad->output_enabled ? "out" : "in");
+-		seq_printf(s, " %-7s", pmic_gpio_functions[pad->function]);
++		seq_printf(s, " %-7s", pmic_gpio_functions[function]);
+ 		seq_printf(s, " vin-%d", pad->power_source);
+ 		seq_printf(s, " %-27s", biases[pad->pullup]);
+ 		seq_printf(s, " %-10s", buffer_types[pad->buffer_type]);
+@@ -618,40 +780,72 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
+ 	case PMIC_GPIO_SUBTYPE_GPIOC_8CH:
+ 		pad->num_sources = 8;
+ 		break;
++	case PMIC_GPIO_SUBTYPE_GPIO_LV:
++		pad->num_sources = 1;
++		pad->have_buffer = true;
++		pad->lv_mv_type = true;
++		break;
++	case PMIC_GPIO_SUBTYPE_GPIO_MV:
++		pad->num_sources = 2;
++		pad->have_buffer = true;
++		pad->lv_mv_type = true;
++		break;
+ 	default:
+ 		dev_err(state->dev, "unknown GPIO type 0x%x\n", subtype);
+ 		return -ENODEV;
+ 	}
+ 
+-	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_MODE_CTL);
+-	if (val < 0)
+-		return val;
++	if (pad->lv_mv_type) {
++		val = pmic_gpio_read(state, pad,
++				PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL);
++		if (val < 0)
++			return val;
++
++		pad->out_value = !!(val & PMIC_GPIO_LV_MV_OUTPUT_INVERT);
++		pad->function = val & PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK;
++
++		val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_MODE_CTL);
++		if (val < 0)
++			return val;
++
++		dir = val & PMIC_GPIO_REG_LV_MV_MODE_DIR_MASK;
++	} else {
++		val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_MODE_CTL);
++		if (val < 0)
++			return val;
++
++		pad->out_value = val & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
+ 
+-	pad->out_value = val & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++		dir = val >> PMIC_GPIO_REG_MODE_DIR_SHIFT;
++		dir &= PMIC_GPIO_REG_MODE_DIR_MASK;
++		pad->function = val >> PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
++		pad->function &= PMIC_GPIO_REG_MODE_FUNCTION_MASK;
++	}
+ 
+-	dir = val >> PMIC_GPIO_REG_MODE_DIR_SHIFT;
+-	dir &= PMIC_GPIO_REG_MODE_DIR_MASK;
+ 	switch (dir) {
+-	case 0:
++	case PMIC_GPIO_MODE_DIGITAL_INPUT:
+ 		pad->input_enabled = true;
+ 		pad->output_enabled = false;
+ 		break;
+-	case 1:
++	case PMIC_GPIO_MODE_DIGITAL_OUTPUT:
+ 		pad->input_enabled = false;
+ 		pad->output_enabled = true;
+ 		break;
+-	case 2:
++	case PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT:
+ 		pad->input_enabled = true;
+ 		pad->output_enabled = true;
+ 		break;
++	case PMIC_GPIO_MODE_ANALOG_PASS_THRU:
++		if (pad->lv_mv_type)
++			pad->function = PMIC_GPIO_FUNC_INDEX_ANALOG;
++		else
++			return -ENODEV;
++		break;
+ 	default:
+ 		dev_err(state->dev, "unknown GPIO direction\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	pad->function = val >> PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
+-	pad->function &= PMIC_GPIO_REG_MODE_FUNCTION_MASK;
+-
+ 	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_DIG_VIN_CTL);
+ 	if (val < 0)
+ 		return val;
+@@ -676,6 +870,13 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
+ 	pad->buffer_type = val >> PMIC_GPIO_REG_OUT_TYPE_SHIFT;
+ 	pad->buffer_type &= PMIC_GPIO_REG_OUT_TYPE_MASK;
+ 
++	if (pad->function == PMIC_GPIO_FUNC_INDEX_ANALOG) {
++		val = pmic_gpio_read(state, pad,
++				PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL);
++		if (val < 0)
++			return val;
++		pad->atest = val & PMIC_GPIO_LV_MV_ANA_MUX_SEL_MASK;
++	}
+ 	/* Pin could be disabled with PIN_CONFIG_BIAS_HIGH_IMPEDANCE */
+ 	pad->is_enabled = true;
+ 	return 0;
+diff --git a/include/dt-bindings/pinctrl/qcom,pmic-gpio.h b/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
+index d33f17c..85d8809 100644
+--- a/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
++++ b/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
+@@ -93,15 +93,24 @@
+ #define PM8994_GPIO_S4			2
+ #define PM8994_GPIO_L12			3
+ 
++/* ATEST MUX selection for analog-pass-through mode */
++#define PMIC_GPIO_AOUT_ATEST1		0
++#define PMIC_GPIO_AOUT_ATEST2		1
++#define PMIC_GPIO_AOUT_ATEST3		2
++#define PMIC_GPIO_AOUT_ATEST4		3
++
+ /* To be used with "function" */
+ #define PMIC_GPIO_FUNC_NORMAL		"normal"
+ #define PMIC_GPIO_FUNC_PAIRED		"paired"
+ #define PMIC_GPIO_FUNC_FUNC1		"func1"
+ #define PMIC_GPIO_FUNC_FUNC2		"func2"
++#define PMIC_GPIO_FUNC_FUNC3		"func3"
++#define PMIC_GPIO_FUNC_FUNC4		"func4"
+ #define PMIC_GPIO_FUNC_DTEST1		"dtest1"
+ #define PMIC_GPIO_FUNC_DTEST2		"dtest2"
+ #define PMIC_GPIO_FUNC_DTEST3		"dtest3"
+ #define PMIC_GPIO_FUNC_DTEST4		"dtest4"
++#define PMIC_GPIO_FUNC_ANALOG		"analog"
+ 
+ #define PM8038_GPIO1_2_LPG_DRV		PMIC_GPIO_FUNC_FUNC1
+ #define PM8038_GPIO3_5V_BOOST_EN	PMIC_GPIO_FUNC_FUNC1
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum, a Linux Foundation Collaborative Project
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
