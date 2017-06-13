@@ -1,430 +1,281 @@
-From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 1/9] irqchip: add Amlogic Meson GPIO irqchip driver
-Date: Mon, 12 Jun 2017 22:50:43 +0200
-Message-ID: <fa064adb-29b2-db8d-a2f1-612503a96c34@gmail.com>
-References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
- <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
- <1497257685.3086.4.camel@baylibre.com>
+From: Baolin Wang <baolin.wang@spreadtrum.com>
+Subject: Re: [PATCH v2 1/2] DT: pinctrl: Add binding documentation for
+ Spreadtrum pin controller
+Date: Tue, 13 Jun 2017 11:15:47 +0800
+Message-ID: <20170613031547.GA29679@spreadtrum.com>
+References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
+ <CACRpkdbtuPKr=tWGoJC-sg2Oj47rYMpo6fs_Us=Nynew1Wkz=w@mail.gmail.com>
+ <20170612060718.GA8566@spreadtrum.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1497257685.3086.4.camel-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:26937 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1751753AbdFMDTF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 12 Jun 2017 23:19:05 -0400
+Content-Disposition: inline
+In-Reply-To: <20170612060718.GA8566@spreadtrum.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@linaro.org>
 
-Am 12.06.2017 um 10:54 schrieb Jerome Brunet:
-> On Sat, 2017-06-10 at 23:57 +0200, Heiner Kallweit wrote:
->> Add a driver supporting the GPIO interrupt controller on certain
->> Amlogic meson SoC's.
->>
->> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->> v5:
->> - changed Kconfig entry based on Neil's suggestion
->> - added authors
->> - extended explanation why 2 * n hwirqs are used
->> v6:
->> - change DT property parent-interrupts to interrupts
->> v7:
->> - no changes
->> ---
->>  drivers/irqchip/Kconfig          |   5 +
->>  drivers/irqchip/Makefile         |   1 +
->>  drivers/irqchip/irq-meson-gpio.c | 295
->> +++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 301 insertions(+)
->>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
->>
->> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->> index 478f8ace..bdc86e14 100644
->> --- a/drivers/irqchip/Kconfig
->> +++ b/drivers/irqchip/Kconfig
->> @@ -301,3 +301,8 @@ config QCOM_IRQ_COMBINER
->>  	help
->>  	  Say yes here to add support for the IRQ combiner devices embedded
->>  	  in Qualcomm Technologies chips.
->> +
->> +config MESON_GPIO_INTC
->> +	bool
->> +	depends on ARCH_MESON
->> +	default y
->> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->> index b64c59b8..1be482bd 100644
->> --- a/drivers/irqchip/Makefile
->> +++ b/drivers/irqchip/Makefile
->> @@ -76,3 +76,4 @@ obj-$(CONFIG_EZNPS_GIC)			+= irq-
->> eznps.o
->>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
->>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
->>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
->> +obj-$(CONFIG_MESON_GPIO_INTC)		+= irq-meson-gpio.o
->> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-
->> gpio.c
->> new file mode 100644
->> index 00000000..925d00c2
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-meson-gpio.c
->> @@ -0,0 +1,295 @@
->> +/*
->> + * Amlogic Meson GPIO IRQ chip driver
->> + *
->> + * Copyright (c) 2015 Endless Mobile, Inc.
->> + * Author: Carlo Caione <carlo-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
->> + * Copyright (c) 2016 BayLibre, SAS.
->> + * Author: Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
->> + * Copyright (c) 2017 Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License as
->> + * published by the Free Software Foundation, version 2.
->> + */
->> +
->> +#include <linux/device.h>
->> +#include <linux/init.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/of.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/of_address.h>
->> +#include <linux/regmap.h>
->> +
->> +#define REG_EDGE_POL		0x00
->> +#define REG_PIN_03_SEL		0x04
->> +#define REG_PIN_47_SEL		0x08
->> +#define REG_FILTER_SEL		0x0c
->> +
->> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
->> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
->> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
->> +
->> +#define MAX_PARENT_IRQ_NUM	8
->> +
->> +/* maximum number of GPIO IRQs on supported platforms */
->> +#define MAX_NUM_GPIO_IRQ	133
-> 
-> Comment on V6 still applies here. 133 being the max on gxbb does not make it the
-> max on the other supported chipset. 
-> 
-133 is the highest number occurring on any supported chip.
+Hi Linus,
 
-> Review from october suggested to put this value in DT.
+On 一,  6月 12, 2017 at 02:07:18下午 +0800, Baolin Wang wrote:
+> Hi Linus,
 > 
-I checked few irqchip drivers and none of them gets the number of hwirqs
-from DT. Most of the time the number of hwirq's is a #define in the driver.
-Also I don't see which benefit this would provide.
+> On 五,  6月 09, 2017 at 01:00:17下午 +0200, Linus Walleij wrote:
+> > On Mon, Jun 5, 2017 at 2:11 PM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
+> > 
+> > > This patch adds the binding documentation for Spreadtrum SC9860 pin
+> > > controller device.
+> > >
+> > > Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
+> > 
+> > Good improvements since last iteration!
+> > 
+> > (...)
+> > 
+> > > +The Spreadtrum pin controller are organized in 3 blocks (types).
+> > > +
+> > > +The first block comprises some global control registers, and each
+> > > +register contains several bit fields with one bit or several bits
+> > > +to configure for some global common configuration, such as domain
+> > > +pad driving level, system control select and so on.
+> > 
+> > Insert your explanations about domain pads and system
+> > control from the other mail here.
+> 
+> OK.
+> 
+> > 
+> > > + We recognise
+> > > +every fields comprising one bit or several bits in one global control
+> > > +register as one pin, thus we should record every pin's bit offset,
+> > > +bit width and register offset to configure this field (pin). Since
+> > > +this type pins' configuration are very tricky and different for each
+> > > +register, we introduce "sprd,ctrl" property to set the various global
+> > > +control configuration.
+> > 
+> > Hm I still don't fully understand this property.
+> 
+> I try to explain these special pins definition on Spreadtrum platform.
+> This type pins (containing one bit or several bits) are used to configure
+> various global control, not only domain pad driving level, system control,
+> and also some other configuration:
+> EIC (external interrupt controller) source select, debug mode select,
+> camera pd signal select, camera reset signal select, ADI sync signal
+> require, watchdog reset select .......
+> 
+> There are too much various configuration that I can not list all of them,
+> so we can not make every special configuration as one generic configuration,
+> and maybe it will add more strange globle configuration in future. Then
+> we add one "sprd,ctrl" (maybe "sprd,control" will be better) to set these
+> various global control configuration, and we need use magic number for this
+> property.
+> 
+> > 
+> > > + In some situation we have some pin-sleep related
+> > > +configuration need to set when one of system goes into deep sleep
+> > > +mode. For example, if we set the pin sleep mode as AP_SLEEP, which
+> > > +means when AP system goes into deep sleep mode, this pin's sleep
+> > > +related properties (input/output or pullup/down) will be set
+> > > +automatically. Thus we intoduce "sprd,sleep_mode" to set pin sleep
+> > > +mode.
+> > 
+> > So what you mean is that there is a special register for the sleep
+> > mode, so that we do not need to write the sleep mode explicitly,
+> > it will instead hit the hardware automatically when the system
+> > switches to sleep mode on some global level?
+> 
+> No. Sorry for confusing. What I mean is if we set one pin's sleep mode
+> as AP_SLEEP, when the AP system goes into deep sleep mode, then the sleep
+> related configuration of this pin will be set automatically. If we set
+> the sleep mode as PUBCP_SLEEP, which means when the pubcp system goes into
+> deep sleep mode, this pin's sleep related configuration will be set.
+> 
+> The sleep related configuration of one pin are described (need modify as
+> you pointed) as below:
+> - sprd,input-sleep: Input enable when system goes into deep sleep mode.
+> - sprd,output-sleep: Output enable when system goes into deep sleep mode.
+> - sprd,pullup_sleep: Pull up enable when system goes into deep sleep mode.
+> - sprd,pulldown_sleep: Pull down enable when system goes into deep sleep mode.
+> 
+> So if we set one pin's sleep related configuration, we also should choose
+> the sleep mode (means which system).
+> 
+> > 
+> > Please detail this.
+> > 
+> > This is not a spreadtrum-specific feature. Look for example in:
+> > include/dt-bindings/pinctrl/nomadik.h
+> > 
+> > We have things like this:
+> > 
+> > #define SLPM_DISABLED           0
+> > #define SLPM_ENABLED            1
+> > #define SLPM_INPUT_NOPULL       0
+> > #define SLPM_INPUT_PULLUP       1
+> > #define SLPM_INPUT_PULLDOWN     2
+> > #define SLPM_DIR_INPUT          3
+> > #define SLPM_OUTPUT_LOW         0
+> > #define SLPM_OUTPUT_HIGH        1
+> > #define SLPM_DIR_OUTPUT         2
+> > #define SLPM_WAKEUP_DISABLE     0
+> > #define SLPM_WAKEUP_ENABLE      1
+> > 
+> > These (also custom) properties predate the generic pin config,
+> > and that is why it was done like this.
+> > 
+> > But moving forward, we may need to think about coming up with
+> > something generic for this.
+> > 
+> > I think this kind of overlaps the pin control states "default"
+> > and "sleep".
+> > 
+> > What we want to do is read out both "default" and "sleep" modes
+> > from the device tree and program *both* into the hardware
+> > when "default" is normally initialized.
+> > 
+> > This is better, because then the device tree looks the same
+> > whether we use hardware-backed switch from "default" to
+> > "sleep" and back or not.
+> > 
+> > I don't know how to do this practically unfortunately, it may need
+> > some modifications of the pin control core code so that drivers
+> > can get the "sleep" mode configuration out and program it.
+> 
+> Yes, I think these "sleep" related configuration are not like
+> what "sprd,sleep-mode" describes, it looks like below properties:
+> - sprd,input-sleep: Input enable when system goes into deep sleep mode.
+> - sprd,output-sleep: Output enable when system goes into deep sleep mode.
+> - sprd,pullup_sleep: Pull up enable when system goes into deep sleep mode.
+> - sprd,pulldown_sleep: Pull down enable when system goes into deep sleep mode.
+> 
+> I agree we should add these into core code, something like:
+> static const struct pinconf_generic_params dt_params[] = {
+> 	{ "bias-bus-hold", PIN_CONFIG_BIAS_BUS_HOLD, 0 },
+> 	{ "bias-disable", PIN_CONFIG_BIAS_DISABLE, 0 },
+> 	{ "bias-high-impedance", PIN_CONFIG_BIAS_HIGH_IMPEDANCE, 0 },
+> 	{ "bias-pull-up", PIN_CONFIG_BIAS_PULL_UP, 1 },
+> 	{ "bias-pull-pin-default", PIN_CONFIG_BIAS_PULL_PIN_DEFAULT, 1 },
+> 	{ "bias-pull-down", PIN_CONFIG_BIAS_PULL_DOWN, 1 },
+> 	{ "drive-open-drain", PIN_CONFIG_DRIVE_OPEN_DRAIN, 0 },
+> 	{ "drive-open-source", PIN_CONFIG_DRIVE_OPEN_SOURCE, 0 },
+> 	{ "drive-push-pull", PIN_CONFIG_DRIVE_PUSH_PULL, 0 },
+> 	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
+> 	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
+> 	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
+> 	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
+> 	{ "input-schmitt", PIN_CONFIG_INPUT_SCHMITT, 0 },
+> 	{ "input-schmitt-disable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 0 },
+> 	{ "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
+> 	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
+> 	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
+> 	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
+> 	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
+> 	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
+> 	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
+> +	{ "sleep-bias-pull-up", PIN_CONFIG_SLEEP_BIAS_PULL_UP, 1},
+> +	{ "sleep-bias-pull-down", PIN_CONFIG_SLEEP_BIAS_PULL_DOWN 1},
+> 	......
+> };
+> 
+> If you agree that, I can help to add these configuration.
+> 
+> > 
+> > > +The last block comprises some misc registers which also have unified
+> > > +register definition, and each register described one pin is used to
+> > > +configure drive strength, pull up/down and so on.
+> > 
+> > OK
+> > 
+> > > + Especially for pull
+> > > +up, we introduce "sprd,pullup" property for two kind configuration:
+> > > +PULLUP_20K or PULLUP_4_7K, which means the pullup resistor is 20K or
+> > > +4.7K.
+> > 
+> > Do not use this. The generic bias-pull-up already supports an
+> > argument.
+> > 
+> > Use this:
+> > 
+> > bias-pull-up = <20000>;
+> > bias-pull-up = <4700>;
+> > 
+> > Just unpack the argument in the .set_config() callback and deny
+> > it setting anything else than 20000 or 4700 Ohms.
+> 
+> Yes, you are right. I missed this and will fix in next version.
+> 
+> > 
+> > > +Optional properties:
+> > > +- function: Specified the function name.
+> > > +- drive-strength: Drive strength in mA.
+> > > +- input-schmitt-disable: Enable schmitt-trigger mode.
+> > > +- input-schmitt-enable: Disable schmitt-trigger mode.
+> > > +- bias-disable: Disable pin bias.
+> > > +- bias-pull-down: Pull down on pin.
+> > 
+> > OK
+> > 
+> > > +- sprd,ctrl: Control values referring to databook for global control pins.
+> > 
+> > Uncertain on this.
+> > 
+> > > +- sprd,sleep_mode: Sleep mode selection.
+> > > +- sprd,pullup: Pull up on pin.
+> > 
+> > Switch to bias-pull-up as per above.
+> 
+> OK.
+> 
+> > 
+> > > +- sprd,input-sleep: Input enable when system goes into deep sleep mode.
+> > > +- sprd,output-sleep: Output enable when system goes into deep sleep mode.
+> > > +- sprd,pullup_sleep: Pull up enable when system goes into deep sleep mode.
+> > > +- sprd,pulldown_sleep: Pull down enable when system goes into deep sleep mode.
+> > 
+> > This is not good. We need to handle these using the standard
+> > 
+> > input-enable
+> > output-enable
+> > bias-pull-up
+> > bias-pull-down
+> > 
+> > Just inside a state named "sleep" and then let the driver read and program
+> > this state into the sleep registers at first convenience.
+> 
+> I am afraid I can not use the "sleep" state. Since if we set the "sleep" state,
+> and usually we will issue "pinctrl_force_sleep()" in suspend function, but I am
+> afraid it will be too late for pin sleep related configuration when system goes
+> into deep sleep.
+> 
+> As I explained above, these 4 sleep related configuration bind with the pin sleep
+> mode, we should set them as generic config before system goes into deep sleep.
+> We can add these sleep related configuration into pinctrl core like I suggested
+> above, which will be more reasonable. What do you think?
+> static const struct pinconf_generic_params dt_params[] = {
+> 	......
+> 	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
+> +	{ "sleep-bias-pull-up", PIN_CONFIG_SLEEP_BIAS_PULL_UP, 1},
+> +	{ "sleep-bias-pull-down", PIN_CONFIG_SLEEP_BIAS_PULL_DOWN, 1},
+> +	{ "sleep-bias-input-enable", PIN_CONFIG_SLEEP_INPUT_ENABLE, 1},
+> +	{ "sleep-bias-output-enable", PIN_CONFIG_SLEEP_OUTPUT_ENABLE, 1},
+> 
+> Really appreciate for your comments.
 
-This value is used only to determine the size of the irq mapping array
-in the irq domain. By using chip-specific values we could save a few bytes
-in this array. But I think that's not worth the effort of introducing an extra
-dt parameter.
-And using a hwirq greater than the max on the specific chips (if any driver
-should ever try this) results in: nothing.
+I forgot one most important reason why we can not use the "sleep" state. As I explained
+above, the sleep related configuration will bind with the pin's sleep mode. If we set the
+pin's sleep mode as AP_SLEEP, then we can select "sleep" state when AP system goes into
+deep sleep mode by issuing "pinctrl_force_sleep()" in pinctrl suspend function.
 
-Last but not least the dt binding was acked by Rob and if the number of
-hwirq's should be in the DT I think he would have mentioned this.
-
->> +
->> +/*
->> + * In case of IRQ_TYPE_EDGE_BOTH we need two parent interrupts, one for each
->> + * edge. That's due to HW constraints.
->> + * We use format 2 * GPIO_HWIRQ +(0|1) for the hwirq, so we can have one
->> + * GPIO_HWIRQ twice and derive the GPIO_HWIRQ from hwirq by shifting hwirq
->> + * one bit to the right.
->> + */
->> +#define NUM_GPIO_HWIRQ		(2 * MAX_NUM_GPIO_IRQ)
-> 
-> ????
-> 
->> +
->> +struct meson_irq_slot {
->> +	unsigned int irq;
->> +	unsigned int owner;
->> +};
->> +
->> +struct meson_data {
->> +	struct regmap *regmap;
->> +	struct meson_irq_slot slots[MAX_PARENT_IRQ_NUM];
->> +	unsigned int num_slots;
->> +	struct mutex lock;
->> +};
->> +
->> +static int meson_alloc_irq_slot(struct meson_data *md, unsigned int virq)
->> +{
->> +	int i, slot = -ENOSPC;
->> +
->> +	mutex_lock(&md->lock);
->> +
->> +	for (i = 0; i < md->num_slots && slot < 0; i++)
->> +		if (!md->slots[i].owner) {
->> +			md->slots[i].owner = virq;
->> +			slot = i;
->> +		}
->> +
->> +	mutex_unlock(&md->lock);
->> +
->> +	return slot;
->> +}
->> +
->> +static void meson_free_irq_slot(struct meson_data *md, unsigned int virq)
->> +{
->> +	int i;
->> +
->> +	mutex_lock(&md->lock);
->> +
->> +	for (i = 0; i < md->num_slots; i++)
->> +		if (md->slots[i].owner == virq) {
->> +			md->slots[i].owner = 0;
->> +			break;
->> +		}
->> +
->> +	mutex_unlock(&md->lock);
->> +}
->> +
->> +static int meson_find_irq_slot(struct meson_data *md, unsigned int virq)
->> +{
->> +	int i, slot = -EINVAL;
->> +
->> +	mutex_lock(&md->lock);
->> +
->> +	for (i = 0; i < md->num_slots && slot < 0; i++)
->> +		if (md->slots[i].owner == virq)
->> +			slot = i;
->> +
->> +	mutex_unlock(&md->lock);
->> +
->> +	return slot;
->> +}
->> +
->> +static void meson_set_hwirq(struct meson_data *md, int idx, unsigned int
->> hwirq)
->> +{
->> +	int reg = idx > 3 ? REG_PIN_47_SEL : REG_PIN_03_SEL;
->> +	int shift = 8 * (idx % 4);
->> +
->> +	regmap_update_bits(md->regmap, reg, 0xff << shift,
->> +			   hwirq << shift);
->> +}
->> +
->> +static void meson_irq_set_hwirq(struct irq_data *data, unsigned int hwirq)
->> +{
->> +	struct meson_data *md = data->domain->host_data;
->> +	int slot = meson_find_irq_slot(md, data->irq);
->> +
->> +	if (slot >= 0)
->> +		meson_set_hwirq(md, slot, hwirq);
->> +}
->> +
->> +static int meson_irq_set_type(struct irq_data *data, unsigned int type)
->> +{
->> +	struct meson_data *md = data->domain->host_data;
->> +	int slot;
->> +	unsigned int val = 0;
->> +
->> +	if (type == IRQ_TYPE_EDGE_BOTH)
->> +		return -EINVAL;
->> +
->> +	slot = meson_find_irq_slot(md, data->irq);
->> +	if (slot < 0)
->> +		return slot;
->> +
->> +	if (type & IRQ_TYPE_EDGE_BOTH)
->> +		val |= REG_EDGE_POL_EDGE(slot);
->> +
->> +	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
->> +		val |= REG_EDGE_POL_LOW(slot);
->> +
->> +	regmap_update_bits(md->regmap, REG_EDGE_POL,
->> +			   REG_EDGE_POL_MASK(slot), val);
->> +
->> +	if (type & IRQ_TYPE_EDGE_BOTH)
->> +		val = IRQ_TYPE_EDGE_RISING;
->> +	else
->> +		val = IRQ_TYPE_LEVEL_HIGH;
->> +
->> +	return irq_chip_set_type_parent(data, val);
->> +}
->> +
->> +static unsigned int meson_irq_startup(struct irq_data *data)
->> +{
->> +	irq_chip_unmask_parent(data);
->> +	/*
->> +	 * An extra bit was added to allow having the same gpio hwirq twice
->> +	 * for handling IRQ_TYPE_EDGE_BOTH. Remove this bit to get the
->> +	 * gpio hwirq.
->> +	 */
->> +	meson_irq_set_hwirq(data, data->hwirq >> 1);
-> 
-> Comments from v6 still applies here, and this has nothing to do with the so-
-> called percentage of niceness - whatever this means.
-> 
-> This is an interrupt controller, a critical part of the system. It has be
-> correct.
-> 
-> Multiplying the number of IRQ lines and so changing the interface is not
-> correct.
-
-Why changing the interface? Using gpio_hwirq << 1 as irq domain hwirq
-is the interface. A hwirq in a irq domain is a number, not more and not less.
-AFAIK there's no pre-defined semantics.
-Of course it should be clear what the number means and the interface should
-not change later.
-
-> DT is OS independent, property should not be os-specific, let alone driver-
-> hacked specific.
-> 
-> Interfaces, including DT, are important. These are supposed to be stable. We
-> don't to change the irq numbers in every dts because "yeahhh we found another
-> way!"
-> 
-Which DT property are you referring to? There is no irq number in the DT.
-
-> So yes, the corner cases should be covered, what drives you is not the matter
-> here. If you have a critical need for this, then feel free to apply the patch to
-> your kernel, no one is stopping you. If it goes upstream, people should be able
-> to understand it and trust it, identified corner cases should be covered.
-> 
->> +
->> +	return 0;
->> +}
->> +
->> +static void meson_irq_shutdown(struct irq_data *data)
->> +{
->> +	meson_irq_set_hwirq(data, 0xff);
->> +	irq_chip_mask_parent(data);
->> +}
->> +
->> +static struct irq_chip meson_irq_chip = {
->> +	.name = "meson_gpio_intc",
->> +	.irq_set_type = meson_irq_set_type,
->> +	.irq_eoi = irq_chip_eoi_parent,
->> +	.irq_mask = irq_chip_mask_parent,
->> +	.irq_unmask = irq_chip_unmask_parent,
->> +	.irq_startup = meson_irq_startup,
->> +	.irq_shutdown = meson_irq_shutdown,
->> +	.irq_set_affinity = irq_chip_set_affinity_parent,
->> +};
->> +
->> +static int meson_irq_alloc(struct irq_domain *d, unsigned int virq,
->> +			   unsigned int nr_irqs, void *data)
->> +{
->> +	struct irq_fwspec parent_fwspec, *fwspec = data;
->> +	struct meson_data *md = d->host_data;
->> +	irq_hw_number_t hwirq;
->> +	int ret, slot;
->> +
->> +	slot = meson_alloc_irq_slot(md, virq);
->> +	if (slot < 0)
->> +		return slot;
->> +
->> +	hwirq = fwspec->param[0];
->> +	irq_domain_set_hwirq_and_chip(d, virq, hwirq, &meson_irq_chip, NULL);
->> +
->> +	parent_fwspec.fwnode = d->parent->fwnode;
->> +	parent_fwspec.param_count = 3;
->> +	parent_fwspec.param[0] = 0; /* SPI */
->> +	parent_fwspec.param[1] = md->slots[slot].irq;
->> +	parent_fwspec.param[2] = IRQ_TYPE_NONE;
->> +
->> +	ret = irq_domain_alloc_irqs_parent(d, virq, nr_irqs, &parent_fwspec);
->> +	if (ret)
->> +		meson_free_irq_slot(md, virq);
->> +
->> +	return ret;
->> +}
->> +
->> +static void meson_irq_free(struct irq_domain *d, unsigned int virq,
->> +			   unsigned int nr_irqs)
->> +{
->> +	struct meson_data *md = d->host_data;
->> +
->> +	irq_domain_free_irqs_common(d, virq, nr_irqs);
->> +	meson_free_irq_slot(md, virq);
->> +}
->> +
->> +static const struct irq_domain_ops meson_irq_ops = {
->> +	.alloc = meson_irq_alloc,
->> +	.free = meson_irq_free,
->> +	.xlate = irq_domain_xlate_twocell,
->> +};
->> +
->> +static int meson_get_irqs(struct meson_data *md, struct device_node *node)
->> +{
->> +	int ret, i;
->> +	u32 irq;
->> +
->> +	for (i = 0; i < MAX_PARENT_IRQ_NUM; i++) {
->> +		ret = of_property_read_u32_index(node, "interrupts", i,
->> &irq);
->> +		if (ret)
->> +			break;
->> +		md->slots[i].irq = irq;
->> +	}
->> +
->> +	md->num_slots = i;
->> +
->> +	return i ? 0 : -EINVAL;
->> +}
->> +
->> +static const struct regmap_config meson_regmap_config = {
->> +	.reg_bits       = 32,
->> +	.reg_stride     = 4,
->> +	.val_bits       = 32,
->> +	.max_register	= REG_FILTER_SEL,
->> +};
->> +
->> +static int __init meson_gpio_irq_init(struct device_node *node,
->> +				      struct device_node *parent)
->> +{
->> +	struct irq_domain *meson_irq_domain, *parent_domain;
->> +	struct meson_data *md;
->> +	void __iomem *io_base;
->> +	int ret;
->> +
->> +	md = kzalloc(sizeof(*md), GFP_KERNEL);
->> +	if (!md)
->> +		return -ENOMEM;
->> +
->> +	mutex_init(&md->lock);
->> +
->> +	io_base = of_iomap(node, 0);
->> +	if (!io_base)
->> +		return -EINVAL;
->> +
->> +	md->regmap = regmap_init_mmio(NULL, io_base, &meson_regmap_config);
->> +	if (IS_ERR(md->regmap))
->> +		return PTR_ERR(md->regmap);
->> +
->> +	/* initialize to IRQ_TYPE_LEVEL_HIGH */
->> +	regmap_write(md->regmap, REG_EDGE_POL, 0);
->> +	/* disable all GPIO interrupt sources */
->> +	regmap_write(md->regmap, REG_PIN_03_SEL, 0xffffffff);
->> +	regmap_write(md->regmap, REG_PIN_47_SEL, 0xffffffff);
->> +	/* disable filtering */
->> +	regmap_write(md->regmap, REG_FILTER_SEL, 0);
->> +
->> +	ret = meson_get_irqs(md, node);
->> +	if (ret)
->> +		return ret;
->> +
->> +	parent_domain = irq_find_host(parent);
->> +	if (!parent_domain)
->> +		return -ENXIO;
->> +
->> +	meson_irq_domain = irq_domain_add_hierarchy(parent_domain, 0,
->> +						    NUM_GPIO_HWIRQ, node,
->> +						    &meson_irq_ops, md);
->> +	return meson_irq_domain ? 0 : -EINVAL;
->> +}
->> +
->> +IRQCHIP_DECLARE(meson_gpio_irq, "amlogic,meson-gpio-intc",
->> meson_gpio_irq_init);
-> 
-> 
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+But if we set the pin's sleep mode as PUBCP_SLEEP and pubcp system doesn't run linux kernel
+(it run another thread OS), then we can not select "sleep" state since the AP system does
+not go into deep sleep mode (AP system run linux kernel OS).
+ 
+> };
+> > 
+> > Yours,
+> > Linus Walleij
