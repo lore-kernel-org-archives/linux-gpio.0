@@ -1,195 +1,417 @@
-From: Dong Aisheng <dongas86@gmail.com>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and output-enable
-Date: Tue, 13 Jun 2017 14:25:08 +0800
-Message-ID: <CAA+hA=RmDEybOkbimtyQBq+vK=6T9GYJn9Jw-GcDy7XxR0b0AA@mail.gmail.com>
-References: <CAHp75VfOMKOhpkec+htA6DRQhivpSmNXy1=Ayig1W+ZC84gTLw@mail.gmail.com>
- <20170508172516.GC25206@w540> <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
- <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
- <20170523183735.GC13664@w540> <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
- <20170529104229.GB21347@w540> <CAA+hA=T56WHugmA+5V5ZC6TTxeSUVt1hr0v53YuDsUYgBcvKTw@mail.gmail.com>
- <20170609075028.GE15739@w540> <CACRpkdZ=hNJLyV94FyRBSR3Dk8NLe-jEo3qbUKDya6ruqG3KNQ@mail.gmail.com>
- <20170612094424.GG15739@w540>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v7 1/9] irqchip: add Amlogic Meson GPIO irqchip driver
+Date: Tue, 13 Jun 2017 09:31:16 +0100
+Message-ID: <91b20fc4-4969-02a6-cc47-ff711f604342@arm.com>
+References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
+ <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170612094424.GG15739@w540>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris Brandt <Chris.Brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:44422 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751753AbdFMIbV (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 13 Jun 2017 04:31:21 -0400
+In-Reply-To: <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On Mon, Jun 12, 2017 at 5:44 PM, jmondi <jacopo@jmondi.org> wrote:
-> Hi Linus,
->
-> On Sun, Jun 11, 2017 at 11:45:49PM +0200, Linus Walleij wrote:
->> On Fri, Jun 9, 2017 at 9:50 AM, jmondi <jacopo@jmondi.org> wrote:
->> > On Fri, Jun 09, 2017 at 03:26:57PM +0800, Dong Aisheng wrote:
->>
->> >> > I see three options here:
->> >> >
->> >> > 1) Add "output-buffer-enable" and "input-buffer-enable"
->> >> > we end up with
->> >> > "output-high"
->> >> > "output-low"
->> >> > "input-enable"
->> >> > "output-buffer-enable"
->> >> > "input-buffer-enable"
->> >> >
->> >> > 2) Add "output-buffer-enable" only
->> >> > we end up with
->> >> > "output-high"
->> >> > "output-low"
->> >> > "input-enable"
->> >> > "output-buffer-enable"
->> >> >
->> >> > Binding may be confusing as in one case we use "output-buffer-enable"
->> >> > while in the other "input-enable"
->> >> >
->> >> > 3) Add "output-enable" only
->> >> > "output-high"
->> >> > "output-low"
->> >> > "input-enable"
->> >> > "output-enable"
->> >> >
->> >> > As you, I don't like "output-enable" that much but it pairs better with
->> >> > "input-enable".
->> >> >
->> >> > I'll let you and DT people decide on this, as it's really an ABI definition
->> >> > problem and you have better judgment there.
->> >> >
->> >>
->> >> What's the final decision of this?
->> >
->> > I admit a was buying a bit of time and post-poned the gentle ping for
->> > any final word on this. But since you're asking I'll second your
->> > question :)
->>
->> I suspect it is time to quote
->> Documentation/process/management-style.rst
->> (Torvalds):
->>
->> 1) Decisions
->>
->> Everybody thinks managers make decisions, and that decision-making is
->> important.  The bigger and more painful the decision, the bigger the
->> manager must be to make it.  That's very deep and obvious, but it's not
->> actually true.
->>
->> The name of the game is to **avoid** having to make a decision.  In
->> particular, if somebody tells you "choose (a) or (b), we really need you
->> to decide on this", you're in trouble as a manager.  The people you
->> manage had better know the details better than you, so if they come to
->> you for a technical decision, you're screwed.  You're clearly not
->> competent to make that decision for them.
->>
->> (It goes on, it's the best part of the entire Documentation/* dir in my
->> opinion, please take the time to read it in full.)
->>
->> So: what do you guys, using this feature, and Andy, who raised serious
->> concerns, think is the right binding? That is what *I* need to know.
->
-> Fair enough :)
->
-> I'll try to keep this short: I don't like "output-enable", and at the
-> same time I don't think "output-high" and "output-low" fit well for
-> this purpose, as they electrically means something different from what
-> our (and IMX) use case is: enabling/disabling input/output
-> buffers internal to pin controller/gpio block HW and not driving a value
-> there.
->
-> This seems clear to me from the "GPIO mode pitfalls" section of
-> pinctrl.txt documentation examples and from the fact that generic bindings
-> did not expose an "output" flag because if you drive an output line, you
-> reasonably either drive it high or low.
->
-> Unfortunately I cannot convince myself that the same reasons apply
-> to the input use case.  Enabling input on a pin implies the pinctrl/gpio driver
-> has to enable any input buffer required to use that pin as a properly
-> working input line, and enabling an input buffer implies being able to sense
-> the line value from there, so I don't see that much use for "input-buffer-enable"
-> alone.
->
-> So, even if bindings could look a bit weird as there won't be a direct
-> matching between properties names used to enable input/output buffers,
-> my vote is to add "output-buffer-enable" only, and keep using the
-> already there "input-enable" properties for the input use case.
->
+On 10/06/17 22:57, Heiner Kallweit wrote:
+> Add a driver supporting the GPIO interrupt controller on certain
+> Amlogic meson SoC's.
+> 
+> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> ---
+> v5:
+> - changed Kconfig entry based on Neil's suggestion
+> - added authors
+> - extended explanation why 2 * n hwirqs are used
+> v6:
+> - change DT property parent-interrupts to interrupts
+> v7:
+> - no changes
+> ---
+>  drivers/irqchip/Kconfig          |   5 +
+>  drivers/irqchip/Makefile         |   1 +
+>  drivers/irqchip/irq-meson-gpio.c | 295 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 301 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
+> 
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 478f8ace..bdc86e14 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -301,3 +301,8 @@ config QCOM_IRQ_COMBINER
+>  	help
+>  	  Say yes here to add support for the IRQ combiner devices embedded
+>  	  in Qualcomm Technologies chips.
+> +
+> +config MESON_GPIO_INTC
+> +	bool
+> +	depends on ARCH_MESON
+> +	default y
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index b64c59b8..1be482bd 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -76,3 +76,4 @@ obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
+>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
+>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
+>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
+> +obj-$(CONFIG_MESON_GPIO_INTC)		+= irq-meson-gpio.o
+> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
+> new file mode 100644
+> index 00000000..925d00c2
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-meson-gpio.c
+> @@ -0,0 +1,295 @@
+> +/*
+> + * Amlogic Meson GPIO IRQ chip driver
+> + *
+> + * Copyright (c) 2015 Endless Mobile, Inc.
+> + * Author: Carlo Caione <carlo@endlessm.com>
+> + * Copyright (c) 2016 BayLibre, SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + * Copyright (c) 2017 Heiner Kallweit <hkallweit1@gmail.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License as
+> + * published by the Free Software Foundation, version 2.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/init.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/of.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_address.h>
+> +#include <linux/regmap.h>
+> +
+> +#define REG_EDGE_POL		0x00
+> +#define REG_PIN_03_SEL		0x04
+> +#define REG_PIN_47_SEL		0x08
+> +#define REG_FILTER_SEL		0x0c
+> +
+> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
+> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
+> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
+> +
+> +#define MAX_PARENT_IRQ_NUM	8
+> +
+> +/* maximum number of GPIO IRQs on supported platforms */
+> +#define MAX_NUM_GPIO_IRQ	133
 
-Yes, it may be a bit weird.
-I'm not pad internal details expert and can't tell much difference between
-output-enable and output-buffer-enable.
-I just feel a bit confuse if only using output-buffer-enable.
+Why aren't these values coming from DT? I bet that a future revision of
+the same HW will double these. Or at least, you could match it on the
+compatible string.
 
-If enable both input and output, it becomes:
-pinctrl_xxx: gpios_xxx_grp {
-        pins = <
-                ULP1_PAD_PTD0__PTD0
-        >;
-        input-enable;
-        output-buffer-enable;
-        bias-pull-up;
-};
+> +
+> +/*
+> + * In case of IRQ_TYPE_EDGE_BOTH we need two parent interrupts, one for each
+> + * edge. That's due to HW constraints.
+> + * We use format 2 * GPIO_HWIRQ +(0|1) for the hwirq, so we can have one
+> + * GPIO_HWIRQ twice and derive the GPIO_HWIRQ from hwirq by shifting hwirq
+> + * one bit to the right.
 
-How about still use output-enable in pairs to input-enable but explain more
-in comments?
-Aslo update 'input-enable' comment to 'enable input buffer'.
-e.g.
-diff --git a/drivers/pinctrl/pinconf-generic.c
-b/drivers/pinctrl/pinconf-generic.c
-index 720a19f..96c83a4 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -172,6 +172,7 @@ static const struct pinconf_generic_params dt_params[] = {
-        { "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
-        { "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
-        { "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-+       { "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
-        { "output-high", PIN_CONFIG_OUTPUT, 1, },
-        { "output-low", PIN_CONFIG_OUTPUT, 0, },
-        { "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-diff --git a/include/linux/pinctrl/pinconf-generic.h
-b/include/linux/pinctrl/pinconf-generic.h
-index 7620eb1..d30f4fe 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -59,9 +59,9 @@
-  *     which means it will wait for signals to settle when reading inputs. The
-  *     argument gives the debounce time in usecs. Setting the
-  *     argument to zero turns debouncing off.
-- * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input.  Note that this does not
-- *     affect the pin's ability to drive output.  1 enables input, 0 disables
-- *     input.
-+ * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input buffer.  Note
-that this does
-+ *     not affect the pin's ability to drive output.
-+ *     1 enables input, 0 disables input.
-  * @PIN_CONFIG_INPUT_SCHMITT: this will configure an input pin to run in
-  *     schmitt-trigger mode. If the schmitt-trigger has adjustable hysteresis,
-  *     the threshold value is given on a custom format as argument when
-@@ -73,6 +73,9 @@
-  *     operation, if several modes of operation are supported these can be
-  *     passed in the argument on a custom form, else just use argument 1
-  *     to indicate low power mode, argument 0 turns low power mode off.
-+ * @PIN_CONFIG_OUTPUT_ENABLE: only enable the pin's output buffer, not driving
-+ *     a value.
-+ *     1 enables output buffer, 0 disables output buffer.
-  * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use argument
-  *     1 to indicate high level, argument 0 to indicate low level. (Please
-  *     see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
+Please expand on how you expect this to work, specially when a random
+driver expects a single interrupt.
 
-Or
-invent both input-buffer-enable and output-buffer-enable and
-deprecated input-enable?
+> + */
+> +#define NUM_GPIO_HWIRQ		(2 * MAX_NUM_GPIO_IRQ)
+> +
+> +struct meson_irq_slot {
+> +	unsigned int irq;
+> +	unsigned int owner;
+> +};
+> +
+> +struct meson_data {
+> +	struct regmap *regmap;
+> +	struct meson_irq_slot slots[MAX_PARENT_IRQ_NUM];
+> +	unsigned int num_slots;
+> +	struct mutex lock;
+> +};
+> +
+> +static int meson_alloc_irq_slot(struct meson_data *md, unsigned int virq)
+> +{
+> +	int i, slot = -ENOSPC;
+> +
+> +	mutex_lock(&md->lock);
+> +
+> +	for (i = 0; i < md->num_slots && slot < 0; i++)
+> +		if (!md->slots[i].owner) {
+> +			md->slots[i].owner = virq;
 
-Andy,
-how about your comments?
+Why do you have to deal with the virq? It'd be more logical to deal with
+the hwirq. The usual mechanism to reserve a "slot" is to use a bitmap
+indexed by the hwirq. Why is that not working for you?
 
-Regards
-Dong Aisheng
+> +			slot = i;
+> +		}
+> +
+> +	mutex_unlock(&md->lock);
+> +
+> +	return slot;
+> +}
+> +
+> +static void meson_free_irq_slot(struct meson_data *md, unsigned int virq)
+> +{
+> +	int i;
+> +
+> +	mutex_lock(&md->lock);
+> +
+> +	for (i = 0; i < md->num_slots; i++)
+> +		if (md->slots[i].owner == virq) {
+> +			md->slots[i].owner = 0;
+> +			break;
+> +		}
+> +
+> +	mutex_unlock(&md->lock);
+> +}
 
-> Thanks
->    j
->
->>
->> Yours,
->> Linus Walleij
+These two functions are basically the same...
+
+> +
+> +static int meson_find_irq_slot(struct meson_data *md, unsigned int virq)
+> +{
+> +	int i, slot = -EINVAL;
+> +
+> +	mutex_lock(&md->lock);
+> +
+> +	for (i = 0; i < md->num_slots && slot < 0; i++)
+> +		if (md->slots[i].owner == virq)
+> +			slot = i;
+> +
+> +	mutex_unlock(&md->lock);
+> +
+> +	return slot;
+> +}
+
+... and could be expressed in terms of this one.
+
+> +
+> +static void meson_set_hwirq(struct meson_data *md, int idx, unsigned int hwirq)
+> +{
+> +	int reg = idx > 3 ? REG_PIN_47_SEL : REG_PIN_03_SEL;
+> +	int shift = 8 * (idx % 4);
+
+What's this?
+
+> +
+> +	regmap_update_bits(md->regmap, reg, 0xff << shift,
+> +			   hwirq << shift);
+> +}
+> +
+> +static void meson_irq_set_hwirq(struct irq_data *data, unsigned int hwirq)
+> +{
+> +	struct meson_data *md = data->domain->host_data;
+> +	int slot = meson_find_irq_slot(md, data->irq);
+> +
+> +	if (slot >= 0)
+> +		meson_set_hwirq(md, slot, hwirq);
+> +}
+> +
+> +static int meson_irq_set_type(struct irq_data *data, unsigned int type)
+> +{
+> +	struct meson_data *md = data->domain->host_data;
+> +	int slot;
+> +	unsigned int val = 0;
+> +
+> +	if (type == IRQ_TYPE_EDGE_BOTH)
+> +		return -EINVAL;
+
+So you reject EDGE_BOTH? So what's the deal with the beginning of the patch?
+
+> +
+> +	slot = meson_find_irq_slot(md, data->irq);
+> +	if (slot < 0)
+> +		return slot;
+
+How can this happen?
+
+> +
+> +	if (type & IRQ_TYPE_EDGE_BOTH)
+> +		val |= REG_EDGE_POL_EDGE(slot);
+> +
+> +	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
+> +		val |= REG_EDGE_POL_LOW(slot);
+> +
+> +	regmap_update_bits(md->regmap, REG_EDGE_POL,
+> +			   REG_EDGE_POL_MASK(slot), val);
+> +
+> +	if (type & IRQ_TYPE_EDGE_BOTH)
+> +		val = IRQ_TYPE_EDGE_RISING;
+> +	else
+> +		val = IRQ_TYPE_LEVEL_HIGH;
+
+How does this work? Does this HW have some magic falling->rising and
+low->high conversion feature? If it doesn't, I cannot see how this can work.
+
+> +
+> +	return irq_chip_set_type_parent(data, val);
+> +}
+> +
+> +static unsigned int meson_irq_startup(struct irq_data *data)
+> +{
+> +	irq_chip_unmask_parent(data);
+> +	/*
+> +	 * An extra bit was added to allow having the same gpio hwirq twice
+> +	 * for handling IRQ_TYPE_EDGE_BOTH. Remove this bit to get the
+> +	 * gpio hwirq.
+> +	 */
+> +	meson_irq_set_hwirq(data, data->hwirq >> 1);
+
+Again. Do you support EDGE_BOTH or not?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void meson_irq_shutdown(struct irq_data *data)
+> +{
+> +	meson_irq_set_hwirq(data, 0xff);
+
+What's special about 0xff?
+
+> +	irq_chip_mask_parent(data);
+> +}
+> +
+> +static struct irq_chip meson_irq_chip = {
+> +	.name = "meson_gpio_intc",
+> +	.irq_set_type = meson_irq_set_type,
+> +	.irq_eoi = irq_chip_eoi_parent,
+> +	.irq_mask = irq_chip_mask_parent,
+> +	.irq_unmask = irq_chip_unmask_parent,
+> +	.irq_startup = meson_irq_startup,
+> +	.irq_shutdown = meson_irq_shutdown,
+> +	.irq_set_affinity = irq_chip_set_affinity_parent,
+> +};
+> +
+> +static int meson_irq_alloc(struct irq_domain *d, unsigned int virq,
+> +			   unsigned int nr_irqs, void *data)
+> +{
+> +	struct irq_fwspec parent_fwspec, *fwspec = data;
+> +	struct meson_data *md = d->host_data;
+> +	irq_hw_number_t hwirq;
+> +	int ret, slot;
+> +
+> +	slot = meson_alloc_irq_slot(md, virq);
+> +	if (slot < 0)
+> +		return slot;
+> +
+> +	hwirq = fwspec->param[0];
+> +	irq_domain_set_hwirq_and_chip(d, virq, hwirq, &meson_irq_chip, NULL);
+> +
+> +	parent_fwspec.fwnode = d->parent->fwnode;
+> +	parent_fwspec.param_count = 3;
+> +	parent_fwspec.param[0] = 0; /* SPI */
+> +	parent_fwspec.param[1] = md->slots[slot].irq;
+> +	parent_fwspec.param[2] = IRQ_TYPE_NONE;
+
+Hell no. Look at the GIC DT binding: there is no NONE. It is either
+HIGH, or RISING.
+
+> +
+> +	ret = irq_domain_alloc_irqs_parent(d, virq, nr_irqs, &parent_fwspec);
+> +	if (ret)
+> +		meson_free_irq_slot(md, virq);
+> +
+> +	return ret;
+> +}
+> +
+> +static void meson_irq_free(struct irq_domain *d, unsigned int virq,
+> +			   unsigned int nr_irqs)
+> +{
+> +	struct meson_data *md = d->host_data;
+> +
+> +	irq_domain_free_irqs_common(d, virq, nr_irqs);
+> +	meson_free_irq_slot(md, virq);
+> +}
+> +
+> +static const struct irq_domain_ops meson_irq_ops = {
+> +	.alloc = meson_irq_alloc,
+> +	.free = meson_irq_free,
+> +	.xlate = irq_domain_xlate_twocell,
+> +};
+> +
+> +static int meson_get_irqs(struct meson_data *md, struct device_node *node)
+> +{
+> +	int ret, i;
+> +	u32 irq;
+> +
+> +	for (i = 0; i < MAX_PARENT_IRQ_NUM; i++) {
+> +		ret = of_property_read_u32_index(node, "interrupts", i, &irq);
+> +		if (ret)
+> +			break;
+> +		md->slots[i].irq = irq;
+> +	}
+> +
+> +	md->num_slots = i;
+> +
+> +	return i ? 0 : -EINVAL;
+> +}
+> +
+> +static const struct regmap_config meson_regmap_config = {
+> +	.reg_bits       = 32,
+> +	.reg_stride     = 4,
+> +	.val_bits       = 32,
+> +	.max_register	= REG_FILTER_SEL,
+> +};
+> +
+> +static int __init meson_gpio_irq_init(struct device_node *node,
+> +				      struct device_node *parent)
+> +{
+> +	struct irq_domain *meson_irq_domain, *parent_domain;
+> +	struct meson_data *md;
+> +	void __iomem *io_base;
+> +	int ret;
+> +
+> +	md = kzalloc(sizeof(*md), GFP_KERNEL);
+> +	if (!md)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&md->lock);
+> +
+> +	io_base = of_iomap(node, 0);
+> +	if (!io_base)
+> +		return -EINVAL;
+> +
+> +	md->regmap = regmap_init_mmio(NULL, io_base, &meson_regmap_config);
+> +	if (IS_ERR(md->regmap))
+> +		return PTR_ERR(md->regmap);
+> +
+> +	/* initialize to IRQ_TYPE_LEVEL_HIGH */
+> +	regmap_write(md->regmap, REG_EDGE_POL, 0);
+> +	/* disable all GPIO interrupt sources */
+> +	regmap_write(md->regmap, REG_PIN_03_SEL, 0xffffffff);
+> +	regmap_write(md->regmap, REG_PIN_47_SEL, 0xffffffff);
+> +	/* disable filtering */
+> +	regmap_write(md->regmap, REG_FILTER_SEL, 0);
+> +
+> +	ret = meson_get_irqs(md, node);
+> +	if (ret)
+> +		return ret;
+> +
+> +	parent_domain = irq_find_host(parent);
+> +	if (!parent_domain)
+> +		return -ENXIO;
+
+Memory leak on all the return paths.
+
+> +
+> +	meson_irq_domain = irq_domain_add_hierarchy(parent_domain, 0,
+> +						    NUM_GPIO_HWIRQ, node,
+> +						    &meson_irq_ops, md);
+> +	return meson_irq_domain ? 0 : -EINVAL;
+> +}
+> +
+> +IRQCHIP_DECLARE(meson_gpio_irq, "amlogic,meson-gpio-intc", meson_gpio_irq_init);
+> 
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
