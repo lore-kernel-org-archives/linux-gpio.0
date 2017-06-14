@@ -1,65 +1,354 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 3/7] includes: dt-bindings: Rename STM32F429 pinctrl DT bindings
-Date: Wed, 14 Jun 2017 08:05:52 -0500
-Message-ID: <CAL_JsqJHFmamtr_o852fsbzq2S6V0i+xWi62=3HJ0w5F=3SG6g@mail.gmail.com>
-References: <1491568984-20169-1-git-send-email-alexandre.torgue@st.com>
- <1491568984-20169-4-git-send-email-alexandre.torgue@st.com>
- <20170410202736.zy7naw74hvrdmfzk@rob-hp-laptop> <800a68a4-d6ce-212b-5849-56c9d32f891a@st.com>
- <832cd436-0704-3709-ba2c-2c1f6db48615@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <832cd436-0704-3709-ba2c-2c1f6db48615@st.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, Jonathan Corbet <corbet@lwn.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [RFT 1/2] pinctrl: samsung: Fix NULL pointer exception on external interrupts on S3C24xx
+Date: Wed, 14 Jun 2017 15:18:27 +0200
+Message-ID: <20170614131828.28683-1-krzk@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org, Sergio Prado <sergio.prado@e-labworks.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 7, 2017 at 11:35 AM, Alexandre Torgue
-<alexandre.torgue@st.com> wrote:
-> Hi Rob,
->
-> Gentle ping.
->
-> On 04/12/2017 03:31 PM, Alexandre Torgue wrote:
->>
->> Hi Rob,
->>
->> On 04/10/2017 10:27 PM, Rob Herring wrote:
->>>
->>> On Fri, Apr 07, 2017 at 02:43:00PM +0200, Alexandre TORGUE wrote:
->>>>
->>>> STM32F4 MCU series is composed of several SOC (STM32F429, STM32F469,
->>>> ...).
->>>> Most of muxing definition are identical. So to avoid to duplicate
->>>> bindings
->>>> definition, this patch create common definitions.
->>>
->>>
->>> This is a lot of churn. Some confirmation that the resultant dtb is the
->>> same before and after would be nice. Perhaps the script you used to
->>> convert this as well.
->>
->>
->> I tried to use fdtdump but it seems bugged. So I used directly dtc
->> binary to (re)generate dts files (before and after apply the series) and
->> I compared "pinmux" field in both case.
->>
->> Example on stm32f469-disco:
->>
->> ./scripts/dtc/dtc -I dtb -O dts -o stm32f469-disco-after.dts
->> stm32f469-disco-after.dtb
->>
->> ./scripts/dtc/dtc -I dtb -O dts -o stm32f469-disco-before.dts
->> stm32f469-disco-before.dtb
->>
->> cat stm32f469-disco-after.dts | grep pinmux
->> cat stm32f469-disco-before.dts | grep pinmux
->>
->
-> Do you agree with verifications ?
+After commit 8b1bd11c1f8f ("pinctrl: samsung: Add the support the
+multiple IORESOURCE_MEM for one pin-bank"), the S3C24xx (and probably
+S3C64xx as well) fails:
 
-I would expect you do "diff -u stm32f469-disco-before.dts
-stm32f469-disco-after.dts".
+	Unable to handle kernel NULL pointer dereference at virtual address 000000a8
+	...
+	(s3c24xx_demux_eint4_7) from [<c004469c>] (__handle_domain_irq+0x6c/0xcc)
+	(__handle_domain_irq) from [<c0009444>] (s3c24xx_handle_irq+0x6c/0x12c)
+	(s3c24xx_handle_irq) from [<c000e5fc>] (__irq_svc+0x5c/0x78)
 
-Rob
+Mentioned commit moved the pointer to controller's base IO memory address
+from each controller's driver data (samsung_pinctrl_drv_data) to per-bank
+structure (samsung_pin_bank).  The external interrupt demux
+handlers (s3c24xx_demux_eint()) tried to get this base address from opaque
+pointer stored under irq_chip data:
+
+	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+	...
+	pend = readl(bank->eint_base + EINTPEND_REG);
+
+which is wrong because this is hardware irq and it bank was never set
+for this irq_chip.
+
+For S3C24xx and S3C64xx, this partially reverts mentioned commit by
+bringing back the virt_base stored under each controller's driver data
+(samsung_pinctrl_drv_data).  This virt_base address will be now
+duplicated:
+ - samsung_pinctrl_drv_data->virt_base: used on S3C24xx and S3C64xx,
+ - samsung_pin_bank->pctl_base: used on Exynos.
+
+Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+Cc: <stable@vger.kernel.org>
+Cc: Sergio Prado <sergio.prado@e-labworks.com>
+Reported-by: Sergio Prado <sergio.prado@e-labworks.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+---
+
+Tested on Odroid XU3.
+Please kindly test on S3C24xx and S3C64xx. Other tests, including
+Exynos5433 are also welcomed.
+---
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 37 +++++++++++++++-------------
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 40 ++++++++++++++-----------------
+ drivers/pinctrl/samsung/pinctrl-samsung.c |  5 ++++
+ drivers/pinctrl/samsung/pinctrl-samsung.h |  5 ++++
+ 4 files changed, 49 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+index 49774851e84a..edf27264b603 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -151,7 +151,7 @@ static void s3c24xx_eint_set_function(struct samsung_pinctrl_drv_data *d,
+ 	u32 val;
+ 
+ 	/* Make sure that pin is configured as interrupt */
+-	reg = bank->pctl_base + bank->pctl_offset;
++	reg = d->virt_base + bank->pctl_offset;
+ 	shift = pin * bank_type->fld_width[PINCFG_TYPE_FUNC];
+ 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+ 
+@@ -184,7 +184,7 @@ static int s3c24xx_eint_type(struct irq_data *data, unsigned int type)
+ 	s3c24xx_eint_set_handler(data, type);
+ 
+ 	/* Set up interrupt trigger */
+-	reg = bank->eint_base + EINT_REG(index);
++	reg = d->virt_base + EINT_REG(index);
+ 	shift = EINT_OFFS(index);
+ 
+ 	val = readl(reg);
+@@ -259,29 +259,32 @@ static void s3c2410_demux_eint0_3(struct irq_desc *desc)
+ static void s3c2412_eint0_3_ack(struct irq_data *data)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 
+ 	unsigned long bitval = 1UL << data->hwirq;
+-	writel(bitval, bank->eint_base + EINTPEND_REG);
++	writel(bitval, d->virt_base + EINTPEND_REG);
+ }
+ 
+ static void s3c2412_eint0_3_mask(struct irq_data *data)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned long mask;
+ 
+-	mask = readl(bank->eint_base + EINTMASK_REG);
++	mask = readl(d->virt_base + EINTMASK_REG);
+ 	mask |= (1UL << data->hwirq);
+-	writel(mask, bank->eint_base + EINTMASK_REG);
++	writel(mask, d->virt_base + EINTMASK_REG);
+ }
+ 
+ static void s3c2412_eint0_3_unmask(struct irq_data *data)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned long mask;
+ 
+-	mask = readl(bank->eint_base + EINTMASK_REG);
++	mask = readl(d->virt_base + EINTMASK_REG);
+ 	mask &= ~(1UL << data->hwirq);
+-	writel(mask, bank->eint_base + EINTMASK_REG);
++	writel(mask, d->virt_base + EINTMASK_REG);
+ }
+ 
+ static struct irq_chip s3c2412_eint0_3_chip = {
+@@ -316,31 +319,34 @@ static void s3c2412_demux_eint0_3(struct irq_desc *desc)
+ static void s3c24xx_eint_ack(struct irq_data *data)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned char index = bank->eint_offset + data->hwirq;
+ 
+-	writel(1UL << index, bank->eint_base + EINTPEND_REG);
++	writel(1UL << index, d->virt_base + EINTPEND_REG);
+ }
+ 
+ static void s3c24xx_eint_mask(struct irq_data *data)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned char index = bank->eint_offset + data->hwirq;
+ 	unsigned long mask;
+ 
+-	mask = readl(bank->eint_base + EINTMASK_REG);
++	mask = readl(d->virt_base + EINTMASK_REG);
+ 	mask |= (1UL << index);
+-	writel(mask, bank->eint_base + EINTMASK_REG);
++	writel(mask, d->virt_base + EINTMASK_REG);
+ }
+ 
+ static void s3c24xx_eint_unmask(struct irq_data *data)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned char index = bank->eint_offset + data->hwirq;
+ 	unsigned long mask;
+ 
+-	mask = readl(bank->eint_base + EINTMASK_REG);
++	mask = readl(d->virt_base + EINTMASK_REG);
+ 	mask &= ~(1UL << index);
+-	writel(mask, bank->eint_base + EINTMASK_REG);
++	writel(mask, d->virt_base + EINTMASK_REG);
+ }
+ 
+ static struct irq_chip s3c24xx_eint_chip = {
+@@ -356,14 +362,13 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
+ {
+ 	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+-	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *d = data->drvdata;
+ 	unsigned int pend, mask;
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+-	pend = readl(bank->eint_base + EINTPEND_REG);
+-	mask = readl(bank->eint_base + EINTMASK_REG);
++	pend = readl(d->virt_base + EINTPEND_REG);
++	mask = readl(d->virt_base + EINTMASK_REG);
+ 
+ 	pend &= ~mask;
+ 	pend &= range;
+diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+index 4a88d7446e87..e63663b32907 100644
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -280,7 +280,7 @@ static void s3c64xx_irq_set_function(struct samsung_pinctrl_drv_data *d,
+ 	u32 val;
+ 
+ 	/* Make sure that pin is configured as interrupt */
+-	reg = bank->pctl_base + bank->pctl_offset;
++	reg = d->virt_base + bank->pctl_offset;
+ 	shift = pin;
+ 	if (bank_type->fld_width[PINCFG_TYPE_FUNC] * shift >= 32) {
+ 		/* 4-bit bank type with 2 con regs */
+@@ -308,8 +308,9 @@ static void s3c64xx_irq_set_function(struct samsung_pinctrl_drv_data *d,
+ static inline void s3c64xx_gpio_irq_set_mask(struct irq_data *irqd, bool mask)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned char index = EINT_OFFS(bank->eint_offset) + irqd->hwirq;
+-	void __iomem *reg = bank->eint_base + EINTMASK_REG(bank->eint_offset);
++	void __iomem *reg = d->virt_base + EINTMASK_REG(bank->eint_offset);
+ 	u32 val;
+ 
+ 	val = readl(reg);
+@@ -333,8 +334,9 @@ static void s3c64xx_gpio_irq_mask(struct irq_data *irqd)
+ static void s3c64xx_gpio_irq_ack(struct irq_data *irqd)
+ {
+ 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	unsigned char index = EINT_OFFS(bank->eint_offset) + irqd->hwirq;
+-	void __iomem *reg = bank->eint_base + EINTPEND_REG(bank->eint_offset);
++	void __iomem *reg = d->virt_base + EINTPEND_REG(bank->eint_offset);
+ 
+ 	writel(1 << index, reg);
+ }
+@@ -357,7 +359,7 @@ static int s3c64xx_gpio_irq_set_type(struct irq_data *irqd, unsigned int type)
+ 	s3c64xx_irq_set_handler(irqd, type);
+ 
+ 	/* Set up interrupt trigger */
+-	reg = bank->eint_base + EINTCON_REG(bank->eint_offset);
++	reg = d->virt_base + EINTCON_REG(bank->eint_offset);
+ 	shift = EINT_OFFS(bank->eint_offset) + irqd->hwirq;
+ 	shift = 4 * (shift / 4); /* 4 EINTs per trigger selector */
+ 
+@@ -409,8 +411,7 @@ static void s3c64xx_eint_gpio_irq(struct irq_desc *desc)
+ {
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct s3c64xx_eint_gpio_data *data = irq_desc_get_handler_data(desc);
+-	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+-	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
++	struct samsung_pinctrl_drv_data *drvdata = data->drvdata;
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+@@ -420,7 +421,7 @@ static void s3c64xx_eint_gpio_irq(struct irq_desc *desc)
+ 		unsigned int pin;
+ 		unsigned int virq;
+ 
+-		svc = readl(bank->eint_base + SERVICE_REG);
++		svc = readl(drvdata->virt_base + SERVICE_REG);
+ 		group = SVC_GROUP(svc);
+ 		pin = svc & SVC_NUM_MASK;
+ 
+@@ -515,15 +516,15 @@ static inline void s3c64xx_eint0_irq_set_mask(struct irq_data *irqd, bool mask)
+ {
+ 	struct s3c64xx_eint0_domain_data *ddata =
+ 					irq_data_get_irq_chip_data(irqd);
+-	struct samsung_pin_bank *bank = ddata->bank;
++	struct samsung_pinctrl_drv_data *d = ddata->bank->drvdata;
+ 	u32 val;
+ 
+-	val = readl(bank->eint_base + EINT0MASK_REG);
++	val = readl(d->virt_base + EINT0MASK_REG);
+ 	if (mask)
+ 		val |= 1 << ddata->eints[irqd->hwirq];
+ 	else
+ 		val &= ~(1 << ddata->eints[irqd->hwirq]);
+-	writel(val, bank->eint_base + EINT0MASK_REG);
++	writel(val, d->virt_base + EINT0MASK_REG);
+ }
+ 
+ static void s3c64xx_eint0_irq_unmask(struct irq_data *irqd)
+@@ -540,10 +541,10 @@ static void s3c64xx_eint0_irq_ack(struct irq_data *irqd)
+ {
+ 	struct s3c64xx_eint0_domain_data *ddata =
+ 					irq_data_get_irq_chip_data(irqd);
+-	struct samsung_pin_bank *bank = ddata->bank;
++	struct samsung_pinctrl_drv_data *d = ddata->bank->drvdata;
+ 
+ 	writel(1 << ddata->eints[irqd->hwirq],
+-					bank->eint_base + EINT0PEND_REG);
++					d->virt_base + EINT0PEND_REG);
+ }
+ 
+ static int s3c64xx_eint0_irq_set_type(struct irq_data *irqd, unsigned int type)
+@@ -551,7 +552,7 @@ static int s3c64xx_eint0_irq_set_type(struct irq_data *irqd, unsigned int type)
+ 	struct s3c64xx_eint0_domain_data *ddata =
+ 					irq_data_get_irq_chip_data(irqd);
+ 	struct samsung_pin_bank *bank = ddata->bank;
+-	struct samsung_pinctrl_drv_data *d = ddata->bank->drvdata;
++	struct samsung_pinctrl_drv_data *d = bank->drvdata;
+ 	void __iomem *reg;
+ 	int trigger;
+ 	u8 shift;
+@@ -566,7 +567,7 @@ static int s3c64xx_eint0_irq_set_type(struct irq_data *irqd, unsigned int type)
+ 	s3c64xx_irq_set_handler(irqd, type);
+ 
+ 	/* Set up interrupt trigger */
+-	reg = bank->eint_base + EINT0CON0_REG;
++	reg = d->virt_base + EINT0CON0_REG;
+ 	shift = ddata->eints[irqd->hwirq];
+ 	if (shift >= EINT_MAX_PER_REG) {
+ 		reg += 4;
+@@ -598,19 +599,14 @@ static struct irq_chip s3c64xx_eint0_irq_chip = {
+ static inline void s3c64xx_irq_demux_eint(struct irq_desc *desc, u32 range)
+ {
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+-	struct irq_data *irqd = irq_desc_get_irq_data(desc);
+-	struct s3c64xx_eint0_domain_data *ddata =
+-					irq_data_get_irq_chip_data(irqd);
+-	struct samsung_pin_bank *bank = ddata->bank;
+-
+ 	struct s3c64xx_eint0_data *data = irq_desc_get_handler_data(desc);
+-
++	struct samsung_pinctrl_drv_data *drvdata = data->drvdata;
+ 	unsigned int pend, mask;
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+-	pend = readl(bank->eint_base + EINT0PEND_REG);
+-	mask = readl(bank->eint_base + EINT0MASK_REG);
++	pend = readl(drvdata->virt_base + EINT0PEND_REG);
++	mask = readl(drvdata->virt_base + EINT0MASK_REG);
+ 
+ 	pend = pend & range & ~mask;
+ 	pend &= range;
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index f542642eed8d..a25c3ffae25c 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1013,6 +1013,11 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+ 		bank->eint_base = virt_base[0];
+ 		bank->pctl_base = virt_base[bdata->pctl_res_idx];
+ 	}
++	/*
++	 * For legacy platforms which need to access IO memory through
++	 * samsung_pinctrl_drv_data:
++	 */
++	d->virt_base = virt_base[bdata->pctl_res_idx];
+ 
+ 	for_each_child_of_node(node, np) {
+ 		if (!of_find_property(np, "gpio-controller", NULL))
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index 515a61035e54..61c4cab0ad24 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -247,6 +247,10 @@ struct samsung_pin_ctrl {
+ /**
+  * struct samsung_pinctrl_drv_data: wrapper for holding driver data together.
+  * @node: global list node
++ * @virt_base: register base address of the controller; this will be equal
++ *             to each bank samsung_pin_bank->pctl_base and used on legacy
++ *             platforms (like S3C24XX or S3C64XX) which has to access the base
++ *             through samsung_pinctrl_drv_data, not samsung_pin_bank).
+  * @dev: device instance representing the controller.
+  * @irq: interrpt number used by the controller to notify gpio interrupts.
+  * @ctrl: pin controller instance managed by the driver.
+@@ -262,6 +266,7 @@ struct samsung_pin_ctrl {
+  */
+ struct samsung_pinctrl_drv_data {
+ 	struct list_head		node;
++	void __iomem			*virt_base;
+ 	struct device			*dev;
+ 	int				irq;
+ 
+-- 
+2.9.3
