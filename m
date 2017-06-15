@@ -1,495 +1,150 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v7 1/9] irqchip: add Amlogic Meson GPIO irqchip driver
-Date: Thu, 15 Jun 2017 14:27:02 +0100
-Message-ID: <9129464d-b7b6-a8f6-8671-091fc30e3161@arm.com>
-References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
- <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
- <91b20fc4-4969-02a6-cc47-ff711f604342@arm.com>
- <1510ca1c-0a50-283d-42d5-b5710700460f@gmail.com>
+From: Yao Lihua <ylhuajnu@163.com>
+Subject: Re: [RFT 1/2] pinctrl: samsung: Fix NULL pointer exception on
+ external interrupts on S3C24xx
+Date: Thu, 15 Jun 2017 22:42:30 +0800
+Message-ID: <44ca46f9-0607-d750-4f26-eab717518fd9@163.com>
+References: <20170614131828.28683-1-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:45318 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750948AbdFON1H (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 15 Jun 2017 09:27:07 -0400
-In-Reply-To: <1510ca1c-0a50-283d-42d5-b5710700460f@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20170614131828.28683-1-krzk@kernel.org>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sergio Prado <sergio.prado@e-labworks.com>, stable@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On 15/06/17 14:10, Heiner Kallweit wrote:
-> Am 13.06.2017 um 10:31 schrieb Marc Zyngier:
->> On 10/06/17 22:57, Heiner Kallweit wrote:
->>> Add a driver supporting the GPIO interrupt controller on certain
->>> Amlogic meson SoC's.
->>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> ---
->>> v5:
->>> - changed Kconfig entry based on Neil's suggestion
->>> - added authors
->>> - extended explanation why 2 * n hwirqs are used
->>> v6:
->>> - change DT property parent-interrupts to interrupts
->>> v7:
->>> - no changes
->>> ---
->>>  drivers/irqchip/Kconfig          |   5 +
->>>  drivers/irqchip/Makefile         |   1 +
->>>  drivers/irqchip/irq-meson-gpio.c | 295 +++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 301 insertions(+)
->>>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
->>>
->>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->>> index 478f8ace..bdc86e14 100644
->>> --- a/drivers/irqchip/Kconfig
->>> +++ b/drivers/irqchip/Kconfig
->>> @@ -301,3 +301,8 @@ config QCOM_IRQ_COMBINER
->>>  	help
->>>  	  Say yes here to add support for the IRQ combiner devices embedded
->>>  	  in Qualcomm Technologies chips.
->>> +
->>> +config MESON_GPIO_INTC
->>> +	bool
->>> +	depends on ARCH_MESON
->>> +	default y
->>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>> index b64c59b8..1be482bd 100644
->>> --- a/drivers/irqchip/Makefile
->>> +++ b/drivers/irqchip/Makefile
->>> @@ -76,3 +76,4 @@ obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->>>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
->>>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
->>>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
->>> +obj-$(CONFIG_MESON_GPIO_INTC)		+= irq-meson-gpio.o
->>> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
->>> new file mode 100644
->>> index 00000000..925d00c2
->>> --- /dev/null
->>> +++ b/drivers/irqchip/irq-meson-gpio.c
->>> @@ -0,0 +1,295 @@
->>> +/*
->>> + * Amlogic Meson GPIO IRQ chip driver
->>> + *
->>> + * Copyright (c) 2015 Endless Mobile, Inc.
->>> + * Author: Carlo Caione <carlo@endlessm.com>
->>> + * Copyright (c) 2016 BayLibre, SAS.
->>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->>> + * Copyright (c) 2017 Heiner Kallweit <hkallweit1@gmail.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->>> + * modify it under the terms of the GNU General Public License as
->>> + * published by the Free Software Foundation, version 2.
->>> + */
->>> +
->>> +#include <linux/device.h>
->>> +#include <linux/init.h>
->>> +#include <linux/interrupt.h>
->>> +#include <linux/irqchip.h>
->>> +#include <linux/of.h>
->>> +#include <linux/of_irq.h>
->>> +#include <linux/of_address.h>
->>> +#include <linux/regmap.h>
->>> +
->>> +#define REG_EDGE_POL		0x00
->>> +#define REG_PIN_03_SEL		0x04
->>> +#define REG_PIN_47_SEL		0x08
->>> +#define REG_FILTER_SEL		0x0c
->>> +
->>> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
->>> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
->>> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
->>> +
->>> +#define MAX_PARENT_IRQ_NUM	8
->>> +
->>> +/* maximum number of GPIO IRQs on supported platforms */
->>> +#define MAX_NUM_GPIO_IRQ	133
->>
->> Why aren't these values coming from DT? I bet that a future revision of
->> the same HW will double these. Or at least, you could match it on the
->> compatible string.
->>
-> Alternatively this value can be set to 255. The GPIO source is an 8 bit
-> value with 255 being reserved for "no interrupt source assigned".
+Hi Krzysztof,
 
-Who is reserving it? The HW? Or is that your own defined convention?
+Another Oops on S3C6410.
 
-> This way we cover all chips based on the same IP.
+[    2.842434] Unable to handle kernel NULL pointer dereference at virtual 
+address 00000900
+[    2.848477] pgd = c0004000
+[    2.851165] [00000900] *pgd=00000000
+[    2.854738] Internal error: Oops: 5 [#1] PREEMPT ARM
+[    2.859669] Modules linked in:
+[    2.862716] CPU: 0 PID: 1 Comm: swapper Not tainted 4.12.0-rc4 #118
+[    2.868953] Hardware name: Samsung S3C64xx (Flattened Device Tree)
+[    2.875115] task: cf890000 task.stack: cf88e000
+[    2.879642] PC is at s3c64xx_eint0_irq_set_type+0x94/0xec
+[    2.885013] LR is at s3c64xx_eint0_irq_set_type+0x94/0xec
+[    2.890393] pc : [<c02f3c20>]    lr : [<c02f3c20>]    psr: 20000093
+[    2.890393] sp : cf88fd18  ip : 00000590  fp : cf213e10
+[    2.901837] r10: 00000000  r9 : cf212234  r8 : 00000006
+[    2.907044] r7 : cf8d8710  r6 : 00000900  r5 : cf83fbd8  r4 : cf212210
+[    2.913551] r3 : 00000001  r2 : cf88e000  r1 : cf88e004  r0 : 00000019
+[    2.920060] Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[    2.927263] Control: 00c5387d  Table: 50004008  DAC: 00000051
+[    2.932990] Process swapper (pid: 1, stack limit = 0xcf88e188)
+[    2.938802] Stack: (0xcf88fd18 to 0xcf890000)
+[    2.943146] fd00: cf21228c cf212200
+[    2.951309] fd20: c02f3b8c 00000000 c07ba9e4 00000003 60000013 c005bae8 
+60000013 cf21225c
+[    2.959465] fd40: 00000050 cf212200 cf076900 00000050 cf21225c c005c094 
+00000001 00000050
+[    2.967622] fd60: 00000050 00000000 00000000 cf20bc3c cf076900 cf212210 
+cf212200 c005c39c
+[    2.975776] fd80: 00000000 00000083 00000050 c0bb49a8 00000083 c03c35e0 
+cf20bc3c cf20bc3c
+[    2.983934] fda0: cf98ee10 c005c49c c0bb49a8 cf20bc3c cf1e3ef0 c0bb49a8 
+00000050 c03c35e0
+[    2.992090] fdc0: 00000083 c005e598 cf20bc3c c0530fe8 cf20bc10 cf213e2c 
+00000000 c0bb49a8
+[    3.000245] fde0: cf20bc10 cf98ee10 00000083 c03c2e80 c0bb49a8 cf20bc3c 
+00000000 c017f644
+[    3.008401] fe00: 00000000 00000000 cf20a400 cf20bc3c cfdb68a0 00000000 
+c03c35e0 cf98ee00
+[    3.016558] fe20: cf2150f0 cf20bc6c 00000001 cf98ee10 c03c2be8 c07c61c8 
+c07c61b4 c07c61c8
+[    3.024712] fe40: 00000000 00000001 c08120d0 c034d508 c034d4b4 cf98ee10 
+c08120d0 00000000
+[    3.032869] fe60: c08120d8 c034b8c4 c058517c 00000000 cf98efa0 00000001 
+c058517c cf98ee10
+[    3.041025] fe80: c07c61c8 cf98ee44 00000000 00000000 c0760ff8 00000000 
+c071d4fc c034ba18
+[    3.049181] fea0: c07c61c8 c034b974 00000000 c0349f44 cf808a70 cf9b4e20 
+c07c61c8 cf1de4e0
+[    3.057337] fec0: c07c1848 c034ae98 c06aa8a8 c07c61c8 00000007 c07c61c8 
+00000007 c0749370
+[    3.065494] fee0: c07e0000 c034c570 c034cecc c0767048 00000007 c0009824 
+0000004e c05338c4
+[    3.073648] ff00: cf8d8000 00000000 00000000 00000000 0000009e 00000000 
+cfffcdbd 00000000
+[    3.081805] ff20: 0000009e 0000009e cfffcdc4 c003b714 c06ef210 00000000 
+00000007 00000007
+[    3.089961] ff40: cfffcdc0 cfffcdbd 00000000 dae6109a c0756860 00000007 
+c0756840 c07e0000
+[    3.098117] ff60: 0000009e 00000000 c071d4fc c071dda0 00000007 00000007 
+00000000 c071d4fc
+[    3.106272] ff80: 00000000 00000000 c052ae90 00000000 00000000 00000000 
+00000000 00000000
+[    3.114430] ffa0: 00000000 c052ae98 00000000 c000f7b8 00000000 00000000 
+00000000 00000000
+[    3.122584] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 
+00000000 00000000
+[    3.130742] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 
+ffffffff ffffffff
+[    3.138927] [<c02f3c20>] (s3c64xx_eint0_irq_set_type) from [<c005bae8>] 
+(__irq_set_trigger+0x60/0x154)
+[    3.148195] [<c005bae8>] (__irq_set_trigger) from [<c005c094>] 
+(__setup_irq+0x4b8/0x5ac)
+[    3.156259] [<c005c094>] (__setup_irq) from [<c005c39c>] 
+(request_threaded_irq+0x120/0x19c)
+[    3.164589] [<c005c39c>] (request_threaded_irq) from [<c005c49c>] 
+(request_any_context_irq+0x84/0x88)
+[    3.173789] [<c005c49c>] (request_any_context_irq) from [<c005e598>] 
+(devm_request_any_context_irq+0x60/0xa8)
+[    3.183694] [<c005e598>] (devm_request_any_context_irq) from [<c03c2e80>] 
+(gpio_keys_probe+0x298/0x85c)
+[    3.193065] [<c03c2e80>] (gpio_keys_probe) from [<c034d508>] 
+(platform_drv_probe+0x54/0xa4)
+[    3.201383] [<c034d508>] (platform_drv_probe) from [<c034b8c4>] 
+(driver_probe_device+0x248/0x2f8)
+[    3.210229] [<c034b8c4>] (driver_probe_device) from [<c034ba18>] 
+(__driver_attach+0xa4/0xa8)
+[    3.218645] [<c034ba18>] (__driver_attach) from [<c0349f44>] 
+(bus_for_each_dev+0x64/0x88)
+[    3.226800] [<c0349f44>] (bus_for_each_dev) from [<c034ae98>] 
+(bus_add_driver+0x16c/0x1fc)
+[    3.235047] [<c034ae98>] (bus_add_driver) from [<c034c570>] 
+(driver_register+0x78/0xf4)
+[    3.243028] [<c034c570>] (driver_register) from [<c0009824>] 
+(do_one_initcall+0x50/0x194)
+[    3.251192] [<c0009824>] (do_one_initcall) from [<c071dda0>] 
+(kernel_init_freeable+0x174/0x244)
+[    3.259862] [<c071dda0>] (kernel_init_freeable) from [<c052ae98>] 
+(kernel_init+0x8/0xf0)
+[    3.267935] [<c052ae98>] (kernel_init) from [<c000f7b8>] 
+(ret_from_fork+0x14/0x3c)
 
-Why? Where is that 8bit limit coming from?
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index f542642eed8d..a25c3ffae25c 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1013,6 +1013,11 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+>   		bank->eint_base = virt_base[0];
+>   		bank->pctl_base = virt_base[bdata->pctl_res_idx];
+>   	}
+> +	/*
+> +	 * For legacy platforms which need to access IO memory through
+> +	 * samsung_pinctrl_drv_data:
+> +	 */
+> +	d->virt_base = virt_base[bdata->pctl_res_idx];
+>   
+>
+     for (i = 0; i < ctrl->nr_banks; ++i, ++bdata, ++bank) {
+         ......
+     }
+     /*
+      * For legacy platforms which need to access IO memory through
+      * samsung_pinctrl_drv_data:
+      */
+     d->virt_base = virt_base[bdata->pctl_res_idx];
+                                                     ^
+                                                      **bdata** is invalid here.
 
-> I think what we could gain by introducing an additional DT property
-> (saving a few bytes in the irqdomain mapping table) isn't worth the effort.
 
-It is not about saving or wasting memory. It is about making the driver
-and its binding able to span multiple generation of the HW without too
-much churn. Which is why I'm suggesting that you either define these
-properties in DT *or* match the compatible string to obtain these values.
-
->>> +
->>> +/*
->>> + * In case of IRQ_TYPE_EDGE_BOTH we need two parent interrupts, one for each
->>> + * edge. That's due to HW constraints.
->>> + * We use format 2 * GPIO_HWIRQ +(0|1) for the hwirq, so we can have one
->>> + * GPIO_HWIRQ twice and derive the GPIO_HWIRQ from hwirq by shifting hwirq
->>> + * one bit to the right.
->>
->> Please expand on how you expect this to work, specially when a random
->> driver expects a single interrupt.
->>
-> The gpio interrupt controller in this chip doesn't have native support for
-> IRQ_TYPE_EDGE_BOTH. As a workaround we would need to assign the same gpio
-> to two parent interrupts, one for each edge.
-
-No, that's horrible, racy, and impractical. It has been proposed in the
-past (for the same HW), and we're not going there again.
-
-> There's still no solution to achieve this in a way everybody is happy with.
-> Therefore this feature isn't part of this patch set.
-> 
-> However, to be prepared to include this feature later, the interface
-> between pinctrl/gpio and irqchip driver should (IMHO) cater for it already.
-> Else we may have to touch the irqchip driver later and change the interface
-> what I would like to avoid.
-
-Don't even think of it, and considered it pre-NAKed.
-
-> 
-> If a driver just needs one (parent) interrupt, it can request hwirq
-> (2 * GPIO_HWIRQ) only. There's no issue with that.
-
-Other than being utterly useless and confusing?
-
->>> + */
->>> +#define NUM_GPIO_HWIRQ		(2 * MAX_NUM_GPIO_IRQ)
->>> +
->>> +struct meson_irq_slot {
->>> +	unsigned int irq;
->>> +	unsigned int owner;
->>> +};
->>> +
->>> +struct meson_data {
->>> +	struct regmap *regmap;
->>> +	struct meson_irq_slot slots[MAX_PARENT_IRQ_NUM];
->>> +	unsigned int num_slots;
->>> +	struct mutex lock;
->>> +};
->>> +
->>> +static int meson_alloc_irq_slot(struct meson_data *md, unsigned int virq)
->>> +{
->>> +	int i, slot = -ENOSPC;
->>> +
->>> +	mutex_lock(&md->lock);
->>> +
->>> +	for (i = 0; i < md->num_slots && slot < 0; i++)
->>> +		if (!md->slots[i].owner) {
->>> +			md->slots[i].owner = virq;
->>
->> Why do you have to deal with the virq? It'd be more logical to deal with
->> the hwirq. The usual mechanism to reserve a "slot" is to use a bitmap
->> indexed by the hwirq. Why is that not working for you?
->>
-> Using the hwirq as owner should also be possible. Will consider this.
-> 
-> A slot has two members, the owner and a the associated parent irq number.
-> Of course we could split this into a slot bitmap + an array with parent
-> irq's indexed by slot number. Would you prefer this?
-
-Again, why do you need to consider the Linux irq number? All you need to
-track is whether a hwirq has been allocated or not, since all the
-irqchip function are called with an irq_data as a parameter, which
-contains both the irq and hwirq values.
-
->>> +			slot = i;
->>> +		}
->>> +
->>> +	mutex_unlock(&md->lock);
->>> +
->>> +	return slot;
->>> +}
->>> +
->>> +static void meson_free_irq_slot(struct meson_data *md, unsigned int virq)
->>> +{
->>> +	int i;
->>> +
->>> +	mutex_lock(&md->lock);
->>> +
->>> +	for (i = 0; i < md->num_slots; i++)
->>> +		if (md->slots[i].owner == virq) {
->>> +			md->slots[i].owner = 0;
->>> +			break;
->>> +		}
->>> +
->>> +	mutex_unlock(&md->lock);
->>> +}
->>
->> These two functions are basically the same...
->>
->>> +
->>> +static int meson_find_irq_slot(struct meson_data *md, unsigned int virq)
->>> +{
->>> +	int i, slot = -EINVAL;
->>> +
->>> +	mutex_lock(&md->lock);
->>> +
->>> +	for (i = 0; i < md->num_slots && slot < 0; i++)
->>> +		if (md->slots[i].owner == virq)
->>> +			slot = i;
->>> +
->>> +	mutex_unlock(&md->lock);
->>> +
->>> +	return slot;
->>> +}
->>
->> ... and could be expressed in terms of this one.
->>
->>> +
->>> +static void meson_set_hwirq(struct meson_data *md, int idx, unsigned int hwirq)
->>> +{
->>> +	int reg = idx > 3 ? REG_PIN_47_SEL : REG_PIN_03_SEL;
->>> +	int shift = 8 * (idx % 4);
->>
->> What's this?
->>
-> GPIO source for the eight parent irq's can be configured using two 32-bit registers
-> with four 8-bit fields each.
-
-Consider moving it to an accessor and document the mapping of the hwirqs
-in these registers.
-
->>> +
->>> +	regmap_update_bits(md->regmap, reg, 0xff << shift,
->>> +			   hwirq << shift);
->>> +}
->>> +
->>> +static void meson_irq_set_hwirq(struct irq_data *data, unsigned int hwirq)
->>> +{
->>> +	struct meson_data *md = data->domain->host_data;
->>> +	int slot = meson_find_irq_slot(md, data->irq);
->>> +
->>> +	if (slot >= 0)
->>> +		meson_set_hwirq(md, slot, hwirq);
->>> +}
->>> +
->>> +static int meson_irq_set_type(struct irq_data *data, unsigned int type)
->>> +{
->>> +	struct meson_data *md = data->domain->host_data;
->>> +	int slot;
->>> +	unsigned int val = 0;
->>> +
->>> +	if (type == IRQ_TYPE_EDGE_BOTH)
->>> +		return -EINVAL;
->>
->> So you reject EDGE_BOTH? So what's the deal with the beginning of the patch?
->>
-> We reject it in the initial version of the patch set as there's no consensus
-> yet on some details of the workaround needed for EDGE_BOTH support.
-
-There is a consensus: The HW doesn't support this feature.
-
->>> +
->>> +	slot = meson_find_irq_slot(md, data->irq);
->>> +	if (slot < 0)
->>> +		return slot;
->>
->> How can this happen?
->>
-> I see no way how this can happen. It was basically added to be on the safe
-> side and fail nicely in case I miss a scenario which could cause this to fail.
-> I can remove the check.
-> 
->>> +
->>> +	if (type & IRQ_TYPE_EDGE_BOTH)
->>> +		val |= REG_EDGE_POL_EDGE(slot);
->>> +
->>> +	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
->>> +		val |= REG_EDGE_POL_LOW(slot);
->>> +
->>> +	regmap_update_bits(md->regmap, REG_EDGE_POL,
->>> +			   REG_EDGE_POL_MASK(slot), val);
->>> +
->>> +	if (type & IRQ_TYPE_EDGE_BOTH)
->>> +		val = IRQ_TYPE_EDGE_RISING;
->>> +	else
->>> +		val = IRQ_TYPE_LEVEL_HIGH;
->>
->> How does this work? Does this HW have some magic falling->rising and
->> low->high conversion feature? If it doesn't, I cannot see how this can work.
->>
-> Exactly, HW has a programmable polarity inverter.
-> 
->>> +
->>> +	return irq_chip_set_type_parent(data, val);
->>> +}
->>> +
->>> +static unsigned int meson_irq_startup(struct irq_data *data)
->>> +{
->>> +	irq_chip_unmask_parent(data);
->>> +	/*
->>> +	 * An extra bit was added to allow having the same gpio hwirq twice
->>> +	 * for handling IRQ_TYPE_EDGE_BOTH. Remove this bit to get the
->>> +	 * gpio hwirq.
->>> +	 */
->>> +	meson_irq_set_hwirq(data, data->hwirq >> 1);
->>
->> Again. Do you support EDGE_BOTH or not?
->>
-> 
-> Not yet ..
-> 
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static void meson_irq_shutdown(struct irq_data *data)
->>> +{
->>> +	meson_irq_set_hwirq(data, 0xff);
->>
->> What's special about 0xff?
->>
-> 0xff is the reserved value indicating the no GPIO source is assigned
-> to the parent irq.
-
-Then document it, add a #define for this.
-
->>> +	irq_chip_mask_parent(data);
->>> +}
->>> +
->>> +static struct irq_chip meson_irq_chip = {
->>> +	.name = "meson_gpio_intc",
->>> +	.irq_set_type = meson_irq_set_type,
->>> +	.irq_eoi = irq_chip_eoi_parent,
->>> +	.irq_mask = irq_chip_mask_parent,
->>> +	.irq_unmask = irq_chip_unmask_parent,
->>> +	.irq_startup = meson_irq_startup,
->>> +	.irq_shutdown = meson_irq_shutdown,
->>> +	.irq_set_affinity = irq_chip_set_affinity_parent,
->>> +};
->>> +
->>> +static int meson_irq_alloc(struct irq_domain *d, unsigned int virq,
->>> +			   unsigned int nr_irqs, void *data)
->>> +{
->>> +	struct irq_fwspec parent_fwspec, *fwspec = data;
->>> +	struct meson_data *md = d->host_data;
->>> +	irq_hw_number_t hwirq;
->>> +	int ret, slot;
->>> +
->>> +	slot = meson_alloc_irq_slot(md, virq);
->>> +	if (slot < 0)
->>> +		return slot;
->>> +
->>> +	hwirq = fwspec->param[0];
->>> +	irq_domain_set_hwirq_and_chip(d, virq, hwirq, &meson_irq_chip, NULL);
->>> +
->>> +	parent_fwspec.fwnode = d->parent->fwnode;
->>> +	parent_fwspec.param_count = 3;
->>> +	parent_fwspec.param[0] = 0; /* SPI */
->>> +	parent_fwspec.param[1] = md->slots[slot].irq;
->>> +	parent_fwspec.param[2] = IRQ_TYPE_NONE;
->>
->> Hell no. Look at the GIC DT binding: there is no NONE. It is either
->> HIGH, or RISING.
->>
-> OK, will be changed.
-> 
->>> +
->>> +	ret = irq_domain_alloc_irqs_parent(d, virq, nr_irqs, &parent_fwspec);
->>> +	if (ret)
->>> +		meson_free_irq_slot(md, virq);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static void meson_irq_free(struct irq_domain *d, unsigned int virq,
->>> +			   unsigned int nr_irqs)
->>> +{
->>> +	struct meson_data *md = d->host_data;
->>> +
->>> +	irq_domain_free_irqs_common(d, virq, nr_irqs);
->>> +	meson_free_irq_slot(md, virq);
->>> +}
->>> +
->>> +static const struct irq_domain_ops meson_irq_ops = {
->>> +	.alloc = meson_irq_alloc,
->>> +	.free = meson_irq_free,
->>> +	.xlate = irq_domain_xlate_twocell,
->>> +};
->>> +
->>> +static int meson_get_irqs(struct meson_data *md, struct device_node *node)
->>> +{
->>> +	int ret, i;
->>> +	u32 irq;
->>> +
->>> +	for (i = 0; i < MAX_PARENT_IRQ_NUM; i++) {
->>> +		ret = of_property_read_u32_index(node, "interrupts", i, &irq);
->>> +		if (ret)
->>> +			break;
->>> +		md->slots[i].irq = irq;
->>> +	}
->>> +
->>> +	md->num_slots = i;
->>> +
->>> +	return i ? 0 : -EINVAL;
->>> +}
->>> +
->>> +static const struct regmap_config meson_regmap_config = {
->>> +	.reg_bits       = 32,
->>> +	.reg_stride     = 4,
->>> +	.val_bits       = 32,
->>> +	.max_register	= REG_FILTER_SEL,
->>> +};
->>> +
->>> +static int __init meson_gpio_irq_init(struct device_node *node,
->>> +				      struct device_node *parent)
->>> +{
->>> +	struct irq_domain *meson_irq_domain, *parent_domain;
->>> +	struct meson_data *md;
->>> +	void __iomem *io_base;
->>> +	int ret;
->>> +
->>> +	md = kzalloc(sizeof(*md), GFP_KERNEL);
->>> +	if (!md)
->>> +		return -ENOMEM;
->>> +
->>> +	mutex_init(&md->lock);
->>> +
->>> +	io_base = of_iomap(node, 0);
->>> +	if (!io_base)
->>> +		return -EINVAL;
->>> +
->>> +	md->regmap = regmap_init_mmio(NULL, io_base, &meson_regmap_config);
->>> +	if (IS_ERR(md->regmap))
->>> +		return PTR_ERR(md->regmap);
->>> +
->>> +	/* initialize to IRQ_TYPE_LEVEL_HIGH */
->>> +	regmap_write(md->regmap, REG_EDGE_POL, 0);
->>> +	/* disable all GPIO interrupt sources */
->>> +	regmap_write(md->regmap, REG_PIN_03_SEL, 0xffffffff);
->>> +	regmap_write(md->regmap, REG_PIN_47_SEL, 0xffffffff);
->>> +	/* disable filtering */
->>> +	regmap_write(md->regmap, REG_FILTER_SEL, 0);
->>> +
->>> +	ret = meson_get_irqs(md, node);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	parent_domain = irq_find_host(parent);
->>> +	if (!parent_domain)
->>> +		return -ENXIO;
->>
->> Memory leak on all the return paths.
->>
-> Indeed. Most likely copy & paste error when I used other irqchip drivers
-> as inspiration. E.g. irq-crossbar faces the same issue, it allocates memory
-> in crossbar_of_init which isn't free'd if irq_domain_add_hierarchy fails.
-
-Then please submit a patch addressing the defect.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks!
+Lihua
