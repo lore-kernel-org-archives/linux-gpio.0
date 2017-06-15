@@ -1,365 +1,195 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT v2] pinctrl: samsung: Fix NULL pointer exception on external interrupts on S3C24xx
-Date: Thu, 15 Jun 2017 17:46:37 +0200
-Message-ID: <20170615154637.9830-1-krzk@kernel.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v7 1/9] irqchip: add Amlogic Meson GPIO irqchip driver
+Date: Thu, 15 Jun 2017 17:04:21 +0100
+Message-ID: <daddce59-cfe6-a1be-6c04-093dfa146aca@arm.com>
+References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
+ <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
+ <91b20fc4-4969-02a6-cc47-ff711f604342@arm.com>
+ <1510ca1c-0a50-283d-42d5-b5710700460f@gmail.com>
+ <9129464d-b7b6-a8f6-8671-091fc30e3161@arm.com>
+ <c04dce8b-f3b9-e49e-47e8-0b24f3b66974@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59300 "EHLO mail.kernel.org"
+Received: from foss.arm.com ([217.140.101.70]:47102 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750727AbdFOPqv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 15 Jun 2017 11:46:51 -0400
+        id S1750899AbdFOQE0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 15 Jun 2017 12:04:26 -0400
+In-Reply-To: <c04dce8b-f3b9-e49e-47e8-0b24f3b66974@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sergio Prado <sergio.prado@e-labworks.com>, Donglin Peng <dolinux.peng@gmail.com>, Yao Lihua <ylhuajnu@163.com>, stable@vger.kernel.org
+To: Heiner Kallweit <hkallweit1@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-After commit 8b1bd11c1f8f ("pinctrl: samsung: Add the support the
-multiple IORESOURCE_MEM for one pin-bank"), the S3C24xx (and probably
-S3C64xx as well) fails:
+On 15/06/17 16:24, Heiner Kallweit wrote:
+> Am 15.06.2017 um 15:27 schrieb Marc Zyngier:
+>> On 15/06/17 14:10, Heiner Kallweit wrote:
+>>> Am 13.06.2017 um 10:31 schrieb Marc Zyngier:
+>>>> On 10/06/17 22:57, Heiner Kallweit wrote:
+>>>>> Add a driver supporting the GPIO interrupt controller on certain
+>>>>> Amlogic meson SoC's.
+>>>>>
+>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>>>>> ---
+>>>>> v5:
+>>>>> - changed Kconfig entry based on Neil's suggestion
+>>>>> - added authors
+>>>>> - extended explanation why 2 * n hwirqs are used
+>>>>> v6:
+>>>>> - change DT property parent-interrupts to interrupts
+>>>>> v7:
+>>>>> - no changes
+>>>>> ---
+>>>>>  drivers/irqchip/Kconfig          |   5 +
+>>>>>  drivers/irqchip/Makefile         |   1 +
+>>>>>  drivers/irqchip/irq-meson-gpio.c | 295 +++++++++++++++++++++++++++++++++++++++
+>>>>>  3 files changed, 301 insertions(+)
+>>>>>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
+>>>>>
+>>>>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>>>>> index 478f8ace..bdc86e14 100644
+>>>>> --- a/drivers/irqchip/Kconfig
+>>>>> +++ b/drivers/irqchip/Kconfig
+>>>>> @@ -301,3 +301,8 @@ config QCOM_IRQ_COMBINER
+>>>>>  	help
+>>>>>  	  Say yes here to add support for the IRQ combiner devices embedded
+>>>>>  	  in Qualcomm Technologies chips.
+>>>>> +
+>>>>> +config MESON_GPIO_INTC
+>>>>> +	bool
+>>>>> +	depends on ARCH_MESON
+>>>>> +	default y
+>>>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>>>>> index b64c59b8..1be482bd 100644
+>>>>> --- a/drivers/irqchip/Makefile
+>>>>> +++ b/drivers/irqchip/Makefile
+>>>>> @@ -76,3 +76,4 @@ obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
+>>>>>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
+>>>>>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
+>>>>>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
+>>>>> +obj-$(CONFIG_MESON_GPIO_INTC)		+= irq-meson-gpio.o
+>>>>> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
+>>>>> new file mode 100644
+>>>>> index 00000000..925d00c2
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/irqchip/irq-meson-gpio.c
+>>>>> @@ -0,0 +1,295 @@
+>>>>> +/*
+>>>>> + * Amlogic Meson GPIO IRQ chip driver
+>>>>> + *
+>>>>> + * Copyright (c) 2015 Endless Mobile, Inc.
+>>>>> + * Author: Carlo Caione <carlo@endlessm.com>
+>>>>> + * Copyright (c) 2016 BayLibre, SAS.
+>>>>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>>>>> + * Copyright (c) 2017 Heiner Kallweit <hkallweit1@gmail.com>
+>>>>> + *
+>>>>> + * This program is free software; you can redistribute it and/or
+>>>>> + * modify it under the terms of the GNU General Public License as
+>>>>> + * published by the Free Software Foundation, version 2.
+>>>>> + */
+>>>>> +
+>>>>> +#include <linux/device.h>
+>>>>> +#include <linux/init.h>
+>>>>> +#include <linux/interrupt.h>
+>>>>> +#include <linux/irqchip.h>
+>>>>> +#include <linux/of.h>
+>>>>> +#include <linux/of_irq.h>
+>>>>> +#include <linux/of_address.h>
+>>>>> +#include <linux/regmap.h>
+>>>>> +
+>>>>> +#define REG_EDGE_POL		0x00
+>>>>> +#define REG_PIN_03_SEL		0x04
+>>>>> +#define REG_PIN_47_SEL		0x08
+>>>>> +#define REG_FILTER_SEL		0x0c
+>>>>> +
+>>>>> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
+>>>>> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
+>>>>> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
+>>>>> +
+>>>>> +#define MAX_PARENT_IRQ_NUM	8
+>>>>> +
+>>>>> +/* maximum number of GPIO IRQs on supported platforms */
+>>>>> +#define MAX_NUM_GPIO_IRQ	133
+>>>>
+>>>> Why aren't these values coming from DT? I bet that a future revision of
+>>>> the same HW will double these. Or at least, you could match it on the
+>>>> compatible string.
+>>>>
+>>> Alternatively this value can be set to 255. The GPIO source is an 8 bit
+>>> value with 255 being reserved for "no interrupt source assigned".
+>>
+>> Who is reserving it? The HW? Or is that your own defined convention?
+>>
+>>> This way we cover all chips based on the same IP.
+>>
+>> Why? Where is that 8bit limit coming from?
+>>
+> The 8 bit limit is in the HW.
+> 
+>>> I think what we could gain by introducing an additional DT property
+>>> (saving a few bytes in the irqdomain mapping table) isn't worth the effort.
+>>
+>> It is not about saving or wasting memory. It is about making the driver
+>> and its binding able to span multiple generation of the HW without too
+>> much churn. Which is why I'm suggesting that you either define these
+>> properties in DT *or* match the compatible string to obtain these values.
+>>
+>>>>> +
+>>>>> +/*
+>>>>> + * In case of IRQ_TYPE_EDGE_BOTH we need two parent interrupts, one for each
+>>>>> + * edge. That's due to HW constraints.
+>>>>> + * We use format 2 * GPIO_HWIRQ +(0|1) for the hwirq, so we can have one
+>>>>> + * GPIO_HWIRQ twice and derive the GPIO_HWIRQ from hwirq by shifting hwirq
+>>>>> + * one bit to the right.
+>>>>
+>>>> Please expand on how you expect this to work, specially when a random
+>>>> driver expects a single interrupt.
+>>>>
+>>> The gpio interrupt controller in this chip doesn't have native support for
+>>> IRQ_TYPE_EDGE_BOTH. As a workaround we would need to assign the same gpio
+>>> to two parent interrupts, one for each edge.
+>>
+>> No, that's horrible, racy, and impractical. It has been proposed in the
+>> past (for the same HW), and we're not going there again.
+>>
+> IIRC what has been proposed before is to re-program the polarity of edge
+> detection withing the ISR. This would match your concern that it is racy.
+> 
+> Here it's about using two parent irq's, one programmed to react on the
+> rising edge whilst the other is triggered in case of falling edge.
+> Would you consider this to be racy too?
 
-	Unable to handle kernel NULL pointer dereference at virtual address 000000a8
-	...
-	(s3c24xx_demux_eint4_7) from [<c004469c>] (__handle_domain_irq+0x6c/0xcc)
-	(__handle_domain_irq) from [<c0009444>] (s3c24xx_handle_irq+0x6c/0x12c)
-	(s3c24xx_handle_irq) from [<c000e5fc>] (__irq_svc+0x5c/0x78)
+How do you reconcile two interrupts to make look like a single one for a
+random, pre-existing driver?
 
-Mentioned commit moved the pointer to controller's base IO memory address
-from each controller's driver data (samsung_pinctrl_drv_data) to per-bank
-structure (samsung_pin_bank).  The external interrupt demux
-handlers (s3c24xx_demux_eint()) tried to get this base address from opaque
-pointer stored under irq_chip data:
+[...]
 
-	struct irq_data *irqd = irq_desc_get_irq_data(desc);
-	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-	...
-	pend = readl(bank->eint_base + EINTPEND_REG);
+>>>> So you reject EDGE_BOTH? So what's the deal with the beginning of the patch?
+>>>>
+>>> We reject it in the initial version of the patch set as there's no consensus
+>>> yet on some details of the workaround needed for EDGE_BOTH support.
+>>
+>> There is a consensus: The HW doesn't support this feature.
+>>
+> Means what? There is no acceptable way to support EDGE_BOTH on this HW?
+> In this case I could stop here as for me this feature is important.
 
-which is wrong because this is hardware irq and it bank was never set
-for this irq_chip.
+Answer my question above, which I asked in my initial review: How do you
+make two interrupts appear as one for a driver that wants to get
+signaled on each edge, using the existing API.
 
-For S3C24xx and S3C64xx, this partially reverts mentioned commit by
-bringing back the virt_base stored under each controller's driver data
-(samsung_pinctrl_drv_data).  This virt_base address will be now
-duplicated:
- - samsung_pinctrl_drv_data->virt_base: used on S3C24xx and S3C64xx,
- - samsung_pin_bank->pctl_base: used on Exynos.
+> 
+> Would be somewhat a pity as there is a working solution. If it doesn't fit
+> into the current irq(chip) framework, shouldn't this be considered a gap
+> in the framework?
 
-Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
-Cc: <stable@vger.kernel.org>
-Cc: Sergio Prado <sergio.prado@e-labworks.com>
-Reported-by: Sergio Prado <sergio.prado@e-labworks.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Again, this is not about the framework, which we can almost twist as we
+see fit. It is about the API that a driver expects. At the moment, you
+haven't proposed anything.
 
----
+Thanks,
 
-Tested on Odroid XU3.
-Please kindly test on S3C24xx and S3C64xx. Other tests, including
-Exynos5433 are also welcomed.
-
-Changes since v1:
-1. Fix NULL pointer exception when setting virt_base because bdata
-   pointer is invalid at this point (incremented by loop). Spotted
-   by Yao Lihua.
----
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 37 +++++++++++++++-------------
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 40 ++++++++++++++-----------------
- drivers/pinctrl/samsung/pinctrl-samsung.c |  6 +++++
- drivers/pinctrl/samsung/pinctrl-samsung.h |  5 ++++
- 4 files changed, 50 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-index 49774851e84a..edf27264b603 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -151,7 +151,7 @@ static void s3c24xx_eint_set_function(struct samsung_pinctrl_drv_data *d,
- 	u32 val;
- 
- 	/* Make sure that pin is configured as interrupt */
--	reg = bank->pctl_base + bank->pctl_offset;
-+	reg = d->virt_base + bank->pctl_offset;
- 	shift = pin * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
-@@ -184,7 +184,7 @@ static int s3c24xx_eint_type(struct irq_data *data, unsigned int type)
- 	s3c24xx_eint_set_handler(data, type);
- 
- 	/* Set up interrupt trigger */
--	reg = bank->eint_base + EINT_REG(index);
-+	reg = d->virt_base + EINT_REG(index);
- 	shift = EINT_OFFS(index);
- 
- 	val = readl(reg);
-@@ -259,29 +259,32 @@ static void s3c2410_demux_eint0_3(struct irq_desc *desc)
- static void s3c2412_eint0_3_ack(struct irq_data *data)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 
- 	unsigned long bitval = 1UL << data->hwirq;
--	writel(bitval, bank->eint_base + EINTPEND_REG);
-+	writel(bitval, d->virt_base + EINTPEND_REG);
- }
- 
- static void s3c2412_eint0_3_mask(struct irq_data *data)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned long mask;
- 
--	mask = readl(bank->eint_base + EINTMASK_REG);
-+	mask = readl(d->virt_base + EINTMASK_REG);
- 	mask |= (1UL << data->hwirq);
--	writel(mask, bank->eint_base + EINTMASK_REG);
-+	writel(mask, d->virt_base + EINTMASK_REG);
- }
- 
- static void s3c2412_eint0_3_unmask(struct irq_data *data)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned long mask;
- 
--	mask = readl(bank->eint_base + EINTMASK_REG);
-+	mask = readl(d->virt_base + EINTMASK_REG);
- 	mask &= ~(1UL << data->hwirq);
--	writel(mask, bank->eint_base + EINTMASK_REG);
-+	writel(mask, d->virt_base + EINTMASK_REG);
- }
- 
- static struct irq_chip s3c2412_eint0_3_chip = {
-@@ -316,31 +319,34 @@ static void s3c2412_demux_eint0_3(struct irq_desc *desc)
- static void s3c24xx_eint_ack(struct irq_data *data)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned char index = bank->eint_offset + data->hwirq;
- 
--	writel(1UL << index, bank->eint_base + EINTPEND_REG);
-+	writel(1UL << index, d->virt_base + EINTPEND_REG);
- }
- 
- static void s3c24xx_eint_mask(struct irq_data *data)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned char index = bank->eint_offset + data->hwirq;
- 	unsigned long mask;
- 
--	mask = readl(bank->eint_base + EINTMASK_REG);
-+	mask = readl(d->virt_base + EINTMASK_REG);
- 	mask |= (1UL << index);
--	writel(mask, bank->eint_base + EINTMASK_REG);
-+	writel(mask, d->virt_base + EINTMASK_REG);
- }
- 
- static void s3c24xx_eint_unmask(struct irq_data *data)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(data);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned char index = bank->eint_offset + data->hwirq;
- 	unsigned long mask;
- 
--	mask = readl(bank->eint_base + EINTMASK_REG);
-+	mask = readl(d->virt_base + EINTMASK_REG);
- 	mask &= ~(1UL << index);
--	writel(mask, bank->eint_base + EINTMASK_REG);
-+	writel(mask, d->virt_base + EINTMASK_REG);
- }
- 
- static struct irq_chip s3c24xx_eint_chip = {
-@@ -356,14 +362,13 @@ static inline void s3c24xx_demux_eint(struct irq_desc *desc,
- {
- 	struct s3c24xx_eint_data *data = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct irq_data *irqd = irq_desc_get_irq_data(desc);
--	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *d = data->drvdata;
- 	unsigned int pend, mask;
- 
- 	chained_irq_enter(chip, desc);
- 
--	pend = readl(bank->eint_base + EINTPEND_REG);
--	mask = readl(bank->eint_base + EINTMASK_REG);
-+	pend = readl(d->virt_base + EINTPEND_REG);
-+	mask = readl(d->virt_base + EINTMASK_REG);
- 
- 	pend &= ~mask;
- 	pend &= range;
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index 4a88d7446e87..e63663b32907 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -280,7 +280,7 @@ static void s3c64xx_irq_set_function(struct samsung_pinctrl_drv_data *d,
- 	u32 val;
- 
- 	/* Make sure that pin is configured as interrupt */
--	reg = bank->pctl_base + bank->pctl_offset;
-+	reg = d->virt_base + bank->pctl_offset;
- 	shift = pin;
- 	if (bank_type->fld_width[PINCFG_TYPE_FUNC] * shift >= 32) {
- 		/* 4-bit bank type with 2 con regs */
-@@ -308,8 +308,9 @@ static void s3c64xx_irq_set_function(struct samsung_pinctrl_drv_data *d,
- static inline void s3c64xx_gpio_irq_set_mask(struct irq_data *irqd, bool mask)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned char index = EINT_OFFS(bank->eint_offset) + irqd->hwirq;
--	void __iomem *reg = bank->eint_base + EINTMASK_REG(bank->eint_offset);
-+	void __iomem *reg = d->virt_base + EINTMASK_REG(bank->eint_offset);
- 	u32 val;
- 
- 	val = readl(reg);
-@@ -333,8 +334,9 @@ static void s3c64xx_gpio_irq_mask(struct irq_data *irqd)
- static void s3c64xx_gpio_irq_ack(struct irq_data *irqd)
- {
- 	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	unsigned char index = EINT_OFFS(bank->eint_offset) + irqd->hwirq;
--	void __iomem *reg = bank->eint_base + EINTPEND_REG(bank->eint_offset);
-+	void __iomem *reg = d->virt_base + EINTPEND_REG(bank->eint_offset);
- 
- 	writel(1 << index, reg);
- }
-@@ -357,7 +359,7 @@ static int s3c64xx_gpio_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	s3c64xx_irq_set_handler(irqd, type);
- 
- 	/* Set up interrupt trigger */
--	reg = bank->eint_base + EINTCON_REG(bank->eint_offset);
-+	reg = d->virt_base + EINTCON_REG(bank->eint_offset);
- 	shift = EINT_OFFS(bank->eint_offset) + irqd->hwirq;
- 	shift = 4 * (shift / 4); /* 4 EINTs per trigger selector */
- 
-@@ -409,8 +411,7 @@ static void s3c64xx_eint_gpio_irq(struct irq_desc *desc)
- {
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct s3c64xx_eint_gpio_data *data = irq_desc_get_handler_data(desc);
--	struct irq_data *irqd = irq_desc_get_irq_data(desc);
--	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
-+	struct samsung_pinctrl_drv_data *drvdata = data->drvdata;
- 
- 	chained_irq_enter(chip, desc);
- 
-@@ -420,7 +421,7 @@ static void s3c64xx_eint_gpio_irq(struct irq_desc *desc)
- 		unsigned int pin;
- 		unsigned int virq;
- 
--		svc = readl(bank->eint_base + SERVICE_REG);
-+		svc = readl(drvdata->virt_base + SERVICE_REG);
- 		group = SVC_GROUP(svc);
- 		pin = svc & SVC_NUM_MASK;
- 
-@@ -515,15 +516,15 @@ static inline void s3c64xx_eint0_irq_set_mask(struct irq_data *irqd, bool mask)
- {
- 	struct s3c64xx_eint0_domain_data *ddata =
- 					irq_data_get_irq_chip_data(irqd);
--	struct samsung_pin_bank *bank = ddata->bank;
-+	struct samsung_pinctrl_drv_data *d = ddata->bank->drvdata;
- 	u32 val;
- 
--	val = readl(bank->eint_base + EINT0MASK_REG);
-+	val = readl(d->virt_base + EINT0MASK_REG);
- 	if (mask)
- 		val |= 1 << ddata->eints[irqd->hwirq];
- 	else
- 		val &= ~(1 << ddata->eints[irqd->hwirq]);
--	writel(val, bank->eint_base + EINT0MASK_REG);
-+	writel(val, d->virt_base + EINT0MASK_REG);
- }
- 
- static void s3c64xx_eint0_irq_unmask(struct irq_data *irqd)
-@@ -540,10 +541,10 @@ static void s3c64xx_eint0_irq_ack(struct irq_data *irqd)
- {
- 	struct s3c64xx_eint0_domain_data *ddata =
- 					irq_data_get_irq_chip_data(irqd);
--	struct samsung_pin_bank *bank = ddata->bank;
-+	struct samsung_pinctrl_drv_data *d = ddata->bank->drvdata;
- 
- 	writel(1 << ddata->eints[irqd->hwirq],
--					bank->eint_base + EINT0PEND_REG);
-+					d->virt_base + EINT0PEND_REG);
- }
- 
- static int s3c64xx_eint0_irq_set_type(struct irq_data *irqd, unsigned int type)
-@@ -551,7 +552,7 @@ static int s3c64xx_eint0_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	struct s3c64xx_eint0_domain_data *ddata =
- 					irq_data_get_irq_chip_data(irqd);
- 	struct samsung_pin_bank *bank = ddata->bank;
--	struct samsung_pinctrl_drv_data *d = ddata->bank->drvdata;
-+	struct samsung_pinctrl_drv_data *d = bank->drvdata;
- 	void __iomem *reg;
- 	int trigger;
- 	u8 shift;
-@@ -566,7 +567,7 @@ static int s3c64xx_eint0_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	s3c64xx_irq_set_handler(irqd, type);
- 
- 	/* Set up interrupt trigger */
--	reg = bank->eint_base + EINT0CON0_REG;
-+	reg = d->virt_base + EINT0CON0_REG;
- 	shift = ddata->eints[irqd->hwirq];
- 	if (shift >= EINT_MAX_PER_REG) {
- 		reg += 4;
-@@ -598,19 +599,14 @@ static struct irq_chip s3c64xx_eint0_irq_chip = {
- static inline void s3c64xx_irq_demux_eint(struct irq_desc *desc, u32 range)
- {
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct irq_data *irqd = irq_desc_get_irq_data(desc);
--	struct s3c64xx_eint0_domain_data *ddata =
--					irq_data_get_irq_chip_data(irqd);
--	struct samsung_pin_bank *bank = ddata->bank;
--
- 	struct s3c64xx_eint0_data *data = irq_desc_get_handler_data(desc);
--
-+	struct samsung_pinctrl_drv_data *drvdata = data->drvdata;
- 	unsigned int pend, mask;
- 
- 	chained_irq_enter(chip, desc);
- 
--	pend = readl(bank->eint_base + EINT0PEND_REG);
--	mask = readl(bank->eint_base + EINT0MASK_REG);
-+	pend = readl(drvdata->virt_base + EINT0PEND_REG);
-+	mask = readl(drvdata->virt_base + EINT0MASK_REG);
- 
- 	pend = pend & range & ~mask;
- 	pend &= range;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index f542642eed8d..61bbd54e35ba 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1013,6 +1013,12 @@ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
- 		bank->eint_base = virt_base[0];
- 		bank->pctl_base = virt_base[bdata->pctl_res_idx];
- 	}
-+	/*
-+	 * Legacy platforms should provide only one resource with IO memory.
-+	 * Store it as virt_base because legacy driver needs to access it
-+	 * through samsung_pinctrl_drv_data.
-+	 */
-+	d->virt_base = virt_base[0];
- 
- 	for_each_child_of_node(node, np) {
- 		if (!of_find_property(np, "gpio-controller", NULL))
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 515a61035e54..61c4cab0ad24 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -247,6 +247,10 @@ struct samsung_pin_ctrl {
- /**
-  * struct samsung_pinctrl_drv_data: wrapper for holding driver data together.
-  * @node: global list node
-+ * @virt_base: register base address of the controller; this will be equal
-+ *             to each bank samsung_pin_bank->pctl_base and used on legacy
-+ *             platforms (like S3C24XX or S3C64XX) which has to access the base
-+ *             through samsung_pinctrl_drv_data, not samsung_pin_bank).
-  * @dev: device instance representing the controller.
-  * @irq: interrpt number used by the controller to notify gpio interrupts.
-  * @ctrl: pin controller instance managed by the driver.
-@@ -262,6 +266,7 @@ struct samsung_pin_ctrl {
-  */
- struct samsung_pinctrl_drv_data {
- 	struct list_head		node;
-+	void __iomem			*virt_base;
- 	struct device			*dev;
- 	int				irq;
- 
+	M.
 -- 
-2.9.3
-
+Jazz is not dead. It just smells funny...
