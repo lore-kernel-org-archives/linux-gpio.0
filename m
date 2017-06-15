@@ -1,272 +1,165 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v2] gpio: lp87565: Add support for GPIO
-Date: Thu, 15 Jun 2017 12:03:11 +0530
-Message-ID: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add DU parallel RGB output support
+Date: Thu, 15 Jun 2017 10:30:31 +0300
+Message-ID: <20170615073031.11199-1-laurent.pinchart+renesas@ideasonboard.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:54326 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbdFOGhG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2017 02:37:06 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:35623 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750961AbdFOHaM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2017 03:30:12 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: j-keerthy@ti.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, t-kristo@ti.com
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 
-Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
-and can be configured in Open-drain output or Push-pull output.
+The H3 ES1.x and H3 ES2.0 have identical pinmuxing for the parallel RGB
+output support.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 101 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
-Latest version of mfd patch:
+Hi Geert,
 
-https://patchwork.kernel.org/patch/9783079/
+This patch is based on the sh-pfc-for-v4.13 branch from your renesas-drivers
+tree. Please let me know if you would like me to pick another base.
 
-Changes in v2:
-
-  * included <linux/gpio/driver.h>
-  * stored the struct regmap *map instead of whole lp87565 struct
-  * clamped return values to [0,1] where necessary.
-  * Added more comments to explain the 2 modes.
-  * platform_set_drvdata(pdev, gpio)
-
- drivers/gpio/Kconfig        |  10 +++
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-lp87565.c | 190 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 201 insertions(+)
- create mode 100644 drivers/gpio/gpio-lp87565.c
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 2e7d9ff..f235eae 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -965,6 +965,16 @@ config GPIO_LP873X
- 	  This driver can also be built as a module. If so, the module will be
-           called gpio-lp873x.
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index f220bf124ca1..75222a9b46b3 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1663,6 +1663,87 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
+ 	AVB_AVTP_CAPTURE_B_MARK,
+ };
  
-+config GPIO_LP87565
-+	tristate "TI LP87565 GPIO"
-+	depends on MFD_TI_LP87565
-+	help
-+	  This driver supports the GPIO on TI Lp873565 PMICs. 3 GPIOs are present
-+	  on LP87565 PMICs.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called gpio-lp87565.
-+
- config GPIO_MAX77620
- 	tristate "GPIO support for PMIC MAX77620 and MAX20024"
- 	depends on MFD_MAX77620
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index bcd0a0b..a9fda6c 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -67,6 +67,7 @@ obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
- obj-$(CONFIG_GPIO_LPC18XX)	+= gpio-lpc18xx.o
- obj-$(CONFIG_ARCH_LPC32XX)	+= gpio-lpc32xx.o
- obj-$(CONFIG_GPIO_LP873X)	+= gpio-lp873x.o
-+obj-$(CONFIG_GPIO_LP87565)	+= gpio-lp87565.o
- obj-$(CONFIG_GPIO_LYNXPOINT)	+= gpio-lynxpoint.o
- obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
- obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
-diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
-new file mode 100644
-index 0000000..6313c50
---- /dev/null
-+++ b/drivers/gpio/gpio-lp87565.c
-@@ -0,0 +1,190 @@
-+/*
-+ * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
-+ *	Keerthy <j-keerthy@ti.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-+ * kind, whether expressed or implied; without even the implied warranty
-+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License version 2 for more details.
-+ *
-+ * Based on the LP873X driver
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/mfd/lp87565.h>
-+
-+struct lp87565_gpio {
-+	struct gpio_chip chip;
-+	struct regmap *map;
++/* - DU --------------------------------------------------------------------- */
++static const unsigned int du_rgb666_pins[] = {
++	/* R[7:2], G[7:2], B[7:2] */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
++	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
++	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
++};
++static const unsigned int du_rgb666_mux[] = {
++	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
++	DU_DR3_MARK, DU_DR2_MARK,
++	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
++	DU_DG3_MARK, DU_DG2_MARK,
++	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
++	DU_DB3_MARK, DU_DB2_MARK,
++};
++static const unsigned int du_rgb888_pins[] = {
++	/* R[7:0], G[7:0], B[7:0] */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 8),
++	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
++	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
++	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
++	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
++	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
++};
++static const unsigned int du_rgb888_mux[] = {
++	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
++	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
++	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
++	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
++	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
++	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
++};
++static const unsigned int du_clk_out_0_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(1, 27),
++};
++static const unsigned int du_clk_out_0_mux[] = {
++	DU_DOTCLKOUT0_MARK
++};
++static const unsigned int du_clk_out_1_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(2, 3),
++};
++static const unsigned int du_clk_out_1_mux[] = {
++	DU_DOTCLKOUT1_MARK
++};
++static const unsigned int du_sync_pins[] = {
++	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
++	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
++};
++static const unsigned int du_sync_mux[] = {
++	DU_EXVSYNC_DU_VSYNC_MARK, DU_EXHSYNC_DU_HSYNC_MARK
++};
++static const unsigned int du_oddf_pins[] = {
++	/* EXDISP/EXODDF/EXCDE */
++	RCAR_GP_PIN(2, 2),
++};
++static const unsigned int du_oddf_mux[] = {
++	DU_EXODDF_DU_ODDF_DISP_CDE_MARK,
++};
++static const unsigned int du_cde_pins[] = {
++	/* CDE */
++	RCAR_GP_PIN(2, 0),
++};
++static const unsigned int du_cde_mux[] = {
++	DU_CDE_MARK,
++};
++static const unsigned int du_disp_pins[] = {
++	/* DISP */
++	RCAR_GP_PIN(2, 1),
++};
++static const unsigned int du_disp_mux[] = {
++	DU_DISP_MARK,
 +};
 +
-+static int lp87565_gpio_get_direction(struct gpio_chip *chip,
-+				      unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+	int ret, val;
-+
-+	ret = regmap_read(gpio->map, LP87565_REG_GPIO_CONFIG, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !(val & BIT(offset));
-+}
-+
-+static int lp87565_gpio_direction_input(struct gpio_chip *chip,
-+					unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+
-+	return regmap_update_bits(gpio->map,
-+				  LP87565_REG_GPIO_CONFIG,
-+				  BIT(offset), 0);
-+}
-+
-+static int lp87565_gpio_direction_output(struct gpio_chip *chip,
-+					 unsigned int offset, int value)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+
-+	return regmap_update_bits(gpio->map,
-+				  LP87565_REG_GPIO_CONFIG,
-+				  BIT(offset), !value ? BIT(offset) : 0);
-+}
-+
-+static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+	int ret, val;
-+
-+	ret = regmap_read(gpio->map, LP87565_REG_GPIO_IN, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!(val & BIT(offset));
-+}
-+
-+static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			     int value)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-+
-+	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
-+			   BIT(offset), value ? BIT(offset) : 0);
-+}
-+
-+static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(gc);
-+	int ret;
-+
-+	switch (offset) {
-+	case 0:
-+	case 1:
-+	case 2:
-+		/*
-+		 * MUX can program the pin to be in EN1/2/3 pin mode
-+		 * Or GPIO1/2/3 mode.
-+		 * Setup the GPIO*_SEL MUX to GPIO mode
-+		 */
-+		ret = regmap_update_bits(gpio->map,
-+					 LP87565_REG_PIN_FUNCTION,
-+					 BIT(offset), BIT(offset));
-+		if (ret)
-+			return ret;
-+
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int lp87565_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct lp87565_gpio *gpio = gpiochip_get_data(gc);
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(gpio->map,
-+					  LP87565_REG_GPIO_CONFIG,
-+					  BIT(offset +
-+					      __ffs(LP87565_GOIO1_OD)),
-+					  BIT(offset +
-+					      __ffs(LP87565_GOIO1_OD)));
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(gpio->map,
-+					  LP87565_REG_GPIO_CONFIG,
-+					  BIT(offset +
-+					      __ffs(LP87565_GOIO1_OD)), 0);
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
-+static const struct gpio_chip template_chip = {
-+	.label			= "lp87565-gpio",
-+	.owner			= THIS_MODULE,
-+	.request		= lp87565_gpio_request,
-+	.get_direction		= lp87565_gpio_get_direction,
-+	.direction_input	= lp87565_gpio_direction_input,
-+	.direction_output	= lp87565_gpio_direction_output,
-+	.get			= lp87565_gpio_get,
-+	.set			= lp87565_gpio_set,
-+	.set_config		= lp87565_gpio_set_config,
-+	.base			= -1,
-+	.ngpio			= 3,
-+	.can_sleep		= true,
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1887,6 +1968,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
++	SH_PFC_PIN_GROUP(du_rgb666),
++	SH_PFC_PIN_GROUP(du_rgb888),
++	SH_PFC_PIN_GROUP(du_clk_out_0),
++	SH_PFC_PIN_GROUP(du_clk_out_1),
++	SH_PFC_PIN_GROUP(du_sync),
++	SH_PFC_PIN_GROUP(du_oddf),
++	SH_PFC_PIN_GROUP(du_cde),
++	SH_PFC_PIN_GROUP(du_disp),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1931,6 +2020,17 @@ static const char * const avb_groups[] = {
+ 	"avb_avtp_capture_b",
+ };
+ 
++static const char * const du_groups[] = {
++	"du_rgb666",
++	"du_rgb888",
++	"du_clk_out_0",
++	"du_clk_out_1",
++	"du_sync",
++	"du_oddf",
++	"du_cde",
++	"du_disp",
 +};
 +
-+static int lp87565_gpio_probe(struct platform_device *pdev)
-+{
-+	struct lp87565_gpio *gpio;
-+	struct lp87565 *lp87565;
-+	int ret;
-+
-+	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
-+	if (!gpio)
-+		return -ENOMEM;
-+
-+	lp87565 = dev_get_drvdata(pdev->dev.parent);
-+	gpio->chip = template_chip;
-+	gpio->chip.parent = lp87565->dev;
-+	gpio->map = lp87565->regmap;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id lp87565_gpio_id_table[] = {
-+	{ "lp87565-q1-gpio", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(platform, lp87565_gpio_id_table);
-+
-+static struct platform_driver lp87565_gpio_driver = {
-+	.driver = {
-+		.name = "lp87565-gpio",
-+	},
-+	.probe = lp87565_gpio_probe,
-+	.id_table = lp87565_gpio_id_table,
-+};
-+module_platform_driver(lp87565_gpio_driver);
-+
-+MODULE_AUTHOR("Keerthy <j-keerthy@ti.com>");
-+MODULE_DESCRIPTION("LP87565 GPIO driver");
-+MODULE_LICENSE("GPL v2");
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -1983,6 +2083,7 @@ static const char * const scif_clk_groups[] = {
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb),
++	SH_PFC_FUNCTION(du),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
 -- 
-1.9.1
+Regards,
+
+Laurent Pinchart
 
