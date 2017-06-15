@@ -1,148 +1,94 @@
-From: jmondi <jacopo@jmondi.org>
-Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
- output-enable
-Date: Thu, 15 Jun 2017 13:11:24 +0200
-Message-ID: <20170615111124.GD22030@w540>
-References: <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
- <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
- <20170523183735.GC13664@w540>
- <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
- <20170529104229.GB21347@w540>
- <CAA+hA=T56WHugmA+5V5ZC6TTxeSUVt1hr0v53YuDsUYgBcvKTw@mail.gmail.com>
- <20170609075028.GE15739@w540>
- <CACRpkdZ=hNJLyV94FyRBSR3Dk8NLe-jEo3qbUKDya6ruqG3KNQ@mail.gmail.com>
- <20170612094424.GG15739@w540>
- <CAA+hA=RmDEybOkbimtyQBq+vK=6T9GYJn9Jw-GcDy7XxR0b0AA@mail.gmail.com>
+From: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v7 2/9] dt-bindings: add Amlogic Meson GPIO
+ interrupt-controller DT binding documentation
+Date: Thu, 15 Jun 2017 10:34:46 +0200
+Message-ID: <d6fd8d6f-7b81-68be-7e7e-cbfdc422e1de@gmail.com>
+References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
+ <d7c3fd04-d3d7-c128-1dcc-921e99677130@gmail.com>
+ <c5453bc7-1d8b-d3a1-91ac-779734444b8b@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAA+hA=RmDEybOkbimtyQBq+vK=6T9GYJn9Jw-GcDy7XxR0b0AA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris Brandt <Chris.Brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c5453bc7-1d8b-d3a1-91ac-779734444b8b-5wv7dgnIgG8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jerome Brunet <jbrunet-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Dong,
+Am 13.06.2017 um 10:53 schrieb Marc Zyngier:
+> On 10/06/17 22:57, Heiner Kallweit wrote:
+>> Add dt binding documentation for Amlogic meson GPIO interrupt controller.
+>>
+>> Signed-off-by: Heiner Kallweit <hkallweit1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Reviewed-by: Neil Armstrong <narmstrong-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+>> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>> ---
+>> v5:
+>> - added Reviewed-by
+>> v6:
+>> - rename parent-interrupts to interrupts
+>> v7:
+>> - no changes
+>> ---
+>>  .../amlogic,meson-gpio-intc.txt                    | 26 ++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+>> new file mode 100644
+>> index 00000000..4c9bb323
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
+>> @@ -0,0 +1,26 @@
+>> +Amlogic meson GPIO interrupt controller
+>> +
+>> +Meson SoCs contains an interrupt controller which is able watch the SoC pads
+>> +and generate an interrupt on edges or level. The controller is essentially a
+>> +256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
+>> +or level and polarity. The actual number of interrupt exposed depends on the
+>> +SoC.
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "amlogic,meson-gpio-intc".
+>> +- reg : Specifies base physical address and size of the registers.
+>> +- interrupt-controller : Identifies the node as an interrupt controller.
+>> +- #interrupt-cells : should be 2.
+>> +- interrupts : list of GIC interrupts which can be used with the
+>> +	       GPIO IRQ multiplexer
+>> +
+>> +Example:
+>> +
+>> +gpio_intc: interrupt-controller@9880 {
+>> +	compatible = "amlogic,meson-gpio-intc";
+>> +	reg = <0x0 0x09880 0x0 0x10>;
+>> +	interrupt-controller;
+>> +	#interrupt-cells = <2>;
+>> +	interrupts = <64 65 66 67 68 69 70 71>;
+> 
+> What does it mean to have single-cell interrupt specifiers like this,
+> when the interrupt-parent is a GIC, which has #interrupt-cells set to 3?
+> Either you use actual interrupt specifiers, or you use another identifier.
+> 
+The following approaches have been used already:
 
-On Tue, Jun 13, 2017 at 02:25:08PM +0800, Dong Aisheng wrote:
-> On Mon, Jun 12, 2017 at 5:44 PM, jmondi <jacopo@jmondi.org> wrote:
-> > Fair enough :)
-> >
-> > I'll try to keep this short: I don't like "output-enable", and at the
-> > same time I don't think "output-high" and "output-low" fit well for
-> > this purpose, as they electrically means something different from what
-> > our (and IMX) use case is: enabling/disabling input/output
-> > buffers internal to pin controller/gpio block HW and not driving a value
-> > there.
-> >
-> > This seems clear to me from the "GPIO mode pitfalls" section of
-> > pinctrl.txt documentation examples and from the fact that generic bindings
-> > did not expose an "output" flag because if you drive an output line, you
-> > reasonably either drive it high or low.
-> >
-> > Unfortunately I cannot convince myself that the same reasons apply
-> > to the input use case.  Enabling input on a pin implies the pinctrl/gpio driver
-> > has to enable any input buffer required to use that pin as a properly
-> > working input line, and enabling an input buffer implies being able to sense
-> > the line value from there, so I don't see that much use for "input-buffer-enable"
-> > alone.
-> >
-> > So, even if bindings could look a bit weird as there won't be a direct
-> > matching between properties names used to enable input/output buffers,
-> > my vote is to add "output-buffer-enable" only, and keep using the
-> > already there "input-enable" properties for the input use case.
-> >
->
-> Yes, it may be a bit weird.
-> I'm not pad internal details expert and can't tell much difference between
-> output-enable and output-buffer-enable.
-> I just feel a bit confuse if only using output-buffer-enable.
+- standard interrupts property (3-cell): was rejected because the chip doesn't
+  actually generate the interrupts but just provides a programmable IRQ routing
 
-Yes it is, and I actually like your proposal, I was just trying to
-make sure I was not confusing the property semantic with its
-real-world effect.
+- property "parent-interrupts" (1-cell): Rob suggested to use "interrupts" instead
 
-If no one as different opinions on this, I can send a patch later to
-add output-enable only, or since you have almost done it down here you
-can do the same resusing what you have proposed below.
->
-> If enable both input and output, it becomes:
-> pinctrl_xxx: gpios_xxx_grp {
->         pins = <
->                 ULP1_PAD_PTD0__PTD0
->         >;
->         input-enable;
->         output-buffer-enable;
->         bias-pull-up;
-> };
->
-> How about still use output-enable in pairs to input-enable but explain more
-> in comments?
-> Aslo update 'input-enable' comment to 'enable input buffer'.
-> e.g.
-> diff --git a/drivers/pinctrl/pinconf-generic.c
-> b/drivers/pinctrl/pinconf-generic.c
-> index 720a19f..96c83a4 100644
-> --- a/drivers/pinctrl/pinconf-generic.c
-> +++ b/drivers/pinctrl/pinconf-generic.c
-> @@ -172,6 +172,7 @@ static const struct pinconf_generic_params dt_params[] = {
->         { "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
->         { "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
->         { "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-> +       { "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
->         { "output-high", PIN_CONFIG_OUTPUT, 1, },
->         { "output-low", PIN_CONFIG_OUTPUT, 0, },
->         { "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-> diff --git a/include/linux/pinctrl/pinconf-generic.h
-> b/include/linux/pinctrl/pinconf-generic.h
-> index 7620eb1..d30f4fe 100644
-> --- a/include/linux/pinctrl/pinconf-generic.h
-> +++ b/include/linux/pinctrl/pinconf-generic.h
-> @@ -59,9 +59,9 @@
->   *     which means it will wait for signals to settle when reading inputs. The
->   *     argument gives the debounce time in usecs. Setting the
->   *     argument to zero turns debouncing off.
-> - * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input.  Note that this does not
-> - *     affect the pin's ability to drive output.  1 enables input, 0 disables
-> - *     input.
-> + * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input buffer.  Note
-> that this does
-> + *     not affect the pin's ability to drive output.
-> + *     1 enables input, 0 disables input.
+I'd appreciate if you could come to an agreement with Rob, whatever the outcome
+is is fine with me.
 
-I would not mention the "input buffer" here, as enabling input implies enabling
-the buffer if you want to read values from there. Actually I guess
-there may be platforms where buffer enabling may be implicit, so I
-would leave this out and let drivers handle it internally.
+Rgds, Heiner
 
->   * @PIN_CONFIG_INPUT_SCHMITT: this will configure an input pin to run in
->   *     schmitt-trigger mode. If the schmitt-trigger has adjustable hysteresis,
->   *     the threshold value is given on a custom format as argument when
-> @@ -73,6 +73,9 @@
->   *     operation, if several modes of operation are supported these can be
->   *     passed in the argument on a custom form, else just use argument 1
->   *     to indicate low power mode, argument 0 turns low power mode off.
-> + * @PIN_CONFIG_OUTPUT_ENABLE: only enable the pin's output buffer, not driving
-> + *     a value.
-> + *     1 enables output buffer, 0 disables output buffer.
->   * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use argument
->   *     1 to indicate high level, argument 0 to indicate low level. (Please
->   *     see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
->
-> Or
-> invent both input-buffer-enable and output-buffer-enable and
-> deprecated input-enable?
->
-> Andy,
-> how about your comments?
->
-> Regards
-> Dong Aisheng
->
-> > Thanks
-> >    j
-> >
-> >>
-> >> Yours,
-> >> Linus Walleij
+> Thanks,
+> 
+> 	M.
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
