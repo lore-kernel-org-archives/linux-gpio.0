@@ -1,123 +1,148 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH v1 1/1] gpio: of: provide option generic property for
- initial line states
-Date: Thu, 15 Jun 2017 12:48:28 +0300
-Message-ID: <55bfb5e4-a6ff-89a1-3807-e4f4e4b0cef8@mentor.com>
-References: <20170609141622.21502-1-o.rempel@pengutronix.de>
- <CAL_JsqJeSCN88JnVnofb2Ncy4bDyXiKQbLniHmvbE4j854ZePA@mail.gmail.com>
- <20170611061919.jsbc7x67ut4segj5@pengutronix.de>
- <2432df7e-5d20-42c9-ddc0-044c2ca5ce2b@mentor.com>
- <20170615055632.qjtyf6kiqdam3mho@pengutronix.de>
+From: jmondi <jacopo@jmondi.org>
+Subject: Re: [PATCH v5 01/10] pinctrl: generic: Add bi-directional and
+ output-enable
+Date: Thu, 15 Jun 2017 13:11:24 +0200
+Message-ID: <20170615111124.GD22030@w540>
+References: <CACRpkdY1h+yfFuk2y9=nZqqvW9=G33_eHCisvuMkJ5b3zizY7Q@mail.gmail.com>
+ <CAA+hA=Q9hwe7_xL440Reoi7z7m8-SScZ5E057419KSA7dQK=tQ@mail.gmail.com>
+ <20170523183735.GC13664@w540>
+ <CACRpkdYcaGzSvAN2Trqwer+8GbqXyfpE=VqiYcQvCOqhDO9MMw@mail.gmail.com>
+ <20170529104229.GB21347@w540>
+ <CAA+hA=T56WHugmA+5V5ZC6TTxeSUVt1hr0v53YuDsUYgBcvKTw@mail.gmail.com>
+ <20170609075028.GE15739@w540>
+ <CACRpkdZ=hNJLyV94FyRBSR3Dk8NLe-jEo3qbUKDya6ruqG3KNQ@mail.gmail.com>
+ <20170612094424.GG15739@w540>
+ <CAA+hA=RmDEybOkbimtyQBq+vK=6T9GYJn9Jw-GcDy7XxR0b0AA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:33404 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750784AbdFOJsi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2017 05:48:38 -0400
-In-Reply-To: <20170615055632.qjtyf6kiqdam3mho@pengutronix.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAA+hA=RmDEybOkbimtyQBq+vK=6T9GYJn9Jw-GcDy7XxR0b0AA@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris Brandt <Chris.Brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Oleksij Rempel <ore@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>, barebox@lists.infradead.org
 
-Hi Oleksij,
+Hi Dong,
 
-On 06/15/2017 08:56 AM, Oleksij Rempel wrote:
-> Hi Vladimir,
-> 
-> On Sun, Jun 11, 2017 at 10:57:18PM +0300, Vladimir Zapolskiy wrote:
->> Hi Oleksij,
->>
->> On 06/11/2017 09:19 AM, Oleksij Rempel wrote:
->>> Hi Rob,
->>>
->>> On Fri, Jun 09, 2017 at 10:41:30AM -0500, Rob Herring wrote:
->>>> On Fri, Jun 9, 2017 at 9:16 AM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->>>>> This property is needed for barebox or may be other bootloaders
->>>>> to set proper gpio configuration as early as possible.
->>>>>
->>>>> This example is mainly based on "lines-initial-states" property
->>>>> from this binding documentation:
->>>>> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
->>>>
->>>> Don't we have a binding for this already based on gpio-hogs.
->>>
->>> Markus Pargmann was working on this topic before and suddenly was not
->>> able to finish it.
->>
->> that's fine, but the proposed extension is supposedly not wanted.
-> 
-> :(
+On Tue, Jun 13, 2017 at 02:25:08PM +0800, Dong Aisheng wrote:
+> On Mon, Jun 12, 2017 at 5:44 PM, jmondi <jacopo@jmondi.org> wrote:
+> > Fair enough :)
+> >
+> > I'll try to keep this short: I don't like "output-enable", and at the
+> > same time I don't think "output-high" and "output-low" fit well for
+> > this purpose, as they electrically means something different from what
+> > our (and IMX) use case is: enabling/disabling input/output
+> > buffers internal to pin controller/gpio block HW and not driving a value
+> > there.
+> >
+> > This seems clear to me from the "GPIO mode pitfalls" section of
+> > pinctrl.txt documentation examples and from the fact that generic bindings
+> > did not expose an "output" flag because if you drive an output line, you
+> > reasonably either drive it high or low.
+> >
+> > Unfortunately I cannot convince myself that the same reasons apply
+> > to the input use case.  Enabling input on a pin implies the pinctrl/gpio driver
+> > has to enable any input buffer required to use that pin as a properly
+> > working input line, and enabling an input buffer implies being able to sense
+> > the line value from there, so I don't see that much use for "input-buffer-enable"
+> > alone.
+> >
+> > So, even if bindings could look a bit weird as there won't be a direct
+> > matching between properties names used to enable input/output buffers,
+> > my vote is to add "output-buffer-enable" only, and keep using the
+> > already there "input-enable" properties for the input use case.
+> >
+>
+> Yes, it may be a bit weird.
+> I'm not pad internal details expert and can't tell much difference between
+> output-enable and output-buffer-enable.
+> I just feel a bit confuse if only using output-buffer-enable.
 
-No worries, we're in the discussion and 'supposedly' was a meaningful
-word :)
+Yes it is, and I actually like your proposal, I was just trying to
+make sure I was not confusing the property semantic with its
+real-world effect.
 
->>> I found only some not finished discussions and no code or documentation
->>> in linux kernel upstream.
->>>
->>> So far, I was able to find fallowing patches and discussions:
->>> patch 23.08.2015, last comment 11.05.2017:
->>> https://patchwork.kernel.org/patch/7096721/
->>>
->>> patch 23.02.2016, last comment 09.03.2016:
->>> https://patchwork.ozlabs.org/patch/586743/
->>>
->>> Since there was objections about node-like design for gpio-initval, I
->>> provided an array property, which is similar to initval properties already used
->>> for different other device nodes. For example:
->>>
->>> Documentation/devicetree/bindings/net/wireless/qcom,ath10k.txt
->>> qcom,ath10k-calibration-data
->>>
->>> Documentation/devicetree/bindings/gpio/gpio-pcf857x.txt
->>> lines-initial-states
->>
->> It'd rather be better to fix the drivers and remove the properties
->> from these found device tree binding descriptions.
-> 
-> no sure if it is possible. WiFi calibration data is kind of initval too.
-
-Sorry, I have no idea about the ath10k calibration data and its
-connection to the GPIO framework.
-
->>>
->>> Please fixme if I miss something.
->>
->> Why is GPIO hogging mechanism not good enough for your purpose?
-> 
-> Becouse it should not permanently hog a gpio. The "Hogging" should be
-> released as soon as some driver will request it.
-> 
-> Right now, if I define gpio-hog, boot loader will configure it and start
-> linux. But linux will never let it free.
-> 
-> If you have other suggestions which fit to this use case, please tell
-> me. I assume, right now I'm just blind.
-
-Ok, I'll meditate on it.
-
-> Other way, I can imagine is to create real device nodes which use this
-> gpios. Compatible for this devices will be like this:
-> some_gpio_holder: gpio@0 {
-> 	compatible = "gpio-for-userspace";
-> 	gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+If no one as different opinions on this, I can send a patch later to
+add output-enable only, or since you have almost done it down here you
+can do the same resusing what you have proposed below.
+>
+> If enable both input and output, it becomes:
+> pinctrl_xxx: gpios_xxx_grp {
+>         pins = <
+>                 ULP1_PAD_PTD0__PTD0
+>         >;
+>         input-enable;
+>         output-buffer-enable;
+>         bias-pull-up;
 > };
+>
+> How about still use output-enable in pairs to input-enable but explain more
+> in comments?
+> Aslo update 'input-enable' comment to 'enable input buffer'.
+> e.g.
+> diff --git a/drivers/pinctrl/pinconf-generic.c
+> b/drivers/pinctrl/pinconf-generic.c
+> index 720a19f..96c83a4 100644
+> --- a/drivers/pinctrl/pinconf-generic.c
+> +++ b/drivers/pinctrl/pinconf-generic.c
+> @@ -172,6 +172,7 @@ static const struct pinconf_generic_params dt_params[] = {
+>         { "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
+>         { "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
+>         { "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
+> +       { "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
+>         { "output-high", PIN_CONFIG_OUTPUT, 1, },
+>         { "output-low", PIN_CONFIG_OUTPUT, 0, },
+>         { "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
+> diff --git a/include/linux/pinctrl/pinconf-generic.h
+> b/include/linux/pinctrl/pinconf-generic.h
+> index 7620eb1..d30f4fe 100644
+> --- a/include/linux/pinctrl/pinconf-generic.h
+> +++ b/include/linux/pinctrl/pinconf-generic.h
+> @@ -59,9 +59,9 @@
+>   *     which means it will wait for signals to settle when reading inputs. The
+>   *     argument gives the debounce time in usecs. Setting the
+>   *     argument to zero turns debouncing off.
+> - * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input.  Note that this does not
+> - *     affect the pin's ability to drive output.  1 enables input, 0 disables
+> - *     input.
+> + * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input buffer.  Note
+> that this does
+> + *     not affect the pin's ability to drive output.
+> + *     1 enables input, 0 disables input.
 
-Generally it might be a good option, because if GPIOs are essentially
-needed to be preset, I can conclude there are some ICs to which these
-GPIOs are connected, thus drivers of these ICs can become GPIO consumers
-and get a proper description in a board DTB.
+I would not mention the "input buffer" here, as enabling input implies enabling
+the buffer if you want to read values from there. Actually I guess
+there may be platforms where buffer enabling may be implicit, so I
+would leave this out and let drivers handle it internally.
 
-> 
-> Boot loader will configure it as needed, an linux will do nothing with
-> it so it can be used over /dev/gpio interface.
-
-As I read it from Documentation/gpio/sysfs.txt generic interface(s)
-to control GPIOs is a last resort, it is not clear if you want a new
-feature for all possible consumers or just userspace consumers.
-
---
-With best wishes,
-Vladimir
+>   * @PIN_CONFIG_INPUT_SCHMITT: this will configure an input pin to run in
+>   *     schmitt-trigger mode. If the schmitt-trigger has adjustable hysteresis,
+>   *     the threshold value is given on a custom format as argument when
+> @@ -73,6 +73,9 @@
+>   *     operation, if several modes of operation are supported these can be
+>   *     passed in the argument on a custom form, else just use argument 1
+>   *     to indicate low power mode, argument 0 turns low power mode off.
+> + * @PIN_CONFIG_OUTPUT_ENABLE: only enable the pin's output buffer, not driving
+> + *     a value.
+> + *     1 enables output buffer, 0 disables output buffer.
+>   * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use argument
+>   *     1 to indicate high level, argument 0 to indicate low level. (Please
+>   *     see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
+>
+> Or
+> invent both input-buffer-enable and output-buffer-enable and
+> deprecated input-enable?
+>
+> Andy,
+> how about your comments?
+>
+> Regards
+> Dong Aisheng
+>
+> > Thanks
+> >    j
+> >
+> >>
+> >> Yours,
+> >> Linus Walleij
