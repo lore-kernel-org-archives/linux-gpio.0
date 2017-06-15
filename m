@@ -1,195 +1,115 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v7 1/9] irqchip: add Amlogic Meson GPIO irqchip driver
-Date: Thu, 15 Jun 2017 17:04:21 +0100
-Message-ID: <daddce59-cfe6-a1be-6c04-093dfa146aca@arm.com>
-References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
- <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
- <91b20fc4-4969-02a6-cc47-ff711f604342@arm.com>
- <1510ca1c-0a50-283d-42d5-b5710700460f@gmail.com>
- <9129464d-b7b6-a8f6-8671-091fc30e3161@arm.com>
- <c04dce8b-f3b9-e49e-47e8-0b24f3b66974@gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Thu, 15 Jun 2017 18:20:42 +0200
+Message-ID: <1497543642.3086.35.camel@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:47102 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750899AbdFOQE0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 15 Jun 2017 12:04:26 -0400
-In-Reply-To: <c04dce8b-f3b9-e49e-47e8-0b24f3b66974@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
 
-On 15/06/17 16:24, Heiner Kallweit wrote:
-> Am 15.06.2017 um 15:27 schrieb Marc Zyngier:
->> On 15/06/17 14:10, Heiner Kallweit wrote:
->>> Am 13.06.2017 um 10:31 schrieb Marc Zyngier:
->>>> On 10/06/17 22:57, Heiner Kallweit wrote:
->>>>> Add a driver supporting the GPIO interrupt controller on certain
->>>>> Amlogic meson SoC's.
->>>>>
->>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>>> ---
->>>>> v5:
->>>>> - changed Kconfig entry based on Neil's suggestion
->>>>> - added authors
->>>>> - extended explanation why 2 * n hwirqs are used
->>>>> v6:
->>>>> - change DT property parent-interrupts to interrupts
->>>>> v7:
->>>>> - no changes
->>>>> ---
->>>>>  drivers/irqchip/Kconfig          |   5 +
->>>>>  drivers/irqchip/Makefile         |   1 +
->>>>>  drivers/irqchip/irq-meson-gpio.c | 295 +++++++++++++++++++++++++++++++++++++++
->>>>>  3 files changed, 301 insertions(+)
->>>>>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
->>>>>
->>>>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->>>>> index 478f8ace..bdc86e14 100644
->>>>> --- a/drivers/irqchip/Kconfig
->>>>> +++ b/drivers/irqchip/Kconfig
->>>>> @@ -301,3 +301,8 @@ config QCOM_IRQ_COMBINER
->>>>>  	help
->>>>>  	  Say yes here to add support for the IRQ combiner devices embedded
->>>>>  	  in Qualcomm Technologies chips.
->>>>> +
->>>>> +config MESON_GPIO_INTC
->>>>> +	bool
->>>>> +	depends on ARCH_MESON
->>>>> +	default y
->>>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>>>> index b64c59b8..1be482bd 100644
->>>>> --- a/drivers/irqchip/Makefile
->>>>> +++ b/drivers/irqchip/Makefile
->>>>> @@ -76,3 +76,4 @@ obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->>>>>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
->>>>>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
->>>>>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
->>>>> +obj-$(CONFIG_MESON_GPIO_INTC)		+= irq-meson-gpio.o
->>>>> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
->>>>> new file mode 100644
->>>>> index 00000000..925d00c2
->>>>> --- /dev/null
->>>>> +++ b/drivers/irqchip/irq-meson-gpio.c
->>>>> @@ -0,0 +1,295 @@
->>>>> +/*
->>>>> + * Amlogic Meson GPIO IRQ chip driver
->>>>> + *
->>>>> + * Copyright (c) 2015 Endless Mobile, Inc.
->>>>> + * Author: Carlo Caione <carlo@endlessm.com>
->>>>> + * Copyright (c) 2016 BayLibre, SAS.
->>>>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->>>>> + * Copyright (c) 2017 Heiner Kallweit <hkallweit1@gmail.com>
->>>>> + *
->>>>> + * This program is free software; you can redistribute it and/or
->>>>> + * modify it under the terms of the GNU General Public License as
->>>>> + * published by the Free Software Foundation, version 2.
->>>>> + */
->>>>> +
->>>>> +#include <linux/device.h>
->>>>> +#include <linux/init.h>
->>>>> +#include <linux/interrupt.h>
->>>>> +#include <linux/irqchip.h>
->>>>> +#include <linux/of.h>
->>>>> +#include <linux/of_irq.h>
->>>>> +#include <linux/of_address.h>
->>>>> +#include <linux/regmap.h>
->>>>> +
->>>>> +#define REG_EDGE_POL		0x00
->>>>> +#define REG_PIN_03_SEL		0x04
->>>>> +#define REG_PIN_47_SEL		0x08
->>>>> +#define REG_FILTER_SEL		0x0c
->>>>> +
->>>>> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
->>>>> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
->>>>> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
->>>>> +
->>>>> +#define MAX_PARENT_IRQ_NUM	8
->>>>> +
->>>>> +/* maximum number of GPIO IRQs on supported platforms */
->>>>> +#define MAX_NUM_GPIO_IRQ	133
->>>>
->>>> Why aren't these values coming from DT? I bet that a future revision of
->>>> the same HW will double these. Or at least, you could match it on the
->>>> compatible string.
->>>>
->>> Alternatively this value can be set to 255. The GPIO source is an 8 bit
->>> value with 255 being reserved for "no interrupt source assigned".
->>
->> Who is reserving it? The HW? Or is that your own defined convention?
->>
->>> This way we cover all chips based on the same IP.
->>
->> Why? Where is that 8bit limit coming from?
->>
-> The 8 bit limit is in the HW.
-> 
->>> I think what we could gain by introducing an additional DT property
->>> (saving a few bytes in the irqdomain mapping table) isn't worth the effort.
->>
->> It is not about saving or wasting memory. It is about making the driver
->> and its binding able to span multiple generation of the HW without too
->> much churn. Which is why I'm suggesting that you either define these
->> properties in DT *or* match the compatible string to obtain these values.
->>
->>>>> +
->>>>> +/*
->>>>> + * In case of IRQ_TYPE_EDGE_BOTH we need two parent interrupts, one for each
->>>>> + * edge. That's due to HW constraints.
->>>>> + * We use format 2 * GPIO_HWIRQ +(0|1) for the hwirq, so we can have one
->>>>> + * GPIO_HWIRQ twice and derive the GPIO_HWIRQ from hwirq by shifting hwirq
->>>>> + * one bit to the right.
->>>>
->>>> Please expand on how you expect this to work, specially when a random
->>>> driver expects a single interrupt.
->>>>
->>> The gpio interrupt controller in this chip doesn't have native support for
->>> IRQ_TYPE_EDGE_BOTH. As a workaround we would need to assign the same gpio
->>> to two parent interrupts, one for each edge.
->>
->> No, that's horrible, racy, and impractical. It has been proposed in the
->> past (for the same HW), and we're not going there again.
->>
-> IIRC what has been proposed before is to re-program the polarity of edge
-> detection withing the ISR. This would match your concern that it is racy.
-> 
-> Here it's about using two parent irq's, one programmed to react on the
-> rising edge whilst the other is triggered in case of falling edge.
-> Would you consider this to be racy too?
+Hi Linus,
 
-How do you reconcile two interrupts to make look like a single one for a
-random, pre-existing driver?
+I would to (re)start the discussion around the management of the
+irq_mapping in the gpio framework:
 
-[...]
+Many gpio controllers are able to provide a working irq to all the gpios at the
+same time. On those controller we can create all the irq mapping during the
+probe of the controller. Things are easy.
 
->>>> So you reject EDGE_BOTH? So what's the deal with the beginning of the patch?
->>>>
->>> We reject it in the initial version of the patch set as there's no consensus
->>> yet on some details of the workaround needed for EDGE_BOTH support.
->>
->> There is a consensus: The HW doesn't support this feature.
->>
-> Means what? There is no acceptable way to support EDGE_BOTH on this HW?
-> In this case I could stop here as for me this feature is important.
+Then, there is another type of controller, with constraints that make it
+impossible to provide a working irq to all pins at the same it. On Amlogic SoC
+for example, we have only 8 parent irqs with and 8 to many (the number of pins)
+router. Ressource has be to managed in a more "dynamic" fashion.
 
-Answer my question above, which I asked in my initial review: How do you
-make two interrupts appear as one for a driver that wants to get
-signaled on each edge, using the existing API.
+To handle this we tried:
+- [0]: To create the mapping in the gpio_to_irq. Linus, you pointed out that
+this is not allowed as gpio_to_irq is callable in irq context, therefore it
+should not sleep. Actually 3 drivers [2] are calling gpio_to_irq in irq
+handlers.
+I would also add that "gpio_to_irq" has no "free" counter part, so this approach
+leaks mappings. The fact that 26 gpio drivers [3] create mapping in the
+gpio_to_irq callback shows that the problem of managing the irq mapping is not
+specific to Amlogic and that an evolution might be useful.
 
-> 
-> Would be somewhat a pity as there is a working solution. If it doesn't fit
-> into the current irq(chip) framework, shouldn't this be considered a gap
-> in the framework?
+- [1]: To create an empty domain to get a virq for each pins but delay the setup
+of the interrupt hierarchy to the "irq_request_resources" callback. Testing this
+approach led me to some nasty race conditions in the interrupt handlers. I
+discussed this solution with Marc and he told me that doing the setup of the
+interrupt hierarchy in the irqchip callbacks is "too late" . If I understood
+correctly (Marc feel to correct me if necessary), you should only get a virq
+when the full interrupt hierarchy is setup, from the triggering device to the
+CPU. 
 
-Again, this is not about the framework, which we can almost twist as we
-see fit. It is about the API that a driver expects. At the moment, you
-haven't proposed anything.
+With this last comment, I don't think there is a (clean) way ATM for a gpio
+driver to create the mapping "on demand". By "on-demand", I mean the consumer
+drivers doing this kind of thing:
 
-Thanks,
+ret = request_irq(gpio_to_irq(GPIOX_Y), ... )
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+I would to like propose a way to fix that. It is not going to be a oneline fix,
+but I'm convinced we can do it w/o breaking anything:
+
+1) Introduce new gpio driver callbacks (.irq_prepare, .irq_unprepare): Drivers
+will be free to implement those callbacks or not. Driver which can create all
+their mappings at probe time would obviously skip those.
+
+2) Introduce gpio_irq_prepare and gpio_irq_unprepare to the gpio API: This
+functions would do refcounting to handle shared irq and avoid wrongly disposing
+of used mappings. Then call the new drivers callbacks, if defined. A devm
+version of gpio_irq_prepare might be usefull
+
+3) Add calls to gpio_irq_prepare to consumer drivers probe/init which use the
+gpio_to_irq callback. I don't think this is going to be that hard to do, but
+it's going be to long and boring ...
+
+As long as a platform does not implement these new callbacks, all the above is
+basically a noop and should not change anything.
+
+I think this course of action would allow us to slowly fix those offending
+drivers [3], providing them with a solution.
+
+As this is not going to be a small task, I would like to get your view on it
+before going further.
+
+Best Regards
+Jerome
+
+[0]: https://patchwork.ozlabs.org/patch/684208/
+[1]: http://lkml.kernel.org/r/5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com
+
+[2]: Drivers using gpio_to_irq in irq_handlers
+* drivers/gpio/gpio-ep93xx.c 
+* drivers/gpio/gpio-pxa.c
+* drivers/gpio/gpio-tegra.c
+
+[3]: Drivers creating mapping in the gpio_to_irq callback (either through
+irq_create_mapping, irq_create_fwspec_mapping or regmap_irq_get_virq)
+* arch/sh/boards/mach-x3proto/gpio.c
+* drivers/gpio/gpio-bcm-kona.c
+* drivers/gpio/gpio-da9052.c
+* drivers/gpio/gpio-da9055.c
+* drivers/gpio/gpio-wm831x.c
+* drivers/gpio/gpio-wm8994.c
+* drivers/pinctrl/nomadik/pinctrl-abx500.c
+* drivers/pinctrl/pinctrl-as3722.c
+* drivers/pinctrl/pinctrl-rockchip.c
+* drivers/pinctrl/samsung/pinctrl-samsung.c
+* drivers/pinctrl/stm32/pinctrl-stm32.c
+* arch/arm/plat-orion/gpio.c
+* drivers/gpio/gpio-davinci.c
+* drivers/gpio/gpio-em.c
+* drivers/gpio/gpio-grgpio.c
+* drivers/gpio/gpio-max77620.c
+* drivers/gpio/gpio-mpc8xxx.c
+* drivers/gpio/gpio-mvebu.c
+* drivers/gpio/gpio-palmas.c
+* drivers/gpio/gpio-tb10x.c
+* drivers/gpio/gpio-tps6586x.c
+* drivers/gpio/gpio-tz1090.c
+* drivers/gpio/gpio-xgene-sb.c
+* drivers/pinctrl/pinctrl-adi2.c
+* drivers/pinctrl/samsung/pinctrl-exynos5440.c
