@@ -1,209 +1,210 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v7 1/9] irqchip: add Amlogic Meson GPIO irqchip driver
-Date: Thu, 15 Jun 2017 21:03:56 +0200
-Message-ID: <025c570f-71a2-7fe7-a83b-a4ef4be47db9@gmail.com>
-References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
- <b33ccc5c-f383-97e7-44e6-d6e1f104e26c@gmail.com>
- <91b20fc4-4969-02a6-cc47-ff711f604342@arm.com>
- <1510ca1c-0a50-283d-42d5-b5710700460f@gmail.com>
- <9129464d-b7b6-a8f6-8671-091fc30e3161@arm.com>
- <c04dce8b-f3b9-e49e-47e8-0b24f3b66974@gmail.com>
- <daddce59-cfe6-a1be-6c04-093dfa146aca@arm.com>
- <92fdf31d-80ea-3b5f-3cfd-cf1f9ed529b9@gmail.com>
- <d768717c-b04f-bc55-4ac4-8261a61e95e9@arm.com>
+From: sathyanarayanan kuppuswamy
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] gpio: gpio-wcove: Fix GPIO control register offset
+ calculation
+Date: Thu, 15 Jun 2017 13:53:32 -0700
+Message-ID: <f18a15e9-24f2-891e-679b-6c9c83c9acc9@linux.intel.com>
+References: <c3bed7faffed058b1363ff5fdd35b6f107b83a78.1497476287.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <CAHp75Vd1w9FXF_Yfo0+mBAS3+JZmCv7O8tKCWvyAvTdjAcJn0A@mail.gmail.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33132 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbdFOTEJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 15 Jun 2017 15:04:09 -0400
-In-Reply-To: <d768717c-b04f-bc55-4ac4-8261a61e95e9@arm.com>
+Received: from mga05.intel.com ([192.55.52.43]:64528 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750830AbdFOUxd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 15 Jun 2017 16:53:33 -0400
+In-Reply-To: <CAHp75Vd1w9FXF_Yfo0+mBAS3+JZmCv7O8tKCWvyAvTdjAcJn0A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 
-Am 15.06.2017 um 18:58 schrieb Marc Zyngier:
-> On 15/06/17 17:37, Heiner Kallweit wrote:
->> Am 15.06.2017 um 18:04 schrieb Marc Zyngier:
->>> On 15/06/17 16:24, Heiner Kallweit wrote:
->>>> Am 15.06.2017 um 15:27 schrieb Marc Zyngier:
->>>>> On 15/06/17 14:10, Heiner Kallweit wrote:
->>>>>> Am 13.06.2017 um 10:31 schrieb Marc Zyngier:
->>>>>>> On 10/06/17 22:57, Heiner Kallweit wrote:
->>>>>>>> Add a driver supporting the GPIO interrupt controller on certain
->>>>>>>> Amlogic meson SoC's.
->>>>>>>>
->>>>>>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>>>>>> ---
->>>>>>>> v5:
->>>>>>>> - changed Kconfig entry based on Neil's suggestion
->>>>>>>> - added authors
->>>>>>>> - extended explanation why 2 * n hwirqs are used
->>>>>>>> v6:
->>>>>>>> - change DT property parent-interrupts to interrupts
->>>>>>>> v7:
->>>>>>>> - no changes
->>>>>>>> ---
->>>>>>>>  drivers/irqchip/Kconfig          |   5 +
->>>>>>>>  drivers/irqchip/Makefile         |   1 +
->>>>>>>>  drivers/irqchip/irq-meson-gpio.c | 295 +++++++++++++++++++++++++++++++++++++++
->>>>>>>>  3 files changed, 301 insertions(+)
->>>>>>>>  create mode 100644 drivers/irqchip/irq-meson-gpio.c
->>>>>>>>
->>>>>>>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->>>>>>>> index 478f8ace..bdc86e14 100644
->>>>>>>> --- a/drivers/irqchip/Kconfig
->>>>>>>> +++ b/drivers/irqchip/Kconfig
->>>>>>>> @@ -301,3 +301,8 @@ config QCOM_IRQ_COMBINER
->>>>>>>>  	help
->>>>>>>>  	  Say yes here to add support for the IRQ combiner devices embedded
->>>>>>>>  	  in Qualcomm Technologies chips.
->>>>>>>> +
->>>>>>>> +config MESON_GPIO_INTC
->>>>>>>> +	bool
->>>>>>>> +	depends on ARCH_MESON
->>>>>>>> +	default y
->>>>>>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>>>>>>> index b64c59b8..1be482bd 100644
->>>>>>>> --- a/drivers/irqchip/Makefile
->>>>>>>> +++ b/drivers/irqchip/Makefile
->>>>>>>> @@ -76,3 +76,4 @@ obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
->>>>>>>>  obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o
->>>>>>>>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
->>>>>>>>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
->>>>>>>> +obj-$(CONFIG_MESON_GPIO_INTC)		+= irq-meson-gpio.o
->>>>>>>> diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
->>>>>>>> new file mode 100644
->>>>>>>> index 00000000..925d00c2
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/drivers/irqchip/irq-meson-gpio.c
->>>>>>>> @@ -0,0 +1,295 @@
->>>>>>>> +/*
->>>>>>>> + * Amlogic Meson GPIO IRQ chip driver
->>>>>>>> + *
->>>>>>>> + * Copyright (c) 2015 Endless Mobile, Inc.
->>>>>>>> + * Author: Carlo Caione <carlo@endlessm.com>
->>>>>>>> + * Copyright (c) 2016 BayLibre, SAS.
->>>>>>>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->>>>>>>> + * Copyright (c) 2017 Heiner Kallweit <hkallweit1@gmail.com>
->>>>>>>> + *
->>>>>>>> + * This program is free software; you can redistribute it and/or
->>>>>>>> + * modify it under the terms of the GNU General Public License as
->>>>>>>> + * published by the Free Software Foundation, version 2.
->>>>>>>> + */
->>>>>>>> +
->>>>>>>> +#include <linux/device.h>
->>>>>>>> +#include <linux/init.h>
->>>>>>>> +#include <linux/interrupt.h>
->>>>>>>> +#include <linux/irqchip.h>
->>>>>>>> +#include <linux/of.h>
->>>>>>>> +#include <linux/of_irq.h>
->>>>>>>> +#include <linux/of_address.h>
->>>>>>>> +#include <linux/regmap.h>
->>>>>>>> +
->>>>>>>> +#define REG_EDGE_POL		0x00
->>>>>>>> +#define REG_PIN_03_SEL		0x04
->>>>>>>> +#define REG_PIN_47_SEL		0x08
->>>>>>>> +#define REG_FILTER_SEL		0x0c
->>>>>>>> +
->>>>>>>> +#define REG_EDGE_POL_MASK(x)	(BIT(x) | BIT(16 + (x)))
->>>>>>>> +#define REG_EDGE_POL_EDGE(x)	BIT(x)
->>>>>>>> +#define REG_EDGE_POL_LOW(x)	BIT(16 + (x))
->>>>>>>> +
->>>>>>>> +#define MAX_PARENT_IRQ_NUM	8
->>>>>>>> +
->>>>>>>> +/* maximum number of GPIO IRQs on supported platforms */
->>>>>>>> +#define MAX_NUM_GPIO_IRQ	133
->>>>>>>
->>>>>>> Why aren't these values coming from DT? I bet that a future revision of
->>>>>>> the same HW will double these. Or at least, you could match it on the
->>>>>>> compatible string.
->>>>>>>
->>>>>> Alternatively this value can be set to 255. The GPIO source is an 8 bit
->>>>>> value with 255 being reserved for "no interrupt source assigned".
->>>>>
->>>>> Who is reserving it? The HW? Or is that your own defined convention?
->>>>>
->>>>>> This way we cover all chips based on the same IP.
->>>>>
->>>>> Why? Where is that 8bit limit coming from?
->>>>>
->>>> The 8 bit limit is in the HW.
->>>>
->>>>>> I think what we could gain by introducing an additional DT property
->>>>>> (saving a few bytes in the irqdomain mapping table) isn't worth the effort.
->>>>>
->>>>> It is not about saving or wasting memory. It is about making the driver
->>>>> and its binding able to span multiple generation of the HW without too
->>>>> much churn. Which is why I'm suggesting that you either define these
->>>>> properties in DT *or* match the compatible string to obtain these values.
->>>>>
->>>>>>>> +
->>>>>>>> +/*
->>>>>>>> + * In case of IRQ_TYPE_EDGE_BOTH we need two parent interrupts, one for each
->>>>>>>> + * edge. That's due to HW constraints.
->>>>>>>> + * We use format 2 * GPIO_HWIRQ +(0|1) for the hwirq, so we can have one
->>>>>>>> + * GPIO_HWIRQ twice and derive the GPIO_HWIRQ from hwirq by shifting hwirq
->>>>>>>> + * one bit to the right.
->>>>>>>
->>>>>>> Please expand on how you expect this to work, specially when a random
->>>>>>> driver expects a single interrupt.
->>>>>>>
->>>>>> The gpio interrupt controller in this chip doesn't have native support for
->>>>>> IRQ_TYPE_EDGE_BOTH. As a workaround we would need to assign the same gpio
->>>>>> to two parent interrupts, one for each edge.
->>>>>
->>>>> No, that's horrible, racy, and impractical. It has been proposed in the
->>>>> past (for the same HW), and we're not going there again.
->>>>>
->>>> IIRC what has been proposed before is to re-program the polarity of edge
->>>> detection withing the ISR. This would match your concern that it is racy.
->>>>
->>>> Here it's about using two parent irq's, one programmed to react on the
->>>> rising edge whilst the other is triggered in case of falling edge.
->>>> Would you consider this to be racy too?
->>>
->>> How do you reconcile two interrupts to make look like a single one for a
->>> random, pre-existing driver?
->>>
->>> [...]
->>>
->>>>>>> So you reject EDGE_BOTH? So what's the deal with the beginning of the patch?
->>>>>>>
->>>>>> We reject it in the initial version of the patch set as there's no consensus
->>>>>> yet on some details of the workaround needed for EDGE_BOTH support.
->>>>>
->>>>> There is a consensus: The HW doesn't support this feature.
->>>>>
->>>> Means what? There is no acceptable way to support EDGE_BOTH on this HW?
->>>> In this case I could stop here as for me this feature is important.
->>>
->>> Answer my question above, which I asked in my initial review: How do you
->>> make two interrupts appear as one for a driver that wants to get
->>> signaled on each edge, using the existing API.
->>>
->> Please see the pinctrl/gpio part of the patch set.
+Hi Andy,
+
+
+On 06/15/2017 02:06 AM, Andy Shevchenko wrote:
+> On Thu, Jun 15, 2017 at 12:39 AM,
+> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 >>
->> The GPIO controller has an own IRQ domain. When requesting an interrupt
->> in request_resources if needed two parent irq's are allocated, (was removed
->> in the current initial version of the patch set) both calling the same ISR
->> via a chained interrupt.
+>> According to Whiskey Cove PMIC GPIO controller specification, for GPIO
+>> pins 0-12, GPIO input and output register control address range from,
 >>
->> Works perfectly fine here.
-> 
-> Are you referring to the horror that performs interrupt allocations from
-> within the irq_set_type callback? No way. That's beyond disgusting. And
-> potentially broken, as the locks that are being taken were never
-> designed to nest that way.
-> 
-No, this horror was the first attempt. In v7 of the patch set this is
-done from the request_resources callback.
+>> 0x4e44-0x4e50 for GPIO outputs control register
+>>
+>> 0x4e51-0x4e5d for GPIO input control register
+>>
+>> But, currently when calculating the GPIO register offsets in to_reg()
+>> function, all GPIO pins in the same bank uses the same GPIO control
+>> register address. This logic is incorrect. This patch fixes this
+>> issue.
+>>
+>> This patch also adds support to selectively skip register modification
+>> for virtual GPIOs.
+>>
+>> In case of Whiskey Cove PMIC, ACPI code may use up 94 virtual GPIOs.
+>> These virtual GPIOs are used by the ACPI code as means to access various
+>> non GPIO bits of PMIC. So for these virtual GPIOs, we don't need to
+>> manipulate the physical GPIO pin register. A similar patch has been
+>> merged recently by Hans for Crystal Cove PMIC GPIO driver. You can
+>> find more details about it in Commit 9a752b4c9ab9 ("gpio: crystalcove:
+>> Do not write regular gpio registers for virtual GPIOs")
+>>
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> Reported-by: Jukka Laitinen <jukka.laitinen@intel.com>
+> It seems it should have a Fixes tag.
+This issue exist from the first commit. Should I add fixes tag for it ?
+>
+>>   static inline unsigned int to_reg(int gpio, enum ctrl_register reg_type)
+>>   {
+>>          unsigned int reg;
+>> -       int bank;
+>>
+>> -       if (gpio < BANK0_NR_PINS)
+>> -               bank = 0;
+>> -       else if (gpio < BANK0_NR_PINS + BANK1_NR_PINS)
+>> -               bank = 1;
+>> -       else
+>> -               bank = 2;
+>> +       if (gpio >= WCOVE_GPIO_NUM)
+>> +               return -EOPNOTSUPP;
+> How this can happen?
+Whiskey Cove PMIC only has 13 real GPIO pins. But if you look at the 
+gpio chip configuration in gpio-wcove.c driver, ngpio value is set as 94.
 
-Rgds, Heiner
+wg->chip.ngpio = WCOVE_VGPIO_NUM; // 94
 
-> 	M.
-> 
+So, 0 < gpio index < 13 are real GPIOs  and  13 <= gpio index <  94 are 
+virtual GPIOs.  So for these virtual GPIOs we don't have any real 
+configuration registers in the hardware. That's why we should skip 
+register modifications for any GPIO pin index >= WCOVE_GPIO_NUM.
+
+
+>>          if (reg_type == CTRL_IN)
+>> -               reg = GPIO_IN_CTRL_BASE + bank;
+>> +               /*
+>> +                * GPIO input control registers
+>> +                * (one per pin): 0x4e51 - 0x4e5d
+>> +                */
+> Noise.
+Will remove it.
+>
+>> +               reg = GPIO_IN_CTRL_BASE + gpio;
+>>          else
+>> -               reg = GPIO_OUT_CTRL_BASE + bank;
+>> +               /* GPIO output control registers
+>> +                * (one per pin): 0x4e44 - 0x4e50
+>> +                */
+> Wrong multi-line comment and noise overall.
+>
+> If you wish to leave the comments, put them on top of the function as
+> its description.
+I will just remove it.
+>
+>> +               reg = GPIO_OUT_CTRL_BASE + gpio;
+>>
+>>          return reg;
+>>   }
+>> @@ -145,7 +147,10 @@ static void wcove_update_irq_mask(struct wcove_gpio *wg, int gpio)
+>>
+>>   static void wcove_update_irq_ctrl(struct wcove_gpio *wg, int gpio)
+>>   {
+>> -       unsigned int reg = to_reg(gpio, CTRL_IN);
+>> +       int reg = to_reg(gpio, CTRL_IN);
+>> +
+>> +       if (reg < 0)
+>> +               return;
+> Since above comment this change would gone.
+>
+>> +       int reg = to_reg(gpio, CTRL_OUT);
+>> +
+>> +       if (reg < 0)
+>> +               return 0;
+>>
+>> -       return regmap_write(wg->regmap, to_reg(gpio, CTRL_OUT),
+>> -                           CTLO_INPUT_SET);
+>> +       return regmap_write(wg->regmap, reg, CTLO_INPUT_SET);
+> Ditto.
+>
+>> +       int reg = to_reg(gpio, CTRL_OUT);
+>>
+>> -       return regmap_write(wg->regmap, to_reg(gpio, CTRL_OUT),
+>> -                           CTLO_OUTPUT_SET | value);
+>> +       if (reg < 0)
+>> +               return 0;
+>> +
+>> +       return regmap_write(wg->regmap, reg, CTLO_OUTPUT_SET | value);
+> Ditto.
+>
+>> +       int ret, reg = to_reg(gpio, CTRL_OUT);
+> Don't fit such variable on one line.
+>
+>> +
+>> +       if (reg < 0)
+>> +               return 0;
+>>
+>> -       ret = regmap_read(wg->regmap, to_reg(gpio, CTRL_OUT), &val);
+>> +       ret = regmap_read(wg->regmap, reg, &val);
+> This would gone after addressing first comment.
+>
+>> -       int ret;
+>> +       int ret, reg = to_reg(gpio, CTRL_IN);
+>> +
+>> +       if (reg < 0)
+>> +               return 0;
+>>
+>> -       ret = regmap_read(wg->regmap, to_reg(gpio, CTRL_IN), &val);
+>> +       ret = regmap_read(wg->regmap, reg, &val);
+> Ditto.
+>
+>> +       int reg = to_reg(gpio, CTRL_OUT);
+>> +
+>> +       if (reg < 0)
+>> +               return;
+>>
+>>          if (value)
+>> -               regmap_update_bits(wg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
+>> +               regmap_update_bits(wg->regmap, reg, 1, 1);
+>>          else
+>> -               regmap_update_bits(wg->regmap, to_reg(gpio, CTRL_OUT), 1, 0);
+>> +               regmap_update_bits(wg->regmap, reg, 1, 0);
+> Ditto.
+>
+>> +       int reg = to_reg(gpio, CTRL_OUT);
+>> +
+>> +       if (reg < 0)
+>> +               return 0;
+>>
+>>          switch (pinconf_to_config_param(config)) {
+>>          case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+>> -               return regmap_update_bits(wg->regmap, to_reg(gpio, CTRL_OUT),
+>> -                                               CTLO_DRV_MASK, CTLO_DRV_OD);
+>> +               return regmap_update_bits(wg->regmap, reg, CTLO_DRV_MASK,
+>> +                                         CTLO_DRV_OD);
+>>          case PIN_CONFIG_DRIVE_PUSH_PULL:
+>> -               return regmap_update_bits(wg->regmap, to_reg(gpio, CTRL_OUT),
+>> -                                               CTLO_DRV_MASK, CTLO_DRV_CMOS);
+>> +               return regmap_update_bits(wg->regmap, reg, CTLO_DRV_MASK,
+>> +                                         CTLO_DRV_CMOS);
+> Ditto.
+>
+>> +       if (data->hwirq >= WCOVE_GPIO_NUM)
+>> +               return 0;
+>> +
+> How could it happen?
+>
+>> +       if (data->hwirq >= WCOVE_GPIO_NUM)
+>> +               return;
+> Ditto.
+>
+>> +       if (data->hwirq >= WCOVE_GPIO_NUM)
+>> +               return;
+> Ditto.
+>
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
