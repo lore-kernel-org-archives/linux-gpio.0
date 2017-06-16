@@ -1,55 +1,43 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Timur Tabi <timur@codeaurora.org>
 Subject: Re: Sparse GPIO maps with pinctrl-msm.c?
-Date: Fri, 16 Jun 2017 08:07:21 -0700
-Message-ID: <20170616150721.GJ20170@codeaurora.org>
+Date: Fri, 16 Jun 2017 10:15:01 -0500
+Message-ID: <9bdc5f51-0045-53bf-4b5f-be2a930f1965@codeaurora.org>
 References: <CAOZdJXWPEmcw-=P9+q-Zsf4xy9J-ze+W6kUVFi8hLxVH9SGcCA@mail.gmail.com>
+ <20170616150721.GJ20170@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:55368 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:57924 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752609AbdFPPHX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jun 2017 11:07:23 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOZdJXWPEmcw-=P9+q-Zsf4xy9J-ze+W6kUVFi8hLxVH9SGcCA@mail.gmail.com>
+        with ESMTP id S1752439AbdFPPPE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jun 2017 11:15:04 -0400
+In-Reply-To: <20170616150721.GJ20170@codeaurora.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
 Cc: linux-gpio@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-(Updating Andy's mail and adding Bjorn)
+On 6/16/17 10:07 AM, Stephen Boyd wrote:
+> I'm not aware of anything in pinctrl-msm to support this. 
 
-On 06/13, Timur Tabi wrote:
-> I've run into a problem with our ACPI system where it turns out that
-> one a subset of GPIOs are actually available to Linux.  Attempting to
-> access anything that's not "approve" generates an XPU violation and
-> halts the system.
-> 
-> Our pin control driver, pinctrl-qdf2xxx.c, is a client on
-> pintrl-msm.c.  As such, it has to package the GPIO information in a
-> way that pinctrl-msm can use.  I just want to get confirmation that
-> there is no way to provide a list of specific GPIOs.
-> 
-> The actual list are these GPIOs: 116, 117, 118, 119, 120, 121, 122,
-> 123, 124, 125, 126, 127, 128, 129, 130, 131, 80, 81, 82, 83, 84, 85,
-> 86, 87, 88, 89, 90, 50, 36, 37, 38, 39.  These correspond to
-> qdss_tracedata[0 - 31].  I can create these as gpio0 - gpio31, but
-> that doesn't work because then no one will know (without using
-> debug_fs) that "gpio3" is actually GPIO 119.
-> 
-> I can instead create all 150 GPIOs, and then specify NULL data for the
-> 118 unavailable GPIOs, but then if anyone tries to access any of those
-> (e.g. "echo 7 > /sys/class/gpio/gexport") will case a violation.
-> 
-> Is there a way, in pinctrl-msm, to specify a GPIO that doesn't
-> actually exist, and therefore should never be exported?
-> 
+It seems to me like the 'npins' field in msm_pingroup should be deleted, 
+because it can only ever be 1.
 
-I'm not aware of anything in pinctrl-msm to support this. Is this
-really a problem though? The only user that could cause an XPU
-violation would be root. So just "don't do that" and things will
-work fine.
+> Is this
+> really a problem though? The only user that could cause an XPU
+> violation would be root. So just "don't do that" and things will
+> work fine.
+
+Unfortunately, thanks to 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/pinctrl/qcom?id=8e51533780ba223a3562ff4382c6b6f350c7e9a4 
+we now read the direction of every pin at boot, and so we always get an 
+XPU violation early in the boot process.
+
+And even so, "don't do that" is just not acceptable on a server platform.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the
+Code Aurora Forum, hosted by The Linux Foundation.
