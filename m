@@ -1,42 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: mvebu: change compatible string for PWM support
-Date: Fri, 16 Jun 2017 11:13:40 +0200
-Message-ID: <CACRpkdZErh0PKy6+D7a23Js5d9n+eN_HVXhuatOFHGJRfObogA@mail.gmail.com>
-References: <20170601200820.22396-1-ralph.sennhauser@gmail.com>
- <CACRpkdY7yy=U1DgFHXGd06UXg0hh5eC7mBKHLr7hq01hR__q8g@mail.gmail.com> <CACQ1gAht7kPysPofvyykYrfcRgJ_i_FFC8NqyN+J2L9WXwHfcg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: mvebu: fix regmap_update_bits usage
+Date: Fri, 16 Jun 2017 11:16:32 +0200
+Message-ID: <CACRpkdbKde6Bj0pThxJ+Butzet1JCeFojSVVeoqM=x3qWGVw1w@mail.gmail.com>
+References: <20170609100917.26660-1-gregory.clement@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CACQ1gAht7kPysPofvyykYrfcRgJ_i_FFC8NqyN+J2L9WXwHfcg@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Ralph Sennhauser <ralph.sennhauser@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Russell King <linux@armlinux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170609100917.26660-1-gregory.clement@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Packham <Chris.Packham@alliedtelesis.co.nz>, Ralph Sennhauser <ralph.sennhauser@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 9, 2017 at 9:45 AM, Richard Genoud <richard.genoud@gmail.com> wrote:
-> 2017-06-09 9:42 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Thu, Jun 1, 2017 at 10:08 PM, Ralph Sennhauser
->> <ralph.sennhauser@gmail.com> wrote:
->>
->>> As it turns out more than just Armada 370 and XP support using GPIO
->>> lines as PWM lines. For example the Armada 38x family has the same
->>> hardware support. As such "marvell,armada-370-xp-gpio" for the
->>> compatible string is a misnomer.
->>>
->>> Change the compatible string to "marvell,armada-370-gpio" before the
->>> driver makes it out of the -rc stage. This also follows the practice of
->>> using only the first device family supported as part of the name.
->>>
->>> Also update the documentation and comments in the code accordingly.
->>>
->>> Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
->>> Signed-off-by: Ralph Sennhauser <ralph.sennhauser@gmail.com>
->>
->> Patch applied for next with the tags.
-> You mean for fixes right ?
-> The goal was to correct "marvell,armada-370-xp-gpio" before 4.12 is out.
+On Fri, Jun 9, 2017 at 12:09 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-OK I moved it to fixes.
+> In some place in the driver regmap_update_bits was misused. Indeed the
+> last argument is not the value of the bit (or group of bits) itself but
+> the mask value inside the register.
+>
+> So when setting the bit N, then the value must be BIT(N) and not 1.
+>
+> CC: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+> CC: Ralph Sennhauser <ralph.sennhauser@gmail.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> ---
+> Hi,
+>
+> In this second version I fixed the improper changed pointed by Thomas.
+
+This version applied with the tags.
 
 Yours,
 Linus Walleij
