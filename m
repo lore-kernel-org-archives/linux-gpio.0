@@ -1,55 +1,43 @@
-From: Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] gpio: rcar: Add R8A7743 (RZ/G1M) support
-Date: Fri, 16 Jun 2017 14:32:24 +0100
-Message-ID: <1497619944-61410-1-git-send-email-biju.das@bp.renesas.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:26868 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753971AbdFPNpy (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 16 Jun 2017 09:45:54 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFT 2/2] pinctrl: samsung: Fix invalid register offset used
+ for Exynos5433 external interrupts
+Date: Fri, 16 Jun 2017 16:08:13 +0200
+Message-ID: <0cfe358a-c050-aae0-5755-819c7b25ef28@samsung.com>
+References: <20170614131828.28683-1-krzk@kernel.org>
+        <CGME20170614131847epcas3p4755a0ad1e25550134ddfcf0db9aff06b@epcas3p4.samsung.com>
+        <20170614131828.28683-2-krzk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20170614131828.28683-2-krzk@kernel.org>
+Content-language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, Chris Paterson <chris.paterson2@renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Biju Das <biju.das@bp.renesas.com>
 
-Renesas RZ/G1M (R8A7743 SoC) GPIO blocks are identical to the R-Car Gen2
-family. Add support for its GPIO controllers.
+On 06/14/2017 03:18 PM, Krzysztof Kozlowski wrote:
+> When setting the pin function for external interrupts, the driver used
+> wrong IO memory address base.  The pin function register is always under
+> pctl_base, not the eint_base.
+> 
+> By updating wrong register, the external interrupts for chosen GPIO
+> would not work at all and some other GPIO might be configured to wrong
+> value.
+> 
+> Platforms other than Exynos5433 should not be affected as eint_base
+> equals pctl_base in such case.
+> 
+> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple IORESOURCE_MEM for one pin-bank")
+> Cc:<stable@vger.kernel.org>
+> Reported-by: Tomasz Figa<tomasz.figa@gmail.com>
+> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
----
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- drivers/gpio/gpio-rcar.c                                     | 4 ++++
- 2 files changed, 5 insertions(+)
+The patch looks good to me, I'll try to test it later today.
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 7c1ab3b..1cc3cfe 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -3,6 +3,7 @@
- Required Properties:
- 
-   - compatible: should contain one of the following.
-+    - "renesas,gpio-r8a7743": for R8A7743 (RZ-G1M) compatible GPIO controller.
-     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 31ad288..4a1536a 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -344,6 +344,10 @@ struct gpio_rcar_info {
- 
- static const struct of_device_id gpio_rcar_of_table[] = {
- 	{
-+		.compatible = "renesas,gpio-r8a7743",
-+		/* RZ/G1 GPIO is identical to R-Car Gen2. */
-+		.data = &gpio_rcar_info_gen2,
-+	}, {
- 		.compatible = "renesas,gpio-r8a7790",
- 		.data = &gpio_rcar_info_gen2,
- 	}, {
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
 -- 
-1.9.1
-
+Thanks,
+Sylwester
