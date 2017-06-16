@@ -1,7 +1,7 @@
 From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v3 6/9] pinctrl: mvebu: add driver for Armada CP110 pinctrl
-Date: Fri, 16 Jun 2017 11:24:33 +0200
-Message-ID: <CACRpkdb6i+O1okCb2tbSECdzjzsyBsff-q-2UQ16gX7yW+Xu8Q@mail.gmail.com>
+Date: Fri, 16 Jun 2017 11:26:08 +0200
+Message-ID: <CACRpkdb+D+a9S4UCjex_P1YEATj9RhSu4i0fy50AopAJ1MOzXA@mail.gmail.com>
 References: <cover.d003a5e862e6d732d901a61d1765a349c9a89eef.1497281623.git-series.gregory.clement@free-electrons.com>
  <2d71d93a22ed24c45b7ce7b52fa066cc0a14a69f.1497281623.git-series.gregory.clement@free-electrons.com>
 Mime-Version: 1.0
@@ -29,6 +29,34 @@ On Mon, Jun 12, 2017 at 5:34 PM, Gregory CLEMENT
 >
 > Signed-off-by: Hanna Hawa <hannah-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 > Reviewed-by: Shadi Ammouri <shadi-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+>
+> [updated for mvebu pinctrl and 4.9 changes:
+>  - converted to simple_mmio
+>  - converted to syscon/regmap
+>  - removed unimplemented .remove function
+>  - dropped DTS changes
+>  - defered gpio ranges to DT
+>  - fixed warning
+>  - properly set soc->nmodes
+>  -- rmk]
+> Signed-off-by: Russell King <rmk+kernel-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>
+>
+> [ add missing MPP[61:56] function 14 (SDIO)
+> -- Konstantin Porotchkin]
+> Signed-off-by: Konstantin Porotchkin <kostap-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+>
+> [ allow to properly register more then one instance of this driver
+> -- Grzegorz Jaszczyk]
+> Signed-off-by: Grzegorz Jaszczyk <jaz-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>
+>
+> [ - rebased on 4.12-rc1
+>   - fixed the 80 character limit for mvebu_mpp_mode array
+>   - aligned the compatible name on the ones already used
+>   - fixed the MPP table for CP110: some MPP are not available on Armada 7K
+> -- Gregory CLEMENT]
+> Signed-off-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+>
+> Tested-by: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
 Patch applied.
 
