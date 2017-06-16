@@ -1,70 +1,58 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Timur Tabi <timur@codeaurora.org>
 Subject: Re: Sparse GPIO maps with pinctrl-msm.c?
-Date: Fri, 16 Jun 2017 09:06:44 -0700
-Message-ID: <20170616160644.GA17640@tuxbook>
+Date: Fri, 16 Jun 2017 11:07:41 -0500
+Message-ID: <4d56b425-10c3-9568-e88c-4ac22ca0c50d@codeaurora.org>
 References: <CAOZdJXWPEmcw-=P9+q-Zsf4xy9J-ze+W6kUVFi8hLxVH9SGcCA@mail.gmail.com>
  <20170616150721.GJ20170@codeaurora.org>
  <9bdc5f51-0045-53bf-4b5f-be2a930f1965@codeaurora.org>
- <20170616154125.GK20170@codeaurora.org>
- <bac5136c-e98f-d6ef-bf30-0c22b01c1ac7@codeaurora.org>
+ <20170616155517.GY12920@tuxbook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f53.google.com ([74.125.83.53]:35589 "EHLO
-        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750986AbdFPQGu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jun 2017 12:06:50 -0400
-Received: by mail-pg0-f53.google.com with SMTP id k71so22176770pgd.2
-        for <linux-gpio@vger.kernel.org>; Fri, 16 Jun 2017 09:06:49 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <bac5136c-e98f-d6ef-bf30-0c22b01c1ac7@codeaurora.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60720 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750899AbdFPQHo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 16 Jun 2017 12:07:44 -0400
+In-Reply-To: <20170616155517.GY12920@tuxbook>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-gpio@vger.kernel.org, Andy Gross <andy.gross@linaro.org>
 
-On Fri 16 Jun 08:49 PDT 2017, Timur Tabi wrote:
+On 6/16/17 10:55 AM, Bjorn Andersson wrote:
+> npins are the number of "pins" handles by the TLMM, while ngpios are the
+> number of GPIO lines. I.e. npins >= ngpios and non platforms where we
+> control e.g. sdc properties you can see that npins > ngpios.
 
-> On 6/16/17 10:41 AM, Stephen Boyd wrote:
-> > On 06/16, Timur Tabi wrote:
-> > > On 6/16/17 10:07 AM, Stephen Boyd wrote:
-> > > > I'm not aware of anything in pinctrl-msm to support this.
-> > > 
-> > > It seems to me like the 'npins' field in msm_pingroup should be
-> > > deleted, because it can only ever be 1.
-> > 
-> > Ok. But does that change anything about this problem?
+I'm talking about the 'npins' in struct msm_pingroup:
+
+struct msm_pingroup {
+	const char *name;
+	const unsigned *pins;
+	unsigned npins;
+
+Every client driver of pinctrl-msm sets this value to 1 for every group.
+
+> It's not an awesome solution for mobile either. But to solve this we
+> have two problems to solve;
 > 
-> No, but at least no one would ever be fooled into thinking that you can have
-> sparse GPIO maps when using pinctrl-msm.
-> 
+> 1) as the XPU configuration isn't fixed we need to be dynamic or
+> configurable in some sensible way
 
-As GPIOs are both identified by name and by index within the controller
-I don't see it as sufficient to play games with just lowering
-npins/ngpios and compacting the lists.
+I was planning on updating the TLMM ACPI node to include a property that 
+lists the acceptable GPIOs.
 
-[..]
-> > We've already run into this problem on mobile platforms where
-> > certain pins are locked down and the approach has been to not
-> > care. But I don't think we have your patch yet, so you're the
-> > first one to run into this problem.
-> 
-> For now, I've decided that I'm just going to expose the qdss_tracedata[]
-> pins as GPIOs, numbered 0 .. n-1.  However, there's no consensus on that,
-> either.
-> 
+> 2) the pinctrl framework does have some support for sparse pin spaces,
+> but this would need to be extended to allow us to (easily) register a
+> sparse list of pins
 
-Exposing a subset of GPIOs with a different numbering than what's in the
-hardware documentation is going to be quite confusing for the users.
+I was hoping there would be a way in pinctrl-msm to tell the framework, 
+"Oh, you want to export this pin? Sorry, I forgot to tell you that it 
+doesn't exist."
 
-
-Just to confirm, are the qdss_tracedata the only GPIOs that you want to
-expose from the TLMM now? Are those consecutive?
-
-> Being able to designate specific pins as absent would make everyone happy.
-> 
-
-I agree.
-
-Regards,
-Bjorn
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the
+Code Aurora Forum, hosted by The Linux Foundation.
