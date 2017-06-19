@@ -1,130 +1,48 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [PATCH v1] pinctrl: generic: Add output-enable property
-Date: Mon, 19 Jun 2017 10:55:12 +0300
-Message-ID: <8308055.PJrIDk1Zue@avalon>
-References: <1497603581-9632-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH] gpio: rcar: Add R8A7743 (RZ/G1M) support
+Date: Mon, 19 Jun 2017 11:17:30 +0000
+Message-ID: <KL1PR06MB170245DC49AB2DF041FC97E9B8C40@KL1PR06MB1702.apcprd06.prod.outlook.com>
+References: <1497619944-61410-1-git-send-email-biju.das@bp.renesas.com>
+ <d7242a3b-bf30-1683-29e0-90c847ce8eaf@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1497603581-9632-1-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:41552 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753830AbdFSLRg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 19 Jun 2017 07:17:36 -0400
+In-Reply-To: <d7242a3b-bf30-1683-29e0-90c847ce8eaf@cogentembedded.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, Chris Paterson <Chris.Paterson2@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Jacopo,
-
-Thank you for the patch.
-
-On Friday 16 Jun 2017 10:59:41 Jacopo Mondi wrote:
-> Add output-enable generic pin configuration property.
-> This properties allows enabling/disabling pin's output capabilities
-> without actually driving any value on the line.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-> ---
-> 
-> So, after that many discussions I'm now sending this, that only adds a new
-> flag used to enable or disable a pin's output capabilities.
-> I intentionally avoided naming the output buffer explicitly because if and
-> how it has to be enabled/disabled is a platform specific details each
-> driver has to take care of.
-> 
-> Dong: this is similar to what you recently proposed, without mentioning the
-> output buffer directly. Can I have your Reviewed-by or your Acked-by here?
-> 
-> Linus, Andy: I initially proposed to add "output-buffer-enable" in place of
-> this one, so not to confuse the property's semantic with its real world
-> effect. While I'm still partially convinced output-enable is not the most
-> accurate choice possible, it certainly is the best balance with bindings
-> clearness, and the one where more consensus has been collected on. Hope
-> this flies for you too and we can have this merged so me and Dong can send
-> our updated series on top of this.
-> 
-> Thanks
->    j
-> 
->  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 2 ++
->  drivers/pinctrl/pinconf-generic.c                              | 3 +++
->  include/linux/pinctrl/pinconf-generic.h                        | 3 +++
->  3 files changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt index
-> f01d154..f8af190 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> @@ -259,6 +259,8 @@ input-debounce		- debounce mode with debound 
-time X
->  power-source		- select between different power supplies
->  low-power-enable	- enable low power mode
->  low-power-disable	- disable low power mode
-> +output-disable		- disable output on a pin
-> +output-enable		- enable output on a pin
->  output-low		- set the pin to output mode with low level
->  output-high		- set the pin to output mode with high level
->  slew-rate		- set the slew rate
-> diff --git a/drivers/pinctrl/pinconf-generic.c
-> b/drivers/pinctrl/pinconf-generic.c index 720a19f..fc0c230 100644
-> --- a/drivers/pinctrl/pinconf-generic.c
-> +++ b/drivers/pinctrl/pinconf-generic.c
-> @@ -44,6 +44,7 @@ static const struct pin_config_item conf_items[] = {
->  	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, 
-false),
-> PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT_ENABLE, "input schmitt enabled", NULL,
-> false), PCONFDUMP(PIN_CONFIG_LOW_POWER_MODE, "pin low power", "mode",
-> true), +	PCONFDUMP(PIN_CONFIG_OUTPUT_ENABLE, "output enabled", NULL,
-> false), PCONFDUMP(PIN_CONFIG_OUTPUT, "pin output", "level", true),
->  	PCONFDUMP(PIN_CONFIG_POWER_SOURCE, "pin power source", "selector", 
-true),
->  	PCONFDUMP(PIN_CONFIG_SLEW_RATE, "slew rate", NULL, true),
-> @@ -172,6 +173,8 @@ static const struct pinconf_generic_params dt_params[] =
-> { { "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
->  	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
->  	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-> +	{ "output-disable", PIN_CONFIG_OUTPUT_ENABLE, 0 },
-> +	{ "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
->  	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
->  	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
->  	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-> diff --git a/include/linux/pinctrl/pinconf-generic.h
-> b/include/linux/pinctrl/pinconf-generic.h index 7620eb1..5761958 100644
-> --- a/include/linux/pinctrl/pinconf-generic.h
-> +++ b/include/linux/pinctrl/pinconf-generic.h
-> @@ -73,6 +73,8 @@
->   *	operation, if several modes of operation are supported these can be
->   *	passed in the argument on a custom form, else just use argument 1
->   *	to indicate low power mode, argument 0 turns low power mode off.
-> + * @PIN_CONFIG_OUTPUT_ENABLE: this will enable the pin's output mode
-> + * 	without driving a value there. 1 enables output mode, 0 disables it.
-
-I think you need to elaborate a bit more here. It will be very difficult for a 
-developer to understand the rationale behind PIN_CONFIG_OUTPUT_ENABLE and when 
-it should be used instead of PIN_CONFIG_OUTPUT with just those two lines of 
-documentation if he/she hasn't followed the discussion that led to this patch.
-
->   * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use
-> argument
->   *	1 to indicate high level, argument 0 to indicate low level. (Please
->   *	see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
-> @@ -105,6 +107,7 @@ enum pin_config_param {
->  	PIN_CONFIG_INPUT_SCHMITT,
->  	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
->  	PIN_CONFIG_LOW_POWER_MODE,
-> +	PIN_CONFIG_OUTPUT_ENABLE,
->  	PIN_CONFIG_OUTPUT,
->  	PIN_CONFIG_POWER_SOURCE,
->  	PIN_CONFIG_SLEW_RATE,
-> --
-> 2.7.4
-
--- 
-Regards,
-
-Laurent Pinchart
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBncGlvOiByY2FyOiBBZGQgUjhBNzc0MyAoUlovRzFNKSBz
+dXBwb3J0DQo+DQo+IEhlbGxvIQ0KPg0KPiBPbiAwNi8xNi8yMDE3IDA0OjMyIFBNLCBCaWp1IERh
+cyB3cm90ZToNCj4NCj4gPiBSZW5lc2FzIFJaL0cxTSAoUjhBNzc0MyBTb0MpIEdQSU8gYmxvY2tz
+IGFyZSBpZGVudGljYWwgdG8gdGhlIFItQ2FyDQo+IEdlbjINCj4NCj4gICAgIFNvQyBzaG91bGQg
+YmUgb3V0c2lkZSB0aGUgcGFyZW5zLg0KDQpUaGFua3MuIEkgd2lsbCBjb3JyZWN0IGl0Lg0KDQo+
+DQo+ID4gZmFtaWx5LiBBZGQgc3VwcG9ydCBmb3IgaXRzIEdQSU8gY29udHJvbGxlcnMuDQo+ID4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+
+ID4gUmV2aWV3ZWQtYnk6IENocmlzIFBhdGVyc29uIDxjaHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5j
+b20+DQo+ID4gLS0tDQo+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlv
+L3JlbmVzYXMsZ3Bpby1yY2FyLnR4dCB8IDEgKw0KPiA+ICBkcml2ZXJzL2dwaW8vZ3Bpby1yY2Fy
+LmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA0ICsrKysNCj4gPiAgMiBm
+aWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9yZW5lc2FzLGdwaW8tcmNhci50eHQN
+Cj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9yZW5lc2FzLGdwaW8t
+cmNhci50eHQNCj4gPiBpbmRleCA3YzFhYjNiLi4xY2MzY2ZlIDEwMDY0NA0KPiA+IC0tLSBhL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3JlbmVzYXMsZ3Bpby1yY2FyLnR4
+dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3JlbmVz
+YXMsZ3Bpby1yY2FyLnR4dA0KPiA+IEBAIC0zLDYgKzMsNyBAQA0KPiA+ICBSZXF1aXJlZCBQcm9w
+ZXJ0aWVzOg0KPiA+DQo+ID4gICAgLSBjb21wYXRpYmxlOiBzaG91bGQgY29udGFpbiBvbmUgb2Yg
+dGhlIGZvbGxvd2luZy4NCj4gPiArICAgIC0gInJlbmVzYXMsZ3Bpby1yOGE3NzQzIjogZm9yIFI4
+QTc3NDMgKFJaLUcxTSkgY29tcGF0aWJsZSBHUElPDQo+IGNvbnRyb2xsZXIuDQo+DQo+ICAgICBO
+b3QgUlovRzFNPw0KDQpJIHdpbGwgY2hhbmdlIHRoaXMgdG8gUlovRzFNIGFuZCB3aWxsIHB1c2gg
+VjIuDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBM
+dGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1z
+aGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJl
+Z2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
