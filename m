@@ -1,48 +1,63 @@
-From: Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH] gpio: rcar: Add R8A7743 (RZ/G1M) support
-Date: Mon, 19 Jun 2017 11:17:30 +0000
-Message-ID: <KL1PR06MB170245DC49AB2DF041FC97E9B8C40@KL1PR06MB1702.apcprd06.prod.outlook.com>
-References: <1497619944-61410-1-git-send-email-biju.das@bp.renesas.com>
- <d7242a3b-bf30-1683-29e0-90c847ce8eaf@cogentembedded.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [GIT PULL] Immutable branch between MFD and X86 due for the v4.13
+ merge window
+Date: Mon, 19 Jun 2017 15:48:49 +0100
+Message-ID: <20170619144849.ltx2qny5v66od3ml@dell>
+References: <CAHp75VcQfSkn7NAWSC2Vq=8RCC0M1p9zvVFjJFLyEo17GDvHsA@mail.gmail.com>
+ <cover.1496687716.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:41552 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753830AbdFSLRg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 19 Jun 2017 07:17:36 -0400
-In-Reply-To: <d7242a3b-bf30-1683-29e0-90c847ce8eaf@cogentembedded.com>
-Content-Language: en-US
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:33137 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbdFSOsx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jun 2017 10:48:53 -0400
+Received: by mail-wm0-f41.google.com with SMTP id u185so383352wmd.0
+        for <linux-gpio@vger.kernel.org>; Mon, 19 Jun 2017 07:48:52 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <cover.1496687716.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, Chris Paterson <Chris.Paterson2@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: sathyanarayanan.kuppuswamy@linux.intel.com
+Cc: gnurou@gmail.com, heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, linus.walleij@linaro.org, edubezval@gmail.com, dvhart@infradead.org, rui.zhang@intel.com, andy@infradead.org, platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, sathyaosid@gmail.com
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIXSBncGlvOiByY2FyOiBBZGQgUjhBNzc0MyAoUlovRzFNKSBz
-dXBwb3J0DQo+DQo+IEhlbGxvIQ0KPg0KPiBPbiAwNi8xNi8yMDE3IDA0OjMyIFBNLCBCaWp1IERh
-cyB3cm90ZToNCj4NCj4gPiBSZW5lc2FzIFJaL0cxTSAoUjhBNzc0MyBTb0MpIEdQSU8gYmxvY2tz
-IGFyZSBpZGVudGljYWwgdG8gdGhlIFItQ2FyDQo+IEdlbjINCj4NCj4gICAgIFNvQyBzaG91bGQg
-YmUgb3V0c2lkZSB0aGUgcGFyZW5zLg0KDQpUaGFua3MuIEkgd2lsbCBjb3JyZWN0IGl0Lg0KDQo+
-DQo+ID4gZmFtaWx5LiBBZGQgc3VwcG9ydCBmb3IgaXRzIEdQSU8gY29udHJvbGxlcnMuDQo+ID4N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+
-ID4gUmV2aWV3ZWQtYnk6IENocmlzIFBhdGVyc29uIDxjaHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5j
-b20+DQo+ID4gLS0tDQo+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlv
-L3JlbmVzYXMsZ3Bpby1yY2FyLnR4dCB8IDEgKw0KPiA+ICBkcml2ZXJzL2dwaW8vZ3Bpby1yY2Fy
-LmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCA0ICsrKysNCj4gPiAgMiBm
-aWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9yZW5lc2FzLGdwaW8tcmNhci50eHQN
-Cj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZ3Bpby9yZW5lc2FzLGdwaW8t
-cmNhci50eHQNCj4gPiBpbmRleCA3YzFhYjNiLi4xY2MzY2ZlIDEwMDY0NA0KPiA+IC0tLSBhL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3JlbmVzYXMsZ3Bpby1yY2FyLnR4
-dA0KPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL3JlbmVz
-YXMsZ3Bpby1yY2FyLnR4dA0KPiA+IEBAIC0zLDYgKzMsNyBAQA0KPiA+ICBSZXF1aXJlZCBQcm9w
-ZXJ0aWVzOg0KPiA+DQo+ID4gICAgLSBjb21wYXRpYmxlOiBzaG91bGQgY29udGFpbiBvbmUgb2Yg
-dGhlIGZvbGxvd2luZy4NCj4gPiArICAgIC0gInJlbmVzYXMsZ3Bpby1yOGE3NzQzIjogZm9yIFI4
-QTc3NDMgKFJaLUcxTSkgY29tcGF0aWJsZSBHUElPDQo+IGNvbnRyb2xsZXIuDQo+DQo+ICAgICBO
-b3QgUlovRzFNPw0KDQpJIHdpbGwgY2hhbmdlIHRoaXMgdG8gUlovRzFNIGFuZCB3aWxsIHB1c2gg
-VjIuDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBM
-dGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1z
-aGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJl
-Z2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+Enjoy!
+
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-x86-v4.13
+
+for you to fetch changes up to 94d68594a7b4fd2eec457f22110de644e1c4ee57:
+
+  platform/x86: intel_bxtwc_tmu: Remove first level IRQ unmask (2017-06-19 15:45:30 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD and X86 due for the v4.13 merge window
+
+----------------------------------------------------------------
+Kuppuswamy Sathyanarayanan (6):
+      mfd: intel_soc_pmic_bxtwc: Fix TMU interrupt index
+      mfd: intel_soc_pmic_bxtwc: Remove thermal second level IRQs
+      mfd: intel_soc_pmic_bxtwc: Remove second level IRQ for gpio device
+      mfd: intel_soc_pmic_bxtwc: Utilize devm_* functions in driver probe
+      mfd: intel_soc_pmic_bxtwc: Use chained IRQs for second level IRQ chips
+      platform/x86: intel_bxtwc_tmu: Remove first level IRQ unmask
+
+ drivers/gpio/gpio-wcove.c                |  14 +-
+ drivers/mfd/intel_soc_pmic_bxtwc.c       | 232 +++++++++++++++++++++----------
+ drivers/platform/x86/intel_bxtwc_tmu.c   |   4 -
+ drivers/thermal/intel_bxt_pmic_thermal.c |   2 +-
+ drivers/usb/typec/typec_wcove.c          |   2 +-
+ include/linux/mfd/intel_soc_pmic.h       |   5 +-
+ 6 files changed, 175 insertions(+), 84 deletions(-)
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
