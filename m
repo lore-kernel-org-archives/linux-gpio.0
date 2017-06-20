@@ -1,29 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] MAINTAINERS: Take maintainership for GPIO ACPI support
-Date: Tue, 20 Jun 2017 10:49:39 +0200
-Message-ID: <CACRpkdY1Xo2LzVWo=SizwEkYVsuv-5uO_Q4WD9d+HahtLeyzkQ@mail.gmail.com>
-References: <20170612085212.64831-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Tue, 20 Jun 2017 10:52:56 +0200
+Message-ID: <CACRpkdZU2kuBGh84DL8naHitoj3Y-pFXLyw5vec36fWMHLnyQA@mail.gmail.com>
+References: <1497259612-38401-1-git-send-email-rajmohan.mani@intel.com> <1497259612-38401-3-git-send-email-rajmohan.mani@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170612085212.64831-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:37321 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752635AbdFTIw7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 04:52:59 -0400
+Received: by mail-it0-f52.google.com with SMTP id m47so9922677iti.0
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 01:52:59 -0700 (PDT)
+In-Reply-To: <1497259612-38401-3-git-send-email-rajmohan.mani@intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 
-On Mon, Jun 12, 2017 at 10:52 AM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Mon, Jun 12, 2017 at 11:26 AM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
 
-> We will help Linus to maintain GPIO ACPI support.
+> This patch adds support for TPS68470 GPIOs.
+> There are 7 GPIOs and a few sensor related GPIOs.
+> These GPIOs can be requested and configured as
+> appropriate.
 >
-> Append a dedicated record to the MAINTAINERS data base.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
 
-Patch happily applied.
+This is some fine code.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks guys!
+Feel free to merge this through MFD or tell me if I should
+merge it if there are no compile-time dependencies.
 
 Yours,
 Linus Walleij
