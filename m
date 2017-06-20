@@ -1,37 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 2/3] gpio: Add support for TPS68470 GPIOs
-Date: Tue, 20 Jun 2017 10:52:56 +0200
-Message-ID: <CACRpkdZU2kuBGh84DL8naHitoj3Y-pFXLyw5vec36fWMHLnyQA@mail.gmail.com>
-References: <1497259612-38401-1-git-send-email-rajmohan.mani@intel.com> <1497259612-38401-3-git-send-email-rajmohan.mani@intel.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
+Date: Tue, 20 Jun 2017 10:54:52 +0200
+Message-ID: <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com>
+ <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:37321 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752635AbdFTIw7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 04:52:59 -0400
-Received: by mail-it0-f52.google.com with SMTP id m47so9922677iti.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 01:52:59 -0700 (PDT)
-In-Reply-To: <1497259612-38401-3-git-send-email-rajmohan.mani@intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rajmohan Mani <rajmohan.mani@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
 
-On Mon, Jun 12, 2017 at 11:26 AM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
+On 2017-06-20 10:19, Linus Walleij wrote:
+> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> 
+>> This makes the gpio-exar driver usable, which was prevented by a number
+>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
+>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
+>> series, so I'm also cross-posting to the serial and gpio lists.
+>>
+>> Changes in v6:
+> 
+> I merged some of the patches, that applied. Let's see if they survive
+> in linux-next, else I guess we need to fix this in the -rcs or for the next
+> kernel cycle.
 
-> This patch adds support for TPS68470 GPIOs.
-> There are 7 GPIOs and a few sensor related GPIOs.
-> These GPIOs can be requested and configured as
-> appropriate.
->
-> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+Weird that things did not apply. I just did a cherry-pick for all those
+10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
+know which baseline is needed, and I will rebase.
 
-This is some fine code.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thanks,
+Jan
 
-Feel free to merge this through MFD or tell me if I should
-merge it if there are no compile-time dependencies.
-
-Yours,
-Linus Walleij
+-- 
+Siemens AG, Corporate Technology, CT RDA ITP SES-DE
+Corporate Competence Center Embedded Linux
