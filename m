@@ -1,60 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.12, take three
-Date: Tue, 20 Jun 2017 13:51:23 +0200
-Message-ID: <CACRpkdY-vFyd1F8SysCdpTRAr0bf63H1m6JBikfzv454dYyi5w@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
+Date: Tue, 20 Jun 2017 13:52:34 +0200
+Message-ID: <CACRpkdZB=L4zY46XAQABjzjyLDRCjqwXFckbXaS0jBWvRRZXaQ@mail.gmail.com>
+References: <20170609164827.2231-1-krzk@kernel.org> <CACRpkdZjZbHD4ZCQVHUyu8y0f45FnRqTRL4P6J7Wrz9dZNXGdw@mail.gmail.com>
+ <CAJKOXPd0UFGGF38DB=XVH+SyW-P7r6K14ca6buYPP7j4Odx3gA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f48.google.com ([209.85.214.48]:34890 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbdFTLvZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:51:25 -0400
-Received: by mail-it0-f48.google.com with SMTP id m62so12626496itc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:51:25 -0700 (PDT)
+Received: from mail-io0-f182.google.com ([209.85.223.182]:35039 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbdFTLwg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:52:36 -0400
+Received: by mail-io0-f182.google.com with SMTP id k93so82741695ioi.2
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:52:35 -0700 (PDT)
+In-Reply-To: <CAJKOXPd0UFGGF38DB=XVH+SyW-P7r6K14ca6buYPP7j4Odx3gA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Tue, Jun 20, 2017 at 1:14 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Tue, Jun 20, 2017 at 10:08 AM, Linus Walleij
+> <linus.walleij@linaro.org> wrote:
+>> On Fri, Jun 9, 2017 at 6:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>>> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+>>>
+>>>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+>>>
+>>> are available in the git repository at:
+>>>
+>>>   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
+>>>
+>>> for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
+>>>
+>>>   pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
+>>
+>> Pulled into my "devel" branch on the pin control tree.
+>>
+>> Pushing it to the build servers hoping all works.
+>>
+>> Thanks for your efforts to maintain Samsung pin control, it is
+>> much appreciated!
+>
+> I will have another bunch of cleanups and one important fix (broken
+> for some time, around v4.10, so it's not a candidate for current RC
+> fix). It is pretty late. Will you still have time to pull them for
+> v4.13?
 
-some late arriving fixes. I should have sent earlier, just swamped
-with work as usual. Thomas patch makes AMD systems usable
-despite driver bugs so it is fairly important.
+Not sure, I will be off for the weekend starting the day after tomorrow.
 
-Please pull in these two patches!
+If there is an -rc7 on sunday, then yes.
 
 Yours,
 Linus Walleij
-
-The following changes since commit 3c2993b8c6143d8a5793746a54eba8f86f95240f:
-
-  Linux 4.12-rc4 (2017-06-04 16:47:43 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.12-3
-
-for you to fetch changes up to b7c747d4627462f25b3daabf49c18895a6722faa:
-
-  pinctrl: stm32: Fix bad function call (2017-06-09 10:51:54 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for v4.12, take three:
-
-- Make the AMD driver use a regular interrupt rather than a chained one,
-  so the system does not lock up.
-
-- Fix a function call error deep inside the STM32 driver.
-
-----------------------------------------------------------------
-Alexandre TORGUE (1):
-      pinctrl: stm32: Fix bad function call
-
-Thomas Gleixner (1):
-      pinctrl/amd: Use regular interrupt instead of chained
-
- drivers/pinctrl/pinctrl-amd.c         | 91 ++++++++++++++++-------------------
- drivers/pinctrl/stm32/pinctrl-stm32.c |  2 +-
- 2 files changed, 42 insertions(+), 51 deletions(-)
