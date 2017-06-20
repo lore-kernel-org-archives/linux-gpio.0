@@ -1,32 +1,33 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] pin control fixes for v4.12, take three
-Date: Tue, 20 Jun 2017 14:24:39 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1706201424040.1869@nanos>
-References: <CACRpkdY-vFyd1F8SysCdpTRAr0bf63H1m6JBikfzv454dYyi5w@mail.gmail.com>
+From: Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
+Date: Tue, 20 Jun 2017 14:28:02 +0200
+Message-ID: <20170620122802.vddn3grn3aesmfrs@pd.tnic>
+References: <alpine.DEB.2.20.1705232307330.2409@nanos>
+ <CACRpkdbkEnLpZtLKz+x6FLQZTdsyxKsFexFa_UQwNxgZJGDExQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:43461 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751078AbdFTMYl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 08:24:41 -0400
-In-Reply-To: <CACRpkdY-vFyd1F8SysCdpTRAr0bf63H1m6JBikfzv454dYyi5w@mail.gmail.com>
+Received: from mail.skyhub.de ([5.9.137.197]:34610 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750884AbdFTM2T (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 20 Jun 2017 08:28:19 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbkEnLpZtLKz+x6FLQZTdsyxKsFexFa_UQwNxgZJGDExQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ken Xue <Ken.Xue@amd.com>
 
-On Tue, 20 Jun 2017, Linus Walleij wrote:
+On Mon, May 29, 2017 at 01:55:57PM +0200, Linus Walleij wrote:
+> Patch applied for fixes.
 
-> Hi Linus,
-> 
-> some late arriving fixes. I should have sent earlier, just swamped
-> with work as usual. Thomas patch makes AMD systems usable
-> despite driver bugs so it is fairly important.
+Btw, any chance you can add the CC:stable tag to it or would you prefer
+for me to backport it once it hits mainline?
 
-s/driver bugs/firmware bugs/
+Thanks.
 
-Thanks,
+-- 
+Regards/Gruss,
+    Boris.
 
-	tglx
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
