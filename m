@@ -1,105 +1,123 @@
-From: Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org>
-Subject: Re: bcm2835_pinctrl_probe: WARNING: CPU: 0 PID: 1 at
- kernel/irq/chip.c:850
-Date: Tue, 20 Jun 2017 18:51:30 +0200 (CEST)
-Message-ID: <975495226.218463.1497977490704@email.1und1.de>
-References: <2049796110.190734.1497905942101@email.1und1.de>
- <CACRpkdbBPVG3eP-Vt+uHALZkpPzV+0YVE6zBO0B7qnQi3qNKyA@mail.gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Tue, 20 Jun 2017 19:23:58 +0200
+Message-ID: <1497979438.7387.10.camel@baylibre.com>
+References: <1497543642.3086.35.camel@baylibre.com>
+         <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
+         <1497954416.7387.1.camel@baylibre.com>
+         <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <CACRpkdbBPVG3eP-Vt+uHALZkpPzV+0YVE6zBO0B7qnQi3qNKyA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
-List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-rpi-kernel <linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:36352 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbdFTRYC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 13:24:02 -0400
+Received: by mail-wr0-f178.google.com with SMTP id c11so44423174wrc.3
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 10:24:01 -0700 (PDT)
+In-Reply-To: <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Linus,
+On Tue, 2017-06-20 at 18:37 +0200, Linus Walleij wrote:
+> On Tue, Jun 20, 2017 at 12:26 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> 
+> So I finally understood that what you want is to handle those cases
+> where gpio_to_irq() is currently in use, and not expand the use of that
+> function. And that is good.
 
-> Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> hat am 20. Juni 2017 um 13:32 geschrieben:
+Indeed
+
 > 
+> > On Tue, 2017-06-20 at 10:39 +0200, Linus Walleij wrote:
+> > > > The fact that 26 gpio drivers [3] create mapping in the
+> > > > gpio_to_irq callback shows that the problem of managing the irq mapping
+> > > > is
+> > > > not
+> > > > specific to Amlogic and that an evolution might be useful.
+> > > 
+> > > Calling irq_create_mapping() in gpio_to_irq() is not a problem if
+> > > the mapping is free:ed elsewhere. But yeah, there are lots of old
+> > > drivers with old and erroneous solutions to this problem.
+> > 
+> > A lot of these drivers are old indeed, and dealing with all this history
+> > must be
+> > quite a challenge ;)
+> > However, some are fairly recent.
 > 
-> On Mon, Jun 19, 2017 at 10:59 PM, Stefan Wahren <stefan.wahren-eS4NqCHxEME@public.gmane.org> wrote:
-> 
-> > i'm currently working Raspberry Pi Zero W support and had problems to boot with Mini UART
-> > (no sign of life after startup). After switching to pl011 with EARLY_PRINTK, the Zero W boots
-> > and i get the following output:
-> 
-> (...)
-> > [    0.255621] ------------[ cut here ]------------
-> > [    0.255742] WARNING: CPU: 0 PID: 1 at kernel/irq/chip.c:850 __irq_do_set_handler+0x4c/0x14c
-> > [    0.255811] Modules linked in:
-> > [    0.255862] CPU: 0 PID: 1 Comm: swapper Not tainted 4.12.0-rc5-next-20170616+ #3
-> > [    0.255924] Hardware name: Generic DT based system
-> > [    0.256009] [<c010f64c>] (unwind_backtrace) from [<c010c604>] (show_stack+0x20/0x24)
-> > [    0.256109] [<c010c604>] (show_stack) from [<c037bb88>] (dump_stack+0x20/0x28)
-> > [    0.256204] [<c037bb88>] (dump_stack) from [<c011e76c>] (__warn+0xe4/0x110)
-> > [    0.256270] [<c011e76c>] (__warn) from [<c011e868>] (warn_slowpath_null+0x30/0x38)
-> > [    0.256355] [<c011e868>] (warn_slowpath_null) from [<c01590f0>] (__irq_do_set_handler+0x4c/0x14c)
-> > [    0.256444] [<c01590f0>] (__irq_do_set_handler) from [<c01592dc>] (irq_set_chained_handler_and_data+0x4c/0x64)
-> > [    0.256548] [<c01592dc>] (irq_set_chained_handler_and_data) from [<c03ae534>] (gpiochip_set_chained_irqchip+0x80/0xa0)
-> > [    0.256641] [<c03ae534>] (gpiochip_set_chained_irqchip) from [<c03aa9e8>] (bcm2835_pinctrl_probe+0x31c/0x3c8)
-> > [    0.256746] [<c03aa9e8>] (bcm2835_pinctrl_probe) from [<c044f03c>] (platform_drv_probe+0x60/0xac)
-> > [    0.256840] [<c044f03c>] (platform_drv_probe) from [<c044d434>] (driver_probe_device+0x1d8/0x438)
-> > [    0.256929] [<c044d434>] (driver_probe_device) from [<c044d730>] (__driver_attach+0x9c/0x100)
-> > [    0.257014] [<c044d730>] (__driver_attach) from [<c044b6e4>] (bus_for_each_dev+0x84/0x98)
-> > [    0.257098] [<c044b6e4>] (bus_for_each_dev) from [<c044cd7c>] (driver_attach+0x28/0x30)
-> > [    0.257181] [<c044cd7c>] (driver_attach) from [<c044c7dc>] (bus_add_drcm2835_pinctrl_driver_init+0x20/0x28)
-> > [    0.257535] [<c0b2c9b0>] (bcm2835_pinctrl_driver_init) from [<c0101ac0>] (do_one_initcall+0xc0/0x188)
-> > [    0.257635] [<c0101ac0>] (do_one_initcall) from [<c0b00f64>] (kernel_init_freeable+0x170/0x234)
-> > [    0.257728] [<c0b00f64>] (kernel_init_freeable) from [<c07366b4>] (kernel_init+0x18/0x11c)
-> > [    0.257822] [<c07366b4>] (kernel_init) from [<c0107f38>] (ret_from_fork+0x14/0x3c)
-> > [    0.257904] random: init_oops_id+0x30/0x4c get_random_bytes called with crng_init=0
-> > [    0.257980] ---[ end trace 9c0064da26f1596a ]---
-> > [    0.261962] Serial: 8250/16550 driver, 1 ports, IRQ sharing enabled
-> > [    0.265460] libphy: Fixed MDIO Bus: probed
-> > ...
-> >
-> > According to the source code, this is the relevant line:
-> >
-> > if (WARN_ON(!irq_data || irq_data->chip == &no_irq_chip))
-> >         return;
-> 
-> Isn't that because something is using the irqchip before the irqchip
-> is registered, so an initcall
-> problem?
-> 
-> I don't really know how some stuff like irqchips deal with deferred
-> probe or if they even can.
-> 
-> I had some similar patch the other day fixing something like this in
-> another driver,
-> I guess you can try reordering the initcalls. (Sorry.)
+> Unfortunately the API has merits. Like for keys: OK there is a key
+> for an GPIO line, and then it asks "can I have an IRQ for that"?
+> There are cases where the IRQ is really optional, not a required
+> feature.
 > 
 
-thanks, but it seems more trivial. The return value of irq_of_parse_and_map() wasn't check before calling gpiochip_set_chained_irqchip().
+I think you misunderstood me. I have nothing against the API. I absolutely want
+to keep it. I'd like to extend it.
 
-So this change (similar to a downstream patch) avoid this warning:
+> > So there is 2 use cases:
+> > * What you described above: This is indeed completely orthogonal to gpio
+> > framework. It will be using the irqchip callbacks only. In this particular
+> > case,
+> > it is the device tree platform code which will handle the mapping creation
+> > for
+> > us.
+> 
+> OK
+> 
+> So the problem is really to use drivers that cannot do all their
+> mappings at probe
+> time with drivers that use gpio_to_irq(), right?
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 1eb7a1a..2a29128 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -1048,6 +1048,10 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
-        for (i = 0; i < BCM2835_NUM_IRQS; i++) {
-                pc->irq[i] = irq_of_parse_and_map(np, i);
-                pc->irq_group[i] = i;
-+
-+               if (pc->irq[i] == 0)
-+                       continue;
-+
-                /*
-                 * Use the same handler for all groups: this is necessary
-                 * since we use one gpiochip to cover all lines - the
+Yep
 
+> 
+> So, if the idea is to patch *ALL* drivers using gpio_to_irq(), I think
+> for each case
+> it should be investigated whether that should really be using gpio_to_irq()
+> but I suspect they are all pretty solid.
+> 
+> Well you're probably right, the API has to change for the case where the
+> number
+> of IRQs are limited and cannot just be handled out to the left and right, but
+> we
+> should really replace *ALL* occurences of gpio_to_irq() with a pair of
+> gpio_irq_prepare() that also returns the valid IRQ if found, and
+> gpio_irq_unprepare()
+> that removes it.
+> 
+> For the transitional period, gpio_to_irq() should *FAIL* if gpio_irq_prepare()
+> was called first for the same GPIO line.
+> 
+> Eventually gpio_to_irq() should be DELETED and replaced in full with
+> the prepare/unprepare calls.
+
+Woahh, that's not what I meant. gpio_to_irq should stay. Getting rid of it would
+be a mess and it is a useful call.
+
+The gpio_irq_prepare is meant so that the consumer can tell the gpio driver it
+will want to get irq from a particular gpio at some point.
+
+IOW, it's the consumer saying to the gpio driver "please do whatever you need to
+do, if anything, so this gpio can generate an interrupt"
+
+This is a much simpler change. Using devm, all we need is to put a
+devm_gpio_irq_prepare(<gpio_num>) in the probe of the drivers using gpio_to_irq.
+
+Mandating call to gpio_irq_prepare before any call to gpio_to_irq will be fairly
+easy.
+
+> 
+> And I would like strong confidence that the change will be carried all the way
+> through, not half-done and left to me to complete. I already have too many
+> problems of that type.
+
+
+Fair enough.
+
+> 
 > Yours,
 > Linus Walleij
+
