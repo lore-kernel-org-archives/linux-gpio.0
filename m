@@ -1,123 +1,56 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Tue, 20 Jun 2017 19:23:58 +0200
-Message-ID: <1497979438.7387.10.camel@baylibre.com>
-References: <1497543642.3086.35.camel@baylibre.com>
-         <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
-         <1497954416.7387.1.camel@baylibre.com>
-         <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v3 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Tue, 20 Jun 2017 22:16:59 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725C3299@FMSMSX114.amr.corp.intel.com>
+References: <1497259612-38401-1-git-send-email-rajmohan.mani@intel.com>
+ <1497259612-38401-3-git-send-email-rajmohan.mani@intel.com>
+ <CACRpkdZU2kuBGh84DL8naHitoj3Y-pFXLyw5vec36fWMHLnyQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:36352 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750946AbdFTRYC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 13:24:02 -0400
-Received: by mail-wr0-f178.google.com with SMTP id c11so44423174wrc.3
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 10:24:01 -0700 (PDT)
-In-Reply-To: <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZU2kuBGh84DL8naHitoj3Y-pFXLyw5vec36fWMHLnyQA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 2017-06-20 at 18:37 +0200, Linus Walleij wrote:
-> On Tue, Jun 20, 2017 at 12:26 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> 
-> So I finally understood that what you want is to handle those cases
-> where gpio_to_irq() is currently in use, and not expand the use of that
-> function. And that is good.
-
-Indeed
-
-> 
-> > On Tue, 2017-06-20 at 10:39 +0200, Linus Walleij wrote:
-> > > > The fact that 26 gpio drivers [3] create mapping in the
-> > > > gpio_to_irq callback shows that the problem of managing the irq mapping
-> > > > is
-> > > > not
-> > > > specific to Amlogic and that an evolution might be useful.
-> > > 
-> > > Calling irq_create_mapping() in gpio_to_irq() is not a problem if
-> > > the mapping is free:ed elsewhere. But yeah, there are lots of old
-> > > drivers with old and erroneous solutions to this problem.
-> > 
-> > A lot of these drivers are old indeed, and dealing with all this history
-> > must be
-> > quite a challenge ;)
-> > However, some are fairly recent.
-> 
-> Unfortunately the API has merits. Like for keys: OK there is a key
-> for an GPIO line, and then it asks "can I have an IRQ for that"?
-> There are cases where the IRQ is really optional, not a required
-> feature.
-> 
-
-I think you misunderstood me. I have nothing against the API. I absolutely want
-to keep it. I'd like to extend it.
-
-> > So there is 2 use cases:
-> > * What you described above: This is indeed completely orthogonal to gpio
-> > framework. It will be using the irqchip callbacks only. In this particular
-> > case,
-> > it is the device tree platform code which will handle the mapping creation
-> > for
-> > us.
-> 
-> OK
-> 
-> So the problem is really to use drivers that cannot do all their
-> mappings at probe
-> time with drivers that use gpio_to_irq(), right?
-
-Yep
-
-> 
-> So, if the idea is to patch *ALL* drivers using gpio_to_irq(), I think
-> for each case
-> it should be investigated whether that should really be using gpio_to_irq()
-> but I suspect they are all pretty solid.
-> 
-> Well you're probably right, the API has to change for the case where the
-> number
-> of IRQs are limited and cannot just be handled out to the left and right, but
-> we
-> should really replace *ALL* occurences of gpio_to_irq() with a pair of
-> gpio_irq_prepare() that also returns the valid IRQ if found, and
-> gpio_irq_unprepare()
-> that removes it.
-> 
-> For the transitional period, gpio_to_irq() should *FAIL* if gpio_irq_prepare()
-> was called first for the same GPIO line.
-> 
-> Eventually gpio_to_irq() should be DELETED and replaced in full with
-> the prepare/unprepare calls.
-
-Woahh, that's not what I meant. gpio_to_irq should stay. Getting rid of it would
-be a mess and it is a useful call.
-
-The gpio_irq_prepare is meant so that the consumer can tell the gpio driver it
-will want to get irq from a particular gpio at some point.
-
-IOW, it's the consumer saying to the gpio driver "please do whatever you need to
-do, if anything, so this gpio can generate an interrupt"
-
-This is a much simpler change. Using devm, all we need is to put a
-devm_gpio_irq_prepare(<gpio_num>) in the probe of the drivers using gpio_to_irq.
-
-Mandating call to gpio_irq_prepare before any call to gpio_to_irq will be fairly
-easy.
-
-> 
-> And I would like strong confidence that the change will be carried all the way
-> through, not half-done and left to me to complete. I already have too many
-> problems of that type.
-
-
-Fair enough.
-
-> 
-> Yours,
-> Linus Walleij
-
+SGkgTGludXMsDQoNClRoYW5rcyBmb3IgeW91ciBjb21tZW50cy4NCg0KPiBPbiBNb24sIEp1biAx
+MiwgMjAxNyBhdCAxMToyNiBBTSwgUmFqbW9oYW4gTWFuaQ0KPiA8cmFqbW9oYW4ubWFuaUBpbnRl
+bC5jb20+IHdyb3RlOg0KPiANCj4gPiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgVFBTNjg0
+NzAgR1BJT3MuDQo+ID4gVGhlcmUgYXJlIDcgR1BJT3MgYW5kIGEgZmV3IHNlbnNvciByZWxhdGVk
+IEdQSU9zLg0KPiA+IFRoZXNlIEdQSU9zIGNhbiBiZSByZXF1ZXN0ZWQgYW5kIGNvbmZpZ3VyZWQg
+YXMgYXBwcm9wcmlhdGUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBSYWptb2hhbiBNYW5pIDxy
+YWptb2hhbi5tYW5pQGludGVsLmNvbT4NCj4gDQo+IFRoaXMgaXMgc29tZSBmaW5lIGNvZGUuDQo+
+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQo+
+IA0KPiBGZWVsIGZyZWUgdG8gbWVyZ2UgdGhpcyB0aHJvdWdoIE1GRCBvciB0ZWxsIG1lIGlmIEkg
+c2hvdWxkIG1lcmdlIGl0IGlmIHRoZXJlIGFyZQ0KPiBubyBjb21waWxlLXRpbWUgZGVwZW5kZW5j
+aWVzLg0KDQpJIHN0aWxsIGhhdmUgdGhlIGZvbGxvd2luZyAzIG91dHN0YW5kaW5nIGNvbW1lbnRz
+IGZyb20gQW5keSAodGhhdCBpbmNsdWRlcyBvbmUgZnJvbSBMZWUpIG9uIHRoaXMgcGF0Y2ggc2Vy
+aWVzLg0KDQpNYWluIHBvaW50cyAoc29tZSBJIGFscmVhZHkgdG9sZCBpbiBhbiBhbnN3ZXIgdG8g
+U2FrYXJpJ3MgbWFpbCk6DQoNCjEuIENvbnNpZGVyIDIgR1BJTyBjaGlwcyBvdmVyIDEuKEFuZHkg
+b24gR1BJTyBkcml2ZXIpDQogSSB3aWxsIGxvb2sgaW50byB0aGlzIHdlZWsgYW5kIGdldCBiYWNr
+IG9uIHRoZSBpc3N1ZSB0aGF0IEkgZmluZCB3aXRoIHVzaW5nIDIgR1BJTyBjaGlwcy4NCg0KMi4g
+Rml4IEZJWE1FKHMpIChBbmR5IGFuZCBMZWUgb24gTUZEIGRyaXZlcikNCkkgd2lsbCB3b3JrIG9u
+IHRoaXMgb25jZSBJIGFtIGRvbmUgd2l0aCAxLg0KDQorCS8qIEZJWE1FOiBjb25maWd1cmUgdGhl
+c2UgZHluYW1pY2FsbHkgKi8NCisJLyogRW5hYmxlIERhaXN5IENoYWluIExETyBhbmQgY29uZmln
+dXJlIHJlbGV2YW50IEdQSU9zIGFzIG91dHB1dCAqLw0KKwlyZXQgPSByZWdtYXBfd3JpdGUocmVn
+bWFwLCBUUFM2ODQ3MF9SRUdfU19JMkNfQ1RMLCAyKTsNCisJaWYgKHJldCA8IDApDQorCQlyZXR1
+cm4gcmV0Ow0KKw0KKwlyZXQgPSByZWdtYXBfd3JpdGUocmVnbWFwLCBUUFM2ODQ3MF9SRUdfR1BD
+VEw0QSwgMik7DQorCWlmIChyZXQgPCAwKQ0KKwkJcmV0dXJuIHJldDsNCisNCisJcmV0ID0gcmVn
+bWFwX3dyaXRlKHJlZ21hcCwgVFBTNjg0NzBfUkVHX0dQQ1RMNUEsIDIpOw0KKwlpZiAocmV0IDwg
+MCkNCisJCXJldHVybiByZXQ7DQorDQorCXJldCA9IHJlZ21hcF93cml0ZShyZWdtYXAsIFRQUzY4
+NDcwX1JFR19HUENUTDZBLCAyKTsNCisJaWYgKHJldCA8IDApDQorCQlyZXR1cm4gcmV0Ow0KKw0K
+KwkvKg0KKwkgKiBXaGVuIFNEQSBhbmQgU0NMIGFyZSByb3V0ZWQgdG8gR1BJTzEgYW5kIEdQSU8y
+LCB0aGUgbW9kZQ0KKwkgKiBmb3IgdGhlc2UgR1BJT3MgbXVzdCBiZSBjb25maWd1cmVkIHVzaW5n
+IHRoZWlyIHJlc3BlY3RpdmUNCisJICogR1BDVEx4QSByZWdpc3RlcnMgYXMgaW5wdXRzIHdpdGgg
+bm8gcHVsbC11cHMuDQorCSAqLw0KKwlyZXQgPSByZWdtYXBfd3JpdGUocmVnbWFwLCBUUFM2ODQ3
+MF9SRUdfR1BDVEwxQSwgMCk7DQorCWlmIChyZXQgPCAwKQ0KKwkJcmV0dXJuIHJldDsNCisNCisJ
+cmV0ID0gcmVnbWFwX3dyaXRlKHJlZ21hcCwgVFBTNjg0NzBfUkVHX0dQQ1RMMkEsIDApOw0KKwlp
+ZiAocmV0IDwgMCkNCisJCXJldHVybiByZXQ7DQorDQorCS8qIEVuYWJsZSBkYWlzeSBjaGFpbiAq
+Lw0KKwlyZXQgPSByZWdtYXBfdXBkYXRlX2JpdHMocmVnbWFwLCBUUFM2ODQ3MF9SRUdfU19JMkNf
+Q1RMLCAxLCAxKTsNCisJaWYgKHJldCA8IDApDQorCQlyZXR1cm4gcmV0Ow0KDQozLiBNb3ZlIDxp
+bmNsdWRlL2kyYy5oPiBmcm9tIHRwczY4NDcwLmggdG8gdHBzNjg0NzAuYyAoQW5keSBvbiBNRkQg
+ZHJpdmVyKQ0KVGhpcyBpcyBkb25lLCBidXQgd2FpdGluZyBvbiAxIGFuZCAyDQoNClRoYW5rcw0K
+UmFqDQo=
