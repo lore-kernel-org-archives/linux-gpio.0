@@ -1,49 +1,38 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFT 2/2] pinctrl: samsung: Fix invalid register offset used
- for Exynos5433 external interrupts
-Date: Tue, 20 Jun 2017 12:31:18 +0200
-Message-ID: <766729e5-b29d-4bf1-0186-3eacbd11f07e@samsung.com>
-References: <20170614131828.28683-1-krzk@kernel.org>
-        <CGME20170614131847epcas3p4755a0ad1e25550134ddfcf0db9aff06b@epcas3p4.samsung.com>
-        <20170614131828.28683-2-krzk@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 01/29] pinctrl.txt: standardize document format
+Date: Tue, 20 Jun 2017 13:12:12 +0200
+Message-ID: <CACRpkdbJop=1uhww1C69yMRPKD17fo1==Y6T6MNdebMctsfS5A@mail.gmail.com>
+References: <cover.1495157082.git.mchehab@s-opensource.com>
+ <d16c41b5f7022add66672d43b5d595af74a1db34.1495157082.git.mchehab@s-opensource.com>
+ <CACRpkdaDZQQ7fprGkSvXiUHfqdM_zGkPe4_T3R-p55asCDeQCw@mail.gmail.com> <20170617120301.057229bc@vento.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20170614131828.28683-2-krzk@kernel.org>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Donglin Peng <dolinux.peng@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:34128 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751038AbdFTLMO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:12:14 -0400
+Received: by mail-io0-f180.google.com with SMTP id i7so82192862ioe.1
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:12:14 -0700 (PDT)
+In-Reply-To: <20170617120301.057229bc@vento.lan>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 06/14/2017 03:18 PM, Krzysztof Kozlowski wrote:
-> When setting the pin function for external interrupts, the driver used
-> wrong IO memory address base.  The pin function register is always under
-> pctl_base, not the eint_base.
-> 
-> By updating wrong register, the external interrupts for chosen GPIO
-> would not work at all and some other GPIO might be configured to wrong
-> value.
-> 
-> Platforms other than Exynos5433 should not be affected as eint_base
-> equals pctl_base in such case.
-> 
-> Fixes: 8b1bd11c1f8f ("pinctrl: samsung: Add the support the multiple 
-> IORESOURCE_MEM for one pin-bank")
-> Cc:<stable@vger.kernel.org>
-> Reported-by: Tomasz Figa<tomasz.figa@gmail.com>
-> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+On Sat, Jun 17, 2017 at 5:03 PM, Mauro Carvalho Chehab
+<mchehab@s-opensource.com> wrote:
+> Linus Walleij <linus.walleij@linaro.org> escreveu:
 
-I've tested this patch by comparing GPFx_CON register values, as 
-nothing seems to be currently using pins from the GPF1...GPF5 banks 
-as external interrupts on TM2, the only board based on Exynos5433.
-I changed sii8620 interrupt-parent temporarily to &gpf1 and GPF1_CON
-got configured properly with the patch and improperly without 
-the patch. I guess this can be considered as
+>> Should the file be renamed pinctrl.rst now?
+>
+> If you just rename it, Sphinx will complain because it doesn't
+> belong to any index.rst file. As this is part of drivers/, I guess
+> the right thing is to add it to driver-api book.
+>
+> The enclosed patch should be doing it (it is based on linux-next).
 
-Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Hey it just applies, so I tossed in this patch too, thanks a lot!
 
--- 
-Thanks,
-Sylwester
+Yours,
+Linus Walleij
