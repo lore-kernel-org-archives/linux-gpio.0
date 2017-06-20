@@ -1,37 +1,53 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v6 3/6] clk: qcom: Add DT bindings for ipq8074 gcc clock
- controller
-Date: Mon, 19 Jun 2017 17:43:38 -0700
-Message-ID: <20170620004338.GC20170@codeaurora.org>
-References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
- <1497001319-30353-4-git-send-email-varada@codeaurora.org>
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: Re: [PATCH] gpio: dwapb: fix missing first irq for edgeboth irq
+ type
+Date: Tue, 20 Jun 2017 10:40:54 +0800
+Message-ID: <20170620104054.45847c81@xhacker>
+References: <20170601232715.2788-1-xgchenshy@gmail.com>
+        <CACRpkdbnXOab-wn3z9BQrs7RVrqag8wtdwsmUvekYLY29rxdVw@mail.gmail.com>
+        <20170612130530.724305b5@xhacker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1497001319-30353-4-git-send-email-varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, david.brown-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sjaganat-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sricharan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:32922 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750990AbdFTCpo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 19 Jun 2017 22:45:44 -0400
+In-Reply-To: <20170612130530.724305b5@xhacker>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: xgchenshy@gmail.com, Hoan Tran <hotran@apm.com>, Jiang Qiu <qiujiang@huawei.com>, Jamie Iles <jamie@jamieiles.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 06/09, Varadarajan Narayanan wrote:
-> From: Abhishek Sahu <absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+On Mon, 12 Jun 2017 13:05:30 +0800 Jisheng Zhang wrote:
+
+> On Fri, 9 Jun 2017 11:26:19 +0200 Linus Walleij wrote:
 > 
-> Add the compatible strings and the include file for ipq8074 gcc
-> clock controller.
+> > 
+> > On Fri, Jun 2, 2017 at 1:27 AM,  <xgchenshy@gmail.com> wrote:  
+> > > From: Xiaoguang Chen <xgchenshy@gmail.com>
+> > >
+> > > dwapb_irq_set_type overwrites polarity register value for
+> > > IRQ_TYPE_EDGE_BOTH case. If the polarity of one gpio is 0
+> > > by default, then it will set falling edge irq trigger.
+> > > and the gpio may requires rising edge irq for the first time,
+> > > and it will be missed.
+> > >
+> > > Do not overwrite polarity register for IRQ_TYPE_EDGE_BOTH case
+> > > can solve this issue.  
 > 
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> (bindings)
-> Signed-off-by: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Signed-off-by: Abhishek Sahu <absahu-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> ---
+> I think this is a correct fix.
+> 
+> > >
+> > > Signed-off-by: Xiaoguang Chen <xgchenshy@gmail.com>  
+> 
+> Tested-by: Jisheng Zhang <jszhang@marvell.com>
 
-Applied to clk-next
+Per my test, this patch fixes the following bug:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+make use of CD-GPIO mechanism. Cold boot with sdcard inserted, hot-unplug
+the sdcard, sometimes, kernel won't get the remove interrupt.
+
+Thanks
