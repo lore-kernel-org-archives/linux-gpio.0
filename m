@@ -1,39 +1,60 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
-Date: Tue, 20 Jun 2017 13:38:28 +0200
-Message-ID: <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
-References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
- <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
+Subject: [GIT PULL] pin control fixes for v4.12, take three
+Date: Tue, 20 Jun 2017 13:51:23 +0200
+Message-ID: <CACRpkdY-vFyd1F8SysCdpTRAr0bf63H1m6JBikfzv454dYyi5w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:34890 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbdFTLvZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:51:25 -0400
+Received: by mail-it0-f48.google.com with SMTP id m62so12626496itc.0
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:51:25 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On 2017-06-20 10:19, Linus Walleij wrote:
->> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>
->>> This makes the gpio-exar driver usable, which was prevented by a number
->>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
->>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
->>> series, so I'm also cross-posting to the serial and gpio lists.
->>>
->>> Changes in v6:
->>
->> I merged some of the patches, that applied. Let's see if they survive
->> in linux-next, else I guess we need to fix this in the -rcs or for the next
->> kernel cycle.
->
-> Weird that things did not apply. I just did a cherry-pick for all those
-> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
-> know which baseline is needed, and I will rebase.
+Hi Linus,
 
-This was on the "devel" branch of my GPIO tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+some late arriving fixes. I should have sent earlier, just swamped
+with work as usual. Thomas patch makes AMD systems usable
+despite driver bugs so it is fairly important.
+
+Please pull in these two patches!
 
 Yours,
 Linus Walleij
+
+The following changes since commit 3c2993b8c6143d8a5793746a54eba8f86f95240f:
+
+  Linux 4.12-rc4 (2017-06-04 16:47:43 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.12-3
+
+for you to fetch changes up to b7c747d4627462f25b3daabf49c18895a6722faa:
+
+  pinctrl: stm32: Fix bad function call (2017-06-09 10:51:54 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for v4.12, take three:
+
+- Make the AMD driver use a regular interrupt rather than a chained one,
+  so the system does not lock up.
+
+- Fix a function call error deep inside the STM32 driver.
+
+----------------------------------------------------------------
+Alexandre TORGUE (1):
+      pinctrl: stm32: Fix bad function call
+
+Thomas Gleixner (1):
+      pinctrl/amd: Use regular interrupt instead of chained
+
+ drivers/pinctrl/pinctrl-amd.c         | 91 ++++++++++++++++-------------------
+ drivers/pinctrl/stm32/pinctrl-stm32.c |  2 +-
+ 2 files changed, 42 insertions(+), 51 deletions(-)
