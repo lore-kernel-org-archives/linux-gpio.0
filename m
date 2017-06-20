@@ -1,38 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] gpio: lp87565: Add support for GPIO
-Date: Tue, 20 Jun 2017 13:37:19 +0200
-Message-ID: <CACRpkdYg1bEve=m=XNOUY=DHEy8M9Pk0dMEEs67UkVskvOZaUg@mail.gmail.com>
-References: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
+Date: Tue, 20 Jun 2017 13:38:28 +0200
+Message-ID: <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+ <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:33395 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751106AbdFTLhV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:37:21 -0400
-Received: by mail-io0-f174.google.com with SMTP id t87so82639502ioe.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:37:21 -0700 (PDT)
-In-Reply-To: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
 
-On Thu, Jun 15, 2017 at 8:33 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> On 2017-06-20 10:19, Linus Walleij wrote:
+>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>>
+>>> This makes the gpio-exar driver usable, which was prevented by a number
+>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
+>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
+>>> series, so I'm also cross-posting to the serial and gpio lists.
+>>>
+>>> Changes in v6:
+>>
+>> I merged some of the patches, that applied. Let's see if they survive
+>> in linux-next, else I guess we need to fix this in the -rcs or for the next
+>> kernel cycle.
+>
+> Weird that things did not apply. I just did a cherry-pick for all those
+> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
+> know which baseline is needed, and I will rebase.
 
-> Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
-> and can be configured in Open-drain output or Push-pull output.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->
-> Latest version of mfd patch:
->
-> https://patchwork.kernel.org/patch/9783079/
->
-> Changes in v2:
-
-Patch applied, thanks for your nice work on this driver!
+This was on the "devel" branch of my GPIO tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
 
 Yours,
 Linus Walleij
