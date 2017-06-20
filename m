@@ -1,192 +1,283 @@
-From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 09/12] Input: Add power key driver for Rockchip RK805
- PMIC
-Date: Mon, 19 Jun 2017 20:06:43 -0700
-Message-ID: <20170620030643.GG21379@dtor-ws>
-References: <1496905959-29202-1-git-send-email-chenjh@rock-chips.com>
- <1496907027-27197-1-git-send-email-chenjh@rock-chips.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2] gpio: lp87565: Add support for GPIO
+Date: Tue, 20 Jun 2017 08:53:42 +0530
+Message-ID: <0b4b407a-439c-b306-c8db-34bb7a976a85@ti.com>
+References: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1496907027-27197-1-git-send-email-chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jianhong Chen <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, tony.xie-TNX95d0MmH7DzftRWevZcw@public.gmane.org, zhangqing-TNX95d0MmH7DzftRWevZcw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, w.egorov-guT5V/WYfQezQB+pC5nmwQ@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:36222 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbdFTDYL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 19 Jun 2017 23:24:11 -0400
+In-Reply-To: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org, t-kristo@ti.com
 
-On Thu, Jun 08, 2017 at 03:30:27PM +0800, Jianhong Chen wrote:
-> From: chenjh <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+
+
+On Thursday 15 June 2017 12:03 PM, Keerthy wrote:
+> Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
+> and can be configured in Open-drain output or Push-pull output.
 > 
-> This driver provides a input driver for the power
-> key on the Rockchip RK805 PMIC.
-> 
-> Signed-off-by: chenjh <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 > ---
->  drivers/input/misc/Kconfig        |   6 +++
->  drivers/input/misc/Makefile       |   1 +
->  drivers/input/misc/rk805-pwrkey.c | 111 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 118 insertions(+)
->  create mode 100644 drivers/input/misc/rk805-pwrkey.c
 > 
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 5b6c522..72dc4f5 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -571,6 +571,12 @@ config INPUT_PWM_BEEPER
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called pwm-beeper.
+> Latest version of mfd patch:
+> 
+> https://patchwork.kernel.org/patch/9783079/
+
+The latest version is pulled by Lee Jones.
+
+https://patchwork.kernel.org/patch/9783081/
+
+Thanks,
+Keerthy
+> 
+> Changes in v2:
+> 
+>   * included <linux/gpio/driver.h>
+>   * stored the struct regmap *map instead of whole lp87565 struct
+>   * clamped return values to [0,1] where necessary.
+>   * Added more comments to explain the 2 modes.
+>   * platform_set_drvdata(pdev, gpio)
+> 
+>  drivers/gpio/Kconfig        |  10 +++
+>  drivers/gpio/Makefile       |   1 +
+>  drivers/gpio/gpio-lp87565.c | 190 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 201 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-lp87565.c
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 2e7d9ff..f235eae 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -965,6 +965,16 @@ config GPIO_LP873X
+>  	  This driver can also be built as a module. If so, the module will be
+>            called gpio-lp873x.
 >  
-> +config INPUT_RK805_PWRKEY
-> +	tristate "Rockchip RK805 PMIC power key support"
-> +	depends on MFD_RK808
+> +config GPIO_LP87565
+> +	tristate "TI LP87565 GPIO"
+> +	depends on MFD_TI_LP87565
 > +	help
-> +	  Select this option to enable power key driver for RK805.
+> +	  This driver supports the GPIO on TI Lp873565 PMICs. 3 GPIOs are present
+> +	  on LP87565 PMICs.
 > +
->  config INPUT_GPIO_ROTARY_ENCODER
->  	tristate "Rotary encoders connected to GPIO pins"
->  	depends on GPIOLIB || COMPILE_TEST
-> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-> index b10523f..c27052a 100644
-> --- a/drivers/input/misc/Makefile
-> +++ b/drivers/input/misc/Makefile
-> @@ -63,6 +63,7 @@ obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
->  obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
->  obj-$(CONFIG_INPUT_AXP20X_PEK)		+= axp20x-pek.o
->  obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)	+= rotary_encoder.o
-> +obj-$(CONFIG_INPUT_RK805_PWRKEY)	+= rk805-pwrkey.o
->  obj-$(CONFIG_INPUT_SGI_BTNS)		+= sgi_btns.o
->  obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)	+= sirfsoc-onkey.o
->  obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY)	+= soc_button_array.o
-> diff --git a/drivers/input/misc/rk805-pwrkey.c b/drivers/input/misc/rk805-pwrkey.c
+> +	  This driver can also be built as a module. If so, the module will be
+> +	  called gpio-lp87565.
+> +
+>  config GPIO_MAX77620
+>  	tristate "GPIO support for PMIC MAX77620 and MAX20024"
+>  	depends on MFD_MAX77620
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index bcd0a0b..a9fda6c 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -67,6 +67,7 @@ obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
+>  obj-$(CONFIG_GPIO_LPC18XX)	+= gpio-lpc18xx.o
+>  obj-$(CONFIG_ARCH_LPC32XX)	+= gpio-lpc32xx.o
+>  obj-$(CONFIG_GPIO_LP873X)	+= gpio-lp873x.o
+> +obj-$(CONFIG_GPIO_LP87565)	+= gpio-lp87565.o
+>  obj-$(CONFIG_GPIO_LYNXPOINT)	+= gpio-lynxpoint.o
+>  obj-$(CONFIG_GPIO_MAX730X)	+= gpio-max730x.o
+>  obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
+> diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
 > new file mode 100644
-> index 0000000..188eed5
+> index 0000000..6313c50
 > --- /dev/null
-> +++ b/drivers/input/misc/rk805-pwrkey.c
-> @@ -0,0 +1,111 @@
+> +++ b/drivers/gpio/gpio-lp87565.c
+> @@ -0,0 +1,190 @@
 > +/*
-> + * Rockchip RK805 PMIC Power Key driver
+> + * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
+> + *	Keerthy <j-keerthy@ti.com>
 > + *
-> + * Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
 > + *
-> + * Author: Chen Jianhong <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
+> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+> + * kind, whether expressed or implied; without even the implied warranty
+> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License version 2 for more details.
 > + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under  the terms of the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the License, or (at your
-> + * option) any later version.
-> + *
+> + * Based on the LP873X driver
 > + */
-> +#include <linux/errno.h>
-> +#include <linux/init.h>
-> +#include <linux/input.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
+> +
+> +#include <linux/gpio/driver.h>
 > +#include <linux/module.h>
 > +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
 > +
-> +static irqreturn_t pwrkey_fall_irq(int irq, void *_pwr)
+> +#include <linux/mfd/lp87565.h>
+> +
+> +struct lp87565_gpio {
+> +	struct gpio_chip chip;
+> +	struct regmap *map;
+> +};
+> +
+> +static int lp87565_gpio_get_direction(struct gpio_chip *chip,
+> +				      unsigned int offset)
 > +{
-> +	struct input_dev *pwr = _pwr;
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+> +	int ret, val;
 > +
-> +	input_report_key(pwr, KEY_POWER, 1);
-> +	input_sync(pwr);
+> +	ret = regmap_read(gpio->map, LP87565_REG_GPIO_CONFIG, &val);
+> +	if (ret < 0)
+> +		return ret;
 > +
-> +	return IRQ_HANDLED;
+> +	return !(val & BIT(offset));
 > +}
 > +
-> +static irqreturn_t pwrkey_rise_irq(int irq, void *_pwr)
+> +static int lp87565_gpio_direction_input(struct gpio_chip *chip,
+> +					unsigned int offset)
 > +{
-> +	struct input_dev *pwr = _pwr;
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
 > +
-> +	input_report_key(pwr, KEY_POWER, 0);
-> +	input_sync(pwr);
-> +
-> +	return IRQ_HANDLED;
+> +	return regmap_update_bits(gpio->map,
+> +				  LP87565_REG_GPIO_CONFIG,
+> +				  BIT(offset), 0);
 > +}
 > +
-> +static int rk805_pwrkey_probe(struct platform_device *pdev)
+> +static int lp87565_gpio_direction_output(struct gpio_chip *chip,
+> +					 unsigned int offset, int value)
 > +{
-> +	struct input_dev *pwr;
-> +	int fall_irq, rise_irq;
-> +	int err;
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
 > +
-> +	pwr = devm_input_allocate_device(&pdev->dev);
-> +	if (!pwr) {
-> +		dev_err(&pdev->dev, "Can't allocate power button\n");
-> +		return -ENOMEM;
+> +	return regmap_update_bits(gpio->map,
+> +				  LP87565_REG_GPIO_CONFIG,
+> +				  BIT(offset), !value ? BIT(offset) : 0);
+> +}
+> +
+> +static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+> +	int ret, val;
+> +
+> +	ret = regmap_read(gpio->map, LP87565_REG_GPIO_IN, &val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return !!(val & BIT(offset));
+> +}
+> +
+> +static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +			     int value)
+> +{
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+> +
+> +	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
+> +			   BIT(offset), value ? BIT(offset) : 0);
+> +}
+> +
+> +static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(gc);
+> +	int ret;
+> +
+> +	switch (offset) {
+> +	case 0:
+> +	case 1:
+> +	case 2:
+> +		/*
+> +		 * MUX can program the pin to be in EN1/2/3 pin mode
+> +		 * Or GPIO1/2/3 mode.
+> +		 * Setup the GPIO*_SEL MUX to GPIO mode
+> +		 */
+> +		ret = regmap_update_bits(gpio->map,
+> +					 LP87565_REG_PIN_FUNCTION,
+> +					 BIT(offset), BIT(offset));
+> +		if (ret)
+> +			return ret;
+> +
+> +		break;
+> +	default:
+> +		return -EINVAL;
 > +	}
-> +
-> +	pwr->name = "rk805 pwrkey";
-> +	pwr->phys = "rk805_pwrkey/input0";
-> +	pwr->dev.parent = &pdev->dev;
-> +	input_set_capability(pwr, EV_KEY, KEY_POWER);
-> +
-> +	fall_irq = platform_get_irq(pdev, 0);
-> +	if (fall_irq < 0) {
-> +		dev_err(&pdev->dev, "Can't get fall irq: %d\n", fall_irq);
-> +		return fall_irq;
-> +	}
-> +
-> +	rise_irq = platform_get_irq(pdev, 1);
-> +	if (rise_irq < 0) {
-> +		dev_err(&pdev->dev, "Can't get rise irq: %d\n", rise_irq);
-> +		return rise_irq;
-> +	}
-> +
-> +	err = devm_request_threaded_irq(&pwr->dev, fall_irq, NULL,
-> +					pwrkey_fall_irq,
-> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-> +					"rk805_pwrkey_fall", pwr);
-
-I think you want devm_request_any_context_irq() here as your interrupt
-handler does not need to sleep.
-
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "Can't register fall irq: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = devm_request_threaded_irq(&pwr->dev, rise_irq, NULL,
-> +					pwrkey_rise_irq,
-> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +					"rk805_pwrkey_rise", pwr);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "Can't register rise irq: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = input_register_device(pwr);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Can't register power button: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, pwr);
-> +	device_init_wakeup(&pdev->dev, true);
 > +
 > +	return 0;
 > +}
 > +
-> +static struct platform_driver rk805_pwrkey_driver = {
-> +	.probe	= rk805_pwrkey_probe,
-> +	.driver	= {
-> +		.name = "rk805-pwrkey",
-> +	},
-> +};
-> +module_platform_driver(rk805_pwrkey_driver);
+> +static int lp87565_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
+> +				   unsigned long config)
+> +{
+> +	struct lp87565_gpio *gpio = gpiochip_get_data(gc);
 > +
-> +MODULE_AUTHOR("Chen Jianghong <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>");
-> +MODULE_DESCRIPTION("RK805 PMIC Power Key driver");
+> +	switch (pinconf_to_config_param(config)) {
+> +	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+> +		return regmap_update_bits(gpio->map,
+> +					  LP87565_REG_GPIO_CONFIG,
+> +					  BIT(offset +
+> +					      __ffs(LP87565_GOIO1_OD)),
+> +					  BIT(offset +
+> +					      __ffs(LP87565_GOIO1_OD)));
+> +	case PIN_CONFIG_DRIVE_PUSH_PULL:
+> +		return regmap_update_bits(gpio->map,
+> +					  LP87565_REG_GPIO_CONFIG,
+> +					  BIT(offset +
+> +					      __ffs(LP87565_GOIO1_OD)), 0);
+> +	default:
+> +		return -ENOTSUPP;
+> +	}
+> +}
+> +
+> +static const struct gpio_chip template_chip = {
+> +	.label			= "lp87565-gpio",
+> +	.owner			= THIS_MODULE,
+> +	.request		= lp87565_gpio_request,
+> +	.get_direction		= lp87565_gpio_get_direction,
+> +	.direction_input	= lp87565_gpio_direction_input,
+> +	.direction_output	= lp87565_gpio_direction_output,
+> +	.get			= lp87565_gpio_get,
+> +	.set			= lp87565_gpio_set,
+> +	.set_config		= lp87565_gpio_set_config,
+> +	.base			= -1,
+> +	.ngpio			= 3,
+> +	.can_sleep		= true,
+> +};
+> +
+> +static int lp87565_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct lp87565_gpio *gpio;
+> +	struct lp87565 *lp87565;
+> +	int ret;
+> +
+> +	gpio = devm_kzalloc(&pdev->dev, sizeof(*gpio), GFP_KERNEL);
+> +	if (!gpio)
+> +		return -ENOMEM;
+> +
+> +	lp87565 = dev_get_drvdata(pdev->dev.parent);
+> +	gpio->chip = template_chip;
+> +	gpio->chip.parent = lp87565->dev;
+> +	gpio->map = lp87565->regmap;
+> +
+> +	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct platform_device_id lp87565_gpio_id_table[] = {
+> +	{ "lp87565-q1-gpio", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(platform, lp87565_gpio_id_table);
+> +
+> +static struct platform_driver lp87565_gpio_driver = {
+> +	.driver = {
+> +		.name = "lp87565-gpio",
+> +	},
+> +	.probe = lp87565_gpio_probe,
+> +	.id_table = lp87565_gpio_id_table,
+> +};
+> +module_platform_driver(lp87565_gpio_driver);
+> +
+> +MODULE_AUTHOR("Keerthy <j-keerthy@ti.com>");
+> +MODULE_DESCRIPTION("LP87565 GPIO driver");
 > +MODULE_LICENSE("GPL v2");
-> -- 
-> 1.9.1
 > 
-> 
-
--- 
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
