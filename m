@@ -1,32 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: ingenic: checking for NULL instead of IS_ERR()
-Date: Tue, 20 Jun 2017 11:36:40 +0200
-Message-ID: <CACRpkdZ6qczpU+ovDdmUyURMasQgdvNUypWoFLBWk7B2b2v4+Q@mail.gmail.com>
-References: <20170614091209.GC29394@elgon.mountain>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/2] pinctrl: samsung: Consistently use unsigned instead
+ of u32 for nr_banks
+Date: Tue, 20 Jun 2017 12:19:20 +0200
+Message-ID: <67234130-5861-5c62-8753-69107d0a3990@samsung.com>
+References: <20170615163316.6444-1-krzk@kernel.org>
+        <CGME20170615163343epcas2p35150e861d333a98fa22384bcffcf1523@epcas2p3.samsung.com>
+        <20170615163316.6444-2-krzk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:38152 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751641AbdFTJgm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 05:36:42 -0400
-Received: by mail-it0-f54.google.com with SMTP id b205so10658818itg.1
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 02:36:42 -0700 (PDT)
-In-Reply-To: <20170614091209.GC29394@elgon.mountain>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-reply-to: <20170615163316.6444-2-krzk@kernel.org>
+Content-language: en-GB
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Paul Cercueil <paul@crapouillou.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 11:12 AM, Dan Carpenter
-<dan.carpenter@oracle.com> wrote:
+On 06/15/2017 06:33 PM, Krzysztof Kozlowski wrote:
+> Unlike for other countable members, the driver used u32 for number of
+> banks (nr_banks).  There is no specific need for using fixed-width
+> integer in this particular place.  Make it consistent.
+> 
+> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
 
-> devm_pinctrl_register() returns error pointers, it doesn't return NULL.
->
-> Fixes: b5c23aa46537 ("pinctrl: add a pinctrl driver for the Ingenic jz47xx SoCs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+-- 
+Regards,
+Sylwester
