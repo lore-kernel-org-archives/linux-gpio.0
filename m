@@ -1,39 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: dwapb: fix missing first irq for edgeboth irq type
-Date: Tue, 20 Jun 2017 13:34:49 +0200
-Message-ID: <CACRpkdapkjs3UtKmhJPzNrdav4T=cHzBsThWV_T11N+bxf+W=g@mail.gmail.com>
-References: <20170601232715.2788-1-xgchenshy@gmail.com>
+Subject: Re: [PATCH v2] gpio: lp87565: Add support for GPIO
+Date: Tue, 20 Jun 2017 13:37:19 +0200
+Message-ID: <CACRpkdYg1bEve=m=XNOUY=DHEy8M9Pk0dMEEs67UkVskvOZaUg@mail.gmail.com>
+References: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:35000 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750925AbdFTLev (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:34:51 -0400
-Received: by mail-io0-f169.google.com with SMTP id k93so82464587ioi.2
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:34:51 -0700 (PDT)
-In-Reply-To: <20170601232715.2788-1-xgchenshy@gmail.com>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:33395 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751106AbdFTLhV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 07:37:21 -0400
+Received: by mail-io0-f174.google.com with SMTP id t87so82639502ioe.0
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 04:37:21 -0700 (PDT)
+In-Reply-To: <1497508391-2806-1-git-send-email-j-keerthy@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Xiaoguang Chen <xgchenshy@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Keerthy <j-keerthy@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
 
-On Fri, Jun 2, 2017 at 1:27 AM,  <xgchenshy@gmail.com> wrote:
+On Thu, Jun 15, 2017 at 8:33 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-> From: Xiaoguang Chen <xgchenshy@gmail.com>
+> Add driver for lp87565 PMIC family GPIOs. Three GPIOs are supported
+> and can be configured in Open-drain output or Push-pull output.
 >
-> dwapb_irq_set_type overwrites polarity register value for
-> IRQ_TYPE_EDGE_BOTH case. If the polarity of one gpio is 0
-> by default, then it will set falling edge irq trigger.
-> and the gpio may requires rising edge irq for the first time,
-> and it will be missed.
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
 >
-> Do not overwrite polarity register for IRQ_TYPE_EDGE_BOTH case
-> can solve this issue.
+> Latest version of mfd patch:
 >
-> Signed-off-by: Xiaoguang Chen <xgchenshy@gmail.com>
+> https://patchwork.kernel.org/patch/9783079/
+>
+> Changes in v2:
 
-Patch applied with Jisheng's tested tag.
+Patch applied, thanks for your nice work on this driver!
 
 Yours,
 Linus Walleij
