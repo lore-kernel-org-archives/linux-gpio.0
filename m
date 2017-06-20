@@ -1,35 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] DT: pinctrl: Add binding documentation for
- Spreadtrum pin controller
-Date: Tue, 20 Jun 2017 11:10:41 +0200
-Message-ID: <CACRpkdZMdKPwMt0hQ+5k731pJEnsgyzqYULbD=S7iXbOyai7CQ@mail.gmail.com>
-References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
- <CACRpkdbtuPKr=tWGoJC-sg2Oj47rYMpo6fs_Us=Nynew1Wkz=w@mail.gmail.com> <20170612060718.GA8566@spreadtrum.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
+Date: Tue, 20 Jun 2017 11:22:05 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1706201120190.1869@nanos>
+References: <alpine.DEB.2.20.1705232307330.2409@nanos> <BLUPR12MB07212D4797B68DB06C3A6D40A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com> <alpine.DEB.2.20.1705260841250.1902@nanos> <BLUPR12MB0721B0824892B985DC807471A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+ <20170619161323.pjdrh6l33pqix32x@pd.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170612060718.GA8566@spreadtrum.com>
+In-Reply-To: <20170619161323.pjdrh6l33pqix32x@pd.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Baolin Wang <baolin.wang@linaro.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Xue, Ken" <Ken.Xue@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Jun 12, 2017 at 8:07 AM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
+On Mon, 19 Jun 2017, Borislav Petkov wrote:
 
-> I agree we should add these into core code, something like:
-> static const struct pinconf_generic_params dt_params[] = {
-(...)
->         { "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
-> +       { "sleep-bias-pull-up", PIN_CONFIG_SLEEP_BIAS_PULL_UP, 1},
-> +       { "sleep-bias-pull-down", PIN_CONFIG_SLEEP_BIAS_PULL_DOWN 1},
->         ......
-> };
->
-> If you agree that, I can help to add these configuration.
+> On Fri, May 26, 2017 at 09:33:10AM +0000, Shah, Nehal-bakulchandra wrote:
+> > Hi Thomas,
+> > 
+> > Thanks  for the prompt reply. Agree on points.
+> > 
+> > we will validate at our end and shall provide the update.
+> 
+> Any news on the issue? Resolution?
+> 
+> I still have a user reporting "irq 7: nobody cared (try booting with the
+> "irqpoll" option)" pointing to amd_gpio_irq_handler(), even with Thomas'
+> patch.
+> 
+> See https://bugzilla.suse.com/show_bug.cgi?id=1034261
+> 
+> So something's still not completely fine yet.
 
-Actually, yes indeed, that is a nice thing. Very nice. I think my Nomadik
-driver could use this too.
+Well, that's kinda expected.
 
-Just need to hear what the DT maintainers have to say about it.
+If the interrupt _IS_ screaming because the hardware is buggered, then the
+nobody cared thing will detect it and switch it off. That's all what we can
+do, aside of not loading the driver at all.
 
-Yours,
-Linus Walleij
+But that's way better than silently locking up the box forever.
+
+Thanks
+
+	tglx
