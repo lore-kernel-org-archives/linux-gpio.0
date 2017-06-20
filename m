@@ -1,43 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
-Date: Tue, 20 Jun 2017 10:08:56 +0200
-Message-ID: <CACRpkdZjZbHD4ZCQVHUyu8y0f45FnRqTRL4P6J7Wrz9dZNXGdw@mail.gmail.com>
-References: <20170609164827.2231-1-krzk@kernel.org>
+Subject: Re: [PATCH v6 02/10] gpio-exar/8250-exar: Fix passing in of parent
+ PCI device
+Date: Tue, 20 Jun 2017 10:13:36 +0200
+Message-ID: <CACRpkdZdkYvji9NyjLY0NpmTBcboQawv23RxO+KZojj586t+mQ@mail.gmail.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com> <6f2e19cfb8bcb9acf4b042e4db716e93286862d6.1497033197.git.jan.kiszka@siemens.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:35637 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbdFTII6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 04:08:58 -0400
-Received: by mail-io0-f173.google.com with SMTP id k93so79254004ioi.2
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 01:08:58 -0700 (PDT)
-In-Reply-To: <20170609164827.2231-1-krzk@kernel.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37072 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbdFTINi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 04:13:38 -0400
+Received: by mail-it0-f49.google.com with SMTP id m47so9377467iti.0
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 01:13:38 -0700 (PDT)
+In-Reply-To: <6f2e19cfb8bcb9acf4b042e4db716e93286862d6.1497033197.git.jan.kiszka@siemens.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Fri, Jun 9, 2017 at 6:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 
-> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+> This fixes reloading of the GPIO driver for the same platform device
+> instance as created by the exar UART driver: First of all, the driver
+> sets drvdata to its own value during probing and does not restore the
+> original value on exit. But this won't help anyway as the core clears
+> drvdata after the driver left.
 >
->   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+> Set the platform device parent instead.
 >
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
->
-> for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
->
->   pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Pulled into my "devel" branch on the pin control tree.
+Patch applied to the GPIO tree so we advance this series.
 
-Pushing it to the build servers hoping all works.
+Patch 1 does not apply.
 
-Thanks for your efforts to maintain Samsung pin control, it is
-much appreciated!
+Let's see how it goes.
 
 Yours,
 Linus Walleij
