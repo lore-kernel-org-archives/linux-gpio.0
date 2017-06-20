@@ -1,30 +1,32 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] pinctrl: samsung: Use unsigned int for number of
- controller IO mem resources
-Date: Tue, 20 Jun 2017 14:11:23 +0200
-Message-ID: <9683ed1b-3b8c-e110-20c9-ef86d887a8ac@samsung.com>
-References: <CGME20170615163507epcas2p4afd786730362715894d5a178a4ad2040@epcas2p4.samsung.com>
-        <20170615163316.6444-1-krzk@kernel.org>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] pin control fixes for v4.12, take three
+Date: Tue, 20 Jun 2017 14:24:39 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1706201424040.1869@nanos>
+References: <CACRpkdY-vFyd1F8SysCdpTRAr0bf63H1m6JBikfzv454dYyi5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-reply-to: <20170615163316.6444-1-krzk@kernel.org>
-Content-language: en-GB
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from Galois.linutronix.de ([146.0.238.70]:43461 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751078AbdFTMYl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 08:24:41 -0400
+In-Reply-To: <CACRpkdY-vFyd1F8SysCdpTRAr0bf63H1m6JBikfzv454dYyi5w@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 06/15/2017 06:33 PM, Krzysztof Kozlowski wrote:
-> Number of IO memory resources cannot be negative obviously and the
-> driver depends silently on this (by iterating from 0 to
-> nr_ext_resources+1).  Make this requirement explicit.
+On Tue, 20 Jun 2017, Linus Walleij wrote:
+
+> Hi Linus,
 > 
-> Signed-off-by: Krzysztof Kozlowski<krzk@kernel.org>
+> some late arriving fixes. I should have sent earlier, just swamped
+> with work as usual. Thomas patch makes AMD systems usable
+> despite driver bugs so it is fairly important.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+s/driver bugs/firmware bugs/
 
--- 
-Regards,
-Sylwester
+Thanks,
+
+	tglx
+
