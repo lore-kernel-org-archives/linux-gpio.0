@@ -1,31 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 8/8] gpio: mockup: use devm_kcalloc() where applicable
-Date: Tue, 20 Jun 2017 09:17:59 +0200
-Message-ID: <CACRpkdYEsRG+GP8sC=VhfYeMJ4O7sQQi_yjttyc2bDYKXOoT3A@mail.gmail.com>
-References: <1497008492-14907-1-git-send-email-brgl@bgdev.pl> <1497008492-14907-9-git-send-email-brgl@bgdev.pl>
+Subject: Re: [GIT PULL] pinctrl: samsung: Pinctrl update for v4.13
+Date: Tue, 20 Jun 2017 10:08:56 +0200
+Message-ID: <CACRpkdZjZbHD4ZCQVHUyu8y0f45FnRqTRL4P6J7Wrz9dZNXGdw@mail.gmail.com>
+References: <20170609164827.2231-1-krzk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:35769 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750990AbdFTHSB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 03:18:01 -0400
-Received: by mail-it0-f44.google.com with SMTP id m62so8778093itc.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 00:18:01 -0700 (PDT)
-In-Reply-To: <1497008492-14907-9-git-send-email-brgl@bgdev.pl>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:35637 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbdFTII6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 04:08:58 -0400
+Received: by mail-io0-f173.google.com with SMTP id k93so79254004ioi.2
+        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 01:08:58 -0700 (PDT)
+In-Reply-To: <20170609164827.2231-1-krzk@kernel.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jun 9, 2017 at 1:41 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Fri, Jun 9, 2017 at 6:48 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-> When allocating a zeroed array of objects use devm_kcalloc() instead
-> of manually calculating the required size and using devm_kzalloc().
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
 >
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.13
+>
+> for you to fetch changes up to a453f3693f2aa9ebba623f8cff1e3d7c5df96ddd:
+>
+>   pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem (2017-06-07 20:40:48 +0200)
 
-Patch applied.
+Pulled into my "devel" branch on the pin control tree.
+
+Pushing it to the build servers hoping all works.
+
+Thanks for your efforts to maintain Samsung pin control, it is
+much appreciated!
 
 Yours,
 Linus Walleij
