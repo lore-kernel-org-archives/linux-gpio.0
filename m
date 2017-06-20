@@ -1,27 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: uniphier: fix WARN_ON() of pingroups dump on LD20
-Date: Tue, 20 Jun 2017 11:35:29 +0200
-Message-ID: <CACRpkdavW1WGHzW9et9SgEOVe+oV71FZCONEFSL3oaYA3_-Lyg@mail.gmail.com>
-References: <1497415770-17741-1-git-send-email-yamada.masahiro@socionext.com> <1497415770-17741-2-git-send-email-yamada.masahiro@socionext.com>
+From: Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
+Date: Tue, 20 Jun 2017 11:29:33 +0200
+Message-ID: <20170620092933.m4pbbjcpw4zjas3i@pd.tnic>
+References: <alpine.DEB.2.20.1705232307330.2409@nanos>
+ <BLUPR12MB07212D4797B68DB06C3A6D40A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+ <alpine.DEB.2.20.1705260841250.1902@nanos>
+ <BLUPR12MB0721B0824892B985DC807471A0FC0@BLUPR12MB0721.namprd12.prod.outlook.com>
+ <20170619161323.pjdrh6l33pqix32x@pd.tnic>
+ <alpine.DEB.2.20.1706201120190.1869@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1497415770-17741-2-git-send-email-yamada.masahiro@socionext.com>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1706201120190.1869@nanos>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>, LKML <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "Xue, Ken" <Ken.Xue@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 14, 2017 at 6:49 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, Jun 20, 2017 at 11:22:05AM +0200, Thomas Gleixner wrote:
+> If the interrupt _IS_ screaming because the hardware is buggered, then the
+> nobody cared thing will detect it and switch it off. That's all what we can
+> do, aside of not loading the driver at all.
+> 
+> But that's way better than silently locking up the box forever.
 
-> The pingroups dump of debugfs hits WARN_ON() in pinctrl_groups_show().
-> Filling non-existing ports with '-1' turned out a bad idea.
->
-> Fixes: 336306ee1f2d ("pinctrl: uniphier: add UniPhier PH1-LD20 pinctrl driver")
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Sounds to me we should route this fix to stable.
 
-Patch applied.
+Looking at Linus' branch:
 
-Yours,
-Linus Walleij
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=fixes&id=ba714a9c1dea85e0bf2899d02dfeb9c70040427c
+
+patch isn't tagged for stable.
+
+Should it be?
+
+It certainly is an improvement of the situation.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
