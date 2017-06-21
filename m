@@ -1,201 +1,54 @@
-From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V4 6/7] pinctrl: imx: make imx_pmx_ops.gpio_set_direction platform specific callbacks
-Date: Wed, 21 Jun 2017 19:59:54 +0800
-Message-ID: <1498046395-30001-7-git-send-email-aisheng.dong@nxp.com>
-References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH v3 4/9] arm64: marvell: enable the Armada 7K/8K pinctrl driver
+Date: Wed, 21 Jun 2017 14:53:03 +0200
+Message-ID: <8737at33kg.fsf@free-electrons.com>
+References: <cover.d003a5e862e6d732d901a61d1765a349c9a89eef.1497281623.git-series.gregory.clement@free-electrons.com>
+        <30ebac2a9f20c05d354eb3f41ad21cdda8a45ae9.1497281623.git-series.gregory.clement@free-electrons.com>
+        <CACRpkdbbL+QaQ7rAKdq4ZVTzkNab=o3h78hE1Zb+c7ivNRaQKw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0054.outbound.protection.outlook.com ([104.47.38.54]:20274
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751118AbdFUMBz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 21 Jun 2017 08:01:55 -0400
-In-Reply-To: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:60831 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750823AbdFUMxP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jun 2017 08:53:15 -0400
+In-Reply-To: <CACRpkdbbL+QaQ7rAKdq4ZVTzkNab=o3h78hE1Zb+c7ivNRaQKw@mail.gmail.com>
+        (Linus Walleij's message of "Fri, 16 Jun 2017 11:22:01 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>, Alexandre Courbot <gnurou@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Nadav Haklai <nadavh@marvell.com>, Kostya Porotchkin <kostap@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Omri Itach <omrii@marvell.com>, Shadi Ammouri <shadi@marvell.com>
 
-Various IMX platforms may have different imx_pmx_ops.gpio_set_direction
-implementations, so let's make it platform specific callbacks instead of
-the fixed common one.
+Hi Linus,
+ 
+ On ven., juin 16 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Currently only VF610 platform implements it. No function level changes.
+> On Mon, Jun 12, 2017 at 5:34 PM, Gregory CLEMENT
+> <gregory.clement@free-electrons.com> wrote:
+>
+>> This commit makes sure the drivers for the Armada 7K/8K pin controllers
+>> are enabled.
+>>
+>> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Please merge this through ARM SoC.
 
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
----
-ChangeLog:
- * new patch.
----
- drivers/pinctrl/freescale/pinctrl-imx.c   | 48 +++----------------------------
- drivers/pinctrl/freescale/pinctrl-imx.h   | 20 +++++++++++++
- drivers/pinctrl/freescale/pinctrl-vf610.c | 25 ++++++++++++++++
- 3 files changed, 49 insertions(+), 44 deletions(-)
+Applied on mvebu/arm64
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 505fe79..ad23e39 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -35,18 +35,6 @@
- #define IMX_NO_PAD_CTL	0x80000000	/* no pin config need */
- #define IMX_PAD_SION 0x40000000		/* set SION */
- 
--/**
-- * @dev: a pointer back to containing device
-- * @base: the offset to the controller in virtual memory
-- */
--struct imx_pinctrl {
--	struct device *dev;
--	struct pinctrl_dev *pctl;
--	void __iomem *base;
--	void __iomem *input_sel_base;
--	struct imx_pinctrl_soc_info *info;
--};
--
- static inline const struct group_desc *imx_pinctrl_find_group_by_name(
- 				struct pinctrl_dev *pctldev,
- 				const char *name)
-@@ -255,42 +243,11 @@ static int imx_pmx_set(struct pinctrl_dev *pctldev, unsigned selector,
- 	return 0;
- }
- 
--static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
--	   struct pinctrl_gpio_range *range, unsigned offset, bool input)
--{
--	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
--	struct imx_pinctrl_soc_info *info = ipctl->info;
--	const struct imx_pin_reg *pin_reg;
--	u32 reg;
--
--	/*
--	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
--	 * They are part of the shared mux/conf register.
--	 */
--	if (!(info->flags & SHARE_MUX_CONF_REG))
--		return 0;
--
--	pin_reg = &info->pin_regs[offset];
--	if (pin_reg->mux_reg == -1)
--		return -EINVAL;
--
--	/* IBE always enabled allows us to read the value "on the wire" */
--	reg = readl(ipctl->base + pin_reg->mux_reg);
--	if (input)
--		reg &= ~0x2;
--	else
--		reg |= 0x2;
--	writel(reg, ipctl->base + pin_reg->mux_reg);
--
--	return 0;
--}
--
--static const struct pinmux_ops imx_pmx_ops = {
-+struct pinmux_ops imx_pmx_ops = {
- 	.get_functions_count = pinmux_generic_get_function_count,
- 	.get_function_name = pinmux_generic_get_function_name,
- 	.get_function_groups = pinmux_generic_get_function_groups,
- 	.set_mux = imx_pmx_set,
--	.gpio_set_direction = imx_pmx_gpio_set_direction,
- };
- 
- /* decode generic config into raw register values */
-@@ -793,6 +750,9 @@ int imx_pinctrl_probe(struct platform_device *pdev,
- 	imx_pinctrl_desc->custom_params = info->custom_params;
- 	imx_pinctrl_desc->num_custom_params = info->num_custom_params;
- 
-+	/* platform specific callback */
-+	imx_pmx_ops.gpio_set_direction = info->gpio_set_direction;
-+
- 	mutex_init(&info->mutex);
- 
- 	ipctl->info = info;
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
-index 880bba7..5aa22b5 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.h
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.h
-@@ -16,9 +16,12 @@
- #define __DRIVERS_PINCTRL_IMX_H
- 
- #include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinmux.h>
- 
- struct platform_device;
- 
-+extern struct pinmux_ops imx_pmx_ops;
-+
- /**
-  * struct imx_pin - describes a single i.MX pin
-  * @pin: the pin_id of this pin
-@@ -76,6 +79,23 @@ struct imx_pinctrl_soc_info {
- 	unsigned int num_decodes;
- 	void (*fixup)(unsigned long *configs, unsigned int num_configs,
- 		      u32 *raw_config);
-+
-+	int (*gpio_set_direction)(struct pinctrl_dev *pctldev,
-+				  struct pinctrl_gpio_range *range,
-+				  unsigned offset,
-+				  bool input);
-+};
-+
-+/**
-+ * @dev: a pointer back to containing device
-+ * @base: the offset to the controller in virtual memory
-+ */
-+struct imx_pinctrl {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+	void __iomem *base;
-+	void __iomem *input_sel_base;
-+	struct imx_pinctrl_soc_info *info;
- };
- 
- #define IMX_CFG_PARAMS_DECODE(p, m, o) \
-diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c b/drivers/pinctrl/freescale/pinctrl-vf610.c
-index 3bd8556..ac18bb6 100644
---- a/drivers/pinctrl/freescale/pinctrl-vf610.c
-+++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
-@@ -295,10 +295,35 @@ static const struct pinctrl_pin_desc vf610_pinctrl_pads[] = {
- 	IMX_PINCTRL_PIN(VF610_PAD_PTA7),
- };
- 
-+static int vf610_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
-+					struct pinctrl_gpio_range *range,
-+					unsigned offset, bool input)
-+{
-+	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
-+	struct imx_pinctrl_soc_info *info = ipctl->info;
-+	const struct imx_pin_reg *pin_reg;
-+	u32 reg;
-+
-+	pin_reg = &info->pin_regs[offset];
-+	if (pin_reg->mux_reg == -1)
-+		return -EINVAL;
-+
-+	/* IBE always enabled allows us to read the value "on the wire" */
-+	reg = readl(ipctl->base + pin_reg->mux_reg);
-+	if (input)
-+		reg &= ~0x2;
-+	else
-+		reg |= 0x2;
-+	writel(reg, ipctl->base + pin_reg->mux_reg);
-+
-+	return 0;
-+}
-+
- static struct imx_pinctrl_soc_info vf610_pinctrl_info = {
- 	.pins = vf610_pinctrl_pads,
- 	.npins = ARRAY_SIZE(vf610_pinctrl_pads),
- 	.flags = SHARE_MUX_CONF_REG | ZERO_OFFSET_VALID,
-+	.gpio_set_direction = vf610_pmx_gpio_set_direction,
- 	.mux_mask = 0x700000,
- 	.mux_shift = 20,
- };
+Thanks,
+
+Gregory
+
+>
+> Yours,
+> Linus Walleij
+
 -- 
-2.7.4
-
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
