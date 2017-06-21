@@ -1,68 +1,74 @@
-From: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
-Subject: [PATCH V4 1/7] dt-bindings: pinctrl: extend the pinmux property to support integers array
-Date: Wed, 21 Jun 2017 19:59:49 +0800
-Message-ID: <1498046395-30001-2-git-send-email-aisheng.dong@nxp.com>
-References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V4 0/7] pinctrl: imx: add imx7ulp pinctrl support
+Date: Wed, 21 Jun 2017 19:59:48 +0800
+Message-ID: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1498046395-30001-1-git-send-email-aisheng.dong-3arQi8VN3Tc@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, ping.bai-3arQi8VN3Tc@public.gmane.org, fugang.duan-3arQi8VN3Tc@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-bl2nam02on0053.outbound.protection.outlook.com ([104.47.38.53]:48650
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750823AbdFUMBd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 21 Jun 2017 08:01:33 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>
 
-Some platforms may need more than one integer to represent a complete
-pinmux binding, so let's extend the pinmux property to allow to accept
-integer array instead of only a single integer.
+i.MX 7ULP has three IOMUXC instances: IOMUXC0 for M4 ports,
+IOMUXC1 for A7 ports and IOMUXC DDR for DDR interface.
 
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Signed-off-by: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+This patch series adds the IOMUXC1 support for A7.
+It only supports generic pin config.
 
----
 ChangeLog:
- * new patch
----
- Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+v3->v4:
+ This patch series is a combine of the following patches per
+ Maintainer's request.
+[PATCH V3 1/2] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
+https://www.spinics.net/lists/arm-kernel/msg582995.html
+[PATCH V3 2/2] pinctrl: imx: add imx7ulp driver
+https://www.spinics.net/lists/arm-kernel/msg582996.html
+[PATCH 0/2] pinctrl: pinctrl-imx: add gpio support for mx7ulp
+https://www.spinics.net/lists/arm-kernel/msg580993.html
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index f01d154..1b954b5 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -205,10 +205,11 @@ maintain.
- 
- For cases like this, the pin controller driver may use the pinmux helper
- property, where the pin identifier is packed with mux configuration settings
--in a single integer.
-+in a single integer or integers array which depends on platform binding
-+specific.
- 
--The pinmux property accepts an array of integers, each of them describing
--a single pin multiplexing configuration.
-+The pinmux property accepts an array of group of integers, each group
-+describing a single pin multiplexing configuration.
- 
- pincontroller {
- 	state_0_node_a {
-@@ -300,7 +301,7 @@ arguments are described below.
- - pinmux takes a list of pin IDs and mux settings as required argument. The
-   specific bindings for the hardware defines:
-   - How pin IDs and mux settings are defined and assembled together in a single
--    integer.
-+    integer or integers array.
- 
- - bias-pull-up, -down and -pin-default take as optional argument on hardware
-   supporting it the pull strength in Ohm. bias-disable will disable the pull.
+ Detailed changes as follows:
+ * change pad name to IMX7ULP_PAD_X style
+ * switch to generic pinmux property
+ * remove input/output generic property decodes as the standard
+   input/out property name are still under discussing.
+   It does not affect the normal GPIO function as imx7ulp pinctrl
+   driver supports gpio_set_direction which will set input/output enable
+   automatically.
+   See: [PATCH V4 7/7] pinctrl: pinctrl-imx7ulp: add gpio_set_direction
+   It will be added back later for other pads once the standard property
+   is determined.
+
+Dong Aisheng (7):
+  dt-bindings: pinctrl: extend the pinmux property to support integers
+    array
+  dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
+  pinctrl: imx: switch to use the generic pinmux property
+  pinctrl: imx: add imx7ulp driver
+  pinctrl: imx: remove gpio_request_enable and gpio_disable_free
+  pinctrl: imx: make imx_pmx_ops.gpio_set_direction platform specific
+    callbacks
+  pinctrl: pinctrl-imx7ulp: add gpio_set_direction support
+
+ .../bindings/pinctrl/fsl,imx7ulp-pinctrl.txt       |  61 +++
+ .../bindings/pinctrl/pinctrl-bindings.txt          |   9 +-
+ arch/arm/boot/dts/imx7ulp-pinfunc.h                | 468 +++++++++++++++++++++
+ drivers/pinctrl/freescale/Kconfig                  |   7 +
+ drivers/pinctrl/freescale/Makefile                 |   1 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            | 123 +-----
+ drivers/pinctrl/freescale/pinctrl-imx.h            |  20 +
+ drivers/pinctrl/freescale/pinctrl-imx7ulp.c        | 364 ++++++++++++++++
+ drivers/pinctrl/freescale/pinctrl-vf610.c          |  25 ++
+ 9 files changed, 958 insertions(+), 120 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7ulp-pinctrl.txt
+ create mode 100644 arch/arm/boot/dts/imx7ulp-pinfunc.h
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+
 -- 
 2.7.4
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
