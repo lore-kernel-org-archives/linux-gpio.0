@@ -1,32 +1,49 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH] pinctrl/amd: Use regular interrupt instead of chained
-Date: Wed, 21 Jun 2017 19:01:30 +0200
-Message-ID: <20170621170129.jlbsxzvviynzd2lm@pd.tnic>
-References: <alpine.DEB.2.20.1705232307330.2409@nanos>
- <CACRpkdbkEnLpZtLKz+x6FLQZTdsyxKsFexFa_UQwNxgZJGDExQ@mail.gmail.com>
- <20170620122802.vddn3grn3aesmfrs@pd.tnic>
- <CACRpkdahw=4h9Dp4TMcfiquO0=BOZGCpNizdgyef2vC3wUmMTg@mail.gmail.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH] pinctrl: bcm2835: Avoid warning from __irq_do_set_handler
+Date: Wed, 21 Jun 2017 20:20:04 +0200
+Message-ID: <1498069204-28154-1-git-send-email-stefan.wahren@i2se.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdahw=4h9Dp4TMcfiquO0=BOZGCpNizdgyef2vC3wUmMTg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ken Xue <Ken.Xue@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, linux-gpio@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jun 21, 2017 at 06:37:09PM +0200, Linus Walleij wrote:
-> This is sent to Torvalds, but you can simply suggest to Greg to pick
-> this for stable according to the process in:
-> Documentation/process/stable-kernel-rules.rst
+We get a warning during boot with enabled EARLY_PRINTK that
+we try to set a irq_chip without data. This is caused by ignoring
+the return value of irq_of_parse_and_map(). So avoid calling
+gpiochip_set_chained_irqchip() in error case.
 
-Yeah, I saw your pull request after hitting send. I'll send it to Greg.
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Fixes: 85ae9e512f43 ("pinctrl: bcm2835: switch to GPIOLIB_IRQCHIP")
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks.
-
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 1eb7a1a..2308831 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -1048,6 +1048,10 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
+ 	for (i = 0; i < BCM2835_NUM_IRQS; i++) {
+ 		pc->irq[i] = irq_of_parse_and_map(np, i);
+ 		pc->irq_group[i] = i;
++
++		if (pc->irq[i] == 0)
++			continue;
++
+ 		/*
+ 		 * Use the same handler for all groups: this is necessary
+ 		 * since we use one gpiochip to cover all lines - the
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.7.4
