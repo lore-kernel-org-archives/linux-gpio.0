@@ -1,47 +1,51 @@
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: Re: [PATCH v2 1/2] DT: pinctrl: Add binding documentation for
- Spreadtrum pin controller
-Date: Wed, 21 Jun 2017 10:35:56 +0800
-Message-ID: <CAMz4kuLCqNEpmf31FjHg+UzP1GrLLtHkgUh9+pwNU6kNEWuj6A@mail.gmail.com>
-References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
- <CACRpkdbtuPKr=tWGoJC-sg2Oj47rYMpo6fs_Us=Nynew1Wkz=w@mail.gmail.com>
- <20170612060718.GA8566@spreadtrum.com> <CACRpkdZMdKPwMt0hQ+5k731pJEnsgyzqYULbD=S7iXbOyai7CQ@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
+Date: Wed, 21 Jun 2017 08:29:58 +0200
+Message-ID: <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com>
+ <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+ <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
+ <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:33162 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753055AbdFUCf5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 20 Jun 2017 22:35:57 -0400
-Received: by mail-oi0-f46.google.com with SMTP id p66so50005547oia.0
-        for <linux-gpio@vger.kernel.org>; Tue, 20 Jun 2017 19:35:57 -0700 (PDT)
-In-Reply-To: <CACRpkdZMdKPwMt0hQ+5k731pJEnsgyzqYULbD=S7iXbOyai7CQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On 20 June 2017 at 17:10, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Jun 12, 2017 at 8:07 AM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
->
->> I agree we should add these into core code, something like:
->> static const struct pinconf_generic_params dt_params[] = {
-> (...)
->>         { "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
->> +       { "sleep-bias-pull-up", PIN_CONFIG_SLEEP_BIAS_PULL_UP, 1},
->> +       { "sleep-bias-pull-down", PIN_CONFIG_SLEEP_BIAS_PULL_DOWN 1},
->>         ......
->> };
+On 2017-06-20 13:38, Linus Walleij wrote:
+> On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> On 2017-06-20 10:19, Linus Walleij wrote:
+>>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>>>
+>>>> This makes the gpio-exar driver usable, which was prevented by a number
+>>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
+>>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
+>>>> series, so I'm also cross-posting to the serial and gpio lists.
+>>>>
+>>>> Changes in v6:
+>>>
+>>> I merged some of the patches, that applied. Let's see if they survive
+>>> in linux-next, else I guess we need to fix this in the -rcs or for the next
+>>> kernel cycle.
 >>
->> If you agree that, I can help to add these configuration.
->
-> Actually, yes indeed, that is a nice thing. Very nice. I think my Nomadik
-> driver could use this too.
->
-> Just need to hear what the DT maintainers have to say about it.
+>> Weird that things did not apply. I just did a cherry-pick for all those
+>> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
+>> know which baseline is needed, and I will rebase.
+> 
+> This was on the "devel" branch of my GPIO tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
 
-OK, I will submit one patch to review. Thanks.
+Again, all (missing) patches applied absolutely cleanly for me, see
+
+http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
+
+Jan
 
 -- 
-Baolin.wang
-Best Regards
+Siemens AG, Corporate Technology, CT RDA ITP SES-DE
+Corporate Competence Center Embedded Linux
