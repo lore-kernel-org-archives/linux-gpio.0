@@ -1,53 +1,94 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Wed, 21 Jun 2017 22:50:14 +0200
-Message-ID: <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
-References: <1497543642.3086.35.camel@baylibre.com> <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
- <1497954416.7387.1.camel@baylibre.com> <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
- <1497979438.7387.10.camel@baylibre.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH fixes v3] pinctrl: Really force states during
+ suspend/resume
+Date: Wed, 21 Jun 2017 14:23:03 -0700
+Message-ID: <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com>
+References: <20170301183257.6554-1-f.fainelli@gmail.com>
+ <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
+ <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
+ <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
+ <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
+ <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:35711 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbdFUUuQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 21 Jun 2017 16:50:16 -0400
-Received: by mail-io0-f179.google.com with SMTP id h134so3047668iof.2
-        for <linux-gpio@vger.kernel.org>; Wed, 21 Jun 2017 13:50:16 -0700 (PDT)
-In-Reply-To: <1497979438.7387.10.camel@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 20, 2017 at 7:23 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Tue, 2017-06-20 at 18:37 +0200, Linus Walleij wrote:
+(sorry for the lag)
 
->> Eventually gpio_to_irq() should be DELETED and replaced in full with
->> the prepare/unprepare calls.
->
-> Woahh, that's not what I meant. gpio_to_irq should stay. Getting rid of it would
-> be a mess and it is a useful call.
->
-> The gpio_irq_prepare is meant so that the consumer can tell the gpio driver it
-> will want to get irq from a particular gpio at some point.
->
-> IOW, it's the consumer saying to the gpio driver "please do whatever you need to
-> do, if anything, so this gpio can generate an interrupt"
->
-> This is a much simpler change. Using devm, all we need is to put a
-> devm_gpio_irq_prepare(<gpio_num>) in the probe of the drivers using gpio_to_irq.
->
-> Mandating call to gpio_irq_prepare before any call to gpio_to_irq will be fairly
-> easy.
+On 03/16/2017 07:08 AM, Linus Walleij wrote:
+> On Wed, Mar 15, 2017 at 3:18 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 03/14/2017 03:16 AM, Linus Walleij wrote:
+> 
+>>> The most obvious would be to use the API as many already do:
+>>> define "sleep" states in the core, and switch to these before
+>>> going to sleep. If CONFIG_PM is available simply by calling
+>>> pinctrl_pm_select_sleep_state() in the driver suspend() callback.
+>>
+>> Well, the difficulty for our platforms is that S2 does not make the HW
+>> lose pin states, only S3 does and drivers should be agnostic of S2 vs. S3.
+>>
+>> There is not really a "sleep" and "default" state defined for these
+>> platforms just the "default" state. I initially even considered adding a
+>> fake "sleep" state just to satisfy the state transition condition, but
+>> that does not accurately represent the HW.
+> 
+> Do you mean that on the way up, on the resume path, you know> whether the setting was lost or not?
 
-So why can't we just return the IRQ from prepare() and be done with it
-instead of having two calls? (Plus a third eventual unprepare()).
+In S3 we loose the hardware contents, and in S2 we do not. A platform
+device driver has no way (currently) in its suspend/resume callback to
+know which state was entered/exited.
 
-Clocks, regulators and godknowswhat is managed by two symmetrical
-calls, so why shouldn't GPIO IRQs be?
+> 
+> Or you don't know it anywhere?
+> 
+> It is not less elegant to uncessesarily switch to a sleep state
+> than to unnecessarily program the default state when you only
+> went into S2 in that case.
 
-It would be counterintuitive to have a third call in the middle.
+Agreed, but defining a sleep state that does not exist just to force a
+transition to the default state upon resumption is not really elegant.
 
-Yours,
-Linus Walleij
+> 
+> I guess then it is better to assume we will loose the state, or
+> push for more granular handling of S2/3 etc states in the
+> PM core (I guess these states comes from ACPI or similar).
+
+I expected to see pm_message_t reflect which state we were entering into
+(PM_SUSPEND_STANDBY vs. PM_SUSPEND_MEM), but that is not the case.
+
+> 
+>>> Alternatively we would add a function to set the pinctrl handle to
+>>> an "unknown" state, so that when we resume, the pinctrl core at
+>>> least knows that we are not in "default" state anymore, so that
+>>> "default" is applied.
+>>
+>> And such a function would be called during driver suspend? Would not we
+>> still end-up with the drivers having to know about the fact that there
+>> is a) only one pin state defined, and b) these pins potentially lose
+>> their states in some deep sleep mode?
+> 
+> Again, the proposal to switch to default state twice just because
+> we do not know how deep sleep we went into isn't any more
+> elegant. Then it is better to just assume we lost the state at
+> all times.
+> 
+> Alternatively develop the PM core. Is it really impossible for
+> PM hooks to know which state it went into/came from?
+
+I don't think I liked Rafael's suggestion of putting that kind of detail
+into the platform_suspend_ops routine as he seems to suggest here:
+
+https://www.spinics.net/lists/arm-kernel/msg587311.html
+
+and here is my response:
+
+https://www.spinics.net/lists/arm-kernel/msg589844.html
+-- 
+Florian
