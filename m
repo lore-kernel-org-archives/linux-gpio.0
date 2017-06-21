@@ -1,51 +1,56 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
-Date: Wed, 21 Jun 2017 08:29:58 +0200
-Message-ID: <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com>
-References: <cover.1497033197.git.jan.kiszka@siemens.com>
- <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
- <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
- <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v2 1/2] DT: pinctrl: Add binding documentation for
+ Spreadtrum pin controller
+Date: Wed, 21 Jun 2017 16:10:41 +0800
+Message-ID: <CAMz4ku+jZ-S6sBL=ib++j+ooqweU9UC+MTgFca7ScrQiJDeZVQ@mail.gmail.com>
+References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
+ <CACRpkdbtuPKr=tWGoJC-sg2Oj47rYMpo6fs_Us=Nynew1Wkz=w@mail.gmail.com>
+ <20170612060718.GA8566@spreadtrum.com> <20170613031547.GA29679@spreadtrum.com>
+ <CACRpkdbaP1U3pefTbPj-wOa1AibcJHBBALfKWO8dBR=YW8f7zA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <CACRpkdbaP1U3pefTbPj-wOa1AibcJHBBALfKWO8dBR=YW8f7zA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 2017-06-20 13:38, Linus Walleij wrote:
-> On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->> On 2017-06-20 10:19, Linus Walleij wrote:
->>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>>
->>>> This makes the gpio-exar driver usable, which was prevented by a number
->>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
->>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
->>>> series, so I'm also cross-posting to the serial and gpio lists.
->>>>
->>>> Changes in v6:
->>>
->>> I merged some of the patches, that applied. Let's see if they survive
->>> in linux-next, else I guess we need to fix this in the -rcs or for the next
->>> kernel cycle.
+On 20 June 2017 at 17:31, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jun 13, 2017 at 5:15 AM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
+>
+>> I forgot one most important reason why we can not use the "sleep" state. As I explained
+>> above, the sleep related configuration will bind with the pin's sleep mode. If we set the
+>> pin's sleep mode as AP_SLEEP, then we can select "sleep" state when AP system goes into
+>> deep sleep mode by issuing "pinctrl_force_sleep()" in pinctrl suspend function.
 >>
->> Weird that things did not apply. I just did a cherry-pick for all those
->> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
->> know which baseline is needed, and I will rebase.
-> 
-> This was on the "devel" branch of my GPIO tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+>> But if we set the pin's sleep mode as PUBCP_SLEEP and pubcp system doesn't run linux kernel
+>> (it run another thread OS), then we can not select "sleep" state since the AP system does
+>> not go into deep sleep mode (AP system run linux kernel OS).
+>
+> Allright yes it makes sense, and also there are systems that just go into
+> "hardware sleep" and just put the pin into some pre-programmed mode.
+>
+> I'm a bit back-and-forth. I didn't mean that some code would actually
+> switch the state to "sleep" when we go to sleep, I meant that when
+> the system configures "default" mode it should also look up and
+> program the "sleep" mode, but this approach with a special property
+> is just another way of achieveing the same thing.
+>
+> But then we should add a whole slew of sleep states.
+>
+> I was thinking whether we could avoid having a special DT property
+> by parsing ahead to states we do not currently use and programming
+> that into the sleep mode registers.
 
-Again, all (missing) patches applied absolutely cleanly for me, see
-
-http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
-
-Jan
+Yes, for most scenarios, it can work with the "sleep" state to set
+sleep-related config. But for our Spreadtrum platform scenario (I do
+not know if there are other platforms need this feature), we can not
+select the "sleep" state when pubcp system goes into deep sleep mode
+but ap system does not go into deep sleep mode. So I think we still
+need these "sleep-bias-pull-up", "sleep-bias-pull-down",
+"sleep-input-enable" and "sleep-output-enable" properties.
 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
+Baolin.wang
+Best Regards
