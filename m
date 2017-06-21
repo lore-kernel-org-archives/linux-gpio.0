@@ -1,94 +1,114 @@
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during
- suspend/resume
-Date: Wed, 21 Jun 2017 14:23:03 -0700
-Message-ID: <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com>
- <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
- <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
- <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
- <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
- <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
+From: jmondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V4 1/7] dt-bindings: pinctrl: extend the pinmux property
+ to support integers array
+Date: Wed, 21 Jun 2017 23:50:59 +0200
+Message-ID: <20170621215059.GA14826@w540>
+References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
+ <1498046395-30001-2-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1498046395-30001-2-git-send-email-aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, stefan-XLVq0VzYD2Y@public.gmane.org, ping.bai-3arQi8VN3Tc@public.gmane.org, fugang.duan-3arQi8VN3Tc@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-(sorry for the lag)
+Hi Dong,
+   thanks for this
 
-On 03/16/2017 07:08 AM, Linus Walleij wrote:
-> On Wed, Mar 15, 2017 at 3:18 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->> On 03/14/2017 03:16 AM, Linus Walleij wrote:
-> 
->>> The most obvious would be to use the API as many already do:
->>> define "sleep" states in the core, and switch to these before
->>> going to sleep. If CONFIG_PM is available simply by calling
->>> pinctrl_pm_select_sleep_state() in the driver suspend() callback.
->>
->> Well, the difficulty for our platforms is that S2 does not make the HW
->> lose pin states, only S3 does and drivers should be agnostic of S2 vs. S3.
->>
->> There is not really a "sleep" and "default" state defined for these
->> platforms just the "default" state. I initially even considered adding a
->> fake "sleep" state just to satisfy the state transition condition, but
->> that does not accurately represent the HW.
-> 
-> Do you mean that on the way up, on the resume path, you know> whether the setting was lost or not?
+On Wed, Jun 21, 2017 at 07:59:49PM +0800, Dong Aisheng wrote:
+> Some platforms may need more than one integer to represent a complete
+> pinmux binding, so let's extend the pinmux property to allow to accept
+> integer array instead of only a single integer.
+>
+> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Shawn Guo <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+>
+> ---
+> ChangeLog:
+>  * new patch
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> index f01d154..1b954b5 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> @@ -205,10 +205,11 @@ maintain.
+>
+>  For cases like this, the pin controller driver may use the pinmux helper
+>  property, where the pin identifier is packed with mux configuration settings
+> -in a single integer.
+> +in a single integer or integers array which depends on platform binding
+> +specific.
+>
 
-In S3 we loose the hardware contents, and in S2 we do not. A platform
-device driver has no way (currently) in its suspend/resume callback to
-know which state was entered/exited.
+s/or integers array/or a group of integers/
+since you're using "group" below
 
-> 
-> Or you don't know it anywhere?
-> 
-> It is not less elegant to uncessesarily switch to a sleep state
-> than to unnecessarily program the default state when you only
-> went into S2 in that case.
+s/ which depends on platform binding specific//
 
-Agreed, but defining a sleep state that does not exist just to force a
-transition to the default state upon resumption is not really elegant.
+I'm not a native speaker, but this sounds weird to me. If I'm the only
+one, please ignore my comment otherwise please drop this
 
-> 
-> I guess then it is better to assume we will loose the state, or
-> push for more granular handling of S2/3 etc states in the
-> PM core (I guess these states comes from ACPI or similar).
+Actually, to avoid confusion between "array of integers" and "group of
+integers" I would provide a definition of what a "pinmux group" is
+before everything else.
+This is how the paragraph would look like:
 
-I expected to see pm_message_t reflect which state we were entering into
-(PM_SUSPEND_STANDBY vs. PM_SUSPEND_MEM), but that is not the case.
+-----------------------------------------------------------------------------
+ For cases like this, the pin controller driver may use the pinmux helper
+ property, where the pin identifier is provided with mux configuration settings
+ in a pinmux group.
 
-> 
->>> Alternatively we would add a function to set the pinctrl handle to
->>> an "unknown" state, so that when we resume, the pinctrl core at
->>> least knows that we are not in "default" state anymore, so that
->>> "default" is applied.
->>
->> And such a function would be called during driver suspend? Would not we
->> still end-up with the drivers having to know about the fact that there
->> is a) only one pin state defined, and b) these pins potentially lose
->> their states in some deep sleep mode?
-> 
-> Again, the proposal to switch to default state twice just because
-> we do not know how deep sleep we went into isn't any more
-> elegant. Then it is better to just assume we lost the state at
-> all times.
-> 
-> Alternatively develop the PM core. Is it really impossible for
-> PM hooks to know which state it went into/came from?
+ A pinumux group consists of the pin identifier and mux settings
+ represented as a single integer or an array of integers.
 
-I don't think I liked Rafael's suggestion of putting that kind of detail
-into the platform_suspend_ops routine as he seems to suggest here:
+ The pinmux property accepts an array of pinmux groups, each of them describing
+ a single pin multiplexing configuration.
 
-https://www.spinics.net/lists/arm-kernel/msg587311.html
+ pincontroller {
+	state_0_node_a {
+		pinmux = <PINMUX_GROUP>, <PINMUX_GROUP>, ...;
+	};
+ };
 
-and here is my response:
+ Each individual pin controller driver bindings documentation shall specify
+ how pin IDs and pin multiplexing configuration are defined and assembled together
+ in a pinmux group.
+-----------------------------------------------------------------------------
 
-https://www.spinics.net/lists/arm-kernel/msg589844.html
--- 
-Florian
+Thanks
+   j
+
+> -The pinmux property accepts an array of integers, each of them describing
+> -a single pin multiplexing configuration.
+> +The pinmux property accepts an array of group of integers, each group
+> +describing a single pin multiplexing configuration.
+>
+>  pincontroller {
+>  	state_0_node_a {
+> @@ -300,7 +301,7 @@ arguments are described below.
+>  - pinmux takes a list of pin IDs and mux settings as required argument. The
+>    specific bindings for the hardware defines:
+>    - How pin IDs and mux settings are defined and assembled together in a single
+> -    integer.
+> +    integer or integers array.
+>
+>  - bias-pull-up, -down and -pin-default take as optional argument on hardware
+>    supporting it the pull strength in Ohm. bias-disable will disable the pull.
+> --
+> 2.7.4
+>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
