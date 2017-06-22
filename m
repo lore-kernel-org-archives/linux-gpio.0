@@ -1,106 +1,103 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Thu, 22 Jun 2017 16:25:15 +0200
-Message-ID: <1498141515.7387.16.camel@baylibre.com>
-References: <1497543642.3086.35.camel@baylibre.com>
-         <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
-         <1497954416.7387.1.camel@baylibre.com>
-         <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
-         <1497979438.7387.10.camel@baylibre.com>
-         <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: RE: [PATCH V4 1/7] dt-bindings: pinctrl: extend the pinmux property
+ to support integers array
+Date: Thu, 22 Jun 2017 14:35:02 +0000
+Message-ID: <AM3PR04MB306DCE8DEF8507B4175789180DB0@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
+ <1498046395-30001-2-git-send-email-aisheng.dong@nxp.com>
+ <20170621215059.GA14826@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:34604 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751095AbdFVOZT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jun 2017 10:25:19 -0400
-Received: by mail-wr0-f171.google.com with SMTP id 77so25789076wrb.1
-        for <linux-gpio@vger.kernel.org>; Thu, 22 Jun 2017 07:25:18 -0700 (PDT)
-In-Reply-To: <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+Received: from mail-ve1eur01on0070.outbound.protection.outlook.com ([104.47.1.70]:57952
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750812AbdFVOfG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 22 Jun 2017 10:35:06 -0400
+In-Reply-To: <20170621215059.GA14826@w540>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: jmondi <jacopo@jmondi.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On Wed, 2017-06-21 at 22:50 +0200, Linus Walleij wrote:
-> On Tue, Jun 20, 2017 at 7:23 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > On Tue, 2017-06-20 at 18:37 +0200, Linus Walleij wrote:
-> > > Eventually gpio_to_irq() should be DELETED and replaced in full with
-> > > the prepare/unprepare calls.
-> > 
-> > Woahh, that's not what I meant. gpio_to_irq should stay. Getting rid of it
-> > would
-> > be a mess and it is a useful call.
-> > 
-> > The gpio_irq_prepare is meant so that the consumer can tell the gpio driver
-> > it
-> > will want to get irq from a particular gpio at some point.
-> > 
-> > IOW, it's the consumer saying to the gpio driver "please do whatever you
-> > need to
-> > do, if anything, so this gpio can generate an interrupt"
-> > 
-> > This is a much simpler change. Using devm, all we need is to put a
-> > devm_gpio_irq_prepare(<gpio_num>) in the probe of the drivers using
-> > gpio_to_irq.
-> > 
-> > Mandating call to gpio_irq_prepare before any call to gpio_to_irq will be
-> > fairly
-> > easy.
-> 
-> So why can't we just return the IRQ from prepare() and be done with it
-
-We can return it here as well, it's actually a good idea. New drivers could just
-use that one if they are keeping track of the irq number.
-
-> instead of having two calls? (Plus a third eventual unprepare()).
-> 
-> Clocks, regulators and godknowswhat is managed by two symmetrical
-> calls, so why shouldn't GPIO IRQs be?
-
-The approach is exactly the same as what we trying to follow in the irq
-framework:
-
-framework     | irq                 | gpio
------------------------------------------------------
-index         | hwirq               | gpio_num
-creation      | irq_create_mapping  | gpio_irq_prepare   ?
-removal       | irq_dispose_mapping | gpio_irq_unprepare ?
-(fast) lookup | irq_find_mapping    | gpio_to_irq
-
-We are going to have at lookup function somehow, why not expose it ?
-
-Another reason for keeping gpio_to_irq is that many existing drivers using the
-callback don't keep track of their irq number, just the gpio. For every irq
-operation, they call gpio_to_irq. Things like this:
-
-* irq_enable(gpio_to_irq(<gpio_num>))
-* irq_release(gpio_to_irq(<gpio_num>))
-* etc ...
-
-It's a bit lazy maybe, but I don't think there is anything utterly wrong with
-it.
-
-Getting rid of gpio_to_irq would mean reworking all those drivers so they keep
-track of their irq number. I think this would be a mess for a very little gain.
-
-Also, except for the 26 gpio drivers I have listed, the rest should already be
-implementing what qualify as a "lookup" function in gpio_to_irq. I don't think
-we should by modifying every single gpio driver when there is a solution to
-'surgically' address the matter.
-
-The series would already affect a significant amount of drivers, I'm trying to
-keep it as simple an contained as possible.
-
-If that is OK with you, I could send an RFC implementing the idea but fixing
-only 1 gpio driver and 2 or 3 consumer. We would have actual code to discuss on,
-it might be easier. 
-
-> 
-> It would be counterintuitive to have a third call in the middle.
-> 
-> Yours,
-> Linus Walleij
-
+SGkgSmFjb3BvLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGptb25k
+aSBbbWFpbHRvOmphY29wb0BqbW9uZGkub3JnXQ0KPiBTZW50OiBUaHVyc2RheSwgSnVuZSAyMiwg
+MjAxNyA1OjUxIEFNDQo+IFRvOiBBLnMuIERvbmcNCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJu
+ZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxpbnVzLndh
+bGxlaWpAbGluYXJvLm9yZzsgc2hhd25ndW9Aa2VybmVsLm9yZzsgc3RlZmFuQGFnbmVyLmNoOyBK
+YWNreSBCYWk7DQo+IEFuZHkgRHVhbjsga2VybmVsQHBlbmd1dHJvbml4LmRlOyBSb2IgSGVycmlu
+ZzsgTWFyayBSdXRsYW5kOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSmFjb3BvIE1v
+bmRpDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjQgMS83XSBkdC1iaW5kaW5nczogcGluY3RybDog
+ZXh0ZW5kIHRoZSBwaW5tdXgNCj4gcHJvcGVydHkgdG8gc3VwcG9ydCBpbnRlZ2VycyBhcnJheQ0K
+PiANCj4gSGkgRG9uZywNCj4gICAgdGhhbmtzIGZvciB0aGlzDQo+IA0KPiBPbiBXZWQsIEp1biAy
+MSwgMjAxNyBhdCAwNzo1OTo0OVBNICswODAwLCBEb25nIEFpc2hlbmcgd3JvdGU6DQo+ID4gU29t
+ZSBwbGF0Zm9ybXMgbWF5IG5lZWQgbW9yZSB0aGFuIG9uZSBpbnRlZ2VyIHRvIHJlcHJlc2VudCBh
+IGNvbXBsZXRlDQo+ID4gcGlubXV4IGJpbmRpbmcsIHNvIGxldCdzIGV4dGVuZCB0aGUgcGlubXV4
+IHByb3BlcnR5IHRvIGFsbG93IHRvIGFjY2VwdA0KPiA+IGludGVnZXIgYXJyYXkgaW5zdGVhZCBv
+ZiBvbmx5IGEgc2luZ2xlIGludGVnZXIuDQo+ID4NCj4gPiBDYzogUm9iIEhlcnJpbmcgPHJvYmgr
+ZHRAa2VybmVsLm9yZz4NCj4gPiBDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNv
+bT4NCj4gPiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogTGludXMgV2Fs
+bGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiA+IENjOiBTaGF3biBHdW8gPHNoYXdu
+Z3VvQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IEphY29wbyBNb25kaSA8amFjb3BvK3JlbmVzYXNAam1v
+bmRpLm9yZz4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0Bu
+eHAuY29tPg0KPiA+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlTG9nOg0KPiA+ICAqIG5ldyBwYXRjaA0K
+PiA+IC0tLQ0KPiA+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9w
+aW5jdHJsLWJpbmRpbmdzLnR4dCB8IDkNCj4gPiArKysrKy0tLS0NCj4gPiAgMSBmaWxlIGNoYW5n
+ZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQN
+Cj4gPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3BpbmN0cmwt
+YmluZGluZ3MudHh0DQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGlu
+Y3RybC9waW5jdHJsLWJpbmRpbmdzLnR4dA0KPiA+IGluZGV4IGYwMWQxNTQuLjFiOTU0YjUgMTAw
+NjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwv
+cGluY3RybC1iaW5kaW5ncy50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvcGluY3RybC9waW5jdHJsLWJpbmRpbmdzLnR4dA0KPiA+IEBAIC0yMDUsMTAgKzIw
+NSwxMSBAQCBtYWludGFpbi4NCj4gPg0KPiA+ICBGb3IgY2FzZXMgbGlrZSB0aGlzLCB0aGUgcGlu
+IGNvbnRyb2xsZXIgZHJpdmVyIG1heSB1c2UgdGhlIHBpbm11eA0KPiA+IGhlbHBlciAgcHJvcGVy
+dHksIHdoZXJlIHRoZSBwaW4gaWRlbnRpZmllciBpcyBwYWNrZWQgd2l0aCBtdXgNCj4gPiBjb25m
+aWd1cmF0aW9uIHNldHRpbmdzIC1pbiBhIHNpbmdsZSBpbnRlZ2VyLg0KPiA+ICtpbiBhIHNpbmds
+ZSBpbnRlZ2VyIG9yIGludGVnZXJzIGFycmF5IHdoaWNoIGRlcGVuZHMgb24gcGxhdGZvcm0NCj4g
+PiArYmluZGluZyBzcGVjaWZpYy4NCj4gPg0KPiANCj4gcy9vciBpbnRlZ2VycyBhcnJheS9vciBh
+IGdyb3VwIG9mIGludGVnZXJzLyBzaW5jZSB5b3UncmUgdXNpbmcgImdyb3VwIg0KPiBiZWxvdw0K
+PiANCj4gcy8gd2hpY2ggZGVwZW5kcyBvbiBwbGF0Zm9ybSBiaW5kaW5nIHNwZWNpZmljLy8NCj4g
+DQo+IEknbSBub3QgYSBuYXRpdmUgc3BlYWtlciwgYnV0IHRoaXMgc291bmRzIHdlaXJkIHRvIG1l
+LiBJZiBJJ20gdGhlIG9ubHkgb25lLA0KPiBwbGVhc2UgaWdub3JlIG15IGNvbW1lbnQgb3RoZXJ3
+aXNlIHBsZWFzZSBkcm9wIHRoaXMNCj4gDQo+IEFjdHVhbGx5LCB0byBhdm9pZCBjb25mdXNpb24g
+YmV0d2VlbiAiYXJyYXkgb2YgaW50ZWdlcnMiIGFuZCAiZ3JvdXAgb2YNCj4gaW50ZWdlcnMiIEkg
+d291bGQgcHJvdmlkZSBhIGRlZmluaXRpb24gb2Ygd2hhdCBhICJwaW5tdXggZ3JvdXAiIGlzIGJl
+Zm9yZQ0KPiBldmVyeXRoaW5nIGVsc2UuDQo+IFRoaXMgaXMgaG93IHRoZSBwYXJhZ3JhcGggd291
+bGQgbG9vayBsaWtlOg0KPiANCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gLS0tDQo+ICBGb3IgY2Fz
+ZXMgbGlrZSB0aGlzLCB0aGUgcGluIGNvbnRyb2xsZXIgZHJpdmVyIG1heSB1c2UgdGhlIHBpbm11
+eCBoZWxwZXINCj4gcHJvcGVydHksIHdoZXJlIHRoZSBwaW4gaWRlbnRpZmllciBpcyBwcm92aWRl
+ZCB3aXRoIG11eCBjb25maWd1cmF0aW9uDQo+IHNldHRpbmdzICBpbiBhIHBpbm11eCBncm91cC4N
+Cj4gDQo+ICBBIHBpbnVtdXggZ3JvdXAgY29uc2lzdHMgb2YgdGhlIHBpbiBpZGVudGlmaWVyIGFu
+ZCBtdXggc2V0dGluZ3MNCj4gcmVwcmVzZW50ZWQgYXMgYSBzaW5nbGUgaW50ZWdlciBvciBhbiBh
+cnJheSBvZiBpbnRlZ2Vycy4NCj4gDQo+ICBUaGUgcGlubXV4IHByb3BlcnR5IGFjY2VwdHMgYW4g
+YXJyYXkgb2YgcGlubXV4IGdyb3VwcywgZWFjaCBvZiB0aGVtDQo+IGRlc2NyaWJpbmcgIGEgc2lu
+Z2xlIHBpbiBtdWx0aXBsZXhpbmcgY29uZmlndXJhdGlvbi4NCj4gDQo+ICBwaW5jb250cm9sbGVy
+IHsNCj4gCXN0YXRlXzBfbm9kZV9hIHsNCj4gCQlwaW5tdXggPSA8UElOTVVYX0dST1VQPiwgPFBJ
+Tk1VWF9HUk9VUD4sIC4uLjsNCj4gCX07DQo+ICB9Ow0KPiANCj4gIEVhY2ggaW5kaXZpZHVhbCBw
+aW4gY29udHJvbGxlciBkcml2ZXIgYmluZGluZ3MgZG9jdW1lbnRhdGlvbiBzaGFsbA0KPiBzcGVj
+aWZ5ICBob3cgcGluIElEcyBhbmQgcGluIG11bHRpcGxleGluZyBjb25maWd1cmF0aW9uIGFyZSBk
+ZWZpbmVkIGFuZA0KPiBhc3NlbWJsZWQgdG9nZXRoZXIgIGluIGEgcGlubXV4IGdyb3VwLg0KPiAt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQ0KPiAtLS0NCg0KVGhpcyBkb2VzIGxvb2sgbXVjaCBiZXR0ZXIuDQpJ
+IHdpbGwgcmVuZXcgdGhlIHBhdGNoIHdpdGggeW91ciBzaWduLW9mZiBhcyB3ZWxsIHNpbmNlIGl0
+IG1vc3RseSBmcm9tIHlvdS4NClRoYW5rcyBmb3IgdGhlIGdyZWF0IHN1Z2dlc3Rpb24uDQoNClJl
+Z2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo+IA0KPiBUaGFua3MNCj4gICAgag0KPiANCj4gPiAtVGhl
+IHBpbm11eCBwcm9wZXJ0eSBhY2NlcHRzIGFuIGFycmF5IG9mIGludGVnZXJzLCBlYWNoIG9mIHRo
+ZW0NCj4gPiBkZXNjcmliaW5nIC1hIHNpbmdsZSBwaW4gbXVsdGlwbGV4aW5nIGNvbmZpZ3VyYXRp
+b24uDQo+ID4gK1RoZSBwaW5tdXggcHJvcGVydHkgYWNjZXB0cyBhbiBhcnJheSBvZiBncm91cCBv
+ZiBpbnRlZ2VycywgZWFjaCBncm91cA0KPiA+ICtkZXNjcmliaW5nIGEgc2luZ2xlIHBpbiBtdWx0
+aXBsZXhpbmcgY29uZmlndXJhdGlvbi4NCj4gPg0KPiA+ICBwaW5jb250cm9sbGVyIHsNCj4gPiAg
+CXN0YXRlXzBfbm9kZV9hIHsNCj4gPiBAQCAtMzAwLDcgKzMwMSw3IEBAIGFyZ3VtZW50cyBhcmUg
+ZGVzY3JpYmVkIGJlbG93Lg0KPiA+ICAtIHBpbm11eCB0YWtlcyBhIGxpc3Qgb2YgcGluIElEcyBh
+bmQgbXV4IHNldHRpbmdzIGFzIHJlcXVpcmVkIGFyZ3VtZW50Lg0KPiBUaGUNCj4gPiAgICBzcGVj
+aWZpYyBiaW5kaW5ncyBmb3IgdGhlIGhhcmR3YXJlIGRlZmluZXM6DQo+ID4gICAgLSBIb3cgcGlu
+IElEcyBhbmQgbXV4IHNldHRpbmdzIGFyZSBkZWZpbmVkIGFuZCBhc3NlbWJsZWQgdG9nZXRoZXIg
+aW4NCj4gYSBzaW5nbGUNCj4gPiAtICAgIGludGVnZXIuDQo+ID4gKyAgICBpbnRlZ2VyIG9yIGlu
+dGVnZXJzIGFycmF5Lg0KPiA+DQo+ID4gIC0gYmlhcy1wdWxsLXVwLCAtZG93biBhbmQgLXBpbi1k
+ZWZhdWx0IHRha2UgYXMgb3B0aW9uYWwgYXJndW1lbnQgb24NCj4gaGFyZHdhcmUNCj4gPiAgICBz
+dXBwb3J0aW5nIGl0IHRoZSBwdWxsIHN0cmVuZ3RoIGluIE9obS4gYmlhcy1kaXNhYmxlIHdpbGwg
+ZGlzYWJsZSB0aGUNCj4gcHVsbC4NCj4gPiAtLQ0KPiA+IDIuNy40DQo+ID4NCg==
