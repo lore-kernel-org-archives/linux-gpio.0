@@ -1,107 +1,106 @@
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v2] pinctrl: generic: Add output-enable property
-Date: Thu, 22 Jun 2017 12:00:58 +0200
-Message-ID: <1498125658-14554-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, andy.shevchenko@gmail.com, dongas86@gmail.com, geert+renesas@glider.be, Chris.Brandt@renesas.com, laurent.pinchart@ideasonboard.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Thu, 22 Jun 2017 16:25:15 +0200
+Message-ID: <1498141515.7387.16.camel@baylibre.com>
+References: <1497543642.3086.35.camel@baylibre.com>
+         <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
+         <1497954416.7387.1.camel@baylibre.com>
+         <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+         <1497979438.7387.10.camel@baylibre.com>
+         <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:34604 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbdFVOZT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jun 2017 10:25:19 -0400
+Received: by mail-wr0-f171.google.com with SMTP id 77so25789076wrb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 22 Jun 2017 07:25:18 -0700 (PDT)
+In-Reply-To: <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Add output-enable generic pin configuration property.
-This properties allows enabling/disabling pin's output capabilities
-without actually driving any value on the line.
+On Wed, 2017-06-21 at 22:50 +0200, Linus Walleij wrote:
+> On Tue, Jun 20, 2017 at 7:23 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > On Tue, 2017-06-20 at 18:37 +0200, Linus Walleij wrote:
+> > > Eventually gpio_to_irq() should be DELETED and replaced in full with
+> > > the prepare/unprepare calls.
+> > 
+> > Woahh, that's not what I meant. gpio_to_irq should stay. Getting rid of it
+> > would
+> > be a mess and it is a useful call.
+> > 
+> > The gpio_irq_prepare is meant so that the consumer can tell the gpio driver
+> > it
+> > will want to get irq from a particular gpio at some point.
+> > 
+> > IOW, it's the consumer saying to the gpio driver "please do whatever you
+> > need to
+> > do, if anything, so this gpio can generate an interrupt"
+> > 
+> > This is a much simpler change. Using devm, all we need is to put a
+> > devm_gpio_irq_prepare(<gpio_num>) in the probe of the drivers using
+> > gpio_to_irq.
+> > 
+> > Mandating call to gpio_irq_prepare before any call to gpio_to_irq will be
+> > fairly
+> > easy.
+> 
+> So why can't we just return the IRQ from prepare() and be done with it
 
----
-v1->v2:
- - Expand the property description as suggested by Laurent. I ended up
-   mentioning the in-famous output buffer :)
+We can return it here as well, it's actually a good idea. New drivers could just
+use that one if they are keeping track of the irq number.
 
-One (more) question to GPIO people on:
-+	PCONFDUMP(PIN_CONFIG_OUTPUT_ENABLE, "output enabled", NULL, false),
+> instead of having two calls? (Plus a third eventual unprepare()).
+> 
+> Clocks, regulators and godknowswhat is managed by two symmetrical
+> calls, so why shouldn't GPIO IRQs be?
 
-I copied this from INPUT_ENABLE where arguments 2 and 3 passed to PCONFDUMP are
-NULL and false even if the property has an argument, used to enable/disable
-the input mode. Is this intended? Should that be turned instead to
--	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", NULL, false),
-+	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", "enabled", true),
+The approach is exactly the same as what we trying to follow in the irq
+framework:
 
-Note that the same applies to most of the properties that have an
-"enable"/"disable" argument. Just to make sure this is done on purpose.
+framework     | irq                 | gpio
+-----------------------------------------------------
+index         | hwirq               | gpio_num
+creation      | irq_create_mapping  | gpio_irq_prepare   ?
+removal       | irq_dispose_mapping | gpio_irq_unprepare ?
+(fast) lookup | irq_find_mapping    | gpio_to_irq
 
-Thanks
-   j
- .../devicetree/bindings/pinctrl/pinctrl-bindings.txt      |  2 ++
- drivers/pinctrl/pinconf-generic.c                         |  3 +++
- include/linux/pinctrl/pinconf-generic.h                   | 15 +++++++++++----
- 3 files changed, 16 insertions(+), 4 deletions(-)
+We are going to have at lookup function somehow, why not expose it ?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-index f01d154..f8af190 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-@@ -259,6 +259,8 @@ input-debounce		- debounce mode with debound time X
- power-source		- select between different power supplies
- low-power-enable	- enable low power mode
- low-power-disable	- disable low power mode
-+output-disable		- disable output on a pin
-+output-enable		- enable output on a pin
- output-low		- set the pin to output mode with low level
- output-high		- set the pin to output mode with high level
- slew-rate		- set the slew rate
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 720a19f..fc0c230 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -44,6 +44,7 @@ static const struct pin_config_item conf_items[] = {
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT_ENABLE, "input schmitt enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_LOW_POWER_MODE, "pin low power", "mode", true),
-+	PCONFDUMP(PIN_CONFIG_OUTPUT_ENABLE, "output enabled", NULL, false),
- 	PCONFDUMP(PIN_CONFIG_OUTPUT, "pin output", "level", true),
- 	PCONFDUMP(PIN_CONFIG_POWER_SOURCE, "pin power source", "selector", true),
- 	PCONFDUMP(PIN_CONFIG_SLEW_RATE, "slew rate", NULL, true),
-@@ -172,6 +173,8 @@ static const struct pinconf_generic_params dt_params[] = {
- 	{ "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
- 	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
- 	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-+	{ "output-disable", PIN_CONFIG_OUTPUT_ENABLE, 0 },
-+	{ "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
- 	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
- 	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
- 	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 7620eb1..231d307 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -73,10 +73,16 @@
-  *	operation, if several modes of operation are supported these can be
-  *	passed in the argument on a custom form, else just use argument 1
-  *	to indicate low power mode, argument 0 turns low power mode off.
-- * @PIN_CONFIG_OUTPUT: this will configure the pin as an output. Use argument
-- *	1 to indicate high level, argument 0 to indicate low level. (Please
-- *	see Documentation/pinctrl.txt, section "GPIO mode pitfalls" for a
-- *	discussion around this parameter.)
-+ * @PIN_CONFIG_OUTPUT_ENABLE: this will enable the pin's output mode
-+ * 	without driving a value there. For most platforms this reduces to
-+ * 	enable the output buffers and then let the pin controller current
-+ * 	configuration (eg. the currently selected mux function) drive values on
-+ * 	the line. Use argument 1 to enable output mode, argument 0 to disable
-+ * 	it.
-+ * @PIN_CONFIG_OUTPUT: this will configure the pin as an output and drive a
-+ * 	value on the line. Use argument 1 to indicate high level, argument 0 to
-+ * 	indicate low level. (Please see Documentation/pinctrl.txt, section
-+ * 	"GPIO mode pitfalls" for a discussion around this parameter.)
-  * @PIN_CONFIG_POWER_SOURCE: if the pin can select between different power
-  *	supplies, the argument to this parameter (on a custom format) tells
-  *	the driver which alternative power source to use.
-@@ -105,6 +111,7 @@ enum pin_config_param {
- 	PIN_CONFIG_INPUT_SCHMITT,
- 	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
- 	PIN_CONFIG_LOW_POWER_MODE,
-+	PIN_CONFIG_OUTPUT_ENABLE,
- 	PIN_CONFIG_OUTPUT,
- 	PIN_CONFIG_POWER_SOURCE,
- 	PIN_CONFIG_SLEW_RATE,
---
-2.7.4
+Another reason for keeping gpio_to_irq is that many existing drivers using the
+callback don't keep track of their irq number, just the gpio. For every irq
+operation, they call gpio_to_irq. Things like this:
+
+* irq_enable(gpio_to_irq(<gpio_num>))
+* irq_release(gpio_to_irq(<gpio_num>))
+* etc ...
+
+It's a bit lazy maybe, but I don't think there is anything utterly wrong with
+it.
+
+Getting rid of gpio_to_irq would mean reworking all those drivers so they keep
+track of their irq number. I think this would be a mess for a very little gain.
+
+Also, except for the 26 gpio drivers I have listed, the rest should already be
+implementing what qualify as a "lookup" function in gpio_to_irq. I don't think
+we should by modifying every single gpio driver when there is a solution to
+'surgically' address the matter.
+
+The series would already affect a significant amount of drivers, I'm trying to
+keep it as simple an contained as possible.
+
+If that is OK with you, I could send an RFC implementing the idea but fixing
+only 1 gpio driver and 2 or 3 consumer. We would have actual code to discuss on,
+it might be easier. 
+
+> 
+> It would be counterintuitive to have a third call in the middle.
+> 
+> Yours,
+> Linus Walleij
+
