@@ -1,103 +1,86 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V4 1/7] dt-bindings: pinctrl: extend the pinmux property
- to support integers array
-Date: Thu, 22 Jun 2017 14:35:02 +0000
-Message-ID: <AM3PR04MB306DCE8DEF8507B4175789180DB0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
- <1498046395-30001-2-git-send-email-aisheng.dong@nxp.com>
- <20170621215059.GA14826@w540>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V5 1/1] dt-bindings: pinctrl: extend the pinmux property to support integers array
+Date: Thu, 22 Jun 2017 22:49:00 +0800
+Message-ID: <1498142940-7982-1-git-send-email-aisheng.dong@nxp.com>
+References: <1498046395-30001-2-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0070.outbound.protection.outlook.com ([104.47.1.70]:57952
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+Received: from mail-bl2nam02on0062.outbound.protection.outlook.com ([104.47.38.62]:48352
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750812AbdFVOfG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 22 Jun 2017 10:35:06 -0400
-In-Reply-To: <20170621215059.GA14826@w540>
-Content-Language: en-US
+        id S1753171AbdFVOux (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 22 Jun 2017 10:50:53 -0400
+In-Reply-To: <1498046395-30001-2-git-send-email-aisheng.dong@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: jmondi <jacopo@jmondi.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, jacopo+renesas@jmondi.org, Dong Aisheng <aisheng.dong@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 
-SGkgSmFjb3BvLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGptb25k
-aSBbbWFpbHRvOmphY29wb0BqbW9uZGkub3JnXQ0KPiBTZW50OiBUaHVyc2RheSwgSnVuZSAyMiwg
-MjAxNyA1OjUxIEFNDQo+IFRvOiBBLnMuIERvbmcNCj4gQ2M6IGxpbnV4LWdwaW9Admdlci5rZXJu
-ZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxpbnVzLndh
-bGxlaWpAbGluYXJvLm9yZzsgc2hhd25ndW9Aa2VybmVsLm9yZzsgc3RlZmFuQGFnbmVyLmNoOyBK
-YWNreSBCYWk7DQo+IEFuZHkgRHVhbjsga2VybmVsQHBlbmd1dHJvbml4LmRlOyBSb2IgSGVycmlu
-ZzsgTWFyayBSdXRsYW5kOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSmFjb3BvIE1v
-bmRpDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjQgMS83XSBkdC1iaW5kaW5nczogcGluY3RybDog
-ZXh0ZW5kIHRoZSBwaW5tdXgNCj4gcHJvcGVydHkgdG8gc3VwcG9ydCBpbnRlZ2VycyBhcnJheQ0K
-PiANCj4gSGkgRG9uZywNCj4gICAgdGhhbmtzIGZvciB0aGlzDQo+IA0KPiBPbiBXZWQsIEp1biAy
-MSwgMjAxNyBhdCAwNzo1OTo0OVBNICswODAwLCBEb25nIEFpc2hlbmcgd3JvdGU6DQo+ID4gU29t
-ZSBwbGF0Zm9ybXMgbWF5IG5lZWQgbW9yZSB0aGFuIG9uZSBpbnRlZ2VyIHRvIHJlcHJlc2VudCBh
-IGNvbXBsZXRlDQo+ID4gcGlubXV4IGJpbmRpbmcsIHNvIGxldCdzIGV4dGVuZCB0aGUgcGlubXV4
-IHByb3BlcnR5IHRvIGFsbG93IHRvIGFjY2VwdA0KPiA+IGludGVnZXIgYXJyYXkgaW5zdGVhZCBv
-ZiBvbmx5IGEgc2luZ2xlIGludGVnZXIuDQo+ID4NCj4gPiBDYzogUm9iIEhlcnJpbmcgPHJvYmgr
-ZHRAa2VybmVsLm9yZz4NCj4gPiBDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNv
-bT4NCj4gPiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogTGludXMgV2Fs
-bGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPg0KPiA+IENjOiBTaGF3biBHdW8gPHNoYXdu
-Z3VvQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IEphY29wbyBNb25kaSA8amFjb3BvK3JlbmVzYXNAam1v
-bmRpLm9yZz4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0Bu
-eHAuY29tPg0KPiA+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlTG9nOg0KPiA+ICAqIG5ldyBwYXRjaA0K
-PiA+IC0tLQ0KPiA+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGluY3RybC9w
-aW5jdHJsLWJpbmRpbmdzLnR4dCB8IDkNCj4gPiArKysrKy0tLS0NCj4gPiAgMSBmaWxlIGNoYW5n
-ZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQN
-Cj4gPiBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL3BpbmN0cmwt
-YmluZGluZ3MudHh0DQo+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGlu
-Y3RybC9waW5jdHJsLWJpbmRpbmdzLnR4dA0KPiA+IGluZGV4IGYwMWQxNTQuLjFiOTU0YjUgMTAw
-NjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwv
-cGluY3RybC1iaW5kaW5ncy50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvcGluY3RybC9waW5jdHJsLWJpbmRpbmdzLnR4dA0KPiA+IEBAIC0yMDUsMTAgKzIw
-NSwxMSBAQCBtYWludGFpbi4NCj4gPg0KPiA+ICBGb3IgY2FzZXMgbGlrZSB0aGlzLCB0aGUgcGlu
-IGNvbnRyb2xsZXIgZHJpdmVyIG1heSB1c2UgdGhlIHBpbm11eA0KPiA+IGhlbHBlciAgcHJvcGVy
-dHksIHdoZXJlIHRoZSBwaW4gaWRlbnRpZmllciBpcyBwYWNrZWQgd2l0aCBtdXgNCj4gPiBjb25m
-aWd1cmF0aW9uIHNldHRpbmdzIC1pbiBhIHNpbmdsZSBpbnRlZ2VyLg0KPiA+ICtpbiBhIHNpbmds
-ZSBpbnRlZ2VyIG9yIGludGVnZXJzIGFycmF5IHdoaWNoIGRlcGVuZHMgb24gcGxhdGZvcm0NCj4g
-PiArYmluZGluZyBzcGVjaWZpYy4NCj4gPg0KPiANCj4gcy9vciBpbnRlZ2VycyBhcnJheS9vciBh
-IGdyb3VwIG9mIGludGVnZXJzLyBzaW5jZSB5b3UncmUgdXNpbmcgImdyb3VwIg0KPiBiZWxvdw0K
-PiANCj4gcy8gd2hpY2ggZGVwZW5kcyBvbiBwbGF0Zm9ybSBiaW5kaW5nIHNwZWNpZmljLy8NCj4g
-DQo+IEknbSBub3QgYSBuYXRpdmUgc3BlYWtlciwgYnV0IHRoaXMgc291bmRzIHdlaXJkIHRvIG1l
-LiBJZiBJJ20gdGhlIG9ubHkgb25lLA0KPiBwbGVhc2UgaWdub3JlIG15IGNvbW1lbnQgb3RoZXJ3
-aXNlIHBsZWFzZSBkcm9wIHRoaXMNCj4gDQo+IEFjdHVhbGx5LCB0byBhdm9pZCBjb25mdXNpb24g
-YmV0d2VlbiAiYXJyYXkgb2YgaW50ZWdlcnMiIGFuZCAiZ3JvdXAgb2YNCj4gaW50ZWdlcnMiIEkg
-d291bGQgcHJvdmlkZSBhIGRlZmluaXRpb24gb2Ygd2hhdCBhICJwaW5tdXggZ3JvdXAiIGlzIGJl
-Zm9yZQ0KPiBldmVyeXRoaW5nIGVsc2UuDQo+IFRoaXMgaXMgaG93IHRoZSBwYXJhZ3JhcGggd291
-bGQgbG9vayBsaWtlOg0KPiANCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gLS0tDQo+ICBGb3IgY2Fz
-ZXMgbGlrZSB0aGlzLCB0aGUgcGluIGNvbnRyb2xsZXIgZHJpdmVyIG1heSB1c2UgdGhlIHBpbm11
-eCBoZWxwZXINCj4gcHJvcGVydHksIHdoZXJlIHRoZSBwaW4gaWRlbnRpZmllciBpcyBwcm92aWRl
-ZCB3aXRoIG11eCBjb25maWd1cmF0aW9uDQo+IHNldHRpbmdzICBpbiBhIHBpbm11eCBncm91cC4N
-Cj4gDQo+ICBBIHBpbnVtdXggZ3JvdXAgY29uc2lzdHMgb2YgdGhlIHBpbiBpZGVudGlmaWVyIGFu
-ZCBtdXggc2V0dGluZ3MNCj4gcmVwcmVzZW50ZWQgYXMgYSBzaW5nbGUgaW50ZWdlciBvciBhbiBh
-cnJheSBvZiBpbnRlZ2Vycy4NCj4gDQo+ICBUaGUgcGlubXV4IHByb3BlcnR5IGFjY2VwdHMgYW4g
-YXJyYXkgb2YgcGlubXV4IGdyb3VwcywgZWFjaCBvZiB0aGVtDQo+IGRlc2NyaWJpbmcgIGEgc2lu
-Z2xlIHBpbiBtdWx0aXBsZXhpbmcgY29uZmlndXJhdGlvbi4NCj4gDQo+ICBwaW5jb250cm9sbGVy
-IHsNCj4gCXN0YXRlXzBfbm9kZV9hIHsNCj4gCQlwaW5tdXggPSA8UElOTVVYX0dST1VQPiwgPFBJ
-Tk1VWF9HUk9VUD4sIC4uLjsNCj4gCX07DQo+ICB9Ow0KPiANCj4gIEVhY2ggaW5kaXZpZHVhbCBw
-aW4gY29udHJvbGxlciBkcml2ZXIgYmluZGluZ3MgZG9jdW1lbnRhdGlvbiBzaGFsbA0KPiBzcGVj
-aWZ5ICBob3cgcGluIElEcyBhbmQgcGluIG11bHRpcGxleGluZyBjb25maWd1cmF0aW9uIGFyZSBk
-ZWZpbmVkIGFuZA0KPiBhc3NlbWJsZWQgdG9nZXRoZXIgIGluIGEgcGlubXV4IGdyb3VwLg0KPiAt
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQ0KPiAtLS0NCg0KVGhpcyBkb2VzIGxvb2sgbXVjaCBiZXR0ZXIuDQpJ
-IHdpbGwgcmVuZXcgdGhlIHBhdGNoIHdpdGggeW91ciBzaWduLW9mZiBhcyB3ZWxsIHNpbmNlIGl0
-IG1vc3RseSBmcm9tIHlvdS4NClRoYW5rcyBmb3IgdGhlIGdyZWF0IHN1Z2dlc3Rpb24uDQoNClJl
-Z2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo+IA0KPiBUaGFua3MNCj4gICAgag0KPiANCj4gPiAtVGhl
-IHBpbm11eCBwcm9wZXJ0eSBhY2NlcHRzIGFuIGFycmF5IG9mIGludGVnZXJzLCBlYWNoIG9mIHRo
-ZW0NCj4gPiBkZXNjcmliaW5nIC1hIHNpbmdsZSBwaW4gbXVsdGlwbGV4aW5nIGNvbmZpZ3VyYXRp
-b24uDQo+ID4gK1RoZSBwaW5tdXggcHJvcGVydHkgYWNjZXB0cyBhbiBhcnJheSBvZiBncm91cCBv
-ZiBpbnRlZ2VycywgZWFjaCBncm91cA0KPiA+ICtkZXNjcmliaW5nIGEgc2luZ2xlIHBpbiBtdWx0
-aXBsZXhpbmcgY29uZmlndXJhdGlvbi4NCj4gPg0KPiA+ICBwaW5jb250cm9sbGVyIHsNCj4gPiAg
-CXN0YXRlXzBfbm9kZV9hIHsNCj4gPiBAQCAtMzAwLDcgKzMwMSw3IEBAIGFyZ3VtZW50cyBhcmUg
-ZGVzY3JpYmVkIGJlbG93Lg0KPiA+ICAtIHBpbm11eCB0YWtlcyBhIGxpc3Qgb2YgcGluIElEcyBh
-bmQgbXV4IHNldHRpbmdzIGFzIHJlcXVpcmVkIGFyZ3VtZW50Lg0KPiBUaGUNCj4gPiAgICBzcGVj
-aWZpYyBiaW5kaW5ncyBmb3IgdGhlIGhhcmR3YXJlIGRlZmluZXM6DQo+ID4gICAgLSBIb3cgcGlu
-IElEcyBhbmQgbXV4IHNldHRpbmdzIGFyZSBkZWZpbmVkIGFuZCBhc3NlbWJsZWQgdG9nZXRoZXIg
-aW4NCj4gYSBzaW5nbGUNCj4gPiAtICAgIGludGVnZXIuDQo+ID4gKyAgICBpbnRlZ2VyIG9yIGlu
-dGVnZXJzIGFycmF5Lg0KPiA+DQo+ID4gIC0gYmlhcy1wdWxsLXVwLCAtZG93biBhbmQgLXBpbi1k
-ZWZhdWx0IHRha2UgYXMgb3B0aW9uYWwgYXJndW1lbnQgb24NCj4gaGFyZHdhcmUNCj4gPiAgICBz
-dXBwb3J0aW5nIGl0IHRoZSBwdWxsIHN0cmVuZ3RoIGluIE9obS4gYmlhcy1kaXNhYmxlIHdpbGwg
-ZGlzYWJsZSB0aGUNCj4gcHVsbC4NCj4gPiAtLQ0KPiA+IDIuNy40DQo+ID4NCg==
+Some platforms may need more than one integer to represent a complete
+pinmux binding, so let's extend the pinmux property to allow to accept
+integer array instead of only a single integer.
+
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+---
+ChangeLog:
+v4->v5:
+ * doc improvement
+v4:
+ * new patch
+---
+ .../devicetree/bindings/pinctrl/pinctrl-bindings.txt      | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+index f01d154..30f1d9e 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+@@ -204,21 +204,22 @@ each single pin the number of required sub-nodes containing "pin" and
+ maintain.
+ 
+ For cases like this, the pin controller driver may use the pinmux helper
+-property, where the pin identifier is packed with mux configuration settings
+-in a single integer.
++property, where the pin identifier is provided with mux configuration settings
++in a pinmux group. A pinmux group consists of the pin identifier and mux
++settings represented as a single integer or an array of integers.
+ 
+-The pinmux property accepts an array of integers, each of them describing
++The pinmux property accepts an array of pinmux groups, each of them describing
+ a single pin multiplexing configuration.
+ 
+ pincontroller {
+ 	state_0_node_a {
+-		pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ...;
++		pinmux = <PINMUX_GROUP>, <PINMUX_GROUP>, ...;
+ 	};
+ };
+ 
+ Each individual pin controller driver bindings documentation shall specify
+-how those values (pin IDs and pin multiplexing configuration) are defined and
+-assembled together.
++how pin IDs and pin multiplexing configuration are defined and assembled
++together in a pinmux group.
+ 
+ == Generic pin configuration node content ==
+ 
+@@ -300,7 +301,7 @@ arguments are described below.
+ - pinmux takes a list of pin IDs and mux settings as required argument. The
+   specific bindings for the hardware defines:
+   - How pin IDs and mux settings are defined and assembled together in a single
+-    integer.
++    integer or an array of integers.
+ 
+ - bias-pull-up, -down and -pin-default take as optional argument on hardware
+   supporting it the pull strength in Ohm. bias-disable will disable the pull.
+-- 
+2.7.4
+
