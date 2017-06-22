@@ -1,44 +1,130 @@
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v6 3/8] arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
-Date: Thu, 22 Jun 2017 16:54:31 +0200
-Message-ID: <1498143276-7976-4-git-send-email-jacopo+renesas@jmondi.org>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk, aisheng.dong@nxp.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
+Date: Thu, 22 Jun 2017 15:54:10 -0500
+Message-ID: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:45766 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750847AbdFVUyP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jun 2017 16:54:15 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: timur@codeaurora.org
 
-Add dt-bindings for Renesas r7s72100 pin controller header file.
+On Qualcomm Technologies QDF2xxx platforms, only a subset of the GPIOs
+are actually available to the HLOS.  The others are blocked by the XPU,
+and any attempt to access them will cause an XPU violation that halts
+the system.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Instead, the ACPI table now lists only specific GPIOs that are exposed
+externally as generic GPIO pins.  To maintain consistency, the GPIOs are
+enumerated 0 .. (N-1) as before, so that "gpio0" is really whatever is
+the first GPIO listed in ACPI.  The actual mapping is available via
+/sys/kernel/debug/gpio.
+
+Tested-by: Tyler Baicar <tbaicar@codeaurora.org>
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
 ---
- include/dt-bindings/pinctrl/r7s72100-pinctrl.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+ drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 46 ++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
-diff --git a/include/dt-bindings/pinctrl/r7s72100-pinctrl.h b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-new file mode 100644
-index 0000000..6b609fe
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/r7s72100-pinctrl.h
-@@ -0,0 +1,16 @@
-+/*
-+ * Defines macros and constants for Renesas RZ/A1 pin controller pin
-+ * muxing functions.
-+ */
-+#ifndef __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
-+#define __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H
+diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+index bb3ce5c..983df72 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
++++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+@@ -32,9 +32,6 @@
+ 
+ static struct msm_pinctrl_soc_data qdf2xxx_pinctrl;
+ 
+-/* A reasonable limit to the number of GPIOS */
+-#define MAX_GPIOS	256
+-
+ /* maximum size of each gpio name (enough room for "gpioXXX" + null) */
+ #define NAME_SIZE	8
+ 
+@@ -43,22 +40,35 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ 	struct pinctrl_pin_desc *pins;
+ 	struct msm_pingroup *groups;
+ 	char (*names)[NAME_SIZE];
+-	unsigned int i;
+-	u32 num_gpios;
++	unsigned int i, num_gpios;
++	u32 *gpios;
+ 	int ret;
+ 
+ 	/* Query the number of GPIOs from ACPI */
+-	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
++	num_gpios = ret = device_property_read_u32_array(&pdev->dev, "gpios",
++							 NULL, 0);
+ 	if (ret < 0) {
+-		dev_warn(&pdev->dev, "missing num-gpios property\n");
++		dev_err(&pdev->dev,
++			"missing or invalid 'gpios' property (ret=%i)\n", ret);
+ 		return ret;
+ 	}
+-
+-	if (!num_gpios || num_gpios > MAX_GPIOS) {
+-		dev_warn(&pdev->dev, "invalid num-gpios property\n");
++	if (ret == 0) {
++		dev_warn(&pdev->dev, "no GPIOs defined\n");
+ 		return -ENODEV;
+ 	}
+ 
++	gpios = devm_kcalloc(&pdev->dev, num_gpios, sizeof(u32), GFP_KERNEL);
++	if (!gpios)
++		return -ENOMEM;
 +
-+#define RZA1_PINS_PER_PORT	16
++	ret = device_property_read_u32_array(&pdev->dev, "gpios", gpios,
++					     num_gpios);
++	if (ret < 0) {
++		dev_err(&pdev->dev,
++			"could not read list of GPIOs (ret=%i)\n", ret);
++		return ret;
++	}
 +
-+/*
-+ * Create the pin index from its bank and position numbers and store in
-+ * the upper 16 bits the alternate function identifier
-+ */
-+#define RZA1_PINMUX(b, p, f)	((b) * RZA1_PINS_PER_PORT + (p) | (f << 16))
+ 	pins = devm_kcalloc(&pdev->dev, num_gpios,
+ 		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
+ 	groups = devm_kcalloc(&pdev->dev, num_gpios,
+@@ -69,7 +79,9 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < num_gpios; i++) {
+-		snprintf(names[i], NAME_SIZE, "gpio%u", i);
++		unsigned int gpio = gpios[i];
 +
-+#endif /* __DT_BINDINGS_PINCTRL_RENESAS_RZA1_H */
++		snprintf(names[i], NAME_SIZE, "gpio%u", gpio);
+ 
+ 		pins[i].number = i;
+ 		pins[i].name = names[i];
+@@ -78,11 +90,11 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ 		groups[i].name = names[i];
+ 		groups[i].pins = &pins[i].number;
+ 
+-		groups[i].ctl_reg = 0x10000 * i;
+-		groups[i].io_reg = 0x04 + 0x10000 * i;
+-		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
+-		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
+-		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
++		groups[i].ctl_reg = 0x10000 * gpio;
++		groups[i].io_reg = 0x04 + 0x10000 * gpio;
++		groups[i].intr_cfg_reg = 0x08 + 0x10000 * gpio;
++		groups[i].intr_status_reg = 0x0c + 0x10000 * gpio;
++		groups[i].intr_target_reg = 0x08 + 0x10000 * gpio;
+ 
+ 		groups[i].mux_bit = 2;
+ 		groups[i].pull_bit = 0;
+@@ -100,6 +112,8 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ 		groups[i].intr_detection_width = 2;
+ 	}
+ 
++	devm_kfree(&pdev->dev, gpios);
++
+ 	qdf2xxx_pinctrl.pins = pins;
+ 	qdf2xxx_pinctrl.groups = groups;
+ 	qdf2xxx_pinctrl.npins = num_gpios;
 -- 
-2.7.4
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
