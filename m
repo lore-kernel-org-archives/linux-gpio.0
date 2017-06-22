@@ -1,130 +1,35 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
-Date: Thu, 22 Jun 2017 15:54:10 -0500
-Message-ID: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:45766 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbdFVUyP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 22 Jun 2017 16:54:15 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 2/8] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Thu, 22 Jun 2017 16:09:17 -0500
+Message-ID: <20170622210917.ljbxkpaalckhegmq@rob-hp-laptop>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1498143276-7976-3-git-send-email-jacopo+renesas@jmondi.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1498143276-7976-3-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, aisheng.dong-3arQi8VN3Tc@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: timur@codeaurora.org
 
-On Qualcomm Technologies QDF2xxx platforms, only a subset of the GPIOs
-are actually available to the HLOS.  The others are blocked by the XPU,
-and any attempt to access them will cause an XPU violation that halts
-the system.
+On Thu, Jun 22, 2017 at 04:54:30PM +0200, Jacopo Mondi wrote:
+> Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+> controller.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+> ---
+>  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 221 +++++++++++++++++++++
+>  1 file changed, 221 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
 
-Instead, the ACPI table now lists only specific GPIOs that are exposed
-externally as generic GPIO pins.  To maintain consistency, the GPIOs are
-enumerated 0 .. (N-1) as before, so that "gpio0" is really whatever is
-the first GPIO listed in ACPI.  The actual mapping is available via
-/sys/kernel/debug/gpio.
+Please add acks when posting new versions. It seems there are 2 more 
+lines here, but I have no idea what changed. I'm assuming it was minor 
+enough to retain my ack.
 
-Tested-by: Tyler Baicar <tbaicar@codeaurora.org>
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 46 ++++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-index bb3ce5c..983df72 100644
---- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-+++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-@@ -32,9 +32,6 @@
- 
- static struct msm_pinctrl_soc_data qdf2xxx_pinctrl;
- 
--/* A reasonable limit to the number of GPIOS */
--#define MAX_GPIOS	256
--
- /* maximum size of each gpio name (enough room for "gpioXXX" + null) */
- #define NAME_SIZE	8
- 
-@@ -43,22 +40,35 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
- 	struct pinctrl_pin_desc *pins;
- 	struct msm_pingroup *groups;
- 	char (*names)[NAME_SIZE];
--	unsigned int i;
--	u32 num_gpios;
-+	unsigned int i, num_gpios;
-+	u32 *gpios;
- 	int ret;
- 
- 	/* Query the number of GPIOs from ACPI */
--	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
-+	num_gpios = ret = device_property_read_u32_array(&pdev->dev, "gpios",
-+							 NULL, 0);
- 	if (ret < 0) {
--		dev_warn(&pdev->dev, "missing num-gpios property\n");
-+		dev_err(&pdev->dev,
-+			"missing or invalid 'gpios' property (ret=%i)\n", ret);
- 		return ret;
- 	}
--
--	if (!num_gpios || num_gpios > MAX_GPIOS) {
--		dev_warn(&pdev->dev, "invalid num-gpios property\n");
-+	if (ret == 0) {
-+		dev_warn(&pdev->dev, "no GPIOs defined\n");
- 		return -ENODEV;
- 	}
- 
-+	gpios = devm_kcalloc(&pdev->dev, num_gpios, sizeof(u32), GFP_KERNEL);
-+	if (!gpios)
-+		return -ENOMEM;
-+
-+	ret = device_property_read_u32_array(&pdev->dev, "gpios", gpios,
-+					     num_gpios);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev,
-+			"could not read list of GPIOs (ret=%i)\n", ret);
-+		return ret;
-+	}
-+
- 	pins = devm_kcalloc(&pdev->dev, num_gpios,
- 		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
- 	groups = devm_kcalloc(&pdev->dev, num_gpios,
-@@ -69,7 +79,9 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < num_gpios; i++) {
--		snprintf(names[i], NAME_SIZE, "gpio%u", i);
-+		unsigned int gpio = gpios[i];
-+
-+		snprintf(names[i], NAME_SIZE, "gpio%u", gpio);
- 
- 		pins[i].number = i;
- 		pins[i].name = names[i];
-@@ -78,11 +90,11 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
- 		groups[i].name = names[i];
- 		groups[i].pins = &pins[i].number;
- 
--		groups[i].ctl_reg = 0x10000 * i;
--		groups[i].io_reg = 0x04 + 0x10000 * i;
--		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
--		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
--		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
-+		groups[i].ctl_reg = 0x10000 * gpio;
-+		groups[i].io_reg = 0x04 + 0x10000 * gpio;
-+		groups[i].intr_cfg_reg = 0x08 + 0x10000 * gpio;
-+		groups[i].intr_status_reg = 0x0c + 0x10000 * gpio;
-+		groups[i].intr_target_reg = 0x08 + 0x10000 * gpio;
- 
- 		groups[i].mux_bit = 2;
- 		groups[i].pull_bit = 0;
-@@ -100,6 +112,8 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
- 		groups[i].intr_detection_width = 2;
- 	}
- 
-+	devm_kfree(&pdev->dev, gpios);
-+
- 	qdf2xxx_pinctrl.pins = pins;
- 	qdf2xxx_pinctrl.groups = groups;
- 	qdf2xxx_pinctrl.npins = num_gpios;
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
