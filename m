@@ -1,45 +1,59 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH] gpio: acpi: Skip _AEI entries without a handler rather then aborting the scan
-Date: Fri, 23 Jun 2017 09:26:13 +0200
-Message-ID: <20170623072613.3768-1-hdegoede@redhat.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:50992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753611AbdFWH0h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 23 Jun 2017 03:26:37 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: jmondi <jacopo@jmondi.org>
+Subject: Re: [PATCH v6 2/8] dt-bindings: pinctrl: Add RZ/A1 bindings doc
+Date: Fri, 23 Jun 2017 10:05:31 +0200
+Message-ID: <20170623080531.GA14273@w540>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1498143276-7976-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20170622210917.ljbxkpaalckhegmq@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170622210917.ljbxkpaalckhegmq@rob-hp-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org, geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, chris.brandt@renesas.com, mark.rutland@arm.com, linux@armlinux.org.uk, aisheng.dong@nxp.com, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-acpi_walk_resources will stop as soon as the callback passed in returns
-an error status. On a x86 tablet I have the first GpioInt in the _AEI
-resource list has no handler defined in the DSDT, causing
-acpi_walk_resources to abort scanning the rest of the resource list,
-which does define valid ACPI GPIO events.
+Hi Rob,
 
-This commit changes the return for not finding a handler from
-AE_BAD_PARAMETER to AE_OK so that the rest of the resource list will
-get scanned normally in case of missing event handlers.
+On Thu, Jun 22, 2017 at 04:09:17PM -0500, Rob Herring wrote:
+> On Thu, Jun 22, 2017 at 04:54:30PM +0200, Jacopo Mondi wrote:
+> > Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
+> > controller.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 221 +++++++++++++++++++++
+> >  1 file changed, 221 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+>
+> Please add acks when posting new versions. It seems there are 2 more
+> lines here, but I have no idea what changed. I'm assuming it was minor
+> enough to retain my ack.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/gpio/gpiolib-acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I have dropped your Acked-by in v4, as compared to the previous
+versions bindings changed "significantly".
+Quoting the v4 cover letter:
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 5b77248666fa..fd53e9ada7dd 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -201,7 +201,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
- 			handler = acpi_gpio_irq_handler_evt;
- 	}
- 	if (!handler)
--		return AE_BAD_PARAMETER;
-+		return AE_OK;
- 
- 	pin = acpi_gpiochip_pin_to_gpio_offset(chip->gpiodev, pin);
- 	if (pin < 0)
--- 
-2.13.0
+"The device tree bindings changed significantly, and as anticipated I
+have not incorporated Rob's ack as I would like him to have a look there again."
 
+Now that I look at bindings again, I guess I could have kept it
+because all of the changes are related to pin controller subsystem
+specificities and are not that "significant" in the end..
+
+I'll list them here for your reference
+
+- use "pinmux" in place of "renesas,pins" property
+- use generic properties in place of pin mux flags
+- a bit of shuffling on generic properties in v4->v6 transition
+
+If none of these is relevant to you, we can add you Acked-by back when
+sending pull-request (right Geert?)
+
+Thanks
+   j
+
+>
+> Rob
