@@ -1,35 +1,45 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 2/8] dt-bindings: pinctrl: Add RZ/A1 bindings doc
-Date: Thu, 22 Jun 2017 16:09:17 -0500
-Message-ID: <20170622210917.ljbxkpaalckhegmq@rob-hp-laptop>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
- <1498143276-7976-3-git-send-email-jacopo+renesas@jmondi.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1498143276-7976-3-git-send-email-jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, aisheng.dong-3arQi8VN3Tc@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH] gpio: acpi: Skip _AEI entries without a handler rather then aborting the scan
+Date: Fri, 23 Jun 2017 09:26:13 +0200
+Message-ID: <20170623072613.3768-1-hdegoede@redhat.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:50992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753611AbdFWH0h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 23 Jun 2017 03:26:37 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
 
-On Thu, Jun 22, 2017 at 04:54:30PM +0200, Jacopo Mondi wrote:
-> Add device tree bindings documentation for Renesas RZ/A1 gpio and pin
-> controller.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-> ---
->  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      | 221 +++++++++++++++++++++
->  1 file changed, 221 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+acpi_walk_resources will stop as soon as the callback passed in returns
+an error status. On a x86 tablet I have the first GpioInt in the _AEI
+resource list has no handler defined in the DSDT, causing
+acpi_walk_resources to abort scanning the rest of the resource list,
+which does define valid ACPI GPIO events.
 
-Please add acks when posting new versions. It seems there are 2 more 
-lines here, but I have no idea what changed. I'm assuming it was minor 
-enough to retain my ack.
+This commit changes the return for not finding a handler from
+AE_BAD_PARAMETER to AE_OK so that the rest of the resource list will
+get scanned normally in case of missing event handlers.
 
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/gpio/gpiolib-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
+index 5b77248666fa..fd53e9ada7dd 100644
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -201,7 +201,7 @@ static acpi_status acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
+ 			handler = acpi_gpio_irq_handler_evt;
+ 	}
+ 	if (!handler)
+-		return AE_BAD_PARAMETER;
++		return AE_OK;
+ 
+ 	pin = acpi_gpiochip_pin_to_gpio_offset(chip->gpiodev, pin);
+ 	if (pin < 0)
+-- 
+2.13.0
+
