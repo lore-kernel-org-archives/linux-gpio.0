@@ -1,94 +1,67 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v7 2/9] dt-bindings: add Amlogic Meson GPIO
- interrupt-controller DT binding documentation
-Date: Fri, 23 Jun 2017 13:33:24 -0500
-Message-ID: <CAL_JsqLQ=WJ2rhzthZja8vvruoPbyjXxPOtMs6MNrhiD7VaDSQ@mail.gmail.com>
-References: <5b352c8d-a426-fa73-58b7-0c935979492b@gmail.com>
- <d7c3fd04-d3d7-c128-1dcc-921e99677130@gmail.com> <c5453bc7-1d8b-d3a1-91ac-779734444b8b@arm.com>
- <d6fd8d6f-7b81-68be-7e7e-cbfdc422e1de@gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
+Date: Fri, 23 Jun 2017 22:09:12 +0200
+Message-ID: <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com>
+ <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+ <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
+ <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+ <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754327AbdFWSdq (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 23 Jun 2017 14:33:46 -0400
-In-Reply-To: <d6fd8d6f-7b81-68be-7e7e-cbfdc422e1de@gmail.com>
+Received: from goliath.siemens.de ([192.35.17.28]:51187 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754940AbdFWUJ0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 16:09:26 -0400
+In-Reply-To: <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Jerome Brunet <jbrunet@baylibre.com>, Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Thomas Gleixner <tglx@linutronix.de>, Neil Armstrong <narmstrong@baylibre.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-amlogic@lists.infradead.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Thu, Jun 15, 2017 at 3:34 AM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> Am 13.06.2017 um 10:53 schrieb Marc Zyngier:
->> On 10/06/17 22:57, Heiner Kallweit wrote:
->>> Add dt binding documentation for Amlogic meson GPIO interrupt controller.
+On 2017-06-21 08:29, Jan Kiszka wrote:
+> On 2017-06-20 13:38, Linus Walleij wrote:
+>> On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>>> On 2017-06-20 10:19, Linus Walleij wrote:
+>>>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>>>>
+>>>>> This makes the gpio-exar driver usable, which was prevented by a number
+>>>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
+>>>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
+>>>>> series, so I'm also cross-posting to the serial and gpio lists.
+>>>>>
+>>>>> Changes in v6:
+>>>>
+>>>> I merged some of the patches, that applied. Let's see if they survive
+>>>> in linux-next, else I guess we need to fix this in the -rcs or for the next
+>>>> kernel cycle.
 >>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->>> Acked-by: Rob Herring <robh@kernel.org>
->>> ---
->>> v5:
->>> - added Reviewed-by
->>> v6:
->>> - rename parent-interrupts to interrupts
->>> v7:
->>> - no changes
->>> ---
->>>  .../amlogic,meson-gpio-intc.txt                    | 26 ++++++++++++++++++++++
->>>  1 file changed, 26 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
->>> new file mode 100644
->>> index 00000000..4c9bb323
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/interrupt-controller/amlogic,meson-gpio-intc.txt
->>> @@ -0,0 +1,26 @@
->>> +Amlogic meson GPIO interrupt controller
->>> +
->>> +Meson SoCs contains an interrupt controller which is able watch the SoC pads
->>> +and generate an interrupt on edges or level. The controller is essentially a
->>> +256 pads to 8 GIC interrupt multiplexer, with a filter block to select edge
->>> +or level and polarity. The actual number of interrupt exposed depends on the
->>> +SoC.
->>> +
->>> +Required properties:
->>> +
->>> +- compatible : should be "amlogic,meson-gpio-intc".
->>> +- reg : Specifies base physical address and size of the registers.
->>> +- interrupt-controller : Identifies the node as an interrupt controller.
->>> +- #interrupt-cells : should be 2.
->>> +- interrupts : list of GIC interrupts which can be used with the
->>> +           GPIO IRQ multiplexer
->>> +
->>> +Example:
->>> +
->>> +gpio_intc: interrupt-controller@9880 {
->>> +    compatible = "amlogic,meson-gpio-intc";
->>> +    reg = <0x0 0x09880 0x0 0x10>;
->>> +    interrupt-controller;
->>> +    #interrupt-cells = <2>;
->>> +    interrupts = <64 65 66 67 68 69 70 71>;
+>>> Weird that things did not apply. I just did a cherry-pick for all those
+>>> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
+>>> know which baseline is needed, and I will rebase.
 >>
->> What does it mean to have single-cell interrupt specifiers like this,
->> when the interrupt-parent is a GIC, which has #interrupt-cells set to 3?
->> Either you use actual interrupt specifiers, or you use another identifier.
->>
-> The following approaches have been used already:
->
-> - standard interrupts property (3-cell): was rejected because the chip doesn't
->   actually generate the interrupts but just provides a programmable IRQ routing
+>> This was on the "devel" branch of my GPIO tree:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+> 
+> Again, all (missing) patches applied absolutely cleanly for me, see
+> 
+> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
 
-So what? That is describing any chained interrupt controller. The
-interrupts binding describes interrupt connections, not just interrupt
-source endpoints.
+I've rebased over devel and noticed along this that you will have to
+include "serial: uapi: Add support for bus termination" from Greg's
+tty-next for the last patch to avoid breaking the build. Result pushed to
 
-> - property "parent-interrupts" (1-cell): Rob suggested to use "interrupts" instead
->
-> I'd appreciate if you could come to an agreement with Rob, whatever the outcome
-> is is fine with me.
+http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
 
-If Marc said not to use standard interrupt binding I can't find it.
+If you want me to resend anything, just let me know. Would be great to
+have the remaining pieces lined up in time for the next merge window.
 
-Rob
+Thanks,
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA ITP SES-DE
+Corporate Competence Center Embedded Linux
