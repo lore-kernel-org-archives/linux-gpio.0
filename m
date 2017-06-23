@@ -1,60 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [GIT PULL 2/2] SoCFPGA update for v4.13
-Date: Fri, 23 Jun 2017 14:28:58 +0200
-Message-ID: <CACRpkdbCrKo7Uvhdyx+4_hMQrPCYaMMijHpYzEY+2MePjpr73g@mail.gmail.com>
-References: <1498059352-9483-1-git-send-email-dinguyen@kernel.org>
- <1498059352-9483-2-git-send-email-dinguyen@kernel.org> <CAK8P3a1vZVQ5MZDU+qp62LCLnF8z-9LFH=c7XYj=ZnPUzVMjOA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:37505 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750932AbdFWM3A (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 08:29:00 -0400
-Received: by mail-it0-f44.google.com with SMTP id m47so7398072iti.0
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Jun 2017 05:29:00 -0700 (PDT)
-In-Reply-To: <CAK8P3a1vZVQ5MZDU+qp62LCLnF8z-9LFH=c7XYj=ZnPUzVMjOA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 1/2] pinctrl: armada-37xx: Fix uart2 group selection register mask
+Date: Fri, 23 Jun 2017 14:29:51 +0200
+Message-ID: <20170623122952.9871-2-gregory.clement@free-electrons.com>
+References: <20170623122952.9871-1-gregory.clement@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170623122952.9871-1-gregory.clement@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ken Ma <make@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Stefan Roese <sr@denx.de>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 
-On Fri, Jun 23, 2017 at 2:03 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Jun 21, 2017 at 5:35 PM, Dinh Nguyen <dinguyen@kernel.org> wrote:
->> Hi Arnd, Kevin, and Olof:
->>
->> Please pull in this SoCFPGA Kconfig update for v4.13.
->
-> I'd like to defer this one until I hear back from the GPIO maintainers:
->
-> With this patch, CONFIG_ARCH_NR_GPIO increases from 1024 to 2048
-> in the ARM defconfig build. Is this ok in terms of runtime overhead?
+From: Ken Ma <make@marvell.com>
 
-There is no problem with runtime overhead, only with footprint.
+If north bridge selection register bit1 is clear, pins [10:8] are for
+SDIO0 Resetn, Wakeup, and PDN while if bit1 is set, pins [10:8]are for
+GPIO; when bit1 is clear, pin 9 and pin 10 can be used for uart2 RTSn
+and CTSn, so bit1 should be added to uart2 group and it must be set
+for both "gpio" and "uart" functions of uart2 group.
 
-The array of sizeof(gpio_desc) increases to double.
+Signed-off-by: Ken Ma <make@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-struct looks like so:
-
-struct gpio_desc {
-        struct gpio_device      *gdev;
-        unsigned long           flags;
-        const char              *label;
-        const char              *name;
-};
-
-Looks like 4x32 bits in most cases, so this means a 4*4*1024 =
-16 KiB footprint increase.
-
-We have had to allocate this statically because so many playforms still
-use the legacy GPIO API.
-
-> If not, are there any alternatives?
-
-Not really, if they have this many GPIOs.
-
-Helping out ridding the kernel of users of the old GPIO global
-numberspace ABI is appreciated though.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 5c96f5558310..2fb1c67886fc 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -147,8 +147,9 @@ static struct armada_37xx_pin_group armada_37xx_nb_groups[] = {
+ 	PIN_GRP_GPIO("onewire", 4, 1, BIT(16), "onewire"),
+ 	PIN_GRP_GPIO("uart1", 25, 2, BIT(17), "uart"),
+ 	PIN_GRP_GPIO("spi_quad", 15, 2, BIT(18), "spi"),
+-	PIN_GRP_EXTRA("uart2", 9, 2, BIT(13) | BIT(14) | BIT(19),
+-		      BIT(13) | BIT(14), BIT(19), 18, 2, "gpio", "uart"),
++	PIN_GRP_EXTRA("uart2", 9, 2, BIT(1) | BIT(13) | BIT(14) | BIT(19),
++		      BIT(1) | BIT(13) | BIT(14), BIT(1) | BIT(19),
++		      18, 2, "gpio", "uart"),
+ 	PIN_GRP_GPIO("led0_od", 11, 1, BIT(20), "led"),
+ 	PIN_GRP_GPIO("led1_od", 12, 1, BIT(21), "led"),
+ 	PIN_GRP_GPIO("led2_od", 13, 1, BIT(22), "led"),
+-- 
+2.11.0
