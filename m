@@ -1,41 +1,55 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH] gpiolib: fix filtering out unwanted events
-Date: Fri, 23 Jun 2017 13:45:16 +0200
-Message-ID: <1498218316-27860-2-git-send-email-brgl@bgdev.pl>
-References: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 2/2] SoCFPGA update for v4.13
+Date: Fri, 23 Jun 2017 14:03:05 +0200
+Message-ID: <CAK8P3a1vZVQ5MZDU+qp62LCLnF8z-9LFH=c7XYj=ZnPUzVMjOA@mail.gmail.com>
+References: <1498059352-9483-1-git-send-email-dinguyen@kernel.org> <1498059352-9483-2-git-send-email-dinguyen@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:35261 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751193AbdFWMDG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 08:03:06 -0400
+Received: by mail-ot0-f194.google.com with SMTP id z48so4602678otz.2
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Jun 2017 05:03:06 -0700 (PDT)
+In-Reply-To: <1498059352-9483-2-git-send-email-dinguyen@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 
-GPIOEVENT_REQUEST_BOTH_EDGES is not a single flag, but a binary OR of
-GPIOEVENT_REQUEST_RISING_EDGE and GPIOEVENT_REQUEST_FALLING_EDGE.
+On Wed, Jun 21, 2017 at 5:35 PM, Dinh Nguyen <dinguyen@kernel.org> wrote:
+> Hi Arnd, Kevin, and Olof:
+>
+> Please pull in this SoCFPGA Kconfig update for v4.13.
 
-The expression 'le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES' we'll get
-evaluated to true even if only one event type was requested.
+I'd like to defer this one until I hear back from the GPIO maintainers:
 
-Fix it by checking both RISING & FALLING flags explicitly.
+With this patch, CONFIG_ARCH_NR_GPIO increases from 1024 to 2048
+in the ARM defconfig build. Is this ok in terms of runtime overhead?
+If not, are there any alternatives?
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/gpio/gpiolib.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+        Arnd
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5db4413..a42a1ee 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -708,7 +708,8 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
- 
- 	ge.timestamp = ktime_get_real_ns();
- 
--	if (le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES) {
-+	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
-+	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
- 		int level = gpiod_get_value_cansleep(le->desc);
- 
- 		if (level)
--- 
-2.9.3
+> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+>
+>   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git tags/socfpga_updates_for_v4.13
+>
+> for you to fetch changes up to 139358be24e526bc8d050e319cdd4e2d1941503e:
+>
+>   ARM: socfpga: Increase max number of GPIOs (2017-06-21 10:16:02 -0500)
+>
+> ----------------------------------------------------------------
+> SoCFPGA updates for v4.13
+> - Increase number of available GPIOs in Kconfig
+>
+> ----------------------------------------------------------------
+> Marek Vasut (1):
+>       ARM: socfpga: Increase max number of GPIOs
+>
+>  arch/arm/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
