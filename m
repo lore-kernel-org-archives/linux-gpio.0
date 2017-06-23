@@ -1,55 +1,55 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/2] SoCFPGA update for v4.13
-Date: Fri, 23 Jun 2017 14:03:05 +0200
-Message-ID: <CAK8P3a1vZVQ5MZDU+qp62LCLnF8z-9LFH=c7XYj=ZnPUzVMjOA@mail.gmail.com>
-References: <1498059352-9483-1-git-send-email-dinguyen@kernel.org> <1498059352-9483-2-git-send-email-dinguyen@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] last GPIO changes for v4.12
+Date: Fri, 23 Jun 2017 14:06:40 +0200
+Message-ID: <CACRpkdZVMDAE0mwTZNiuSdbjiiRY2rrwgFO8K-gFLXKr7mAGeg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:35261 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbdFWMDG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 08:03:06 -0400
-Received: by mail-ot0-f194.google.com with SMTP id z48so4602678otz.2
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Jun 2017 05:03:06 -0700 (PDT)
-In-Reply-To: <1498059352-9483-2-git-send-email-dinguyen@kernel.org>
+Received: from mail-io0-f175.google.com ([209.85.223.175]:35611 "EHLO
+        mail-io0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751230AbdFWMGl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 08:06:41 -0400
+Received: by mail-io0-f175.google.com with SMTP id h134so31585478iof.2
+        for <linux-gpio@vger.kernel.org>; Fri, 23 Jun 2017 05:06:41 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: arm-soc <arm@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ralph Sennhauser <ralph.sennhauser@gmail.com>
 
-On Wed, Jun 21, 2017 at 5:35 PM, Dinh Nguyen <dinguyen@kernel.org> wrote:
-> Hi Arnd, Kevin, and Olof:
->
-> Please pull in this SoCFPGA Kconfig update for v4.13.
+Hi Linus,
 
-I'd like to defer this one until I hear back from the GPIO maintainers:
+here is a single patch that has been sitting around. Sorry for sending
+it this late, but the MVEBU people really want to get their ABI right
+before the v4.12 release.
 
-With this patch, CONFIG_ARCH_NR_GPIO increases from 1024 to 2048
-in the ARM defconfig build. Is this ok in terms of runtime overhead?
-If not, are there any alternatives?
+Please pull it in!
 
-        Arnd
+Yours,
+Linus Walleij
 
-> The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
->
->   Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git tags/socfpga_updates_for_v4.13
->
-> for you to fetch changes up to 139358be24e526bc8d050e319cdd4e2d1941503e:
->
->   ARM: socfpga: Increase max number of GPIOs (2017-06-21 10:16:02 -0500)
->
-> ----------------------------------------------------------------
-> SoCFPGA updates for v4.13
-> - Increase number of available GPIOs in Kconfig
->
-> ----------------------------------------------------------------
-> Marek Vasut (1):
->       ARM: socfpga: Increase max number of GPIOs
->
->  arch/arm/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+The following changes since commit 41f1830f5a7af77cf5c86359aba3cbd706687e52:
+
+  Linux 4.12-rc6 (2017-06-19 22:19:37 +0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.12-3
+
+for you to fetch changes up to 6c7515c61ffa0985c57abd8892c7928b52b9a306:
+
+  gpio: mvebu: change compatible string for PWM support (2017-06-20
+13:42:20 +0200)
+
+----------------------------------------------------------------
+A single GPIO patch fixing the compatible string for the
+MVEBU PWM controller embedded in the GPIO controller before
+we release v4.12. Hopefully.
+
+----------------------------------------------------------------
+Ralph Sennhauser (1):
+      gpio: mvebu: change compatible string for PWM support
+
+ Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 6 +++---
+ drivers/gpio/gpio-mvebu.c                             | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
