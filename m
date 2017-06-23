@@ -1,63 +1,45 @@
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [RFC PATCH] pinctrl: rockchip: add irq_shutdown
-Date: Fri, 23 Jun 2017 21:03:39 +0800
-Message-ID: <1498223019-9123-1-git-send-email-jeffy.chen@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: tfiga@chromium.org, briannorris@chromium.org, heiko@sntech.de, dianders@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
+Date: Fri, 23 Jun 2017 08:28:58 -0500
+Message-ID: <c3d6aecf-93e6-ef47-69c1-ef4ce7174a32@codeaurora.org>
+References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:51398 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751256AbdFWN3B (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 09:29:01 -0400
+In-Reply-To: <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Currently the rockchip pinctrl driver would try to enable/disable the
-gpio bank clk when enable/disable an irq.
+On 6/23/17 7:33 AM, Linus Walleij wrote:
 
-So when the irq core trying to shutdown an already disabled irq, it
-would result in unbalanced clk disable request:
-[   35.911955] WARNING: at drivers/clk/clk.c:680
-...
-[   37.272271] Call trace:
-[   37.274729] [<ffffffc0007ac270>] clk_core_disable+0x28/0x194
-[   37.280395] [<ffffffc0007ac6a8>] clk_disable+0x34/0x48
-[   37.285544] [<ffffffc0004f3bf0>] rockchip_irq_disable+0x30/0x3c
-[   37.291472] [<ffffffc00027a7e0>] __irq_disable+0x40/0x64
-[   37.296791] [<ffffffc00027a86c>] irq_shutdown+0x68/0x8c
-[   37.302023] [<ffffffc0002777fc>] __free_irq+0x110/0x218
-[   37.307254] [<ffffffc0002779a8>] free_irq+0x54/0x64
-[   37.312138] [<ffffffc00027ba24>] devm_irq_release+0x24/0x30
+>> Instead, the ACPI table now lists only specific GPIOs that are exposed
+>> externally as generic GPIO pins.
+> 
+> The ACPI table or the device tree property "gpios" right?
+> 
+> (But maybe this system is only using ACPI.)
 
-Add an irq_shutdown callback, and do a sanity check for irq state to
-prevent that.
+It's only ACPI.
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+> I think using "lsgpio" fron tools/gpio/lsgpio.c is better to inspect
+> the available GPIOs.
+> 
+> If you haven't tested the GPIO tools, please try it out.
 
- drivers/pinctrl/pinctrl-rockchip.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+I was not aware of these tools.  I will try them out, thanks.
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 607f52c..b0e3130 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2551,6 +2551,12 @@ static void rockchip_irq_disable(struct irq_data *d)
- 	clk_disable(bank->clk);
- }
- 
-+static void rockchip_irq_shutdown(struct irq_data *d)
-+{
-+	if (!irqd_irq_disabled(d))
-+		rockchip_irq_disable(d);
-+}
-+
- static void rockchip_irq_bus_lock(struct irq_data *d)
- {
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-@@ -2641,6 +2647,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
- 		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
- 		gc->chip_types[0].chip.irq_enable = rockchip_irq_enable;
- 		gc->chip_types[0].chip.irq_disable = rockchip_irq_disable;
-+		gc->chip_types[0].chip.irq_shutdown = rockchip_irq_shutdown;
- 		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
- 		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
- 		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
+
+
 -- 
-2.1.4
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the
+Code Aurora Forum, hosted by The Linux Foundation.
