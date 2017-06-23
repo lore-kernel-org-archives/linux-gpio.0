@@ -1,37 +1,41 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 Subject: [PATCH] gpiolib: fix filtering out unwanted events
-Date: Fri, 23 Jun 2017 13:45:15 +0200
-Message-ID: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:35942 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbdFWLpW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 07:45:22 -0400
-Received: by mail-wr0-f173.google.com with SMTP id c11so62153265wrc.3
-        for <linux-gpio@vger.kernel.org>; Fri, 23 Jun 2017 04:45:21 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Date: Fri, 23 Jun 2017 13:45:16 +0200
+Message-ID: <1498218316-27860-2-git-send-email-brgl@bgdev.pl>
+References: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+List-Id: linux-gpio@vger.kernel.org
 
-Hi Linux,
+GPIOEVENT_REQUEST_BOTH_EDGES is not a single flag, but a binary OR of
+GPIOEVENT_REQUEST_RISING_EDGE and GPIOEVENT_REQUEST_FALLING_EDGE.
 
-I've just fixed an issue in libgpiod which accidentally also led to
-filtering out unwanted events in user space instead of gpiolib kernel
-code. I then noticed that programs don't behave correctly and tracked
-it down to an issue in gpiolib.c.
+The expression 'le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES' we'll get
+evaluated to true even if only one event type was requested.
 
-Please take a look at the fix. The bug has been there for some time and
-it's quite late in the release cycle, but I believe it should still go
-in v4.12 since currently the character device interface doesn't do what
-it promises to.
+Fix it by checking both RISING & FALLING flags explicitly.
 
-Bartosz Golaszewski (1):
-  gpiolib: fix filtering out unwanted events
-
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
  drivers/gpio/gpiolib.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 5db4413..a42a1ee 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -708,7 +708,8 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ 
+ 	ge.timestamp = ktime_get_real_ns();
+ 
+-	if (le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES) {
++	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
++	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
+ 		int level = gpiod_get_value_cansleep(le->desc);
+ 
+ 		if (level)
 -- 
 2.9.3
-
