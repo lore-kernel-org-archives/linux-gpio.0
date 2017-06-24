@@ -1,118 +1,212 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: PM / wakeirq: Convert to SRCU
-Date: Sat, 24 Jun 2017 11:56:11 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1706241153260.1941@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:35462 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751276AbdFXJ4W (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 24 Jun 2017 05:56:22 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add PWM support
+Date: Sat, 24 Jun 2017 13:18:54 +0300
+Message-ID: <20170624101854.27655-1-laurent.pinchart+renesas@ideasonboard.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-The wakeirq infrastructure uses RCU to protect the list of wakeirqs. That
-breaks the irq bus locking infrastructure, which allows sleeping functions
-to be called so interrupt controllers behind slow busses, e.g. i2c, can be
-handled.
+Add pinctrl support for the PWM[0-6] pins.
 
-The wakeirq functions hold rcu_read_lock and call into irq functions, which
-in case of interrupts using the irq bus locking will trigger a
-might_sleep() splat.
-
-Convert the wakeirq infrastructure to Sleepable RCU and unbreak it.
-
-Fixes: 4990d4fe327b ("PM / Wakeirq: Add automated device wake IRQ handling")
-Reported-by: Brian Norris <briannorris@chromium.org>
-Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/base/power/wakeup.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 153 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 153 insertions(+)
 
---- a/drivers/base/power/wakeup.c
-+++ b/drivers/base/power/wakeup.c
-@@ -60,6 +60,8 @@ static LIST_HEAD(wakeup_sources);
+Hi Geert,
+
+I've successfully tested the PWM1 channel with backlight on the Salvator-XS
+board. The other channels remain untested, I have only verified that the pin
+numbers match the datasheet.
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 75222a9b46b3..1656295af2b0 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1744,6 +1744,105 @@ static const unsigned int du_disp_mux[] = {
+ 	DU_DISP_MARK,
+ };
  
- static DECLARE_WAIT_QUEUE_HEAD(wakeup_count_wait_queue);
- 
-+static struct srcu_struct wakeup_srcu;
++/* - PWM0 --------------------------------------------------------------------*/
++static const unsigned int pwm0_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 6),
++};
++static const unsigned int pwm0_mux[] = {
++	PWM0_MARK,
++};
++/* - PWM1 --------------------------------------------------------------------*/
++static const unsigned int pwm1_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 7),
++};
++static const unsigned int pwm1_a_mux[] = {
++	PWM1_A_MARK,
++};
++static const unsigned int pwm1_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 8),
++};
++static const unsigned int pwm1_b_mux[] = {
++	PWM1_B_MARK,
++};
++/* - PWM2 --------------------------------------------------------------------*/
++static const unsigned int pwm2_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 8),
++};
++static const unsigned int pwm2_a_mux[] = {
++	PWM2_A_MARK,
++};
++static const unsigned int pwm2_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 11),
++};
++static const unsigned int pwm2_b_mux[] = {
++	PWM2_B_MARK,
++};
++/* - PWM3 --------------------------------------------------------------------*/
++static const unsigned int pwm3_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 0),
++};
++static const unsigned int pwm3_a_mux[] = {
++	PWM3_A_MARK,
++};
++static const unsigned int pwm3_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 2),
++};
++static const unsigned int pwm3_b_mux[] = {
++	PWM3_B_MARK,
++};
++/* - PWM4 --------------------------------------------------------------------*/
++static const unsigned int pwm4_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 1),
++};
++static const unsigned int pwm4_a_mux[] = {
++	PWM4_A_MARK,
++};
++static const unsigned int pwm4_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 3),
++};
++static const unsigned int pwm4_b_mux[] = {
++	PWM4_B_MARK,
++};
++/* - PWM5 --------------------------------------------------------------------*/
++static const unsigned int pwm5_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 2),
++};
++static const unsigned int pwm5_a_mux[] = {
++	PWM5_A_MARK,
++};
++static const unsigned int pwm5_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 4),
++};
++static const unsigned int pwm5_b_mux[] = {
++	PWM5_B_MARK,
++};
++/* - PWM6 --------------------------------------------------------------------*/
++static const unsigned int pwm6_a_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(1, 3),
++};
++static const unsigned int pwm6_a_mux[] = {
++	PWM6_A_MARK,
++};
++static const unsigned int pwm6_b_pins[] = {
++	/* PWM */
++	RCAR_GP_PIN(2, 5),
++};
++static const unsigned int pwm6_b_mux[] = {
++	PWM6_B_MARK,
++};
 +
- static struct wakeup_source deleted_ws = {
- 	.name = "deleted",
- 	.lock =  __SPIN_LOCK_UNLOCKED(deleted_ws.lock),
-@@ -198,7 +200,7 @@ void wakeup_source_remove(struct wakeup_
- 	spin_lock_irqsave(&events_lock, flags);
- 	list_del_rcu(&ws->entry);
- 	spin_unlock_irqrestore(&events_lock, flags);
--	synchronize_rcu();
-+	synchronize_srcu(&wakeup_srcu);
- }
- EXPORT_SYMBOL_GPL(wakeup_source_remove);
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -1976,6 +2075,19 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(du_oddf),
+ 	SH_PFC_PIN_GROUP(du_cde),
+ 	SH_PFC_PIN_GROUP(du_disp),
++	SH_PFC_PIN_GROUP(pwm0),
++	SH_PFC_PIN_GROUP(pwm1_a),
++	SH_PFC_PIN_GROUP(pwm1_b),
++	SH_PFC_PIN_GROUP(pwm2_a),
++	SH_PFC_PIN_GROUP(pwm2_b),
++	SH_PFC_PIN_GROUP(pwm3_a),
++	SH_PFC_PIN_GROUP(pwm3_b),
++	SH_PFC_PIN_GROUP(pwm4_a),
++	SH_PFC_PIN_GROUP(pwm4_b),
++	SH_PFC_PIN_GROUP(pwm5_a),
++	SH_PFC_PIN_GROUP(pwm5_b),
++	SH_PFC_PIN_GROUP(pwm6_a),
++	SH_PFC_PIN_GROUP(pwm6_b),
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -2031,6 +2143,40 @@ static const char * const du_groups[] = {
+ 	"du_disp",
+ };
  
-@@ -804,10 +806,10 @@ EXPORT_SYMBOL_GPL(pm_wakeup_dev_event);
- void pm_print_active_wakeup_sources(void)
- {
- 	struct wakeup_source *ws;
--	int active = 0;
-+	int srcuidx, active = 0;
- 	struct wakeup_source *last_activity_ws = NULL;
- 
--	rcu_read_lock();
-+	srcuidx = srcu_read_lock(&wakeup_srcu);
- 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
- 		if (ws->active) {
- 			pr_debug("active wakeup source: %s\n", ws->name);
-@@ -823,7 +825,7 @@ void pm_print_active_wakeup_sources(void
- 	if (!active && last_activity_ws)
- 		pr_debug("last active wakeup source: %s\n",
- 			last_activity_ws->name);
--	rcu_read_unlock();
-+	srcu_read_unlock(&wakeup_srcu, srcuidx);
- }
- EXPORT_SYMBOL_GPL(pm_print_active_wakeup_sources);
- 
-@@ -950,8 +952,9 @@ void pm_wakep_autosleep_enabled(bool set
- {
- 	struct wakeup_source *ws;
- 	ktime_t now = ktime_get();
-+	int srcuidx;
- 
--	rcu_read_lock();
-+	srcuidx = srcu_read_lock(&wakeup_srcu);
- 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
- 		spin_lock_irq(&ws->lock);
- 		if (ws->autosleep_enabled != set) {
-@@ -965,7 +968,7 @@ void pm_wakep_autosleep_enabled(bool set
- 		}
- 		spin_unlock_irq(&ws->lock);
- 	}
--	rcu_read_unlock();
-+	srcu_read_unlock(&wakeup_srcu, srcuidx);
- }
- #endif /* CONFIG_PM_AUTOSLEEP */
- 
-@@ -1026,15 +1029,16 @@ static int print_wakeup_source_stats(str
- static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
- {
- 	struct wakeup_source *ws;
-+	int srcuidx;
- 
- 	seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
- 		"expire_count\tactive_since\ttotal_time\tmax_time\t"
- 		"last_change\tprevent_suspend_time\n");
- 
--	rcu_read_lock();
-+	srcuidx = srcu_read_lock(&wakeup_srcu);
- 	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
- 		print_wakeup_source_stats(m, ws);
--	rcu_read_unlock();
-+	srcu_read_unlock(&wakeup_srcu, srcuidx);
- 
- 	print_wakeup_source_stats(m, &deleted_ws);
- 
++static const char * const pwm0_groups[] = {
++	"pwm0",
++};
++
++static const char * const pwm1_groups[] = {
++	"pwm1_a",
++	"pwm1_b",
++};
++
++static const char * const pwm2_groups[] = {
++	"pwm2_a",
++	"pwm2_b",
++};
++
++static const char * const pwm3_groups[] = {
++	"pwm3_a",
++	"pwm3_b",
++};
++
++static const char * const pwm4_groups[] = {
++	"pwm4_a",
++	"pwm4_b",
++};
++
++static const char * const pwm5_groups[] = {
++	"pwm5_a",
++	"pwm5_b",
++};
++
++static const char * const pwm6_groups[] = {
++	"pwm6_a",
++	"pwm6_b",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -2084,6 +2230,13 @@ static const char * const scif_clk_groups[] = {
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb),
+ 	SH_PFC_FUNCTION(du),
++	SH_PFC_FUNCTION(pwm0),
++	SH_PFC_FUNCTION(pwm1),
++	SH_PFC_FUNCTION(pwm2),
++	SH_PFC_FUNCTION(pwm3),
++	SH_PFC_FUNCTION(pwm4),
++	SH_PFC_FUNCTION(pwm5),
++	SH_PFC_FUNCTION(pwm6),
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif2),
+-- 
+Regards,
+
+Laurent Pinchart
