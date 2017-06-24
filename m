@@ -1,100 +1,80 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH for 4.12] Revert "pinctrl: rockchip: avoid hardirq-unsafe
- functions in irq_chip"
-Date: Fri, 23 Jun 2017 15:40:49 -0700
-Message-ID: <20170623224049.GP3721@linux.vnet.ibm.com>
-References: <20170517225634.GA11404@google.com>
- <20170527021900.GA119873@google.com>
- <20170623205911.GA143883@google.com>
- <alpine.DEB.2.20.1706232353220.2234@nanos>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: <hastpass@sqha.se>
+Subject: (unknown)
+Date: Sat, 24 Jun 2017 00:04:10 -0000
+Message-ID: <149826265094.4332.12917126709948597081@regencymedia.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1706232353220.2234@nanos>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>
+Content-Type: application/zip; name="EMAIL_847312_linux-gpio.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail03.regencymedia.com.au ([101.178.166.1]:18712 "HELO
+        regencymedia.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1754075AbdFXAEU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 23 Jun 2017 20:04:20 -0400
+Content-Disposition: attachment
+Subject: 
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-On Sat, Jun 24, 2017 at 12:12:49AM +0200, Thomas Gleixner wrote:
-> On Fri, 23 Jun 2017, Brian Norris wrote:
-> 
-> > This reverts commit 88bb94216f59e10802aaf78c858a4146085faf18.
-> > 
-> > It introduced a new CONFIG_DEBUG_ATOMIC_SLEEP warning in v4.12-rc1:
-> > 
-> > [ 7226.716713] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:238
-> > [ 7226.716716] in_atomic(): 0, irqs_disabled(): 0, pid: 1708, name: bash
-> > [ 7226.716722] CPU: 1 PID: 1708 Comm: bash Not tainted 4.12.0-rc6+ #1213
-> > [ 7226.716724] Hardware name: Google Kevin (DT)
-> > [ 7226.716726] Call trace:
-> > [ 7226.716738] [<ffffff8008089928>] dump_backtrace+0x0/0x24c
-> > [ 7226.716743] [<ffffff8008089b94>] show_stack+0x20/0x28
-> > [ 7226.716749] [<ffffff8008371370>] dump_stack+0x90/0xb0
-> > [ 7226.716755] [<ffffff80080cd2a0>] ___might_sleep+0x10c/0x124
-> > [ 7226.716760] [<ffffff80080cd330>] __might_sleep+0x78/0x88
-> > [ 7226.716765] [<ffffff800879e210>] mutex_lock+0x2c/0x64
-> > [ 7226.716771] [<ffffff80083ad678>] rockchip_irq_bus_lock+0x30/0x3c
-> > [ 7226.716777] [<ffffff80080f6d40>] __irq_get_desc_lock+0x78/0x98
-> > [ 7226.716782] [<ffffff80080f7e6c>] irq_set_irq_wake+0x44/0x12c
-> > [ 7226.716787] [<ffffff8008486e18>] dev_pm_arm_wake_irq+0x4c/0x58
-> > [ 7226.716792] [<ffffff800848b80c>] device_wakeup_arm_wake_irqs+0x3c/0x58
-> > [ 7226.716796] [<ffffff80084896fc>] dpm_suspend_noirq+0xf8/0x3a0
-> > [ 7226.716800] [<ffffff80080f1384>] suspend_devices_and_enter+0x1a4/0x9a8
-> > [ 7226.716803] [<ffffff80080f21ec>] pm_suspend+0x664/0x6a4
-> > [ 7226.716807] [<ffffff80080f04d8>] state_store+0xd4/0xf8
-> > ...
-> > 
-> > It was reported on -rc1, and it's still not fixed in -rc6, so it should
-> > just be reverted.
-> > 
-> > + Thomas, in case he has thoughts
-> 
-> + Peter and Paul, Tony
-> 
-> > Subject was "[4.12 REGRESSION] pinctrl: rockchip: sleeping function
-> > called from atomic context"
-> > 
-> > On Fri, May 26, 2017 at 07:19:00PM -0700, Brian Norris wrote:
-> > > Any thoughts? Revert the offending patch? I can spend a little more time
-> > > next week trying to debug what's actually going on if needed.
-> > > 
-> > > On Wed, May 17, 2017 at 03:56:34PM -0700, Brian Norris wrote:
-> > 
-> > > > The thing is, the documentation (and apparent design) suggest that
-> > > > calling sleeping functions from ->irq_bus_lock() is perfectly valid. I'm
-> > > > not 100% following the ___might_sleep() logic, but is this complaining
-> > > > because of the RCU read locking in device_wakeup_arm_wake_irqs()? I have
-> > > > CONFIG_PREEMPT_RCU and CONFIG_PREEMPT enabled, FWIW.
-> 
-> Sigh, The real wreckage happened in commit:
-> 
-> commit 4990d4fe327b9d9a7a3be7103a82699406fdde69
-> Author: Tony Lindgren <tony@atomide.com>
-> Date:   Mon May 18 15:40:29 2015 -0700
-> 
->     PM / Wakeirq: Add automated device wake IRQ handling
-> 
-> which added that RCU locking stuff and thereby broke the long existing
-> bus_lock() facility of the interrupt core.
-> 
-> irq_bus_lock/unlock was explicitely made to allow sleeping locks for
-> interrupt chips which hang behind slow busses like i2c or spi. It took us
-> quite some effort to get this done and that patch broke it permanently.
-> 
-> I'm not sure what to do here. This is an ever recurring issue simply
-> because RT requires that sleeping locks can be taken inside rcu locked
-> regions. So sooner than later we need a resoilution for that problem.
-
-The usual advice would be for 4990d4fe327b ("PM / Wakeirq: Add automated
-device wake IRQ handling") to use SRCU rather than RCU.  Is there some
-reason that won't work?
-
-And yes, my commit 5b72f9643b52a ("rcu: Complain if blocking in
-preemptible RCU read-side critical section") that is now in -tip needs
-adjustment for -rt.  I can easily add "&& IS_ENABLED(CONFIG_PREEMPT_RT)"
-or whatever the current incantation is.  Just let me know!
-
-							Thanx, Paul
+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
