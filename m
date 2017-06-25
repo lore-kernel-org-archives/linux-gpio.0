@@ -1,159 +1,56 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: PM / wakeirq: Convert to SRCU
-Date: Sat, 24 Jun 2017 06:53:20 -0700
-Message-ID: <20170624135320.GS3721@linux.vnet.ibm.com>
-References: <alpine.DEB.2.20.1706241153260.1941@nanos>
-Reply-To: paulmck@linux.vnet.ibm.com
+Date: Sun, 25 Jun 2017 11:11:57 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1706251103320.1996@nanos>
+References: <alpine.DEB.2.20.1706241153260.1941@nanos> <20170624135320.GS3721@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39389 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751281AbdFXNx1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 24 Jun 2017 09:53:27 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v5ODmhRm059876
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2017 09:53:26 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2b9ky00xcs-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-gpio@vger.kernel.org>; Sat, 24 Jun 2017 09:53:26 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-gpio@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 24 Jun 2017 09:53:25 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1706241153260.1941@nanos>
+Received: from Galois.linutronix.de ([146.0.238.70]:36760 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbdFYJMQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 25 Jun 2017 05:12:16 -0400
+In-Reply-To: <20170624135320.GS3721@linux.vnet.ibm.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-On Sat, Jun 24, 2017 at 11:56:11AM +0200, Thomas Gleixner wrote:
-> The wakeirq infrastructure uses RCU to protect the list of wakeirqs. That
-> breaks the irq bus locking infrastructure, which allows sleeping functions
-> to be called so interrupt controllers behind slow busses, e.g. i2c, can be
-> handled.
+On Sat, 24 Jun 2017, Paul E. McKenney wrote:
+> On Sat, Jun 24, 2017 at 11:56:11AM +0200, Thomas Gleixner wrote:
+> >  static DECLARE_WAIT_QUEUE_HEAD(wakeup_count_wait_queue);
+> > 
+> > +static struct srcu_struct wakeup_srcu;
 > 
-> The wakeirq functions hold rcu_read_lock and call into irq functions, which
-> in case of interrupts using the irq bus locking will trigger a
-> might_sleep() splat.
+> I suggest this to avoid the need for boot-time init_srcu_struct():
 > 
-> Convert the wakeirq infrastructure to Sleepable RCU and unbreak it.
-> 
-> Fixes: 4990d4fe327b ("PM / Wakeirq: Add automated device wake IRQ handling")
-> Reported-by: Brian Norris <briannorris@chromium.org>
-> Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
+> DEFINE_STATIC_SRCU(wakeup_srcu);
 
-Looks plausible.  One suggestion on initialization below, and a couple
-of questions about uses of RCU that this patch does not convert to SRCU.
+Now I know why I had this nagging feeling, that should stay away from
+computers yesterday morning.....
 
-							Thanx, Paul
+> >  static struct wakeup_source deleted_ws = {
+> >  	.name = "deleted",
+> >  	.lock =  __SPIN_LOCK_UNLOCKED(deleted_ws.lock),
+> > @@ -198,7 +200,7 @@ void wakeup_source_remove(struct wakeup_
+> >  	spin_lock_irqsave(&events_lock, flags);
+> >  	list_del_rcu(&ws->entry);
+> >  	spin_unlock_irqrestore(&events_lock, flags);
+> > -	synchronize_rcu();
+> > +	synchronize_srcu(&wakeup_srcu);
+> >  }
+> >  EXPORT_SYMBOL_GPL(wakeup_source_remove);
+> 
+> The uses of RCU in device_wakeup_arm_wake_irqs() and
+> device_wakeup_disarm_wake_irqs() are unrelated and thus do not
+> need to be converted?  Or am I looking at the wrong version of
+> the kernel?  (Looking at f65013d655ac ("Merge branch 'for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace")
+> in Linus's tree.)
 
-> ---
->  drivers/base/power/wakeup.c |   20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
-> 
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -60,6 +60,8 @@ static LIST_HEAD(wakeup_sources);
-> 
->  static DECLARE_WAIT_QUEUE_HEAD(wakeup_count_wait_queue);
-> 
-> +static struct srcu_struct wakeup_srcu;
+No, you are looking at the result of heat induced brain melt. Will send a
+proper one soon.
 
-I suggest this to avoid the need for boot-time init_srcu_struct():
+Thanks,
 
-DEFINE_STATIC_SRCU(wakeup_srcu);
-
-> +
->  static struct wakeup_source deleted_ws = {
->  	.name = "deleted",
->  	.lock =  __SPIN_LOCK_UNLOCKED(deleted_ws.lock),
-> @@ -198,7 +200,7 @@ void wakeup_source_remove(struct wakeup_
->  	spin_lock_irqsave(&events_lock, flags);
->  	list_del_rcu(&ws->entry);
->  	spin_unlock_irqrestore(&events_lock, flags);
-> -	synchronize_rcu();
-> +	synchronize_srcu(&wakeup_srcu);
->  }
->  EXPORT_SYMBOL_GPL(wakeup_source_remove);
-
-The uses of RCU in device_wakeup_arm_wake_irqs() and
-device_wakeup_disarm_wake_irqs() are unrelated and thus do not
-need to be converted?  Or am I looking at the wrong version of
-the kernel?  (Looking at f65013d655ac ("Merge branch 'for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace")
-in Linus's tree.)
-
-If these two functions are making unrelated use of RCU and thus don't
-need to be converted to SRCU, might be worth a comment somewhere.
-
-> @@ -804,10 +806,10 @@ EXPORT_SYMBOL_GPL(pm_wakeup_dev_event);
->  void pm_print_active_wakeup_sources(void)
->  {
->  	struct wakeup_source *ws;
-> -	int active = 0;
-> +	int srcuidx, active = 0;
->  	struct wakeup_source *last_activity_ws = NULL;
-> 
-> -	rcu_read_lock();
-> +	srcuidx = srcu_read_lock(&wakeup_srcu);
->  	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
->  		if (ws->active) {
->  			pr_debug("active wakeup source: %s\n", ws->name);
-> @@ -823,7 +825,7 @@ void pm_print_active_wakeup_sources(void
->  	if (!active && last_activity_ws)
->  		pr_debug("last active wakeup source: %s\n",
->  			last_activity_ws->name);
-> -	rcu_read_unlock();
-> +	srcu_read_unlock(&wakeup_srcu, srcuidx);
->  }
->  EXPORT_SYMBOL_GPL(pm_print_active_wakeup_sources);
-> 
-> @@ -950,8 +952,9 @@ void pm_wakep_autosleep_enabled(bool set
->  {
->  	struct wakeup_source *ws;
->  	ktime_t now = ktime_get();
-> +	int srcuidx;
-> 
-> -	rcu_read_lock();
-> +	srcuidx = srcu_read_lock(&wakeup_srcu);
->  	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
->  		spin_lock_irq(&ws->lock);
->  		if (ws->autosleep_enabled != set) {
-> @@ -965,7 +968,7 @@ void pm_wakep_autosleep_enabled(bool set
->  		}
->  		spin_unlock_irq(&ws->lock);
->  	}
-> -	rcu_read_unlock();
-> +	srcu_read_unlock(&wakeup_srcu, srcuidx);
->  }
->  #endif /* CONFIG_PM_AUTOSLEEP */
-
-Same question for pm_wakep_autosleep_enabled().
-
-> @@ -1026,15 +1029,16 @@ static int print_wakeup_source_stats(str
->  static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
->  {
->  	struct wakeup_source *ws;
-> +	int srcuidx;
-> 
->  	seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
->  		"expire_count\tactive_since\ttotal_time\tmax_time\t"
->  		"last_change\tprevent_suspend_time\n");
-> 
-> -	rcu_read_lock();
-> +	srcuidx = srcu_read_lock(&wakeup_srcu);
->  	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
->  		print_wakeup_source_stats(m, ws);
-> -	rcu_read_unlock();
-> +	srcu_read_unlock(&wakeup_srcu, srcuidx);
-> 
->  	print_wakeup_source_stats(m, &deleted_ws);
-> 
-> 
-
+	tglx
