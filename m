@@ -1,37 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: Add PWM support
-Date: Mon, 26 Jun 2017 10:25:27 +0200
-Message-ID: <CAMuHMdWXnYMMatb5Uhz=i8n6yA3W=jNBqrbiez=CgDOstbCTBg@mail.gmail.com>
-References: <20170624101854.27655-1-laurent.pinchart+renesas@ideasonboard.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 01/17] mfd: madera: Add register
+ definitions for Cirrus Logic Madera codecs
+Date: Mon, 26 Jun 2017 09:33:38 +0100
+Message-ID: <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
+References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20170605100707.zqyfyzhlhrpswa2u@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33356 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751389AbdFZIZ3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Jun 2017 04:25:29 -0400
-In-Reply-To: <20170624101854.27655-1-laurent.pinchart+renesas@ideasonboard.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20170605100707.zqyfyzhlhrpswa2u@dell>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Sat, Jun 24, 2017 at 12:18 PM, Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Add pinctrl support for the PWM[0-6] pins.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Mon, 2017-06-05 at 11:07 +0100, Lee Jones wrote:
+> On Fri, 02 Jun 2017, Richard Fitzgerald wrote:
+> 
+> > This patch adds a header file of register definitions for Cirrus
+> > Logic "Madera" class codecs. These codecs are all based off a common
+> > set of hardware IP so have a common register map (with a few minor
+> > device-to-device variations). These are complex devices with a large
+> > number of features and so have a correspondingly large register set.
+> > The registers.h file has been auto-generated from the hardware register
+> > definitions, stripped down to only registers we need to access from
+> > the driver
+> > 
+> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> > ---
+> > Changes since V2:
+> > - Used new field names for IRQ1_STATUS_33 register
+> > 
+> >  MAINTAINERS                          |   10 +
+> >  include/linux/mfd/madera/registers.h | 8832 ++++++++++++++++++++++++++++++++++
+> 
+> Crikey!
+> 
+> For my own reference:
+>   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+>   
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. queuing in sh-pfc-for-v4.13.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Can I suggest that you take this patch into the mfd tree? Other
+subsystem maintainers will have to base on that but it avoids me keeping
+emailing out nearly 9000 lines of register definitions each time I do an
+update to the other patches in the chain.
