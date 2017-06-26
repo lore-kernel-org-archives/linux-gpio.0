@@ -1,49 +1,31 @@
-From: Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v2]  PM / wakeirq: Convert to SRCU
-Date: Mon, 26 Jun 2017 13:37:11 -0700
-Message-ID: <20170626203709.GA11099@google.com>
-References: <alpine.DEB.2.20.1706241153260.1941@nanos>
- <20170624135320.GS3721@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1706251103320.1996@nanos>
- <20170625144559.GA3721@linux.vnet.ibm.com>
- <alpine.DEB.2.20.1706251930220.2528@nanos>
+From: Julian Smith <sinara_group@126.com>
+Subject: Product Inquiry
+Date: Mon, 26 Jun 2017 17:51:26 -0400 (EDT)
+Message-ID: <20170626215126.C6BEB8B48D@mail.dealer.com>
+Reply-To: sinara-group@bk.ru
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:36629 "EHLO
-        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751477AbdFZUhU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Jun 2017 16:37:20 -0400
-Received: by mail-pf0-f175.google.com with SMTP id q86so5512260pfl.3
-        for <linux-gpio@vger.kernel.org>; Mon, 26 Jun 2017 13:37:20 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1706251930220.2528@nanos>
+Received: from host238-201-177-94.serverdedicati.aruba.it ([94.177.201.238]:43525
+        "EHLO mail.dealer.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751449AbdF0ABb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Jun 2017 20:01:31 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: linux-gpio@vger.kernel.org
 
-On Sun, Jun 25, 2017 at 07:31:13PM +0200, Thomas Gleixner wrote:
-> The wakeirq infrastructure uses RCU to protect the list of wakeirqs. That
-> breaks the irq bus locking infrastructure, which is allows sleeping
-> functions to be called so interrupt controllers behind slow busses,
-> e.g. i2c, can be handled.
-> 
-> The wakeirq functions hold rcu_read_lock and call into irq functions, which
-> in case of interrupts using the irq bus locking will trigger a
-> might_sleep() splat.
-> 
-> Convert the wakeirq infrastructure to Sleepable RCU and unbreak it.
-> 
-> Fixes: 4990d4fe327b ("PM / Wakeirq: Add automated device wake IRQ handling")
-> Reported-by: Brian Norris <briannorris@chromium.org>
-> Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  drivers/base/power/wakeup.c |   32 ++++++++++++++++++--------------
->  1 file changed, 18 insertions(+), 14 deletions(-)
+Hello, 
 
-This resolves the warnings I've seen, for sure. And I don't seem to have
-any new suspend/resume problems, so:
+My name is Ms Julian Smith and i am from Sinara Group Co.
+We are glad to know about your company from the web and we are interested in
+your products.Please send us your Latest catalog and price list for our
+trial order. 
 
-Tested-by: Brian Norris <briannorris@chromium.org>
+Julian Smith, 
+Purchasing Manager
+Sinara Group Co.
+7 Krasnogo Znameni Ave.
+Vladivostok,690106,Ukraine
+
+
