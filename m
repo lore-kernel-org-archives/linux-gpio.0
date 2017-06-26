@@ -1,34 +1,73 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] gpio: acpi: Skip _AEI entries without a handler rather
- then aborting the scan
-Date: Mon, 26 Jun 2017 19:08:14 +0300
-Message-ID: <20170626160814.GO629@lahna.fi.intel.com>
-References: <20170623072613.3768-1-hdegoede@redhat.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/3] pinctrl: Add sleep related configuration
+Date: Mon, 26 Jun 2017 11:13:48 -0500
+Message-ID: <20170626161348.vrtlpat5eof5aa2c@rob-hp-laptop>
+References: <62a67526907157d41235403bd05af309fd4db16b.1498045588.git.baolin.wang@spreadtrum.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:40722 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750919AbdFZQIU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 26 Jun 2017 12:08:20 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33127 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751402AbdFZQNu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 26 Jun 2017 12:13:50 -0400
 Content-Disposition: inline
-In-Reply-To: <20170623072613.3768-1-hdegoede@redhat.com>
+In-Reply-To: <62a67526907157d41235403bd05af309fd4db16b.1498045588.git.baolin.wang@spreadtrum.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org
+To: Baolin Wang <baolin.wang@spreadtrum.com>
+Cc: linus.walleij@linaro.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org
 
-On Fri, Jun 23, 2017 at 09:26:13AM +0200, Hans de Goede wrote:
-> acpi_walk_resources will stop as soon as the callback passed in returns
-> an error status. On a x86 tablet I have the first GpioInt in the _AEI
-> resource list has no handler defined in the DSDT, causing
-> acpi_walk_resources to abort scanning the rest of the resource list,
-> which does define valid ACPI GPIO events.
+On Wed, Jun 21, 2017 at 07:55:37PM +0800, Baolin Wang wrote:
+> In some scenarios, we should set some pins as input/output/pullup/pulldown
+> when the specified system goes into deep sleep mode, then when the system
+> goes into deep sleep mode, these pins will be set automatically by hardware.
 > 
-> This commit changes the return for not finding a handler from
-> AE_BAD_PARAMETER to AE_OK so that the rest of the resource list will
-> get scanned normally in case of missing event handlers.
-> 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Usually we can set the "sleep" state to set sleep related config, but one SoC
+> usually has not only one system (especially for mobile SoC), some systems on
+> the SoC which did not run linux kernel, they can not select the "sleep" state
+> when they go into deep sleep mode.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+The wording here is not very clear. I think what you mean is some pins 
+are not controlled by any specific driver in the OS, but need to be 
+controlled when entering sleep mode.
+
+> Thus we introduce some sleep related config into pinconf-generic for users to
+> configure.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
+> ---
+>  - Add this patch since v4.
+> ---
+>  .../bindings/pinctrl/pinctrl-bindings.txt          |   12 ++++++++++++
+>  drivers/pinctrl/pinconf-generic.c                  |   10 ++++++++++
+>  include/linux/pinctrl/pinconf-generic.h            |   14 ++++++++++++++
+>  3 files changed, 36 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> index bf3f7b0..e098059 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> @@ -236,6 +236,18 @@ low-power-enable	- enable low power mode
+>  low-power-disable	- disable low power mode
+>  output-low		- set the pin to output mode with low level
+>  output-high		- set the pin to output mode with high level
+> +sleep-bias-pull-up	- pull up the pin when the specified system goes into
+> +			  deep sleep mode
+> +sleep-bias-pull-down	- pull down the pin when the specified system goes into
+> +			  deep sleep mode
+> +sleep-input-enable	- enable input on pin when the specified system goes
+> +			  into deep sleep mode (no effect on output)
+> +sleep-intput-disable	- disable input on pin when the specified system goes
+> +			  into deep sleep mode (no effect on output)
+> +sleep-output-low	- set the pin to output mode with low level when the
+> +			  specified system goes into deep sleep mode
+> +sleep-output-high	- set the pin to output mode with high level when the
+> +			  specified system goes into deep sleep mode
+>  slew-rate		- set the slew rate
+
+I don't really like having 2 ways to define pin setup and this doesn't 
+scale if I need to define 3 states. Couldn't we create pin state 
+definitions and have a pinctrl-n property within the pin controller 
+node to handle all the unhandled pins?
+
+Rob
