@@ -1,56 +1,150 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 01/17] mfd: madera: Add register
- definitions for Cirrus Logic Madera codecs
-Date: Mon, 26 Jun 2017 09:33:38 +0100
-Message-ID: <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170605100707.zqyfyzhlhrpswa2u@dell>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v6 00/8] Renesas RZ/A1 pin and gpio controller
+Date: Mon, 26 Jun 2017 10:45:22 +0200
+Message-ID: <CAMuHMdWWSD8BD3xqd+OnWGzmEQO39d8Fg8zWXEP3j=te3axZ8Q@mail.gmail.com>
+References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20170605100707.zqyfyzhlhrpswa2u@dell>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Dong Aisheng <aisheng.dong@nxp.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 2017-06-05 at 11:07 +0100, Lee Jones wrote:
-> On Fri, 02 Jun 2017, Richard Fitzgerald wrote:
-> 
-> > This patch adds a header file of register definitions for Cirrus
-> > Logic "Madera" class codecs. These codecs are all based off a common
-> > set of hardware IP so have a common register map (with a few minor
-> > device-to-device variations). These are complex devices with a large
-> > number of features and so have a correspondingly large register set.
-> > The registers.h file has been auto-generated from the hardware register
-> > definitions, stripped down to only registers we need to access from
-> > the driver
-> > 
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> > ---
-> > Changes since V2:
-> > - Used new field names for IRQ1_STATUS_33 register
-> > 
-> >  MAINTAINERS                          |   10 +
-> >  include/linux/mfd/madera/registers.h | 8832 ++++++++++++++++++++++++++++++++++
-> 
-> Crikey!
-> 
-> For my own reference:
->   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
->   
+Hi Linus,
 
-Can I suggest that you take this patch into the mfd tree? Other
-subsystem maintainers will have to base on that but it avoids me keeping
-emailing out nearly 9000 lines of register definitions each time I do an
-update to the other patches in the chain.
+On Thu, Jun 22, 2017 at 4:54 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>    this is 6th round of RZ/A1 pin controller patch series.
+>
+> Where did we stop: discussion from pin controller driver shifted toward two
+> new generic pin configuration properties I added to the previous series
+> (bi-directional and output-enable).
+>
+> After a really long discussion, we decided to go for handling internally all
+> bi-directional use cases, making the generic property not a requirement for the
+> series. Interestingly, we recently found out the number of pins actually
+> requiring this flag is less (~half) than what reported by the processor manual,
+> so we could have handled these internally from day one :(
+>
+> We also now manage internally pins requiring IO direction specified in software
+> even when configured in alternate function mode (SWIO mode). Most of them are
+> handled by the driver, some of them have to come from DTS as the user can freely
+> select if they have to be inputs or outputs. For those pins, and after another
+> discussion involving NXP developers, we decided to use input-enable and
+> output-enable properties. I have just sent a patch to add output-enable to the
+> generic pin configuration properties, but it is currently under discussion.
+>
+> However, none of the pins currently configured by mainline DTS require those
+> properties to be specified, so I have dropped in this driver any dependency on
+> output-enable property, and I'm using instead the already in place
+> PIN_CONFIG_OUTPUT one. Once output-enable will eventually be accepted, we can
+> update the driver to make use of it, but since there are no use cases for that
+> at the moment, it makes not too much sense holding this series back for that.
+>
+> The total memory occupation we were so worried about of bi-directional and swio
+> pin tables is now around 100 bytes, because of how the number of pins actually
+> needing those flags has  reduced and because of how we have arranged the
+> tables using bitfield structures (credits to Geert here).
+>
+> Having cleared out dependencies on new pin configuration properties and having
+> made configuration flags a driver specific issue, I hope this version can be
+> accepted and land in forthcoming pull request for Renesas PFC updates from
+> Geert, pending some feedback from the linux-gpio community.
+
+If this is OK for you, I'd like to include the first 3 patches (plus a small
+fix I received offline from Chris Brandt[*]) in my final pull request of
+sh-pfc for v4.13 (which I have been postponing in anticipation of this driver).
+
+After v4.13-rc1, Simon can queue up the DTS patches in his tree for v4.14.
+
+Thanks!
+
+[*]
+
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -617,11 +617,13 @@ static int rza1_pin_mux_single(struct
+rza1_pinctrl *rza1_pctl,
+         * to I/O direction specified by pin configuration -after- PMC has been
+         * set to one.
+         */
+-       if (!(mux_flags & (MUX_FLAGS_SWIO_INPUT | MUX_FLAGS_SWIO_OUTPUT)))
++       if (mux_flags & (MUX_FLAGS_SWIO_INPUT | MUX_FLAGS_SWIO_OUTPUT))
++               rza1_set_bit(port, RZA1_PM_REG, pin,
++                            mux_flags & MUX_FLAGS_SWIO_INPUT);
++       else
+                rza1_set_bit(port, RZA1_PIPC_REG, pin, 1);
+
+        rza1_set_bit(port, RZA1_PMC_REG, pin, 1);
+-       rza1_set_bit(port, RZA1_PM_REG, pin, mux_flags & MUX_FLAGS_SWIO_INPUT);
+
+        return 0;
+ }
+
+> v1 -> v2:
+> - change pin configuration flags as suggested by Chris
+> - gpio set direction function fixed as suggested by Chris
+> - add some more example on pin configuration flag usage to dt-binding doc
+> - fix gpio-controller names to remove unit address as suggested by Geert
+> - some comments chopped here and there to make the driver less verbose
+>
+> v2 -> v3:
+> - fix grammar and syntax in comment and documentation
+> - fix code style (reverse xmas tree ordering in variable declaration)
+> - use irqsave/irqrestore in spinlock lock/unlock
+> - use devm_ version of kasprintf (memory returned was not properly free)
+> - use bitops.h operation ffs and fls to make sure a single bit is set in pmx
+>   mask
+> - Add Geert's reviewed-by to DTS patches
+>
+> v3 -> v4:
+> - use "pinmux" property in pmx sub-nodes in place of "renesas,pins"
+> - use pinconf standard properties to set pin mux additional flags
+> - add "bi-directional" and "output-enable" to pinconf generic properties
+> - perform pmx function parsing at dt_node_to_map() time
+> - change DT bindings to use GENERIC_PINCONF
+> - change DT bindings to allow sub-nodes to have "pinmux" property specified
+> - several renames (register names, DT parse functions, set_mux() function)
+>
+> v4 -> v5:
+> - use pinctrl_enable() function in pin controller registration function
+> - update bindings documentation to incorporate Geert's comments
+> - add generic properties unpack macros
+>
+> v5 -> v6:
+> - add tables in driver to manage bi-directional and swio flags
+> - drop dependecies on new generic pin configuration properties
+>
+> Jacopo Mondi (8):
+>   pinctrl: Renesas RZ/A1 pin and gpio controller
+>   dt-bindings: pinctrl: Add RZ/A1 bindings doc
+>   arm: dts: dt-bindings: Add Renesas RZ/A1 pinctrl header
+>   arm: dts: r7s72100: Add pin controller node
+>   arm: dts: genmai: Add SCIF2 pin group
+>   arm: dts: genmai: Add RIIC2 pin group
+>   arm: dts: genmai: Add user led device nodes
+>   arm: dts: genmai: Add ethernet pin group
+>
+>  .../bindings/pinctrl/renesas,rza1-pinctrl.txt      |  218 ++++
+>  arch/arm/boot/dts/r7s72100-genmai.dts              |   69 ++
+>  arch/arm/boot/dts/r7s72100.dtsi                    |   78 ++
+>  drivers/pinctrl/Kconfig                            |   11 +
+>  drivers/pinctrl/Makefile                           |    1 +
+>  drivers/pinctrl/pinctrl-rza1.c                     | 1309 ++++++++++++++++++++
+>  include/dt-bindings/pinctrl/r7s72100-pinctrl.h     |   16 +
+>  7 files changed, 1702 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/pinctrl-rza1.c
+>  create mode 100644 include/dt-bindings/pinctrl/r7s72100-pinctrl.h
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
