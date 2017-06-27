@@ -1,67 +1,130 @@
-From: Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH for 4.12] Revert "pinctrl: rockchip: avoid hardirq-unsafe
- functions in irq_chip"
-Date: Tue, 27 Jun 2017 10:23:09 -0700
-Message-ID: <20170627172306.GA91202@google.com>
-References: <20170517225634.GA11404@google.com>
- <20170527021900.GA119873@google.com>
- <20170623205911.GA143883@google.com>
- <alpine.DEB.2.20.1706232353220.2234@nanos>
- <20170627000622.GA63039@google.com>
- <alpine.DEB.2.20.1706271357520.1798@nanos>
- <alpine.DEB.2.20.1706271504521.1798@nanos>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Tue, 27 Jun 2017 12:49:03 -0500
+Message-ID: <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
+References: <1497543642.3086.35.camel@baylibre.com>
+ <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
+ <1497954416.7387.1.camel@baylibre.com>
+ <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+ <1497979438.7387.10.camel@baylibre.com>
+ <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+ <1498141515.7387.16.camel@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1706271504521.1798@nanos>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>, "David.Wu" <david.wu@rock-chips.com>, =?utf-8?B?J+m7hOa2myc=?= <huangtao@rock-chips.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1498141515.7387.16.camel@baylibre.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-I'm not sure I follow all of Thomas's suggestions on what should be done
-in the future yet, but I agree that can be done in parallel:
 
-On Tue, Jun 27, 2017 at 03:06:26PM +0200, Thomas Gleixner wrote:
-> On Tue, 27 Jun 2017, Thomas Gleixner wrote:
-> > That aside, looking at the commit which caused this discussion:
-> > 
-> > 88bb94216f59e pinctrl: rockchip: avoid hardirq-unsafe functions in irq_chip
-> > 
-> > I assume (the changelog lacks details) that the patch want's to avoid a
-> > might sleep splat from the irq callbacks caused by the regmap spinlock,
-> > which gets converted into a sleeping lock on RT. It does this by abusing
-> > the irq_bus_lock() mechanism, which is wrong to begin with.
-> > 
-> > The only irq chip function which uses the regmap magic is the
-> > irq_set_type() callback. Now, I have a hard time to understand (though I'm
-> > no regmap/pinctrl expert) why that regmap stuff needs to be called in the
-> > first place. The level and the polarity are programmed via:
-> > 
-> >         writel_relaxed(level, gc->reg_base + GPIO_INTTYPE_LEVEL);
-> >         writel_relaxed(polarity, gc->reg_base + GPIO_INT_POLARITY);
-> > 
-> > Why needs the regmap machinery to be invoked there? The GPIO is already
-> > muxed and configured as interrupt, otherwise none of the irq functions
-> > could be invoked. Hmm?
+On 06/22/2017 09:25 AM, Jerome Brunet wrote:
+> On Wed, 2017-06-21 at 22:50 +0200, Linus Walleij wrote:
+>> On Tue, Jun 20, 2017 at 7:23 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>> On Tue, 2017-06-20 at 18:37 +0200, Linus Walleij wrote:
+>>>> Eventually gpio_to_irq() should be DELETED and replaced in full with
+>>>> the prepare/unprepare calls.
+>>>
+>>> Woahh, that's not what I meant. gpio_to_irq should stay. Getting rid of it
+>>> would
+>>> be a mess and it is a useful call.
+>>>
+>>> The gpio_irq_prepare is meant so that the consumer can tell the gpio driver
+>>> it
+>>> will want to get irq from a particular gpio at some point.
+>>>
+>>> IOW, it's the consumer saying to the gpio driver "please do whatever you
+>>> need to
+>>> do, if anything, so this gpio can generate an interrupt"
+>>>
+>>> This is a much simpler change. Using devm, all we need is to put a
+>>> devm_gpio_irq_prepare(<gpio_num>) in the probe of the drivers using
+>>> gpio_to_irq.
+>>>
+>>> Mandating call to gpio_irq_prepare before any call to gpio_to_irq will be
+>>> fairly
+>>> easy.
+>>
+>> So why can't we just return the IRQ from prepare() and be done with it
 > 
-> That said, the commit should be reverted and the issue needs to analyzed
-> proper. We still need the RCU -> SCRU conversion, but that's a different
-> problem.
+> We can return it here as well, it's actually a good idea. New drivers could just
+> use that one if they are keeping track of the irq number.
+> 
+>> instead of having two calls? (Plus a third eventual unprepare()).
+>>
+>> Clocks, regulators and godknowswhat is managed by two symmetrical
+>> calls, so why shouldn't GPIO IRQs be?
+> 
+> The approach is exactly the same as what we trying to follow in the irq
+> framework:
+> 
+> framework     | irq                 | gpio
+> -----------------------------------------------------
+> index         | hwirq               | gpio_num
+> creation      | irq_create_mapping  | gpio_irq_prepare   ?
+> removal       | irq_dispose_mapping | gpio_irq_unprepare ?
+> (fast) lookup | irq_find_mapping    | gpio_to_irq
+> 
+> We are going to have at lookup function somehow, why not expose it ?
+> 
+> Another reason for keeping gpio_to_irq is that many existing drivers using the
+> callback don't keep track of their irq number, just the gpio. For every irq
+> operation, they call gpio_to_irq. Things like this:
+> 
+> * irq_enable(gpio_to_irq(<gpio_num>))
+> * irq_release(gpio_to_irq(<gpio_num>))
+> * etc ...
+> 
+> It's a bit lazy maybe, but I don't think there is anything utterly wrong with
+> it.
+> 
+> Getting rid of gpio_to_irq would mean reworking all those drivers so they keep
+> track of their irq number. I think this would be a mess for a very little gain.
+> 
+> Also, except for the 26 gpio drivers I have listed, the rest should already be
+> implementing what qualify as a "lookup" function in gpio_to_irq. I don't think
+> we should by modifying every single gpio driver when there is a solution to
+> 'surgically' address the matter.
+> 
+> The series would already affect a significant amount of drivers, I'm trying to
+> keep it as simple an contained as possible.
+> 
+> If that is OK with you, I could send an RFC implementing the idea but fixing
+> only 1 gpio driver and 2 or 3 consumer. We would have actual code to discuss on,
+> it might be easier.
+> 
 
-Can we consider this an "ack" for the $subject then? Heiko also gave his
-approval. How can this get merged? It's running a bit late for 4.12,
-though it really shouldn't be risky (at least for non-RT stuff that was
-working warning-free already in 4.11), but a 4.13-rc1 with -stable tag
-could work as well.
+I'd like to add my 5 cents here :)
+1) "To create the mapping in the gpio_to_irq. Linus, you pointed out that this is not
+ allowed as gpio_to_irq is callable in irq context, therefore it should not sleep.
+ Actually 3 drivers [2] are calling gpio_to_irq in irq handlers."
 
-I suppose I didn't put a proper 'Fixes' tag (though it should be obvious
-from the commit message), so here goes:
+It's not allowed to call gpio_to_irq() from IRQ handlers, as mappings should already exist at
+that time and It might require to do sleepable calls to crate IRQ mappings and configure HW. 
 
-Fixes: 88bb94216f59 ("pinctrl: rockchip: avoid hardirq-unsafe functions in irq_chip")
+Drivers, pointed out in first e-mail, should use other APIs in their IRQ handlers:
+drivers/gpio/gpio-ep93xx.c 
+^ direct call to ep93xx_gpio_to_irq()
+* drivers/gpio/gpio-pxa.c
+ ^ use irq_find_mapping()
+* drivers/gpio/gpio-tegra.c
+ ^ use irq_find_mapping()
 
-Regards,
-Brian
+Also note, IRQ mappings can be created as dynamically (each time  gpio_to_irq() is called) as
+statically (in probe). The last approach is widely used in gpio drivers due to compatibility and
+legacy reasons. 
+
+2) As per above I do not really understand why gpio_irq_prepare() is required.
+
+3) As per problem description irq_dispose_mapping() equivalent for GPIO IRQs might be required,
+but what is the real use-case? Modules reloading or unloading one module and loading another instead?
+Usually GPIO and IRQ configuration is static and defined in DT, so IRQ mapping created by first call to
+gpio_to_irq()/platform_get_irq()/of_irq_get() and any subsequent calls just re-use already created mapping.
+
+-- 
+regards,
+-grygorii
