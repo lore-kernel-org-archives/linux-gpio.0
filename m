@@ -1,81 +1,46 @@
-From: Baolin Wang <baolin.wang@spreadtrum.com>
-Subject: Re: [PATCH v4 1/3] pinctrl: Add sleep related configuration
-Date: Tue, 27 Jun 2017 16:21:33 +0800
-Message-ID: <20170627082132.GB32447@spreadtrum.com>
-References: <62a67526907157d41235403bd05af309fd4db16b.1498045588.git.baolin.wang@spreadtrum.com>
- <20170626161348.vrtlpat5eof5aa2c@rob-hp-laptop>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] gpio: acpi: Skip _AEI entries without a handler rather
+ then aborting the scan
+Date: Tue, 27 Jun 2017 12:12:09 +0300
+Message-ID: <1498554729.22624.178.camel@linux.intel.com>
+References: <20170623072613.3768-1-hdegoede@redhat.com>
+         <20170626160814.GO629@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170626161348.vrtlpat5eof5aa2c@rob-hp-laptop>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: linus.walleij@linaro.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:63022 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751513AbdF0JMO (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 27 Jun 2017 05:12:14 -0400
+In-Reply-To: <20170626160814.GO629@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On 一,  6月 26, 2017 at 11:13:48上午 -0500, Rob Herring wrote:
-> On Wed, Jun 21, 2017 at 07:55:37PM +0800, Baolin Wang wrote:
-> > In some scenarios, we should set some pins as input/output/pullup/pulldown
-> > when the specified system goes into deep sleep mode, then when the system
-> > goes into deep sleep mode, these pins will be set automatically by hardware.
+On Mon, 2017-06-26 at 19:08 +0300, Mika Westerberg wrote:
+> On Fri, Jun 23, 2017 at 09:26:13AM +0200, Hans de Goede wrote:
+> > acpi_walk_resources will stop as soon as the callback passed in
+> > returns
+> > an error status. On a x86 tablet I have the first GpioInt in the
+> > _AEI
+> > resource list has no handler defined in the DSDT, causing
+> > acpi_walk_resources to abort scanning the rest of the resource list,
+> > which does define valid ACPI GPIO events.
 > > 
-> > Usually we can set the "sleep" state to set sleep related config, but one SoC
-> > usually has not only one system (especially for mobile SoC), some systems on
-> > the SoC which did not run linux kernel, they can not select the "sleep" state
-> > when they go into deep sleep mode.
-> 
-> The wording here is not very clear. I think what you mean is some pins 
-> are not controlled by any specific driver in the OS, but need to be 
-> controlled when entering sleep mode.
-
-Yes, that is what I meaning, sorry for confusing.
-
-> 
-> > Thus we introduce some sleep related config into pinconf-generic for users to
-> > configure.
+> > This commit changes the return for not finding a handler from
+> > AE_BAD_PARAMETER to AE_OK so that the rest of the resource list will
+> > get scanned normally in case of missing event handlers.
 > > 
-> > Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
-> > ---
-> >  - Add this patch since v4.
-> > ---
-> >  .../bindings/pinctrl/pinctrl-bindings.txt          |   12 ++++++++++++
-> >  drivers/pinctrl/pinconf-generic.c                  |   10 ++++++++++
-> >  include/linux/pinctrl/pinconf-generic.h            |   14 ++++++++++++++
-> >  3 files changed, 36 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > index bf3f7b0..e098059 100644
-> > --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > @@ -236,6 +236,18 @@ low-power-enable	- enable low power mode
-> >  low-power-disable	- disable low power mode
-> >  output-low		- set the pin to output mode with low level
-> >  output-high		- set the pin to output mode with high level
-> > +sleep-bias-pull-up	- pull up the pin when the specified system goes into
-> > +			  deep sleep mode
-> > +sleep-bias-pull-down	- pull down the pin when the specified system goes into
-> > +			  deep sleep mode
-> > +sleep-input-enable	- enable input on pin when the specified system goes
-> > +			  into deep sleep mode (no effect on output)
-> > +sleep-intput-disable	- disable input on pin when the specified system goes
-> > +			  into deep sleep mode (no effect on output)
-> > +sleep-output-low	- set the pin to output mode with low level when the
-> > +			  specified system goes into deep sleep mode
-> > +sleep-output-high	- set the pin to output mode with high level when the
-> > +			  specified system goes into deep sleep mode
-> >  slew-rate		- set the slew rate
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > 
-> I don't really like having 2 ways to define pin setup and this doesn't 
-> scale if I need to define 3 states. Couldn't we create pin state 
-> definitions and have a pinctrl-n property within the pin controller 
-> node to handle all the unhandled pins?
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-As LinusW also suggest we can create one "sleep" state and program them
-into registers at early point (like: after probing pinctrl driver). So I
-think I can introduce one called "early-sleep" state which need select it
-after initializing pinctrl driver.
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> 
-> Rob
+(based on private discussion with Mika)
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
