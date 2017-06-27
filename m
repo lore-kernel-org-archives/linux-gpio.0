@@ -1,189 +1,57 @@
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: RE: [PATCH V4 5/7] pinctrl: imx: remove gpio_request_enable and
- gpio_disable_free
-Date: Tue, 27 Jun 2017 05:27:57 +0000
-Message-ID: <AM3PR04MB3065FE9A282899398C35E6B80DC0@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com>
- <1498046395-30001-6-git-send-email-aisheng.dong@nxp.com>
- <804b1d3135af76ed8d26ecd5c3dd1f80@agner.ch>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH for 4.12] Revert "pinctrl: rockchip: avoid hardirq-unsafe
+ functions in irq_chip"
+Date: Mon, 26 Jun 2017 23:24:09 -0700
+Message-ID: <20170627062409.GX3730@atomide.com>
+References: <20170517225634.GA11404@google.com>
+ <20170527021900.GA119873@google.com>
+ <20170623205911.GA143883@google.com>
+ <alpine.DEB.2.20.1706232353220.2234@nanos>
+ <20170627000622.GA63039@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-he1eur01on0065.outbound.protection.outlook.com ([104.47.0.65]:18976
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751312AbdF0F2E (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 27 Jun 2017 01:28:04 -0400
-In-Reply-To: <804b1d3135af76ed8d26ecd5c3dd1f80@agner.ch>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170627000622.GA63039@google.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Brian Norris <briannorris@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, "David.Wu" <david.wu@rock-chips.com>, =?utf-8?B?J+m7hOa2myc=?= <huangtao@rock-chips.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>
 
-> -----Original Message-----
-> From: Stefan Agner [mailto:stefan@agner.ch]
-> Sent: Tuesday, June 27, 2017 11:48 AM
-> To: A.s. Dong
-> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
-> kernel@pengutronix.de; Alexandre Courbot
-> Subject: Re: [PATCH V4 5/7] pinctrl: imx: remove gpio_request_enable and
-> gpio_disable_free
->=20
-> On 2017-06-21 04:59, Dong Aisheng wrote:
-> > gpio_request_enable/disable_free actually are not quite necessary as
-> > standard IMX pinctrl binding already sets GPIO mux from device tree,
-> > e.g. VF610_PAD_PTB20__GPIO_42 or MX7D_PAD_SD2_CD_B__GPIO5_IO9 No need
-> > to do it again in gpio_request_enable.
-> >
-> > And according to Stefan:
-> > "For all GPIO I checked in upstream device trees we assign a pinctrl
-> > to the same node, so in all cases gpio_request_enable/disable is
-> > really unnecessary."
-> >
-> > So it should be safe to simply remove it.
->=20
-> Thanks looks good.
->=20
-> I would add a comment that this changes semantics for Vybrid, e.g.
->=20
-> "The two functions have been introduced for Vybrid (through
-> SHARE_MUX_CONF_REG) and mux pins as GPIOs automatically when a GPIO gets
-> requested. The automatic mux is optional by the pinmux/gpio subsystem
-> semantics, and other NXP devices do not use it, instead an explicit
-> pinctrl node is added in the device tree to mux GPIOs where required.
-> Hence this change aligns Vybrid to other NXP (i.MX) devices.
->=20
-> Note that all upstream device tree assign proper pinctrl properties where
-> GPIOs are used so no change is necessary for device trees."
->=20
+* Brian Norris <briannorris@chromium.org> [170626 17:06]:
+> So I agree that the above commit was problematic, and that you have
+> fixed that in your patch ("PM / wakeirq: Convert to SRCU"). But I
+> noticed there were other threads where people have complained about the
+> $subject patch also causing problems with drivers that call
+> disable_irq_nosync() from within an IRQ context. So I poked around with
+> one such driver that calls disable_irq_nosync() from its ISR [1], and
+> saw this:
+> 
+> [   14.524945] Bluetooth: : OOB Wake-on-BT configured at IRQ 56
+> [   14.531657] usbcore: registered new interface driver btusb
+> [   18.973886] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:238
+> [   18.987695] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/0
+> [   18.995282] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.12.0-rc6+ #1233
+> [   19.002669] Hardware name: Google Kevin (DT)
+> [   19.007435] Call trace:
+> [   19.010171] [<ffffff8008089928>] dump_backtrace+0x0/0x24c
+> [   19.016202] [<ffffff8008089b94>] show_stack+0x20/0x28
+> [   19.021846] [<ffffff8008371270>] dump_stack+0x90/0xb0
+> [   19.027488] [<ffffff80080cd2a0>] ___might_sleep+0x10c/0x124
+> [   19.033713] [<ffffff80080cd330>] __might_sleep+0x78/0x88
+> [   19.039647] [<ffffff800879e248>] mutex_lock+0x2c/0x64
+> [   19.045291] [<ffffff80083ad578>] rockchip_irq_bus_lock+0x30/0x3c
+> [   19.052003] [<ffffff80080f6c68>] __irq_get_desc_lock+0x78/0x98
+> [   19.058519] [<ffffff80080f8e90>] __disable_irq_nosync+0x38/0x80
+> [   19.065132] [<ffffff80080f8ef8>] disable_irq_nosync+0x20/0x2c
+> [   19.071555] [<ffffff8000a99f58>] btusb_oob_wake_handler+0x4c/0x68 [btusb]
 
-The comments looks ok to me.
+Hmm so how come drivers/bluetooth/btusb.c can't use the generic
+dev_pm_set_dedicated_wake_irq()? Can you please take a look?
 
-Linus,
-Would you help append it when pick the patch?
+If there are issues remaining let's rather fix them so we can get rid
+of the custom tinkering of wake-up events in the drivers.
 
-Stefan,
-Would you help review imx7ulp GPIO patches as well after this pinctrl chang=
-e?
+Regards,
 
-Regards
-Dong Aisheng
-
-> Otherwise:
-> Acked-by: Stefan Agner <stefan@agner.ch>
->=20
-> --
-> Stefan
->=20
-> >
-> > Cc: Stefan Agner <stefan@agner.ch>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Alexandre Courbot <gnurou@gmail.com>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Fugang Duan <fugang.duan@nxp.com>
-> > Cc: Bai Ping <ping.bai@nxp.com>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> >
-> > ---
-> > ChangeLog:
-> >  * New patch.
-> >    Instead of fixing gpio_request_enable/disable, we decided to remove
-> it
-> >    after dicussion with Stefan (see blow).
-> >    https://www.spinics.net/lists/arm-kernel/msg583154.html
-> > ---
-> >  drivers/pinctrl/freescale/pinctrl-imx.c | 69
-> > ---------------------------------
-> >  1 file changed, 69 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c
-> > b/drivers/pinctrl/freescale/pinctrl-imx.c
-> > index fc1ba3c..505fe79 100644
-> > --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> > +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> > @@ -255,73 +255,6 @@ static int imx_pmx_set(struct pinctrl_dev
-> > *pctldev, unsigned selector,
-> >  	return 0;
-> >  }
-> >
-> > -static int imx_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
-> > -			struct pinctrl_gpio_range *range, unsigned offset)
-> > -{
-> > -	struct imx_pinctrl *ipctl =3D pinctrl_dev_get_drvdata(pctldev);
-> > -	struct imx_pinctrl_soc_info *info =3D ipctl->info;
-> > -	const struct imx_pin_reg *pin_reg;
-> > -	struct group_desc *grp;
-> > -	struct imx_pin *imx_pin;
-> > -	unsigned int pin, group;
-> > -	u32 reg;
-> > -
-> > -	/* Currently implementation only for shared mux/conf register */
-> > -	if (!(info->flags & SHARE_MUX_CONF_REG))
-> > -		return 0;
-> > -
-> > -	pin_reg =3D &info->pin_regs[offset];
-> > -	if (pin_reg->mux_reg =3D=3D -1)
-> > -		return -EINVAL;
-> > -
-> > -	/* Find the pinctrl config with GPIO mux mode for the requested pin
-> */
-> > -	for (group =3D 0; group < pctldev->num_groups; group++) {
-> > -		grp =3D pinctrl_generic_get_group(pctldev, group);
-> > -		if (!grp)
-> > -			continue;
-> > -		for (pin =3D 0; pin < grp->num_pins; pin++) {
-> > -			imx_pin =3D &((struct imx_pin *)(grp->data))[pin];
-> > -			if (imx_pin->pin =3D=3D offset && !imx_pin->mux_mode)
-> > -				goto mux_pin;
-> > -		}
-> > -	}
-> > -
-> > -	return -EINVAL;
-> > -
-> > -mux_pin:
-> > -	reg =3D readl(ipctl->base + pin_reg->mux_reg);
-> > -	reg &=3D ~info->mux_mask;
-> > -	reg |=3D imx_pin->config;
-> > -	writel(reg, ipctl->base + pin_reg->mux_reg);
-> > -
-> > -	return 0;
-> > -}
-> > -
-> > -static void imx_pmx_gpio_disable_free(struct pinctrl_dev *pctldev,
-> > -			struct pinctrl_gpio_range *range, unsigned offset)
-> > -{
-> > -	struct imx_pinctrl *ipctl =3D pinctrl_dev_get_drvdata(pctldev);
-> > -	struct imx_pinctrl_soc_info *info =3D ipctl->info;
-> > -	const struct imx_pin_reg *pin_reg;
-> > -	u32 reg;
-> > -
-> > -	/*
-> > -	 * Only Vybrid has the input/output buffer enable flags (IBE/OBE)
-> > -	 * They are part of the shared mux/conf register.
-> > -	 */
-> > -	if (!(info->flags & SHARE_MUX_CONF_REG))
-> > -		return;
-> > -
-> > -	pin_reg =3D &info->pin_regs[offset];
-> > -	if (pin_reg->mux_reg =3D=3D -1)
-> > -		return;
-> > -
-> > -	/* Clear IBE/OBE/PUE to disable the pin (Hi-Z) */
-> > -	reg =3D readl(ipctl->base + pin_reg->mux_reg);
-> > -	reg &=3D ~0x7;
-> > -	writel(reg, ipctl->base + pin_reg->mux_reg);
-> > -}
-> > -
-> >  static int imx_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
-> >  	   struct pinctrl_gpio_range *range, unsigned offset, bool input)
-> {
-> > @@ -357,8 +290,6 @@ static const struct pinmux_ops imx_pmx_ops =3D {
-> >  	.get_function_name =3D pinmux_generic_get_function_name,
-> >  	.get_function_groups =3D pinmux_generic_get_function_groups,
-> >  	.set_mux =3D imx_pmx_set,
-> > -	.gpio_request_enable =3D imx_pmx_gpio_request_enable,
-> > -	.gpio_disable_free =3D imx_pmx_gpio_disable_free,
-> >  	.gpio_set_direction =3D imx_pmx_gpio_set_direction,  };
+Tony
