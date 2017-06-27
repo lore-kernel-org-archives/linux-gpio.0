@@ -1,75 +1,89 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH for 4.12] Revert "pinctrl: rockchip: avoid hardirq-unsafe
- functions in irq_chip"
-Date: Tue, 27 Jun 2017 00:32:50 -0700
-Message-ID: <20170627073249.GY3730@atomide.com>
-References: <20170517225634.GA11404@google.com>
- <20170527021900.GA119873@google.com>
- <20170623205911.GA143883@google.com>
- <alpine.DEB.2.20.1706232353220.2234@nanos>
- <20170627000622.GA63039@google.com>
- <20170627062409.GX3730@atomide.com>
- <20170627070731.GA23083@google.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v2 1/2] DT: pinctrl: Add binding documentation for
+ Spreadtrum pin controller
+Date: Tue, 27 Jun 2017 15:59:02 +0800
+Message-ID: <CAMz4kuJigdhbV5+J1CcqP6zb7pqi9HaW=dxe_rsNi-=RsQ70vA@mail.gmail.com>
+References: <359d62c1f2f7ef61c6160df9b60c1af4bfcea89a.1496664241.git.baolin.wang@spreadtrum.com>
+ <CACRpkdbtuPKr=tWGoJC-sg2Oj47rYMpo6fs_Us=Nynew1Wkz=w@mail.gmail.com>
+ <20170612060718.GA8566@spreadtrum.com> <20170613031547.GA29679@spreadtrum.com>
+ <CACRpkdbaP1U3pefTbPj-wOa1AibcJHBBALfKWO8dBR=YW8f7zA@mail.gmail.com>
+ <CAMz4ku+jZ-S6sBL=ib++j+ooqweU9UC+MTgFca7ScrQiJDeZVQ@mail.gmail.com> <CACRpkdYETvpsr1X1dfiGfg9i=Tq2qHJBZHv7Us4aZ_1HQcOdoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170627070731.GA23083@google.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Brian Norris <briannorris@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Peter Zijlstra <peterz@infradead.org>, "David.Wu" <david.wu@rock-chips.com>, =?utf-8?B?J+m7hOa2myc=?= <huangtao@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34632 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752555AbdF0H7O (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 27 Jun 2017 03:59:14 -0400
+Received: by mail-oi0-f49.google.com with SMTP id l83so13297504oif.1
+        for <linux-gpio@vger.kernel.org>; Tue, 27 Jun 2017 00:59:09 -0700 (PDT)
+In-Reply-To: <CACRpkdYETvpsr1X1dfiGfg9i=Tq2qHJBZHv7Us4aZ_1HQcOdoA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
-* Brian Norris <briannorris@chromium.org> [170627 00:07]:
-> On Mon, Jun 26, 2017 at 11:24:09PM -0700, Tony Lindgren wrote:
-> > Hmm so how come drivers/bluetooth/btusb.c can't use the generic
-> > dev_pm_set_dedicated_wake_irq()? Can you please take a look?
-> 
-> I took a look previously, and last time I did, there were too many bugs
-> for it to be useful. You may have fixed the ones I reported w.r.t.
-> assumptions about runtime PM.
+On 26 June 2017 at 06:19, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Jun 21, 2017 at 10:10 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> On 20 June 2017 at 17:31, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Tue, Jun 13, 2017 at 5:15 AM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
+>>>
+>>>> I forgot one most important reason why we can not use the "sleep" state. As I explained
+>>>> above, the sleep related configuration will bind with the pin's sleep mode. If we set the
+>>>> pin's sleep mode as AP_SLEEP, then we can select "sleep" state when AP system goes into
+>>>> deep sleep mode by issuing "pinctrl_force_sleep()" in pinctrl suspend function.
+>>>>
+>>>> But if we set the pin's sleep mode as PUBCP_SLEEP and pubcp system doesn't run linux kernel
+>>>> (it run another thread OS), then we can not select "sleep" state since the AP system does
+>>>> not go into deep sleep mode (AP system run linux kernel OS).
+>>>
+>>> Allright yes it makes sense, and also there are systems that just go into
+>>> "hardware sleep" and just put the pin into some pre-programmed mode.
+>>>
+>>> I'm a bit back-and-forth. I didn't mean that some code would actually
+>>> switch the state to "sleep" when we go to sleep, I meant that when
+>>> the system configures "default" mode it should also look up and
+>>> program the "sleep" mode, but this approach with a special property
+>>> is just another way of achieveing the same thing.
+>>>
+>>> But then we should add a whole slew of sleep states.
+>>>
+>>> I was thinking whether we could avoid having a special DT property
+>>> by parsing ahead to states we do not currently use and programming
+>>> that into the sleep mode registers.
+>>
+>> Yes, for most scenarios, it can work with the "sleep" state to set
+>> sleep-related config. But for our Spreadtrum platform scenario (I do
+>> not know if there are other platforms need this feature), we can not
+>> select the "sleep" state when pubcp system goes into deep sleep mode
+>> but ap system does not go into deep sleep mode. So I think we still
+>> need these "sleep-bias-pull-up", "sleep-bias-pull-down",
+>> "sleep-input-enable" and "sleep-output-enable" properties.
+>
+> I don't really mean you should select the "sleep" state.
+>
+> I meant, as part of setting the "default" state or even the "init"
+> state, we would inspect the "sleep" state, use those settings, and
+> program them into the registers at this early point.
 
-Yes several issues got fixed over past few years. If you find issues
-please let me know, otherwise I can't help.
+I understood your points. But we can not program all into the
+registers at one early point, sometimes these sleep-related configs
+need depend on some conditions in users' drivers, like on condition 1:
+driver need to set one pin as input-enable when specified system goes
+into deep sleep, on condition 2: driver need set this pin as
+output-enable when specified system goes into deep sleep. So I still
+think it is better if we introduce some standard sleep related
+configs.
 
-> I also recall there being some difficulty with supporting
-> level-triggered interrupts that way. (This signal has no device-level
-> mask, and it triggers for all sorts of BT activity. There may not be a
-> relevant "edge".)
+>
+> Then never touch the registers again, and never really go to the
+> sleep state by software, just by hardware.
+>
+> Yours,
+> Linus Walleij
 
-Well typically the wakeirq needs to be disabled during runtime like we
-do for the generic wakeirqs. It might be connected to the RX line for
-example so it's just noise during runtime. If you actually need it during
-runtime then it's a separate story but I doubt that's the case here.
 
-Talking of GPIO interrupt triggering, I wonder if something like below
-might help? It seems we're missing the setting of triggering, see below.
 
-> > If there are issues remaining let's rather fix them so we can get rid
-> > of the custom tinkering of wake-up events in the drivers.
-> 
-> That's nice, but that doesn't answer my questions. Perhaps that's a side
-> project. The point is that we're clearly violating the documented APIs.
-
-Certainly all these issues need to be fixed if we intent to use it. Funny
-how I have not run into these with my test cases. Do you have a GPIO
-irqchip on I2C for handling the wake-up interrupts?
-
-Regards,
-
-Tony
-
-8< -------
-diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
---- a/drivers/base/power/wakeirq.c
-+++ b/drivers/base/power/wakeirq.c
-@@ -198,7 +198,8 @@ int dev_pm_set_dedicated_wake_irq(struct device *dev, int irq)
- 	 * so we use a threaded irq.
- 	 */
- 	err = request_threaded_irq(irq, NULL, handle_threaded_wake_irq,
--				   IRQF_ONESHOT, dev_name(dev), wirq);
-+				   irq_get_trigger_type(irq) | IRQF_ONESHOT,
-+				   dev_name(dev), wirq);
- 	if (err)
- 		goto err_free;
- 
+-- 
+Baolin.wang
+Best Regards
