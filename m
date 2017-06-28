@@ -1,76 +1,66 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v6 00/8] Renesas RZ/A1 pin and gpio controller
-Date: Wed, 28 Jun 2017 19:36:15 +0200
-Message-ID: <CAMuHMdXCT_Zw8bdzE0SbcDwwqyzKQwxtcyKHL18q2n7eLMaESw@mail.gmail.com>
-References: <1498143276-7976-1-git-send-email-jacopo+renesas@jmondi.org> <CAMuHMdWWSD8BD3xqd+OnWGzmEQO39d8Fg8zWXEP3j=te3axZ8Q@mail.gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
+Date: Wed, 28 Jun 2017 12:12:04 -0700
+Message-ID: <20170628191204.GP18666@tuxbook>
+References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:35970 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751489AbdF1RgR (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 13:36:17 -0400
-In-Reply-To: <CAMuHMdWWSD8BD3xqd+OnWGzmEQO39d8Fg8zWXEP3j=te3axZ8Q@mail.gmail.com>
+Received: from mail-pf0-f174.google.com ([209.85.192.174]:33826 "EHLO
+        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751501AbdF1TMK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 15:12:10 -0400
+Received: by mail-pf0-f174.google.com with SMTP id s66so38000219pfs.1
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Jun 2017 12:12:09 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Chris Brandt <chris.brandt@renesas.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Dong Aisheng <aisheng.dong@nxp.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Timur Tabi <timur@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Fri 23 Jun 05:33 PDT 2017, Linus Walleij wrote:
 
-On Mon, Jun 26, 2017 at 10:45 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Jun 22, 2017 at 4:54 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
->>    this is 6th round of RZ/A1 pin controller patch series.
->>
->> Where did we stop: discussion from pin controller driver shifted toward two
->> new generic pin configuration properties I added to the previous series
->> (bi-directional and output-enable).
->>
->> After a really long discussion, we decided to go for handling internally all
->> bi-directional use cases, making the generic property not a requirement for the
->> series. Interestingly, we recently found out the number of pins actually
->> requiring this flag is less (~half) than what reported by the processor manual,
->> so we could have handled these internally from day one :(
->>
->> We also now manage internally pins requiring IO direction specified in software
->> even when configured in alternate function mode (SWIO mode). Most of them are
->> handled by the driver, some of them have to come from DTS as the user can freely
->> select if they have to be inputs or outputs. For those pins, and after another
->> discussion involving NXP developers, we decided to use input-enable and
->> output-enable properties. I have just sent a patch to add output-enable to the
->> generic pin configuration properties, but it is currently under discussion.
->>
->> However, none of the pins currently configured by mainline DTS require those
->> properties to be specified, so I have dropped in this driver any dependency on
->> output-enable property, and I'm using instead the already in place
->> PIN_CONFIG_OUTPUT one. Once output-enable will eventually be accepted, we can
->> update the driver to make use of it, but since there are no use cases for that
->> at the moment, it makes not too much sense holding this series back for that.
->>
->> The total memory occupation we were so worried about of bi-directional and swio
->> pin tables is now around 100 bytes, because of how the number of pins actually
->> needing those flags has  reduced and because of how we have arranged the
->> tables using bitfield structures (credits to Geert here).
->>
->> Having cleared out dependencies on new pin configuration properties and having
->> made configuration flags a driver specific issue, I hope this version can be
->> accepted and land in forthcoming pull request for Renesas PFC updates from
->> Geert, pending some feedback from the linux-gpio community.
->
-> If this is OK for you, I'd like to include the first 3 patches (plus a small
-> fix I received offline from Chris Brandt[*]) in my final pull request of
-> sh-pfc for v4.13 (which I have been postponing in anticipation of this driver).
+> On Thu, Jun 22, 2017 at 10:54 PM, Timur Tabi <timur@codeaurora.org> wrote:
+> 
+> > On Qualcomm Technologies QDF2xxx platforms, only a subset of the GPIOs
+> > are actually available to the HLOS.  The others are blocked by the XPU,
+> > and any attempt to access them will cause an XPU violation that halts
+> > the system.
+> 
+> That's a bummer. Looking for Björn's review on this patch.
+> 
 
-And so I did. Queued in sh-pfc-for-v4.13, pull request sent.
+The TLMM block on this platform has N gpios, regardless of the XPU
+configuration. The ACPI table provides the kernel with a list of
+available "logical" GPIOs based on some system specification (or
+reference design perhaps?).
 
-Gr{oetje,eeting}s,
+I have not seen the Qualcomm server platforms, but I imagine that
+customers can alter this list.
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I think the numbering of the GPIOs should be that of the TLMM and the
+"logical" names should be populated from ACPI by using gpio_chip->names.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The question left is how to represent the XPU locked gpios - a problem
+we do share with in the mobile TLMM drivers.
+
+
+It seems that if we extend the msm_pingroup with a flag to carry the XPU
+lock information and then implement pinmux_ops->request() and deny any
+requests on the locked pins, we should cover all[*] the normal GPIO code
+paths.
+
+[*] Except the reported case of gpiochip_add_data() looping over all
+pins and calling get_direction() without first requesting the pin.
+
+@Linus, do you see any flaws in this scheme?
+
+
+PS. gpiochip_generic_request() ends up calling pinmux_ops->request()
+
+Regards,
+Bjorn
