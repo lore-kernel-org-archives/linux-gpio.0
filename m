@@ -1,98 +1,59 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
-Date: Wed, 28 Jun 2017 14:23:15 -0500
-Message-ID: <9338abeb-2685-510a-1eb6-ebe86c306cea@codeaurora.org>
-References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
- <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
- <20170628191204.GP18666@tuxbook>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 01/17] mfd: madera: Add register definitions for
+ Cirrus Logic Madera codecs
+Date: Wed, 28 Jun 2017 20:26:40 +0100
+Message-ID: <20170628192640.lboeddcabjcrvmtw@sirena.org.uk>
+References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20170605100707.zqyfyzhlhrpswa2u@dell>
+ <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="blk3miywyypstlok"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42828 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751501AbdF1TXZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 15:23:25 -0400
-In-Reply-To: <20170628191204.GP18666@tuxbook>
-Content-Language: en-US
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51104 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752332AbdF1T1E (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 15:27:04 -0400
+Content-Disposition: inline
+In-Reply-To: <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: Lee Jones <lee.jones@linaro.org>, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/28/2017 02:12 PM, Bjorn Andersson wrote:
-> On Fri 23 Jun 05:33 PDT 2017, Linus Walleij wrote:
-> 
->> On Thu, Jun 22, 2017 at 10:54 PM, Timur Tabi <timur@codeaurora.org> wrote:
->>
->>> On Qualcomm Technologies QDF2xxx platforms, only a subset of the GPIOs
->>> are actually available to the HLOS.  The others are blocked by the XPU,
->>> and any attempt to access them will cause an XPU violation that halts
->>> the system.
->>
->> That's a bummer. Looking for Björn's review on this patch.
->>
-> 
-> The TLMM block on this platform has N gpios, regardless of the XPU
-> configuration. The ACPI table provides the kernel with a list of
-> available "logical" GPIOs based on some system specification (or
-> reference design perhaps?).
 
-It's the list of available physical GPIOs.  Here's the table:
+--blk3miywyypstlok
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Name (_DSD, Package ()
-{
-	ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-	Package ()
-	{
-		// Expose only the qdss_tracedata pins as GPIOs,
-		// numbered sequentially, so that "gpio X" maps
-		// to qdss_tracedata[X].  These pins are configured
-		// as GPIOs (function 0) and wired externally
-		// to a header on the board, so it's safe to
-		// expose them to the HLOS driver.
-		Package (2) {"gpios", Package ()
-			{116, 117, 118, 119, 120, 121, 122, 123,
-			 124, 125, 126, 127, 128, 129, 130, 131,
-			 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
-			 90, 50, 36, 37, 38, 39}}
-	}
-})
+On Mon, Jun 26, 2017 at 09:33:38AM +0100, Richard Fitzgerald wrote:
+> On Mon, 2017-06-05 at 11:07 +0100, Lee Jones wrote:
 
-> I have not seen the Qualcomm server platforms, but I imagine that
-> customers can alter this list.
+> > For my own reference:
+> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-Not easily, as it requires recompiling the ACPI tables.  I also don't 
-know how much control customers have over the XPU settings.  The XPU is 
-supposed to block access to any GPIOs that have been muxed to other 
-purposes, but it's a hand-crafted list that could be anything.
+> Can I suggest that you take this patch into the mfd tree? Other
+> subsystem maintainers will have to base on that but it avoids me keeping
+> emailing out nearly 9000 lines of register definitions each time I do an
+> update to the other patches in the chain.
 
-> I think the numbering of the GPIOs should be that of the TLMM and the
-> "logical" names should be populated from ACPI by using gpio_chip->names.
+Yes, please!  It also helps other maintainers see that the early bits of
+the series we depend on are making progress.
 
-Is that not what my driver is doing?  Or do I misunderstand you?
+--blk3miywyypstlok
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> The question left is how to represent the XPU locked gpios - a problem
-> we do share with in the mobile TLMM drivers.
-> 
-> 
-> It seems that if we extend the msm_pingroup with a flag to carry the XPU
-> lock information and then implement pinmux_ops->request() and deny any
-> requests on the locked pins, we should cover all[*] the normal GPIO code
-> paths.
+-----BEGIN PGP SIGNATURE-----
 
-Instead of a flag, I was thinking if npins == 0, then this GPIO should 
-be disabled.
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllUAvAACgkQJNaLcl1U
+h9BXmAf/fnhzU7vj/WylR2wzdugxyjm9fV1/gjWMvcByJKDFtMByxHBcNjgW05/1
+G5tPf1ztaOoSv+3aQ2CLKeK/HUvvwHrLreWpqXd9XLVMSn/TrjJUEsXX9Y5XVMNV
+cmuM24laOuGphT/QnC21LdK+3qeB6E1ou97brmCv0AkDZh2TOwzCz26BY0v6uuPn
+BArlPD/Cgr3MQCI4iT8d6U5iDhCcGioMqUk6jpMLAWVlLAVe/oA3GTxozlYL7dfs
+Rda3MYCqfQDenCjXIOBxuWPF/i3H1IlIETeGXqQ+oPgTEv8Xm1VO+/sqE8V1wX+z
+BHiMz/gEQmrPhWK1akV5AvBjRYA/dg==
+=GX1w
+-----END PGP SIGNATURE-----
 
-> [*] Except the reported case of gpiochip_add_data() looping over all
-> pins and calling get_direction() without first requesting the pin.
-
-This is what triggered the problem in the first place.  Every time the 
-kernel boots, it's queries all of the GPIOs.  Ironically, I created that 
-feature because on server platforms, that was the only way to know the 
-current setting.
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+--blk3miywyypstlok--
