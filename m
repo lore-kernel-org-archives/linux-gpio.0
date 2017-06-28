@@ -1,48 +1,35 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2]  PM / wakeirq: Convert to SRCU
-Date: Wed, 28 Jun 2017 22:54:29 +0200
-Message-ID: <1760907.lunhnTdAjq@aspire.rjw.lan>
-References: <alpine.DEB.2.20.1706241153260.1941@nanos> <alpine.DEB.2.20.1706251930220.2528@nanos> <20170626203709.GA11099@google.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
+Date: Wed, 28 Jun 2017 17:38:38 -0500
+Message-ID: <d4ed2a91-5f19-fa04-42ed-02b94dde1b6e@codeaurora.org>
+References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
+ <20170628191204.GP18666@tuxbook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:61154 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751526AbdF1VB4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 28 Jun 2017 17:01:56 -0400
-In-Reply-To: <20170626203709.GA11099@google.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:44332 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbdF1Wik (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 18:38:40 -0400
+In-Reply-To: <20170628191204.GP18666@tuxbook>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Brian Norris <briannorris@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Monday, June 26, 2017 01:37:11 PM Brian Norris wrote:
-> On Sun, Jun 25, 2017 at 07:31:13PM +0200, Thomas Gleixner wrote:
-> > The wakeirq infrastructure uses RCU to protect the list of wakeirqs. That
-> > breaks the irq bus locking infrastructure, which is allows sleeping
-> > functions to be called so interrupt controllers behind slow busses,
-> > e.g. i2c, can be handled.
-> > 
-> > The wakeirq functions hold rcu_read_lock and call into irq functions, which
-> > in case of interrupts using the irq bus locking will trigger a
-> > might_sleep() splat.
-> > 
-> > Convert the wakeirq infrastructure to Sleepable RCU and unbreak it.
-> > 
-> > Fixes: 4990d4fe327b ("PM / Wakeirq: Add automated device wake IRQ handling")
-> > Reported-by: Brian Norris <briannorris@chromium.org>
-> > Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > ---
-> >  drivers/base/power/wakeup.c |   32 ++++++++++++++++++--------------
-> >  1 file changed, 18 insertions(+), 14 deletions(-)
-> 
-> This resolves the warnings I've seen, for sure. And I don't seem to have
-> any new suspend/resume problems, so:
-> 
-> Tested-by: Brian Norris <briannorris@chromium.org>
+On 06/28/2017 02:12 PM, Bjorn Andersson wrote:
+> It seems that if we extend the msm_pingroup with a flag to carry the XPU
+> lock information and then implement pinmux_ops->request() and deny any
+> requests on the locked pins, we should cover all[*] the normal GPIO code
+> paths.
 
-Applied with all tags, thanks!
+I managed to get this to work, so I'll post a patchset by tomorrow that 
+implements this.
 
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
