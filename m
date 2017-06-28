@@ -1,59 +1,48 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 01/17] mfd: madera: Add register definitions for
- Cirrus Logic Madera codecs
-Date: Wed, 28 Jun 2017 20:26:40 +0100
-Message-ID: <20170628192640.lboeddcabjcrvmtw@sirena.org.uk>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170605100707.zqyfyzhlhrpswa2u@dell>
- <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2]  PM / wakeirq: Convert to SRCU
+Date: Wed, 28 Jun 2017 22:54:29 +0200
+Message-ID: <1760907.lunhnTdAjq@aspire.rjw.lan>
+References: <alpine.DEB.2.20.1706241153260.1941@nanos> <alpine.DEB.2.20.1706251930220.2528@nanos> <20170626203709.GA11099@google.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="blk3miywyypstlok"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51104 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752332AbdF1T1E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 15:27:04 -0400
-Content-Disposition: inline
-In-Reply-To: <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:61154 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751526AbdF1VB4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 28 Jun 2017 17:01:56 -0400
+In-Reply-To: <20170626203709.GA11099@google.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Brian Norris <briannorris@chromium.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Heiko Stuebner <heiko@sntech.de>, Linus Walleij <linus.walleij@linaro.org>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, linux-pm@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Peter Zijlstra <peterz@infradead.org>, Tony Lindgren <tony@atomide.com>
 
+On Monday, June 26, 2017 01:37:11 PM Brian Norris wrote:
+> On Sun, Jun 25, 2017 at 07:31:13PM +0200, Thomas Gleixner wrote:
+> > The wakeirq infrastructure uses RCU to protect the list of wakeirqs. That
+> > breaks the irq bus locking infrastructure, which is allows sleeping
+> > functions to be called so interrupt controllers behind slow busses,
+> > e.g. i2c, can be handled.
+> > 
+> > The wakeirq functions hold rcu_read_lock and call into irq functions, which
+> > in case of interrupts using the irq bus locking will trigger a
+> > might_sleep() splat.
+> > 
+> > Convert the wakeirq infrastructure to Sleepable RCU and unbreak it.
+> > 
+> > Fixes: 4990d4fe327b ("PM / Wakeirq: Add automated device wake IRQ handling")
+> > Reported-by: Brian Norris <briannorris@chromium.org>
+> > Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > ---
+> >  drivers/base/power/wakeup.c |   32 ++++++++++++++++++--------------
+> >  1 file changed, 18 insertions(+), 14 deletions(-)
+> 
+> This resolves the warnings I've seen, for sure. And I don't seem to have
+> any new suspend/resume problems, so:
+> 
+> Tested-by: Brian Norris <briannorris@chromium.org>
 
---blk3miywyypstlok
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied with all tags, thanks!
 
-On Mon, Jun 26, 2017 at 09:33:38AM +0100, Richard Fitzgerald wrote:
-> On Mon, 2017-06-05 at 11:07 +0100, Lee Jones wrote:
-
-> > For my own reference:
-> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
-> Can I suggest that you take this patch into the mfd tree? Other
-> subsystem maintainers will have to base on that but it avoids me keeping
-> emailing out nearly 9000 lines of register definitions each time I do an
-> update to the other patches in the chain.
-
-Yes, please!  It also helps other maintainers see that the early bits of
-the series we depend on are making progress.
-
---blk3miywyypstlok
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllUAvAACgkQJNaLcl1U
-h9BXmAf/fnhzU7vj/WylR2wzdugxyjm9fV1/gjWMvcByJKDFtMByxHBcNjgW05/1
-G5tPf1ztaOoSv+3aQ2CLKeK/HUvvwHrLreWpqXd9XLVMSn/TrjJUEsXX9Y5XVMNV
-cmuM24laOuGphT/QnC21LdK+3qeB6E1ou97brmCv0AkDZh2TOwzCz26BY0v6uuPn
-BArlPD/Cgr3MQCI4iT8d6U5iDhCcGioMqUk6jpMLAWVlLAVe/oA3GTxozlYL7dfs
-Rda3MYCqfQDenCjXIOBxuWPF/i3H1IlIETeGXqQ+oPgTEv8Xm1VO+/sqE8V1wX+z
-BHiMz/gEQmrPhWK1akV5AvBjRYA/dg==
-=GX1w
------END PGP SIGNATURE-----
-
---blk3miywyypstlok--
