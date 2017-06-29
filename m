@@ -1,98 +1,76 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: Fix GPIO control register offset
- calculation
-Date: Thu, 29 Jun 2017 15:24:22 +0200
-Message-ID: <893836dc-9f7d-da72-7fa0-909ec0025d5e@redhat.com>
-References: <4b57167184fa9aa4d1c183d4c8df6e6a600a7dbd.1498087915.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <CAHp75VeY0beV-TxXpyc7gSW5jPs0da2wnRt-WrikdQ4CSxKjJw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Thu, 29 Jun 2017 16:14:17 +0200
+Message-ID: <CACRpkdZfvGm+sy+B2wsuw5TfD57h9cTJc7ii=1Q1DEuMxNk_8A@mail.gmail.com>
+References: <1497543642.3086.35.camel@baylibre.com> <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
+ <1497954416.7387.1.camel@baylibre.com> <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+ <1497979438.7387.10.camel@baylibre.com> <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+ <1498141515.7387.16.camel@baylibre.com> <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
+ <1498587929.25567.12.camel@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:54728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752614AbdF2NYZ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 29 Jun 2017 09:24:25 -0400
-In-Reply-To: <CAHp75VeY0beV-TxXpyc7gSW5jPs0da2wnRt-WrikdQ4CSxKjJw@mail.gmail.com>
-Content-Language: en-US
+Received: from mail-it0-f43.google.com ([209.85.214.43]:38294 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753115AbdF2OOU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 10:14:20 -0400
+Received: by mail-it0-f43.google.com with SMTP id k192so7805073ith.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 07:14:19 -0700 (PDT)
+In-Reply-To: <1498587929.25567.12.camel@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi,
+On Tue, Jun 27, 2017 at 8:25 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-On 29-06-17 14:30, Andy Shevchenko wrote:
-> +Cc: Hans
-> 
-> On Mon, Jun 26, 2017 at 8:37 PM,
-> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
->> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->> According to Whiskey Cove PMIC GPIO controller specification, for GPIO
->> pins 0-12, GPIO input and output register control address range from,
->>
->> 0x4e44-0x4e50 for GPIO outputs control register
->>
->> 0x4e51-0x4e5d for GPIO input control register
->>
->> But, currently when calculating the GPIO register offsets in to_reg()
->> function, all GPIO pins in the same bank uses the same GPIO control
->> register address. This logic is incorrect. This patch fixes this
->> issue.
-> 
->>
->> This patch also adds support to selectively skip register modification
->> for virtual GPIOs.
->>
->> In case of Whiskey Cove PMIC, ACPI code may use up 94 virtual GPIOs.
->> These virtual GPIOs are used by the ACPI code as means to access various
->> non GPIO bits of PMIC. So for these virtual GPIOs, we don't need to
->> manipulate the physical GPIO pin register. A similar patch has been
->> merged recently by Hans for Crystal Cove PMIC GPIO driver. You can
->> find more details about it in Commit 9a752b4c9ab9 ("gpio: crystalcove:
->> Do not write regular gpio registers for virtual GPIOs")
-> 
-> For me (disregards to content of the patch) the question is: did we
-> ever have a *working* solution looking to the bug fixes on this
-> driver?!
-> 
-> I would suggest to stop applying patches on Intel PMICs without
-> Tested-by tag from independent testers.
-> 
-> Hans, do you have anything to add / comment on this?
+> At the time Linus strongly rejected the idea of calling  irq_create_mapping (or
+> any sleeping functions) in gpio_to_irq: please see the reply from Oct 26, 2016
+> (sorry for quoting such an old discussion but this is really the starting point)
+>
+> * Me: There is really a *lot* of gpio drivers which use irq_create_mapping in
+> the to_irq callback, are these all wrong ?
+> * Linus: Yes they are all wrong. They should all be using irq_find_mapping().
+>
+> * Me: If this should not be used, what should we all do instead ?
+> * Linus: Call irq_create_mapping() in some other place.
+>
+> gpio_prepare_irq is a proposition for this 'other place'.
 
-Yes, I noticed the driver .name = "bxt_wcove_gpio", I myself have
-a device with a Cherry Trail Whiskey Cove variant. For those reading
-along here which SoC / platform a PMIC is used on (Cherry Trail vs
-Broxton) may seem unrelevant. But Intel has a per platform variant
-of its Crystal Cove and Whiskey Cove PMICs and the platform variants
-are really just completely different PMICs, using incompatible
-registermaps for one. So I would really like us to stop referring
-to these devices as Whiskey Cove (or wcove) and instead name them
-"Cherry Trail Whiskey Cove" or cht_wc, "Bay Trail Crystal Cove" /
-byt_crc, etc. and do so consistently!
+There is a misunderstanding here.
 
-E.g. I've recently learned that there are Cherry Trail devices
-with Crystal Cove PMICs (Dell Venue 8 pro 5855) and enabling
-the Crystal Cove PMIC ACPI Opregion on those wrecks havoc because
-it causes the wrong registers to get modified. Specifically
-the regulator control registers have slightly different addresses
-so we are modifying the wrong regulators! <sarcasm> Which is not a
-problem, right ? </sarcasm>
+I wrote (at the time):
 
-Anyways back to the topic. Kuppuswamy do you have access to
-*Cherry Trail* Whiskey Cove documentation and can you check that
-the GPIO ctrl and irq registers are the same there ? IOW can
-you check if we can re-use this driver for the
-Cherry Trail Whiskey Cove PMIC ?  If not then the .c file
-should really be renamed to drivers/gpio/gpio-bxt-wcove.c
+> Yes, but you want to call irq_create_mapping() in slowpath (irq setup)
+> and irq_find_mapping() in fastpath (irq handler). Else the first IRQ
+> may result in unwelcomed surprises.
 
-And future patches should also use gpio-bxt-wcove in their
-subject.
+This does not mean that irq_create_mapping() cannot be called
+in irq context because I think it can.
 
-With that said, the patch looks good to me.
+What it means is that I think that is suboptimal from a performance
+point of view if called from gpio_to_irq(), because nominally, at this
+point, the mapping should already exist, since the GPIO and IRQ
+frameworks are orthogonal.
 
-Regards,
+But that may not apply to the case with many-to-few interrupt
+mappings... so I think I was in some 1-to-1-mapping context
+when I wrote this. Sorry :(
 
-Hans
+So I changed my mind, it is fine for this type of driver to call
+irq_create_mapping() in gpio_to_irq(). Preferably with some comment
+around the call.
+
+It remains to see what happens if gpio_to_irq() would fail, as can
+happen in this case. Like if gpio_to_irq() would return 0 (NO_IRQ)
+or something negative. I think many drivers are not equipped for
+handling this.
+
+So I guess if you could change the semantics of all drivers
+calling gpio_to_irq() to also handle say 0 as an error and bail
+out, we can call irq_create_mapping() in gpio_to_irq().
+
+Sorry if I'm confused... or confusing.
+
+Yours,
+Linus Walleij
