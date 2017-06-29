@@ -1,48 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: fix filtering out unwanted events
-Date: Thu, 29 Jun 2017 15:16:19 +0200
-Message-ID: <CACRpkdZd=rGQy8kGEjS8pEAJ+xYpBn=JmGXDpSf3qF_P2aa6TA@mail.gmail.com>
-References: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
- <1498218316-27860-2-git-send-email-brgl@bgdev.pl> <CACRpkda0WViPpULRAZCcBzCfCuum0GHkyWnWonS8A+LZvP+xXQ@mail.gmail.com>
- <CAMRc=MdYomHx1UKM4PrTAdkkz1KG3ifx=CmF6S+Nq4L3NRNoAQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.13 (take two)
+Date: Thu, 29 Jun 2017 15:17:38 +0200
+Message-ID: <CAMuHMdXOZanCR7vujbwA2dHHa0H5DH4rXDWcG=gsNMY5xzAm1Q@mail.gmail.com>
+References: <1498669816-25410-1-git-send-email-geert+renesas@glider.be> <CACRpkdaQ6-hRZxnvyV4hg0_yQQHS3c+apc66qUUDm58nxOxBig@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:36377 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbdF2NQV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 09:16:21 -0400
-Received: by mail-io0-f171.google.com with SMTP id z62so6646272ioi.3
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 06:16:21 -0700 (PDT)
-In-Reply-To: <CAMRc=MdYomHx1UKM4PrTAdkkz1KG3ifx=CmF6S+Nq4L3NRNoAQ@mail.gmail.com>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35940 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752698AbdF2NRk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 09:17:40 -0400
+In-Reply-To: <CACRpkdaQ6-hRZxnvyV4hg0_yQQHS3c+apc66qUUDm58nxOxBig@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Thu, Jun 29, 2017 at 1:03 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2017-06-29 11:33 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Fri, Jun 23, 2017 at 1:45 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Hi Linus,
+
+On Thu, Jun 29, 2017 at 3:07 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Wed, Jun 28, 2017 at 7:10 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> The following changes since commit c8bac70f079bb3ecaf9a716f141f3d85cef27231:
 >>
->>> GPIOEVENT_REQUEST_BOTH_EDGES is not a single flag, but a binary OR of
->>> GPIOEVENT_REQUEST_RISING_EDGE and GPIOEVENT_REQUEST_FALLING_EDGE.
->>>
->>> The expression 'le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES' we'll get
->>> evaluated to true even if only one event type was requested.
->>>
->>> Fix it by checking both RISING & FALLING flags explicitly.
->>>
->>> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>>   pinctrl: sh-pfc: r8a7794: Add R8A7745 support (2017-05-16 13:53:15 +0200)
 >>
->> Patch applied for fixes.
+>> are available in the git repository at:
 >>
->> Yours,
->> Linus Walleij
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.13-tag2
+>>
+>> for you to fetch changes up to c03a133bba8662daecd7db09819fa369663d0ea7:
+>>
+>>   pinctrl: sh-pfc: r8a7795: Add PWM support (2017-06-26 10:21:38 +0200)
 >
-> Thanks. I think this should also go to linux-stable (e.g. 4.9 LTS is
-> affected). Will you forward it or should I do it myself?
+> Pulled in for devel.
+>
+> It's late, but you all worked hard to make this happen so we should
+> be liberal, also it is a new driver.
 
-I have added the stable tag so it should JustWork(TM).
+Thanks a lot!
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
