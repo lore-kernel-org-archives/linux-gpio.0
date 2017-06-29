@@ -1,53 +1,89 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
-Date: Thu, 29 Jun 2017 14:43:38 +0300
-Message-ID: <CAHp75VfGLEXirr7sPX37rSxfpax7XYWoxWMR3moCNy7hzKRuww@mail.gmail.com>
-References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
- <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com> <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
- <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com> <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
- <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: Fix GPIO control register offset calculation
+Date: Thu, 29 Jun 2017 14:17:01 +0200
+Message-ID: <CACRpkdY83WvJ_PzzdEwzgHEFBm=ixLGLqCYdpkArWPFBa7U2Kw@mail.gmail.com>
+References: <4b57167184fa9aa4d1c183d4c8df6e6a600a7dbd.1498087915.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33948 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbdF2Lnk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 07:43:40 -0400
-In-Reply-To: <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:34226 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752803AbdF2MRJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 08:17:09 -0400
+Received: by mail-it0-f48.google.com with SMTP id v202so8549269itb.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 05:17:08 -0700 (PDT)
+In-Reply-To: <4b57167184fa9aa4d1c183d4c8df6e6a600a7dbd.1498087915.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>, Graeme Gregory <graeme.gregory@linaro.org>
 
-On Thu, Jun 29, 2017 at 12:51 PM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Fri, Jun 23, 2017 at 10:09 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->> On 2017-06-21 08:29, Jan Kiszka wrote:
+On Mon, Jun 26, 2017 at 7:37 PM,
+<sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
 
->> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
->>
->> If you want me to resend anything, just let me know. Would be great to
->> have the remaining pieces lined up in time for the next merge window.
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 >
-> I could just pull it in, but then I want a clear indication that Greg and
-> say Andy are happy with this.
+> According to Whiskey Cove PMIC GPIO controller specification, for GPIO
+> pins 0-12, GPIO input and output register control address range from,
+>
+> 0x4e44-0x4e50 for GPIO outputs control register
+>
+> 0x4e51-0x4e5d for GPIO input control register
+>
+> But, currently when calculating the GPIO register offsets in to_reg()
+> function, all GPIO pins in the same bank uses the same GPIO control
+> register address. This logic is incorrect. This patch fixes this
+> issue.
+>
+> This patch also adds support to selectively skip register modification
+> for virtual GPIOs.
+>
+> In case of Whiskey Cove PMIC, ACPI code may use up 94 virtual GPIOs.
+> These virtual GPIOs are used by the ACPI code as means to access various
+> non GPIO bits of PMIC. So for these virtual GPIOs, we don't need to
+> manipulate the physical GPIO pin register. A similar patch has been
+> merged recently by Hans for Crystal Cove PMIC GPIO driver. You can
+> find more details about it in Commit 9a752b4c9ab9 ("gpio: crystalcove:
+> Do not write regular gpio registers for virtual GPIOs")
 
-All patches that have my tag already are good from my point of view.
-The rest, i.e.
-"platform: Accept const properties", needs a slightly more attention.
+So where can I get a handle on the people inside Intel who are obviously
+using ACPI GPIO class for shoehorning what we in the linux kernel call
+syscon or register bit misc access into the GPIO ACPI container just
+because they feel it is convenient?
 
-This one on one hand does the right thing, though I would like to hear
-Mika on this.
+They need to invent a NEW ACPI four-character thing and call that
+"misc register bit" (_MRB?) or whatever and have it bind to syscon.
+This is not working.
 
-We still have platform_device_info and mfd_cell that doesn't define
-the properties with const.
-(I believe they should, though is it matter of this patch?)
+It feels like I am starting to maintain Intel's swiss army knife for misc
+register manipulation, and that should not be done by "virtual GPIO"
+because just look at it:
 
-P.S. I have looked at the current state of the use of the API in
-question and rather agree with the patch, thus
+General-purpose input/output - yeah that sounds like something
+going in/out of the system right? And something that is used by electronics
+outside the provider. Like a LED. Or a key.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+"Virtual GPIO" - those are not input/outputs at all in most cases,
+because they are internally routed, and they are not general purpose
+at all because mostly they are for a specific purpose. Neither are they
+virtual because the signals are very real.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Calling something "virtual GPIO" is just one big confusion for the brain.
+
+Looking at Rusty Russell's API design manifesto:
+http://sweng.the-davies.net/Home/rustys-api-design-manifesto
+this is just screwing things up.
+
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Reported-by: Jukka Laitinen <jukka.laitinen@intel.com>
+
+I have applied the patch because I think you know this better than
+me, just including Mika and Andy as a side note. The patch is fine
+because it makes the system run despite the above mentioned
+violation of ACPI which is not your fault.
+
+Would you mind signing yourself up as maintainer in the MAINTAINERS
+file for this driver?
+
+Yours,
+Linus Walleij
