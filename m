@@ -1,42 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Thu, 29 Jun 2017 16:16:51 +0200
-Message-ID: <CACRpkdar9YwnMgLb1y1sP1Vbg-1MgPAOcRPcfNCtmpKuf+g+kQ@mail.gmail.com>
-References: <1497543642.3086.35.camel@baylibre.com> <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
- <1497954416.7387.1.camel@baylibre.com> <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
- <1497979438.7387.10.camel@baylibre.com> <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
- <1498141515.7387.16.camel@baylibre.com> <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
- <1498587929.25567.12.camel@baylibre.com> <657221fa-c6b3-e914-1a81-9a48972ee6d5@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v2] pinctrl: generic: Add output-enable property
+Date: Thu, 29 Jun 2017 17:26:33 +0300
+Message-ID: <CAHp75VdAM2EWXtZfaBZ4U2eXL0oj82ipWQZier18jX93xhdUYQ@mail.gmail.com>
+References: <1498125658-14554-1-git-send-email-jacopo+renesas@jmondi.org> <CACRpkdYViCZG0PmboxVq7S9ggFOrsTuvk6ZjdzoBgS9aio0ygg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:37270 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753054AbdF2OQx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 10:16:53 -0400
-Received: by mail-it0-f54.google.com with SMTP id m84so7879417ita.0
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 07:16:53 -0700 (PDT)
-In-Reply-To: <657221fa-c6b3-e914-1a81-9a48972ee6d5@ti.com>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:33027 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751974AbdF2O0f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 10:26:35 -0400
+In-Reply-To: <CACRpkdYViCZG0PmboxVq7S9ggFOrsTuvk6ZjdzoBgS9aio0ygg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, Dong Aisheng <dongas86@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Chris Brandt <Chris.Brandt@renesas.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 27, 2017 at 10:43 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On Thu, Jun 29, 2017 at 3:33 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Jun 22, 2017 at 12:00 PM, Jacopo Mondi
+> <jacopo+renesas@jmondi.org> wrote:
+>
+>> Add output-enable generic pin configuration property.
+>> This properties allows enabling/disabling pin's output capabilities
+>> without actually driving any value on the line.
 
-> And my opinion is still the same here - It should be perfectly valid to create
-> mappings from gpio_to_irq() to handle properly orthogonality of gpiochip and
-> gpio-irqchip functionality and satisfy SPARSE_IRQ goal (allocate Linux virq and
-> irq descriptors on demand).
+> I have applied the patch adding a few elaborations in the binding that
+> the situation where you may use this is typically when enabling/disabling
+> input or output buffers irrespective of the mode of the line as a whole.
+>
+> We might need even more documentation because this is really
+> confusing.
+>
+> But for now it lets drivers work, which is nice.
+>
+> Rough consensus and running code should be our guide.
 
-You are right.
+At least this looks much better than odd bi-directional thingy.
+Thanks!
 
-I would rather say: GPIO drivers that have a 1-to-1 mapping between GPIO
-lines and IRQs should not do it, they should map up them all at probe().
-
-Drivers that actually have fewer IRQs than GPIO lines should be able to
-create the mappings in gpio_to_irq().
-
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
