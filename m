@@ -1,44 +1,53 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] gpiolib: fix filtering out unwanted events
-Date: Thu, 29 Jun 2017 13:03:47 +0200
-Message-ID: <CAMRc=MdYomHx1UKM4PrTAdkkz1KG3ifx=CmF6S+Nq4L3NRNoAQ@mail.gmail.com>
-References: <1498218316-27860-1-git-send-email-brgl@bgdev.pl>
- <1498218316-27860-2-git-send-email-brgl@bgdev.pl> <CACRpkda0WViPpULRAZCcBzCfCuum0GHkyWnWonS8A+LZvP+xXQ@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
+Date: Thu, 29 Jun 2017 14:43:38 +0300
+Message-ID: <CAHp75VfGLEXirr7sPX37rSxfpax7XYWoxWMR3moCNy7hzKRuww@mail.gmail.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+ <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com> <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+ <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com> <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
+ <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f41.google.com ([209.85.214.41]:37808 "EHLO
-        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752347AbdF2LDt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 07:03:49 -0400
-Received: by mail-it0-f41.google.com with SMTP id m84so4903264ita.0
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 04:03:48 -0700 (PDT)
-In-Reply-To: <CACRpkda0WViPpULRAZCcBzCfCuum0GHkyWnWonS8A+LZvP+xXQ@mail.gmail.com>
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:33948 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbdF2Lnk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 07:43:40 -0400
+In-Reply-To: <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-2017-06-29 11:33 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Fri, Jun 23, 2017 at 1:45 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
->> GPIOEVENT_REQUEST_BOTH_EDGES is not a single flag, but a binary OR of
->> GPIOEVENT_REQUEST_RISING_EDGE and GPIOEVENT_REQUEST_FALLING_EDGE.
->>
->> The expression 'le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES' we'll get
->> evaluated to true even if only one event type was requested.
->>
->> Fix it by checking both RISING & FALLING flags explicitly.
->>
->> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->
-> Patch applied for fixes.
->
-> Yours,
-> Linus Walleij
+On Thu, Jun 29, 2017 at 12:51 PM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> On Fri, Jun 23, 2017 at 10:09 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> On 2017-06-21 08:29, Jan Kiszka wrote:
 
-Thanks. I think this should also go to linux-stable (e.g. 4.9 LTS is
-affected). Will you forward it or should I do it myself?
+>> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
+>>
+>> If you want me to resend anything, just let me know. Would be great to
+>> have the remaining pieces lined up in time for the next merge window.
+>
+> I could just pull it in, but then I want a clear indication that Greg and
+> say Andy are happy with this.
 
-Thanks,
-Bartosz
+All patches that have my tag already are good from my point of view.
+The rest, i.e.
+"platform: Accept const properties", needs a slightly more attention.
+
+This one on one hand does the right thing, though I would like to hear
+Mika on this.
+
+We still have platform_device_info and mfd_cell that doesn't define
+the properties with const.
+(I believe they should, though is it matter of this patch?)
+
+P.S. I have looked at the current state of the use of the API in
+question and rather agree with the patch, thus
+
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
