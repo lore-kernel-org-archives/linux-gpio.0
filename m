@@ -1,94 +1,91 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 2/5] genirq: Move bus locking into __setup_irq()
-Date: Thu, 29 Jun 2017 23:33:36 +0200
-Message-ID: <20170629214343.960949031@linutronix.de>
-References: <20170629213334.375848050@linutronix.de>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
+Date: Thu, 29 Jun 2017 14:49:22 -0700
+Message-ID: <20170629214922.GC18666@tuxbook>
+References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
+ <d5cb17b6-083a-58a0-caa6-01ee06ff1fd4@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline;
- filename=genirq--Move-locking-into-_-setup_irq--.patch
-Sender: linux-kernel-owner@vger.kernel.org
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f44.google.com ([74.125.83.44]:35285 "EHLO
+        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751626AbdF2Vt1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 17:49:27 -0400
+Received: by mail-pg0-f44.google.com with SMTP id j186so53850736pge.2
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 14:49:27 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <d5cb17b6-083a-58a0-caa6-01ee06ff1fd4@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-There is no point in having the irq_bus_lock() protection around all
-callers to __setup_irq().
+On Thu 29 Jun 12:37 PDT 2017, Timur Tabi wrote:
 
-Move it into __setup_irq(). This is also a preparatory patch for addressing
-the issues with the irq resource callbacks.
+> On 06/23/2017 07:33 AM, Linus Walleij wrote:
+> > I think using "lsgpio" fron tools/gpio/lsgpio.c is better to inspect
+> > the available GPIOs.
+> > 
+> > If you haven't tested the GPIO tools, please try it out.
+> 
+> Unfortunately, this tool isn't very useful:
+> 
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- kernel/irq/manage.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+I believe you have to come up with a separate array of names and attach
+that to the gpio_chip in msm_gpio_init() for the _gpio_ pins to have
+names. The names we specify in the pin driver is only the name of the
+pinctrl pin...
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1167,6 +1167,8 @@ static int
- 	if (desc->irq_data.chip->flags & IRQCHIP_ONESHOT_SAFE)
- 		new->flags &= ~IRQF_ONESHOT;
- 
-+	chip_bus_lock(desc);
-+
- 	/*
- 	 * The following block of code has to be executed atomically
- 	 */
-@@ -1347,6 +1349,7 @@ static int
- 	}
- 
- 	raw_spin_unlock_irqrestore(&desc->lock, flags);
-+	chip_bus_sync_unlock(desc);
- 
- 	irq_setup_timings(desc, new);
- 
-@@ -1378,6 +1381,8 @@ static int
- out_unlock:
- 	raw_spin_unlock_irqrestore(&desc->lock, flags);
- 
-+	chip_bus_sync_unlock(desc);
-+
- out_thread:
- 	if (new->thread) {
- 		struct task_struct *t = new->thread;
-@@ -1417,9 +1422,7 @@ int setup_irq(unsigned int irq, struct i
- 	if (retval < 0)
- 		return retval;
- 
--	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, act);
--	chip_bus_sync_unlock(desc);
- 
- 	if (retval)
- 		irq_chip_pm_put(&desc->irq_data);
-@@ -1674,9 +1677,7 @@ int request_threaded_irq(unsigned int ir
- 		return retval;
- 	}
- 
--	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, action);
--	chip_bus_sync_unlock(desc);
- 
- 	if (retval) {
- 		irq_chip_pm_put(&desc->irq_data);
-@@ -1924,9 +1925,7 @@ int setup_percpu_irq(unsigned int irq, s
- 	if (retval < 0)
- 		return retval;
- 
--	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, act);
--	chip_bus_sync_unlock(desc);
- 
- 	if (retval)
- 		irq_chip_pm_put(&desc->irq_data);
-@@ -1980,9 +1979,7 @@ int request_percpu_irq(unsigned int irq,
- 		return retval;
- 	}
- 
--	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, action);
--	chip_bus_sync_unlock(desc);
- 
- 	if (retval) {
- 		irq_chip_pm_put(&desc->irq_data);
+Regards,
+Bjorn
+
+> $ sudo ./lsgpio
+> GPIO chip: gpiochip0, "QCOM8001:00", 150 GPIO lines
+>         line  0: unnamed unused [output]
+>         line  1: unnamed unused [output]
+>         line  2: unnamed unused [output]
+>         line  3: unnamed unused [output]
+>         line  4: unnamed unused [output]
+>         line  5: unnamed unused [output]
+>         line  6: unnamed unused [output]
+>         line  7: unnamed unused [output]
+>         line  8: unnamed unused [output]
+>         line  9: unnamed unused [output]
+>         line 10: unnamed unused [output]
+>         line 11: unnamed unused [output]
+>         line 12: unnamed unused [output]
+>         line 13: unnamed unused [output]
+>         line 14: unnamed unused [output]
+>         line 15: unnamed unused [output]
+>         line 16: unnamed unused [output]
+>         line 17: unnamed unused [output]
+>         line 18: unnamed unused [output]
+>         line 19: unnamed unused [output]
+>         line 20: unnamed unused [output]
+>         line 21: unnamed unused [output]
+>         line 22: unnamed unused [output]
+>         line 23: unnamed unused [output]
+>         line 24: unnamed unused [output]
+>         line 25: unnamed unused [output]
+>         line 26: unnamed unused [output]
+>         line 27: unnamed unused [output]
+>         line 28: unnamed unused [output]
+>         line 29: unnamed unused [output]
+>         line 30: unnamed unused [output]
+>         line 31: unnamed unused [output]
+>         line 32: unnamed unused [output]
+>         line 33: unnamed unused [output]
+>         line 34: unnamed unused [output]
+>         line 35: unnamed unused [output]
+>         line 36: unnamed unused
+>         line 37: unnamed "sysfs" [kernel]
+>         line 38: unnamed unused
+>         line 39: unnamed unused
+>         line 40: unnamed unused [output]
+> 	...
+> 
+> -- 
+> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+> Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+> Code Aurora Forum, a Linux Foundation Collaborative Project.
