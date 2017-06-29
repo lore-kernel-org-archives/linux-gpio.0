@@ -1,36 +1,39 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/4] pinctrl: Add USB support for Aspeed SoCs
-Date: Thu, 29 Jun 2017 14:53:41 +0200
-Message-ID: <CACRpkdZpJuaedE=04we_bcLB7qzOdvJAz4QmTfnuZA=5PrMf0g@mail.gmail.com>
-References: <20170627021214.23323-1-andrew@aj.id.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: acpi: Skip _AEI entries without a handler rather
+ then aborting the scan
+Date: Thu, 29 Jun 2017 14:55:56 +0200
+Message-ID: <CACRpkdZzGYLeBjRn+ihD1g4pMPk-oH+5AUsWr1tRSBn98HTvDA@mail.gmail.com>
+References: <20170623072613.3768-1-hdegoede@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170627021214.23323-1-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Ryan Chen <ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f169.google.com ([209.85.223.169]:33547 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbdF2Mz6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 08:55:58 -0400
+Received: by mail-io0-f169.google.com with SMTP id h64so6355722iod.0
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 05:55:58 -0700 (PDT)
+In-Reply-To: <20170623072613.3768-1-hdegoede@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Jun 27, 2017 at 4:12 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
+On Fri, Jun 23, 2017 at 9:26 AM, Hans de Goede <hdegoede@redhat.com> wrote:
 
-> With recent interest in the USB virtual hub in the Aspeed SoCs[1] it is a good
-> time to add pinmux support for the USB ports and controllers. The earlier
-> series of pinmux patches for the Aspeed SoCs focussed on supporting pins which
-> were capable of GPIO. This is not the case for the USB pins, hence they have
-> been unsupported until now.
+> acpi_walk_resources will stop as soon as the callback passed in returns
+> an error status. On a x86 tablet I have the first GpioInt in the _AEI
+> resource list has no handler defined in the DSDT, causing
+> acpi_walk_resources to abort scanning the rest of the resource list,
+> which does define valid ACPI GPIO events.
 >
-> Rob: I know you've mentioned previously you desired complete bindings to be
-> provided up front, so apologies for continuing to add functionality. This looks
-> to be the last of it.
+> This commit changes the return for not finding a handler from
+> AE_BAD_PARAMETER to AE_OK so that the rest of the resource list will
+> get scanned normally in case of missing event handlers.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Waiting for DT review and addressing of Beji's comment for these.
-
-Please resend after the merge window.
+Patch applied for fixes with the ACKs.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
