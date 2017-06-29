@@ -1,49 +1,81 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 01/17] mfd: madera: Add register
- definitions for Cirrus Logic Madera codecs
-Date: Thu, 29 Jun 2017 10:11:34 +0100
-Message-ID: <1498727494.4826.84.camel@rf-debian.wolfsonmicro.main>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170605100707.zqyfyzhlhrpswa2u@dell>
- <1498466018.4826.81.camel@rf-debian.wolfsonmicro.main>
- <20170628192640.lboeddcabjcrvmtw@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
+Date: Thu, 29 Jun 2017 11:17:46 +0200
+Message-ID: <CACRpkdbGza+vYTSqBRPbUGGnUsuNQS-6oKkweSch5Pwpku=CEg@mail.gmail.com>
+References: <20170301183257.6554-1-f.fainelli@gmail.com> <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
+ <304fb86d-0862-992b-4563-61151b37d060@gmail.com> <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
+ <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com> <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
+ <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20170628192640.lboeddcabjcrvmtw@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, tglx@linutronix.de, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:33835 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbdF2JRs (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 05:17:48 -0400
+Received: by mail-io0-f182.google.com with SMTP id r36so3577023ioi.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 02:17:47 -0700 (PDT)
+In-Reply-To: <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-On Wed, 2017-06-28 at 20:26 +0100, Mark Brown wrote:
-> On Mon, Jun 26, 2017 at 09:33:38AM +0100, Richard Fitzgerald wrote:
-> > On Mon, 2017-06-05 at 11:07 +0100, Lee Jones wrote:
-> 
-> > > For my own reference:
-> > >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> 
-> > Can I suggest that you take this patch into the mfd tree? Other
-> > subsystem maintainers will have to base on that but it avoids me keeping
-> > emailing out nearly 9000 lines of register definitions each time I do an
-> > update to the other patches in the chain.
-> 
-> Yes, please!  It also helps other maintainers see that the early bits of
-> the series we depend on are making progress.
+Sorry for slowness...
 
-I guess taking all the MFD code when Lee is happy with it would also be
-acceptable? There's several multi-thousand-line files in there too.
+On Wed, Jun 21, 2017 at 11:23 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 03/16/2017 07:08 AM, Linus Walleij wrote:
 
-There are build dependencies between the subsystems but I don't know how
-the maintainers prefer to deal with that - keep the patches as a set or
-cross-merge branches.
+>> I guess then it is better to assume we will loose the state, or
+>> push for more granular handling of S2/3 etc states in the
+>> PM core (I guess these states comes from ACPI or similar).
+>
+> I expected to see pm_message_t reflect which state we were entering into
+> (PM_SUSPEND_STANDBY vs. PM_SUSPEND_MEM), but that is not the case.
+
+Can we fix it?
+
+>> Alternatively develop the PM core. Is it really impossible for
+>> PM hooks to know which state it went into/came from?
+>
+> I don't think I liked Rafael's suggestion of putting that kind of detail
+> into the platform_suspend_ops routine as he seems to suggest here:
+>
+> https://www.spinics.net/lists/arm-kernel/msg587311.html
+
+He is suggesting:
+
+> The cleanest way would be to run that code from one of the platform
+> suspend hooks that receive information on what sleep state is to be
+> entered.
+
+But what I suggest is more the inverse: that it receive information
+on what state it is coming from, rather than which state it is
+going to.
+
+But I guess it would be logical that suspend() get to know what state
+it is going to and resume() get to know which state it is coming from.
+
+So Rafael seem to be aligned with that idea.
+
+> and here is my response:
+>
+> https://www.spinics.net/lists/arm-kernel/msg589844.html
+
+So if it is not desireable to have every driver know which exact
+state it came from like S3 this or S2 that and on this laptop
+we have S2' which is slightly different and such mess (that you
+predict IIUC) what we really need to know is pretty simple:
+did the hardware loose its state or not?
+
+That is the information we want the PM core to provide to
+the resume() callback, somehow. A simple bool is fine.
+
+Any platform specifics or simplifications pertaining to certain
+states and whether S5 or S7 looses the context should not
+be the concern of a driver, what it wants to know is simply
+whether its device has been powered off and lost its hardware
+context.
+
+Yours,
+Linus Walleij
