@@ -1,78 +1,110 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
-Date: Thu, 29 Jun 2017 14:37:30 -0500
-Message-ID: <d5cb17b6-083a-58a0-caa6-01ee06ff1fd4@codeaurora.org>
-References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
- <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH fixes v3] pinctrl: Really force states during
+ suspend/resume
+Date: Thu, 29 Jun 2017 12:38:11 -0700
+Message-ID: <37d75c89-883f-1c58-23e8-7e0213935986@gmail.com>
+References: <20170301183257.6554-1-f.fainelli@gmail.com>
+ <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
+ <304fb86d-0862-992b-4563-61151b37d060@gmail.com>
+ <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
+ <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com>
+ <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
+ <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com>
+ <CACRpkdbGza+vYTSqBRPbUGGnUsuNQS-6oKkweSch5Pwpku=CEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:56140 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752843AbdF2Thg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 15:37:36 -0400
-In-Reply-To: <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33595 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751591AbdF2TiP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 15:38:15 -0400
+In-Reply-To: <CACRpkdbGza+vYTSqBRPbUGGnUsuNQS-6oKkweSch5Pwpku=CEg@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-On 06/23/2017 07:33 AM, Linus Walleij wrote:
-> I think using "lsgpio" fron tools/gpio/lsgpio.c is better to inspect
-> the available GPIOs.
+On 06/29/2017 02:17 AM, Linus Walleij wrote:
+> Sorry for slowness...
 > 
-> If you haven't tested the GPIO tools, please try it out.
+> On Wed, Jun 21, 2017 at 11:23 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>> On 03/16/2017 07:08 AM, Linus Walleij wrote:
+> 
+>>> I guess then it is better to assume we will loose the state, or
+>>> push for more granular handling of S2/3 etc states in the
+>>> PM core (I guess these states comes from ACPI or similar).
+>>
+>> I expected to see pm_message_t reflect which state we were entering into
+>> (PM_SUSPEND_STANDBY vs. PM_SUSPEND_MEM), but that is not the case.
+> 
+> Can we fix it?
 
-Unfortunately, this tool isn't very useful:
+Yes, I proposed this and got no feedback so far:
 
-$ sudo ./lsgpio
-GPIO chip: gpiochip0, "QCOM8001:00", 150 GPIO lines
-         line  0: unnamed unused [output]
-         line  1: unnamed unused [output]
-         line  2: unnamed unused [output]
-         line  3: unnamed unused [output]
-         line  4: unnamed unused [output]
-         line  5: unnamed unused [output]
-         line  6: unnamed unused [output]
-         line  7: unnamed unused [output]
-         line  8: unnamed unused [output]
-         line  9: unnamed unused [output]
-         line 10: unnamed unused [output]
-         line 11: unnamed unused [output]
-         line 12: unnamed unused [output]
-         line 13: unnamed unused [output]
-         line 14: unnamed unused [output]
-         line 15: unnamed unused [output]
-         line 16: unnamed unused [output]
-         line 17: unnamed unused [output]
-         line 18: unnamed unused [output]
-         line 19: unnamed unused [output]
-         line 20: unnamed unused [output]
-         line 21: unnamed unused [output]
-         line 22: unnamed unused [output]
-         line 23: unnamed unused [output]
-         line 24: unnamed unused [output]
-         line 25: unnamed unused [output]
-         line 26: unnamed unused [output]
-         line 27: unnamed unused [output]
-         line 28: unnamed unused [output]
-         line 29: unnamed unused [output]
-         line 30: unnamed unused [output]
-         line 31: unnamed unused [output]
-         line 32: unnamed unused [output]
-         line 33: unnamed unused [output]
-         line 34: unnamed unused [output]
-         line 35: unnamed unused [output]
-         line 36: unnamed unused
-         line 37: unnamed "sysfs" [kernel]
-         line 38: unnamed unused
-         line 39: unnamed unused
-         line 40: unnamed unused [output]
-	...
+https://www.spinics.net/lists/arm-kernel/msg590135.html
+
+> 
+>>> Alternatively develop the PM core. Is it really impossible for
+>>> PM hooks to know which state it went into/came from?
+>>
+>> I don't think I liked Rafael's suggestion of putting that kind of detail
+>> into the platform_suspend_ops routine as he seems to suggest here:
+>>
+>> https://www.spinics.net/lists/arm-kernel/msg587311.html
+> 
+> He is suggesting:
+> 
+>> The cleanest way would be to run that code from one of the platform
+>> suspend hooks that receive information on what sleep state is to be
+>> entered.
+> 
+> But what I suggest is more the inverse: that it receive information
+> on what state it is coming from, rather than which state it is
+> going to.
+
+The same information is available and it won't change from one suspend
+cycle to resume, since in between these calls you are supposed to be...
+suspended.
+
+> 
+> But I guess it would be logical that suspend() get to know what state
+> it is going to and resume() get to know which state it is coming from.>
+> So Rafael seem to be aligned with that idea.
+> 
+>> and here is my response:
+>>
+>> https://www.spinics.net/lists/arm-kernel/msg589844.html
+> 
+> So if it is not desireable to have every driver know which exact
+> state it came from like S3 this or S2 that and on this laptop
+> we have S2' which is slightly different and such mess (that you
+> predict IIUC) what we really need to know is pretty simple:
+> did the hardware loose its state or not?
+
+That information is inherently platform specific though, so on platforms
+where pinctrl-single is used, you won't necessarily know whether the
+state should be restored (conversely saved) so maybe that means we
+should have the possibility for a platform to define a wrapper around
+pinctrl-single whose purpose is to implement platform specific
+suspend/r/resume functions and just that really? Is there such a driver
+already that uses pinctrl-single more as a "library" than anything else?
+
+> 
+> That is the information we want the PM core to provide to
+> the resume() callback, somehow. A simple bool is fine.
+> 
+> Any platform specifics or simplifications pertaining to certain
+> states and whether S5 or S7 looses the context should not
+> be the concern of a driver, what it wants to know is simply
+> whether its device has been powered off and lost its hardware
+> context.
+> 
+> Yours,
+> Linus Walleij
+> 
+
 
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Florian
