@@ -1,61 +1,94 @@
 From: Thomas Gleixner <tglx@linutronix.de>
-Subject: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from resource
- management
-Date: Thu, 29 Jun 2017 23:33:35 +0200
-Message-ID: <20170629214343.882576048@linutronix.de>
+Subject: [patch 2/5] genirq: Move bus locking into __setup_irq()
+Date: Thu, 29 Jun 2017 23:33:36 +0200
+Message-ID: <20170629214343.960949031@linutronix.de>
 References: <20170629213334.375848050@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline;
- filename=pinctrl--samsung--Remove-bogus-irqmask-unmask.patch
+ filename=genirq--Move-locking-into-_-setup_irq--.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-gpio@vger.kernel.org
 
-The irq chip callbacks irq_request/release_resources() have absolutely no
-business with masking and unmasking the irq.
+There is no point in having the irq_bus_lock() protection around all
+callers to __setup_irq().
 
-The core code unmasks the interrupt after complete setup and masks it
-before invoking irq_release_resources().
+Move it into __setup_irq(). This is also a preparatory patch for addressing
+the issues with the irq resource callbacks.
 
-The unmask is actually harmful as it happens before the interrupt is
-completely initialized in __setup_irq().
-
-Remove it.
-
-Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ----
- 1 file changed, 4 deletions(-)
+ kernel/irq/manage.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -205,8 +205,6 @@ static int exynos_irq_request_resources(
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1167,6 +1167,8 @@ static int
+ 	if (desc->irq_data.chip->flags & IRQCHIP_ONESHOT_SAFE)
+ 		new->flags &= ~IRQF_ONESHOT;
  
- 	spin_unlock_irqrestore(&bank->slock, flags);
++	chip_bus_lock(desc);
++
+ 	/*
+ 	 * The following block of code has to be executed atomically
+ 	 */
+@@ -1347,6 +1349,7 @@ static int
+ 	}
  
--	exynos_irq_unmask(irqd);
--
- 	return 0;
- }
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
++	chip_bus_sync_unlock(desc);
  
-@@ -226,8 +224,6 @@ static void exynos_irq_release_resources
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+ 	irq_setup_timings(desc, new);
  
--	exynos_irq_mask(irqd);
--
- 	spin_lock_irqsave(&bank->slock, flags);
+@@ -1378,6 +1381,8 @@ static int
+ out_unlock:
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
  
- 	con = readl(bank->eint_base + reg_con);
++	chip_bus_sync_unlock(desc);
++
+ out_thread:
+ 	if (new->thread) {
+ 		struct task_struct *t = new->thread;
+@@ -1417,9 +1422,7 @@ int setup_irq(unsigned int irq, struct i
+ 	if (retval < 0)
+ 		return retval;
+ 
+-	chip_bus_lock(desc);
+ 	retval = __setup_irq(irq, desc, act);
+-	chip_bus_sync_unlock(desc);
+ 
+ 	if (retval)
+ 		irq_chip_pm_put(&desc->irq_data);
+@@ -1674,9 +1677,7 @@ int request_threaded_irq(unsigned int ir
+ 		return retval;
+ 	}
+ 
+-	chip_bus_lock(desc);
+ 	retval = __setup_irq(irq, desc, action);
+-	chip_bus_sync_unlock(desc);
+ 
+ 	if (retval) {
+ 		irq_chip_pm_put(&desc->irq_data);
+@@ -1924,9 +1925,7 @@ int setup_percpu_irq(unsigned int irq, s
+ 	if (retval < 0)
+ 		return retval;
+ 
+-	chip_bus_lock(desc);
+ 	retval = __setup_irq(irq, desc, act);
+-	chip_bus_sync_unlock(desc);
+ 
+ 	if (retval)
+ 		irq_chip_pm_put(&desc->irq_data);
+@@ -1980,9 +1979,7 @@ int request_percpu_irq(unsigned int irq,
+ 		return retval;
+ 	}
+ 
+-	chip_bus_lock(desc);
+ 	retval = __setup_irq(irq, desc, action);
+-	chip_bus_sync_unlock(desc);
+ 
+ 	if (retval) {
+ 		irq_chip_pm_put(&desc->irq_data);
