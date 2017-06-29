@@ -1,52 +1,87 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
-Date: Fri, 30 Jun 2017 00:10:56 +0200
-Message-ID: <CACRpkda-3g6ZpL7A8fcch_qFpYWuJkF1W6HHHdXJADN1G=FrKw@mail.gmail.com>
-References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
- <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com> <d5cb17b6-083a-58a0-caa6-01ee06ff1fd4@codeaurora.org>
+Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
+Date: Fri, 30 Jun 2017 00:13:11 +0200
+Message-ID: <CACRpkdYEvc2De88sy-FWOOkU8-O4KwX00rLZ7dBk6H2H0Q0+LQ@mail.gmail.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+ <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com> <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+ <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com> <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
+ <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com> <20170629144940.GD23512@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:34888 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752545AbdF2WK6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 18:10:58 -0400
-Received: by mail-io0-f177.google.com with SMTP id h134so15022404iof.2
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 15:10:58 -0700 (PDT)
-In-Reply-To: <d5cb17b6-083a-58a0-caa6-01ee06ff1fd4@codeaurora.org>
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37267 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752289AbdF2WNS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 18:13:18 -0400
+Received: by mail-it0-f49.google.com with SMTP id m84so15347784ita.0
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 15:13:18 -0700 (PDT)
+In-Reply-To: <20170629144940.GD23512@kroah.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
-On Thu, Jun 29, 2017 at 9:37 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> On 06/23/2017 07:33 AM, Linus Walleij wrote:
+On Thu, Jun 29, 2017 at 4:49 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, Jun 29, 2017 at 11:51:08AM +0200, Linus Walleij wrote:
+>> On Fri, Jun 23, 2017 at 10:09 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> > On 2017-06-21 08:29, Jan Kiszka wrote:
+>> >> On 2017-06-20 13:38, Linus Walleij wrote:
+>> >>> On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> >>>> On 2017-06-20 10:19, Linus Walleij wrote:
+>> >>>>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> >>>>>
+>> >>>>>> This makes the gpio-exar driver usable, which was prevented by a number
+>> >>>>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
+>> >>>>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
+>> >>>>>> series, so I'm also cross-posting to the serial and gpio lists.
+>> >>>>>>
+>> >>>>>> Changes in v6:
+>> >>>>>
+>> >>>>> I merged some of the patches, that applied. Let's see if they survive
+>> >>>>> in linux-next, else I guess we need to fix this in the -rcs or for the next
+>> >>>>> kernel cycle.
+>> >>>>
+>> >>>> Weird that things did not apply. I just did a cherry-pick for all those
+>> >>>> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
+>> >>>> know which baseline is needed, and I will rebase.
+>> >>>
+>> >>> This was on the "devel" branch of my GPIO tree:
+>> >>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+>> >>
+>> >> Again, all (missing) patches applied absolutely cleanly for me, see
+>> >>
+>> >> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
+>> >
+>> > I've rebased over devel and noticed along this that you will have to
+>> > include "serial: uapi: Add support for bus termination" from Greg's
+>> > tty-next for the last patch to avoid breaking the build. Result pushed to
+>> >
+>> > http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
+>> >
+>> > If you want me to resend anything, just let me know. Would be great to
+>> > have the remaining pieces lined up in time for the next merge window.
 >>
->> I think using "lsgpio" fron tools/gpio/lsgpio.c is better to inspect
->> the available GPIOs.
+>> I could just pull it in, but then I want a clear indication that Greg and
+>> say Andy are happy with this.
 >>
->> If you haven't tested the GPIO tools, please try it out.
+>> The serial patches are missing Gregs explicit ACK and the platform
+>> patch could use Andy's ACK. The last patch adding the
+>> IOT2040 is so obviously out of my GPIO territory that I want
+>> Greg 100% aligned with this.
+>>
+>> I am sorry that it is troublesome when things cross subsystem
+>> boundaries, I already stretched it a bit with the things I queued
+>> up because it annoys me too, but this is the process we have :/
 >
->
-> Unfortunately, this tool isn't very useful:
->
-> $ sudo ./lsgpio
-> GPIO chip: gpiochip0, "QCOM8001:00", 150 GPIO lines
->         line  0: unnamed unused [output]
->         line  1: unnamed unused [output]
->         line  2: unnamed unused [output]
+> I've added my acks to the serial patches, so all should be fine for you
+> to take this all through your tree now.
 
-They can be given reasonable names using the line-names
-property in the DTS file, preferably the top-level file.
-arch/arm/boot/dts/bcm2835-rpi-b-plus.dts
-is a good example.
+Awesome, Jan can you:
 
-Do the same with your target board and things will
-be very much more helpful.
+- Collect the ACKs
 
-gpio-hammer can help you test a line (try it with
-a LED) and gpio-event-mon can help you listen
-at a key for example.
+- Send me a pull request based on my devel branch?
 
 Yours,
 Linus Walleij
