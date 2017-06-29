@@ -1,82 +1,126 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
-Date: Thu, 29 Jun 2017 16:49:40 +0200
-Message-ID: <20170629144940.GD23512@kroah.com>
-References: <cover.1497033197.git.jan.kiszka@siemens.com>
- <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
- <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
- <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
- <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com>
- <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
- <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Thu, 29 Jun 2017 16:57:18 +0200
+Message-ID: <1498748238.27840.5.camel@baylibre.com>
+References: <1497543642.3086.35.camel@baylibre.com>
+         <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
+         <1497954416.7387.1.camel@baylibre.com>
+         <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+         <1497979438.7387.10.camel@baylibre.com>
+         <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+         <1498141515.7387.16.camel@baylibre.com>
+         <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
+         <1498587929.25567.12.camel@baylibre.com>
+         <CACRpkdZfvGm+sy+B2wsuw5TfD57h9cTJc7ii=1Q1DEuMxNk_8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57128 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753367AbdF2Otx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 10:49:53 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:35988 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753329AbdF2O5V (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 10:57:21 -0400
+Received: by mail-wm0-f41.google.com with SMTP id 62so85083249wmw.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 07:57:20 -0700 (PDT)
+In-Reply-To: <CACRpkdZfvGm+sy+B2wsuw5TfD57h9cTJc7ii=1Q1DEuMxNk_8A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Thu, Jun 29, 2017 at 11:51:08AM +0200, Linus Walleij wrote:
-> On Fri, Jun 23, 2017 at 10:09 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> > On 2017-06-21 08:29, Jan Kiszka wrote:
-> >> On 2017-06-20 13:38, Linus Walleij wrote:
-> >>> On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> >>>> On 2017-06-20 10:19, Linus Walleij wrote:
-> >>>>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> >>>>>
-> >>>>>> This makes the gpio-exar driver usable, which was prevented by a number
-> >>>>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
-> >>>>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
-> >>>>>> series, so I'm also cross-posting to the serial and gpio lists.
-> >>>>>>
-> >>>>>> Changes in v6:
-> >>>>>
-> >>>>> I merged some of the patches, that applied. Let's see if they survive
-> >>>>> in linux-next, else I guess we need to fix this in the -rcs or for the next
-> >>>>> kernel cycle.
-> >>>>
-> >>>> Weird that things did not apply. I just did a cherry-pick for all those
-> >>>> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
-> >>>> know which baseline is needed, and I will rebase.
-> >>>
-> >>> This was on the "devel" branch of my GPIO tree:
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
-> >>
-> >> Again, all (missing) patches applied absolutely cleanly for me, see
-> >>
-> >> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
-> >
-> > I've rebased over devel and noticed along this that you will have to
-> > include "serial: uapi: Add support for bus termination" from Greg's
-> > tty-next for the last patch to avoid breaking the build. Result pushed to
-> >
-> > http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
-> >
-> > If you want me to resend anything, just let me know. Would be great to
-> > have the remaining pieces lined up in time for the next merge window.
+On Thu, 2017-06-29 at 16:14 +0200, Linus Walleij wrote:
+> On Tue, Jun 27, 2017 at 8:25 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 > 
-> I could just pull it in, but then I want a clear indication that Greg and
-> say Andy are happy with this.
+> > At the time Linus strongly rejected the idea of calling  irq_create_mapping
+> > (or
+> > any sleeping functions) in gpio_to_irq: please see the reply from Oct 26,
+> > 2016
+> > (sorry for quoting such an old discussion but this is really the starting
+> > point)
+> > 
+> > * Me: There is really a *lot* of gpio drivers which use irq_create_mapping
+> > in
+> > the to_irq callback, are these all wrong ?
+> > * Linus: Yes they are all wrong. They should all be using
+> > irq_find_mapping().
+> > 
+> > * Me: If this should not be used, what should we all do instead ?
+> > * Linus: Call irq_create_mapping() in some other place.
+> > 
+> > gpio_prepare_irq is a proposition for this 'other place'.
 > 
-> The serial patches are missing Gregs explicit ACK and the platform
-> patch could use Andy's ACK. The last patch adding the
-> IOT2040 is so obviously out of my GPIO territory that I want
-> Greg 100% aligned with this.
+> There is a misunderstanding here.
 > 
-> I am sorry that it is troublesome when things cross subsystem
-> boundaries, I already stretched it a bit with the things I queued
-> up because it annoys me too, but this is the process we have :/
+> I wrote (at the time):
+> 
+> > Yes, but you want to call irq_create_mapping() in slowpath (irq setup)
+> > and irq_find_mapping() in fastpath (irq handler). Else the first IRQ
+> > may result in unwelcomed surprises.
+> 
+> This does not mean that irq_create_mapping() cannot be called
+> in irq context because I think it can.
+> 
+> What it means is that I think that is suboptimal from a performance
+> point of view if called from gpio_to_irq(), because nominally, at this
+> point, the mapping should already exist, since the GPIO and IRQ
+> frameworks are orthogonal.
 
-I've added my acks to the serial patches, so all should be fine for you
-to take this all through your tree now.
+Agreed. It should. In such case, irq_create_mapping is just a call to
+irq_find_mapping which is fine. If, for whatever reason this is not the case,
+this is going to call sleeping function in irq context. It should not happen but
+it is not entirely impossible ...
 
-thanks,
+> 
+> But that may not apply to the case with many-to-few interrupt
+> mappings... so I think I was in some 1-to-1-mapping context
+> when I wrote this. Sorry :(
+> 
+> So I changed my mind, it is fine for this type of driver to call
+> irq_create_mapping() in gpio_to_irq(). Preferably with some comment
+> around the call.
 
-greg k-h
+What about disposing of the mapping ? there still is no counter part function to
+gpio_to_irq. It seems weird to leave them lying around, don't you think ?
+
+Here is a real use we will be having a meson:
+* MMC driver load and call gpio_to_irq on its cd pin
+  This is going to create a mapping 
+* MMC driver request an irq with IRQ_EDGE_BOTH trigger (which we don't/can't
+  support at the moment). request_irq fails.
+* MMC defaults to polling the GPIO
+
+Remember that we have only 8 possibles mappings. Now there is one (useless)
+mapping lying around which can't get rid of.
+
+If there is more drivers doing this sort of tricks, we are going to exhaust the
+ressource pretty quickly.
+
+That's just one exemple. The fact is, as soon as a driver calls gpio_to_irq, the
+mapping is going to stay forever. Don't you think we should try address this ?
+
+I will happily (re)submit a patch with irq_create_mapping in gpio_to_irq to
+bring the 'initial' gpio irq support in meson, until something better comes
+up...
+
+> 
+> It remains to see what happens if gpio_to_irq() would fail, as can
+> happen in this case. Like if gpio_to_irq() would return 0 (NO_IRQ)
+> or something negative. I think many drivers are not equipped for
+> handling this.
+
+I think this is already fine, gpio_to_irq is supposed to return 0 if there is no
+mapping, isn't it ? 
+
+> 
+> So I guess if you could change the semantics of all drivers
+> calling gpio_to_irq() to also handle say 0 as an error and bail
+> out, we can call irq_create_mapping() in gpio_to_irq().
+> 
+> Sorry if I'm confused... or confusing.
+
+Aren't we all ... we'll get there, someday :)
+
+> 
+> Yours,
+> Linus Walleij
+
