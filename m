@@ -1,36 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpiolib: fix filtering out unwanted events
-Date: Thu, 29 Jun 2017 11:33:21 +0200
-Message-ID: <CACRpkda0WViPpULRAZCcBzCfCuum0GHkyWnWonS8A+LZvP+xXQ@mail.gmail.com>
-References: <1498218316-27860-1-git-send-email-brgl@bgdev.pl> <1498218316-27860-2-git-send-email-brgl@bgdev.pl>
+Subject: Re: [PATCH 1/2] pinctrl: armada-37xx: Fix uart2 group selection
+ register mask
+Date: Thu, 29 Jun 2017 11:44:33 +0200
+Message-ID: <CACRpkdYsWrT-q5baD-Y7RYs2aQ2J3suEcEe4G8GceJUYS7JXyQ@mail.gmail.com>
+References: <20170623122952.9871-1-gregory.clement@free-electrons.com> <20170623122952.9871-2-gregory.clement@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:34145 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbdF2JdX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 05:33:23 -0400
-Received: by mail-io0-f173.google.com with SMTP id r36so3757176ioi.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 02:33:23 -0700 (PDT)
-In-Reply-To: <1498218316-27860-2-git-send-email-brgl@bgdev.pl>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170623122952.9871-2-gregory.clement@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ken Ma <make@marvell.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stefan Roese <sr@denx.de>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 23, 2017 at 1:45 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Fri, Jun 23, 2017 at 2:29 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-> GPIOEVENT_REQUEST_BOTH_EDGES is not a single flag, but a binary OR of
-> GPIOEVENT_REQUEST_RISING_EDGE and GPIOEVENT_REQUEST_FALLING_EDGE.
+> From: Ken Ma <make@marvell.com>
 >
-> The expression 'le->eflags & GPIOEVENT_REQUEST_BOTH_EDGES' we'll get
-> evaluated to true even if only one event type was requested.
+> If north bridge selection register bit1 is clear, pins [10:8] are for
+> SDIO0 Resetn, Wakeup, and PDN while if bit1 is set, pins [10:8]are for
+> GPIO; when bit1 is clear, pin 9 and pin 10 can be used for uart2 RTSn
+> and CTSn, so bit1 should be added to uart2 group and it must be set
+> for both "gpio" and "uart" functions of uart2 group.
 >
-> Fix it by checking both RISING & FALLING flags explicitly.
->
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Signed-off-by: Ken Ma <make@marvell.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-Patch applied for fixes.
+Patch applied.
 
 Yours,
 Linus Walleij
