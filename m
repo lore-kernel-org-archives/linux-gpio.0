@@ -1,138 +1,141 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Thu, 29 Jun 2017 20:33:05 +0200
-Message-ID: <1498761185.27840.7.camel@baylibre.com>
-References: <1497543642.3086.35.camel@baylibre.com>
-         <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
-         <1497954416.7387.1.camel@baylibre.com>
-         <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
-         <1497979438.7387.10.camel@baylibre.com>
-         <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
-         <1498141515.7387.16.camel@baylibre.com>
-         <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
-         <1498587929.25567.12.camel@baylibre.com>
-         <CACRpkdZfvGm+sy+B2wsuw5TfD57h9cTJc7ii=1Q1DEuMxNk_8A@mail.gmail.com>
-         <1498748238.27840.5.camel@baylibre.com>
-         <e0e11852-2ede-abff-7dc3-badbffecf776@arm.com>
+From: sathyanarayanan kuppuswamy
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: Fix GPIO control register offset
+ calculation
+Date: Thu, 29 Jun 2017 12:13:24 -0700
+Message-ID: <6ce5e7fd-ac9e-4902-760e-0b6b00ffc92a@linux.intel.com>
+References: <4b57167184fa9aa4d1c183d4c8df6e6a600a7dbd.1498087915.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <CACRpkdY83WvJ_PzzdEwzgHEFBm=ixLGLqCYdpkArWPFBa7U2Kw@mail.gmail.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:36662 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752601AbdF2SdJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 14:33:09 -0400
-Received: by mail-wm0-f42.google.com with SMTP id 62so90400222wmw.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 11:33:08 -0700 (PDT)
-In-Reply-To: <e0e11852-2ede-abff-7dc3-badbffecf776@arm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdY83WvJ_PzzdEwzgHEFBm=ixLGLqCYdpkArWPFBa7U2Kw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Hans de Goede <hdegoede@redhat.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>, Graeme Gregory <graeme.gregory@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Thu, 2017-06-29 at 17:53 +0100, Marc Zyngier wrote:
-> On 29/06/17 15:57, Jerome Brunet wrote:
-> > On Thu, 2017-06-29 at 16:14 +0200, Linus Walleij wrote:
-> > > On Tue, Jun 27, 2017 at 8:25 PM, Jerome Brunet <jbrunet@baylibre.com>
-> > > wrote:
-> > > 
-> > > > At the time Linus strongly rejected the idea of
-> > > > calling  irq_create_mapping
-> > > > (or
-> > > > any sleeping functions) in gpio_to_irq: please see the reply from Oct
-> > > > 26,
-> > > > 2016
-> > > > (sorry for quoting such an old discussion but this is really the
-> > > > starting
-> > > > point)
-> > > > 
-> > > > * Me: There is really a *lot* of gpio drivers which use
-> > > > irq_create_mapping
-> > > > in
-> > > > the to_irq callback, are these all wrong ?
-> > > > * Linus: Yes they are all wrong. They should all be using
-> > > > irq_find_mapping().
-> > > > 
-> > > > * Me: If this should not be used, what should we all do instead ?
-> > > > * Linus: Call irq_create_mapping() in some other place.
-> > > > 
-> > > > gpio_prepare_irq is a proposition for this 'other place'.
-> > > 
-> > > There is a misunderstanding here.
-> > > 
-> > > I wrote (at the time):
-> > > 
-> > > > Yes, but you want to call irq_create_mapping() in slowpath (irq setup)
-> > > > and irq_find_mapping() in fastpath (irq handler). Else the first IRQ
-> > > > may result in unwelcomed surprises.
-> > > 
-> > > This does not mean that irq_create_mapping() cannot be called
-> > > in irq context because I think it can.
-> > > 
-> > > What it means is that I think that is suboptimal from a performance
-> > > point of view if called from gpio_to_irq(), because nominally, at this
-> > > point, the mapping should already exist, since the GPIO and IRQ
-> > > frameworks are orthogonal.
-> > 
-> > Agreed. It should. In such case, irq_create_mapping is just a call to
-> > irq_find_mapping which is fine. If, for whatever reason this is not the
-> > case,
-> > this is going to call sleeping function in irq context. It should not happen
-> > but
-> > it is not entirely impossible ...
-> > 
-> > > 
-> > > But that may not apply to the case with many-to-few interrupt
-> > > mappings... so I think I was in some 1-to-1-mapping context
-> > > when I wrote this. Sorry :(
-> > > 
-> > > So I changed my mind, it is fine for this type of driver to call
-> > > irq_create_mapping() in gpio_to_irq(). Preferably with some comment
-> > > around the call.
-> > 
-> > What about disposing of the mapping ? there still is no counter part
-> > function to
-> > gpio_to_irq. It seems weird to leave them lying around, don't you think ?
-> > 
-> > Here is a real use we will be having a meson:
-> > * MMC driver load and call gpio_to_irq on its cd pin
-> >   This is going to create a mapping 
-> > * MMC driver request an irq with IRQ_EDGE_BOTH trigger (which we don't/can't
-> >   support at the moment). request_irq fails.
-> > * MMC defaults to polling the GPIO
-> > 
-> > Remember that we have only 8 possibles mappings. Now there is one (useless)
-> > mapping lying around which can't get rid of.
-> 
-> Which should be dropped by a dispose_mapping() call in the MMC driver
-> (or ideally some gpio-specific wrapper around this function).
+Hi Linus,
 
-Actually you must go through a gpio-specific function.
 
-Not all gpio drivers use irq domains and mapping unfortunately (legacy...)  
-Only the gpio driver knows how this "mapping" (between the gpio number and the
-virq) was done.
+On 06/29/2017 05:17 AM, Linus Walleij wrote:
+> On Mon, Jun 26, 2017 at 7:37 PM,
+> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+>
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> According to Whiskey Cove PMIC GPIO controller specification, for GPIO
+>> pins 0-12, GPIO input and output register control address range from,
+>>
+>> 0x4e44-0x4e50 for GPIO outputs control register
+>>
+>> 0x4e51-0x4e5d for GPIO input control register
+>>
+>> But, currently when calculating the GPIO register offsets in to_reg()
+>> function, all GPIO pins in the same bank uses the same GPIO control
+>> register address. This logic is incorrect. This patch fixes this
+>> issue.
+>>
+>> This patch also adds support to selectively skip register modification
+>> for virtual GPIOs.
+>>
+>> In case of Whiskey Cove PMIC, ACPI code may use up 94 virtual GPIOs.
+>> These virtual GPIOs are used by the ACPI code as means to access various
+>> non GPIO bits of PMIC. So for these virtual GPIOs, we don't need to
+>> manipulate the physical GPIO pin register. A similar patch has been
+>> merged recently by Hans for Crystal Cove PMIC GPIO driver. You can
+>> find more details about it in Commit 9a752b4c9ab9 ("gpio: crystalcove:
+>> Do not write regular gpio registers for virtual GPIOs")
+> So where can I get a handle on the people inside Intel who are obviously
+> using ACPI GPIO class for shoehorning what we in the linux kernel call
+> syscon or register bit misc access into the GPIO ACPI container just
+> because they feel it is convenient?
+Found the patch from where it all started. It looks like the origin of this
+hack is from Crystal Cove PMIC. This was added to handle the side-effects
+of windows specific BIOS fix . After that instead of finding the proper BIOS
+fix, the same hack has been adapted to other Intel family PMIC devices in
+ACPI tables.
 
-The proposition at the start of this is my idea for this gpio-specific function.
-I'm open to other ideas, of course :)
+commit dcdc3018d6357c35eae7d80b323e10bd72253cb7
+Author: Aaron Lu <aaron.lu@intel.com>
+Date:   Thu Sep 25 10:57:26 2014 +0800
 
-> 
-> > If there is more drivers doing this sort of tricks, we are going to exhaust
-> > the
-> > ressource pretty quickly.
-> 
-> We can fix those drivers as we go. It's not like there's a huge variety
-> of potential HW on this particular platform of yours.
-> 
+     gpio: crystalcove: support virtual GPIO
 
-Those drivers are consumer of gpios. They should not have platform specific
-fixes/quirks , right? Like the mmc framework, or the gpio-button driver...
+     The virtual GPIO introduced in ACPI table of Baytrail-T based system is
+     used to solve a problem under Windows. We do not have such problems
+     under Linux so we do not actually need them. But we have to tell GPIO
+     library that the Crystal Cove GPIO chip has this many GPIO pins or the
+     common GPIO handler will refuse any access to those high number GPIO
+     pins, which will resulted in a failure evaluation of every ACPI control
+     method that is used to turn on/off power resource and/or report sensor
+     temperatures.
 
-In addition, this problem of un-disposed mappings may also affect any of the 26
-driver which create mapping in gpio_to_irq, so it is not specific to a single
-platform.
+     Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+     Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+     [changed vgpio number from 0x5e to 94]
+     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-> Thanks,
-> 
-> 	M.
 
+> They need to invent a NEW ACPI four-character thing and call that
+> "misc register bit" (_MRB?) or whatever and have it bind to syscon.
+> This is not working.
+At this point I am not sure whether this BIOS fix is a hack or actual 
+requirement.
+
+Mike or Aaron might have more info on this windows issue mentioned in 
+the above
+commit message.
+
+If this is really a requirement then I can send these details to Rafael 
+or Bob Moore for
+more ACPI specific review.
+>
+> It feels like I am starting to maintain Intel's swiss army knife for misc
+> register manipulation, and that should not be done by "virtual GPIO"
+> because just look at it:
+Sorry about that. When I submitted this patch, I also noticed that this 
+"Virtual GPIO" concept has nothing to do with GPIO subsystem. But since 
+this hack is already merged and has tight dependency on BIOS, I can't 
+fix it cleanly any more. Only solution is, to prevent this hack being 
+adapted to any future Intel PMIC GPIO drivers.
+>
+> General-purpose input/output - yeah that sounds like something
+> going in/out of the system right? And something that is used by electronics
+> outside the provider. Like a LED. Or a key.
+>
+> "Virtual GPIO" - those are not input/outputs at all in most cases,
+> because they are internally routed, and they are not general purpose
+> at all because mostly they are for a specific purpose. Neither are they
+> virtual because the signals are very real.
+>
+> Calling something "virtual GPIO" is just one big confusion for the brain.
+>
+> Looking at Rusty Russell's API design manifesto:
+> http://sweng.the-davies.net/Home/rustys-api-design-manifesto
+> this is just screwing things up.
+>
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> Reported-by: Jukka Laitinen <jukka.laitinen@intel.com>
+> I have applied the patch because I think you know this better than
+> me, just including Mika and Andy as a side note. The patch is fine
+> because it makes the system run despite the above mentioned
+> violation of ACPI which is not your fault.
+Thanks. I have also tested it and it seem to run fine. Without this fix, 
+I am getting
+Interrupt storms in USB Type-C device.
+>
+> Would you mind signing yourself up as maintainer in the MAINTAINERS
+> file for this driver?
+I don't mind. I can sign-up for it.
+>
+> Yours,
+> Linus Walleij
+>
+
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
