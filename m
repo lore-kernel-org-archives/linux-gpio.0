@@ -1,35 +1,37 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
-Date: Wed, 28 Jun 2017 17:38:38 -0500
-Message-ID: <d4ed2a91-5f19-fa04-42ed-02b94dde1b6e@codeaurora.org>
-References: <1498164850-4738-1-git-send-email-timur@codeaurora.org>
- <CACRpkdZeDjS_g27=1e7uCmFpjnqX+sDSu5G2VAuwFr_GJW1mug@mail.gmail.com>
- <20170628191204.GP18666@tuxbook>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v6 1/6] pinctrl: qcom: Add ipq8074 pinctrl driver
+Date: Wed, 28 Jun 2017 21:30:20 -0700
+Message-ID: <20170629043020.GS18666@tuxbook>
+References: <1497001319-30353-1-git-send-email-varada@codeaurora.org>
+ <1497001319-30353-2-git-send-email-varada@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:44332 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbdF1Wik (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 28 Jun 2017 18:38:40 -0400
-In-Reply-To: <20170628191204.GP18666@tuxbook>
-Content-Language: en-US
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:36103 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbdF2Ea0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 00:30:26 -0400
+Received: by mail-pg0-f50.google.com with SMTP id u62so41655521pgb.3
+        for <linux-gpio@vger.kernel.org>; Wed, 28 Jun 2017 21:30:26 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1497001319-30353-2-git-send-email-varada@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org, linus.walleij@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, absahu@codeaurora.org, sjaganat@codeaurora.org, sricharan@codeaurora.org, Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
 
-On 06/28/2017 02:12 PM, Bjorn Andersson wrote:
-> It seems that if we extend the msm_pingroup with a flag to carry the XPU
-> lock information and then implement pinmux_ops->request() and deny any
-> requests on the locked pins, we should cover all[*] the normal GPIO code
-> paths.
+On Fri 09 Jun 02:41 PDT 2017, Varadarajan Narayanan wrote:
 
-I managed to get this to work, so I'll post a patchset by tomorrow that 
-implements this.
+> Add initial pinctrl driver to support pin configuration with
+> pinctrl framework for ipq8074.
+> 
+> Acked-by: Rob Herring <robh@kernel.org> (bindings)
+> Signed-off-by: Manoharan Vijaya Raghavan <mraghava@codeaurora.org>
+> Signed-off-by: Varadarajan Narayanan <varada@codeaurora.org>
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Sorry for the delay, I think this looks good.
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
