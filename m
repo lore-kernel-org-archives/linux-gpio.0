@@ -1,35 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Fri, 30 Jun 2017 00:16:12 +0200
-Message-ID: <CACRpkda7Nsgwv9AqQeN1vnGu6sZmW_nKMbiWfXTtRYxRtfv+uA@mail.gmail.com>
-References: <1497543642.3086.35.camel@baylibre.com> <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
- <1497954416.7387.1.camel@baylibre.com> <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
- <1497979438.7387.10.camel@baylibre.com> <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
- <1498141515.7387.16.camel@baylibre.com> <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
- <1498587929.25567.12.camel@baylibre.com> <CACRpkdZfvGm+sy+B2wsuw5TfD57h9cTJc7ii=1Q1DEuMxNk_8A@mail.gmail.com>
- <1498748238.27840.5.camel@baylibre.com>
+Subject: Re: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
+Date: Fri, 30 Jun 2017 00:25:27 +0200
+Message-ID: <CACRpkdZbbgUcj149aE=N-RX4BLjVNsiOqvRDzWFDELyaKr_Z4Q@mail.gmail.com>
+References: <20170301183257.6554-1-f.fainelli@gmail.com> <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
+ <304fb86d-0862-992b-4563-61151b37d060@gmail.com> <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
+ <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com> <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
+ <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com> <CACRpkdbGza+vYTSqBRPbUGGnUsuNQS-6oKkweSch5Pwpku=CEg@mail.gmail.com>
+ <37d75c89-883f-1c58-23e8-7e0213935986@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1498748238.27840.5.camel@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:36082 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbdF2WZ2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 18:25:28 -0400
+Received: by mail-it0-f42.google.com with SMTP id m68so53035246ith.1
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 15:25:28 -0700 (PDT)
+In-Reply-To: <37d75c89-883f-1c58-23e8-7e0213935986@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-On Thu, Jun 29, 2017 at 4:57 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Thu, 2017-06-29 at 16:14 +0200, Linus Walleij wrote:
+On Thu, Jun 29, 2017 at 9:38 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 06/29/2017 02:17 AM, Linus Walleij wrote:
 
->> So I changed my mind, it is fine for this type of driver to call
->> irq_create_mapping() in gpio_to_irq(). Preferably with some comment
->> around the call.
+>> So if it is not desireable to have every driver know which exact
+>> state it came from like S3 this or S2 that and on this laptop
+>> we have S2' which is slightly different and such mess (that you
+>> predict IIUC) what we really need to know is pretty simple:
+>> did the hardware loose its state or not?
 >
-> What about disposing of the mapping ? there still is no counter part function to
-> gpio_to_irq. It seems weird to leave them lying around, don't you think ?
+> That information is inherently platform specific though, so on platforms
+> where pinctrl-single is used, you won't necessarily know whether the
+> state should be restored (conversely saved) so maybe that means we
+> should have the possibility for a platform to define a wrapper around
+> pinctrl-single whose purpose is to implement platform specific
+> suspend/r/resume functions and just that really? Is there such a driver
+> already that uses pinctrl-single more as a "library" than anything else?
 
-Yeah that sucks. We need a way to fix that.
+pinctrl-single maye not be the easiest in cases like this, but Tony
+et al have bolted in a few OMAP specifics to pinctrl-single in the
+past so I don't see why this would be a problem.
 
-Is gpio_irq_prepare/unprepare the right approach?
+commit 02e483f66deb6bd8df6af450726574614eb53be3
+"pinctrl: single: Prepare for supporting SoC specific features"
+etc.
 
 Yours,
 Linus Walleij
