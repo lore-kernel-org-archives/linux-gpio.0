@@ -1,74 +1,84 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 00/10] serial/gpio: exar: Fixes and support for IOT2000
-Date: Thu, 29 Jun 2017 11:51:08 +0200
-Message-ID: <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
-References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
- <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com> <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
- <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com> <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] pinctrl: add ZTE ZX pinctrl driver support
+Date: Thu, 29 Jun 2017 12:51:52 +0300
+Message-ID: <20170629095152.ahkv55cjj26c3nmk@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:38054 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbdF2JvK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 05:51:10 -0400
-Received: by mail-it0-f54.google.com with SMTP id k192so4034107ith.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 02:51:10 -0700 (PDT)
-In-Reply-To: <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:36175 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751557AbdF2JwF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 05:52:05 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+To: shawn.guo@linaro.org
+Cc: linux-gpio@vger.kernel.org
 
-On Fri, Jun 23, 2017 at 10:09 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On 2017-06-21 08:29, Jan Kiszka wrote:
->> On 2017-06-20 13:38, Linus Walleij wrote:
->>> On Tue, Jun 20, 2017 at 10:54 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>>> On 2017-06-20 10:19, Linus Walleij wrote:
->>>>> On Fri, Jun 9, 2017 at 8:33 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->>>>>
->>>>>> This makes the gpio-exar driver usable, which was prevented by a number
->>>>>> of fatal bugs, and adds support for the SIMATIC IOT2040 to the 8250-exar
->>>>>> driver and, indirectly, to gpio-exar as well. It's a cross-subsystem
->>>>>> series, so I'm also cross-posting to the serial and gpio lists.
->>>>>>
->>>>>> Changes in v6:
->>>>>
->>>>> I merged some of the patches, that applied. Let's see if they survive
->>>>> in linux-next, else I guess we need to fix this in the -rcs or for the next
->>>>> kernel cycle.
->>>>
->>>> Weird that things did not apply. I just did a cherry-pick for all those
->>>> 10 patches on top of 5c996b7eb52c, and that went smoothly. Please let me
->>>> know which baseline is needed, and I will rebase.
->>>
->>> This was on the "devel" branch of my GPIO tree:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
->>
->> Again, all (missing) patches applied absolutely cleanly for me, see
->>
->> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
->
-> I've rebased over devel and noticed along this that you will have to
-> include "serial: uapi: Add support for bus termination" from Greg's
-> tty-next for the last patch to avoid breaking the build. Result pushed to
->
-> http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/queues/gpio-iot2000
->
-> If you want me to resend anything, just let me know. Would be great to
-> have the remaining pieces lined up in time for the next merge window.
+Hello Shawn Guo,
 
-I could just pull it in, but then I want a clear indication that Greg and
-say Andy are happy with this.
+The patch cbff0c4d27f4: "pinctrl: add ZTE ZX pinctrl driver support"
+from Apr 24, 2017, leads to the following static checker warning:
 
-The serial patches are missing Gregs explicit ACK and the platform
-patch could use Andy's ACK. The last patch adding the
-IOT2040 is so obviously out of my GPIO territory that I want
-Greg 100% aligned with this.
+	drivers/pinctrl/zte/pinctrl-zx.c:338 zx_pinctrl_build_state()
+	warn: passing devm_ allocated variable to kfree. 'functions'
 
-I am sorry that it is troublesome when things cross subsystem
-boundaries, I already stretched it a bit with the things I queued
-up because it annoys me too, but this is the process we have :/
+drivers/pinctrl/zte/pinctrl-zx.c
+   293  
+   294          /* Build function list from pin mux functions */
+   295          functions = devm_kzalloc(&pdev->dev, info->npins * sizeof(*functions),
+                ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Yours,
-Linus Walleij
+   296                                   GFP_KERNEL);
+   297          if (!functions)
+   298                  return -ENOMEM;
+   299  
+   300          nfunctions = 0;
+   301          for (i = 0; i < info->npins; i++) {
+   302                  const struct pinctrl_pin_desc *pindesc = info->pins + i;
+   303                  struct zx_pin_data *data = pindesc->drv_data;
+   304                  struct zx_mux_desc *mux;
+   305  
+   306                  /* Reserved pins do not have a drv_data at all */
+   307                  if (!data)
+   308                          continue;
+   309  
+   310                  /* Loop over all muxes for the pin */
+   311                  mux = data->muxes;
+   312                  while (mux->name) {
+   313                          struct function_desc *func = functions;
+   314  
+   315                          /* Search function list for given mux */
+   316                          while (func->name) {
+   317                                  if (strcmp(mux->name, func->name) == 0) {
+   318                                          /* Function exists */
+   319                                          func->num_group_names++;
+   320                                          break;
+   321                                  }
+   322                                  func++;
+   323                          }
+   324  
+   325                          if (!func->name) {
+   326                                  /* New function */
+   327                                  func->name = mux->name;
+   328                                  func->num_group_names = 1;
+   329                                  radix_tree_insert(&pctldev->pin_function_tree,
+   330                                                    nfunctions++, func);
+   331                          }
+   332  
+   333                          mux++;
+   334                  }
+   335          }
+   336  
+   337          pctldev->num_functions = nfunctions;
+   338          functions = krealloc(functions, nfunctions * sizeof(*functions),
+                                     ^^^^^^^^^
+Not allowed.
+
+   339                               GFP_KERNEL);
+   340  
+   341          /* Find pin groups for every single function */
+   342          for (i = 0; i < info->npins; i++) {
+
+regards,
+dan carpenter
