@@ -1,51 +1,118 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH fixes v3] pinctrl: Really force states during suspend/resume
-Date: Fri, 30 Jun 2017 00:25:27 +0200
-Message-ID: <CACRpkdZbbgUcj149aE=N-RX4BLjVNsiOqvRDzWFDELyaKr_Z4Q@mail.gmail.com>
-References: <20170301183257.6554-1-f.fainelli@gmail.com> <CAHp75VdWVq3E3qrgtvvJK=A4yxK+yM_q3ZJd1hNnFBTj-H4Mxw@mail.gmail.com>
- <304fb86d-0862-992b-4563-61151b37d060@gmail.com> <CACRpkdb-_oTuRyGWtH9Rb2g2w_J9VM=m3mXK94OYbCXy+E0XLw@mail.gmail.com>
- <18ca4418-8b62-a1c9-1282-0c468f2aefb2@gmail.com> <CACRpkdZBrYT=vXhR77W+v_hN=t6zYACVPm5HR==kC7nmDYJLQA@mail.gmail.com>
- <5e61618b-cfb0-ddff-3d87-bf512521e669@gmail.com> <CACRpkdbGza+vYTSqBRPbUGGnUsuNQS-6oKkweSch5Pwpku=CEg@mail.gmail.com>
- <37d75c89-883f-1c58-23e8-7e0213935986@gmail.com>
+From: sathyanarayanan kuppuswamy
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] gpio: gpio-wcove: Fix GPIO control register offset
+ calculation
+Date: Thu, 29 Jun 2017 16:14:14 -0700
+Message-ID: <03edf024-f788-0808-89b5-5a8aba4ebb16@linux.intel.com>
+References: <4b57167184fa9aa4d1c183d4c8df6e6a600a7dbd.1498087915.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <CAHp75VeY0beV-TxXpyc7gSW5jPs0da2wnRt-WrikdQ4CSxKjJw@mail.gmail.com>
+ <893836dc-9f7d-da72-7fa0-909ec0025d5e@redhat.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:36082 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbdF2WZ2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 18:25:28 -0400
-Received: by mail-it0-f42.google.com with SMTP id m68so53035246ith.1
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 15:25:28 -0700 (PDT)
-In-Reply-To: <37d75c89-883f-1c58-23e8-7e0213935986@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <893836dc-9f7d-da72-7fa0-909ec0025d5e@redhat.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sathyanarayanan Kuppuswamy Natarajan <sathyaosid@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Al Cooper <alcooperx@gmail.com>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-On Thu, Jun 29, 2017 at 9:38 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> On 06/29/2017 02:17 AM, Linus Walleij wrote:
+Hi Hans,
 
->> So if it is not desireable to have every driver know which exact
->> state it came from like S3 this or S2 that and on this laptop
->> we have S2' which is slightly different and such mess (that you
->> predict IIUC) what we really need to know is pretty simple:
->> did the hardware loose its state or not?
+
+On 06/29/2017 06:24 AM, Hans de Goede wrote:
+> Hi,
 >
-> That information is inherently platform specific though, so on platforms
-> where pinctrl-single is used, you won't necessarily know whether the
-> state should be restored (conversely saved) so maybe that means we
-> should have the possibility for a platform to define a wrapper around
-> pinctrl-single whose purpose is to implement platform specific
-> suspend/r/resume functions and just that really? Is there such a driver
-> already that uses pinctrl-single more as a "library" than anything else?
+> On 29-06-17 14:30, Andy Shevchenko wrote:
+>> +Cc: Hans
+>>
+>> On Mon, Jun 26, 2017 at 8:37 PM,
+>> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+>>> From: Kuppuswamy Sathyanarayanan 
+>>> <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>>
+>>> According to Whiskey Cove PMIC GPIO controller specification, for GPIO
+>>> pins 0-12, GPIO input and output register control address range from,
+>>>
+>>> 0x4e44-0x4e50 for GPIO outputs control register
+>>>
+>>> 0x4e51-0x4e5d for GPIO input control register
+>>>
+>>> But, currently when calculating the GPIO register offsets in to_reg()
+>>> function, all GPIO pins in the same bank uses the same GPIO control
+>>> register address. This logic is incorrect. This patch fixes this
+>>> issue.
+>>
+>>>
+>>> This patch also adds support to selectively skip register modification
+>>> for virtual GPIOs.
+>>>
+>>> In case of Whiskey Cove PMIC, ACPI code may use up 94 virtual GPIOs.
+>>> These virtual GPIOs are used by the ACPI code as means to access 
+>>> various
+>>> non GPIO bits of PMIC. So for these virtual GPIOs, we don't need to
+>>> manipulate the physical GPIO pin register. A similar patch has been
+>>> merged recently by Hans for Crystal Cove PMIC GPIO driver. You can
+>>> find more details about it in Commit 9a752b4c9ab9 ("gpio: crystalcove:
+>>> Do not write regular gpio registers for virtual GPIOs")
+>>
+>> For me (disregards to content of the patch) the question is: did we
+>> ever have a *working* solution looking to the bug fixes on this
+>> driver?!
+>>
+>> I would suggest to stop applying patches on Intel PMICs without
+>> Tested-by tag from independent testers.
+>>
+>> Hans, do you have anything to add / comment on this?
+>
+> Yes, I noticed the driver .name = "bxt_wcove_gpio", I myself have
+> a device with a Cherry Trail Whiskey Cove variant. For those reading
+> along here which SoC / platform a PMIC is used on (Cherry Trail vs
+> Broxton) may seem unrelevant. But Intel has a per platform variant
+> of its Crystal Cove and Whiskey Cove PMICs and the platform variants
+> are really just completely different PMICs, using incompatible
+> registermaps for one. So I would really like us to stop referring
+> to these devices as Whiskey Cove (or wcove) and instead name them
+> "Cherry Trail Whiskey Cove" or cht_wc, "Bay Trail Crystal Cove" /
+> byt_crc, etc. and do so consistently!
+>
+> E.g. I've recently learned that there are Cherry Trail devices
+> with Crystal Cove PMICs (Dell Venue 8 pro 5855) and enabling
+> the Crystal Cove PMIC ACPI Opregion on those wrecks havoc because
+> it causes the wrong registers to get modified. Specifically
+> the regulator control registers have slightly different addresses
+> so we are modifying the wrong regulators! <sarcasm> Which is not a
+> problem, right ? </sarcasm>
+>
+> Anyways back to the topic. Kuppuswamy do you have access to
+> *Cherry Trail* Whiskey Cove documentation and can you check that
+> the GPIO ctrl and irq registers are the same there ? IOW can
+> you check if we can re-use this driver for the
+> Cherry Trail Whiskey Cove PMIC ?
+You are right. I just checked the spec documents and the GPIO controller 
+register map for CHT PMIC is different compared to BXT.
 
-pinctrl-single maye not be the easiest in cases like this, but Tony
-et al have bolted in a few OMAP specifics to pinctrl-single in the
-past so I don't see why this would be a problem.
+In BXT Whiskey Cove, we have 3 GPIO banks. But in CHT, we have only two. 
+Also they are different alignment in register map.
 
-commit 02e483f66deb6bd8df6af450726574614eb53be3
-"pinctrl: single: Prepare for supporting SoC specific features"
-etc.
+So this driver will not work with CHT Whiskey Cove PMIC.
+> If not then the .c file
+> should really be renamed to drivers/gpio/gpio-bxt-wcove.c
+I also agree with this point. If Linus is also fine with rename, I can 
+submit a patch for it.
+>
+> And future patches should also use gpio-bxt-wcove in their
+> subject.
+>
+> With that said, the patch looks good to me.
+>
+> Regards,
+>
+> Hans
+>
 
-Yours,
-Linus Walleij
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
