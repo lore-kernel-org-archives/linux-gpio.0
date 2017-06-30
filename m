@@ -1,106 +1,81 @@
-From: jeffy <jeffy.chen@rock-chips.com>
-Subject: Re: [RFC PATCH] pinctrl: rockchip: add irq_shutdown
-Date: Fri, 30 Jun 2017 09:24:54 +0800
-Message-ID: <5955A866.20308@rock-chips.com>
-References: <1498223019-9123-1-git-send-email-jeffy.chen@rock-chips.com> <20170629220532.GA54678@google.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH 0/4] pinctrl: Add USB support for Aspeed SoCs
+Date: Fri, 30 Jun 2017 10:54:58 +0930
+Message-ID: <1498785898.5203.12.camel@aj.id.au>
+References: <20170627021214.23323-1-andrew@aj.id.au>
+         <CACRpkdZpJuaedE=04we_bcLB7qzOdvJAz4QmTfnuZA=5PrMf0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:55835 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751784AbdF3BZF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 21:25:05 -0400
-In-Reply-To: <20170629220532.GA54678@google.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-4p9Wm0Z7u8HgnG5MYdFt"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZpJuaedE=04we_bcLB7qzOdvJAz4QmTfnuZA=5PrMf0g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ryan Chen <ryan_chen@aspeedtech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-aspeed@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: Brian Norris <briannorris@chromium.org>
-Cc: linux-kernel@vger.kernel.org, tfiga@chromium.org, heiko@sntech.de, dianders@chromium.org, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-
-Hi brian,
-
-On 06/30/2017 06:05 AM, Brian Norris wrote:
-> On Fri, Jun 23, 2017 at 09:03:39PM +0800, Jeffy Chen wrote:
->> Currently the rockchip pinctrl driver would try to enable/disable the
->> gpio bank clk when enable/disable an irq.
->>
->> So when the irq core trying to shutdown an already disabled irq, it
->> would result in unbalanced clk disable request:
->> [   35.911955] WARNING: at drivers/clk/clk.c:680
->> ...
->> [   37.272271] Call trace:
->> [   37.274729] [<ffffffc0007ac270>] clk_core_disable+0x28/0x194
->> [   37.280395] [<ffffffc0007ac6a8>] clk_disable+0x34/0x48
->> [   37.285544] [<ffffffc0004f3bf0>] rockchip_irq_disable+0x30/0x3c
->> [   37.291472] [<ffffffc00027a7e0>] __irq_disable+0x40/0x64
->> [   37.296791] [<ffffffc00027a86c>] irq_shutdown+0x68/0x8c
->> [   37.302023] [<ffffffc0002777fc>] __free_irq+0x110/0x218
->> [   37.307254] [<ffffffc0002779a8>] free_irq+0x54/0x64
->> [   37.312138] [<ffffffc00027ba24>] devm_irq_release+0x24/0x30
->>
->> Add an irq_shutdown callback, and do a sanity check for irq state to
->> prevent that.
->
-> IMO, this patch is completely the wrong approach. Either we:
->
-> (a) follow the current semantics of the irqchip core handling (which
-> tglx described more or less as "no refcounting; no guarantee that
-> enable/disable are balanced") or
->
-> (b) fix the irqchip core to provide the above guarantee
-right, since we have:
-bf22ff45 genirq: Avoid unnecessary low level irq function calls
-d829b8f genirq: Set irq masked state when initializing irq_desc
-
-this issue should be fixed now.
->
-> To do (a) properly would be rather trivial too; just keep an extra
-> bitmask in the bank struct to track the "enabled" state of each
-> interrupt. If the mask is non-zero, enable the clock; if zero, disable.
-> (Incidentally, this is pretty similar logic to what you ended up with on
-> your SPI runtime PM / set_cs() patches recently.)
->
-> This patch does neither (a) nor (b), and so I'd tend to reject it.
->
-> Brian
->
->> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
->> ---
->>
->>   drivers/pinctrl/pinctrl-rockchip.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
->> index 607f52c..b0e3130 100644
->> --- a/drivers/pinctrl/pinctrl-rockchip.c
->> +++ b/drivers/pinctrl/pinctrl-rockchip.c
->> @@ -2551,6 +2551,12 @@ static void rockchip_irq_disable(struct irq_data *d)
->>   	clk_disable(bank->clk);
->>   }
->>
->> +static void rockchip_irq_shutdown(struct irq_data *d)
->> +{
->> +	if (!irqd_irq_disabled(d))
->> +		rockchip_irq_disable(d);
->> +}
->> +
->>   static void rockchip_irq_bus_lock(struct irq_data *d)
->>   {
->>   	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
->> @@ -2641,6 +2647,7 @@ static int rockchip_interrupts_register(struct platform_device *pdev,
->>   		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
->>   		gc->chip_types[0].chip.irq_enable = rockchip_irq_enable;
->>   		gc->chip_types[0].chip.irq_disable = rockchip_irq_disable;
->> +		gc->chip_types[0].chip.irq_shutdown = rockchip_irq_shutdown;
->>   		gc->chip_types[0].chip.irq_set_wake = irq_gc_set_wake;
->>   		gc->chip_types[0].chip.irq_suspend = rockchip_irq_suspend;
->>   		gc->chip_types[0].chip.irq_resume = rockchip_irq_resume;
->> --
->> 2.1.4
->>
->>
->
->
->
 
 
+--=-4p9Wm0Z7u8HgnG5MYdFt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 2017-06-29 at 14:53 +0200, Linus Walleij wrote:
+> > On Tue, Jun 27, 2017 at 4:12 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
+:
+>=20
+> > With recent interest in the USB virtual hub in the Aspeed SoCs[1] it is=
+ a good
+> > time to add pinmux support for the USB ports and controllers. The earli=
+er
+> > series of pinmux patches for the Aspeed SoCs focussed on supporting pin=
+s which
+> > were capable of GPIO. This is not the case for the USB pins, hence they=
+ have
+> > been unsupported until now.
+> >=20
+> > Rob: I know you've mentioned previously you desired complete bindings t=
+o be
+> > provided up front, so apologies for continuing to add functionality. Th=
+is looks
+> > to be the last of it.
+>=20
+> Waiting for DT review and addressing of Beji's comment for these.
+
+Okay, Rob's now ack'ed the bindings and Ben's comments should amount to
+a commit message change. I've reworked it.
+
+>=20
+> Please resend after the merge window.
+
+Will do.
+
+Thanks,
+
+Andrew
+
+>=20
+> Yours,
+> Linus Walleij
+--=-4p9Wm0Z7u8HgnG5MYdFt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJZVahqAAoJEJ0dnzgO5LT5D4YP/1S7guRRVEWH2SvVIrGDDBtf
+XQFaQsj1aaT30HCoeBUAVU0c+oQ5CILU5o34Sgix2LFugm+Ef0THj9RueQe3q8yk
+JrTTekw1Y+a9E1pvn0oF4Hn62xxQldHMS654rFxa6E01XXu2LUa4vDUN+5OTp143
+6rsGngKy6dJCs37TgGrD/jUbMSyvqtfJpE40FXIczc5e8YUudNA+lhdnCp7THV85
+K2I5uW2RWuNu3Yeu54pCbfveritsepRFVH3bqR6KVxq5ZufMl2Fj4/woZEzADdai
+w0ddbtbpAMYkj3RbMa2x3FyvjrXwXvBqPdSEyKE7T442n7KDdKHvPVzm0lGdaMXn
+C1zK3/3Y3aplKsI5f3DIbnVlP/YDxRiJopL4AxFfAL2aeZQ//hu4YRirK2uA0jP4
+tKsZQvGOVImVmEpv3SsZYxj9/UO0REguBJlsyhpNTZmvO3Tg3dF833WEdJzMvlmP
+DKRureS52I8POvwNM1ANTRFpFTNeD8fbGmmbB92LGZCSTnX9J0jibvwM1BJbtKOd
+0HMIP3haOD8fUYdh+ekKSTLVpbVhd+vc34jHMl4cw6C334V4Cv4YhepBnCPif40G
+r3i4FWHLBCL9jBXfn0tfNDf3/67idy/vsa3c2B1Jpepwe51Ni9D6RZmMzWikD5R4
+WPrP1HH8GvlSVNYxeGI1
+=6zej
+-----END PGP SIGNATURE-----
+
+--=-4p9Wm0Z7u8HgnG5MYdFt--
