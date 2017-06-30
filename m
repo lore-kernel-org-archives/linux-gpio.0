@@ -1,81 +1,62 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH 0/4] pinctrl: Add USB support for Aspeed SoCs
-Date: Fri, 30 Jun 2017 10:54:58 +0930
-Message-ID: <1498785898.5203.12.camel@aj.id.au>
-References: <20170627021214.23323-1-andrew@aj.id.au>
-         <CACRpkdZpJuaedE=04we_bcLB7qzOdvJAz4QmTfnuZA=5PrMf0g@mail.gmail.com>
+From: Brian Norris <briannorris@chromium.org>
+Subject: Re: [RFC PATCH] pinctrl: rockchip: add irq_shutdown
+Date: Thu, 29 Jun 2017 18:29:31 -0700
+Message-ID: <20170630012930.GA99272@google.com>
+References: <1498223019-9123-1-git-send-email-jeffy.chen@rock-chips.com>
+ <20170629220532.GA54678@google.com>
+ <5955A866.20308@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-4p9Wm0Z7u8HgnG5MYdFt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZpJuaedE=04we_bcLB7qzOdvJAz4QmTfnuZA=5PrMf0g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ryan Chen <ryan_chen@aspeedtech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-aspeed@lists.ozlabs.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f51.google.com ([74.125.83.51]:36822 "EHLO
+        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751722AbdF3B3e (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 21:29:34 -0400
+Received: by mail-pg0-f51.google.com with SMTP id u62so55864092pgb.3
+        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 18:29:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <5955A866.20308@rock-chips.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: jeffy <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, tfiga@chromium.org, heiko@sntech.de, dianders@chromium.org, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+On Fri, Jun 30, 2017 at 09:24:54AM +0800, Jeffy Chen wrote:
+> On 06/30/2017 06:05 AM, Brian Norris wrote:
+> >On Fri, Jun 23, 2017 at 09:03:39PM +0800, Jeffy Chen wrote:
+> >>Currently the rockchip pinctrl driver would try to enable/disable the
+> >>gpio bank clk when enable/disable an irq.
+> >>
+> >>So when the irq core trying to shutdown an already disabled irq, it
+> >>would result in unbalanced clk disable request:
+> >>[   35.911955] WARNING: at drivers/clk/clk.c:680
+> >>...
+> >>[   37.272271] Call trace:
+> >>[   37.274729] [<ffffffc0007ac270>] clk_core_disable+0x28/0x194
+> >>[   37.280395] [<ffffffc0007ac6a8>] clk_disable+0x34/0x48
+> >>[   37.285544] [<ffffffc0004f3bf0>] rockchip_irq_disable+0x30/0x3c
+> >>[   37.291472] [<ffffffc00027a7e0>] __irq_disable+0x40/0x64
+> >>[   37.296791] [<ffffffc00027a86c>] irq_shutdown+0x68/0x8c
+> >>[   37.302023] [<ffffffc0002777fc>] __free_irq+0x110/0x218
+> >>[   37.307254] [<ffffffc0002779a8>] free_irq+0x54/0x64
+> >>[   37.312138] [<ffffffc00027ba24>] devm_irq_release+0x24/0x30
+> >>
+> >>Add an irq_shutdown callback, and do a sanity check for irq state to
+> >>prevent that.
+> >
+> >IMO, this patch is completely the wrong approach. Either we:
+> >
+> >(a) follow the current semantics of the irqchip core handling (which
+> >tglx described more or less as "no refcounting; no guarantee that
+> >enable/disable are balanced") or
+> >
+> >(b) fix the irqchip core to provide the above guarantee
+> right, since we have:
+> bf22ff45 genirq: Avoid unnecessary low level irq function calls
+> d829b8f genirq: Set irq masked state when initializing irq_desc
+> 
+> this issue should be fixed now.
 
---=-4p9Wm0Z7u8HgnG5MYdFt
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Oh, I didn't notice Thomas applied those. I'll have to take a look.
 
-On Thu, 2017-06-29 at 14:53 +0200, Linus Walleij wrote:
-> > On Tue, Jun 27, 2017 at 4:12 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
-:
->=20
-> > With recent interest in the USB virtual hub in the Aspeed SoCs[1] it is=
- a good
-> > time to add pinmux support for the USB ports and controllers. The earli=
-er
-> > series of pinmux patches for the Aspeed SoCs focussed on supporting pin=
-s which
-> > were capable of GPIO. This is not the case for the USB pins, hence they=
- have
-> > been unsupported until now.
-> >=20
-> > Rob: I know you've mentioned previously you desired complete bindings t=
-o be
-> > provided up front, so apologies for continuing to add functionality. Th=
-is looks
-> > to be the last of it.
->=20
-> Waiting for DT review and addressing of Beji's comment for these.
-
-Okay, Rob's now ack'ed the bindings and Ben's comments should amount to
-a commit message change. I've reworked it.
-
->=20
-> Please resend after the merge window.
-
-Will do.
-
-Thanks,
-
-Andrew
-
->=20
-> Yours,
-> Linus Walleij
---=-4p9Wm0Z7u8HgnG5MYdFt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCgAGBQJZVahqAAoJEJ0dnzgO5LT5D4YP/1S7guRRVEWH2SvVIrGDDBtf
-XQFaQsj1aaT30HCoeBUAVU0c+oQ5CILU5o34Sgix2LFugm+Ef0THj9RueQe3q8yk
-JrTTekw1Y+a9E1pvn0oF4Hn62xxQldHMS654rFxa6E01XXu2LUa4vDUN+5OTp143
-6rsGngKy6dJCs37TgGrD/jUbMSyvqtfJpE40FXIczc5e8YUudNA+lhdnCp7THV85
-K2I5uW2RWuNu3Yeu54pCbfveritsepRFVH3bqR6KVxq5ZufMl2Fj4/woZEzADdai
-w0ddbtbpAMYkj3RbMa2x3FyvjrXwXvBqPdSEyKE7T442n7KDdKHvPVzm0lGdaMXn
-C1zK3/3Y3aplKsI5f3DIbnVlP/YDxRiJopL4AxFfAL2aeZQ//hu4YRirK2uA0jP4
-tKsZQvGOVImVmEpv3SsZYxj9/UO0REguBJlsyhpNTZmvO3Tg3dF833WEdJzMvlmP
-DKRureS52I8POvwNM1ANTRFpFTNeD8fbGmmbB92LGZCSTnX9J0jibvwM1BJbtKOd
-0HMIP3haOD8fUYdh+ekKSTLVpbVhd+vc34jHMl4cw6C334V4Cv4YhepBnCPif40G
-r3i4FWHLBCL9jBXfn0tfNDf3/67idy/vsa3c2B1Jpepwe51Ni9D6RZmMzWikD5R4
-WPrP1HH8GvlSVNYxeGI1
-=6zej
------END PGP SIGNATURE-----
-
---=-4p9Wm0Z7u8HgnG5MYdFt--
+Brian
