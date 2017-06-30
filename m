@@ -1,42 +1,36 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rza1: Remove unneeded wrong check for wrong variable
-Date: Fri, 30 Jun 2017 15:47:05 +0200
-Message-ID: <CACRpkdaZBVeJkf55EzH+UjNt1d9_PJ7kq2Lm_i-zy7X3gmrS2w@mail.gmail.com>
-References: <1498805859-4136-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] pinctrl: rza1: make structures rza1_gpiochip_template and
+ rza1_pinmux_ops static
+Date: Fri, 30 Jun 2017 15:49:05 +0200
+Message-ID: <CACRpkdaw3APxQhNw9zmc5-41s6jxSS34f7BZ-PncNpmW0=-_8Q@mail.gmail.com>
+References: <20170630102653.9546-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1498805859-4136-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris Brandt <chris.brandt@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:37829 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbdF3NtH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 09:49:07 -0400
+Received: by mail-it0-f51.google.com with SMTP id m84so24764223ita.0
+        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2017 06:49:07 -0700 (PDT)
+In-Reply-To: <20170630102653.9546-1-colin.king@canonical.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 30, 2017 at 8:57 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Jun 30, 2017 at 12:26 PM, Colin King <colin.king@canonical.com> wrote:
 
-> Depending on compiler version:
+> From: Colin Ian King <colin.king@canonical.com>
 >
->     drivers/pinctrl/pinctrl-rza1.c: In function =E2=80=98rza1_pinctrl_pro=
-be=E2=80=99:
->     drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: =E2=80=98ret=E2=80=99=
- may be used uninitialized in this function [-Wmaybe-uninitialized]
->       if (ret)
->          ^
+> structures rza1_gpiochip_template and rza1_pinmux_ops do not need to be
+> in global scope, so make them static.
 >
-> Indeed, the result returned by platform_get_resource() was stored in
-> "res", not "ret".  In addition, the correct error check would be
-> "if (!res)", as platform_get_resource() does not return an error code,
-> but returns NULL on failure.
+> Cleans up sparse warnings:
+> symbol 'rza1_gpiochip_template' was not declared. Should it be static?
+> symbol 'rza1_pinmux_ops' was not declared. Should it be static?
 >
-> However, as devm_ioremap_resource() verifies the validity of the passed
-> resource pointer anyway, the check can just be removed.
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Fixes: 5a49b644b3075f88 ("pinctrl: Renesas RZ/A1 pin and gpio controller"=
-)
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
 Patch applied.
 
