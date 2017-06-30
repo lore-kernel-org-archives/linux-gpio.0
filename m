@@ -1,38 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rza1: make structures rza1_gpiochip_template and
- rza1_pinmux_ops static
-Date: Fri, 30 Jun 2017 15:49:05 +0200
-Message-ID: <CACRpkdaw3APxQhNw9zmc5-41s6jxSS34f7BZ-PncNpmW0=-_8Q@mail.gmail.com>
-References: <20170630102653.9546-1-colin.king@canonical.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [patch 0/5] genirq: Distangle irq_request/release_resources()
+ from irq_desc->lock
+Date: Fri, 30 Jun 2017 14:49:37 +0100
+Message-ID: <36bdf915-6741-c3a6-cfa3-75ccb3769d93@arm.com>
+References: <20170629213334.375848050@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f51.google.com ([209.85.214.51]:37829 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbdF3NtH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 09:49:07 -0400
-Received: by mail-it0-f51.google.com with SMTP id m84so24764223ita.0
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2017 06:49:07 -0700 (PDT)
-In-Reply-To: <20170630102653.9546-1-colin.king@canonical.com>
+Received: from foss.arm.com ([217.140.101.70]:42602 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751840AbdF3Ntl (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 30 Jun 2017 09:49:41 -0400
+In-Reply-To: <20170629213334.375848050@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, linux-gpio@vger.kernel.org, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>
 
-On Fri, Jun 30, 2017 at 12:26 PM, Colin King <colin.king@canonical.com> wrote:
+On 29/06/17 22:33, Thomas Gleixner wrote:
+> The irq_request/release_resources() callbacks are a problem on RT as they
+> are called under irq_desc->lock with interrupts disabled.
+> 
+> Aside of that calling them under irq_desc->lock is conceptually wrong and
+> has a (hard to trigger and probably theoretical) issue in free_irq(). See
+> patch 4/5 for a detailed explanation.
+> 
+> The series contains also a fix for the exynos gpio driver, which fiddles
+> with the irq masking in the resource callbacks, which is bogus and
+> potentially harmful.
+> 
+> Finally it moves the irq timings deallocation out of the spin locked region.
+> 
+> Thanks,
+> 
+> 	tglx
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c |    4 --
+>  include/linux/irqdesc.h                  |    3 +
+>  kernel/irq/irqdesc.c                     |    1 
+>  kernel/irq/manage.c                      |   47 +++++++++++++++++++------------
+>  4 files changed, 34 insertions(+), 21 deletions(-)
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> structures rza1_gpiochip_template and rza1_pinmux_ops do not need to be
-> in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> symbol 'rza1_gpiochip_template' was not declared. Should it be static?
-> symbol 'rza1_pinmux_ops' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+For the series:
 
-Patch applied.
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
-Yours,
-Linus Walleij
+	M.
+-- 
+Jazz is not dead. It just smells funny...
