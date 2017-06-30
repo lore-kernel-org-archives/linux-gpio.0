@@ -1,55 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from
- resource management
-Date: Fri, 30 Jun 2017 16:58:13 +0200
-Message-ID: <20170630145813.r4h346yi6iricslm@kozik-lap>
-References: <20170629213334.375848050@linutronix.de>
- <20170629214343.882576048@linutronix.de>
- <CACRpkdazKNDdcoJxvJ9injibZmOTsdmN-Y0sTS5eyanwz=iFEA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34577 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751560AbdF3O6T (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 10:58:19 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdazKNDdcoJxvJ9injibZmOTsdmN-Y0sTS5eyanwz=iFEA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pinctrl: rza1: fix error handling
+Date: Fri, 30 Jun 2017 18:09:53 +0200
+Message-ID: <20170630161009.13762-1-arnd@arndb.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jun 30, 2017 at 03:53:18PM +0200, Linus Walleij wrote:
-> On Thu, Jun 29, 2017 at 11:33 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> > The irq chip callbacks irq_request/release_resources() have absolutely no
-> > business with masking and unmasking the irq.
-> >
-> > The core code unmasks the interrupt after complete setup and masks it
-> > before invoking irq_release_resources().
-> >
-> > The unmask is actually harmful as it happens before the interrupt is
-> > completely initialized in __setup_irq().
-> >
-> > Remove it.
-> >
-> > Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Kukjin Kim <kgene@kernel.org>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Cc: linux-gpio@vger.kernel.org
-> 
-> Patch applied directly since it has no deps and fixes queued stuff for v4.13.
-> I guess Krysztof will make sure it doesn't break anything.
+A compiler warning points out a typo:
 
-Everything seems to work fine with the patchset.
+drivers/pinctrl/pinctrl-rza1.c: In function 'rza1_pinctrl_probe':
+drivers/pinctrl/pinctrl-rza1.c:1260:5: error: 'ret' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Best regards,
-Krzysztof
+This changes the condition to the usual check for failure of the previous
+function call.
 
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pinctrl/pinctrl-rza1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 614a043f3038..1d57d4480a02 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1257,7 +1257,7 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
+ 	rza1_pctl->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (ret)
++	if (!res)
+ 		return -ENODEV;
+ 
+ 	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
+-- 
+2.9.0
