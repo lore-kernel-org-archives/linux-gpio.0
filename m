@@ -1,61 +1,58 @@
-From: jmondi <jacopo@jmondi.org>
-Subject: Re: [PATCH] pinctrl: rza1: fix error handling
-Date: Fri, 30 Jun 2017 18:42:21 +0200
-Message-ID: <20170630164221.GH11157@w540>
-References: <20170630161009.13762-1-arnd@arndb.de>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
+Date: Fri, 30 Jun 2017 14:54:37 -0500
+Message-ID: <f8495533-b53f-8999-9320-38f18ca7691b@ti.com>
+References: <1497543642.3086.35.camel@baylibre.com>
+ <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
+ <1497954416.7387.1.camel@baylibre.com>
+ <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
+ <1497979438.7387.10.camel@baylibre.com>
+ <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
+ <1498141515.7387.16.camel@baylibre.com>
+ <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
+ <1498587929.25567.12.camel@baylibre.com>
+ <657221fa-c6b3-e914-1a81-9a48972ee6d5@ti.com>
+ <CACRpkdar9YwnMgLb1y1sP1Vbg-1MgPAOcRPcfNCtmpKuf+g+kQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:58119 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751072AbdF3QmZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 12:42:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20170630161009.13762-1-arnd@arndb.de>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:33630 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752611AbdF3TzI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 15:55:08 -0400
+In-Reply-To: <CACRpkdar9YwnMgLb1y1sP1Vbg-1MgPAOcRPcfNCtmpKuf+g+kQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hi Arnd,
 
-On Fri, Jun 30, 2017 at 06:09:53PM +0200, Arnd Bergmann wrote:
-> A compiler warning points out a typo:
->
 
-Geert already sent a fix for this
-https://patchwork.kernel.org/patch/9818555/
+On 06/29/2017 09:16 AM, Linus Walleij wrote:
+> On Tue, Jun 27, 2017 at 10:43 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+>> And my opinion is still the same here - It should be perfectly valid to create
+>> mappings from gpio_to_irq() to handle properly orthogonality of gpiochip and
+>> gpio-irqchip functionality and satisfy SPARSE_IRQ goal (allocate Linux virq and
+>> irq descriptors on demand).
+> 
+> You are right.
+> 
+> I would rather say: GPIO drivers that have a 1-to-1 mapping between GPIO
+> lines and IRQs should not do it, they should map up them all at probe().
+> 
 
-It should have been applied already
+Sry, can't completely agree here :( There could be 300 (or even thousands)
+of gpios and only dozen of them will be used as GPIO IRQ, so statical mapping will
+just waste system resources. So, better not define such kind of restrictions -
+it seems platform/system specific.
 
-Thanks
-   j
+> Drivers that actually have fewer IRQs than GPIO lines should be able to
+> create the mappings in gpio_to_irq().
 
-> drivers/pinctrl/pinctrl-rza1.c: In function 'rza1_pinctrl_probe':
-> drivers/pinctrl/pinctrl-rza1.c:1260:5: error: 'ret' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->
-> This changes the condition to the usual check for failure of the previous
-> function call.
->
-> Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/pinctrl/pinctrl-rza1.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-> index 614a043f3038..1d57d4480a02 100644
-> --- a/drivers/pinctrl/pinctrl-rza1.c
-> +++ b/drivers/pinctrl/pinctrl-rza1.c
-> @@ -1257,7 +1257,7 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
->  	rza1_pctl->dev = &pdev->dev;
->
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (ret)
-> +	if (!res)
->  		return -ENODEV;
->
->  	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
-> --
-> 2.9.0
->
+-- 
+regards,
+-grygorii
