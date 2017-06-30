@@ -1,58 +1,220 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Fri, 30 Jun 2017 14:54:37 -0500
-Message-ID: <f8495533-b53f-8999-9320-38f18ca7691b@ti.com>
-References: <1497543642.3086.35.camel@baylibre.com>
- <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
- <1497954416.7387.1.camel@baylibre.com>
- <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
- <1497979438.7387.10.camel@baylibre.com>
- <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
- <1498141515.7387.16.camel@baylibre.com>
- <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
- <1498587929.25567.12.camel@baylibre.com>
- <657221fa-c6b3-e914-1a81-9a48972ee6d5@ti.com>
- <CACRpkdar9YwnMgLb1y1sP1Vbg-1MgPAOcRPcfNCtmpKuf+g+kQ@mail.gmail.com>
+From: Stefan Agner <stefan@agner.ch>
+Subject: Re: [PATCH 2/2] gpio: gpio-vf610: add imx7ulp support
+Date: Fri, 30 Jun 2017 14:53:57 -0700
+Message-ID: <e15b08d4857d5498b70a57f8022b5ba5@agner.ch>
+References: <1494829706-5661-1-git-send-email-aisheng.dong@nxp.com>
+ <1494829706-5661-3-git-send-email-aisheng.dong@nxp.com>
+ <690d43f0314da9d340065b551700d6b7@agner.ch>
+ <AM3PR04MB3067C3AFBD7285A5CC24B6780DA0@AM3PR04MB306.eurprd04.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:33630 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752611AbdF3TzI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 15:55:08 -0400
-In-Reply-To: <CACRpkdar9YwnMgLb1y1sP1Vbg-1MgPAOcRPcfNCtmpKuf+g+kQ@mail.gmail.com>
-Content-Language: en-US
+Received: from mail.kmu-office.ch ([178.209.48.109]:39124 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753162AbdF3Vze (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 17:55:34 -0400
+In-Reply-To: <AM3PR04MB3067C3AFBD7285A5CC24B6780DA0@AM3PR04MB306.eurprd04.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>, Peter Chen <peter.chen@nxp.com>, LW@KARO-electronics.de
 
-
-
-On 06/29/2017 09:16 AM, Linus Walleij wrote:
-> On Tue, Jun 27, 2017 at 10:43 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
+On 2017-06-21 06:30, A.s. Dong wrote:
+> Hi Stefan,
 > 
->> And my opinion is still the same here - It should be perfectly valid to create
->> mappings from gpio_to_irq() to handle properly orthogonality of gpiochip and
->> gpio-irqchip functionality and satisfy SPARSE_IRQ goal (allocate Linux virq and
->> irq descriptors on demand).
-> 
-> You are right.
-> 
-> I would rather say: GPIO drivers that have a 1-to-1 mapping between GPIO
-> lines and IRQs should not do it, they should map up them all at probe().
-> 
+>> -----Original Message-----
+>> From: Stefan Agner [mailto:stefan@agner.ch]
+>> Sent: Tuesday, May 16, 2017 1:59 AM
+>> To: A.S. Dong
+>> Cc: linux-gpio@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linus.walleij@linaro.org; shawnguo@kernel.org; Jacky Bai; Andy Duan;
+>> kernel@pengutronix.de; Alexandre Courbot; Peter Chen
+>> Subject: Re: [PATCH 2/2] gpio: gpio-vf610: add imx7ulp support
+>>
+>> On 2017-05-14 23:28, Dong Aisheng wrote:
+>> > The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P) on
+>> > MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the RGPIO2P
+>> > has an extra Port Data Direction Register (PDDR) used to configure the
+>> > individual port pins for input or output.
+>> >
+>> > We introduce a FSL_GPIO_HAVE_PDDR with fsl_gpio_soc_data data to
+>> > distinguish this differences. And we support getting the output status
+>> > by checking the GPIO direction in PDDR.
+>> >
+>> > Cc: Linus Walleij <linus.walleij@linaro.org>
+>> > Cc: Alexandre Courbot <gnurou@gmail.com>
+>> > Cc: Shawn Guo <shawnguo@kernel.org>
+>> > Cc: Stefan Agner <stefan@agner.ch>
+>> > Cc: Fugang Duan <fugang.duan@nxp.com>
+>> > Cc: Peter Chen <peter.chen@nxp.com>
+>> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+>> > ---
+>> >  drivers/gpio/gpio-vf610.c | 49
+>> > ++++++++++++++++++++++++++++++++++++++++++++---
+>> >  1 file changed, 46 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+>> > index 521fbe3..a439d27 100644
+>> > --- a/drivers/gpio/gpio-vf610.c
+>> > +++ b/drivers/gpio/gpio-vf610.c
+>> > @@ -30,10 +30,15 @@
+>> >
+>> >  #define VF610_GPIO_PER_PORT		32
+>> >
+>> > +struct fsl_gpio_soc_data {
+>> > +	u32 flags;
+>> > +};
+>> > +
+>> >  struct vf610_gpio_port {
+>> >  	struct gpio_chip gc;
+>> >  	void __iomem *base;
+>> >  	void __iomem *gpio_base;
+>> > +	const struct fsl_gpio_soc_data *sdata;
+>> >  	u8 irqc[VF610_GPIO_PER_PORT];
+>> >  	int irq;
+>> >  };
+>> > @@ -43,6 +48,7 @@ struct vf610_gpio_port {
+>> >  #define GPIO_PCOR		0x08
+>> >  #define GPIO_PTOR		0x0c
+>> >  #define GPIO_PDIR		0x10
+>> > +#define GPIO_PDDR		0x14
+>> >
+>> >  #define PORT_PCR(n)		((n) * 0x4)
+>> >  #define PORT_PCR_IRQC_OFFSET	16
+>> > @@ -59,10 +65,18 @@ struct vf610_gpio_port {
+>> >  #define PORT_INT_EITHER_EDGE	0xb
+>> >  #define PORT_INT_LOGIC_ONE	0xc
+>> >
+>> > +/* SoC has a Port Data Direction Register (PDDR) */
+>> > +#define FSL_GPIO_HAVE_PDDR	BIT(0)
+>> > +
+>> >  static struct irq_chip vf610_gpio_irq_chip;
+>> >
+>> > +static const struct fsl_gpio_soc_data imx_data = {
+>> > +	.flags = FSL_GPIO_HAVE_PDDR,
+>> > +};
+>> > +
+>> >  static const struct of_device_id vf610_gpio_dt_ids[] = {
+>> > -	{ .compatible = "fsl,vf610-gpio" },
+>> > +	{ .compatible = "fsl,vf610-gpio",	.data = NULL, },
+>> > +	{ .compatible = "fsl,imx7ulp-gpio",	.data = &imx_data, },
+>> >  	{ /* sentinel */ }
+>> >  };
+>> >
+>> > @@ -79,8 +93,18 @@ static inline u32 vf610_gpio_readl(void __iomem
+>> > *reg)  static int vf610_gpio_get(struct gpio_chip *gc, unsigned int
+>> > gpio)  {
+>> >  	struct vf610_gpio_port *port = gpiochip_get_data(gc);
+>> > -
+>> > -	return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR) & BIT(gpio));
+>> > +	unsigned long mask = BIT(gpio);
+>> > +	void __iomem *addr;
+>> > +
+>> > +	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR) {
+>> > +		mask &= vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
+>> > +		addr = mask ? port->gpio_base + GPIO_PDOR :
+>> > +			      port->gpio_base + GPIO_PDIR;
+>> > +		return !!(vf610_gpio_readl(addr) & BIT(gpio));
 
-Sry, can't completely agree here :( There could be 300 (or even thousands)
-of gpios and only dozen of them will be used as GPIO IRQ, so statical mapping will
-just waste system resources. So, better not define such kind of restrictions -
-it seems platform/system specific.
+I still feel it would be better to read back the actual value on the
+wire...
 
-> Drivers that actually have fewer IRQs than GPIO lines should be able to
-> create the mappings in gpio_to_irq().
+But this would require to enable the input buffer in
+imx7ulp_pmx_gpio_set_direction. 
 
--- 
-regards,
--grygorii
+Lothar was with me in this discussion:
+https://patchwork.kernel.org/patch/9726163/
+
+Or is there really a technical limitation on i.MX7ULP?
+
+We could also change it later, especially if the pinctrl changes already
+got merged anyway.
+
+>From a Vybrid perspective:
+Acked-by: Stefan Agner <stefan@agner.ch>
+
+--
+Stefan
+
+>> > +	} else {
+>> > +		return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR)
+>> > +					   & BIT(gpio));
+>> > +	}
+>>
+>> I would rather prefer to read the actual value on the wire...
+>>
+>> >  }
+>> >
+>> >  static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio,
+>> > int val) @@ -96,12 +120,28 @@ static void vf610_gpio_set(struct
+>> > gpio_chip *gc, unsigned int gpio, int val)
+>> >
+>> >  static int vf610_gpio_direction_input(struct gpio_chip *chip,
+>> > unsigned gpio)  {
+>> > +	struct vf610_gpio_port *port = gpiochip_get_data(chip);
+>> > +	unsigned long mask = BIT(gpio);
+>> > +	u32 val;
+>> > +
+>> > +	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR) {
+>> > +		val = vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
+>> > +		val &= ~mask;
+>> > +		vf610_gpio_writel(val, port->gpio_base + GPIO_PDDR);
+>>
+>> As mentioned in the pinctrl patchset review, if we can do this orthogonal,
+>> I would rather prefer to not involve pinctrl here in the i.MX 7ULP case.
+>> So I would make sure that pinctrl_gpio_direction_input/output does not get
+>> called at all (e.g.
+>> returning in this if case)...
+>>
+> 
+> As we already discussed and decided to remove pinctrl_gpio_enable/disable
+> and only keep pinctrl_gpio_direction_input/output for both VF610 and ULP [1],
+> and ULP will read PDOR as it has FSL_GPIO_HAVE_PDDR flag, so there will
+> be no changes for this series.
+> 
+> Would you help double review and give a tag if it's ok for you?
+> 
+> [1] [PATCH V4 0/7] pinctrl: imx: add imx7ulp pinctrl support
+> https://www.spinics.net/lists/arm-kernel/msg589700.html
+> 
+> Regards
+> Dong Aisheng
+> 
+>> --
+>> Stefan
+>>
+>> > +	}
+>> > +
+>> >  	return pinctrl_gpio_direction_input(chip->base + gpio);  }
+>> >
+>> >  static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned
+>> gpio,
+>> >  				       int value)
+>> >  {
+>> > +	struct vf610_gpio_port *port = gpiochip_get_data(chip);
+>> > +	unsigned long mask = BIT(gpio);
+>> > +
+>> > +	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR)
+>> > +		vf610_gpio_writel(mask, port->gpio_base + GPIO_PDDR);
+>> > +
+>> >  	vf610_gpio_set(chip, gpio, value);
+>> >
+>> >  	return pinctrl_gpio_direction_output(chip->base + gpio); @@ -216,6
+>> > +256,8 @@ static struct irq_chip vf610_gpio_irq_chip = {
+>> >
+>> >  static int vf610_gpio_probe(struct platform_device *pdev)  {
+>> > +	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
+>> > +							   &pdev->dev);
+>> >  	struct device *dev = &pdev->dev;
+>> >  	struct device_node *np = dev->of_node;
+>> >  	struct vf610_gpio_port *port;
+>> > @@ -227,6 +269,7 @@ static int vf610_gpio_probe(struct platform_device
+>> *pdev)
+>> >  	if (!port)
+>> >  		return -ENOMEM;
+>> >
+>> > +	port->sdata = of_id->data;
+>> >  	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> >  	port->base = devm_ioremap_resource(dev, iores);
+>> >  	if (IS_ERR(port->base))
