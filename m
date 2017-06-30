@@ -1,50 +1,82 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [bug report] pinctrl: add ZTE ZX pinctrl driver support
-Date: Fri, 30 Jun 2017 10:53:57 +0300
-Message-ID: <20170630075357.vl34jcvkdxy2kvxm@mwanda>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
+Date: Fri, 30 Jun 2017 10:10:15 +0200
+Message-ID: <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:51561 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbdF3HyL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 03:54:11 -0400
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1494489813-27321-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: shawn.guo@linaro.org
-Cc: linux-gpio@vger.kernel.org
 
-Hello Shawn Guo,
+Hi Rich, Sato-san,
 
-This is a semi-automatic email about new static checker warnings.
+On Thu, May 11, 2017 at 10:03 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+>
+>     sh-pfc pfc-sh7722: pin 0 already registered
+>     sh-pfc pfc-sh7722: error during pin registration
+>     sh-pfc pfc-sh7722: could not register: -22
+>     sh-pfc: probe of pfc-sh7722 failed with error -22
+>
+> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+> array initializers, where the GPIO_* enums serve as indices.
+> Apparently GPIO_PTQ7 was defined in the enum, but never used.
+> If enum values are defined, but never used, pinmux_pins[] contains
+> (zero-filled) holes.  Hence such entries are treated as pin zero, which
+> was registered before, and pinctrl registration fails.
+>
+> I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
+> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
+> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
+> drivers/pinctrl/core.c already had the check.
+>
+> Some scripting revealed a few more broken drivers:
+>   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+>   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+>     PINMUX_GPIO().
+>
+> Patch 1 fixes the issue on sh7722, and was tested.
+> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
+> to lack of hardware.
+>
+> Changes compared to v1:
+>   - Replace fake error messages by references to sh7722,
+>   - Add Reviewed-by, Tested-by.
+>
+> Thanks for applying!
+>
+> Geert Uytterhoeven (4):
+>   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+>   sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
+>     registration
+>   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>     registration
+>   sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>     registration
+>
+>  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+>  arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+>  arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
+>  arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+>  4 files changed, 7 insertions(+), 11 deletions(-)
 
-The patch cbff0c4d27f4: "pinctrl: add ZTE ZX pinctrl driver support" 
-from Apr 24, 2017, leads to the following Smatch complaint:
+Are these patches planned for inclusion in v4.13?
+I don't see them in next-2016.
 
-drivers/pinctrl/zte/pinctrl-zx.c:76 zx_set_mux()
-	 warn: variable dereferenced before check 'data' (see line 67)
+Thanks!
 
-drivers/pinctrl/zte/pinctrl-zx.c
-    66		struct zx_pin_data *data = pindesc->drv_data;
-    67		struct zx_mux_desc *mux = data->muxes;
-                                          ^^^^^^^^^^^
-Dereference.
+Gr{oetje,eeting}s,
 
-    68		u32 mask = (1 << data->width) - 1;
-    69		u32 offset = data->offset;
-    70		u32 bitpos = data->bitpos;
-    71		struct function_desc *func;
-    72		unsigned long flags;
-    73		u32 val, mval;
-    74	
-    75		/* Skip reserved pin */
-    76		if (!data)
-                    ^^^^^
-Too late.
+                        Geert
 
-    77			return -EINVAL;
-    78	
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-regards,
-dan carpenter
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
