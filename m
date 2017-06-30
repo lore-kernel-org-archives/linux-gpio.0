@@ -1,183 +1,106 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 2/2] [v2] pinctrl: qcom: qdf2xxx: expose only some GPIO pins
-Date: Thu, 29 Jun 2017 19:42:19 -0500
-Message-ID: <1498783339-749-2-git-send-email-timur@codeaurora.org>
-References: <1498783339-749-1-git-send-email-timur@codeaurora.org>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH 2/4] ARM: aspeed: g5: Add USB functions to pinctrl
+ bindings
+Date: Fri, 30 Jun 2017 10:44:56 +0930
+Message-ID: <1498785296.5203.10.camel@aj.id.au>
+References: <20170627021214.23323-1-andrew@aj.id.au>
+         <20170627021214.23323-3-andrew@aj.id.au>
+         <20170629201324.c4t7bcrhsdoftkd3@rob-hp-laptop>
+         <20170629203222.xwxzlawckxlpw6u5@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-Cakq2GeHo/+tFsF+grjt"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43892 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752539AbdF3Amh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 20:42:37 -0400
-In-Reply-To: <1498783339-749-1-git-send-email-timur@codeaurora.org>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:33043 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751650AbdF3BU6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 29 Jun 2017 21:20:58 -0400
+In-Reply-To: <20170629203222.xwxzlawckxlpw6u5@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: timur@codeaurora.org
+To: Rob Herring <robh@kernel.org>
+Cc: linus.walleij@linaro.org, mark.rutland@arm.com, joel@jms.id.au, benh@kernel.crashing.org, ryan_chen@aspeedtech.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org
 
-On Qualcomm Technologies QDF2xxx platforms, only a subset of the GPIOs
-are actually available to the HLOS.  The others are blocked by the XPU,
-and any attempt to access them will cause an XPU violation that halts
-the system.
 
-Instead, the ACPI table now lists only specific GPIOs that are exposed
-externally as generic GPIO pins.  The full list of GPIOs is still
-registered, but the pin count for the unavailable GPIOs is set to zero.
-The pinctrl-msm driver will block those unavailable GPIOs from being
-accessed.
+--=-Cakq2GeHo/+tFsF+grjt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 112 +++++++++++++++++++++------------
- 1 file changed, 73 insertions(+), 39 deletions(-)
+On Thu, 2017-06-29 at 15:32 -0500, Rob Herring wrote:
+> On Thu, Jun 29, 2017 at 03:13:24PM -0500, Rob Herring wrote:
+> > On Tue, Jun 27, 2017 at 11:42:12AM +0930, Andrew Jeffery wrote:
+> > > The Aspeed AST2500 SoC contains a number of USB controllers:
+> > >=20
+> > > * USB 1.1 Host Controller
+> > > * USB 2.0 Host Controller (x2)
+> > > * Combined USB 2.0 Virtual Hub and USB 1.1 HID Controller
+> > >=20
+> > > The controllers are exposed via two USB ports with functionality muxe=
+d
+> > > as required. The following table illustrates the relationships betwee=
+n
+> > > the ports and the controllers via the mux function names:
+> > >=20
+> > > Port=C2=A0=C2=A0| USB Version=C2=A0=C2=A0| USB Mode=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0| Mux Function
+> > > ------|--------------|--------------|-------------
+> > > A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 2.0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0| Virtual Hub=C2=A0=C2=A0| USB2AD
+> > > A=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 2.0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0| Host=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0| USB2AH
+> > > B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 1.1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0| HID=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0| USB11BHID
+> > > B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 2.0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0| Device=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0| USB2BD
+> > > B=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0| 2.0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0| Host=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0| USB2BH
+> > >=20
+> > > > > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> > > ---
+> > > =C2=A0Documentation/devicetree/bindings/pinctrl/pinctrl-aspeed.txt | =
+3 ++-
+> > > =C2=A01 file changed, 2 insertions(+), 1 deletion(-)
+> >=20
+> > Acked-by: Rob Herring <robh@kernel.org>
+>=20
+> Also, when you resend, use "dt-bindings: pinctrl: ..." for the subjects=
+=C2=A0
+> of binding patches in this series.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-index bb3ce5c..106e6c1 100644
---- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-+++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-@@ -43,68 +43,102 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
- 	struct pinctrl_pin_desc *pins;
- 	struct msm_pingroup *groups;
- 	char (*names)[NAME_SIZE];
--	unsigned int i;
--	u32 num_gpios;
-+	unsigned int i, num_gpios, max_gpios;
-+	u32 *gpios;
- 	int ret;
- 
--	/* Query the number of GPIOs from ACPI */
--	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
-+	/* The total number of GPIOs that exist */
-+	ret = device_property_read_u32(&pdev->dev, "num-gpios", &max_gpios);
- 	if (ret < 0) {
--		dev_warn(&pdev->dev, "missing num-gpios property\n");
-+		dev_err(&pdev->dev, "missing num-gpios property\n");
- 		return ret;
- 	}
-+	if (!max_gpios || max_gpios > MAX_GPIOS) {
-+		dev_err(&pdev->dev, "invalid 'num-gpios' property\n");
-+		return -EINVAL;
-+	}
- 
--	if (!num_gpios || num_gpios > MAX_GPIOS) {
--		dev_warn(&pdev->dev, "invalid num-gpios property\n");
-+	/* The number of GPIOs in the approved list */
-+	num_gpios = ret = device_property_read_u32_array(&pdev->dev, "gpios",
-+							 NULL, 0);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev,
-+			"missing or invalid 'gpios' property (ret=%i)\n", ret);
-+		return ret;
-+	}
-+	if (ret == 0) {
-+		dev_warn(&pdev->dev, "no GPIOs defined\n");
- 		return -ENODEV;
- 	}
- 
--	pins = devm_kcalloc(&pdev->dev, num_gpios,
-+	gpios = devm_kcalloc(&pdev->dev, num_gpios, sizeof(u32), GFP_KERNEL);
-+	if (!gpios)
-+		return -ENOMEM;
-+
-+	ret = device_property_read_u32_array(&pdev->dev, "gpios", gpios,
-+					     num_gpios);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev,
-+			"could not read list of GPIOs (ret=%i)\n", ret);
-+		return ret;
-+	}
-+
-+	pins = devm_kcalloc(&pdev->dev, max_gpios,
- 		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
--	groups = devm_kcalloc(&pdev->dev, num_gpios,
-+	groups = devm_kcalloc(&pdev->dev, max_gpios,
- 		sizeof(struct msm_pingroup), GFP_KERNEL);
- 	names = devm_kcalloc(&pdev->dev, num_gpios, NAME_SIZE, GFP_KERNEL);
- 
- 	if (!pins || !groups || !names)
- 		return -ENOMEM;
- 
--	for (i = 0; i < num_gpios; i++) {
--		snprintf(names[i], NAME_SIZE, "gpio%u", i);
--
-+	/*
-+	 * Initialize the array.  GPIOs not listed in the 'gpios' array
-+	 * still need a number and a name, but nothing else.
-+	 */
-+	for (i = 0; i < max_gpios; i++) {
- 		pins[i].number = i;
--		pins[i].name = names[i];
--
--		groups[i].npins = 1;
--		groups[i].name = names[i];
- 		groups[i].pins = &pins[i].number;
-+	}
- 
--		groups[i].ctl_reg = 0x10000 * i;
--		groups[i].io_reg = 0x04 + 0x10000 * i;
--		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
--		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
--		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
--
--		groups[i].mux_bit = 2;
--		groups[i].pull_bit = 0;
--		groups[i].drv_bit = 6;
--		groups[i].oe_bit = 9;
--		groups[i].in_bit = 0;
--		groups[i].out_bit = 1;
--		groups[i].intr_enable_bit = 0;
--		groups[i].intr_status_bit = 0;
--		groups[i].intr_target_bit = 5;
--		groups[i].intr_target_kpss_val = 1;
--		groups[i].intr_raw_status_bit = 4;
--		groups[i].intr_polarity_bit = 1;
--		groups[i].intr_detection_bit = 2;
--		groups[i].intr_detection_width = 2;
-+	/* Populate the entries that are meant to be exposes as GPIOs. */
-+	for (i = 0; i < num_gpios; i++) {
-+		unsigned int gpio = gpios[i];
-+
-+		groups[gpio].npins = 1;
-+		snprintf(names[i], NAME_SIZE, "gpio%u", gpio);
-+		pins[gpio].name = names[i];
-+		groups[gpio].name = names[i];
-+
-+		groups[gpio].ctl_reg = 0x10000 * gpio;
-+		groups[gpio].io_reg = 0x04 + 0x10000 * gpio;
-+		groups[gpio].intr_cfg_reg = 0x08 + 0x10000 * gpio;
-+		groups[gpio].intr_status_reg = 0x0c + 0x10000 * gpio;
-+		groups[gpio].intr_target_reg = 0x08 + 0x10000 * gpio;
-+
-+		groups[gpio].mux_bit = 2;
-+		groups[gpio].pull_bit = 0;
-+		groups[gpio].drv_bit = 6;
-+		groups[gpio].oe_bit = 9;
-+		groups[gpio].in_bit = 0;
-+		groups[gpio].out_bit = 1;
-+		groups[gpio].intr_enable_bit = 0;
-+		groups[gpio].intr_status_bit = 0;
-+		groups[gpio].intr_target_bit = 5;
-+		groups[gpio].intr_target_kpss_val = 1;
-+		groups[gpio].intr_raw_status_bit = 4;
-+		groups[gpio].intr_polarity_bit = 1;
-+		groups[gpio].intr_detection_bit = 2;
-+		groups[gpio].intr_detection_width = 2;
- 	}
- 
-+	devm_kfree(&pdev->dev, gpios);
-+
- 	qdf2xxx_pinctrl.pins = pins;
- 	qdf2xxx_pinctrl.groups = groups;
--	qdf2xxx_pinctrl.npins = num_gpios;
--	qdf2xxx_pinctrl.ngroups = num_gpios;
--	qdf2xxx_pinctrl.ngpios = num_gpios;
-+	qdf2xxx_pinctrl.npins = max_gpios;
-+	qdf2xxx_pinctrl.ngroups = max_gpios;
-+	qdf2xxx_pinctrl.ngpios = max_gpios;
- 
- 	return msm_pinctrl_probe(pdev, &qdf2xxx_pinctrl);
- }
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Will do.
+
+Cheers,
+
+Andrew
+
+>=20
+> Rob
+--=-Cakq2GeHo/+tFsF+grjt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJZVaYQAAoJEJ0dnzgO5LT58MgQAJ6eFlkSf/Thd9C9WNBo0l9y
+cIpneKeg8tuHyW7OansKn/Mzb0E51+ZlZlJDm8vemtDgFJx7dhPkazDW0orz+al4
+WsiB9IRmjhqZKTT7xxOx1Du5uKekMRKdaKj5GhvIzdeYoFXHZo7NPlKj9L9SWMWf
+C8K98GKG75j9kDccLK8eWYxrzKbm4ldmRIMxuR8bGudUlI5ZpnSV8u0xXnMPjBoK
+xAMpAYN6UAlSQ+lfhsFy818HwQwYVqXO9UuJ8YrXhQnFYHoOAJLEdzkZkqv/HEr1
+YEx4b9Wx1Lf9NIZiQYsmaSFSjBLLucuFLHCI0eLRHdKpeBk3B7iMPHd1K3Cyd1Tp
+z96448aSzFmclVNIOAW90BH8+fKezR9YIQ9tp3FOFV6cBAPvXcUj+1Lh9gT0C5DZ
+gG9T6jxES/NjxDqLH6NuPO3GhbiBdeV2w73+K2VUwz0JAYxTWkYzz/HVEslbPXYm
+anJORhkkIWwCrvMHMo3eJAJKgPAlGbbOnioJl54o7TWiUMaMY6EkkA0h4/gATDZz
+fOauOpwZptQ82ZexxpJQ8jg7cJl7BLcAub56mAYw12c9CI0lhNVuHCGMPV6xjlCZ
+/xC4UK0jNiEjlmM/jfVBG9JHUyORR7OfOki1N5ghDhCSCCkeievfsk7XgfXxQq2s
+c0n4SeV+RfU4SgmLf6S4
+=y/4F
+-----END PGP SIGNATURE-----
+
+--=-Cakq2GeHo/+tFsF+grjt--
 
