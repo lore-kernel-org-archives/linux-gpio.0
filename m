@@ -1,62 +1,83 @@
-From: Brian Norris <briannorris@chromium.org>
-Subject: Re: [RFC PATCH] pinctrl: rockchip: add irq_shutdown
-Date: Thu, 29 Jun 2017 18:29:31 -0700
-Message-ID: <20170630012930.GA99272@google.com>
-References: <1498223019-9123-1-git-send-email-jeffy.chen@rock-chips.com>
- <20170629220532.GA54678@google.com>
- <5955A866.20308@rock-chips.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from
+ resource management
+Date: Fri, 30 Jun 2017 11:47:35 +0900
+Message-ID: <CA+Ln22GyEDZidAWkMonjLYF0etxNjZ0btwYkQ5raAPsnk1bJFg@mail.gmail.com>
+References: <20170629213334.375848050@linutronix.de> <20170629214343.882576048@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:36822 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751722AbdF3B3e (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 21:29:34 -0400
-Received: by mail-pg0-f51.google.com with SMTP id u62so55864092pgb.3
-        for <linux-gpio@vger.kernel.org>; Thu, 29 Jun 2017 18:29:34 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <5955A866.20308@rock-chips.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34207 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751722AbdF3Crn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 29 Jun 2017 22:47:43 -0400
+In-Reply-To: <20170629214343.882576048@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: jeffy <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, tfiga@chromium.org, heiko@sntech.de, dianders@chromium.org, linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Gleixner <tglx@linutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Fri, Jun 30, 2017 at 09:24:54AM +0800, Jeffy Chen wrote:
-> On 06/30/2017 06:05 AM, Brian Norris wrote:
-> >On Fri, Jun 23, 2017 at 09:03:39PM +0800, Jeffy Chen wrote:
-> >>Currently the rockchip pinctrl driver would try to enable/disable the
-> >>gpio bank clk when enable/disable an irq.
-> >>
-> >>So when the irq core trying to shutdown an already disabled irq, it
-> >>would result in unbalanced clk disable request:
-> >>[   35.911955] WARNING: at drivers/clk/clk.c:680
-> >>...
-> >>[   37.272271] Call trace:
-> >>[   37.274729] [<ffffffc0007ac270>] clk_core_disable+0x28/0x194
-> >>[   37.280395] [<ffffffc0007ac6a8>] clk_disable+0x34/0x48
-> >>[   37.285544] [<ffffffc0004f3bf0>] rockchip_irq_disable+0x30/0x3c
-> >>[   37.291472] [<ffffffc00027a7e0>] __irq_disable+0x40/0x64
-> >>[   37.296791] [<ffffffc00027a86c>] irq_shutdown+0x68/0x8c
-> >>[   37.302023] [<ffffffc0002777fc>] __free_irq+0x110/0x218
-> >>[   37.307254] [<ffffffc0002779a8>] free_irq+0x54/0x64
-> >>[   37.312138] [<ffffffc00027ba24>] devm_irq_release+0x24/0x30
-> >>
-> >>Add an irq_shutdown callback, and do a sanity check for irq state to
-> >>prevent that.
-> >
-> >IMO, this patch is completely the wrong approach. Either we:
-> >
-> >(a) follow the current semantics of the irqchip core handling (which
-> >tglx described more or less as "no refcounting; no guarantee that
-> >enable/disable are balanced") or
-> >
-> >(b) fix the irqchip core to provide the above guarantee
-> right, since we have:
-> bf22ff45 genirq: Avoid unnecessary low level irq function calls
-> d829b8f genirq: Set irq masked state when initializing irq_desc
-> 
-> this issue should be fixed now.
+Hi Thomas,
 
-Oh, I didn't notice Thomas applied those. I'll have to take a look.
+2017-06-30 6:33 GMT+09:00 Thomas Gleixner <tglx@linutronix.de>:
+> The irq chip callbacks irq_request/release_resources() have absolutely no
+> business with masking and unmasking the irq.
+>
+> The core code unmasks the interrupt after complete setup and masks it
+> before invoking irq_release_resources().
+>
+> The unmask is actually harmful as it happens before the interrupt is
+> completely initialized in __setup_irq().
+>
+> Remove it.
 
-Brian
+Good catch, thanks! (Note that the original patch of mine [1] did that
+in .irq_startup()/.irq_shutdown(), which was for some reason changed
+later, but I don't remember the exact story.)
+
+[1] https://patchwork.kernel.org/patch/4466431/
+
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Sylwester, Krzysztof, would you be able to do some basic test?
+
+Best regards,
+Tomasz
+
+>
+> Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ----
+>  1 file changed, 4 deletions(-)
+>
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -205,8 +205,6 @@ static int exynos_irq_request_resources(
+>
+>         spin_unlock_irqrestore(&bank->slock, flags);
+>
+> -       exynos_irq_unmask(irqd);
+> -
+>         return 0;
+>  }
+>
+> @@ -226,8 +224,6 @@ static void exynos_irq_release_resources
+>         shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
+>         mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+>
+> -       exynos_irq_mask(irqd);
+> -
+>         spin_lock_irqsave(&bank->slock, flags);
+>
+>         con = readl(bank->eint_base + reg_con);
+>
+>
