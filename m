@@ -1,60 +1,53 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from
- resource management
-Date: Fri, 30 Jun 2017 15:20:41 +0900
-Message-ID: <CA+Ln22Esc-1P6bcMeXuTVztiyFMXsOV1O0V=tZOj4YEwLZJSuQ@mail.gmail.com>
-References: <20170629213334.375848050@linutronix.de> <20170629214343.882576048@linutronix.de>
- <CA+Ln22GyEDZidAWkMonjLYF0etxNjZ0btwYkQ5raAPsnk1bJFg@mail.gmail.com> <CAJKOXPd+ir1+036jmN+Pd6WWvTcTES2xV9LLsh-W=DYvc2LoEQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: rza1: Remove unneeded wrong check for wrong variable
+Date: Fri, 30 Jun 2017 08:57:39 +0200
+Message-ID: <1498805859-4136-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:36997 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751854AbdF3GUn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 02:20:43 -0400
-In-Reply-To: <CAJKOXPd+ir1+036jmN+Pd6WWvTcTES2xV9LLsh-W=DYvc2LoEQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris Brandt <chris.brandt@renesas.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-2017-06-30 15:02 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
-> On Fri, Jun 30, 2017 at 4:47 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Thomas,
->>
->> 2017-06-30 6:33 GMT+09:00 Thomas Gleixner <tglx@linutronix.de>:
->>> The irq chip callbacks irq_request/release_resources() have absolutely no
->>> business with masking and unmasking the irq.
->>>
->>> The core code unmasks the interrupt after complete setup and masks it
->>> before invoking irq_release_resources().
->>>
->>> The unmask is actually harmful as it happens before the interrupt is
->>> completely initialized in __setup_irq().
->>>
->>> Remove it.
->>
->> Good catch, thanks! (Note that the original patch of mine [1] did that
->> in .irq_startup()/.irq_shutdown(), which was for some reason changed
->> later, but I don't remember the exact story.)
->>
->> [1] https://patchwork.kernel.org/patch/4466431/
->>
->> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
->>
->> Sylwester, Krzysztof, would you be able to do some basic test?
->
-> I suppose this was not tested so yes - I have platforms do this. I
-> understand that checking any non-shared GPIO interrupt should be
-> sufficient to test, right?
+Depending on compiler version:
 
-I think any interrupt from the Exynos pin controller should work, even
-shared one. I'd expect irq_request_resources() to be invoked for
-shared interrupts as well, otherwise we have a problem... (I quickly
-looked through kernel/irq/manage.c and it seems to be invoked for the
-first __setup_irq() call even for shared interrupts.)
+    drivers/pinctrl/pinctrl-rza1.c: In function ‘rza1_pinctrl_probe’:
+    drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: ‘ret’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+      if (ret)
+	 ^
 
-Thanks.
+Indeed, the result returned by platform_get_resource() was stored in
+"res", not "ret".  In addition, the correct error check would be
+"if (!res)", as platform_get_resource() does not return an error code,
+but returns NULL on failure.
 
-Best regards,
-Tomasz
+However, as devm_ioremap_resource() verifies the validity of the passed
+resource pointer anyway, the check can just be removed.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 5a49b644b3075f88 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
+---
+ drivers/pinctrl/pinctrl-rza1.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 614a043f3038d5d3..1188e6881e52ba7a 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1257,9 +1257,6 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
+ 	rza1_pctl->dev = &pdev->dev;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (ret)
+-		return -ENODEV;
+-
+ 	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(rza1_pctl->base))
+ 		return PTR_ERR(rza1_pctl->base);
+-- 
+2.7.4
