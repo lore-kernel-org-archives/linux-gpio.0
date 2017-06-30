@@ -1,36 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: rza1: fix incorrect failure check on platform_get_resources
-Date: Fri, 30 Jun 2017 15:50:33 +0200
-Message-ID: <CACRpkdbbk74DhCeQ2h=3-innkRCAqk_x-iqhVUc0YgM7G=YuNg@mail.gmail.com>
-References: <20170630103355.9769-1-colin.king@canonical.com>
+Subject: Re: [patch 1/5] pinctrl: samsung: Remove bogus irq_[un]mask from
+ resource management
+Date: Fri, 30 Jun 2017 15:53:18 +0200
+Message-ID: <CACRpkdazKNDdcoJxvJ9injibZmOTsdmN-Y0sTS5eyanwz=iFEA@mail.gmail.com>
+References: <20170629213334.375848050@linutronix.de> <20170629214343.882576048@linutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f51.google.com ([209.85.214.51]:36850 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752076AbdF3Nue (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 30 Jun 2017 09:50:34 -0400
-Received: by mail-it0-f51.google.com with SMTP id m68so61336534ith.1
-        for <linux-gpio@vger.kernel.org>; Fri, 30 Jun 2017 06:50:34 -0700 (PDT)
-In-Reply-To: <20170630103355.9769-1-colin.king@canonical.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <20170629214343.882576048@linutronix.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Brian Norris <briannorris@chromium.org>, Heiko Stuebner <heiko@sntech.de>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Julia Cartwright <julia@ni.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, John Keeping <john@metanate.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 30, 2017 at 12:33 PM, Colin King <colin.king@canonical.com> wrote:
+On Thu, Jun 29, 2017 at 11:33 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> The irq chip callbacks irq_request/release_resources() have absolutely no
+> business with masking and unmasking the irq.
 >
-> The return res from platform_get_resources should be checked for
-> a failure rather than ret.  Fixes warning:
+> The core code unmasks the interrupt after complete setup and masks it
+> before invoking irq_release_resources().
 >
-> 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> The unmask is actually harmful as it happens before the interrupt is
+> completely initialized in __setup_irq().
 >
-> Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Remove it.
+>
+> Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
 
-Geert already sent the right fix for this.
+Patch applied directly since it has no deps and fixes queued stuff for v4.13.
+I guess Krysztof will make sure it doesn't break anything.
 
 Yours,
 Linus Walleij
