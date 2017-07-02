@@ -1,99 +1,39 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC] gpio: about the need to manage irq mapping dynamically.
-Date: Sun, 2 Jul 2017 17:01:11 +0200
-Message-ID: <CACRpkdbcKGu7n3qRZegHvkXLXpRo4XTO3rUs7K61+cmyKrwa9w@mail.gmail.com>
-References: <1497543642.3086.35.camel@baylibre.com> <CACRpkdZWw_-joPT4CJ-RAJ31s4BxuE6vusjg5YnZWaHtkRg5+w@mail.gmail.com>
- <1497954416.7387.1.camel@baylibre.com> <CACRpkdZu74aAsu8hggxsfffQPMk0nqihCSfuMaMbf+-4EFSYYA@mail.gmail.com>
- <1497979438.7387.10.camel@baylibre.com> <CACRpkdZ2cqUgMwOFG+9JVyAOxYTfHYa3+yrUzUozLpYD87KdOQ@mail.gmail.com>
- <1498141515.7387.16.camel@baylibre.com> <0e12f9bd-4e0b-c602-5627-5dbda5371dee@ti.com>
- <1498587929.25567.12.camel@baylibre.com> <657221fa-c6b3-e914-1a81-9a48972ee6d5@ti.com>
- <CACRpkdar9YwnMgLb1y1sP1Vbg-1MgPAOcRPcfNCtmpKuf+g+kQ@mail.gmail.com> <f8495533-b53f-8999-9320-38f18ca7691b@ti.com>
+From: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
+Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic
+ SoCs
+Date: Sun, 02 Jul 2017 18:35:01 +0200
+Message-ID: <1499013301.1477.0@smtp.crapouillou.net>
+References: <20170402204244.14216-2-paul@crapouillou.net>
+        <20170428200824.10906-1-paul@crapouillou.net>
+        <20170428200824.10906-6-paul@crapouillou.net>
+        <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:33862 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751635AbdGBPBO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 2 Jul 2017 11:01:14 -0400
-Received: by mail-io0-f173.google.com with SMTP id r36so43939478ioi.1
-        for <linux-gpio@vger.kernel.org>; Sun, 02 Jul 2017 08:01:13 -0700 (PDT)
-In-Reply-To: <f8495533-b53f-8999-9320-38f18ca7691b@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maarten ter Huurne <maarten-Ph2Y2OKCxY1M656bX5wj8A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Paul Burton <paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>"linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <li>
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, Kevin Hilman <khilman@baylibre.com>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Fri, Jun 30, 2017 at 9:54 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
-> On 06/29/2017 09:16 AM, Linus Walleij wrote:
->> On Tue, Jun 27, 2017 at 10:43 PM, Grygorii Strashko
->> <grygorii.strashko@ti.com> wrote:
->>
->>> And my opinion is still the same here - It should be perfectly valid to create
->>> mappings from gpio_to_irq() to handle properly orthogonality of gpiochip and
->>> gpio-irqchip functionality and satisfy SPARSE_IRQ goal (allocate Linux virq and
->>> irq descriptors on demand).
->>
->> You are right.
->>
->> I would rather say: GPIO drivers that have a 1-to-1 mapping between GPIO
->> lines and IRQs should not do it, they should map up them all at probe().
->>
->
-> Sry, can't completely agree here :( There could be 300 (or even thousands)
-> of gpios and only dozen of them will be used as GPIO IRQ, so statical mapping will
-> just waste system resources. So, better not define such kind of restrictions -
-> it seems platform/system specific.
+Hi Linus,
 
-If there could, yeah.
+> I applied all the patches to a branch in pinctrl and merged into my
+> devel branch for testing:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/
+> Branch: ingenic
+> 
+> Ralf: are you OK with this? It would be nice to have your ACK on
+> all patches. If you want you can pull this branch into the MIPS
+> tree, or we can hope for it all to settle nicely because of low 
+> platform
+> activity in MIPS on this platform, so it only needs to come in
+> from my trees.
 
-But the majority of the worlds systems use a hardcoded value of 512 GPIOs.
+There has been no word from Ralf, is this going into 4.13?
 
-See include/asm-generic/gpio.h:
-
-#ifndef ARCH_NR_GPIOS
-#if defined(CONFIG_ARCH_NR_GPIO) && CONFIG_ARCH_NR_GPIO > 0
-#define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
-#else
-#define ARCH_NR_GPIOS           512
-#endif
-#endif
-
-The only arch that overrides this is ARM, which has CONFIG_ARCH_NR_GPIO:
-
-# The GPIO number here must be sorted by descending number. In case of
-# a multiplatform kernel, we just want the highest value required by the
-# selected platforms.
-config ARCH_NR_GPIO
-        int
-        default 1024 if ARCH_BRCMSTB || ARCH_SHMOBILE || ARCH_TEGRA || \
-                ARCH_ZYNQ
-        default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
-                SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
-        default 416 if ARCH_SUNXI
-        default 392 if ARCH_U8500
-        default 352 if ARCH_VT8500
-        default 288 if ARCH_ROCKCHIP
-        default 264 if MACH_H4700
-        default 0
-        help
-          Maximum number of GPIOs in the system.
-
-          If unsure, leave the default value.
-
-So actually, noone use more than 1024 GPIOs.
-
-For each GPIO a descriptor of 16 bytes is allocated. So in worst case 16KiB.
-
-Also this is an upper cap: it just means the nax we have on any platform is 1024
-statically allocated GPIO descriptors, not that they all get mapped to IRQs.
-That happens on a per-gpiochip basis.
-
-But every irq descriptor is pretty big (somewhere around 64+ bytes), so you have
-a point.
-
-If every GPIO allocates an IRQ descriptor, it may add up to as much as 64KiB
-on a machine with 1024 GPIOs.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
