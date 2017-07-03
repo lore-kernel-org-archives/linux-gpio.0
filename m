@@ -1,49 +1,101 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PULL] serial/gpio: exar: Fixes and support for IOT2000
-Date: Mon, 3 Jul 2017 10:10:32 +0200
-Message-ID: <CACRpkda4v+2oQjYzGXsNZsUeJ8qwF30SLM3mL-JFyDnGiZdx8A@mail.gmail.com>
-References: <cover.1497033197.git.jan.kiszka@siemens.com> <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
- <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com> <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
- <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com> <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
- <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
- <20170629144940.GD23512@kroah.com> <CACRpkdYEvc2De88sy-FWOOkU8-O4KwX00rLZ7dBk6H2H0Q0+LQ@mail.gmail.com>
- <5de2f417-02e2-b983-67bd-7d82232956b0@siemens.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH v2] gpio: lp87565: Set proper output level and direction for direction_output
+Date: Mon,  3 Jul 2017 16:28:12 +0800
+Message-ID: <20170703082812.23444-1-axel.lin@ingics.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:36449 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752157AbdGCIKe (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 04:10:34 -0400
-Received: by mail-io0-f170.google.com with SMTP id z62so52715668ioi.3
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2017 01:10:33 -0700 (PDT)
-In-Reply-To: <5de2f417-02e2-b983-67bd-7d82232956b0@siemens.com>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35390 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752272AbdGCI2Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 04:28:25 -0400
+Received: by mail-pf0-f193.google.com with SMTP id s66so25032881pfs.2
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2017 01:28:25 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Keerthy <j-keerthy@ti.com>, linux-gpio@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
 
-On Mon, Jul 3, 2017 at 9:21 AM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+The value argument of lp87565_gpio_direction_output() means output level
+rather than gpio direction.
 
-> The following changes since commit 85bb4646f8908eb786dfa19a6bb2ff1423dc8aa4:
->
->   gpio: rcar: Add R8A7743 (RZ/G1M) support (2017-06-29 14:22:38 +0200)
->
-> are available in the git repository at:
->
->   git://git.kiszka.org/linux.git queues/gpio-iot2000
->
-> for you to fetch changes up to 413058df4331ce29f9934a5870d582c7e71fe15f:
->
->   serial: exar: Add support for IOT2040 device (2017-07-03 08:33:20 +0200)
->
-> This corresponds to v6 of the series with additional review and ack
-> tags.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Reviewed-by: Keerthy <j-keerthy@ti.com>
+Tested-by: Keerthy <j-keerthy@ti.com>
+---
+v2: Call lp87565_gpio_set() instead of open-coded.
+I move lp87565_gpio_get/lp87565_gpio_set functions up to avoid forward
+declaration. It's fine to only move lp87565_gpio_set() but it looks better
+for me to move lp87565_gpio_get/lp87565_gpio_set together.
+Hope this change is fine.
 
-Thanks Jan, pulled in for v4.13.
+ drivers/gpio/gpio-lp87565.c | 46 +++++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-Also thanks for your tireless and gritty work in hashing this out
-and get the right fix out there!
+diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
+index 6313c50..a121c8f 100644
+--- a/drivers/gpio/gpio-lp87565.c
++++ b/drivers/gpio/gpio-lp87565.c
+@@ -26,6 +26,27 @@ struct lp87565_gpio {
+ 	struct regmap *map;
+ };
+ 
++static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
++	int ret, val;
++
++	ret = regmap_read(gpio->map, LP87565_REG_GPIO_IN, &val);
++	if (ret < 0)
++		return ret;
++
++	return !!(val & BIT(offset));
++}
++
++static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			     int value)
++{
++	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
++
++	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
++			   BIT(offset), value ? BIT(offset) : 0);
++}
++
+ static int lp87565_gpio_get_direction(struct gpio_chip *chip,
+ 				      unsigned int offset)
+ {
+@@ -54,30 +75,11 @@ static int lp87565_gpio_direction_output(struct gpio_chip *chip,
+ {
+ 	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+ 
++	lp87565_gpio_set(chip, offset, value);
++
+ 	return regmap_update_bits(gpio->map,
+ 				  LP87565_REG_GPIO_CONFIG,
+-				  BIT(offset), !value ? BIT(offset) : 0);
+-}
+-
+-static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
+-{
+-	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+-	int ret, val;
+-
+-	ret = regmap_read(gpio->map, LP87565_REG_GPIO_IN, &val);
+-	if (ret < 0)
+-		return ret;
+-
+-	return !!(val & BIT(offset));
+-}
+-
+-static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
+-			     int value)
+-{
+-	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+-
+-	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
+-			   BIT(offset), value ? BIT(offset) : 0);
++				  BIT(offset), BIT(offset));
+ }
+ 
+ static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
+-- 
+2.9.3
 
-Yours,
-Linus Walleij
