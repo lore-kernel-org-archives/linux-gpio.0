@@ -1,52 +1,40 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: Getting gpios from user space based on gpio-line-names
-Date: Mon, 3 Jul 2017 15:06:06 +0200
-Message-ID: <CAMRc=MdPNMQu27RWGW6D+um4yD+BBnut3Bfy0hC0CUprm99q=Q@mail.gmail.com>
-References: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic
+ SoCs
+Date: Mon, 3 Jul 2017 15:55:55 +0200
+Message-ID: <20170703135555.GA686@linux-mips.org>
+References: <20170402204244.14216-2-paul@crapouillou.net>
+ <20170428200824.10906-1-paul@crapouillou.net>
+ <20170428200824.10906-6-paul@crapouillou.net>
+ <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ@mail.gmail.com>
+ <1499013301.1477.0@smtp.crapouillou.net>
+ <CACRpkdb=Zti+C+2me_WP0=m6z12G5Kz+W_cPcZsw=CVzBO_wAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:36202 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753978AbdGCNGH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 09:06:07 -0400
-Received: by mail-qt0-f176.google.com with SMTP id i2so142602174qta.3
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2017 06:06:07 -0700 (PDT)
-In-Reply-To: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mips-bounce@linux-mips.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb=Zti+C+2me_WP0=m6z12G5Kz+W_cPcZsw=CVzBO_wAg@mail.gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: monstr@monstr.eu
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-2017-07-03 15:01 GMT+02:00 Michal Simek <monstr@monstr.eu>:
-> Hi,
->
-> I am trying to find some docs about how to ask for gpio line
-> based on gpio-line-names in DT. I see line names available via debugfs
-> which is not suitable for production.
-> And also I didn't find a way how to ask for gpio Linux number from user
-> space to start to work with them.
-> This is for gpio mraa integration which depends on Linux gpio line numbers.
->
-> Thanks,
-> Michal
->
-> --
-> Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-> w: www.monstr.eu p: +42-0-721842854
-> Maintainer of Linux kernel - Xilinx Microblaze
-> Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-> U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
->
->
+On Mon, Jul 03, 2017 at 11:07:09AM +0200, Linus Walleij wrote:
 
-Hi Michal,
+> > There has been no word from Ralf, is this going into 4.13?
 
-you can try libgpiod[1] and specifically the gpiofind tool included in
-the repository. Buildroot has this package should you need to build a
-rootfs for some specific target.
+Acked-by: Ralf Baechle <ralf@linux-mips.org>
 
-Best regards,
-Bartosz Golaszewski
+for the whole series.
 
-[1] https://github.com/brgl/libgpiod
+Thanks,
+
+  Ralf
