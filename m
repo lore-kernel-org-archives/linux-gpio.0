@@ -1,108 +1,54 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [bug report] pinctrl: add ZTE ZX pinctrl driver support
-Date: Mon, 3 Jul 2017 17:55:39 +0300
-Message-ID: <20170703145539.kl3dboashb74asqp@mwanda>
-References: <20170629095152.ahkv55cjj26c3nmk@mwanda>
- <20170629143053.GA14078@dragon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] gpio: pca953x: remove incorrect le16_to_cpu calls
+Date: Mon,  3 Jul 2017 20:45:30 +0300
+Message-ID: <20170703174530.81298-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:49991 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756577AbdGCOzv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 10:55:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20170629143053.GA14078@dragon>
+Received: from mga02.intel.com ([134.134.136.20]:7087 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755825AbdGCRpf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 3 Jul 2017 13:45:35 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, Jun 29, 2017 at 10:30:55PM +0800, Shawn Guo wrote:
-> Hi Dan,
-> 
-> On Thu, Jun 29, 2017 at 12:51:52PM +0300, Dan Carpenter wrote:
-> > Hello Shawn Guo,
-> > 
-> > The patch cbff0c4d27f4: "pinctrl: add ZTE ZX pinctrl driver support"
-> > from Apr 24, 2017, leads to the following static checker warning:
-> > 
-> > 	drivers/pinctrl/zte/pinctrl-zx.c:338 zx_pinctrl_build_state()
-> > 	warn: passing devm_ allocated variable to kfree. 'functions'
-> 
-> I tried to see this warning with sparse, but failed.  Can you please
-> tell how I can reproduced this static check warning?
-> 
+i2c_smbus commands handle the correct byte order for smbus transactions
+internally. This will currently result in incorrect operation on big
+endian systems.
 
-Hm.  It's a Smatch thing that I didn't push.  I'll push it in the next
-day or two.
+Suggested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpio/gpio-pca953x.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> > 
-> > drivers/pinctrl/zte/pinctrl-zx.c
-> >    293  
-> >    294          /* Build function list from pin mux functions */
-> >    295          functions = devm_kzalloc(&pdev->dev, info->npins * sizeof(*functions),
-> >                 ^^^^^^^^^^^^^^^^^^^^^^^^
-> > 
-> >    296                                   GFP_KERNEL);
-> >    297          if (!functions)
-> >    298                  return -ENOMEM;
-> >    299  
-> >    300          nfunctions = 0;
-> >    301          for (i = 0; i < info->npins; i++) {
-> >    302                  const struct pinctrl_pin_desc *pindesc = info->pins + i;
-> >    303                  struct zx_pin_data *data = pindesc->drv_data;
-> >    304                  struct zx_mux_desc *mux;
-> >    305  
-> >    306                  /* Reserved pins do not have a drv_data at all */
-> >    307                  if (!data)
-> >    308                          continue;
-> >    309  
-> >    310                  /* Loop over all muxes for the pin */
-> >    311                  mux = data->muxes;
-> >    312                  while (mux->name) {
-> >    313                          struct function_desc *func = functions;
-> >    314  
-> >    315                          /* Search function list for given mux */
-> >    316                          while (func->name) {
-> >    317                                  if (strcmp(mux->name, func->name) == 0) {
-> >    318                                          /* Function exists */
-> >    319                                          func->num_group_names++;
-> >    320                                          break;
-> >    321                                  }
-> >    322                                  func++;
-> >    323                          }
-> >    324  
-> >    325                          if (!func->name) {
-> >    326                                  /* New function */
-> >    327                                  func->name = mux->name;
-> >    328                                  func->num_group_names = 1;
-> >    329                                  radix_tree_insert(&pctldev->pin_function_tree,
-> >    330                                                    nfunctions++, func);
-> >    331                          }
-> >    332  
-> >    333                          mux++;
-> >    334                  }
-> >    335          }
-> >    336  
-> >    337          pctldev->num_functions = nfunctions;
-> >    338          functions = krealloc(functions, nfunctions * sizeof(*functions),
-> >                                      ^^^^^^^^^
-> > Not allowed.
-> 
-> So I guess the best fix would be changing devm_kzalloc() above to
-> kzalloc(), and managing the free procedure on my own, right?
->
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 4c9e21300a26..1b9dbf691ae7 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -187,10 +187,9 @@ static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
+ 
+ static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+-	__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
++	u16 word = get_unaligned((u16 *)val);
+ 
+-	return i2c_smbus_write_word_data(chip->client,
+-					 reg << 1, (__force u16)word);
++	return i2c_smbus_write_word_data(chip->client, reg << 1, word);
+ }
+ 
+ static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+@@ -241,8 +240,7 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+ 	int ret;
+ 
+ 	ret = i2c_smbus_read_word_data(chip->client, reg << 1);
+-	val[0] = (u16)ret & 0xFF;
+-	val[1] = (u16)ret >> 8;
++	put_unaligned(ret, (u16 *)val);
+ 
+ 	return ret;
+ }
+-- 
+2.11.0
 
-Sounds good.
-
-regards,
-dan carpenter
-
-> Shawn
-> 
-> > 
-> >    339                               GFP_KERNEL);
-> >    340  
-> >    341          /* Find pin groups for every single function */
-> >    342          for (i = 0; i < info->npins; i++) {
