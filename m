@@ -1,74 +1,75 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 01/17] mfd: madera: Add register definitions for
- Cirrus Logic Madera codecs
-Date: Mon, 03 Jul 2017 04:26:54 -0700
-Message-ID: <1499081214.9885.15.camel@perches.com>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
-         <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
-         <20170703103330.uka6otpdes462eym@dell>
-         <1499079166.9885.13.camel@perches.com>
-         <20170703112116.zgatgnazk24qja4e@dell>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Getting gpios from user space based on gpio-line-names
+Date: Mon, 3 Jul 2017 15:01:26 +0200
+Message-ID: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170703112116.zgatgnazk24qja4e@dell>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="j0RadQb4uhLSmSimMSJkSXU383qFTtl0R"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:37284 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbdGCNB3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 09:01:29 -0400
+Received: by mail-wm0-f43.google.com with SMTP id i127so107891375wma.0
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2017 06:01:28 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 
-On Mon, 2017-07-03 at 12:21 +0100, Lee Jones wrote:
-> On Mon, 03 Jul 2017, Joe Perches wrote:
-> 
-> > On Mon, 2017-07-03 at 11:33 +0100, Lee Jones wrote:
-> > > On Fri, 02 Jun 2017, Richard Fitzgerald wrote:
-> > > 
-> > > > This patch adds a header file of register definitions for Cirrus
-> > > > Logic "Madera" class codecs. These codecs are all based off a common
-> > > > set of hardware IP so have a common register map (with a few minor
-> > > > device-to-device variations). These are complex devices with a large
-> > > > number of features and so have a correspondingly large register set.
-> > > > The registers.h file has been auto-generated from the hardware register
-> > > > definitions, stripped down to only registers we need to access from
-> > > > the driver
-> > > > 
-> > > > Signed-off-by: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-> > > > ---
-> > > > Changes since V2:
-> > > > - Used new field names for IRQ1_STATUS_33 register
-> > > > 
-> > > >  MAINTAINERS                          |   10 +
-> > > >  include/linux/mfd/madera/registers.h | 8832 ++++++++++++++++++++++++++++++++++
-> > > >  2 files changed, 8842 insertions(+)
-> > > >  create mode 100644 include/linux/mfd/madera/registers.h
-> > > 
-> > > Applied, thanks.
-> > 
-> > followed by 400k of useless quoted reply!!!
-> > 
-> > Lee.  Seriously.  Don't be impolite to others.
-> > Remember to trim  your replies.
-> 
-> "Applied, thanks" is *obviously* the last message in my reply.  Did
-> you waste any time reading past that, or are you just being pedantic?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--j0RadQb4uhLSmSimMSJkSXU383qFTtl0R
+Content-Type: multipart/mixed; boundary="cK8SHEqEEJM88SJ1OQlV5fR3sekB3iTv6";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Message-ID: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
+Subject: Getting gpios from user space based on gpio-line-names
 
-Nope, I just looked at the size and the delay
-in loading this message over my phone's hotspot.
+--cK8SHEqEEJM88SJ1OQlV5fR3sekB3iTv6
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-> If you are truly concerned over 400k of bandwidth you need to switch
-> to a new internet provider.
+Hi,
 
-Not everyone uses continuously fast connections.
+I am trying to find some docs about how to ask for gpio line
+based on gpio-line-names in DT. I see line names available via debugfs
+which is not suitable for production.
+And also I didn't find a way how to ask for gpio Linux number from user
+space to start to work with them.
+This is for gpio mraa integration which depends on Linux gpio line number=
+s.
 
-> This isn't the 1980s.
+Thanks,
+Michal
 
-2017 last I checked.
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
-Being thoughtful to others is still something you
-seem content to overlook.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--cK8SHEqEEJM88SJ1OQlV5fR3sekB3iTv6--
+
+--j0RadQb4uhLSmSimMSJkSXU383qFTtl0R
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAllaQCYACgkQykllyylKDCEczQCfZc5Gfzn7KwVDMDPcBuNyVL77
+EPYAnRITsVK0BT4xz/GEnjgjIW5SNf4Y
+=qqUr
+-----END PGP SIGNATURE-----
+
+--j0RadQb4uhLSmSimMSJkSXU383qFTtl0R--
