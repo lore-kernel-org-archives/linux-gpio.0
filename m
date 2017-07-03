@@ -1,73 +1,64 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH RFT] gpio: lp87565: Set proper output level and direction
- for direction_output
-Date: Mon, 3 Jul 2017 11:10:36 +0530
-Message-ID: <5380d587-98b1-8358-c3d4-3111c70ba4ca@ti.com>
-References: <20170622092821.5508-1-axel.lin@ingics.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PULL] serial/gpio: exar: Fixes and support for IOT2000
+Date: Mon, 3 Jul 2017 09:21:30 +0200
+Message-ID: <5de2f417-02e2-b983-67bd-7d82232956b0@siemens.com>
+References: <cover.1497033197.git.jan.kiszka@siemens.com>
+ <CACRpkdZYSFTa63BF5u-J=pu2XwUbVZiQGAtZybhjQno6vVbe=g@mail.gmail.com>
+ <9520074b-3731-7bbe-d59d-cbed90ac16bb@siemens.com>
+ <CACRpkdbNPnNbk_r0NWEs4e7PuKmMf9KTjeRPRnxTOHuK-+ki2Q@mail.gmail.com>
+ <c0a29540-7946-4e95-1b59-3a2f478757da@siemens.com>
+ <d52a1a65-842c-9c73-17f7-5574fcefab2a@siemens.com>
+ <CACRpkdZ1atVQLuDio6PVk4Xg+DUBDt2F2OH+2UjVkue8rKNbcA@mail.gmail.com>
+ <20170629144940.GD23512@kroah.com>
+ <CACRpkdYEvc2De88sy-FWOOkU8-O4KwX00rLZ7dBk6H2H0Q0+LQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:62974 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750777AbdGCFkm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 01:40:42 -0400
-In-Reply-To: <20170622092821.5508-1-axel.lin@ingics.com>
+Received: from thoth.sbs.de ([192.35.17.2]:39731 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752078AbdGCHVk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 3 Jul 2017 03:21:40 -0400
+In-Reply-To: <CACRpkdYEvc2De88sy-FWOOkU8-O4KwX00rLZ7dBk6H2H0Q0+LQ@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sascha Weisenberger <sascha.weisenberger@siemens.com>
 
+The following changes since commit 85bb4646f8908eb786dfa19a6bb2ff1423dc8aa4:
 
+  gpio: rcar: Add R8A7743 (RZ/G1M) support (2017-06-29 14:22:38 +0200)
 
-On Thursday 22 June 2017 02:58 PM, Axel Lin wrote:
-> The value argument of lp87565_gpio_direction_output() means output level
-> rather than gpio direction.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
-> Hi Keerthy,
-> I don't have this h/w, so please help to review and test it.
+are available in the git repository at:
 
-Axel,
+  git://git.kiszka.org/linux.git queues/gpio-iot2000
 
-Apologies for replying a bit late.
+for you to fetch changes up to 413058df4331ce29f9934a5870d582c7e71fe15f:
 
+  serial: exar: Add support for IOT2040 device (2017-07-03 08:33:20 +0200)
 
-> Thanks,
-> Axel
->  drivers/gpio/gpio-lp87565.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
-> index 6313c50..69b69d4 100644
-> --- a/drivers/gpio/gpio-lp87565.c
-> +++ b/drivers/gpio/gpio-lp87565.c
-> @@ -54,9 +54,12 @@ static int lp87565_gpio_direction_output(struct gpio_chip *chip,
->  {
->  	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
->  
-> +	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
-> +			   BIT(offset), value ? BIT(offset) : 0);
-> +
+This corresponds to v6 of the series with additional review and ack
+tags.
 
-Or just call:
+----------------------------------------------------------------
+Jan Kiszka (8):
+      serial: uapi: Add support for bus termination
+      gpio-exar/8250-exar: Do not even instantiate a GPIO device for Commtech cards
+      gpio: exar: Fix iomap request
+      gpio-exar/8250-exar: Rearrange gpiochip parenthood
+      serial: exar: Factor out platform hooks
+      platform: Accept const properties
+      gpio-exar/8250-exar: Make set of exported GPIOs configurable
+      serial: exar: Add support for IOT2040 device
 
-lp87565_gpio_set(chip, offset, value);
+ drivers/base/platform.c             |   2 +-
+ drivers/gpio/gpio-exar.c            |  71 +++++++--------
+ drivers/tty/serial/8250/8250_exar.c | 170 +++++++++++++++++++++++++++++++++++-
+ include/linux/platform_device.h     |   2 +-
+ include/uapi/linux/serial.h         |   3 +
+ 5 files changed, 208 insertions(+), 40 deletions(-)
 
-Apart from the above comment.
-
-Reviewed-by: Keerthy <j-keerthy@ti.com>
-Tested-by: Keerthy <j-keerthy@ti.com>
-
-Thanks,
-Keerthy
-
->  	return regmap_update_bits(gpio->map,
->  				  LP87565_REG_GPIO_CONFIG,
-> -				  BIT(offset), !value ? BIT(offset) : 0);
-> +				  BIT(offset), BIT(offset));
->  }
->  
->  static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> 
+-- 
+Siemens AG, Corporate Technology, CT RDA ITP SES-DE
+Corporate Competence Center Embedded Linux
