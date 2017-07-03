@@ -1,109 +1,38 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH v2] gpio: lp87565: Set proper output level and direction
- for direction_output
-Date: Mon, 3 Jul 2017 14:02:21 +0530
-Message-ID: <71921231-e7b9-bb95-272f-afa0c80867a0@ti.com>
-References: <20170703082812.23444-1-axel.lin@ingics.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic SoCs
+Date: Mon, 3 Jul 2017 11:07:09 +0200
+Message-ID: <CACRpkdb=Zti+C+2me_WP0=m6z12G5Kz+W_cPcZsw=CVzBO_wAg@mail.gmail.com>
+References: <20170402204244.14216-2-paul@crapouillou.net> <20170428200824.10906-1-paul@crapouillou.net>
+ <20170428200824.10906-6-paul@crapouillou.net> <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ@mail.gmail.com>
+ <1499013301.1477.0@smtp.crapouillou.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:54525 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752795AbdGCIdF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 04:33:05 -0400
-In-Reply-To: <20170703082812.23444-1-axel.lin@ingics.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1499013301.1477.0@smtp.crapouillou.net>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>"linux-mtd@lists.infradead.org" <li>
 List-Id: linux-gpio@vger.kernel.org
-To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
 
+On Sun, Jul 2, 2017 at 6:35 PM, Paul Cercueil <paul@crapouillou.net> wrote:
+> Hi Linus,
+>
+>> I applied all the patches to a branch in pinctrl and merged into my
+>> devel branch for testing:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/
+>> Branch: ingenic
+>>
+>> Ralf: are you OK with this? It would be nice to have your ACK on
+>> all patches. If you want you can pull this branch into the MIPS
+>> tree, or we can hope for it all to settle nicely because of low platform
+>> activity in MIPS on this platform, so it only needs to come in
+>> from my trees.
+>
+>
+> There has been no word from Ralf, is this going into 4.13?
 
+Yes.
 
-On Monday 03 July 2017 01:58 PM, Axel Lin wrote:
-> The value argument of lp87565_gpio_direction_output() means output level
-> rather than gpio direction.
-> 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> Reviewed-by: Keerthy <j-keerthy@ti.com>
-> Tested-by: Keerthy <j-keerthy@ti.com>
-> ---
-> v2: Call lp87565_gpio_set() instead of open-coded.
-> I move lp87565_gpio_get/lp87565_gpio_set functions up to avoid forward
-> declaration. It's fine to only move lp87565_gpio_set() but it looks better
-> for me to move lp87565_gpio_get/lp87565_gpio_set together.
-> Hope this change is fine.
-
-Looks good to me.
-
-> 
->  drivers/gpio/gpio-lp87565.c | 46 +++++++++++++++++++++++----------------------
->  1 file changed, 24 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
-> index 6313c50..a121c8f 100644
-> --- a/drivers/gpio/gpio-lp87565.c
-> +++ b/drivers/gpio/gpio-lp87565.c
-> @@ -26,6 +26,27 @@ struct lp87565_gpio {
->  	struct regmap *map;
->  };
->  
-> +static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-> +	int ret, val;
-> +
-> +	ret = regmap_read(gpio->map, LP87565_REG_GPIO_IN, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return !!(val & BIT(offset));
-> +}
-> +
-> +static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
-> +			     int value)
-> +{
-> +	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-> +
-> +	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
-> +			   BIT(offset), value ? BIT(offset) : 0);
-> +}
-> +
->  static int lp87565_gpio_get_direction(struct gpio_chip *chip,
->  				      unsigned int offset)
->  {
-> @@ -54,30 +75,11 @@ static int lp87565_gpio_direction_output(struct gpio_chip *chip,
->  {
->  	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
->  
-> +	lp87565_gpio_set(chip, offset, value);
-> +
->  	return regmap_update_bits(gpio->map,
->  				  LP87565_REG_GPIO_CONFIG,
-> -				  BIT(offset), !value ? BIT(offset) : 0);
-> -}
-> -
-> -static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> -{
-> -	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-> -	int ret, val;
-> -
-> -	ret = regmap_read(gpio->map, LP87565_REG_GPIO_IN, &val);
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	return !!(val & BIT(offset));
-> -}
-> -
-> -static void lp87565_gpio_set(struct gpio_chip *chip, unsigned int offset,
-> -			     int value)
-> -{
-> -	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
-> -
-> -	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
-> -			   BIT(offset), value ? BIT(offset) : 0);
-> +				  BIT(offset), BIT(offset));
->  }
->  
->  static int lp87565_gpio_request(struct gpio_chip *gc, unsigned int offset)
-> 
+Yours,
+Linus Walleij
