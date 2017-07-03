@@ -1,39 +1,73 @@
-From: Paul Cercueil <paul-icTtO2rgO2OTuSrc4Mpeew@public.gmane.org>
-Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic
- SoCs
-Date: Sun, 02 Jul 2017 18:35:01 +0200
-Message-ID: <1499013301.1477.0@smtp.crapouillou.net>
-References: <20170402204244.14216-2-paul@crapouillou.net>
-        <20170428200824.10906-1-paul@crapouillou.net>
-        <20170428200824.10906-6-paul@crapouillou.net>
-        <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ@mail.gmail.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH RFT] gpio: lp87565: Set proper output level and direction
+ for direction_output
+Date: Mon, 3 Jul 2017 11:10:36 +0530
+Message-ID: <5380d587-98b1-8358-c3d4-3111c70ba4ca@ti.com>
+References: <20170622092821.5508-1-axel.lin@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maarten ter Huurne <maarten-Ph2Y2OKCxY1M656bX5wj8A@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Paul Burton <paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux MIPS <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>"linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <li>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:62974 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750777AbdGCFkm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 01:40:42 -0400
+In-Reply-To: <20170622092821.5508-1-axel.lin@ingics.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 
-Hi Linus,
 
-> I applied all the patches to a branch in pinctrl and merged into my
-> devel branch for testing:
+
+On Thursday 22 June 2017 02:58 PM, Axel Lin wrote:
+> The value argument of lp87565_gpio_direction_output() means output level
+> rather than gpio direction.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/
-> Branch: ingenic
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+> Hi Keerthy,
+> I don't have this h/w, so please help to review and test it.
+
+Axel,
+
+Apologies for replying a bit late.
+
+
+> Thanks,
+> Axel
+>  drivers/gpio/gpio-lp87565.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> Ralf: are you OK with this? It would be nice to have your ACK on
-> all patches. If you want you can pull this branch into the MIPS
-> tree, or we can hope for it all to settle nicely because of low 
-> platform
-> activity in MIPS on this platform, so it only needs to come in
-> from my trees.
+> diff --git a/drivers/gpio/gpio-lp87565.c b/drivers/gpio/gpio-lp87565.c
+> index 6313c50..69b69d4 100644
+> --- a/drivers/gpio/gpio-lp87565.c
+> +++ b/drivers/gpio/gpio-lp87565.c
+> @@ -54,9 +54,12 @@ static int lp87565_gpio_direction_output(struct gpio_chip *chip,
+>  {
+>  	struct lp87565_gpio *gpio = gpiochip_get_data(chip);
+>  
+> +	regmap_update_bits(gpio->map, LP87565_REG_GPIO_OUT,
+> +			   BIT(offset), value ? BIT(offset) : 0);
+> +
 
-There has been no word from Ralf, is this going into 4.13?
+Or just call:
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+lp87565_gpio_set(chip, offset, value);
+
+Apart from the above comment.
+
+Reviewed-by: Keerthy <j-keerthy@ti.com>
+Tested-by: Keerthy <j-keerthy@ti.com>
+
+Thanks,
+Keerthy
+
+>  	return regmap_update_bits(gpio->map,
+>  				  LP87565_REG_GPIO_CONFIG,
+> -				  BIT(offset), !value ? BIT(offset) : 0);
+> +				  BIT(offset), BIT(offset));
+>  }
+>  
+>  static int lp87565_gpio_get(struct gpio_chip *chip, unsigned int offset)
+> 
