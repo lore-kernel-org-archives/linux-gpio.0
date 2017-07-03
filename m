@@ -1,38 +1,74 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 05/14] MIPS: ingenic: Enable pinctrl for all ingenic SoCs
-Date: Mon, 3 Jul 2017 11:07:09 +0200
-Message-ID: <CACRpkdb=Zti+C+2me_WP0=m6z12G5Kz+W_cPcZsw=CVzBO_wAg@mail.gmail.com>
-References: <20170402204244.14216-2-paul@crapouillou.net> <20170428200824.10906-1-paul@crapouillou.net>
- <20170428200824.10906-6-paul@crapouillou.net> <CACRpkdauf5c2i4o5i8QY8YHPNjizkvTu6kAbnquWiP_=v2=KdQ@mail.gmail.com>
- <1499013301.1477.0@smtp.crapouillou.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1499013301.1477.0@smtp.crapouillou.net>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Maarten ter Huurne <maarten@treewalker.org>, Lars-Peter Clausen <lars@metafoo.de>, Paul Burton <paul.burton@imgtec.com>, James Hogan <james.hogan@imgtec.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux MIPS <linux-mips@linux-mips.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>"linux-mtd@lists.infradead.org" <li>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] gpiolib: skip unwanted events, don't convert them to opposite edge
+Date: Mon,  3 Jul 2017 11:12:03 +0200
+Message-ID: <1499073123-13393-1-git-send-email-brgl@bgdev.pl>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:35238 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753378AbdGCJMK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 05:12:10 -0400
+Received: by mail-wm0-f50.google.com with SMTP id w126so161789279wme.0
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Jul 2017 02:12:09 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 
-On Sun, Jul 2, 2017 at 6:35 PM, Paul Cercueil <paul@crapouillou.net> wrote:
-> Hi Linus,
->
->> I applied all the patches to a branch in pinctrl and merged into my
->> devel branch for testing:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/
->> Branch: ingenic
->>
->> Ralf: are you OK with this? It would be nice to have your ACK on
->> all patches. If you want you can pull this branch into the MIPS
->> tree, or we can hope for it all to settle nicely because of low platform
->> activity in MIPS on this platform, so it only needs to come in
->> from my trees.
->
->
-> There has been no word from Ralf, is this going into 4.13?
+The previous fix for filtering out of unwatched events was not entirely
+correct. Instead of skipping the events we don't want, they are now
+interpreted as events with opposing edge.
 
-Yes.
+In order to fix it: always read the GPIO line value on interrupt and
+only emit the event if it corresponds with the event type we requested.
 
-Yours,
-Linus Walleij
+Fixes: ad537b822577 ("gpiolib: fix filtering out unwanted events")
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+Hi Linus,
+
+I tested my previous fix on a real board, where I got a storm of
+interrupts from simply playing with a GPIO manually. It looked ok so I
+posted the patch, but I didn't notice that when waiting for rising-edge
+events, all falling-edge events got interpreted as such. This patch
+should actually fix this bug. Tested carefully with gpio-mockup this
+time.
+
+ drivers/gpio/gpiolib.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a42a1ee..2e96b3d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -704,24 +704,23 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
+ {
+ 	struct lineevent_state *le = p;
+ 	struct gpioevent_data ge;
+-	int ret;
++	int ret, level;
+ 
+ 	ge.timestamp = ktime_get_real_ns();
++	level = gpiod_get_value_cansleep(le->desc);
+ 
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+ 	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
+-		int level = gpiod_get_value_cansleep(le->desc);
+-
+ 		if (level)
+ 			/* Emit low-to-high event */
+ 			ge.id = GPIOEVENT_EVENT_RISING_EDGE;
+ 		else
+ 			/* Emit high-to-low event */
+ 			ge.id = GPIOEVENT_EVENT_FALLING_EDGE;
+-	} else if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE) {
++	} else if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE && level) {
+ 		/* Emit low-to-high event */
+ 		ge.id = GPIOEVENT_EVENT_RISING_EDGE;
+-	} else if (le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
++	} else if (le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE && !level) {
+ 		/* Emit high-to-low event */
+ 		ge.id = GPIOEVENT_EVENT_FALLING_EDGE;
+ 	} else {
+-- 
+2.9.3
+
