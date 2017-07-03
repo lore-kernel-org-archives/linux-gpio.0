@@ -1,51 +1,41 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v3 01/17] mfd: madera: Add register definitions for
- Cirrus Logic Madera codecs
-Date: Mon, 03 Jul 2017 03:52:46 -0700
-Message-ID: <1499079166.9885.13.camel@perches.com>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
-         <1496415790-19164-2-git-send-email-rf@opensource.wolfsonmicro.com>
-         <20170703103330.uka6otpdes462eym@dell>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] gpiolib: skip unwanted events, don't convert them to
+ opposite edge
+Date: Mon, 3 Jul 2017 14:07:15 +0300
+Message-ID: <CAHp75Vddwkxgj6uLc9GSqqAF0PQCzX9a2QyyBhE7GviVBJH8jQ@mail.gmail.com>
+References: <1499073123-13393-1-git-send-email-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtprelay0130.hostedemail.com ([216.40.44.130]:57448 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752560AbdGCKwv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 06:52:51 -0400
-In-Reply-To: <20170703103330.uka6otpdes462eym@dell>
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:33181 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753032AbdGCLHQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 3 Jul 2017 07:07:16 -0400
+In-Reply-To: <1499073123-13393-1-git-send-email-brgl@bgdev.pl>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 2017-07-03 at 11:33 +0100, Lee Jones wrote:
-> On Fri, 02 Jun 2017, Richard Fitzgerald wrote:
-> 
-> > This patch adds a header file of register definitions for Cirrus
-> > Logic "Madera" class codecs. These codecs are all based off a common
-> > set of hardware IP so have a common register map (with a few minor
-> > device-to-device variations). These are complex devices with a large
-> > number of features and so have a correspondingly large register set.
-> > The registers.h file has been auto-generated from the hardware register
-> > definitions, stripped down to only registers we need to access from
-> > the driver
-> > 
-> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-> > ---
-> > Changes since V2:
-> > - Used new field names for IRQ1_STATUS_33 register
-> > 
-> >  MAINTAINERS                          |   10 +
-> >  include/linux/mfd/madera/registers.h | 8832 ++++++++++++++++++++++++++++++++++
-> >  2 files changed, 8842 insertions(+)
-> >  create mode 100644 include/linux/mfd/madera/registers.h
-> 
-> Applied, thanks.
+On Mon, Jul 3, 2017 at 12:12 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> The previous fix for filtering out of unwatched events was not entirely
+> correct. Instead of skipping the events we don't want, they are now
+> interpreted as events with opposing edge.
+>
+> In order to fix it: always read the GPIO line value on interrupt and
+> only emit the event if it corresponds with the event type we requested.
 
-followed by 400k of useless quoted reply!!!
+>         struct lineevent_state *le = p;
+>         struct gpioevent_data ge;
+> -       int ret;
+> +       int ret, level;
 
-Lee.  Seriously.  Don't be impolite to others.
-Remember to trim  your replies.
+I prefer
+int level;
+int ret;
 
+Though it's matter of taste (I don't remember which one Linus' preferable).
+
+-- 
+With Best Regards,
+Andy Shevchenko
