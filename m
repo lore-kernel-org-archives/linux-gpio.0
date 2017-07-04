@@ -1,114 +1,48 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: Getting gpios from user space based on gpio-line-names
-Date: Tue, 4 Jul 2017 12:57:29 +0200
-Message-ID: <29fa2aeb-9b5c-746e-66af-e441163c62d9@monstr.eu>
-References: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
- <CAMRc=MdPNMQu27RWGW6D+um4yD+BBnut3Bfy0hC0CUprm99q=Q@mail.gmail.com>
-Reply-To: monstr@monstr.eu
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH] gpio: drop unnecessary includes from
+ include/linux/gpio/driver.h
+Date: Tue, 4 Jul 2017 08:58:51 -0400
+Message-ID: <20170704125851.GA20504@sophia>
+References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="PJrxNQvfBrxiEAbPCu9wxDs4WSURjhIAB"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:37186 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751910AbdGDK5g (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Jul 2017 06:57:36 -0400
-Received: by mail-wm0-f46.google.com with SMTP id i127so134436587wma.0
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Jul 2017 03:57:35 -0700 (PDT)
-In-Reply-To: <CAMRc=MdPNMQu27RWGW6D+um4yD+BBnut3Bfy0hC0CUprm99q=Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---PJrxNQvfBrxiEAbPCu9wxDs4WSURjhIAB
-Content-Type: multipart/mixed; boundary="KhwhRfk4VmCBtnVtedx69mhfJhHBhJx0t";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>
-Message-ID: <29fa2aeb-9b5c-746e-66af-e441163c62d9@monstr.eu>
-Subject: Re: Getting gpios from user space based on gpio-line-names
-References: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
- <CAMRc=MdPNMQu27RWGW6D+um4yD+BBnut3Bfy0hC0CUprm99q=Q@mail.gmail.com>
-In-Reply-To: <CAMRc=MdPNMQu27RWGW6D+um4yD+BBnut3Bfy0hC0CUprm99q=Q@mail.gmail.com>
-
---KhwhRfk4VmCBtnVtedx69mhfJhHBhJx0t
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ray Jui <rjui@broadcom.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, linux-acpi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>, linux-tegra@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.o
+List-Id: linux-gpio@vger.kernel.org
 
-On 3.7.2017 15:06, Bartosz Golaszewski wrote:
-> 2017-07-03 15:01 GMT+02:00 Michal Simek <monstr@monstr.eu>:
->> Hi,
->>
->> I am trying to find some docs about how to ask for gpio line
->> based on gpio-line-names in DT. I see line names available via debugfs=
+On Tue, Jul 04, 2017 at 12:53:34PM +0900, Masahiro Yamada wrote:
+>Some of include directives in include/linux/gpio/driver.h are
+>unneeded because the header does not need to know the content of
+>struct device, irq_chip, etc.  Just declare they are structures.
+>
+>On the other hand, <linux/irqhandler.h> and <linux/spinlock_types.h>
+>turned out to be necessary for irq_flow_handler_t and spinlock_t,
+>respectively.
+>
+>Each driver should include what it needs without relying on what is
+>implicitly included from <linux/gpio/driver.h>.  This will cut down
+>unnecessary header parsing.
+>
+>Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>---
+>
+> drivers/gpio/gpio-104-dio-48e.c  |  1 +
+> drivers/gpio/gpio-104-idi-48.c   |  1 +
+> drivers/gpio/gpio-104-idio-16.c  |  1 +
+> drivers/gpio/gpio-pci-idio-16.c  |  2 ++
+> drivers/gpio/gpio-ws16c48.c      |  1 +
 
->> which is not suitable for production.
->> And also I didn't find a way how to ask for gpio Linux number from use=
-r
->> space to start to work with them.
->> This is for gpio mraa integration which depends on Linux gpio line num=
-bers.
->>
->> Thanks,
->> Michal
->>
->> --
->> Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
->> w: www.monstr.eu p: +42-0-721842854
->> Maintainer of Linux kernel - Xilinx Microblaze
->> Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
->> U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
->>
->>
->=20
-> Hi Michal,
->=20
-> you can try libgpiod[1] and specifically the gpiofind tool included in
-> the repository. Buildroot has this package should you need to build a
-> rootfs for some specific target.
->=20
-> Best regards,
-> Bartosz Golaszewski
->=20
-> [1] https://github.com/brgl/libgpiod
->=20
+The changes to the above drivers look fine to me:
 
-Thanks. That's what I was looking for. I knew that there is new
-interface but didn't have this link.
+Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Thanks,
-Michal
+However, this patch as a whole does too many things; I'd like to see it
+split-up logically similar to how Andy Shevchenko suggested in his
+reply. That should allow ACKs by respective driver maintainers to be
+accounted more properly.
 
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---KhwhRfk4VmCBtnVtedx69mhfJhHBhJx0t--
-
---PJrxNQvfBrxiEAbPCu9wxDs4WSURjhIAB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAllbdJ0ACgkQykllyylKDCEz/ACeNFAym0SnjJE2tp1yDtOJsEfw
-iNIAniAQzE0QW6dCcH6QHhOHJWztEgbu
-=Vq1d
------END PGP SIGNATURE-----
-
---PJrxNQvfBrxiEAbPCu9wxDs4WSURjhIAB--
+William Breathitt Gray
