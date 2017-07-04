@@ -1,45 +1,49 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] pinctrl: cherryview: Add Setzer models to the Chromebook DMI quirk
-Date: Tue,  4 Jul 2017 15:58:39 +0300
-Message-ID: <20170704125839.16093-1-andriy.shevchenko@linux.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] gpiolib: skip unwanted events, don't convert them to
+ opposite edge
+Date: Tue, 4 Jul 2017 16:27:08 +0200
+Message-ID: <CAMRc=MccOquh9ovQTLB-F2GiQND3EQXmcKDEqh26o+RY470UZw@mail.gmail.com>
+References: <1499073123-13393-1-git-send-email-brgl@bgdev.pl> <CAHp75Vddwkxgj6uLc9GSqqAF0PQCzX9a2QyyBhE7GviVBJH8jQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:6079 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752736AbdGDM67 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 4 Jul 2017 08:58:59 -0400
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:36828 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752135AbdGDO1J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 4 Jul 2017 10:27:09 -0400
+Received: by mail-qk0-f175.google.com with SMTP id p21so169712211qke.3
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Jul 2017 07:27:09 -0700 (PDT)
+In-Reply-To: <CAHp75Vddwkxgj6uLc9GSqqAF0PQCzX9a2QyyBhE7GviVBJH8jQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, mail@abhishek.geek.nz
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Add one more model to the Chromebook DMI quirk to make it working again.
+2017-07-03 13:07 GMT+02:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+> On Mon, Jul 3, 2017 at 12:12 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> The previous fix for filtering out of unwatched events was not entirely
+>> correct. Instead of skipping the events we don't want, they are now
+>> interpreted as events with opposing edge.
+>>
+>> In order to fix it: always read the GPIO line value on interrupt and
+>> only emit the event if it corresponds with the event type we requested.
+>
+>>         struct lineevent_state *le = p;
+>>         struct gpioevent_data ge;
+>> -       int ret;
+>> +       int ret, level;
+>
+> I prefer
+> int level;
+> int ret;
+>
+> Though it's matter of taste (I don't remember which one Linus' preferable).
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
-Fixes: 2a8209fa6823 ("pinctrl: cherryview: Extend the Chromebook DMI quirk to Intel_Strago systems")
-Reported-by: mail@abhishek.geek.nz
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Hard to tell, the file uses both styles.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 20f1b4493994..04e929fd0ffe 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1548,6 +1548,13 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		},
- 	},
- 	{
-+		.ident = "HP Chromebook 11 G5 (Setzer)",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-+		},
-+	},
-+	{
- 		.ident = "Acer Chromebook R11 (Cyan)",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
--- 
-2.11.0
-
+Thanks,
+Bartosz
