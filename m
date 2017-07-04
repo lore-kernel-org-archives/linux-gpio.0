@@ -1,50 +1,59 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from
- include/linux/gpio/driver.h
-Date: Tue, 4 Jul 2017 09:30:45 +0100
-Message-ID: <20170704083045.fqruqn6i5sxhfhu6@localhost.localdomain>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: wrap Intel pin control drivers in an
+ architecture check
+Date: Tue, 4 Jul 2017 12:54:59 +0300
+Message-ID: <20170704095459.GB1250@kuha.fi.intel.com>
+References: <20170704064947.10792-1-pbrobinson@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:30333 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751631AbdGDJzD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 4 Jul 2017 05:55:03 -0400
 Content-Disposition: inline
-In-Reply-To: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Thor Thayer <thor.thayer@linux.intel.com>, Tien Hock Loh <thloh@altera.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, Alban Bedel <albeu@free.fr>, Florian Fainelli <f.fainelli@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Kevin Hilman <khilman@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-acpi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Joel Stanley <joel@jms.id.au>, Grygorii Strashko <grygorii.strashko@ti.com>, Ray Jui <rjui@broadcom.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, linux-gpio@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-arm-kernel@lists.infradead.org, =?iso-885
+In-Reply-To: <20170704064947.10792-1-pbrobinson@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Robinson <pbrobinson@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Tue, Jul 04, 2017 at 12:53:34PM +0900, Masahiro Yamada wrote:
-> Some of include directives in include/linux/gpio/driver.h are
-> unneeded because the header does not need to know the content of
-> struct device, irq_chip, etc.  Just declare they are structures.
+On Tue, Jul 04, 2017 at 07:49:47AM +0100, Peter Robinson wrote:
+> The Intel pin control drivers are architecture specific so add an if arch
+> to check for X86 or compile test to ensure continued test coverage.
 > 
-> On the other hand, <linux/irqhandler.h> and <linux/spinlock_types.h>
-> turned out to be necessary for irq_flow_handler_t and spinlock_t,
-> respectively.
-> 
-> Each driver should include what it needs without relying on what is
-> implicitly included from <linux/gpio/driver.h>.  This will cut down
-> unnecessary header parsing.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
 > ---
+>  drivers/pinctrl/intel/Kconfig | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->  drivers/gpio/gpio-wm831x.c       |  1 +
->  drivers/gpio/gpio-wm8994.c       |  1 +
+> diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
+> index 396830a41127..0c7edc321415 100644
+> --- a/drivers/pinctrl/intel/Kconfig
+> +++ b/drivers/pinctrl/intel/Kconfig
+> @@ -1,6 +1,7 @@
+>  #
+>  # Intel pin control drivers
+>  #
+> +if (X86 || COMPILE_TEST)
+>  
+>  config PINCTRL_BAYTRAIL
+>  	bool "Intel Baytrail GPIO pin control"
+> @@ -72,3 +73,5 @@ config PINCTRL_SUNRISEPOINT
+>  	  Sunrisepoint is the PCH of Intel Skylake. This pinctrl driver
+>  	  provides an interface that allows configuring of PCH pins and
+>  	  using them as GPIOs.
+> +
+> +endif
 
-For the Wolfson Micro bits:
+OK by me:
 
-Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 
 Thanks,
-Charles
+
+-- 
+heikki
