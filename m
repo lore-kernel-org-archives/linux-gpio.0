@@ -1,48 +1,45 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from
- include/linux/gpio/driver.h
-Date: Tue, 4 Jul 2017 08:58:51 -0400
-Message-ID: <20170704125851.GA20504@sophia>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ray Jui <rjui@broadcom.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, linux-acpi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>, linux-tegra@vger.kernel.org, Joel Stanley <joel@jms.id.au>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.o
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] pinctrl: cherryview: Add Setzer models to the Chromebook DMI quirk
+Date: Tue,  4 Jul 2017 15:58:39 +0300
+Message-ID: <20170704125839.16093-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:6079 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752736AbdGDM67 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 4 Jul 2017 08:58:59 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, mail@abhishek.geek.nz
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Tue, Jul 04, 2017 at 12:53:34PM +0900, Masahiro Yamada wrote:
->Some of include directives in include/linux/gpio/driver.h are
->unneeded because the header does not need to know the content of
->struct device, irq_chip, etc.  Just declare they are structures.
->
->On the other hand, <linux/irqhandler.h> and <linux/spinlock_types.h>
->turned out to be necessary for irq_flow_handler_t and spinlock_t,
->respectively.
->
->Each driver should include what it needs without relying on what is
->implicitly included from <linux/gpio/driver.h>.  This will cut down
->unnecessary header parsing.
->
->Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->---
->
-> drivers/gpio/gpio-104-dio-48e.c  |  1 +
-> drivers/gpio/gpio-104-idi-48.c   |  1 +
-> drivers/gpio/gpio-104-idio-16.c  |  1 +
-> drivers/gpio/gpio-pci-idio-16.c  |  2 ++
-> drivers/gpio/gpio-ws16c48.c      |  1 +
+Add one more model to the Chromebook DMI quirk to make it working again.
 
-The changes to the above drivers look fine to me:
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+Fixes: 2a8209fa6823 ("pinctrl: cherryview: Extend the Chromebook DMI quirk to Intel_Strago systems")
+Reported-by: mail@abhishek.geek.nz
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 20f1b4493994..04e929fd0ffe 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1548,6 +1548,13 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		},
+ 	},
+ 	{
++		.ident = "HP Chromebook 11 G5 (Setzer)",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
++		},
++	},
++	{
+ 		.ident = "Acer Chromebook R11 (Cyan)",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+-- 
+2.11.0
 
-However, this patch as a whole does too many things; I'd like to see it
-split-up logically similar to how Andy Shevchenko suggested in his
-reply. That should allow ACKs by respective driver maintainers to be
-accounted more properly.
-
-William Breathitt Gray
