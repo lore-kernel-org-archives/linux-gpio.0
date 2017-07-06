@@ -1,58 +1,34 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v2 2/3] gpio: Add support for TPS68470 GPIOs
-Date: Thu, 6 Jul 2017 01:49:28 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725D5A39@FMSMSX114.amr.corp.intel.com>
-References: <1497161395-36504-1-git-send-email-rajmohan.mani@intel.com>
- <1497161395-36504-3-git-send-email-rajmohan.mani@intel.com>
- <CAHp75Ve5zabpmRoAYbg7ONcp8WM_cCB=xiSLhSnU6QzC0CnJ3g@mail.gmail.com>
- <6F87890CF0F5204F892DEA1EF0D77A59725BF44A@FMSMSX114.amr.corp.intel.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V1 1/3] pinctrl: qcom: spmi-gpio: Add support for GPIO
+ LV/MV subtype
+Date: Wed, 5 Jul 2017 22:02:55 -0700
+Message-ID: <20170706050255.GN18666@tuxbook>
+References: <20170613061707.13892-1-fenglinw@codeaurora.org>
+ <20170613061707.13892-2-fenglinw@codeaurora.org>
+ <CACRpkdYrsOB71gJjXeQn0Q8xBTEvYSeDnRpSGm4GQ0h-=Pk3=Q@mail.gmail.com>
+ <5cdf4344-7298-055b-70cb-84cfd96110af@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725BF44A@FMSMSX114.amr.corp.intel.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Andy Shevchenko' <andy.shevchenko@gmail.com>
-Cc: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'linux-gpio@vger.kernel.org'" <linux-gpio@vger.kernel.org>, "'linux-acpi@vger.kernel.org'" <linux-acpi@vger.kernel.org>, 'Lee Jones' <lee.jones@linaro.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Alexandre Courbot' <gnurou@gmail.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Len Brown' <lenb@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5cdf4344-7298-055b-70cb-84cfd96110af@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Fenglin Wu <fenglinw@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Ivan Ivanov <iivanov.xz@gmail.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, collinsd@quicinc.com, aghayal@qti.qualcomm.com, wruan@quicinc.com, kgunda@qti.qualcomm.com
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgQW5keSBhbmQgYWxsLA0KDQpUaGFua3MgZm9yIHlvdXIgcGF0aWVuY2UuDQoNCj4gPg0KPiA+
-IE1haW4gcG9pbnRzIChzb21lIEkgYWxyZWFkeSB0b2xkIGluIGFuIGFuc3dlciB0byBTYWthcmkn
-cyBtYWlsKToNCj4gPiAxLiBDb25zaWRlciAyIEdQSU8gY2hpcHMgb3ZlciAxLg0KPiANCj4gSSBh
-bSBsb29raW5nIGludG8gdGhpcy4NCj4gDQoNCkZvciB0aGUgc2Vjb25kIEdQSU8gY2hpcCwgdGhl
-IGNhbGwgdG8gYWNwaV9hdHRhY2hfZGF0YSgpIGZhaWxzIHdpdGggQUVfQUxSRUFEWV9FWElTVFMs
-IGFzIGJlbG93IHdpdGggNC4xMiByYzMga2VybmVsLg0KDQphY3BpX2dwaW9jaGlwX2FkZCgpDQoJ
-YWNwaV9hdHRhY2hfZGF0YSgpIA0KCQlhY3BpX25zX2F0dGFjaF9kYXRhKCkgZmFpbHMgd2l0aCBB
-RV9BTFJFQURZX0VYSVNUUyBmb3IgdGhlIHNlY29uZCBHUElPIGNoaXAuDQoJCS8qIFdlIG9ubHkg
-YWxsb3cgb25lIGF0dGFjaG1lbnQgcGVyIGhhbmRsZXIgKi8gZHJpdmVycy9hY3BpL2FjcGljYS9u
-c29iamVjdC5jDQoNCkFsc28sIEkgdHJpZWQgdGhlIGZvbGxvd2luZyBleHBlcmltZW50LCBzaW5j
-ZSB3ZSBrbm93IHRoZSBudW1iZXIgb2YgR1BJT3MgZm9yIHRoZSBzZWNvbmQgR1BJTyBjaGlwIGlz
-IDMsIGp1c3QgdG8gc2VlIGlmIEkgY2FuIGdldCBmdXJ0aGVyIGFsb25nIGFmdGVyIGEgc3VjY2Vz
-c2Z1bCBjYWxsIHRvIGFjcGlfYXR0YWNoX2RhdGEoKS4NCg0KU2luY2UgdGhlIGFjcGlfZ3Bpb19j
-aGlwX2RoIGlzIHVzZWQgYXMgdGhlIGhhbmRsZXIgaW4gYWxsIGFjcGlfZ3Bpb2NoaXBfKiBjYWxs
-cywgSSB0cmllZCB0byB1c2UgYW5vdGhlciBoYW5kbGVyIChhY3BpX2dwaW9fY2hpcF9kaDIpLiBC
-dXQgbm93LCBhcyBleHBlY3RlZCwgYWNwaV9ncGlvY2hpcF9yZXF1ZXN0X3JlZ2lvbnMoKSBmYWls
-ZWQgaW5zaWRlIGFjcGlfZ3Bpb2NoaXBfYWRkKCksIGFzIG9ubHkgb25lIE9wUmVnaW9uIGhhbmRs
-ZXIgY2FuIGJlIGluc3RhbGxlZCBmb3IgYSBnaXZlbiBPcFJlZ2lvbiBjb2RlLiBEdWUgdG8gdGhp
-cywgd2hlbiBJIHRyeSB0byBzZXQgdGhlIEdQSU8gOSAod2hpY2ggaXMgbm93IEdQSU8gMiBvZiB0
-aGUgc2Vjb25kIEdQSU8gY2hpcCBvZiAyIEdQSU8gY2hpcHMgaW1wbGVtZW50YXRpb24pLCB0aGUg
-T3BSZWdpb24gaGFuZGxlciBpcyBjYWxsZWQgd2l0aCB0aGUgaW5mb3JtYXRpb24gLyByZWdpb25f
-Y29udGV4dCBwb2ludGVyIG9mIHRoZSBmaXJzdCBHUElPIGNoaXAsIHdoaWNoIGlzIG5vdCBkZXNp
-cmVkLg0KDQpJdCBzb3VuZHMgbGlrZSB0aGVyZSBhcmUgMiBpc3N1ZXMgd2l0aCB0aGUgMiBHUElP
-IGNoaXBzIGltcGxlbWVudGF0aW9uLg0KDQoxKSBIb3cgdG8gZ2V0IGFjcGlfbnNfYXR0YWNoX2Rh
-dGEoKSBkb25lIHN1Y2Nlc3NmdWxseSBmb3IgdGhlIHNlY29uZCBHUElPIGNoaXAsIGdpdmVuIHRo
-ZSBvYnNlcnZhdGlvbiBhYm92ZSBhbmQNCg0KMikgSG93IHRvIGdldCB0aGUgR1BJTyBPcFJlZ2lv
-biBoYW5kbGVyIHRvIGJlIGNhbGxlZCB3aXRoIHRoZSByaWdodCBHUElPIGNoaXAgaW5mb3JtYXRp
-b24gLyByZWdpb25fY29udGV4dCBwb2ludGVyDQoNCkkgbmVlZCBwb2ludGVycyB0byBtYWtlIGZ1
-cnRoZXIgcHJvZ3Jlc3MgaGVyZS4NCg0KPiA+IDIuIEZpeCBGSVhNRShzKS4NCj4gDQo+IExlYXZp
-bmcgdGhpcyBvbiwgdW50aWwgSSBzZWUgaG93IHRoaXMgY2FuIGJlIGZpeGVkLg0KPiANCg0KVGhl
-c2UgRklYTUUgY29kZSB3aWxsIGJlIHJlbW92ZWQgZnJvbSB0aGUgZHJpdmVyLCBhcyB3ZSBhcmUg
-d29ya2luZyB0byBnZXQgdGhpcyBkb25lIHRocm91Z2ggcGxhdGZvcm0gZmlybXdhcmUuDQoNCj4g
-PiAzLiBJZiB0aGVyZSBpcyBoYXJkd2FyZSBidWcgd2Ugc2hvdWxkIHdvcmsgYXJvdW5kIGl0IG11
-c3QgYmUgY2xhcmlmaWVkLg0KPiANCj4gQWNrDQo+IElmIHRoaXMgaXMgYWJvdXQgaW5pdGlhbGl6
-aW5nIHRoZSBHUElPcyB3aXRoIHplcm8sIEkgaGF2ZSByZW1vdmVkIHRoaXMgY29kZSBmb3INCj4g
-bm93Lg0KPiANCj4gPiA0LiBZb3UgbWlzc2VkIExpbnVzJyBjb21tZW50cyBoZXJlIChzd2l0Y2gg
-dG8gdGhlIGRhdGEgcG9pbnRlciBpbnNpZGUNCj4gPiBHUElPIGNoaXAgYW5kIHJlbW92ZSBwbGF0
-Zm9ybSBkcml2ZXIgZGF0YSBzdHVmZiBmcm9tIHRoZSBkcml2ZXIpLg0KPiA+DQo+IA0KPiBJIGhh
-dmUgZml4ZWQgdGhpcyB3aXRoIHYzDQo=
+On Wed 05 Jul 16:51 PDT 2017, Fenglin Wu wrote:
+
+> Hi Bjorn and Ivan,
+> 
+> Could you help to take some time to look at these spmi-gpio pinctrl
+> patches?
+> Thanks.
+
+Hi Fenglin,
+
+Sorry for not getting to this earlier, I'll try to finalize my review of
+this tomorrow.
+
+Regards,
+Bjorn
