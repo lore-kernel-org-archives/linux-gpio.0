@@ -1,78 +1,43 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 2/2] pinctrl: sunxi: add support of R40 to A10 pinctrl
- driver
-Date: Thu, 6 Jul 2017 22:50:30 +0200
-Message-ID: <20170706205030.e6wzn5n7ix3443cl@flea>
-References: <20170706142822.20296-1-icenowy@aosc.io>
- <20170706142822.20296-3-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: add COMPILE_TEST to several drivers
+Date: Thu, 6 Jul 2017 23:52:51 +0200
+Message-ID: <CACRpkdaits4bo4NhdG1Crh2Ds-7q=_WotZeYF6dWMSzFpf-zjQ@mail.gmail.com>
+References: <1499140313-31592-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mbdzrfndsd5tl2um"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170706142822.20296-3-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:38725 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752717AbdGFVwx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Jul 2017 17:52:53 -0400
+Received: by mail-it0-f52.google.com with SMTP id k192so17766324ith.1
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Jul 2017 14:52:53 -0700 (PDT)
+In-Reply-To: <1499140313-31592-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+On Tue, Jul 4, 2017 at 5:51 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
---mbdzrfndsd5tl2um
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> These drivers are actually platform-agnostic.  Add COMPILE_TEST for
+> the compilation test coverage.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Thu, Jul 06, 2017 at 10:28:22PM +0800, Icenowy Zheng wrote:
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> -		  SUNXI_FUNCTION(0x2, "i2c0")),		/* SCK */
-> +		  SUNXI_FUNCTION(0x2, "i2c0"),		/* SCK */
-> +		  SUNXI_FUNCTION_VARIANT(0x3,
-> +					 "pll_lock_dbg",
-> +					 PINCTRL_SUN8I_R40)),
+I had such patches in the past.
 
-You have a number of lines where the wrapping is not consistent with
-the rest, such as this one, but also...
+It breaks everything to the left and right.
 
->  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 20),
->  		  SUNXI_FUNCTION(0x0, "gpio_in"),
->  		  SUNXI_FUNCTION(0x1, "gpio_out"),
-> -		  SUNXI_FUNCTION(0x2, "i2c2")),		/* SCK */
-> +		  SUNXI_FUNCTION(0x2, "i2c2"),		/* SCK */
-> +		  SUNXI_FUNCTION_VARIANT(0x4,
-> +					 "pwm",		/* PWM4 */
-> +					 PINCTRL_SUN8I_R40)),
+What I need is someone who turns this on PER DRIVER (in their tree)
+fixes all the fallout (I don't know how, maybe using 0day builds?), then
+sends a patch fixing the fallout and as the last patch turns on
+COMPILE_TEST when it doesn't break anything.
 
-=2E.. this one for example. Please fix this.
+And we want to use it for new drivers, ideally.
 
-Looks good otherwise.
+The arch that always breaks everything us UM Linux.
 
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
-
---mbdzrfndsd5tl2um
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJZXqKWAAoJEBx+YmzsjxAgVj8P/REFGwfOS8uG83jPpk1Hvgv8
-q1rURNZv0ZCdAn69lkbzF85aML3mQTMmi3zEKx1MNInLUFPc2JeYJckzyTt0DBp0
-wlktGfMscNKCcQCAUvUnevc19hwwQXAmVpstDuHHH/mqizx7U++mOEQONDGmOEXi
-zQdQC5vSOeKWYd+HHA9tBhR3dDnGK/7y3nfAL676HtoQ0x/Ved95DgWoWitSZSh0
-QIo7Jy5RhSHEoWDajrfLhskt+vBqXY4S/uxcmGRsRi1UNPTDwG3GDOuLGrlFWI1h
-pm79Cdy+NEyIuUi1p5dLpG2P7+OyP83/SPIbEGr3Rby3kRezb50M/EEYkiVBHvqq
-KLVBsx0TRNyiCU//KLF5JsC0u8g+tkzL33UjnFavAlm0/QVeR9b5aOu9RclNPNUf
-iHjKMnVy9zIGmP75aeKXSHWm/S/m+cPu9cef2aZjWIbD+Zy9C8EJFmqpFiGgTKYt
-b+wAMORe03QjdLLVFwcZgJJE0/NAsQNXf/2TpU7HyFzGUsHAtvzuy0XFcSBPMNkY
-8RxiGq1oPMJ8FCHlRSfK7WhgkXx01IXa6XeKm+nlJpH+rujE7WEm7HaF7RaiHnO1
-kSrE7kJ4rvPxPvdXOgzLtemsKTKn+SOcCou+7pGKZPx5q7qIYaMyEd8CLFKJTTMB
-yi8rqLARZn20tpwwJCan
-=sJhe
------END PGP SIGNATURE-----
-
---mbdzrfndsd5tl2um--
+Yours,
+Linus Walleij
