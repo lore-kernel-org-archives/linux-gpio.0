@@ -1,54 +1,54 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: sunxi: add a missing function
- of A10/A20 pinctrl driver
-Date: Thu, 6 Jul 2017 22:46:46 +0200
-Message-ID: <20170706204646.3akr57fo6c2ok4wn@flea>
-References: <20170706142822.20296-1-icenowy@aosc.io>
- <20170706142822.20296-2-icenowy@aosc.io>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lia4rf3fybgly4n3"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBB3GD7LFAKGQE2PT4HAA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170706142822.20296-2-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Anatolij Gustschin <agust@denx.de>
+Subject: [PATCH 0/3] FPGA Manager support for FPP via FT232H FT245-FIFO
+Date: Thu,  6 Jul 2017 22:49:15 +0200
+Message-ID: <1499374158-12388-1-git-send-email-agust@denx.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.10]:42416 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751980AbdGFUtX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 6 Jul 2017 16:49:23 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>
+Cc: Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
+This series adds support for fast passive parallel (FPP) Altera
+FPGA configuration using FTDI FT232H chip in FT245-FIFO mode.
+It has been used to configure Arria 10 FPGAs.
 
---lia4rf3fybgly4n3
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Patch 1 adds an FT232H MFD driver with common functions that
+can be used for FT232H USB-GPIO/I2C/SPI master adapter drivers.
+Currently it is used for FT232H GPIO support (in patch 2) and
+for FT245 FIFO transfers in FPP FPGA manager driver in patch 3.
+Driver support for FT232H USB-I2C/SPI master adapters can be
+added later.
 
-Hi,
+Patch 2 adds a simple GPIO driver supporting four FT232H CBUS GPIOs.
 
-On Thu, Jul 06, 2017 at 10:28:21PM +0800, Icenowy Zheng wrote:
-> The PH16 pin has a function with mux id 0x5, which is the DET pin of the
-> "sim" (smart card reader) IP block.
-> 
-> This function is missing both in the old A10 and A20 drivers, so it's
-> not found during the merge of these two drivers.
-> 
-> Add it to the driver. As we now merged A20 pinctrl driver to the A10
-> one, we need to only fix the A10 driver now.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Patch 3 adds an FPGA Manager driver for Altera FPP FPGA configuration
+via FT232H FT245-FIFO interface.
 
-I'm not sure what you mean there. It's not mentionned in the A10
-datasheet, and neither in the A20. Where did you get that info from?
+Anatolij Gustschin (3):
+  mfd: Add support for FTDI FT232H devices
+  gpio: Add FT232H CBUS GPIO driver
+  fpga manager: Add FT232H driver for Altera FPP
 
-Maxime
+ drivers/fpga/Kconfig          |   7 +
+ drivers/fpga/Makefile         |   1 +
+ drivers/fpga/ftdi-fifo-fpp.c  | 569 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/Kconfig          |  11 +
+ drivers/gpio/Makefile         |   1 +
+ drivers/gpio/gpio-ftdi-cbus.c | 251 +++++++++++++++++++
+ drivers/mfd/Kconfig           |   9 +
+ drivers/mfd/Makefile          |   1 +
+ drivers/mfd/ftdi-ft232h.c     | 470 ++++++++++++++++++++++++++++++++++
+ include/linux/mfd/ftdi/ftdi.h |  71 ++++++
+ 10 files changed, 1391 insertions(+)
+ create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+ create mode 100644 drivers/gpio/gpio-ftdi-cbus.c
+ create mode 100644 drivers/mfd/ftdi-ft232h.c
+ create mode 100644 include/linux/mfd/ftdi/ftdi.h
 
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---lia4rf3fybgly4n3--
+2.7.4
+
