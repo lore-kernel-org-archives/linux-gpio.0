@@ -1,141 +1,80 @@
-From: Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] pinctrl: Add sleep related configuration
-Date: Fri, 7 Jul 2017 16:13:02 +0800
-Message-ID: <20170707081301.GA9683@spreadtrum.com>
-References: <62a67526907157d41235403bd05af309fd4db16b.1498045588.git.baolin.wang@spreadtrum.com>
- <20170626161348.vrtlpat5eof5aa2c@rob-hp-laptop>
- <20170627082132.GB32447@spreadtrum.com>
- <20170627120626.GA1067@spreadtrum.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 2/2] pinctrl: sunxi: add support of R40 to A10 pinctrl
+ driver
+Date: Fri, 7 Jul 2017 11:18:38 +0200
+Message-ID: <20170707091838.64phmj2p5qvn3dxc@flea>
+References: <20170706142822.20296-1-icenowy@aosc.io>
+ <20170706142822.20296-3-icenowy@aosc.io>
+ <20170706205030.e6wzn5n7ix3443cl@flea>
+ <72337BAD-680C-46BC-8DF5-645028E08F65@aosc.io>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ksml2aqpdco54r6c"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:46489 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbdGGJUD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 7 Jul 2017 05:20:03 -0400
 Content-Disposition: inline
-In-Reply-To: <20170627120626.GA1067-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+In-Reply-To: <72337BAD-680C-46BC-8DF5-645028E08F65@aosc.io>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 
-Hi Linusw and Rob,
 
-On 二,  6月 27, 2017 at 08:06:26下午 +0800, Baolin Wang wrote:
-> Hi,
-> 
-> On 二,  6月 27, 2017 at 04:21:32下午 +0800, Baolin Wang wrote:
-> > On 一,  6月 26, 2017 at 11:13:48上午 -0500, Rob Herring wrote:
-> > > On Wed, Jun 21, 2017 at 07:55:37PM +0800, Baolin Wang wrote:
-> > > > In some scenarios, we should set some pins as input/output/pullup/pulldown
-> > > > when the specified system goes into deep sleep mode, then when the system
-> > > > goes into deep sleep mode, these pins will be set automatically by hardware.
-> > > > 
-> > > > Usually we can set the "sleep" state to set sleep related config, but one SoC
-> > > > usually has not only one system (especially for mobile SoC), some systems on
-> > > > the SoC which did not run linux kernel, they can not select the "sleep" state
-> > > > when they go into deep sleep mode.
-> > > 
-> > > The wording here is not very clear. I think what you mean is some pins 
-> > > are not controlled by any specific driver in the OS, but need to be 
-> > > controlled when entering sleep mode.
-> > 
-> > Yes, that is what I meaning, sorry for confusing.
-> > 
-> > > 
-> > > > Thus we introduce some sleep related config into pinconf-generic for users to
-> > > > configure.
-> > > > 
-> > > > Signed-off-by: Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
-> > > > ---
-> > > >  - Add this patch since v4.
-> > > > ---
-> > > >  .../bindings/pinctrl/pinctrl-bindings.txt          |   12 ++++++++++++
-> > > >  drivers/pinctrl/pinconf-generic.c                  |   10 ++++++++++
-> > > >  include/linux/pinctrl/pinconf-generic.h            |   14 ++++++++++++++
-> > > >  3 files changed, 36 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > > > index bf3f7b0..e098059 100644
-> > > > --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-> > > > @@ -236,6 +236,18 @@ low-power-enable	- enable low power mode
-> > > >  low-power-disable	- disable low power mode
-> > > >  output-low		- set the pin to output mode with low level
-> > > >  output-high		- set the pin to output mode with high level
-> > > > +sleep-bias-pull-up	- pull up the pin when the specified system goes into
-> > > > +			  deep sleep mode
-> > > > +sleep-bias-pull-down	- pull down the pin when the specified system goes into
-> > > > +			  deep sleep mode
-> > > > +sleep-input-enable	- enable input on pin when the specified system goes
-> > > > +			  into deep sleep mode (no effect on output)
-> > > > +sleep-intput-disable	- disable input on pin when the specified system goes
-> > > > +			  into deep sleep mode (no effect on output)
-> > > > +sleep-output-low	- set the pin to output mode with low level when the
-> > > > +			  specified system goes into deep sleep mode
-> > > > +sleep-output-high	- set the pin to output mode with high level when the
-> > > > +			  specified system goes into deep sleep mode
-> > > >  slew-rate		- set the slew rate
-> > > 
-> > > I don't really like having 2 ways to define pin setup and this doesn't 
-> > > scale if I need to define 3 states. Couldn't we create pin state 
-> > > definitions and have a pinctrl-n property within the pin controller 
-> > > node to handle all the unhandled pins?
-> > 
-> > As LinusW also suggest we can create one "sleep" state and program them
-> > into registers at early point (like: after probing pinctrl driver). So I
-> > think I can introduce one called "early-sleep" state which need select it
-> > after initializing pinctrl driver.
-> 
-> After more investigation, I do not think it is a good solution to create one
-> state containing sleep related configs and select it at early point.
-> 
-> First these sleep related configs are pins' attributes, they should be set
-> depanding on users situation, which means the state containing sleep related
-> configs should be selected by users. We can not create one "sleep-xxx" state
-> containing all pins' sleep related configs, and select it when initializing
-> pinctrl driver.
-> 
-> Second if we create one "sleep-xxx" state containing sleep related configs,
-> which means we should set one pin's configuration in 2 places.
-> 
-> If we introduce "sleep-input-enable" config, we can set the pin's config
-> as below:
-> vio_sd0_ms_3: regctrl3 {
-> 	pins = "SC9860_RFCTL30", "SC9860_RFCTL31", "SC9860_RFCTL32";
-> 	function = "func1";
-> 	sprd,sleep-mode = <0x3>;
-> 	sleep-input-enable;
-> };
-> 
-> But If we create one extra "sleep-xxx" state for sleep-related configs,
-> it will be like:
-> grp1: regctrl3 {
-> 	pins = "SC9860_RFCTL30", "SC9860_RFCTL31";
-> 	function = "func1";
-> 	sprd,sleep-mode = <0x3>;
-> };
-> 
-> sleep-input: input_grp {
-> 	pins = "SC9860_RFCTL30", "SC9860_RFCTL31", "SC9860_RFCTL32";
-> 	input-enable;
-> };
-> 
-> pinctrl-names = "sleep-input";
-> pinctrl-0 = <&sleep-input>;
-> 
-> "sleep-input" state will be selected when initializing pinctrl driver, "grp1"
-> will be selected by user to set other pin configuration.
-> 
-> Then we need config "SC9860_RFCTL30" pin in 2 different places, which is
-> more inconvenient for users.
-> 
-> Accoring to above explanation, I think we should introduce these standard
-> sleep related configs for users, but if you still have strong objection for
-> it, I think I should introduce some SoC-specific attributes (something like
-> "sprd,sleep-input") for our driver. LinusW and Rob, do you have any good
-> suggestion? Thanks.
+--ksml2aqpdco54r6c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How can I handle these sleep related configs, do you have any good suggestion?
-Thanks a lot.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Fri, Jul 07, 2017 at 07:13:30AM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2017=E5=B9=B47=E6=9C=887=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=884=
+:50:30, Maxime Ripard <maxime.ripard@free-electrons.com> =E5=86=99=E5=88=B0:
+> >On Thu, Jul 06, 2017 at 10:28:22PM +0800, Icenowy Zheng wrote:
+> >>  	SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 0),
+> >>  		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> >>  		  SUNXI_FUNCTION(0x1, "gpio_out"),
+> >> -		  SUNXI_FUNCTION(0x2, "i2c0")),		/* SCK */
+> >> +		  SUNXI_FUNCTION(0x2, "i2c0"),		/* SCK */
+> >> +		  SUNXI_FUNCTION_VARIANT(0x3,
+> >> +					 "pll_lock_dbg",
+> >> +					 PINCTRL_SUN8I_R40)),
+> >
+> >You have a number of lines where the wrapping is not consistent with
+> >the rest, such as this one, but also...
+>=20
+> I think this one is because of extraordinary function name.
+
+Since you don't have a comment, I guess that's not really that bad.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--ksml2aqpdco54r6c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJZX1HuAAoJEBx+YmzsjxAgRSkP/3Uv8ot0V2Bl+4ee3ti1xxEL
+RujkiAMkYALJMMIkbYmr9mxNzh4bEVOPBMO40VYHC7UzZB8db9U/yPm15lROiOwK
+TtVkVJhwnIXK8qm6row+bk+Aa4JLLEyamM46VzQJO2Du7ymcibhd5d/eiL9FpugC
+S8IWUhwblZayKD5yu7D0nYaYDq35HqZMbzYFSToyQu5O/7VpknR7jOut3QlEbMFx
+bWWyiwYCNdITY0jCTfXjnIzRrvzmaCT3VeZka59j9auqEqCn67cpZC8XSV3gAYJi
+K3Fmr+O70dMUYI4kbw0s9F0YSj0E3xuRGZ2isTGPqRu+BSk8x+G/uFdfLB7DeBa/
+AAo6FyPV3SGwdCmnSCzc4r1nrWybV1RU7mqYasGvfS6LCaBUmpAdD6oOJXFIaAW1
+GxdzRc55Ku9ERt6TLa4AdvF6pQxsHUoMr2KQXiivJdOpgvbXncMB3F9TrxZ86AXf
+dIkCROQ7HPKgbBusv7GjiiOk+jVyeoLhY9HWVBZJNDrc/KCfZDdw1L11hb9HNE81
+v+zHiG+MWItPC/bN45TrXEahk0QvkLyj8by+nsZCSzWOfUzmneT+6zCCXffDrCmn
+EBN7bxFzZoChftBE9hMEGxjl91jrU2wpEP8D5y/vkqUwYoJ8QPhu61j31lzGnuNn
+ByPohibYGgi5aIT0BnAf
+=tjHm
+-----END PGP SIGNATURE-----
+
+--ksml2aqpdco54r6c--
