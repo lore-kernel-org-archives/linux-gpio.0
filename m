@@ -1,52 +1,38 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [RFC/RFT PATCH 2/3] gpio: pxa: remove gpio_to_irq() from hw irq handlers
-Date: Sat, 8 Jul 2017 17:44:12 -0500
-Message-ID: <20170708224413.18281-3-grygorii.strashko@ti.com>
-References: <20170708224413.18281-1-grygorii.strashko@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Getting gpios from user space based on gpio-line-names
+Date: Sun, 9 Jul 2017 09:59:46 +0200
+Message-ID: <CACRpkdYSPGb5NKpj9ruOy+SGxRvcsuvCoj-7VWaMyZBnU_hLoA@mail.gmail.com>
+References: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170708224413.18281-1-grygorii.strashko@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robert Jarzmik <robert.jarzmik@free.fr>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:35513 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751883AbdGIH7s (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 9 Jul 2017 03:59:48 -0400
+Received: by mail-io0-f171.google.com with SMTP id h134so13049846iof.2
+        for <linux-gpio@vger.kernel.org>; Sun, 09 Jul 2017 00:59:48 -0700 (PDT)
+In-Reply-To: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "monstr@monstr.eu" <monstr@monstr.eu>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-gpio_to_irq() API expected to be used by GPIO consumers and
-not drivers and there are no guarantee that its gpiolib implementation
-is irq safe.
+On Mon, Jul 3, 2017 at 3:01 PM, Michal Simek <monstr@monstr.eu> wrote:
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/gpio/gpio-pxa.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+> I am trying to find some docs about how to ask for gpio line
+> based on gpio-line-names in DT. I see line names available via debugfs
+> which is not suitable for production.
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 832f3e4..6029899 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -451,7 +451,9 @@ static irqreturn_t pxa_gpio_demux_handler(int in_irq, void *d)
- 			for_each_set_bit(n, &gedr, BITS_PER_LONG) {
- 				loop = 1;
- 
--				generic_handle_irq(gpio_to_irq(gpio + n));
-+				generic_handle_irq(
-+					irq_find_mapping(pchip->irqdomain,
-+							 gpio + n));
- 			}
- 		}
- 		handled += loop;
-@@ -465,9 +467,9 @@ static irqreturn_t pxa_gpio_direct_handler(int in_irq, void *d)
- 	struct pxa_gpio_chip *pchip = d;
- 
- 	if (in_irq == pchip->irq0) {
--		generic_handle_irq(gpio_to_irq(0));
-+		generic_handle_irq(irq_find_mapping(pchip->irqdomain, 0));
- 	} else if (in_irq == pchip->irq1) {
--		generic_handle_irq(gpio_to_irq(1));
-+		generic_handle_irq(irq_find_mapping(pchip->irqdomain, 1));
- 	} else {
- 		pr_err("%s() unknown irq %d\n", __func__, in_irq);
- 		return IRQ_NONE;
--- 
-2.10.1
+Bartosz library is the thing to use. There are simple examples in
+tools/gpio as well.
+
+> And also I didn't find a way how to ask for gpio Linux number from user
+> space to start to work with them.
+> This is for gpio mraa integration which depends on Linux gpio line numbers.
+
+Hopefully it should not need specific numbers but instead go by name.
+It'd be interesting to see how mraa properly uses this new ABI.
+
+Yours,
+Linus Walleij
