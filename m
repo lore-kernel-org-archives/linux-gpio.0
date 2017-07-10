@@ -1,71 +1,52 @@
-From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Subject: Re: Re: [PATCH 1/2] pinctrl: sunxi: add a missing
- function of A10/A20 pinctrl driver
-Date: Mon, 10 Jul 2017 18:23:32 +0800
-Message-ID: <E5197E25-926B-42C5-BBFC-061BB289E707@aosc.io>
-References: <20170706142822.20296-1-icenowy@aosc.io> <20170706142822.20296-2-icenowy@aosc.io> <20170706204646.3akr57fo6c2ok4wn@flea> <a55741a065b818d8ff3843471da61c0e@aosc.io> <20170710084400.wwrfjekv2fkoqvoa@flea>
-Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
+Date: Mon, 10 Jul 2017 14:34:27 +0200
+Message-ID: <20170710123427.GJ29638@localhost>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+ <1499374158-12388-2-git-send-email-agust@denx.de>
+ <87y3s0adr3.fsf@miraculix.mork.no>
+ <20170707115329.06dcdb69@crub>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-sunxi+bncBDS6XAN6ZADRBNVLRXFQKGQEJS6Y4QQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170710084400.wwrfjekv2fkoqvoa@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.orgMaxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170707115329.06dcdb69@crub>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anatolij Gustschin <agust@denx.de>
+Cc: =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Fri, Jul 07, 2017 at 11:53:29AM +0200, Anatolij Gustschin wrote:
+> On Fri, 07 Jul 2017 09:48:48 +0200
+> Bjørn Mork bjorn@mork.no wrote:
+> 
+> >[adding Johan on the CC list]
+> >
+> >Anatolij Gustschin <agust@denx.de> writes:
+> >
+> >> +static struct usb_device_id ftdi_mfd_table[] = {
+> >> +	{ USB_DEVICE(0x0403, 0x6014) },
+> >> +	{}
+> >> +};
+> >> +MODULE_DEVICE_TABLE(usb, ftdi_mfd_table);  
+> >
+> >This device ID is currently handled by the ftdi_sio driver, so I believe
+> >you at least have to explain how you intend these two drivers to
+> >cooperate...
+> 
+> these drivers cannot cooperate, the different ftdi function modes
+> use same device pins as in UART mode. So, you either can use the
+> device in UART interface mode or in some different mode. I do not
+> load the ftdi_sio module or do unbind the USB device from the
+> ftdio_sio driver and bind it to the mfd driver, e.g.:
+> 
+>   sh -c "echo -n "3-2:1.0" > /sys/bus/usb/drivers/ftdi_sio/unbind"
+>   sh -c "echo -n "3-2:1.0" > /sys/bus/usb/drivers/ftdi-mfd/bind"
 
+I'm afraid that's not good enough. If we're going to support a non-UART
+mode through a separate driver, we need to have all drivers for these
+devices be able to retrieve the current mode during probe and only bind
+when the mode matches.
 
-=E4=BA=8E 2017=E5=B9=B47=E6=9C=8810=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=884:=
-44:00, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> =E5=86=99=E5=88=B0:
->On Fri, Jul 07, 2017 at 07:21:19AM +0800, icenowy-h8G6r0blFSE@public.gmane.org wrote:
->> =E5=9C=A8 2017-07-07 04:46=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=
-=BC=9A
->> > Hi,
->> >=20
->> > On Thu, Jul 06, 2017 at 10:28:21PM +0800, Icenowy Zheng wrote:
->> > > The PH16 pin has a function with mux id 0x5, which is the DET pin
->of
->> > > the
->> > > "sim" (smart card reader) IP block.
->> > >=20
->> > > This function is missing both in the old A10 and A20 drivers, so
->it's
->> > > not found during the merge of these two drivers.
->> > >=20
->> > > Add it to the driver. As we now merged A20 pinctrl driver to the
->A10
->> > > one, we need to only fix the A10 driver now.
->> > >=20
->> > > Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
->> >=20
->> > I'm not sure what you mean there. It's not mentionned in the A10
->> > datasheet, and neither in the A20. Where did you get that info
->from?
->>=20
->> It's mentioned in all newest datasheets: "A10 Datasheet V1.70.pdf"
->and
->> "A20 Datasheet V1.41 20131230.pdf".
->
->Mentionning that in the commit log would be great.
->
->Where did you find those?
-
-dl.linux-sunxi.org
-
->
->Maxime
-
---=20
-You received this message because you are subscribed to the Google Groups "=
-linux-sunxi" group.
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Johan
