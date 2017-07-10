@@ -1,99 +1,96 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: Getting gpios from user space based on gpio-line-names
-Date: Mon, 10 Jul 2017 08:45:39 +0200
-Message-ID: <5a9b3163-f3fc-4d73-c2fe-1c13ad244e73@monstr.eu>
-References: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
- <CACRpkdYSPGb5NKpj9ruOy+SGxRvcsuvCoj-7VWaMyZBnU_hLoA@mail.gmail.com>
-Reply-To: monstr@monstr.eu
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: Re: [PATCH 1/2] pinctrl: sunxi: add a missing
+ function of A10/A20 pinctrl driver
+Date: Mon, 10 Jul 2017 10:44:00 +0200
+Message-ID: <20170710084400.wwrfjekv2fkoqvoa@flea>
+References: <20170706142822.20296-1-icenowy@aosc.io>
+ <20170706142822.20296-2-icenowy@aosc.io>
+ <20170706204646.3akr57fo6c2ok4wn@flea>
+ <a55741a065b818d8ff3843471da61c0e@aosc.io>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="3nIi9AmF3eILWHAJPt2n7Mrf1FtGf02WG"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34085 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752295AbdGJGpm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 10 Jul 2017 02:45:42 -0400
-Received: by mail-wr0-f193.google.com with SMTP id k67so22683405wrc.1
-        for <linux-gpio@vger.kernel.org>; Sun, 09 Jul 2017 23:45:41 -0700 (PDT)
-In-Reply-To: <CACRpkdYSPGb5NKpj9ruOy+SGxRvcsuvCoj-7VWaMyZBnU_hLoA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+	protocol="application/pgp-signature"; boundary="xwgvccwzumpxs32k"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBDX5RTFQKGQEBPT2TJI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <a55741a065b818d8ff3843471da61c0e-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: icenowy-h8G6r0blFSE@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---3nIi9AmF3eILWHAJPt2n7Mrf1FtGf02WG
-Content-Type: multipart/mixed; boundary="WVuSiIFXUVf0K7iRmiBrOHtaN7uU5frw1";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Message-ID: <5a9b3163-f3fc-4d73-c2fe-1c13ad244e73@monstr.eu>
-Subject: Re: Getting gpios from user space based on gpio-line-names
-References: <6fc9ba3b-982c-d17d-3d5f-16b486f3ca5a@monstr.eu>
- <CACRpkdYSPGb5NKpj9ruOy+SGxRvcsuvCoj-7VWaMyZBnU_hLoA@mail.gmail.com>
-In-Reply-To: <CACRpkdYSPGb5NKpj9ruOy+SGxRvcsuvCoj-7VWaMyZBnU_hLoA@mail.gmail.com>
 
---WVuSiIFXUVf0K7iRmiBrOHtaN7uU5frw1
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+--xwgvccwzumpxs32k
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-+Mani
-
-On 9.7.2017 09:59, Linus Walleij wrote:
-> On Mon, Jul 3, 2017 at 3:01 PM, Michal Simek <monstr@monstr.eu> wrote:
+On Fri, Jul 07, 2017 at 07:21:19AM +0800, icenowy-h8G6r0blFSE@public.gmane.org wrote:
+> =E5=9C=A8 2017-07-07 04:46=EF=BC=8CMaxime Ripard =E5=86=99=E9=81=93=EF=BC=
+=9A
+> > Hi,
+> >=20
+> > On Thu, Jul 06, 2017 at 10:28:21PM +0800, Icenowy Zheng wrote:
+> > > The PH16 pin has a function with mux id 0x5, which is the DET pin of
+> > > the
+> > > "sim" (smart card reader) IP block.
+> > >=20
+> > > This function is missing both in the old A10 and A20 drivers, so it's
+> > > not found during the merge of these two drivers.
+> > >=20
+> > > Add it to the driver. As we now merged A20 pinctrl driver to the A10
+> > > one, we need to only fix the A10 driver now.
+> > >=20
+> > > Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> >=20
+> > I'm not sure what you mean there. It's not mentionned in the A10
+> > datasheet, and neither in the A20. Where did you get that info from?
 >=20
->> I am trying to find some docs about how to ask for gpio line
->> based on gpio-line-names in DT. I see line names available via debugfs=
+> It's mentioned in all newest datasheets: "A10 Datasheet V1.70.pdf" and
+> "A20 Datasheet V1.41 20131230.pdf".
 
->> which is not suitable for production.
->=20
-> Bartosz library is the thing to use. There are simple examples in
-> tools/gpio as well.
+Mentionning that in the commit log would be great.
 
-Will look.
+Where did you find those?
 
->=20
->> And also I didn't find a way how to ask for gpio Linux number from use=
-r
->> space to start to work with them.
->> This is for gpio mraa integration which depends on Linux gpio line num=
-bers.
->=20
-> Hopefully it should not need specific numbers but instead go by name.
-> It'd be interesting to see how mraa properly uses this new ABI.
-
-I was in touch with Mani and he is saying to send it within 2 days.
-
-Thanks,
-Michal
+Maxime
 
 --=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
+--=20
+You received this message because you are subscribed to the Google Groups "=
+linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
 
-
---WVuSiIFXUVf0K7iRmiBrOHtaN7uU5frw1--
-
---3nIi9AmF3eILWHAJPt2n7Mrf1FtGf02WG
+--xwgvccwzumpxs32k
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
 
-iEYEARECAAYFAlljIpMACgkQykllyylKDCFV7ACeNR8HWQl4NlHPqy/glPIWDttE
-XtAAnjJTYVsmbpSsMFNl+Dn8LxZUMKp1
-=7S5N
+iQIcBAEBAgAGBQJZYz5QAAoJEBx+YmzsjxAgd0MQAK+z1++YYxF8M52D9e6L5PUB
+yqx9+ccb+R1VZjxZPDfeHJ2WxUQogMd3JTc1/Q0gwPCeJiFhbkRL7pHfZH4QaHaS
+bZRnlhN+WqQy51Akhf4Uoy7mnsVjqxVXblsjZzmKTjIpi5wqRR25WiWVX61Y3j7p
+5S6xNcbOX9Ku2//MI5Ta9pF6vgp8a5lkHosY6u28kO+jgB6lDXiHeoUKTZdZEGYX
+uVGpbdw9Nlu0MuXvKh84ss691sS2SG+KdTFh+we7MLbW9jjmaHVy6xx4I80xsusC
+ZFc0vH0OaKcZV5YEikeTREVXHgGJDhVcRz1OWEV7cxlX/n38Q2/24ahMWXJomfNq
+Gn+/M779vInhIQZMijzFbhnqmLGDTPaU/0oslvlWQ12WvPDslO+mLkauMQfIxZYM
+vW087YvMK+msI5ulV8FSkFZL0Av5dRotbiUX46UobMt0kfsayVDiSgydN39ox27R
+Hil8asZqpW0j+kSSPE3TiI+gD9Tcb0rkqC5861YCJ+pe0DOPqzcDhdTvWmIXcU/d
+A0pR/zglN1zXXWE8LdCT+cbcFsUBvHyOQyB/qeYDiAEDxjGzEJudCxZ1QNeSFZEV
+nWTZhxpxC2jPcVRNa31t78X7c8PTuzqrnW5UKYt9S1oc1O1TxmFhJhD/jkDPjPHH
+mHrJo7EOLPvA9JgIQjO+
+=tfWg
 -----END PGP SIGNATURE-----
 
---3nIi9AmF3eILWHAJPt2n7Mrf1FtGf02WG--
+--xwgvccwzumpxs32k--
