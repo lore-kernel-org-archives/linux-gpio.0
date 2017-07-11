@@ -1,86 +1,67 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] pinctrl: coh901: constify gpio_chip structure
-Date: Tue, 11 Jul 2017 16:35:19 -0500
-Message-ID: <20170711213519.GA3391@embeddedgus>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] pinctrl: qcom: msm: constify gpio_chip structure
+Date: Tue, 11 Jul 2017 14:41:51 -0700
+Message-ID: <20170711214151.GC20973@minitux>
+References: <20170711183414.GA24866@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gateway22.websitewelcome.com ([192.185.46.234]:36542 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932159AbdGKVfW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 11 Jul 2017 17:35:22 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 0F1EB30205
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Jul 2017 16:35:20 -0500 (CDT)
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:32973 "EHLO
+        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933396AbdGKVly (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Jul 2017 17:41:54 -0400
+Received: by mail-pf0-f177.google.com with SMTP id e7so2358728pfk.0
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Jul 2017 14:41:54 -0700 (PDT)
 Content-Disposition: inline
+In-Reply-To: <20170711183414.GA24866@embeddedgus>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This structure is only used to copy into another structure, so declare
-it as const.
+On Tue 11 Jul 11:34 PDT 2017, Gustavo A. R. Silva wrote:
+[..]
+> In the following log you can see a significant difference in the code size
+> and data segment, hence in the dec segment. This log is the output
 
-This issue was detected using Coccinelle and the following semantic patch:
+"dec" is for "decimal" and is the sum of text, data and bss...
 
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct gpio_chip i@p = { ... };
+> of the size command, before and after the code change:
+> 
+> before:
+>    text    data     bss     dec     hex filename
+>   13129    2808     192   16129    3f01 drivers/pinctrl/qcom/pinctrl-msm.o
+> 
+> after:
+>    text    data     bss     dec     hex filename
+>   12839    2720     192   15751    3d87 drivers/pinctrl/qcom/pinctrl-msm.o
+> 
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
-@ok@
-identifier r.i;
-expression e;
-position p;
-@@
-e = i@p;
+Good catch, thanks!
 
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct gpio_chip e;
-@@
-e@i@p
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct gpio_chip i = { ... };
+Regards,
+Bjorn
 
-In the following log you can see a significant difference in the code size
-and data segment, hence in the dec segment. This log is the output
-of the size command, before and after the code change:
-
-before:
-   text    data     bss     dec     hex filename
-  12775    3696      64   16535    4097 drivers/pinctrl/pinctrl-coh901.o
-
-after:
-            bss     dec     hex filename
-  12440    3640      64   16144    3f10 drivers/pinctrl/pinctrl-coh901.o
-
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- drivers/pinctrl/pinctrl-coh901.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-coh901.c b/drivers/pinctrl/pinctrl-coh901.c
-index 741b39e..ac155e7 100644
---- a/drivers/pinctrl/pinctrl-coh901.c
-+++ b/drivers/pinctrl/pinctrl-coh901.c
-@@ -387,7 +387,7 @@ int u300_gpio_config_set(struct gpio_chip *chip, unsigned offset,
- 	return 0;
- }
- 
--static struct gpio_chip u300_gpio_chip = {
-+static const struct gpio_chip u300_gpio_chip = {
- 	.label			= "u300-gpio-chip",
- 	.owner			= THIS_MODULE,
- 	.request		= gpiochip_generic_request,
--- 
-2.5.0
-
+> ---
+>  drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 273badd..245ccfd 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -521,7 +521,7 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+>  #define msm_gpio_dbg_show NULL
+>  #endif
+>  
+> -static struct gpio_chip msm_gpio_template = {
+> +static const struct gpio_chip msm_gpio_template = {
+>  	.direction_input  = msm_gpio_direction_input,
+>  	.direction_output = msm_gpio_direction_output,
+>  	.get_direction    = msm_gpio_get_direction,
+> -- 
+> 2.5.0
+> 
