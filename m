@@ -1,77 +1,40 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] gpio: altera-a10sr: constify gpio_chip structure
-Date: Tue, 11 Jul 2017 17:15:38 -0500
-Message-ID: <20170711221538.GA8001@embeddedgus>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thor Thayer <thor.thayer@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 2/2] gpio: xgene-sb: select IRQ_DOMAIN_HIERARCHY
+Date: Wed, 12 Jul 2017 08:11:50 +0900
+Message-ID: <1499814710-16686-3-git-send-email-yamada.masahiro@socionext.com>
+References: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg-08.nifty.com ([210.131.2.75]:31533 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755932AbdGKXMf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Jul 2017 19:12:35 -0400
+In-Reply-To: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-This structure is only used to copy into another structure, so declare
-it as const.
+This driver calls irq_domain_hierarchy() and irq_chip_*_parent().
+They are available only when CONFIG_IRQ_DOMAIN_HIERARCHY is enabled.
 
-This issue was detected using Coccinelle and the following semantic patch:
-
-@r disable optional_qualifier@
-identifier i;
-position p;
-@@
-static struct gpio_chip i@p = { ... };
-
-@ok@
-identifier r.i;
-expression e;
-position p;
-@@
-e = i@p;
-
-@bad@
-position p != {r.p,ok.p};
-identifier r.i;
-struct gpio_chip e;
-@@
-e@i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r.i;
-@@
-static
-+const
- struct gpio_chip i = { ... };
-
-In the following log you can see a significant difference in the code size
-and data segment, hence in the dec segment. This log is the output
-of the size command, before and after the code change:
-
-before:
-   text    data     bss     dec     hex filename
-   1954     600       0    2554     9fa drivers/gpio/gpio-altera-a10sr.o
-
-after:
-   text    data     bss     dec     hex filename
-   1655     512       0    2167     877 drivers/gpio/gpio-altera-a10sr.o
-
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/gpio/gpio-altera-a10sr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-a10sr.c
-index 16a8951..6b11f13 100644
---- a/drivers/gpio/gpio-altera-a10sr.c
-+++ b/drivers/gpio/gpio-altera-a10sr.c
-@@ -71,7 +71,7 @@ static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
- 	return -EINVAL;
- }
- 
--static struct gpio_chip altr_a10sr_gc = {
-+static const struct gpio_chip altr_a10sr_gc = {
- 	.label = "altr_a10sr_gpio",
- 	.owner = THIS_MODULE,
- 	.get = altr_a10sr_gpio_get,
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index f235eae04c16..461d6fc3688b 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -504,6 +504,7 @@ config GPIO_XGENE_SB
+ 	depends on ARCH_XGENE && OF_GPIO
+ 	select GPIO_GENERIC
+ 	select GPIOLIB_IRQCHIP
++	select IRQ_DOMAIN_HIERARCHY
+ 	help
+ 	  This driver supports the GPIO block within the APM X-Gene
+ 	  Standby Domain. Say yes here to enable the GPIO functionality.
 -- 
-2.5.0
+2.7.4
+
