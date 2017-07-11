@@ -1,67 +1,38 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: msm: constify gpio_chip structure
-Date: Tue, 11 Jul 2017 14:41:51 -0700
-Message-ID: <20170711214151.GC20973@minitux>
-References: <20170711183414.GA24866@embeddedgus>
+Subject: Re: [PATCH] pinctrl: qcom: ssbi-gpio: constify gpio_chip structure
+Date: Tue, 11 Jul 2017 14:42:49 -0700
+Message-ID: <20170711214249.GD20973@minitux>
+References: <20170711183950.GA26899@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f177.google.com ([209.85.192.177]:32973 "EHLO
-        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933396AbdGKVly (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Jul 2017 17:41:54 -0400
-Received: by mail-pf0-f177.google.com with SMTP id e7so2358728pfk.0
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Jul 2017 14:41:54 -0700 (PDT)
+Received: from mail-pf0-f180.google.com ([209.85.192.180]:35314 "EHLO
+        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934030AbdGKVmx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Jul 2017 17:42:53 -0400
+Received: by mail-pf0-f180.google.com with SMTP id c73so2341264pfk.2
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Jul 2017 14:42:53 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20170711183414.GA24866@embeddedgus>
+In-Reply-To: <20170711183950.GA26899@embeddedgus>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue 11 Jul 11:34 PDT 2017, Gustavo A. R. Silva wrote:
+On Tue 11 Jul 11:39 PDT 2017, Gustavo A. R. Silva wrote:
+
 [..]
-> In the following log you can see a significant difference in the code size
-> and data segment, hence in the dec segment. This log is the output
-
-"dec" is for "decimal" and is the sum of text, data and bss...
-
-> of the size command, before and after the code change:
-> 
 > before:
 >    text    data     bss     dec     hex filename
->   13129    2808     192   16129    3f01 drivers/pinctrl/qcom/pinctrl-msm.o
+>   17061    6992       0   24053    5df5 drivers/pinctrl/qcom/pinctrl-ssbi-gpio.o
 > 
 > after:
 >    text    data     bss     dec     hex filename
->   12839    2720     192   15751    3d87 drivers/pinctrl/qcom/pinctrl-msm.o
+>   16777    6904       0   23681    5c81 drivers/pinctrl/qcom/pinctrl-ssbi-gpio.o
 > 
 > Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-
-Good catch, thanks!
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
-
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 273badd..245ccfd 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -521,7 +521,7 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->  #define msm_gpio_dbg_show NULL
->  #endif
->  
-> -static struct gpio_chip msm_gpio_template = {
-> +static const struct gpio_chip msm_gpio_template = {
->  	.direction_input  = msm_gpio_direction_input,
->  	.direction_output = msm_gpio_direction_output,
->  	.get_direction    = msm_gpio_get_direction,
-> -- 
-> 2.5.0
-> 
