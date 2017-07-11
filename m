@@ -1,14 +1,14 @@
 From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] pinctrl: st: constify gpio_chip structure
-Date: Tue, 11 Jul 2017 13:15:19 -0500
-Message-ID: <20170711181519.GA20001@embeddedgus>
+Subject: [PATCH] pinctrl: rza1: constify gpio_chip structure
+Date: Tue, 11 Jul 2017 13:22:37 -0500
+Message-ID: <20170711182237.GA21702@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
 
 This structure is only used to copy into other structure, so declare
@@ -49,29 +49,29 @@ of the size command, before and after the code change:
 
 before:
    text    data     bss     dec     hex filename
-  21671    3632     128   25431    6357 drivers/pinctrl/pinctrl-st.o
+  11866    3520     128   15514    3c9a drivers/pinctrl/pinctrl-rza1.o
 
 after:
    text    data     bss     dec     hex filename
-  21366    3576     128   25070    61ee drivers/pinctrl/pinctrl-st.o
+  11539    3464     128   15131    3b1b drivers/pinctrl/pinctrl-rza1.o
 
 Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 ---
- drivers/pinctrl/pinctrl-st.c | 2 +-
+ drivers/pinctrl/pinctrl-rza1.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index 3ae8066..5d4789d 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -1442,7 +1442,7 @@ static void st_gpio_irqmux_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index dc164da..7e30134 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -723,7 +723,7 @@ static void rza1_gpio_set(struct gpio_chip *chip, unsigned int gpio,
+ 	rza1_pin_set(port, gpio, value);
  }
  
--static struct gpio_chip st_gpio_template = {
-+static const struct gpio_chip st_gpio_template = {
- 	.request		= gpiochip_generic_request,
- 	.free			= gpiochip_generic_free,
- 	.get			= st_gpio_get,
+-static struct gpio_chip rza1_gpiochip_template = {
++static const struct gpio_chip rza1_gpiochip_template = {
+ 	.request		= rza1_gpio_request,
+ 	.free			= rza1_gpio_free,
+ 	.get_direction		= rza1_gpio_get_direction,
 -- 
 2.5.0
