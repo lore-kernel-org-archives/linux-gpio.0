@@ -1,40 +1,45 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 2/2] gpio: xgene-sb: select IRQ_DOMAIN_HIERARCHY
-Date: Wed, 12 Jul 2017 08:11:50 +0900
-Message-ID: <1499814710-16686-3-git-send-email-yamada.masahiro@socionext.com>
-References: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg-08.nifty.com ([210.131.2.75]:31533 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755932AbdGKXMf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Jul 2017 19:12:35 -0400
-In-Reply-To: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 0/2] gpio: select IRQ_DOMAIN_HIERARCHY fixing curcular Kconfig
+ dependency
+Date: Wed, 12 Jul 2017 08:11:48 +0900
+Message-ID: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Cc: Alexandre Torgue <alexandre.torgue@st.com>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
-This driver calls irq_domain_hierarchy() and irq_chip_*_parent().
-They are available only when CONFIG_IRQ_DOMAIN_HIERARCHY is enabled.
+1/2 touches pinctrl driver, but
+I want both patches in GPIO tree
+because 1/2 is a prerequisite for 2/2.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Otherwise, Kconfig reports recursive dependency.
 
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+I noticed this problem when I added "select IRQ_DOMAIN_HIERARCHY"
+to my GPIO driver, which I will submit later.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index f235eae04c16..461d6fc3688b 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -504,6 +504,7 @@ config GPIO_XGENE_SB
- 	depends on ARCH_XGENE && OF_GPIO
- 	select GPIO_GENERIC
- 	select GPIOLIB_IRQCHIP
-+	select IRQ_DOMAIN_HIERARCHY
- 	help
- 	  This driver supports the GPIO block within the APM X-Gene
- 	  Standby Domain. Say yes here to enable the GPIO functionality.
+Please apply 1/2 to GPIO tree, not pinctrl tree.
+
+
+
+Masahiro Yamada (2):
+  pinctrl: stm32: select IRQ_DOMAIN_HIERARCHY instead of depends on
+  gpio: xgene-sb: select IRQ_DOMAIN_HIERARCHY
+
+ drivers/gpio/Kconfig          | 1 +
+ drivers/pinctrl/stm32/Kconfig | 9 +++++----
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
 -- 
 2.7.4
-
