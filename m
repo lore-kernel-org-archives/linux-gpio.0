@@ -1,96 +1,77 @@
-From: Davide Hug <d@videhug.ch>
-Subject: Should irq_enable/disable be flagging/unflagging gpio lines used as
- irq?
-Date: Tue, 11 Jul 2017 19:55:18 +0200
-Message-ID: <20170711195518.34aa849888e9d67a0736a990@videhug.ch>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] pinctrl: st: constify gpio_chip structure
+Date: Tue, 11 Jul 2017 13:15:19 -0500
+Message-ID: <20170711181519.GA20001@embeddedgus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from s067.cyon.net ([149.126.4.76]:44994 "EHLO s067.cyon.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755326AbdGKSGn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 11 Jul 2017 14:06:43 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
 
-Hi,
+This structure is only used to copy into other structure, so declare
+it as const.
 
-I'm looking at a driver (hwmon/sht15) that does not load with message:
+This issue was detected using Coccinelle and the following semantic patch:
 
-	gpio-48 (SHT15 data): _gpiod_direction_output_raw: tried to set a GPIO tied to an IRQ as output
+@r disable optional_qualifier@
+identifier i;
+position p;
+@@
+static struct gpio_chip i@p = { ... };
 
-This happens because the driver uses a GPIO line alternately (and not at the
-same time) as IRQ and output. To do this irq_enable/disable are used to
-prevent setting a GPIO with enabled IRQ as output. This seems the right
-approach to me since in the patch "gpio: add API to be strict about GPIO IRQ
-usage"[1] I read:
+@ok@
+identifier r.i;
+expression e;
+position p;
+@@
+e = i@p;
 
-	The API is symmetric so that lines can also be flagged from
-	.irq_enable() and unflagged from IRQ by .irq_disable().
+@bad@
+position p != {r.p,ok.p};
+identifier r.i;
+struct gpio_chip e;
+@@
+e@i@p
 
-But I didn't find any GPIO driver implementing this API in irq_enable/disable.
+@depends on !bad disable optional_qualifier@
+identifier r.i;
+@@
+static
++const
+ struct gpio_chip i = { ... };
 
-Since my platform uses omap_gpio which does not implement
-irq_enable/disable at all, I added a default irq_enable/disable
-implementation in gpio/gpiolib.c (in the patch below).
+In the following log you can see a significant difference in the code size
+and data segment, hence in the dec segment. This log is the output
+of the size command, before and after the code change:
 
-Is it the right approach to call gpiochip_lock_as_irq/gpiochip_unlock_as_irq
-in irq_enable/irq_disable?
+before:
+   text    data     bss     dec     hex filename
+  21671    3632     128   25431    6357 drivers/pinctrl/pinctrl-st.o
 
-Thanks, Davide
+after:
+   text    data     bss     dec     hex filename
+  21366    3576     128   25070    61ee drivers/pinctrl/pinctrl-st.o
 
-[1]: https://github.com/torvalds/linux/commit/d468bf9ecaabd3bf3a6134e5a369ced82b1d1ca1
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+---
+ drivers/pinctrl/pinctrl-st.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 8b4d721d6d63..c1db0461f29d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1678,6 +1678,22 @@ static void gpiochip_irq_relres(struct irq_data *d)
- 	module_put(chip->gpiodev->owner);
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 3ae8066..5d4789d 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -1442,7 +1442,7 @@ static void st_gpio_irqmux_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
  }
  
-+static void gpiochip_irq_disable(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+
-+	gpiochip_unlock_as_irq(chip, data->hwirq);
-+	data->chip->irq_mask(data);
-+}
-+
-+static void gpiochip_irq_enable(struct irq_data *data)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-+
-+	gpiochip_lock_as_irq(chip, data->hwirq);
-+	data->chip->irq_unmask(data);
-+}
-+
- static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	return irq_find_mapping(chip->irqdomain, offset);
-@@ -1714,6 +1730,8 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
- 	if (gpiochip->irqchip) {
- 		gpiochip->irqchip->irq_request_resources = NULL;
- 		gpiochip->irqchip->irq_release_resources = NULL;
-+		gpiochip->irqchip->irq_disable = NULL;
-+		gpiochip->irqchip->irq_enable  = NULL;
- 		gpiochip->irqchip = NULL;
- 	}
- 
-@@ -1814,6 +1832,11 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 		irqchip->irq_request_resources = gpiochip_irq_reqres;
- 		irqchip->irq_release_resources = gpiochip_irq_relres;
- 	}
-+	if (!irqchip->irq_disable &&
-+	    !irqchip->irq_enable) {
-+		irqchip->irq_disable = gpiochip_irq_disable;
-+		irqchip->irq_enable  = gpiochip_irq_enable;
-+	}
- 
- 	/*
- 	 * Prepare the mapping since the irqchip shall be orthogonal to
+-static struct gpio_chip st_gpio_template = {
++static const struct gpio_chip st_gpio_template = {
+ 	.request		= gpiochip_generic_request,
+ 	.free			= gpiochip_generic_free,
+ 	.get			= st_gpio_get,
+-- 
+2.5.0
