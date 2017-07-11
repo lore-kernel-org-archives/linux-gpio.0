@@ -1,23 +1,23 @@
 From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] pinctrl: qcom: ssbi: mpp: constify gpio_chip structure
-Date: Tue, 11 Jul 2017 16:18:36 -0500
-Message-ID: <20170711211836.GA31321@embeddedgus>
+Subject: [PATCH] pinctrl: nomadik: abx500: constify gpio_chip structure
+Date: Tue, 11 Jul 2017 16:29:29 -0500
+Message-ID: <20170711212929.GA1037@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gateway22.websitewelcome.com ([192.185.46.234]:20921 "EHLO
+Received: from gateway22.websitewelcome.com ([192.185.46.234]:29098 "EHLO
         gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932658AbdGKVSl (ORCPT
+        by vger.kernel.org with ESMTP id S933837AbdGKV3c (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 11 Jul 2017 17:18:41 -0400
+        Tue, 11 Jul 2017 17:29:32 -0400
 Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 59D142712A
-        for <linux-gpio@vger.kernel.org>; Tue, 11 Jul 2017 16:18:38 -0500 (CDT)
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 3F7653128D
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Jul 2017 16:29:30 -0500 (CDT)
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@unipv.it>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
 This structure is only used to copy into another structure, so declare
 it as const.
@@ -57,30 +57,30 @@ of the size command, before and after the code change:
 
 before:
    text    data     bss     dec     hex filename
-  15136    5112       0   20248    4f18 drivers/pinctrl/qcom/pinctrl-ssbi-mpp.o
+  17545    5376       0   22921    5989 drivers/pinctrl/nomadik/pinctrl-abx500.o
 
 after:
             bss     dec     hex filename
-  14849    5024       0   19873    4da1 drivers/pinctrl/qcom/pinctrl-ssbi-mpp.o
+  17273    5320       0   22593    5841 drivers/pinctrl/nomadik/pinctrl-abx500.o
 
 Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c | 2 +-
+ drivers/pinctrl/nomadik/pinctrl-abx500.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-index 0d1392f..1e513bd 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
-@@ -643,7 +643,7 @@ static void pm8xxx_mpp_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- #define pm8xxx_mpp_dbg_show NULL
+diff --git a/drivers/pinctrl/nomadik/pinctrl-abx500.c b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+index f95001b..b32c0d6 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-abx500.c
++++ b/drivers/pinctrl/nomadik/pinctrl-abx500.c
+@@ -647,7 +647,7 @@ static inline void abx500_gpio_dbg_show_one(struct seq_file *s,
+ #define abx500_gpio_dbg_show	NULL
  #endif
  
--static struct gpio_chip pm8xxx_mpp_template = {
-+static const struct gpio_chip pm8xxx_mpp_template = {
- 	.direction_input = pm8xxx_mpp_direction_input,
- 	.direction_output = pm8xxx_mpp_direction_output,
- 	.get = pm8xxx_mpp_get,
+-static struct gpio_chip abx500gpio_chip = {
++static const struct gpio_chip abx500gpio_chip = {
+ 	.label			= "abx500-gpio",
+ 	.owner			= THIS_MODULE,
+ 	.request		= gpiochip_generic_request,
 -- 
 2.5.0
 
