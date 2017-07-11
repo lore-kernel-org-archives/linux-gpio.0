@@ -1,100 +1,94 @@
-From: "Kuppuswamy, Sathyanarayanan" <sathyaosid@gmail.com>
-Subject: Re: [PATCH v1 1/1] gpio: gpio-crystalcove: Skip IRQ CTRL register
- update for virtual GPIOs
-Date: Tue, 11 Jul 2017 10:20:50 -0700
-Message-ID: <d94333d0-f009-85a4-93df-63f864006e50@gmail.com>
-References: <5fabde8f9366fce42b5f361f3472bc91754ca7db.1497482431.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <CAHp75VdVmAPTP5k_U+=EvBqysGz0Jk9YoytFMTSA_1T-tmVvZw@mail.gmail.com>
- <167cd7bd-1e70-d44a-180c-da890a017110@linux.intel.com>
- <9fd783e9-3c53-582f-24f9-97901d63501b@linux.intel.com>
- <909b020e-75eb-b3ab-7123-f3e3f41143c9@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC] gpio: rcar: add gen[123] fallback compatibility strings
+Date: Tue, 11 Jul 2017 19:59:31 +0200
+Message-ID: <CAMuHMdWH_av4fiGXAtS7Xz91jW86-ntkXPdZz8Wci4dSVUmJOw@mail.gmail.com>
+References: <1499776710-25450-1-git-send-email-horms+renesas@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <909b020e-75eb-b3ab-7123-f3e3f41143c9@redhat.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hans de Goede <hdegoede@redhat.com>, sathyanarayanan.kuppuswamy@linux.intel.com, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:34644 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932571AbdGKR7d (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 11 Jul 2017 13:59:33 -0400
+In-Reply-To: <1499776710-25450-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Hi Hans,
+Hi Simon,
 
+On Tue, Jul 11, 2017 at 2:38 PM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Add fallback compatibility string for R-Car Gen 1, 2 and 3.
+>
+> In the case of Renesas R-Car hardware we know that there are generations of
+> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+> between IP blocks might be. For example, I believe that r8a7790 is older
+> than r8a7791 but that doesn't imply that the latter is a descendant of the
+> former or vice versa.
+>
+> We can, however, by examining the documentation and behaviour of the
+> hardware at run-time observe that the current driver implementation appears
+> to be compatible with the IP blocks on SoCs within a given generation.
+>
+> For the above reasons and convenience when enabling new SoCs a
+> per-generation fallback compatibility string scheme being adopted for
+> drivers for Renesas SoCs.
+>
+> Also deprecate renesas,gpio-rcar as its name is more generic than its
+> implementation.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-On 7/11/2017 2:47 AM, Hans de Goede wrote:
-> Hi,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> ---
+> Based on linux-gpio/for-next
+> ---
+>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt        | 15 +++++++++++----
+>  drivers/gpio/gpio-rcar.c                                  | 10 ++++++++++
+>  2 files changed, 21 insertions(+), 4 deletions(-)
 >
-> On 11-07-17 01:35, sathyanarayanan kuppuswamy wrote:
->> Hi Hans,
->>
->> Do you have any comments on this patch ? It kind of fixes your patch, 
->> so would prefer to get your comments.
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> index 6826a371fb69..48634b01f1bf 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> @@ -2,7 +2,7 @@
 >
-> Sorry I did not notice this patch before, did you Cc me ?
+>  Required Properties:
 >
-> As for the patch, I deliberately did not add the check
-> to crystalcove_update_irq_ctrl, crystalcove_update_irq_ctrl
-> only gets called from crystalcove_bus_sync_unlock if
-> UPDATE_IRQ_TYPE
->
-> UPDATE_IRQ_TYPE only gets set from crystalcove_irq_type
-> which at the top contains:
->
->         if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
->                 return 0;
->
-> So crystalcove_update_irq_ctrl will never get called for
-> virtual GPIOs.
->
-> TL;DR: your patch is not necessary.
-Thanks for the clarification.
->
-> Regards,
->
-> Hans
->
->
->>
->>
->> On 06/15/2017 02:45 PM, sathyanarayanan kuppuswamy wrote:
->>> Hi Andy,
->>>
->>>
->>> On 06/15/2017 02:19 AM, Andy Shevchenko wrote:
->>>> On Thu, Jun 15, 2017 at 2:21 AM,
->>>> <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
->>>>> From: Kuppuswamy Sathyanarayanan 
->>>>> <sathyanarayanan.kuppuswamy@linux.intel.com>
->>>>>
->>>>> Commit 9a752b4c9ab9 ("gpio: crystalcove: Do not write regular gpio
->>>>> registers for virtual GPIOs") added support to skip GPIO register
->>>>> update for virtual GPIOs, but it missed to add skip logic in
->>>>> crystalcove_update_irq_ctrl() function. This patch fixes it.
->>>>> @@ -134,6 +134,9 @@ static void crystalcove_update_irq_ctrl(struct 
->>>>> crystalcove_gpio *cg, int gpio)
->>>>>   {
->>>>>          int reg = to_reg(gpio, CTRL_IN);
->>>>>
->>>>> +       if (reg < 0)
->>>>> +               return;
->>>>> +
->>>>>          regmap_update_bits(cg->regmap, reg, CTLI_INTCNT_BE, 
->>>>> cg->intcnt_value);
->>>>>   }
->>>> Shouldn't it have been done using irq_valid_mask flag in the first 
->>>> place?
->>> Agree. Setting irq_valid_mask would be the proper approach to skip 
->>> IRQ for some GPIO pins. But commit 9a752b4c9ab9 added the GPIO index 
->>> based checks in other IRQ set/unset functions in this driver and 
->>> missed to add it only in this update_irq_ctrl() function. May be I 
->>> can submit a separate patch to clean it up and use logic based on 
->>> setting irq_valid_mask.
->>>
->>> Even if we do the cleanup patch, I would still prefer to have this 
->>> check. Since to_reg() can return value < 0, its good to check it 
->>> before passing it to regmap_* functions. Let me know your comments.
->>>
->>>>
->>>
->>
+> -  - compatible: should contain one of the following.
+> +  - compatible: should contain one or more of the following:
+>      - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
+>      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
+>      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
+> @@ -13,7 +13,14 @@ Required Properties:
+>      - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+>      - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+>      - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
+> -    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+> +    - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+> +    - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+> +    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
+> +    - "renesas,gpio-rcar": deprecated.
+> +
+> +    When compatible with the generic version nodes must list the
+> +    SoC-specific version corresponding to the platform first followed by
+> +    the generic version.
+
+Besides for consistency, does it make sense to deprecate "renesas,gpio-rcar"
+(which means R-Car Gen1) and introduce "renesas,rcar-gen1-gpio"?
+It's not like new R-Car Gen1 SoCs will pop up anytime soon (do we want Linux
+support for R-Car E1?).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
