@@ -1,109 +1,34 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 1/2] pinctrl: stm32: select IRQ_DOMAIN_HIERARCHY instead
- of depends on
-Date: Wed, 12 Jul 2017 10:09:01 +0200
-Message-ID: <8a12356e-14bf-9044-ddc7-ba3087843ee0@st.com>
-References: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
- <1499814710-16686-2-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1499814710-16686-2-git-send-email-yamada.masahiro@socionext.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+From: Philipp Rosenberger <p.rosenberger@linutronix.de>
+Subject: [PATCH 0/2] gpio-mxc: Fix issue with gpios used as wake source on iMX27
+Date: Wed, 12 Jul 2017 10:36:38 +0200
+Message-ID: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from Galois.linutronix.de ([146.0.238.70]:42312 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933664AbdGLIhM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 04:37:12 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Philipp Rosenberger <p.rosenberger@linutronix.de>
 
-Hi,
+The gpio-mxc driver is able to use two interrupts per gpio bank. One for
+the lower 16 and the other for the higher 16 gpios. The iMX27 has only one
+interrupt per bank. An error in the driver leads to the problem that the
+driver uses an invalid interrupt for the higher 16 gpios. Which in turn
+prevents the upper 16 gpios per bank to be used as wake source.
 
-On 07/12/2017 01:11 AM, Masahiro Yamada wrote:
-> Drivers that need IRQ_DOMAIN_HIERARCHY should "select" it, but
-> drivers/pinctrl/stm32/Kconfig is the only exception that uses
-> "depends on" syntax.  This prevents GPIO drivers from select'ing
-> IRQ_DOMAIN_HIERARCHY.
-> 
-> For example, if I add "select IRQ_DOMAIN_HIERARCHY" to GPIO_XGENE_SB,
-> I get the following recursive dependency error.
-> 
-> drivers/gpio/Kconfig:13:error: recursive dependency detected!
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
-> drivers/gpio/Kconfig:13:	symbol GPIOLIB is selected by PINCTRL_STM32
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
-> drivers/pinctrl/stm32/Kconfig:3:	symbol PINCTRL_STM32 is selected by PINCTRL_STM32F429
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
-> drivers/pinctrl/stm32/Kconfig:11:	symbol PINCTRL_STM32F429 depends on IRQ_DOMAIN_HIERARCHY
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
-> kernel/irq/Kconfig:67:	symbol IRQ_DOMAIN_HIERARCHY is selected by GPIO_XGENE_SB
-> For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> subsection "Kconfig recursive dependency limitations"
-> drivers/gpio/Kconfig:502:	symbol GPIO_XGENE_SB depends on GPIOLIB
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com
-> ---
+The first patch fixes the assignment for the irq_high. The second patch
+adds proper return values. Which should make finding any problems in the
+future much easier.
 
-Thanks for the patch.
+Philipp Rosenberger (2):
+  gpio: gpio-mxc: Fix: higher 16 GPIOs usable as wake source
+  gpio: gpio-mxc: gpio_set_wake_irq() use proper return values
 
-Tested-by: Alexandre TORGUE <alexandre.torgue@st.com>
+ drivers/gpio/gpio-mxc.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-regards
-Alex
+-- 
+2.1.4
 
-
-> 
->   drivers/pinctrl/stm32/Kconfig | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
-> index 3b8026fca057..7e1fe39a56a5 100644
-> --- a/drivers/pinctrl/stm32/Kconfig
-> +++ b/drivers/pinctrl/stm32/Kconfig
-> @@ -6,29 +6,30 @@ config PINCTRL_STM32
->   	select PINMUX
->   	select GENERIC_PINCONF
->   	select GPIOLIB
-> +	select IRQ_DOMAIN_HIERARCHY
->   	select MFD_SYSCON
->   
->   config PINCTRL_STM32F429
->   	bool "STMicroelectronics STM32F429 pin control" if COMPILE_TEST && !MACH_STM32F429
-> -	depends on OF && IRQ_DOMAIN_HIERARCHY
-> +	depends on OF
->   	default MACH_STM32F429
->   	select PINCTRL_STM32
->   
->   config PINCTRL_STM32F469
->   	bool "STMicroelectronics STM32F469 pin control" if COMPILE_TEST && !MACH_STM32F469
-> -	depends on OF && IRQ_DOMAIN_HIERARCHY
-> +	depends on OF
->   	default MACH_STM32F469
->   	select PINCTRL_STM32
->   
->   config PINCTRL_STM32F746
->   	bool "STMicroelectronics STM32F746 pin control" if COMPILE_TEST && !MACH_STM32F746
-> -	depends on OF && IRQ_DOMAIN_HIERARCHY
-> +	depends on OF
->   	default MACH_STM32F746
->   	select PINCTRL_STM32
->   
->   config PINCTRL_STM32H743
->   	bool "STMicroelectronics STM32H743 pin control" if COMPILE_TEST && !MACH_STM32H743
-> -	depends on OF && IRQ_DOMAIN_HIERARCHY
-> +	depends on OF
->   	default MACH_STM32H743
->   	select PINCTRL_STM32
->   endif
-> 
