@@ -1,21 +1,25 @@
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH 01/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
-Date: Thu, 13 Jul 2017 01:55:34 +0900
-Message-ID: <1499878547-3452-2-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH 02/14] pinctrl: sh-pfc: r8a7796: Fix IPSR register setting when MSIOF3_SS1_E pin was selected
+Date: Thu, 13 Jul 2017 01:55:35 +0900
+Message-ID: <1499878547-3452-3-git-send-email-ykaneko0929@gmail.com>
 References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34674 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753959AbdGLQ4N (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 12:56:13 -0400
 In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
-value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
+This patch fixes to set IPSR register when using MSIOF3_SS1_E pin function
+is selected.
 
-This is a correction to the incorrect implementation of MOD_SEL register
+This is a correction to the incorrect implementation of IPSR register
 pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
 User's Manual Rev.0.51E or later.
 
@@ -27,17 +31,18 @@ Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 98bf5d0..b2fb66f 100644
+index b2fb66f..87f21d7b 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -1461,7 +1461,7 @@ enum {
- 	PINMUX_IPSR_GPSR(IP17_27_24,	AUDIO_CLKOUT_B),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	SSI_SCK2_B,		SEL_SSI_1),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	TS_SDEN1_D,		SEL_TSIF1_3),
--	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_2),
-+	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	RIF3_D0_B,		SEL_DRIF3_1),
- 	PINMUX_IPSR_MSEL(IP17_27_24,	TCLK2_B,		SEL_TIMER_TMU_1),
+@@ -645,7 +645,7 @@ enum {
+ 	PINMUX_IPSR_MSEL(IP0_31_28,	VI4_DATA1_B,		SEL_VIN4_1),
+ 	PINMUX_IPSR_MSEL(IP0_31_28,	CAN0_RX_B,		SEL_RCAN0_1),
+ 	PINMUX_IPSR_MSEL(IP0_31_28,	CANFD0_RX_B,		SEL_CANFD0_1),
+-	PINMUX_IPSR_MSEL(IP0_27_24,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
++	PINMUX_IPSR_MSEL(IP0_31_28,	MSIOF3_SS1_E,		SEL_MSIOF3_4),
+ 
+ 	/* IPSR1 */
+ 	PINMUX_IPSR_GPSR(IP1_3_0,	IRQ2),
 -- 
 1.9.1
+
