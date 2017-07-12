@@ -1,34 +1,40 @@
 From: Philipp Rosenberger <p.rosenberger@linutronix.de>
-Subject: [PATCH 0/2] gpio-mxc: Fix issue with gpios used as wake source on iMX27
-Date: Wed, 12 Jul 2017 10:36:38 +0200
-Message-ID: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:42312 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933664AbdGLIhM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 04:37:12 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 1/2] gpio: gpio-mxc: Fix: higher 16 GPIOs usable as wake source
+Date: Wed, 12 Jul 2017 10:36:39 +0200
+Message-ID: <1499848600-7233-2-git-send-email-p.rosenberger@linutronix.de>
+References: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: tglx@linutronix.de, Philipp Rosenberger <p.rosenberger@linutronix.de>
+List-Id: linux-gpio@vger.kernel.org
 
-The gpio-mxc driver is able to use two interrupts per gpio bank. One for
-the lower 16 and the other for the higher 16 gpios. The iMX27 has only one
-interrupt per bank. An error in the driver leads to the problem that the
-driver uses an invalid interrupt for the higher 16 gpios. Which in turn
-prevents the upper 16 gpios per bank to be used as wake source.
+In the function gpio_set_wake_irq(), port->irq_high is only checked for
+zero. As platform_get_irq() returns a value less then zero if no interrupt
+was found, any gpio >= 16 was handled like an irq_high interrupt was
+available. On iMX27 for example no high interrupt is available. This lead
+to the problem that only some gpios (the lower 16) were useable as wake
+sources.
 
-The first patch fixes the assignment for the irq_high. The second patch
-adds proper return values. Which should make finding any problems in the
-future much easier.
+Signed-off-by: Philipp Rosenberger <p.rosenberger@linutronix.de>
+---
+ drivers/gpio/gpio-mxc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Philipp Rosenberger (2):
-  gpio: gpio-mxc: Fix: higher 16 GPIOs usable as wake source
-  gpio: gpio-mxc: gpio_set_wake_irq() use proper return values
-
- drivers/gpio/gpio-mxc.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 3abea3f..9269225 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -424,6 +424,9 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(port->base);
+ 
+ 	port->irq_high = platform_get_irq(pdev, 1);
++	if (port->irq_high < 0)
++		port->irq_high = 0;
++
+ 	port->irq = platform_get_irq(pdev, 0);
+ 	if (port->irq < 0)
+ 		return port->irq;
 -- 
 2.1.4
-
