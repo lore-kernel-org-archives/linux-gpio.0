@@ -1,110 +1,46 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] pinctrl: st: constify gpio_chip structure
-Date: Wed, 12 Jul 2017 11:51:44 -0500
-Message-ID: <20170712115144.Horde.FbWJCF3tLLNmzrIfChEYUVc@gator4166.hostgator.com>
-References: <20170711181519.GA20001@embeddedgus>
- <c0a35f14-7c22-63f9-8bfa-2d88b5800fbd@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gateway31.websitewelcome.com ([192.185.144.28]:24084 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753543AbdGLQvx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 12 Jul 2017 12:51:53 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id BC6BCEB10
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2017 11:51:44 -0500 (CDT)
-In-Reply-To: <c0a35f14-7c22-63f9-8bfa-2d88b5800fbd@st.com>
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
+From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: [PATCH 00/14] pinctrl: sh-pfc: r8a7796: Fix pin assignment definitions
+Date: Thu, 13 Jul 2017 01:55:33 +0900
+Message-ID: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Patrice,
+This series fixes pin assignment definitions for R8A7796 SoC.
+This series is based on the for-next branch of linux-pinctrl tree.
 
-Quoting Patrice CHOTARD <patrice.chotard@st.com>:
+Takeshi Kihara (14):
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using
+    STP_ISEN_1_D
+  pinctrl: sh-pfc: r8a7796: Fix IPSR register setting when MSIOF3_SS1_E
+    pin was selected
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for SSI
+    pins group
+  pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment
+    to MOD_SEL1 bit10
+  pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin
+    function definitions
+  pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N}
+    pin function definitions
+  pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pins function
+    definitions
+  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for
+    TCLK{1,2}_{A,B} pins group
+  pinctrl: sh-pfc: r8a7796: Fix to delete FSCLKST pin and IPSR7
+    bit[15:12] register definitions
+  pinctrl: sh-pfc: r8a7796: Fix to delete SATA_DEVSLP_B pins function
+    definitions
+  pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0 bit2 register
+    definitions
+  pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin assignment
+    for FSO pins group
+  pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
 
-> Hi Gustavo
->
-> On 07/11/2017 08:15 PM, Gustavo A. R. Silva wrote:
->> This structure is only used to copy into other structure, so declare
->> it as const.
->>
->> This issue was detected using Coccinelle and the following semantic patch:
->>
->> @r disable optional_qualifier@
->> identifier i;
->> position p;
->> @@
->> static struct gpio_chip i@p = { ... };
->>
->> @ok@
->> identifier r.i;
->> expression e;
->> position p;
->> @@
->> e = i@p;
->>
->> @bad@
->> position p != {r.p,ok.p};
->> identifier r.i;
->> struct gpio_chip e;
->> @@
->> e@i@p
->>
->> @depends on !bad disable optional_qualifier@
->> identifier r.i;
->> @@
->> static
->> +const
->>   struct gpio_chip i = { ... };
->>
->> In the following log you can see a significant difference in the code size
->> and data segment, hence in the dec segment. This log is the output
->> of the size command, before and after the code change:
->>
->> before:
->>     text    data     bss     dec     hex filename
->>    21671    3632     128   25431    6357 drivers/pinctrl/pinctrl-st.o
->>
->> after:
->>     text    data     bss     dec     hex filename
->>    21366    3576     128   25070    61ee drivers/pinctrl/pinctrl-st.o
->>
->> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->> ---
->>   drivers/pinctrl/pinctrl-st.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
->> index 3ae8066..5d4789d 100644
->> --- a/drivers/pinctrl/pinctrl-st.c
->> +++ b/drivers/pinctrl/pinctrl-st.c
->> @@ -1442,7 +1442,7 @@ static void st_gpio_irqmux_handler(struct  
->> irq_desc *desc)
->>   	chained_irq_exit(chip, desc);
->>   }
->>
->> -static struct gpio_chip st_gpio_template = {
->> +static const struct gpio_chip st_gpio_template = {
->>   	.request		= gpiochip_generic_request,
->>   	.free			= gpiochip_generic_free,
->>   	.get			= st_gpio_get,
->>
->
-> Acked-by: Patrice Chotard <patrice.chotard@st.com>
->
-> Thanks
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 138 +++++++++++++++++------------------
+ 1 file changed, 65 insertions(+), 73 deletions(-)
 
-Glad to help. :)
-
-Thanks
---
-Gustavo A. R. Silva
-
-
-
-
-
+-- 
+1.9.1
