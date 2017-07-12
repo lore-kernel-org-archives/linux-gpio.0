@@ -1,57 +1,75 @@
-From: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] gpio/serial: revert "linux,first-pin" property handling
-Date: Wed, 12 Jul 2017 13:56:17 +0200
-Message-ID: <44be7013-b849-a784-90e9-5f4ba4ac07e7@siemens.com>
-References: <20170710140902.21935-1-linus.walleij@linaro.org>
- <db1ae5e9-dc03-403e-2f46-e05cbd4a7b4f@siemens.com>
- <5310fa81-dc0e-75b1-05fb-2ec9b558f867@siemens.com>
- <CACRpkdb9sOj5DgeCwD1FK5yCNUmMiC0JKXL4H7z0RfK1DfUH8g@mail.gmail.com>
- <6b28ae9a-9393-1c97-4ef2-aaf69ec6a522@siemens.com>
- <CACRpkdZAwXZn+dJ-XB6wEbVLLiOfhumdrXDx4K-bMFN-p3-PSA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZAwXZn+dJ-XB6wEbVLLiOfhumdrXDx4K-bMFN-p3-PSA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin group
+Date: Wed, 12 Jul 2017 13:58:33 +0200
+Message-ID: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from andre.telenet-ops.be ([195.130.132.53]:41148 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756497AbdGLL6h (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 07:58:37 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Chris Paterson <chris.paterson2@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 2017-07-12 13:39, Linus Walleij wrote:
-> On Wed, Jul 12, 2017 at 1:30 PM, Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org> wrote:
->> On 2017-07-12 11:30, Linus Walleij wrote:
-> 
->>> What you are talking about should be hardware-and-vendor specific
->>> info and prefixed "exar,*".
->>
->> "exar," or rather "gpio-exar,", like in [1]?
-> 
-> HW-specific DT bindings have this form: "vendor,foo".
-> 
-> So "exar,gpio-first-exported-pin" is some kind of overstating of the
-> fact, but correct.
+Pins D6 and D7 of the MMC interface can be muxed to two different sets
+of pins, but currently only one set is supported.
+Add a pin group for the alternative set to fix this.
 
-OK.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in sh-pfc-for-v4.14.
 
-> 
-> The bindings (put with the rest of the exar DT bindings if there
-> are such somewhere in Documentation/devicetree/bindings/* else
-> in a new file) should make it very clear that this is a
-> hardware-specific thing telling us which hardware pin is the
-> first offset to be used for GPIO.
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-This binding will lack any compatible value, so I'm not yet sure how to
-name/document things properly. Is there a precedence for such a case?
-Well, I can add some gpio-exar.txt and just put those two properties in it.
-
-Jan
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 4c5ffbd75be77148..10bd35f8c894c58e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -2589,6 +2589,17 @@ static const unsigned int mmc_data8_mux[] = {
+ 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
+ };
++static const unsigned int mmc_data8_b_pins[] = {
++	/* D[0:7] */
++	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
++	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
++	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
++	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
++};
++static const unsigned int mmc_data8_b_mux[] = {
++	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
++	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_B_MARK, MMC_D7_B_MARK,
++};
+ static const unsigned int mmc_ctrl_pins[] = {
+ 	/* CLK, CMD */
+ 	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
+@@ -4420,7 +4431,7 @@ static const unsigned int vin2_clk_mux[] = {
+ };
+ 
+ static const struct {
+-	struct sh_pfc_pin_group common[341];
++	struct sh_pfc_pin_group common[342];
+ 	struct sh_pfc_pin_group r8a779x[9];
+ } pinmux_groups = {
+ 	.common = {
+@@ -4523,6 +4534,7 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(mmc_data1),
+ 		SH_PFC_PIN_GROUP(mmc_data4),
+ 		SH_PFC_PIN_GROUP(mmc_data8),
++		SH_PFC_PIN_GROUP(mmc_data8_b),
+ 		SH_PFC_PIN_GROUP(mmc_ctrl),
+ 		SH_PFC_PIN_GROUP(msiof0_clk),
+ 		SH_PFC_PIN_GROUP(msiof0_sync),
+@@ -4955,6 +4967,7 @@ static const char * const mmc_groups[] = {
+ 	"mmc_data1",
+ 	"mmc_data4",
+ 	"mmc_data8",
++	"mmc_data8_b",
+ 	"mmc_ctrl",
+ };
+ 
 -- 
-Siemens AG, Corporate Technology, CT RDA ITP SES-DE
-Corporate Competence Center Embedded Linux
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.7.4
+
