@@ -1,7 +1,7 @@
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH 06/14] pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
-Date: Thu, 13 Jul 2017 01:55:39 +0900
-Message-ID: <1499878547-3452-7-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH 05/14] pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment to MOD_SEL1 bit10
+Date: Thu, 13 Jul 2017 01:55:38 +0900
+Message-ID: <1499878547-3452-6-git-send-email-ykaneko0929@gmail.com>
 References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
@@ -12,8 +12,8 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch fixes the implementation incorrect of IPSR register value
-definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
+This patch fixes SCIF_CLK_{A,B} pin's MOD_SEL assignment from MOD_SEL1
+bit11 to MOD_SEL1 bit10.
 
 This is a correction to the incorrect implementation of IPSR register
 pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
@@ -23,23 +23,39 @@ Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 467f32e..9a9094f 100644
+index 18c9c61..467f32e 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -367,8 +367,8 @@
- #define IP17_23_20	FM(USB1_OVC)		F_(0, 0)	FM(MSIOF1_SS2_C)	F_(0, 0)			FM(SSI_WS1_A)	FM(TS_SDAT0_E)	FM(STP_ISD_0_E)		FM(FMIN_B)	FM(RIF2_SYNC_B)		F_(0, 0)	FM(REMOCON_B)	F_(0, 0)	F_(0, 0) FM(HCTS2_N_C) F_(0, 0) F_(0, 0)
- #define IP17_27_24	FM(USB30_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT_B)		FM(SSI_SCK2_B)	FM(TS_SDEN1_D)	FM(STP_ISEN_1_D)	FM(STP_OPWM_0_E)FM(RIF3_D0_B)		F_(0, 0)	FM(TCLK2_B)	FM(TPU0TO0)	FM(BPFCLK_C) FM(HRTS2_N_C) F_(0, 0) F_(0, 0)
- #define IP17_31_28	FM(USB30_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT1_B)		FM(SSI_WS2_B)	FM(TS_SPSYNC1_D)FM(STP_ISSYNC_1_D)	FM(STP_IVCXO27_0_E)FM(RIF3_D1_B)	F_(0, 0)	FM(FSO_TOE_B)	FM(TPU0TO1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP18_3_0	FM(GP6_30)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	FM(FSO_CFE_0_A)	FM(TPU0TO2)	F_(0, 0) FM(FMCLK_C) FM(FMCLK_D) F_(0, 0)
--#define IP18_7_4	FM(GP6_31)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	FM(FSO_CFE_1_A)	FM(TPU0TO3)	F_(0, 0) FM(FMIN_C) FM(FMIN_D) F_(0, 0)
-+#define IP18_3_0	FM(GP6_30)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	FM(FSO_CFE_0_A)	FM(TPU0TO2)	FM(FMCLK_C) FM(FMCLK_D) F_(0, 0) F_(0, 0)
-+#define IP18_7_4	FM(GP6_31)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	FM(FSO_CFE_1_A)	FM(TPU0TO3)	FM(FMIN_C) FM(FMIN_D) F_(0, 0) F_(0, 0)
+@@ -488,7 +488,7 @@
+ #define MOD_SEL1_13		FM(SEL_SCIF3_0)		FM(SEL_SCIF3_1)
+ #define MOD_SEL1_12		FM(SEL_SCIF2_0)		FM(SEL_SCIF2_1)
+ #define MOD_SEL1_11		FM(SEL_SCIF1_0)		FM(SEL_SCIF1_1)
+-#define MOD_SEL1_10		FM(SEL_SATA_0)		FM(SEL_SATA_1)
++#define MOD_SEL1_10		FM(SEL_SCIF_0)		FM(SEL_SCIF_1)
+ #define MOD_SEL1_9		FM(SEL_REMOCON_0)	FM(SEL_REMOCON_1)
+ #define MOD_SEL1_6		FM(SEL_RCAN0_0)		FM(SEL_RCAN0_1)
+ #define MOD_SEL1_5		FM(SEL_PWM6_0)		FM(SEL_PWM6_1)
+@@ -1205,7 +1205,7 @@ enum {
+ 	PINMUX_IPSR_GPSR(IP12_27_24,	ADICHS0),
  
- #define PINMUX_GPSR	\
- \
+ 	PINMUX_IPSR_GPSR(IP12_31_28,	SCK2),
+-	PINMUX_IPSR_MSEL(IP12_31_28,	SCIF_CLK_B,		SEL_SCIF1_1),
++	PINMUX_IPSR_MSEL(IP12_31_28,	SCIF_CLK_B,		SEL_SCIF_1),
+ 	PINMUX_IPSR_MSEL(IP12_31_28,	MSIOF1_SCK_B,		SEL_MSIOF1_1),
+ 	PINMUX_IPSR_MSEL(IP12_31_28,	TS_SCK1_C,		SEL_TSIF1_2),
+ 	PINMUX_IPSR_MSEL(IP12_31_28,	STP_ISCLK_1_C,		SEL_SSP1_1_2),
+@@ -1417,7 +1417,7 @@ enum {
+ 	PINMUX_IPSR_GPSR(IP17_3_0,	CC5_OSCOUT),
+ 
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	AUDIO_CLKB_B,		SEL_ADG_B_1),
+-	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF1_0),
++	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF_0),
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	STP_IVCXO27_1_D,	SEL_SSP1_1_3),
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	REMOCON_A,		SEL_REMOCON_0),
+ 	PINMUX_IPSR_MSEL(IP17_7_4,	TCLK1_A,		SEL_TIMER_TMU_0),
 -- 
 1.9.1
