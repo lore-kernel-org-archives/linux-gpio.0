@@ -1,52 +1,61 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH] gpio: mvebu: Fix cause computation in irq handler
-Date: Wed, 12 Jul 2017 13:22:29 +0200
-Message-ID: <20170712112229.858-1-gregory.clement@free-electrons.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: Re: [PATCH] gpio/serial: revert "linux,first-pin" property handling
+Date: Wed, 12 Jul 2017 13:30:43 +0200
+Message-ID: <6b28ae9a-9393-1c97-4ef2-aaf69ec6a522@siemens.com>
+References: <20170710140902.21935-1-linus.walleij@linaro.org>
+ <db1ae5e9-dc03-403e-2f46-e05cbd4a7b4f@siemens.com>
+ <5310fa81-dc0e-75b1-05fb-2ec9b558f867@siemens.com>
+ <CACRpkdb9sOj5DgeCwD1FK5yCNUmMiC0JKXL4H7z0RfK1DfUH8g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:54779 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755886AbdGLLWt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 07:22:49 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:46546 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756068AbdGLLas (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 07:30:48 -0400
+In-Reply-To: <CACRpkdb9sOj5DgeCwD1FK5yCNUmMiC0JKXL4H7z0RfK1DfUH8g@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Nadav Haklai <nadavh@marvell.com>, Shadi Ammouri <shadi@marvell.com>, Yehuda Yitschak <yehuday@marvell.com>, Omri Itach <omrii@marvell.com>, Hanna Hawa <hannah@marvell.com>, Igal Liberman <igall@marvell.com>, Marcin Wojtas <mw@semihalf.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-When switching to regmap, the way to compute the irq cause was
-reorganized. However while doing it, a typo was introduced: a 'xor'
-replaced a 'and'.
+On 2017-07-12 11:30, Linus Walleij wrote:
+> On Tue, Jul 11, 2017 at 5:42 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>> On 2017-07-10 16:23, Jan Kiszka wrote:
+>>> On 2017-07-10 16:09, Linus Walleij wrote:
+>>>> This is not a legal device tree property, because its binding has
+>>>> not been reviewed and approved, nor does it exist in any device
+>>>> tree binding document.
+>>>>
+>>>> It is further wrong, because it is added to the GPIO offset which
+>>>> is by definition controller-local.
+>>
+>> BTW, I don't get this second statement. The parameter passed in is
+>> controlling which pin of the GPIO device can be controlled by the driver
+>> at all. And that's also a very private interface between 8250_exar and
+>> gpio-exar: the former tells the latter which pins are physically
+>> available to drive, because the former operates the others already.
+> 
+> Then it seems like the big confusion here is the "linux,*" prefix in
+> the DT binding.
+> 
+> We only use that for information which is necessary evil Linux-specific
+> stuff.
+> 
+> What you are talking about should be hardware-and-vendor specific
+> info and prefixed "exar,*".
 
-This lead to wrong behavior in the interrupt handler ans one of the
-symptom was wrong irq handler called on the Armada 388 GP:
-"->handle_irq():  c016303c,
-handle_bad_irq+0x0/0x278
-->irq_data.chip(): c0b0ec0c,
-0xc0b0ec0c
-->action():   (null)
-   IRQ_NOPROBE set
- IRQ_NOREQUEST set
-unexpected IRQ trap at vector 00
-irq 0, desc: ee804800, depth: 1, count: 0, unhandled: 0"
+"exar," or rather "gpio-exar,", like in [1]?
 
-Fixes: 2233bf7a92e7 ("gpio: mvebu: switch to regmap for register access")
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/gpio/gpio-mvebu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Can you propose a patch simply changing the binding and try to get
+> the DT maintainers ACK on it?
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index e338c3743562..45c65f805fd6 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -557,7 +557,7 @@ static void mvebu_gpio_irq_handler(struct irq_desc *desc)
- 	edge_cause = mvebu_gpio_read_edge_cause(mvchip);
- 	edge_mask  = mvebu_gpio_read_edge_mask(mvchip);
- 
--	cause = (data_in ^ level_mask) | (edge_cause & edge_mask);
-+	cause = (data_in & level_mask) | (edge_cause & edge_mask);
- 
- 	for (i = 0; i < mvchip->chip.ngpio; i++) {
- 		int irq;
--- 
-2.13.2
+Sure, will do then.
 
+Jan
+
+[1]
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1407975.html
