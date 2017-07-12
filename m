@@ -1,51 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio/serial: revert "linux,first-pin" property handling
-Date: Wed, 12 Jul 2017 11:30:12 +0200
-Message-ID: <CACRpkdb9sOj5DgeCwD1FK5yCNUmMiC0JKXL4H7z0RfK1DfUH8g@mail.gmail.com>
-References: <20170710140902.21935-1-linus.walleij@linaro.org>
- <db1ae5e9-dc03-403e-2f46-e05cbd4a7b4f@siemens.com> <5310fa81-dc0e-75b1-05fb-2ec9b558f867@siemens.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/5] pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pin function definitions
+Date: Wed, 12 Jul 2017 12:31:15 +0200
+Message-ID: <1499855477-20818-4-git-send-email-geert+renesas@glider.be>
+References: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35902 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbdGLJaT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 05:30:19 -0400
-Received: by mail-it0-f46.google.com with SMTP id m68so8733822ith.1
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2017 02:30:14 -0700 (PDT)
-In-Reply-To: <5310fa81-dc0e-75b1-05fb-2ec9b558f867@siemens.com>
+Received: from michel.telenet-ops.be ([195.130.137.88]:47564 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756118AbdGLKbW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 06:31:22 -0400
+In-Reply-To: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Jul 11, 2017 at 5:42 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On 2017-07-10 16:23, Jan Kiszka wrote:
->> On 2017-07-10 16:09, Linus Walleij wrote:
->>> This is not a legal device tree property, because its binding has
->>> not been reviewed and approved, nor does it exist in any device
->>> tree binding document.
->>>
->>> It is further wrong, because it is added to the GPIO offset which
->>> is by definition controller-local.
->
-> BTW, I don't get this second statement. The parameter passed in is
-> controlling which pin of the GPIO device can be controlled by the driver
-> at all. And that's also a very private interface between 8250_exar and
-> gpio-exar: the former tells the latter which pins are physically
-> available to drive, because the former operates the others already.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Then it seems like the big confusion here is the "linux,*" prefix in
-the DT binding.
+This patch fixes the incorrect IPSR register value definitions for
+MSIOF3_{SS1,SS2}_E pin functions.
 
-We only use that for information which is necessary evil Linux-specific
-stuff.
+This is a correction to the incorrect implementation of IPSR register
+pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+User's Manual Rev.0.51E or later.
 
-What you are talking about should be hardware-and-vendor specific
-info and prefixed "exar,*".
+Fixes: f9aece7344bd81ce ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Reword]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Can you propose a patch simply changing the binding and try to get
-the DT maintainers ACK on it?
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 98bf5d0e078ec096..6fa1729d784e6df2 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -221,8 +221,8 @@
+ #define IP0_15_12	FM(AVB_LINK)		F_(0, 0)	FM(MSIOF2_SCK_C)	FM(TX4_A)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_19_16	FM(AVB_AVTP_MATCH_A)	F_(0, 0)	FM(MSIOF2_RXD_C)	FM(CTS4_N_A)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP0_23_20	FM(AVB_AVTP_CAPTURE_A)	F_(0, 0)	FM(MSIOF2_TXD_C)	FM(RTS4_N_TANS_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0_27_24	FM(IRQ0)		FM(QPOLB)	F_(0, 0)		FM(DU_CDE)			FM(VI4_DATA0_B) FM(CAN0_TX_B)	FM(CANFD0_TX_B)		FM(MSIOF3_SS1_E) F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP0_31_28	FM(IRQ1)		FM(QPOLA)	F_(0, 0)		FM(DU_DISP)			FM(VI4_DATA1_B) FM(CAN0_RX_B)	FM(CANFD0_RX_B)		FM(MSIOF3_SS2_E) F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0_27_24	FM(IRQ0)		FM(QPOLB)	F_(0, 0)		FM(DU_CDE)			FM(VI4_DATA0_B) FM(CAN0_TX_B)	FM(CANFD0_TX_B)		FM(MSIOF3_SS2_E) F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP0_31_28	FM(IRQ1)		FM(QPOLA)	F_(0, 0)		FM(DU_DISP)			FM(VI4_DATA1_B) FM(CAN0_RX_B)	FM(CANFD0_RX_B)		FM(MSIOF3_SS1_E) F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1_3_0		FM(IRQ2)		FM(QCPV_QDE)	F_(0, 0)		FM(DU_EXODDF_DU_ODDF_DISP_CDE)	FM(VI4_DATA2_B) F_(0, 0)	F_(0, 0)		FM(MSIOF3_SYNC_E) F_(0, 0)		FM(PWM3_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1_7_4		FM(IRQ3)		FM(QSTVB_QVE)	FM(A25)			FM(DU_DOTCLKOUT1)		FM(VI4_DATA3_B) F_(0, 0)	F_(0, 0)		FM(MSIOF3_SCK_E) F_(0, 0)		FM(PWM4_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP1_11_8	FM(IRQ4)		FM(QSTH_QHS)	FM(A24)			FM(DU_EXHSYNC_DU_HSYNC)		FM(VI4_DATA4_B) F_(0, 0)	F_(0, 0)		FM(MSIOF3_RXD_E) F_(0, 0)		FM(PWM5_B)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
