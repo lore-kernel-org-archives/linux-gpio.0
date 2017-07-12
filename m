@@ -1,96 +1,89 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 1/2] pinctrl: stm32: select IRQ_DOMAIN_HIERARCHY instead of
- depends on
-Date: Wed, 12 Jul 2017 08:11:49 +0900
-Message-ID: <1499814710-16686-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH/RFC] gpio: rcar: add gen[123] fallback compatibility
+ strings
+Date: Wed, 12 Jul 2017 07:49:10 +0200
+Message-ID: <20170712054909.GA18990@verge.net.au>
+References: <1499776710-25450-1-git-send-email-horms+renesas@verge.net.au>
+ <CAMuHMdWH_av4fiGXAtS7Xz91jW86-ntkXPdZz8Wci4dSVUmJOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1499814710-16686-1-git-send-email-yamada.masahiro@socionext.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWH_av4fiGXAtS7Xz91jW86-ntkXPdZz8Wci4dSVUmJOw@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Drivers that need IRQ_DOMAIN_HIERARCHY should "select" it, but
-drivers/pinctrl/stm32/Kconfig is the only exception that uses
-"depends on" syntax.  This prevents GPIO drivers from select'ing
-IRQ_DOMAIN_HIERARCHY.
+On Tue, Jul 11, 2017 at 07:59:31PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Tue, Jul 11, 2017 at 2:38 PM, Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Add fallback compatibility string for R-Car Gen 1, 2 and 3.
+> >
+> > In the case of Renesas R-Car hardware we know that there are generations of
+> > SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
+> > between IP blocks might be. For example, I believe that r8a7790 is older
+> > than r8a7791 but that doesn't imply that the latter is a descendant of the
+> > former or vice versa.
+> >
+> > We can, however, by examining the documentation and behaviour of the
+> > hardware at run-time observe that the current driver implementation appears
+> > to be compatible with the IP blocks on SoCs within a given generation.
+> >
+> > For the above reasons and convenience when enabling new SoCs a
+> > per-generation fallback compatibility string scheme being adopted for
+> > drivers for Renesas SoCs.
+> >
+> > Also deprecate renesas,gpio-rcar as its name is more generic than its
+> > implementation.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > ---
+> > Based on linux-gpio/for-next
+> > ---
+> >  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt        | 15 +++++++++++----
+> >  drivers/gpio/gpio-rcar.c                                  | 10 ++++++++++
+> >  2 files changed, 21 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> > index 6826a371fb69..48634b01f1bf 100644
+> > --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> > +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> > @@ -2,7 +2,7 @@
+> >
+> >  Required Properties:
+> >
+> > -  - compatible: should contain one of the following.
+> > +  - compatible: should contain one or more of the following:
+> >      - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
+> >      - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
+> >      - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
+> > @@ -13,7 +13,14 @@ Required Properties:
+> >      - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+> >      - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+> >      - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
+> > -    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+> > +    - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+> > +    - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+> > +    - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
+> > +    - "renesas,gpio-rcar": deprecated.
+> > +
+> > +    When compatible with the generic version nodes must list the
+> > +    SoC-specific version corresponding to the platform first followed by
+> > +    the generic version.
+> 
+> Besides for consistency, does it make sense to deprecate "renesas,gpio-rcar"
+> (which means R-Car Gen1) and introduce "renesas,rcar-gen1-gpio"?
+> It's not like new R-Car Gen1 SoCs will pop up anytime soon (do we want Linux
+> support for R-Car E1?).
 
-For example, if I add "select IRQ_DOMAIN_HIERARCHY" to GPIO_XGENE_SB,
-I get the following recursive dependency error.
+>From my PoV the only advantage of that portion of the change is improving
+consistency. Perhaps it would be better to substitute it with something
+like this:
 
-drivers/gpio/Kconfig:13:error: recursive dependency detected!
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpio/Kconfig:13:	symbol GPIOLIB is selected by PINCTRL_STM32
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/pinctrl/stm32/Kconfig:3:	symbol PINCTRL_STM32 is selected by PINCTRL_STM32F429
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/pinctrl/stm32/Kconfig:11:	symbol PINCTRL_STM32F429 depends on IRQ_DOMAIN_HIERARCHY
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-kernel/irq/Kconfig:67:	symbol IRQ_DOMAIN_HIERARCHY is selected by GPIO_XGENE_SB
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpio/Kconfig:502:	symbol GPIO_XGENE_SB depends on GPIOLIB
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/pinctrl/stm32/Kconfig | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfig
-index 3b8026fca057..7e1fe39a56a5 100644
---- a/drivers/pinctrl/stm32/Kconfig
-+++ b/drivers/pinctrl/stm32/Kconfig
-@@ -6,29 +6,30 @@ config PINCTRL_STM32
- 	select PINMUX
- 	select GENERIC_PINCONF
- 	select GPIOLIB
-+	select IRQ_DOMAIN_HIERARCHY
- 	select MFD_SYSCON
- 
- config PINCTRL_STM32F429
- 	bool "STMicroelectronics STM32F429 pin control" if COMPILE_TEST && !MACH_STM32F429
--	depends on OF && IRQ_DOMAIN_HIERARCHY
-+	depends on OF
- 	default MACH_STM32F429
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32F469
- 	bool "STMicroelectronics STM32F469 pin control" if COMPILE_TEST && !MACH_STM32F469
--	depends on OF && IRQ_DOMAIN_HIERARCHY
-+	depends on OF
- 	default MACH_STM32F469
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32F746
- 	bool "STMicroelectronics STM32F746 pin control" if COMPILE_TEST && !MACH_STM32F746
--	depends on OF && IRQ_DOMAIN_HIERARCHY
-+	depends on OF
- 	default MACH_STM32F746
- 	select PINCTRL_STM32
- 
- config PINCTRL_STM32H743
- 	bool "STMicroelectronics STM32H743 pin control" if COMPILE_TEST && !MACH_STM32H743
--	depends on OF && IRQ_DOMAIN_HIERARCHY
-+	depends on OF
- 	default MACH_STM32H743
- 	select PINCTRL_STM32
- endif
--- 
-2.7.4
+	- "renesas,gpio-rcar": for a generic R-Car Gen1 GPIO controller.
