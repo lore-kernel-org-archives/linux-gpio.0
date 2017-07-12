@@ -1,75 +1,40 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin group
-Date: Wed, 12 Jul 2017 13:58:33 +0200
-Message-ID: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V4 0/7] pinctrl: imx: add imx7ulp pinctrl support
+Date: Wed, 12 Jul 2017 13:59:52 +0200
+Message-ID: <CACRpkdbeqiGJAD5idGPJXpN2VEnOVnExzHripnfFwaneRHAuGA@mail.gmail.com>
+References: <1498046395-30001-1-git-send-email-aisheng.dong@nxp.com> <AM3PR04MB306A0A86603EF133C37852480D60@AM3PR04MB306.eurprd04.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:41148 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756497AbdGLL6h (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 07:58:37 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:36217 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756250AbdGLL7y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 12 Jul 2017 07:59:54 -0400
+Received: by mail-it0-f44.google.com with SMTP id m68so10313940ith.1
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Jul 2017 04:59:53 -0700 (PDT)
+In-Reply-To: <AM3PR04MB306A0A86603EF133C37852480D60@AM3PR04MB306.eurprd04.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Chris Paterson <chris.paterson2@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "stefan@agner.ch" <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Pins D6 and D7 of the MMC interface can be muxed to two different sets
-of pins, but currently only one set is supported.
-Add a pin group for the alternative set to fix this.
+On Mon, Jul 3, 2017 at 12:36 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v4.14.
+> Is the series got missed?
+>
+> I saw you only picked the revised patch 1.
+>
+> Or do I need resend it?
 
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Can you please:
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index 4c5ffbd75be77148..10bd35f8c894c58e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -2589,6 +2589,17 @@ static const unsigned int mmc_data8_mux[] = {
- 	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
- 	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_MARK, MMC_D7_MARK,
- };
-+static const unsigned int mmc_data8_b_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(6, 18), RCAR_GP_PIN(6, 19),
-+	RCAR_GP_PIN(6, 20), RCAR_GP_PIN(6, 21),
-+	RCAR_GP_PIN(6, 22), RCAR_GP_PIN(6, 23),
-+	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
-+};
-+static const unsigned int mmc_data8_b_mux[] = {
-+	MMC_D0_MARK, MMC_D1_MARK, MMC_D2_MARK, MMC_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK, MMC_D6_B_MARK, MMC_D7_B_MARK,
-+};
- static const unsigned int mmc_ctrl_pins[] = {
- 	/* CLK, CMD */
- 	RCAR_GP_PIN(6, 16), RCAR_GP_PIN(6, 17),
-@@ -4420,7 +4431,7 @@ static const unsigned int vin2_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[341];
-+	struct sh_pfc_pin_group common[342];
- 	struct sh_pfc_pin_group r8a779x[9];
- } pinmux_groups = {
- 	.common = {
-@@ -4523,6 +4534,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(mmc_data1),
- 		SH_PFC_PIN_GROUP(mmc_data4),
- 		SH_PFC_PIN_GROUP(mmc_data8),
-+		SH_PFC_PIN_GROUP(mmc_data8_b),
- 		SH_PFC_PIN_GROUP(mmc_ctrl),
- 		SH_PFC_PIN_GROUP(msiof0_clk),
- 		SH_PFC_PIN_GROUP(msiof0_sync),
-@@ -4955,6 +4967,7 @@ static const char * const mmc_groups[] = {
- 	"mmc_data1",
- 	"mmc_data4",
- 	"mmc_data8",
-+	"mmc_data8_b",
- 	"mmc_ctrl",
- };
- 
--- 
-2.7.4
+- Rebase on v4.13-rc1 once it is out
 
+- Include the explicit ACKs from Shawn and Stephan Agner on
+  the patches, also make sure all patches have ACKs.
+
+I am sorry if I missed it, it may be due to that I had a hard time
+to see which patches were ACKed and not.
+
+Yours,
+Linus Walleij
