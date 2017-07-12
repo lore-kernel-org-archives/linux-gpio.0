@@ -1,46 +1,43 @@
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH 00/14] pinctrl: sh-pfc: r8a7796: Fix pin assignment definitions
-Date: Thu, 13 Jul 2017 01:55:33 +0900
-Message-ID: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH 01/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
+Date: Thu, 13 Jul 2017 01:55:34 +0900
+Message-ID: <1499878547-3452-2-git-send-email-ykaneko0929@gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This series fixes pin assignment definitions for R8A7796 SoC.
-This series is based on the for-next branch of linux-pinctrl tree.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Takeshi Kihara (14):
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using
-    STP_ISEN_1_D
-  pinctrl: sh-pfc: r8a7796: Fix IPSR register setting when MSIOF3_SS1_E
-    pin was selected
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for SSI
-    pins group
-  pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment
-    to MOD_SEL1 bit10
-  pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin
-    function definitions
-  pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N}
-    pin function definitions
-  pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pins function
-    definitions
-  pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for
-    TCLK{1,2}_{A,B} pins group
-  pinctrl: sh-pfc: r8a7796: Fix to delete FSCLKST pin and IPSR7
-    bit[15:12] register definitions
-  pinctrl: sh-pfc: r8a7796: Fix to delete SATA_DEVSLP_B pins function
-    definitions
-  pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0 bit2 register
-    definitions
-  pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin assignment
-    for FSO pins group
-  pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
+This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
 
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 138 +++++++++++++++++------------------
- 1 file changed, 65 insertions(+), 73 deletions(-)
+This is a correction to the incorrect implementation of MOD_SEL register
+pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+User's Manual Rev.0.51E or later.
 
+Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 98bf5d0..b2fb66f 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -1461,7 +1461,7 @@ enum {
+ 	PINMUX_IPSR_GPSR(IP17_27_24,	AUDIO_CLKOUT_B),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	SSI_SCK2_B,		SEL_SSI_1),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	TS_SDEN1_D,		SEL_TSIF1_3),
+-	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_2),
++	PINMUX_IPSR_MSEL(IP17_27_24,	STP_ISEN_1_D,		SEL_SSP1_1_3),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	STP_OPWM_0_E,		SEL_SSP1_0_4),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	RIF3_D0_B,		SEL_DRIF3_1),
+ 	PINMUX_IPSR_MSEL(IP17_27_24,	TCLK2_B,		SEL_TIMER_TMU_1),
 -- 
 1.9.1
