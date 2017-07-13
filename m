@@ -1,57 +1,35 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 04/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin
- assignment for SSI pins group
-Date: Thu, 13 Jul 2017 11:12:49 +0200
-Message-ID: <CAMuHMdURF=teYxa2iuPDbPQQVV=9mYsE=xBwEGGB0JAhCHXNRA@mail.gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-5-git-send-email-ykaneko0929@gmail.com>
+Subject: Re: [PATCH 05/14] pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's
+ MOD_SEL assignment to MOD_SEL1 bit10
+Date: Thu, 13 Jul 2017 11:24:40 +0200
+Message-ID: <CAMuHMdUV02SPrxviKiRaoo=xDdqT4NbxS0xsyU7uTm=gBhdhBg@mail.gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-6-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1499878547-3452-5-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1499878547-3452-6-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-
-Hi Kaneko-san, Kihara-san,
 
 On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
-> for SSI pins group.
+> This patch fixes SCIF_CLK_{A,B} pin's MOD_SEL assignment from MOD_SEL1
+> bit11 to MOD_SEL1 bit10.
 >
-> This is a correction to the incorrect implementation of MOD_SEL register
+> This is a correction to the incorrect implementation of IPSR register
 > pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
 > User's Manual Rev.0.51E or later.
 >
 > Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 38 ++++++++++++++++++------------------
->  1 file changed, 19 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-> index 4d070c2..18c9c61 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-> @@ -1277,7 +1277,7 @@ enum {
->         PINMUX_IPSR_MSEL(IP14_3_0,      RX5_A,                  SEL_SCIF5_0),
->         PINMUX_IPSR_MSEL(IP14_3_0,      NFWP_N_A,               SEL_NDF_0),
->         PINMUX_IPSR_MSEL(IP14_3_0,      AUDIO_CLKA_C,           SEL_ADG_A_2),
-> -       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI_0),
-> +       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI2_0),
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The SSI_SCK2_A part seems to have been removed in Rev.052E and later?
-However, I can't find that in the errata for Rev.051E.
-
->         PINMUX_IPSR_MSEL(IP14_3_0,      STP_IVCXO27_0_C,        SEL_SSP1_0_2),
->         PINMUX_IPSR_GPSR(IP14_3_0,      AUDIO_CLKOUT3_A),
->         PINMUX_IPSR_MSEL(IP14_3_0,      TCLK1_B,                SEL_TIMER_TMU_1),
-
-The rest looks good to me.
+i.e. will queue in sh-pfc-for-v4.14.
 
 Gr{oetje,eeting}s,
 
