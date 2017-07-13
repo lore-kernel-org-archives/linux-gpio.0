@@ -1,72 +1,35 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 01/18] mfd: madera: Add register definitions for
- Cirrus Logic Madera codecs
-Date: Thu, 13 Jul 2017 14:03:05 +0100
-Message-ID: <20170713130305.ytrk322lqe6dusla@sirena.org.uk>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-2-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170713080210.lbsjnmlciovoxe4g@dell>
- <20170713100539.mqvyxgvwqowjim6i@sirena.org.uk>
- <1499949850.4826.88.camel@rf-debian.wolfsonmicro.main>
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH] pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin
+ group
+Date: Thu, 13 Jul 2017 15:50:56 +0000
+Message-ID: <TY1PR06MB0702C7C16CE4766948CDC37DB7AC0@TY1PR06MB0702.apcprd06.prod.outlook.com>
+References: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dnu4nyp3x6jvsw2v"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1499949850.4826.88.camel-WeElTRBN8n0bEPBeyYQi64iQ8/zYDDdY1BehtkLrGTY@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Hello Geert,
 
---dnu4nyp3x6jvsw2v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: linux-gpio-owner@vger.kernel.org [mailto:linux-gpio-
+> owner@vger.kernel.org] On Behalf Of Geert Uytterhoeven
+> Sent: 12 July 2017 12:59
+>=20
+> Pins D6 and D7 of the MMC interface can be muxed to two different sets of
+> pins, but currently only one set is supported.
+> Add a pin group for the alternative set to fix this.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
 
-On Thu, Jul 13, 2017 at 01:44:10PM +0100, Richard Fitzgerald wrote:
-> On Thu, 2017-07-13 at 11:05 +0100, Mark Brown wrote:
-> > On Thu, Jul 13, 2017 at 09:02:10AM +0100, Lee Jones wrote:
+I've also tested this on the iwg20m board which uses these pins. All looks =
+okay.
+Tested-by: Chris Paterson <chris.paterson2@renesas.com>
 
-> > > This patch has been rejected by Linus.
-
-> > > https://lkml.org/lkml/2017/7/7/579
-
-> > Hrm, when I used to push the register definition patches I did elide all
-> > the obviously repeated register banks like the write sequencer one that
-> > Linus is calling out there.  I'm surprised by the "every single line"
-> > bit though...
-
-> Linux doesn't say what he wants us to do about it. I could manually
-> strip out a few more definitions but seriously, it makes the code a lot
-> harder to maintain if we can't grep it for use of registers and register
-> fields. They are big chips, they have a lot of stuff in the registers.
-
-I'd take it up with him, if you can explain why it looks very
-repetitive but isn't actually that'd help...
-
-Building up copies of the repeated IPs with macros would help too (the
-AIF and especially frame control registers stick out like a sore thumb
-here), as would removing the individual registers for the write
-sequencer block.
-
---dnu4nyp3x6jvsw2v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllnb4gACgkQJNaLcl1U
-h9Ajzwf/UT3dCb8Miwi/swDRP0ZvxT512f4vbdv9H1+mx+lXkUUQ3xQOYHvfy2Fp
-7qnitYjeGzzPk5Qm5sfkEHDgmm95Ju3OKAPQqsib0qYHRIWQ1Tbfk9/USplc6oqb
-TyKqII498Tt1t5Uq4ZmjVynwGweem1Hy2TqnjqOgsc9jtRB9mcvup/BFGDwY2Tq6
-T/9Wudte3/BkK2Pd9tUUAT+lSHnukOi6lmCdfM+bYJhF8aveEm4ZAzvrhHTETu/E
-tcn7GcbK5hjMwBaQGtOdJioYdvYJd4CbWSmG8Qb1y+CiTkXcvKZaG/KtNe7TJRhV
-RuvJHVmYXTilhvtTxIKvkBnbmvB8Uw==
-=pWIf
------END PGP SIGNATURE-----
-
---dnu4nyp3x6jvsw2v--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kind regards, Chris
