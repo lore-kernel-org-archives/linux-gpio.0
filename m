@@ -1,49 +1,47 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 01/18] mfd: madera: Add register
- definitions for Cirrus Logic Madera codecs
-Date: Thu, 13 Jul 2017 09:02:10 +0100
-Message-ID: <20170713080210.lbsjnmlciovoxe4g@dell>
-References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1493050124-5970-2-git-send-email-rf@opensource.wolfsonmicro.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 01/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24]
+ to 0x3 when using STP_ISEN_1_D
+Date: Thu, 13 Jul 2017 10:07:47 +0200
+Message-ID: <CAMuHMdVCC7WyTBgCG4XU3NTNMdacQsJvT4jeaStXZpTcTVUQuQ@mail.gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-2-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <1493050124-5970-2-git-send-email-rf@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:32829 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbdGMIHt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jul 2017 04:07:49 -0400
+In-Reply-To: <1499878547-3452-2-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-T24gTW9uLCAyNCBBcHIgMjAxNywgUmljaGFyZCBGaXR6Z2VyYWxkIHdyb3RlOgoKPiBUaGlzIHBh
-dGNoIGFkZHMgYSBoZWFkZXIgZmlsZSBvZiByZWdpc3RlciBkZWZpbml0aW9ucyBmb3IgQ2lycnVz
-Cj4gTG9naWMgIk1hZGVyYSIgY2xhc3MgY29kZWNzLiBUaGVzZSBjb2RlY3MgYXJlIGFsbCBiYXNl
-ZCBvZmYgYSBjb21tb24KPiBzZXQgb2YgaGFyZHdhcmUgSVAgc28gaGF2ZSBhIGNvbW1vbiByZWdp
-c3RlciBtYXAgKHdpdGggYSBmZXcgbWlub3IKPiBkZXZpY2UtdG8tZGV2aWNlIHZhcmlhdGlvbnMp
-LiBUaGVzZSBhcmUgY29tcGxleCBkZXZpY2VzIHdpdGggYSBsYXJnZQo+IG51bWJlciBvZiBmZWF0
-dXJlcyBhbmQgc28gaGF2ZSBhIGNvcnJlc3BvbmRpbmdseSBsYXJnZSByZWdpc3RlciBzZXQuCj4g
-VGhlIHJlZ2lzdGVycy5oIGZpbGUgaGFzIGJlZW4gYXV0by1nZW5lcmF0ZWQgZnJvbSB0aGUgaGFy
-ZHdhcmUgcmVnaXN0ZXIKPiBkZWZpbml0aW9ucywgc3RyaXBwZWQgZG93biB0byBvbmx5IHJlZ2lz
-dGVycyB3ZSBuZWVkIHRvIGFjY2VzcyBmcm9tCj4gdGhlIGRyaXZlci4KPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBSaWNoYXJkIEZpdHpnZXJhbGQgPHJmQG9wZW5zb3VyY2Uud29sZnNvbm1pY3JvLmNvbT4K
-PiAtLS0KPiAKPiBObyBjaGFuZ2VzIHNpbmNlIFYxLgo+IAo+ICBNQUlOVEFJTkVSUyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgfCAgIDEwICsKPiAgaW5jbHVkZS9saW51eC9tZmQvbWFkZXJhL3Jl
-Z2lzdGVycy5oIHwgODgzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gIDIg
-ZmlsZXMgY2hhbmdlZCwgODg0MiBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBp
-bmNsdWRlL2xpbnV4L21mZC9tYWRlcmEvcmVnaXN0ZXJzLmgKClRoaXMgcGF0Y2ggaGFzIGJlZW4g
-cmVqZWN0ZWQgYnkgTGludXMuCgpodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNy83LzcvNTc5Cgot
-LSAKTGVlIEpvbmVzCkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQK
-TGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBM
-aW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZl
-bEBhbHNhLXByb2plY3Qub3JnCmh0dHA6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9hbHNhLWRldmVsCg==
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+> value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+i.e. will queue in sh-pfc-for-v4.14.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
