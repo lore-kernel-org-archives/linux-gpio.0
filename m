@@ -1,77 +1,49 @@
-From: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] gpio-exar: Use correct property prefix and document bindings
-Date: Thu, 13 Jul 2017 08:44:26 +0200
-Message-ID: <491bf615-f1d2-13ff-fa6e-fe5350a0b3b0@siemens.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 01/18] mfd: madera: Add register
+ definitions for Cirrus Logic Madera codecs
+Date: Thu, 13 Jul 2017 09:02:10 +0100
+Message-ID: <20170713080210.lbsjnmlciovoxe4g@dell>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1493050124-5970-2-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <1493050124-5970-2-git-send-email-rf@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de
 List-Id: linux-gpio@vger.kernel.org
 
-The device-specific property should be prefixed with the vendor name
-Change this and document the bindings of this platform device.
-
-Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
----
- Documentation/devicetree/bindings/gpio/gpio-exar.txt | 5 +++++
- drivers/gpio/gpio-exar.c                             | 2 +-
- drivers/tty/serial/8250/8250_exar.c                  | 4 ++--
- 3 files changed, 8 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-exar.txt
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-exar.txt b/Documentation/devicetree/bindings/gpio/gpio-exar.txt
-new file mode 100644
-index 000000000000..452180229b36
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-exar.txt
-@@ -0,0 +1,5 @@
-+Exportable MPIO interface of Exar UART chips
-+
-+Required properties of platform device:
-+ - exar,first-pin: first exportable pins (0..15)
-+ - ngpios: number of exportable pins (1..16)
-diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
-index fb8d304cfa17..0ecd2369c2ca 100644
---- a/drivers/gpio/gpio-exar.c
-+++ b/drivers/gpio/gpio-exar.c
-@@ -132,7 +132,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
- 	if (!p)
- 		return -ENOMEM;
- 
--	ret = device_property_read_u32(&pdev->dev, "linux,first-pin",
-+	ret = device_property_read_u32(&pdev->dev, "exar,first-pin",
- 				       &first_pin);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-index b5c98e5bf524..c6360fbdf808 100644
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -261,7 +261,7 @@ __xr17v35x_register_gpio(struct pci_dev *pcidev,
- }
- 
- static const struct property_entry exar_gpio_properties[] = {
--	PROPERTY_ENTRY_U32("linux,first-pin", 0),
-+	PROPERTY_ENTRY_U32("exar,first-pin", 0),
- 	PROPERTY_ENTRY_U32("ngpios", 16),
- 	{ }
- };
-@@ -326,7 +326,7 @@ static int iot2040_rs485_config(struct uart_port *port,
- }
- 
- static const struct property_entry iot2040_gpio_properties[] = {
--	PROPERTY_ENTRY_U32("linux,first-pin", 10),
-+	PROPERTY_ENTRY_U32("exar,first-pin", 10),
- 	PROPERTY_ENTRY_U32("ngpios", 1),
- 	{ }
- };
--- 
-2.12.3
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gTW9uLCAyNCBBcHIgMjAxNywgUmljaGFyZCBGaXR6Z2VyYWxkIHdyb3RlOgoKPiBUaGlzIHBh
+dGNoIGFkZHMgYSBoZWFkZXIgZmlsZSBvZiByZWdpc3RlciBkZWZpbml0aW9ucyBmb3IgQ2lycnVz
+Cj4gTG9naWMgIk1hZGVyYSIgY2xhc3MgY29kZWNzLiBUaGVzZSBjb2RlY3MgYXJlIGFsbCBiYXNl
+ZCBvZmYgYSBjb21tb24KPiBzZXQgb2YgaGFyZHdhcmUgSVAgc28gaGF2ZSBhIGNvbW1vbiByZWdp
+c3RlciBtYXAgKHdpdGggYSBmZXcgbWlub3IKPiBkZXZpY2UtdG8tZGV2aWNlIHZhcmlhdGlvbnMp
+LiBUaGVzZSBhcmUgY29tcGxleCBkZXZpY2VzIHdpdGggYSBsYXJnZQo+IG51bWJlciBvZiBmZWF0
+dXJlcyBhbmQgc28gaGF2ZSBhIGNvcnJlc3BvbmRpbmdseSBsYXJnZSByZWdpc3RlciBzZXQuCj4g
+VGhlIHJlZ2lzdGVycy5oIGZpbGUgaGFzIGJlZW4gYXV0by1nZW5lcmF0ZWQgZnJvbSB0aGUgaGFy
+ZHdhcmUgcmVnaXN0ZXIKPiBkZWZpbml0aW9ucywgc3RyaXBwZWQgZG93biB0byBvbmx5IHJlZ2lz
+dGVycyB3ZSBuZWVkIHRvIGFjY2VzcyBmcm9tCj4gdGhlIGRyaXZlci4KPiAKPiBTaWduZWQtb2Zm
+LWJ5OiBSaWNoYXJkIEZpdHpnZXJhbGQgPHJmQG9wZW5zb3VyY2Uud29sZnNvbm1pY3JvLmNvbT4K
+PiAtLS0KPiAKPiBObyBjaGFuZ2VzIHNpbmNlIFYxLgo+IAo+ICBNQUlOVEFJTkVSUyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAgIDEwICsKPiAgaW5jbHVkZS9saW51eC9tZmQvbWFkZXJhL3Jl
+Z2lzdGVycy5oIHwgODgzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gIDIg
+ZmlsZXMgY2hhbmdlZCwgODg0MiBpbnNlcnRpb25zKCspCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBp
+bmNsdWRlL2xpbnV4L21mZC9tYWRlcmEvcmVnaXN0ZXJzLmgKClRoaXMgcGF0Y2ggaGFzIGJlZW4g
+cmVqZWN0ZWQgYnkgTGludXMuCgpodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNy83LzcvNTc5Cgot
+LSAKTGVlIEpvbmVzCkxpbmFybyBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQK
+TGluYXJvLm9yZyDilIIgT3BlbiBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBM
+aW5hcm86IEZhY2Vib29rIHwgVHdpdHRlciB8IEJsb2cKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KQWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZl
+bEBhbHNhLXByb2plY3Qub3JnCmh0dHA6Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9hbHNhLWRldmVsCg==
