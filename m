@@ -1,41 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 14/14] pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
-Date: Thu, 13 Jul 2017 12:02:23 +0200
-Message-ID: <CAMuHMdV15EZC+GRgVOUsXkbwF7GwmDQTdzGCasA0ctJ==1BMGw@mail.gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-15-git-send-email-ykaneko0929@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 01/18] mfd: madera: Add register definitions for
+ Cirrus Logic Madera codecs
+Date: Thu, 13 Jul 2017 11:05:39 +0100
+Message-ID: <20170713100539.mqvyxgvwqowjim6i@sirena.org.uk>
+References: <1493050124-5970-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1493050124-5970-2-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20170713080210.lbsjnmlciovoxe4g@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1499878547-3452-15-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4re4f3dxoztsibxi"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50426 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751046AbdGMKF6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jul 2017 06:05:58 -0400
+Content-Disposition: inline
+In-Reply-To: <20170713080210.lbsjnmlciovoxe4g@dell>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch renames the pin function macro definitions of the GPSR1 and
-> IPSR4 registers value for the CS1# pin.
->
-> This is a correction because GPSR and IPSR register specification for
-> R8A7796 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.54E.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Fixes: f9aece7344bd81ce ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+--4re4f3dxoztsibxi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-i.e. will queue in sh-pfc-for-v4.14.
+On Thu, Jul 13, 2017 at 09:02:10AM +0100, Lee Jones wrote:
 
-Gr{oetje,eeting}s,
+> This patch has been rejected by Linus.
 
-                        Geert
+> https://lkml.org/lkml/2017/7/7/579
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Hrm, when I used to push the register definition patches I did elide all
+the obviously repeated register banks like the write sequencer one that
+Linus is calling out there.  I'm surprised by the "every single line"
+bit though...
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--4re4f3dxoztsibxi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllnRe8ACgkQJNaLcl1U
+h9DIeQf9E+JONV3frlWhgbGngNm2kgZX9WGIfuj4KV+U6UpfOzUllIVWwLUWCLel
+UlX8A3CRoW52Juhs2nAgk4exuPu46MZpdxIaTci6I94G7yk1NHks0reqiKGF9Xaa
+7cplSBAH6ur/24ohrmTvvwl71N/soBCkfMYwuLx8wPqNnAzKWHI7vyfvWYmeho7Y
+c+1KlfyqIrVfpcK+zlHXCiMbbrFdG1u3Asdhdu+ofm5zO1vXSbQAdYdCU6rnBV54
+sLzzGWJcHkqX2BA7/rLHclw3mhFUPJjOHno9MB+6UE9L6OqMe6pwxhGN4wB2AVNT
+e91W4PmGlYRpHRud/b3cEZXv3nCH+Q==
+=ev8l
+-----END PGP SIGNATURE-----
+
+--4re4f3dxoztsibxi--
