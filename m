@@ -1,43 +1,138 @@
 From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 1/2] pinctrl: zynq: Fix kernel doc warnings
-Date: Thu, 13 Jul 2017 11:12:42 +0200
-Message-ID: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33630 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbdGMJMq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jul 2017 05:12:46 -0400
-Received: by mail-wm0-f67.google.com with SMTP id j85so3743786wmj.0
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Jul 2017 02:12:45 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 2/2] pinctrl: zynq: Fix warnings in the driver
+Date: Thu, 13 Jul 2017 11:12:43 +0200
+Message-ID: <4ec0134906b80ac107dfc80fbf7beb10e38e47cb.1499937148.git.michal.simek@xilinx.com>
+References: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
+In-Reply-To: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
+References: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, monstr@monstr.eu
 Cc: Nava kishore Manne <nava.manne@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
 From: Nava kishore Manne <nava.manne@xilinx.com>
 
-This patch fixes the kernel doc warnings in the driver.
+This patch fixes the below warning
+        --> Prefer 'unsigned int' to bare use of 'unsigned'.
+        --> line over 80 characters.
+        --> Prefer 'unsigned int **' to bare use of 'unsigned **'.
 
 Signed-off-by: Nava kishore Manne <navam@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
- drivers/pinctrl/pinctrl-zynq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-zynq.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index b51a46dfdcc3..7565651acdc6 100644
+index 7565651acdc6..a0daf27042bd 100644
 --- a/drivers/pinctrl/pinctrl-zynq.c
 +++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -45,7 +45,7 @@
-  * @syscon:		Syscon regmap
-  * @pctrl_offset:	Offset for pinctrl into the @syscon space
-  * @groups:		Pingroups
-- * @ngroupos:		Number of @groups
-+ * @ngroups:		Number of @groups
-  * @funcs:		Pinmux functions
-  * @nfuncs:		Number of @funcs
-  */
+@@ -62,7 +62,7 @@ struct zynq_pinctrl {
+ struct zynq_pctrl_group {
+ 	const char *name;
+ 	const unsigned int *pins;
+-	const unsigned npins;
++	const unsigned int npins;
+ };
+ 
+ /**
+@@ -841,7 +841,7 @@ static int zynq_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
+ }
+ 
+ static const char *zynq_pctrl_get_group_name(struct pinctrl_dev *pctldev,
+-					     unsigned selector)
++					     unsigned int selector)
+ {
+ 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -849,9 +849,9 @@ static const char *zynq_pctrl_get_group_name(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int zynq_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
+-				     unsigned selector,
+-				     const unsigned **pins,
+-				     unsigned *num_pins)
++				     unsigned int selector,
++				     const unsigned int **pins,
++				     unsigned int *num_pins)
+ {
+ 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -878,7 +878,7 @@ static int zynq_pmux_get_functions_count(struct pinctrl_dev *pctldev)
+ }
+ 
+ static const char *zynq_pmux_get_function_name(struct pinctrl_dev *pctldev,
+-					       unsigned selector)
++					       unsigned int selector)
+ {
+ 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 
+@@ -886,7 +886,7 @@ static const char *zynq_pmux_get_function_name(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int zynq_pmux_get_function_groups(struct pinctrl_dev *pctldev,
+-					 unsigned selector,
++					 unsigned int selector,
+ 					 const char * const **groups,
+ 					 unsigned * const num_groups)
+ {
+@@ -898,8 +898,8 @@ static int zynq_pmux_get_function_groups(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int zynq_pinmux_set_mux(struct pinctrl_dev *pctldev,
+-			       unsigned function,
+-			       unsigned group)
++			       unsigned int function,
++			       unsigned int  group)
+ {
+ 	int i, ret;
+ 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+@@ -986,8 +986,8 @@ enum zynq_pin_config_param {
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+-static const struct pin_config_item zynq_conf_items[ARRAY_SIZE(zynq_dt_params)] = {
+-	PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
++static const struct pin_config_item zynq_conf_items[ARRAY_SIZE(zynq_dt_params)]
++	= { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+ };
+ #endif
+ 
+@@ -997,7 +997,7 @@ static unsigned int zynq_pinconf_iostd_get(u32 reg)
+ }
+ 
+ static int zynq_pinconf_cfg_get(struct pinctrl_dev *pctldev,
+-				unsigned pin,
++				unsigned int pin,
+ 				unsigned long *config)
+ {
+ 	u32 reg;
+@@ -1054,9 +1054,9 @@ static int zynq_pinconf_cfg_get(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int zynq_pinconf_cfg_set(struct pinctrl_dev *pctldev,
+-				unsigned pin,
++				unsigned int pin,
+ 				unsigned long *configs,
+-				unsigned num_configs)
++				unsigned int num_configs)
+ {
+ 	int i, ret;
+ 	u32 reg;
+@@ -1130,9 +1130,9 @@ static int zynq_pinconf_cfg_set(struct pinctrl_dev *pctldev,
+ }
+ 
+ static int zynq_pinconf_group_set(struct pinctrl_dev *pctldev,
+-				  unsigned selector,
++				  unsigned int selector,
+ 				  unsigned long *configs,
+-				  unsigned num_configs)
++				  unsigned int  num_configs)
+ {
+ 	int i, ret;
+ 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
 -- 
 1.9.1
-
