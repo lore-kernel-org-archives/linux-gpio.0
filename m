@@ -1,138 +1,65 @@
-From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 2/2] pinctrl: zynq: Fix warnings in the driver
-Date: Thu, 13 Jul 2017 11:12:43 +0200
-Message-ID: <4ec0134906b80ac107dfc80fbf7beb10e38e47cb.1499937148.git.michal.simek@xilinx.com>
-References: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
-In-Reply-To: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
-References: <4c6e1f9b0635682518d2ffa50cf611efef4aff68.1499937148.git.michal.simek@xilinx.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: Nava kishore Manne <nava.manne@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, linux-arm-kernel@lists.infradead.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 04/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin
+ assignment for SSI pins group
+Date: Thu, 13 Jul 2017 11:12:49 +0200
+Message-ID: <CAMuHMdURF=teYxa2iuPDbPQQVV=9mYsE=xBwEGGB0JAhCHXNRA@mail.gmail.com>
+References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com> <1499878547-3452-5-git-send-email-ykaneko0929@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1499878547-3452-5-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+Hi Kaneko-san, Kihara-san,
 
-This patch fixes the below warning
-        --> Prefer 'unsigned int' to bare use of 'unsigned'.
-        --> line over 80 characters.
-        --> Prefer 'unsigned int **' to bare use of 'unsigned **'.
+On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
+> for SSI pins group.
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 38 ++++++++++++++++++------------------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> index 4d070c2..18c9c61 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 
-Signed-off-by: Nava kishore Manne <navam@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+> @@ -1277,7 +1277,7 @@ enum {
+>         PINMUX_IPSR_MSEL(IP14_3_0,      RX5_A,                  SEL_SCIF5_0),
+>         PINMUX_IPSR_MSEL(IP14_3_0,      NFWP_N_A,               SEL_NDF_0),
+>         PINMUX_IPSR_MSEL(IP14_3_0,      AUDIO_CLKA_C,           SEL_ADG_A_2),
+> -       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI_0),
+> +       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI2_0),
 
- drivers/pinctrl/pinctrl-zynq.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+The SSI_SCK2_A part seems to have been removed in Rev.052E and later?
+However, I can't find that in the errata for Rev.051E.
 
-diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
-index 7565651acdc6..a0daf27042bd 100644
---- a/drivers/pinctrl/pinctrl-zynq.c
-+++ b/drivers/pinctrl/pinctrl-zynq.c
-@@ -62,7 +62,7 @@ struct zynq_pinctrl {
- struct zynq_pctrl_group {
- 	const char *name;
- 	const unsigned int *pins;
--	const unsigned npins;
-+	const unsigned int npins;
- };
- 
- /**
-@@ -841,7 +841,7 @@ static int zynq_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
- }
- 
- static const char *zynq_pctrl_get_group_name(struct pinctrl_dev *pctldev,
--					     unsigned selector)
-+					     unsigned int selector)
- {
- 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
-@@ -849,9 +849,9 @@ static const char *zynq_pctrl_get_group_name(struct pinctrl_dev *pctldev,
- }
- 
- static int zynq_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
--				     unsigned selector,
--				     const unsigned **pins,
--				     unsigned *num_pins)
-+				     unsigned int selector,
-+				     const unsigned int **pins,
-+				     unsigned int *num_pins)
- {
- 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
-@@ -878,7 +878,7 @@ static int zynq_pmux_get_functions_count(struct pinctrl_dev *pctldev)
- }
- 
- static const char *zynq_pmux_get_function_name(struct pinctrl_dev *pctldev,
--					       unsigned selector)
-+					       unsigned int selector)
- {
- 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
- 
-@@ -886,7 +886,7 @@ static const char *zynq_pmux_get_function_name(struct pinctrl_dev *pctldev,
- }
- 
- static int zynq_pmux_get_function_groups(struct pinctrl_dev *pctldev,
--					 unsigned selector,
-+					 unsigned int selector,
- 					 const char * const **groups,
- 					 unsigned * const num_groups)
- {
-@@ -898,8 +898,8 @@ static int zynq_pmux_get_function_groups(struct pinctrl_dev *pctldev,
- }
- 
- static int zynq_pinmux_set_mux(struct pinctrl_dev *pctldev,
--			       unsigned function,
--			       unsigned group)
-+			       unsigned int function,
-+			       unsigned int  group)
- {
- 	int i, ret;
- 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-@@ -986,8 +986,8 @@ enum zynq_pin_config_param {
- };
- 
- #ifdef CONFIG_DEBUG_FS
--static const struct pin_config_item zynq_conf_items[ARRAY_SIZE(zynq_dt_params)] = {
--	PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-+static const struct pin_config_item zynq_conf_items[ARRAY_SIZE(zynq_dt_params)]
-+	= { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
- };
- #endif
- 
-@@ -997,7 +997,7 @@ static unsigned int zynq_pinconf_iostd_get(u32 reg)
- }
- 
- static int zynq_pinconf_cfg_get(struct pinctrl_dev *pctldev,
--				unsigned pin,
-+				unsigned int pin,
- 				unsigned long *config)
- {
- 	u32 reg;
-@@ -1054,9 +1054,9 @@ static int zynq_pinconf_cfg_get(struct pinctrl_dev *pctldev,
- }
- 
- static int zynq_pinconf_cfg_set(struct pinctrl_dev *pctldev,
--				unsigned pin,
-+				unsigned int pin,
- 				unsigned long *configs,
--				unsigned num_configs)
-+				unsigned int num_configs)
- {
- 	int i, ret;
- 	u32 reg;
-@@ -1130,9 +1130,9 @@ static int zynq_pinconf_cfg_set(struct pinctrl_dev *pctldev,
- }
- 
- static int zynq_pinconf_group_set(struct pinctrl_dev *pctldev,
--				  unsigned selector,
-+				  unsigned int selector,
- 				  unsigned long *configs,
--				  unsigned num_configs)
-+				  unsigned int  num_configs)
- {
- 	int i, ret;
- 	struct zynq_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
--- 
-1.9.1
+>         PINMUX_IPSR_MSEL(IP14_3_0,      STP_IVCXO27_0_C,        SEL_SSP1_0_2),
+>         PINMUX_IPSR_GPSR(IP14_3_0,      AUDIO_CLKOUT3_A),
+>         PINMUX_IPSR_MSEL(IP14_3_0,      TCLK1_B,                SEL_TIMER_TMU_1),
+
+The rest looks good to me.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
