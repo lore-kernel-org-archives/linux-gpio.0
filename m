@@ -1,47 +1,38 @@
-From: Thor Thayer <thor.thayer@linux.intel.com>
-Subject: Re: [PATCH] gpio: altera-a10sr: constify gpio_chip structure
-Date: Thu, 13 Jul 2017 12:41:26 -0500
-Message-ID: <b9982b12-1836-8623-c4e0-c0f3c82361b0@linux.intel.com>
-References: <20170711221538.GA8001@embeddedgus>
-Reply-To: thor.thayer@linux.intel.com
+From: Davide Hug <d@videhug.ch>
+Subject: Re: Should irq_enable/disable be flagging/unflagging gpio lines
+ used as irq?
+Date: Thu, 13 Jul 2017 22:17:29 +0200
+Message-ID: <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
+References: <20170711195518.34aa849888e9d67a0736a990@videhug.ch>
+        <CACRpkdaqJT5SLSCDtHtfXXpF4j+ig5CQeDhLFJw47Lcgmc6rCQ@mail.gmail.com>
+        <alpine.DEB.2.20.1707122330060.2510@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:6718 "EHLO mga11.intel.com"
+Received: from s067.cyon.net ([149.126.4.76]:39900 "EHLO s067.cyon.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbdGMRiN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 13 Jul 2017 13:38:13 -0400
-In-Reply-To: <20170711221538.GA8001@embeddedgus>
-Content-Language: en-US
+        id S1753097AbdGMUTL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 13 Jul 2017 16:19:11 -0400
+In-Reply-To: <alpine.DEB.2.20.1707122330060.2510@nanos>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 07/11/2017 05:15 PM, Gustavo A. R. Silva wrote:
-> This structure is only used to copy into another structure, so declare
-> it as const.
+Thanks. I probably should have pointed out that I'm just getting started.
+I thought this driver that does not load would be a good place to do that. But
+obviously a "completely broken" driver that "breaks with the current semantics
+of the GPIO interrupt" is the wrong place to get started and learn how things
+should be done.
 
-<snip>
+So this driver should probably be rewritten using timer based polling and the
+descriptor based gpio interface. But since it is a really specific driver for
+sensors that are already discontinued it probably doesn't make much sense. And
+I'm not yet up to the task anyway.
 
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> ---
->   drivers/gpio/gpio-altera-a10sr.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-a10sr.c
-> index 16a8951..6b11f13 100644
-> --- a/drivers/gpio/gpio-altera-a10sr.c
-> +++ b/drivers/gpio/gpio-altera-a10sr.c
-> @@ -71,7 +71,7 @@ static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
->   	return -EINVAL;
->   }
->   
-> -static struct gpio_chip altr_a10sr_gc = {
-> +static const struct gpio_chip altr_a10sr_gc = {
->   	.label = "altr_a10sr_gpio",
->   	.owner = THIS_MODULE,
->   	.get = altr_a10sr_gpio_get,
-> 
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
+Are the drivers listed in Documentation/gpio/drivers-on-gpio.txt good examples
+of GPIO consumer drivers?
+
+Thanks again.
+Davide
