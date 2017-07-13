@@ -1,67 +1,153 @@
-From: Fenglin Wu <fenglinw@codeaurora.org>
-Subject: Re: [PATCH V1 3/3] pinctrl: qcom: spmi-gpio: Correct power_source
- range check
-Date: Thu, 13 Jul 2017 13:55:27 +0800
-Message-ID: <4095df2e-63c9-93c4-c56b-f501724140d5@codeaurora.org>
-References: <20170613061707.13892-1-fenglinw@codeaurora.org>
- <20170613061707.13892-4-fenglinw@codeaurora.org>
- <20170712213314.GL1618@tuxbook>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH v4 1/3] pinctrl: Add sleep related configuration
+Date: Thu, 13 Jul 2017 14:35:23 +0800
+Message-ID: <CAMz4kuLFyw4gGbvXFmPozM2J85kkEXf-UGm0FhwxZWSvvBWKWA@mail.gmail.com>
+References: <62a67526907157d41235403bd05af309fd4db16b.1498045588.git.baolin.wang@spreadtrum.com>
+ <20170626161348.vrtlpat5eof5aa2c@rob-hp-laptop> <20170627082132.GB32447@spreadtrum.com>
+ <20170627120626.GA1067@spreadtrum.com> <CACRpkdapE2+7jR3J0Qw5Hnvg-19-sR5uCYnvMoHiAbowm8-Uug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54726 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750854AbdGMFzd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 13 Jul 2017 01:55:33 -0400
-In-Reply-To: <20170712213314.GL1618@tuxbook>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdapE2+7jR3J0Qw5Hnvg-19-sR5uCYnvMoHiAbowm8-Uug@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-soc@vger.kernel.org, linux-gpio@vger.kernel.org, collinsd@quicinc.com, aghayal@qti.qualcomm.com, wruan@quicinc.com, kgunda@qti.qualcomm.com
 
-On 7/13/2017 5:33 AM, Bjorn Andersson wrote:
-> On Mon 12 Jun 23:16 PDT 2017, fenglinw@codeaurora.org wrote:
-> 
->> From: Fenglin Wu <fenglinw@codeaurora.org>
+Hi,
+
+On 12 July 2017 at 20:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jun 27, 2017 at 2:06 PM, Baolin Wang <baolin.wang@spreadtrum.com> wrote:
+>
+>> If we introduce "sleep-input-enable" config, we can set the pin's config
+>> as below:
 >>
->> Power source selection in DIG_VIN_CTL is indexed from 0, in the range
->> check it shouldn't be equal to the total number of power sources.
+>> vio_sd0_ms_3: regctrl3 {
+>>         pins = "SC9860_RFCTL30", "SC9860_RFCTL31", "SC9860_RFCTL32";
+>>         function = "func1";
+>>         sprd,sleep-mode = <0x3>;
+>>         sleep-input-enable;
+>> };
+>
+> This looks like a "default" mode. Is that correct?
+
+This can be not default. In some situation, user can change the pins
+function and other config.
+
+> I.e. do you set up this on probe then do not touch it?
+>
+> It seems some of the problems come from the insistance to use a single
+> node for all configuration. Compare to this nomadik:
+>
+>                i2c0 {
+>                         i2c0_default_mux: i2c0_mux {
+>                                 i2c0_default_mux {
+>                                         function = "i2c0";
+>                                         groups = "i2c0_a_1";
+>                                 };
+>                         };
+>                         i2c0_default_mode: i2c0_default {
+>                                 i2c0_default_cfg {
+>                                         pins = "GPIO62_D3", "GPIO63_D2";
+>                                         input-enable;
+>                                 };
+>                         };
+>                 };
+>
+> It is easy to imagine:
+>
+>                i2c0 {
+>                         i2c0_default_mux: i2c0_mux {
+>                                 i2c0_default_mux {
+>                                         function = "i2c0";
+>                                         groups = "i2c0_a_1";
+>                                 };
+>                         };
+>                         i2c0_default_mode: i2c0_default {
+>                                 i2c0_default_cfg {
+>                                         pins = "GPIO62_D3", "GPIO63_D2";
+>                                         input-enable;
+>                                 };
+>                         };
+>                         i2c0_default_mode_sleep: i2c0_default_sleep {
+>                                 i2c0_default_cfg {
+>                                         pins = "GPIO62_D3", "GPIO63_D2";
+>                                         sleep-hardware-state;
+>                                         input-disable;
+>                                 };
+>                         };
+>                 };
+>
+> Notice the new bool property "sleep-hardware-state" that just
+> indicate that this should be programmed into the registers for
+> the sleep state.
+
+That means we should introduce one "sleep-hardware-state" config.
+
+So my instance can change to be :
+grp1: regctrl3 {
+        pins = "SC9860_RFCTL30", "SC9860_RFCTL31", "SC9860_RFCTL32";
+        function = "func1";
+        sprd,sleep-mode = <0x3>;
+
+        grp1_sleep_mode: regctrl3_default_sleep {
+                 pins = "SC9860_RFCTL30", "SC9860_RFCTL31", "SC9860_RFCTL32";
+                 sleep-hardware-state;
+                 input-enable;
+       }
+};
+
+That sounds reasonable and I will try to check if it can work.
+
+>
+>> But If we create one extra "sleep-xxx" state for sleep-related configs,
+>> it will be like:
 >>
->> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> This patch is unrelated to the other patches in the series, when this is
-> the case it's better to send it on its own.
-> 
-> Regards,
-> Bjorn
-> 
-Sure, I will send it as an independent patch.
->> ---
->>   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> grp1: regctrl3 {
+>>         pins = "SC9860_RFCTL30", "SC9860_RFCTL31";
+>>         function = "func1";
+>>         sprd,sleep-mode = <0x3>;
+>> };
 >>
->> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->> index 581309d..1fd677c 100644
->> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->> @@ -500,7 +500,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->>   			pad->is_enabled = false;
->>   			break;
->>   		case PIN_CONFIG_POWER_SOURCE:
->> -			if (arg > pad->num_sources)
->> +			if (arg >= pad->num_sources)
->>   				return -EINVAL;
->>   			pad->power_source = arg;
->>   			break;
->> -- 
->> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project.
+>> sleep-input: input_grp {
+>>         pins = "SC9860_RFCTL30", "SC9860_RFCTL31", "SC9860_RFCTL32";
+>>         input-enable;
+>> };
 >>
+>> pinctrl-names = "sleep-input";
+>> pinctrl-0 = <&sleep-input>;
+>>
+>> "sleep-input" state will be selected when initializing pinctrl driver,
+>
+> The state you should use for initial configuration should be called
+> just "init".
+
+Yes.
+
+>
+>> "grp1"
+>> will be selected by user to set other pin configuration.
+>
+> Like "default"?
+>
+>> Then we need config "SC9860_RFCTL30" pin in 2 different places, which is
+>> more inconvenient for users.
+>
+> I'm not so sure about that. Having a lot more sleep,* config options
+> may be even more inconvenient for users, and especially for the
+> community of developers as a whole.
+
+Make sense. Thanks for your suggestion.
+
+>
+> Several config nodes on the other hand, we have had in the pin
+> control subsystem since day 1.
+>
+> Yours,
+> Linus Walleij
+
+
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Baolin.wang
+Best Regards
