@@ -1,35 +1,47 @@
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH] pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin
- group
-Date: Thu, 13 Jul 2017 15:50:56 +0000
-Message-ID: <TY1PR06MB0702C7C16CE4766948CDC37DB7AC0@TY1PR06MB0702.apcprd06.prod.outlook.com>
-References: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+From: Thor Thayer <thor.thayer@linux.intel.com>
+Subject: Re: [PATCH] gpio: altera-a10sr: constify gpio_chip structure
+Date: Thu, 13 Jul 2017 12:41:26 -0500
+Message-ID: <b9982b12-1836-8623-c4e0-c0f3c82361b0@linux.intel.com>
+References: <20170711221538.GA8001@embeddedgus>
+Reply-To: thor.thayer@linux.intel.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1499860713-27650-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:6718 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbdGMRiN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 13 Jul 2017 13:38:13 -0400
+In-Reply-To: <20170711221538.GA8001@embeddedgus>
 Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Geert,
+On 07/11/2017 05:15 PM, Gustavo A. R. Silva wrote:
+> This structure is only used to copy into another structure, so declare
+> it as const.
 
-> From: linux-gpio-owner@vger.kernel.org [mailto:linux-gpio-
-> owner@vger.kernel.org] On Behalf Of Geert Uytterhoeven
-> Sent: 12 July 2017 12:59
->=20
-> Pins D6 and D7 of the MMC interface can be muxed to two different sets of
-> pins, but currently only one set is supported.
-> Add a pin group for the alternative set to fix this.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Chris Paterson <chris.paterson2@renesas.com>
+<snip>
 
-I've also tested this on the iwg20m board which uses these pins. All looks =
-okay.
-Tested-by: Chris Paterson <chris.paterson2@renesas.com>
-
-Kind regards, Chris
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> ---
+>   drivers/gpio/gpio-altera-a10sr.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-altera-a10sr.c b/drivers/gpio/gpio-altera-a10sr.c
+> index 16a8951..6b11f13 100644
+> --- a/drivers/gpio/gpio-altera-a10sr.c
+> +++ b/drivers/gpio/gpio-altera-a10sr.c
+> @@ -71,7 +71,7 @@ static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
+>   	return -EINVAL;
+>   }
+>   
+> -static struct gpio_chip altr_a10sr_gc = {
+> +static const struct gpio_chip altr_a10sr_gc = {
+>   	.label = "altr_a10sr_gpio",
+>   	.owner = THIS_MODULE,
+>   	.get = altr_a10sr_gpio_get,
+> 
+Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
