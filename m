@@ -1,87 +1,76 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 18/22] gpio: acpi: fix string overflow for large pin
- numbers
-Date: Fri, 14 Jul 2017 15:52:20 +0300
-Message-ID: <1500036740.29303.7.camel@linux.intel.com>
-References: <20170714120720.906842-1-arnd@arndb.de>
-         <20170714120720.906842-19-arnd@arndb.de>
+From: Christian Lamparter <chunkeey@googlemail.com>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
+Date: Fri, 14 Jul 2017 15:18:56 +0200
+Message-ID: <6378379.o12yG5fNYn@debian64>
+References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <001b01d2d48e$3f366660$bda33320$@codeaurora.org> <20170706060243.GP18666@tuxbook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170714120720.906842-19-arnd@arndb.de>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, akpm@linux-foundation.org, netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, x86@kernel.org, Hans de Goede <hdegoede@redhat.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:37849 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753599AbdGNNTF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Jul 2017 09:19:05 -0400
+In-Reply-To: <20170706060243.GP18666@tuxbook>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ram Chandra Jangir <rjangir@codeaurora.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'John Crispin' <john@phrozen.org>
 
-On Fri, 2017-07-14 at 14:07 +0200, Arnd Bergmann wrote:
-> gcc-7 notices that the pin_table is an array of 16-bit numbers,
-> but we assume it can be printed as a two-character hexadecimal
-> string:
+On Wednesday, July 5, 2017 11:02:43 PM CEST Bjorn Andersson wrote:
+> On Wed 24 May 06:04 PDT 2017, Ram Chandra Jangir wrote:
+> > On Wednesday, May 24, 2017 12:59 AM CEST Bjorn Andersson wrote:
+> [..]
+> > >This makes me wonder what wifi1_uart (and uart1) actually is...
+> > 
+> > >The wifi\d_uart seems to have 5 pins in its group and wifi\d_uart\d seems
+> > to be two sets of two pins. So perhaps this is some alternative routing and
+> > wifi0_uart0 and wifi0_uart1 is actually the same function?
+> > 
+> > >@Ram, can you help us out here?
+> > 
 > 
-> drivers/gpio/gpiolib-acpi.c: In function
-> 'acpi_gpiochip_request_interrupt':
-> drivers/gpio/gpiolib-acpi.c:206:24: warning: '%02X' directive writing
-> between 2 and 4 bytes into a region of size 3 [-Wformat-overflow=]
->    sprintf(ev_name, "_%c%02X",
->                         ^~~~
-> drivers/gpio/gpiolib-acpi.c:206:20: note: directive argument in the
-> range [0, 65535]
->    sprintf(ev_name, "_%c%02X",
->                     ^~~~~~~~~
-> drivers/gpio/gpiolib-acpi.c:206:3: note: 'sprintf' output between 5
-> and 7 bytes into a destination of size 5
->    sprintf(ev_name, "_%c%02X",
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->     agpio->triggering == ACPI_EDGE_SENSITIVE ? 'E' : 'L',
->     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     pin);
->     ~~~~
-
-
-This is obviously a false positive warning.
-
-Here we have
-int pin = u16 pin_table[0] <= 255 (implying >= 0).
-
-I see few options how to make it more clear
-1) your proposal;
-2) use "%02hhX" instead;
-3) use if (ret >= 0 && ret <= 255) condition.
-
-I would choose one of the 2-3.
-
-In case gcc will complain about 3), file a bug to gcc crazy warning.
-
+> Ram, thanks for your answer. Unfortunately I missed this mail until
+> Christian posted the new version of the patch.
 > 
-> This can't be right, so this changes it to truncate the number to
-> an 8-bit pin number.
+> Unfortunately I don't understand the functions provided here, so I hope
+> you can help me better understand what's going on.
 > 
-> Fixes: 0d1c28a449c6 ("gpiolib-acpi: Add ACPI5 event model support to
-> gpio.")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpio/gpiolib-acpi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > wifi0_uart0 and wifi0_uart1 are different functions,  and they are mapped as
+> > below:
+> > wifi0_uart    -->  wifi0   uart   RTS
+> > wifi0_uart0  -->  wifi0  uart   RxD
+> > wifi0_uart1  -->  wifi0  uart   CTS
 > 
-> diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-> index c9b42dd12dfa..c3faea724af8 100644
-> --- a/drivers/gpio/gpiolib-acpi.c
-> +++ b/drivers/gpio/gpiolib-acpi.c
-> @@ -205,7 +205,7 @@ static acpi_status
-> acpi_gpiochip_request_interrupt(struct acpi_resource *ares,
->  		char ev_name[5];
->  		sprintf(ev_name, "_%c%02X",
->  			agpio->triggering == ACPI_EDGE_SENSITIVE ?
-> 'E' : 'L',
-> -			pin);
-> +			(u8)pin);
->  		if (ACPI_SUCCESS(acpi_get_handle(handle, ev_name,
-> &evt_handle)))
->  			handler = acpi_gpio_irq_handler;
->  	}
+> Christian has the following groups of pins for each function:
+> 
+> wifi0_uart: pin 8, 9, 11, 19 and 62
+> wifi0_uart0: pin 9 and 10
+> wifi0_uart1: pin 18 and 63
+> 
+> It's common to see alternative muxing of functions, so I'm guessing that
+> wifi0_uart1 is one of these. Is this correct?
+> 
+> But why is there 5 pins for RTS?
+> 
+> Why is receive (wifi0_uart0) two adjacent pins? Are they perhaps Rx and
+> Tx?
+> 
+> Why do we have a CTS line if we only have RxD, no TxD?
+> 
+> > 
+> > wifi1_uart    -->  wifi1   uart   TxD
+> > wifi1_uart0  -->  wifi1   uart   RxD  
+> > wifi1_uart1  -->  wifi1   uart   CTS
+> > 
+> 
+> Why is there no RTS for this when it seems bidirectional?
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+no response in over a week. :-/
+
+I removed the wifi*_uart* definitions in V3. I think we can life without 
+them. If QCA ever releases the firmware code to the public, they would 
+be of some use but until them, we can do without.
+
+Regards,
+Christian
