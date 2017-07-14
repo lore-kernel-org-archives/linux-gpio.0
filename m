@@ -1,52 +1,52 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Timur Tabi <timur@codeaurora.org>
 Subject: Re: [PATCH 1/2] pinctrl: qcom: disable GPIO groups with no pins
-Date: Fri, 14 Jul 2017 14:46:48 -0700
-Message-ID: <20170714214648.GL22780@codeaurora.org>
+Date: Fri, 14 Jul 2017 17:01:03 -0500
+Message-ID: <e8720afb-fbf9-2330-d4f6-89acb6e839cc@codeaurora.org>
 References: <1499982763-29619-1-git-send-email-timur@codeaurora.org>
  <1499982763-29619-2-git-send-email-timur@codeaurora.org>
  <20170714171148.GH22780@codeaurora.org>
  <8eaeefc0-2f2c-a488-283f-80e26f4d13f5@codeaurora.org>
+ <20170714214648.GL22780@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54038 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbdGNVqu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Jul 2017 17:46:50 -0400
-Content-Disposition: inline
-In-Reply-To: <8eaeefc0-2f2c-a488-283f-80e26f4d13f5@codeaurora.org>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20170714214648.GL22780@codeaurora.org>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
 Cc: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-gpio@vger.kernel.org
 
-On 07/14, Timur Tabi wrote:
-> On 07/14/2017 12:11 PM, Stephen Boyd wrote:
-> >gpiochips also have a request() hook. Can we use that before
-> >initializing direction to make sure the GPIO is accessible?
-> 
-> So I tried it, and it didn't work:
-> 
-> static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
-> {
-> 	pr_info("%s:%u offset=%u\n", __func__, __LINE__, offset);
-> 
-> 	return 0;
-> }
-> 
-> static struct gpio_chip msm_gpio_template = {
-> 	.request          = msm_gpio_request,
-> 	...
-> 
-> msm_gpio_request() is never called when the driver loads.  In fact,
-> I can't figure out when it would be called.
-> 
+On 07/14/2017 04:46 PM, Stephen Boyd wrote:
+> Right, the gpiolib core would need to be updated to request the
+> gpio in gpiochip_add_data() around the loop where it goes and
+> configures things. And it could ignore ones that it can't request
+> there.
 
-Right, the gpiolib core would need to be updated to request the
-gpio in gpiochip_add_data() around the loop where it goes and
-configures things. And it could ignore ones that it can't request
-there.
+__gpiod_request already calls chip->request(), so this would need to be 
+a temporary request.  It seems a bit hackish, but I'll try it.
+
+BTW, I noticed that __gpiod_free() does this:
+
+	if (chip->free) {
+		spin_unlock_irqrestore(&gpio_lock, flags);
+--->		might_sleep_if(chip->can_sleep);
+		chip->free(chip, gpio_chip_hwgpio(desc));
+		spin_lock_irqsave(&gpio_lock, flags);
+
+
+Should __gpiod_request() also call might_sleep_if()?
+
+	if (chip->request) {
+		/* chip->request may sleep */
+		spin_unlock_irqrestore(&gpio_lock, flags);
+---> missing call to might_sleep_if() here?
+		status = chip->request(chip, gpio_chip_hwgpio(desc));
+		spin_lock_irqsave(&gpio_lock, flags);
+
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
