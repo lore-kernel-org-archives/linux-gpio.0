@@ -1,91 +1,89 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V1 2/3] pinctrl: qcom: spmi-gpio: Add dtest route for
- digital input
-Date: Fri, 14 Jul 2017 11:19:51 -0700
-Message-ID: <20170714181951.GQ20973@minitux>
-References: <20170613061707.13892-1-fenglinw@codeaurora.org>
- <20170613061707.13892-3-fenglinw@codeaurora.org>
- <20170712212454.GK1618@tuxbook>
- <7a958ced-910f-3304-8128-911412df6dfd@codeaurora.org>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 2/2] pinctrl: qcom: qdf2xxx: add support for new ACPI HID
+ QCOM8002
+Date: Fri, 14 Jul 2017 13:30:50 -0500
+Message-ID: <99cc9d6e-da81-82b5-8402-0a471a6c9fb2@codeaurora.org>
+References: <1499982763-29619-1-git-send-email-timur@codeaurora.org>
+ <1499982763-29619-3-git-send-email-timur@codeaurora.org>
+ <20170714172121.GN20973@minitux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7a958ced-910f-3304-8128-911412df6dfd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fenglin Wu <fenglinw@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-soc@vger.kernel.org, collinsd@quicinc.com, aghayal@qti.qualcomm.com, wruan@quicinc.com, kgunda@qti.qualcomm.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20170714172121.GN20973@minitux>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed 12 Jul 22:27 PDT 2017, Fenglin Wu wrote:
+On 07/14/2017 12:21 PM, Bjorn Andersson wrote:
 
-> On 7/13/2017 5:24 AM, Bjorn Andersson wrote:
-> > On Mon 12 Jun 23:16 PDT 2017, fenglinw@codeaurora.org wrote:
-> > 
-> > > From: Fenglin Wu <fenglinw@codeaurora.org>
-> > > 
-> > > Add property "qcom,dtest-buffer" to specify which dtest rail to feed
-> > > when the pin is configured as a digital input.
-> > > 
-> > > Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
-> > > ---
-> > >   .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 15 ++++++++
-> > >   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 45 ++++++++++++++++++++++
-> > >   include/dt-bindings/pinctrl/qcom,pmic-gpio.h       |  6 +++
-> > >   3 files changed, 66 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> > > index 1493c0a..521c783 100644
-> > > --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> > > @@ -195,6 +195,21 @@ to specify in a pin configuration subnode:
-> > >   		    Valid values are 0-3 corresponding to PMIC_GPIO_AOUT_ATESTx
-> > >   		    defined in <dt-bindings/pinctrl/qcom,pmic-gpio.h>.
-> > > +- qcom,dtest-buffer:
-> > > +	Usage: optional
-> > > +	Value type: <u32>
-> > > +	Definition: Selects DTEST rail to route to GPIO when it's configured
-> > > +		    as a digital input.
-> > > +		    For LV/MV GPIO subtypes, the valid values are 0-3
-> > > +		    corresponding to PMIC_GPIO_DIN_DTESTx defined in
-> > > +		    <dt-bindings/pinctrl/qcom,pmic-gpio.h>. Only one
-> > > +		    DTEST rail can be selected at a time.
-> > 
-> > As with the analog lines, this is a natural number and I think we should
-> > encode it as such in the DeviceTree.
-> > 
-> > > +		    For 4CH/8CH GPIO subtypes, supported values are 1-15.
-> > > +		    4 DTEST rails are supported in total and more than 1 DTEST
-> > > +		    rail can be selected simultaneously. Each bit of the
-> > > +		    4 LSBs represent one DTEST rail, such as [3:0] = 0101
-> > > +		    means both DTEST1 and DTEST3 are selected.
-> > 
-> > I'm not too keen on encoding this as a bitmask. I would much rather
-> > encode it as multiple values - although that complicates the
-> > implementation.
-> > 
-> > Or can we just ignore it? (Is the lack of support in the newer chips a
-> > result of no-one using this?)
+>> +enum {
+>> +	QDF2XXX_V1,
+>> +	QDF2XXX_V2,
+>> +};
+>> +
+>> +static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
+>> +	{"QCOM8001", QDF2XXX_V1},
+>> +	{"QCOM8002", QDF2XXX_V2},
+>> +	{},
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
 > 
-> I am not quite sure if any real cases would route multiple DTEST line to
-> single GPIO, but the register mapping uses the bit mask for 4CH/8CH
-> subtypes and I think we should support it accordingly. Even if I drop
-> the support, we still have the difference of the register mapping on the
-> dtest selection between MV/LV subtypes and legacy 4CH/8CH subtypes,
-> which means we need a place to unify the dtest definition. I put the
-> complication here in dtsi which the end user would choose the right
-> value according to the hardware. I am also fine with putting the
-> complication in C code, but that would drop the supporting of multiple
-> DTEST lines selection for 4CH/8CH subtype.
+> NB. too bad there doesn't seem to be an equivalent of
+> of_device_get_match_data().
+
+There's acpi_match_device(), which I use.
+
 > 
+>> +
+>>   static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+>>   {
+>> +	const struct acpi_device_id *id =
+>> +		acpi_match_device(qdf2xxx_acpi_ids, &pdev->dev);
+>> +	struct device *dev = &pdev->dev;
+>>   	struct pinctrl_pin_desc *pins;
+>>   	struct msm_pingroup *groups;
+>>   	char (*names)[NAME_SIZE];
+>>   	unsigned int i;
+> 
+> The result of the patch looks fine, but unfortunately there's some noise
+> in the patch due to the transition from &pdev->dev to dev and num_gpios
+> to max_gpios.
 
-I do like when the format of DT properties is obvious, so I think the
-appropriate format for multiple dtest lines would be: "qcom,dtest-buffer
-= <1, 2>;"
+I did that to shrink the line lengths.  I can put it back if you want.
 
-So let's punt on the multiple dtest lines for now and just support one.
-If we in the future add support for arrays of lines that would still be
-backwards compatible with the single case.
+> 
+>> -	u32 num_gpios;
+>> +	unsigned int num_gpios; /* The number of GPIOs we support */
+>> +	u32 max_gpios; /* The highest number GPIO that exists */
+> 
+> Could you please keep the "num_gpios" naming and name the new variable
+> "avail_gpios" or something similar.
 
-Regards,
-Bjorn
+Sure.
+
+> 
+>> +	u16 *gpios; /* An array of supported GPIOs */
+>>   	int ret;
+> 
+>>   
+>> -	/* Query the number of GPIOs from ACPI */
+>> -	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
+>> +	/* The total number of GPIOs that exist */
+>> +	ret = device_property_read_u32(dev, "num-gpios", &max_gpios);
+>>   	if (ret < 0) {
+>> -		dev_warn(&pdev->dev, "missing num-gpios property\n");
+>> +		dev_err(dev, "missing or invalid 'num-gpios' property\n");
+> 
+> While this makes sense it's not entirely related to this patch. My
+> suggestion is that you prepend a patch transitioning &pdev->dev to dev
+> and change these to dev_err in the same.
+
+I'd rather put pdev->dev back.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
