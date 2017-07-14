@@ -1,111 +1,45 @@
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: qdf2xxx: add support for new ACPI HID
- QCOM8002
-Date: Fri, 14 Jul 2017 10:21:21 -0700
-Message-ID: <20170714172121.GN20973@minitux>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: disable GPIO groups with no pins
+Date: Fri, 14 Jul 2017 10:23:36 -0700
+Message-ID: <20170714172336.GO20973@minitux>
 References: <1499982763-29619-1-git-send-email-timur@codeaurora.org>
- <1499982763-29619-3-git-send-email-timur@codeaurora.org>
+ <1499982763-29619-2-git-send-email-timur@codeaurora.org>
+ <20170714171148.GH22780@codeaurora.org>
+ <6ca041fa-533d-6c6b-8c77-4c079cb7e9f6@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:35462 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753495AbdGNRVY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Jul 2017 13:21:24 -0400
-Received: by mail-pf0-f179.google.com with SMTP id c73so48425534pfk.2
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Jul 2017 10:21:24 -0700 (PDT)
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:34549 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753124AbdGNRXk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Jul 2017 13:23:40 -0400
+Received: by mail-pf0-f175.google.com with SMTP id q85so48389092pfq.1
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Jul 2017 10:23:40 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1499982763-29619-3-git-send-email-timur@codeaurora.org>
+In-Reply-To: <6ca041fa-533d-6c6b-8c77-4c079cb7e9f6@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Timur Tabi <timur@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Stephen Boyd <sboyd@codeaurora.org>, andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu 13 Jul 14:52 PDT 2017, Timur Tabi wrote:
+On Fri 14 Jul 10:17 PDT 2017, Timur Tabi wrote:
 
-> Newer versions of the firmware for the Qualcomm Datacenter Technologies
-> QDF2400 restricts access to a subset of the GPIOs on the TLMM.  To
-> prevent older kernels from accidentally accessing the restricted GPIOs,
-> we change the ACPI HID for the TLMM block from QCOM8001 to QCOM8002,
-> and introduce a new property "gpios".  This property is an array of
-> specific GPIOs that are accessible.  When an older kernel boots on
-> newer (restricted) firmware, it will fail to probe.
+> On 07/14/2017 12:11 PM, Stephen Boyd wrote:
 > 
-> To implement the sparse GPIO map, we register all of the GPIOs, but set
-> the pin count for the unavailable GPIOs to zero.  The pinctrl-msm
-> driver will block those unavailable GPIOs from being accessed.
+> > > +/*
+> > > + * Request a GPIO. If the number of pins for this GPIO group is zero,
+> > > + * then assume that the GPIO is unavailable.
+> > > + */
+> > > +static int msm_request(struct pinctrl_dev *pctldev, unsigned int offset)
+> > 
+> > These names are awful. Reminds me of the serial driver that has
+> > functions like msm_reset(). But when in Rome this is how it goes
+> > I suppose.
 > 
-> To allow newer kernels to support older firmware, the driver retains
-> support for QCOM8001.
+> I can change it to msm_pinctrl_request().
 > 
 
-This approach looks sane.
-
-> Signed-off-by: Timur Tabi <timur@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 157 +++++++++++++++++++++++----------
->  1 file changed, 111 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-> index bb3ce5c..266f2e6 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
-> @@ -38,83 +38,148 @@
->  /* maximum size of each gpio name (enough room for "gpioXXX" + null) */
->  #define NAME_SIZE	8
->  
-> +enum {
-> +	QDF2XXX_V1,
-> +	QDF2XXX_V2,
-> +};
-> +
-> +static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
-> +	{"QCOM8001", QDF2XXX_V1},
-> +	{"QCOM8002", QDF2XXX_V2},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
-
-NB. too bad there doesn't seem to be an equivalent of
-of_device_get_match_data().
-
-> +
->  static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
->  {
-> +	const struct acpi_device_id *id =
-> +		acpi_match_device(qdf2xxx_acpi_ids, &pdev->dev);
-> +	struct device *dev = &pdev->dev;
->  	struct pinctrl_pin_desc *pins;
->  	struct msm_pingroup *groups;
->  	char (*names)[NAME_SIZE];
->  	unsigned int i;
-
-The result of the patch looks fine, but unfortunately there's some noise
-in the patch due to the transition from &pdev->dev to dev and num_gpios
-to max_gpios.
-
-> -	u32 num_gpios;
-> +	unsigned int num_gpios; /* The number of GPIOs we support */
-> +	u32 max_gpios; /* The highest number GPIO that exists */
-
-Could you please keep the "num_gpios" naming and name the new variable
-"avail_gpios" or something similar.
-
-> +	u16 *gpios; /* An array of supported GPIOs */
->  	int ret;
-
->  
-> -	/* Query the number of GPIOs from ACPI */
-> -	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
-> +	/* The total number of GPIOs that exist */
-> +	ret = device_property_read_u32(dev, "num-gpios", &max_gpios);
->  	if (ret < 0) {
-> -		dev_warn(&pdev->dev, "missing num-gpios property\n");
-> +		dev_err(dev, "missing or invalid 'num-gpios' property\n");
-
-While this makes sense it's not entirely related to this patch. My
-suggestion is that you prepend a patch transitioning &pdev->dev to dev
-and change these to dev_err in the same.
+msm_pinmux_request()
 
 Regards,
 Bjorn
