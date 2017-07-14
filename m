@@ -1,76 +1,53 @@
 From: Christian Lamparter <chunkeey@googlemail.com>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: ipq4019: add remaining pin definitions
-Date: Fri, 14 Jul 2017 15:18:56 +0200
-Message-ID: <6378379.o12yG5fNYn@debian64>
-References: <d53b7a9b1bab818536680123136ac58481d959c8.1494415174.git.chunkeey@googlemail.com> <001b01d2d48e$3f366660$bda33320$@codeaurora.org> <20170706060243.GP18666@tuxbook>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH v3 1/3] dt-bindings: pinctrl: add most other IPQ4019 pin functions and groups
+Date: Fri, 14 Jul 2017 16:14:09 +0200
+Message-ID: <d45ae31e888ad858d9f4396cabb4dc32a3f0365e.1500038134.git.chunkeey@googlemail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:37849 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753599AbdGNNTF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Jul 2017 09:19:05 -0400
-In-Reply-To: <20170706060243.GP18666@tuxbook>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36463 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754207AbdGNOOP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 14 Jul 2017 10:14:15 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ram Chandra Jangir <rjangir@codeaurora.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'John Crispin' <john@phrozen.org>
+To: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Varadarajan Narayanan <varada@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ram Chandra Jangir <rjangir@codeaurora.org>, John Crispin <john@phrozen.org>
 
-On Wednesday, July 5, 2017 11:02:43 PM CEST Bjorn Andersson wrote:
-> On Wed 24 May 06:04 PDT 2017, Ram Chandra Jangir wrote:
-> > On Wednesday, May 24, 2017 12:59 AM CEST Bjorn Andersson wrote:
-> [..]
-> > >This makes me wonder what wifi1_uart (and uart1) actually is...
-> > 
-> > >The wifi\d_uart seems to have 5 pins in its group and wifi\d_uart\d seems
-> > to be two sets of two pins. So perhaps this is some alternative routing and
-> > wifi0_uart0 and wifi0_uart1 is actually the same function?
-> > 
-> > >@Ram, can you help us out here?
-> > 
-> 
-> Ram, thanks for your answer. Unfortunately I missed this mail until
-> Christian posted the new version of the patch.
-> 
-> Unfortunately I don't understand the functions provided here, so I hope
-> you can help me better understand what's going on.
-> 
-> > wifi0_uart0 and wifi0_uart1 are different functions,  and they are mapped as
-> > below:
-> > wifi0_uart    -->  wifi0   uart   RTS
-> > wifi0_uart0  -->  wifi0  uart   RxD
-> > wifi0_uart1  -->  wifi0  uart   CTS
-> 
-> Christian has the following groups of pins for each function:
-> 
-> wifi0_uart: pin 8, 9, 11, 19 and 62
-> wifi0_uart0: pin 9 and 10
-> wifi0_uart1: pin 18 and 63
-> 
-> It's common to see alternative muxing of functions, so I'm guessing that
-> wifi0_uart1 is one of these. Is this correct?
-> 
-> But why is there 5 pins for RTS?
-> 
-> Why is receive (wifi0_uart0) two adjacent pins? Are they perhaps Rx and
-> Tx?
-> 
-> Why do we have a CTS line if we only have RxD, no TxD?
-> 
-> > 
-> > wifi1_uart    -->  wifi1   uart   TxD
-> > wifi1_uart0  -->  wifi1   uart   RxD  
-> > wifi1_uart1  -->  wifi1   uart   CTS
-> > 
-> 
-> Why is there no RTS for this when it seems bidirectional?
+This patch adds the remaining pin functions and mux groups.
+All unknown and debug functions are omitted. Existing functions
+for qpic, sdio, rgmii, rmii, wifi/d are squashed together as
+much as possible. And only in case of a clash, the individually
+named functions have been kept. The exceptions are:
+	led0-11
+	i2s_rx, i2s_tx, i2s_td, i2s_spdif_in, i2s_spdif_out,
+	smart0-3
 
-no response in over a week. :-/
+Cc: Varadarajan Narayanan <varada@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ram Chandra Jangir <rjangir@codeaurora.org>
+Cc: John Crispin <john@phrozen.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+---
+ Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-I removed the wifi*_uart* definitions in V3. I think we can life without 
-them. If QCA ever releases the firmware code to the public, they would 
-be of some use but until them, we can do without.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+index cfb8500dd56b..93374f478b9e 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+@@ -50,7 +50,11 @@ Valid values for qcom,pins are:
+     Supports mux, bias and drive-strength
+ 
+ Valid values for qcom,function are:
+-gpio, blsp_uart1, blsp_i2c0, blsp_i2c1, blsp_uart0, blsp_spi1, blsp_spi0
++aud_pin, audio_pwm, blsp_i2c0, blsp_i2c1, blsp_spi0, blsp_spi1, blsp_uart0,
++blsp_uart1, chip_rst, gpio, i2s_rx, i2s_spdif_in, i2s_spdif_out, i2s_td, i2s_tx,
++jtag, led0, led1, led2, led3, led4, led5, led6, led7, led8, led9, led10, led11,
++mdc, mdio, pcie, pmu, prng_rosc, qpic, rgmii, rmii, sdio, smart0, smart1,
++smart2, smart3, tm, wifi0, wifi1
+ 
+ Example:
+ 
+-- 
+2.13.2
 
-Regards,
-Christian
