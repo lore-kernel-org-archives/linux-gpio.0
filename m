@@ -1,59 +1,36 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 1/2] pinctrl: qcom: disable GPIO groups with no pins
-Date: Fri, 14 Jul 2017 15:04:22 -0700
-Message-ID: <20170714220422.GM22780@codeaurora.org>
-References: <1499982763-29619-1-git-send-email-timur@codeaurora.org>
- <1499982763-29619-2-git-send-email-timur@codeaurora.org>
- <20170714171148.GH22780@codeaurora.org>
- <8eaeefc0-2f2c-a488-283f-80e26f4d13f5@codeaurora.org>
- <20170714214648.GL22780@codeaurora.org>
- <e8720afb-fbf9-2330-d4f6-89acb6e839cc@codeaurora.org>
+From: kbuild test robot <lkp-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 3/3] pinctrl: sprd: Add Spreadtrum pin control driver
+Date: Sat, 15 Jul 2017 10:33:00 +0800
+Message-ID: <201707151033.5qhip6oi%fengguang.wu@intel.com>
+References: <f41270ddc53d11b746c2cc7c66b323e11381938f.1500018536.git.baolin.wang@spreadtrum.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <e8720afb-fbf9-2330-d4f6-89acb6e839cc@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <f41270ddc53d11b746c2cc7c66b323e11381938f.1500018536.git.baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kbuild-all-JC7UmRfGjtg@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On 07/14, Timur Tabi wrote:
-> On 07/14/2017 04:46 PM, Stephen Boyd wrote:
-> >Right, the gpiolib core would need to be updated to request the
-> >gpio in gpiochip_add_data() around the loop where it goes and
-> >configures things. And it could ignore ones that it can't request
-> >there.
-> 
-> __gpiod_request already calls chip->request(), so this would need to
-> be a temporary request.  It seems a bit hackish, but I'll try it.
+Hi Baolin,
 
-Yeah, request, configure, free, in a loop. Unless someone is
-aware why we don't do that here.
+[auto build test WARNING on v4.12]
+[cannot apply to pinctrl/devel robh/for-next next-20170714]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> 
-> BTW, I noticed that __gpiod_free() does this:
-> 
-> 	if (chip->free) {
-> 		spin_unlock_irqrestore(&gpio_lock, flags);
-> --->		might_sleep_if(chip->can_sleep);
-> 		chip->free(chip, gpio_chip_hwgpio(desc));
-> 		spin_lock_irqsave(&gpio_lock, flags);
-> 
-> 
-> Should __gpiod_request() also call might_sleep_if()?
-> 
-> 	if (chip->request) {
-> 		/* chip->request may sleep */
-> 		spin_unlock_irqrestore(&gpio_lock, flags);
-> ---> missing call to might_sleep_if() here?
-> 		status = chip->request(chip, gpio_chip_hwgpio(desc));
-> 		spin_lock_irqsave(&gpio_lock, flags);
-> 
+url:    https://github.com/0day-ci/linux/commits/Baolin-Wang/pinctrl-Add-sleep-related-state-to-indicate-sleep-related-configs/20170715-021507
 
-Probably. Except we would have caught it earlier when it was
-requested?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/pinctrl/sprd/pinctrl-sprd-sc9860.c:950:3-8: No need to set .owner here. The core will do it.
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
