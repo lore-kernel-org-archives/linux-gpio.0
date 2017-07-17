@@ -1,59 +1,71 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1] pinctrl: cherryview: Add Setzer models to the
- Chromebook DMI quirk
-Date: Mon, 17 Jul 2017 17:30:01 +0300
-Message-ID: <1500301801.29303.50.camel@linux.intel.com>
-References: <20170704125839.16093-1-andriy.shevchenko@linux.intel.com>
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH 3/5] MAINTAINERS: Update the Gemini maintainer list
+Date: Mon, 17 Jul 2017 17:14:22 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1707171710460.3934@T420s>
+References: <20170715175056.13040-1-linus.walleij@linaro.org> <20170715175056.13040-3-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:33429 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751301AbdGQObe (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 17 Jul 2017 10:31:34 -0400
-In-Reply-To: <20170704125839.16093-1-andriy.shevchenko@linux.intel.com>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33342 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751278AbdGQPPz (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 11:15:55 -0400
+Received: by mail-wr0-f195.google.com with SMTP id 40so2930946wrw.0
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Jul 2017 08:15:55 -0700 (PDT)
+In-Reply-To: <20170715175056.13040-3-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, mail@abhishek.geek.nz
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, 2017-07-04 at 15:58 +0300, Andy Shevchenko wrote:
-> Add one more model to the Chromebook DMI quirk to make it working
-> again.
+Hi Linus
+
+On Sat, 15 Jul 2017, Linus Walleij wrote:
+
+> This patch:
+> - Adds myself as comaintainer for the Gemini.
+> - Adds the Gemini main bindings to the file list.
+> - Adds the pin controller plus bindings to the Gemini
+>   file list.
+> - Fixes up the path of the RTC binding and driver.
 > 
-
-Linus, I guess it's a good material for v4.13-rc2 if no objection.
-
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
-> Fixes: 2a8209fa6823 ("pinctrl: cherryview: Extend the Chromebook DMI
-> quirk to Intel_Strago systems")
-> Reported-by: mail@abhishek.geek.nz
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Hans: please ACK this if you're OK with it and I'll merge this
+> fixup along with the new pin control driver into my pin control
+> tree.
+> ---
+>  MAINTAINERS | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index 20f1b4493994..04e929fd0ffe 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1548,6 +1548,13 @@ static const struct dmi_system_id
-> chv_no_valid_mask[] = {
->  		},
->  	},
->  	{
-> +		.ident = "HP Chromebook 11 G5 (Setzer)",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-> +		},
-> +	},
-> +	{
->  		.ident = "Acer Chromebook R11 (Cyan)",
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7ad8107b47db..27c56bbba3a7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1239,11 +1239,16 @@ S:	Maintained
+>  
+>  ARM/CORTINA SYSTEMS GEMINI ARM ARCHITECTURE
+>  M:	Hans Ulli Kroll <ulli.kroll@googlemail.com>
+> +M:	Linus Walleij <linus.walleij@linaro.org>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  T:	git git://github.com/ulli-kroll/linux.git
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/arm/gemini.txt
+> +F:	Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+> +F:	Documentation/devicetree/bindings/rtc/faraday,ftrtc010.txt
+>  F:	arch/arm/mach-gemini/
+> -F:	drivers/rtc/rtc-gemini.c
+> +F:	drivers/pinctrl/pinctrl-gemini.c
+> +F:	drivers/rtc/rtc-ftrtc010.c
+>  
+>  ARM/CSR SIRFPRIMA2 MACHINE SUPPORT
+>  M:	Barry Song <baohua@kernel.org>
+> -- 
+> 2.9.4
+> 
+> 
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+
+
+
