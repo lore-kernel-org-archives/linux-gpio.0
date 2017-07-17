@@ -1,62 +1,50 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [bug report] gpio: Add ROHM BD9571MWV-M PMIC GPIO driver
-Date: Mon, 17 Jul 2017 21:35:29 +0200
-Message-ID: <4a8aabc9-7b00-d3bc-872d-82a96c127473@gmail.com>
-References: <20170717192049.6n54skiklvrawfy3@mwanda>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/5] pinctrl: Add DT bindings for Cortina Gemini
+Date: Mon, 17 Jul 2017 14:39:39 -0500
+Message-ID: <20170717193939.dwl2w6m47gqysvdc@rob-hp-laptop>
+References: <20170715175056.13040-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35984 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751316AbdGQTfc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 15:35:32 -0400
-Received: by mail-wm0-f65.google.com with SMTP id 15so778171wmm.3
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Jul 2017 12:35:31 -0700 (PDT)
-In-Reply-To: <20170717192049.6n54skiklvrawfy3@mwanda>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:34451 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbdGQTjl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 15:39:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20170715175056.13040-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-gpio@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-On 07/17/2017 09:20 PM, Dan Carpenter wrote:
-> Hello Marek Vasut,
-
-Hello Dan,
-
-> The patch 9384793036af: "gpio: Add ROHM BD9571MWV-M PMIC GPIO driver"
-> from Apr 25, 2017, is missing an include:
-
-Unfortunately, the core code missed another MW, for details see:
-
-https://patchwork.kernel.org/patch/9707899/
-
-> drivers/gpio/gpio-bd9571mwv.c
->     15   * Based on the TPS65086 driver
->     16   *
->     17   * NOTE: Interrupts are not supported yet.
->     18   */
->     19  
->     20  #include <linux/gpio/driver.h>
->     21  #include <linux/module.h>
->     22  #include <linux/platform_device.h>
->     23  
->     24  #include <linux/mfd/bd9571mwv.h>
->                   ^^^^^^^^^^^^^^^^^^^^^
-> Where is this file?
+On Sat, Jul 15, 2017 at 07:50:52PM +0200, Linus Walleij wrote:
+> The Cortina Gemini pin controller uses the standard pin control
+> bindings for muxing functions with groups so these bindings
+> should be entirely uncontroversial.
 > 
->     25  
->     26  struct bd9571mwv_gpio {
->     27          struct gpio_chip chip;
->     28          struct bd9571mwv *bd;
->     29  };
->     30  
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  .../bindings/pinctrl/cortina,gemini-pinctrl.txt    | 54 ++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
 > 
-> regards,
-> dan carpenter
-> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+> new file mode 100644
+> index 000000000000..2ef3e8a65559
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+> @@ -0,0 +1,54 @@
+> +Cortina Systems Gemini pin controller
+> +
+> +This pin controller is found in the Cortina Systems Gemini SoC family,
+> +see further arm/gemini.txt. It is a purely group-based multiplexing pin
+> +controller.
+> +
+> +Required properties:
+> +- compatible: "cortina,gemini-pinctrl"
+> +- regmap: phandle to the system controller node
 
+Why not a child of the system controller?
 
--- 
-Best regards,
-Marek Vasut
+Rob
