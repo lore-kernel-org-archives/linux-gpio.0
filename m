@@ -1,36 +1,89 @@
 From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 0/3][v2] pinctrl: qcom: add support for sparse GPIOs
-Date: Mon, 17 Jul 2017 18:43:58 -0500
-Message-ID: <1500335041-32711-1-git-send-email-timur@codeaurora.org>
+Subject: [PATCH 2/3] [v2] pinctrl: qcom: disable GPIO groups with no pins
+Date: Mon, 17 Jul 2017 18:44:00 -0500
+Message-ID: <1500335041-32711-3-git-send-email-timur@codeaurora.org>
+References: <1500335041-32711-1-git-send-email-timur@codeaurora.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35110 "EHLO
+Received: from smtp.codeaurora.org ([198.145.29.96]:35188 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751450AbdGQXoG (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 19:44:06 -0400
+        with ESMTP id S1751632AbdGQXoI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 19:44:08 -0400
+In-Reply-To: <1500335041-32711-1-git-send-email-timur@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: timur@codeaurora.org
 
-First patch update gpiolib so that it requests the GPIO before trying to
-initialize it.
+To support sparse GPIO maps, pinctrl-msm client drivers can specify
+that a given GPIO has a pin count of zero.  These GPIOs will be
+considered "hidden".  Any attempt to claim the GPIO will fail, and they
+will not be listed in debugfs.
 
-Second patch allows for for pinctrl-msm to understand GPIO groups with
-no pins.  Such pins are "hidden" and can't be exported or accessed.
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-Last patch updates the QDF2xxx driver to take advantage of all that.
-
-
-Timur Tabi (3):
-  gliolib: request the gpio before querying its direction
-  [v2] pinctrl: qcom: disable GPIO groups with no pins
-  [v2] pinctrl: qcom: qdf2xxx: add support for new ACPI HID QCOM8002
-
- drivers/gpio/gpiolib.c                 |  11 +++
- drivers/pinctrl/qcom/pinctrl-msm.c     |  22 ++++--
- drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 139 ++++++++++++++++++++++++---------
- 3 files changed, 131 insertions(+), 41 deletions(-)
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 273badd..d0f09a3 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -494,6 +494,11 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 	};
+ 
+ 	g = &pctrl->soc->groups[offset];
++
++	/* If the GPIO group has no pins, then don't show it. */
++	if (!g->npins)
++		return;
++
+ 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
+ 
+ 	is_out = !!(ctl_reg & BIT(g->oe_bit));
+@@ -503,7 +508,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 
+ 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
+ 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
+-	seq_printf(s, " %s", pulls[pull]);
++	seq_printf(s, " %s\n", pulls[pull]);
+ }
+ 
+ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+@@ -511,23 +516,30 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
+ 	unsigned gpio = chip->base;
+ 	unsigned i;
+ 
+-	for (i = 0; i < chip->ngpio; i++, gpio++) {
++	for (i = 0; i < chip->ngpio; i++, gpio++)
+ 		msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
+-		seq_puts(s, "\n");
+-	}
+ }
+ 
+ #else
+ #define msm_gpio_dbg_show NULL
+ #endif
+ 
++/* If the GPIO has no pins, then treat it as unavailable. */
++static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
++{
++	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
++	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
++
++	return g->npins ? 0 : -ENODEV;
++}
++
+ static struct gpio_chip msm_gpio_template = {
+ 	.direction_input  = msm_gpio_direction_input,
+ 	.direction_output = msm_gpio_direction_output,
+ 	.get_direction    = msm_gpio_get_direction,
+ 	.get              = msm_gpio_get,
+ 	.set              = msm_gpio_set,
+-	.request          = gpiochip_generic_request,
++	.request          = msm_gpio_request,
+ 	.free             = gpiochip_generic_free,
+ 	.dbg_show         = msm_gpio_dbg_show,
+ };
 -- 
 Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
 Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
