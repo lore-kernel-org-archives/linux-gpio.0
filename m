@@ -1,62 +1,51 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH] pinctrl: zte: fix 'functions' allocation in zx_pinctrl_build_state()
-Date: Sun, 16 Jul 2017 21:33:28 +0800
-Message-ID: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:54980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751274AbdGPNe7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 16 Jul 2017 09:34:59 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: Re: [PATCH] pinctrl: bcm2835: constify gpio_chip structure
+Date: Sun, 16 Jul 2017 23:12:15 -0500
+Message-ID: <e2e1909e-9a8a-9fc5-a002-b8597cef6b64@embeddedor.com>
+References: <20170711180339.GA17806@embeddedgus>
+ <877ezdh3jn.fsf@eliezer.anholt.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <877ezdh3jn.fsf@eliezer.anholt.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Anholt <eric@anholt.net>, Linus Walleij <linus.walleij@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Baoyou Xie <xie.baoyou@sanechips.com.cn>, Xin Zhou <zhou.xin8@sanechips.com.cn>, Jun Nie <jun.nie@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shawn Guo <shawn.guo@linaro.org>
 
-From: Shawn Guo <shawn.guo@linaro.org>
 
-It fixes the following Smatch static check warning:
 
- drivers/pinctrl/zte/pinctrl-zx.c:338 zx_pinctrl_build_state()
- warn: passing devm_ allocated variable to kfree.
+On 07/12/2017 02:13 PM, Eric Anholt wrote:
+> "Gustavo A. R. Silva" <garsilva@embeddedor.com> writes:
+>
+>> This structure is only used to copy into other structure, so declare
+>> it as const.
+>>
+>> This issue was detected using Coccinelle and the following semantic patch:
+> Acked-by: Eric Anholt <eric@anholt.net>
 
-As we will be calling krealloc() on pointer 'functions', which means
-kfree() will be called in there, devm_kzalloc() shouldn't be used with
-the allocation in the first place.  Fix the warning by calling kcalloc()
-and managing the free procedure in error path on our own.
+Thank you, Eric
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: cbff0c4d27f4 ("pinctrl: add ZTE ZX pinctrl driver support")
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/pinctrl/zte/pinctrl-zx.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+>> ---
+>>   drivers/pinctrl/bcm/pinctrl-bcm2835.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>> index 2308831..7203f35 100644
+>> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+>> @@ -353,7 +353,7 @@ static int bcm2835_gpio_direction_output(struct gpio_chip *chip,
+>>   	return pinctrl_gpio_direction_output(chip->base + offset);
+>>   }
+>>   
+>> -static struct gpio_chip bcm2835_gpio_chip = {
+>> +static const struct gpio_chip bcm2835_gpio_chip = {
+>>   	.label = MODULE_NAME,
+>>   	.owner = THIS_MODULE,
+>>   	.request = gpiochip_generic_request,
+>> -- 
+>> 2.5.0
 
-diff --git a/drivers/pinctrl/zte/pinctrl-zx.c b/drivers/pinctrl/zte/pinctrl-zx.c
-index f828ee340a98..ded366bb6564 100644
---- a/drivers/pinctrl/zte/pinctrl-zx.c
-+++ b/drivers/pinctrl/zte/pinctrl-zx.c
-@@ -295,8 +295,7 @@ static int zx_pinctrl_build_state(struct platform_device *pdev)
- 	pctldev->num_groups = ngroups;
- 
- 	/* Build function list from pin mux functions */
--	functions = devm_kzalloc(&pdev->dev, info->npins * sizeof(*functions),
--				 GFP_KERNEL);
-+	functions = kcalloc(info->npins, sizeof(*functions), GFP_KERNEL);
- 	if (!functions)
- 		return -ENOMEM;
- 
-@@ -367,8 +366,10 @@ static int zx_pinctrl_build_state(struct platform_device *pdev)
- 						func->num_group_names *
- 						sizeof(*func->group_names),
- 						GFP_KERNEL);
--				if (!func->group_names)
-+				if (!func->group_names) {
-+					kfree(functions);
- 					return -ENOMEM;
-+				}
- 			}
- 
- 			group = func->group_names;
 -- 
-1.9.1
-
+Gustavo A. R. Silva
