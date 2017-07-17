@@ -1,46 +1,31 @@
-From: Lee Jones <lee.jones@linaro.org>
+From: Bastien Nocera <hadess@hadess.net>
 Subject: Re: [PATCH] mfd: intel_soc_pmic_crc: Uniquify device name
-Date: Mon, 17 Jul 2017 12:58:29 +0100
-Message-ID: <20170717115829.2mp2eyodrcdqy4t5@dell>
+Date: Mon, 17 Jul 2017 15:24:00 +0200
+Message-ID: <1500297840.24690.4.camel@hadess.net>
 References: <20170620163323.16345-1-hadess@hadess.net>
+         <20170717115829.2mp2eyodrcdqy4t5@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170620163323.16345-1-hadess@hadess.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bastien Nocera <hadess@hadess.net>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46726 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751374AbdGQNYE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 09:24:04 -0400
+In-Reply-To: <20170717115829.2mp2eyodrcdqy4t5@dell>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The commit log should not be empty.
+On Mon, 2017-07-17 at 12:58 +0100, Lee Jones wrote:
+> The commit log should not be empty.
 
-Please provide information as to why this change is required, etc.
+Fair.
 
-> ---
->  drivers/mfd/intel_soc_pmic_crc.c | 2 +-
+> Please provide information as to why this change is required, etc.
 
-One of the Intel guys should take a look at this too.
+SSIA.
 
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/intel_soc_pmic_crc.c b/drivers/mfd/intel_soc_pmic_crc.c
-> index 4a7494872da2..f47dadaf644c 100644
-> --- a/drivers/mfd/intel_soc_pmic_crc.c
-> +++ b/drivers/mfd/intel_soc_pmic_crc.c
-> @@ -147,7 +147,7 @@ static const struct regmap_irq crystal_cove_irqs[] = {
->  };
->  
->  static const struct regmap_irq_chip crystal_cove_irq_chip = {
-> -	.name = "Crystal Cove",
-> +	.name = "Crystal Cove (PMIC)",
->  	.irqs = crystal_cove_irqs,
->  	.num_irqs = ARRAY_SIZE(crystal_cove_irqs),
->  	.num_regs = 1,
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I also sent another patch to the same addresses labelled:
+[PATCH] gpio: crystalcove: Uniquify driver name
