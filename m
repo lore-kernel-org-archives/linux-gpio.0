@@ -1,50 +1,38 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/5] pinctrl: Add DT bindings for Cortina Gemini
-Date: Mon, 17 Jul 2017 14:39:39 -0500
-Message-ID: <20170717193939.dwl2w6m47gqysvdc@rob-hp-laptop>
-References: <20170715175056.13040-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 0/3][v2] pinctrl: qcom: add support for sparse GPIOs
+Date: Mon, 17 Jul 2017 18:43:58 -0500
+Message-ID: <1500335041-32711-1-git-send-email-timur@codeaurora.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34451 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751316AbdGQTjl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 15:39:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20170715175056.13040-1-linus.walleij@linaro.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:35110 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751450AbdGQXoG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 17 Jul 2017 19:44:06 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: timur@codeaurora.org
 
-On Sat, Jul 15, 2017 at 07:50:52PM +0200, Linus Walleij wrote:
-> The Cortina Gemini pin controller uses the standard pin control
-> bindings for muxing functions with groups so these bindings
-> should be entirely uncontroversial.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  .../bindings/pinctrl/cortina,gemini-pinctrl.txt    | 54 ++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-> new file mode 100644
-> index 000000000000..2ef3e8a65559
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-> @@ -0,0 +1,54 @@
-> +Cortina Systems Gemini pin controller
-> +
-> +This pin controller is found in the Cortina Systems Gemini SoC family,
-> +see further arm/gemini.txt. It is a purely group-based multiplexing pin
-> +controller.
-> +
-> +Required properties:
-> +- compatible: "cortina,gemini-pinctrl"
-> +- regmap: phandle to the system controller node
+First patch update gpiolib so that it requests the GPIO before trying to
+initialize it.
 
-Why not a child of the system controller?
+Second patch allows for for pinctrl-msm to understand GPIO groups with
+no pins.  Such pins are "hidden" and can't be exported or accessed.
 
-Rob
+Last patch updates the QDF2xxx driver to take advantage of all that.
+
+
+Timur Tabi (3):
+  gliolib: request the gpio before querying its direction
+  [v2] pinctrl: qcom: disable GPIO groups with no pins
+  [v2] pinctrl: qcom: qdf2xxx: add support for new ACPI HID QCOM8002
+
+ drivers/gpio/gpiolib.c                 |  11 +++
+ drivers/pinctrl/qcom/pinctrl-msm.c     |  22 ++++--
+ drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 139 ++++++++++++++++++++++++---------
+ 3 files changed, 131 insertions(+), 41 deletions(-)
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
