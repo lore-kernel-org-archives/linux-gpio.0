@@ -1,60 +1,30 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: Re: [PATCH] gpio: altera-a10sr: constify gpio_chip structure
-Date: Sun, 16 Jul 2017 23:14:31 -0500
-Message-ID: <9167407f-ce82-72dc-e2b2-585fb4ea5b67@embeddedor.com>
-References: <20170711221538.GA8001@embeddedgus>
- <b9982b12-1836-8623-c4e0-c0f3c82361b0@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] pinctrl: zte: fix 'functions' allocation in
+ zx_pinctrl_build_state()
+Date: Mon, 17 Jul 2017 11:02:21 +0300
+Message-ID: <20170717080221.gqf7xgeo2zqgigdq@mwanda>
+References: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gateway31.websitewelcome.com ([192.185.143.52]:41101 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751253AbdGQEOh (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 17 Jul 2017 00:14:37 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id DE54D19E389
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Jul 2017 23:14:36 -0500 (CDT)
-In-Reply-To: <b9982b12-1836-8623-c4e0-c0f3c82361b0@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Baoyou Xie <xie.baoyou@sanechips.com.cn>, linux-gpio@vger.kernel.org, Xin Zhou <zhou.xin8@sanechips.com.cn>, Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
-To: thor.thayer@linux.intel.com, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Shouldn't there be a free if the remove function?  I'm not even sure
+where the remove function is so I don't know.
 
-
-On 07/13/2017 12:41 PM, Thor Thayer wrote:
-> On 07/11/2017 05:15 PM, Gustavo A. R. Silva wrote:
->> This structure is only used to copy into another structure, so declare
->> it as const.
->
-> <snip>
->
->> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
->> ---
->>   drivers/gpio/gpio-altera-a10sr.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpio/gpio-altera-a10sr.c 
->> b/drivers/gpio/gpio-altera-a10sr.c
->> index 16a8951..6b11f13 100644
->> --- a/drivers/gpio/gpio-altera-a10sr.c
->> +++ b/drivers/gpio/gpio-altera-a10sr.c
->> @@ -71,7 +71,7 @@ static int altr_a10sr_gpio_direction_output(struct 
->> gpio_chip *gc,
->>       return -EINVAL;
->>   }
->>   -static struct gpio_chip altr_a10sr_gc = {
->> +static const struct gpio_chip altr_a10sr_gc = {
->>       .label = "altr_a10sr_gpio",
->>       .owner = THIS_MODULE,
->>       .get = altr_a10sr_gpio_get,
->>
-> Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-
-Thank you, Thor.
-
--- 
-Gustavo A. R. Silva
-
+regards,
+dan carpenter
