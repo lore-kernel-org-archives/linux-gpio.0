@@ -1,31 +1,56 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] gpio-exar: Use correct property prefix and document bindings
-Date: Tue, 18 Jul 2017 09:37:03 -0500
-Message-ID: <CAL_Jsq+vP-8a1x7Q1zB_mM_a14o=gyBd-MD8SMCEkpmpk2O_5Q@mail.gmail.com>
-References: <491bf615-f1d2-13ff-fa6e-fe5350a0b3b0@siemens.com>
- <20170717174825.p2oflpvbd5ns6xx3@rob-hp-laptop> <e4190c03-5894-a9d2-a1e6-44135a3acb6a@siemens.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e4190c03-5894-a9d2-a1e6-44135a3acb6a@siemens.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2] gpio: pca953x: remove incorrect le16_to_cpu calls
+Date: Tue, 18 Jul 2017 18:51:16 +0300
+Message-ID: <20170718155116.88531-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:30275 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751392AbdGRPvU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 Jul 2017 11:51:20 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Mon, Jul 17, 2017 at 1:20 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> On 2017-07-17 19:48, Rob Herring wrote:
->> On Thu, Jul 13, 2017 at 08:44:26AM +0200, Jan Kiszka wrote:
->>> The device-specific property should be prefixed with the vendor name
->>> Change this and document the bindings of this platform device.
->>
->> You are breaking backwards compatibility. You minimally need to state
->> that and why that is okay in this case.
->
-> There is no previous version yet: The patch that introduced this just
-> entered for 4.13. Linus remarked that "linux," is the wrong prefix and
-> wanted this to be changed before this version becomes final.
+i2c_smbus commands handle the correct byte order for smbus transactions
+internally. This will currently result in incorrect operation on big
+endian systems.
 
-Please describe this in the commit message and add a Fixes tag.
+Suggested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+- add RB tag
+ drivers/gpio/gpio-pca953x.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Rob
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 4c9e21300a26..1b9dbf691ae7 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -187,10 +187,9 @@ static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
+ 
+ static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+-	__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
++	u16 word = get_unaligned((u16 *)val);
+ 
+-	return i2c_smbus_write_word_data(chip->client,
+-					 reg << 1, (__force u16)word);
++	return i2c_smbus_write_word_data(chip->client, reg << 1, word);
+ }
+ 
+ static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+@@ -241,8 +240,7 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+ 	int ret;
+ 
+ 	ret = i2c_smbus_read_word_data(chip->client, reg << 1);
+-	val[0] = (u16)ret & 0xFF;
+-	val[1] = (u16)ret >> 8;
++	put_unaligned(ret, (u16 *)val);
+ 
+ 	return ret;
+ }
+-- 
+2.11.0
+
