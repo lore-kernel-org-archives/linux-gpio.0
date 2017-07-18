@@ -1,68 +1,43 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH 3/4] gpio: davinci: Add a separate compatible for
- keystone-k2g soc
-Date: Tue, 18 Jul 2017 17:01:43 +0530
-Message-ID: <902db353-2db1-fa86-5f96-541082348a35@ti.com>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
+From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH] gpio: tegra: fix unbalanced chained_irq_enter/exit
+Date: Tue, 18 Jul 2017 14:35:45 +0200
+Message-ID: <a9c261800dbb662c9c703544817dc103e2937472.1500381146.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:45943 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751334AbdGRLcQ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 07:32:16 -0400
-In-Reply-To: <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
-Content-Language: en-US
+Received: from rere.qmqm.pl ([91.227.64.183]:35176 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751336AbdGRMow (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 Jul 2017 08:44:52 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, ssantosh@kernel.org
-Cc: robh+dt@kernel.org, s-anna@ti.com, fcooper@ti.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 
-Hi Keerthy,
+When more than one GPIO IRQs are triggered simultaneously,
+tegra_gpio_irq_handler() called chained_irq_exit() multiple
+times for one chained_irq_enter().
 
-On Tuesday 18 July 2017 04:27 PM, Keerthy wrote:
-> Add a separate compatible for keystone-k2g soc
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 3 ++-
->  drivers/gpio/gpio-davinci.c                             | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-> index 5079ba7..1a5c1a2 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-> @@ -1,7 +1,8 @@
->  Davinci/Keystone GPIO controller bindings
->  
->  Required Properties:
-> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
-> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio",
-> +	      "ti,keystone-k2g-gpio"
->  
->  - reg: Physical base address of the controller and the size of memory mapped
->         registers.
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 932f270..a8d8dd9 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -610,6 +610,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->  static const struct of_device_id davinci_gpio_ids[] = {
->  	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
->  	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
-> +	{ .compatible = "ti,keystone-k2g-gpio", keystone_gpio_get_irq_chip},
+Fixes: 3c92db9ac0ca3eee8e46e2424b6c074e2e394ad9
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ drivers/gpio/gpio-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You don't have to add compatible matching to the driver if you don't
-need any special handling for K2G ATM. Your dts should have:
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 88529d3c06c9..4bd99a38cae8 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -384,7 +384,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+ 			 * before executing the handler so that we don't
+ 			 * miss edges
+ 			 */
+-			if (lvl & (0x100 << pin)) {
++			if (!unmasked && lvl & (0x100 << pin)) {
+ 				unmasked = 1;
+ 				chained_irq_exit(chip, desc);
+ 			}
+-- 
+2.11.0
 
-compatible = "ti,keystone-k2g-gpio", "ti,keystone-gpio";
-
-this way, the driver continues to probe using "ti,keystone-gpio", and
-when you really discover a need to do some special handling for K2G, a
-kernel update will do without the need for a DT update.
-
-Thanks,
-Sekhar
