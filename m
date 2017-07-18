@@ -1,53 +1,34 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: intel_soc_pmic_crc: Uniquify device name
-Date: Tue, 18 Jul 2017 08:14:17 +0100
-Message-ID: <20170718071417.umjdrk2cahnwqbz4@dell>
-References: <20170620163323.16345-1-hadess@hadess.net>
- <20170717115829.2mp2eyodrcdqy4t5@dell>
- <1500297840.24690.4.camel@hadess.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 0/2] Last step to working Allwinner R40 pinctrl
+Date: Tue, 18 Jul 2017 15:42:52 +0800
+Message-ID: <20170718074254.20732-1-icenowy@aosc.io>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:35187 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751357AbdGRHOV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 03:14:21 -0400
-Received: by mail-wr0-f176.google.com with SMTP id w4so15188283wrb.2
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Jul 2017 00:14:20 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1500297840.24690.4.camel@hadess.net>
+Received: from hermes.aosc.io ([199.195.250.187]:44221 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751336AbdGRHnE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 18 Jul 2017 03:43:04 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bastien Nocera <hadess@hadess.net>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
 
-On Mon, 17 Jul 2017, Bastien Nocera wrote:
+This patchset contains only two patches.
 
-> On Mon, 2017-07-17 at 12:58 +0100, Lee Jones wrote:
-> > The commit log should not be empty.
-> 
-> Fair.
-> 
-> > Please provide information as to why this change is required, etc.
-> 
-> SSIA.
+The first one is a minor fix for the A10 pinctrl driver, add a function
+of a pin, which used to be missing in A10/A20 pinctrl driver. Thanks for
+Chen-Yu for discovering it when reviewing my R40 pinctrl patchset.
 
-Disagree.  The $SUBJECT says what your intention is, but does not
-describe why it's required or what tangible difference it makes to a
-running system.
+The second one is the real R40 pinctrl part, with fixes suggested by
+Chen-Yu and Maxime.
 
-> I also sent another patch to the same addresses labelled:
-> [PATCH] gpio: crystalcove: Uniquify driver name
+Icenowy Zheng (2):
+  pinctrl: sunxi: add a missing function of A10/A20 pinctrl driver
+  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
 
-Okay?  I did wonder why the GPIO list was Cc'ed on this patch.
-
-In this case the Intel guys are not listed as Maintainers for these
-files, so you'll have to run ./get_maintainer.pl and pick them from
-the committers entries.
+ drivers/pinctrl/sunxi/Kconfig             |   2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 274 +++++++++++++++++++++---------
+ 2 files changed, 197 insertions(+), 79 deletions(-)
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.13.0
+
