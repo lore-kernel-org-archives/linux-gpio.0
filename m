@@ -1,56 +1,71 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2] gpio: pca953x: remove incorrect le16_to_cpu calls
-Date: Tue, 18 Jul 2017 18:51:16 +0300
-Message-ID: <20170718155116.88531-1-andriy.shevchenko@linux.intel.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH 1/4] gpio: davinci: Use devm_gpiochip_add_data in place of
+ gpiochip_add_data
+Date: Tue, 18 Jul 2017 11:50:11 -0500
+Message-ID: <0aa79585-c88e-e5b7-c260-6e9ceee6d776@ti.com>
+References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
+ <1500375436-9435-2-git-send-email-j-keerthy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:30275 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751392AbdGRPvU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 Jul 2017 11:51:20 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:9757 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751366AbdGRQuh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 12:50:37 -0400
+In-Reply-To: <1500375436-9435-2-git-send-email-j-keerthy@ti.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, ssantosh@kernel.org
+Cc: robh+dt@kernel.org, nsekhar@ti.com, fcooper@ti.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-i2c_smbus commands handle the correct byte order for smbus transactions
-internally. This will currently result in incorrect operation on big
-endian systems.
+Hi Keerthy,
 
-Suggested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-- add RB tag
- drivers/gpio/gpio-pca953x.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+On 07/18/2017 05:57 AM, Keerthy wrote:
+> Use the devm version of gpiochip_add_data and pass on the
+> return value. Reset the static variables to 0 before returning.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  drivers/gpio/gpio-davinci.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 65cb359..2c88054 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -166,7 +166,7 @@ static int davinci_gpio_get(struct gpio_chip *chip, unsigned offset)
+>  static int davinci_gpio_probe(struct platform_device *pdev)
+>  {
+>  	static int ctrl_num, bank_base;
+> -	int gpio, bank;
+> +	int gpio, bank, ret = 0;
+>  	unsigned ngpio, nbank;
+>  	struct davinci_gpio_controller *chips;
+>  	struct davinci_gpio_platform_data *pdata;
+> @@ -232,7 +232,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>  	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
+>  		chips->regs[bank] = gpio_base + offset_array[bank];
+>  
+> -	gpiochip_add_data(&chips->chip, chips);
+> +	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
+> +	if (ret) {
+> +		ctrl_num = 0;
+> +		bank_base = 0;
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 4c9e21300a26..1b9dbf691ae7 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -187,10 +187,9 @@ static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
- 
- static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
- {
--	__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
-+	u16 word = get_unaligned((u16 *)val);
- 
--	return i2c_smbus_write_word_data(chip->client,
--					 reg << 1, (__force u16)word);
-+	return i2c_smbus_write_word_data(chip->client, reg << 1, word);
- }
- 
- static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
-@@ -241,8 +240,7 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
- 	int ret;
- 
- 	ret = i2c_smbus_read_word_data(chip->client, reg << 1);
--	val[0] = (u16)ret & 0xFF;
--	val[1] = (u16)ret >> 8;
-+	put_unaligned(ret, (u16 *)val);
- 
- 	return ret;
- }
--- 
-2.11.0
+Hmm, this doesn't look right to me. These variables are defined as
+static, and you are resetting them unconditionally. This should be an
+issue when you have multiple devices and one of them fails.
+
+regards
+Suman
+
+> +		return ret;
+> +	}
+> +
+>  	platform_set_drvdata(pdev, chips);
+>  	davinci_gpio_irq_setup(pdev);
+>  	return 0;
+> 
 
