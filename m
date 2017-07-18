@@ -1,60 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/5] pinctrl: Add DT bindings for Cortina Gemini
-Date: Tue, 18 Jul 2017 11:38:05 +0200
-Message-ID: <CACRpkdY3e1N=StPHa8VOSXfeBT1KxdmXAnBX+j0cjm_+Ccw6Bg@mail.gmail.com>
-References: <20170715175056.13040-1-linus.walleij@linaro.org> <20170717193939.dwl2w6m47gqysvdc@rob-hp-laptop>
+From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH 1/4] gpio: davinci: Use devm_gpiochip_add_data in place of gpiochip_add_data
+Date: Tue, 18 Jul 2017 16:27:13 +0530
+Message-ID: <1500375436-9435-2-git-send-email-j-keerthy@ti.com>
+References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f179.google.com ([209.85.223.179]:33305 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751349AbdGRJiH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 05:38:07 -0400
-Received: by mail-io0-f179.google.com with SMTP id 5so10023563iow.0
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Jul 2017 02:38:07 -0700 (PDT)
-In-Reply-To: <20170717193939.dwl2w6m47gqysvdc@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1500375436-9435-1-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, s-anna-l0cyMroinI0@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, j-keerthy-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Florian Fainelli <f.fainelli@gmail.com>, Janos Laube <janos.dev@gmail.com>, Paulius Zaleckas <paulius.zaleckas@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Mon, Jul 17, 2017 at 9:39 PM, Rob Herring <robh@kernel.org> wrote:
-> On Sat, Jul 15, 2017 at 07:50:52PM +0200, Linus Walleij wrote:
->> The Cortina Gemini pin controller uses the standard pin control
->> bindings for muxing functions with groups so these bindings
->> should be entirely uncontroversial.
->>
->> Cc: devicetree@vger.kernel.org
->> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>  .../bindings/pinctrl/cortina,gemini-pinctrl.txt    | 54 ++++++++++++++++++++++
->>  1 file changed, 54 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
->> new file mode 100644
->> index 000000000000..2ef3e8a65559
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
->> @@ -0,0 +1,54 @@
->> +Cortina Systems Gemini pin controller
->> +
->> +This pin controller is found in the Cortina Systems Gemini SoC family,
->> +see further arm/gemini.txt. It is a purely group-based multiplexing pin
->> +controller.
->> +
->> +Required properties:
->> +- compatible: "cortina,gemini-pinctrl"
->> +- regmap: phandle to the system controller node
->
-> Why not a child of the system controller?
+Use the devm version of gpiochip_add_data and pass on the
+return value. Reset the static variables to 0 before returning.
 
-It is a child of the system controller, I just didn't show that in the
-example.
+Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+---
+ drivers/gpio/gpio-davinci.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-And it's true, then I can just look it up from the parent.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 65cb359..2c88054 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -166,7 +166,7 @@ static int davinci_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	static int ctrl_num, bank_base;
+-	int gpio, bank;
++	int gpio, bank, ret = 0;
+ 	unsigned ngpio, nbank;
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+@@ -232,7 +232,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
+ 		chips->regs[bank] = gpio_base + offset_array[bank];
+ 
+-	gpiochip_add_data(&chips->chip, chips);
++	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
++	if (ret) {
++		ctrl_num = 0;
++		bank_base = 0;
++		return ret;
++	}
++
+ 	platform_set_drvdata(pdev, chips);
+ 	davinci_gpio_irq_setup(pdev);
+ 	return 0;
+-- 
+1.9.1
 
-I'll revise.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
