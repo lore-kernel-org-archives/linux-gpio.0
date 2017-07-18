@@ -1,43 +1,31 @@
-From: =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH] gpio: tegra: fix unbalanced chained_irq_enter/exit
-Date: Tue, 18 Jul 2017 14:35:45 +0200
-Message-ID: <a9c261800dbb662c9c703544817dc103e2937472.1500381146.git.mirq-linux@rere.qmqm.pl>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] gpio-exar: Use correct property prefix and document bindings
+Date: Tue, 18 Jul 2017 09:37:03 -0500
+Message-ID: <CAL_Jsq+vP-8a1x7Q1zB_mM_a14o=gyBd-MD8SMCEkpmpk2O_5Q@mail.gmail.com>
+References: <491bf615-f1d2-13ff-fa6e-fe5350a0b3b0@siemens.com>
+ <20170717174825.p2oflpvbd5ns6xx3@rob-hp-laptop> <e4190c03-5894-a9d2-a1e6-44135a3acb6a@siemens.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from rere.qmqm.pl ([91.227.64.183]:35176 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751336AbdGRMow (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 18 Jul 2017 08:44:52 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <e4190c03-5894-a9d2-a1e6-44135a3acb6a@siemens.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
 
-When more than one GPIO IRQs are triggered simultaneously,
-tegra_gpio_irq_handler() called chained_irq_exit() multiple
-times for one chained_irq_enter().
+On Mon, Jul 17, 2017 at 1:20 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> On 2017-07-17 19:48, Rob Herring wrote:
+>> On Thu, Jul 13, 2017 at 08:44:26AM +0200, Jan Kiszka wrote:
+>>> The device-specific property should be prefixed with the vendor name
+>>> Change this and document the bindings of this platform device.
+>>
+>> You are breaking backwards compatibility. You minimally need to state
+>> that and why that is okay in this case.
+>
+> There is no previous version yet: The patch that introduced this just
+> entered for 4.13. Linus remarked that "linux," is the wrong prefix and
+> wanted this to be changed before this version becomes final.
 
-Fixes: 3c92db9ac0ca3eee8e46e2424b6c074e2e394ad9
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- drivers/gpio/gpio-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please describe this in the commit message and add a Fixes tag.
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 88529d3c06c9..4bd99a38cae8 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -384,7 +384,7 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
- 			 * before executing the handler so that we don't
- 			 * miss edges
- 			 */
--			if (lvl & (0x100 << pin)) {
-+			if (!unmasked && lvl & (0x100 << pin)) {
- 				unmasked = 1;
- 				chained_irq_exit(chip, desc);
- 			}
--- 
-2.11.0
-
+Rob
