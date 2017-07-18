@@ -1,128 +1,53 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH v2 4/4] pinctrl: aspeed: g5: Add USB device and host support
-Date: Tue, 18 Jul 2017 14:54:53 +0930
-Message-ID: <20170718052453.14316-5-andrew@aj.id.au>
-References: <20170718052453.14316-1-andrew@aj.id.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170718052453.14316-1-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Andrew Jeffery <andrew@aj.id.au>, robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au, benh@kernel.crashing.org, ryan_chen@aspeedtech.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: intel_soc_pmic_crc: Uniquify device name
+Date: Tue, 18 Jul 2017 08:14:17 +0100
+Message-ID: <20170718071417.umjdrk2cahnwqbz4@dell>
+References: <20170620163323.16345-1-hadess@hadess.net>
+ <20170717115829.2mp2eyodrcdqy4t5@dell>
+ <1500297840.24690.4.camel@hadess.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:35187 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751357AbdGRHOV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 03:14:21 -0400
+Received: by mail-wr0-f176.google.com with SMTP id w4so15188283wrb.2
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Jul 2017 00:14:20 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1500297840.24690.4.camel@hadess.net>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bastien Nocera <hadess@hadess.net>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Implement the AST2500 USB functions as described by the devicetree
-bindings. The AST2500 exposes five USB controllers through two USB
-ports. Similar to the AST2400, the pins exposing USB are outliers with
-respect to the rest of the pinmux as they not capable of GPIO.
+On Mon, 17 Jul 2017, Bastien Nocera wrote:
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 58 +++++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+> On Mon, 2017-07-17 at 12:58 +0100, Lee Jones wrote:
+> > The commit log should not be empty.
+> 
+> Fair.
+> 
+> > Please provide information as to why this change is required, etc.
+> 
+> SSIA.
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-index 68aa04664a62..634b371da43a 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c
-@@ -25,7 +25,7 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-aspeed.h"
- 
--#define ASPEED_G5_NR_PINS 232
-+#define ASPEED_G5_NR_PINS 236
- 
- #define COND1		{ ASPEED_IP_SCU, SCU90, BIT(6), 0, 0 }
- #define COND2		{ ASPEED_IP_SCU, SCU94, GENMASK(1, 0), 0, 0 }
-@@ -1724,6 +1724,48 @@ FUNC_GROUP_DECL(LPCRST, G22);
- 
- FUNC_GROUP_DECL(ESPI, G21, G20, D22, E22, C22, F21, F22, G22);
- 
-+#define A7 232
-+SIG_EXPR_LIST_DECL_SINGLE(USB2AHDP, USB2AH, SIG_DESC_SET(SCU90, 29));
-+SIG_EXPR_LIST_DECL_SINGLE(USB2ADDP, USB2AD, SIG_DESC_BIT(SCU90, 29, 0));
-+MS_PIN_DECL_(A7, SIG_EXPR_LIST_PTR(USB2AHDP), SIG_EXPR_LIST_PTR(USB2ADDP));
-+
-+#define A8 233
-+SIG_EXPR_LIST_DECL_SINGLE(USB2AHDN, USB2AH, SIG_DESC_SET(SCU90, 29));
-+SIG_EXPR_LIST_DECL_SINGLE(USB2ADDN, USB2AD, SIG_DESC_BIT(SCU90, 29, 0));
-+MS_PIN_DECL_(A8, SIG_EXPR_LIST_PTR(USB2AHDN), SIG_EXPR_LIST_PTR(USB2ADDN));
-+
-+FUNC_GROUP_DECL(USB2AH, A7, A8);
-+FUNC_GROUP_DECL(USB2AD, A7, A8);
-+
-+#define USB11BHID_DESC  { ASPEED_IP_SCU, SCU94, GENMASK(14, 13), 0, 0 }
-+#define USB2BD_DESC   { ASPEED_IP_SCU, SCU94, GENMASK(14, 13), 1, 0 }
-+#define USB2BH1_DESC { ASPEED_IP_SCU, SCU94, GENMASK(14, 13), 2, 0 }
-+#define USB2BH2_DESC { ASPEED_IP_SCU, SCU94, GENMASK(14, 13), 3, 0 }
-+
-+#define B6 234
-+SIG_EXPR_LIST_DECL_SINGLE(USB11BDP, USB11BHID, USB11BHID_DESC);
-+SIG_EXPR_LIST_DECL_SINGLE(USB2BDDP, USB2BD, USB2BD_DESC);
-+SIG_EXPR_DECL(USB2BHDP1, USB2BH, USB2BH1_DESC);
-+SIG_EXPR_DECL(USB2BHDP2, USB2BH, USB2BH2_DESC);
-+SIG_EXPR_LIST_DECL(USB2BHDP, SIG_EXPR_PTR(USB2BHDP1, USB2BH),
-+		SIG_EXPR_PTR(USB2BHDP2, USB2BH));
-+MS_PIN_DECL_(B6, SIG_EXPR_LIST_PTR(USB11BDP), SIG_EXPR_LIST_PTR(USB2BDDP),
-+		SIG_EXPR_LIST_PTR(USB2BHDP));
-+
-+#define A6 235
-+SIG_EXPR_LIST_DECL_SINGLE(USB11BDN, USB11BHID, USB11BHID_DESC);
-+SIG_EXPR_LIST_DECL_SINGLE(USB2BDN, USB2BD, USB2BD_DESC);
-+SIG_EXPR_DECL(USB2BHDN1, USB2BH, USB2BH1_DESC);
-+SIG_EXPR_DECL(USB2BHDN2, USB2BH, USB2BH2_DESC);
-+SIG_EXPR_LIST_DECL(USB2BHDN, SIG_EXPR_PTR(USB2BHDN1, USB2BH),
-+		SIG_EXPR_PTR(USB2BHDN2, USB2BH));
-+MS_PIN_DECL_(A6, SIG_EXPR_LIST_PTR(USB11BDN), SIG_EXPR_LIST_PTR(USB2BDN),
-+		SIG_EXPR_LIST_PTR(USB2BHDN));
-+
-+FUNC_GROUP_DECL(USB11BHID, B6, A6);
-+FUNC_GROUP_DECL(USB2BD, B6, A6);
-+FUNC_GROUP_DECL(USB2BH, B6, A6);
-+
- /* Pins, groups and functions are sort(1):ed alphabetically for sanity */
- 
- static struct pinctrl_pin_desc aspeed_g5_pins[ASPEED_G5_NR_PINS] = {
-@@ -1743,6 +1785,9 @@ static struct pinctrl_pin_desc aspeed_g5_pins[ASPEED_G5_NR_PINS] = {
- 	ASPEED_PINCTRL_PIN(A3),
- 	ASPEED_PINCTRL_PIN(A4),
- 	ASPEED_PINCTRL_PIN(A5),
-+	ASPEED_PINCTRL_PIN(A6),
-+	ASPEED_PINCTRL_PIN(A7),
-+	ASPEED_PINCTRL_PIN(A8),
- 	ASPEED_PINCTRL_PIN(A9),
- 	ASPEED_PINCTRL_PIN(AA1),
- 	ASPEED_PINCTRL_PIN(AA19),
-@@ -1777,6 +1822,7 @@ static struct pinctrl_pin_desc aspeed_g5_pins[ASPEED_G5_NR_PINS] = {
- 	ASPEED_PINCTRL_PIN(B3),
- 	ASPEED_PINCTRL_PIN(B4),
- 	ASPEED_PINCTRL_PIN(B5),
-+	ASPEED_PINCTRL_PIN(B6),
- 	ASPEED_PINCTRL_PIN(B9),
- 	ASPEED_PINCTRL_PIN(C1),
- 	ASPEED_PINCTRL_PIN(C11),
-@@ -2111,6 +2157,11 @@ static const struct aspeed_pin_group aspeed_g5_groups[] = {
- 	ASPEED_PINCTRL_GROUP(TXD3),
- 	ASPEED_PINCTRL_GROUP(TXD4),
- 	ASPEED_PINCTRL_GROUP(UART6),
-+	ASPEED_PINCTRL_GROUP(USB11BHID),
-+	ASPEED_PINCTRL_GROUP(USB2AD),
-+	ASPEED_PINCTRL_GROUP(USB2AH),
-+	ASPEED_PINCTRL_GROUP(USB2BD),
-+	ASPEED_PINCTRL_GROUP(USB2BH),
- 	ASPEED_PINCTRL_GROUP(USBCKI),
- 	ASPEED_PINCTRL_GROUP(VGABIOSROM),
- 	ASPEED_PINCTRL_GROUP(VGAHS),
-@@ -2275,6 +2326,11 @@ static const struct aspeed_pin_function aspeed_g5_functions[] = {
- 	ASPEED_PINCTRL_FUNC(TXD3),
- 	ASPEED_PINCTRL_FUNC(TXD4),
- 	ASPEED_PINCTRL_FUNC(UART6),
-+	ASPEED_PINCTRL_FUNC(USB11BHID),
-+	ASPEED_PINCTRL_FUNC(USB2AD),
-+	ASPEED_PINCTRL_FUNC(USB2AH),
-+	ASPEED_PINCTRL_FUNC(USB2BD),
-+	ASPEED_PINCTRL_FUNC(USB2BH),
- 	ASPEED_PINCTRL_FUNC(USBCKI),
- 	ASPEED_PINCTRL_FUNC(VGABIOSROM),
- 	ASPEED_PINCTRL_FUNC(VGAHS),
+Disagree.  The $SUBJECT says what your intention is, but does not
+describe why it's required or what tangible difference it makes to a
+running system.
+
+> I also sent another patch to the same addresses labelled:
+> [PATCH] gpio: crystalcove: Uniquify driver name
+
+Okay?  I did wonder why the GPIO list was Cc'ed on this patch.
+
+In this case the Intel guys are not listed as Maintainers for these
+files, so you'll have to run ./get_maintainer.pl and pick them from
+the committers entries.
+
 -- 
-2.11.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
