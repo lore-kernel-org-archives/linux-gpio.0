@@ -1,76 +1,107 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH 3/4] gpio: davinci: Add a separate compatible for
- keystone-k2g soc
-Date: Tue, 18 Jul 2017 23:18:41 +0530
-Message-ID: <8551db79-611e-e8f3-3756-ef4930760924@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH 4/4] ARM: dts: keystone-k2g-evm: Add gpio nodes
+Date: Tue, 18 Jul 2017 14:13:42 -0500
+Message-ID: <1cd6ef99-a98e-7cdb-5c2a-f5cd057eef41@ti.com>
 References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
- <902db353-2db1-fa86-5f96-541082348a35@ti.com>
+ <1500375436-9435-5-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:56300 "EHLO
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:60215 "EHLO
         lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751424AbdGRRtO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 13:49:14 -0400
-In-Reply-To: <902db353-2db1-fa86-5f96-541082348a35@ti.com>
+        with ESMTP id S1751546AbdGRTOJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 18 Jul 2017 15:14:09 -0400
+In-Reply-To: <1500375436-9435-5-git-send-email-j-keerthy@ti.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Sekhar Nori <nsekhar@ti.com>, linus.walleij@linaro.org, ssantosh@kernel.org
-Cc: robh+dt@kernel.org, s-anna@ti.com, fcooper@ti.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org, ssantosh@kernel.org
+Cc: robh+dt@kernel.org, nsekhar@ti.com, fcooper@ti.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
+Hi Keerthy,
 
+On 07/18/2017 05:57 AM, Keerthy wrote:
+> keystone-k2g has 2 instances of gpio. The first one has all the 144 GPIOs
 
-On Tuesday 18 July 2017 05:01 PM, Sekhar Nori wrote:
-> Hi Keerthy,
-> 
-> On Tuesday 18 July 2017 04:27 PM, Keerthy wrote:
->> Add a separate compatible for keystone-k2g soc
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>  Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 3 ++-
->>  drivers/gpio/gpio-davinci.c                             | 1 +
->>  2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> index 5079ba7..1a5c1a2 100644
->> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> @@ -1,7 +1,8 @@
->>  Davinci/Keystone GPIO controller bindings
->>  
->>  Required Properties:
->> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
->> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio",
->> +	      "ti,keystone-k2g-gpio"
->>  
->>  - reg: Physical base address of the controller and the size of memory mapped
->>         registers.
->> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->> index 932f270..a8d8dd9 100644
->> --- a/drivers/gpio/gpio-davinci.c
->> +++ b/drivers/gpio/gpio-davinci.c
->> @@ -610,6 +610,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->>  static const struct of_device_id davinci_gpio_ids[] = {
->>  	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
->>  	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
->> +	{ .compatible = "ti,keystone-k2g-gpio", keystone_gpio_get_irq_chip},
-> 
-> You don't have to add compatible matching to the driver if you don't
-> need any special handling for K2G ATM. Your dts should have:
-> 
-> compatible = "ti,keystone-k2g-gpio", "ti,keystone-gpio";
-> 
-> this way, the driver continues to probe using "ti,keystone-gpio", and
-> when you really discover a need to do some special handling for K2G, a
-> kernel update will do without the need for a DT update.
+Please use 66AK2G for keystone-k2g.
 
-Sure that is better to do as currently i do not see any differences
-between k2g and other k2 devices.
+> functional( 9 banks with 16 gpios = 144). The second instance has
+> only the GPIO0:GPIO67 functional and rest are marked reserved.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  arch/arm/boot/dts/keystone-k2g.dtsi | 42 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
+> index bf4d1fa..58ac3db 100644
+> --- a/arch/arm/boot/dts/keystone-k2g.dtsi
+> +++ b/arch/arm/boot/dts/keystone-k2g.dtsi
+> @@ -15,6 +15,7 @@
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/pinctrl/keystone.h>
+> +#include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+>  	compatible = "ti,k2g","ti,keystone";
+> @@ -168,5 +169,46 @@
+>  				#reset-cells = <2>;
+>  			};
+>  		};
+> +
+> +		gpio0: gpio@2603000 {
+> +			compatible = "ti,keystone-k2g-gpio";
+> +			reg = <0x02603000 0x100>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +
+> +			interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			ti,ngpio = <144>;
+> +			ti,davinci-gpio-unbanked = <0>;
+> +			clocks = <&k2g_clks 0x001b 0x0>;
+> +			clock-names = "gpio";
 
+I don't see the clocks and clock-names documented in the binding.
+Looking at davinci_gpio_irq_setup(), these are required, and a specific
+clock name is what the driver is looking for. And you have different
+semantics for this on K2G and non-K2G SoCs. Davinci platforms are using
+non-DT clocks, so their DT nodes didn't have them.
+
+regards
+Suman
+
+> +		};
+> +
+> +		gpio1: gpio@260a000 {
+> +			compatible = "ti,keystone-k2g-gpio";
+> +			reg = <0x0260a000 0x100>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupts = <GIC_SPI 442 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 443 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 444 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 445 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 446 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			ti,ngpio = <68>;
+> +			ti,davinci-gpio-unbanked = <0>;
+> +			clocks = <&k2g_clks 0x001c 0x0>;
+> +			clock-names = "gpio";
+> +		};
+>  	};
+>  };
 > 
-> Thanks,
-> Sekhar
-> 
+
