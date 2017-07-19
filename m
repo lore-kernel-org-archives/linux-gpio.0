@@ -1,71 +1,84 @@
-From: Anatolij Gustschin <agust@denx.de>
-Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
-Date: Wed, 19 Jul 2017 14:59:00 +0200
-Message-ID: <20170719145900.42172f44@crub>
-References: <1499374158-12388-1-git-send-email-agust@denx.de>
-        <1499374158-12388-2-git-send-email-agust@denx.de>
-        <20170710125210.GK29638@localhost>
-        <20170719085934.GU29638@localhost>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/1] gpio: core: Decouple open drain/source flag with
+ active low/high
+Date: Wed, 19 Jul 2017 15:25:33 +0200
+Message-ID: <20170719131640.GA2533@localhost>
+References: <1491485752-28030-1-git-send-email-ldewangan@nvidia.com>
+ <CACRpkdaK1ut-1=NtqqL15QuQV+P2n8XidNqVspOfu+7x=XMvog@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170719085934.GU29638@localhost>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaK1ut-1=NtqqL15QuQV+P2n8XidNqVspOfu+7x=XMvog@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Frank Rowand <frowand.list@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 19 Jul 2017 10:59:34 +0200
-Johan Hovold johan@kernel.org wrote:
-...
->> > +static const struct mfd_cell ftdi_cells[] = {
->> > +	{ .name = "ftdi-cbus-gpio", },
->> > +	{ .name = "ftdi-mpsse-i2c", },
->> > +	{ .name = "ftdi-mpsse-spi", },
->> > +	{ .name = "ftdi-fifo-fpp-mgr", },
->> > +};  
->> 
->> Correct me if I'm wrong, but aren't these modes really mutually
->> exclusive, possibly with exception of cbus-gpio (some pins are at least
->> available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
->> here either.  
->
->You never replied to this, and I'm afraid there are more issue with this
->series.
+On Fri, Apr 07, 2017 at 12:25:49PM +0200, Linus Walleij wrote:
+> On Thu, Apr 6, 2017 at 3:35 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> 
+> > Currently, the GPIO interface is said to Open Drain if it is Single
+> > Ended and active LOW. Similarly, it is said as Open Source if it is
+> > Single Ended and active HIGH.
+> >
+> > The active HIGH/LOW is used in the interface for setting the pin
+> > state to HIGH or LOW when enabling/disabling the interface.
+> >
+> > In Open Drain interface, pin is set to HIGH by putting pin in
+> > high impedance and LOW by driving to the LOW.
+> >
+> > In Open Source interface, pin is set to HIGH by driving pin to
+> > HIGH and set to LOW by putting pin in high impedance.
+> >
+> > With above, the Open Drain/Source is unrelated to the active LOW/HIGH
+> > in interface. There is interface where the enable/disable of interface
+> > is ether active LOW or HIGH but it is Open Drain type.
+> >
+> > Hence decouple the Open Drain with Single Ended + Active LOW and
+> > Open Source with Single Ended + Active HIGH.
+> >
+> > Adding different flag for the Open Drain/Open Source which is valid
+> > only when Single ended flag is enabled.
+> >
+> > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> 
+> Patch applied.
+> 
+> Good that you found this and fixed it before someone git hurt.
 
-Sorry, unfortunately I'm too busy with other stuff. Will try to find
-time to rework.
+Well, while decoupling single-endedness from polarity was the right
+thing to do, this change did actually break the DT binary interface.
 
->> And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
->> seems too application specific for a generic chip like this.  
->
->Of which this is one is one of the major.
+If you have an old compiled dtb whose source used GPIO_OPEN_DRAIN, you
+now instead get *open-source* behaviour on 4.12:
 
-Thanks all for feedback. I'm still pondering how to interface the
-fpga manager driver to FTDI FIFO driver.
+	GPIO_OPEN_DRAIN = GPIO_SINGLE_ENDED | GPIO_ACTIVE_LOW
+	
+		=> active-low, but *open source*
 
->In short, your driver is much to application specific and is probably
->something that needs to be implemented in userspace using libftdi.
+while if you recompile that source against 4.12 you do get the expected
+open-drain behaviour, but now with inverted polarity:
 
-I have a requirement to use the fpga manager framework, therefore the
-kernel driver is needed. Our usage scenario is a multi stage fpga
-configuration process, the first stage is a pre-configuration via
-FTDI SPI/FIFO, all subsequent stages are also done by other fpga
-manager drivers. libftdi based driver already existed for hardware
-bring-up, now I need similar functionality as kernel fpga manager.
+	GPIO_OPEN_DRAIN = GPIO_SINGLE_ENDED | GPIO_LINE_OPEN_DRAIN
+	
+		=> open drain, but *active high*
 
->Speaking of libftdi, you seem to have copied or borrowed a lot of code
->and protocol from libftdi and this should have been mentioned in commit
->messages and file headers (not just in a comment to one specific
->function).
+requiring the device tree to be updated by specifying
 
-I'll mention this in next patch series.
+	(GPIO_OPEN_DRAIN | GPIO_ACTIVE_LOW)
 
->These chips can be used for a many different applications (also in FIFO
->mode) so you cannot tie a driver to it exposing just a specific
->interface for programming a certain class of FPGAs.
+I guess the latter is fine, even if it is likely to amount to a fair bit
+of debugging world wide.
 
-Agreed.
+Perhaps all this can still be avoided by adding further flags and
+deprecating others before people start migrating to 4.12 (after all,
+GPIO_OPEN_DRAIN has been around since 4.4 even if there are no in-kernel
+users).
 
-Anatolij
+Or we accept the binary interface breakage -- it probably is pretty rare
+that people update the kernel without updating the dtb. I can just
+update the dts on the system that broke for me, and hopefully anyone
+debugging this issue while updating to 4.12 will find this mail quickly.
+
+Johan
