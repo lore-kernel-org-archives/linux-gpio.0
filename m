@@ -1,348 +1,371 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 07:05:18 +0000
-Message-ID: <a9fa7f8b-49f8-1e76-8504-5a63dd65d3b1@st.com>
-References: <20170718214339.7774-43-robh@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
-Content-Language: en-US
-Content-ID: <74F7B08071635E4D9639E8B563CB2535@st.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: "kernel@stlinux.com" <kernel@stlinux.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Tomasz Figa <tomasz.figa@gmail.com>, Eric Anholt <eric@anholt.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, "bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ray Jui <rjui@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-rpi-kernel@lists.infradead.org" <linux-rpi-kernel@lists.infradead.org>"linux-arm-kernel@lists.infradead.org" <lin>
+From: fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Subject: [PATCH V1] pinctrl: qcom: spmi-gpio: Add support for qcom,gpios-disallowed property
+Date: Wed, 19 Jul 2017 15:17:07 +0800
+Message-ID: <20170719071804.3816-1-fenglinw@codeaurora.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: collinsd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, aghayal-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, wruan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+From: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
+Add support for qcom,gpios-disallowed property which is used to exclude
+PMIC GPIOs not owned by the APSS processor from the pinctrl device.
 
-On 07/18/2017 11:43 PM, Rob Herring wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Lee Jones <lee@kernel.org>
-> Cc: Eric Anholt <eric@anholt.net>
-> Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Scott Branden <sbranden@broadcom.com>
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-rpi-kernel@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: kernel@stlinux.com
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->   drivers/pinctrl/bcm/pinctrl-bcm2835.c     | 25 +++++++++++--------------
->   drivers/pinctrl/devicetree.c              |  4 ++--
->   drivers/pinctrl/freescale/pinctrl-imx.c   |  8 +++-----
->   drivers/pinctrl/pinconf-generic.c         |  7 +++----
->   drivers/pinctrl/pinctrl-at91-pio4.c       | 11 +++++------
->   drivers/pinctrl/pinctrl-st.c              |  2 +-
->   drivers/pinctrl/pinctrl-tb10x.c           |  4 ++--
->   drivers/pinctrl/samsung/pinctrl-samsung.c |  6 +++---
->   drivers/pinctrl/sh-pfc/pinctrl.c          |  2 +-
->   drivers/pinctrl/sirf/pinctrl-sirf.c       |  6 +++---
->   10 files changed, 34 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> index 230883168e99..3e71e5d782ee 100644
-> --- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> +++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-> @@ -692,8 +692,7 @@ static int bcm2835_pctl_dt_node_to_map_func(struct bcm2835_pinctrl *pc,
->   	struct pinctrl_map *map = *maps;
-> 
->   	if (fnum >= ARRAY_SIZE(bcm2835_functions)) {
-> -		dev_err(pc->dev, "%s: invalid brcm,function %d\n",
-> -			of_node_full_name(np), fnum);
-> +		dev_err(pc->dev, "%pOF: invalid brcm,function %d\n", np, fnum);
->   		return -EINVAL;
->   	}
-> 
-> @@ -713,8 +712,7 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
->   	unsigned long *configs;
-> 
->   	if (pull > 2) {
-> -		dev_err(pc->dev, "%s: invalid brcm,pull %d\n",
-> -			of_node_full_name(np), pull);
-> +		dev_err(pc->dev, "%pOF: invalid brcm,pull %d\n", np, pull);
->   		return -EINVAL;
->   	}
-> 
-> @@ -745,8 +743,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-> 
->   	pins = of_find_property(np, "brcm,pins", NULL);
->   	if (!pins) {
-> -		dev_err(pc->dev, "%s: missing brcm,pins property\n",
-> -				of_node_full_name(np));
-> +		dev_err(pc->dev, "%pOF: missing brcm,pins property\n", np);
->   		return -EINVAL;
->   	}
-> 
-> @@ -755,8 +752,8 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-> 
->   	if (!funcs && !pulls) {
->   		dev_err(pc->dev,
-> -			"%s: neither brcm,function nor brcm,pull specified\n",
-> -			of_node_full_name(np));
-> +			"%pOF: neither brcm,function nor brcm,pull specified\n",
-> +			np);
->   		return -EINVAL;
->   	}
-> 
-> @@ -766,15 +763,15 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-> 
->   	if (num_funcs > 1 && num_funcs != num_pins) {
->   		dev_err(pc->dev,
-> -			"%s: brcm,function must have 1 or %d entries\n",
-> -			of_node_full_name(np), num_pins);
-> +			"%pOF: brcm,function must have 1 or %d entries\n",
-> +			np, num_pins);
->   		return -EINVAL;
->   	}
-> 
->   	if (num_pulls > 1 && num_pulls != num_pins) {
->   		dev_err(pc->dev,
-> -			"%s: brcm,pull must have 1 or %d entries\n",
-> -			of_node_full_name(np), num_pins);
-> +			"%pOF: brcm,pull must have 1 or %d entries\n",
-> +			np, num_pins);
->   		return -EINVAL;
->   	}
-> 
-> @@ -793,8 +790,8 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
->   		if (err)
->   			goto out;
->   		if (pin >= ARRAY_SIZE(bcm2835_gpio_pins)) {
-> -			dev_err(pc->dev, "%s: invalid brcm,pins value %d\n",
-> -				of_node_full_name(np), pin);
-> +			dev_err(pc->dev, "%pOF: invalid brcm,pins value %d\n",
-> +				np, pin);
->   			err = -EINVAL;
->   			goto out;
->   		}
-> diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-> index 0e5c9f14a706..0a20afc2210c 100644
-> --- a/drivers/pinctrl/devicetree.c
-> +++ b/drivers/pinctrl/devicetree.c
-> @@ -117,8 +117,8 @@ static int dt_to_map_one_config(struct pinctrl *p,
->   	for (;;) {
->   		np_pctldev = of_get_next_parent(np_pctldev);
->   		if (!np_pctldev || of_node_is_root(np_pctldev)) {
-> -			dev_info(p->dev, "could not find pctldev for node %s, deferring probe\n",
-> -				np_config->full_name);
-> +			dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
-> +				np_config);
->   			of_node_put(np_pctldev);
->   			/* OK let's just assume this will appear later then */
->   			return -EPROBE_DEFER;
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-> index 72aca758f4c6..1f0095a69407 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-> @@ -573,16 +573,14 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
->   		list = of_get_property(np, "pins", &size);
->   		if (!list) {
->   			dev_err(info->dev,
-> -				"no fsl,pins and pins property in node %s\n",
-> -				np->full_name);
-> +				"no fsl,pins and pins property in node %pOF\n", np);
->   			return -EINVAL;
->   		}
->   	}
-> 
->   	/* we do not check return since it's safe node passed down */
->   	if (!size || size % pin_size) {
-> -		dev_err(info->dev, "Invalid fsl,pins or pins property in node %s\n",
-> -			np->full_name);
-> +		dev_err(info->dev, "Invalid fsl,pins or pins property in node %pOF\n", np);
->   		return -EINVAL;
->   	}
-> 
-> @@ -666,7 +664,7 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
->   	func->name = np->name;
->   	func->num_group_names = of_get_child_count(np);
->   	if (func->num_group_names == 0) {
-> -		dev_err(info->dev, "no groups defined in %s\n", np->full_name);
-> +		dev_err(info->dev, "no groups defined in %pOF\n", np);
->   		return -EINVAL;
->   	}
->   	func->group_names = devm_kcalloc(info->dev, func->num_group_names,
-> diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-> index fc0c230aa11f..4cf901c78130 100644
-> --- a/drivers/pinctrl/pinconf-generic.c
-> +++ b/drivers/pinctrl/pinconf-generic.c
-> @@ -316,16 +316,15 @@ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->   	if (ret < 0) {
->   		/* EINVAL=missing, which is fine since it's optional */
->   		if (ret != -EINVAL)
-> -			dev_err(dev, "%s: could not parse property function\n",
-> -				of_node_full_name(np));
-> +			dev_err(dev, "%pOF: could not parse property function\n",
-> +				np);
->   		function = NULL;
->   	}
-> 
->   	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
->   					      &num_configs);
->   	if (ret < 0) {
-> -		dev_err(dev, "%s: could not parse node property\n",
-> -			of_node_full_name(np));
-> +		dev_err(dev, "%pOF: could not parse node property\n", np);
->   		return ret;
->   	}
-> 
-> diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-> index dc8591543dee..b1ca838dd80a 100644
-> --- a/drivers/pinctrl/pinctrl-at91-pio4.c
-> +++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-> @@ -494,8 +494,8 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
->   	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
->   					      &num_configs);
->   	if (ret < 0) {
-> -		dev_err(pctldev->dev, "%s: could not parse node property\n",
-> -			of_node_full_name(np));
-> +		dev_err(pctldev->dev, "%pOF: could not parse node property\n",
-> +			np);
->   		return ret;
->   	}
-> 
-> @@ -504,8 +504,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
-> 
->   	num_pins = pins->length / sizeof(u32);
->   	if (!num_pins) {
-> -		dev_err(pctldev->dev, "no pins found in node %s\n",
-> -			of_node_full_name(np));
-> +		dev_err(pctldev->dev, "no pins found in node %pOF\n", np);
->   		ret = -EINVAL;
->   		goto exit;
->   	}
-> @@ -584,8 +583,8 @@ static int atmel_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-> 
->   	if (ret < 0) {
->   		pinctrl_utils_free_map(pctldev, *map, *num_maps);
-> -		dev_err(pctldev->dev, "can't create maps for node %s\n",
-> -			np_config->full_name);
-> +		dev_err(pctldev->dev, "can't create maps for node %pOF\n",
-> +			np_config);
->   	}
-> 
->   	return ret;
-> diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-> index 3ae8066bc127..1703977de7cf 100644
-> --- a/drivers/pinctrl/pinctrl-st.c
-> +++ b/drivers/pinctrl/pinctrl-st.c
-> @@ -1537,7 +1537,7 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
->   			return err;
->   		}
->   	} else {
-> -		dev_info(dev, "No IRQ support for %s bank\n", np->full_name);
-> +		dev_info(dev, "No IRQ support for %pOF bank\n", np);
->   	}
-> 
->   	return 0;
-> diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-> index edfba506e958..09d35006acb2 100644
-> --- a/drivers/pinctrl/pinctrl-tb10x.c
-> +++ b/drivers/pinctrl/pinctrl-tb10x.c
-> @@ -557,8 +557,8 @@ static int tb10x_dt_node_to_map(struct pinctrl_dev *pctl,
->   	int ret = 0;
-> 
->   	if (of_property_read_string(np_config, "abilis,function", &string)) {
-> -		pr_err("%s: No abilis,function property in device tree.\n",
-> -			np_config->full_name);
-> +		pr_err("%pOF: No abilis,function property in device tree.\n",
-> +			np_config);
->   		return -EINVAL;
->   	}
-> 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index f542642eed8d..20b59bb02196 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -679,7 +679,7 @@ static int samsung_pinctrl_create_function(struct device *dev,
-> 
->   	npins = of_property_count_strings(func_np, "samsung,pins");
->   	if (npins < 1) {
-> -		dev_err(dev, "invalid pin list in %s node", func_np->name);
-> +		dev_err(dev, "invalid pin list in %pOFn node", func_np);
->   		return -EINVAL;
->   	}
-> 
-> @@ -696,8 +696,8 @@ static int samsung_pinctrl_create_function(struct device *dev,
->   							i, &gname);
->   		if (ret) {
->   			dev_err(dev,
-> -				"failed to read pin name %d from %s node\n",
-> -				i, func_np->name);
-> +				"failed to read pin name %d from %pOFn node\n",
-> +				i, func_np);
->   			return ret;
->   		}
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-> index a70157f0acf4..e7a92eec06c2 100644
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -290,7 +290,7 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
->   	if (*num_maps)
->   		return 0;
-> 
-> -	dev_err(dev, "no mapping found in node %s\n", np->full_name);
-> +	dev_err(dev, "no mapping found in node %pOF\n", np);
->   	ret = -EINVAL;
-> 
->   done:
-> diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-> index 0df72be60704..80bfd4719199 100644
-> --- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-> +++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-> @@ -810,7 +810,7 @@ static int sirfsoc_gpio_probe(struct device_node *np)
->   	sgpio->chip.gc.set = sirfsoc_gpio_set_value;
->   	sgpio->chip.gc.base = 0;
->   	sgpio->chip.gc.ngpio = SIRFSOC_GPIO_BANK_SIZE * SIRFSOC_GPIO_NO_OF_BANKS;
-> -	sgpio->chip.gc.label = kstrdup(np->full_name, GFP_KERNEL);
-> +	sgpio->chip.gc.label = kasprintf(GFP_KERNEL, "%pOF", np);
->   	sgpio->chip.gc.of_node = np;
->   	sgpio->chip.gc.of_xlate = sirfsoc_gpio_of_xlate;
->   	sgpio->chip.gc.of_gpio_n_cells = 2;
-> @@ -819,8 +819,8 @@ static int sirfsoc_gpio_probe(struct device_node *np)
-> 
->   	err = gpiochip_add_data(&sgpio->chip.gc, sgpio);
->   	if (err) {
-> -		dev_err(&pdev->dev, "%s: error in probe function with status %d\n",
-> -			np->full_name, err);
-> +		dev_err(&pdev->dev, "%pOF: error in probe function with status %d\n",
-> +			np, err);
->   		goto out;
->   	}
-> 
-> --
-> 2.11.0
-> 
-For ST pinctrl:
+Signed-off-by: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |  12 ++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 202 +++++++++++++++++----
+ 2 files changed, 176 insertions(+), 38 deletions(-)
 
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index 8d893a8..435efe8 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -43,6 +43,17 @@ PMIC's from Qualcomm.
+ 		    the first cell will be used to define gpio number and the
+ 		    second denotes the flags for this gpio
+ 
++- qcom,gpios-disallowed:
++	Usage: optional
++	Value type: <prop-encoded-array>
++	Definition: Array of the GPIO hardware numbers corresponding to GPIOs
++		    which the APSS processor is not allowed to configure.
++		    The hardware numbers are indexed from 1.
++		    The interrupt resources for these GPIOs must not be defined
++		    in "interrupts" and "interrupt-names" properties.
++		    GPIOs defined in this array won't be registered as pins
++		    in the pinctrl device or gpios in the gpio chip.
++
+ Please refer to ../gpio/gpio.txt and ../interrupt-controller/interrupts.txt for
+ a general description of GPIO and interrupt bindings.
+ 
+@@ -206,6 +217,7 @@ Example:
+ 
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
++		qcom,gpios-disallowed = <1 20>;
+ 
+ 		pm8921_gpio_keys: gpio-keys {
+ 			volume-keys {
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 664b641..74821af 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -96,6 +96,7 @@
+  * struct pmic_gpio_pad - keep current GPIO settings
+  * @base: Address base in SPMI device.
+  * @irq: IRQ number which this GPIO generate.
++ * @gpio_idx: The index in GPIO's hardware number space (1-based)
+  * @is_enabled: Set to false when GPIO should be put in high Z state.
+  * @out_value: Cached pin output value
+  * @have_buffer: Set to true if GPIO output could be configured in push-pull,
+@@ -112,6 +113,7 @@
+ struct pmic_gpio_pad {
+ 	u16		base;
+ 	int		irq;
++	int		gpio_idx;
+ 	bool		is_enabled;
+ 	bool		out_value;
+ 	bool		have_buffer;
+@@ -130,6 +132,7 @@ struct pmic_gpio_state {
+ 	struct regmap	*map;
+ 	struct pinctrl_dev *ctrl;
+ 	struct gpio_chip chip;
++	const char **gpio_groups;
+ };
+ 
+ static const struct pinconf_generic_params pmic_gpio_bindings[] = {
+@@ -231,7 +234,9 @@ static int pmic_gpio_get_function_groups(struct pinctrl_dev *pctldev,
+ 					 const char *const **groups,
+ 					 unsigned *const num_qgroups)
+ {
+-	*groups = pmic_gpio_groups;
++	struct pmic_gpio_state *state = pinctrl_dev_get_drvdata(pctldev);
++
++	*groups = state->gpio_groups;
+ 	*num_qgroups = pctldev->desc->npins;
+ 	return 0;
+ }
+@@ -455,7 +460,7 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ 
+ 	pad = pctldev->desc->pins[pin].drv_data;
+ 
+-	seq_printf(s, " gpio%-2d:", pin + PMIC_GPIO_PHYSICAL_OFFSET);
++	seq_printf(s, " gpio%-2d:", pad->gpio_idx);
+ 
+ 	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_EN_CTL);
+ 
+@@ -546,13 +551,29 @@ static int pmic_gpio_of_xlate(struct gpio_chip *chip,
+ 			      const struct of_phandle_args *gpio_desc,
+ 			      u32 *flags)
+ {
++	int i;
++	struct pmic_gpio_state *state = gpiochip_get_data(chip);
++	struct pinctrl_desc *desc = state->ctrl->desc;
++	struct pmic_gpio_pad *pad;
++
+ 	if (chip->of_gpio_n_cells < 2)
+ 		return -EINVAL;
+ 
+ 	if (flags)
+ 		*flags = gpio_desc->args[1];
+ 
+-	return gpio_desc->args[0] - PMIC_GPIO_PHYSICAL_OFFSET;
++	for (i = 0; i < chip->ngpio; i++) {
++		pad = desc->pins[i].drv_data;
++		if (pad->gpio_idx == gpio_desc->args[0]) {
++			dev_dbg(state->dev, "gpio%-2d xlate to pin%-2d\n",
++						gpio_desc->args[0], i);
++			return i;
++		}
++	}
++
++	dev_err(state->dev, "Couldn't find pin for gpio %d\n",
++				gpio_desc->args[0]);
++	return -ENODEV;
+ }
+ 
+ static int pmic_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+@@ -688,43 +709,124 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 	struct pinctrl_desc *pctrldesc;
+ 	struct pmic_gpio_pad *pad, *pads;
+ 	struct pmic_gpio_state *state;
+-	int ret, npins, i;
+-	u32 reg;
++	int ret, npins, ngpios, i, j, pin_idx;
++	int disallowed_count = 0;
++	u32 reg[2], start, size;
++	u32 *disallowed = NULL;
+ 
+-	ret = of_property_read_u32(dev->of_node, "reg", &reg);
++	ret = of_property_read_u32_array(dev->of_node, "reg", reg, 2);
+ 	if (ret < 0) {
+-		dev_err(dev, "missing base address");
++		dev_err(dev, "reg property reading failed\n");
+ 		return ret;
+ 	}
++	start = reg[0];
++	size = reg[1];
++
++	ngpios = size / PMIC_GPIO_ADDRESS_RANGE;
++	if (ngpios == 0) {
++		dev_err(dev, "no gpios assigned\n");
++		return -ENODEV;
++	}
+ 
+-	npins = platform_irq_count(pdev);
+-	if (!npins)
++	if (ngpios > ARRAY_SIZE(pmic_gpio_groups)) {
++		dev_err(dev, "reg property defines %d gpios, but only %d are allowed\n",
++				ngpios, (int)ARRAY_SIZE(pmic_gpio_groups));
+ 		return -EINVAL;
+-	if (npins < 0)
+-		return npins;
++	}
++
++	if (of_find_property(dev->of_node, "qcom,gpios-disallowed",
++					&disallowed_count)) {
++		disallowed_count /= sizeof(u32);
++		if (disallowed_count == 0) {
++			dev_err(dev, "No data in gpios-disallowed\n");
++			return -EINVAL;
++		}
+ 
+-	BUG_ON(npins > ARRAY_SIZE(pmic_gpio_groups));
++		disallowed = kcalloc(disallowed_count, sizeof(u32), GFP_KERNEL);
++		if (disallowed == NULL)
++			return -ENOMEM;
++
++		ret = of_property_read_u32_array(dev->of_node,
++				"qcom,gpios-disallowed",
++				disallowed, disallowed_count);
++		if (ret < 0) {
++			dev_err(dev, "qcom,gpios-disallowed property reading failed, ret=%d\n",
++								ret);
++			goto err_free;
++		}
++
++		for (i = 0; i < disallowed_count; i++) {
++			if (disallowed[i] >= ngpios + PMIC_GPIO_PHYSICAL_OFFSET
++				|| disallowed[i] < PMIC_GPIO_PHYSICAL_OFFSET) {
++				dev_err(dev, "invalid gpio = %d specified in qcom,gpios-disallowed, supported values: %d to %d\n",
++					disallowed[i],
++					PMIC_GPIO_PHYSICAL_OFFSET,
++					ngpios - 1 + PMIC_GPIO_PHYSICAL_OFFSET);
++				ret = -EINVAL;
++				goto err_free;
++			}
++			for (j = 0; j < i; j++) {
++				if (disallowed[i] == disallowed[j]) {
++					dev_err(dev, "duplicate gpio = %d listed in qcom,gpios-disallowed\n",
++							disallowed[i]);
++					ret = -EINVAL;
++					goto err_free;
++				}
++			}
++			dev_dbg(dev, "gpio %d NOT supported\n", disallowed[i]);
++		}
++	} else {
++		disallowed_count = 0;
++	}
++
++	npins = ngpios - disallowed_count;
++	if (npins <= 0) {
++		dev_err(dev, "No pins assigned\n");
++		ret = -ENODEV;
++		goto err_free;
++	}
++	if (platform_irq_count(pdev) != npins) {
++		dev_err(dev, "%d IRQs defined but %d expected\n",
++				platform_irq_count(pdev), npins);
++		ret = -EINVAL;
++		goto err_free;
++	}
+ 
+ 	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
+-	if (!state)
+-		return -ENOMEM;
++	if (!state) {
++		ret = -ENOMEM;
++		goto err_free;
++	}
+ 
+ 	platform_set_drvdata(pdev, state);
+ 
+ 	state->dev = &pdev->dev;
+ 	state->map = dev_get_regmap(dev->parent, NULL);
+ 
++	state->gpio_groups = devm_kcalloc(dev, sizeof(*state->gpio_groups),
++						npins, GFP_KERNEL);
++	if (!state->gpio_groups) {
++		ret = -ENOMEM;
++		goto err_free;
++	}
++
+ 	pindesc = devm_kcalloc(dev, npins, sizeof(*pindesc), GFP_KERNEL);
+-	if (!pindesc)
+-		return -ENOMEM;
++	if (!pindesc) {
++		ret = -ENOMEM;
++		goto err_free;
++	}
+ 
+ 	pads = devm_kcalloc(dev, npins, sizeof(*pads), GFP_KERNEL);
+-	if (!pads)
+-		return -ENOMEM;
++	if (!pads) {
++		ret = -ENOMEM;
++		goto err_free;
++	}
+ 
+ 	pctrldesc = devm_kzalloc(dev, sizeof(*pctrldesc), GFP_KERNEL);
+-	if (!pctrldesc)
+-		return -ENOMEM;
++	if (!pctrldesc) {
++		ret = -ENOMEM;
++		goto err_free;
++	}
+ 
+ 	pctrldesc->pctlops = &pmic_gpio_pinctrl_ops;
+ 	pctrldesc->pmxops = &pmic_gpio_pinmux_ops;
+@@ -738,22 +840,42 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ #ifdef CONFIG_DEBUG_FS
+ 	pctrldesc->custom_conf_items = pmic_conf_items;
+ #endif
++	for (pin_idx = 0, i = 0; i < ngpios; i++) {
++		for (j = 0; j < disallowed_count; j++) {
++			if (i + PMIC_GPIO_PHYSICAL_OFFSET == disallowed[j])
++				break;
++		}
++		if (j != disallowed_count)
++			continue;
+ 
+-	for (i = 0; i < npins; i++, pindesc++) {
+-		pad = &pads[i];
++		pad = &pads[pin_idx];
+ 		pindesc->drv_data = pad;
+-		pindesc->number = i;
++		pindesc->number = pin_idx;
+ 		pindesc->name = pmic_gpio_groups[i];
+ 
+-		pad->irq = platform_get_irq(pdev, i);
+-		if (pad->irq < 0)
+-			return pad->irq;
++		pad->gpio_idx = i + PMIC_GPIO_PHYSICAL_OFFSET;
++		pad->irq = platform_get_irq(pdev, pin_idx);
++		if (pad->irq < 0) {
++			dev_err(state->dev,
++				"failed to get irq for gpio %d (pin %d), ret=%d\n",
++					pad->gpio_idx, pin_idx, pad->irq);
++			ret = pad->irq;
++			goto err_free;
++		}
++		/* Every pin is a group */
++		state->gpio_groups[pin_idx] = pmic_gpio_groups[i];
+ 
+-		pad->base = reg + i * PMIC_GPIO_ADDRESS_RANGE;
++		pad->base = start + i * PMIC_GPIO_ADDRESS_RANGE;
+ 
+ 		ret = pmic_gpio_populate(state, pad);
+-		if (ret < 0)
+-			return ret;
++		if (ret < 0) {
++			dev_err(state->dev,
++				"failed to populate gpio %d, ret=%d\n",
++							i, ret);
++			goto err_free;
++		}
++		pindesc++;
++		pin_idx++;
+ 	}
+ 
+ 	state->chip = pmic_gpio_gpio_template;
+@@ -765,25 +887,29 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+ 	state->chip.can_sleep = false;
+ 
+ 	state->ctrl = devm_pinctrl_register(dev, pctrldesc, state);
+-	if (IS_ERR(state->ctrl))
+-		return PTR_ERR(state->ctrl);
++	if (IS_ERR(state->ctrl)) {
++		ret = PTR_ERR(state->ctrl);
++		dev_err(state->dev, "failed to register pinctrl device, ret=%d\n",
++							ret);
++		goto err_free;
++	}
+ 
+ 	ret = gpiochip_add_data(&state->chip, state);
+ 	if (ret) {
+-		dev_err(state->dev, "can't add gpio chip\n");
+-		return ret;
++		dev_err(state->dev, "can't add gpio chip, ret=%d\n", ret);
++		goto err_free;
+ 	}
+ 
+ 	ret = gpiochip_add_pin_range(&state->chip, dev_name(dev), 0, 0, npins);
+ 	if (ret) {
+-		dev_err(dev, "failed to add pin range\n");
+-		goto err_range;
++		dev_err(dev, "failed to add pin range\n, ret=%d\n", ret);
++		gpiochip_remove(&state->chip);
++		goto err_free;
+ 	}
+ 
+-	return 0;
++err_free:
++	kfree(disallowed);
+ 
+-err_range:
+-	gpiochip_remove(&state->chip);
+ 	return ret;
+ }
+ 
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
 
-Thanks
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
