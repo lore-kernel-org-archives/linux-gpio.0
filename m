@@ -1,324 +1,116 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-Date: Tue, 18 Jul 2017 16:43:23 -0500
-Message-ID: <20170718214339.7774-43-robh@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel@stli
+From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: dts: keystone-k2g-evm: Add gpio nodes
+Date: Wed, 19 Jul 2017 09:36:59 +0530
+Message-ID: <87734375-8841-ce74-38eb-7ee5af1ad4f6@ti.com>
+References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
+ <1500375436-9435-5-git-send-email-j-keerthy@ti.com>
+ <1cd6ef99-a98e-7cdb-5c2a-f5cd057eef41@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1cd6ef99-a98e-7cdb-5c2a-f5cd057eef41-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Suman Anna <s-anna-l0cyMroinI0@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Now that we have a custom printf format specifier, convert users of
-full_name to use %pOF instead. This is preparation to remove storing
-of the full path string for each node.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lee Jones <lee@kernel.org>
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Barry Song <baohua@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: kernel@stlinux.com
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c     | 25 +++++++++++--------------
- drivers/pinctrl/devicetree.c              |  4 ++--
- drivers/pinctrl/freescale/pinctrl-imx.c   |  8 +++-----
- drivers/pinctrl/pinconf-generic.c         |  7 +++----
- drivers/pinctrl/pinctrl-at91-pio4.c       | 11 +++++------
- drivers/pinctrl/pinctrl-st.c              |  2 +-
- drivers/pinctrl/pinctrl-tb10x.c           |  4 ++--
- drivers/pinctrl/samsung/pinctrl-samsung.c |  6 +++---
- drivers/pinctrl/sh-pfc/pinctrl.c          |  2 +-
- drivers/pinctrl/sirf/pinctrl-sirf.c       |  6 +++---
- 10 files changed, 34 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index 230883168e99..3e71e5d782ee 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -692,8 +692,7 @@ static int bcm2835_pctl_dt_node_to_map_func(struct bcm2835_pinctrl *pc,
- 	struct pinctrl_map *map = *maps;
+On Wednesday 19 July 2017 12:43 AM, Suman Anna wrote:
+> Hi Keerthy,
+> 
+> On 07/18/2017 05:57 AM, Keerthy wrote:
+>> keystone-k2g has 2 instances of gpio. The first one has all the 144 GPIOs
+> 
+> Please use 66AK2G for keystone-k2g.
 
- 	if (fnum >= ARRAY_SIZE(bcm2835_functions)) {
--		dev_err(pc->dev, "%s: invalid brcm,function %d\n",
--			of_node_full_name(np), fnum);
-+		dev_err(pc->dev, "%pOF: invalid brcm,function %d\n", np, fnum);
- 		return -EINVAL;
- 	}
+Okay
 
-@@ -713,8 +712,7 @@ static int bcm2835_pctl_dt_node_to_map_pull(struct bcm2835_pinctrl *pc,
- 	unsigned long *configs;
+> 
+>> functional( 9 banks with 16 gpios = 144). The second instance has
+>> only the GPIO0:GPIO67 functional and rest are marked reserved.
+>>
+>> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/keystone-k2g.dtsi | 42 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 42 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
+>> index bf4d1fa..58ac3db 100644
+>> --- a/arch/arm/boot/dts/keystone-k2g.dtsi
+>> +++ b/arch/arm/boot/dts/keystone-k2g.dtsi
+>> @@ -15,6 +15,7 @@
+>>  
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  #include <dt-bindings/pinctrl/keystone.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>>  
+>>  / {
+>>  	compatible = "ti,k2g","ti,keystone";
+>> @@ -168,5 +169,46 @@
+>>  				#reset-cells = <2>;
+>>  			};
+>>  		};
+>> +
+>> +		gpio0: gpio@2603000 {
+>> +			compatible = "ti,keystone-k2g-gpio";
+>> +			reg = <0x02603000 0x100>;
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +
+>> +			interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <2>;
+>> +			ti,ngpio = <144>;
+>> +			ti,davinci-gpio-unbanked = <0>;
+>> +			clocks = <&k2g_clks 0x001b 0x0>;
+>> +			clock-names = "gpio";
+> 
+> I don't see the clocks and clock-names documented in the binding.
+> Looking at davinci_gpio_irq_setup(), these are required, and a specific
+> clock name is what the driver is looking for. And you have different
+> semantics for this on K2G and non-K2G SoCs. Davinci platforms are using
+> non-DT clocks, so their DT nodes didn't have them.
 
- 	if (pull > 2) {
--		dev_err(pc->dev, "%s: invalid brcm,pull %d\n",
--			of_node_full_name(np), pull);
-+		dev_err(pc->dev, "%pOF: invalid brcm,pull %d\n", np, pull);
- 		return -EINVAL;
- 	}
+I will document the same.
 
-@@ -745,8 +743,7 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-
- 	pins = of_find_property(np, "brcm,pins", NULL);
- 	if (!pins) {
--		dev_err(pc->dev, "%s: missing brcm,pins property\n",
--				of_node_full_name(np));
-+		dev_err(pc->dev, "%pOF: missing brcm,pins property\n", np);
- 		return -EINVAL;
- 	}
-
-@@ -755,8 +752,8 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-
- 	if (!funcs && !pulls) {
- 		dev_err(pc->dev,
--			"%s: neither brcm,function nor brcm,pull specified\n",
--			of_node_full_name(np));
-+			"%pOF: neither brcm,function nor brcm,pull specified\n",
-+			np);
- 		return -EINVAL;
- 	}
-
-@@ -766,15 +763,15 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-
- 	if (num_funcs > 1 && num_funcs != num_pins) {
- 		dev_err(pc->dev,
--			"%s: brcm,function must have 1 or %d entries\n",
--			of_node_full_name(np), num_pins);
-+			"%pOF: brcm,function must have 1 or %d entries\n",
-+			np, num_pins);
- 		return -EINVAL;
- 	}
-
- 	if (num_pulls > 1 && num_pulls != num_pins) {
- 		dev_err(pc->dev,
--			"%s: brcm,pull must have 1 or %d entries\n",
--			of_node_full_name(np), num_pins);
-+			"%pOF: brcm,pull must have 1 or %d entries\n",
-+			np, num_pins);
- 		return -EINVAL;
- 	}
-
-@@ -793,8 +790,8 @@ static int bcm2835_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 		if (err)
- 			goto out;
- 		if (pin >= ARRAY_SIZE(bcm2835_gpio_pins)) {
--			dev_err(pc->dev, "%s: invalid brcm,pins value %d\n",
--				of_node_full_name(np), pin);
-+			dev_err(pc->dev, "%pOF: invalid brcm,pins value %d\n",
-+				np, pin);
- 			err = -EINVAL;
- 			goto out;
- 		}
-diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
-index 0e5c9f14a706..0a20afc2210c 100644
---- a/drivers/pinctrl/devicetree.c
-+++ b/drivers/pinctrl/devicetree.c
-@@ -117,8 +117,8 @@ static int dt_to_map_one_config(struct pinctrl *p,
- 	for (;;) {
- 		np_pctldev = of_get_next_parent(np_pctldev);
- 		if (!np_pctldev || of_node_is_root(np_pctldev)) {
--			dev_info(p->dev, "could not find pctldev for node %s, deferring probe\n",
--				np_config->full_name);
-+			dev_info(p->dev, "could not find pctldev for node %pOF, deferring probe\n",
-+				np_config);
- 			of_node_put(np_pctldev);
- 			/* OK let's just assume this will appear later then */
- 			return -EPROBE_DEFER;
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
-index 72aca758f4c6..1f0095a69407 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx.c
-@@ -573,16 +573,14 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
- 		list = of_get_property(np, "pins", &size);
- 		if (!list) {
- 			dev_err(info->dev,
--				"no fsl,pins and pins property in node %s\n",
--				np->full_name);
-+				"no fsl,pins and pins property in node %pOF\n", np);
- 			return -EINVAL;
- 		}
- 	}
-
- 	/* we do not check return since it's safe node passed down */
- 	if (!size || size % pin_size) {
--		dev_err(info->dev, "Invalid fsl,pins or pins property in node %s\n",
--			np->full_name);
-+		dev_err(info->dev, "Invalid fsl,pins or pins property in node %pOF\n", np);
- 		return -EINVAL;
- 	}
-
-@@ -666,7 +664,7 @@ static int imx_pinctrl_parse_functions(struct device_node *np,
- 	func->name = np->name;
- 	func->num_group_names = of_get_child_count(np);
- 	if (func->num_group_names == 0) {
--		dev_err(info->dev, "no groups defined in %s\n", np->full_name);
-+		dev_err(info->dev, "no groups defined in %pOF\n", np);
- 		return -EINVAL;
- 	}
- 	func->group_names = devm_kcalloc(info->dev, func->num_group_names,
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index fc0c230aa11f..4cf901c78130 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -316,16 +316,15 @@ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	if (ret < 0) {
- 		/* EINVAL=missing, which is fine since it's optional */
- 		if (ret != -EINVAL)
--			dev_err(dev, "%s: could not parse property function\n",
--				of_node_full_name(np));
-+			dev_err(dev, "%pOF: could not parse property function\n",
-+				np);
- 		function = NULL;
- 	}
-
- 	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
- 					      &num_configs);
- 	if (ret < 0) {
--		dev_err(dev, "%s: could not parse node property\n",
--			of_node_full_name(np));
-+		dev_err(dev, "%pOF: could not parse node property\n", np);
- 		return ret;
- 	}
-
-diff --git a/drivers/pinctrl/pinctrl-at91-pio4.c b/drivers/pinctrl/pinctrl-at91-pio4.c
-index dc8591543dee..b1ca838dd80a 100644
---- a/drivers/pinctrl/pinctrl-at91-pio4.c
-+++ b/drivers/pinctrl/pinctrl-at91-pio4.c
-@@ -494,8 +494,8 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs,
- 					      &num_configs);
- 	if (ret < 0) {
--		dev_err(pctldev->dev, "%s: could not parse node property\n",
--			of_node_full_name(np));
-+		dev_err(pctldev->dev, "%pOF: could not parse node property\n",
-+			np);
- 		return ret;
- 	}
-
-@@ -504,8 +504,7 @@ static int atmel_pctl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
-
- 	num_pins = pins->length / sizeof(u32);
- 	if (!num_pins) {
--		dev_err(pctldev->dev, "no pins found in node %s\n",
--			of_node_full_name(np));
-+		dev_err(pctldev->dev, "no pins found in node %pOF\n", np);
- 		ret = -EINVAL;
- 		goto exit;
- 	}
-@@ -584,8 +583,8 @@ static int atmel_pctl_dt_node_to_map(struct pinctrl_dev *pctldev,
-
- 	if (ret < 0) {
- 		pinctrl_utils_free_map(pctldev, *map, *num_maps);
--		dev_err(pctldev->dev, "can't create maps for node %s\n",
--			np_config->full_name);
-+		dev_err(pctldev->dev, "can't create maps for node %pOF\n",
-+			np_config);
- 	}
-
- 	return ret;
-diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-index 3ae8066bc127..1703977de7cf 100644
---- a/drivers/pinctrl/pinctrl-st.c
-+++ b/drivers/pinctrl/pinctrl-st.c
-@@ -1537,7 +1537,7 @@ static int st_gpiolib_register_bank(struct st_pinctrl *info,
- 			return err;
- 		}
- 	} else {
--		dev_info(dev, "No IRQ support for %s bank\n", np->full_name);
-+		dev_info(dev, "No IRQ support for %pOF bank\n", np);
- 	}
-
- 	return 0;
-diff --git a/drivers/pinctrl/pinctrl-tb10x.c b/drivers/pinctrl/pinctrl-tb10x.c
-index edfba506e958..09d35006acb2 100644
---- a/drivers/pinctrl/pinctrl-tb10x.c
-+++ b/drivers/pinctrl/pinctrl-tb10x.c
-@@ -557,8 +557,8 @@ static int tb10x_dt_node_to_map(struct pinctrl_dev *pctl,
- 	int ret = 0;
-
- 	if (of_property_read_string(np_config, "abilis,function", &string)) {
--		pr_err("%s: No abilis,function property in device tree.\n",
--			np_config->full_name);
-+		pr_err("%pOF: No abilis,function property in device tree.\n",
-+			np_config);
- 		return -EINVAL;
- 	}
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index f542642eed8d..20b59bb02196 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -679,7 +679,7 @@ static int samsung_pinctrl_create_function(struct device *dev,
-
- 	npins = of_property_count_strings(func_np, "samsung,pins");
- 	if (npins < 1) {
--		dev_err(dev, "invalid pin list in %s node", func_np->name);
-+		dev_err(dev, "invalid pin list in %pOFn node", func_np);
- 		return -EINVAL;
- 	}
-
-@@ -696,8 +696,8 @@ static int samsung_pinctrl_create_function(struct device *dev,
- 							i, &gname);
- 		if (ret) {
- 			dev_err(dev,
--				"failed to read pin name %d from %s node\n",
--				i, func_np->name);
-+				"failed to read pin name %d from %pOFn node\n",
-+				i, func_np);
- 			return ret;
- 		}
-
-diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c b/drivers/pinctrl/sh-pfc/pinctrl.c
-index a70157f0acf4..e7a92eec06c2 100644
---- a/drivers/pinctrl/sh-pfc/pinctrl.c
-+++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-@@ -290,7 +290,7 @@ static int sh_pfc_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	if (*num_maps)
- 		return 0;
-
--	dev_err(dev, "no mapping found in node %s\n", np->full_name);
-+	dev_err(dev, "no mapping found in node %pOF\n", np);
- 	ret = -EINVAL;
-
- done:
-diff --git a/drivers/pinctrl/sirf/pinctrl-sirf.c b/drivers/pinctrl/sirf/pinctrl-sirf.c
-index 0df72be60704..80bfd4719199 100644
---- a/drivers/pinctrl/sirf/pinctrl-sirf.c
-+++ b/drivers/pinctrl/sirf/pinctrl-sirf.c
-@@ -810,7 +810,7 @@ static int sirfsoc_gpio_probe(struct device_node *np)
- 	sgpio->chip.gc.set = sirfsoc_gpio_set_value;
- 	sgpio->chip.gc.base = 0;
- 	sgpio->chip.gc.ngpio = SIRFSOC_GPIO_BANK_SIZE * SIRFSOC_GPIO_NO_OF_BANKS;
--	sgpio->chip.gc.label = kstrdup(np->full_name, GFP_KERNEL);
-+	sgpio->chip.gc.label = kasprintf(GFP_KERNEL, "%pOF", np);
- 	sgpio->chip.gc.of_node = np;
- 	sgpio->chip.gc.of_xlate = sirfsoc_gpio_of_xlate;
- 	sgpio->chip.gc.of_gpio_n_cells = 2;
-@@ -819,8 +819,8 @@ static int sirfsoc_gpio_probe(struct device_node *np)
-
- 	err = gpiochip_add_data(&sgpio->chip.gc, sgpio);
- 	if (err) {
--		dev_err(&pdev->dev, "%s: error in probe function with status %d\n",
--			np->full_name, err);
-+		dev_err(&pdev->dev, "%pOF: error in probe function with status %d\n",
-+			np, err);
- 		goto out;
- 	}
-
+> 
+> regards
+> Suman
+> 
+>> +		};
+>> +
+>> +		gpio1: gpio@260a000 {
+>> +			compatible = "ti,keystone-k2g-gpio";
+>> +			reg = <0x0260a000 0x100>;
+>> +			gpio-controller;
+>> +			#gpio-cells = <2>;
+>> +			interrupts = <GIC_SPI 442 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 443 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 444 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 445 IRQ_TYPE_EDGE_RISING>,
+>> +					<GIC_SPI 446 IRQ_TYPE_EDGE_RISING>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <2>;
+>> +			ti,ngpio = <68>;
+>> +			ti,davinci-gpio-unbanked = <0>;
+>> +			clocks = <&k2g_clks 0x001c 0x0>;
+>> +			clock-names = "gpio";
+>> +		};
+>>  	};
+>>  };
+>>
+> 
 --
-2.11.0
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
