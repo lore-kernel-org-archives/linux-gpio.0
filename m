@@ -1,85 +1,55 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2] gpio: pca953x: remove incorrect le16_to_cpu calls
-Date: Wed, 19 Jul 2017 13:56:52 +0200
-Message-ID: <871spc7i7v.fsf@free-electrons.com>
-References: <20170718155116.88531-1-andriy.shevchenko@linux.intel.com>
+From: Anatolij Gustschin <agust@denx.de>
+Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
+Date: Wed, 19 Jul 2017 13:58:30 +0200
+Message-ID: <20170719135830.643f853d@crub>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+        <1499374158-12388-2-git-send-email-agust@denx.de>
+        <20170710125210.GK29638@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:34495 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753690AbdGSL5E (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2017 07:57:04 -0400
-In-Reply-To: <20170718155116.88531-1-andriy.shevchenko@linux.intel.com> (Andy
-        Shevchenko's message of "Tue, 18 Jul 2017 18:51:16 +0300")
+Received: from mail-out.m-online.net ([212.18.0.10]:40673 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752492AbdGSL6g (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2017 07:58:36 -0400
+In-Reply-To: <20170710125210.GK29638@localhost>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
+To: Johan Hovold <johan@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
 
-Hi Andy,
- 
- On mar., juil. 18 2017, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Mon, 10 Jul 2017 14:52:10 +0200
+Johan Hovold johan@kernel.org wrote:
 
-> i2c_smbus commands handle the correct byte order for smbus
-> transactions
+>On Thu, Jul 06, 2017 at 10:49:16PM +0200, Anatolij Gustschin wrote:
+>> Add USB part with common functions for USB-GPIO/I2C/SPI master
+>> adapters. These allow communication with chip's control, transmit
+>> and receive endpoints and will be used by various FT232H drivers.  
+>
+>> +static const struct mfd_cell ftdi_cells[] = {
+>> +	{ .name = "ftdi-cbus-gpio", },
+>> +	{ .name = "ftdi-mpsse-i2c", },
+>> +	{ .name = "ftdi-mpsse-spi", },
+>> +	{ .name = "ftdi-fifo-fpp-mgr", },
+>> +};  
+>
+>Correct me if I'm wrong, but aren't these modes really mutually
+>exclusive, possibly with exception of cbus-gpio (some pins are at least
+>available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
+>here either.
 
-I am not sure of this claim, I didn't find any cpu_to_lexx in the sbmus
-function.
+MPSSE and FIFO modes are mutually exclusive, but I'm not sure about
+MPSSE and CBUS-GPIO. CBUS-GPIO didn't work as expected when I was
+testing with MPSSE SPI master driver, but maybe it is a driver issue.
+FT245 FIFO and CBUS GPIO can be switched by a control request, when
+FIFO mode is configured in the EEPROM.
 
-> internally. This will currently result in incorrect operation on big
-> endian systems.
+>And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
+>seems too application specific for a generic chip like this.
 
-Did you managed to test this driver in a big endian system and to check
-that with this patch the driver worked as expected?
+Yes, I agree. I'm thinking of a rework to add a FIFO driver instead
+and use it in the fpp-mgr driver. Is that the right direction? 
 
 Thanks,
-
-Gregory
-
-
->
-> Suggested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> - add RB tag
->  drivers/gpio/gpio-pca953x.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index 4c9e21300a26..1b9dbf691ae7 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -187,10 +187,9 @@ static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
->  
->  static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
->  {
-> -	__le16 word = cpu_to_le16(get_unaligned((u16 *)val));
-> +	u16 word = get_unaligned((u16 *)val);
->  
-> -	return i2c_smbus_write_word_data(chip->client,
-> -					 reg << 1, (__force u16)word);
-> +	return i2c_smbus_write_word_data(chip->client, reg << 1, word);
->  }
->  
->  static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
-> @@ -241,8 +240,7 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
->  	int ret;
->  
->  	ret = i2c_smbus_read_word_data(chip->client, reg << 1);
-> -	val[0] = (u16)ret & 0xFF;
-> -	val[1] = (u16)ret >> 8;
-> +	put_unaligned(ret, (u16 *)val);
->  
->  	return ret;
->  }
-> -- 
-> 2.11.0
->
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Anatolij
