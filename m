@@ -1,51 +1,71 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH 0/3] simulated interrupts
-Date: Wed, 19 Jul 2017 14:44:47 +0200
-Message-ID: <CAMRc=McO4L59zDT4QJSmqsdOpLfAv4NDyjddd57Prz2hjE5zWw@mail.gmail.com>
-References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl> <alpine.DEB.2.20.1707191424190.2286@nanos>
+From: Anatolij Gustschin <agust@denx.de>
+Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
+Date: Wed, 19 Jul 2017 14:59:00 +0200
+Message-ID: <20170719145900.42172f44@crub>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+        <1499374158-12388-2-git-send-email-agust@denx.de>
+        <20170710125210.GK29638@localhost>
+        <20170719085934.GU29638@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.20.1707191424190.2286@nanos>
+In-Reply-To: <20170719085934.GU29638@localhost>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+To: Johan Hovold <johan@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
 List-Id: linux-gpio@vger.kernel.org
 
-2017-07-19 14:25 GMT+02:00 Thomas Gleixner <tglx@linutronix.de>:
-> On Wed, 19 Jul 2017, Bartosz Golaszewski wrote:
+On Wed, 19 Jul 2017 10:59:34 +0200
+Johan Hovold johan@kernel.org wrote:
+...
+>> > +static const struct mfd_cell ftdi_cells[] = {
+>> > +	{ .name = "ftdi-cbus-gpio", },
+>> > +	{ .name = "ftdi-mpsse-i2c", },
+>> > +	{ .name = "ftdi-mpsse-spi", },
+>> > +	{ .name = "ftdi-fifo-fpp-mgr", },
+>> > +};  
+>> 
+>> Correct me if I'm wrong, but aren't these modes really mutually
+>> exclusive, possibly with exception of cbus-gpio (some pins are at least
+>> available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
+>> here either.  
 >
->> Some frameworks (e.g. iio, gpiolib) use irq_work to implement simulated
->> interrupts that can be 'fired' from process context when needed and
->> requested just like normal interrupts. This is useful for testing and
->> development purposes.
->>
->> Currently this code is reimplemented by every user. This series
->> proposes to add a new set of functions that can be used by drivers
->> that want to simulate interrupts without having to duplicate any
->> boilerplate code.
->>
->> The first patch adds a simple irq simulator framework. The second
->> extends it with resource management. The third uses the new
->> functionality in the gpio-mockup testing driver.
->>
->> NOTE: The next candidate for using this API would be iio-dummy-evgen.
->
-> I like the general idea - have not looked at the code yet. Just a quick
-> question: How many copies/variants of this scheme do we have in tree?
->
-> Thanks,
->
->         tglx
+>You never replied to this, and I'm afraid there are more issue with this
+>series.
 
-Currently there are two: iio and gpiolib basically duplicate the same
-code in their respective testing drivers. I only used irq_sim in
-gpio-mockup in this series as an example and to see if there's any
-interest in merging it before spending time on iio-dummy-evgen.
+Sorry, unfortunately I'm too busy with other stuff. Will try to find
+time to rework.
 
-In the future this could be used in any framework that uses interrupts
-and wants to test the irq code paths without touching any specific
-hardware.
+>> And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
+>> seems too application specific for a generic chip like this.  
+>
+>Of which this is one is one of the major.
 
-Thanks,
-Bartosz
+Thanks all for feedback. I'm still pondering how to interface the
+fpga manager driver to FTDI FIFO driver.
+
+>In short, your driver is much to application specific and is probably
+>something that needs to be implemented in userspace using libftdi.
+
+I have a requirement to use the fpga manager framework, therefore the
+kernel driver is needed. Our usage scenario is a multi stage fpga
+configuration process, the first stage is a pre-configuration via
+FTDI SPI/FIFO, all subsequent stages are also done by other fpga
+manager drivers. libftdi based driver already existed for hardware
+bring-up, now I need similar functionality as kernel fpga manager.
+
+>Speaking of libftdi, you seem to have copied or borrowed a lot of code
+>and protocol from libftdi and this should have been mentioned in commit
+>messages and file headers (not just in a comment to one specific
+>function).
+
+I'll mention this in next patch series.
+
+>These chips can be used for a many different applications (also in FIFO
+>mode) so you cannot tie a driver to it exposing just a specific
+>interface for programming a certain class of FPGAs.
+
+Agreed.
+
+Anatolij
