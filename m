@@ -1,81 +1,30 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
 Subject: Re: [PATCH 0/3] simulated interrupts
-Date: Wed, 19 Jul 2017 15:19:58 +0100
-Message-ID: <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
+Date: Wed, 19 Jul 2017 17:43:02 +0300
+Message-ID: <CAHp75Vdu1Eiyuo0WCg+Cx7aifcaQ-1ipGZ4cAPCwZ8D+id882Q@mail.gmail.com>
 References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl>
- <alpine.DEB.2.20.1707191424190.2286@nanos>
- <CAMRc=McO4L59zDT4QJSmqsdOpLfAv4NDyjddd57Prz2hjE5zWw@mail.gmail.com>
- <alpine.DEB.2.20.1707191557390.2286@nanos>
+ <alpine.DEB.2.20.1707191424190.2286@nanos> <CAMRc=McO4L59zDT4QJSmqsdOpLfAv4NDyjddd57Prz2hjE5zWw@mail.gmail.com>
+ <alpine.DEB.2.20.1707191557390.2286@nanos> <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.20.1707191557390.2286@nanos>
+In-Reply-To: <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Documentation List <linux-doc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On 19/07/17 14:58, Thomas Gleixner wrote:
-> On Wed, 19 Jul 2017, Bartosz Golaszewski wrote:
-> 
->> 2017-07-19 14:25 GMT+02:00 Thomas Gleixner <tglx@linutronix.de>:
->>> On Wed, 19 Jul 2017, Bartosz Golaszewski wrote:
->>>
->>>> Some frameworks (e.g. iio, gpiolib) use irq_work to implement simulated
->>>> interrupts that can be 'fired' from process context when needed and
->>>> requested just like normal interrupts. This is useful for testing and
->>>> development purposes.
->>>>
->>>> Currently this code is reimplemented by every user. This series
->>>> proposes to add a new set of functions that can be used by drivers
->>>> that want to simulate interrupts without having to duplicate any
->>>> boilerplate code.
->>>>
->>>> The first patch adds a simple irq simulator framework. The second
->>>> extends it with resource management. The third uses the new
->>>> functionality in the gpio-mockup testing driver.
->>>>
->>>> NOTE: The next candidate for using this API would be iio-dummy-evgen.
->>>
->>> I like the general idea - have not looked at the code yet. Just a quick
->>> question: How many copies/variants of this scheme do we have in tree?
->>>
->>> Thanks,
->>>
->>>         tglx
->>
->> Currently there are two: iio and gpiolib basically duplicate the same
->> code in their respective testing drivers. I only used irq_sim in
->> gpio-mockup in this series as an example and to see if there's any
->> interest in merging it before spending time on iio-dummy-evgen.
-> 
-> Yes, I think so. Consolidation is always a good thing and simulation is
-> useful for developing or validating code.
+On Wed, Jul 19, 2017 at 5:19 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> On 19/07/17 14:58, Thomas Gleixner wrote:
+>> On Wed, 19 Jul 2017, Bartosz Golaszewski wrote:
 
-Indeed, that's pretty interesting.
+> echo 1 >/proc/irq/9/trigger
+> (or the corresponding /sys/kernel/debug/irq/irqs/ interface if we want to make sure that this
+> is really not for production use...).
 
-On a slightly tangential subject, there is another aspect that I thought
-of implementing for a while, but always ended up just relying on a quick
-hack: forcing the injection of an actual interrupt. A number of
-interrupt controllers have the ability to make an interrupt pending, for
-it to be handled as if a device had actually triggered it.
+or /sys/kernel/irq as a successor of /proc/irq
 
-In my case, it has proved to be incredibly useful when debugging the
-interrupt controller itself, and also things that mess with interrupts
-in a creative way (like KVM) while relying on a particular interrupt
-controller.
 
-What I had in mind was something like:
-
-echo 1 >/proc/irq/9/trigger (or the corresponding
-/sys/kernel/debug/irq/irqs/ interface if we want to make sure that this
-is really not for production use...).
-
-If there is any interest, I'll try to whip something up.
-
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+With Best Regards,
+Andy Shevchenko
