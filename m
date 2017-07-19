@@ -1,19 +1,19 @@
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 066/102] pinctrl: stm32: explicitly request exclusive reset control
-Date: Wed, 19 Jul 2017 17:26:10 +0200
-Message-ID: <20170719152646.25903-67-p.zabel@pengutronix.de>
+Subject: [PATCH 067/102] pinctrl: sunxi: explicitly request exclusive reset control
+Date: Wed, 19 Jul 2017 17:26:11 +0200
+Message-ID: <20170719152646.25903-68-p.zabel@pengutronix.de>
 References: <20170719152646.25903-1-p.zabel@pengutronix.de>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:58783 "EHLO
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:49081 "EHLO
         metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933125AbdGSP3f (ORCPT
+        by vger.kernel.org with ESMTP id S933096AbdGSP3g (ORCPT
         <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 19 Jul 2017 11:29:35 -0400
+        Wed, 19 Jul 2017 11:29:36 -0400
 In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-gpio@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
 Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
 reset lines") started to transition the reset control request API calls
@@ -23,28 +23,42 @@ explicit API call so the temporary transition helpers can be removed.
 
 No functional changes.
 
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
 Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
 Cc: linux-gpio@vger.kernel.org
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c | 2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 06431ff49ffb2..50299ad966590 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -952,7 +952,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl,
- 	int npins = STM32_GPIO_PINS_PER_BANK;
- 	int bank_nr, err;
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
+index a22bd88a1f03e..92c0ddc652959 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
+@@ -113,7 +113,7 @@ static int sun6i_a31_r_pinctrl_probe(struct platform_device *pdev)
+ 	struct reset_control *rstc;
+ 	int ret;
  
--	rstc = of_reset_control_get(np, NULL);
-+	rstc = of_reset_control_get_exclusive(np, NULL);
- 	if (!IS_ERR(rstc))
- 		reset_control_deassert(rstc);
+-	rstc = devm_reset_control_get(&pdev->dev, NULL);
++	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(rstc)) {
+ 		dev_err(&pdev->dev, "Reset controller missing\n");
+ 		return PTR_ERR(rstc);
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
+index 2292e05a397b4..2e113ca78f959 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
+@@ -100,7 +100,7 @@ static int sun8i_a23_r_pinctrl_probe(struct platform_device *pdev)
+ 	struct reset_control *rstc;
+ 	int ret;
  
+-	rstc = devm_reset_control_get(&pdev->dev, NULL);
++	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(rstc)) {
+ 		dev_err(&pdev->dev, "Reset controller missing\n");
+ 		return PTR_ERR(rstc);
 -- 
 2.11.0
 
