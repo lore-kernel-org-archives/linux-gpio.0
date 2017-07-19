@@ -1,64 +1,40 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 067/102] pinctrl: sunxi: explicitly request exclusive reset control
-Date: Wed, 19 Jul 2017 17:26:11 +0200
-Message-ID: <20170719152646.25903-68-p.zabel@pengutronix.de>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 0/3] simulated interrupts
+Date: Wed, 19 Jul 2017 18:28:53 +0300
+Message-ID: <CAHp75Vf3HonXDDhN3sbGW2hP-kyRzPjfsSLbDDOj+aQSMjmafA@mail.gmail.com>
+References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl>
+ <alpine.DEB.2.20.1707191424190.2286@nanos> <CAMRc=McO4L59zDT4QJSmqsdOpLfAv4NDyjddd57Prz2hjE5zWw@mail.gmail.com>
+ <alpine.DEB.2.20.1707191557390.2286@nanos> <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
+ <CAHp75Vdu1Eiyuo0WCg+Cx7aifcaQ-1ipGZ4cAPCwZ8D+id882Q@mail.gmail.com> <alpine.DEB.2.20.1707191652330.2286@nanos>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:49081 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933096AbdGSP3g (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 19 Jul 2017 11:29:36 -0400
-In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:35988 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932786AbdGSP2z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 19 Jul 2017 11:28:55 -0400
+In-Reply-To: <alpine.DEB.2.20.1707191652330.2286@nanos>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Documentation List <linux-doc@vger.kernel.org>
 
-Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-reset lines") started to transition the reset control request API calls
-to explicitly state whether the driver needs exclusive or shared reset
-control behavior. Convert all drivers requesting exclusive resets to the
-explicit API call so the temporary transition helpers can be removed.
+On Wed, Jul 19, 2017 at 5:53 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Wed, 19 Jul 2017, Andy Shevchenko wrote:
+>> On Wed, Jul 19, 2017 at 5:19 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
 
-No functional changes.
+>> > echo 1 >/proc/irq/9/trigger
+>> > (or the corresponding /sys/kernel/debug/irq/irqs/ interface if we want to make sure that this
+>> > is really not for production use...).
+>>
+>> or /sys/kernel/irq as a successor of /proc/irq
+>
+> /sys/kernel/debug/irq/irqs/ is already there and it's DEBUG and not
+> something which is in the regular sysfs maze.
 
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c | 2 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Yep. My point was "not to extend /proc/irq interface". From the
+description of the series it indeed looks suitable rather for debug.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
-index a22bd88a1f03e..92c0ddc652959 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
-@@ -113,7 +113,7 @@ static int sun6i_a31_r_pinctrl_probe(struct platform_device *pdev)
- 	struct reset_control *rstc;
- 	int ret;
- 
--	rstc = devm_reset_control_get(&pdev->dev, NULL);
-+	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
- 	if (IS_ERR(rstc)) {
- 		dev_err(&pdev->dev, "Reset controller missing\n");
- 		return PTR_ERR(rstc);
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
-index 2292e05a397b4..2e113ca78f959 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
-@@ -100,7 +100,7 @@ static int sun8i_a23_r_pinctrl_probe(struct platform_device *pdev)
- 	struct reset_control *rstc;
- 	int ret;
- 
--	rstc = devm_reset_control_get(&pdev->dev, NULL);
-+	rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
- 	if (IS_ERR(rstc)) {
- 		dev_err(&pdev->dev, "Reset controller missing\n");
- 		return PTR_ERR(rstc);
 -- 
-2.11.0
-
+With Best Regards,
+Andy Shevchenko
