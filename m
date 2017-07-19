@@ -1,23 +1,26 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH] gpio: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 02:11:06 -0700
-Message-ID: <CADtm3G42P3CG7rwmDu7QLJQY8+k0PmpJe3jE2BbcTOLxO3Bsig@mail.gmail.com>
-References: <20170718214339.7774-23-robh@kernel.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/4] gpio: davinci: Use devm_gpiochip_add_data in place
+ of gpiochip_add_data
+Date: Wed, 19 Jul 2017 11:37:22 +0200
+Message-ID: <20170719093722.GW29638@localhost>
+References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
+ <1500375436-9435-2-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170718214339.7774-23-robh@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1500375436-9435-2-git-send-email-j-keerthy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tien Hock Loh <thloh@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-gpio@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Keerthy <j-keerthy@ti.com>
+Cc: linus.walleij@linaro.org, ssantosh@kernel.org, devicetree@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, fcooper@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 2:43 PM, Rob Herring <robh@kernel.org> wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On Tue, Jul 18, 2017 at 04:27:13PM +0530, Keerthy wrote:
+> Use the devm version of gpiochip_add_data and pass on the
+> return value. Reset the static variables to 0 before returning.
 
-For the brcmstb part,
-Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+You need to describe not just what you do, but also why you it. In this
+case, your fixing memory leaks and the gpio chip being left registered
+if this driver is unbound.
+
+Johan
