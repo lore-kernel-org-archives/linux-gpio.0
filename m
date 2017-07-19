@@ -1,38 +1,60 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
-Date: Wed, 19 Jul 2017 09:37:53 +0200
-Message-ID: <CAMuHMdXsmcN892-2qxx5W7LX976ARbPH33bWDZ5mTO_PPXL2kg@mail.gmail.com>
-References: <20170718214339.7774-43-robh@kernel.org>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
+Date: Wed, 19 Jul 2017 10:59:34 +0200
+Message-ID: <20170719085934.GU29638@localhost>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+ <1499374158-12388-2-git-send-email-agust@denx.de>
+ <20170710125210.GK29638@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170710125210.GK29638@localhost>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anatolij Gustschin <agust-ynQEQJNshbs@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alan Tull <atull-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Moritz Fischer <moritz.fischer-+aYTwkv1SeIAvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fpga-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Laight <David.Laight-JxhZ9S5GRejQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 11:43 PM, Rob Herring <robh@kernel.org> wrote:
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On Mon, Jul 10, 2017 at 02:52:10PM +0200, Johan Hovold wrote:
+> On Thu, Jul 06, 2017 at 10:49:16PM +0200, Anatolij Gustschin wrote:
+> > Add USB part with common functions for USB-GPIO/I2C/SPI master
+> > adapters. These allow communication with chip's control, transmit
+> > and receive endpoints and will be used by various FT232H drivers.
+> 
+> > +static const struct mfd_cell ftdi_cells[] = {
+> > +	{ .name = "ftdi-cbus-gpio", },
+> > +	{ .name = "ftdi-mpsse-i2c", },
+> > +	{ .name = "ftdi-mpsse-spi", },
+> > +	{ .name = "ftdi-fifo-fpp-mgr", },
+> > +};
+> 
+> Correct me if I'm wrong, but aren't these modes really mutually
+> exclusive, possibly with exception of cbus-gpio (some pins are at least
+> available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
+> here either.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+You never replied to this, and I'm afraid there are more issue with this
+series.
 
->  drivers/pinctrl/sh-pfc/pinctrl.c          |  2 +-
+> And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
+> seems too application specific for a generic chip like this.
 
-For the sh-pfc part:
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Of which this is one is one of the major.
 
-Gr{oetje,eeting}s,
+In short, your driver is much to application specific and is probably
+something that needs to be implemented in userspace using libftdi.
 
-                        Geert
+Speaking of libftdi, you seem to have copied or borrowed a lot of code
+and protocol from libftdi and this should have been mentioned in commit
+messages and file headers (not just in a comment to one specific
+function).
 
+These chips can be used for a many different applications (also in FIFO
+mode) so you cannot tie a driver to it exposing just a specific
+interface for programming a certain class of FPGAs.
+
+Johan
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
