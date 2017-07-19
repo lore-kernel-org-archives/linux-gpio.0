@@ -1,64 +1,48 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Wed, 19 Jul 2017 21:15:15 +0200
-Message-ID: <20170719211515.46a1196c@windsurf>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+From: Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOF instead of full_name
+Date: Wed, 19 Jul 2017 12:50:29 -0700
+Message-ID: <87r2xcdx4q.fsf@eliezer.anholt.net>
+References: <20170718214339.7774-43-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <20170719152646.25903-1-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170718214339.7774-43-robh@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Ludovic Desroches <ludovic.desroches@microchip.com>, Patrice Chotard <patrice.chotard@st.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Barry Song <baohua@kernel.org>, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com, linux-samsung-
 List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+--=-=-=
+Content-Type: text/plain
 
-On Wed, 19 Jul 2017 17:25:04 +0200, Philipp Zabel wrote:
-> The reset control API has two modes: exclusive access, where the driver
-> expects to have full and immediate control over the state of the reset
-> line, and shared (clock-like) access, where drivers only request reset
-> deassertion while active, but don't care about the state of the reset line
-> while inactive.
-> 
-> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-> reset lines") started to transition the reset control request API calls
-> to explicitly state whether the driver needs exclusive or shared reset
-> control behavior.
-> 
-> This series converts all drivers that currently implicitly request
-> exclusive reset controls to the corresponding explicit API call. It is,
-> for the most part, generated from the following semantic patch:
-> 
-> @@
-> expression rstc, dev, id;
-> @@
-> -rstc = reset_control_get(dev, id);
-> +rstc = reset_control_get_exclusive(dev, id);
+Rob Herring <robh@kernel.org> writes:
 
-I don't know if it has been discussed in the past, so forgive me if it
-has been. Have you considered adding a "int flags" argument to the
-existing reset_control_get_*() functions, rather than introducing
-separate exclusive variants ?
+> Now that we have a custom printf format specifier, convert users of
+> full_name to use %pOF instead. This is preparation to remove storing
+> of the full path string for each node.
 
-Indeed, with a "int flags" argument you could in the future add more
-variants/behaviors without actually multiplying the number of
-functions. Something like the "flags" argument for request_irq() for
-example.
+For bcm283x:
 
-Best regards,
+Acked-by: Eric Anholt <eric@anholt.net>
 
-Thomas
--- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAllvuAUACgkQtdYpNtH8
+nujR1Q//TnAQqX0i19SDkIcn6xngbGWP2ftvGhAA5mQiDWLZwwwZL/XZ3d1rOR/T
+46Auz9+uHZJDN4y44JgM/8+l8Fq6WUKC6rmfdRH+tJjMlY/SJeervfAjNiuff3Wq
+BYGEMp6hrlqqI5Wxct7qN3lASzXaU5JOT5JDj3XsrB5rM8Kankaedar6/J8Ps6nw
+Ukr1usdibBHpLxp6t6+89NanQVwjhLI1VmVamYQ6V6zqW2Mi9mhbvlq+u0kJzDap
+ec0W8hLwL7Ky+MgSOL5r7c1BfGDSi6HNY3/dIBqzd8aZNycmNaMxOvrXLzC5KcAh
+APCiXB1H3lgUy2hqyfN/C6amnYxyZD5mcGrWmrp28L19CF+ur9VNGtVfmDgrqiBQ
+MUNXtv4cEAShmgI9ecAVEXusjpO4JSWTkCdudALRpGxXspaGujeQ110WZL0FQZ+z
+DKHx7CrfrA+ljHW83Mlz9powzQv7/mPbvHwWQPhXTwowRn1n4CuUtJtOrLV1V9yH
+86HeJSr4yffRHaCSjb7AeDzzG1yMCCvaCDff5PePhO1tiWYTSD5mz6VF1Izaa2/J
+dIoLFJbazfHUz9X4hwlVBkEzs551C92eDEFw5TFK1bv39gcTsdCGsWx4KCt8Qhp8
+AdQJ9Qw25XnUR7iGs26hzwuW7vTl4b1KpKd/rvlubwpasFxREhw=
+=etz9
+-----END PGP SIGNATURE-----
+--=-=-=--
