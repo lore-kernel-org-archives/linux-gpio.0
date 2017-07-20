@@ -1,69 +1,66 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH 2/4] gpio: davinci: Handle the return value of
- davinci_gpio_irq_setup function
-Date: Thu, 20 Jul 2017 15:40:22 +0530
-Message-ID: <574e0ecc-df20-e2da-46a5-a90a80cc57e3@ti.com>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-3-git-send-email-j-keerthy@ti.com>
- <20170719111000.GX29638@localhost>
- <cbea9082-3799-281b-1364-50e442f5362f@ti.com>
- <cc66dfaf-05c5-8d55-03a6-556ec83c4487@ti.com>
- <20170720095047.GA2729@localhost>
- <47055927-5102-b39f-fdbb-b5d89cb14632@ti.com>
- <20170720100509.GB2729@localhost>
+From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Thu, 20 Jul 2017 12:36:40 +0200
+Message-ID: <20170720123640.43c2ce01@windsurf>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170719211515.46a1196c@windsurf>
+ <1500543415.2354.37.camel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170720100509.GB2729@localhost>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Johan Hovold <johan@kernel.org>
-Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, fcooper@ti.com, ssantosh@kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1500543415.2354.37.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+Hello,
 
+On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
 
-On Thursday 20 July 2017 03:35 PM, Johan Hovold wrote:
-> On Thu, Jul 20, 2017 at 03:32:27PM +0530, Keerthy wrote:
->> On Thursday 20 July 2017 03:20 PM, Johan Hovold wrote:
->>> On Thu, Jul 20, 2017 at 02:40:37PM +0530, Keerthy wrote:
->>>> On Thursday 20 July 2017 12:14 PM, Keerthy wrote:
->>>>> On Wednesday 19 July 2017 04:40 PM, Johan Hovold wrote:
+> > I don't know if it has been discussed in the past, so forgive me if it
+> > has been. Have you considered adding a "int flags" argument to the
+> > existing reset_control_get_*() functions, rather than introducing
+> > separate exclusive variants ?
+> > 
+> > Indeed, with a "int flags" argument you could in the future add more
+> > variants/behaviors without actually multiplying the number of
+> > functions. Something like the "flags" argument for request_irq() for
+> > example.  
 > 
->>>>>> There's a separate but related bug here too as the clk_prepare_enable()
->>>>>> in davinci_gpio_irq_setup() is never balanced on driver unbind.
->>>>>
->>>>> Yes Johan. I will send that as a separate patch.
->>>>
->>>> This is already fixed in the latest kernel:
->>>>
->>>> commit 6dc0048cff988858254fcc26becfc1e9753efa79
->>>> Author: Arvind Yadav <arvind.yadav.cs@gmail.com>
->>>> Date:   Tue May 23 14:48:57 2017 +0530
->>>
->>> That change only handles errors in davinci_gpio_irq_setup() (i.e. during
->>> probe) and not the imbalance at driver unbind that I was referring to.
->>
->> Okay got it. One more clk_unprepare_disable() call needs to be there in
->> probe err path.
-> 
-> No, you need to balance it on driver unbind, that is, in a new remove()
-> callback.
+> I can't find the discussion right now, but I remember we had talked
+> about this in the past.
+> Behind the scenes, all the inline API functions already call common
+> entry points with flags (well, currently separate bool parameters for
+> shared and optional).
+> One reason against exposing those as an int flags in the user facing API
+> is the possibility to accidentally provide a wrong value.
 
-Okay yes davinci_gpio_irq_setup is the last call in probe so no need of
-that in probe error path. I will add a new remove() to balance.
+This is a quite strange argument. You could also accidentally use the
+wrong variant of the function, just like you could use the wrong flag.
 
-Thanks,
-Keerthy
+Once again, the next time you have another parameter for those reset
+functions, beyond the exclusive/shared variant, you will multiply again
+by two the number of functions ? You already have the  exclusive/shared
+and optional/mandatory variants, so 4 variants. When you'll add a new
+parameter, you'll have 8 variants. Doesn't seem really good.
 
-> 
-> Johan
-> 
+What about reset_control_get(struct device *, const char *, int flags)
+to replace all those variants ?
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
