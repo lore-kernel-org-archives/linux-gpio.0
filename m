@@ -1,61 +1,36 @@
-From: Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH v2 0/3] gpio: davinci: Add missing return checks
-Date: Thu, 20 Jul 2017 14:57:50 -0500
-Message-ID: <7107e153-3341-2e64-04d5-a3ba98aa7190@ti.com>
-References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
- <fc3de1fa-35b0-fc09-7116-921d7d2bf8a9@ti.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: (no subject)
+Date: Thu, 20 Jul 2017 22:36:41 +0200
+Message-ID: <1687646.TMvigZNUOP@phil>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:45368 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934707AbdGTT6Q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 15:58:16 -0400
-In-Reply-To: <fc3de1fa-35b0-fc09-7116-921d7d2bf8a9@ti.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Adrian Hunter <adrian.hunter@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Alan Tull <atull@kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>, Andrew Lunn <andrew@lunn.ch>, Ben Skeggs <bskeggs@redhat.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Bin Liu <b-liu@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Brian Norris <computersforpeace@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Chen Feng <puck.chen@hisilicon.com>, Chen-Yu Tsai <wens@csie.org>, Corentin Labbe <clabbe.montjoie@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Dan Williams <dan.j.williams@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>, linus.walleij@linaro.org
-Cc: t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, nsekhar@ti.com
 
-Hi Keerthy,
+Hi,
 
-> 
-> On Thursday 20 July 2017 03:12 PM, Keerthy wrote:
->> The patch series does a couple of important return handling which were missed
->> earlier in the driver probe.
->>
->> This is based on Suman's:
->>
->> http://marc.info/?l=linux-arm-kernel&m=150034845427555&w=2
->> http://marc.info/?l=linux-arm-kernel&m=150034856627618&w=2 
->>
-> 
-> My bad! The series has no dependency on the above. I have split the
-> device tree patches to keep it independent.
+>   crypto: rockchip: explicitly request exclusive reset control
+>   iio: adc: rockchip_saradc: explicitly request exclusive reset control
+>   PCI: rockchip: explicitly request exclusive reset control
+>   phy: rockchip-pcie: explicitly request exclusive reset control
+>   phy: rockchip-typec: explicitly request exclusive reset control
+>   phy: rockchip-usb: explicitly request exclusive reset control
+>   thermal: rockchip: explicitly request exclusive reset control
 
-The new patches looks clean. The davinci_gpio_irq_setup() function
-though could also do with couple more cleanups. Not all failure paths
-are doing the necessary cleanup (there are some non devres functions
-also called, but not cleaned up).
+for the driver-related Rockchip changes
 
-regards
-Suman
-
-> 
->> Changes in v2:
->>
->>   * Removed the device tree patch for to keep the series independent.
->>
->> Keerthy (3):
->>   gpio: davinci: Use devm_gpiochip_add_data in place of
->>     gpiochip_add_data
->>   gpio: davinci: Handle the return value of davinci_gpio_irq_setup
->>     function
->>   gpio: davinci: Convert prinkt to dev_err
->>
->>  drivers/gpio/gpio-davinci.c | 22 +++++++++++++++++-----
->>  1 file changed, 17 insertions(+), 5 deletions(-)
->>
-
+Acked-by: Heiko Stuebner <heiko@sntech.de>
