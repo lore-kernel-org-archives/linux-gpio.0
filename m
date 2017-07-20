@@ -1,74 +1,76 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [RFC] drivers/gpio/gpio-pca953x.c broken for PCA9505 ?
-Date: Thu, 20 Jul 2017 20:46:30 +0800
-Message-ID: <31ff335a-5ca4-4893-543f-16a7be743230@electromag.com.au>
-References: <CAMSpPPdvrPfhSEMnzSntaUxt+VUhshYduE0EKvobeh_T1b7a1Q@mail.gmail.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Thu, 20 Jul 2017 14:55:12 +0200
+Message-ID: <1500555312.2354.75.camel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+         <20170719211515.46a1196c@windsurf>
+         <1500543415.2354.37.camel@pengutronix.de>
+         <20170720123640.43c2ce01@windsurf>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy1.45ru.net.au ([203.30.46.145]:60356 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933994AbdGTMqf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 08:46:35 -0400
-In-Reply-To: <CAMSpPPdvrPfhSEMnzSntaUxt+VUhshYduE0EKvobeh_T1b7a1Q@mail.gmail.com>
-Content-Language: en-AU
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <20170720123640.43c2ce01@windsurf>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@roeck-us.net>, Ohad Ben-Cohen <ohad@wizery.com>, linux-pm@vger.kernel.org, Thomas Gleixner <tglx>
 List-Id: linux-gpio@vger.kernel.org
-To: Oza Oza <oza.oza@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-G'day Oza,
+Hi Thomas,
 
-On 20/07/2017 18:07, Oza Oza wrote:
-> Hi,
+On Thu, 2017-07-20 at 12:36 +0200, Thomas Petazzoni wrote:
+> Hello,
 > 
-> Our SOC has PCA9505 IO expander,
-> Basically I was implementing PCI hotplug, e.g. PCI present lines got
-> to IO expander.
+> On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
 > 
-> I had to fix the driver at some places.
-> but I am not sure, if driver was written considering 9505 chip ?
-> in fact it declares 9505 as PCA953X_TYPE.
+> > > I don't know if it has been discussed in the past, so forgive me if it
+> > > has been. Have you considered adding a "int flags" argument to the
+> > > existing reset_control_get_*() functions, rather than introducing
+> > > separate exclusive variants ?
+> > > 
+> > > Indeed, with a "int flags" argument you could in the future add more
+> > > variants/behaviors without actually multiplying the number of
+> > > functions. Something like the "flags" argument for request_irq() for
+> > > example.  
+> > 
+> > I can't find the discussion right now, but I remember we had talked
+> > about this in the past.
+> > Behind the scenes, all the inline API functions already call common
+> > entry points with flags (well, currently separate bool parameters for
+> > shared and optional).
+> > One reason against exposing those as an int flags in the user facing API
+> > is the possibility to accidentally provide a wrong value.
 > 
-> some of the fixes which I have made are
-> 
-> 1) #define PCAL953X_INT_MASK       36  (it was 37 before)
-This looks to be for PCA_PCAL flaged devices only.
-The pca9505 is not one of these.
+> This is a quite strange argument. You could also accidentally use the
+> wrong variant of the function, just like you could use the wrong flag.
 
-The following address calcs are for the wrong chip type.
+You can't accidentally use no flag at all or a completely bogus value
+with the "plethora of inline functions" variant.
 
-> pca953x_write_regs_24  has very odd way of calculating register offset.
-> 
-> int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> i2c write to
-> reg << bank_shift
-> 
-> which was coming 37 << 3 as 0x128 and which is u8 data type.
-> will address 0x28 which is invalid locaiton.
-> 
-> 36 << 3 as 0x120, which will address 0x20 correctly.
-> although again thsi is odd way of deriving offset.
-> I am following datasheet:
-> http://www.nxp.com/docs/en/data-sheet/PCA9505_9506.pdf
-> 
-> 2) #define PCAL953X_IN_LATCH       34
-> above LATCH is not present.
-> 
-> 3) #define PCAL953X_INT_STAT       38
-> above also points to indirect locaiton.
-> 
-> please suggest if this diver was written with 9505 in mind ?
+> Once again, the next time you have another parameter for those reset
+> functions, beyond the exclusive/shared variant, you will multiply again
+> by two the number of functions ? You already have the  exclusive/shared
+> and optional/mandatory variants, so 4 variants. When you'll add a new
+> parameter, you'll have 8 variants. Doesn't seem really good.
 
-The driver looks fine for pca9505 without interrupt support.
-I think it needs modification to enable irq's for the 9505.
-Which would new define like
-#define PCA953X_MASK	4
+I'd rather avoid adding more variants, if possible. The complexity
+increases regardless of whether the API is expressed as a bunch of
+functions or as a single function with a bunch of flags.
 
-and some logic to set it pca953x_irq_bus_sync_unlock() I think.
+> What about reset_control_get(struct device *, const char *, int flags)
+> to replace all those variants ?
 
+While I like how this looks, unfortunately (devm_)reset_control_get
+already exists without the flags, so we can't change to that with a
+gentle transition.
 
-
--- 
-Regards
-Phil Reid
+regards
+Philipp
