@@ -1,50 +1,58 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] gpio: tegra: Use platform_get_irq()
-Date: Thu, 20 Jul 2017 18:00:57 +0200
-Message-ID: <20170720160057.13483-2-thierry.reding@gmail.com>
-References: <20170720160057.13483-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170720160057.13483-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH] pinctrl: bcm2835: Remove unneeded irq_group field
+Date: Thu, 20 Jul 2017 18:59:12 +0200
+Message-ID: <20170720165912.14360-1-thierry.reding@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37835 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755536AbdGTQ7Q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 12:59:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id m4so4250566wmi.4
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2017 09:59:15 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-Instead of using platform_get_resource() and getting the interrupts from
-the resource, use platform_get_irq() which is slightly easier to use and
-covers some special cases that the former doesn't.
+The irq_group field stores a 1:1 mapping. Use the loop variable to
+derive the values instead of storing them in an extra array.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpio-tegra.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index cdbff018a0f4..17725c83821f 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -640,15 +640,15 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 		return -ENODEV;
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index a605d74552b6..834d4862dd15 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -92,7 +92,6 @@ struct bcm2835_pinctrl {
+ 	struct gpio_chip gpio_chip;
+ 	struct pinctrl_gpio_range gpio_range;
  
- 	for (i = 0; i < tgi->bank_count; i++) {
--		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
--		if (!res) {
--			dev_err(&pdev->dev, "Missing IRQ resource\n");
--			return -ENODEV;
-+		ret = platform_get_irq(pdev, i);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "Missing IRQ resource: %d\n", ret);
-+			return ret;
+-	int irq_group[BCM2835_NUM_IRQS];
+ 	spinlock_t irq_lock[BCM2835_NUM_BANKS];
+ };
+ 
+@@ -400,7 +399,7 @@ static void bcm2835_gpio_irq_handler(struct irq_desc *desc)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(pc->irq); i++) {
+ 		if (pc->irq[i] == irq) {
+-			group = pc->irq_group[i];
++			group = i;
+ 			break;
  		}
- 
- 		bank = &tgi->bank_info[i];
- 		bank->bank = i;
--		bank->irq = res->start;
-+		bank->irq = ret;
- 		bank->tgi = tgi;
  	}
+@@ -1047,7 +1046,6 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
  
+ 	for (i = 0; i < BCM2835_NUM_IRQS; i++) {
+ 		pc->irq[i] = irq_of_parse_and_map(np, i);
+-		pc->irq_group[i] = i;
+ 
+ 		if (pc->irq[i] == 0)
+ 			continue;
 -- 
 2.13.3
+
