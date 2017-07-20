@@ -1,80 +1,87 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH 2/4] gpio: davinci: Handle the return value of
- davinci_gpio_irq_setup function
-Date: Thu, 20 Jul 2017 14:40:37 +0530
-Message-ID: <cc66dfaf-05c5-8d55-03a6-556ec83c4487@ti.com>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-3-git-send-email-j-keerthy@ti.com>
- <20170719111000.GX29638@localhost>
- <cbea9082-3799-281b-1364-50e442f5362f@ti.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Thu, 20 Jul 2017 11:24:24 +0200
+Message-ID: <1500542664.2354.27.camel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170720081157.GA11630@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:9642 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935612AbdGTJLL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 05:11:11 -0400
-In-Reply-To: <cbea9082-3799-281b-1364-50e442f5362f@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170720081157.GA11630@kroah.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/ath10k/>
+List-Post: <mailto:ath10k@lists.infradead.org>
+List-Help: <mailto:ath10k-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/ath10k>,
+ <mailto:ath10k-request@lists.infradead.org?subject=subscribe>
+Sender: "ath10k" <ath10k-bounces@lists.infradead.org>
+Errors-To: ath10k-bounces+gldad-ath10k=m.gmane.org@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@roeck-us.net>, Ohad Ben-Cohen <ohad@wizery.com>, linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Vincent Abriou <vincent.abriou@st.com>, Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, linux-kernel@
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: linus.walleij@linaro.org, ssantosh@kernel.org, devicetree@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org, fcooper@ti.com
 
+Hi Greg,
 
+The patches in this series are completely independent of each other, and
+I would like the subsystem maintainers to apply them at their own
+leisure.
+Well, except for the last one, which I will apply only after there are
+no more users of the transition helpers.
 
-On Thursday 20 July 2017 12:14 PM, Keerthy wrote:
+On Thu, 2017-07-20 at 10:11 +0200, Greg Kroah-Hartman wrote:
+> On Wed, Jul 19, 2017 at 05:25:04PM +0200, Philipp Zabel wrote:
+> > The reset control API has two modes: exclusive access, where the driver
+> > expects to have full and immediate control over the state of the reset
+> > line, and shared (clock-like) access, where drivers only request reset
+> > deassertion while active, but don't care about the state of the reset line
+> > while inactive.
+> > 
+> > Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+> > reset lines") started to transition the reset control request API calls
+> > to explicitly state whether the driver needs exclusive or shared reset
+> > control behavior.
+> > 
+> > This series converts all drivers that currently implicitly request
+> > exclusive reset controls to the corresponding explicit API call. It is,
+> > for the most part, generated from the following semantic patch:
 > 
-> 
-> On Wednesday 19 July 2017 04:40 PM, Johan Hovold wrote:
->> On Tue, Jul 18, 2017 at 04:27:14PM +0530, Keerthy wrote:
->>> Currently davinci_gpio_irq_setup return value is ignored. Handle the
->>> return value appropriately.
->>>
->>> Signed-off-by: Keerthy <j-keerthy@ti.com>
->>> ---
->>>  drivers/gpio/gpio-davinci.c | 18 +++++++++++++-----
->>>  1 file changed, 13 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->>> index 2c88054..932f270 100644
->>> --- a/drivers/gpio/gpio-davinci.c
->>> +++ b/drivers/gpio/gpio-davinci.c
->>> @@ -233,15 +233,23 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->>>  		chips->regs[bank] = gpio_base + offset_array[bank];
->>>  
->>>  	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
->>> +	if (ret)
->>> +		goto err;
->>> +
->>> +	platform_set_drvdata(pdev, chips);
->>> +	ret = davinci_gpio_irq_setup(pdev);
->>>  	if (ret) {
->>> -		ctrl_num = 0;
->>> -		bank_base = 0;
->>> -		return ret;
->>> +		platform_set_drvdata(pdev, NULL);
->>> +		goto err;
->>>  	}
->>>  
->>> -	platform_set_drvdata(pdev, chips);
->>> -	davinci_gpio_irq_setup(pdev);
->>>  	return 0;
->>
->> There's a separate but related bug here too as the clk_prepare_enable()
->> in davinci_gpio_irq_setup() is never balanced on driver unbind.
-> 
-> Yes Johan. I will send that as a separate patch.
+> Hey, I'm all for large api changes, but this really seems ackward, isn't
+> there a "better" way to do this?
 
-This is already fixed in the latest kernel:
+It is a bit awkward. I am sorry I haven't done this earlier. Quite a few
+new drivers started using the old API after the explicit requests were
+introduced last year.
 
-commit 6dc0048cff988858254fcc26becfc1e9753efa79
-Author: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Date:   Tue May 23 14:48:57 2017 +0530
+> Why not, as you say the "implicit" request is exclusive, just leave
+> everything alone and state that the "reset_control_get()" call is
+> exclusive 
 
-Regards,
-Keerthy
+I think it is better to let the drivers explicitly state what they
+expect from the API, and using reset_control_get_exclusive vs _shared
+helps driver developers to make a conscious decision.
+
+Further, the implicit API call predates shared reset support, so it is
+not clear that all of the old users really need exclusive control.
+A few drivers have been switched to the shared API already.
+
+> and make the shared one the "odd" usage as that seems to not
+> be the normal case.
+
+I am not sure, there have been people arguing that the "clock-like" case
+really is the common one. I suppose some of those drivers touched by the
+100 patches in this series could also be changed to shared. But I don't
+dare to make this decision for each of them.
+
+> That should be a much smaller patch right?
 > 
->>
->> Johan
->>
+> That way you don't break everything here, and require 100+ patches to
+> just change the name of a function from one to another and do nothing
+> else.
+
+I don't break anything here, and I'm absolutely fine with squashing
+patches together per subsystem where that is preferable.
+
+regards
+Philipp
