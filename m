@@ -1,57 +1,77 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Thu, 20 Jul 2017 10:11:57 +0200
-Message-ID: <20170720081157.GA11630@kroah.com>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v1 1/3] mfd: Add new mfd device TPS68470
+Date: Thu, 20 Jul 2017 09:15:34 +0100
+Message-ID: <20170720081534.jy3ajvtgm45u4bic@dell>
+References: <1496750118-5570-1-git-send-email-rajmohan.mani@intel.com>
+ <1496750118-5570-2-git-send-email-rajmohan.mani@intel.com>
+ <CAHp75VfiTM2t=WxWpG4+kUfGA3DrfGfMOwxP6Cs42nGwHjAp7w@mail.gmail.com>
+ <20170607115827.GY1019@valkosipuli.retiisi.org.uk>
+ <6F87890CF0F5204F892DEA1EF0D77A59725BECB0@FMSMSX114.amr.corp.intel.com>
+ <20170612082038.x6z3rx2bknxmfyfp@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725BF469@FMSMSX114.amr.corp.intel.com>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DCCC2@FMSMSX114.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170719152646.25903-1-p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel@
+In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725DCCC2@FMSMSX114.amr.corp.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Cc: 'Sakari Ailus' <sakari.ailus@iki.fi>, 'Andy Shevchenko' <andy.shevchenko@gmail.com>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'linux-gpio@vger.kernel.org'" <linux-gpio@vger.kernel.org>, "'linux-acpi@vger.kernel.org'" <linux-acpi@vger.kernel.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Alexandre Courbot' <gnurou@gmail.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Len Brown' <lenb@kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 05:25:04PM +0200, Philipp Zabel wrote:
-> The reset control API has two modes: exclusive access, where the driver
-> expects to have full and immediate control over the state of the reset
-> line, and shared (clock-like) access, where drivers only request reset
-> deassertion while active, but don't care about the state of the reset line
-> while inactive.
+On Wed, 19 Jul 2017, Mani, Rajmohan wrote:
+
+> Hi Lee,
 > 
-> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-> reset lines") started to transition the reset control request API calls
-> to explicitly state whether the driver needs exclusive or shared reset
-> control behavior.
+> > > On Fri, 09 Jun 2017, Mani, Rajmohan wrote:
+> > >
+> > > > Hi Andy,
+> > > >
+> > > > > On Tue, Jun 06, 2017 at 03:59:49PM +0300, Andy Shevchenko wrote:
+> > > > > > On Tue, Jun 6, 2017 at 2:55 PM, Rajmohan Mani
+> > > > > <rajmohan.mani@intel.com> wrote:
+> > > > > > > The TPS68470 device is an advanced power management unit that
+> > > > > > > powers a Compact Camera Module (CCM), generates clocks for
+> > > > > > > image sensors, drives a dual LED for Flash and incorporates
+> > > > > > > two LED drivers for general purpose indicators.
+> > > > > > >
+> > > > > > > This patch adds support for TPS68470 mfd device.
+> > > > > >
+> > > > > > I dunno why you decide to send this out now, see my comments
+> > below.
+> > > > > >
+> > > > > > > +static int tps68470_chip_init(struct tps68470 *tps) {
+> > > > > > > +       unsigned int version;
+> > > > > > > +       int ret;
+> > > > > >
+> > > > > > > +       /* FIXME: configure these dynamically */
+> > > > > >
+> > > > > > So, what prevents you to fix this?
+> > > > >
+> > > > > Nothing I suppose. They're however not needed right now and can be
+> > > > > implemented later on if they're ever needed.
+> > > > >
+> > > >
+> > > > Ack
+> > >
+> > > What does this mean?  Is the plan to fix it or not?  I don't want
+> > > FIXMEs in the code that a) can be fixed right away or b) might never be
+> > fixed.
+> > >
+> > 
+> > I meant that this can be implemented later on, if there's a need.
+> > I will look into this and see how this can be fixed.
+> > 
 > 
-> This series converts all drivers that currently implicitly request
-> exclusive reset controls to the corresponding explicit API call. It is,
-> for the most part, generated from the following semantic patch:
+> Thanks for your patience.
+> This is fixed with v4 of this series.
 
-Hey, I'm all for large api changes, but this really seems ackward, isn't
-there a "better" way to do this?
+Great, thanks.
 
-Why not, as you say the "implicit" request is exclusive, just leave
-everything alone and state that the "reset_control_get()" call is
-exclusive and make the shared one the "odd" usage as that seems to not
-be the normal case.
-
-That should be a much smaller patch right?
-
-That way you don't break everything here, and require 100+ patches to
-just change the name of a function from one to another and do nothing
-else.
-
-thanks,
-
-greg k-h
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
