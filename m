@@ -1,53 +1,54 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/4] gpio: davinci: Handle the return value of
- davinci_gpio_irq_setup function
-Date: Thu, 20 Jul 2017 12:05:09 +0200
-Message-ID: <20170720100509.GB2729@localhost>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-3-git-send-email-j-keerthy@ti.com>
- <20170719111000.GX29638@localhost>
- <cbea9082-3799-281b-1364-50e442f5362f@ti.com>
- <cc66dfaf-05c5-8d55-03a6-556ec83c4487@ti.com>
- <20170720095047.GA2729@localhost>
- <47055927-5102-b39f-fdbb-b5d89cb14632@ti.com>
+From: Oza Oza <oza.oza@broadcom.com>
+Subject: [RFC] drivers/gpio/gpio-pca953x.c broken for PCA9505 ?
+Date: Thu, 20 Jul 2017 15:37:10 +0530
+Message-ID: <CAMSpPPdvrPfhSEMnzSntaUxt+VUhshYduE0EKvobeh_T1b7a1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <47055927-5102-b39f-fdbb-b5d89cb14632-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f50.google.com ([74.125.83.50]:38660 "EHLO
+        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933887AbdGTKHK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 06:07:10 -0400
+Received: by mail-pg0-f50.google.com with SMTP id s4so12715637pgr.5
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Jul 2017 03:07:10 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 03:32:27PM +0530, Keerthy wrote:
-> On Thursday 20 July 2017 03:20 PM, Johan Hovold wrote:
-> > On Thu, Jul 20, 2017 at 02:40:37PM +0530, Keerthy wrote:
-> >> On Thursday 20 July 2017 12:14 PM, Keerthy wrote:
-> >>> On Wednesday 19 July 2017 04:40 PM, Johan Hovold wrote:
+Hi,
 
-> >>>> There's a separate but related bug here too as the clk_prepare_enable()
-> >>>> in davinci_gpio_irq_setup() is never balanced on driver unbind.
-> >>>
-> >>> Yes Johan. I will send that as a separate patch.
-> >>
-> >> This is already fixed in the latest kernel:
-> >>
-> >> commit 6dc0048cff988858254fcc26becfc1e9753efa79
-> >> Author: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> Date:   Tue May 23 14:48:57 2017 +0530
-> > 
-> > That change only handles errors in davinci_gpio_irq_setup() (i.e. during
-> > probe) and not the imbalance at driver unbind that I was referring to.
-> 
-> Okay got it. One more clk_unprepare_disable() call needs to be there in
-> probe err path.
+Our SOC has PCA9505 IO expander,
+Basically I was implementing PCI hotplug, e.g. PCI present lines got
+to IO expander.
 
-No, you need to balance it on driver unbind, that is, in a new remove()
-callback.
+I had to fix the driver at some places.
+but I am not sure, if driver was written considering 9505 chip ?
+in fact it declares 9505 as PCA953X_TYPE.
 
-Johan
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+some of the fixes which I have made are
+
+1) #define PCAL953X_INT_MASK       36  (it was 37 before)
+pca953x_write_regs_24  has very odd way of calculating register offset.
+
+int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+i2c write to
+reg << bank_shift
+
+which was coming 37 << 3 as 0x128 and which is u8 data type.
+will address 0x28 which is invalid locaiton.
+
+36 << 3 as 0x120, which will address 0x20 correctly.
+although again thsi is odd way of deriving offset.
+I am following datasheet:
+http://www.nxp.com/docs/en/data-sheet/PCA9505_9506.pdf
+
+2) #define PCAL953X_IN_LATCH       34
+above LATCH is not present.
+
+3) #define PCAL953X_INT_STAT       38
+above also points to indirect locaiton.
+
+please suggest if this diver was written with 9505 in mind ?
+
+Regards,
+Oza.
