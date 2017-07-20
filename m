@@ -1,42 +1,45 @@
 From: Keerthy <j-keerthy@ti.com>
-Subject: [PATCH v2 3/3] gpio: davinci: Convert prinkt to dev_err
-Date: Thu, 20 Jul 2017 15:12:18 +0530
-Message-ID: <1500543738-9696-4-git-send-email-j-keerthy@ti.com>
+Subject: [PATCH v2 2/3] gpio: davinci: Handle the return value of davinci_gpio_irq_setup function
+Date: Thu, 20 Jul 2017 15:12:17 +0530
+Message-ID: <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
 References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:25601 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933027AbdGTJnP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 05:43:15 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:56411 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964987AbdGTJnh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 05:43:37 -0400
 In-Reply-To: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linus.walleij@linaro.org
 Cc: t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, s-anna@ti.com, nsekhar@ti.com, j-keerthy@ti.com
 
-In case of devm_clk_get failure use dev_err instead of printk
+Currently davinci_gpio_irq_setup return value is ignored. Handle the
+return value appropriately.
 
 Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
- drivers/gpio/gpio-davinci.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpio/gpio-davinci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index d6fb1ce..f75d844 100644
+index 27499ec..d6fb1ce 100644
 --- a/drivers/gpio/gpio-davinci.c
 +++ b/drivers/gpio/gpio-davinci.c
-@@ -490,8 +490,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+@@ -237,7 +237,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 		goto err;
  
- 	clk = devm_clk_get(dev, "gpio");
- 	if (IS_ERR(clk)) {
--		printk(KERN_ERR "Error %ld getting gpio clock?\n",
--		       PTR_ERR(clk));
-+		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
- 		return PTR_ERR(clk);
- 	}
- 	ret = clk_prepare_enable(clk);
+ 	platform_set_drvdata(pdev, chips);
+-	davinci_gpio_irq_setup(pdev);
++	ret = davinci_gpio_irq_setup(pdev);
++	if (ret)
++		goto err;
++
+ 	return 0;
+ 
+ err:
 -- 
 1.9.1
 
