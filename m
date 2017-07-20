@@ -1,71 +1,75 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Thu, 20 Jul 2017 11:36:55 +0200
-Message-ID: <1500543415.2354.37.camel@pengutronix.de>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
-         <20170719211515.46a1196c@windsurf>
+From: Keerthy <j-keerthy@ti.com>
+Subject: [PATCH v2 1/3] gpio: davinci: Use devm_gpiochip_add_data in place of
+ gpiochip_add_data
+Date: Thu, 20 Jul 2017 15:12:16 +0530
+Message-ID: <1500543738-9696-2-git-send-email-j-keerthy@ti.com>
+References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <20170719211515.46a1196c@windsurf>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@roeck-us.net>, Ohad Ben-Cohen <ohad@wizery.com>, linux-pm@vger.kernel.org, Thomas Gleixner <tglx>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linus.walleij@linaro.org
+Cc: j-keerthy@ti.com, nsekhar@ti.com, t-kristo@ti.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, fcooper@ti.com
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Thomas,
+Use the devm version of gpiochip_add_data and pass on the
+return value. This avoids memory leak due to gpiochip_add_data
+in case the driver is unbound.
 
-On Wed, 2017-07-19 at 21:15 +0200, Thomas Petazzoni wrote:
-> Hello,
-> 
-> On Wed, 19 Jul 2017 17:25:04 +0200, Philipp Zabel wrote:
-> > The reset control API has two modes: exclusive access, where the driver
-> > expects to have full and immediate control over the state of the reset
-> > line, and shared (clock-like) access, where drivers only request reset
-> > deassertion while active, but don't care about the state of the reset line
-> > while inactive.
-> > 
-> > Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
-> > reset lines") started to transition the reset control request API calls
-> > to explicitly state whether the driver needs exclusive or shared reset
-> > control behavior.
-> > 
-> > This series converts all drivers that currently implicitly request
-> > exclusive reset controls to the corresponding explicit API call. It is,
-> > for the most part, generated from the following semantic patch:
-> > 
-> > @@
-> > expression rstc, dev, id;
-> > @@
-> > -rstc = reset_control_get(dev, id);
-> > +rstc = reset_control_get_exclusive(dev, id);
-> 
-> I don't know if it has been discussed in the past, so forgive me if it
-> has been. Have you considered adding a "int flags" argument to the
-> existing reset_control_get_*() functions, rather than introducing
-> separate exclusive variants ?
-> 
-> Indeed, with a "int flags" argument you could in the future add more
-> variants/behaviors without actually multiplying the number of
-> functions. Something like the "flags" argument for request_irq() for
-> example.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-I can't find the discussion right now, but I remember we had talked
-about this in the past.
-Behind the scenes, all the inline API functions already call common
-entry points with flags (well, currently separate bool parameters for
-shared and optional).
-One reason against exposing those as an int flags in the user facing API
-is the possibility to accidentally provide a wrong value.
+Changes in v2:
 
-regards
-Philipp
+  * Restoring the previous values of ctrl_num and bank_base in case of an error.
+
+ drivers/gpio/gpio-davinci.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 65cb359..27499ec 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -166,7 +166,7 @@ static int davinci_gpio_get(struct gpio_chip *chip, unsigned offset)
+ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	static int ctrl_num, bank_base;
+-	int gpio, bank;
++	int gpio, bank, ret = 0;
+ 	unsigned ngpio, nbank;
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+@@ -232,10 +232,20 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	for (gpio = 0, bank = 0; gpio < ngpio; gpio += 32, bank++)
+ 		chips->regs[bank] = gpio_base + offset_array[bank];
+ 
+-	gpiochip_add_data(&chips->chip, chips);
++	ret = devm_gpiochip_add_data(dev, &chips->chip, chips);
++	if (ret)
++		goto err;
++
+ 	platform_set_drvdata(pdev, chips);
+ 	davinci_gpio_irq_setup(pdev);
+ 	return 0;
++
++err:
++	/* Revert the static variable increments */
++	ctrl_num--;
++	bank_base -= ngpio;
++
++	return ret;
+ }
+ 
+ /*--------------------------------------------------------------------------*/
+-- 
+1.9.1
