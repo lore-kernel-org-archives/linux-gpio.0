@@ -1,66 +1,74 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Thu, 20 Jul 2017 12:36:40 +0200
-Message-ID: <20170720123640.43c2ce01@windsurf>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719211515.46a1196c@windsurf>
- <1500543415.2354.37.camel@pengutronix.de>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [RFC] drivers/gpio/gpio-pca953x.c broken for PCA9505 ?
+Date: Thu, 20 Jul 2017 20:46:30 +0800
+Message-ID: <31ff335a-5ca4-4893-543f-16a7be743230@electromag.com.au>
+References: <CAMSpPPdvrPfhSEMnzSntaUxt+VUhshYduE0EKvobeh_T1b7a1Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1500543415.2354.37.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from anchovy1.45ru.net.au ([203.30.46.145]:60356 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933994AbdGTMqf (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 20 Jul 2017 08:46:35 -0400
+In-Reply-To: <CAMSpPPdvrPfhSEMnzSntaUxt+VUhshYduE0EKvobeh_T1b7a1Q@mail.gmail.com>
+Content-Language: en-AU
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Oza Oza <oza.oza@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org
 
-Hello,
+G'day Oza,
 
-On Thu, 20 Jul 2017 11:36:55 +0200, Philipp Zabel wrote:
-
-> > I don't know if it has been discussed in the past, so forgive me if it
-> > has been. Have you considered adding a "int flags" argument to the
-> > existing reset_control_get_*() functions, rather than introducing
-> > separate exclusive variants ?
-> > 
-> > Indeed, with a "int flags" argument you could in the future add more
-> > variants/behaviors without actually multiplying the number of
-> > functions. Something like the "flags" argument for request_irq() for
-> > example.  
+On 20/07/2017 18:07, Oza Oza wrote:
+> Hi,
 > 
-> I can't find the discussion right now, but I remember we had talked
-> about this in the past.
-> Behind the scenes, all the inline API functions already call common
-> entry points with flags (well, currently separate bool parameters for
-> shared and optional).
-> One reason against exposing those as an int flags in the user facing API
-> is the possibility to accidentally provide a wrong value.
+> Our SOC has PCA9505 IO expander,
+> Basically I was implementing PCI hotplug, e.g. PCI present lines got
+> to IO expander.
+> 
+> I had to fix the driver at some places.
+> but I am not sure, if driver was written considering 9505 chip ?
+> in fact it declares 9505 as PCA953X_TYPE.
+> 
+> some of the fixes which I have made are
+> 
+> 1) #define PCAL953X_INT_MASK       36  (it was 37 before)
+This looks to be for PCA_PCAL flaged devices only.
+The pca9505 is not one of these.
 
-This is a quite strange argument. You could also accidentally use the
-wrong variant of the function, just like you could use the wrong flag.
+The following address calcs are for the wrong chip type.
 
-Once again, the next time you have another parameter for those reset
-functions, beyond the exclusive/shared variant, you will multiply again
-by two the number of functions ? You already have the  exclusive/shared
-and optional/mandatory variants, so 4 variants. When you'll add a new
-parameter, you'll have 8 variants. Doesn't seem really good.
+> pca953x_write_regs_24  has very odd way of calculating register offset.
+> 
+> int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> i2c write to
+> reg << bank_shift
+> 
+> which was coming 37 << 3 as 0x128 and which is u8 data type.
+> will address 0x28 which is invalid locaiton.
+> 
+> 36 << 3 as 0x120, which will address 0x20 correctly.
+> although again thsi is odd way of deriving offset.
+> I am following datasheet:
+> http://www.nxp.com/docs/en/data-sheet/PCA9505_9506.pdf
+> 
+> 2) #define PCAL953X_IN_LATCH       34
+> above LATCH is not present.
+> 
+> 3) #define PCAL953X_INT_STAT       38
+> above also points to indirect locaiton.
+> 
+> please suggest if this diver was written with 9505 in mind ?
 
-What about reset_control_get(struct device *, const char *, int flags)
-to replace all those variants ?
+The driver looks fine for pca9505 without interrupt support.
+I think it needs modification to enable irq's for the 9505.
+Which would new define like
+#define PCA953X_MASK	4
 
-Best regards,
+and some logic to set it pca953x_irq_bus_sync_unlock() I think.
 
-Thomas
+
+
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Regards
+Phil Reid
