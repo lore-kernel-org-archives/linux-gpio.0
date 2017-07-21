@@ -1,92 +1,93 @@
-From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/4] gpio: davinci: Handle the return value of
- davinci_gpio_irq_setup function
-Date: Fri, 21 Jul 2017 09:46:01 +0200
-Message-ID: <20170721074601.GC2729@localhost>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-3-git-send-email-j-keerthy@ti.com>
- <20170719111000.GX29638@localhost>
- <cbea9082-3799-281b-1364-50e442f5362f@ti.com>
- <cc66dfaf-05c5-8d55-03a6-556ec83c4487@ti.com>
- <20170720095047.GA2729@localhost>
- <47055927-5102-b39f-fdbb-b5d89cb14632@ti.com>
- <20170720100509.GB2729@localhost>
- <02965359-ecf1-b934-6b7a-87162d7d00a4@ti.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v6 08/12] gpio: Add GPIO driver for the RK805 PMIC
+Date: Fri, 21 Jul 2017 10:12:45 +0200
+Message-ID: <1879271.veJUKjWuAS@phil>
+References: <1496905959-29202-1-git-send-email-chenjh@rock-chips.com> <1617153.S9fhFArdpW@diego> <67c2e8bb-dadd-faa3-dcd0-0f325b3cbfce@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <02965359-ecf1-b934-6b7a-87162d7d00a4-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <67c2e8bb-dadd-faa3-dcd0-0f325b3cbfce@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jianhong Chen <chenjh@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Tao Huang <huangtao@rock-chips.com>, Alexandre Courbot <gnurou@gmail.com>, zhangqing@rock-chips.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, tony.xie@rock-chips.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, w.egorov@phytec.de
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 04:34:42PM -0500, Grygorii Strashko wrote:
+Am Freitag, 21. Juli 2017, 10:00:29 CEST schrieb Jianhong Chen:
 > 
+> 在 2017/6/29 18:29, Heiko Stübner 写道:
 > 
-> On 07/20/2017 05:05 AM, Johan Hovold wrote:
-> > On Thu, Jul 20, 2017 at 03:32:27PM +0530, Keerthy wrote:
-> >> On Thursday 20 July 2017 03:20 PM, Johan Hovold wrote:
-> >>> On Thu, Jul 20, 2017 at 02:40:37PM +0530, Keerthy wrote:
-> >>>> On Thursday 20 July 2017 12:14 PM, Keerthy wrote:
-> >>>>> On Wednesday 19 July 2017 04:40 PM, Johan Hovold wrote:
-> > 
-> >>>>>> There's a separate but related bug here too as the clk_prepare_enable()
-> >>>>>> in davinci_gpio_irq_setup() is never balanced on driver unbind.
-> >>>>>
-> >>>>> Yes Johan. I will send that as a separate patch.
+> > Hi,
+> >
+> > Am Mittwoch, 14. Juni 2017, 20:11:06 CEST schrieb Jianhong Chen:
+> >> 在 2017/6/9 20:17, Heiko Stuebner 写道:
+> >>> Am Freitag, 9. Juni 2017, 13:37:26 CEST schrieb Linus Walleij:
+> >>>> Heiko, can you please look at this patch.
 > >>>>
-> >>>> This is already fixed in the latest kernel:
-> >>>>
-> >>>> commit 6dc0048cff988858254fcc26becfc1e9753efa79
-> >>>> Author: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >>>> Date:   Tue May 23 14:48:57 2017 +0530
+> >>>> On Thu, Jun 8, 2017 at 9:30 AM, Jianhong Chen <chenjh@rock-chips.com>
+> > wrote:
+> >>>>> From: chenjh <chenjh@rock-chips.com>
+> >>>> Full name please.
+> >>> git config --global user.name "John Doe"
 > >>>
-> >>> That change only handles errors in davinci_gpio_irq_setup() (i.e. during
-> >>> probe) and not the imbalance at driver unbind that I was referring to.
-> >>
-> >> Okay got it. One more clk_unprepare_disable() call needs to be there in
-> >> probe err path.
-> > 
-> > No, you need to balance it on driver unbind, that is, in a new remove()
-> > callback.
-> > 
+> >>> might do the and make this permanent for all your commits :-)
+> >>>
+> >>>>> RK805 has two configurable GPIOs that can be used for several
+> >>>>> purposes. These are output only.
+> >>>>>
+> >>>>> This driver is generic for other Rockchip PMICs to be added.
+> >>>>>
+> >>>>> Signed-off-by: chenjh <chenjh@rock-chips.com>
+> >>>> Dito.
+> >>>>
+> >>>> Your commit message says they are output-only, yet you implement
+> >>>> .direction_input(). So what is is going to be?
+> >>> So far, I've only seen the rk808 and rk818. Both do not have any
+> >>> configurable pins.
+> >>>
+> >>> The rk805 which is a sort of variant of the above, does have the two
+> >>> pins defined below, but in the manual I could also only find them as
+> >>> output-only and having no other function than being output-pins.
+> >>>
+> >>> So I don't really know if all the input- or "gpio-mode"- handling is only
+> >>> an oversight (copy'n'paste) or if there are yet other rk808 variants
+> >>> around
+> >>> that can actually be configured as inputs or even non-gpio modes?
+> >>>
+> >>> I hope Jianhong will be able to answer that.
+> >>>
+> >>>
+> >>> Heiko
+> >> This driver is not only for rk805, but also intend for rk816 and furtrue
+> >> PMICs.
+> >> The rk816 has one multi function pin(TS/GPIO), when setting as gpio, it
+> >> can be configured as output or input.
+> >> Here is simple description from manual: "Thermistor input. Connect a
+> >> thermistor from this pin to ground. The thermistor is usually inside the
+> >> battery pack. (multi-function for GPIO) ".
+> > As Linus suggested, this sounds like you want a pinctrl driver that
+> > also handles the gpios.
+> >
+> > Ideally you might also directly provide support for this rk816 in the
+> > same patch series, so reviewers can see the full extend of what is
+> > supported.
+> >
+> >
+> > Heiko
+> >
 > 
-> Sry, but manual driver unbind for this driver is really smth unexpected ;(
+> Hi, Heiko:
+> 
+>       I have moved gpio-rk805.c to drivers/pinctrl/pinctrl-rk805.c, this 
+> driver is also designed for rk816 or furture PMICs to extend.
+>       RK816 is not in our team's plan at this porting, it will be added 
+> at next time, so I don't directly provide rk816 in this driver. I will 
+> add more descriptions in commit message to express my design purpose.
+> 
+>       Are you agreed ?  If so, I will send [PATCH v7] today.
 
-It certainly wouldn't be something often used (e.g. besides during
-development) but that doesn't mean it should not be implemented.
+yep, sounds good. But we will of course see more, once you have sent
+the patches :-) .
 
-> So, I'm not sure if it need to be implemented and even yes - it should not be
-> a part of this patch.
 
-That's why I said "separate, but related" above.
-
-> Probably, smth like "convert driver to be a module".
->
-> By the way, I've tried to unbind gpio-omap, result - failure (expected),
-> as unbind does not take into account module refcnt state.
-
-Indeed. We also have CONFIG_DEBUG_TEST_DRIVER_REMOVE which would try to
-unbind this driver during probe if enabled.
-
-Getting into the habit of properly cleaning up allocated and enabled
-resources is only a good thing; it shows that the author has thought
-this through and serves as documentation of what needs to be released in
-both probe error paths and driver unbind callbacks.
-
-Assumptions also change over time (e.g. deferred probe and
-CONFIG_DEBUG_TEST_DRIVER_REMOVE), and by not taking such shortcuts we
-are also preventing incomplete code from being copied and reproduced in
-other drivers (e.g. on hotpluggable buses).
-
-So, just add the remove callback (in a separate patch) and everything is
-good.
-
-Thanks,
-Johan
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Heiko
