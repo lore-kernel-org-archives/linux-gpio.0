@@ -1,115 +1,107 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs dynamically
-Date: Fri, 21 Jul 2017 11:49:00 -0500
-Message-ID: <20170721164900.7070-1-grygorii.strashko@ti.com>
+From: Jonathan Bennett <jbennett@cipherdyne.com>
+Subject: GPIO Char device and tools/gpio/gpio-utils.c
+Date: Fri, 21 Jul 2017 12:26:01 -0500
+Message-ID: <546696b7-4be8-ef79-6436-d9eb0a41db52@cipherdyne.com>
+References: <aa21e9a8-345d-b9db-e39c-e62d910794cc@cipherdyne.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="A4SuVefdTNDshKMvMXJL7kvJxaHIi52iF"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.cipherdyne.com ([216.58.159.84]:58612 "EHLO
+        mail.cipherdyne.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752780AbdGURfg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 21 Jul 2017 13:35:36 -0400
+Received: from [10.0.1.241] (199-47-118-71.fidnet.com [199.47.118.71])
+        by mail.cipherdyne.com (Postfix) with ESMTPSA id 2B98F80AC33D
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Jul 2017 12:26:07 -0500 (CDT)
+In-Reply-To: <aa21e9a8-345d-b9db-e39c-e62d910794cc@cipherdyne.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-Now IRQ mappings are always created for all (allowed) GPIOs in gpiochip in
-gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ and,
-as result, leads to:
- - increasing of memory consumption for IRQ descriptors most of which will
-never ever be used (espessially on platform with a high number of GPIOs).
-(sizeof(struct irq_desc) == 256 on my tested platforms)
- - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
-GPIO IRQ functionality as IRQ crossbar/router which has only limited
-number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
-IRQs).
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--A4SuVefdTNDshKMvMXJL7kvJxaHIi52iF
+Content-Type: multipart/mixed; boundary="TOHwMGTlKgfFDdVo00a6v3bI8XVrfmXgo";
+ protected-headers="v1"
+From: Jonathan Bennett <jbennett@cipherdyne.com>
+To: linux-gpio@vger.kernel.org
+Message-ID: <546696b7-4be8-ef79-6436-d9eb0a41db52@cipherdyne.com>
+Subject: GPIO Char device and tools/gpio/gpio-utils.c
+References: <aa21e9a8-345d-b9db-e39c-e62d910794cc@cipherdyne.com>
+In-Reply-To: <aa21e9a8-345d-b9db-e39c-e62d910794cc@cipherdyne.com>
 
-Hence, remove static IRQ mapping code from gpiochip_irqchip_add_key() and
-instead replace irq_find_mapping() with irq_create_mapping() in
-gpiochip_to_irq(). Also add additional gpiochip_irqchip_irq_valid() calls
-in gpiochip_to_irq() and gpiochip_irq_map().
+--TOHwMGTlKgfFDdVo00a6v3bI8XVrfmXgo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-After this change gpio2irq mapping will happen the following way when GPIO
-irqchip APIs are used by gpio driver:
- - IRQ mappings will be created statically if driver passes first_irq>0
-vlaue in gpiochip_irqchip_add_key().
- - IRQ mappings will be created dynamically from gpio_to_irq() or
-of_irq_get().
+Hey guys, I've hit an odd issue in the gpio-utils.c library, and possibly=
+ the new GPIO chardev interface.  This might be a problem with the specif=
+ic platform I'm using, or it's always possible I'm just misunderstanding =
+how the chardev interface is intended to work.  Sorry for the noise on th=
+is list, but I wasn't sure where else to ask.
 
-Tested on am335x-evm and dra72-evm-revc.
-- dra72-evm-revc: number of created irq mappings decreased from 402 -> 135
-  Mem savings 267*256 = 68352 (66kB)
-- am335x-evm: number of created irq mappings decreased from 188 -> 63
-  Mem savings 125*256 = 32000 (31kB)
 
-[1] https://lkml.org/lkml/2017/6/15/428
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
-Changes in v2:
-- restored struct gpio_chip->irq_base to fix buld of gpio-mockup.c
-Link on v1:
-- https://patchwork.kernel.org/patch/9831565/
+First off, I'm running Fedora 26 on a Raspberry Pi 2.  Kernel version is =
+4.11.10-300.fc26.armv7hl. This is Fedora's nearly vanilla kernel, not the=
+ custom Pi kernel.  This kernel is new enough to have the GPIO chardev in=
+terface.  I've started by playing with the tools from the kernel tree, gp=
+io-hammer and lsgpio.  These seemed to work as expected, until I dug a bi=
+t further, and started to find the issue that prompted this email.
 
- drivers/gpio/gpiolib.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 9568708..ee6ba07 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1605,6 +1605,9 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- {
- 	struct gpio_chip *chip = d->host_data;
- 
-+	if (!gpiochip_irqchip_irq_valid(chip, hwirq))
-+		return -ENXIO;
-+
- 	irq_set_chip_data(irq, chip);
- 	/*
- 	 * This lock class tells lockdep that GPIO irqs are in a different
-@@ -1671,7 +1674,9 @@ static void gpiochip_irq_relres(struct irq_data *d)
- 
- static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
- {
--	return irq_find_mapping(chip->irqdomain, offset);
-+	if (!gpiochip_irqchip_irq_valid(chip, offset))
-+		return -ENXIO;
-+	return irq_create_mapping(chip->irqdomain, offset);
- }
- 
- /**
-@@ -1747,9 +1752,6 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 			     struct lock_class_key *lock_key)
- {
- 	struct device_node *of_node;
--	bool irq_base_set = false;
--	unsigned int offset;
--	unsigned irq_base = 0;
- 
- 	if (!gpiochip || !irqchip)
- 		return -EINVAL;
-@@ -1806,25 +1808,6 @@ int gpiochip_irqchip_add_key(struct gpio_chip *gpiochip,
- 		irqchip->irq_release_resources = gpiochip_irq_relres;
- 	}
- 
--	/*
--	 * Prepare the mapping since the irqchip shall be orthogonal to
--	 * any gpiochip calls. If the first_irq was zero, this is
--	 * necessary to allocate descriptors for all IRQs.
--	 */
--	for (offset = 0; offset < gpiochip->ngpio; offset++) {
--		if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
--			continue;
--		irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
--		if (!irq_base_set) {
--			/*
--			 * Store the base into the gpiochip to be used when
--			 * unmapping the irqs.
--			 */
--			gpiochip->irq_base = irq_base;
--			irq_base_set = true;
--		}
--	}
--
- 	acpi_gpiochip_request_interrupts(gpiochip);
- 
- 	return 0;
--- 
-2.10.1
+The GPIO pin I'm testing default to high.  When running gpio-hammer with =
+a count of 1 (-c 1), the GPIO flips off, and then back on.  Looking at th=
+e source of gpio-hammer, this seems odd.  I would expect that the GPIO va=
+lue should flip from on to off, and remain off, rather than reset back to=
+ default.
+
+
+Looking at the functions in the gpio-utils lib confirms that something is=
+ broken.  The gpiotools_set function acts the same way, briefly flipping =
+the GPIO pin to off, and then the pin falls back to its default.  It seem=
+s that as soon as the /dev/gpiochip0 file descriptor is closed, all the G=
+PIO lines are reverting to their defaults.  The code in gpiotools_set see=
+ms to strongly indicate this is unintentional.
+
+
+So to use GPIO pins through the chardev interface, one has to hold on to =
+the file descriptor to keep the pins from reverting to their initial stat=
+e.  Is this a bug, or intended behavior? =20
+
+
+Thanks!
+
+Jonathan Bennett
+
+
+
+
+
+--TOHwMGTlKgfFDdVo00a6v3bI8XVrfmXgo--
+
+--A4SuVefdTNDshKMvMXJL7kvJxaHIi52iF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJZcjkqAAoJEGOEl5zMghbaXQUP/i673aPzXq6FdkNPNGD+j9ZW
+gKyWz+1PMjwhqNPOdAz0FfWMwpUyf6cloZ0ssbWrm0So3sQrn9SpVDdOQ7MKAAsc
+kQIk4UlFe9pRFkT/KOiz5Mroan3d42MvuDhs8K3lKqNACqvQOw7VXWKYRzPhWV0n
+FfCRz5KPp+fPqYm9hVpVeF3uLAsrhj53IyC2bUtMXXPNo/Tg6TELGAVqCGiY4owM
+QE0Dau1VUdC5w6jjuVxaWwB3xdkPC1cAjEuEPE+/mLHLgsUxtVGKwoQsDRgyHYhh
+4DyYULQCi+FYHJJspAjR4ufy6nHrsplndZTh6vCBld8uE5zawsJKBJcDPBKKuIuv
+yJpPSBxSWOqd4gjIU5VRxnrxOkOhhfCC/6hLN8u5XHD0ut2aGxvb2t/MfLjnhY/h
+uKcLxDE2fOzK5//8WTfcLz1/CeGYmMm1ZXD//wGp8++IaTXEhMMgmiJ6yPnnm7eU
+9wDjmLeex0BHG7ICbWtf5DH3aI89GE6qYVAl5l8luV615RtkSiST8ckGGzCPGmDH
+28fa+agOx21WHtCnW5AtadSPvubz5opCpSKs03aXsTNo5OxW3+gBparVxjh414WC
+WMPL/L3cwdP/HLCy2iLwM2zFofg9j2qU6QraOUXhYOei2MyC5EbPXsFyVnVJLuiA
+MFXp8XZIqbtyOo++r5nv
+=CbUG
+-----END PGP SIGNATURE-----
+
+--A4SuVefdTNDshKMvMXJL7kvJxaHIi52iF--
