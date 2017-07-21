@@ -1,232 +1,92 @@
-From: David Wu <david.wu@rock-chips.com>
-Subject: [PATCH 2/2] pinctrl: rockchip: Add rk3128 pinctrl support
-Date: Fri, 21 Jul 2017 14:27:15 +0800
-Message-ID: <1500618435-15092-3-git-send-email-david.wu@rock-chips.com>
-References: <1500618435-15092-1-git-send-email-david.wu@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1500618435-15092-1-git-send-email-david.wu@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: heiko@sntech.de, linus.walleij@linaro.org
-Cc: huangtao@rock-chips.com, dianders@chromium.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, David Wu <david.wu@rock-chips.com>
+From: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/4] gpio: davinci: Handle the return value of
+ davinci_gpio_irq_setup function
+Date: Fri, 21 Jul 2017 09:46:01 +0200
+Message-ID: <20170721074601.GC2729@localhost>
+References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
+ <1500375436-9435-3-git-send-email-j-keerthy@ti.com>
+ <20170719111000.GX29638@localhost>
+ <cbea9082-3799-281b-1364-50e442f5362f@ti.com>
+ <cc66dfaf-05c5-8d55-03a6-556ec83c4487@ti.com>
+ <20170720095047.GA2729@localhost>
+ <47055927-5102-b39f-fdbb-b5d89cb14632@ti.com>
+ <20170720100509.GB2729@localhost>
+ <02965359-ecf1-b934-6b7a-87162d7d00a4@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <02965359-ecf1-b934-6b7a-87162d7d00a4-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-There are 3 IP blocks pin routes need to be switched, that are
-emmc-cmd, spi, i2s. And there are some pins need to be recalced,
-which are gpio2c4~gpio2c7 and gpio2d0.
- 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
----
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   1 +
- drivers/pinctrl/pinctrl-rockchip.c                 | 129 +++++++++++++++++++++
- 2 files changed, 130 insertions(+)
+On Thu, Jul 20, 2017 at 04:34:42PM -0500, Grygorii Strashko wrote:
+> 
+> 
+> On 07/20/2017 05:05 AM, Johan Hovold wrote:
+> > On Thu, Jul 20, 2017 at 03:32:27PM +0530, Keerthy wrote:
+> >> On Thursday 20 July 2017 03:20 PM, Johan Hovold wrote:
+> >>> On Thu, Jul 20, 2017 at 02:40:37PM +0530, Keerthy wrote:
+> >>>> On Thursday 20 July 2017 12:14 PM, Keerthy wrote:
+> >>>>> On Wednesday 19 July 2017 04:40 PM, Johan Hovold wrote:
+> > 
+> >>>>>> There's a separate but related bug here too as the clk_prepare_enable()
+> >>>>>> in davinci_gpio_irq_setup() is never balanced on driver unbind.
+> >>>>>
+> >>>>> Yes Johan. I will send that as a separate patch.
+> >>>>
+> >>>> This is already fixed in the latest kernel:
+> >>>>
+> >>>> commit 6dc0048cff988858254fcc26becfc1e9753efa79
+> >>>> Author: Arvind Yadav <arvind.yadav.cs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >>>> Date:   Tue May 23 14:48:57 2017 +0530
+> >>>
+> >>> That change only handles errors in davinci_gpio_irq_setup() (i.e. during
+> >>> probe) and not the imbalance at driver unbind that I was referring to.
+> >>
+> >> Okay got it. One more clk_unprepare_disable() call needs to be there in
+> >> probe err path.
+> > 
+> > No, you need to balance it on driver unbind, that is, in a new remove()
+> > callback.
+> > 
+> 
+> Sry, but manual driver unbind for this driver is really smth unexpected ;(
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index ee01ab5..58b7921 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -24,6 +24,7 @@ Required properties for iomux controller:
- 		"rockchip,rk2928-pinctrl":  for Rockchip RK2928
- 		"rockchip,rk3066a-pinctrl": for Rockchip RK3066a
- 		"rockchip,rk3066b-pinctrl": for Rockchip RK3066b
-+		"rockchip,rk3128-pinctrl":  for Rockchip RK3128
- 		"rockchip,rk3188-pinctrl":  for Rockchip RK3188
- 		"rockchip,rk3228-pinctrl":  for Rockchip RK3228
- 		"rockchip,rk3288-pinctrl":  for Rockchip RK3288
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index fd4e491..7ba0c40 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -62,6 +62,7 @@ enum rockchip_pinctrl_type {
- 	RV1108,
- 	RK2928,
- 	RK3066B,
-+	RK3128,
- 	RK3188,
- 	RK3288,
- 	RK3368,
-@@ -557,6 +558,40 @@ static void rockchip_dt_free_map(struct pinctrl_dev *pctldev,
-  * Hardware access
-  */
- 
-+static  struct rockchip_mux_recalced_data rk3128_mux_recalced_data[] = {
-+	{
-+		.num = 2,
-+		.pin = 20,
-+		.reg = 0xe8,
-+		.bit = 0,
-+		.mask = 0x7
-+	}, {
-+		.num = 2,
-+		.pin = 21,
-+		.reg = 0xe8,
-+		.bit = 4,
-+		.mask = 0x7
-+	}, {
-+		.num = 2,
-+		.pin = 22,
-+		.reg = 0xe8,
-+		.bit = 8,
-+		.mask = 0x7
-+	}, {
-+		.num = 2,
-+		.pin = 23,
-+		.reg = 0xe8,
-+		.bit = 12,
-+		.mask = 0x7
-+	}, {
-+		.num = 2,
-+		.pin = 24,
-+		.reg = 0xd4,
-+		.bit = 12,
-+		.mask = 0x7
-+	},
-+};
-+
- static struct rockchip_mux_recalced_data rk3328_mux_recalced_data[] = {
- 	{
- 		.num = 2,
-@@ -602,6 +637,59 @@ static void rockchip_get_recalced_mux(struct rockchip_pin_bank *bank, int pin,
- 	*bit = data->bit;
- }
- 
-+static struct rockchip_mux_route_data rk3128_mux_route_data[] = {
-+	{
-+		/* spi-0 */
-+		.bank_num = 1,
-+		.pin = 10,
-+		.func = 1,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 3) | BIT(16 + 4),
-+	}, {
-+		/* spi-1 */
-+		.bank_num = 1,
-+		.pin = 27,
-+		.func = 3,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 3) | BIT(16 + 4) | BIT(3),
-+	}, {
-+		/* spi-2 */
-+		.bank_num = 0,
-+		.pin = 13,
-+		.func = 2,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 3) | BIT(16 + 4) | BIT(4),
-+	}, {
-+		/* i2s-0 */
-+		.bank_num = 1,
-+		.pin = 5,
-+		.func = 1,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 5),
-+	}, {
-+		/* i2s-1 */
-+		.bank_num = 0,
-+		.pin = 14,
-+		.func = 1,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 5) | BIT(5),
-+	}, {
-+		/* emmc-0 */
-+		.bank_num = 1,
-+		.pin = 22,
-+		.func = 2,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 6),
-+	}, {
-+		/* emmc-1 */
-+		.bank_num = 2,
-+		.pin = 4,
-+		.func = 2,
-+		.route_offset = 0x144,
-+		.route_val = BIT(16 + 6) | BIT(6),
-+	},
-+};
-+
- static struct rockchip_mux_route_data rk3228_mux_route_data[] = {
- 	{
- 		/* pwm0-0 */
-@@ -1102,6 +1190,22 @@ static void rk2928_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
- 	*bit = pin_num % RK2928_PULL_PINS_PER_REG;
- };
- 
-+#define RK3128_PULL_OFFSET	0x118
-+
-+static void rk3128_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
-+					 int pin_num, struct regmap **regmap,
-+					 int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	*regmap = info->regmap_base;
-+	*reg = RK3128_PULL_OFFSET;
-+	*reg += bank->bank_num * RK2928_PULL_BANK_STRIDE;
-+	*reg += ((pin_num / RK2928_PULL_PINS_PER_REG) * 4);
-+
-+	*bit = pin_num % RK2928_PULL_PINS_PER_REG;
-+}
-+
- #define RK3188_PULL_OFFSET		0x164
- #define RK3188_PULL_BITS_PER_PIN	2
- #define RK3188_PULL_PINS_PER_REG	8
-@@ -1571,6 +1675,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 
- 	switch (ctrl->type) {
- 	case RK2928:
-+	case RK3128:
- 		return !(data & BIT(bit))
- 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
- 				: PIN_CONFIG_BIAS_DISABLE;
-@@ -1611,6 +1716,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 
- 	switch (ctrl->type) {
- 	case RK2928:
-+	case RK3128:
- 		data = BIT(bit + 16);
- 		if (pull == PIN_CONFIG_BIAS_DISABLE)
- 			data |= BIT(bit);
-@@ -1865,6 +1971,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
- {
- 	switch (ctrl->type) {
- 	case RK2928:
-+	case RK3128:
- 		return (pull == PIN_CONFIG_BIAS_PULL_PIN_DEFAULT ||
- 					pull == PIN_CONFIG_BIAS_DISABLE);
- 	case RK3066B:
-@@ -3093,6 +3200,26 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 		.grf_mux_offset	= 0x60,
- };
- 
-+static struct rockchip_pin_bank rk3128_pin_banks[] = {
-+	PIN_BANK(0, 32, "gpio0"),
-+	PIN_BANK(1, 32, "gpio1"),
-+	PIN_BANK(2, 32, "gpio2"),
-+	PIN_BANK(3, 32, "gpio3"),
-+};
-+
-+static struct rockchip_pin_ctrl rk3128_pin_ctrl = {
-+		.pin_banks		= rk3128_pin_banks,
-+		.nr_banks		= ARRAY_SIZE(rk3128_pin_banks),
-+		.label			= "RK3128-GPIO",
-+		.type			= RK3128,
-+		.grf_mux_offset		= 0xa8,
-+		.iomux_recalced		= rk3128_mux_recalced_data,
-+		.niomux_recalced	= ARRAY_SIZE(rk3128_mux_recalced_data),
-+		.iomux_routes		= rk3128_mux_route_data,
-+		.niomux_routes		= ARRAY_SIZE(rk3128_mux_route_data),
-+		.pull_calc_reg		= rk3128_calc_pull_reg_and_bit,
-+};
-+
- static struct rockchip_pin_bank rk3188_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_GPIO_ONLY, 0, 0, 0),
- 	PIN_BANK(1, 32, "gpio1"),
-@@ -3301,6 +3428,8 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 		.data = &rk3066a_pin_ctrl },
- 	{ .compatible = "rockchip,rk3066b-pinctrl",
- 		.data = &rk3066b_pin_ctrl },
-+	{ .compatible = "rockchip,rk3128-pinctrl",
-+		.data = (void *)&rk3128_pin_ctrl },
- 	{ .compatible = "rockchip,rk3188-pinctrl",
- 		.data = &rk3188_pin_ctrl },
- 	{ .compatible = "rockchip,rk3228-pinctrl",
--- 
-1.9.1
+It certainly wouldn't be something often used (e.g. besides during
+development) but that doesn't mean it should not be implemented.
+
+> So, I'm not sure if it need to be implemented and even yes - it should not be
+> a part of this patch.
+
+That's why I said "separate, but related" above.
+
+> Probably, smth like "convert driver to be a module".
+>
+> By the way, I've tried to unbind gpio-omap, result - failure (expected),
+> as unbind does not take into account module refcnt state.
+
+Indeed. We also have CONFIG_DEBUG_TEST_DRIVER_REMOVE which would try to
+unbind this driver during probe if enabled.
+
+Getting into the habit of properly cleaning up allocated and enabled
+resources is only a good thing; it shows that the author has thought
+this through and serves as documentation of what needs to be released in
+both probe error paths and driver unbind callbacks.
+
+Assumptions also change over time (e.g. deferred probe and
+CONFIG_DEBUG_TEST_DRIVER_REMOVE), and by not taking such shortcuts we
+are also preventing incomplete code from being copied and reproduced in
+other drivers (e.g. on hotpluggable buses).
+
+So, just add the remove callback (in a separate patch) and everything is
+good.
+
+Thanks,
+Johan
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
