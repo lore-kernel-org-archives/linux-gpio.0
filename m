@@ -1,89 +1,31 @@
-From: Joseph Chen <chenjh@rock-chips.com>
-Subject: [PATCH v7 12/12] pinctrl: dt-bindings: add bindings for Rockchip RK805 PMIC
-Date: Fri, 21 Jul 2017 19:19:01 +0800
-Message-ID: <1500635941-12930-1-git-send-email-chenjh@rock-chips.com>
-References: <1500635681-12477-1-git-send-email-chenjh@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1500635681-12477-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, tony.xie@rock-chips.com, zhangqing@rock-chips.com, wdc@rock-chips.com, devicetree@vger.kernel.org, w.egorov@phytec.de, lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, Joseph Chen <chenjh@rock-chips.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+Date: Fri, 21 Jul 2017 12:26:04 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725DD9D7@FMSMSX114.amr.corp.intel.com>
+References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
+ <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
+ <20170720090300.ayx5pz5l4yntefpt@dell>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
----
- .../devicetree/bindings/pinctrl/pinctrl-rk805.txt  | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-new file mode 100644
-index 0000000..367ddf9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-@@ -0,0 +1,63 @@
-+Pincontrol driver for RK805 Power management IC.
-+
-+RK805 has 2 pins which can be configured as GPIO output only.
-+
-+Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
-+for details of the common pinctrl bindings used by client devices,
-+including the meaning of the phrase "pin configuration node".
-+
-+Optional Pinmux properties:
-+--------------------------
-+Following properties are required if default setting of pins are required
-+at boot.
-+- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
-+- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
-+		<pinctrl-binding.txt>.
-+
-+The pin configurations are defined as child of the pinctrl states node. Each
-+sub-node have following properties:
-+
-+Required properties:
-+------------------
-+- #gpio-cells: Should be two. The first cell is the pin number and the
-+  second is the GPIO flags.
-+
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+- pins: List of pins. Valid values of pins properties are: gpio0, gpio1.
-+
-+First 2 properties must be added in the RK805 PMIC node, documented in
-+Documentation/devicetree/bindings/mfd/rk808.txt
-+
-+Optional properties:
-+-------------------
-+Following are optional properties defined as pinmux DT binding document
-+<pinctrl-bindings.txt>. Absence of properties will leave the configuration
-+on default.
-+	function,
-+	output-low,
-+	output-high.
-+
-+Valid values for function properties are: gpio.
-+
-+Theres is also not customised properties for any GPIO.
-+
-+Example:
-+--------
-+rk805: rk805@18 {
-+	compatible = "rockchip,rk805";
-+	...
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmic_int_l>, <&rk805_default>;
-+
-+	rk805_default: pinmux {
-+		gpio01 {
-+			pins = "gpio0", "gpio1";
-+			function = "gpio";
-+			output-high.
-+		};
-+	};
-+};
--- 
-1.9.1
+SGkgTGVlLA0KDQo+ID4gPiArICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBj
+YW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vcg0KPiA+ID4gKyAqIG1vZGlmeSBpdCB1bmRlciB0aGUg
+dGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIGFzDQo+ID4gPiArICogcHVi
+bGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24gdmVyc2lvbiAyLg0KPiA+ID4g
+KyAqDQo+ID4gPiArICogVGhpcyBwcm9ncmFtIGlzIGRpc3RyaWJ1dGVkICJhcyBpcyIgV0lUSE9V
+VCBBTlkgV0FSUkFOVFkgb2YgYW55DQo+ID4gPiArICoga2luZCwgd2hldGhlciBleHByZXNzIG9y
+IGltcGxpZWQ7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZA0KPiA+ID4gKyB3YXJyYW50eQ0KPiA+
+ID4gKyAqIG9mIE1FUkNIQU5UQUJJTElUWSBvciBGSVRORVNTIEZPUiBBIFBBUlRJQ1VMQVIgUFVS
+UE9TRS4gIFNlZQ0KPiB0aGUNCj4gPiA+ICsgKiBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBm
+b3IgbW9yZSBkZXRhaWxzLg0KPiA+DQo+ID4gQ2FuIHlvdSB1c2UgdGhlIHNob3J0IHZlcnNpb24/
+DQo+ID4NCj4gDQo+IEFjaw0KPiBJIHdpbGwgdXBkYXRlIHRoZSBvdGhlciBwYXRjaGVzIG9mIHRo
+aXMgc2VyaWVzIHRvby4NCj4gDQoNCkkganVzdCBjb25maXJtZWQgdGhhdCB3ZSBhcmUgcmVjb21t
+ZW5kZWQgdG8gdXNlIHRoZSBhYm92ZSBsb25nIHZlcnNpb24gb2YgaGVhZGVycy4gU28sIHRoZXNl
+IGhlYWRlcnMgd2lsbCBzdGF5IGFzIHN1Y2guDQoNClRoYW5rcw0KUmFqDQo=
