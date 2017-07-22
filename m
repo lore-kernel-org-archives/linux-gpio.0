@@ -1,41 +1,38 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v5 0/3] TPS68470 PMIC drivers
-Date: Fri, 21 Jul 2017 22:51:02 +0200
-Message-ID: <3425487.LgIRMVflim@aspire.rjw.lan>
-References: <1500648378-10294-1-git-send-email-rajmohan.mani@intel.com> <CAHp75VdMgXJ6g8g+mv1GATaKFn1SLPOHUc7-ciMz4EpjjjHQYg@mail.gmail.com>
+From: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Subject: [PATCH v3 0/2] Last step to working Allwinner R40 pinctrl
+Date: Sat, 22 Jul 2017 10:50:52 +0800
+Message-ID: <20170722025054.32645-1-icenowy@aosc.io>
+Reply-To: icenowy-h8G6r0blFSE@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdMgXJ6g8g+mv1GATaKFn1SLPOHUc7-ciMz4EpjjjHQYg@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Rajmohan Mani <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, sakari.ailus@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBDS6XAN6ZADRBIX3ZLFQKGQEYTPB3FI-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Friday, July 21, 2017 06:20:15 PM Andy Shevchenko wrote:
-> On Fri, Jul 21, 2017 at 5:46 PM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
-> > This is the patch series for TPS68470 PMIC that works as a camera PMIC.
-> >
-> > The patch series provide the following 3 drivers, to help configure the voltage regulators, clocks and GPIOs provided by the TPS68470 PMIC, to be able to use the camera sensors connected to this PMIC.
-> >
-> > TPS68470 MFD driver:
-> > This is the multi function driver that initializes the TPS68470 PMIC and supports the GPIO and Op Region functions.
-> >
-> > TPS68470 GPIO driver:
-> > This is the PMIC GPIO driver that will be used by the OS GPIO layer, when the BIOS / firmware triggered GPIO access is done.
-> >
-> > TPS68470 Op Region driver:
-> > This is the driver that will be invoked, when the BIOS / firmware configures the voltage / clock for the sensors / vcm devices connected to the PMIC.
-> >
-> 
-> All three patches are good to me (we did few rounds of internal review
-> before posting v4)
-> 
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+This patchset contains only two patches.
 
-OK, so how should they be routed?
+The first one is a minor fix for the A10 pinctrl driver, add a function
+of a pin, which used to be missing in A10/A20 pinctrl driver. Thanks for
+Chen-Yu for discovering it when reviewing my R40 pinctrl patchset.
 
-Thanks,
-Rafael
+The second one is the real R40 pinctrl part, with fixes suggested by
+Chen-Yu and Maxime.
 
+Icenowy Zheng (2):
+  pinctrl: sunxi: add a missing function of A10/A20 pinctrl driver
+  pinctrl: sunxi: add support of R40 to A10 pinctrl driver
+
+ drivers/pinctrl/sunxi/Kconfig             |   2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 274 +++++++++++++++++++++---------
+ 2 files changed, 197 insertions(+), 79 deletions(-)
+
+-- 
+2.13.0
