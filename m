@@ -1,44 +1,46 @@
-From: Joseph Chen <chenjh@rock-chips.com>
-Subject: [PATCH v7 05/12] clk: Kconfig: Name RK805 in Kconfig for COMMON_CLK_RK808
-Date: Sat, 22 Jul 2017 11:34:13 +0800
-Message-ID: <1500694453-416-1-git-send-email-chenjh@rock-chips.com>
-References: <1500635681-12477-1-git-send-email-chenjh@rock-chips.com>
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1500635681-12477-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-input-owner@vger.kernel.org
-To: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, tony.xie@rock-chips.com, zhangqing@rock-chips.com, wdc@rock-chips.com, devicetree@vger.kernel.org, w.egorov@phytec.de, lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v5 0/3] TPS68470 PMIC drivers
+Date: Sat, 22 Jul 2017 20:15:33 +0300
+Message-ID: <CAHp75VdtEh8MAFjQN2LWVFbJj7_bPrhjo77SEsCYVmuOCWvOfQ@mail.gmail.com>
+References: <1500648378-10294-1-git-send-email-rajmohan.mani@intel.com>
+ <CAHp75VdMgXJ6g8g+mv1GATaKFn1SLPOHUc7-ciMz4EpjjjHQYg@mail.gmail.com> <3425487.LgIRMVflim@aspire.rjw.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <3425487.LgIRMVflim@aspire.rjw.lan>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Rajmohan Mani <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, sakari.ailus@linux.intel.com
 List-Id: linux-gpio@vger.kernel.org
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+On Fri, Jul 21, 2017 at 11:51 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Friday, July 21, 2017 06:20:15 PM Andy Shevchenko wrote:
+>> On Fri, Jul 21, 2017 at 5:46 PM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
+>> > This is the patch series for TPS68470 PMIC that works as a camera PMIC.
+>> >
+>> > The patch series provide the following 3 drivers, to help configure the voltage regulators, clocks and GPIOs provided by the TPS68470 PMIC, to be able to use the camera sensors connected to this PMIC.
+>> >
+>> > TPS68470 MFD driver:
+>> > This is the multi function driver that initializes the TPS68470 PMIC and supports the GPIO and Op Region functions.
+>> >
+>> > TPS68470 GPIO driver:
+>> > This is the PMIC GPIO driver that will be used by the OS GPIO layer, when the BIOS / firmware triggered GPIO access is done.
+>> >
+>> > TPS68470 Op Region driver:
+>> > This is the driver that will be invoked, when the BIOS / firmware configures the voltage / clock for the sensors / vcm devices connected to the PMIC.
+>> >
+>>
+>> All three patches are good to me (we did few rounds of internal review
+>> before posting v4)
+>>
+>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>
+> OK, so how should they be routed?
 
-The RK808 and RK805 PMICs are using a similar register map.
-We can reuse the clk driver for the RK805 PMIC. So let's add
-the RK805 in the Kconfig description.
+Good question. I don't know how last time PMIC drivers were merged,
+here I think is just sane to route vi MFD with immutable branch
+created.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 9356ab4..7ca8f02 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -39,10 +39,10 @@ config COMMON_CLK_MAX77686
- 	  clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK808 and RK818 crystal oscillator clock. These
-+	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
- 	  multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
 -- 
-1.9.1
-
-
+With Best Regards,
+Andy Shevchenko
