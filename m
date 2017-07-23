@@ -1,80 +1,60 @@
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: Re: [PATCH 04/14] pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin
- assignment for SSI pins group
-Date: Mon, 24 Jul 2017 01:32:57 +0900
-Message-ID: <CAH1o70+zfgTxnv6nnTpT1foY_fnEUE3kBGqnj+u7S2sPKp9XgQ@mail.gmail.com>
-References: <1499878547-3452-1-git-send-email-ykaneko0929@gmail.com>
- <1499878547-3452-5-git-send-email-ykaneko0929@gmail.com> <CAMuHMdURF=teYxa2iuPDbPQQVV=9mYsE=xBwEGGB0JAhCHXNRA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Sun, 23 Jul 2017 20:41:48 +0200
+Message-ID: <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170719211515.46a1196c@windsurf> <1500543415.2354.37.camel@pengutronix.de>
+ <20170720123640.43c2ce01@windsurf> <1500555312.2354.75.camel@pengutronix.de> <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdURF=teYxa2iuPDbPQQVV=9mYsE=xBwEGGB0JAhCHXNRA@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, lkml <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Peter Chen <Peter.Chen@nxp.com>, DRI <dri-devel@lists.freedesktop.org>, Marc Dietrich <marvin24@gmx.de>, Rakesh Iyer <riyer@nvidia.com>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-clk <linux-clk@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Wolfram Sang <wsa@the-dreams.de>, Xinliang Liu <z.liuxinliang@hisilicon.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jiri Slaby <jslaby@suse.com>, Michael Turquette <mturquette@baylibre.com>, Guenter Roeck <linux@r>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Geert-san,
+On Thu, Jul 20, 2017 at 10:46 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Thu, Jul 20, 2017 at 5:55 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-I'm very sorry that for the long delay in my reply.
-
-2017-07-13 18:12 GMT+09:00 Geert Uytterhoeven <geert@linux-m68k.org>:
-> Hi Kaneko-san, Kihara-san,
->
-> On Wed, Jul 12, 2017 at 6:55 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
->> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>>> What about reset_control_get(struct device *, const char *, int flags)
+>>> to replace all those variants ?
 >>
->> This patch fixes MOD_SEL1 bit20 and MOD_SEL2 bit20, bit21 pin assignment
->> for SSI pins group.
->>
->> This is a correction to the incorrect implementation of MOD_SEL register
->> pin assignment for R8A7796 SoC specification of R-Car Gen3 Hardware
->> User's Manual Rev.0.51E or later.
->>
->> Fixes: f9aece7344bd ("pinctrl: sh-pfc: Initial R8A7796 PFC support")
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->> ---
->>  drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 38 ++++++++++++++++++------------------
->>  1 file changed, 19 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
->> index 4d070c2..18c9c61 100644
->> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
->> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+>> While I like how this looks, unfortunately (devm_)reset_control_get
+>> already exists without the flags, so we can't change to that with a
+>> gentle transition.
 >
->> @@ -1277,7 +1277,7 @@ enum {
->>         PINMUX_IPSR_MSEL(IP14_3_0,      RX5_A,                  SEL_SCIF5_0),
->>         PINMUX_IPSR_MSEL(IP14_3_0,      NFWP_N_A,               SEL_NDF_0),
->>         PINMUX_IPSR_MSEL(IP14_3_0,      AUDIO_CLKA_C,           SEL_ADG_A_2),
->> -       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI_0),
->> +       PINMUX_IPSR_MSEL(IP14_3_0,      SSI_SCK2_A,             SEL_SSI2_0),
->
-> The SSI_SCK2_A part seems to have been removed in Rev.052E and later?
-> However, I can't find that in the errata for Rev.051E.
+> This was done for gpiod_get() and its flags argument with horrifying
+> #define-ry, which thankfully was completely hidden from users.
 
-Indeed, SSI_SCK2_A seems to have been removed from configuration of
-SEL_SSI2 in Rev.0.52E, but the definition of IP14[3:0] does not
-change.
-Should I remove the entry of SSI_SCK2_A from pinmux_data[]?
+For your reference:
 
-Thanks,
-Kaneko
+commit bae48da237fcedd7ad09569025483b988635efb7
+"gpiolib: add gpiod_get() and gpiod_put() functions"
 
->
->>         PINMUX_IPSR_MSEL(IP14_3_0,      STP_IVCXO27_0_C,        SEL_SSP1_0_2),
->>         PINMUX_IPSR_GPSR(IP14_3_0,      AUDIO_CLKOUT3_A),
->>         PINMUX_IPSR_MSEL(IP14_3_0,      TCLK1_B,                SEL_TIMER_TMU_1),
->
-> The rest looks good to me.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+commit 39b2bbe3d715cf5013b5c48695ccdd25bd3bf120
+"gpio: add flags argument to gpiod_get*() functions"
+
+commit 0dbc8b7afef6e4fddcfebcbacbeb269a0a3b06d5
+"gpio: move varargs hack outside #ifdef GPIOLIB"
+
+commit b17d1bf16cc72a374a48d748940f700009d40ff4
+"gpio: make flags mandatory for gpiod_get functions"
+
+Retrospectively ... was that really a good idea... it was a LOT
+of trouble to add a flag, maybe it had been better to try and
+just slam all users in a single go.
+
+But it worked.
+
+Yours,
+Linus Walleij
