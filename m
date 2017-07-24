@@ -1,62 +1,39 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 3/4] gpio: davinci: Add a separate compatible for
- keystone-k2g soc
-Date: Mon, 24 Jul 2017 13:24:27 -0500
-Message-ID: <20170724182427.64u5zmr2jl3hk5lh@rob-hp-laptop>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] gpio-exar: Use correct property prefix and document
+ bindings
+Date: Mon, 24 Jul 2017 14:06:14 -0500
+Message-ID: <20170724190614.k2cd2aqzkoi5frvk@rob-hp-laptop>
+References: <dd5bb6b5-a6a7-a799-581f-b5fb83aa677b@siemens.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:38552 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752669AbdGXSYa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2017 14:24:30 -0400
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <dd5bb6b5-a6a7-a799-581f-b5fb83aa677b-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: linus.walleij@linaro.org, ssantosh@kernel.org, nsekhar@ti.com, s-anna@ti.com, fcooper@ti.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 18, 2017 at 04:27:15PM +0530, Keerthy wrote:
-> Add a separate compatible for keystone-k2g soc
+On Wed, Jul 19, 2017 at 07:31:14AM +0200, Jan Kiszka wrote:
+> The device-specific property should be prefixed with the vendor name,
+> not "linux,", as Linus Walleij pointed out. Change this and document the
+> bindings of this platform device.
 > 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> We didn't ship the old binding in a release yet. So we can still change
+> it without breaking an official API.
+> 
+> Fixes: 380b1e2f3a2f ("gpio-exar/8250-exar: Make set of exported GPIOs configurable")
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 3 ++-
->  drivers/gpio/gpio-davinci.c                             | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-> index 5079ba7..1a5c1a2 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
-> @@ -1,7 +1,8 @@
->  Davinci/Keystone GPIO controller bindings
->  
->  Required Properties:
-> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
-> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio",
-> +	      "ti,keystone-k2g-gpio"
+>  Documentation/devicetree/bindings/gpio/gpio-exar.txt | 5 +++++
+>  drivers/gpio/gpio-exar.c                             | 2 +-
+>  drivers/tty/serial/8250/8250_exar.c                  | 4 ++--
+>  3 files changed, 8 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-exar.txt
 
-Reformat to one valid combination per line.
-
->  
->  - reg: Physical base address of the controller and the size of memory mapped
->         registers.
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 932f270..a8d8dd9 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -610,6 +610,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->  static const struct of_device_id davinci_gpio_ids[] = {
->  	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
->  	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
-> +	{ .compatible = "ti,keystone-k2g-gpio", keystone_gpio_get_irq_chip},
->  	{ /* sentinel */ },
->  };
->  MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
-> -- 
-> 1.9.1
-> 
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
