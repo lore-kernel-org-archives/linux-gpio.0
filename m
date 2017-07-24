@@ -1,350 +1,148 @@
-From: =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <mnhu@prevas.dk>
-Subject: [PATCH] tools/gpio: add gpio util to get or set gpio lines
-Date: Mon, 24 Jul 2017 16:32:18 +0200
-Message-ID: <20170724143218.8510-1-mnhu@prevas.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail02.prevas.se ([62.95.78.10]:24892 "EHLO mail02.prevas.se"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753413AbdGXOm2 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 24 Jul 2017 10:42:28 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 3/4] gpio: tegra: Fix checkpatch warnings
+Date: Mon, 24 Jul 2017 16:55:07 +0200
+Message-ID: <20170724145508.7388-3-thierry.reding@gmail.com>
+References: <20170724145508.7388-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170724145508.7388-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <mnhu@prevas.dk>, linux-gpio@vger.kernel.org
 
-Add a new tool to set or get the value of one or more gpio lines, which
-can as either chip offsets or line names. This makes it easier to
-control gpio lines from user space without using the cumbersome sysfs
-interface. It also demostrates how gpio-line-names can be used to
-decouple software from hardware layout.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Martin Hundebøll <mnhu@prevas.dk>
+Fix a couple of checkpatch warnings, such as complaints about bare
+unsigned being used (instead of unsigned int) and missing blank lines
+after declarations.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- tools/gpio/.gitignore |   2 +-
- tools/gpio/Build      |   1 +
- tools/gpio/Makefile   |  11 ++-
- tools/gpio/gpio.c     | 261 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 273 insertions(+), 2 deletions(-)
- create mode 100644 tools/gpio/gpio.c
+ drivers/gpio/gpio-tegra.c | 32 ++++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/tools/gpio/.gitignore b/tools/gpio/.gitignore
-index 9e9dd4b681b2..1039ed454be6 100644
---- a/tools/gpio/.gitignore
-+++ b/tools/gpio/.gitignore
-@@ -1,4 +1,4 @@
- gpio-event-mon
- gpio-hammer
- lsgpio
--
-+gpio
-diff --git a/tools/gpio/Build b/tools/gpio/Build
-index 620c1937d957..6692741538c8 100644
---- a/tools/gpio/Build
-+++ b/tools/gpio/Build
-@@ -1,3 +1,4 @@
-+gpio-y += gpio.o gpio-utils.o
- lsgpio-y += lsgpio.o gpio-utils.o
- gpio-hammer-y += gpio-hammer.o gpio-utils.o
- gpio-event-mon-y += gpio-event-mon.o gpio-utils.o
-diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
-index b4401536cfa9..77d35c2bf5ac 100644
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -15,7 +15,7 @@ CC = $(CROSS_COMPILE)gcc
- LD = $(CROSS_COMPILE)ld
- CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 1d4df290d7ab..edc1a14557f0 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -138,12 +138,12 @@ static void tegra_gpio_disable(struct tegra_gpio_info *tgi, int gpio)
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_CNF(tgi, gpio), gpio, 0);
+ }
  
--ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
-+ALL_TARGETS := gpio lsgpio gpio-hammer gpio-event-mon
- ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+-static int tegra_gpio_request(struct gpio_chip *chip, unsigned offset)
++static int tegra_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	return pinctrl_request_gpio(offset);
+ }
  
- all: $(ALL_PROGRAMS)
-@@ -33,6 +33,15 @@ $(OUTPUT)include/linux/gpio.h: ../../include/uapi/linux/gpio.h
- prepare: $(OUTPUT)include/linux/gpio.h
+-static void tegra_gpio_free(struct gpio_chip *chip, unsigned offset)
++static void tegra_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
  
- #
-+# gpio
-+#
-+GPIO_IN := $(OUTPUT)gpio-in.o
-+$(GPIO_IN): prepare FORCE
-+	$(Q)$(MAKE) $(build)=gpio
-+$(OUTPUT)gpio: $(GPIO_IN)
-+	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+@@ -151,14 +151,15 @@ static void tegra_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 	tegra_gpio_disable(tgi, offset);
+ }
+ 
+-static void tegra_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
++static void tegra_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			   int value)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 
+ 	tegra_gpio_mask_write(tgi, GPIO_MSK_OUT(tgi, offset), offset, value);
+ }
+ 
+-static int tegra_gpio_get(struct gpio_chip *chip, unsigned offset)
++static int tegra_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 	int bval = BIT(GPIO_BIT(offset));
+@@ -170,7 +171,8 @@ static int tegra_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return !!(tegra_gpio_readl(tgi, GPIO_IN(tgi, offset)) & bval);
+ }
+ 
+-static int tegra_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
++static int tegra_gpio_direction_input(struct gpio_chip *chip,
++				      unsigned int offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 
+@@ -179,8 +181,9 @@ static int tegra_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 	return 0;
+ }
+ 
+-static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+-					int value)
++static int tegra_gpio_direction_output(struct gpio_chip *chip,
++				       unsigned int offset,
++				       int value)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 
+@@ -190,7 +193,8 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
+ 	return 0;
+ }
+ 
+-static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++static int tegra_gpio_get_direction(struct gpio_chip *chip,
++				    unsigned int offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 	u32 pin_mask = BIT(GPIO_BIT(offset));
+@@ -250,7 +254,7 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ 	return tegra_gpio_set_debounce(chip, offset, debounce);
+ }
+ 
+-static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
++static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+ 
+@@ -413,7 +417,8 @@ static int tegra_gpio_resume(struct device *dev)
+ 		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
+ 
+ 		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+-			unsigned int gpio = (b<<5) | (p<<3);
++			unsigned int gpio = (b << 5) | (p << 3);
 +
-+#
- # lsgpio
- #
- LSGPIO_IN := $(OUTPUT)lsgpio-in.o
-diff --git a/tools/gpio/gpio.c b/tools/gpio/gpio.c
-new file mode 100644
-index 000000000000..7ab360a0a131
---- /dev/null
-+++ b/tools/gpio/gpio.c
-@@ -0,0 +1,261 @@
-+/*
-+ * lsgpio - example on how to list the GPIO lines on a system
-+ *
-+ * Copyright (C) 2015 Linus Walleij
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ *
-+ * Usage:
-+ *	lsgpio <-n device-name>
-+ */
+ 			tegra_gpio_writel(tgi, bank->cnf[p],
+ 					  GPIO_CNF(tgi, gpio));
+ 
+@@ -452,7 +457,8 @@ static int tegra_gpio_suspend(struct device *dev)
+ 		struct tegra_gpio_bank *bank = &tgi->bank_info[b];
+ 
+ 		for (p = 0; p < ARRAY_SIZE(bank->oe); p++) {
+-			unsigned int gpio = (b<<5) | (p<<3);
++			unsigned int gpio = (b << 5) | (p << 3);
 +
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <dirent.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <poll.h>
-+#include <fcntl.h>
-+#include <getopt.h>
-+#include <sys/ioctl.h>
-+#include <linux/gpio.h>
+ 			bank->cnf[p] = tegra_gpio_readl(tgi,
+ 							GPIO_CNF(tgi, gpio));
+ 			bank->out[p] = tegra_gpio_readl(tgi,
+@@ -513,6 +519,7 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
+ 	for (i = 0; i < tgi->bank_count; i++) {
+ 		for (j = 0; j < 4; j++) {
+ 			int gpio = tegra_gpio_compose(i, j, 0);
 +
-+#include "gpio-utils.h"
+ 			seq_printf(s,
+ 				"%d:%d %02x %02x %02x %02x %02x %02x %06x\n",
+ 				i, j,
+@@ -542,7 +549,7 @@ static const struct file_operations debug_fops = {
+ 
+ static void tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
+ {
+-	(void) debugfs_create_file("tegra_gpio", S_IRUGO,
++	(void) debugfs_create_file("tegra_gpio", 0444,
+ 					NULL, tgi, &debug_fops);
+ }
+ 
+@@ -653,6 +660,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	for (i = 0; i < tgi->bank_count; i++) {
+ 		for (j = 0; j < 4; j++) {
+ 			int gpio = tegra_gpio_compose(i, j, 0);
 +
-+int print_offsets(const char *device_name, unsigned int *lines, int nlines)
-+{
-+	struct gpiohandle_data data;
-+	int i, line, value, ret;
-+
-+	ret = gpiotools_gets(device_name, lines, nlines, &data);
-+	if (ret)
-+		return ret;
-+
-+	/* print value for each configured line */
-+	printf("GPIO chip: %s\n", device_name);
-+	for (i = 0; i < nlines; i++) {
-+		line = lines[i];
-+		value = data.values[line];
-+		printf("\tline %i: %i\n", lines[i], value);
-+	}
-+
-+	return ret;
-+}
-+
-+int print_labels(const char *device_name, unsigned int *lines,
-+		  const char *labels[], int nlabels)
-+{
-+	struct gpiohandle_data data;
-+	int i, value, ret;
-+	const char *label;
-+
-+	ret = gpiotools_gets(device_name, lines, nlabels, &data);
-+	if (ret)
-+		return ret;
-+
-+	/* print value for each configured label */
-+	printf("GPIO chip: %s\n", device_name);
-+	for (i = 0; i < nlabels; i++) {
-+		label = labels[i];
-+		value = data.values[i];
-+		printf("\t%s: %i\n", label, value);
-+	}
-+
-+	return ret;
-+}
-+
-+int control_offsets(const char *device_name, unsigned int *lines, int nlines,
-+		    int flags, int value)
-+{
-+	struct gpiohandle_data data = {{ value }};
-+
-+	if (flags & GPIOHANDLE_REQUEST_INPUT)
-+		return print_offsets(device_name, lines, nlines);
-+	else
-+		return gpiotools_sets(device_name, lines, nlines, &data);
-+}
-+
-+int control_labels(const char *device_name, const char *labels[], int nlabels,
-+		   int flags, int value)
-+{
-+	struct gpiochip_info cinfo = {0};
-+	char *chrdev_name = NULL;
-+	unsigned int lines[GPIOHANDLES_MAX];
-+	int nlines = 0;
-+	int ret, fd, i, j;
-+
-+	ret = asprintf(&chrdev_name, "/dev/%s", device_name);
-+	if (ret < 0)
-+		return -ENOMEM;
-+
-+	fd = open(chrdev_name, 0);
-+	if (fd == -1) {
-+		ret = -errno;
-+		fprintf(stderr, "Failed to open %s\n", chrdev_name);
-+		goto exit_error;
-+	}
-+
-+	/* Inspect this GPIO chip */
-+	ret = ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &cinfo);
-+	if (ret == -1) {
-+		ret = -errno;
-+		perror("Failed to issue CHIPINFO IOCTL\n");
-+		goto exit_close_error;
-+	}
-+
-+	/* Loop over the lines and match info */
-+	for (i = 0; i < cinfo.lines; i++) {
-+		struct gpioline_info linfo;
-+
-+		memset(&linfo, 0, sizeof(linfo));
-+		linfo.line_offset = i;
-+
-+		ret = ioctl(fd, GPIO_GET_LINEINFO_IOCTL, &linfo);
-+		if (ret == -1) {
-+			ret = -errno;
-+			perror("Failed to issue LINEINFO IOCTL\n");
-+			goto exit_close_error;
-+		}
-+
-+		/* Check if line name is included requested names */
-+		for (j = 0; j < nlabels; j++) {
-+			if (strcmp(linfo.name, labels[j]) == 0) {
-+				lines[nlines++] = i;
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (nlines == 0)
-+		goto exit_close_error;
-+
-+	if (flags & GPIOHANDLE_REQUEST_INPUT) {
-+		print_labels(device_name, lines, labels, nlabels);
-+	} else {
-+		struct gpiohandle_data data = {{ value }};
-+		ret = gpiotools_sets(device_name, lines, nlines, &data);
-+	}
-+
-+exit_close_error:
-+	if (fd >= 0 && close(fd) == -1)
-+		perror("Failed to close GPIO character device file");
-+
-+exit_error:
-+	free(chrdev_name);
-+
-+	return ret;
-+}
-+
-+void print_usage(void)
-+{
-+	fprintf(stderr, "Usage: gpio [options]... (input | output <value>)\n"
-+		"List GPIO chips, lines and states\n"
-+		"  -n <name>  Control GPIO(s) on a named device\n"
-+		"  -o <n>     Offset[s] to control, at least one, several can be stated\n"
-+		"  -l <label> Labeled line[s] to control, at least one, several can be stated\n"
-+		"  -?         This helptext\n"
-+		"  <value>    Should be either 0 or 1\n"
-+	);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	const char *device_name = NULL;
-+	unsigned int lines[GPIOHANDLES_MAX];
-+	const char *labels[GPIOHANDLES_MAX];
-+	int nlines = 0;
-+	int nlabels = 0;
-+	int value = 0;
-+	int ret = 0;
-+	int flags;
-+	int c;
-+
-+	while ((c = getopt(argc, argv, "n:o:l:")) != -1) {
-+		switch (c) {
-+		case 'n':
-+			device_name = optarg;
-+			break;
-+		case 'o':
-+			lines[nlines++] = strtoul(optarg, NULL, 10);
-+			break;
-+		case 'l':
-+			labels[nlabels++] = optarg;
-+			break;
-+		case '?':
-+			print_usage();
-+			return -1;
-+		}
-+	}
-+
-+	/* User must give at least one positional argument */
-+	if (optind >= argc) {
-+		print_usage();
-+		return -1;
-+	}
-+
-+	/* Match on "input" or "output <value>" */
-+	if (strcmp(argv[optind], "input") == 0) {
-+		flags = GPIOHANDLE_REQUEST_INPUT;
-+	} else if (strcmp(argv[optind], "output") == 0) {
-+		flags = GPIOHANDLE_REQUEST_OUTPUT;
-+		value = atoi(argv[++optind]);
-+		/* Only boolean value is alowed */
-+		if (value < 0 || value > 1) {
-+			print_usage();
-+			return -1;
-+		}
-+	} else {
-+		print_usage();
-+		return -1;
-+	}
-+
-+	/* Numeric offsets must come together with a gpio chip name */
-+	if (nlines != 0 && device_name == NULL) {
-+		fprintf(stderr, "Option '-o' requires '-n'\n");
-+		return -1;
-+	}
-+
-+	/* At least one line or label must be given */
-+	if (nlines == 0 && nlabels == 0) {
-+		fprintf(stderr, "No lines or labels given\n");
-+		return -1;
-+	}
-+
-+	if (device_name) {
-+		if (nlines)
-+			ret += control_offsets(device_name, lines, nlines, flags, value);
-+		if (nlabels)
-+			ret += control_labels(device_name, labels, nlabels, flags, value);
-+	} else {
-+		const struct dirent *ent;
-+		DIR *dp;
-+
-+		/* Control all GPIO devices one at a time */
-+		dp = opendir("/dev");
-+		if (!dp) {
-+			ret = -errno;
-+			goto error_out;
-+		}
-+
-+		ret = -ENOENT;
-+		while (ent = readdir(dp), ent) {
-+			if (check_prefix(ent->d_name, "gpiochip")) {
-+				ret += control_labels(ent->d_name, labels, nlabels, flags, value);
-+				if (ret)
-+					break;
-+			}
-+		}
-+
-+		ret = 0;
-+		if (closedir(dp) == -1) {
-+			perror("scanning devices: Failed to close directory");
-+			ret = -errno;
-+		}
-+	}
-+error_out:
-+	return ret;
-+}
+ 			tegra_gpio_writel(tgi, 0x00, GPIO_INT_ENB(tgi, gpio));
+ 		}
+ 	}
 -- 
 2.13.3
-
