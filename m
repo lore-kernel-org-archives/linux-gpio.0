@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4/7] gpio: acpi: Fixup kerneldoc
-Date: Mon, 24 Jul 2017 16:57:25 +0200
-Message-ID: <20170724145728.7662-4-thierry.reding@gmail.com>
+Subject: [PATCH 3/7] gpio: devres: Improve kerneldoc
+Date: Mon, 24 Jul 2017 16:57:24 +0200
+Message-ID: <20170724145728.7662-3-thierry.reding@gmail.com>
 References: <20170724145728.7662-1-thierry.reding@gmail.com>
 Return-path: <linux-acpi-owner@vger.kernel.org>
 In-Reply-To: <20170724145728.7662-1-thierry.reding@gmail.com>
@@ -12,36 +12,41 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Fix up a parameter description to match the code and fix markup for a
-constant to prettify output.
+Add missing descriptions for some parameters to match the code.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpiolib-acpi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/devres.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index c9b42dd12dfa..4d2113530735 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -61,7 +61,7 @@ static int acpi_gpiochip_find(struct gpio_chip *gc, void *data)
- #ifdef CONFIG_PINCTRL
+diff --git a/drivers/gpio/devres.c b/drivers/gpio/devres.c
+index a75511d1ea5d..afbff155a0ba 100644
+--- a/drivers/gpio/devres.c
++++ b/drivers/gpio/devres.c
+@@ -132,6 +132,7 @@ EXPORT_SYMBOL(devm_gpiod_get_index);
+  * @index:	index of the GPIO to obtain in the consumer
+  * @child:	firmware node (child of @dev)
+  * @flags:	GPIO initialization flags
++ * @label:	label to attach to the requested GPIO
+  *
+  * GPIO descriptors returned from this function are automatically disposed on
+  * driver detach.
+@@ -271,6 +272,7 @@ EXPORT_SYMBOL(devm_gpiod_get_array_optional);
+ 
  /**
-  * acpi_gpiochip_pin_to_gpio_offset() - translates ACPI GPIO to Linux GPIO
-- * @chip: GPIO chip
-+ * @gdev: GPIO device
-  * @pin: ACPI GPIO pin number from GpioIo/GpioInt resource
+  * devm_gpiod_put - Resource-managed gpiod_put()
++ * @dev:	GPIO consumer
+  * @desc:	GPIO descriptor to dispose of
   *
-  * Function takes ACPI GpioIo/GpioInt pin number as a parameter and
-@@ -763,7 +763,7 @@ struct gpio_desc *acpi_node_get_gpiod(struct fwnode_handle *fwnode,
-  * The function is idempotent, though each time it runs it will configure GPIO
-  * pin direction according to the flags in GpioInt resource.
+  * Dispose of a GPIO descriptor obtained with devm_gpiod_get() or
+@@ -286,6 +288,7 @@ EXPORT_SYMBOL(devm_gpiod_put);
+ 
+ /**
+  * devm_gpiod_put_array - Resource-managed gpiod_put_array()
++ * @dev:	GPIO consumer
+  * @descs:	GPIO descriptor array to dispose of
   *
-- * Return: Linux IRQ number (>%0) on success, negative errno on failure.
-+ * Return: Linux IRQ number (> %0) on success, negative errno on failure.
-  */
- int acpi_dev_gpio_irq_get(struct acpi_device *adev, int index)
- {
+  * Dispose of an array of GPIO descriptors obtained with devm_gpiod_get_array().
 -- 
 2.13.3
 
