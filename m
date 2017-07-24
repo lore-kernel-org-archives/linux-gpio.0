@@ -1,35 +1,62 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] pinctrl: qcom: spmi-gpio: Add dtest route for
- digital input
-Date: Mon, 24 Jul 2017 11:09:33 -0500
-Message-ID: <20170724160933.dh7pt2geva23k6ol@rob-hp-laptop>
-References: <20170719063136.5300-1-fenglinw@codeaurora.org>
- <20170719063136.5300-3-fenglinw@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/4] gpio: davinci: Add a separate compatible for
+ keystone-k2g soc
+Date: Mon, 24 Jul 2017 13:24:27 -0500
+Message-ID: <20170724182427.64u5zmr2jl3hk5lh@rob-hp-laptop>
+References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
+ <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:38552 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbdGXSYa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 24 Jul 2017 14:24:30 -0400
 Content-Disposition: inline
-In-Reply-To: <20170719063136.5300-3-fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-Cc: linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, collinsd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, aghayal-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, wruan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+In-Reply-To: <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: linus.walleij@linaro.org, ssantosh@kernel.org, nsekhar@ti.com, s-anna@ti.com, fcooper@ti.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 02:30:46PM +0800, fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org wrote:
-> From: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+On Tue, Jul 18, 2017 at 04:27:15PM +0530, Keerthy wrote:
+> Add a separate compatible for keystone-k2g soc
 > 
-> Add property "qcom,dtest-buffer" to specify which dtest rail to feed
-> when the pin is configured as a digital input.
-> 
-> Signed-off-by: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 > ---
->  .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |  7 +++
+>  Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 3 ++-
+>  drivers/gpio/gpio-davinci.c                             | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> index 5079ba7..1a5c1a2 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> @@ -1,7 +1,8 @@
+>  Davinci/Keystone GPIO controller bindings
+>  
+>  Required Properties:
+> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
+> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio",
+> +	      "ti,keystone-k2g-gpio"
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Reformat to one valid combination per line.
 
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 50 ++++++++++++++++++++++
->  2 files changed, 57 insertions(+)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  
+>  - reg: Physical base address of the controller and the size of memory mapped
+>         registers.
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 932f270..a8d8dd9 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -610,6 +610,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+>  static const struct of_device_id davinci_gpio_ids[] = {
+>  	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
+>  	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
+> +	{ .compatible = "ti,keystone-k2g-gpio", keystone_gpio_get_irq_chip},
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
+> -- 
+> 1.9.1
+> 
