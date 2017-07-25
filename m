@@ -1,59 +1,68 @@
 From: Anatolij Gustschin <agust@denx.de>
 Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
-Date: Tue, 25 Jul 2017 14:14:16 +0200
-Message-ID: <20170725141416.5b7764ed@crub>
+Date: Tue, 25 Jul 2017 14:34:41 +0200
+Message-ID: <20170725143441.2debeff6@crub>
 References: <1499374158-12388-1-git-send-email-agust@denx.de>
         <1499374158-12388-2-git-send-email-agust@denx.de>
         <20170710125210.GK29638@localhost>
-        <20170719085934.GU29638@localhost>
-        <20170719145900.42172f44@crub>
-        <20170725115235.GO2729@localhost>
+        <20170719135830.643f853d@crub>
+        <20170725114908.GN2729@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170725115235.GO2729@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-out.m-online.net ([212.18.0.9]:48191 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751799AbdGYMer (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2017 08:34:47 -0400
+In-Reply-To: <20170725114908.GN2729@localhost>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Johan Hovold <johan@kernel.org>
 Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
-List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 25 Jul 2017 13:52:35 +0200
+On Tue, 25 Jul 2017 13:49:08 +0200
 Johan Hovold johan@kernel.org wrote:
 
->On Wed, Jul 19, 2017 at 02:59:00PM +0200, Anatolij Gustschin wrote:
->> On Wed, 19 Jul 2017 10:59:34 +0200
->> Johan Hovold johan@kernel.org wrote:  
->
->> >> And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
->> >> seems too application specific for a generic chip like this.    
->> >
->> >Of which this is one is one of the major.  
->> 
->> Thanks all for feedback. I'm still pondering how to interface the
->> fpga manager driver to FTDI FIFO driver.
+>On Wed, Jul 19, 2017 at 01:58:30PM +0200, Anatolij Gustschin wrote:
+>> On Mon, 10 Jul 2017 14:52:10 +0200
+>> Johan Hovold johan@kernel.org wrote:
 >>   
->> >In short, your driver is much to application specific and is probably
->> >something that needs to be implemented in userspace using libftdi.  
+>> >On Thu, Jul 06, 2017 at 10:49:16PM +0200, Anatolij Gustschin wrote:  
+>> >> Add USB part with common functions for USB-GPIO/I2C/SPI master
+>> >> adapters. These allow communication with chip's control, transmit
+>> >> and receive endpoints and will be used by various FT232H drivers.    
+>> >  
+>> >> +static const struct mfd_cell ftdi_cells[] = {
+>> >> +	{ .name = "ftdi-cbus-gpio", },
+>> >> +	{ .name = "ftdi-mpsse-i2c", },
+>> >> +	{ .name = "ftdi-mpsse-spi", },
+>> >> +	{ .name = "ftdi-fifo-fpp-mgr", },
+>> >> +};    
+>> >
+>> >Correct me if I'm wrong, but aren't these modes really mutually
+>> >exclusive, possibly with exception of cbus-gpio (some pins are at least
+>> >available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
+>> >here either.  
 >> 
->> I have a requirement to use the fpga manager framework, therefore the
->> kernel driver is needed. Our usage scenario is a multi stage fpga
->> configuration process, the first stage is a pre-configuration via
->> FTDI SPI/FIFO, all subsequent stages are also done by other fpga
->> manager drivers. libftdi based driver already existed for hardware
->> bring-up, now I need similar functionality as kernel fpga manager.  
+>> MPSSE and FIFO modes are mutually exclusive, but I'm not sure about
+>> MPSSE and CBUS-GPIO. CBUS-GPIO didn't work as expected when I was
+>> testing with MPSSE SPI master driver, but maybe it is a driver issue.  
 >
->How are you even accessing these fpga-managers from userspace? I thought
->current interface was for in-kernel use only?
+>Yes, that wasn't clear to me either from just looking at the data
+>sheets. MPSSE seems to deal with its GPIOs differently.
 
-We have different possibilities to access to these fpga-managers from
-userspace. On platforms with device-tree support there is a DT-Overlay
-configfs interface for inserting a blob with configuration data and
-fpga device description. After inserting the blob the fpga manager is
-invoked automatically. There are also fpga-mgr debugfs config interface
-patches in Altera linux-socfpga git tree for accessing from userspace.
-I used them for initial testing, but now I'm using additional kernel
-module with a single configuration interface for different managers.
+yes, the GPIOs are at different pins in MPSSE mode and these pins are
+controlled via writes/reads to/from bulk endpoint with MPSSE commands.
+
+>> FT245 FIFO and CBUS GPIO can be switched by a control request, when
+>> FIFO mode is configured in the EEPROM.  
+>
+>Since the set_bitmode command is used to control the CBUS gpios, does
+>that mean that they cannot be toggled independently while FIFO mode is
+>in use (as the same command is used to set FIFO mode)?
+
+yes.
 
 Thanks,
 Anatolij
