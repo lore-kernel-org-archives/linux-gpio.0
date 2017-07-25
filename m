@@ -1,80 +1,72 @@
-From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Subject: RE: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
-Date: Tue, 25 Jul 2017 17:05:30 +0000
-Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725DE951@FMSMSX114.amr.corp.intel.com>
-References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
- <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
- <20170720090300.ayx5pz5l4yntefpt@dell>
- <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
- <20170725091012.3hpxihekht2j35xb@dell>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH] gpio: add gpio_add_lookup_tables() to add several tables at
+ once
+Date: Tue, 25 Jul 2017 13:58:00 -0700
+Message-ID: <20170725205800.GA25245@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:35797 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751033AbdGYRFc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Jul 2017 13:05:32 -0400
-In-Reply-To: <20170725091012.3hpxihekht2j35xb@dell>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-SGkgTGVlLA0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS8zXSBtZmQ6IEFkZCBuZXcgbWZk
-IGRldmljZSBUUFM2ODQ3MA0KPiANCj4gT24gRnJpLCAyMSBKdWwgMjAxNywgTWFuaSwgUmFqbW9o
-YW4gd3JvdGU6DQo+ID4gPiBPbiBXZWQsIDE5IEp1bCAyMDE3LCBSYWptb2hhbiBNYW5pIHdyb3Rl
-Og0KPiA+ID4NCj4gPiA+ID4gVGhlIFRQUzY4NDcwIGRldmljZSBpcyBhbiBhZHZhbmNlZCBwb3dl
-ciBtYW5hZ2VtZW50IHVuaXQgdGhhdA0KPiA+ID4gPiBwb3dlcnMNCj4gPiA+IGENCj4gPiA+ID4g
-Q29tcGFjdCBDYW1lcmEgTW9kdWxlIChDQ00pLCBnZW5lcmF0ZXMgY2xvY2tzIGZvciBpbWFnZSBz
-ZW5zb3JzLA0KPiA+ID4gPiBkcml2ZXMgYSBkdWFsIExFRCBmb3IgRmxhc2ggYW5kIGluY29ycG9y
-YXRlcyB0d28gTEVEIGRyaXZlcnMgZm9yDQo+ID4gPiA+IGdlbmVyYWwgcHVycG9zZSBpbmRpY2F0
-b3JzLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgVFBTNjg0
-NzAgbWZkIGRldmljZS4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUmFqbW9oYW4g
-TWFuaSA8cmFqbW9oYW4ubWFuaUBpbnRlbC5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAgZHJp
-dmVycy9tZmQvS2NvbmZpZyAgICAgICAgICB8ICAxOCArKysrKysrDQo+ID4gPiA+ICBkcml2ZXJz
-L21mZC9NYWtlZmlsZSAgICAgICAgIHwgICAxICsNCj4gPiA+ID4gIGRyaXZlcnMvbWZkL3RwczY4
-NDcwLmMgICAgICAgfCAxMTANCj4gPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysNCj4gPiA+ID4gIGluY2x1ZGUvbGludXgvbWZkL3RwczY4NDcwLmggfCAgOTcN
-Cj4gPiA+ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4g
-IDQgZmlsZXMgY2hhbmdlZCwgMjI2IGluc2VydGlvbnMoKykgIGNyZWF0ZSBtb2RlIDEwMDY0NA0K
-PiA+ID4gPiBkcml2ZXJzL21mZC90cHM2ODQ3MC5jICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiA+
-ID4gaW5jbHVkZS9saW51eC9tZmQvdHBzNjg0NzAuaA0KPiANCj4gWy4uLl0NCj4gDQo+ID4gPiA+
-ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ21hcF9jb25maWcgdHBzNjg0NzBfcmVnbWFwX2NvbmZp
-ZyA9IHsNCj4gPiA+ID4gKwkucmVnX2JpdHMgPSA4LA0KPiA+ID4gPiArCS52YWxfYml0cyA9IDgs
-DQo+ID4gPiA+ICsJLm1heF9yZWdpc3RlciA9IFRQUzY4NDcwX1JFR19NQVgsIH07DQo+ID4gPiA+
-ICsNCj4gPiA+ID4gK3N0YXRpYyBpbnQgdHBzNjg0NzBfY2hpcF9pbml0KHN0cnVjdCBkZXZpY2Ug
-KmRldiwgc3RydWN0IHJlZ21hcA0KPiA+ID4gPiArKnJlZ21hcCkgew0KPiA+ID4gPiArCXVuc2ln
-bmVkIGludCB2ZXJzaW9uOw0KPiA+ID4gPiArCWludCByZXQ7DQo+ID4gPiA+ICsNCj4gPiA+ID4g
-KwkvKiBGb3JjZSBzb2Z0d2FyZSByZXNldCAqLw0KPiA+ID4gPiArCXJldCA9IHJlZ21hcF93cml0
-ZShyZWdtYXAsIFRQUzY4NDcwX1JFR19SRVNFVCwNCj4gPiA+IFRQUzY4NDcwX1JFR19SRVNFVF9N
-QVNLKTsNCj4gPiA+ID4gKwlpZiAocmV0IDwgMCkNCj4gPiA+DQo+ID4gPiBXaWxsICdpZiAoIXJl
-dCknIGRvPw0KPiA+ID4NCj4gPg0KPiA+IFdlIGludGVuZCB0byBjaGVjayBlcnJvciBjb25kaXRp
-b25zIGFuZCBiYWlsIG91dC4gU28sIGlmIChyZXQgPCAwKSB3b3JrcyBmb3INCj4gdGhpcy4NCj4g
-DQo+IFllcywgJ2lmICghcmV0KScgZG9lcyB0aGF0IHRvby4NCj4gDQoNCnJlZ21hcF93cml0ZSgp
-IGFuZCByZWdtYXBfcmVhZCgpIGZ1bmN0aW9ucyByZXR1cm4gMCBvbiBzdWNjZXNzLiBIZW5jZSB3
-ZSBjYW4gbm90IHVzZSAnaWYgKCFyZXQpJyBoZXJlLCBzaW5jZSB3ZSBjaGVjayBmb3IgZXJyb3Ig
-Y29uZGl0aW9ucy4NCg0KPiA+ID4gPiArCQlyZXR1cm4gcmV0Ow0KPiA+ID4gPiArDQo+ID4gPiA+
-ICsJcmV0ID0gcmVnbWFwX3JlYWQocmVnbWFwLCBUUFM2ODQ3MF9SRUdfUkVWSUQsICZ2ZXJzaW9u
-KTsNCj4gPiA+ID4gKwlpZiAocmV0IDwgMCkgew0KPiA+ID4NCj4gPiA+IFNhbWUNCj4gPiA+DQo+
-ID4NCj4gPiBXZSBpbnRlbmQgdG8gY2hlY2sgZXJyb3IgY29uZGl0aW9ucyBhbmQgYmFpbCBvdXQu
-IFNvLCBpZiAocmV0IDwgMCkgd29ya3MgZm9yDQo+IHRoaXMuDQo+IA0KPiBBcyBhYm92ZS4NCj4g
-DQoNClNhbWUgYXMgYWJvdmUNCg0KPiA+ID4gPiArCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBy
-ZWFkIHJldmlzaW9uIHJlZ2lzdGVyOiAlZFxuIiwgcmV0KTsNCj4gPiA+ID4gKwkJcmV0dXJuIHJl
-dDsNCj4gPiA+ID4gKwl9DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlkZXZfaW5mbyhkZXYsICJUUFM2
-ODQ3MCBSRVZJRDogMHgleFxuIiwgdmVyc2lvbik7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlyZXR1
-cm4gMDsNCj4gPiA+ID4gK30NCj4gPiA+ID4gKw0KPiA+ID4gPiArc3RhdGljIGludCB0cHM2ODQ3
-MF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50KSB7DQo+ID4gPiA+ICsJc3RydWN0IGRl
-dmljZSAqZGV2ID0gJmNsaWVudC0+ZGV2Ow0KPiA+ID4gPiArCXN0cnVjdCByZWdtYXAgKnJlZ21h
-cDsNCj4gPiA+ID4gKwlpbnQgcmV0Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICsJcmVnbWFwID0gZGV2
-bV9yZWdtYXBfaW5pdF9pMmMoY2xpZW50LCAmdHBzNjg0NzBfcmVnbWFwX2NvbmZpZyk7DQo+ID4g
-PiA+ICsJaWYgKElTX0VSUihyZWdtYXApKSB7DQo+ID4gPiA+ICsJCWRldl9lcnIoZGV2LCAiZGV2
-bV9yZWdtYXBfaW5pdF9pMmMgRXJyb3IgJWxkXG4iLA0KPiA+ID4gPiArCQkJUFRSX0VSUihyZWdt
-YXApKTsNCj4gPiA+ID4gKwkJcmV0dXJuIFBUUl9FUlIocmVnbWFwKTsNCj4gPiA+ID4gKwl9DQo+
-ID4gPiA+ICsNCj4gPiA+ID4gKwlpMmNfc2V0X2NsaWVudGRhdGEoY2xpZW50LCByZWdtYXApOw0K
-PiA+ID4gPiArDQo+ID4gPiA+ICsJcmV0ID0gdHBzNjg0NzBfY2hpcF9pbml0KGRldiwgcmVnbWFw
-KTsNCj4gPiA+ID4gKwlpZiAocmV0IDwgMCkgew0KPiA+ID4NCj4gPiA+IFNhbWUNCj4gPiA+DQo+
-ID4NCj4gPiBXZSBpbnRlbmQgdG8gY2hlY2sgZXJyb3IgY29uZGl0aW9ucyBhbmQgYmFpbCBvdXQu
-IFNvLCBpZiAocmV0IDwgMCkgd29ya3MgZm9yDQo+IHRoaXMuDQo+IA0KPiBBcyBhYm92ZS4NCj4g
-DQoNClNhbWUgYXMgYWJvdmUNCg==
+When converting legacy board to use gpiod API() there migt be several
+lookup tables in board file, let's provide a way to register them all at
+once.
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/gpio/gpiolib.c       | 18 ++++++++++++++++++
+ include/linux/gpio/machine.h |  2 ++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a42a1eea5714..f8f4f8b61db8 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3010,6 +3010,24 @@ void gpiod_add_lookup_table(struct gpiod_lookup_table *table)
+ 	mutex_unlock(&gpio_lookup_lock);
+ }
+ 
++/**
++ * gpiod_add_lookup_tables() - register GPIO device consumers
++ * @tables: list of table of consumers to register
++ * @n: number of tables in the list
++ */
++void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables,
++			     unsigned int n)
++{
++	unsigned int i;
++
++	mutex_lock(&gpio_lookup_lock);
++
++	for (i = 0; i < n; i++)
++		list_add_tail(&tables[i]->list, &gpio_lookup_list);
++
++	mutex_unlock(&gpio_lookup_lock);
++}
++
+ /**
+  * gpiod_remove_lookup_table() - unregister GPIO device consumers
+  * @table: table of consumers to unregister
+diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
+index f738d50cc17d..6f7ddce88fb8 100644
+--- a/include/linux/gpio/machine.h
++++ b/include/linux/gpio/machine.h
+@@ -58,6 +58,8 @@ struct gpiod_lookup_table {
+ 
+ #ifdef CONFIG_GPIOLIB
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
++void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables,
++			     unsigned int n);
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
+ #else
+ static inline
+-- 
+2.14.0.rc0.400.g1c36432dff-goog
+
+
+-- 
+Dmitry
