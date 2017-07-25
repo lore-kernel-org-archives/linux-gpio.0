@@ -1,72 +1,58 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH] gpio: add gpio_add_lookup_tables() to add several tables at
- once
-Date: Tue, 25 Jul 2017 13:58:00 -0700
-Message-ID: <20170725205800.GA25245@dtor-ws>
+From: =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>
+Subject: [PATCH] gpio-it87: add support for IT8772F Super I/O.
+Date: Tue, 25 Jul 2017 22:10:29 +0100
+Message-ID: <20170725211029.20301-1-flameeyes@flameeyes.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37341 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751979AbdGYVKd (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2017 17:10:33 -0400
+Received: by mail-wm0-f53.google.com with SMTP id c184so66221794wmd.0
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Jul 2017 14:10:32 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, Sergey Tkachev <tssergey22@gmail.com>, =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>
 
-When converting legacy board to use gpiod API() there migt be several
-lookup tables in board file, let's provide a way to register them all at
-once.
+>From the datasheet, the GPIO interface is identical to IT8728 (same
+description), so just add it to the same case as the other chip.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.eu>
 ---
- drivers/gpio/gpiolib.c       | 18 ++++++++++++++++++
- include/linux/gpio/machine.h |  2 ++
- 2 files changed, 20 insertions(+)
+ drivers/gpio/gpio-it87.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a42a1eea5714..f8f4f8b61db8 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3010,6 +3010,24 @@ void gpiod_add_lookup_table(struct gpiod_lookup_table *table)
- 	mutex_unlock(&gpio_lookup_lock);
- }
+diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
+index 45d29e488dbb..d43d0a2cc4c5 100644
+--- a/drivers/gpio/gpio-it87.c
++++ b/drivers/gpio/gpio-it87.c
+@@ -2,6 +2,7 @@
+  *  GPIO interface for IT87xx Super I/O chips
+  *
+  *  Author: Diego Elio Pettenò <flameeyes@flameeyes.eu>
++ *  Copyright (c) 2017 Google, Inc.
+  *
+  *  Based on it87_wdt.c     by Oliver Schuster
+  *           gpio-it8761e.c by Denis Turischev
+@@ -39,6 +40,7 @@
+ #define IT8728_ID	0x8728
+ #define IT8732_ID	0x8732
+ #define IT8761_ID	0x8761
++#define IT8772_ID	0x8772
  
-+/**
-+ * gpiod_add_lookup_tables() - register GPIO device consumers
-+ * @tables: list of table of consumers to register
-+ * @n: number of tables in the list
-+ */
-+void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables,
-+			     unsigned int n)
-+{
-+	unsigned int i;
-+
-+	mutex_lock(&gpio_lookup_lock);
-+
-+	for (i = 0; i < n; i++)
-+		list_add_tail(&tables[i]->list, &gpio_lookup_list);
-+
-+	mutex_unlock(&gpio_lookup_lock);
-+}
-+
- /**
-  * gpiod_remove_lookup_table() - unregister GPIO device consumers
-  * @table: table of consumers to unregister
-diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
-index f738d50cc17d..6f7ddce88fb8 100644
---- a/include/linux/gpio/machine.h
-+++ b/include/linux/gpio/machine.h
-@@ -58,6 +58,8 @@ struct gpiod_lookup_table {
- 
- #ifdef CONFIG_GPIOLIB
- void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
-+void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables,
-+			     unsigned int n);
- void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
- #else
- static inline
+ /* IO Ports */
+ #define REG		0x2e
+@@ -314,6 +316,7 @@ static int __init it87_gpio_init(void)
+ 		break;
+ 	case IT8728_ID:
+ 	case IT8732_ID:
++	case IT8772_ID:
+ 		gpio_ba_reg = 0x62;
+ 		it87_gpio->io_size = 8;
+ 		it87_gpio->output_base = 0xc8;
 -- 
-2.14.0.rc0.400.g1c36432dff-goog
+2.13.3
 
-
--- 
-Dmitry
