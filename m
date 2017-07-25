@@ -1,36 +1,119 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 4/7] gpio: acpi: Fixup kerneldoc
-Date: Tue, 25 Jul 2017 11:50:08 +0300
-Message-ID: <20170725085008.GB2369@lahna.fi.intel.com>
-References: <20170724145728.7662-1-thierry.reding@gmail.com>
- <20170724145728.7662-4-thierry.reding@gmail.com>
- <1500909227.29303.205.camel@linux.intel.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+Date: Tue, 25 Jul 2017 10:10:12 +0100
+Message-ID: <20170725091012.3hpxihekht2j35xb@dell>
+References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
+ <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
+ <20170720090300.ayx5pz5l4yntefpt@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:46383 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750824AbdGYIuN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Jul 2017 04:50:13 -0400
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1500909227.29303.205.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 24, 2017 at 06:13:47PM +0300, Andy Shevchenko wrote:
-> On Mon, 2017-07-24 at 16:57 +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
+On Fri, 21 Jul 2017, Mani, Rajmohan wrote:
+> > On Wed, 19 Jul 2017, Rajmohan Mani wrote:
 > > 
-> > Fix up a parameter description to match the code and fix markup for a
-> > constant to prettify output.
+> > > The TPS68470 device is an advanced power management unit that powers
+> > a
+> > > Compact Camera Module (CCM), generates clocks for image sensors,
+> > > drives a dual LED for Flash and incorporates two LED drivers for
+> > > general purpose indicators.
+> > >
+> > > This patch adds support for TPS68470 mfd device.
+> > >
+> > > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> > > ---
+> > >  drivers/mfd/Kconfig          |  18 +++++++
+> > >  drivers/mfd/Makefile         |   1 +
+> > >  drivers/mfd/tps68470.c       | 110
+> > +++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/mfd/tps68470.h |  97
+> > > ++++++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 226 insertions(+)
+> > >  create mode 100644 drivers/mfd/tps68470.c  create mode 100644
+> > > include/linux/mfd/tps68470.h
+
+[...]
+
+> > > +static const struct regmap_config tps68470_regmap_config = {
+> > > +	.reg_bits = 8,
+> > > +	.val_bits = 8,
+> > > +	.max_register = TPS68470_REG_MAX,
+> > > +};
+> > > +
+> > > +static int tps68470_chip_init(struct device *dev, struct regmap
+> > > +*regmap) {
+> > > +	unsigned int version;
+> > > +	int ret;
+> > > +
+> > > +	/* Force software reset */
+> > > +	ret = regmap_write(regmap, TPS68470_REG_RESET,
+> > TPS68470_REG_RESET_MASK);
+> > > +	if (ret < 0)
+> > 
+> > Will 'if (!ret)' do?
 > > 
 > 
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> We intend to check error conditions and bail out. So, if (ret < 0) works for this.
 
-Also
+Yes, 'if (!ret)' does that too.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > +		return ret;
+> > > +
+> > > +	ret = regmap_read(regmap, TPS68470_REG_REVID, &version);
+> > > +	if (ret < 0) {
+> > 
+> > Same
+> > 
+> 
+> We intend to check error conditions and bail out. So, if (ret < 0) works for this.
 
-:)
+As above.
+
+> > > +		dev_err(dev, "Failed to read revision register: %d\n", ret);
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	dev_info(dev, "TPS68470 REVID: 0x%x\n", version);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int tps68470_probe(struct i2c_client *client) {
+> > > +	struct device *dev = &client->dev;
+> > > +	struct regmap *regmap;
+> > > +	int ret;
+> > > +
+> > > +	regmap = devm_regmap_init_i2c(client, &tps68470_regmap_config);
+> > > +	if (IS_ERR(regmap)) {
+> > > +		dev_err(dev, "devm_regmap_init_i2c Error %ld\n",
+> > > +			PTR_ERR(regmap));
+> > > +		return PTR_ERR(regmap);
+> > > +	}
+> > > +
+> > > +	i2c_set_clientdata(client, regmap);
+> > > +
+> > > +	ret = tps68470_chip_init(dev, regmap);
+> > > +	if (ret < 0) {
+> > 
+> > Same
+> > 
+> 
+> We intend to check error conditions and bail out. So, if (ret < 0) works for this.
+
+As above.
+
+[...]
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
