@@ -1,157 +1,80 @@
-From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND 2/2] gpio: gpio-vf610: add imx7ulp support
-Date: Tue, 25 Jul 2017 21:47:18 +0800
-Message-ID: <1500990438-3894-3-git-send-email-aisheng.dong@nxp.com>
-References: <1500990438-3894-1-git-send-email-aisheng.dong@nxp.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+Date: Tue, 25 Jul 2017 17:05:30 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725DE951@FMSMSX114.amr.corp.intel.com>
+References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
+ <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
+ <20170720090300.ayx5pz5l4yntefpt@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
+ <20170725091012.3hpxihekht2j35xb@dell>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-dm3nam03on0049.outbound.protection.outlook.com ([104.47.41.49]:49130
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752130AbdGYNrf (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Jul 2017 09:47:35 -0400
-In-Reply-To: <1500990438-3894-1-git-send-email-aisheng.dong@nxp.com>
+Received: from mga04.intel.com ([192.55.52.120]:35797 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751033AbdGYRFc (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Jul 2017 13:05:32 -0400
+In-Reply-To: <20170725091012.3hpxihekht2j35xb@dell>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, peter.chen@nxp.com, dongas86@gmail.com, kernel@pengutronix.de, aisheng.dong@nxp.com, Alexandre Courbot <gnurou@gmail.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
-on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
-RGPIO2P has an extra Port Data Direction Register (PDDR) used
-to configure the individual port pins for input or output.
-
-We introduce a FSL_GPIO_HAVE_PDDR with fsl_gpio_soc_data data
-to distinguish this differences. And we support getting the output
-status by checking the GPIO direction in PDDR.
-
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Fugang Duan <fugang.duan@nxp.com>
-Cc: Peter Chen <peter.chen@nxp.com>
-Acked-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/gpio/gpio-vf610.c | 49 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 521fbe3..a439d27 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -30,10 +30,15 @@
- 
- #define VF610_GPIO_PER_PORT		32
- 
-+struct fsl_gpio_soc_data {
-+	u32 flags;
-+};
-+
- struct vf610_gpio_port {
- 	struct gpio_chip gc;
- 	void __iomem *base;
- 	void __iomem *gpio_base;
-+	const struct fsl_gpio_soc_data *sdata;
- 	u8 irqc[VF610_GPIO_PER_PORT];
- 	int irq;
- };
-@@ -43,6 +48,7 @@ struct vf610_gpio_port {
- #define GPIO_PCOR		0x08
- #define GPIO_PTOR		0x0c
- #define GPIO_PDIR		0x10
-+#define GPIO_PDDR		0x14
- 
- #define PORT_PCR(n)		((n) * 0x4)
- #define PORT_PCR_IRQC_OFFSET	16
-@@ -59,10 +65,18 @@ struct vf610_gpio_port {
- #define PORT_INT_EITHER_EDGE	0xb
- #define PORT_INT_LOGIC_ONE	0xc
- 
-+/* SoC has a Port Data Direction Register (PDDR) */
-+#define FSL_GPIO_HAVE_PDDR	BIT(0)
-+
- static struct irq_chip vf610_gpio_irq_chip;
- 
-+static const struct fsl_gpio_soc_data imx_data = {
-+	.flags = FSL_GPIO_HAVE_PDDR,
-+};
-+
- static const struct of_device_id vf610_gpio_dt_ids[] = {
--	{ .compatible = "fsl,vf610-gpio" },
-+	{ .compatible = "fsl,vf610-gpio",	.data = NULL, },
-+	{ .compatible = "fsl,imx7ulp-gpio",	.data = &imx_data, },
- 	{ /* sentinel */ }
- };
- 
-@@ -79,8 +93,18 @@ static inline u32 vf610_gpio_readl(void __iomem *reg)
- static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct vf610_gpio_port *port = gpiochip_get_data(gc);
--
--	return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR) & BIT(gpio));
-+	unsigned long mask = BIT(gpio);
-+	void __iomem *addr;
-+
-+	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR) {
-+		mask &= vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
-+		addr = mask ? port->gpio_base + GPIO_PDOR :
-+			      port->gpio_base + GPIO_PDIR;
-+		return !!(vf610_gpio_readl(addr) & BIT(gpio));
-+	} else {
-+		return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR)
-+					   & BIT(gpio));
-+	}
- }
- 
- static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-@@ -96,12 +120,28 @@ static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int vf610_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- {
-+	struct vf610_gpio_port *port = gpiochip_get_data(chip);
-+	unsigned long mask = BIT(gpio);
-+	u32 val;
-+
-+	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR) {
-+		val = vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
-+		val &= ~mask;
-+		vf610_gpio_writel(val, port->gpio_base + GPIO_PDDR);
-+	}
-+
- 	return pinctrl_gpio_direction_input(chip->base + gpio);
- }
- 
- static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
- 				       int value)
- {
-+	struct vf610_gpio_port *port = gpiochip_get_data(chip);
-+	unsigned long mask = BIT(gpio);
-+
-+	if (port->sdata && port->sdata->flags & FSL_GPIO_HAVE_PDDR)
-+		vf610_gpio_writel(mask, port->gpio_base + GPIO_PDDR);
-+
- 	vf610_gpio_set(chip, gpio, value);
- 
- 	return pinctrl_gpio_direction_output(chip->base + gpio);
-@@ -216,6 +256,8 @@ static struct irq_chip vf610_gpio_irq_chip = {
- 
- static int vf610_gpio_probe(struct platform_device *pdev)
- {
-+	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
-+							   &pdev->dev);
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct vf610_gpio_port *port;
-@@ -227,6 +269,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	if (!port)
- 		return -ENOMEM;
- 
-+	port->sdata = of_id->data;
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	port->base = devm_ioremap_resource(dev, iores);
- 	if (IS_ERR(port->base))
--- 
-2.7.4
-
+SGkgTGVlLA0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS8zXSBtZmQ6IEFkZCBuZXcgbWZk
+IGRldmljZSBUUFM2ODQ3MA0KPiANCj4gT24gRnJpLCAyMSBKdWwgMjAxNywgTWFuaSwgUmFqbW9o
+YW4gd3JvdGU6DQo+ID4gPiBPbiBXZWQsIDE5IEp1bCAyMDE3LCBSYWptb2hhbiBNYW5pIHdyb3Rl
+Og0KPiA+ID4NCj4gPiA+ID4gVGhlIFRQUzY4NDcwIGRldmljZSBpcyBhbiBhZHZhbmNlZCBwb3dl
+ciBtYW5hZ2VtZW50IHVuaXQgdGhhdA0KPiA+ID4gPiBwb3dlcnMNCj4gPiA+IGENCj4gPiA+ID4g
+Q29tcGFjdCBDYW1lcmEgTW9kdWxlIChDQ00pLCBnZW5lcmF0ZXMgY2xvY2tzIGZvciBpbWFnZSBz
+ZW5zb3JzLA0KPiA+ID4gPiBkcml2ZXMgYSBkdWFsIExFRCBmb3IgRmxhc2ggYW5kIGluY29ycG9y
+YXRlcyB0d28gTEVEIGRyaXZlcnMgZm9yDQo+ID4gPiA+IGdlbmVyYWwgcHVycG9zZSBpbmRpY2F0
+b3JzLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgVFBTNjg0
+NzAgbWZkIGRldmljZS4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUmFqbW9oYW4g
+TWFuaSA8cmFqbW9oYW4ubWFuaUBpbnRlbC5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAgZHJp
+dmVycy9tZmQvS2NvbmZpZyAgICAgICAgICB8ICAxOCArKysrKysrDQo+ID4gPiA+ICBkcml2ZXJz
+L21mZC9NYWtlZmlsZSAgICAgICAgIHwgICAxICsNCj4gPiA+ID4gIGRyaXZlcnMvbWZkL3RwczY4
+NDcwLmMgICAgICAgfCAxMTANCj4gPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysNCj4gPiA+ID4gIGluY2x1ZGUvbGludXgvbWZkL3RwczY4NDcwLmggfCAgOTcN
+Cj4gPiA+ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4g
+IDQgZmlsZXMgY2hhbmdlZCwgMjI2IGluc2VydGlvbnMoKykgIGNyZWF0ZSBtb2RlIDEwMDY0NA0K
+PiA+ID4gPiBkcml2ZXJzL21mZC90cHM2ODQ3MC5jICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiA+
+ID4gaW5jbHVkZS9saW51eC9tZmQvdHBzNjg0NzAuaA0KPiANCj4gWy4uLl0NCj4gDQo+ID4gPiA+
+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ21hcF9jb25maWcgdHBzNjg0NzBfcmVnbWFwX2NvbmZp
+ZyA9IHsNCj4gPiA+ID4gKwkucmVnX2JpdHMgPSA4LA0KPiA+ID4gPiArCS52YWxfYml0cyA9IDgs
+DQo+ID4gPiA+ICsJLm1heF9yZWdpc3RlciA9IFRQUzY4NDcwX1JFR19NQVgsIH07DQo+ID4gPiA+
+ICsNCj4gPiA+ID4gK3N0YXRpYyBpbnQgdHBzNjg0NzBfY2hpcF9pbml0KHN0cnVjdCBkZXZpY2Ug
+KmRldiwgc3RydWN0IHJlZ21hcA0KPiA+ID4gPiArKnJlZ21hcCkgew0KPiA+ID4gPiArCXVuc2ln
+bmVkIGludCB2ZXJzaW9uOw0KPiA+ID4gPiArCWludCByZXQ7DQo+ID4gPiA+ICsNCj4gPiA+ID4g
+KwkvKiBGb3JjZSBzb2Z0d2FyZSByZXNldCAqLw0KPiA+ID4gPiArCXJldCA9IHJlZ21hcF93cml0
+ZShyZWdtYXAsIFRQUzY4NDcwX1JFR19SRVNFVCwNCj4gPiA+IFRQUzY4NDcwX1JFR19SRVNFVF9N
+QVNLKTsNCj4gPiA+ID4gKwlpZiAocmV0IDwgMCkNCj4gPiA+DQo+ID4gPiBXaWxsICdpZiAoIXJl
+dCknIGRvPw0KPiA+ID4NCj4gPg0KPiA+IFdlIGludGVuZCB0byBjaGVjayBlcnJvciBjb25kaXRp
+b25zIGFuZCBiYWlsIG91dC4gU28sIGlmIChyZXQgPCAwKSB3b3JrcyBmb3INCj4gdGhpcy4NCj4g
+DQo+IFllcywgJ2lmICghcmV0KScgZG9lcyB0aGF0IHRvby4NCj4gDQoNCnJlZ21hcF93cml0ZSgp
+IGFuZCByZWdtYXBfcmVhZCgpIGZ1bmN0aW9ucyByZXR1cm4gMCBvbiBzdWNjZXNzLiBIZW5jZSB3
+ZSBjYW4gbm90IHVzZSAnaWYgKCFyZXQpJyBoZXJlLCBzaW5jZSB3ZSBjaGVjayBmb3IgZXJyb3Ig
+Y29uZGl0aW9ucy4NCg0KPiA+ID4gPiArCQlyZXR1cm4gcmV0Ow0KPiA+ID4gPiArDQo+ID4gPiA+
+ICsJcmV0ID0gcmVnbWFwX3JlYWQocmVnbWFwLCBUUFM2ODQ3MF9SRUdfUkVWSUQsICZ2ZXJzaW9u
+KTsNCj4gPiA+ID4gKwlpZiAocmV0IDwgMCkgew0KPiA+ID4NCj4gPiA+IFNhbWUNCj4gPiA+DQo+
+ID4NCj4gPiBXZSBpbnRlbmQgdG8gY2hlY2sgZXJyb3IgY29uZGl0aW9ucyBhbmQgYmFpbCBvdXQu
+IFNvLCBpZiAocmV0IDwgMCkgd29ya3MgZm9yDQo+IHRoaXMuDQo+IA0KPiBBcyBhYm92ZS4NCj4g
+DQoNClNhbWUgYXMgYWJvdmUNCg0KPiA+ID4gPiArCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBy
+ZWFkIHJldmlzaW9uIHJlZ2lzdGVyOiAlZFxuIiwgcmV0KTsNCj4gPiA+ID4gKwkJcmV0dXJuIHJl
+dDsNCj4gPiA+ID4gKwl9DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlkZXZfaW5mbyhkZXYsICJUUFM2
+ODQ3MCBSRVZJRDogMHgleFxuIiwgdmVyc2lvbik7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwlyZXR1
+cm4gMDsNCj4gPiA+ID4gK30NCj4gPiA+ID4gKw0KPiA+ID4gPiArc3RhdGljIGludCB0cHM2ODQ3
+MF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50KSB7DQo+ID4gPiA+ICsJc3RydWN0IGRl
+dmljZSAqZGV2ID0gJmNsaWVudC0+ZGV2Ow0KPiA+ID4gPiArCXN0cnVjdCByZWdtYXAgKnJlZ21h
+cDsNCj4gPiA+ID4gKwlpbnQgcmV0Ow0KPiA+ID4gPiArDQo+ID4gPiA+ICsJcmVnbWFwID0gZGV2
+bV9yZWdtYXBfaW5pdF9pMmMoY2xpZW50LCAmdHBzNjg0NzBfcmVnbWFwX2NvbmZpZyk7DQo+ID4g
+PiA+ICsJaWYgKElTX0VSUihyZWdtYXApKSB7DQo+ID4gPiA+ICsJCWRldl9lcnIoZGV2LCAiZGV2
+bV9yZWdtYXBfaW5pdF9pMmMgRXJyb3IgJWxkXG4iLA0KPiA+ID4gPiArCQkJUFRSX0VSUihyZWdt
+YXApKTsNCj4gPiA+ID4gKwkJcmV0dXJuIFBUUl9FUlIocmVnbWFwKTsNCj4gPiA+ID4gKwl9DQo+
+ID4gPiA+ICsNCj4gPiA+ID4gKwlpMmNfc2V0X2NsaWVudGRhdGEoY2xpZW50LCByZWdtYXApOw0K
+PiA+ID4gPiArDQo+ID4gPiA+ICsJcmV0ID0gdHBzNjg0NzBfY2hpcF9pbml0KGRldiwgcmVnbWFw
+KTsNCj4gPiA+ID4gKwlpZiAocmV0IDwgMCkgew0KPiA+ID4NCj4gPiA+IFNhbWUNCj4gPiA+DQo+
+ID4NCj4gPiBXZSBpbnRlbmQgdG8gY2hlY2sgZXJyb3IgY29uZGl0aW9ucyBhbmQgYmFpbCBvdXQu
+IFNvLCBpZiAocmV0IDwgMCkgd29ya3MgZm9yDQo+IHRoaXMuDQo+IA0KPiBBcyBhYm92ZS4NCj4g
+DQoNClNhbWUgYXMgYWJvdmUNCg==
