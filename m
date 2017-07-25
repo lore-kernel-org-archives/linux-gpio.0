@@ -1,82 +1,59 @@
 From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V4 RESEND 0/6] pinctrl: imx: add imx7ulp pinctrl support
-Date: Tue, 25 Jul 2017 21:41:50 +0800
-Message-ID: <1500990116-3620-1-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V4 RESEND 2/6] pinctrl: imx: switch to use the generic pinmux property
+Date: Tue, 25 Jul 2017 21:41:52 +0800
+Message-ID: <1500990116-3620-3-git-send-email-aisheng.dong@nxp.com>
+References: <1500990116-3620-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam01on0081.outbound.protection.outlook.com ([104.47.34.81]:28677
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+Received: from mail-bl2nam02on0041.outbound.protection.outlook.com ([104.47.38.41]:33205
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750861AbdGYNmM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Jul 2017 09:42:12 -0400
+        id S1751127AbdGYNmU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Jul 2017 09:42:20 -0400
+In-Reply-To: <1500990116-3620-1-git-send-email-aisheng.dong@nxp.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, aisheng.dong@nxp.com, dongas86@gmail.com, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de
 
-This is a rebased V4 version against 4.13-rc2 with latest ACKs collected.
+The generic pinmux property seems to be more suitable for IMX.
+So we change to use 'pinmux' instead of 'pins'.
 
-Linus,
-I saw your tree still has not rebased to 4.13-rc2, so i generated the
-patch series based on Linus 4.13-rc2 branch.
-Supposed it should be easy to be merged into your branch once you done
-the rebase.
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bai Ping <ping.bai@nxp.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-i.MX 7ULP has three IOMUXC instances: IOMUXC0 for M4 ports,
-IOMUXC1 for A7 ports and IOMUXC DDR for DDR interface.
-
-This patch series adds the IOMUXC1 support for A7.
-It only supports generic pin config.
-
+---
 ChangeLog:
-v3->v4:
- This patch series is a combine of the following patches per
- Maintainer's request.
-[PATCH V3 1/2] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
-https://www.spinics.net/lists/arm-kernel/msg582995.html
-[PATCH V3 2/2] pinctrl: imx: add imx7ulp driver
-https://www.spinics.net/lists/arm-kernel/msg582996.html
-[PATCH 0/2] pinctrl: pinctrl-imx: add gpio support for mx7ulp
-https://www.spinics.net/lists/arm-kernel/msg580993.html
+ * new patch
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- Detailed changes as follows:
- * change pad name to IMX7ULP_PAD_X style
- * switch to generic pinmux property
- * remove input/output generic property decodes as the standard
-   input/out property name are still under discussing.
-   It does not affect the normal GPIO function as imx7ulp pinctrl
-   driver supports gpio_set_direction which will set input/output enable
-   automatically.
-   See: [PATCH V4 7/7] pinctrl: pinctrl-imx7ulp: add gpio_set_direction
-   It will be added back later for other pads once the standard property
-   is determined.
-
-Dong Aisheng (7):
-  dt-bindings: pinctrl: extend the pinmux property to support integers
-    array
-Dong Aisheng (6):
-  dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
-  pinctrl: imx: switch to use the generic pinmux property
-  pinctrl: imx: add imx7ulp driver
-  pinctrl: imx: remove gpio_request_enable and gpio_disable_free
-  pinctrl: imx: make imx_pmx_ops.gpio_set_direction platform specific
-    callbacks
-  pinctrl: pinctrl-imx7ulp: add gpio_set_direction support
-
- .../bindings/pinctrl/fsl,imx7ulp-pinctrl.txt       |  61 +++
- arch/arm/boot/dts/imx7ulp-pinfunc.h                | 468 +++++++++++++++++++++
- drivers/pinctrl/freescale/Kconfig                  |   7 +
- drivers/pinctrl/freescale/Makefile                 |   1 +
- drivers/pinctrl/freescale/pinctrl-imx.c            | 123 +-----
- drivers/pinctrl/freescale/pinctrl-imx.h            |  20 +
- drivers/pinctrl/freescale/pinctrl-imx7ulp.c        | 364 ++++++++++++++++
- drivers/pinctrl/freescale/pinctrl-vf610.c          |  25 ++
- 8 files changed, 953 insertions(+), 116 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7ulp-pinctrl.txt
- create mode 100644 arch/arm/boot/dts/imx7ulp-pinfunc.h
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 72aca75..fc1ba3c 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -563,14 +563,14 @@ static int imx_pinctrl_parse_groups(struct device_node *np,
+ 	 * do sanity check and calculate pins number
+ 	 *
+ 	 * First try legacy 'fsl,pins' property, then fall back to the
+-	 * generic 'pins'.
++	 * generic 'pinmux'.
+ 	 *
+-	 * Note: for generic 'pins' case, there's no CONFIG part in
++	 * Note: for generic 'pinmux' case, there's no CONFIG part in
+ 	 * the binding format.
+ 	 */
+ 	list = of_get_property(np, "fsl,pins", &size);
+ 	if (!list) {
+-		list = of_get_property(np, "pins", &size);
++		list = of_get_property(np, "pinmux", &size);
+ 		if (!list) {
+ 			dev_err(info->dev,
+ 				"no fsl,pins and pins property in node %s\n",
 -- 
 2.7.4
 
