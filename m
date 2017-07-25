@@ -1,68 +1,82 @@
-From: Anatolij Gustschin <agust@denx.de>
-Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
-Date: Tue, 25 Jul 2017 14:34:41 +0200
-Message-ID: <20170725143441.2debeff6@crub>
-References: <1499374158-12388-1-git-send-email-agust@denx.de>
-        <1499374158-12388-2-git-send-email-agust@denx.de>
-        <20170710125210.GK29638@localhost>
-        <20170719135830.643f853d@crub>
-        <20170725114908.GN2729@localhost>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V4 RESEND 0/6] pinctrl: imx: add imx7ulp pinctrl support
+Date: Tue, 25 Jul 2017 21:41:50 +0800
+Message-ID: <1500990116-3620-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-out.m-online.net ([212.18.0.9]:48191 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbdGYMer (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2017 08:34:47 -0400
-In-Reply-To: <20170725114908.GN2729@localhost>
+Received: from mail-by2nam01on0081.outbound.protection.outlook.com ([104.47.34.81]:28677
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750861AbdGYNmM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Jul 2017 09:42:12 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, aisheng.dong@nxp.com, dongas86@gmail.com, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de
 
-On Tue, 25 Jul 2017 13:49:08 +0200
-Johan Hovold johan@kernel.org wrote:
+This is a rebased V4 version against 4.13-rc2 with latest ACKs collected.
 
->On Wed, Jul 19, 2017 at 01:58:30PM +0200, Anatolij Gustschin wrote:
->> On Mon, 10 Jul 2017 14:52:10 +0200
->> Johan Hovold johan@kernel.org wrote:
->>   
->> >On Thu, Jul 06, 2017 at 10:49:16PM +0200, Anatolij Gustschin wrote:  
->> >> Add USB part with common functions for USB-GPIO/I2C/SPI master
->> >> adapters. These allow communication with chip's control, transmit
->> >> and receive endpoints and will be used by various FT232H drivers.    
->> >  
->> >> +static const struct mfd_cell ftdi_cells[] = {
->> >> +	{ .name = "ftdi-cbus-gpio", },
->> >> +	{ .name = "ftdi-mpsse-i2c", },
->> >> +	{ .name = "ftdi-mpsse-spi", },
->> >> +	{ .name = "ftdi-fifo-fpp-mgr", },
->> >> +};    
->> >
->> >Correct me if I'm wrong, but aren't these modes really mutually
->> >exclusive, possibly with exception of cbus-gpio (some pins are at least
->> >available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
->> >here either.  
->> 
->> MPSSE and FIFO modes are mutually exclusive, but I'm not sure about
->> MPSSE and CBUS-GPIO. CBUS-GPIO didn't work as expected when I was
->> testing with MPSSE SPI master driver, but maybe it is a driver issue.  
->
->Yes, that wasn't clear to me either from just looking at the data
->sheets. MPSSE seems to deal with its GPIOs differently.
+Linus,
+I saw your tree still has not rebased to 4.13-rc2, so i generated the
+patch series based on Linus 4.13-rc2 branch.
+Supposed it should be easy to be merged into your branch once you done
+the rebase.
 
-yes, the GPIOs are at different pins in MPSSE mode and these pins are
-controlled via writes/reads to/from bulk endpoint with MPSSE commands.
+i.MX 7ULP has three IOMUXC instances: IOMUXC0 for M4 ports,
+IOMUXC1 for A7 ports and IOMUXC DDR for DDR interface.
 
->> FT245 FIFO and CBUS GPIO can be switched by a control request, when
->> FIFO mode is configured in the EEPROM.  
->
->Since the set_bitmode command is used to control the CBUS gpios, does
->that mean that they cannot be toggled independently while FIFO mode is
->in use (as the same command is used to set FIFO mode)?
+This patch series adds the IOMUXC1 support for A7.
+It only supports generic pin config.
 
-yes.
+ChangeLog:
+v3->v4:
+ This patch series is a combine of the following patches per
+ Maintainer's request.
+[PATCH V3 1/2] dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
+https://www.spinics.net/lists/arm-kernel/msg582995.html
+[PATCH V3 2/2] pinctrl: imx: add imx7ulp driver
+https://www.spinics.net/lists/arm-kernel/msg582996.html
+[PATCH 0/2] pinctrl: pinctrl-imx: add gpio support for mx7ulp
+https://www.spinics.net/lists/arm-kernel/msg580993.html
 
-Thanks,
-Anatolij
+ Detailed changes as follows:
+ * change pad name to IMX7ULP_PAD_X style
+ * switch to generic pinmux property
+ * remove input/output generic property decodes as the standard
+   input/out property name are still under discussing.
+   It does not affect the normal GPIO function as imx7ulp pinctrl
+   driver supports gpio_set_direction which will set input/output enable
+   automatically.
+   See: [PATCH V4 7/7] pinctrl: pinctrl-imx7ulp: add gpio_set_direction
+   It will be added back later for other pads once the standard property
+   is determined.
+
+Dong Aisheng (7):
+  dt-bindings: pinctrl: extend the pinmux property to support integers
+    array
+Dong Aisheng (6):
+  dt-bindings: pinctrl: add imx7ulp pinctrl binding doc
+  pinctrl: imx: switch to use the generic pinmux property
+  pinctrl: imx: add imx7ulp driver
+  pinctrl: imx: remove gpio_request_enable and gpio_disable_free
+  pinctrl: imx: make imx_pmx_ops.gpio_set_direction platform specific
+    callbacks
+  pinctrl: pinctrl-imx7ulp: add gpio_set_direction support
+
+ .../bindings/pinctrl/fsl,imx7ulp-pinctrl.txt       |  61 +++
+ arch/arm/boot/dts/imx7ulp-pinfunc.h                | 468 +++++++++++++++++++++
+ drivers/pinctrl/freescale/Kconfig                  |   7 +
+ drivers/pinctrl/freescale/Makefile                 |   1 +
+ drivers/pinctrl/freescale/pinctrl-imx.c            | 123 +-----
+ drivers/pinctrl/freescale/pinctrl-imx.h            |  20 +
+ drivers/pinctrl/freescale/pinctrl-imx7ulp.c        | 364 ++++++++++++++++
+ drivers/pinctrl/freescale/pinctrl-vf610.c          |  25 ++
+ 8 files changed, 953 insertions(+), 116 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx7ulp-pinctrl.txt
+ create mode 100644 arch/arm/boot/dts/imx7ulp-pinfunc.h
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imx7ulp.c
+
+-- 
+2.7.4
+
