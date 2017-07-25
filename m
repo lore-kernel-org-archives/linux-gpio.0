@@ -1,69 +1,76 @@
-From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 3/4] gpio: davinci: Add a separate compatible for
- keystone-k2g soc
-Date: Tue, 25 Jul 2017 08:52:53 +0530
-Message-ID: <decf6160-621a-8d73-8694-e5091ea50d27@ti.com>
-References: <1500375436-9435-1-git-send-email-j-keerthy@ti.com>
- <1500375436-9435-4-git-send-email-j-keerthy@ti.com>
- <20170724182427.64u5zmr2jl3hk5lh@rob-hp-laptop>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/4] gpio: tegra: Remove unnecessary check
+Date: Tue, 25 Jul 2017 09:27:01 +0100
+Message-ID: <18e56d60-db2a-00d1-bb50-6ba12b319005@nvidia.com>
+References: <20170724145508.7388-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170724182427.64u5zmr2jl3hk5lh@rob-hp-laptop>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, s-anna-l0cyMroinI0@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170724145508.7388-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
 
-
-On Monday 24 July 2017 11:54 PM, Rob Herring wrote:
-> On Tue, Jul 18, 2017 at 04:27:15PM +0530, Keerthy wrote:
->> Add a separate compatible for keystone-k2g soc
->>
->> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
->> ---
->>  Documentation/devicetree/bindings/gpio/gpio-davinci.txt | 3 ++-
->>  drivers/gpio/gpio-davinci.c                             | 1 +
->>  2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> index 5079ba7..1a5c1a2 100644
->> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
->> @@ -1,7 +1,8 @@
->>  Davinci/Keystone GPIO controller bindings
->>  
->>  Required Properties:
->> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
->> +- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio",
->> +	      "ti,keystone-k2g-gpio"
+On 24/07/17 15:55, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Reformat to one valid combination per line.
-
-Sure Rob. Thanks for reviewing.
-
+> of_device_get_match_data() can never return NULL, therefore the check
+> for NULL values is unnecessary.
 > 
->>  
->>  - reg: Physical base address of the controller and the size of memory mapped
->>         registers.
->> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->> index 932f270..a8d8dd9 100644
->> --- a/drivers/gpio/gpio-davinci.c
->> +++ b/drivers/gpio/gpio-davinci.c
->> @@ -610,6 +610,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->>  static const struct of_device_id davinci_gpio_ids[] = {
->>  	{ .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
->>  	{ .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
->> +	{ .compatible = "ti,keystone-k2g-gpio", keystone_gpio_get_irq_chip},
->>  	{ /* sentinel */ },
->>  };
->>  MODULE_DEVICE_TABLE(of, davinci_gpio_ids);
->> -- 
->> 1.9.1
->>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpio/gpio-tegra.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 17725c83821f..63ee221f9be9 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -566,7 +566,6 @@ static struct lock_class_key gpio_lock_class;
+>  
+>  static int tegra_gpio_probe(struct platform_device *pdev)
+>  {
+> -	const struct tegra_gpio_soc_config *config;
+>  	struct tegra_gpio_info *tgi;
+>  	struct resource *res;
+>  	struct tegra_gpio_bank *bank;
+> @@ -575,17 +574,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>  	int i;
+>  	int j;
+>  
+> -	config = of_device_get_match_data(&pdev->dev);
+> -	if (!config) {
+> -		dev_err(&pdev->dev, "Error: No device match found\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	tgi = devm_kzalloc(&pdev->dev, sizeof(*tgi), GFP_KERNEL);
+>  	if (!tgi)
+>  		return -ENODEV;
+>  
+> -	tgi->soc = config;
+> +	tgi->soc = of_device_get_match_data(&pdev->dev);
+>  	tgi->dev = &pdev->dev;
+>  
+>  	ret = platform_irq_count(pdev);
+> @@ -625,7 +618,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, tgi);
+>  
+> -	if (config->debounce_supported)
+> +	if (tgi->soc->debounce_supported)
+>  		tgi->gc.set_config = tegra_gpio_set_config;
+>  
+>  	tgi->bank_info = devm_kzalloc(&pdev->dev, tgi->bank_count *
+
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
+
+-- 
+nvpublic
