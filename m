@@ -1,52 +1,68 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
-Date: Tue, 25 Jul 2017 13:29:15 +0300
-Message-ID: <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
-References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
- <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
- <20170720090300.ayx5pz5l4yntefpt@dell> <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
- <20170725091012.3hpxihekht2j35xb@dell>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
+Date: Tue, 25 Jul 2017 13:49:08 +0200
+Message-ID: <20170725114908.GN2729@localhost>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+ <1499374158-12388-2-git-send-email-agust@denx.de>
+ <20170710125210.GK29638@localhost>
+ <20170719135830.643f853d@crub>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170725091012.3hpxihekht2j35xb@dell>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "Mani, Rajmohan" <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37183 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbdGYLtP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2017 07:49:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20170719135830.643f853d@crub>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Anatolij Gustschin <agust@denx.de>
+Cc: Johan Hovold <johan@kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
 
-On Tue, Jul 25, 2017 at 12:10 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Fri, 21 Jul 2017, Mani, Rajmohan wrote:
->> > On Wed, 19 Jul 2017, Rajmohan Mani wrote:
+On Wed, Jul 19, 2017 at 01:58:30PM +0200, Anatolij Gustschin wrote:
+> On Mon, 10 Jul 2017 14:52:10 +0200
+> Johan Hovold johan@kernel.org wrote:
+> 
+> >On Thu, Jul 06, 2017 at 10:49:16PM +0200, Anatolij Gustschin wrote:
+> >> Add USB part with common functions for USB-GPIO/I2C/SPI master
+> >> adapters. These allow communication with chip's control, transmit
+> >> and receive endpoints and will be used by various FT232H drivers.  
+> >
+> >> +static const struct mfd_cell ftdi_cells[] = {
+> >> +	{ .name = "ftdi-cbus-gpio", },
+> >> +	{ .name = "ftdi-mpsse-i2c", },
+> >> +	{ .name = "ftdi-mpsse-spi", },
+> >> +	{ .name = "ftdi-fifo-fpp-mgr", },
+> >> +};  
+> >
+> >Correct me if I'm wrong, but aren't these modes really mutually
+> >exclusive, possibly with exception of cbus-gpio (some pins are at least
+> >available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
+> >here either.
+> 
+> MPSSE and FIFO modes are mutually exclusive, but I'm not sure about
+> MPSSE and CBUS-GPIO. CBUS-GPIO didn't work as expected when I was
+> testing with MPSSE SPI master driver, but maybe it is a driver issue.
 
->> > > + /* Force software reset */
->> > > + ret = regmap_write(regmap, TPS68470_REG_RESET,
->> > TPS68470_REG_RESET_MASK);
->> > > + if (ret < 0)
->> >
->> > Will 'if (!ret)' do?
->> >
->>
->> We intend to check error conditions and bail out. So, if (ret < 0) works for this.
->
-> Yes, 'if (!ret)' does that too.
+Yes, that wasn't clear to me either from just looking at the data
+sheets. MPSSE seems to deal with its GPIOs differently.
 
-Did you mean
+> FT245 FIFO and CBUS GPIO can be switched by a control request, when
+> FIFO mode is configured in the EEPROM.
 
-if (ret)
- return ret;
+Since the set_bitmode command is used to control the CBUS gpios, does
+that mean that they cannot be toggled independently while FIFO mode is
+in use (as the same command is used to set FIFO mode)?
 
-?
+> >And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
+> >seems too application specific for a generic chip like this.
+> 
+> Yes, I agree. I'm thinking of a rework to add a FIFO driver instead
+> and use it in the fpp-mgr driver. Is that the right direction? 
 
-I briefly checked few ->read() and ->write() implementations and
-didn't find any evidence of positive numbers that can be returned.
-Documentation (kernel doc) doesn't shed a light on that. So, to me it
-sounds unspecified.
+That sounds better, but I'm still not sure that we would be able to bind
+it to devices with the default (generic) VID/PID.
 
-So, for now (until documentation will be fixed) I would rely on
-if (ret < 0)
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Johan
