@@ -1,68 +1,46 @@
 From: Johan Hovold <johan@kernel.org>
 Subject: Re: [PATCH 1/3] mfd: Add support for FTDI FT232H devices
-Date: Tue, 25 Jul 2017 13:49:08 +0200
-Message-ID: <20170725114908.GN2729@localhost>
+Date: Tue, 25 Jul 2017 13:52:35 +0200
+Message-ID: <20170725115235.GO2729@localhost>
 References: <1499374158-12388-1-git-send-email-agust@denx.de>
  <1499374158-12388-2-git-send-email-agust@denx.de>
  <20170710125210.GK29638@localhost>
- <20170719135830.643f853d@crub>
+ <20170719085934.GU29638@localhost>
+ <20170719145900.42172f44@crub>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37183 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbdGYLtP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2017 07:49:15 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170719135830.643f853d@crub>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <20170719145900.42172f44@crub>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Anatolij Gustschin <agust@denx.de>
 Cc: Johan Hovold <johan@kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, David Laight <David.Laight@aculab.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 01:58:30PM +0200, Anatolij Gustschin wrote:
-> On Mon, 10 Jul 2017 14:52:10 +0200
+On Wed, Jul 19, 2017 at 02:59:00PM +0200, Anatolij Gustschin wrote:
+> On Wed, 19 Jul 2017 10:59:34 +0200
 > Johan Hovold johan@kernel.org wrote:
-> 
-> >On Thu, Jul 06, 2017 at 10:49:16PM +0200, Anatolij Gustschin wrote:
-> >> Add USB part with common functions for USB-GPIO/I2C/SPI master
-> >> adapters. These allow communication with chip's control, transmit
-> >> and receive endpoints and will be used by various FT232H drivers.  
+
+> >> And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
+> >> seems too application specific for a generic chip like this.  
 > >
-> >> +static const struct mfd_cell ftdi_cells[] = {
-> >> +	{ .name = "ftdi-cbus-gpio", },
-> >> +	{ .name = "ftdi-mpsse-i2c", },
-> >> +	{ .name = "ftdi-mpsse-spi", },
-> >> +	{ .name = "ftdi-fifo-fpp-mgr", },
-> >> +};  
-> >
-> >Correct me if I'm wrong, but aren't these modes really mutually
-> >exclusive, possibly with exception of cbus-gpio (some pins are at least
-> >available as GPIOs in MPSSE mode)? Then MFD is not is not the right fit
-> >here either.
+> >Of which this is one is one of the major.
 > 
-> MPSSE and FIFO modes are mutually exclusive, but I'm not sure about
-> MPSSE and CBUS-GPIO. CBUS-GPIO didn't work as expected when I was
-> testing with MPSSE SPI master driver, but maybe it is a driver issue.
-
-Yes, that wasn't clear to me either from just looking at the data
-sheets. MPSSE seems to deal with its GPIOs differently.
-
-> FT245 FIFO and CBUS GPIO can be switched by a control request, when
-> FIFO mode is configured in the EEPROM.
-
-Since the set_bitmode command is used to control the CBUS gpios, does
-that mean that they cannot be toggled independently while FIFO mode is
-in use (as the same command is used to set FIFO mode)?
-
-> >And as David Laight already pointed out, your ftdi-fifo-fpp-mgr driver
-> >seems too application specific for a generic chip like this.
+> Thanks all for feedback. I'm still pondering how to interface the
+> fpga manager driver to FTDI FIFO driver.
 > 
-> Yes, I agree. I'm thinking of a rework to add a FIFO driver instead
-> and use it in the fpp-mgr driver. Is that the right direction? 
+> >In short, your driver is much to application specific and is probably
+> >something that needs to be implemented in userspace using libftdi.
+> 
+> I have a requirement to use the fpga manager framework, therefore the
+> kernel driver is needed. Our usage scenario is a multi stage fpga
+> configuration process, the first stage is a pre-configuration via
+> FTDI SPI/FIFO, all subsequent stages are also done by other fpga
+> manager drivers. libftdi based driver already existed for hardware
+> bring-up, now I need similar functionality as kernel fpga manager.
 
-That sounds better, but I'm still not sure that we would be able to bind
-it to devices with the default (generic) VID/PID.
+How are you even accessing these fpga-managers from userspace? I thought
+current interface was for in-kernel use only?
 
 Thanks,
 Johan
