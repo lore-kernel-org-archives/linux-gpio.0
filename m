@@ -1,89 +1,40 @@
 From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V4 RESEND 6/6] pinctrl: pinctrl-imx7ulp: add gpio_set_direction support
-Date: Tue, 25 Jul 2017 21:41:56 +0800
-Message-ID: <1500990116-3620-7-git-send-email-aisheng.dong@nxp.com>
-References: <1500990116-3620-1-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH RESEND 0/2] gpio: add imx7ulp gpio support
+Date: Tue, 25 Jul 2017 21:47:16 +0800
+Message-ID: <1500990438-3894-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0055.outbound.protection.outlook.com ([104.47.36.55]:6368
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+Received: from mail-cys01nam02on0078.outbound.protection.outlook.com ([104.47.37.78]:8445
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751657AbdGYNmh (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 25 Jul 2017 09:42:37 -0400
-In-Reply-To: <1500990116-3620-1-git-send-email-aisheng.dong@nxp.com>
+        id S1750938AbdGYNr1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 25 Jul 2017 09:47:27 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, aisheng.dong@nxp.com, dongas86@gmail.com, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, peter.chen@nxp.com, dongas86@gmail.com, kernel@pengutronix.de, aisheng.dong@nxp.com
 
-Add gpio_set_direction support. This makes the driver support
-GPIO input/output dynamically change from userspace.
+This is a rebased version against 4.13-rc2 Linus master branch with
+latest ACKs collected.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Fugang Duan <fugang.duan@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
+on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
+RGPIO2P has an extra Port Data Direction Register (PDDR) used
+to configure the individual port pins for input or output.
 
----
-ChangeLog:
- * New patch. Derived from the original:
-   [PATCH 1/2] pinctrl: pinctrl-imx: add IBE and OBE SoC property
----
- drivers/pinctrl/freescale/pinctrl-imx7ulp.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+We introduce a FSL_GPIO_HAVE_PDDR with fsl_gpio_soc_data data
+to distinguish this differences. And we support getting the output
+status by checking the GPIO direction in PDDR.
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-index 96127dc..b7bebb2 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx7ulp.c
-@@ -259,6 +259,8 @@ static const struct pinctrl_pin_desc imx7ulp_pinctrl_pads[] = {
- 	IMX_PINCTRL_PIN(IMX7ULP_PAD_PTF19),
- };
- 
-+#define BM_OBE_ENABLED		BIT(17)
-+#define BM_IBE_ENABLED		BIT(16)
- #define BM_LK_ENABLED		BIT(15)
- #define BM_MUX_MODE		0xf00
- #define BP_MUX_MODE		8
-@@ -300,10 +302,34 @@ static void imx7ulp_cfg_params_fixup(unsigned long *configs,
- 	}
- }
- 
-+static int imx7ulp_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
-+					  struct pinctrl_gpio_range *range,
-+					  unsigned offset, bool input)
-+{
-+	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
-+	struct imx_pinctrl_soc_info *info = ipctl->info;
-+	const struct imx_pin_reg *pin_reg;
-+	u32 reg;
-+
-+	pin_reg = &info->pin_regs[offset];
-+	if (pin_reg->mux_reg == -1)
-+		return -EINVAL;
-+
-+	reg = readl(ipctl->base + pin_reg->mux_reg);
-+	if (input)
-+		reg = (reg & ~BM_OBE_ENABLED) | BM_IBE_ENABLED;
-+	else
-+		reg = (reg & ~BM_IBE_ENABLED) | BM_OBE_ENABLED;
-+	writel(reg, ipctl->base + pin_reg->mux_reg);
-+
-+	return 0;
-+}
-+
- static struct imx_pinctrl_soc_info imx7ulp_pinctrl_info = {
- 	.pins = imx7ulp_pinctrl_pads,
- 	.npins = ARRAY_SIZE(imx7ulp_pinctrl_pads),
- 	.flags = ZERO_OFFSET_VALID | SHARE_MUX_CONF_REG,
-+	.gpio_set_direction = imx7ulp_pmx_gpio_set_direction,
- 	.mux_mask = BM_MUX_MODE,
- 	.mux_shift = BP_MUX_MODE,
- 	.generic_pinconf = true,
+Dong Aisheng (2):
+  dt-bindings: gpio-vf610: add imx7ulp support
+  gpio: gpio-vf610: add imx7ulp support
+
+ .../devicetree/bindings/gpio/gpio-vf610.txt        |  4 +-
+ drivers/gpio/gpio-vf610.c                          | 49 ++++++++++++++++++++--
+ 2 files changed, 49 insertions(+), 4 deletions(-)
+
 -- 
 2.7.4
 
