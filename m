@@ -1,112 +1,135 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
-Date: Wed, 26 Jul 2017 20:28:11 +0900
-Message-ID: <1501068491-3926-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Suman Anna <s-anna-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
+Date: Wed, 26 Jul 2017 08:00:13 -0500
+Message-ID: <5aa0d273-8e05-a5ff-7931-b9a94acade36@ti.com>
+References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1501051524-5990-1-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Add pins, groups, and functions for USB 2.0 on R-Car H3 ES2.0.
+Hi Keerthy,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 57 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+On 07/26/2017 01:45 AM, Keerthy wrote:
+> The patch adds keystone-k2g compatible, specific properties and
+> an example.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 947abbd9..d5eddcc 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2754,6 +2754,39 @@ enum {
- 	SCIF_CLK_B_MARK,
- };
- 
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int usb0_mux[] = {
-+	USB0_PWEN_MARK, USB0_OVC_MARK,
-+};
-+/* - USB1 ------------------------------------------------------------------- */
-+static const unsigned int usb1_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int usb1_mux[] = {
-+	USB1_PWEN_MARK, USB1_OVC_MARK,
-+};
-+/* - USB2 ------------------------------------------------------------------- */
-+static const unsigned int usb2_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
-+};
-+static const unsigned int usb2_mux[] = {
-+	USB2_PWEN_MARK, USB2_OVC_MARK,
-+};
-+/* - USB2_CH3 --------------------------------------------------------------- */
-+static const unsigned int usb2_ch3_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int usb2_ch3_mux[] = {
-+	USB2_CH3_PWEN_MARK, USB2_CH3_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
-@@ -2914,6 +2947,10 @@ enum {
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(usb0),
-+	SH_PFC_PIN_GROUP(usb1),
-+	SH_PFC_PIN_GROUP(usb2),
-+	SH_PFC_PIN_GROUP(usb2_ch3),
- };
- 
- static const char * const avb_groups[] = {
-@@ -3135,6 +3172,22 @@ enum {
- 	"scif_clk_b",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0",
-+};
-+
-+static const char * const usb1_groups[] = {
-+	"usb1",
-+};
-+
-+static const char * const usb2_groups[] = {
-+	"usb2",
-+};
-+
-+static const char * const usb2_ch3_groups[] = {
-+	"usb2_ch3",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(du),
-@@ -3156,6 +3209,10 @@ enum {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(usb0),
-+	SH_PFC_FUNCTION(usb1),
-+	SH_PFC_FUNCTION(usb2),
-+	SH_PFC_FUNCTION(usb2_ch3),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+Please update patch header to "dt-bindings: gpio: davinci: ...."
+
+> 
+> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+> ---
+> 
+> Changes in v3:
+> 
+>   * Added details about family of SoCs corresponding to compatibles.
+> 
+>  .../devicetree/bindings/gpio/gpio-davinci.txt      | 40 +++++++++++++++++++++-
+>  1 file changed, 39 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> index 5079ba7..fb9efee 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+> @@ -1,7 +1,10 @@
+>  Davinci/Keystone GPIO controller bindings
+>  
+>  Required Properties:
+> -- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
+> +- compatible: should be "ti,dm6441-gpio": for Davinci da850 SoCs 
+> +			"ti,keystone-gpio": for Keystone 2 66AK2H/K, 66AK2L,
+> +						66AK2E SoCs
+> +			"ti,keystone-k2g-gpio", "ti,keystone-gpio": for 66AK2G
+>  
+>  - reg: Physical base address of the controller and the size of memory mapped
+>         registers.
+> @@ -26,6 +29,17 @@ The GPIO controller also acts as an interrupt controller. It uses the default
+>  two cells specifier as described in Documentation/devicetree/bindings/
+>  interrupt-controller/interrupts.txt.
+>  
+> +Required Properties specific to keystone-k2g
+
+Thanks for updating the binding for the clocks, but clocks are not
+specific to K2G. They also apply to other K2 SoCs. Davinci platforms do
+not have DT clocks atm, so the Davinci portion can be updated later if
+and when they get added.
+
+> +
+> +- clocks: Should contain devices input clock. The first parameter
+> +           is a handle to k2g_clks. The second parameter is the
+> +           device ID and the third parameter is the clock ID. One can
+> +           refer: http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
+
+No need for this link here, just refer to the appropriate clock
+bindings. Some thing like the following would be better
+
+- clocks:               Should contain the device's input clock, and
+                        should be defined as per the appropriate clock
+bindings consumer usage in,
+
+Documentation/devicetree/bindings/clock/keystone-gate.txt
+                            for 66AK2HK/66AK2L/66AK2E SoCs or,
+
+Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+                            for 66AK2G SoCs
+
+> +
+> +           Example: <&k2g_clks 0x001c 0x0>;
+
+This can be dropped as well, below example already demonstrates it.
+
+> +
+> +- clock-names: The driver expects the clock name to be "gpio";
+
+Just say, Should be "gpio". No need of mentioning about the driver.
+
+> +
+>  Example:
+>  
+>  gpio: gpio@1e26000 {
+> @@ -60,3 +74,27 @@ leds {
+>  		...
+>  	};
+>  };
+> +
+> +Example for keystone-k2g:
+
+s/keystone-k2g/66AK2G/
+
+> +
+> +gpio0: gpio@2603000 {
+> +	compatible = "ti,keystone-k2g-gpio", "ti,keystone-gpio";
+> +	reg = <0x02603000 0x100>;
+> +	gpio-controller;
+> +	#gpio-cells = <2>;
+> +	interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
+> +			<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +	ti,ngpio = <144>;
+> +	ti,davinci-gpio-unbanked = <0>;
+> +	clocks = <&k2g_clks 0x001b 0x0>;
+> +	clock-names = "gpio";
+> +};
+> 
+
+regards
+Suman
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
