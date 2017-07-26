@@ -1,67 +1,29 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
-Date: Wed, 26 Jul 2017 09:23:04 +0100
-Message-ID: <20170726082304.7j4lbvsuyyu7owqy@dell>
-References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
- <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
- <20170720090300.ayx5pz5l4yntefpt@dell>
- <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
- <20170725091012.3hpxihekht2j35xb@dell>
- <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v1] pinctrl: cherryview: Add Setzer models to the
+ Chromebook DMI quirk
+Date: Wed, 26 Jul 2017 13:11:20 +0300
+Message-ID: <20170726101120.GI2369@lahna.fi.intel.com>
+References: <20170704125839.16093-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:33460 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750982AbdGZKPr (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Jul 2017 06:15:47 -0400
 Content-Disposition: inline
-In-Reply-To: <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Mani, Rajmohan" <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+In-Reply-To: <20170704125839.16093-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, mail@abhishek.geek.nz
 
-On Tue, 25 Jul 2017, Andy Shevchenko wrote:
-
-> On Tue, Jul 25, 2017 at 12:10 PM, Lee Jones <lee.jones@linaro.org> wrote:
-> > On Fri, 21 Jul 2017, Mani, Rajmohan wrote:
-> >> > On Wed, 19 Jul 2017, Rajmohan Mani wrote:
+On Tue, Jul 04, 2017 at 03:58:39PM +0300, Andy Shevchenko wrote:
+> Add one more model to the Chromebook DMI quirk to make it working again.
 > 
-> >> > > + /* Force software reset */
-> >> > > + ret = regmap_write(regmap, TPS68470_REG_RESET,
-> >> > TPS68470_REG_RESET_MASK);
-> >> > > + if (ret < 0)
-> >> >
-> >> > Will 'if (!ret)' do?
-> >> >
-> >>
-> >> We intend to check error conditions and bail out. So, if (ret < 0) works for this.
-> >
-> > Yes, 'if (!ret)' does that too.
-> 
-> Did you mean
-> 
-> if (ret)
->  return ret;
-> 
-> ?
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> Fixes: 2a8209fa6823 ("pinctrl: cherryview: Extend the Chromebook DMI quirk to Intel_Strago systems")
+> Reported-by: mail@abhishek.geek.nz
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Yes, I just noticed!
-
-Apologies for the confusion.
-
-> I briefly checked few ->read() and ->write() implementations and
-> didn't find any evidence of positive numbers that can be returned.
-> Documentation (kernel doc) doesn't shed a light on that. So, to me it
-> sounds unspecified.
-> 
-> So, for now (until documentation will be fixed) I would rely on
-> if (ret < 0)
-
-It's not unspecified.  The regmap methods call into regcache_write(),
-where the kerneldoc is clear.  Perhaps we can also change the regmap
-kerneldoc headers too to match, which might lessen the disparity.
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
