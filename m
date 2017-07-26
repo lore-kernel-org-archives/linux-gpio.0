@@ -1,58 +1,88 @@
-From: =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>
-Subject: [PATCH] gpio-it87: add support for IT8772F Super I/O.
-Date: Tue, 25 Jul 2017 22:10:29 +0100
-Message-ID: <20170725211029.20301-1-flameeyes@flameeyes.eu>
+From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH v2 1/2] gpio: davinci: Add keystone-k2g compatible
+Date: Wed, 26 Jul 2017 11:20:27 +0530
+Message-ID: <1501048228-3492-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37341 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751979AbdGYVKd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 25 Jul 2017 17:10:33 -0400
-Received: by mail-wm0-f53.google.com with SMTP id c184so66221794wmd.0
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Jul 2017 14:10:32 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org, s-anna-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, j-keerthy-l0cyMroinI0@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, Sergey Tkachev <tssergey22@gmail.com>, =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.eu>
 
->From the datasheet, the GPIO interface is identical to IT8728 (same
-description), so just add it to the same case as the other chip.
+The patch adds keystone-k2g compatible, specific properties and
+an example.
 
-Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.eu>
+Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
 ---
- drivers/gpio/gpio-it87.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../devicetree/bindings/gpio/gpio-davinci.txt      | 39 +++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-it87.c b/drivers/gpio/gpio-it87.c
-index 45d29e488dbb..d43d0a2cc4c5 100644
---- a/drivers/gpio/gpio-it87.c
-+++ b/drivers/gpio/gpio-it87.c
-@@ -2,6 +2,7 @@
-  *  GPIO interface for IT87xx Super I/O chips
-  *
-  *  Author: Diego Elio Pettenò <flameeyes@flameeyes.eu>
-+ *  Copyright (c) 2017 Google, Inc.
-  *
-  *  Based on it87_wdt.c     by Oliver Schuster
-  *           gpio-it8761e.c by Denis Turischev
-@@ -39,6 +40,7 @@
- #define IT8728_ID	0x8728
- #define IT8732_ID	0x8732
- #define IT8761_ID	0x8761
-+#define IT8772_ID	0x8772
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+index 5079ba7..9f4f612 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-davinci.txt
+@@ -1,7 +1,9 @@
+ Davinci/Keystone GPIO controller bindings
  
- /* IO Ports */
- #define REG		0x2e
-@@ -314,6 +316,7 @@ static int __init it87_gpio_init(void)
- 		break;
- 	case IT8728_ID:
- 	case IT8732_ID:
-+	case IT8772_ID:
- 		gpio_ba_reg = 0x62;
- 		it87_gpio->io_size = 8;
- 		it87_gpio->output_base = 0xc8;
+ Required Properties:
+-- compatible: should be "ti,dm6441-gpio", "ti,keystone-gpio"
++- compatible: should be "ti,dm6441-gpio",
++			 "ti,keystone-gpio",
++			 "ti,keystone-k2g-gpio"
+ 
+ - reg: Physical base address of the controller and the size of memory mapped
+        registers.
+@@ -26,6 +28,17 @@ The GPIO controller also acts as an interrupt controller. It uses the default
+ two cells specifier as described in Documentation/devicetree/bindings/
+ interrupt-controller/interrupts.txt.
+ 
++Required Properties specific to keystone-k2g
++
++- clocks: Should contain devices input clock. The first parameter
++           is a handle to k2g_clks. The second parameter is the
++           device ID and the third parameter is the clock ID. One can
++           refer: http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
++
++           Example: <&k2g_clks 0x001c 0x0>;
++
++- clock-names: The driver expects the clock name to be "gpio";
++
+ Example:
+ 
+ gpio: gpio@1e26000 {
+@@ -60,3 +73,27 @@ leds {
+ 		...
+ 	};
+ };
++
++Example for keystone-k2g:
++
++gpio0: gpio@2603000 {
++	compatible = "ti,keystone-k2g-gpio", "ti,keystone-gpio";
++	reg = <0x02603000 0x100>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
++			<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++	ti,ngpio = <144>;
++	ti,davinci-gpio-unbanked = <0>;
++	clocks = <&k2g_clks 0x001b 0x0>;
++	clock-names = "gpio";
++};
 -- 
-2.13.3
+1.9.1
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
