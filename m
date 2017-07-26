@@ -1,48 +1,30 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
-Date: Wed, 26 Jul 2017 13:26:30 +0300
-Message-ID: <CAHp75VfCvNt2TdGRZ77Gk-j7KQzQTAyuKmvsna9GU5yNesGMkw@mail.gmail.com>
-References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
- <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
- <20170720090300.ayx5pz5l4yntefpt@dell> <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
- <20170725091012.3hpxihekht2j35xb@dell> <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
- <20170726082304.7j4lbvsuyyu7owqy@dell>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] pinctrl: sh-pfc: r8a7795: add usb2.0 on R-Car H3 ES2.0
+Date: Wed, 26 Jul 2017 20:28:09 +0900
+Message-ID: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170726082304.7j4lbvsuyyu7owqy@dell>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: "Mani, Rajmohan" <rajmohan.mani@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:40239 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751047AbdGZLbN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 26 Jul 2017 07:31:13 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Wed, Jul 26, 2017 at 11:23 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Tue, 25 Jul 2017, Andy Shevchenko wrote:
->> On Tue, Jul 25, 2017 at 12:10 PM, Lee Jones <lee.jones@linaro.org> wrote:
+This patch is based on the renesas-drivers.git /
+renesas-drivers-2017-07-18-v4.13-rc1 tag.
 
->> I briefly checked few ->read() and ->write() implementations and
->> didn't find any evidence of positive numbers that can be returned.
->> Documentation (kernel doc) doesn't shed a light on that. So, to me it
->> sounds unspecified.
->>
->> So, for now (until documentation will be fixed) I would rely on
->> if (ret < 0)
->
-> It's not unspecified.  The regmap methods call into regcache_write(),
-> where the kerneldoc is clear.
+Yoshihiro Shimoda (2):
+  pinctrl: sh-pfc: r8a7795: Change USB3_{OVC,PWEN} definitions
+  pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
 
-drivers/base/regmap/regcache.c:266
-
-" * Return a negative value on failure, 0 on success."
-
-I can hardly find this any cleaner than "unspecified".
-
->  Perhaps we can also change the regmap
-> kerneldoc headers too to match, which might lessen the disparity.
-
-I'm not familiar with the guts of regmap API, so, I would stick with
-if (ret < 0) for now until documentation specifies positive return values.
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 77 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 67 insertions(+), 10 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
+
