@@ -1,103 +1,149 @@
-From: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH v3 2/2] ARM: dts: keystone-k2g-evm: Add gpio nodes
-Date: Wed, 26 Jul 2017 12:15:24 +0530
-Message-ID: <1501051524-5990-2-git-send-email-j-keerthy@ti.com>
-References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+Date: Wed, 26 Jul 2017 09:20:39 +0100
+Message-ID: <20170726082039.tcxbd7ogkmguufqo@dell>
+References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
+ <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
+ <20170720090300.ayx5pz5l4yntefpt@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
+ <20170725091012.3hpxihekht2j35xb@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DE951@FMSMSX114.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1501051524-5990-1-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, fcooper-l0cyMroinI0@public.gmane.org, s-anna-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, j-keerthy-l0cyMroinI0@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:36582 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdGZIUn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 26 Jul 2017 04:20:43 -0400
+Received: by mail-wm0-f53.google.com with SMTP id t201so65438338wmt.1
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Jul 2017 01:20:43 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725DE951@FMSMSX114.amr.corp.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-66AK2G has 2 instances of gpio. The first one has all the 144 GPIOs
-functional( 9 banks with 16 gpios = 144). The second instance has
-only the GPIO0:GPIO67 functional and rest are marked reserved.
+On Tue, 25 Jul 2017, Mani, Rajmohan wrote:
 
-Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
----
+> Hi Lee,
+> 
+> > Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+> > 
+> > On Fri, 21 Jul 2017, Mani, Rajmohan wrote:
+> > > > On Wed, 19 Jul 2017, Rajmohan Mani wrote:
+> > > >
+> > > > > The TPS68470 device is an advanced power management unit that
+> > > > > powers
+> > > > a
+> > > > > Compact Camera Module (CCM), generates clocks for image sensors,
+> > > > > drives a dual LED for Flash and incorporates two LED drivers for
+> > > > > general purpose indicators.
+> > > > >
+> > > > > This patch adds support for TPS68470 mfd device.
+> > > > >
+> > > > > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> > > > > ---
+> > > > >  drivers/mfd/Kconfig          |  18 +++++++
+> > > > >  drivers/mfd/Makefile         |   1 +
+> > > > >  drivers/mfd/tps68470.c       | 110
+> > > > +++++++++++++++++++++++++++++++++++++++++++
+> > > > >  include/linux/mfd/tps68470.h |  97
+> > > > > ++++++++++++++++++++++++++++++++++++++
+> > > > >  4 files changed, 226 insertions(+)  create mode 100644
+> > > > > drivers/mfd/tps68470.c  create mode 100644
+> > > > > include/linux/mfd/tps68470.h
+> > 
+> > [...]
+> > 
+> > > > > +static const struct regmap_config tps68470_regmap_config = {
+> > > > > +	.reg_bits = 8,
+> > > > > +	.val_bits = 8,
+> > > > > +	.max_register = TPS68470_REG_MAX, };
+> > > > > +
+> > > > > +static int tps68470_chip_init(struct device *dev, struct regmap
+> > > > > +*regmap) {
+> > > > > +	unsigned int version;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	/* Force software reset */
+> > > > > +	ret = regmap_write(regmap, TPS68470_REG_RESET,
+> > > > TPS68470_REG_RESET_MASK);
+> > > > > +	if (ret < 0)
+> > > >
+> > > > Will 'if (!ret)' do?
+> > > >
+> > >
+> > > We intend to check error conditions and bail out. So, if (ret < 0) works for
+> > this.
+> > 
+> > Yes, 'if (!ret)' does that too.
+> > 
+> 
+> regmap_write() and regmap_read() functions return 0 on success. Hence we can not use 'if (!ret)' here, since we check for error conditions.
 
-The patch depends on the below series:
+Sorry, this was a typo.
 
-http://marc.info/?l=linux-arm-kernel&m=150034845427555&w=2
-http://marc.info/?l=linux-arm-kernel&m=150034856627618&w=2
+It should be 'if (ret)'.
 
-Driver patches related are already posted:
+What I'm trying to get at is the " < 0" is not required.
 
-https://www.spinics.net/lists/arm-kernel/msg594862.html
+> > > > > +		return ret;
+> > > > > +
+> > > > > +	ret = regmap_read(regmap, TPS68470_REG_REVID, &version);
+> > > > > +	if (ret < 0) {
+> > > >
+> > > > Same
+> > > >
+> > >
+> > > We intend to check error conditions and bail out. So, if (ret < 0) works for
+> > this.
+> > 
+> > As above.
+> > 
+> 
+> Same as above
+> 
+> > > > > +		dev_err(dev, "Failed to read revision register: %d\n", ret);
+> > > > > +		return ret;
+> > > > > +	}
+> > > > > +
+> > > > > +	dev_info(dev, "TPS68470 REVID: 0x%x\n", version);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int tps68470_probe(struct i2c_client *client) {
+> > > > > +	struct device *dev = &client->dev;
+> > > > > +	struct regmap *regmap;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	regmap = devm_regmap_init_i2c(client, &tps68470_regmap_config);
+> > > > > +	if (IS_ERR(regmap)) {
+> > > > > +		dev_err(dev, "devm_regmap_init_i2c Error %ld\n",
+> > > > > +			PTR_ERR(regmap));
+> > > > > +		return PTR_ERR(regmap);
+> > > > > +	}
+> > > > > +
+> > > > > +	i2c_set_clientdata(client, regmap);
+> > > > > +
+> > > > > +	ret = tps68470_chip_init(dev, regmap);
+> > > > > +	if (ret < 0) {
+> > > >
+> > > > Same
+> > > >
+> > >
+> > > We intend to check error conditions and bail out. So, if (ret < 0) works for
+> > this.
+> > 
+> > As above.
+> > 
+> 
+> Same as above
 
-Changes in v2:
-
-  * Split the documentation part into a separate patch.
-
- arch/arm/boot/dts/keystone-k2g.dtsi | 42 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
-index bf4d1fa..f9ff299 100644
---- a/arch/arm/boot/dts/keystone-k2g.dtsi
-+++ b/arch/arm/boot/dts/keystone-k2g.dtsi
-@@ -15,6 +15,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/pinctrl/keystone.h>
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	compatible = "ti,k2g","ti,keystone";
-@@ -168,5 +169,46 @@
- 				#reset-cells = <2>;
- 			};
- 		};
-+
-+		gpio0: gpio@2603000 {
-+			compatible = "ti,keystone-k2g-gpio", "ti,keystone-gpio";
-+			reg = <0x02603000 0x100>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			ti,ngpio = <144>;
-+			ti,davinci-gpio-unbanked = <0>;
-+			clocks = <&k2g_clks 0x001b 0x0>;
-+			clock-names = "gpio";
-+		};
-+
-+		gpio1: gpio@260a000 {
-+			compatible = "ti,keystone-k2g-gpio", "ti,keystone-gpio";
-+			reg = <0x0260a000 0x100>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupts = <GIC_SPI 442 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 443 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 444 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 445 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 446 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			ti,ngpio = <68>;
-+			ti,davinci-gpio-unbanked = <0>;
-+			clocks = <&k2g_clks 0x001c 0x0>;
-+			clock-names = "gpio";
-+		};
- 	};
- };
 -- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
