@@ -1,48 +1,51 @@
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH 2/2] arm64: dts: Add device node for pmi8994 gpios
-Date: Thu, 27 Jul 2017 12:00:36 +0530
-Message-ID: <1501137036-20155-2-git-send-email-vivek.gautam@codeaurora.org>
-References: <1501137036-20155-1-git-send-email-vivek.gautam@codeaurora.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501137036-20155-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
-Cc: rnayak@codeaurora.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <vivek.gautam@codeaurora.org>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 07/17] regulator: arizona-micsupp: Add
+ support for Cirrus Logic Madera codecs
+Date: Thu, 27 Jul 2017 12:45:50 +0100
+Message-ID: <1501155950.5479.1.camel@rf-debian.wolfsonmicro.main>
+References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1496415790-19164-8-git-send-email-rf@opensource.wolfsonmicro.com>
+ <20170605171006.3ppsjia2xvb22ld2@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20170605171006.3ppsjia2xvb22ld2@rob-hp-laptop>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Rob Herring <robh@kernel.org>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de, lee.jones@linaro.org
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/pmi8994.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+On Mon, 2017-06-05 at 12:10 -0500, Rob Herring wrote:
+> On Fri, Jun 02, 2017 at 04:03:00PM +0100, Richard Fitzgerald wrote:
+> > This adds a new driver identity "madera-micsupp" and probe function
+> > so that this driver can be used to control the micsupp regulator on
+> > Cirrus Logic Madera codecs.
+> > 
+> > Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> > ---
+> > No changes since V2
+> > 
+> >  .../bindings/regulator/arizona-regulator.txt       |  3 +-
+> 
+> I already acked v2. Please add acks when posting new versions.
 
-diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-index d3879a4e8076..3b04ca63c31e 100644
---- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-@@ -8,6 +8,23 @@
- 		reg = <0x2 SPMI_USID>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+
-+		pmi8994_gpios: gpios@c000 {
-+			compatible = "qcom,pmi8994-gpio";
-+			reg = <0xc000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupts = <2 0xc0 0 IRQ_TYPE_NONE>,
-+				     <2 0xc1 0 IRQ_TYPE_NONE>,
-+				     <2 0xc2 0 IRQ_TYPE_NONE>,
-+				     <2 0xc3 0 IRQ_TYPE_NONE>,
-+				     <2 0xc4 0 IRQ_TYPE_NONE>,
-+				     <2 0xc5 0 IRQ_TYPE_NONE>,
-+				     <2 0xc6 0 IRQ_TYPE_NONE>,
-+				     <2 0xc7 0 IRQ_TYPE_NONE>,
-+				     <2 0xc8 0 IRQ_TYPE_NONE>,
-+				     <2 0xc9 0 IRQ_TYPE_NONE>;
-+		};
- 	};
- 
- 	pmic@3 {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Some maintainers have bitten my head off when I've carried forward their
+ack so I never know what people want.
+
+> 
+> >  drivers/regulator/Kconfig                          |  7 ++-
+> >  drivers/regulator/arizona-micsupp.c                | 71 +++++++++++++++++++++-
+> >  3 files changed, 76 insertions(+), 5 deletions(-)
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
