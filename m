@@ -1,53 +1,65 @@
-From: Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH] pinctrl: bcm2835: Remove unneeded irq_group field
-Date: Wed, 26 Jul 2017 12:49:37 -0700
-Message-ID: <871sp3yo4u.fsf@eliezer.anholt.net>
-References: <20170720165912.14360-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 1/2] pinctrl: qcom: spmi-gpio: Add pmi8994 gpio support
+Date: Thu, 27 Jul 2017 12:00:35 +0530
+Message-ID: <1501137036-20155-1-git-send-email-vivek.gautam@codeaurora.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anholt.net ([50.246.234.109]:59962 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750955AbdGZTtk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 26 Jul 2017 15:49:40 -0400
-In-Reply-To: <20170720165912.14360-1-thierry.reding@gmail.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42026 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751082AbdG0Gau (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2017 02:30:50 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org
+To: bjorn.andersson@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
+Cc: rnayak@codeaurora.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <vivek.gautam@codeaurora.org>
 
---=-=-=
-Content-Type: text/plain
+Update the bindings doc and driver for pmi8994-gpio devices.
 
-Thierry Reding <thierry.reding@gmail.com> writes:
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> The irq_group field stores a 1:1 mapping. Use the loop variable to
-> derive the values instead of storing them in an extra array.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+- Have been using this patch-set on db820c [1] for extcon with
+  usb controller. The usb controller uses one of these gpios
+  for usb-id/vbus detection.
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+[1] https://github.com/boddob/linux/tree/for-qcomlt/4.13rc2-merged
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 2 ++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 1 +
+ 2 files changed, 3 insertions(+)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index 8d893a874634..74932318d41d 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -15,6 +15,7 @@ PMIC's from Qualcomm.
+ 		    "qcom,pm8921-gpio"
+ 		    "qcom,pm8941-gpio"
+ 		    "qcom,pm8994-gpio"
++		    "qcom,pmi8994-gpio"
+ 		    "qcom,pma8084-gpio"
+ 
+ 		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
+@@ -84,6 +85,7 @@ to specify in a pin configuration subnode:
+ 		    gpio1-gpio44 for pm8921
+ 		    gpio1-gpio36 for pm8941
+ 		    gpio1-gpio22 for pm8994
++		    gpio1-gpio10 for pmi8994
+ 		    gpio1-gpio22 for pma8084
+ 
+ - function:
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 664b641fd776..bf0a6438424b 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -799,6 +799,7 @@ static int pmic_gpio_remove(struct platform_device *pdev)
+ 	{ .compatible = "qcom,pm8916-gpio" },	/* 4 GPIO's */
+ 	{ .compatible = "qcom,pm8941-gpio" },	/* 36 GPIO's */
+ 	{ .compatible = "qcom,pm8994-gpio" },	/* 22 GPIO's */
++	{ .compatible = "qcom,pmi8994-gpio" },	/* 10 GPIO's */
+ 	{ .compatible = "qcom,pma8084-gpio" },	/* 22 GPIO's */
+ 	{ .compatible = "qcom,spmi-gpio" }, /* Generic */
+ 	{ },
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAll48lEACgkQtdYpNtH8
-nuikMA/9FMLm/mMi8QK4pbApIG8XlmsEZDcE+8QEibxAXqTTQLhrfSMvrbabz8nl
-oDzxCoP1dv7xDZk6aAdNyNWGbvXZuyxwdYmoT/EEzJk2TJ+r4B6GbmdcUgUfqo6G
-ax91oJ+PNn87kckoo1Ey7Ovn6PAjxxuVSQLf9jHrwg/BkF8/M/DBrhbJAVBnNM7J
-jjKjDjpvSzhr1LC00ZSM+Mn+LsgcJIyhfQOeYyDp1be+dKrV40LZ+MTaSR9Zrd+l
-3FaSToDAXVJnR6ywD9xIG+5uPJfXGbaVBl02kk4qL0WvNb2FZKZK3sKKRNgOEJcs
-WMSE4RDcItlHsj3smeeuktKwGdo4dg0i0FAxcw3nA1J++ORbOGJalhs5L+PS0nT5
-kNbvexeW/mFqz+YqRHQjeamiZ/axzYhxom9rR1cFrOLhFAYenxrUEg5sAVmP1VVI
-kGaliFSK5AyXcktQjEOQb48Hvq8Mm2HRUbjGxaIwyuzapVZLr6LLQpJNND/bveAB
-gZ/yCrGOKpra/GkRdVKZkmXlXfkgMxcwFlS0JlYpJATVYXs65BrIwZ4n2qXMqwtI
-YIlQWto54QfTupPyIKzwkxJcoVrzj4yuj5KgLcx13Vmkdz4h2aWlIjzUUeqlwHIT
-TuRVOagXcGns37niKImJerZy0yeuIkrKLg+bWr5sNsbROO5h2GQ=
-=gU5W
------END PGP SIGNATURE-----
---=-=-=--
