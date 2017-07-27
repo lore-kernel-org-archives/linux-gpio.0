@@ -1,73 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 07/17] regulator: arizona-micsupp: Add
- support for Cirrus Logic Madera codecs
-Date: Thu, 27 Jul 2017 16:05:58 +0100
-Message-ID: <20170727150558.oagxltzyhdu64eso@sirena.org.uk>
-References: <1496415790-19164-1-git-send-email-rf@opensource.wolfsonmicro.com>
- <1496415790-19164-8-git-send-email-rf@opensource.wolfsonmicro.com>
- <20170605171006.3ppsjia2xvb22ld2@rob-hp-laptop>
- <1501155950.5479.1.camel@rf-debian.wolfsonmicro.main>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2170780372819891966=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1501155950.5479.1.camel@rf-debian.wolfsonmicro.main>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Cc: Rob Herring <robh@kernel.org>, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, tglx@linutronix.de, lee.jones@linaro.org, gnurou@gmail.com
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 1/3] gliolib: request the gpio before querying its direction
+Date: Thu, 27 Jul 2017 13:19:23 -0500
+Message-ID: <1501179565-26466-2-git-send-email-timur@codeaurora.org>
+References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: andy.gross@linaro.org, david.brown@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: timur@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
 
+Before querying a GPIO to determine its direction, the GPIO should be
+formally requested.  This allows the GPIO driver to block access to
+unavailable GPIOs, which makes it easier for some drivers to support
+sparse GPIO maps.
 
---===============2170780372819891966==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zpgcir5jre7vcplp"
-Content-Disposition: inline
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
+---
+ drivers/gpio/gpiolib.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-
---zpgcir5jre7vcplp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Jul 27, 2017 at 12:45:50PM +0100, Richard Fitzgerald wrote:
-> On Mon, 2017-06-05 at 12:10 -0500, Rob Herring wrote:
-
-> > I already acked v2. Please add acks when posting new versions.
-
-> Some maintainers have bitten my head off when I've carried forward their
-> ack so I never know what people want.
-
-If you've not changed the patch you should carry things forward, if you
-did then (depending on what the changes were) it might not be sensible.
-
---zpgcir5jre7vcplp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAll6AVYACgkQJNaLcl1U
-h9ADoQf+NvHF7/fG4zptYmoSeO7wQ4/imhCimcenYTVhgBgN3p3O6kZy5dA4L1Ar
-ft44pSLn40IDVKtQAeNtZqYAINSmmW6Z5jvqW22HuTuKDN3XpTsO8ywkwmAuGpzl
-WyjoFm5aiAgqwWC1dAhRAt5AwRTauNVHGWckIOP1DQGX/fssZgWIqCUTNIDK0uf8
-FVIKvYIYwuPL2FfOyPDyCT0IgzOFDQ9eHwM9/8Tdo/67IoIDtx5hVyTCnO9epyCP
-3B4tKzGN8hlyo7BiGt43zc8vKWMArWbPhXI5D6ot7Njzyk5vNdBgONNZap9bPHuJ
-TgwC73+pR4MwWxD8Rr7B5c36cuKwxA==
-=SBlW
------END PGP SIGNATURE-----
-
---zpgcir5jre7vcplp--
-
---===============2170780372819891966==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2170780372819891966==--
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9568708..3b4e1e8 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1202,6 +1202,14 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 		struct gpio_desc *desc = &gdev->descs[i];
+ 
+ 		desc->gdev = gdev;
++
++		if (chip->request) {
++			status = chip->request(chip, i);
++			if (status < 0)
++				/* The GPIO is unavailable, so skip it */
++				continue;
++		}
++
+ 		/*
+ 		 * REVISIT: most hardware initializes GPIOs as inputs
+ 		 * (often with pullups enabled) so power usage is
+@@ -1227,6 +1235,9 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 			 */
+ 			set_bit(FLAG_IS_OUT, &desc->flags);
+ 		}
++
++		if (chip->free)
++			chip->free(chip, i);
+ 	}
+ 
+ #ifdef CONFIG_PINCTRL
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
