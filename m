@@ -1,41 +1,49 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [RFC] gpio: consumer: Remove WARN_ON(1) when GPIOLIB is disabled
-Date: Thu, 27 Jul 2017 16:38:40 -0300
-Message-ID: <CAOMZO5AVoGTRnCfRf6x+nGnH_N_LsW6yswkRrY+UQkFRX=E2yg@mail.gmail.com>
-References: <1500503665-21278-1-git-send-email-festevam@gmail.com> <20170719230815.GA38936@dtor-ws>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/2] gpio-mxc: Fix issue with gpios used as wake source
+ on iMX27
+Date: Thu, 27 Jul 2017 22:17:02 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1707272214320.2368@nanos>
+References: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ua0-f181.google.com ([209.85.217.181]:35707 "EHLO
-        mail-ua0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751461AbdG0Til (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2017 15:38:41 -0400
-Received: by mail-ua0-f181.google.com with SMTP id d29so139250262uai.2
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Jul 2017 12:38:41 -0700 (PDT)
-In-Reply-To: <20170719230815.GA38936@dtor-ws>
+Received: from Galois.linutronix.de ([146.0.238.70]:55950 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751613AbdG0URF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2017 16:17:05 -0400
+In-Reply-To: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Andrew Lunn <andrew@lunn.ch>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
+To: Philipp Rosenberger <p.rosenberger@linutronix.de>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 8:08 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
 
-> Hmm, I did not realize that GPIO API allowed calls with NULL desc and
-> they would be silently accepted and return 0... Not sure if that is the
-> best way for the subsystem to behave, but Linus is the boss ;)
+Gentle ping ....
 
-That part seems fine.
+Thanks,
 
-> Maybe check for NULL explicitly and keep warning if !NULL is passed?
+	tglx
 
-Not sure if this is needed.
+On Wed, 12 Jul 2017, Philipp Rosenberger wrote:
 
-Prior to commit 22c403676dbbb7c6 ("gpio: return NULL from
-gpiod_get_optional when
-GPIOLIB is disabled") it made sense to have the WARN_ON(1) and the comment:
-
-"  /* GPIO can never have been requested */" was true.
-
-After such commit this is no longer true, so that's why IMO we should
-just get rid of the WARN_ON and comment.
+> The gpio-mxc driver is able to use two interrupts per gpio bank. One for
+> the lower 16 and the other for the higher 16 gpios. The iMX27 has only one
+> interrupt per bank. An error in the driver leads to the problem that the
+> driver uses an invalid interrupt for the higher 16 gpios. Which in turn
+> prevents the upper 16 gpios per bank to be used as wake source.
+> 
+> The first patch fixes the assignment for the irq_high. The second patch
+> adds proper return values. Which should make finding any problems in the
+> future much easier.
+> 
+> Philipp Rosenberger (2):
+>   gpio: gpio-mxc: Fix: higher 16 GPIOs usable as wake source
+>   gpio: gpio-mxc: gpio_set_wake_irq() use proper return values
+> 
+>  drivers/gpio/gpio-mxc.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.1.4
+> 
+> 
