@@ -1,49 +1,49 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/2] gpio-mxc: Fix issue with gpios used as wake source
- on iMX27
-Date: Thu, 27 Jul 2017 22:17:02 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1707272214320.2368@nanos>
-References: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 2/2] arm64: dts: Add device node for pmi8994 gpios
+Date: Thu, 27 Jul 2017 14:00:15 -0700
+Message-ID: <f0ad95d2-f79e-c3d4-1ac6-48d5d6e21956@codeaurora.org>
+References: <1501137036-20155-1-git-send-email-vivek.gautam@codeaurora.org>
+ <1501137036-20155-2-git-send-email-vivek.gautam@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:55950 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751613AbdG0URF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2017 16:17:05 -0400
-In-Reply-To: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de>
+Received: from smtp.codeaurora.org ([198.145.29.96]:55374 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751517AbdG0VAS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 27 Jul 2017 17:00:18 -0400
+In-Reply-To: <1501137036-20155-2-git-send-email-vivek.gautam@codeaurora.org>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Philipp Rosenberger <p.rosenberger@linutronix.de>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>, bjorn.andersson@linaro.org, linus.walleij@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
+Cc: rnayak@codeaurora.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+
+On 07/26/2017 11:30 PM, Vivek Gautam wrote:
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/pmi8994.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+> index d3879a4e8076..3b04ca63c31e 100644
+> --- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+> @@ -8,6 +8,23 @@
+>  		reg = <0x2 SPMI_USID>;
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> +
+> +		pmi8994_gpios: gpios@c000 {
+> +			compatible = "qcom,pmi8994-gpio";
 
 
-Gentle ping ....
+Please also include the generic "qcom,spmi-gpio" compatible. We really
+don't need to add the "qcom,pmi8994-gpio" one to the driver right now so
+I would leave that out of the driver but leave it here in the dtsi file
+of course.
 
-Thanks,
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-	tglx
-
-On Wed, 12 Jul 2017, Philipp Rosenberger wrote:
-
-> The gpio-mxc driver is able to use two interrupts per gpio bank. One for
-> the lower 16 and the other for the higher 16 gpios. The iMX27 has only one
-> interrupt per bank. An error in the driver leads to the problem that the
-> driver uses an invalid interrupt for the higher 16 gpios. Which in turn
-> prevents the upper 16 gpios per bank to be used as wake source.
-> 
-> The first patch fixes the assignment for the irq_high. The second patch
-> adds proper return values. Which should make finding any problems in the
-> future much easier.
-> 
-> Philipp Rosenberger (2):
->   gpio: gpio-mxc: Fix: higher 16 GPIOs usable as wake source
->   gpio: gpio-mxc: gpio_set_wake_irq() use proper return values
-> 
->  drivers/gpio/gpio-mxc.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> -- 
-> 2.1.4
-> 
-> 
