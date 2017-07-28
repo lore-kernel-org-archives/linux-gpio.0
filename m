@@ -1,187 +1,64 @@
-From: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v7 02/12] mfd: rk808: add rk805 regs addr and ID
-Date: Thu, 27 Jul 2017 23:07:25 +0200
-Message-ID: <4167643.JGZsyoLtym@phil>
-References: <1500635681-12477-1-git-send-email-chenjh@rock-chips.com> <1500635681-12477-3-git-send-email-chenjh@rock-chips.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+Date: Fri, 28 Jul 2017 00:30:39 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725DF8D6@FMSMSX114.amr.corp.intel.com>
+References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
+ <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
+ <20170720090300.ayx5pz5l4yntefpt@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
+ <20170725091012.3hpxihekht2j35xb@dell>
+ <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
+ <20170726082304.7j4lbvsuyyu7owqy@dell>
+ <CAHp75VfCvNt2TdGRZ77Gk-j7KQzQTAyuKmvsna9GU5yNesGMkw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:44020 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751042AbdG0VHn (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 27 Jul 2017 17:07:43 -0400
-In-Reply-To: <1500635681-12477-3-git-send-email-chenjh@rock-chips.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VfCvNt2TdGRZ77Gk-j7KQzQTAyuKmvsna9GU5yNesGMkw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-rockchip@lists.infradead.org
-Cc: Joseph Chen <chenjh@rock-chips.com>, gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, huangtao@rock-chips.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, wdc@rock-chips.com, tony.xie@rock-chips.com, linux-input@vger.kernel.org, mark.rutland@arm.com, w.egorov@phytec.de
 
-Hi Joseph,
-
-Am Freitag, 21. Juli 2017, 19:14:31 CEST schrieb Joseph Chen:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-
-When you send out patches from someone else you should still add your own
-Signed-off-by line. So the patches that are originally from Elaine, should have
-her Signed-off first and yours below.
-
-Same for other patches in this series not authored by you.
-
-Heiko
-
-> ---
->  include/linux/mfd/rk808.h | 120 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 120 insertions(+)
-> 
-> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-> index 54feb14..d315659 100644
-> --- a/include/linux/mfd/rk808.h
-> +++ b/include/linux/mfd/rk808.h
-> @@ -206,6 +206,97 @@ enum rk818_reg {
->  #define RK818_USB_ILMIN_2000MA		0x7
->  #define RK818_USB_CHG_SD_VSEL_MASK	0x70
->  
-> +/* RK805 */
-> +enum rk805_reg {
-> +	RK805_ID_DCDC1,
-> +	RK805_ID_DCDC2,
-> +	RK805_ID_DCDC3,
-> +	RK805_ID_DCDC4,
-> +	RK805_ID_LDO1,
-> +	RK805_ID_LDO2,
-> +	RK805_ID_LDO3,
-> +};
-> +
-> +/* CONFIG REGISTER */
-> +#define RK805_VB_MON_REG		0x21
-> +#define RK805_THERMAL_REG		0x22
-> +
-> +/* POWER CHANNELS ENABLE REGISTER */
-> +#define RK805_DCDC_EN_REG		0x23
-> +#define RK805_SLP_DCDC_EN_REG		0x25
-> +#define RK805_SLP_LDO_EN_REG		0x26
-> +#define RK805_LDO_EN_REG		0x27
-> +
-> +/* BUCK AND LDO CONFIG REGISTER */
-> +#define RK805_BUCK_LDO_SLP_LP_EN_REG	0x2A
-> +#define RK805_BUCK1_CONFIG_REG		0x2E
-> +#define RK805_BUCK1_ON_VSEL_REG		0x2F
-> +#define RK805_BUCK1_SLP_VSEL_REG	0x30
-> +#define RK805_BUCK2_CONFIG_REG		0x32
-> +#define RK805_BUCK2_ON_VSEL_REG		0x33
-> +#define RK805_BUCK2_SLP_VSEL_REG	0x34
-> +#define RK805_BUCK3_CONFIG_REG		0x36
-> +#define RK805_BUCK4_CONFIG_REG		0x37
-> +#define RK805_BUCK4_ON_VSEL_REG		0x38
-> +#define RK805_BUCK4_SLP_VSEL_REG	0x39
-> +#define RK805_LDO1_ON_VSEL_REG		0x3B
-> +#define RK805_LDO1_SLP_VSEL_REG		0x3C
-> +#define RK805_LDO2_ON_VSEL_REG		0x3D
-> +#define RK805_LDO2_SLP_VSEL_REG		0x3E
-> +#define RK805_LDO3_ON_VSEL_REG		0x3F
-> +#define RK805_LDO3_SLP_VSEL_REG		0x40
-> +
-> +/* INTERRUPT REGISTER */
-> +#define RK805_PWRON_LP_INT_TIME_REG	0x47
-> +#define RK805_PWRON_DB_REG		0x48
-> +#define RK805_DEV_CTRL_REG		0x4B
-> +#define RK805_INT_STS_REG		0x4C
-> +#define RK805_INT_STS_MSK_REG		0x4D
-> +#define RK805_GPIO_IO_POL_REG		0x50
-> +#define RK805_OUT_REG			0x52
-> +#define RK805_ON_SOURCE_REG		0xAE
-> +#define RK805_OFF_SOURCE_REG		0xAF
-> +
-> +#define RK805_NUM_REGULATORS		7
-> +
-> +#define RK805_PWRON_FALL_RISE_INT_EN	0x0
-> +#define RK805_PWRON_FALL_RISE_INT_MSK	0x81
-> +
-> +/* RK805 IRQ Definitions */
-> +#define RK805_IRQ_PWRON_RISE		0
-> +#define RK805_IRQ_VB_LOW		1
-> +#define RK805_IRQ_PWRON			2
-> +#define RK805_IRQ_PWRON_LP		3
-> +#define RK805_IRQ_HOTDIE		4
-> +#define RK805_IRQ_RTC_ALARM		5
-> +#define RK805_IRQ_RTC_PERIOD		6
-> +#define RK805_IRQ_PWRON_FALL		7
-> +
-> +#define RK805_IRQ_PWRON_RISE_MSK	BIT(0)
-> +#define RK805_IRQ_VB_LOW_MSK		BIT(1)
-> +#define RK805_IRQ_PWRON_MSK		BIT(2)
-> +#define RK805_IRQ_PWRON_LP_MSK		BIT(3)
-> +#define RK805_IRQ_HOTDIE_MSK		BIT(4)
-> +#define RK805_IRQ_RTC_ALARM_MSK		BIT(5)
-> +#define RK805_IRQ_RTC_PERIOD_MSK	BIT(6)
-> +#define RK805_IRQ_PWRON_FALL_MSK	BIT(7)
-> +
-> +#define RK805_PWR_RISE_INT_STATUS	BIT(0)
-> +#define RK805_VB_LOW_INT_STATUS		BIT(1)
-> +#define RK805_PWRON_INT_STATUS		BIT(2)
-> +#define RK805_PWRON_LP_INT_STATUS	BIT(3)
-> +#define RK805_HOTDIE_INT_STATUS		BIT(4)
-> +#define RK805_ALARM_INT_STATUS		BIT(5)
-> +#define RK805_PERIOD_INT_STATUS		BIT(6)
-> +#define RK805_PWR_FALL_INT_STATUS	BIT(7)
-> +
-> +#define RK805_BUCK1_2_ILMAX_MASK	(3 << 6)
-> +#define RK805_BUCK3_4_ILMAX_MASK        (3 << 3)
-> +#define RK805_RTC_PERIOD_INT_MASK	(1 << 6)
-> +#define RK805_RTC_ALARM_INT_MASK	(1 << 5)
-> +#define RK805_INT_ALARM_EN		(1 << 3)
-> +#define RK805_INT_TIMER_EN		(1 << 2)
-> +
->  /* RK808 IRQ Definitions */
->  #define RK808_IRQ_VOUT_LO	0
->  #define RK808_IRQ_VB_LO		1
-> @@ -298,7 +389,14 @@ enum rk818_reg {
->  #define VOUT_LO_INT	BIT(0)
->  #define CLK32KOUT2_EN	BIT(0)
->  
-> +#define TEMP115C			0x0c
-> +#define TEMP_HOTDIE_MSK			0x0c
-> +#define SLP_SD_MSK			(0x3 << 2)
-> +#define SHUTDOWN_FUN			(0x2 << 2)
-> +#define SLEEP_FUN			(0x1 << 2)
->  #define RK8XX_ID_MSK			0xfff0
-> +#define FPWM_MODE			BIT(7)
-> +
->  enum {
->  	BUCK_ILMIN_50MA,
->  	BUCK_ILMIN_100MA,
-> @@ -322,6 +420,28 @@ enum {
->  };
->  
->  enum {
-> +	RK805_BUCK1_2_ILMAX_2500MA,
-> +	RK805_BUCK1_2_ILMAX_3000MA,
-> +	RK805_BUCK1_2_ILMAX_3500MA,
-> +	RK805_BUCK1_2_ILMAX_4000MA,
-> +};
-> +
-> +enum {
-> +	RK805_BUCK3_ILMAX_1500MA,
-> +	RK805_BUCK3_ILMAX_2000MA,
-> +	RK805_BUCK3_ILMAX_2500MA,
-> +	RK805_BUCK3_ILMAX_3000MA,
-> +};
-> +
-> +enum {
-> +	RK805_BUCK4_ILMAX_2000MA,
-> +	RK805_BUCK4_ILMAX_2500MA,
-> +	RK805_BUCK4_ILMAX_3000MA,
-> +	RK805_BUCK4_ILMAX_3500MA,
-> +};
-> +
-> +enum {
-> +	RK805_ID = 0x8050,
->  	RK808_ID = 0x0000,
->  	RK818_ID = 0x8181,
->  };
-> 
-
-
+SGkgTGVlLCBBbmR5LA0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS8zXSBtZmQ6IEFkZCBu
+ZXcgbWZkIGRldmljZSBUUFM2ODQ3MA0KPiANCj4gT24gV2VkLCBKdWwgMjYsIDIwMTcgYXQgMTE6
+MjMgQU0sIExlZSBKb25lcyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+IHdyb3RlOg0KPiA+IE9uIFR1
+ZSwgMjUgSnVsIDIwMTcsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gPj4gT24gVHVlLCBKdWwg
+MjUsIDIwMTcgYXQgMTI6MTAgUE0sIExlZSBKb25lcyA8bGVlLmpvbmVzQGxpbmFyby5vcmc+IHdy
+b3RlOg0KPiANCj4gPj4gSSBicmllZmx5IGNoZWNrZWQgZmV3IC0+cmVhZCgpIGFuZCAtPndyaXRl
+KCkgaW1wbGVtZW50YXRpb25zIGFuZA0KPiA+PiBkaWRuJ3QgZmluZCBhbnkgZXZpZGVuY2Ugb2Yg
+cG9zaXRpdmUgbnVtYmVycyB0aGF0IGNhbiBiZSByZXR1cm5lZC4NCj4gPj4gRG9jdW1lbnRhdGlv
+biAoa2VybmVsIGRvYykgZG9lc24ndCBzaGVkIGEgbGlnaHQgb24gdGhhdC4gU28sIHRvIG1lIGl0
+DQo+ID4+IHNvdW5kcyB1bnNwZWNpZmllZC4NCj4gPj4NCj4gPj4gU28sIGZvciBub3cgKHVudGls
+IGRvY3VtZW50YXRpb24gd2lsbCBiZSBmaXhlZCkgSSB3b3VsZCByZWx5IG9uIGlmDQo+ID4+IChy
+ZXQgPCAwKQ0KPiA+DQo+ID4gSXQncyBub3QgdW5zcGVjaWZpZWQuICBUaGUgcmVnbWFwIG1ldGhv
+ZHMgY2FsbCBpbnRvIHJlZ2NhY2hlX3dyaXRlKCksDQo+ID4gd2hlcmUgdGhlIGtlcm5lbGRvYyBp
+cyBjbGVhci4NCj4gDQoNClNpbmNlLCB3ZSBhcmUgaW50ZXJlc3RlZCBpbiB0aGUgcmVnbWFwIGZv
+ciB0aGUgSTJDIGJ1cyBoZXJlLCBJIGxvb2tlZCBpbnRvIHRoZSBpbXBsZW1lbnRhdGlvbiBvZg0K
+IF9fZGV2bV9yZWdtYXBfaW5pdCgpDQoJX19yZWdtYXBfaW5pdCgpDQoJCXJlZ2NhY2hlX2luaXQo
+KQ0KZm9yIEkyQyBidXMuDQoNCkF0IHRoZSBlbmQgb2YgX19kZXZtX3JlZ21hcF9pbml0KCkgY2Fs
+bCBmcm9tIGRldm1fcmVnbWFwX2luaXRfaTJjKCkgaW5zaWRlIHRwczY4NDcwX3Byb2JlKCksIEkg
+c2VlIHRoYXQgYm90aCBjYWNoZV9ieXBhc3MgYW5kIGRlZmVyX2NhY2hpbmcgZmxhZ3Mgb2YgaTJj
+IHJlZ21hcCBzdHJ1Y3QgYXJlIHNldC4gU28sIGl0IGxvb2tzIHJlZ2NhY2hlX3dyaXRlL3JlYWQg
+Y2FsbHMgZG8gbm90IGNvbWUgaW50byBwbGF5IGhlcmUuDQoNClNvLCByZWdtYXBfd3JpdGUoKQ0K
+CV9yZWdtYXBfd3JpdGUoKQ0KCQltYXAtPnJlZ193cml0ZSAoZHJpdmVycy9iYXNlL3JlZ21hcC9y
+ZWdtYXAuYzoxNjY1KSB0cmFuc2xhdGVzIHRvDQoJCXJlZ21hcF9pMmNfd3JpdGUoZHJpdmVycy9i
+YXNlL3JlZ21hcC9yZWdtYXAtaTJjLmM6MTI4KQ0KDQpUaGVzZSBjaGVja3MgaW4gcmVnbWFwX2ky
+Y193cml0ZSgpIGVuc3VyZSBhbGwgcmV0dXJuIHZhbHVlcyBmcm9tIGkyY19tYXN0ZXJfc2VuZCgp
+IG90aGVyIHRoYW4gdGhlIHJlcXVlc3RlZCBudW1iZXIgb2YgYnl0ZXMgdG8gd3JpdGUsIGFyZSBj
+b252ZXJ0ZWQgaW50byBuZWdhdGl2ZSB2YWx1ZXMuDQoNCiAgICAgICAgaWYgKHJldCA9PSBjb3Vu
+dCkNCiAgICAgICAgICAgICAgICByZXR1cm4gMDsNCiAgICAgICAgZWxzZSBpZiAocmV0IDwgMCkN
+CiAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KICAgICAgICBlbHNlDQogICAgICAgICAgICAg
+ICAgcmV0dXJuIC1FSU87DQoNClNpbWlsYXIgYXJndW1lbnQgZ29lcyBmb3IgcmVnbWFwX3JlYWQo
+KSBhcyB3ZWxsLg0KV2l0aCB0aGF0LCBmb3IgcmVnbWFwIG92ZXIgSTJDIGJ1cywgaXQgc291bmRz
+IGxpa2UgJ2lmIChyZXQgPCAwKScgbG9va3MgdG8gYmUgYSBiZXR0ZXIgY2hvaWNlLiBQbGVhc2Ug
+c2VlIGlmIEkgbWlzc2VkIGFueXRoaW5nIGhlcmUuDQoJCQ0KPiBkcml2ZXJzL2Jhc2UvcmVnbWFw
+L3JlZ2NhY2hlLmM6MjY2DQo+IA0KPiAiICogUmV0dXJuIGEgbmVnYXRpdmUgdmFsdWUgb24gZmFp
+bHVyZSwgMCBvbiBzdWNjZXNzLiINCj4gDQo+IEkgY2FuIGhhcmRseSBmaW5kIHRoaXMgYW55IGNs
+ZWFuZXIgdGhhbiAidW5zcGVjaWZpZWQiLg0KPiANCj4gPiAgUGVyaGFwcyB3ZSBjYW4gYWxzbyBj
+aGFuZ2UgdGhlIHJlZ21hcCBrZXJuZWxkb2MgaGVhZGVycyB0b28gdG8gbWF0Y2gsDQo+ID4gd2hp
+Y2ggbWlnaHQgbGVzc2VuIHRoZSBkaXNwYXJpdHkuDQo+IA0KPiBJJ20gbm90IGZhbWlsaWFyIHdp
+dGggdGhlIGd1dHMgb2YgcmVnbWFwIEFQSSwgc28sIEkgd291bGQgc3RpY2sgd2l0aCBpZiAocmV0
+IDwgMCkNCj4gZm9yIG5vdyB1bnRpbCBkb2N1bWVudGF0aW9uIHNwZWNpZmllcyBwb3NpdGl2ZSBy
+ZXR1cm4gdmFsdWVzLg0KPiANCg0KQWNrDQo=
