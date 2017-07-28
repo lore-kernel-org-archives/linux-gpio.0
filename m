@@ -1,48 +1,45 @@
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH 2/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
-Date: Fri, 28 Jul 2017 20:41:14 +0900
-Message-ID: <1501242081-3805-3-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH 4/9] pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
+Date: Fri, 28 Jul 2017 20:41:16 +0900
+Message-ID: <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
 References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36613 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751678AbdG1Llf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Jul 2017 07:41:35 -0400
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch fixes the implementation incorrect of MOD_SEL2 bit26 value
-when SCK5_A pin function is selected for IPSR16 bit[31:28].
+This patch fixes the implementation incorrect of IPSR register value
+definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
 
-This is a correction to the incorrect implementation of MOD_SEL register
-pin assignment for R8A7795 ES2.0 SoC specification of R-Car Gen3 Hardware
-User's Manual Rev.0.51E or later.
+This is a correction to the incorrect implementation of IPSR register pin
+assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
+Gen3 Hardware User's Manual Rev.0.53E.
 
 Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 73507bf..cd433fb 100644
+index 37b96b9..3272713 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -1409,7 +1409,7 @@ enum {
- 	PINMUX_IPSR_MSEL(IP16_31_28,	SSI_WS1_B,		SEL_SSI_1),
- 	PINMUX_IPSR_GPSR(IP16_31_28,	SCK1),
- 	PINMUX_IPSR_MSEL(IP16_31_28,	STP_IVCXO27_1_A,	SEL_SSP1_1_0),
--	PINMUX_IPSR_GPSR(IP16_31_28,	SCK5_A),
-+	PINMUX_IPSR_MSEL(IP16_31_28,	SCK5_A,			SEL_SCIF5_0),
+@@ -361,8 +361,8 @@
+ #define IP17_23_20	FM(USB1_OVC)		F_(0, 0)	FM(MSIOF1_SS2_C)	F_(0, 0)			FM(SSI_WS1_A)	FM(TS_SDAT0_E)	FM(STP_ISD_0_E)		FM(FMIN_B)	FM(RIF2_SYNC_B)		F_(0, 0)	FM(REMOCON_B)	F_(0, 0)	F_(0, 0) FM(HCTS2_N_C) F_(0, 0) F_(0, 0)
+ #define IP17_27_24	FM(USB30_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT_B)		FM(SSI_SCK2_B)	FM(TS_SDEN1_D)	FM(STP_ISEN_1_D)	FM(STP_OPWM_0_E)FM(RIF3_D0_B)		F_(0, 0)	FM(TCLK2_B)	FM(TPU0TO0)	FM(BPFCLK_C) FM(HRTS2_N_C) F_(0, 0) F_(0, 0)
+ #define IP17_31_28	FM(USB30_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT1_B)		FM(SSI_WS2_B)	FM(TS_SPSYNC1_D)FM(STP_ISSYNC_1_D)	FM(STP_IVCXO27_0_E)FM(RIF3_D1_B)	F_(0, 0)	FM(FSO_TOE_N)	FM(TPU0TO1)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP18_3_0	FM(USB3_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO2)	F_(0, 0) FM(FMCLK_C) FM(FMCLK_D) F_(0, 0)
+-#define IP18_7_4	FM(USB3_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO3)	F_(0, 0) FM(FMIN_C) FM(FMIN_D) F_(0, 0)
++#define IP18_3_0	FM(USB3_PWEN)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT2_B)		FM(SSI_SCK9_B)	FM(TS_SDEN0_E)	FM(STP_ISEN_0_E)	F_(0, 0)	FM(RIF2_D0_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO2)	FM(FMCLK_C) FM(FMCLK_D) F_(0, 0) F_(0, 0)
++#define IP18_7_4	FM(USB3_OVC)		F_(0, 0)	F_(0, 0)		FM(AUDIO_CLKOUT3_B)		FM(SSI_WS9_B)	FM(TS_SPSYNC0_E)FM(STP_ISSYNC_0_E)	F_(0, 0)	FM(RIF2_D1_B)		F_(0, 0)	F_(0, 0)	FM(TPU0TO3)	FM(FMIN_C) FM(FMIN_D) F_(0, 0) F_(0, 0)
  
- 	/* IPSR17 */
- 	PINMUX_IPSR_MSEL(IP17_3_0,	AUDIO_CLKA_A,		SEL_ADG_A_0),
+ #define PINMUX_GPSR	\
+ \
 -- 
 1.9.1
-
