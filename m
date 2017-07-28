@@ -1,72 +1,180 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
-Date: Fri, 28 Jul 2017 12:16:11 +0300
-Message-ID: <CAHp75VffOr0Bs9jXoyF_FACfZCgD+D+tyE7tE_cdVUgZxqQn1g@mail.gmail.com>
-References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
- <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
- <20170720090300.ayx5pz5l4yntefpt@dell> <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
- <20170725091012.3hpxihekht2j35xb@dell> <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
- <20170726082304.7j4lbvsuyyu7owqy@dell> <CAHp75VfCvNt2TdGRZ77Gk-j7KQzQTAyuKmvsna9GU5yNesGMkw@mail.gmail.com>
- <6F87890CF0F5204F892DEA1EF0D77A59725DF8D6@FMSMSX114.amr.corp.intel.com>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH v4 07/17] regulator: arizona-micsupp: Add
+	support for Cirrus Logic Madera codecs
+Date: Fri, 28 Jul 2017 10:47:09 +0100
+Message-ID: <1501235239-11145-8-git-send-email-rf@opensource.wolfsonmicro.com>
+References: <1501235239-11145-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A59725DF8D6@FMSMSX114.amr.corp.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Mani, Rajmohan" <rajmohan.mani@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1501235239-11145-1-git-send-email-rf@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: lee.jones@linaro.org, broonie@kernel.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net
+Cc: linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jul 28, 2017 at 3:30 AM, Mani, Rajmohan <rajmohan.mani@intel.com> wrote:
->> On Wed, Jul 26, 2017 at 11:23 AM, Lee Jones <lee.jones@linaro.org> wrote:
->> > On Tue, 25 Jul 2017, Andy Shevchenko wrote:
->> >> On Tue, Jul 25, 2017 at 12:10 PM, Lee Jones <lee.jones@linaro.org> wrote:
->>
->> >> I briefly checked few ->read() and ->write() implementations and
->> >> didn't find any evidence of positive numbers that can be returned.
->> >> Documentation (kernel doc) doesn't shed a light on that. So, to me it
->> >> sounds unspecified.
->> >>
->> >> So, for now (until documentation will be fixed) I would rely on if
->> >> (ret < 0)
->> >
->> > It's not unspecified.  The regmap methods call into regcache_write(),
->> > where the kerneldoc is clear.
->>
->
-> Since, we are interested in the regmap for the I2C bus here, I looked into the implementation of
->  __devm_regmap_init()
->         __regmap_init()
->                 regcache_init()
-> for I2C bus.
->
-> At the end of __devm_regmap_init() call from devm_regmap_init_i2c() inside tps68470_probe(), I see that both cache_bypass and defer_caching flags of i2c regmap struct are set. So, it looks regcache_write/read calls do not come into play here.
->
-> So, regmap_write()
->         _regmap_write()
->                 map->reg_write (drivers/base/regmap/regmap.c:1665) translates to
->                 regmap_i2c_write(drivers/base/regmap/regmap-i2c.c:128)
->
-> These checks in regmap_i2c_write() ensure all return values from i2c_master_send() other than the requested number of bytes to write, are converted into negative values.
->
->         if (ret == count)
->                 return 0;
->         else if (ret < 0)
->                 return ret;
->         else
->                 return -EIO;
->
-> Similar argument goes for regmap_read() as well.
-> With that, for regmap over I2C bus, it sounds like 'if (ret < 0)' looks to be a better choice. Please see if I missed anything here.
+This adds a new driver identity "madera-micsupp" and probe function
+so that this driver can be used to control the micsupp regulator on
+Cirrus Logic Madera codecs.
 
-It prooves exactly the Lee's point.
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+No changes since V3
 
-So, perhaps the best approach is to move to
-if (ret)
- return ret;
+ .../bindings/regulator/arizona-regulator.txt       |  3 +-
+ drivers/regulator/Kconfig                          |  7 ++-
+ drivers/regulator/arizona-micsupp.c                | 71 +++++++++++++++++++++-
+ 3 files changed, 76 insertions(+), 5 deletions(-)
 
-...if it will be a problem in the future, fix it accordingly.
-
+diff --git a/Documentation/devicetree/bindings/regulator/arizona-regulator.txt b/Documentation/devicetree/bindings/regulator/arizona-regulator.txt
+index 443564d..91b00f9 100644
+--- a/Documentation/devicetree/bindings/regulator/arizona-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/arizona-regulator.txt
+@@ -5,7 +5,8 @@ of analogue I/O.
+ 
+ This document lists regulator specific bindings, see the primary binding
+ document:
+-  ../mfd/arizona.txt
++  For Wolfson Arizona codecs: ../mfd/arizona.txt
++  For Cirrus Logic Madera codecs: ../mfd/madera.txt
+ 
+ Optional properties:
+   - wlf,ldoena : GPIO specifier for the GPIO controlling LDOENA
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 99b9362..ed5679f 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -134,11 +134,12 @@ config REGULATOR_ARIZONA_LDO1
+ 	  devices.
+ 
+ config REGULATOR_ARIZONA_MICSUPP
+-	tristate "Wolfson Arizona class devices MICSUPP"
+-	depends on MFD_ARIZONA
++	tristate "Cirrus Madera and Wolfson Arizona class devices MICSUPP"
++	depends on MFD_ARIZONA || MFD_MADERA
+ 	depends on SND_SOC
+ 	help
+-	  Support for the MICSUPP regulators found on Wolfson Arizona class
++	  Support for the MICSUPP regulators found on Cirrus Logic Madera codecs
++	  and Wolfson Arizona codecs
+ 	  devices.
+ 
+ config REGULATOR_AS3711
+diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
+index 120de94..36bf73c 100644
+--- a/drivers/regulator/arizona-micsupp.c
++++ b/drivers/regulator/arizona-micsupp.c
+@@ -30,6 +30,10 @@
+ #include <linux/mfd/arizona/pdata.h>
+ #include <linux/mfd/arizona/registers.h>
+ 
++#include <linux/mfd/madera/core.h>
++#include <linux/mfd/madera/pdata.h>
++#include <linux/mfd/madera/registers.h>
++
+ #include <linux/regulator/arizona-micsupp.h>
+ 
+ struct arizona_micsupp {
+@@ -205,6 +209,28 @@ static int arizona_micsupp_set_bypass(struct regulator_dev *rdev, bool ena)
+ 	.num_consumer_supplies = 1,
+ };
+ 
++static const struct regulator_desc madera_micsupp = {
++	.name = "MICVDD",
++	.supply_name = "CPVDD1",
++	.type = REGULATOR_VOLTAGE,
++	.n_voltages = 40,
++	.ops = &arizona_micsupp_ops,
++
++	.vsel_reg = MADERA_LDO2_CONTROL_1,
++	.vsel_mask = MADERA_LDO2_VSEL_MASK,
++	.enable_reg = MADERA_MIC_CHARGE_PUMP_1,
++	.enable_mask = MADERA_CPMIC_ENA,
++	.bypass_reg = MADERA_MIC_CHARGE_PUMP_1,
++	.bypass_mask = MADERA_CPMIC_BYPASS,
++
++	.linear_ranges = arizona_micsupp_ext_ranges,
++	.n_linear_ranges = ARRAY_SIZE(arizona_micsupp_ext_ranges),
++
++	.enable_time = 3000,
++
++	.owner = THIS_MODULE,
++};
++
+ static int arizona_micsupp_of_get_pdata(struct arizona_micsupp_pdata *pdata,
+ 					struct regulator_config *config,
+ 					const struct regulator_desc *desc)
+@@ -321,6 +347,24 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+ 					   &arizona->pdata.micvdd);
+ }
+ 
++static int madera_micsupp_probe(struct platform_device *pdev)
++{
++	struct madera *madera = dev_get_drvdata(pdev->dev.parent);
++	struct arizona_micsupp *micsupp;
++
++	micsupp = devm_kzalloc(&pdev->dev, sizeof(*micsupp), GFP_KERNEL);
++	if (!micsupp)
++		return -ENOMEM;
++
++	micsupp->regmap = madera->regmap;
++	micsupp->dapm = &madera->dapm;
++	micsupp->dev = madera->dev;
++	micsupp->init_data = arizona_micsupp_ext_default;
++
++	return arizona_micsupp_common_init(pdev, micsupp, &madera_micsupp,
++					   &madera->pdata.micvdd);
++}
++
+ static struct platform_driver arizona_micsupp_driver = {
+ 	.probe = arizona_micsupp_probe,
+ 	.driver		= {
+@@ -328,10 +372,35 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
+ 	},
+ };
+ 
+-module_platform_driver(arizona_micsupp_driver);
++static struct platform_driver madera_micsupp_driver = {
++	.probe = madera_micsupp_probe,
++	.driver		= {
++		.name	= "madera-micsupp",
++	},
++};
++
++static struct platform_driver * const arizona_micsupp_drivers[] = {
++	&arizona_micsupp_driver,
++	&madera_micsupp_driver,
++};
++
++static int __init arizona_micsupp_init(void)
++{
++	return platform_register_drivers(arizona_micsupp_drivers,
++					 ARRAY_SIZE(arizona_micsupp_drivers));
++}
++module_init(arizona_micsupp_init);
++
++static void __exit arizona_micsupp_exit(void)
++{
++	platform_unregister_drivers(arizona_micsupp_drivers,
++				    ARRAY_SIZE(arizona_micsupp_drivers));
++}
++module_exit(arizona_micsupp_exit);
+ 
+ /* Module information */
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("Arizona microphone supply driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:arizona-micsupp");
++MODULE_ALIAS("platform:madera-micsupp");
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
