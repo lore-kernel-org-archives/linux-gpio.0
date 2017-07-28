@@ -1,234 +1,72 @@
-From: Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH] gpio: consumer: Remove WARN_ON(1) when GPIOLIB is disabled
-Date: Fri, 28 Jul 2017 13:21:26 -0300
-Message-ID: <1501258886-12376-1-git-send-email-fabio.estevam@nxp.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v4 1/3] mfd: Add new mfd device TPS68470
+Date: Fri, 28 Jul 2017 23:48:00 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A59725DFDAC@FMSMSX114.amr.corp.intel.com>
+References: <1500506426-3047-1-git-send-email-rajmohan.mani@intel.com>
+ <1500506426-3047-2-git-send-email-rajmohan.mani@intel.com>
+ <20170720090300.ayx5pz5l4yntefpt@dell>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DD60A@FMSMSX114.amr.corp.intel.com>
+ <20170725091012.3hpxihekht2j35xb@dell>
+ <CAHp75VeGqWNyDO644V+mje4sWsODDhyxRJ8cQ-HDV_e1hAUP3g@mail.gmail.com>
+ <20170726082304.7j4lbvsuyyu7owqy@dell>
+ <CAHp75VfCvNt2TdGRZ77Gk-j7KQzQTAyuKmvsna9GU5yNesGMkw@mail.gmail.com>
+ <6F87890CF0F5204F892DEA1EF0D77A59725DF8D6@FMSMSX114.amr.corp.intel.com>
+ <CAHp75VffOr0Bs9jXoyF_FACfZCgD+D+tyE7tE_cdVUgZxqQn1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn3nam01on0053.outbound.protection.outlook.com ([104.47.33.53]:8460
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751882AbdG1QVd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 28 Jul 2017 12:21:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:23762 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752987AbdG1XsD (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 28 Jul 2017 19:48:03 -0400
+In-Reply-To: <CAHp75VffOr0Bs9jXoyF_FACfZCgD+D+tyE7tE_cdVUgZxqQn1g@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: sergei.shtylyov@cogentembedded.com, andrew@lunn.ch, dmitry.torokhov@gmail.com, linux-gpio@vger.kernel.org, festevam@gmail.com, Fabio Estevam <fabio.estevam@nxp.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
 
-gpiod_get_optional() returns NULL when GPIOLIB is disabled since
-commit 22c403676dbbb7c6 ("gpio: return NULL from gpiod_get_optional when
-GPIOLIB is disabled").
-
-However, many gpiod functions still have WARN_ON(1) in their
-GPIOLIB=n stubs, which causes warnings in drivers even if the
-GPIO descriptor is requested via gpiod_get_optional().
-
-Prior to commit 22c403676dbbb7c6 ("gpio: return NULL from
-gpiod_get_optional when GPIOLIB is disabled") it was indeed true
-the comment: "GPIO can never have been requested" as gpiod_get_optional()
-used to return an error.
-
-After this commit the returned value is NULL, so the comment and
-WARN_ON(1) are no longer accurate.
-
-An example of this kernel warning can be see in this report:
-https://www.spinics.net/lists/kernel/msg2563045.html
-
-Remove the WARN_ON(1) so that drivers can silently work fine
-without kernel warnings when GPIOLIB is disabled.
-
-Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
-Changes since RFC:
-- Expand a bit on the commit log
-- Include the kernel warning example
-
- include/linux/gpio/consumer.h | 59 -------------------------------------------
- 1 file changed, 59 deletions(-)
-
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 8f702fc..40c1be5 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -197,17 +197,11 @@ gpiod_get_array_optional(struct device *dev, const char *con_id,
- static inline void gpiod_put(struct gpio_desc *desc)
- {
- 	might_sleep();
--
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- 
- static inline void gpiod_put_array(struct gpio_descs *descs)
- {
- 	might_sleep();
--
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- 
- static inline struct gpio_desc *__must_check
-@@ -254,150 +248,99 @@ devm_gpiod_get_array_optional(struct device *dev, const char *con_id,
- {
- 	return NULL;
- }
--
- static inline void devm_gpiod_put(struct device *dev, struct gpio_desc *desc)
- {
- 	might_sleep();
--
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
--
- static inline void devm_gpiod_put_array(struct device *dev,
- 					struct gpio_descs *descs)
- {
- 	might_sleep();
--
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
--
--
- static inline int gpiod_get_direction(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -ENOSYS;
- }
- static inline int gpiod_direction_input(struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -ENOSYS;
- }
- static inline int gpiod_direction_output(struct gpio_desc *desc, int value)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -ENOSYS;
- }
- static inline int gpiod_direction_output_raw(struct gpio_desc *desc, int value)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -ENOSYS;
- }
- 
--
- static inline int gpiod_get_value(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return 0;
- }
- static inline void gpiod_set_value(struct gpio_desc *desc, int value)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- static inline void gpiod_set_array_value(unsigned int array_size,
- 					 struct gpio_desc **desc_array,
- 					 int *value_array)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- static inline int gpiod_get_raw_value(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return 0;
- }
- static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- static inline void gpiod_set_raw_array_value(unsigned int array_size,
- 					     struct gpio_desc **desc_array,
- 					     int *value_array)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- 
- static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return 0;
- }
- static inline void gpiod_set_value_cansleep(struct gpio_desc *desc, int value)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- static inline void gpiod_set_array_value_cansleep(unsigned int array_size,
- 					    struct gpio_desc **desc_array,
- 					    int *value_array)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- static inline int gpiod_get_raw_value_cansleep(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return 0;
- }
- static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
- 						int value)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
- 						struct gpio_desc **desc_array,
- 						int *value_array)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- }
- 
- static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -ENOSYS;
- }
- 
- static inline int gpiod_is_active_low(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return 0;
- }
- static inline int gpiod_cansleep(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return 0;
- }
- 
- static inline int gpiod_to_irq(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -EINVAL;
- }
- 
-@@ -408,8 +351,6 @@ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
- 
- static inline int desc_to_gpio(const struct gpio_desc *desc)
- {
--	/* GPIO can never have been requested */
--	WARN_ON(1);
- 	return -EINVAL;
- }
- 
--- 
-2.7.4
-
+SGkgQW5keSwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDEvM10gbWZkOiBBZGQgbmV3IG1m
+ZCBkZXZpY2UgVFBTNjg0NzANCj4gDQo+IE9uIEZyaSwgSnVsIDI4LCAyMDE3IGF0IDM6MzAgQU0s
+IE1hbmksIFJham1vaGFuDQo+IDxyYWptb2hhbi5tYW5pQGludGVsLmNvbT4gd3JvdGU6DQo+ID4+
+IE9uIFdlZCwgSnVsIDI2LCAyMDE3IGF0IDExOjIzIEFNLCBMZWUgSm9uZXMgPGxlZS5qb25lc0Bs
+aW5hcm8ub3JnPg0KPiB3cm90ZToNCj4gPj4gPiBPbiBUdWUsIDI1IEp1bCAyMDE3LCBBbmR5IFNo
+ZXZjaGVua28gd3JvdGU6DQo+ID4+ID4+IE9uIFR1ZSwgSnVsIDI1LCAyMDE3IGF0IDEyOjEwIFBN
+LCBMZWUgSm9uZXMgPGxlZS5qb25lc0BsaW5hcm8ub3JnPg0KPiB3cm90ZToNCj4gPj4NCj4gPj4g
+Pj4gSSBicmllZmx5IGNoZWNrZWQgZmV3IC0+cmVhZCgpIGFuZCAtPndyaXRlKCkgaW1wbGVtZW50
+YXRpb25zIGFuZA0KPiA+PiA+PiBkaWRuJ3QgZmluZCBhbnkgZXZpZGVuY2Ugb2YgcG9zaXRpdmUg
+bnVtYmVycyB0aGF0IGNhbiBiZSByZXR1cm5lZC4NCj4gPj4gPj4gRG9jdW1lbnRhdGlvbiAoa2Vy
+bmVsIGRvYykgZG9lc24ndCBzaGVkIGEgbGlnaHQgb24gdGhhdC4gU28sIHRvIG1lDQo+ID4+ID4+
+IGl0IHNvdW5kcyB1bnNwZWNpZmllZC4NCj4gPj4gPj4NCj4gPj4gPj4gU28sIGZvciBub3cgKHVu
+dGlsIGRvY3VtZW50YXRpb24gd2lsbCBiZSBmaXhlZCkgSSB3b3VsZCByZWx5IG9uIGlmDQo+ID4+
+ID4+IChyZXQgPCAwKQ0KPiA+PiA+DQo+ID4+ID4gSXQncyBub3QgdW5zcGVjaWZpZWQuICBUaGUg
+cmVnbWFwIG1ldGhvZHMgY2FsbCBpbnRvDQo+ID4+ID4gcmVnY2FjaGVfd3JpdGUoKSwgd2hlcmUg
+dGhlIGtlcm5lbGRvYyBpcyBjbGVhci4NCj4gPj4NCj4gPg0KPiA+IFNpbmNlLCB3ZSBhcmUgaW50
+ZXJlc3RlZCBpbiB0aGUgcmVnbWFwIGZvciB0aGUgSTJDIGJ1cyBoZXJlLCBJIGxvb2tlZA0KPiA+
+IGludG8gdGhlIGltcGxlbWVudGF0aW9uIG9mDQo+ID4gIF9fZGV2bV9yZWdtYXBfaW5pdCgpDQo+
+ID4gICAgICAgICBfX3JlZ21hcF9pbml0KCkNCj4gPiAgICAgICAgICAgICAgICAgcmVnY2FjaGVf
+aW5pdCgpDQo+ID4gZm9yIEkyQyBidXMuDQo+ID4NCj4gPiBBdCB0aGUgZW5kIG9mIF9fZGV2bV9y
+ZWdtYXBfaW5pdCgpIGNhbGwgZnJvbSBkZXZtX3JlZ21hcF9pbml0X2kyYygpDQo+IGluc2lkZSB0
+cHM2ODQ3MF9wcm9iZSgpLCBJIHNlZSB0aGF0IGJvdGggY2FjaGVfYnlwYXNzIGFuZCBkZWZlcl9j
+YWNoaW5nDQo+IGZsYWdzIG9mIGkyYyByZWdtYXAgc3RydWN0IGFyZSBzZXQuIFNvLCBpdCBsb29r
+cyByZWdjYWNoZV93cml0ZS9yZWFkIGNhbGxzIGRvDQo+IG5vdCBjb21lIGludG8gcGxheSBoZXJl
+Lg0KPiA+DQo+ID4gU28sIHJlZ21hcF93cml0ZSgpDQo+ID4gICAgICAgICBfcmVnbWFwX3dyaXRl
+KCkNCj4gPiAgICAgICAgICAgICAgICAgbWFwLT5yZWdfd3JpdGUgKGRyaXZlcnMvYmFzZS9yZWdt
+YXAvcmVnbWFwLmM6MTY2NSkgdHJhbnNsYXRlcw0KPiB0bw0KPiA+ICAgICAgICAgICAgICAgICBy
+ZWdtYXBfaTJjX3dyaXRlKGRyaXZlcnMvYmFzZS9yZWdtYXAvcmVnbWFwLWkyYy5jOjEyOCkNCj4g
+Pg0KPiA+IFRoZXNlIGNoZWNrcyBpbiByZWdtYXBfaTJjX3dyaXRlKCkgZW5zdXJlIGFsbCByZXR1
+cm4gdmFsdWVzIGZyb20NCj4gaTJjX21hc3Rlcl9zZW5kKCkgb3RoZXIgdGhhbiB0aGUgcmVxdWVz
+dGVkIG51bWJlciBvZiBieXRlcyB0byB3cml0ZSwgYXJlDQo+IGNvbnZlcnRlZCBpbnRvIG5lZ2F0
+aXZlIHZhbHVlcy4NCj4gPg0KPiA+ICAgICAgICAgaWYgKHJldCA9PSBjb3VudCkNCj4gPiAgICAg
+ICAgICAgICAgICAgcmV0dXJuIDA7DQo+ID4gICAgICAgICBlbHNlIGlmIChyZXQgPCAwKQ0KPiA+
+ICAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICAgICAgICAgZWxzZQ0KPiA+ICAgICAg
+ICAgICAgICAgICByZXR1cm4gLUVJTzsNCj4gPg0KPiA+IFNpbWlsYXIgYXJndW1lbnQgZ29lcyBm
+b3IgcmVnbWFwX3JlYWQoKSBhcyB3ZWxsLg0KPiA+IFdpdGggdGhhdCwgZm9yIHJlZ21hcCBvdmVy
+IEkyQyBidXMsIGl0IHNvdW5kcyBsaWtlICdpZiAocmV0IDwgMCknIGxvb2tzIHRvIGJlIGENCj4g
+YmV0dGVyIGNob2ljZS4gUGxlYXNlIHNlZSBpZiBJIG1pc3NlZCBhbnl0aGluZyBoZXJlLg0KPiAN
+Cj4gSXQgcHJvb3ZlcyBleGFjdGx5IHRoZSBMZWUncyBwb2ludC4NCj4gDQo+IFNvLCBwZXJoYXBz
+IHRoZSBiZXN0IGFwcHJvYWNoIGlzIHRvIG1vdmUgdG8gaWYgKHJldCkgIHJldHVybiByZXQ7DQo+
+IA0KPiAuLi5pZiBpdCB3aWxsIGJlIGEgcHJvYmxlbSBpbiB0aGUgZnV0dXJlLCBmaXggaXQgYWNj
+b3JkaW5nbHkuDQo+IA0KDQpBY2suDQpXZSBoYXZlIHNwZW50IGVub3VnaCB0aW1lIG9uIHRoaXMg
+YWxyZWFkeS4NCg==
