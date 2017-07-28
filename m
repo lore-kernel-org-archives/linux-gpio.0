@@ -1,74 +1,69 @@
 From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: [PATCH 7/9] pinctrl: sh-pfc: r8a7795: Fix to delete FSCLKST pin and IPSR7 bit[15:12] register definitions
-Date: Fri, 28 Jul 2017 20:41:19 +0900
-Message-ID: <1501242081-3805-8-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH 8/9] pinctrl: sh-pfc: r8a7795: Rename CS1# pin function definitions
+Date: Fri, 28 Jul 2017 20:41:20 +0900
+Message-ID: <1501242081-3805-9-git-send-email-ykaneko0929@gmail.com>
 References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37916 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751737AbdG1Llr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 28 Jul 2017 07:41:47 -0400
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 In-Reply-To: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch fixes the macro definitions of FSCLKST pins function and IPSR7
-bit[15:12] register deleted.
+This patch renames the pin function macro definitions of the GPSR1 and
+IPSR4 registers value for the CS1# pin.
 
-This is a correction because IPSR register specification for R8A7795
-ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual Rev.0.53E or
-later.
+This is a correction because GPSR and IPSR register specification for
+R8A7795 ES2.0 SoC was changed in R-Car Gen3 Hardware User's Manual
+Rev.0.54E.
 
-Fixes: 12f5d9a1dc7f ("pinctrl: sh-pfc: r8a7795: Replace for Renesas R8A7795 ES2.0 SoC")
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 18fea79..605fb3c 100644
+index 605fb3c..44beb7c 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -270,7 +270,6 @@
- #define IP7_3_0		FM(D13)			FM(LCDOUT5)	FM(MSIOF2_SS2_D)	FM(TX4_C)			FM(VI4_DATA5_A)	F_(0, 0)	FM(DU_DR5)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP7_7_4		FM(D14)			FM(LCDOUT6)	FM(MSIOF3_SS1_A)	FM(HRX3_C)			FM(VI4_DATA6_A)	F_(0, 0)	FM(DU_DR6)		FM(SCL6_C)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP7_11_8	FM(D15)			FM(LCDOUT7)	FM(MSIOF3_SS2_A)	FM(HTX3_C)			FM(VI4_DATA7_A)	F_(0, 0)	FM(DU_DR7)		FM(SDA6_C)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP7_15_12	FM(FSCLKST)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP7_19_16	FM(SD0_CLK)		F_(0, 0)	FM(MSIOF1_SCK_E)	F_(0, 0)			F_(0, 0)	F_(0, 0)	FM(STP_OPWM_0_B)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -61,7 +61,7 @@
+ #define GPSR1_24	F_(RD_WR_N,		IP4_31_28)
+ #define GPSR1_23	F_(RD_N,		IP4_27_24)
+ #define GPSR1_22	F_(BS_N,		IP4_23_20)
+-#define GPSR1_21	F_(CS1_N_A26,		IP4_19_16)
++#define GPSR1_21	F_(CS1_N,		IP4_19_16)
+ #define GPSR1_20	F_(CS0_N,		IP4_15_12)
+ #define GPSR1_19	F_(A19,			IP4_11_8)
+ #define GPSR1_18	F_(A18,			IP4_7_4)
+@@ -247,7 +247,7 @@
+ #define IP4_7_4		FM(A18)			FM(LCDOUT10)	F_(0, 0)		F_(0, 0)			FM(VI4_HSYNC_N)	F_(0, 0)	FM(DU_DG2)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_11_8	FM(A19)			FM(LCDOUT11)	F_(0, 0)		F_(0, 0)			FM(VI4_CLKENB)	F_(0, 0)	FM(DU_DG3)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_15_12	FM(CS0_N)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(VI5_CLKENB)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+-#define IP4_19_16	FM(CS1_N_A26)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(VI5_CLK)	F_(0, 0)		FM(EX_WAIT0_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
++#define IP4_19_16	FM(CS1_N)		F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	FM(VI5_CLK)	F_(0, 0)		FM(EX_WAIT0_B)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_23_20	FM(BS_N)		FM(QSTVA_QVS)	FM(MSIOF3_SCK_D)	FM(SCK3)			FM(HSCK3)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN1_TX)		FM(CANFD1_TX)	FM(IETX_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_27_24	FM(RD_N)		F_(0, 0)	FM(MSIOF3_SYNC_D)	FM(RX3_A)			FM(HRX3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN0_TX_A)		FM(CANFD0_TX_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+ #define IP4_31_28	FM(RD_WR_N)		F_(0, 0)	FM(MSIOF3_RXD_D)	FM(TX3_A)			FM(HTX3_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)	FM(CAN0_RX_A)		FM(CANFD0_RX_A)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
+@@ -832,7 +832,7 @@ enum {
+ 	PINMUX_IPSR_GPSR(IP4_15_12,	CS0_N),
+ 	PINMUX_IPSR_GPSR(IP4_15_12,	VI5_CLKENB),
  
- /* IPSRx */		/* 0 */			/* 1 */		/* 2 */			/* 3 */				/* 4 */		/* 5 */		/* 6 */			/* 7 */		/* 8 */			/* 9 */		/* A */		/* B */		/* C - F */
-@@ -413,7 +412,7 @@
- FM(IP4_3_0)	IP4_3_0		FM(IP5_3_0)	IP5_3_0		FM(IP6_3_0)	IP6_3_0		FM(IP7_3_0)	IP7_3_0 \
- FM(IP4_7_4)	IP4_7_4		FM(IP5_7_4)	IP5_7_4		FM(IP6_7_4)	IP6_7_4		FM(IP7_7_4)	IP7_7_4 \
- FM(IP4_11_8)	IP4_11_8	FM(IP5_11_8)	IP5_11_8	FM(IP6_11_8)	IP6_11_8	FM(IP7_11_8)	IP7_11_8 \
--FM(IP4_15_12)	IP4_15_12	FM(IP5_15_12)	IP5_15_12	FM(IP6_15_12)	IP6_15_12	FM(IP7_15_12)	IP7_15_12 \
-+FM(IP4_15_12)	IP4_15_12	FM(IP5_15_12)	IP5_15_12	FM(IP6_15_12)	IP6_15_12 \
- FM(IP4_19_16)	IP4_19_16	FM(IP5_19_16)	IP5_19_16	FM(IP6_19_16)	IP6_19_16	FM(IP7_19_16)	IP7_19_16 \
- FM(IP4_23_20)	IP4_23_20	FM(IP5_23_20)	IP5_23_20	FM(IP6_23_20)	IP6_23_20	FM(IP7_23_20)	IP7_23_20 \
- FM(IP4_27_24)	IP4_27_24	FM(IP5_27_24)	IP5_27_24	FM(IP6_27_24)	IP6_27_24	FM(IP7_27_24)	IP7_27_24 \
-@@ -986,8 +985,6 @@ enum {
- 	PINMUX_IPSR_GPSR(IP7_11_8,	DU_DR7),
- 	PINMUX_IPSR_MSEL(IP7_11_8,	SDA6_C,			SEL_I2C6_2),
+-	PINMUX_IPSR_GPSR(IP4_19_16,	CS1_N_A26),
++	PINMUX_IPSR_GPSR(IP4_19_16,	CS1_N),
+ 	PINMUX_IPSR_GPSR(IP4_19_16,	VI5_CLK),
+ 	PINMUX_IPSR_MSEL(IP4_19_16,	EX_WAIT0_B,		SEL_LBSC_1),
  
--	PINMUX_IPSR_GPSR(IP7_15_12,	FSCLKST),
--
- 	PINMUX_IPSR_GPSR(IP7_19_16,	SD0_CLK),
- 	PINMUX_IPSR_MSEL(IP7_19_16,	MSIOF1_SCK_E,		SEL_MSIOF1_4),
- 	PINMUX_IPSR_MSEL(IP7_19_16,	STP_OPWM_0_B,		SEL_SSP1_0_1),
-@@ -2601,7 +2598,7 @@ enum {
- 		IP7_27_24
- 		IP7_23_20
- 		IP7_19_16
--		IP7_15_12
-+		/* IP7_15_12 */ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 		IP7_11_8
- 		IP7_7_4
- 		IP7_3_0 }
+@@ -3174,7 +3174,7 @@ static int r8a7795_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ 	{ RCAR_GP_PIN(1, 24),    PU2,  5 },	/* RD_WR_N */
+ 	{ RCAR_GP_PIN(1, 23),    PU2,  4 },	/* RD_N */
+ 	{ RCAR_GP_PIN(1, 22),    PU2,  3 },	/* BS_N */
+-	{ RCAR_GP_PIN(1, 21),    PU2,  2 },	/* CS1_N_A26 */
++	{ RCAR_GP_PIN(1, 21),    PU2,  2 },	/* CS1_N */
+ 	{ RCAR_GP_PIN(1, 20),    PU2,  1 },	/* CS0_N */
+ 	{ PIN_NUMBER('F', 1),    PU2,  0 },	/* CLKOUT */
+ 
 -- 
 1.9.1
-
