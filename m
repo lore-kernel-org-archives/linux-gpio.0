@@ -1,81 +1,44 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH] [BUGFIX] gpio: reject invalid gpio before getting gpio_desc
-Date: Sat, 29 Jul 2017 17:00:44 +0900
-Message-ID: <150131523385.6834.16274817727659878191.stgit@devbox>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] pinctrl-st: fix of_irq_to_resource() result check
+Date: Sat, 29 Jul 2017 21:07:07 +0300
+Message-ID: <20170729180744.873303067@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:37277 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752755AbdG2SHu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 29 Jul 2017 14:07:50 -0400
+Received: by mail-lf0-f45.google.com with SMTP id m86so94115261lfi.4
+        for <linux-gpio@vger.kernel.org>; Sat, 29 Jul 2017 11:07:49 -0700 (PDT)
+Content-Disposition: inline; filename=pinctrl-st-fix-of_irq_to_resource-result-check.patch
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Check user-given gpio number and reject it before
-calling gpio_to_desc() because gpio_to_desc() is
-for kernel driver and it expects given gpio number
-is valid (means 0 to 511).
-If given number is invalid, gpio_to_desc() calls
-WARN() and dump registers and stack for debug.
-This means user can easily kick WARN() just by
-writing invalid gpio number (e.g. 512) to
-/sys/class/gpio/export.
-This bug has been introduced by commit 0e9a5edf5d01
-("gpio: fix deferred probe detection for legacy API")
+of_irq_to_resource() has recently been fixed to return negative error #'s
+along with 0 in case of failure, however the ST driver still only regards
+0 as failure indication -- fix it up.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: commit 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
+Fixes: 7a4228bbff76 ("of: irq: use of_irq_get() in of_irq_to_resource()")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/gpio/gpiolib-sysfs.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-st.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index 4b44dd97c07f..4efb11fd1c22 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -2,6 +2,7 @@
- #include <linux/mutex.h>
- #include <linux/device.h>
- #include <linux/sysfs.h>
-+#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/interrupt.h>
-@@ -443,14 +444,16 @@ static ssize_t export_store(struct class *class,
- 				const char *buf, size_t len)
- {
- 	long			gpio;
--	struct gpio_desc	*desc;
-+	struct gpio_desc	*desc = NULL;
- 	int			status;
+Index: linux-pinctrl/drivers/pinctrl/pinctrl-st.c
+===================================================================
+--- linux-pinctrl.orig/drivers/pinctrl/pinctrl-st.c
++++ linux-pinctrl/drivers/pinctrl/pinctrl-st.c
+@@ -1521,7 +1521,7 @@ static int st_gpiolib_register_bank(stru
+ 	 *	[irqN]----> [gpio-bank (n)]
+ 	 */
  
- 	status = kstrtol(buf, 0, &gpio);
- 	if (status < 0)
- 		goto done;
- 
--	desc = gpio_to_desc(gpio);
-+	if (gpio_is_valid(gpio))
-+		desc = gpio_to_desc(gpio);
-+
- 	/* reject invalid GPIOs */
- 	if (!desc) {
- 		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-@@ -485,14 +488,16 @@ static ssize_t unexport_store(struct class *class,
- 				const char *buf, size_t len)
- {
- 	long			gpio;
--	struct gpio_desc	*desc;
-+	struct gpio_desc	*desc = NULL;
- 	int			status;
- 
- 	status = kstrtol(buf, 0, &gpio);
- 	if (status < 0)
- 		goto done;
- 
--	desc = gpio_to_desc(gpio);
-+	if (gpio_is_valid(gpio))
-+		desc = gpio_to_desc(gpio);
-+
- 	/* reject bogus commands (gpio_unexport ignores them) */
- 	if (!desc) {
- 		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+-	if (of_irq_to_resource(np, 0, &irq_res)) {
++	if (of_irq_to_resource(np, 0, &irq_res) > 0) {
+ 		gpio_irq = irq_res.start;
+ 		gpiochip_set_chained_irqchip(&bank->gpio_chip, &st_gpio_irqchip,
+ 					     gpio_irq, st_gpio_irq_handler);
+
