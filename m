@@ -1,90 +1,77 @@
-From: Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH] pinctrl: sunxi: rename R_PIO i2c pin function name
-Date: Sun, 30 Jul 2017 13:36:18 +0800
-Message-ID: <20170730053618.44781-1-icenowy@aosc.io>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] [BUGFIX] gpio: reject invalid gpio before getting gpio_desc
+Date: Sun, 30 Jul 2017 19:21:36 +0300
+Message-ID: <CAHp75Ve6h-rb+zz15mRB_1sDiLXxppKWfu2W9sVsnsL5ZUvucQ@mail.gmail.com>
+References: <150131523385.6834.16274817727659878191.stgit@devbox>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:33617 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750764AbdG3Fgk (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 30 Jul 2017 01:36:40 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36981 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754239AbdG3QVh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 30 Jul 2017 12:21:37 -0400
+In-Reply-To: <150131523385.6834.16274817727659878191.stgit@devbox>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
 
-The I2C pin functions in R_PIO used to be named "s_twi".
+On Sat, Jul 29, 2017 at 11:00 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> Check user-given gpio number and reject it before
+> calling gpio_to_desc() because gpio_to_desc() is
+> for kernel driver and it expects given gpio number
+> is valid (means 0 to 511).
 
-As we usually use the name "i2c" instead of "twi" in the mainline
-kernel, change these names to "s_i2c" for consistency.
+> If given number is invalid, gpio_to_desc() calls
+> WARN() and dump registers and stack for debug.
+> This means user can easily kick WARN() just by
+> writing invalid gpio number (e.g. 512) to
+> /sys/class/gpio/export.
 
-The "s_twi" functions are not yet referenced by any device trees in
-mainline kernel so I think it's safe to change the name.
+> This bug has been introduced by commit 0e9a5edf5d01
+> ("gpio: fix deferred probe detection for legacy API")
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c | 4 ++--
- drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c | 4 ++--
- drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c  | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+Why so narrow paraghraps? We don't do two column articles :-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
-index a22bd88a1f03..c96a3610a178 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c
-@@ -25,12 +25,12 @@ static const struct sunxi_desc_pin sun6i_a31_r_pins[] = {
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SCK */
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SCK */
- 		  SUNXI_FUNCTION(0x3, "s_p2wi")),	/* SCK */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--		  SUNXI_FUNCTION(0x2, "s_twi"),		/* SDA */
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),		/* SDA */
- 		  SUNXI_FUNCTION(0x3, "s_p2wi")),	/* SDA */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
-index 2292e05a397b..5789e9ecbae1 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c
-@@ -29,13 +29,13 @@ static const struct sunxi_desc_pin sun8i_a23_r_pins[] = {
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SCK */
--		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SCK */
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SCK */
- 		  SUNXI_FUNCTION_IRQ_BANK(0x4, 0, 0)),	/* PL_EINT0 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
- 		  SUNXI_FUNCTION(0x2, "s_rsb"),		/* SDA */
--		  SUNXI_FUNCTION(0x3, "s_twi"),		/* SDA */
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SDA */
- 		  SUNXI_FUNCTION_IRQ_BANK(0x4, 0, 1)),	/* PL_EINT1 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
-index 686ec212120b..ebfd9a26628c 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c
-@@ -20,12 +20,12 @@ static const struct sunxi_desc_pin sun8i_h3_r_pins[] = {
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--		  SUNXI_FUNCTION(0x2, "s_twi"),         /* SCK */
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),         /* SCK */
- 		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--		  SUNXI_FUNCTION(0x2, "s_twi"),         /* SDA */
-+		  SUNXI_FUNCTION(0x2, "s_i2c"),         /* SDA */
- 		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Fixes: commit 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
+
+If you use git tools directly, like
+
+% git commit -s --amend
+
+you will immediately notice that your SoB line is supposed to be the last one.
+
+Besides above, word "commit" is not needed in Fixes: tag IIRC.
+
+
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/device.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/interrupt.h>
+
+> @@ -443,14 +444,16 @@ static ssize_t export_store(struct class *class,
+
+> -       struct gpio_desc        *desc;
+> +       struct gpio_desc        *desc = NULL;
+
+> -       desc = gpio_to_desc(gpio);
+> +       if (gpio_is_valid(gpio))
+> +               desc = gpio_to_desc(gpio);
+
+Twice repeatition is a candidate for a helper, like:
+
+static inline struct gpio_desc *gpio_to_valid_desc(int gpio)
+{
+ return gpio_is_valid(gpio) ? gpio_to_desc(gpio) : NULL;
+}
+
 -- 
-2.13.0
-
+With Best Regards,
+Andy Shevchenko
