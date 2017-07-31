@@ -1,72 +1,57 @@
-From: Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH 03/14] pinctrl: rockchip: add input schmitt support for rv1108
-Date: Mon, 31 Jul 2017 18:10:22 +0800
-Message-ID: <1501495822-21503-1-git-send-email-andy.yan@rock-chips.com>
-References: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: heiko@sntech.de, linus.walleij@linaro.org
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] gpio: tegra: Use platform_irq_count()
+Date: Mon, 31 Jul 2017 12:57:13 +0200
+Message-ID: <20170731105713.GG26667@ulmo>
+References: <20170720160057.13483-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t4apE7yKrX2dGgJC"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20170720160057.13483-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Some pins like i2c SCL/SDA need the schmitt input function
-to avoid crosstalk problems.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
+--t4apE7yKrX2dGgJC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/pinctrl/pinctrl-rockchip.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+On Thu, Jul 20, 2017 at 06:00:56PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Use platform_irq_count() instead of open-coding the same code sequence.
+>=20
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpio/gpio-tegra.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index e831647..868cb9c 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1084,6 +1084,36 @@ static void rv1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
- 	*bit *= RV1108_DRV_BITS_PER_PIN;
- }
- 
-+#define RV1108_SCHMITT_PMU_OFFSET		0x30
-+#define RV1108_SCHMITT_GRF_OFFSET		0x388
-+#define RV1108_SCHMITT_BANK_STRIDE		8
-+#define RV1108_SCHMITT_PINS_PER_GRF_REG		16
-+#define RV1108_SCHMITT_PINS_PER_PMU_REG		8
-+
-+static int rv1108_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
-+					   int pin_num,
-+					   struct regmap **regmap,
-+					   int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+	int pins_per_reg;
-+
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = RV1108_SCHMITT_PMU_OFFSET;
-+		pins_per_reg = RV1108_SCHMITT_PINS_PER_PMU_REG;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = RV1108_SCHMITT_GRF_OFFSET;
-+		pins_per_reg = RV1108_SCHMITT_PINS_PER_GRF_REG;
-+		*reg += (bank->bank_num  - 1) * RV1108_SCHMITT_BANK_STRIDE;
-+	}
-+	*reg += ((pin_num / pins_per_reg) * 4);
-+	*bit = pin_num % pins_per_reg;
-+
-+	return 0;
-+}
-+
- #define RK2928_PULL_OFFSET		0x118
- #define RK2928_PULL_PINS_PER_REG	16
- #define RK2928_PULL_BANK_STRIDE		8
-@@ -3017,6 +3047,7 @@ static struct rockchip_pin_ctrl rv1108_pin_ctrl = {
- 	.pmu_mux_offset		= 0x0,
- 	.pull_calc_reg		= rv1108_calc_pull_reg_and_bit,
- 	.drv_calc_reg		= rv1108_calc_drv_reg_and_bit,
-+	.schmitt_calc_reg	= rv1108_calc_schmitt_reg_and_bit,
- };
- 
- static struct rockchip_pin_bank rk2928_pin_banks[] = {
--- 
-2.7.4
+Ping...
+
+Thierry
+
+--t4apE7yKrX2dGgJC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll/DQcACgkQ3SOs138+
+s6Hn6A//QMNvYehJk4wnjA/6E/kFJTSyulSh8fKLt5YWkfzCBCnK6iGTR/O7pCyt
+/TNEx6416/oGWx0MygFnGGHWT9KuTocfH20DhLo+ikETgwCEWUpQks9qqmzRubpN
+b6luRD42d9RU8luKDbcxO3Q3TbelILEJdb4SGOtK8wPSUBvDQpvtq8XakVnJ7llC
+YzOmJ34jcF8tGiqhzUlFu+90WiEdf4oCMkijX+SSjkgNYnqM5QaFZyWDqiy/Hm8m
+/TR8JSpZUOUVKwBDrri1dWc+zUlhsWWr7D8XK3DKwSpCQTVV4/Ic1pCdZcaKZGFr
+g/7+oiK1oDGNRdE2OHfN02QbTU4hpwVW8cWl/lQqVBLam5dcG0OzbcRyNSDtf+MQ
+FoZ5Mr/f0zkP009YGbcB1JTotzpE4t7DtcfBZ2gfA5P48/ee4NzZ+f/P1AUMV1DG
+JrTWs6rvm/xUeXOFMBq3wm9ERIFsjg56gXPU+iUa9ixSkfFyOHPHkJ2Fmx9U8GwU
+C/LVSbmVm8uJRUCl2ArfonLvmr7sYM0MrgSkiTmYue79n/rZOAkFKpHwQ9ru/PdB
+WxqJkOV+w6TkAEpPnmPDP3HfzwAsrXSr8XJ9USPLloz1HpLvz+G0ob0o7rssuxkJ
+H97bk6hSUASKx0+QJOpLvhv+7a2wi0IxYJFV5so2lzJUUBvWot0=
+=YSYp
+-----END PGP SIGNATURE-----
+
+--t4apE7yKrX2dGgJC--
