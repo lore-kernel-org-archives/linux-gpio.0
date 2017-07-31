@@ -1,38 +1,48 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] pinctrl: sunxi: add support of R40
- to A10 pinctrl driver
-Date: Mon, 31 Jul 2017 15:55:18 +0200
-Message-ID: <CACRpkdYpnwOWp8ZckV+2aeKDfdKhy86SDDA-ZAicbbDX-aOWYQ@mail.gmail.com>
-References: <20170722025054.32645-1-icenowy@aosc.io> <20170722025054.32645-3-icenowy@aosc.io>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1] gpio: pca953x: remove incorrect le16_to_cpu calls
+Date: Mon, 31 Jul 2017 17:00:49 +0300
+Message-ID: <1501509649.29303.300.camel@linux.intel.com>
+References: <20170703174530.81298-1-andriy.shevchenko@linux.intel.com>
+         <CACRpkdbmzoWDGp6miCFG=89vtO=vJTzRF8jKN7Eh6YTKye5FOA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBSHN7TFQKGQEYAJIHYQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170722025054.32645-3-icenowy-h8G6r0blFSE@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:24310 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750923AbdGaOCX (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 31 Jul 2017 10:02:23 -0400
+In-Reply-To: <CACRpkdbmzoWDGp6miCFG=89vtO=vJTzRF8jKN7Eh6YTKye5FOA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
 
-2017-07-22 4:50 GMT+02:00 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>:
+On Mon, 2017-07-31 at 15:30 +0200, Linus Walleij wrote:
+> On Mon, Jul 3, 2017 at 7:45 PM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > i2c_smbus commands handle the correct byte order for smbus
+> > transactions
+> > internally. This will currently result in incorrect operation on big
+> > endian systems.
+> > 
+> > Suggested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Patch applied.
 
-> R40 is said to be an upgrade of A20, and its pin configuration is also
-> similar to A20 (and thus similar to A10).
->
-> Add support for R40 to the A10 pinctrl driver.
->
-> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
-> Reviewed-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-> ---
-> Changes in v3:
+Thanks!
 
-Patch applied for next.
+> 
+> As I don't see reported regressions it is applied for -next for
+> now.
 
-Yours,
-Linus Walleij
+Luckily we have none, though the latest changes to drivers/nfc/fdp/i2c.c
+(*) rely on it.
+
+(*) already in v4.13-rc1 IIRC.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
