@@ -1,60 +1,40 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl-st: fix of_irq_to_resource() result check
-Date: Mon, 31 Jul 2017 14:56:46 +0300
-Message-ID: <0f8ee18f-66e8-e828-db55-aeb05466cdf5@cogentembedded.com>
-References: <20170729180744.873303067@cogentembedded.com>
- <20170731112719.GM26667@ulmo>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: GPIO Char device and tools/gpio/gpio-utils.c
+Date: Mon, 31 Jul 2017 14:22:06 +0200
+Message-ID: <CACRpkdYKd1gyJNxyFY3GS4MZVJqPenoqzCKSBmWvvKbq4iszuA@mail.gmail.com>
+References: <aa21e9a8-345d-b9db-e39c-e62d910794cc@cipherdyne.com> <546696b7-4be8-ef79-6436-d9eb0a41db52@cipherdyne.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:37156 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752111AbdGaL4u (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 07:56:50 -0400
-Received: by mail-lf0-f42.google.com with SMTP id m86so105611880lfi.4
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 04:56:49 -0700 (PDT)
-In-Reply-To: <20170731112719.GM26667@ulmo>
+Received: from mail-it0-f44.google.com ([209.85.214.44]:38554 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdGaMWJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 08:22:09 -0400
+Received: by mail-it0-f44.google.com with SMTP id h199so124253806ith.1
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 05:22:08 -0700 (PDT)
+In-Reply-To: <546696b7-4be8-ef79-6436-d9eb0a41db52@cipherdyne.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jonathan Bennett <jbennett@cipherdyne.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hello!
+On Fri, Jul 21, 2017 at 7:26 PM, Jonathan Bennett
+<jbennett@cipherdyne.com> wrote:
 
-On 07/31/2017 02:27 PM, Thierry Reding wrote:
+> So to use GPIO pins through the chardev interface, one has to hold on to the file
+> descriptor to keep the pins from reverting to their initial state.  Is this a bug, or
+> intended behavior?
 
->> of_irq_to_resource() has recently been fixed to return negative error #'s
->> along with 0 in case of failure, however the ST driver still only regards
->> 0 as failure indication -- fix it up.
->>
->> Fixes: 7a4228bbff76 ("of: irq: use of_irq_get() in of_irq_to_resource()")
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->> ---
->>  drivers/pinctrl/pinctrl-st.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> Index: linux-pinctrl/drivers/pinctrl/pinctrl-st.c
->> ===================================================================
->> --- linux-pinctrl.orig/drivers/pinctrl/pinctrl-st.c
->> +++ linux-pinctrl/drivers/pinctrl/pinctrl-st.c
->> @@ -1521,7 +1521,7 @@ static int st_gpiolib_register_bank(stru
->>  	 *	[irqN]----> [gpio-bank (n)]
->>  	 */
->>
->> -	if (of_irq_to_resource(np, 0, &irq_res)) {
->> +	if (of_irq_to_resource(np, 0, &irq_res) > 0) {
->>  		gpio_irq = irq_res.start;
->>  		gpiochip_set_chained_irqchip(&bank->gpio_chip, &st_gpio_irqchip,
->>  					     gpio_irq, st_gpio_irq_handler);
->
-> While at it, maybe turn this into of_irq_get() since you only need the
-> interrupt number in the first place?
+I do not remember putting any code in that would explicitly return the
+GPIO line to
+the inital state.
 
-    Yeah, noticed that too. Will look into this (if I won't forget).
+That said it makes some weird sense as people might be probing around with
+the tools and then it would be good behaviour to leave things in the room like
+they were arranged when you entered, don't you think?
 
-> Thierry
+I'd like to hear Bartosz take on this though, he is more versed with userspace
+GPIO than me these days, and talk directly to users of this feature.
 
-MBR, Sergei
-
+Yours,
+Linus Walleij
