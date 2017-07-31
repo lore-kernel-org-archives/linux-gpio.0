@@ -1,63 +1,67 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/4] gpio: tegra: Remove unnecessary check
-Date: Mon, 31 Jul 2017 13:00:33 +0200
-Message-ID: <20170731110033.GJ26667@ulmo>
-References: <20170724145508.7388-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/7] gpio: Cleanup kerneldoc
+Date: Mon, 31 Jul 2017 13:02:17 +0200
+Message-ID: <20170731110217.GK26667@ulmo>
+References: <20170724145728.7662-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UlxN1C6awaFNesUv"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="j/HO4hzKTNbM1mOX"
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170724145508.7388-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20170724145728.7662-1-thierry.reding@gmail.com>
+Sender: linux-acpi-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
 
---UlxN1C6awaFNesUv
+--j/HO4hzKTNbM1mOX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 24, 2017 at 04:55:05PM +0200, Thierry Reding wrote:
+On Mon, Jul 24, 2017 at 04:57:22PM +0200, Thierry Reding wrote:
 > From: Thierry Reding <treding@nvidia.com>
 >=20
-> of_device_get_match_data() can never return NULL, therefore the check
-> for NULL values is unnecessary.
+> Some kerneldoc has become stale or wasn't quite correct from the outset.
+> Fix up the most serious issues to silence warnings when building the
+> documentation.
 >=20
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  drivers/gpio/gpio-tegra.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
+>  drivers/gpio/gpiolib.c      | 82 +++++++++++++++++++++++++++++++++------=
+------
+>  include/linux/gpio/driver.h |  3 +-
+>  2 files changed, 61 insertions(+), 24 deletions(-)
 
 Hi Linus,
 
-any comments on this? I've got an updated series for the GPIO IRQ chip
-stuff and another set of patches for banked controller support, but I'd
-like to flush out all of these minor patches that are byproducts of the
-other work.
+any chance we can get this merged? The GPIO IRQ chip and banked
+controller support patches that I'm working on depend on this, so I'd
+like for these to go in before I send out the former in order to
+decrease the dependency tracking for everyone involved.
 
+Thanks,
 Thierry
 
---UlxN1C6awaFNesUv
+--j/HO4hzKTNbM1mOX
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll/DdAACgkQ3SOs138+
-s6Greg//W8Aphr/zl0UQ09JvSSV3e7WeKS/l+F81A17JixwI06zWHViU9Uejf6JU
-JM14XJHxTHkhEWVaVebstN18+5mwX/DM9pyTVpaX7+kZ2UqaPCnWfvfl5n7X6juo
-p+mEivyvQJk9RXs5NP/Hv5hThUjbaCon8x6sJ2FBdKG7XS9u/anyZr708b+LiQcg
-5ntBqGdsHDWKAt1tsOPPj4gWf7FKTrKDdkXsMIVwlOuGroe/lqvwUztegeKqCu2y
-fCNazlNRljZIg9UuJFYS8A+AJ4ZOLitpEgr8uj/Gka3iL3J5R/cepMkMNKIKYzxk
-kLZjaN5dRLQ7hWAkMssjgKB38n0B+KlOotpNf/1dhBP4ufbXarx765lDgjmbcEFR
-R0PCY4dGWIKwhC99MDxrGTi2ve5SjZjDV6qkT3E21pfkgTm6FemAgSNw+LqStFuw
-7AntUvWJLuwSZV5hynsNOBjdYqIY0eyvR6w4tKeykG3d2n2AiOKribRiZfZtmcQY
-xJ+ZtPFc5c9OTaCNzkx/E5uIOM3h5PWuxzJoO46Dno+cAnIBKdSkIh5fWOnmPqKm
-rC1dKVLYAyIZH8Sg/Edr9nMlCXJSWSIyntbDj6VJ7/042/WfGI8pHQqlBhnjzlp0
-CytiM2dFM2LE8YTcUdB+k7wgDyxqodBUxFGMhJpyYH1BwkLM12E=
-=bwkp
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAll/DjkACgkQ3SOs138+
+s6HQiA//TlKC1zA9fPpn4FiEWU37G81ulRwhw/aDd4SO+ytvfOuZ1mnfeC9eMhNg
+FSWoteOQ+vbMqvNLgOu7KYtwboTXeGNelXhweuDWwYvY8lAv9WTmdcTdl90qLVmo
+O5NW8mQiKYT5kh6P+/uN2Kv9m3Ohq3UgGrxRHd0YYHZ6VhIRob9dEtbXhVpOKxwt
+sYb9inu+AbE2IBz6eHGPP+YVDd+FiKw/W6Gaiwe6yB5bioiYEvgoRNfpj5HxmYgN
+7w1N76YwnR3BwG3JIGiVNu/DjJ/Cyn/iCpZjKVxSjzzxZ1q4Ep/7z5kCVIhVsu5s
+1tgi+pm8uT2CM3GxkQDLUahjKozBceEx+seY6AswMs5C5f6jpC5aEXLAeVXr4scD
+NoM3XiSBnTvwCBYI8BYo/5s1+MTnjBydfidlTsCCKApGCrVeLSYnX64KlKFBLCLO
+SxoI2KyUBBrIN2plSoZzNCn4RTthaYZc0lsMO3oh6iKsLEFGeOoRw90ZsSuBrKfe
+7b59rH+2qEb5rVLOQrmHqPM7yqGAyV+ovi9O45CdgqfkL5CPc/gLEZ8ORYLt9O96
+bHNHXfjG3fQPYRpAZkPgs7IUYQMRsptPPWSAy9ITHL66Ivu+f7+TR+MqqoB8dVUN
+NfD89KFguE+Y2pXSVsZkEoyiiljATpTQCKBRR596uR8fSIgzwp8=
+=FYYf
 -----END PGP SIGNATURE-----
 
---UlxN1C6awaFNesUv--
+--j/HO4hzKTNbM1mOX--
