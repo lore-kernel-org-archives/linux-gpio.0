@@ -1,56 +1,40 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 3/3] pinctrl: msm: add support to configure ipq40xx
- GPIO_PULL bits
-Date: Mon, 31 Jul 2017 15:19:01 +0200
-Message-ID: <CACRpkdaWXmWiEp0dRHKDJ9mT5qVi_6mTvKaM2Gfc1Qrjm_Xapg@mail.gmail.com>
-References: <941e3869bdeddb2bebcc52ebfd57efe014887bc6.1500038134.git.chunkeey@googlemail.com>
- <d45ae31e888ad858d9f4396cabb4dc32a3f0365e.1500038134.git.chunkeey@googlemail.com>
- <895bbe5061fe2a6825503f57263a4eff9bb78a3c.1500038134.git.chunkeey@googlemail.com>
+Subject: Re: [PATCH v2] gpio: lp87565: Set proper output level and direction
+ for direction_output
+Date: Mon, 31 Jul 2017 15:27:33 +0200
+Message-ID: <CACRpkdbwf=7KCOW7-CiR=Q-d6hkjuW694FGTJu6PLiPgv-LWsw@mail.gmail.com>
+References: <20170703082812.23444-1-axel.lin@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:37564 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751784AbdGaNTD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 09:19:03 -0400
-Received: by mail-io0-f181.google.com with SMTP id c74so110885435iod.4
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 06:19:03 -0700 (PDT)
-In-Reply-To: <895bbe5061fe2a6825503f57263a4eff9bb78a3c.1500038134.git.chunkeey@googlemail.com>
+Received: from mail-io0-f173.google.com ([209.85.223.173]:37689 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbdGaN1f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 09:27:35 -0400
+Received: by mail-io0-f173.google.com with SMTP id c74so110978875iod.4
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 06:27:34 -0700 (PDT)
+In-Reply-To: <20170703082812.23444-1-axel.lin@ingics.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Christian Lamparter <chunkeey@googlemail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ram Chandra Jangir <rjangir@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+To: Axel Lin <axel.lin@ingics.com>
+Cc: Keerthy <j-keerthy@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Jul 14, 2017 at 4:14 PM, Christian Lamparter
-<chunkeey@googlemail.com> wrote:
+On Mon, Jul 3, 2017 at 10:28 AM, Axel Lin <axel.lin@ingics.com> wrote:
 
-> From: Ram Chandra Jangir <rjangir@codeaurora.org>
+> The value argument of lp87565_gpio_direction_output() means output level
+> rather than gpio direction.
 >
-> GPIO_PULL bits configurations in TLMM_GPIO_CFG register
-> differs for IPQ40xx from rest of the other qcom SoCs.
-> As it does not support the keeper state and therefore can't
-> support bias-bus-hold property.
->
-> This patch adds a pull_no_keeper setting which configures the
-> msm_gpio_pull bits for ipq40xx. This is required to fix the
-> proper configurations of gpio-pull bits for nand pins mux.
->
-> IPQ40xx SoC:
-> 2'b10: Internal pull up enable.
-> 2'b11: Unsupport
->
-> For other SoC's:
-> 2'b10: Keeper
-> 2'b11: Pull-Up
->
-> Note: Due to pull_no_keeper length, all kerneldoc entries
-> in the msm_pinctrl_soc_data struct had to be realigned.
->
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Ram Chandra Jangir <rjangir@codeaurora.org>
-> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Reviewed-by: Keerthy <j-keerthy@ti.com>
+> Tested-by: Keerthy <j-keerthy@ti.com>
+> ---
+> v2: Call lp87565_gpio_set() instead of open-coded.
+> I move lp87565_gpio_get/lp87565_gpio_set functions up to avoid forward
+> declaration. It's fine to only move lp87565_gpio_set() but it looks better
+> for me to move lp87565_gpio_get/lp87565_gpio_set together.
+> Hope this change is fine.
 
-Patch applied.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
