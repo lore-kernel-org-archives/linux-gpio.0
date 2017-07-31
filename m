@@ -1,37 +1,42 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: intel: wrap Intel pin control drivers in an
- architecture check
-Date: Mon, 31 Jul 2017 16:48:57 +0300
-Message-ID: <20170731134857.GU2369@lahna.fi.intel.com>
-References: <20170704064947.10792-1-pbrobinson@gmail.com>
- <CACRpkdZL2iRF4Qo8rcFOg+9F1dTBj9RZ_49w=7h6P+8=d9BoYw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: uniphier: fix USB3 pin assignment for Pro4
+Date: Mon, 31 Jul 2017 15:50:35 +0200
+Message-ID: <CACRpkdY0UdiMxepc4+JYEPV5gLDFyVLPgJPdB_wrxT7eH7a8AQ@mail.gmail.com>
+References: <1499324063-907-1-git-send-email-hayashi.kunihiko@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:40589 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750987AbdGaNtd (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 31 Jul 2017 09:49:33 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZL2iRF4Qo8rcFOg+9F1dTBj9RZ_49w=7h6P+8=d9BoYw@mail.gmail.com>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:37610 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdGaNuj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 09:50:39 -0400
+Received: by mail-io0-f182.google.com with SMTP id c74so111239568iod.4
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 06:50:39 -0700 (PDT)
+In-Reply-To: <1499324063-907-1-git-send-email-hayashi.kunihiko@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Peter Robinson <pbrobinson@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Mon, Jul 31, 2017 at 03:41:16PM +0200, Linus Walleij wrote:
-> On Tue, Jul 4, 2017 at 8:49 AM, Peter Robinson <pbrobinson@gmail.com> wrote:
-> 
-> > The Intel pin control drivers are architecture specific so add an if arch
-> > to check for X86 or compile test to ensure continued test coverage.
-> >
-> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-> 
-> I'm waiting for Mika to say what he thinks about this. He's the overall
-> Intel pin control maintainer.
+On Thu, Jul 6, 2017 at 8:54 AM, Kunihiko Hayashi
+<hayashi.kunihiko@socionext.com> wrote:
 
-Looks fine to me,
+> According to pinctrl assignment for Pro4, each definition of USB#2 and
+> USB#3 are as follows.
+>
+>   184: USB2VBUS
+>   185: USB2OD
+>   186: USB2ID
+>   187: USB3VBUS
+>   188: USB3OD
+>
+> USB#2 has an additional pin "USB2ID", but the chip doesn't use this pin
+> while in host-mode. Considering this pin, the pin definitions for USB#3
+> should be {187, 188}.
+>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Patch applied for fixes with Masahiro's ACK.
+
+Yours,
+Linus Walleij
