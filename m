@@ -1,30 +1,101 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sunxi: rename R_PIO i2c pin function name
-Date: Mon, 31 Jul 2017 16:13:10 +0200
-Message-ID: <CACRpkdb6woruLQPOfb2AGwraux5CienovZnJMox7VCh16JMXrA@mail.gmail.com>
-References: <20170730053618.44781-1-icenowy@aosc.io>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170730053618.44781-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: [PATCH 1/5 v2] pinctrl: Add DT bindings for Cortina Gemini
+Date: Mon, 31 Jul 2017 23:30:50 +0200
+Message-ID: <20170731213050.4794-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:38400 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbdGaVa6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 17:30:58 -0400
+Received: by mail-lf0-f52.google.com with SMTP id y15so118824742lfd.5
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 14:30:58 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org
 
-On Sun, Jul 30, 2017 at 7:36 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+The Cortina Gemini pin controller uses the standard pin control
+bindings for muxing functions with groups so these bindings
+should be entirely uncontroversial.
 
-> The I2C pin functions in R_PIO used to be named "s_twi".
->
-> As we usually use the name "i2c" instead of "twi" in the mainline
-> kernel, change these names to "s_i2c" for consistency.
->
-> The "s_twi" functions are not yet referenced by any device trees in
-> mainline kernel so I think it's safe to change the name.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v1->v2:
+- State that the pin controller must be a subnode of the
+  system controller.
+- Drop the phandle to the system controller: we can simply
+  look up the parent.
+---
+ .../bindings/pinctrl/cortina,gemini-pinctrl.txt    | 59 ++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
 
-Patch applied with Chen-Yu's review tag.
+diff --git a/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+new file mode 100644
+index 000000000000..61466c58faae
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+@@ -0,0 +1,59 @@
++Cortina Systems Gemini pin controller
++
++This pin controller is found in the Cortina Systems Gemini SoC family,
++see further arm/gemini.txt. It is a purely group-based multiplexing pin
++controller.
++
++The pin controller node must be a subnode of the system controller node.
++
++Required properties:
++- compatible: "cortina,gemini-pinctrl"
++
++Subnodes of the pin controller contain pin control multiplexing set-up.
++Please refer to pinctrl-bindings.txt for generic pin multiplexing nodes.
++
++Example:
++
++
++syscon {
++	compatible = "cortina,gemini-syscon";
++	...
++	pinctrl {
++		compatible = "cortina,gemini-pinctrl";
++		pinctrl-names = "default";
++		pinctrl-0 = <&dram_default_pins>, <&system_default_pins>,
++		    <&vcontrol_default_pins>;
++
++		dram_default_pins: pinctrl-dram {
++			mux {
++				function = "dram";
++				groups = "dramgrp";
++			};
++		};
++		rtc_default_pins: pinctrl-rtc {
++			mux {
++				function = "rtc";
++				groups = "rtcgrp";
++			};
++		};
++		power_default_pins: pinctrl-power {
++			mux {
++				function = "power";
++				groups = "powergrp";
++			};
++		};
++		system_default_pins: pinctrl-system {
++			mux {
++				function = "system";
++				groups = "systemgrp";
++			};
++		};
++		(...)
++		uart_default_pins: pinctrl-uart {
++			mux {
++				function = "uart";
++				groups = "uartrxtxgrp";
++			};
++		};
++	};
++};
+-- 
+2.9.4
 
-Yours,
-Linus Walleij
