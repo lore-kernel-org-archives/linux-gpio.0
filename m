@@ -1,43 +1,47 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: add most other IPQ4019 pin
- functions and groups
-Date: Mon, 31 Jul 2017 15:15:53 +0200
-Message-ID: <CACRpkdZ6b0brtq=X-iY5FQT1WCC3AY9a+3q2q3ws8qYtWJGM9w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 2/3] pinctrl: qcom: ipq4019: add most remaining pin definitions
+Date: Mon, 31 Jul 2017 15:17:29 +0200
+Message-ID: <CACRpkdZ5Gi6y0ce-u6Z7fx-TMBBAwyGvDDWBXG0BodF5D2AWiw@mail.gmail.com>
 References: <d45ae31e888ad858d9f4396cabb4dc32a3f0365e.1500038134.git.chunkeey@googlemail.com>
+ <941e3869bdeddb2bebcc52ebfd57efe014887bc6.1500038134.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d45ae31e888ad858d9f4396cabb4dc32a3f0365e.1500038134.git.chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f178.google.com ([209.85.223.178]:35815 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbdGaNRb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 09:17:31 -0400
+Received: by mail-io0-f178.google.com with SMTP id m88so102069199iod.2
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 06:17:31 -0700 (PDT)
+In-Reply-To: <941e3869bdeddb2bebcc52ebfd57efe014887bc6.1500038134.git.chunkeey@googlemail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Christian Lamparter <chunkeey@googlemail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ram Chandra Jangir <rjangir@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, John Crispin <john@phrozen.org>
 
 On Fri, Jul 14, 2017 at 4:14 PM, Christian Lamparter
-<chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
+<chunkeey@googlemail.com> wrote:
 
-> This patch adds the remaining pin functions and mux groups.
-> All unknown and debug functions are omitted. Existing functions
-> for qpic, sdio, rgmii, rmii, wifi/d are squashed together as
-> much as possible. And only in case of a clash, the individually
-> named functions have been kept. The exceptions are:
->         led0-11
->         i2s_rx, i2s_tx, i2s_td, i2s_spdif_in, i2s_spdif_out,
->         smart0-3
+> From: Ram Chandra Jangir <rjangir@codeaurora.org>
 >
-> Cc: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+> This patch adds multiple pinctrl functions and mappings
+> for SDIO, NAND, I2S, WIFI, PCIE, LEDs, etc... that have
+> been missing from the current minimal version.
+>
+> This patch has been updated from the original version
+> that was posted by Ram Chandra Jangir on the LEDE-DEV ML:
+> <https://patchwork.ozlabs.org/patch/752962/>. A short
+> summary of the changes are documented in the device-tree
+> patch of this series:
+> "dt-bindings: pinctrl: add most other IPQ4019 pin functions and groups"
+>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: John Crispin <john@phrozen.org>
+> Signed-off-by: Ram Chandra Jangir <rjangir@codeaurora.org>
+> Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
 
 Patch applied with Bj=C3=B6rn's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
