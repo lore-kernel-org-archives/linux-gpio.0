@@ -1,46 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 1/2] pinctrl: sunxi: add a missing function of A10/A20
- pinctrl driver
-Date: Mon, 31 Jul 2017 15:53:31 +0200
-Message-ID: <CACRpkdbeu=NbWWiJvFHrHYe=4U5M16PNspTZ7S1-9_3v7+tV=A@mail.gmail.com>
-References: <20170722025054.32645-1-icenowy@aosc.io> <20170722025054.32645-2-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] pinctrl: sunxi: add support of R40
+ to A10 pinctrl driver
+Date: Mon, 31 Jul 2017 15:55:18 +0200
+Message-ID: <CACRpkdYpnwOWp8ZckV+2aeKDfdKhy86SDDA-ZAicbbDX-aOWYQ@mail.gmail.com>
+References: <20170722025054.32645-1-icenowy@aosc.io> <20170722025054.32645-3-icenowy@aosc.io>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:37342 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750987AbdGaNxc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 09:53:32 -0400
-Received: by mail-io0-f178.google.com with SMTP id c74so111271582iod.4
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 06:53:32 -0700 (PDT)
-In-Reply-To: <20170722025054.32645-2-icenowy@aosc.io>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBSHN7TFQKGQEYAJIHYQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170722025054.32645-3-icenowy-h8G6r0blFSE@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Sat, Jul 22, 2017 at 4:50 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+2017-07-22 4:50 GMT+02:00 Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>:
 
-> The PH16 pin has a function with mux id 0x5, which is the DET pin of the
-> "sim" (smart card reader) IP block.
+> R40 is said to be an upgrade of A20, and its pin configuration is also
+> similar to A20 (and thus similar to A10).
 >
-> This function is missing in old versions of A10/A20 SoCs' datasheets and
-> user manuals, so it's also missing in the old drivers. The newest A10
-> Datasheet V1.70 and A20 Datasheet V1.41 contain this pin function, and
-> it's discovered during implementing R40 pinctrl driver.
+> Add support for R40 to the A10 pinctrl driver.
 >
-> Add it to the driver. As we now merged A20 pinctrl driver to the A10
-> one, we need to only fix the A10 driver now.
->
-> Fixes: f2821b1ca3a2 ("pinctrl: sunxi: Move Allwinner A10 pinctrl
-> driver to a driver of its own")
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Icenowy Zheng <icenowy-h8G6r0blFSE@public.gmane.org>
+> Reviewed-by: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
 > ---
 > Changes in v3:
 
-Patch applied for fixes.
+Patch applied for next.
 
 Yours,
 Linus Walleij
