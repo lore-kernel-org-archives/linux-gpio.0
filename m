@@ -1,44 +1,46 @@
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH 1/3] dt-bindings: pinctrl: mt2712: add binding document
-Date: Mon, 31 Jul 2017 16:22:11 +0800
-Message-ID: <1501489333-23145-2-git-send-email-zhiyong.tao@mediatek.com>
-References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com
-Cc: devicetree@vger.kernel.org, hongkun.cao@mediatek.com, srv_heupstream@mediatek.com, linux-gpio@vger.kernel.org, biao.huang@mediatek.com, Zhiyong Tao <zhiyong.tao@mediatek.com>, erin.lo@mediatek.com, liguo.zhang@mediatek.com, linux-kernel@vger.kernel.org, hongzhou.yang@mediatek.com, linux-mediatek@lists.infradead.org, yt.shen@mediatek.com, yingjoe.chen@mediatek.com, linux-arm-kernel@lists.infradead.org
+From: Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 00/14] Support more devices on rockchip rv1108
+Date: Mon, 31 Jul 2017 18:04:09 +0800
+Message-ID: <1501495449-21290-1-git-send-email-andy.yan@rock-chips.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: heiko@sntech.de
+Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org, mturquette@baylibre.com, linux-gpio@vger.kernel.org, sboyd@codeaurora.org, broonie@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, linux-rockchip@lists.infradead.org, robh+dt@kernel.org, linux-i2c@vger.kernel.org, shawn.lin@rock-chips.com, linux-spi@vger.kernel.org, zhangqing@rock-chips.com, linux-arm-kernel@lists.infradead.org, Andy Yan <andy.yan@rock-chips.com>
 List-Id: linux-gpio@vger.kernel.org
 
-The commit adds mt2712 compatible node in binding document.
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
----
- .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    1 +
- 1 file changed, 1 insertion(+)
+This series try to support i2c/spi/pwm/saradc/pmic/watchdog and
+the full clk tree on rockchip rv1108 soc.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-index 17631d0..37d7447 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt
-@@ -5,6 +5,7 @@ The Mediatek's Pin controller is used to control SoC pins.
- Required properties:
- - compatible: value should be one of the following.
- 	"mediatek,mt2701-pinctrl", compatible with mt2701 pinctrl.
-+	"mediatek,mt2712-pinctrl", compatible with mt2712 pinctrl.
- 	"mediatek,mt6397-pinctrl", compatible with mt6397 pinctrl.
- 	"mediatek,mt7623-pinctrl", compatible with mt7623 pinctrl.
- 	"mediatek,mt8127-pinctrl", compatible with mt8127 pinctrl.
+
+Andy Yan (12):
+  pinctrl: rockchip: add input schmitt support for rv1108
+  dt-bindings: i2c: rk3x: add support for rv1108
+  i2c: rk3x: add support for rv1108
+  ARM: dts: rockchip: add i2c dt node for rv1108
+  spi: rockchip: add compatible string for rv1108 spi
+  ARM: dts: rockchip: add spi dt node for rv1108
+  ARM: dts: rockchip: add pwm dt node for rv1108
+  ARM: dts: rockchip: add watchdog dt node for rv1108
+  ARM: dts: rockchip: add saradc support for rv1108
+  ARM: dts: rockchip: add pwm backlight for rv1108 evb
+  ARM: dts: rockchip: add pmic rk805 dt node for rv1108 evb
+  ARM: dts: rockchip: add accelerometer bma250e dt node for rv1108 evb
+
+Elaine Zhang (2):
+  clk: rockchip: add more clk ids for rv1108
+  clk: rockchip: support more clks for rv1108
+
+ Documentation/devicetree/bindings/i2c/i2c-rk3x.txt |   1 +
+ .../devicetree/bindings/spi/spi-rockchip.txt       |   1 +
+ arch/arm/boot/dts/rv1108-evb.dts                   | 158 +++++++
+ arch/arm/boot/dts/rv1108.dtsi                      | 249 ++++++++++
+ drivers/clk/rockchip/clk-rv1108.c                  | 513 ++++++++++++++++-----
+ drivers/i2c/busses/i2c-rk3x.c                      |   9 +
+ drivers/pinctrl/pinctrl-rockchip.c                 |  31 ++
+ drivers/spi/spi-rockchip.c                         |   1 +
+ include/dt-bindings/clock/rv1108-cru.h             | 128 ++++-
+ 9 files changed, 964 insertions(+), 127 deletions(-)
+
 -- 
-1.7.9.5
+2.7.4
