@@ -1,65 +1,42 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from
- include/linux/gpio/driver.h
-Date: Mon, 31 Jul 2017 17:04:27 +0300
-Message-ID: <1501509867.29303.303.camel@linux.intel.com>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
-         <1499162760.22624.246.camel@linux.intel.com>
-         <CACRpkdaxgxaXV8XjLTzu68JqjyeZ8Jr2YMR3L46wm3zmnMrPsg@mail.gmail.com>
+Subject: Re: [PATCH v1] gpio: pca953x: remove incorrect le16_to_cpu calls
+Date: Mon, 31 Jul 2017 17:06:22 +0300
+Message-ID: <1501509982.29303.305.camel@linux.intel.com>
+References: <20170703174530.81298-1-andriy.shevchenko@linux.intel.com>
+         <CACRpkdbmzoWDGp6miCFG=89vtO=vJTzRF8jKN7Eh6YTKye5FOA@mail.gmail.com>
+         <1501509649.29303.300.camel@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:43915 "EHLO mga07.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:26244 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751827AbdGaOGG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 31 Jul 2017 10:06:06 -0400
-In-Reply-To: <CACRpkdaxgxaXV8XjLTzu68JqjyeZ8Jr2YMR3L46wm3zmnMrPsg@mail.gmail.com>
+        id S1751705AbdGaOHz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 31 Jul 2017 10:07:55 -0400
+In-Reply-To: <1501509649.29303.300.camel@linux.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, Ray Jui <rjui@broadcom.com>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, David Cohen <david.a.cohen@linux.intel.com>, Scott Branden <sbranden@broadcom.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>, Kevin Hilman <khilman@kernel.org>"linux-tegra@vger.kernel.org" <l>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
 
-On Mon, 2017-07-31 at 15:48 +0200, Linus Walleij wrote:
-> On Tue, Jul 4, 2017 at 12:06 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Tue, 2017-07-04 at 12:53 +0900, Masahiro Yamada wrote:
-> > > Some of include directives in include/linux/gpio/driver.h are
-> > > unneeded because the header does not need to know the content of
-> > > struct device, irq_chip, etc.  Just declare they are structures.
-> > > 
-> > > On the other hand, <linux/irqhandler.h> and
-> > > <linux/spinlock_types.h>
-> > > turned out to be necessary for irq_flow_handler_t and spinlock_t,
-> > > respectively.
-> > > 
-> > > Each driver should include what it needs without relying on what
-> > > is
-> > > implicitly included from <linux/gpio/driver.h>.  This will cut
-> > > down
-> > > unnecessary header parsing.
+On Mon, 2017-07-31 at 17:00 +0300, Andy Shevchenko wrote:
+> On Mon, 2017-07-31 at 15:30 +0200, Linus Walleij wrote:
+> > On Mon, Jul 3, 2017 at 7:45 PM, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
 > > 
-> > If Linus is okay with the following proposal I would rather go with
-> > it,
-> > i.e. logical split the series to
+> 
+
 > > 
-> > 1. Fix IRQ related headers inclusion
-> > 2. Fix pinconf-generic.h inclusion
-> > 3. Fix OF headers inclusion (btw, of_gpio.h is not enough there?)
+> > As I don't see reported regressions it is applied for -next for
+> > now.
 > 
-> That works fine with me, but also one big patch actually, I do not
-> want to make it too much work to refactor obviously incorrect things.
+> Luckily we have none, though the latest changes to
+> drivers/nfc/fdp/i2c.c
+> (*) rely on it.
 > 
-> As soon as we have rough consensus on this and the build robot
-> are happy I will apply it to GPIO and also pull it into the pinctrl
-> subsystem.
+> (*) already in v4.13-rc1 IIRC.
 
-For me priorities like this:
-1) it works after the patch being applied (no regressions);
-2) it makes code cleaner at the end;
-3) it is presented in logically split parts.
-
-So, as long as 1) and 2) are satisfied I can neglect on 3).
+My gosh! It's for different patch!
 
 -- 
 Andy Shevchenko <andriy.shevchenko@linux.intel.com>
