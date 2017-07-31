@@ -1,72 +1,60 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH v2 0/3] gpio: davinci: Add missing return checks
-Date: Mon, 31 Jul 2017 17:22:40 +0530
-Message-ID: <0b888731-f23b-7271-447e-87ae2bd560bf@ti.com>
-References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
- <fc3de1fa-35b0-fc09-7116-921d7d2bf8a9@ti.com>
- <7107e153-3341-2e64-04d5-a3ba98aa7190@ti.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] pinctrl-st: fix of_irq_to_resource() result check
+Date: Mon, 31 Jul 2017 14:56:46 +0300
+Message-ID: <0f8ee18f-66e8-e828-db55-aeb05466cdf5@cogentembedded.com>
+References: <20170729180744.873303067@cogentembedded.com>
+ <20170731112719.GM26667@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:46124 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751264AbdGaLxL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 07:53:11 -0400
-In-Reply-To: <7107e153-3341-2e64-04d5-a3ba98aa7190@ti.com>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:37156 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbdGaL4u (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 07:56:50 -0400
+Received: by mail-lf0-f42.google.com with SMTP id m86so105611880lfi.4
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 04:56:49 -0700 (PDT)
+In-Reply-To: <20170731112719.GM26667@ulmo>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Suman Anna <s-anna@ti.com>, linus.walleij@linaro.org
-Cc: t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, nsekhar@ti.com
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Patrice Chotard <patrice.chotard@st.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+Hello!
 
+On 07/31/2017 02:27 PM, Thierry Reding wrote:
 
-On Friday 21 July 2017 01:27 AM, Suman Anna wrote:
-> Hi Keerthy,
-> 
+>> of_irq_to_resource() has recently been fixed to return negative error #'s
+>> along with 0 in case of failure, however the ST driver still only regards
+>> 0 as failure indication -- fix it up.
 >>
->> On Thursday 20 July 2017 03:12 PM, Keerthy wrote:
->>> The patch series does a couple of important return handling which were missed
->>> earlier in the driver probe.
->>>
->>> This is based on Suman's:
->>>
->>> http://marc.info/?l=linux-arm-kernel&m=150034845427555&w=2
->>> http://marc.info/?l=linux-arm-kernel&m=150034856627618&w=2 
->>>
+>> Fixes: 7a4228bbff76 ("of: irq: use of_irq_get() in of_irq_to_resource()")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 >>
->> My bad! The series has no dependency on the above. I have split the
->> device tree patches to keep it independent.
-> 
-> The new patches looks clean. The davinci_gpio_irq_setup() function
-> though could also do with couple more cleanups. Not all failure paths
-> are doing the necessary cleanup (there are some non devres functions
-> also called, but not cleaned up).
-
-Linus,
-
-Any comments on this series?
-
-Regards,
-Keerthy
-
-> 
-> regards
-> Suman
-> 
+>> ---
+>>  drivers/pinctrl/pinctrl-st.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->>> Changes in v2:
->>>
->>>   * Removed the device tree patch for to keep the series independent.
->>>
->>> Keerthy (3):
->>>   gpio: davinci: Use devm_gpiochip_add_data in place of
->>>     gpiochip_add_data
->>>   gpio: davinci: Handle the return value of davinci_gpio_irq_setup
->>>     function
->>>   gpio: davinci: Convert prinkt to dev_err
->>>
->>>  drivers/gpio/gpio-davinci.c | 22 +++++++++++++++++-----
->>>  1 file changed, 17 insertions(+), 5 deletions(-)
->>>
-> 
+>> Index: linux-pinctrl/drivers/pinctrl/pinctrl-st.c
+>> ===================================================================
+>> --- linux-pinctrl.orig/drivers/pinctrl/pinctrl-st.c
+>> +++ linux-pinctrl/drivers/pinctrl/pinctrl-st.c
+>> @@ -1521,7 +1521,7 @@ static int st_gpiolib_register_bank(stru
+>>  	 *	[irqN]----> [gpio-bank (n)]
+>>  	 */
+>>
+>> -	if (of_irq_to_resource(np, 0, &irq_res)) {
+>> +	if (of_irq_to_resource(np, 0, &irq_res) > 0) {
+>>  		gpio_irq = irq_res.start;
+>>  		gpiochip_set_chained_irqchip(&bank->gpio_chip, &st_gpio_irqchip,
+>>  					     gpio_irq, st_gpio_irq_handler);
+>
+> While at it, maybe turn this into of_irq_get() since you only need the
+> interrupt number in the first place?
+
+    Yeah, noticed that too. Will look into this (if I won't forget).
+
+> Thierry
+
+MBR, Sergei
+
