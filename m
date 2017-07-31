@@ -1,43 +1,30 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1] gpio: pca953x: remove incorrect le16_to_cpu calls
-Date: Mon, 31 Jul 2017 17:06:22 +0300
-Message-ID: <1501509982.29303.305.camel@linux.intel.com>
-References: <20170703174530.81298-1-andriy.shevchenko@linux.intel.com>
-         <CACRpkdbmzoWDGp6miCFG=89vtO=vJTzRF8jKN7Eh6YTKye5FOA@mail.gmail.com>
-         <1501509649.29303.300.camel@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: sunxi: rename R_PIO i2c pin function name
+Date: Mon, 31 Jul 2017 16:13:10 +0200
+Message-ID: <CACRpkdb6woruLQPOfb2AGwraux5CienovZnJMox7VCh16JMXrA@mail.gmail.com>
+References: <20170730053618.44781-1-icenowy@aosc.io>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:26244 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751705AbdGaOHz (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Mon, 31 Jul 2017 10:07:55 -0400
-In-Reply-To: <1501509649.29303.300.camel@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170730053618.44781-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Yong Li <sdliyong@gmail.com>, Phil Reid <preid@electromag.com.au>
 
-On Mon, 2017-07-31 at 17:00 +0300, Andy Shevchenko wrote:
-> On Mon, 2017-07-31 at 15:30 +0200, Linus Walleij wrote:
-> > On Mon, Jul 3, 2017 at 7:45 PM, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > 
-> 
+On Sun, Jul 30, 2017 at 7:36 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-> > 
-> > As I don't see reported regressions it is applied for -next for
-> > now.
-> 
-> Luckily we have none, though the latest changes to
-> drivers/nfc/fdp/i2c.c
-> (*) rely on it.
-> 
-> (*) already in v4.13-rc1 IIRC.
+> The I2C pin functions in R_PIO used to be named "s_twi".
+>
+> As we usually use the name "i2c" instead of "twi" in the mainline
+> kernel, change these names to "s_i2c" for consistency.
+>
+> The "s_twi" functions are not yet referenced by any device trees in
+> mainline kernel so I think it's safe to change the name.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-My gosh! It's for different patch!
+Patch applied with Chen-Yu's review tag.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Yours,
+Linus Walleij
