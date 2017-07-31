@@ -1,37 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: zte: fix dereference of 'data' in zx_set_mux()
-Date: Mon, 31 Jul 2017 15:13:40 +0200
-Message-ID: <CACRpkda31aW5YpFefGe3R8mWmMJ-iPF7UMB8t-tqPxhnihkWEw@mail.gmail.com>
-References: <1498880736-18143-1-git-send-email-shawnguo@kernel.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: pinctrl: add most other IPQ4019 pin
+ functions and groups
+Date: Mon, 31 Jul 2017 15:15:53 +0200
+Message-ID: <CACRpkdZ6b0brtq=X-iY5FQT1WCC3AY9a+3q2q3ws8qYtWJGM9w@mail.gmail.com>
+References: <d45ae31e888ad858d9f4396cabb4dc32a3f0365e.1500038134.git.chunkeey@googlemail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:33810 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751784AbdGaNNm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 31 Jul 2017 09:13:42 -0400
-Received: by mail-io0-f169.google.com with SMTP id o9so3111983iod.1
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Jul 2017 06:13:41 -0700 (PDT)
-In-Reply-To: <1498880736-18143-1-git-send-email-shawnguo@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <d45ae31e888ad858d9f4396cabb4dc32a3f0365e.1500038134.git.chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>
 
-On Sat, Jul 1, 2017 at 5:45 AM, Shawn Guo <shawnguo@kernel.org> wrote:
+On Fri, Jul 14, 2017 at 4:14 PM, Christian Lamparter
+<chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org> wrote:
 
-> From: Shawn Guo <shawn.guo@linaro.org>
+> This patch adds the remaining pin functions and mux groups.
+> All unknown and debug functions are omitted. Existing functions
+> for qpic, sdio, rgmii, rmii, wifi/d are squashed together as
+> much as possible. And only in case of a clash, the individually
+> named functions have been kept. The exceptions are:
+>         led0-11
+>         i2s_rx, i2s_tx, i2s_td, i2s_spdif_in, i2s_spdif_out,
+>         smart0-3
 >
-> It fixes the following Smatch complaint:
->
-> drivers/pinctrl/zte/pinctrl-zx.c:76 zx_set_mux()
-> warn: variable dereferenced before check 'data' (see line 67)
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Fixes: cbff0c4d27f4 ("pinctrl: add ZTE ZX pinctrl driver support")
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> Cc: Varadarajan Narayanan <varada-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Cc: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Ram Chandra Jangir <rjangir-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Cc: John Crispin <john-Pj+rj9U5foFAfugRpC6u6w@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Christian Lamparter <chunkeey-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
 
-Patch applied for fixes.
+Patch applied with Bj=C3=B6rn's ACK.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
