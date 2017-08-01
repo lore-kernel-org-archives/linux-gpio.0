@@ -1,19 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: qcom: ssbi-gpio: constify gpio_chip structure
-Date: Tue, 1 Aug 2017 10:01:17 +0200
-Message-ID: <CACRpkdbme0QkyJdNeg4di5=H+vhxvquNWS0k-KiqkCh4+5k99g@mail.gmail.com>
-References: <20170711183950.GA26899@embeddedgus>
+Subject: Re: [PATCH] pinctrl: qcom: msm: constify gpio_chip structure
+Date: Tue, 1 Aug 2017 10:02:47 +0200
+Message-ID: <CACRpkdbpAn4oZxzGw4G-iPwTqcH2yb-DWt9UqW4pDh=kvdOjEg@mail.gmail.com>
+References: <20170711183414.GA24866@embeddedgus>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170711183950.GA26899@embeddedgus>
+In-Reply-To: <20170711183414.GA24866@embeddedgus>
 Sender: linux-kernel-owner@vger.kernel.org
 To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 11, 2017 at 8:39 PM, Gustavo A. R. Silva
+On Tue, Jul 11, 2017 at 8:34 PM, Gustavo A. R. Silva
 <garsilva@embeddedor.com> wrote:
 
 > This structure is only used to copy into other structure, so declare
@@ -56,13 +56,13 @@ e
 >
 > before:
 >    text    data     bss     dec     hex filename
->   17061    6992       0   24053    5df5 drivers/pinctrl/qcom/pinctrl-ssbi=
--gpio.o
+>   13129    2808     192   16129    3f01 drivers/pinctrl/qcom/pinctrl-msm.=
+o
 >
 > after:
 >    text    data     bss     dec     hex filename
->   16777    6904       0   23681    5c81 drivers/pinctrl/qcom/pinctrl-ssbi=
--gpio.o
+>   12839    2720     192   15751    3d87 drivers/pinctrl/qcom/pinctrl-msm.=
+o
 >
 > Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
 
