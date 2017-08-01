@@ -1,294 +1,133 @@
-From: s.abhisit@gmail.com
-Subject: [PATCH 4/5] gpio: Add support for LMP92001 GPIO
-Date: Tue,  1 Aug 2017 16:15:47 +0700
-Message-ID: <1501578947-4692-1-git-send-email-s.abhisit@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35218 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751101AbdHAJQD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 05:16:03 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Subject: [PATCH 5/5] Documentation: bindings: Add ti,lmp92001
+Date: Tue,  1 Aug 2017 16:17:53 +0700
+Message-ID: <1501579073-4764-1-git-send-email-s.abhisit@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Abhisit Sangjan <s.abhisit@gmail.com>
 
-From: Abhisit Sangjan <s.abhisit@gmail.com>
+From: Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
 ---
- drivers/gpio/Kconfig         |   7 ++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-lmp92001.c | 235 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 243 insertions(+)
- create mode 100644 drivers/gpio/gpio-lmp92001.c
+ .../devicetree/bindings/gpio/gpio-lmp92001.txt     | 29 ++++++++++++++++++
+ .../bindings/iio/adc/ti-lmp92001-adc.txt           | 21 +++++++++++++
+ .../bindings/iio/dac/ti-lmp92001-dac.txt           | 35 ++++++++++++++++++++++
+ 3 files changed, 85 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index f235eae..b9b5c97 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1119,6 +1119,13 @@ config GPIO_WM8994
- 	  Say yes here to access the GPIO signals of WM8994 audio hub
- 	  CODECs from Wolfson Microelectronics.
- 
-+config GPIO_LMP92001
-+       tristate "LMP92001 GPIOs"
-+       depends on MFD_LMP92001
-+       help
-+         Say yes here to access the GPIO signals of TI LMP92001 Analog System
-+         Monitor and Controller.
-+
- endmenu
- 
- menu "PCI GPIO expanders"
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index a9fda6c..153daea 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -148,3 +148,4 @@ obj-$(CONFIG_GPIO_ZEVIO)	+= gpio-zevio.o
- obj-$(CONFIG_GPIO_ZYNQ)		+= gpio-zynq.o
- obj-$(CONFIG_GPIO_ZX)		+= gpio-zx.o
- obj-$(CONFIG_GPIO_LOONGSON1)	+= gpio-loongson1.o
-+obj-$(CONFIG_GPIO_LMP92001)	+= gpio-lmp92001.o
-diff --git a/drivers/gpio/gpio-lmp92001.c b/drivers/gpio/gpio-lmp92001.c
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
 new file mode 100644
-index 0000000..ac0eb4d5
+index 0000000..62267ff
 --- /dev/null
-+++ b/drivers/gpio/gpio-lmp92001.c
-@@ -0,0 +1,235 @@
-+/*
-+ * gpio-lmp92001.c - Support for TI LMP92001 GPIOs
-+ *
-+ * Copyright 2016-2017 Celestica Ltd.
-+ *
-+ * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-+ *
-+ * Inspired by wm831x driver.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
++++ b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
+@@ -0,0 +1,29 @@
++* Texas Instruments' LMP92001 GPIOs
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/seq_file.h>
-+#include <linux/mfd/core.h>
-+#include <linux/version.h>
++Required properties:
++ - compatible: Must be set to "ti,lmp92001-gpio".
++ - reg: i2c chip address for the device.
++ - gpio-controller: Marks the device node as a gpio controller.
++ - #gpio-cells : Should be two.  The first cell is the pin number and the
++  second cell is used to specify the gpio polarity:
++        0 = Active high
++        1 = Active low
++- ti,lmp92001-gpio-dir: bit mask for direction and drive logic default. Since
++  the direction and the internal pull-down are shared register and similar to
++  open-collector drive:
++        0 = [O]utput and also meaning drive it to low
++        1 = [I]nput and also meaning open, to drive it to high is required to
++        have an external resistor
 +
-+#include <linux/mfd/lmp92001/core.h>
++Example:
++lmp92001@20 {
++        compatible = "ti,lmp92001";
++        reg = <0x20>;
 +
-+struct lmp92001_gpio {
-+        struct lmp92001 *lmp92001;
-+        struct gpio_chip gpio_chip;
++        lmp92001_gpio: lmp92001-gpio {
++                compatible = "ti,lmp92001-gpio";
++                gpio-controller;
++                #gpio-cells = <2>;
++                ti,lmp92001-gpio-dir = /bits/ 8 <0xff>;
++        };
 +};
+\ No newline at end of file
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
+new file mode 100644
+index 0000000..34d7809
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
+@@ -0,0 +1,21 @@
++* Texas Instruments' LMP92001 ADCs
 +
-+static inline struct lmp92001_gpio *to_lmp92001_gpio(struct gpio_chip *chip)
-+{
-+        return container_of(chip, struct lmp92001_gpio, gpio_chip);
-+}
++Required properties:
++ - compatible: Must be set to "ti,lmp92001-adc".
++ - reg: i2c chip address for the device.
++ - ti,lmp92001-adc-mode: adc operation, either continuous or single-shot.
++ - ti,lmp92001-adc-mask: bit mask for which channel is enable.
++        0 = Off
++        1 = On
 +
-+static int lmp92001_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
-+        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
-+        unsigned int val;
-+        int ret;
++Example:
++lmp92001@20 {
++        compatible = "ti,lmp92001";
++        reg = <0x20>;
 +
-+        ret = regmap_read(lmp92001->regmap, LMP92001_CGPO, &val);
-+        if (ret < 0)
-+                return ret;
-+
-+        return (val >> offset) & 1;
-+}
-+
-+static int lmp92001_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
-+        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
-+
-+        return regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, 1 << offset,
-+                        1 << offset);
-+}
-+
-+static int lmp92001_gpio_get(struct gpio_chip *chip, unsigned offset)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
-+        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
-+        unsigned int val, sgen;
-+
-+        /*
-+         * Does the GPIO input mode?
-+         * Does the GPIO was set?
-+         * Reading indicated logic level.
-+         * Clear indicated logic level.
-+         */
-+        regmap_read(lmp92001->regmap, LMP92001_CGPO, &val);
-+        if ((val >> offset) & 1)
-+        {
-+                regmap_read(lmp92001->regmap, LMP92001_SGEN, &sgen);
-+                if (sgen & 1)
-+                {
-+                        regmap_read(lmp92001->regmap, LMP92001_SGPI, &val);
-+                        regmap_update_bits(lmp92001->regmap, LMP92001_CGPO,
-+                                                0xFF, val);
-+                }
-+        }
-+
-+        return (val >> offset) & 1;
-+}
-+
-+static int lmp92001_gpio_direction_out(struct gpio_chip *chip, unsigned offset,
-+                                        int value)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
-+        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
-+
-+        return regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, 1 << offset,
-+                                        0 << offset);
-+}
-+
-+static void lmp92001_gpio_set(struct gpio_chip *chip, unsigned offset,
-+                                int value)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
-+        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
-+
-+        regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, 1 << offset,
-+                                value << offset);
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void lmp92001_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
-+        struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-+        int i, gpio;
-+        unsigned int cgpo;
-+        const char *label, *dir, *logic;
-+
-+        for (i = 0; i < chip->ngpio; i++)
-+        {
-+                gpio = i + chip->base;
-+
-+                label = gpiochip_is_requested(chip, i);
-+                if (!label)
-+                        continue;
-+
-+                regmap_read(lmp92001->regmap, LMP92001_CGPO, &cgpo);
-+                if ((cgpo>>i) & 1)
-+                        dir = "in";
-+                else
-+                        dir = "out";
-+
-+                if (lmp92001_gpio_get(chip, i))
-+                        logic = "hi";
-+                else
-+                        logic = "lo";
-+
-+                seq_printf(s, " gpio-%-3d (%-20.20s) %-3.3s %-2.2s\n",
-+                                gpio, label, dir, logic);
-+        }
-+}
-+#else
-+#define lmp92001_gpio_dbg_show NULL
-+#endif
-+
-+static struct gpio_chip lmp92001_gpio_chip = {
-+        .label                  = "lmp92001",
-+        .owner                  = THIS_MODULE,
-+        .get_direction          = lmp92001_gpio_get_direction,
-+        .direction_input        = lmp92001_gpio_direction_in,
-+        .get                    = lmp92001_gpio_get,
-+        .direction_output       = lmp92001_gpio_direction_out,
-+        .set                    = lmp92001_gpio_set,
-+        .dbg_show               = lmp92001_gpio_dbg_show,
++        lmp92001-adc {
++                compatible = "ti,lmp92001-adc";
++                ti,lmp92001-adc-mode = "continuous";
++                ti,lmp92001-adc-mask = <0x00000079>;
++        };
 +};
+\ No newline at end of file
+diff --git a/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
+new file mode 100644
+index 0000000..f058cc0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
+@@ -0,0 +1,35 @@
++* Texas Instruments' LMP92001 DACs
 +
-+static int lmp92001_gpio_probe(struct platform_device *pdev)
-+{
-+        struct lmp92001 *lmp92001 = dev_get_drvdata(pdev->dev.parent);
-+        struct lmp92001_gpio *lmp92001_gpio;
-+        struct device_node *np = pdev->dev.of_node;
-+        u8 dir;
-+        int ret;
++Required properties:
++ - compatible: Must be set to "ti,lmp92001-dac".
++ - reg: i2c chip address for the device.
++ - ti,lmp92001-dac-hiz: hi-impedance control,
++        1 = Forces all OUT[1:12] outputs to hi-z, 0 = normal
++ - ti,lmp92001-dac-outx: 
++        Cy = 0, 1 = will force associated OUTx outputs to VDD
++        Cy = 0, 0 = will force associated OUTx outputs to GND
++ - ti,lmp92001-dac-gang: What group of Cy is governed to.
++        -----------------------------------------
++        |  Cy   | CDAC:GANG = 0 | CDAC:GANG = 1 |
++        -----------------------------------------
++        |  C1   |   OUT[1:4]    |    OUT[1:3]   |
++        -----------------------------------------
++        |  C2   |   OUT[5:6]    |    OUT[4:6]   |
++        -----------------------------------------
++        |  C3   |   OUT[7:8]    |    OUT[7:9]   |
++        -----------------------------------------
++        |  C4   |   OUT[9:12]   |    OUT[10:12] |
++        ----------------------------------------- 
 +
-+        lmp92001_gpio = devm_kzalloc(&pdev->dev, sizeof(*lmp92001_gpio),
-+                                        GFP_KERNEL);
-+        if (!lmp92001_gpio)
-+                return -ENOMEM;
++Example:
++lmp92001@20 {
++        compatible = "ti,lmp92001";
++        reg = <0x20>;
 +
-+        lmp92001_gpio->lmp92001 = lmp92001;
-+        lmp92001_gpio->gpio_chip = lmp92001_gpio_chip;
-+        lmp92001_gpio->gpio_chip.ngpio = 8;
-+
-+#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 1, 15)
-+        lmp92001_gpio->gpio_chip.dev = &pdev->dev;
-+#else
-+        lmp92001_gpio->gpio_chip.parent = &pdev->dev;
-+#endif
-+
-+        lmp92001_gpio->gpio_chip.base = -1;
-+
-+        ret = of_property_read_u8(np, "ti,lmp92001-gpio-dir", &dir);
-+        if (!ret)
-+        {
-+                ret = regmap_update_bits(lmp92001->regmap, LMP92001_CGPO,
-+                                                0xFF, dir);
-+                if (ret < 0)
-+                        dev_info(&pdev->dev, "could not initial direction\n");
-+        }
-+
-+        ret = gpiochip_add(&lmp92001_gpio->gpio_chip);
-+        if (ret < 0) {
-+                dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
-+                return ret;
-+        }
-+
-+        platform_set_drvdata(pdev, lmp92001_gpio);
-+
-+        return ret;
-+}
-+
-+static int lmp92001_gpio_remove(struct platform_device *pdev)
-+{
-+        struct lmp92001_gpio *lmp92001_gpio = platform_get_drvdata(pdev);
-+
-+        gpiochip_remove(&lmp92001_gpio->gpio_chip);
-+
-+        return 0;
-+}
-+
-+static struct platform_driver lmp92001_gpio_driver = {
-+        .driver.name    = "lmp92001-gpio",
-+        .driver.owner   = THIS_MODULE,
-+        .probe          = lmp92001_gpio_probe,
-+        .remove         = lmp92001_gpio_remove,
++        lmp92001-dac {
++                compatible = "ti,lmp92001-dac";
++                ti,lmp92001-dac-hiz  = /bits/ 8 <0>;
++                ti,lmp92001-dac-outx = /bits/ 8 <0>;
++                ti,lmp92001-dac-gang = /bits/ 8 <0>;
++        };
 +};
-+
-+static int __init lmp92001_gpio_init(void)
-+{
-+        return platform_driver_register(&lmp92001_gpio_driver);
-+}
-+subsys_initcall(lmp92001_gpio_init);
-+
-+static void __exit lmp92001_gpio_exit(void)
-+{
-+        platform_driver_unregister(&lmp92001_gpio_driver);
-+}
-+module_exit(lmp92001_gpio_exit);
-+
-+MODULE_AUTHOR("Abhisit Sangjan <s.abhisit@gmail.com>");
-+MODULE_DESCRIPTION("GPIO interface for TI LMP92001");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:lmp92001-gpio");
 -- 
 2.7.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
