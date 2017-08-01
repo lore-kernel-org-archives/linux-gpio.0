@@ -1,156 +1,90 @@
-From: Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 1/1] gpio: gpio-vf610: add imx7ulp support
-Date: Tue, 1 Aug 2017 22:04:17 +0800
-Message-ID: <1501596257-20825-1-git-send-email-aisheng.dong@nxp.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
+Date: Tue, 1 Aug 2017 09:30:33 -0500
+Message-ID: <20799238-a72b-c6e7-5898-3de23f91a9ed@ti.com>
+References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
+ <5aa0d273-8e05-a5ff-7931-b9a94acade36@ti.com>
+ <8021c424-460c-def4-3a67-ed760997193d@ti.com>
+ <2eeaeea5-9476-8631-8680-7db3322151bf@ti.com>
+ <da92fe60-d70b-6a37-6b88-2ac95dd67b6a@ti.com>
+ <90337754-8670-6df7-5421-7100e31755b1@ti.com>
+ <65ab0098-ef1b-3bec-1d2a-768e478fa413@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam01on0070.outbound.protection.outlook.com ([104.47.34.70]:47712
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751750AbdHAOEb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 1 Aug 2017 10:04:31 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:51079 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751199AbdHAObp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 10:31:45 -0400
+In-Reply-To: <65ab0098-ef1b-3bec-1d2a-768e478fa413@ti.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, shawnguo@kernel.org, stefan@agner.ch, ping.bai@nxp.com, fugang.duan@nxp.com, aisheng.dong@nxp.com, dongas86@gmail.com, kernel@pengutronix.de, Alexandre Courbot <gnurou@gmail.com>, Peter Chen <peter.chen@nxp.com>
+To: Vignesh R <vigneshr@ti.com>, Keerthy <j-keerthy@ti.com>, Franklin S Cooper Jr <fcooper@ti.com>, ssantosh@kernel.org, robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org, nsekhar@ti.com, t-kristo@ti.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
-on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
-RGPIO2P has an extra Port Data Direction Register (PDDR) used
-to configure the individual port pins for input or output.
+On 08/01/2017 01:12 AM, Vignesh R wrote:
+> 
+> 
+> On Monday 31 July 2017 07:14 PM, Keerthy wrote:
+>>
+>>
+>> On Wednesday 26 July 2017 07:50 PM, Suman Anna wrote:
+>>> On 07/26/2017 08:36 AM, Keerthy wrote:
+>>>>
+>>>> On Wednesday 26 July 2017 06:57 PM, Franklin S Cooper Jr wrote:
+>>>>>
+>>>>>
+>>>>> On 07/26/2017 08:00 AM, Suman Anna wrote:
+>>>>>> Hi Keerthy,
+>>>>>>
+>>>>>> On 07/26/2017 01:45 AM, Keerthy wrote:
+>>>>>>> The patch adds keystone-k2g compatible, specific properties and
+>>>>>>> an example.
+>>>>>
+> [...]
+>>>>>>
+>>>>>
+>>>>> What about power-domain property?
+>>>
+>>> The correct name is "power-domains".
+>>>
+>>>> Driver has no pm_runtime implemented yet.
+>>>
+>>> True, not yet, but this is in general a required property on K2G SoCs to
+>>> automatically enable clocks through runtime_pm. Clock properties on K2G
+>>> nodes should only be truly required if a driver is using clk API
+>>> (ideally to control optional clocks or for adjusting clock frequencies).
+>>> When the gpio-davinci driver gets updated to use pm_runtime, the clock
+>>> properties will be rendered obsolete for K2G.
+>>>
+>>> Rob,
+>>> Any suggestions on how we need to handle this? Should we be adding the
+>>> property now or later when we adapt the driver for runtime_pm? This
+>>> would be a common theme for K2G nodes that are reusing Davinci drivers.
+>>>
+>>> My take on this would be to add the property now, and mark the clock
+>>> properties obsolete when the driver gets converted.
+>>
+> 
+> I don't think SoC wide properties are put into device specific binding
+> documentation, for example pinctrl bindings are not put into device
+> documentation.
 
-We introduce a bool have_paddr with fsl_gpio_soc_data data
-to distinguish this differences. And we support getting the output
-status by checking the GPIO direction in PDDR.
+I wouldn't compare this to pinctrl bindings exactly but more similar to
+clocks or the ti,hwmods on OMAP/AM platforms. I see lot of other
+bindings documenting the power-domains property just as well.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Fugang Duan <fugang.duan@nxp.com>
-Cc: Peter Chen <peter.chen@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+regards
+Suman
 
----
-ChangeLog:
-v1->v2:
- * remove flags and use bool have_paddr instead
----
- drivers/gpio/gpio-vf610.c | 47 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 44 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
-index 521fbe3..cbe9e06 100644
---- a/drivers/gpio/gpio-vf610.c
-+++ b/drivers/gpio/gpio-vf610.c
-@@ -30,10 +30,16 @@
- 
- #define VF610_GPIO_PER_PORT		32
- 
-+struct fsl_gpio_soc_data {
-+	/* SoCs has a Port Data Direction Register (PDDR) */
-+	bool have_paddr;
-+};
-+
- struct vf610_gpio_port {
- 	struct gpio_chip gc;
- 	void __iomem *base;
- 	void __iomem *gpio_base;
-+	const struct fsl_gpio_soc_data *sdata;
- 	u8 irqc[VF610_GPIO_PER_PORT];
- 	int irq;
- };
-@@ -43,6 +49,7 @@ struct vf610_gpio_port {
- #define GPIO_PCOR		0x08
- #define GPIO_PTOR		0x0c
- #define GPIO_PDIR		0x10
-+#define GPIO_PDDR		0x14
- 
- #define PORT_PCR(n)		((n) * 0x4)
- #define PORT_PCR_IRQC_OFFSET	16
-@@ -61,8 +68,13 @@ struct vf610_gpio_port {
- 
- static struct irq_chip vf610_gpio_irq_chip;
- 
-+static const struct fsl_gpio_soc_data imx_data = {
-+	.have_paddr = true,
-+};
-+
- static const struct of_device_id vf610_gpio_dt_ids[] = {
--	{ .compatible = "fsl,vf610-gpio" },
-+	{ .compatible = "fsl,vf610-gpio",	.data = NULL, },
-+	{ .compatible = "fsl,imx7ulp-gpio",	.data = &imx_data, },
- 	{ /* sentinel */ }
- };
- 
-@@ -79,8 +91,18 @@ static inline u32 vf610_gpio_readl(void __iomem *reg)
- static int vf610_gpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	struct vf610_gpio_port *port = gpiochip_get_data(gc);
--
--	return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR) & BIT(gpio));
-+	unsigned long mask = BIT(gpio);
-+	void __iomem *addr;
-+
-+	if (port->sdata && port->sdata->have_paddr) {
-+		mask &= vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
-+		addr = mask ? port->gpio_base + GPIO_PDOR :
-+			      port->gpio_base + GPIO_PDIR;
-+		return !!(vf610_gpio_readl(addr) & BIT(gpio));
-+	} else {
-+		return !!(vf610_gpio_readl(port->gpio_base + GPIO_PDIR)
-+					   & BIT(gpio));
-+	}
- }
- 
- static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-@@ -96,12 +118,28 @@ static void vf610_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int vf610_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
- {
-+	struct vf610_gpio_port *port = gpiochip_get_data(chip);
-+	unsigned long mask = BIT(gpio);
-+	u32 val;
-+
-+	if (port->sdata && port->sdata->have_paddr) {
-+		val = vf610_gpio_readl(port->gpio_base + GPIO_PDDR);
-+		val &= ~mask;
-+		vf610_gpio_writel(val, port->gpio_base + GPIO_PDDR);
-+	}
-+
- 	return pinctrl_gpio_direction_input(chip->base + gpio);
- }
- 
- static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
- 				       int value)
- {
-+	struct vf610_gpio_port *port = gpiochip_get_data(chip);
-+	unsigned long mask = BIT(gpio);
-+
-+	if (port->sdata && port->sdata->have_paddr)
-+		vf610_gpio_writel(mask, port->gpio_base + GPIO_PDDR);
-+
- 	vf610_gpio_set(chip, gpio, value);
- 
- 	return pinctrl_gpio_direction_output(chip->base + gpio);
-@@ -216,6 +254,8 @@ static struct irq_chip vf610_gpio_irq_chip = {
- 
- static int vf610_gpio_probe(struct platform_device *pdev)
- {
-+	const struct of_device_id *of_id = of_match_device(vf610_gpio_dt_ids,
-+							   &pdev->dev);
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct vf610_gpio_port *port;
-@@ -227,6 +267,7 @@ static int vf610_gpio_probe(struct platform_device *pdev)
- 	if (!port)
- 		return -ENOMEM;
- 
-+	port->sdata = of_id->data;
- 	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	port->base = devm_ioremap_resource(dev, iores);
- 	if (IS_ERR(port->base))
--- 
-2.7.4
+> 
+>> Rob,
+>>
+>> Any comments on this?
+>>
+> 
+> [...]
+> 
 
