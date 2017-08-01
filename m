@@ -1,39 +1,53 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH 2/2] gpio: omap : Add missing clk_unprepare().
-Date: Tue,  1 Aug 2017 12:14:31 +0530
-Message-ID: <f41f83c5a540065ca9fc1cae754b5b4d4a2749a2.1501569628.git.arvind.yadav.cs@gmail.com>
-References: <e84a2b010f0632369030f92fa30572ba1e4aaaf2.1501569628.git.arvind.yadav.cs@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36294 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbdHAGor (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 02:44:47 -0400
-In-Reply-To: <e84a2b010f0632369030f92fa30572ba1e4aaaf2.1501569628.git.arvind.yadav.cs@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] gpio: Add FT232H CBUS GPIO driver
+Date: Tue, 1 Aug 2017 08:49:02 +0200
+Message-ID: <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
+References: <1499374158-12388-1-git-send-email-agust@denx.de> <1499374158-12388-3-git-send-email-agust@denx.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1499374158-12388-3-git-send-email-agust@denx.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anatolij Gustschin <agust@denx.de>
+Cc: Lee Jones <lee.jones@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-fpga@vger.kernel.org, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org, linus.walleij@linaro.org
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-omap_gpio_probe() can fail here and we must disable clock.
+On Thu, Jul 6, 2017 at 10:49 PM, Anatolij Gustschin <agust@denx.de> wrote:
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/gpio/gpio-omap.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Add driver for CBUS pins on FT232H. The driver supports setting
+> GPIO direction and getting/setting CBUS 0-3 pin value. The CBUS
+> pins have to be enabled by configuring I/O mode in the FTDI EEPROM.
+>
+> Signed-off-by: Anatolij Gustschin <agust@denx.de>
+(...)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index f8c550de..dbf869f 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1247,6 +1247,8 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 	if (ret) {
- 		pm_runtime_put_sync(dev);
- 		pm_runtime_disable(dev);
-+		if (bank->dbck_flag)
-+			clk_unprepare(bank->dbck);
- 		return ret;
- 	}
- 
--- 
-1.9.1
+> +       select GPIO_GENERIC
 
+You do not seem to be using this.
+
+> +#include <linux/gpio.h>
+
+This include should not be needed. If it is, something is wrong.
+
+> +#include <linux/gpio/driver.h>
+
+Drivers should only include this.
+
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +#include <linux/usb.h>
+
+Why is this needed if the device is abstracted behind an MFD interface?
+
+> +#include <linux/mfd/ftdi/ftdi.h>
+
+I.e. this?
+
+Apart from these small things it looks like a solid and nice driver,
+do you plan to merge this into MFD or should I merge it? Since it depends
+on the Kconfig symbol I guess I can merge it orthogonally if I am sure
+Lee will pick the MFD part.
+
+Yours,
+Linus Walleij
