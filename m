@@ -1,115 +1,36 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2] [BUGFIX] gpio: reject invalid gpio before getting
- gpio_desc
-Date: Tue, 1 Aug 2017 21:22:58 +0900
-Message-ID: <20170801212258.0a70c534ca91fe903a897701@kernel.org>
-References: <150146625669.11567.9576692487524672090.stgit@devbox>
-        <CAHp75VecrQ53X24e6kFLaa9iBzOQApMkozxAQBk3rtHyAW7Aag@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: baytrail: Do not call WARN_ON for a firmware bug
+Date: Tue, 1 Aug 2017 15:19:09 +0200
+Message-ID: <CACRpkdbqHVkksJuu2ibRxOitjdMQyXuNi3njAf4zgamYhr72Qw@mail.gmail.com>
+References: <20170712123101.26996-1-hdegoede@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VecrQ53X24e6kFLaa9iBzOQApMkozxAQBk3rtHyAW7Aag@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:38550 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbdHANTL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 09:19:11 -0400
+Received: by mail-io0-f180.google.com with SMTP id g13so8003806ioj.5
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Aug 2017 06:19:11 -0700 (PDT)
+In-Reply-To: <20170712123101.26996-1-hdegoede@redhat.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, 1 Aug 2017 14:10:03 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+On Wed, Jul 12, 2017 at 2:31 PM, Hans de Goede <hdegoede@redhat.com> wrote:
 
-> On Mon, Jul 31, 2017 at 4:57 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > Check user-given gpio number and reject it before
-> > calling gpio_to_desc() because gpio_to_desc() is
-> > for kernel driver and it expects given gpio number
-> > is valid (means 0 to 511).
-> > If given number is invalid, gpio_to_desc() calls
-> > WARN() and dump registers and stack for debug.
-> > This means user can easily kick WARN() just by
-> > writing invalid gpio number (e.g. 512) to
-> > /sys/class/gpio/export.
-> >
-> 
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> 
-> (2 bikesheds below)
-> 
-> > Fixes: 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >   Changes in v2:
-> >    - Add gpio_to_valid_desc() according to Andy's comment (Thanks!).
-> >    - Fix patch description.
-> > ---
-> >  drivers/gpio/gpiolib-sysfs.c |   12 ++++++++++--
-> >  1 file changed, 10 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-> > index 4b44dd97c07f..819f36258925 100644
-> > --- a/drivers/gpio/gpiolib-sysfs.c
-> > +++ b/drivers/gpio/gpiolib-sysfs.c
-> > @@ -2,6 +2,7 @@
-> >  #include <linux/mutex.h>
-> >  #include <linux/device.h>
-> >  #include <linux/sysfs.h>
-> > +#include <linux/gpio.h>
-> >  #include <linux/gpio/consumer.h>
-> >  #include <linux/gpio/driver.h>
-> >  #include <linux/interrupt.h>
-> > @@ -432,6 +433,11 @@ static struct attribute *gpiochip_attrs[] = {
-> >  };
-> >  ATTRIBUTE_GROUPS(gpiochip);
-> >
-> > +static struct gpio_desc *gpio_to_valid_desc(int gpio)
-> > +{
-> > +       return gpio_is_valid(gpio) ? gpio_to_desc(gpio) : NULL;
-> > +}
-> > +
-> >  /*
-> >   * /sys/class/gpio/export ... write-only
-> >   *     integer N ... number of GPIO to export (full access)
-> > @@ -450,7 +456,8 @@ static ssize_t export_store(struct class *class,
-> >         if (status < 0)
-> >                 goto done;
-> >
-> > -       desc = gpio_to_desc(gpio);
-> > +       desc = gpio_to_valid_desc(gpio);
-> 
-> > +
-> 
-> No need, if you wish better to put modified line after comment.
+> WARN_ON causes a backtrace to get logged which is only useful for
+> kernel bugs. For signalling a firmware bug dev_warn(dev, FW_BUG "...")
+> should be used.
+>
+> This fixes users running userspace software to monitor kernel oopses
+> getting a false positive bug-report every boot because of the wrong
+> use of WARN_ON.
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-OK, should I update the patch and resend?
+Patch applied with Andy's ACK.
 
-Thanks,
-
-> 
-> >         /* reject invalid GPIOs */
-> >         if (!desc) {
-> >                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-> > @@ -492,7 +499,8 @@ static ssize_t unexport_store(struct class *class,
-> >         if (status < 0)
-> >                 goto done;
-> >
-> > -       desc = gpio_to_desc(gpio);
-> > +       desc = gpio_to_valid_desc(gpio);
-> 
-> > +
-> 
-> 
-> Ditto.
-> 
-> >         /* reject bogus commands (gpio_unexport ignores them) */
-> >         if (!desc) {
-> >                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
-> >
-> 
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Yours,
+Linus Walleij
