@@ -1,41 +1,39 @@
-From: Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 2/3] gpio: Add FT232H CBUS GPIO driver
-Date: Tue, 1 Aug 2017 11:24:04 +0200
-Message-ID: <20170801092404.GA30136@localhost>
-References: <1499374158-12388-1-git-send-email-agust@denx.de>
- <1499374158-12388-3-git-send-email-agust@denx.de>
- <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs dynamically
+Date: Tue, 1 Aug 2017 11:53:42 +0200
+Message-ID: <CAMRc=MdgOmVfQ9-qTQ2XOkj90GojBVco_qpQ3Ryms7F4YBLvdA@mail.gmail.com>
+References: <20170721164900.7070-1-grygorii.strashko@ti.com> <CACRpkdbFVV669PxGDXO9Xzf-jj0sEKyQTvhdLMA_of16wBp7PQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34542 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751101AbdHAJYH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 05:24:07 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbFVV669PxGDXO9Xzf-jj0sEKyQTvhdLMA_of16wBp7PQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Anatolij Gustschin <agust@denx.de>, Lee Jones <lee.jones@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-fpga@vger.kernel.org, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Aug 01, 2017 at 08:49:02AM +0200, Linus Walleij wrote:
-> On Thu, Jul 6, 2017 at 10:49 PM, Anatolij Gustschin <agust@denx.de> wrote:
-> 
-> > Add driver for CBUS pins on FT232H. The driver supports setting
-> > GPIO direction and getting/setting CBUS 0-3 pin value. The CBUS
-> > pins have to be enabled by configuring I/O mode in the FTDI EEPROM.
-> >
-> > Signed-off-by: Anatolij Gustschin <agust@denx.de>
+2017-08-01 9:52 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
+>
+> Applied this rather than v1.
+>
+> But maybe we should get rid of ->irq_base from gpio-mockup.c
+> and delete it, as the base is irqchip-internal.
+>
+> Bartosz what do you say? Do we need this in the mockup?
+>
+> Yours,
+> Linus Walleij
 
-> Apart from these small things it looks like a solid and nice driver,
-> do you plan to merge this into MFD or should I merge it? Since it depends
-> on the Kconfig symbol I guess I can merge it orthogonally if I am sure
-> Lee will pick the MFD part.
+Hi Linus,
 
-There are some fundamental problems with this series which prevents it
-from being merged. Please take a look at the discussion following patch
-1/3.
+a while ago I submitted a series[1] adding a simple framework for
+simulating interrupts with the intention of removing most of the
+irq_work code from gpio-mockup and iio-dummy-evgen. The third patch in
+that series[2] does that for the mockup driver. I'll send a v2 shortly
+and I hope to get it merged for v4.14.
 
-Thanks,
-Johan
+Best regards,
+Bartosz Golaszewski
+
+[1] https://lkml.org/lkml/2017/7/19/698
+[2] https://lkml.org/lkml/2017/7/19/696
