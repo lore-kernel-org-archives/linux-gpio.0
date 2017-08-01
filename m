@@ -1,133 +1,41 @@
-From: s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Subject: [PATCH 5/5] Documentation: bindings: Add ti,lmp92001
-Date: Tue,  1 Aug 2017 16:17:53 +0700
-Message-ID: <1501579073-4764-1-git-send-email-s.abhisit@gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 2/3] gpio: Add FT232H CBUS GPIO driver
+Date: Tue, 1 Aug 2017 11:24:04 +0200
+Message-ID: <20170801092404.GA30136@localhost>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+ <1499374158-12388-3-git-send-email-agust@denx.de>
+ <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34542 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751101AbdHAJYH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 05:24:07 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Anatolij Gustschin <agust@denx.de>, Lee Jones <lee.jones@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-fpga@vger.kernel.org, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Tue, Aug 01, 2017 at 08:49:02AM +0200, Linus Walleij wrote:
+> On Thu, Jul 6, 2017 at 10:49 PM, Anatolij Gustschin <agust@denx.de> wrote:
+> 
+> > Add driver for CBUS pins on FT232H. The driver supports setting
+> > GPIO direction and getting/setting CBUS 0-3 pin value. The CBUS
+> > pins have to be enabled by configuring I/O mode in the FTDI EEPROM.
+> >
+> > Signed-off-by: Anatolij Gustschin <agust@denx.de>
 
----
- .../devicetree/bindings/gpio/gpio-lmp92001.txt     | 29 ++++++++++++++++++
- .../bindings/iio/adc/ti-lmp92001-adc.txt           | 21 +++++++++++++
- .../bindings/iio/dac/ti-lmp92001-dac.txt           | 35 ++++++++++++++++++++++
- 3 files changed, 85 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
- create mode 100644 Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
- create mode 100644 Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
+> Apart from these small things it looks like a solid and nice driver,
+> do you plan to merge this into MFD or should I merge it? Since it depends
+> on the Kconfig symbol I guess I can merge it orthogonally if I am sure
+> Lee will pick the MFD part.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
-new file mode 100644
-index 0000000..62267ff
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
-@@ -0,0 +1,29 @@
-+* Texas Instruments' LMP92001 GPIOs
-+
-+Required properties:
-+ - compatible: Must be set to "ti,lmp92001-gpio".
-+ - reg: i2c chip address for the device.
-+ - gpio-controller: Marks the device node as a gpio controller.
-+ - #gpio-cells : Should be two.  The first cell is the pin number and the
-+  second cell is used to specify the gpio polarity:
-+        0 = Active high
-+        1 = Active low
-+- ti,lmp92001-gpio-dir: bit mask for direction and drive logic default. Since
-+  the direction and the internal pull-down are shared register and similar to
-+  open-collector drive:
-+        0 = [O]utput and also meaning drive it to low
-+        1 = [I]nput and also meaning open, to drive it to high is required to
-+        have an external resistor
-+
-+Example:
-+lmp92001@20 {
-+        compatible = "ti,lmp92001";
-+        reg = <0x20>;
-+
-+        lmp92001_gpio: lmp92001-gpio {
-+                compatible = "ti,lmp92001-gpio";
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+                ti,lmp92001-gpio-dir = /bits/ 8 <0xff>;
-+        };
-+};
-\ No newline at end of file
-diff --git a/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
-new file mode 100644
-index 0000000..34d7809
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
-@@ -0,0 +1,21 @@
-+* Texas Instruments' LMP92001 ADCs
-+
-+Required properties:
-+ - compatible: Must be set to "ti,lmp92001-adc".
-+ - reg: i2c chip address for the device.
-+ - ti,lmp92001-adc-mode: adc operation, either continuous or single-shot.
-+ - ti,lmp92001-adc-mask: bit mask for which channel is enable.
-+        0 = Off
-+        1 = On
-+
-+Example:
-+lmp92001@20 {
-+        compatible = "ti,lmp92001";
-+        reg = <0x20>;
-+
-+        lmp92001-adc {
-+                compatible = "ti,lmp92001-adc";
-+                ti,lmp92001-adc-mode = "continuous";
-+                ti,lmp92001-adc-mask = <0x00000079>;
-+        };
-+};
-\ No newline at end of file
-diff --git a/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-new file mode 100644
-index 0000000..f058cc0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-@@ -0,0 +1,35 @@
-+* Texas Instruments' LMP92001 DACs
-+
-+Required properties:
-+ - compatible: Must be set to "ti,lmp92001-dac".
-+ - reg: i2c chip address for the device.
-+ - ti,lmp92001-dac-hiz: hi-impedance control,
-+        1 = Forces all OUT[1:12] outputs to hi-z, 0 = normal
-+ - ti,lmp92001-dac-outx: 
-+        Cy = 0, 1 = will force associated OUTx outputs to VDD
-+        Cy = 0, 0 = will force associated OUTx outputs to GND
-+ - ti,lmp92001-dac-gang: What group of Cy is governed to.
-+        -----------------------------------------
-+        |  Cy   | CDAC:GANG = 0 | CDAC:GANG = 1 |
-+        -----------------------------------------
-+        |  C1   |   OUT[1:4]    |    OUT[1:3]   |
-+        -----------------------------------------
-+        |  C2   |   OUT[5:6]    |    OUT[4:6]   |
-+        -----------------------------------------
-+        |  C3   |   OUT[7:8]    |    OUT[7:9]   |
-+        -----------------------------------------
-+        |  C4   |   OUT[9:12]   |    OUT[10:12] |
-+        ----------------------------------------- 
-+
-+Example:
-+lmp92001@20 {
-+        compatible = "ti,lmp92001";
-+        reg = <0x20>;
-+
-+        lmp92001-dac {
-+                compatible = "ti,lmp92001-dac";
-+                ti,lmp92001-dac-hiz  = /bits/ 8 <0>;
-+                ti,lmp92001-dac-outx = /bits/ 8 <0>;
-+                ti,lmp92001-dac-gang = /bits/ 8 <0>;
-+        };
-+};
--- 
-2.7.4
+There are some fundamental problems with this series which prevents it
+from being merged. Please take a look at the discussion following patch
+1/3.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Johan
