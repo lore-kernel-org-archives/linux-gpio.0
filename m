@@ -1,104 +1,39 @@
-From: Franklin S Cooper Jr <fcooper@ti.com>
-Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
-Date: Tue, 1 Aug 2017 10:49:36 -0500
-Message-ID: <779826e7-0c48-d24f-c3ad-76039f7fdf7e@ti.com>
-References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
- <5aa0d273-8e05-a5ff-7931-b9a94acade36@ti.com>
- <8021c424-460c-def4-3a67-ed760997193d@ti.com>
- <2eeaeea5-9476-8631-8680-7db3322151bf@ti.com>
- <da92fe60-d70b-6a37-6b88-2ac95dd67b6a@ti.com>
- <90337754-8670-6df7-5421-7100e31755b1@ti.com>
- <65ab0098-ef1b-3bec-1d2a-768e478fa413@ti.com>
- <20799238-a72b-c6e7-5898-3de23f91a9ed@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH 0/2] Few fix on armada-37xx pinctrl for v4.13
+Date: Tue,  1 Aug 2017 17:57:18 +0200
+Message-ID: <20170801155720.10229-1-gregory.clement@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:32071 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751368AbdHAPuJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 11:50:09 -0400
-In-Reply-To: <20799238-a72b-c6e7-5898-3de23f91a9ed@ti.com>
-Content-Language: en-US
+Received: from mail.free-electrons.com ([62.4.15.54]:47047 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751829AbdHAP7m (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 11:59:42 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Suman Anna <s-anna@ti.com>, Vignesh R <vigneshr@ti.com>, Keerthy <j-keerthy@ti.com>, ssantosh@kernel.org, robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org, nsekhar@ti.com, t-kristo@ti.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>
 
+Hi,
 
+In v4.13-rc1 a regression appeared on Ethernet support on the Armada
+3720 DB which occurred to be caused by a wrong configuration of the
+pinctrl (due to obsolete documentation).
 
-On 08/01/2017 09:30 AM, Suman Anna wrote:
-> On 08/01/2017 01:12 AM, Vignesh R wrote:
->>
->>
->> On Monday 31 July 2017 07:14 PM, Keerthy wrote:
->>>
->>>
->>> On Wednesday 26 July 2017 07:50 PM, Suman Anna wrote:
->>>> On 07/26/2017 08:36 AM, Keerthy wrote:
->>>>>
->>>>> On Wednesday 26 July 2017 06:57 PM, Franklin S Cooper Jr wrote:
->>>>>>
->>>>>>
->>>>>> On 07/26/2017 08:00 AM, Suman Anna wrote:
->>>>>>> Hi Keerthy,
->>>>>>>
->>>>>>> On 07/26/2017 01:45 AM, Keerthy wrote:
->>>>>>>> The patch adds keystone-k2g compatible, specific properties and
->>>>>>>> an example.
->>>>>>
->> [...]
->>>>>>>
->>>>>>
->>>>>> What about power-domain property?
->>>>
->>>> The correct name is "power-domains".
->>>>
->>>>> Driver has no pm_runtime implemented yet.
->>>>
->>>> True, not yet, but this is in general a required property on K2G SoCs to
->>>> automatically enable clocks through runtime_pm. Clock properties on K2G
->>>> nodes should only be truly required if a driver is using clk API
->>>> (ideally to control optional clocks or for adjusting clock frequencies).
->>>> When the gpio-davinci driver gets updated to use pm_runtime, the clock
->>>> properties will be rendered obsolete for K2G.
->>>>
->>>> Rob,
->>>> Any suggestions on how we need to handle this? Should we be adding the
->>>> property now or later when we adapt the driver for runtime_pm? This
->>>> would be a common theme for K2G nodes that are reusing Davinci drivers.
->>>>
->>>> My take on this would be to add the property now, and mark the clock
->>>> properties obsolete when the driver gets converted.
->>>
->>
->> I don't think SoC wide properties are put into device specific binding
->> documentation, for example pinctrl bindings are not put into device
->> documentation.
-> 
-> I wouldn't compare this to pinctrl bindings exactly but more similar to
-> clocks or the ti,hwmods on OMAP/AM platforms. I see lot of other
-> bindings documenting the power-domains property just as well.
+The first patch fix this issue, and the second one fix an other bug
+found during the debug of the first one.
 
-The issue is that 66AK2G utilizes drivers from both Keystone/Davinci and
-OMAP SoC architectures that handles clock and pm in different ways. So
-for various reasons some drivers just need the power-domain property
-which is new and unique to 66AK2G and other drivers just need the clocks
-property while others may also need the clock-names property. This lack
-of consistency makes properly documenting things important. Also 66AK2G
-will never used hwmod property so avoiding that confusion will also be
-helpful if the current bindings document does include references to hwmod.
+Please apply them for v4.13-rc.
 
-> 
-> regards
-> Suman
-> 
->>
->>> Rob,
->>>
->>> Any comments on this?
->>>
->>
->> [...]
->>
-> 
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (2):
+  pinctrl: armada-37xx: Fix the pin 23 on south bridge
+  pinctrl: armada-37xx: Fix number of pin in south bridge
+
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+-- 
+2.13.2
+
