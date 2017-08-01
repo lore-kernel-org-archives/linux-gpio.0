@@ -1,27 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] gpio: gpio-mxc: gpio_set_wake_irq() use proper return values
-Date: Tue, 1 Aug 2017 10:39:13 +0200
-Message-ID: <CACRpkdbjqLXtar7zw_cKza=8eC6DzCMBgj7_Jn+q1SG22FCE1Q@mail.gmail.com>
-References: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de> <1499848600-7233-3-git-send-email-p.rosenberger@linutronix.de>
+Subject: Re: [PATCH 0/5] pinctrl: sh-pfc: r8a7795/r8a7796: MSIOF updates
+Date: Tue, 1 Aug 2017 10:40:07 +0200
+Message-ID: <CACRpkdaXRf_skSYr=pqEFDOv7f2oaGeHqqXo+SeRpZ5dj_jv6w@mail.gmail.com>
+References: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1499848600-7233-3-git-send-email-p.rosenberger@linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Philipp Rosenberger <p.rosenberger@linutronix.de>, Vladimir Zapolskiy <vz@mleia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1499855477-20818-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 12, 2017 at 10:36 AM, Philipp Rosenberger
-<p.rosenberger@linutronix.de> wrote:
+On Wed, Jul 12, 2017 at 12:31 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> Errors from enable_irq_wake() in gpio_set_wake_irq() were silently ignored.
-> Thus led to the problem that gpio_set_wake_irq() always returned
-> successfully, even if enable_irq_wake() returned an error.
+>         Hi Linus, Laurent,
 >
-> Signed-off-by: Philipp Rosenberger <p.rosenberger@linutronix.de>
+> This patch series fixes MSIOF-related bugs in the R-Car H3 ES2.0 and M3-W
+> pin control drivers, and enables support for MSIOF on R-Car H3 ES2.0.
+>
+> I plan to queue these up in sh-pfc-for-v4.14.
 
-Patch applied.
+All look good to me.
 
 Yours,
 Linus Walleij
