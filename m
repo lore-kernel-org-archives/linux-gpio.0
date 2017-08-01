@@ -1,111 +1,78 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH 1/2] pinctrl: armada-37xx: Fix the pin 23 on south bridge
-Date: Tue,  1 Aug 2017 17:57:19 +0200
-Message-ID: <20170801155720.10229-2-gregory.clement@free-electrons.com>
-References: <20170801155720.10229-1-gregory.clement@free-electrons.com>
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20170801155720.10229-1-gregory.clement@free-electrons.com>
-Sender: stable-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, stable@vger.kernel.org
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs
+ dynamically
+Date: Tue, 1 Aug 2017 13:27:18 -0500
+Message-ID: <835101ba-e5d5-fd5e-e0c2-06001d02f850@ti.com>
+References: <20170721164900.7070-1-grygorii.strashko@ti.com>
+ <CACRpkdbFVV669PxGDXO9Xzf-jj0sEKyQTvhdLMA_of16wBp7PQ@mail.gmail.com>
+ <1501574614.2759.9.camel@baylibre.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:10054 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751327AbdHAS1U (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 14:27:20 -0400
+In-Reply-To: <1501574614.2759.9.camel@baylibre.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Pin 23 on South bridge does not belong to the rgmii group. It belongs to
-a separate group which can have 3 functions.
 
-Due to this the fix also have to update the way the functions are
-managed. Until now each groups used NB_FUNCS(which was 2) functions. For
-the mpp23, 3 functions are available but it is the only group which needs
-it, so on the loop involving NB_FUNCS an extra test was added to handle
-only the functions added.
 
-The bug was visible with the merge of the commit 07d065abf93d "arm64:
-dts: marvell: armada-3720-db: Add vqmmc regulator for SD slot", the gpio
-regulator used the gpio 23, due to this the whole rgmii group was setup
-to gpio which broke the Ethernet support on the Armada 3720 DB
-board. Thanks to this patch, the UHS SD cards (which need the vqmmc)
-_and_ the Ethernet work again.
+On 08/01/2017 03:03 AM, Jerome Brunet wrote:
+> On Tue, 2017-08-01 at 09:52 +0200, Linus Walleij wrote:
+>> On Fri, Jul 21, 2017 at 6:49 PM, Grygorii Strashko
+>> <grygorii.strashko@ti.com> wrote:
+>>
+>>> Now IRQ mappings are always created for all (allowed) GPIOs in gpiochip in
+>>> gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ and,
+>>> as result, leads to:
+>>>   - increasing of memory consumption for IRQ descriptors most of which will
+>>> never ever be used (espessially on platform with a high number of GPIOs).
+>>> (sizeof(struct irq_desc) == 256 on my tested platforms)
+>>>   - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
+>>> GPIO IRQ functionality as IRQ crossbar/router which has only limited
+>>> number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
+>>> IRQs).
+> 
+> Sorry, I forgot to reply to this thread until now.
+> This patch is generalization of create mapping in the gpio_to_irq, right ?
+> 
+> So the issue of mapping left lying around until the gpio driver is unloaded is
+> still there ?
 
-Cc: stable@vger.kernel.org
-Fixes: 87466ccd9401 ("pinctrl: armada-37xx: Add pin controller support
-for Armada 37xx")
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+Yep. But this should unblock you work and allow to use static boot time IRQ
+mappings (if you'll be able to implement irq_domain hierarchy properly). 
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index f024e25787fc..c95c76ecc3f7 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -37,7 +37,7 @@
- #define IRQ_STATUS	0x10
- #define IRQ_WKUP	0x18
- 
--#define NB_FUNCS 2
-+#define NB_FUNCS 3
- #define GPIO_PER_REG	32
- 
- /**
-@@ -126,6 +126,16 @@ struct armada_37xx_pinctrl {
- 		.funcs = {_func1, "gpio"}	\
- 	}
- 
-+#define PIN_GRP_GPIO_3(_name, _start, _nr, _mask, _v1, _v2, _v3, _f1, _f2) \
-+	{					\
-+		.name = _name,			\
-+		.start_pin = _start,		\
-+		.npins = _nr,			\
-+		.reg_mask = _mask,		\
-+		.val = {_v1, _v2, _v3},	\
-+		.funcs = {_f1, _f2, "gpio"}	\
-+	}
-+
- #define PIN_GRP_EXTRA(_name, _start, _nr, _mask, _v1, _v2, _start2, _nr2, \
- 		      _f1, _f2)				\
- 	{						\
-@@ -171,12 +181,13 @@ static struct armada_37xx_pin_group armada_37xx_sb_groups[] = {
- 	PIN_GRP_GPIO("usb32_drvvbus0", 0, 1, BIT(0), "drvbus"),
- 	PIN_GRP_GPIO("usb2_drvvbus1", 1, 1, BIT(1), "drvbus"),
- 	PIN_GRP_GPIO("sdio_sb", 24, 6, BIT(2), "sdio"),
--	PIN_GRP_EXTRA("rgmii", 6, 12, BIT(3), 0, BIT(3), 23, 1, "mii", "gpio"),
-+	PIN_GRP_GPIO("rgmii", 6, 12, BIT(3), "mii"),
- 	PIN_GRP_GPIO("pcie1", 3, 2, BIT(4), "pcie"),
- 	PIN_GRP_GPIO("ptp", 20, 3, BIT(5), "ptp"),
- 	PIN_GRP("ptp_clk", 21, 1, BIT(6), "ptp", "mii"),
- 	PIN_GRP("ptp_trig", 22, 1, BIT(7), "ptp", "mii"),
--	PIN_GRP("mii_col", 23, 1, BIT(8), "mii", "mii_err"),
-+	PIN_GRP_GPIO_3("mii_col", 23, 1, BIT(8) | BIT(14), 0, BIT(8), BIT(14),
-+		       "mii", "mii_err"),
- };
- 
- const struct armada_37xx_pin_data armada_37xx_pin_nb = {
-@@ -208,7 +219,7 @@ static int armada_37xx_get_func_reg(struct armada_37xx_pin_group *grp,
- {
- 	int f;
- 
--	for (f = 0; f < NB_FUNCS; f++)
-+	for (f = 0; (f < NB_FUNCS) && grp->funcs[f]; f++)
- 		if (!strcmp(grp->funcs[f], func))
- 			return f;
- 
-@@ -795,7 +806,7 @@ static int armada_37xx_fill_group(struct armada_37xx_pinctrl *info)
- 		for (j = 0; j < grp->extra_npins; j++)
- 			grp->pins[i+j] = grp->extra_pin + j;
- 
--		for (f = 0; f < NB_FUNCS; f++) {
-+		for (f = 0; (f < NB_FUNCS) && grp->funcs[f]; f++) {
- 			int ret;
- 			/* check for unique functions and count groups */
- 			ret = armada_37xx_add_function(info->funcs, &funcsize,
-@@ -847,7 +858,7 @@ static int armada_37xx_fill_func(struct armada_37xx_pinctrl *info)
- 			struct armada_37xx_pin_group *gp = &info->groups[g];
- 			int f;
- 
--			for (f = 0; f < NB_FUNCS; f++) {
-+			for (f = 0; (f < NB_FUNCS) && gp->funcs[f]; f++) {
- 				if (strcmp(gp->funcs[f], name) == 0) {
- 					*groups = gp->name;
- 					groups++;
+> 
+> Having gpio_irq_prepare/gpio_irq_unprepare would solve that, I suppose
+> (Again, sorry I could not send an RFC for this yet ...)
+
+Sry, but still do not see how it will work :( But hope you might find the way :) 
+Few notes to take into account:
+
+There is no way now to know when you can release mappings and when it's safe to do :(,
+except when gpio driver is unloaded.
+
+1) drivers using GPIO IRQ directly (no gpio_to_irq() calls). IRQ can be shared.
+IRQ mappings will happen in platform_get_irq()/of_irq_get().
+Drivers may call request_irq/free_irq() many times using the same Linux IRQ number.
+Such drivers, in many cases, do not expect to call any kind of GPIO APIs.
+
+2) drivers using GPIO as IRQ (gpio_to_irq() calls).
+IRQ mappings will happen in gpio_to_irq(). Theoretically driver can call
+some API to dispose mappings as it knows when its safe to do, but...
+The same IRQ still can be used by another driver as shared IRQ.
+
+Note. IRQ mappings have no refcount.
+
+Regarding, your use case - MMC issue can be WA using irq_valid_mask.
+(don't blame me it's just WA).
+
 -- 
-2.13.2
+regards,
+-grygorii
