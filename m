@@ -1,53 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] gpio: Add FT232H CBUS GPIO driver
-Date: Tue, 1 Aug 2017 08:49:02 +0200
-Message-ID: <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
-References: <1499374158-12388-1-git-send-email-agust@denx.de> <1499374158-12388-3-git-send-email-agust@denx.de>
+Subject: Re: Should irq_enable/disable be flagging/unflagging gpio lines used
+ as irq?
+Date: Tue, 1 Aug 2017 09:37:12 +0200
+Message-ID: <CACRpkdZ2gm6gE+M2OLHBchUtS+F-L+UYSVSZyXOJin9j9Q4EVg@mail.gmail.com>
+References: <20170711195518.34aa849888e9d67a0736a990@videhug.ch>
+ <CACRpkdaqJT5SLSCDtHtfXXpF4j+ig5CQeDhLFJw47Lcgmc6rCQ@mail.gmail.com>
+ <alpine.DEB.2.20.1707122330060.2510@nanos> <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1499374158-12388-3-git-send-email-agust@denx.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anatolij Gustschin <agust@denx.de>
-Cc: Lee Jones <lee.jones@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-fpga@vger.kernel.org, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f44.google.com ([209.85.214.44]:34917 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbdHAHhO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 03:37:14 -0400
+Received: by mail-it0-f44.google.com with SMTP id h199so3705953ith.0
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Aug 2017 00:37:13 -0700 (PDT)
+In-Reply-To: <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Davide Hug <d@videhug.ch>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jul 6, 2017 at 10:49 PM, Anatolij Gustschin <agust@denx.de> wrote:
+On Thu, Jul 13, 2017 at 10:17 PM, Davide Hug <d@videhug.ch> wrote:
 
-> Add driver for CBUS pins on FT232H. The driver supports setting
-> GPIO direction and getting/setting CBUS 0-3 pin value. The CBUS
-> pins have to be enabled by configuring I/O mode in the FTDI EEPROM.
+> Thanks. I probably should have pointed out that I'm just getting started.
+> I thought this driver that does not load would be a good place to do that. But
+> obviously a "completely broken" driver that "breaks with the current semantics
+> of the GPIO interrupt" is the wrong place to get started and learn how things
+> should be done.
 >
-> Signed-off-by: Anatolij Gustschin <agust@denx.de>
-(...)
+> So this driver should probably be rewritten using timer based polling and the
+> descriptor based gpio interface. But since it is a really specific driver for
+> sensors that are already discontinued it probably doesn't make much sense. And
+> I'm not yet up to the task anyway.
 
-> +       select GPIO_GENERIC
+I'm not so sure about that. You might be the only one with the right hardware
+to fix the problem. Also it is never our intention to discourage anyone to
+hack on the kernel.
 
-You do not seem to be using this.
+If you have this hardware and know what you want to get out of it, go for it.
 
-> +#include <linux/gpio.h>
+> Are the drivers listed in Documentation/gpio/drivers-on-gpio.txt good examples
+> of GPIO consumer drivers?
 
-This include should not be needed. If it is, something is wrong.
-
-> +#include <linux/gpio/driver.h>
-
-Drivers should only include this.
-
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +#include <linux/usb.h>
-
-Why is this needed if the device is abstracted behind an MFD interface?
-
-> +#include <linux/mfd/ftdi/ftdi.h>
-
-I.e. this?
-
-Apart from these small things it looks like a solid and nice driver,
-do you plan to merge this into MFD or should I merge it? Since it depends
-on the Kconfig symbol I guess I can merge it orthogonally if I am sure
-Lee will pick the MFD part.
+I think some, I am fixing others, anything just including
+<linux/gpio/consumer.h>
+and no other GPIO header are usually good examples.
 
 Yours,
 Linus Walleij
