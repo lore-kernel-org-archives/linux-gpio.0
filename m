@@ -1,90 +1,48 @@
-From: Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
-Date: Tue, 1 Aug 2017 09:30:33 -0500
-Message-ID: <20799238-a72b-c6e7-5898-3de23f91a9ed@ti.com>
-References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
- <5aa0d273-8e05-a5ff-7931-b9a94acade36@ti.com>
- <8021c424-460c-def4-3a67-ed760997193d@ti.com>
- <2eeaeea5-9476-8631-8680-7db3322151bf@ti.com>
- <da92fe60-d70b-6a37-6b88-2ac95dd67b6a@ti.com>
- <90337754-8670-6df7-5421-7100e31755b1@ti.com>
- <65ab0098-ef1b-3bec-1d2a-768e478fa413@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:51079 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbdHAObp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 10:31:45 -0400
-In-Reply-To: <65ab0098-ef1b-3bec-1d2a-768e478fa413@ti.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/3] simulated interrupts
+Date: Tue,  1 Aug 2017 16:50:25 +0200
+Message-ID: <20170801145028.7558-1-brgl@bgdev.pl>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
-To: Vignesh R <vigneshr@ti.com>, Keerthy <j-keerthy@ti.com>, Franklin S Cooper Jr <fcooper@ti.com>, ssantosh@kernel.org, robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linus.walleij@linaro.org, nsekhar@ti.com, t-kristo@ti.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/01/2017 01:12 AM, Vignesh R wrote:
-> 
-> 
-> On Monday 31 July 2017 07:14 PM, Keerthy wrote:
->>
->>
->> On Wednesday 26 July 2017 07:50 PM, Suman Anna wrote:
->>> On 07/26/2017 08:36 AM, Keerthy wrote:
->>>>
->>>> On Wednesday 26 July 2017 06:57 PM, Franklin S Cooper Jr wrote:
->>>>>
->>>>>
->>>>> On 07/26/2017 08:00 AM, Suman Anna wrote:
->>>>>> Hi Keerthy,
->>>>>>
->>>>>> On 07/26/2017 01:45 AM, Keerthy wrote:
->>>>>>> The patch adds keystone-k2g compatible, specific properties and
->>>>>>> an example.
->>>>>
-> [...]
->>>>>>
->>>>>
->>>>> What about power-domain property?
->>>
->>> The correct name is "power-domains".
->>>
->>>> Driver has no pm_runtime implemented yet.
->>>
->>> True, not yet, but this is in general a required property on K2G SoCs to
->>> automatically enable clocks through runtime_pm. Clock properties on K2G
->>> nodes should only be truly required if a driver is using clk API
->>> (ideally to control optional clocks or for adjusting clock frequencies).
->>> When the gpio-davinci driver gets updated to use pm_runtime, the clock
->>> properties will be rendered obsolete for K2G.
->>>
->>> Rob,
->>> Any suggestions on how we need to handle this? Should we be adding the
->>> property now or later when we adapt the driver for runtime_pm? This
->>> would be a common theme for K2G nodes that are reusing Davinci drivers.
->>>
->>> My take on this would be to add the property now, and mark the clock
->>> properties obsolete when the driver gets converted.
->>
-> 
-> I don't think SoC wide properties are put into device specific binding
-> documentation, for example pinctrl bindings are not put into device
-> documentation.
+Some frameworks (e.g. iio, gpiolib) use irq_work to implement simulated
+interrupts that can be 'fired' from process context when needed and
+requested just like normal interrupts. This is useful for testing and
+development purposes.
 
-I wouldn't compare this to pinctrl bindings exactly but more similar to
-clocks or the ti,hwmods on OMAP/AM platforms. I see lot of other
-bindings documenting the power-domains property just as well.
+Currently this code is reimplemented by every user. This series
+proposes to add a new set of functions that can be used by drivers
+that want to simulate interrupts without having to duplicate any
+boilerplate code.
 
-regards
-Suman
+The first patch adds a simple irq simulator framework. The second
+extends it with resource management. The third uses the new
+functionality in the gpio-mockup testing driver.
 
-> 
->> Rob,
->>
->> Any comments on this?
->>
-> 
-> [...]
-> 
+NOTE: The next candidate for using this API would be iio-dummy-evgen.
+
+v1 -> v2:
+- added a call to irq_work_sync in irq_sim_fini()
+
+Bartosz Golaszewski (3):
+  irq/irq_sim: add a simple interrupt simulator framework
+  irq/irq_sim: add a devres variant of irq_sim_init()
+  gpio: mockup: use irq_sim
+
+ Documentation/driver-model/devres.txt |   1 +
+ drivers/gpio/Kconfig                  |   2 +-
+ drivers/gpio/gpio-mockup.c            |  77 ++--------------
+ include/linux/irq_sim.h               |  41 +++++++++
+ init/Kconfig                          |   4 +
+ kernel/Makefile                       |   1 +
+ kernel/irq_sim.c                      | 162 ++++++++++++++++++++++++++++++++++
+ 7 files changed, 217 insertions(+), 71 deletions(-)
+ create mode 100644 include/linux/irq_sim.h
+ create mode 100644 kernel/irq_sim.c
+
+-- 
+2.13.2
 
