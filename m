@@ -1,12 +1,12 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/6] pinctrl: uniphier: remove unneeded EXPORT_SYMBOL_GPL()
-Date: Tue, 1 Aug 2017 10:10:30 +0200
-Message-ID: <CACRpkdZP42gui618JdQWCapU4M8qy3ok7ej1qnM+7=x9m8BG1A@mail.gmail.com>
-References: <1501482071-9819-1-git-send-email-yamada.masahiro@socionext.com> <1501482071-9819-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH 2/6] pinctrl: uniphier: fix pin_config_get() for input-enable
+Date: Tue, 1 Aug 2017 10:11:24 +0200
+Message-ID: <CACRpkda459U9AbS3bXV=H2X8A8EodbEFS5GkgwZKMsBtv8uRPQ@mail.gmail.com>
+References: <1501482071-9819-1-git-send-email-yamada.masahiro@socionext.com> <1501482071-9819-3-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501482071-9819-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1501482071-9819-3-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
@@ -15,9 +15,13 @@ List-Id: linux-gpio@vger.kernel.org
 On Mon, Jul 31, 2017 at 8:21 AM, Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 
-> All UniPhier pinctrl drivers are built-in.  Exporting the symbol
-> is meaningless.
+> For LD11/LD20 SoCs (capable of per-pin input enable), iectrl bits are
+> located across multiple registers.  So, the register offset must be
+> taken into account.  Otherwise, wrong input-enable status is displayed.
 >
+> While we here, rename the macro because it is a base address.
+>
+> Fixes: aa543888ca8c ("pinctrl: uniphier: support per-pin input enable for new SoCs")
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Patch applied.
