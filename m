@@ -1,51 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Should irq_enable/disable be flagging/unflagging gpio lines used
- as irq?
-Date: Tue, 1 Aug 2017 09:37:12 +0200
-Message-ID: <CACRpkdZ2gm6gE+M2OLHBchUtS+F-L+UYSVSZyXOJin9j9Q4EVg@mail.gmail.com>
-References: <20170711195518.34aa849888e9d67a0736a990@videhug.ch>
- <CACRpkdaqJT5SLSCDtHtfXXpF4j+ig5CQeDhLFJw47Lcgmc6rCQ@mail.gmail.com>
- <alpine.DEB.2.20.1707122330060.2510@nanos> <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
+Subject: Re: [RFC/RFT PATCH 3/3] gpiolib: make gpio irqchip compatible with sparse_irq
+Date: Tue, 1 Aug 2017 09:46:03 +0200
+Message-ID: <CACRpkdZ0N=mPAc5GrReyS27vqxovBV=08VEJ_qzo8yn=+y=DfA@mail.gmail.com>
+References: <20170708224413.18281-1-grygorii.strashko@ti.com> <20170708224413.18281-4-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:34917 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbdHAHhO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 03:37:14 -0400
-Received: by mail-it0-f44.google.com with SMTP id h199so3705953ith.0
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Aug 2017 00:37:13 -0700 (PDT)
-In-Reply-To: <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170708224413.18281-4-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Davide Hug <d@videhug.ch>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Jul 13, 2017 at 10:17 PM, Davide Hug <d@videhug.ch> wrote:
+On Sun, Jul 9, 2017 at 12:44 AM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-> Thanks. I probably should have pointed out that I'm just getting started.
-> I thought this driver that does not load would be a good place to do that. But
-> obviously a "completely broken" driver that "breaks with the current semantics
-> of the GPIO interrupt" is the wrong place to get started and learn how things
-> should be done.
+> Now IRQ mappings are always created for all (allowed) GPIOs in gpio irqchip in
+> gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ and,
+> as result, leads to:
+>  - increasing of memory consumption because of allocated IRQ descriptors most
+> of which will never ever be used (especially on platform with a
+> high number of GPIOs)
+>  - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
+> GPIO IRQ functionality as IRQ crossbar/multiplexer which has only limited
+> number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
+> IRQs).
 >
-> So this driver should probably be rewritten using timer based polling and the
-> descriptor based gpio interface. But since it is a really specific driver for
-> sensors that are already discontinued it probably doesn't make much sense. And
-> I'm not yet up to the task anyway.
+> Hence, remove static IRQ mapping code from gpiochip_irqchip_add_key() and
+> instead replace irq_find_mapping() with irq_create_mapping() in
+> gpiochip_to_irq(). Also add additional gpiochip_irqchip_irq_valid() calls
+> in gpiochip_to_irq() and gpiochip_irq_map().
+>
+> After this change gpio2irq mapping will happen the following way when GPIO
+> irqchip APIs are used by gpio driver:
+>  - IRQ mappings will be created statically if driver passes first_irq>0
+> vlaue in gpiochip_irqchip_add_key().
+>  - IRQ mappings will be created dynamically from gpio_to_irq() or
+> of_irq_get().
+>
+> [1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1435847.html
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-I'm not so sure about that. You might be the only one with the right hardware
-to fix the problem. Also it is never our intention to discourage anyone to
-hack on the kernel.
+This is obviously better and what I should have done from the beginning
+had I only been smart enough, so what better to do than to throw this in
+now for -next and see what happens :)
 
-If you have this hardware and know what you want to get out of it, go for it.
-
-> Are the drivers listed in Documentation/gpio/drivers-on-gpio.txt good examples
-> of GPIO consumer drivers?
-
-I think some, I am fixing others, anything just including
-<linux/gpio/consumer.h>
-and no other GPIO header are usually good examples.
+Patch applied.
 
 Yours,
 Linus Walleij
