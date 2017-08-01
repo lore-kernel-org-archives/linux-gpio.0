@@ -1,64 +1,103 @@
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] gpio: drop unnecessary includes from
- include/linux/gpio/driver.h
-Date: Tue, 1 Aug 2017 14:04:26 +0300
-Message-ID: <CAHp75VeLwM8Q5vVLeeGz9hL8AWa2J47NTaeX0ogJk6v7y18diw@mail.gmail.com>
-References: <1499140415-31677-1-git-send-email-yamada.masahiro@socionext.com>
- <1499162760.22624.246.camel@linux.intel.com>
- <CACRpkdaxgxaXV8XjLTzu68JqjyeZ8Jr2YMR3L46wm3zmnMrPsg@mail.gmail.com>
- <1501509867.29303.303.camel@linux.intel.com>
- <CACRpkdZ9q5vub3sQkA2xsQaZ+CGHeAp4RRueposnTPiHoFbSsA@mail.gmail.com>
+Subject: Re: [PATCH v2] [BUGFIX] gpio: reject invalid gpio before getting gpio_desc
+Date: Tue, 1 Aug 2017 14:10:03 +0300
+Message-ID: <CAHp75VecrQ53X24e6kFLaa9iBzOQApMkozxAQBk3rtHyAW7Aag@mail.gmail.com>
+References: <150146625669.11567.9576692487524672090.stgit@devbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdZ9q5vub3sQkA2xsQaZ+CGHeAp4RRueposnTPiHoFbSsA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thor Thayer <thor.thayer@linux.intel.com>, Tien Hock Loh <thloh@altera.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thierry Reding <thierry.reding@gmail.com>, Alban Bedel <albeu@free.fr>, Florian Fainelli <f.fainelli@gmail.com>, Alexander Shiyan <shc_work@mail.ru>, Kevin Hilman <khilman@kernel.org>, Michal Simek <michal.simek@xilinx.com>, Jonathan Hunter <jonathanh@nvidia.com>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Joel Stanley <joel@jms.id.au>, Grygorii Strashko <grygorii.strashko@ti.com>, Ray Jui <rjui@broadcom.com>, William Breathitt Gray <vilhelm.gray@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36839 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbdHALKE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 07:10:04 -0400
+In-Reply-To: <150146625669.11567.9576692487524672090.stgit@devbox>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
 
-On Tue, Aug 1, 2017 at 10:53 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Jul 31, 2017 at 4:04 PM, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
->> On Mon, 2017-07-31 at 15:48 +0200, Linus Walleij wrote:
->>> On Tue, Jul 4, 2017 at 12:06 PM, Andy Shevchenko
->>> <andriy.shevchenko@linux.intel.com> wrote:
-
->>> > If Linus is okay with the following proposal I would rather go with
->>> > it,
->>> > i.e. logical split the series to
->>> >
->>> > 1. Fix IRQ related headers inclusion
->>> > 2. Fix pinconf-generic.h inclusion
->>> > 3. Fix OF headers inclusion (btw, of_gpio.h is not enough there?)
->>>
->>> That works fine with me, but also one big patch actually, I do not
->>> want to make it too much work to refactor obviously incorrect things.
->>>
->>> As soon as we have rough consensus on this and the build robot
->>> are happy I will apply it to GPIO and also pull it into the pinctrl
->>> subsystem.
->>
->> For me priorities like this:
->> 1) it works after the patch being applied (no regressions);
->> 2) it makes code cleaner at the end;
->> 3) it is presented in logically split parts.
->>
->> So, as long as 1) and 2) are satisfied I can neglect on 3).
+On Mon, Jul 31, 2017 at 4:57 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> Check user-given gpio number and reject it before
+> calling gpio_to_desc() because gpio_to_desc() is
+> for kernel driver and it expects given gpio number
+> is valid (means 0 to 511).
+> If given number is invalid, gpio_to_desc() calls
+> WARN() and dump registers and stack for debug.
+> This means user can easily kick WARN() just by
+> writing invalid gpio number (e.g. 512) to
+> /sys/class/gpio/export.
 >
-> We are in violent agreement :D
 
-What I would like to say is that is up to you after all :-)
-For me looks better to split.
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+(2 bikesheds below)
+
+> Fixes: 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>   Changes in v2:
+>    - Add gpio_to_valid_desc() according to Andy's comment (Thanks!).
+>    - Fix patch description.
+> ---
+>  drivers/gpio/gpiolib-sysfs.c |   12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+> index 4b44dd97c07f..819f36258925 100644
+> --- a/drivers/gpio/gpiolib-sysfs.c
+> +++ b/drivers/gpio/gpiolib-sysfs.c
+> @@ -2,6 +2,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/device.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/gpio.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/gpio/driver.h>
+>  #include <linux/interrupt.h>
+> @@ -432,6 +433,11 @@ static struct attribute *gpiochip_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(gpiochip);
+>
+> +static struct gpio_desc *gpio_to_valid_desc(int gpio)
+> +{
+> +       return gpio_is_valid(gpio) ? gpio_to_desc(gpio) : NULL;
+> +}
+> +
+>  /*
+>   * /sys/class/gpio/export ... write-only
+>   *     integer N ... number of GPIO to export (full access)
+> @@ -450,7 +456,8 @@ static ssize_t export_store(struct class *class,
+>         if (status < 0)
+>                 goto done;
+>
+> -       desc = gpio_to_desc(gpio);
+> +       desc = gpio_to_valid_desc(gpio);
+
+> +
+
+No need, if you wish better to put modified line after comment.
+
+>         /* reject invalid GPIOs */
+>         if (!desc) {
+>                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+> @@ -492,7 +499,8 @@ static ssize_t unexport_store(struct class *class,
+>         if (status < 0)
+>                 goto done;
+>
+> -       desc = gpio_to_desc(gpio);
+> +       desc = gpio_to_valid_desc(gpio);
+
+> +
+
+
+Ditto.
+
+>         /* reject bogus commands (gpio_unexport ignores them) */
+>         if (!desc) {
+>                 pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+>
+
+
 
 -- 
 With Best Regards,
