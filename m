@@ -1,57 +1,36 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2] [BUGFIX] gpio: reject invalid gpio before getting
- gpio_desc
-Date: Tue, 1 Aug 2017 17:35:50 +0900
-Message-ID: <20170801173550.4e63ceaa562d8e81ecfb1a25@kernel.org>
-References: <150146625669.11567.9576692487524672090.stgit@devbox>
-        <CACRpkdaOHQ+3mEPOOtztb5LN0pmvnJE5oWd524MgiaYkASYJ_w@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] gpio: gpio-mxc: Fix: higher 16 GPIOs usable as wake source
+Date: Tue, 1 Aug 2017 10:37:59 +0200
+Message-ID: <CACRpkdbqugHn8A4qU=2tX256RxBf2GGEfoDrCsX2GdWrOcs4dw@mail.gmail.com>
+References: <1499848600-7233-1-git-send-email-p.rosenberger@linutronix.de> <1499848600-7233-2-git-send-email-p.rosenberger@linutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaOHQ+3mEPOOtztb5LN0pmvnJE5oWd524MgiaYkASYJ_w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f46.google.com ([209.85.214.46]:35975 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbdHAIiB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 04:38:01 -0400
+Received: by mail-it0-f46.google.com with SMTP id 77so4356373itj.1
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Aug 2017 01:38:00 -0700 (PDT)
+In-Reply-To: <1499848600-7233-2-git-send-email-p.rosenberger@linutronix.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Philipp Rosenberger <p.rosenberger@linutronix.de>, Vladimir Zapolskiy <vz@mleia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, 1 Aug 2017 10:09:09 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+On Wed, Jul 12, 2017 at 10:36 AM, Philipp Rosenberger
+<p.rosenberger@linutronix.de> wrote:
 
-> On Mon, Jul 31, 2017 at 3:57 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Check user-given gpio number and reject it before
-> > calling gpio_to_desc() because gpio_to_desc() is
-> > for kernel driver and it expects given gpio number
-> > is valid (means 0 to 511).
-> > If given number is invalid, gpio_to_desc() calls
-> > WARN() and dump registers and stack for debug.
-> > This means user can easily kick WARN() just by
-> > writing invalid gpio number (e.g. 512) to
-> > /sys/class/gpio/export.
-> >
-> > Fixes: 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >   Changes in v2:
-> >    - Add gpio_to_valid_desc() according to Andy's comment (Thanks!).
-> >    - Fix patch description.
-> 
-> I hate the old sysfs ABI sigh. Thanks for fixing it anyways!
-> 
-> Should this be tagged for stable?
+> In the function gpio_set_wake_irq(), port->irq_high is only checked for
+> zero. As platform_get_irq() returns a value less then zero if no interrupt
+> was found, any gpio >= 16 was handled like an irq_high interrupt was
+> available. On iMX27 for example no high interrupt is available. This lead
+> to the problem that only some gpios (the lower 16) were useable as wake
+> sources.
+>
+> Signed-off-by: Philipp Rosenberger <p.rosenberger@linutronix.de>
 
-Yes, I think so. Since this has been introduced 3 years ago,
-it would be nice to go to older stable trees too.
+That looks like a clear bug, patch applied for fixes.
 
-Thanks,
-
-> 
-> Waiting for Andy's review before applying.
-> 
-> Yours,
-> Linus Walleij
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Yours,
+Linus Walleij
