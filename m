@@ -1,212 +1,294 @@
-From: Yingjoe Chen <yingjoe.chen@mediatek.com>
-Subject: Re: [PATCH 3/3] pinctrl: add mt2712 pinctrl driver
-Date: Tue, 1 Aug 2017 17:14:05 +0800
-Message-ID: <1501578845.32089.18.camel@mtksdaap41>
-References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
-         <1501489333-23145-4-git-send-email-zhiyong.tao@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: s.abhisit@gmail.com
+Subject: [PATCH 4/5] gpio: Add support for LMP92001 GPIO
+Date: Tue,  1 Aug 2017 16:15:47 +0700
+Message-ID: <1501578947-4692-1-git-send-email-s.abhisit@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:20123 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751101AbdHAJOK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 05:14:10 -0400
-In-Reply-To: <1501489333-23145-4-git-send-email-zhiyong.tao@mediatek.com>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:35218 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751101AbdHAJQD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 1 Aug 2017 05:16:03 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc: robh+dt@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com, srv_heupstream@mediatek.com, liguo.zhang@mediatek.com, hongkun.cao@mediatek.com, biao.huang@mediatek.com, yt.shen@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Abhisit Sangjan <s.abhisit@gmail.com>
 
+From: Abhisit Sangjan <s.abhisit@gmail.com>
 
+---
+ drivers/gpio/Kconfig         |   7 ++
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-lmp92001.c | 235 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 243 insertions(+)
+ create mode 100644 drivers/gpio/gpio-lmp92001.c
 
-Hi Zhiyong,
-
-
-
-On Mon, 2017-07-31 at 16:22 +0800, Zhiyong Tao wrote:
-<...>
-> 3)Add "spec_dir_set" and "spec_dir_get" in "mtk_pinctrl_devdata".
-> 4)Change "spec_dir_set" and add "spec_dir_get" in "pinctrl-mt2701.c"
->   and "pinctrl-mtk-common.c".
-
-I think these deserve another patch.
-Please also explain why we need this.
-
-
-> 5)Change "port_mask" from "7" to "6" for EINT.
-
-I'm assuming this is a bug fix for mt2701?
-If yes, this should be a separate patch.
-
-> 6)Remove generic pull config condition in "mtk_pconf_set_pull_select".
-> 7)Change "arg" to "MTK_PUPD_SET_R1R0_00" of "mtk_pconf_set_pull_select".
-
-Why we need to change arg?
-
-
-> 
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> ---
->  drivers/pinctrl/mediatek/Kconfig              |    8 +
->  drivers/pinctrl/mediatek/Makefile             |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mt2701.c     |   21 +-
->  drivers/pinctrl/mediatek/pinctrl-mt2712.c     |  670 +++++++++
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |   16 +-
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.h |   44 +-
->  drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h | 1858 +++++++++++++++++++++++++
->  7 files changed, 2586 insertions(+), 32 deletions(-)
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt2712.c
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt2712.h
-> 
-
-<...>
-
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2701.c b/drivers/pinctrl/mediatek/pinctrl-mt2701.c
-> index f86f3b3..4a43f5c 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mt2701.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt2701.c
-> @@ -503,10 +503,26 @@ static void mt2701_spec_pinmux_set(struct regmap *reg, unsigned int pin,
->  	regmap_update_bits(reg, mt2701_spec_pinmux[i].offset, mask, value);
->  }
->  
-> -static void mt2701_spec_dir_set(unsigned int *reg_addr, unsigned int pin)
-> +static int mt2701_spec_dir_set(struct mtk_pinctrl *pctl,
-> +				unsigned int *reg_addr,
-> +				unsigned int pin,
-> +				bool input)
->  {
->  	if (pin > 175)
->  		*reg_addr += 0x10;
-> +
-> +	return 0;
-> +}
-> +
-> +static int mt2701_spec_dir_get(struct mtk_pinctrl *pctl,
-> +				unsigned int *reg_addr,
-> +				unsigned int pin,
-> +				bool input)
-
-incorrect prototype?
-
-> +{
-> +	if (pin > 175)
-> +		*reg_addr += 0x10;
-> +
-> +	return 0;
->  }
->  
->  static const struct mtk_pinctrl_devdata mt2701_pinctrl_data = {
-> @@ -520,6 +536,7 @@ static void mt2701_spec_dir_set(unsigned int *reg_addr, unsigned int pin)
->  	.spec_ies_smt_set = mt2701_ies_smt_set,
->  	.spec_pinmux_set = mt2701_spec_pinmux_set,
->  	.spec_dir_set = mt2701_spec_dir_set,
-> +	.spec_dir_get = mt2701_spec_dir_get,
->  	.dir_offset = 0x0000,
->  	.pullen_offset = 0x0150,
->  	.pullsel_offset = 0x0280,
-> @@ -551,7 +568,7 @@ static void mt2701_spec_dir_set(unsigned int *reg_addr, unsigned int pin)
->  		.dbnc_ctrl = 0x500,
->  		.dbnc_set  = 0x600,
->  		.dbnc_clr  = 0x700,
-> -		.port_mask = 6,
-> +		.port_mask = 7,
->  		.ports     = 6,
->  	},
->  	.ap_num = 169,
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2712.c b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-> new file mode 100644
-> index 0000000..c933b75
-> --- /dev/null
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-
-<...>
-
-> +
-> +static int mt2712_spec_dir_set(struct mtk_pinctrl *pctl,
-> +				unsigned int *reg_addr,
-> +				unsigned int pin,
-> +				bool input)
-> +{
-> +	u32 reg_val;
-> +
-> +	if (pin == 16) {
-> +		regmap_read(pctl->regmap2, 0x940, &reg_val);
-> +		reg_val |= BIT(15);
-> +		if (input == true)
-> +			reg_val &= ~BIT(14);
-> +		else
-> +			reg_val |= BIT(14);
-> +		regmap_write(pctl->regmap2, 0x940, reg_val);
-> +	}
-> +
-> +	if (pin == 17) {
-> +		regmap_read(pctl->regmap2, 0x940, &reg_val);
-> +		reg_val |= BIT(7);
-> +		if (input == true)
-> +			reg_val &= ~BIT(6);
-> +		else
-> +			reg_val |= BIT(6);
-> +		regmap_write(pctl->regmap2, 0x940, reg_val);
-> +	}
-> +
-> +	return 0;
-> +}
-
-Does this means pin 16, 17 is in different/special reg/bit location?
-I didn't see spec_dir_get in your patch, does this means they are in
-standard location or you just forgot it?
-
-The original idea of spec_dir_set is to get the register offset for the
-pin, so both set_direction and get_direction are using the same
-extension function. Instead of adding a new spec_dir_get, can we just
-extend the function to also include bit location?
-
-
-
-<...>
-
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index 3cf384f..aeec87e 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -84,7 +84,7 @@ static int mtk_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
->  	bit = BIT(offset & 0xf);
->  
->  	if (pctl->devdata->spec_dir_set)
-> -		pctl->devdata->spec_dir_set(&reg_addr, offset);
-> +		pctl->devdata->spec_dir_set(pctl, &reg_addr, offset, input);
->  
->  	if (input)
->  		/* Different SoC has different alignment offset. */
-> @@ -307,13 +307,6 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
->  			return 0;
->  	}
->  
-> -	/* For generic pull config, default arg value should be 0 or 1. */
-> -	if (arg != 0 && arg != 1) {
-> -		dev_err(pctl->dev, "invalid pull-up argument %d on pin %d .\n",
-> -			arg, pin);
-> -		return -EINVAL;
-> -	}
-> -
-
-
-Why we need to remove this?
-
->  	bit = BIT(pin & 0xf);
->  	if (enable)
->  		reg_pullen = SET_ADDR(mtk_get_port(pctl, pin) +
-> @@ -343,7 +336,8 @@ static int mtk_pconf_parse_conf(struct pinctrl_dev *pctldev,
->  
->  	switch (param) {
->  	case PIN_CONFIG_BIAS_DISABLE:
-> -		ret = mtk_pconf_set_pull_select(pctl, pin, false, false, arg);
-> +		ret = mtk_pconf_set_pull_select(pctl, pin, false, false,
-> +						MTK_PUPD_SET_R1R0_00);
-
-Why we need to change this?
-
-Joe.C
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index f235eae..b9b5c97 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1119,6 +1119,13 @@ config GPIO_WM8994
+ 	  Say yes here to access the GPIO signals of WM8994 audio hub
+ 	  CODECs from Wolfson Microelectronics.
+ 
++config GPIO_LMP92001
++       tristate "LMP92001 GPIOs"
++       depends on MFD_LMP92001
++       help
++         Say yes here to access the GPIO signals of TI LMP92001 Analog System
++         Monitor and Controller.
++
+ endmenu
+ 
+ menu "PCI GPIO expanders"
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index a9fda6c..153daea 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -148,3 +148,4 @@ obj-$(CONFIG_GPIO_ZEVIO)	+= gpio-zevio.o
+ obj-$(CONFIG_GPIO_ZYNQ)		+= gpio-zynq.o
+ obj-$(CONFIG_GPIO_ZX)		+= gpio-zx.o
+ obj-$(CONFIG_GPIO_LOONGSON1)	+= gpio-loongson1.o
++obj-$(CONFIG_GPIO_LMP92001)	+= gpio-lmp92001.o
+diff --git a/drivers/gpio/gpio-lmp92001.c b/drivers/gpio/gpio-lmp92001.c
+new file mode 100644
+index 0000000..ac0eb4d5
+--- /dev/null
++++ b/drivers/gpio/gpio-lmp92001.c
+@@ -0,0 +1,235 @@
++/*
++ * gpio-lmp92001.c - Support for TI LMP92001 GPIOs
++ *
++ * Copyright 2016-2017 Celestica Ltd.
++ *
++ * Author: Abhisit Sangjan <s.abhisit@gmail.com>
++ *
++ * Inspired by wm831x driver.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/gpio.h>
++#include <linux/platform_device.h>
++#include <linux/seq_file.h>
++#include <linux/mfd/core.h>
++#include <linux/version.h>
++
++#include <linux/mfd/lmp92001/core.h>
++
++struct lmp92001_gpio {
++        struct lmp92001 *lmp92001;
++        struct gpio_chip gpio_chip;
++};
++
++static inline struct lmp92001_gpio *to_lmp92001_gpio(struct gpio_chip *chip)
++{
++        return container_of(chip, struct lmp92001_gpio, gpio_chip);
++}
++
++static int lmp92001_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
++{
++        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
++        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
++        unsigned int val;
++        int ret;
++
++        ret = regmap_read(lmp92001->regmap, LMP92001_CGPO, &val);
++        if (ret < 0)
++                return ret;
++
++        return (val >> offset) & 1;
++}
++
++static int lmp92001_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
++{
++        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
++        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
++
++        return regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, 1 << offset,
++                        1 << offset);
++}
++
++static int lmp92001_gpio_get(struct gpio_chip *chip, unsigned offset)
++{
++        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
++        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
++        unsigned int val, sgen;
++
++        /*
++         * Does the GPIO input mode?
++         * Does the GPIO was set?
++         * Reading indicated logic level.
++         * Clear indicated logic level.
++         */
++        regmap_read(lmp92001->regmap, LMP92001_CGPO, &val);
++        if ((val >> offset) & 1)
++        {
++                regmap_read(lmp92001->regmap, LMP92001_SGEN, &sgen);
++                if (sgen & 1)
++                {
++                        regmap_read(lmp92001->regmap, LMP92001_SGPI, &val);
++                        regmap_update_bits(lmp92001->regmap, LMP92001_CGPO,
++                                                0xFF, val);
++                }
++        }
++
++        return (val >> offset) & 1;
++}
++
++static int lmp92001_gpio_direction_out(struct gpio_chip *chip, unsigned offset,
++                                        int value)
++{
++        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
++        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
++
++        return regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, 1 << offset,
++                                        0 << offset);
++}
++
++static void lmp92001_gpio_set(struct gpio_chip *chip, unsigned offset,
++                                int value)
++{
++        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
++        struct lmp92001 *lmp92001 =  lmp92001_gpio->lmp92001;
++
++        regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, 1 << offset,
++                                value << offset);
++}
++
++#ifdef CONFIG_DEBUG_FS
++static void lmp92001_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
++{
++        struct lmp92001_gpio *lmp92001_gpio = to_lmp92001_gpio(chip);
++        struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
++        int i, gpio;
++        unsigned int cgpo;
++        const char *label, *dir, *logic;
++
++        for (i = 0; i < chip->ngpio; i++)
++        {
++                gpio = i + chip->base;
++
++                label = gpiochip_is_requested(chip, i);
++                if (!label)
++                        continue;
++
++                regmap_read(lmp92001->regmap, LMP92001_CGPO, &cgpo);
++                if ((cgpo>>i) & 1)
++                        dir = "in";
++                else
++                        dir = "out";
++
++                if (lmp92001_gpio_get(chip, i))
++                        logic = "hi";
++                else
++                        logic = "lo";
++
++                seq_printf(s, " gpio-%-3d (%-20.20s) %-3.3s %-2.2s\n",
++                                gpio, label, dir, logic);
++        }
++}
++#else
++#define lmp92001_gpio_dbg_show NULL
++#endif
++
++static struct gpio_chip lmp92001_gpio_chip = {
++        .label                  = "lmp92001",
++        .owner                  = THIS_MODULE,
++        .get_direction          = lmp92001_gpio_get_direction,
++        .direction_input        = lmp92001_gpio_direction_in,
++        .get                    = lmp92001_gpio_get,
++        .direction_output       = lmp92001_gpio_direction_out,
++        .set                    = lmp92001_gpio_set,
++        .dbg_show               = lmp92001_gpio_dbg_show,
++};
++
++static int lmp92001_gpio_probe(struct platform_device *pdev)
++{
++        struct lmp92001 *lmp92001 = dev_get_drvdata(pdev->dev.parent);
++        struct lmp92001_gpio *lmp92001_gpio;
++        struct device_node *np = pdev->dev.of_node;
++        u8 dir;
++        int ret;
++
++        lmp92001_gpio = devm_kzalloc(&pdev->dev, sizeof(*lmp92001_gpio),
++                                        GFP_KERNEL);
++        if (!lmp92001_gpio)
++                return -ENOMEM;
++
++        lmp92001_gpio->lmp92001 = lmp92001;
++        lmp92001_gpio->gpio_chip = lmp92001_gpio_chip;
++        lmp92001_gpio->gpio_chip.ngpio = 8;
++
++#if LINUX_VERSION_CODE <= KERNEL_VERSION(4, 1, 15)
++        lmp92001_gpio->gpio_chip.dev = &pdev->dev;
++#else
++        lmp92001_gpio->gpio_chip.parent = &pdev->dev;
++#endif
++
++        lmp92001_gpio->gpio_chip.base = -1;
++
++        ret = of_property_read_u8(np, "ti,lmp92001-gpio-dir", &dir);
++        if (!ret)
++        {
++                ret = regmap_update_bits(lmp92001->regmap, LMP92001_CGPO,
++                                                0xFF, dir);
++                if (ret < 0)
++                        dev_info(&pdev->dev, "could not initial direction\n");
++        }
++
++        ret = gpiochip_add(&lmp92001_gpio->gpio_chip);
++        if (ret < 0) {
++                dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
++                return ret;
++        }
++
++        platform_set_drvdata(pdev, lmp92001_gpio);
++
++        return ret;
++}
++
++static int lmp92001_gpio_remove(struct platform_device *pdev)
++{
++        struct lmp92001_gpio *lmp92001_gpio = platform_get_drvdata(pdev);
++
++        gpiochip_remove(&lmp92001_gpio->gpio_chip);
++
++        return 0;
++}
++
++static struct platform_driver lmp92001_gpio_driver = {
++        .driver.name    = "lmp92001-gpio",
++        .driver.owner   = THIS_MODULE,
++        .probe          = lmp92001_gpio_probe,
++        .remove         = lmp92001_gpio_remove,
++};
++
++static int __init lmp92001_gpio_init(void)
++{
++        return platform_driver_register(&lmp92001_gpio_driver);
++}
++subsys_initcall(lmp92001_gpio_init);
++
++static void __exit lmp92001_gpio_exit(void)
++{
++        platform_driver_unregister(&lmp92001_gpio_driver);
++}
++module_exit(lmp92001_gpio_exit);
++
++MODULE_AUTHOR("Abhisit Sangjan <s.abhisit@gmail.com>");
++MODULE_DESCRIPTION("GPIO interface for TI LMP92001");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:lmp92001-gpio");
+-- 
+2.7.4
 
