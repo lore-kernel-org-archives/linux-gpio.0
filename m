@@ -1,43 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH/RFC] gpio: rcar: add gen[123] fallback compatibility strings
-Date: Tue, 1 Aug 2017 10:27:40 +0200
-Message-ID: <CACRpkdakMcmgELYdQBBy3F2FFEkEmaHJL2QuNNc236wHug6ctA@mail.gmail.com>
-References: <1499776710-25450-1-git-send-email-horms+renesas@verge.net.au>
+From: Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2] [BUGFIX] gpio: reject invalid gpio before getting
+ gpio_desc
+Date: Tue, 1 Aug 2017 17:35:50 +0900
+Message-ID: <20170801173550.4e63ceaa562d8e81ecfb1a25@kernel.org>
+References: <150146625669.11567.9576692487524672090.stgit@devbox>
+        <CACRpkdaOHQ+3mEPOOtztb5LN0pmvnJE5oWd524MgiaYkASYJ_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1499776710-25450-1-git-send-email-horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaOHQ+3mEPOOtztb5LN0pmvnJE5oWd524MgiaYkASYJ_w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Jul 11, 2017 at 2:38 PM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
+On Tue, 1 Aug 2017 10:09:09 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> Add fallback compatibility string for R-Car Gen 1, 2 and 3.
->
-> In the case of Renesas R-Car hardware we know that there are generations of
-> SoCs, f.e. Gen 1 and 2. But beyond that its not clear what the relationship
-> between IP blocks might be. For example, I believe that r8a7790 is older
-> than r8a7791 but that doesn't imply that the latter is a descendant of the
-> former or vice versa.
->
-> We can, however, by examining the documentation and behaviour of the
-> hardware at run-time observe that the current driver implementation appears
-> to be compatible with the IP blocks on SoCs within a given generation.
->
-> For the above reasons and convenience when enabling new SoCs a
-> per-generation fallback compatibility string scheme being adopted for
-> drivers for Renesas SoCs.
->
-> Also deprecate renesas,gpio-rcar as its name is more generic than its
-> implementation.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> On Mon, Jul 31, 2017 at 3:57 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Check user-given gpio number and reject it before
+> > calling gpio_to_desc() because gpio_to_desc() is
+> > for kernel driver and it expects given gpio number
+> > is valid (means 0 to 511).
+> > If given number is invalid, gpio_to_desc() calls
+> > WARN() and dump registers and stack for debug.
+> > This means user can easily kick WARN() just by
+> > writing invalid gpio number (e.g. 512) to
+> > /sys/class/gpio/export.
+> >
+> > Fixes: 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >   Changes in v2:
+> >    - Add gpio_to_valid_desc() according to Andy's comment (Thanks!).
+> >    - Fix patch description.
+> 
+> I hate the old sysfs ABI sigh. Thanks for fixing it anyways!
+> 
+> Should this be tagged for stable?
 
-Totally uncontroversial DT binding changes so patch applied for next
-with Geert's review tag.
+Yes, I think so. Since this has been introduced 3 years ago,
+it would be nice to go to older stable trees too.
 
-Yours,
-Linus Walleij
+Thanks,
+
+> 
+> Waiting for Andy's review before applying.
+> 
+> Yours,
+> Linus Walleij
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
