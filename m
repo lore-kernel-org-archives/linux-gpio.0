@@ -1,56 +1,76 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: consumer: Remove WARN_ON(1) when GPIOLIB is disabled
-Date: Wed, 2 Aug 2017 14:27:44 +0200
-Message-ID: <CACRpkdZezwWY6hrUvCWbZe2geBV2um1ngc03_55oZV4XqONvUw@mail.gmail.com>
-References: <1501258886-12376-1-git-send-email-fabio.estevam@nxp.com>
+From: Eric Schwarz <eas@sw-optimization.com>
+Subject: Re: [PATCH 0/3] FPGA Manager support for FPP via FT232H FT245-FIFO
+Date: Wed, 02 Aug 2017 13:36:06 +0200
+Message-ID: <42304c20fd460f456ef588df0b97a593@sw-optimization.com>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:36473 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753162AbdHBM1q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 08:27:46 -0400
-Received: by mail-it0-f44.google.com with SMTP id 77so22883217itj.1
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 05:27:45 -0700 (PDT)
-In-Reply-To: <1501258886-12376-1-git-send-email-fabio.estevam@nxp.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1499374158-12388-1-git-send-email-agust@denx.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anatolij Gustschin <agust@denx.de>
+Cc: Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fpga-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Andrew Lunn <andrew@lunn.ch>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Fabio Estevam <festevam@gmail.com>
 
-On Fri, Jul 28, 2017 at 6:21 PM, Fabio Estevam <fabio.estevam@nxp.com> wrote:
+Dear all,
 
-> gpiod_get_optional() returns NULL when GPIOLIB is disabled since
-> commit 22c403676dbbb7c6 ("gpio: return NULL from gpiod_get_optional when
-> GPIOLIB is disabled").
->
-> However, many gpiod functions still have WARN_ON(1) in their
-> GPIOLIB=n stubs, which causes warnings in drivers even if the
-> GPIO descriptor is requested via gpiod_get_optional().
->
-> Prior to commit 22c403676dbbb7c6 ("gpio: return NULL from
-> gpiod_get_optional when GPIOLIB is disabled") it was indeed true
-> the comment: "GPIO can never have been requested" as gpiod_get_optional()
-> used to return an error.
->
-> After this commit the returned value is NULL, so the comment and
-> WARN_ON(1) are no longer accurate.
->
-> An example of this kernel warning can be see in this report:
-> https://www.spinics.net/lists/kernel/msg2563045.html
->
-> Remove the WARN_ON(1) so that drivers can silently work fine
-> without kernel warnings when GPIOLIB is disabled.
->
-> Reported-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+DENX Software Engineering develops and brings this driver to mainline on 
+behalf of us (ARRI*).
 
-I explained in another commend why I see this as a non-issue.
+Since there was a lot of discussion around this patch series I would 
+highly appreciate if someone could sum up what needs to be changed in 
+detail in order to get this driver into the mainline as I am used it 
+from the other "line-by-line" reviews. I understood that the approach is 
+not generic enough - please correct me if I am wrong on that point. We 
+somehow need a commitment that if we change it to another way that the 
+whole discussion does not start from scratch.
 
-Drivers that call GPIO accessors likely need them to work properly.
+Many thanks
+Eric
 
-If they see these messages I suspect it is because of missing
-depends on or select of GPIOLIB in their Kconfig.
+* I am just writing from my private e-mail address since Outlook 
+obviously renders all my mails as HTML despite what I am configuring.
 
-Yours,
-Linus Walleij
+[1]... http://www.arri.com
+
+Am 06.07.2017 22:49, schrieb Anatolij Gustschin:
+
+> This series adds support for fast passive parallel (FPP) Altera
+> FPGA configuration using FTDI FT232H chip in FT245-FIFO mode.
+> It has been used to configure Arria 10 FPGAs.
+> 
+> Patch 1 adds an FT232H MFD driver with common functions that
+> can be used for FT232H USB-GPIO/I2C/SPI master adapter drivers.
+> Currently it is used for FT232H GPIO support (in patch 2) and
+> for FT245 FIFO transfers in FPP FPGA manager driver in patch 3.
+> Driver support for FT232H USB-I2C/SPI master adapters can be
+> added later.
+> 
+> Patch 2 adds a simple GPIO driver supporting four FT232H CBUS GPIOs.
+> 
+> Patch 3 adds an FPGA Manager driver for Altera FPP FPGA configuration
+> via FT232H FT245-FIFO interface.
+> 
+> Anatolij Gustschin (3):
+> mfd: Add support for FTDI FT232H devices
+> gpio: Add FT232H CBUS GPIO driver
+> fpga manager: Add FT232H driver for Altera FPP
+> 
+> drivers/fpga/Kconfig          |   7 +
+> drivers/fpga/Makefile         |   1 +
+> drivers/fpga/ftdi-fifo-fpp.c  | 569 
+> ++++++++++++++++++++++++++++++++++++++++++
+> drivers/gpio/Kconfig          |  11 +
+> drivers/gpio/Makefile         |   1 +
+> drivers/gpio/gpio-ftdi-cbus.c | 251 +++++++++++++++++++
+> drivers/mfd/Kconfig           |   9 +
+> drivers/mfd/Makefile          |   1 +
+> drivers/mfd/ftdi-ft232h.c     | 470 ++++++++++++++++++++++++++++++++++
+> include/linux/mfd/ftdi/ftdi.h |  71 ++++++
+> 10 files changed, 1391 insertions(+)
+> create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+> create mode 100644 drivers/gpio/gpio-ftdi-cbus.c
+> create mode 100644 drivers/mfd/ftdi-ft232h.c
+> create mode 100644 include/linux/mfd/ftdi/ftdi.h
