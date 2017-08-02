@@ -1,29 +1,48 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] gpio: tegra: Use platform_get_irq()
-Date: Wed, 2 Aug 2017 14:03:07 +0200
-Message-ID: <CACRpkdZk=MdiVct6L+uhn=3Befc4NoNQzEWu48b6W=DVN6oysQ@mail.gmail.com>
-References: <20170720160057.13483-1-thierry.reding@gmail.com> <20170720160057.13483-2-thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/7] gpio: Cleanup kerneldoc
+Date: Wed, 2 Aug 2017 14:04:43 +0200
+Message-ID: <CACRpkdb28ndwQr1SjOKcoAWm+KccdhO_vFLejBOPX6xhtSiPgg@mail.gmail.com>
+References: <20170724145728.7662-1-thierry.reding@gmail.com> <20170731110217.GK26667@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170720160057.13483-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f50.google.com ([209.85.214.50]:38673 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752121AbdHBMEp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 08:04:45 -0400
+Received: by mail-it0-f50.google.com with SMTP id h199so23311889ith.1
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 05:04:44 -0700 (PDT)
+In-Reply-To: <20170731110217.GK26667@ulmo>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jul 20, 2017 at 6:00 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Jul 31, 2017 at 1:02 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Mon, Jul 24, 2017 at 04:57:22PM +0200, Thierry Reding wrote:
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> Some kerneldoc has become stale or wasn't quite correct from the outset.
+>> Fix up the most serious issues to silence warnings when building the
+>> documentation.
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>> ---
+>>  drivers/gpio/gpiolib.c      | 82 +++++++++++++++++++++++++++++++++------------
+>>  include/linux/gpio/driver.h |  3 +-
+>>  2 files changed, 61 insertions(+), 24 deletions(-)
 >
-> Instead of using platform_get_resource() and getting the interrupts from
-> the resource, use platform_get_irq() which is slightly easier to use and
-> covers some special cases that the former doesn't.
+> Hi Linus,
 >
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> any chance we can get this merged? The GPIO IRQ chip and banked
+> controller support patches that I'm working on depend on this, so I'd
+> like for these to go in before I send out the former in order to
+> decrease the dependency tracking for everyone involved.
 
-Patch applied.
+I've been on vacation, sorry.
+
+I'm churning the backlog now...
 
 Yours,
 Linus Walleij
