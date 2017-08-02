@@ -1,59 +1,34 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH v2 2/3] gpio: davinci: Handle the return value of
- davinci_gpio_irq_setup function
-Date: Wed, 2 Aug 2017 16:29:16 +0530
-Message-ID: <32ca2ace-bca3-4819-d3fb-10331cd0213c@ti.com>
-References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
- <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/3] simulated interrupts
+Date: Wed, 2 Aug 2017 13:32:48 +0200
+Message-ID: <CACRpkdYRcsr16YBiooDn5D4p+4qB3yhAdE-+VgBBSD4kCCO-Hw@mail.gmail.com>
+References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl>
+ <alpine.DEB.2.20.1707191424190.2286@nanos> <CAMRc=McO4L59zDT4QJSmqsdOpLfAv4NDyjddd57Prz2hjE5zWw@mail.gmail.com>
+ <alpine.DEB.2.20.1707191557390.2286@nanos> <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:19611 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752902AbdHBK7o (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 06:59:44 -0400
-In-Reply-To: <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, s-anna@ti.com, nsekhar@ti.com
 
+On Wed, Jul 19, 2017 at 4:19 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
 
+> On a slightly tangential subject, there is another aspect that I thought
+> of implementing for a while, but always ended up just relying on a quick
+> hack: forcing the injection of an actual interrupt. A number of
+> interrupt controllers have the ability to make an interrupt pending, for
+> it to be handled as if a device had actually triggered it.
 
-On Thursday 20 July 2017 03:12 PM, Keerthy wrote:
-> Currently davinci_gpio_irq_setup return value is ignored. Handle the
-> return value appropriately.
+This would be especially useful for a class of embedded systems that
+are woken up from deep sleep by an asynchronous interrupt controller.
 
-Linus,
+Usually GPIO(-ish) lines are armed and the system put to sleep, and
+when it comes up, the information of what line woke it up is there in a
+special register, but the actual (synchronous) interrupt line is no longer
+asserted or edge triggered, so an interrupt need to be inserted.
 
-Any comments on this? Sorry if i pinged too soon. The rest 2 of this
-series were pulled by you. So just wanted to check on this one if you
-had specific comments.
-
-Regards,
-Keerthy
-
-> 
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> ---
->  drivers/gpio/gpio-davinci.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 27499ec..d6fb1ce 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -237,7 +237,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->  		goto err;
->  
->  	platform_set_drvdata(pdev, chips);
-> -	davinci_gpio_irq_setup(pdev);
-> +	ret = davinci_gpio_irq_setup(pdev);
-> +	if (ret)
-> +		goto err;
-> +
->  	return 0;
->  
->  err:
-> 
+Yours,
+Linus Walleij
