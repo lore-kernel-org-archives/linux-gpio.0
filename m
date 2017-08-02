@@ -1,47 +1,80 @@
-From: Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 0/3] PINCTRL: Mediatek pinctrl driver for mt2712
-Date: Wed, 2 Aug 2017 10:58:52 +0800
-Message-ID: <1501642732.844.14.camel@mhfsdcap03>
-References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
-         <1501577069.32089.0.camel@mtksdaap41>
+From: Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v3] [BUGFIX] gpio: reject invalid gpio before getting gpio_desc
+Date: Wed,  2 Aug 2017 13:47:42 +0900
+Message-ID: <150164925133.3914.939655218385978578.stgit@devbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1501577069.32089.0.camel@mtksdaap41>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yingjoe Chen <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, liguo.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, hongkun.cao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, yt.shen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:37300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750985AbdHBEsj (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 2 Aug 2017 00:48:39 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
 
-On Tue, 2017-08-01 at 16:44 +0800, Yingjoe Chen wrote:
-> On Mon, 2017-07-31 at 16:22 +0800, Zhiyong Tao wrote:
-> > This series includes three patches:
-> > 1.Add mt2712 compatible node in binding document.
-> > 2.Add mt2712 pinctrl device node.
-> > 3.Add mt2712 pinctrl driver.
-> > 
-> > Zhiyong Tao (3):
-> >   dt-bindings: pinctrl: mt2712: add binding document
-> >   arm64: dts: mt2712: add pintcrl device node.
-> >   pinctrl: add mt2712 pinctrl driver
-> > 
-> >  .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    1 +
-> >  arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h      | 1014 +++++++++++
-> >  arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |   18 +
-> 
-> mt2712e.dtsi doesn't exists in v4.13-rc1.
-> What's the base for this series? 
-> 
->
-> 
-> 
-==> This patch is based on 
-http://lists.infradead.org/pipermail/linux-mediatek/2017-July/009618.html
-I forgot to add the comment, I will add it in the next version.
-Thanks.
+Check user-given gpio number and reject it before
+calling gpio_to_desc() because gpio_to_desc() is
+for kernel driver and it expects given gpio number
+is valid (means 0 to 511).
+If given number is invalid, gpio_to_desc() calls
+WARN() and dump registers and stack for debug.
+This means user can easily kick WARN() just by
+writing invalid gpio number (e.g. 512) to
+/sys/class/gpio/export.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fixes: 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+  Changes in v3:
+   - Remove unneeded empty lines.
+---
+ drivers/gpio/gpiolib-sysfs.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 16fe9742597b..fc80add5fedb 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -2,6 +2,7 @@
+ #include <linux/mutex.h>
+ #include <linux/device.h>
+ #include <linux/sysfs.h>
++#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+@@ -432,6 +433,11 @@ static struct attribute *gpiochip_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(gpiochip);
+ 
++static struct gpio_desc *gpio_to_valid_desc(int gpio)
++{
++	return gpio_is_valid(gpio) ? gpio_to_desc(gpio) : NULL;
++}
++
+ /*
+  * /sys/class/gpio/export ... write-only
+  *	integer N ... number of GPIO to export (full access)
+@@ -450,7 +456,7 @@ static ssize_t export_store(struct class *class,
+ 	if (status < 0)
+ 		goto done;
+ 
+-	desc = gpio_to_desc(gpio);
++	desc = gpio_to_valid_desc(gpio);
+ 	/* reject invalid GPIOs */
+ 	if (!desc) {
+ 		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+@@ -493,7 +499,7 @@ static ssize_t unexport_store(struct class *class,
+ 	if (status < 0)
+ 		goto done;
+ 
+-	desc = gpio_to_desc(gpio);
++	desc = gpio_to_valid_desc(gpio);
+ 	/* reject bogus commands (gpio_unexport ignores them) */
+ 	if (!desc) {
+ 		pr_warn("%s: invalid GPIO %ld\n", __func__, gpio);
+
