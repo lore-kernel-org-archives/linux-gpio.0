@@ -1,33 +1,81 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 4/4] pinctrl: aspeed: g5: Add USB device and host support
-Date: Wed, 2 Aug 2017 10:38:55 +0200
-Message-ID: <CACRpkda1ER+4PEC_9zZhzA2o3Eb32eyec6mNYVW8c_8A+oX0mQ@mail.gmail.com>
-References: <20170718052453.14316-1-andrew@aj.id.au> <20170718052453.14316-5-andrew@aj.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v2 10/23] pinctrl: rockchip: add schmitt input mode support for rv1108
+Date: Wed,  2 Aug 2017 16:40:17 +0800
+Message-ID: <1501663217-12255-1-git-send-email-andy.yan@rock-chips.com>
+References: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f182.google.com ([209.85.223.182]:35006 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbdHBIi5 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:38:57 -0400
-Received: by mail-io0-f182.google.com with SMTP id m88so17635310iod.2
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 01:38:56 -0700 (PDT)
-In-Reply-To: <20170718052453.14316-5-andrew@aj.id.au>
+Received: from regular1.263xmail.com ([211.150.99.134]:38617 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751894AbdHBIk3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:40:29 -0400
+In-Reply-To: <1501662303-11687-1-git-send-email-andy.yan@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ryan Chen <ryan_chen@aspeedtech.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-aspeed@lists.ozlabs.org
+To: heiko@sntech.de
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andy Yan <andy.yan@rock-chips.com>
 
-On Tue, Jul 18, 2017 at 7:24 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
+Some pins like i2c SCL/SDA need the schmitt input function
+to avoid crosstalk problems.
 
-> Implement the AST2500 USB functions as described by the devicetree
-> bindings. The AST2500 exposes five USB controllers through two USB
-> ports. Similar to the AST2400, the pins exposing USB are outliers with
-> respect to the rest of the pinmux as they not capable of GPIO.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
 
-Patch applied.
+Changes in v2: None
 
-Yours,
-Linus Walleij
+ drivers/pinctrl/pinctrl-rockchip.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index e831647..868cb9c 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -1084,6 +1084,36 @@ static void rv1108_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
+ 	*bit *= RV1108_DRV_BITS_PER_PIN;
+ }
+ 
++#define RV1108_SCHMITT_PMU_OFFSET		0x30
++#define RV1108_SCHMITT_GRF_OFFSET		0x388
++#define RV1108_SCHMITT_BANK_STRIDE		8
++#define RV1108_SCHMITT_PINS_PER_GRF_REG		16
++#define RV1108_SCHMITT_PINS_PER_PMU_REG		8
++
++static int rv1108_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
++					   int pin_num,
++					   struct regmap **regmap,
++					   int *reg, u8 *bit)
++{
++	struct rockchip_pinctrl *info = bank->drvdata;
++	int pins_per_reg;
++
++	if (bank->bank_num == 0) {
++		*regmap = info->regmap_pmu;
++		*reg = RV1108_SCHMITT_PMU_OFFSET;
++		pins_per_reg = RV1108_SCHMITT_PINS_PER_PMU_REG;
++	} else {
++		*regmap = info->regmap_base;
++		*reg = RV1108_SCHMITT_GRF_OFFSET;
++		pins_per_reg = RV1108_SCHMITT_PINS_PER_GRF_REG;
++		*reg += (bank->bank_num  - 1) * RV1108_SCHMITT_BANK_STRIDE;
++	}
++	*reg += ((pin_num / pins_per_reg) * 4);
++	*bit = pin_num % pins_per_reg;
++
++	return 0;
++}
++
+ #define RK2928_PULL_OFFSET		0x118
+ #define RK2928_PULL_PINS_PER_REG	16
+ #define RK2928_PULL_BANK_STRIDE		8
+@@ -3017,6 +3047,7 @@ static struct rockchip_pin_ctrl rv1108_pin_ctrl = {
+ 	.pmu_mux_offset		= 0x0,
+ 	.pull_calc_reg		= rv1108_calc_pull_reg_and_bit,
+ 	.drv_calc_reg		= rv1108_calc_drv_reg_and_bit,
++	.schmitt_calc_reg	= rv1108_calc_schmitt_reg_and_bit,
+ };
+ 
+ static struct rockchip_pin_bank rk2928_pin_banks[] = {
+-- 
+2.7.4
+
+
