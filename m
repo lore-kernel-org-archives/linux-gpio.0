@@ -1,33 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/3] gpio: davinci: Use devm_gpiochip_add_data in place
- of gpiochip_add_data
-Date: Wed, 2 Aug 2017 11:23:17 +0200
-Message-ID: <CACRpkdZ3EJNBJ38nVV+YZd82KNWrCaJk0SRiwku_xjoE+PApWA@mail.gmail.com>
-References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com> <1500543738-9696-2-git-send-email-j-keerthy@ti.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: keystone-k2g-evm: Add gpio nodes
+Date: Wed, 2 Aug 2017 11:24:22 +0200
+Message-ID: <CACRpkdYvCngFxvK6kxA5rH9C8S37Eb8LSafnXks0caAzsq+Ejg@mail.gmail.com>
+References: <1501048228-3492-1-git-send-email-j-keerthy@ti.com> <1501048228-3492-2-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:35528 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752352AbdHBJXS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 05:23:18 -0400
-Received: by mail-it0-f42.google.com with SMTP id h199so20798685ith.0
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 02:23:18 -0700 (PDT)
-In-Reply-To: <1500543738-9696-2-git-send-email-j-keerthy@ti.com>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:38089 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752352AbdHBJYY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 05:24:24 -0400
+Received: by mail-io0-f177.google.com with SMTP id g13so17987467ioj.5
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 02:24:23 -0700 (PDT)
+In-Reply-To: <1501048228-3492-2-git-send-email-j-keerthy@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, fcooper@ti.com, Suman Anna <s-anna@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, fcooper@ti.com, Suman Anna <s-anna@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>
 
-On Thu, Jul 20, 2017 at 11:42 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Wed, Jul 26, 2017 at 7:50 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-> Use the devm version of gpiochip_add_data and pass on the
-> return value. This avoids memory leak due to gpiochip_add_data
-> in case the driver is unbound.
+> 66AK2G has 2 instances of gpio. The first one has all the 144 GPIOs
+> functional( 9 banks with 16 gpios = 144). The second instance has
+> only the GPIO0:GPIO67 functional and rest are marked reserved.
 >
 > Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-Patch applied.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Merge this through the ARM SoC tree.
 
 Yours,
 Linus Walleij
