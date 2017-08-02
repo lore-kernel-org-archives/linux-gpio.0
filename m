@@ -1,29 +1,29 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] gpio: add gpio_add_lookup_tables() to add several tables
- at once
-Date: Wed, 2 Aug 2017 11:38:48 +0300
-Message-ID: <20170802083848.GT2369@lahna.fi.intel.com>
-References: <20170725205800.GA25245@dtor-ws>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] gpio: tegra: fix unbalanced chained_irq_enter/exit
+Date: Wed, 2 Aug 2017 10:43:27 +0200
+Message-ID: <CACRpkdaXXZsBT+T0Rzd1bOZAQ=oXkRry2e+RVFZMXSeTaX-kVw@mail.gmail.com>
+References: <a9c261800dbb662c9c703544817dc103e2937472.1500381146.git.mirq-linux@rere.qmqm.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:57247 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752184AbdHBIlG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 2 Aug 2017 04:41:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20170725205800.GA25245@dtor-ws>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a9c261800dbb662c9c703544817dc103e2937472.1500381146.git.mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 25, 2017 at 01:58:00PM -0700, Dmitry Torokhov wrote:
-> +void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables,
-> +			     unsigned int n)
+On Tue, Jul 18, 2017 at 2:35 PM, Micha=C5=82 Miros=C5=82aw
+<mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org> wrote:
 
-This should probably be size_t instead.
+> When more than one GPIO IRQs are triggered simultaneously,
+> tegra_gpio_irq_handler() called chained_irq_exit() multiple
+> times for one chained_irq_enter().
+>
+> Fixes: 3c92db9ac0ca3eee8e46e2424b6c074e2e394ad9
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux-CoA6ZxLDdyEEUmgCuDUIdw@public.gmane.org>
 
-Regardless this looks useful so,
+Patch applied. I also changed this variable to a bool.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Yours,
+Linus Walleij
