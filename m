@@ -1,67 +1,42 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: altera-a10sr: constify gpio_chip structure
-Date: Wed, 2 Aug 2017 10:29:34 +0200
-Message-ID: <CACRpkdZ2rL64qiMrdBam5nQY9-6sayxfY6ppC0zm0fgQt3NHEQ@mail.gmail.com>
-References: <20170711221538.GA8001@embeddedgus>
+Subject: Re: [PATCH] pinctrl: zte: fix 'functions' allocation in zx_pinctrl_build_state()
+Date: Wed, 2 Aug 2017 10:31:59 +0200
+Message-ID: <CACRpkdbXYOv8FdbWoiwL-4mhBN5JSP3D8iMMjFM1H2u-vgUC-A@mail.gmail.com>
+References: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170711221538.GA8001@embeddedgus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Thor Thayer <thor.thayer@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f172.google.com ([209.85.223.172]:38588 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751929AbdHBIcB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:32:01 -0400
+Received: by mail-io0-f172.google.com with SMTP id g13so17532034ioj.5
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 01:32:01 -0700 (PDT)
+In-Reply-To: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Baoyou Xie <xie.baoyou@sanechips.com.cn>, Xin Zhou <zhou.xin8@sanechips.com.cn>, Jun Nie <jun.nie@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>
 
-On Wed, Jul 12, 2017 at 12:15 AM, Gustavo A. R. Silva
-<garsilva@embeddedor.com> wrote:
+On Sun, Jul 16, 2017 at 3:33 PM, Shawn Guo <shawnguo@kernel.org> wrote:
 
-> This structure is only used to copy into another structure, so declare
-> it as const.
+> From: Shawn Guo <shawn.guo@linaro.org>
 >
-> This issue was detected using Coccinelle and the following semantic patch:
+> It fixes the following Smatch static check warning:
 >
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct gpio_chip i@p = { ... };
+>  drivers/pinctrl/zte/pinctrl-zx.c:338 zx_pinctrl_build_state()
+>  warn: passing devm_ allocated variable to kfree.
 >
-> @ok@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> e = i@p;
+> As we will be calling krealloc() on pointer 'functions', which means
+> kfree() will be called in there, devm_kzalloc() shouldn't be used with
+> the allocation in the first place.  Fix the warning by calling kcalloc()
+> and managing the free procedure in error path on our own.
 >
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct gpio_chip e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct gpio_chip i = { ... };
->
-> In the following log you can see a significant difference in the code size
-> and data segment, hence in the dec segment. This log is the output
-> of the size command, before and after the code change:
->
-> before:
->    text    data     bss     dec     hex filename
->    1954     600       0    2554     9fa drivers/gpio/gpio-altera-a10sr.o
->
-> after:
->    text    data     bss     dec     hex filename
->    1655     512       0    2167     877 drivers/gpio/gpio-altera-a10sr.o
->
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: cbff0c4d27f4 ("pinctrl: add ZTE ZX pinctrl driver support")
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 
-Patch applied with Thor's review tag.
+Patch applied.
 
 Yours,
 Linus Walleij
