@@ -1,44 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: Convert to using %pOF instead of full_name
-Date: Wed, 2 Aug 2017 11:34:32 +0200
-Message-ID: <CACRpkdbwoT=+6wdm3Xyfj58--Oz_55_ymmjX=tY60behsWc7CA@mail.gmail.com>
-References: <20170718214339.7774-23-robh@kernel.org>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2 2/3] gpio: davinci: Handle the return value of
+ davinci_gpio_irq_setup function
+Date: Wed, 2 Aug 2017 16:29:16 +0530
+Message-ID: <32ca2ace-bca3-4819-d3fb-10331cd0213c@ti.com>
+References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
+ <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f51.google.com ([209.85.214.51]:35424 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752233AbdHBJeg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 05:34:36 -0400
-Received: by mail-it0-f51.google.com with SMTP id h199so20926480ith.0
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 02:34:35 -0700 (PDT)
-In-Reply-To: <20170718214339.7774-23-robh@kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:19611 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752902AbdHBK7o (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 06:59:44 -0400
+In-Reply-To: <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tien Hock Loh <thloh@altera.com>, Alexandre Courbot <gnurou@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linus.walleij@linaro.org
+Cc: t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, s-anna@ti.com, nsekhar@ti.com
 
-On Tue, Jul 18, 2017 at 11:43 PM, Rob Herring <robh@kernel.org> wrote:
 
-> Now that we have a custom printf format specifier, convert users of
-> full_name to use %pOF instead. This is preparation to remove storing
-> of the full path string for each node.
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Tien Hock Loh <thloh@altera.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Gregory Fong <gregory.0xf0@gmail.com>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
 
-Patch applied.
+On Thursday 20 July 2017 03:12 PM, Keerthy wrote:
+> Currently davinci_gpio_irq_setup return value is ignored. Handle the
+> return value appropriately.
 
-Yours,
-Linus Walleij
+Linus,
+
+Any comments on this? Sorry if i pinged too soon. The rest 2 of this
+series were pulled by you. So just wanted to check on this one if you
+had specific comments.
+
+Regards,
+Keerthy
+
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  drivers/gpio/gpio-davinci.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index 27499ec..d6fb1ce 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -237,7 +237,10 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>  		goto err;
+>  
+>  	platform_set_drvdata(pdev, chips);
+> -	davinci_gpio_irq_setup(pdev);
+> +	ret = davinci_gpio_irq_setup(pdev);
+> +	if (ret)
+> +		goto err;
+> +
+>  	return 0;
+>  
+>  err:
+> 
