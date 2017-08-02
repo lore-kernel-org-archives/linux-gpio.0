@@ -1,28 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3] gpio: mockup: use irq_sim
-Date: Wed, 2 Aug 2017 13:34:50 +0200
-Message-ID: <CACRpkdaPxNHRu9vtB-h1v39WDZYscLWxDUeS8d+6mTQEZSjv=w@mail.gmail.com>
-References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl> <1500466814-32679-4-git-send-email-brgl@bgdev.pl>
+Subject: Re: [PATCH 1/6] gpio: sta2x11: use devres for irq generic chip
+Date: Wed, 2 Aug 2017 13:38:13 +0200
+Message-ID: <CACRpkdbb=0p0TTP2ThYTi+7fYdJnmUptSnnhi1712DnxPty5aw@mail.gmail.com>
+References: <20170802075126.17637-1-brgl@bgdev.pl> <20170802075126.17637-2-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1500466814-32679-4-git-send-email-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:34078 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752335AbdHBLiP (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 07:38:15 -0400
+Received: by mail-io0-f174.google.com with SMTP id o9so19393612iod.1
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 04:38:14 -0700 (PDT)
+In-Reply-To: <20170802075126.17637-2-brgl@bgdev.pl>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Jul 19, 2017 at 2:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Wed, Aug 2, 2017 at 9:51 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> Shrink the driver by removing the code dealing with dummy interrupts
-> and replacing it with calls to the irq_sim API.
+> Use resource managed variants of irq_alloc_generic_chip() and
+> irq_setup_generic_chip().
 >
 > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-You can definately merge this along with the simulator into the IRQchip
-subsystem.
+Patch applied.
 
 Yours,
 Linus Walleij
