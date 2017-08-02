@@ -1,67 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: bcm2835: constify gpio_chip structure
-Date: Wed, 2 Aug 2017 10:25:50 +0200
-Message-ID: <CACRpkdZCJzqKnHDFy4ga6n-NMMs21m80_i1=O_2VPua4yx3rfg@mail.gmail.com>
-References: <20170711180339.GA17806@embeddedgus>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 4/6] gpio: mxc: use devres for irq generic chip
+Date: Wed, 2 Aug 2017 10:26:11 +0200
+Message-ID: <CAMRc=Mey6vJB1sgv7MJ79C_fPSqjb8j23A=eUPjh0is61K0wUQ@mail.gmail.com>
+References: <20170802075126.17637-1-brgl@bgdev.pl> <20170802075126.17637-5-brgl@bgdev.pl>
+ <2153314.vmO4TSUiTO@ws-stein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170711180339.GA17806@embeddedgus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:34066 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752161AbdHBI0M (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:26:12 -0400
+Received: by mail-qt0-f171.google.com with SMTP id s6so22972379qtc.1
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 01:26:12 -0700 (PDT)
+In-Reply-To: <2153314.vmO4TSUiTO@ws-stein>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jul 11, 2017 at 8:03 PM, Gustavo A. R. Silva
-<garsilva@embeddedor.com> wrote:
+2017-08-02 10:09 GMT+02:00 Alexander Stein
+<alexander.stein@systec-electronic.com>:
+> Hi,
+>
+> On Wednesday 02 August 2017 09:51:24, Bartosz Golaszewski wrote:
+>> Use resource managed variants of irq_alloc_generic_chip() and
+>> irq_setup_generic_chip().
+>
+> Is this really useful for drivers which can only be built-in? This is probably
+> valid for the other drives as well.
+>
+> Best regards,
+> Alexander
+>
 
-> This structure is only used to copy into other structure, so declare
-> it as const.
->
-> This issue was detected using Coccinelle and the following semantic patch:
->
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct gpio_chip i@p = { ... };
->
-> @ok@
-> identifier r.i;
-> expression e;
-> position p;
-> @@
-> e = i@p;
->
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> struct gpio_chip e;
-> @@
-> e@i@p
->
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct gpio_chip i = { ... };
->
-> In the following log you can see a significant difference in the code size
-> and data segment, hence in the dec segment. This log is the output
-> of the size command, before and after the code change:
->
-> before:
->    text    data     bss     dec     hex filename
->   18958    9000     128   28086    6db6 drivers/pinctrl/bcm/pinctrl-bcm2835.o
->
-> after:
->    text    data     bss     dec     hex filename
->   18764    8912     128   27804    6c9c drivers/pinctrl/bcm/pinctrl-bcm2835.o
->
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+gpio-pch and gpio-ml-ioh are loadable and they leak the resources
+allocated with these routines. Other drivers affected by this series
+already use other devm_*() functions and these changes just make them
+more consistent.
 
-Patch applied with Eric's ACK.
-
-Yours,
-Linus Walleij
+Thanks,
+Bartosz
