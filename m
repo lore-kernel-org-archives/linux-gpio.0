@@ -1,178 +1,114 @@
-From: Anton Sviridenko <anton@corp.bluecherry.net>
-Subject: [PATCH] [media] solo6x10: export hardware GPIO pins 8:31 to gpiolib
- interface
-Date: Wed, 2 Aug 2017 18:17:02 +0400
-Message-ID: <20170802141659.GA31617@magpie-gentoo>
+From: Eric Schwarz <eas@sw-optimization.com>
+Subject: Re: [PATCH 0/3] FPGA Manager support for FPP via FT232H FT245-FIFO
+Date: Wed, 02 Aug 2017 17:30:36 +0200
+Message-ID: <ff3124e052defa1cc562847b6a65df37@sw-optimization.com>
+References: <1499374158-12388-1-git-send-email-agust@denx.de>
+ <42304c20fd460f456ef588df0b97a593@sw-optimization.com>
+ <CANk1AXRJJ1seMv0eJmgTrcax+Y-vFyw=XfrQH+8Dd3TGG+jZ0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+In-Reply-To: <CANk1AXRJJ1seMv0eJmgTrcax+Y-vFyw=XfrQH+8Dd3TGG+jZ0g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey.utkin@corp.bluecherry.net>, Ismael Luceno <ismael@iodev.co.uk>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+To: Alan Tull <atull@kernel.org>
+Cc: Anatolij Gustschin <agust@denx.de>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Moritz Fischer <moritz.fischer@ettus.com>, linux-gpio@vger.kernel.org, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-fpga-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-24 GPIO pins from 32 available on solo6x10 chips are exported
-to gpiolib. First 8 GPIOs are reserved for internal use on capture card
-boards, GPIOs in range 8:15 are configured as outputs to control relays,
-remaining 16:31 are configured as inputs to read sensor states.
-Now with this patch userspace DVR software can switch relays and read
-sensor states when GPIO extension cards are attached to Softlogic solo6x10
-based video capture cards.
+Hello Alan,
 
-Signed-off-by: Anton Sviridenko <anton@corp.bluecherry.net>
----
- drivers/media/pci/solo6x10/solo6x10-gpio.c | 97 ++++++++++++++++++++++++++++++
- drivers/media/pci/solo6x10/solo6x10.h      |  5 ++
- 2 files changed, 102 insertions(+)
+many thanks for your response.
+Well, I am following the whole discussion from the very start and for my 
+taste it is too superficial - don't know whether this is the right 
+wording. Please get me right. We need some kind of implementation 
+specification or a sample way on how to implement stuff. At some point I 
+honestly lost track, thus I was asking for a summary so in the end the 
+result is what we want. If it is clear to everyone what shall be done it 
+should not be kind of a big deal to quickly sum it up which I/we would 
+highly appreciate.
 
-diff --git a/drivers/media/pci/solo6x10/solo6x10-gpio.c b/drivers/media/pci/solo6x10/solo6x10-gpio.c
-index 6d3b4a36bc11..3d0d1aa2f6a8 100644
---- a/drivers/media/pci/solo6x10/solo6x10-gpio.c
-+++ b/drivers/media/pci/solo6x10/solo6x10-gpio.c
-@@ -57,6 +57,9 @@ static void solo_gpio_mode(struct solo_dev *solo_dev,
- 			ret |= 1 << port;
- 	}
- 
-+	/* Enable GPIO[31:16] */
-+	ret |= 0xffff0000;
-+
- 	solo_reg_write(solo_dev, SOLO_GPIO_CONFIG_1, ret);
- }
- 
-@@ -90,16 +93,110 @@ static void solo_gpio_config(struct solo_dev *solo_dev)
- 
- 	/* Initially set relay status to 0 */
- 	solo_gpio_clear(solo_dev, 0xff00);
-+
-+	/* Set input pins direction */
-+	solo_gpio_mode(solo_dev, 0xffff0000, 0);
-+}
-+
-+#ifdef CONFIG_GPIOLIB
-+/* Pins 0-7 are not exported, because it seems from code above they are
-+ * used for internal purposes. So offset 0 corresponds to pin 8, therefore
-+ * offsets 0-7 are relay GPIOs, 8-23 - input GPIOs.
-+ */
-+static int solo_gpiochip_get_direction(struct gpio_chip *chip,
-+				       unsigned int offset)
-+{
-+	int ret, mode;
-+	struct solo_dev *solo_dev = gpiochip_get_data(chip);
-+
-+	if (offset < 8) {
-+		ret = solo_reg_read(solo_dev, SOLO_GPIO_CONFIG_0);
-+		mode = 3 & (ret >> ((offset + 8) * 2));
-+	} else {
-+		ret = solo_reg_read(solo_dev, SOLO_GPIO_CONFIG_1);
-+		mode =  1 & (ret >> (offset - 8));
-+	}
-+
-+	if (!mode)
-+		return 1;
-+	else if (mode == 1)
-+		return 0;
-+
-+	return -1;
- }
- 
-+static int solo_gpiochip_direction_input(struct gpio_chip *chip,
-+					 unsigned int offset)
-+{
-+	return -1;
-+}
-+
-+static int solo_gpiochip_direction_output(struct gpio_chip *chip,
-+					  unsigned int offset, int value)
-+{
-+	return -1;
-+}
-+
-+static int solo_gpiochip_get(struct gpio_chip *chip,
-+						unsigned int offset)
-+{
-+	int ret;
-+	struct solo_dev *solo_dev = gpiochip_get_data(chip);
-+
-+	ret = solo_reg_read(solo_dev, SOLO_GPIO_DATA_IN);
-+
-+	return 1 & (ret >> (offset + 8));
-+}
-+
-+static void solo_gpiochip_set(struct gpio_chip *chip,
-+						unsigned int offset, int value)
-+{
-+	struct solo_dev *solo_dev = gpiochip_get_data(chip);
-+
-+	if (value)
-+		solo_gpio_set(solo_dev, 1 << (offset + 8));
-+	else
-+		solo_gpio_clear(solo_dev, 1 << (offset + 8));
-+}
-+#endif
-+
- int solo_gpio_init(struct solo_dev *solo_dev)
- {
-+	int ret;
-+
- 	solo_gpio_config(solo_dev);
-+#ifdef CONFIG_GPIOLIB
-+	solo_dev->gpio_dev.label = SOLO6X10_NAME"_gpio";
-+	solo_dev->gpio_dev.parent = &solo_dev->pdev->dev;
-+	solo_dev->gpio_dev.owner = THIS_MODULE;
-+	solo_dev->gpio_dev.base = -1;
-+	solo_dev->gpio_dev.ngpio = 24;
-+	solo_dev->gpio_dev.can_sleep = 0;
-+
-+	solo_dev->gpio_dev.get_direction = solo_gpiochip_get_direction;
-+	solo_dev->gpio_dev.direction_input = solo_gpiochip_direction_input;
-+	solo_dev->gpio_dev.direction_output = solo_gpiochip_direction_output;
-+	solo_dev->gpio_dev.get = solo_gpiochip_get;
-+	solo_dev->gpio_dev.set = solo_gpiochip_set;
-+
-+	ret = gpiochip_add_data(&solo_dev->gpio_dev, solo_dev);
-+
-+	if (ret) {
-+		solo_dev->gpio_dev.label = NULL;
-+		return -1;
-+	}
-+#endif
- 	return 0;
- }
- 
- void solo_gpio_exit(struct solo_dev *solo_dev)
- {
-+#ifdef CONFIG_GPIOLIB
-+	if (solo_dev->gpio_dev.label) {
-+		gpiochip_remove(&solo_dev->gpio_dev);
-+		solo_dev->gpio_dev.label = NULL;
-+	}
-+#endif
- 	solo_gpio_clear(solo_dev, 0x30);
- 	solo_gpio_config(solo_dev);
- }
-diff --git a/drivers/media/pci/solo6x10/solo6x10.h b/drivers/media/pci/solo6x10/solo6x10.h
-index 3f8da5e8c430..3a1893ae2dad 100644
---- a/drivers/media/pci/solo6x10/solo6x10.h
-+++ b/drivers/media/pci/solo6x10/solo6x10.h
-@@ -31,6 +31,7 @@
- #include <linux/atomic.h>
- #include <linux/slab.h>
- #include <linux/videodev2.h>
-+#include <linux/gpio/driver.h>
- 
- #include <media/v4l2-dev.h>
- #include <media/v4l2-device.h>
-@@ -199,6 +200,10 @@ struct solo_dev {
- 	u32			irq_mask;
- 	u32			motion_mask;
- 	struct v4l2_device	v4l2_dev;
-+#ifdef CONFIG_GPIOLIB
-+	/* GPIO */
-+	struct gpio_chip	gpio_dev;
-+#endif
- 
- 	/* tw28xx accounting */
- 	u8			tw2865, tw2864, tw2815;
--- 
-2.13.0
+Many thanks
+Eric
+
+Am 02.08.2017 16:16, schrieb Alan Tull:
+
+> On Wed, Aug 2, 2017 at 6:36 AM, Eric Schwarz <eas@sw-optimization.com> 
+> wrote:
+> 
+>> Dear all,
+>> 
+>> DENX Software Engineering develops and brings this driver to mainline 
+>> on
+>> behalf of us (ARRI*).
+>> 
+>> Since there was a lot of discussion around this patch series I would 
+>> highly
+>> appreciate if someone could sum up what needs to be changed in detail 
+>> in
+>> order to get this driver into the mainline as I am used it from the 
+>> other
+>> "line-by-line" reviews. I understood that the approach is not generic 
+>> enough
+>> - please correct me if I am wrong on that point. We somehow need a
+>> commitment that if we change it to another way that the whole 
+>> discussion
+>> does not start from scratch.
+>> 
+>> Many thanks
+>> Eric
+> 
+> Hi Eric,
+> 
+> Patchwork collects all email response to patchsets posted on this
+> mailing list [1] so that could be helpful for you here.
+> 
+> Alan
+> 
+> [1] https://patchwork.kernel.org/project/linux-fpga/list/?submitter=769
+> 
+> * I am just writing from my private e-mail address since Outlook 
+> obviously
+> renders all my mails as HTML despite what I am configuring.
+> 
+> [1]... http://www.arri.com
+> 
+> Am 06.07.2017 22:49, schrieb Anatolij Gustschin:
+> 
+> This series adds support for fast passive parallel (FPP) Altera
+> FPGA configuration using FTDI FT232H chip in FT245-FIFO mode.
+> It has been used to configure Arria 10 FPGAs.
+> 
+> Patch 1 adds an FT232H MFD driver with common functions that
+> can be used for FT232H USB-GPIO/I2C/SPI master adapter drivers.
+> Currently it is used for FT232H GPIO support (in patch 2) and
+> for FT245 FIFO transfers in FPP FPGA manager driver in patch 3.
+> Driver support for FT232H USB-I2C/SPI master adapters can be
+> added later.
+> 
+> Patch 2 adds a simple GPIO driver supporting four FT232H CBUS GPIOs.
+> 
+> Patch 3 adds an FPGA Manager driver for Altera FPP FPGA configuration
+> via FT232H FT245-FIFO interface.
+> 
+> Anatolij Gustschin (3):
+> mfd: Add support for FTDI FT232H devices
+> gpio: Add FT232H CBUS GPIO driver
+> fpga manager: Add FT232H driver for Altera FPP
+> 
+> drivers/fpga/Kconfig          |   7 +
+> drivers/fpga/Makefile         |   1 +
+> drivers/fpga/ftdi-fifo-fpp.c  | 569
+> ++++++++++++++++++++++++++++++++++++++++++
+> drivers/gpio/Kconfig          |  11 +
+> drivers/gpio/Makefile         |   1 +
+> drivers/gpio/gpio-ftdi-cbus.c | 251 +++++++++++++++++++
+> drivers/mfd/Kconfig           |   9 +
+> drivers/mfd/Makefile          |   1 +
+> drivers/mfd/ftdi-ft232h.c     | 470 ++++++++++++++++++++++++++++++++++
+> include/linux/mfd/ftdi/ftdi.h |  71 ++++++
+> 10 files changed, 1391 insertions(+)
+> create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+> create mode 100644 drivers/gpio/gpio-ftdi-cbus.c
+> create mode 100644 drivers/mfd/ftdi-ft232h.c
+> create mode 100644 include/linux/mfd/ftdi/ftdi.h
