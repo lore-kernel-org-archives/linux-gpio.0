@@ -1,88 +1,86 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7796: Add USB2.0 host pins, groups and functions
-Date: Wed,  2 Aug 2017 21:51:09 +0900
-Message-ID: <1501678270-922-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Alan Tull <atull@kernel.org>
+Subject: Re: [PATCH 0/3] FPGA Manager support for FPP via FT232H FT245-FIFO
+Date: Wed, 2 Aug 2017 09:16:19 -0500
+Message-ID: <CANk1AXRJJ1seMv0eJmgTrcax+Y-vFyw=XfrQH+8Dd3TGG+jZ0g@mail.gmail.com>
+References: <1499374158-12388-1-git-send-email-agust@denx.de> <42304c20fd460f456ef588df0b97a593@sw-optimization.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501678270-922-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <42304c20fd460f456ef588df0b97a593@sw-optimization.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Schwarz <eas@sw-optimization.com>
+Cc: Anatolij Gustschin <agust@denx.de>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Moritz Fischer <moritz.fischer@ettus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-fpga-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Wed, Aug 2, 2017 at 6:36 AM, Eric Schwarz <eas@sw-optimization.com> wrote:
+> Dear all,
+>
+> DENX Software Engineering develops and brings this driver to mainline on
+> behalf of us (ARRI*).
+>
+> Since there was a lot of discussion around this patch series I would highly
+> appreciate if someone could sum up what needs to be changed in detail in
+> order to get this driver into the mainline as I am used it from the other
+> "line-by-line" reviews. I understood that the approach is not generic enough
+> - please correct me if I am wrong on that point. We somehow need a
+> commitment that if we change it to another way that the whole discussion
+> does not start from scratch.
+>
+> Many thanks
+> Eric
 
-This patch adds USB{0,1} (USB2.0 host) pins, groups and functions to
-R8A7796 SoC.
+Hi Eric,
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Patchwork collects all email response to patchsets posted on this
+mailing list [1] so that could be helpful for you here.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 6d3f621..2a831d3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -3788,6 +3788,23 @@ enum {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
- 
-+/* - USB0 ------------------------------------------------------------------- */
-+static const unsigned int usb0_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+static const unsigned int usb0_mux[] = {
-+	USB0_PWEN_MARK, USB0_OVC_MARK,
-+};
-+/* - USB1 ------------------------------------------------------------------- */
-+static const unsigned int usb1_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+static const unsigned int usb1_mux[] = {
-+	USB1_PWEN_MARK, USB1_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
-@@ -4088,6 +4105,8 @@ enum {
- 	SH_PFC_PIN_GROUP(ssi9_data_b),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_a),
- 	SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+	SH_PFC_PIN_GROUP(usb0),
-+	SH_PFC_PIN_GROUP(usb1),
- };
- 
- static const char * const audio_clk_groups[] = {
-@@ -4518,6 +4537,14 @@ enum {
- 	"ssi9_ctrl_b",
- };
- 
-+static const char * const usb0_groups[] = {
-+	"usb0",
-+};
-+
-+static const char * const usb1_groups[] = {
-+	"usb1",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -4562,6 +4589,8 @@ enum {
- 	SH_PFC_FUNCTION(sdhi2),
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
-+	SH_PFC_FUNCTION(usb0),
-+	SH_PFC_FUNCTION(usb1),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+Alan
+
+[1] https://patchwork.kernel.org/project/linux-fpga/list/?submitter=769
+
+
+>
+> * I am just writing from my private e-mail address since Outlook obviously
+> renders all my mails as HTML despite what I am configuring.
+>
+> [1]... http://www.arri.com
+>
+> Am 06.07.2017 22:49, schrieb Anatolij Gustschin:
+>
+>> This series adds support for fast passive parallel (FPP) Altera
+>> FPGA configuration using FTDI FT232H chip in FT245-FIFO mode.
+>> It has been used to configure Arria 10 FPGAs.
+>>
+>> Patch 1 adds an FT232H MFD driver with common functions that
+>> can be used for FT232H USB-GPIO/I2C/SPI master adapter drivers.
+>> Currently it is used for FT232H GPIO support (in patch 2) and
+>> for FT245 FIFO transfers in FPP FPGA manager driver in patch 3.
+>> Driver support for FT232H USB-I2C/SPI master adapters can be
+>> added later.
+>>
+>> Patch 2 adds a simple GPIO driver supporting four FT232H CBUS GPIOs.
+>>
+>> Patch 3 adds an FPGA Manager driver for Altera FPP FPGA configuration
+>> via FT232H FT245-FIFO interface.
+>>
+>> Anatolij Gustschin (3):
+>> mfd: Add support for FTDI FT232H devices
+>> gpio: Add FT232H CBUS GPIO driver
+>> fpga manager: Add FT232H driver for Altera FPP
+>>
+>> drivers/fpga/Kconfig          |   7 +
+>> drivers/fpga/Makefile         |   1 +
+>> drivers/fpga/ftdi-fifo-fpp.c  | 569
+>> ++++++++++++++++++++++++++++++++++++++++++
+>> drivers/gpio/Kconfig          |  11 +
+>> drivers/gpio/Makefile         |   1 +
+>> drivers/gpio/gpio-ftdi-cbus.c | 251 +++++++++++++++++++
+>> drivers/mfd/Kconfig           |   9 +
+>> drivers/mfd/Makefile          |   1 +
+>> drivers/mfd/ftdi-ft232h.c     | 470 ++++++++++++++++++++++++++++++++++
+>> include/linux/mfd/ftdi/ftdi.h |  71 ++++++
+>> 10 files changed, 1391 insertions(+)
+>> create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+>> create mode 100644 drivers/gpio/gpio-ftdi-cbus.c
+>> create mode 100644 drivers/mfd/ftdi-ft232h.c
+>> create mode 100644 include/linux/mfd/ftdi/ftdi.h
