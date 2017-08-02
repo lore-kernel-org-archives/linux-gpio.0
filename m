@@ -1,34 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] simulated interrupts
-Date: Wed, 2 Aug 2017 13:32:48 +0200
-Message-ID: <CACRpkdYRcsr16YBiooDn5D4p+4qB3yhAdE-+VgBBSD4kCCO-Hw@mail.gmail.com>
-References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl>
- <alpine.DEB.2.20.1707191424190.2286@nanos> <CAMRc=McO4L59zDT4QJSmqsdOpLfAv4NDyjddd57Prz2hjE5zWw@mail.gmail.com>
- <alpine.DEB.2.20.1707191557390.2286@nanos> <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
+Subject: Re: [PATCH 3/3] gpio: mockup: use irq_sim
+Date: Wed, 2 Aug 2017 13:34:50 +0200
+Message-ID: <CACRpkdaPxNHRu9vtB-h1v39WDZYscLWxDUeS8d+6mTQEZSjv=w@mail.gmail.com>
+References: <1500466814-32679-1-git-send-email-brgl@bgdev.pl> <1500466814-32679-4-git-send-email-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7c98e6b0-3dbd-52f7-79d5-4ec64bf8a66e@arm.com>
+In-Reply-To: <1500466814-32679-4-git-send-email-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Jul 19, 2017 at 4:19 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+On Wed, Jul 19, 2017 at 2:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> On a slightly tangential subject, there is another aspect that I thought
-> of implementing for a while, but always ended up just relying on a quick
-> hack: forcing the injection of an actual interrupt. A number of
-> interrupt controllers have the ability to make an interrupt pending, for
-> it to be handled as if a device had actually triggered it.
+> Shrink the driver by removing the code dealing with dummy interrupts
+> and replacing it with calls to the irq_sim API.
+>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-This would be especially useful for a class of embedded systems that
-are woken up from deep sleep by an asynchronous interrupt controller.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Usually GPIO(-ish) lines are armed and the system put to sleep, and
-when it comes up, the information of what line woke it up is there in a
-special register, but the actual (synchronous) interrupt line is no longer
-asserted or edge triggered, so an interrupt need to be inserted.
+You can definately merge this along with the simulator into the IRQchip
+subsystem.
 
 Yours,
 Linus Walleij
