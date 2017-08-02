@@ -1,42 +1,33 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: zte: fix 'functions' allocation in zx_pinctrl_build_state()
-Date: Wed, 2 Aug 2017 10:31:59 +0200
-Message-ID: <CACRpkdbXYOv8FdbWoiwL-4mhBN5JSP3D8iMMjFM1H2u-vgUC-A@mail.gmail.com>
-References: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH 4/6] gpio: mxc: use devres for irq generic chip
+Date: Wed, 2 Aug 2017 11:32:23 +0300
+Message-ID: <CAHp75Vd_AG_nHSN=GYW95yh0AHmQGuUdJTFC-6iCjw-Xa9vHrw@mail.gmail.com>
+References: <20170802075126.17637-1-brgl@bgdev.pl> <20170802075126.17637-5-brgl@bgdev.pl>
+ <2153314.vmO4TSUiTO@ws-stein>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f172.google.com ([209.85.223.172]:38588 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751929AbdHBIcB (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:32:01 -0400
-Received: by mail-io0-f172.google.com with SMTP id g13so17532034ioj.5
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 01:32:01 -0700 (PDT)
-In-Reply-To: <1500212008-29321-1-git-send-email-shawnguo@kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37873 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751950AbdHBIcY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:32:24 -0400
+In-Reply-To: <2153314.vmO4TSUiTO@ws-stein>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>, Baoyou Xie <xie.baoyou@sanechips.com.cn>, Xin Zhou <zhou.xin8@sanechips.com.cn>, Jun Nie <jun.nie@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>
+To: Alexander Stein <alexander.stein@systec-electronic.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sun, Jul 16, 2017 at 3:33 PM, Shawn Guo <shawnguo@kernel.org> wrote:
+On Wed, Aug 2, 2017 at 11:09 AM, Alexander Stein
+<alexander.stein@systec-electronic.com> wrote:
+> On Wednesday 02 August 2017 09:51:24, Bartosz Golaszewski wrote:
+>> Use resource managed variants of irq_alloc_generic_chip() and
+>> irq_setup_generic_chip().
+>
+> Is this really useful for drivers which can only be built-in?
 
-> From: Shawn Guo <shawn.guo@linaro.org>
->
-> It fixes the following Smatch static check warning:
->
->  drivers/pinctrl/zte/pinctrl-zx.c:338 zx_pinctrl_build_state()
->  warn: passing devm_ allocated variable to kfree.
->
-> As we will be calling krealloc() on pointer 'functions', which means
-> kfree() will be called in there, devm_kzalloc() shouldn't be used with
-> the allocation in the first place.  Fix the warning by calling kcalloc()
-> and managing the free procedure in error path on our own.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Fixes: cbff0c4d27f4 ("pinctrl: add ZTE ZX pinctrl driver support")
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+But you still can unbind the driver and its ->remove() will be called
+(in case of no remove, devres still on the table), right?
 
-Patch applied.
-
-Yours,
-Linus Walleij
+-- 
+With Best Regards,
+Andy Shevchenko
