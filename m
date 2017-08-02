@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/4] pinctrl: aspeed: g4: Add USB device and host support
-Date: Wed, 2 Aug 2017 10:38:03 +0200
-Message-ID: <CACRpkdZxx3-1XyZhnZoxaRtOvDgZP9_as8ceoz0_M9KvW-AoKg@mail.gmail.com>
-References: <20170718052453.14316-1-andrew@aj.id.au> <20170718052453.14316-4-andrew@aj.id.au>
+Subject: Re: [PATCH v2 4/4] pinctrl: aspeed: g5: Add USB device and host support
+Date: Wed, 2 Aug 2017 10:38:55 +0200
+Message-ID: <CACRpkda1ER+4PEC_9zZhzA2o3Eb32eyec6mNYVW8c_8A+oX0mQ@mail.gmail.com>
+References: <20170718052453.14316-1-andrew@aj.id.au> <20170718052453.14316-5-andrew@aj.id.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:37276 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbdHBIiF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:38:05 -0400
-Received: by mail-it0-f50.google.com with SMTP id v127so21120760itd.0
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 01:38:05 -0700 (PDT)
-In-Reply-To: <20170718052453.14316-4-andrew@aj.id.au>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:35006 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752449AbdHBIi5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 2 Aug 2017 04:38:57 -0400
+Received: by mail-io0-f182.google.com with SMTP id m88so17635310iod.2
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Aug 2017 01:38:56 -0700 (PDT)
+In-Reply-To: <20170718052453.14316-5-andrew@aj.id.au>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Andrew Jeffery <andrew@aj.id.au>
@@ -20,16 +20,10 @@ Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Joel 
 
 On Tue, Jul 18, 2017 at 7:24 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
 
-> Implement the AST2400 USB functions as described by the devicetree
-> bindings. Three ports are fully documented in the datasheet and exposed
-> through the bindings and pinctrl, though there are remnants of
-> documentation for a fourth port muxed with GPIO pins GPIOQ6 and GPIOQ7.
-> The implementation is updated to reflect this but the function and
-> group are not exposed.
->
-> Disregarding the mostly undocumented fourth port, the USB functions are
-> an outlier with respect to the rest of the muxed functionality on the
-> AST2400 as GPIO is not supported on these pins.
+> Implement the AST2500 USB functions as described by the devicetree
+> bindings. The AST2500 exposes five USB controllers through two USB
+> ports. Similar to the AST2400, the pins exposing USB are outliers with
+> respect to the rest of the pinmux as they not capable of GPIO.
 >
 > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
