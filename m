@@ -1,29 +1,36 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH] pinctrl: intel: Add Intel Denverton pin controller support
-Date: Thu, 3 Aug 2017 20:00:06 +0300
-Message-ID: <CAHp75Vdn_76PHpa+0o0hP==rEh2Y2JrqVLNgkhaOn=ED8RWQMw@mail.gmail.com>
-References: <20170803163602.61121-1-mika.westerberg@linux.intel.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: spmi-gpio: Add pmi8994 gpio support
+Date: Thu, 3 Aug 2017 15:01:41 -0500
+Message-ID: <20170803200141.qvzj35zz4nup3ich@rob-hp-laptop>
+References: <1501137036-20155-1-git-send-email-vivek.gautam@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:35076 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751966AbdHCRAJ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 13:00:09 -0400
-In-Reply-To: <20170803163602.61121-1-mika.westerberg@linux.intel.com>
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:37435 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbdHCUBo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 16:01:44 -0400
+Content-Disposition: inline
+In-Reply-To: <1501137036-20155-1-git-send-email-vivek.gautam@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, linus.walleij@linaro.org, andy.gross@linaro.org, linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 3, 2017 at 7:36 PM, Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
-> This driver adds pinctrl/GPIO support for Intel Denverton SoC. The GPIO
-> controller is based on the same hardware design that is already used in
-> Intel Sunrisepoint so we leverage the core driver here.
+On Thu, Jul 27, 2017 at 12:00:35PM +0530, Vivek Gautam wrote:
+> Update the bindings doc and driver for pmi8994-gpio devices.
+> 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> ---
+> 
+> - Have been using this patch-set on db820c [1] for extcon with
+>   usb controller. The usb controller uses one of these gpios
+>   for usb-id/vbus detection.
+> 
+> [1] https://github.com/boddob/linux/tree/for-qcomlt/4.13rc2-merged
+> 
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 2 ++
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 1 +
+>  2 files changed, 3 insertions(+)
 
-I would like to double check a pin list.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Rob Herring <robh@kernel.org>
