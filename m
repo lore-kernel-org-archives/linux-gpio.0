@@ -1,25 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/2] Documentation: dt: pinctrl: Add pmi8994 gpio support
-Date: Thu, 3 Aug 2017 15:31:29 +0200
-Message-ID: <CACRpkdZuEsiT4vLXACR=gcWw_EZj5g-YCZ7_bKUKNjC4ktaajg@mail.gmail.com>
-References: <1501247893-30226-1-git-send-email-vivek.gautam@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
+Date: Thu, 3 Aug 2017 11:17:48 -0500
+Message-ID: <20170803161748.u7ier3kt3xmm25jw@rob-hp-laptop>
+References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1501247893-30226-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, rnayak@codeaurora.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38555 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751271AbdHCQRv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 12:17:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: ssantosh@kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, s-anna@ti.com, nsekhar@ti.com
 
-On Fri, Jul 28, 2017 at 3:18 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
+On Wed, Jul 26, 2017 at 12:15:23PM +0530, Keerthy wrote:
+> The patch adds keystone-k2g compatible, specific properties and
+> an example.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+> 
+> Changes in v3:
+> 
+>   * Added details about family of SoCs corresponding to compatibles.
+> 
+>  .../devicetree/bindings/gpio/gpio-davinci.txt      | 40 +++++++++++++++++++++-
+>  1 file changed, 39 insertions(+), 1 deletion(-)
 
-> Update the binding doc for qcom pmi8994-gpio devices.
->
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-
-Patch applied with Stephen's review tag.
-
-Yours,
-Linus Walleij
+Acked-by: Rob Herring <robh@kernel.org>
