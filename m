@@ -1,196 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] tools/gpio: add gpio util to get or set gpio lines
-Date: Thu, 3 Aug 2017 09:56:00 +0200
-Message-ID: <CACRpkdYMfaZDd3Tp-MfdtEpYLYWFJgGVKzwhjp1-swoufuzWrQ@mail.gmail.com>
-References: <20170724143218.8510-1-mnhu@prevas.dk>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/1] gpio: core: Decouple open drain/source flag with
+ active low/high
+Date: Thu, 3 Aug 2017 10:14:32 +0200
+Message-ID: <CACRpkdYqj68NpqedyPY2P6o_-JcVaw=4xzh7ccw6t-2gcy5sqg@mail.gmail.com>
+References: <1491485752-28030-1-git-send-email-ldewangan@nvidia.com>
+ <CACRpkdaK1ut-1=NtqqL15QuQV+P2n8XidNqVspOfu+7x=XMvog@mail.gmail.com>
+ <20170719131640.GA2533@localhost> <596F73BC.1000305@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:37318 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751043AbdHCH4C (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 03:56:02 -0400
-Received: by mail-it0-f50.google.com with SMTP id v127so5340414itd.0
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Aug 2017 00:56:02 -0700 (PDT)
-In-Reply-To: <20170724143218.8510-1-mnhu@prevas.dk>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <596F73BC.1000305-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Johan Hovold <johan-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?Q?Martin_Hundeb=C3=B8ll?= <mnhu@prevas.dk>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Jul 24, 2017 at 4:32 PM, Martin Hundeb=C3=B8ll <mnhu@prevas.dk> wro=
-te:
+On Wed, Jul 19, 2017 at 4:59 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Wednesday 19 July 2017 06:55 PM, Johan Hovold wrote:
 
-> Add a new tool to set or get the value of one or more gpio lines, which
-> can as either chip offsets or line names. This makes it easier to
-> control gpio lines from user space without using the cumbersome sysfs
-> interface. It also demostrates how gpio-line-names can be used to
-> decouple software from hardware layout.
+>> I guess the latter is fine, even if it is likely to amount to a fair bit
+>> of debugging world wide.
+>>
+>> Perhaps all this can still be avoided by adding further flags and
+>> deprecating others before people start migrating to 4.12 (after all,
+>> GPIO_OPEN_DRAIN has been around since 4.4 even if there are no in-kernel
+>> users).
+>>
+>> Or we accept the binary interface breakage -- it probably is pretty rare
+>> that people update the kernel without updating the dtb. I can just
+>> update the dts on the system that broke for me, and hopefully anyone
+>> debugging this issue while updating to 4.12 will find this mail quickly.
 >
-> Signed-off-by: Martin Hundeb=C3=B8ll <mnhu@prevas.dk>
+> Yes, it breaks the older DTS with new kernel. However,  this point was
+> discussed before sending patch. As there was no user in the mainline DTs for
+> these macros, we made change.
 
-How does this relate to Bartosz userspace library libgpiod?
-Have you checked it and considered using it?
-https://github.com/brgl/libgpiod
+My operating assumption is usually "rough consensus and running code".
 
->  tools/gpio/gpio.c     | 261 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++
+If the code doesn't run, i.e. if there are regressions then we need to fix
+them.
 
-We can't have a tool simply named "gpio" it is too unspecific.
+I am not aware of any systems having picked up the flags as they were
+set before this patch, but if they exist we need to patch it of course.
 
-Come up with a better name for this, such as "gpiog-get-set" or so.
+On the other hand we don't patch theoretical compatibility issues either,
+only those that occure in practice.
 
-Maybe it should be two tools? One fo setting and one for getting a line?
+It falls back on when a DT binding is really standardized. When it is
+starting to get discussed? When the final binding is merged to the kernel
+tree? When the devicetree.org people publish it? When a big enough
+vendor ships more than 100 devices using it no matter what happened
+discussion-wise?
 
-> + * lsgpio - example on how to list the GPIO lines on a system
-> + *
-> + * Copyright (C) 2015 Linus Walleij
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms of the GNU General Public License version 2 as publis=
-hed by
-> + * the Free Software Foundation.
-> + *
-> + * Usage:
-> + *     lsgpio <-n device-name>
+All these are a bit fluid concepts, so as a result, the handling of bindings
+is a bit fluid.
 
-There is a lot of copy-paste going on here. Please fix it up.
-
-> +int print_offsets(const char *device_name, unsigned int *lines, int nlin=
-es)
-> +{
-> +       struct gpiohandle_data data;
-> +       int i, line, value, ret;
-> +
-> +       ret =3D gpiotools_gets(device_name, lines, nlines, &data);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* print value for each configured line */
-> +       printf("GPIO chip: %s\n", device_name);
-> +       for (i =3D 0; i < nlines; i++) {
-> +               line =3D lines[i];
-> +               value =3D data.values[line];
-> +               printf("\tline %i: %i\n", lines[i], value);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +int print_labels(const char *device_name, unsigned int *lines,
-> +                 const char *labels[], int nlabels)
-> +{
-> +       struct gpiohandle_data data;
-> +       int i, value, ret;
-> +       const char *label;
-> +
-> +       ret =3D gpiotools_gets(device_name, lines, nlabels, &data);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* print value for each configured label */
-> +       printf("GPIO chip: %s\n", device_name);
-> +       for (i =3D 0; i < nlabels; i++) {
-> +               label =3D labels[i];
-> +               value =3D data.values[i];
-> +               printf("\t%s: %i\n", label, value);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +int control_offsets(const char *device_name, unsigned int *lines, int nl=
-ines,
-> +                   int flags, int value)
-> +{
-> +       struct gpiohandle_data data =3D {{ value }};
-> +
-> +       if (flags & GPIOHANDLE_REQUEST_INPUT)
-> +               return print_offsets(device_name, lines, nlines);
-> +       else
-> +               return gpiotools_sets(device_name, lines, nlines, &data);
-> +}
-> +
-> +int control_labels(const char *device_name, const char *labels[], int nl=
-abels,
-> +                  int flags, int value)
-> +{
-> +       struct gpiochip_info cinfo =3D {0};
-> +       char *chrdev_name =3D NULL;
-> +       unsigned int lines[GPIOHANDLES_MAX];
-> +       int nlines =3D 0;
-> +       int ret, fd, i, j;
-> +
-> +       ret =3D asprintf(&chrdev_name, "/dev/%s", device_name);
-> +       if (ret < 0)
-> +               return -ENOMEM;
-> +
-> +       fd =3D open(chrdev_name, 0);
-> +       if (fd =3D=3D -1) {
-> +               ret =3D -errno;
-> +               fprintf(stderr, "Failed to open %s\n", chrdev_name);
-> +               goto exit_error;
-> +       }
-> +
-> +       /* Inspect this GPIO chip */
-> +       ret =3D ioctl(fd, GPIO_GET_CHIPINFO_IOCTL, &cinfo);
-> +       if (ret =3D=3D -1) {
-> +               ret =3D -errno;
-> +               perror("Failed to issue CHIPINFO IOCTL\n");
-> +               goto exit_close_error;
-> +       }
-> +
-> +       /* Loop over the lines and match info */
-> +       for (i =3D 0; i < cinfo.lines; i++) {
-> +               struct gpioline_info linfo;
-> +
-> +               memset(&linfo, 0, sizeof(linfo));
-> +               linfo.line_offset =3D i;
-> +
-> +               ret =3D ioctl(fd, GPIO_GET_LINEINFO_IOCTL, &linfo);
-> +               if (ret =3D=3D -1) {
-> +                       ret =3D -errno;
-> +                       perror("Failed to issue LINEINFO IOCTL\n");
-> +                       goto exit_close_error;
-> +               }
-> +
-> +               /* Check if line name is included requested names */
-> +               for (j =3D 0; j < nlabels; j++) {
-> +                       if (strcmp(linfo.name, labels[j]) =3D=3D 0) {
-> +                               lines[nlines++] =3D i;
-> +                               break;
-> +                       }
-> +               }
-> +       }
-> +
-> +       if (nlines =3D=3D 0)
-> +               goto exit_close_error;
-> +
-> +       if (flags & GPIOHANDLE_REQUEST_INPUT) {
-> +               print_labels(device_name, lines, labels, nlabels);
-> +       } else {
-> +               struct gpiohandle_data data =3D {{ value }};
-> +               ret =3D gpiotools_sets(device_name, lines, nlines, &data)=
-;
-> +       }
-> +
-> +exit_close_error:
-> +       if (fd >=3D 0 && close(fd) =3D=3D -1)
-> +               perror("Failed to close GPIO character device file");
-> +
-> +exit_error:
-> +       free(chrdev_name);
-> +
-> +       return ret;
-> +}
-
-All of this also looks copypasted.
-
-Please go through your program and make something very
-specific and to the point that does exactly what you want instead of
-randomly reusing lsgpio.
+If we really want DT bindings to have a point when they are "set in stone"
+then we need to talk to devicetree.org about that. But in reality I think all
+standards ever are a bit fuzzy around the edges.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
