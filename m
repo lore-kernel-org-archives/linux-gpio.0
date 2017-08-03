@@ -1,35 +1,30 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] Documentation: dt: pinctrl: Add pmi8994 gpio
- support
-Date: Thu, 3 Aug 2017 18:06:57 -0500
-Message-ID: <20170803230657.gyufjtiirkf3hzjd@rob-hp-laptop>
-References: <1501247893-30226-1-git-send-email-vivek.gautam@codeaurora.org>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: mt2712: add binding document
+Date: Thu, 3 Aug 2017 18:40:54 -0500
+Message-ID: <20170803234054.wykfqjqhceh5phcv@rob-hp-laptop>
+References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
+ <1501489333-23145-2-git-send-email-zhiyong.tao@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34275 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751804AbdHCXk4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 19:40:56 -0400
 Content-Disposition: inline
-In-Reply-To: <1501247893-30226-1-git-send-email-vivek.gautam@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, linus.walleij@linaro.org, andy.gross@linaro.org, linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org, rnayak@codeaurora.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1501489333-23145-2-git-send-email-zhiyong.tao@mediatek.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc: linus.walleij@linaro.org, mark.rutland@arm.com, matthias.bgg@gmail.com, srv_heupstream@mediatek.com, liguo.zhang@mediatek.com, yingjoe.chen@mediatek.com, hongkun.cao@mediatek.com, biao.huang@mediatek.com, yt.shen@mediatek.com, hongzhou.yang@mediatek.com, erin.lo@mediatek.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
 
-On Fri, Jul 28, 2017 at 06:48:12PM +0530, Vivek Gautam wrote:
-> Update the binding doc for qcom pmi8994-gpio devices.
+On Mon, Jul 31, 2017 at 04:22:11PM +0800, Zhiyong Tao wrote:
+> The commit adds mt2712 compatible node in binding document.
 > 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 > ---
-> 
-> - Have been testing this patch-set on db820c for extcon with
->   usb controller. The usb controller uses one of these gpios
->   for usb-id/vbus detection.
-> 
-> Changes since v1:
->  - Dropped "qcom,pmi8994-gpio" compatible addition to the driver
->    since we can use the generic "qcom,spmi-gpio" compatible.
->  - Sorted to add pmi8994-gpio in alphabatical order.
-> 
->  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../devicetree/bindings/pinctrl/pinctrl-mt65xx.txt |    1 +
+>  1 file changed, 1 insertion(+)
 
 Acked-by: Rob Herring <robh@kernel.org>
+
