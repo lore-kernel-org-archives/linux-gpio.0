@@ -1,44 +1,41 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [linux-sunxi] [PATCH] pinctrl: sunxi: fix V3s pinctrl driver IRQ
- bank base
-Date: Fri, 4 Aug 2017 10:23:59 +0800
-Message-ID: <CAGb2v64BBJrr+yo-7n1DkZjYvdB2ws+0OHD_Dwt_MCS85-U19Q@mail.gmail.com>
-References: <20170801145416.61854-1-icenowy@aosc.io>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: check ops->pin_config_set in pinconf_set_config()
+Date: Fri,  4 Aug 2017 11:59:32 +0900
+Message-ID: <1501815572-2792-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:36010 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751891AbdHDCYX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 22:24:23 -0400
-In-Reply-To: <20170801145416.61854-1-icenowy@aosc.io>
+Received: from conuserg-08.nifty.com ([210.131.2.75]:21640 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751845AbdHDDAD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 3 Aug 2017 23:00:03 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>, stable@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
 
-On Tue, Aug 1, 2017 at 10:54 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> The V3s pin controller doesn't have the bank 0 (starts at address
-> 0x200), which is like A33. However, this is not workarounded when
+pinconf_set_config() is called by pinctrl_gpio_set_config().
+If a GPIO driver is backed by a pinctrl driver and it does not
+support .pin_config_set() hook, it causes NULL pointer dereference.
 
-                                           was not worked around
+Fixes: 15381bc7c7f5 ("pinctrl: Allow configuration of pins from gpiolib based drivers")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-"Work around" is a verb phrase. "Workaround" is a noun.
+ drivers/pinctrl/pinconf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> developing the driver, which makes IRQ not working.
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 92f363793f35..d3fe14394b73 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -205,7 +205,7 @@ int pinconf_set_config(struct pinctrl_dev *pctldev, unsigned pin,
+ 	const struct pinconf_ops *ops;
+ 
+ 	ops = pctldev->desc->confops;
+-	if (!ops)
++	if (!ops || !ops->pin_config_set)
+ 		return -ENOTSUPP;
+ 
+ 	return ops->pin_config_set(pctldev, pin, configs, nconfigs);
+-- 
+2.7.4
 
-                               broke the IRQs.
-
->
-> Fix the IRQ bank base.
->
-> Fixes: 56d9e4a76039 ("pinctrl: sunxi: add driver for V3s SoC")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-
-Confirmed this is the same thing we saw on A33.
-The fix is the same.
-
-Apart from the typo / grammar errors above,
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
