@@ -1,48 +1,111 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: add __rcu annotations to fix sparse warnings
-Date: Fri,  4 Aug 2017 13:52:05 +0900
-Message-ID: <1501822325-25512-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [v4 2/2] ARM: dts: keystone-k2g: Add gpio nodes
+Date: Fri, 4 Aug 2017 11:16:30 +0530
+Message-ID: <e510748a-9834-6c0e-0f27-1b0d6e68371c@ti.com>
+References: <1501825539-19110-1-git-send-email-j-keerthy@ti.com>
+ <1501825539-19110-2-git-send-email-j-keerthy@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1501825539-19110-2-git-send-email-j-keerthy@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: ssantosh@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Sparse reports "warning: incorrect type in assignment (different
-address spaces)".
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
- drivers/pinctrl/core.c   | 2 +-
- drivers/pinctrl/pinmux.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On Friday 04 August 2017 11:15 AM, Keerthy wrote:
+> 66AK2G has 2 instances of gpio. The first one has all the 144 GPIOs
+> functional. 9 banks with 16 gpios making a total of 144. The second
+> instance has only the GPIO0:GPIO67 functional and rest are marked
+> reserved.
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 89b9ca77daea..60f82c67b92d 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -686,7 +686,7 @@ EXPORT_SYMBOL_GPL(pinctrl_generic_remove_group);
- static void pinctrl_generic_free_groups(struct pinctrl_dev *pctldev)
- {
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 
- 	radix_tree_for_each_slot(slot, &pctldev->pin_group_tree, &iter, 0)
- 		radix_tree_delete(&pctldev->pin_group_tree, iter.index);
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-index 36d5da9dc587..55502fc4479c 100644
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -833,7 +833,7 @@ EXPORT_SYMBOL_GPL(pinmux_generic_remove_function);
- void pinmux_generic_free_functions(struct pinctrl_dev *pctldev)
- {
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 
- 	radix_tree_for_each_slot(slot, &pctldev->pin_function_tree, &iter, 0)
- 		radix_tree_delete(&pctldev->pin_function_tree, iter.index);
--- 
-2.7.4
+Oops. I will send with the $subject fixed please ignore this.
+
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> 
+> Changes in v4:
+> 
+>   * Couple of rephrasing in the commit log.
+>   * Changed compatible to ti,k2g-gpio.
+> 
+> Changes in v2:
+> 
+>   * Split the documentation part into a separate patch.
+> 
+>  arch/arm/boot/dts/keystone-k2g.dtsi | 42 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
+> index bf4d1fa..4eb1ba8 100644
+> --- a/arch/arm/boot/dts/keystone-k2g.dtsi
+> +++ b/arch/arm/boot/dts/keystone-k2g.dtsi
+> @@ -15,6 +15,7 @@
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/pinctrl/keystone.h>
+> +#include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+>  	compatible = "ti,k2g","ti,keystone";
+> @@ -168,5 +169,46 @@
+>  				#reset-cells = <2>;
+>  			};
+>  		};
+> +
+> +		gpio0: gpio@2603000 {
+> +			compatible = "ti,k2g-gpio", "ti,keystone-gpio";
+> +			reg = <0x02603000 0x100>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +
+> +			interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			ti,ngpio = <144>;
+> +			ti,davinci-gpio-unbanked = <0>;
+> +			clocks = <&k2g_clks 0x001b 0x0>;
+> +			clock-names = "gpio";
+> +		};
+> +
+> +		gpio1: gpio@260a000 {
+> +			compatible = "ti,k2g-gpio", "ti,keystone-gpio";
+> +			reg = <0x0260a000 0x100>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			interrupts = <GIC_SPI 442 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 443 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 444 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 445 IRQ_TYPE_EDGE_RISING>,
+> +					<GIC_SPI 446 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			ti,ngpio = <68>;
+> +			ti,davinci-gpio-unbanked = <0>;
+> +			clocks = <&k2g_clks 0x001c 0x0>;
+> +			clock-names = "gpio";
+> +		};
+>  	};
+>  };
+> 
