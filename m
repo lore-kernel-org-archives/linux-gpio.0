@@ -1,75 +1,49 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: uniphier: widen all pinconf-derived arguments to u32
-Date: Fri,  4 Aug 2017 13:01:25 +0900
-Message-ID: <1501819285-12827-1-git-send-email-yamada.masahiro@socionext.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
+Date: Fri, 4 Aug 2017 09:46:13 +0530
+Message-ID: <af4f6eda-9a91-2ed4-ed34-1fa4e90f0d7c@ti.com>
+References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
+ <20170803161748.u7ier3kt3xmm25jw@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:44517 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751005AbdHDER3 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Aug 2017 00:17:29 -0400
+In-Reply-To: <20170803161748.u7ier3kt3xmm25jw@rob-hp-laptop>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: ssantosh@kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, s-anna@ti.com, nsekhar@ti.com
 
-Since commit 58957d2edfa1 ("pinctrl: Widen the generic pinconf argument
-from 16 to 24 bits"), the generic pinconf arguments are handled by u32.
 
-UniPhier pinctrl drivers do not support debouncing, so u16 is working,
-but align the argument type to u32 for consistency.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On Thursday 03 August 2017 09:47 PM, Rob Herring wrote:
+> On Wed, Jul 26, 2017 at 12:15:23PM +0530, Keerthy wrote:
+>> The patch adds keystone-k2g compatible, specific properties and
+>> an example.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>
+>> Changes in v3:
+>>
+>>   * Added details about family of SoCs corresponding to compatibles.
+>>
+>>  .../devicetree/bindings/gpio/gpio-davinci.txt      | 40 +++++++++++++++++++++-
+>>  1 file changed, 39 insertions(+), 1 deletion(-)
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
 
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Thanks Rob.
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-index 5d8c9efd8135..f9267fabe6b0 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-@@ -198,7 +198,7 @@ static int uniphier_conf_pin_bias_get(struct pinctrl_dev *pctldev,
- }
- 
- static int uniphier_conf_pin_drive_get(struct pinctrl_dev *pctldev,
--				       unsigned int pin, u16 *strength)
-+				       unsigned int pin, u32 *strength)
- {
- 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
- 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
-@@ -289,7 +289,7 @@ static int uniphier_conf_pin_config_get(struct pinctrl_dev *pctldev,
- {
- 	enum pin_config_param param = pinconf_to_config_param(*configs);
- 	bool has_arg = false;
--	u16 arg;
-+	u32 arg;
- 	int ret;
- 
- 	switch (param) {
-@@ -393,7 +393,7 @@ static int uniphier_conf_pin_bias_set(struct pinctrl_dev *pctldev,
- }
- 
- static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
--				       unsigned int pin, u16 strength)
-+				       unsigned int pin, u32 strength)
- {
- 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
- 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
-@@ -454,7 +454,7 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
- }
- 
- static int uniphier_conf_pin_input_enable(struct pinctrl_dev *pctldev,
--					  unsigned int pin, u16 enable)
-+					  unsigned int pin, u32 enable)
- {
- 	struct uniphier_pinctrl_priv *priv = pinctrl_dev_get_drvdata(pctldev);
- 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
--- 
-2.7.4
+Santosh,
+
+I will post a v4 adding Rob's and Linus's Ack.
+
+Thanks,
+Keerthy
+
+> 
