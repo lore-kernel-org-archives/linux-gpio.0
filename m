@@ -1,49 +1,52 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH v3 1/2] gpio: davinci: Add keystone-k2g compatible
-Date: Fri, 4 Aug 2017 09:46:13 +0530
-Message-ID: <af4f6eda-9a91-2ed4-ed34-1fa4e90f0d7c@ti.com>
-References: <1501051524-5990-1-git-send-email-j-keerthy@ti.com>
- <20170803161748.u7ier3kt3xmm25jw@rob-hp-laptop>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] pinctrl: armada-37xx: add static to local data
+Date: Fri,  4 Aug 2017 13:47:00 +0900
+Message-ID: <1501822020-22511-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:44517 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751005AbdHDER3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Aug 2017 00:17:29 -0400
-In-Reply-To: <20170803161748.u7ier3kt3xmm25jw@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: ssantosh@kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, t-kristo@ti.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, fcooper@ti.com, s-anna@ti.com, nsekhar@ti.com
 
+Detected by sparse.
 
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-On Thursday 03 August 2017 09:47 PM, Rob Herring wrote:
-> On Wed, Jul 26, 2017 at 12:15:23PM +0530, Keerthy wrote:
->> The patch adds keystone-k2g compatible, specific properties and
->> an example.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>
->> Changes in v3:
->>
->>   * Added details about family of SoCs corresponding to compatibles.
->>
->>  .../devicetree/bindings/gpio/gpio-davinci.txt      | 40 +++++++++++++++++++++-
->>  1 file changed, 39 insertions(+), 1 deletion(-)
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks Rob.
-
-Santosh,
-
-I will post a v4 adding Rob's and Linus's Ack.
-
-Thanks,
-Keerthy
-
-> 
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index f024e25787fc..0b263b90a9a8 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -179,14 +179,14 @@ static struct armada_37xx_pin_group armada_37xx_sb_groups[] = {
+ 	PIN_GRP("mii_col", 23, 1, BIT(8), "mii", "mii_err"),
+ };
+ 
+-const struct armada_37xx_pin_data armada_37xx_pin_nb = {
++static const struct armada_37xx_pin_data armada_37xx_pin_nb = {
+ 	.nr_pins = 36,
+ 	.name = "GPIO1",
+ 	.groups = armada_37xx_nb_groups,
+ 	.ngroups = ARRAY_SIZE(armada_37xx_nb_groups),
+ };
+ 
+-const struct armada_37xx_pin_data armada_37xx_pin_sb = {
++static const struct armada_37xx_pin_data armada_37xx_pin_sb = {
+ 	.nr_pins = 29,
+ 	.name = "GPIO2",
+ 	.groups = armada_37xx_sb_groups,
+-- 
+2.7.4
