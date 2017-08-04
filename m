@@ -1,41 +1,48 @@
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] pinctrl: nomadik: fix incorrect type in return expression
-Date: Fri,  4 Aug 2017 13:49:47 +0900
-Message-ID: <1501822187-25303-1-git-send-email-yamada.masahiro@socionext.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conuserg-10.nifty.com ([210.131.2.77]:21707 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750899AbdHDEvP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 4 Aug 2017 00:51:15 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH] pinctrl: add __rcu annotations to fix sparse warnings
+Date: Fri,  4 Aug 2017 13:52:05 +0900
+Message-ID: <1501822325-25512-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, Alessandro Rubini <rubini@unipv.it>, linux-kernel@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-Sparse reports "warning: incorrect type in return expression (different
-address spaces)" because nmk_gpio_populate_chip() is supposed to return
-(struct nmk_gpio_chip *) whereas devm_ioremap_resource() returns
-(void __iomem *).  ERR_CAST() is needed to fix the warning.
+Sparse reports "warning: incorrect type in assignment (different
+address spaces)".
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- drivers/pinctrl/nomadik/pinctrl-nomadik.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/core.c   | 2 +-
+ drivers/pinctrl/pinmux.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-index d318ca055489..a53f1a9b1ed2 100644
---- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-+++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
-@@ -1078,7 +1078,7 @@ static struct nmk_gpio_chip *nmk_gpio_populate_chip(struct device_node *np,
- 	res = platform_get_resource(gpio_pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
--		return base;
-+		return ERR_CAST(base);
- 	nmk_chip->addr = base;
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 89b9ca77daea..60f82c67b92d 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -686,7 +686,7 @@ EXPORT_SYMBOL_GPL(pinctrl_generic_remove_group);
+ static void pinctrl_generic_free_groups(struct pinctrl_dev *pctldev)
+ {
+ 	struct radix_tree_iter iter;
+-	void **slot;
++	void __rcu **slot;
  
- 	clk = clk_get(&gpio_pdev->dev, NULL);
+ 	radix_tree_for_each_slot(slot, &pctldev->pin_group_tree, &iter, 0)
+ 		radix_tree_delete(&pctldev->pin_group_tree, iter.index);
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index 36d5da9dc587..55502fc4479c 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -833,7 +833,7 @@ EXPORT_SYMBOL_GPL(pinmux_generic_remove_function);
+ void pinmux_generic_free_functions(struct pinctrl_dev *pctldev)
+ {
+ 	struct radix_tree_iter iter;
+-	void **slot;
++	void __rcu **slot;
+ 
+ 	radix_tree_for_each_slot(slot, &pctldev->pin_function_tree, &iter, 0)
+ 		radix_tree_delete(&pctldev->pin_function_tree, iter.index);
 -- 
 2.7.4
-
