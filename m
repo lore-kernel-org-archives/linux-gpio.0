@@ -1,7 +1,7 @@
 From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 5/8] gpio: zynq: Fix kernel doc warnings
-Date: Mon,  7 Aug 2017 13:01:58 +0200
-Message-ID: <8659e6580b6738a973a161392ba7e03735837c15.1502103715.git.michal.simek@xilinx.com>
+Subject: [PATCH 4/8] gpio: zynq: Provided workaround for GPIO
+Date: Mon,  7 Aug 2017 13:01:57 +0200
+Message-ID: <4f1f7ed79879d17e38ffda095d631d0f561c2818.1502103715.git.michal.simek@xilinx.com>
 References: <cover.1502103715.git.michal.simek@xilinx.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1502103715.git.michal.simek@xilinx.com>
@@ -9,53 +9,109 @@ In-Reply-To: <cover.1502103715.git.michal.simek@xilinx.com>
 References: <cover.1502103715.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: Nava kishore Manne <nava.manne@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, linux-arm-kernel@lists.infradead.org
+Cc: Swapna Manupati <swapna.manupati@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+From: Swapna Manupati <swapna.manupati@xilinx.com>
 
-This patch fixes the kernel doc warnings in the driver.
+This patch provides workaround in the gpio driver
+for Zynq and ZynqMP Platforms by reading pin value
+of EMIO banks through DATA register as it was unable
+to read the value of it from DATA_RO register.
 
-Signed-off-by: Nava kishore Manne <navam@xilinx.com>
+Signed-off-by: Swapna Manupati <swapnam@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
- drivers/gpio/gpio-zynq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-zynq.c | 41 +++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 37 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 1ab0f8c991b6..573bd8303d5d 100644
+index bcf11f0ef5c3..1ab0f8c991b6 100644
 --- a/drivers/gpio/gpio-zynq.c
 +++ b/drivers/gpio/gpio-zynq.c
-@@ -136,11 +136,12 @@ struct zynq_gpio {
- /**
-  * struct zynq_platform_data -  zynq gpio platform data structure
-  * @label:	string to store in gpio->label
-+ * @quirks:	Flags is used to identify the platform
-  * @ngpio:	max number of gpio pins
-  * @max_bank:	maximum number of gpio banks
-  * @bank_min:	this array represents bank's min pin
-  * @bank_max:	this array represents bank's max pin
--*/
-+ */
- struct zynq_platform_data {
- 	const char *label;
- 	u32 quirks;
-@@ -183,6 +184,7 @@ static int gpio_data_ro_bug(struct zynq_gpio *gpio)
-  *		pin
-  * @bank_pin_num: an output parameter used to return pin number within a bank
-  *		  for the given gpio pin
-+ * @gpio:	gpio device data structure
-  *
-  * Returns the bank number and pin offset within the bank.
-  */
-@@ -614,7 +616,6 @@ static void zynq_gpio_handle_bank_irq(struct zynq_gpio *gpio,
+@@ -70,6 +70,7 @@
+ /* MSW Mask & Data -WO */
+ #define ZYNQ_GPIO_DATA_MSW_OFFSET(BANK)	(0x004 + (8 * BANK))
+ /* Data Register-RW */
++#define ZYNQ_GPIO_DATA_OFFSET(BANK)	(0x040 + (4 * BANK))
+ #define ZYNQ_GPIO_DATA_RO_OFFSET(BANK)	(0x060 + (4 * BANK))
+ /* Direction mode reg-RW */
+ #define ZYNQ_GPIO_DIRM_OFFSET(BANK)	(0x204 + (0x40 * BANK))
+@@ -101,6 +102,7 @@
+ 
+ /* set to differentiate zynq from zynqmp, 0=zynqmp, 1=zynq */
+ #define ZYNQ_GPIO_QUIRK_IS_ZYNQ	BIT(0)
++#define GPIO_QUIRK_DATA_RO_BUG	BIT(1)
+ 
+ struct gpio_regs {
+ 	u32 datamsw[ZYNQMP_GPIO_MAX_BANK];
+@@ -163,6 +165,17 @@ static int zynq_gpio_is_zynq(struct zynq_gpio *gpio)
+ }
  
  /**
-  * zynq_gpio_irqhandler - IRQ handler for the gpio banks of a gpio device
-- * @irq:	irq number of the gpio bank where interrupt has occurred
-  * @desc:	irq descriptor instance of the 'irq'
-  *
-  * This function reads the Interrupt Status Register of each bank to get the
++ * gpio_data_ro_bug - test if HW bug exists or not
++ * @gpio:       Pointer to driver data struct
++ *
++ * Return: 0 if bug doesnot exist, 1 if bug exists.
++ */
++static int gpio_data_ro_bug(struct zynq_gpio *gpio)
++{
++	return !!(gpio->p_data->quirks & GPIO_QUIRK_DATA_RO_BUG);
++}
++
++/**
+  * zynq_gpio_get_bank_pin - Get the bank number and pin number within that bank
+  * for a given pin in the GPIO device
+  * @pin_num:	gpio pin number within the device
+@@ -213,9 +226,28 @@ static int zynq_gpio_get_value(struct gpio_chip *chip, unsigned int pin)
+ 
+ 	zynq_gpio_get_bank_pin(pin, &bank_num, &bank_pin_num, gpio);
+ 
+-	data = readl_relaxed(gpio->base_addr +
+-			     ZYNQ_GPIO_DATA_RO_OFFSET(bank_num));
+-
++	if (gpio_data_ro_bug(gpio)) {
++		if (zynq_gpio_is_zynq(gpio)) {
++			if (bank_num <= 1) {
++				data = readl_relaxed(gpio->base_addr +
++					ZYNQ_GPIO_DATA_RO_OFFSET(bank_num));
++			} else {
++				data = readl_relaxed(gpio->base_addr +
++					ZYNQ_GPIO_DATA_OFFSET(bank_num));
++			}
++		} else {
++			if (bank_num <= 2) {
++				data = readl_relaxed(gpio->base_addr +
++					ZYNQ_GPIO_DATA_RO_OFFSET(bank_num));
++			} else {
++				data = readl_relaxed(gpio->base_addr +
++					ZYNQ_GPIO_DATA_OFFSET(bank_num));
++			}
++		}
++	} else {
++		data = readl_relaxed(gpio->base_addr +
++			ZYNQ_GPIO_DATA_RO_OFFSET(bank_num));
++	}
+ 	return (data >> bank_pin_num) & 1;
+ }
+ 
+@@ -743,6 +775,7 @@ static void zynq_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 
+ static const struct zynq_platform_data zynqmp_gpio_def = {
+ 	.label = "zynqmp_gpio",
++	.quirks = GPIO_QUIRK_DATA_RO_BUG,
+ 	.ngpio = ZYNQMP_GPIO_NR_GPIOS,
+ 	.max_bank = ZYNQMP_GPIO_MAX_BANK,
+ 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(MP),
+@@ -761,7 +794,7 @@ static void zynq_gpio_free(struct gpio_chip *chip, unsigned offset)
+ 
+ static const struct zynq_platform_data zynq_gpio_def = {
+ 	.label = "zynq_gpio",
+-	.quirks = ZYNQ_GPIO_QUIRK_IS_ZYNQ,
++	.quirks = ZYNQ_GPIO_QUIRK_IS_ZYNQ | GPIO_QUIRK_DATA_RO_BUG,
+ 	.ngpio = ZYNQ_GPIO_NR_GPIOS,
+ 	.max_bank = ZYNQ_GPIO_MAX_BANK,
+ 	.bank_min[0] = ZYNQ_GPIO_BANK0_PIN_MIN(),
 -- 
 1.9.1
