@@ -1,37 +1,48 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] [BUGFIX] gpio: reject invalid gpio before getting gpio_desc
-Date: Mon, 7 Aug 2017 14:00:55 +0200
-Message-ID: <CACRpkdb+ZP8ne2-Wkd4F3sovsRN3GtKFnYA9VbHZcCf2sQqvkw@mail.gmail.com>
-References: <150164925133.3914.939655218385978578.stgit@devbox>
+Subject: Re: [PATCH V2 1/1] gpio: gpio-vf610: add imx7ulp support
+Date: Mon, 7 Aug 2017 14:05:25 +0200
+Message-ID: <CACRpkda6AmCUyDz-zNQbh9XCCDjUcKqhMH07oET6CEXzXV=0rw@mail.gmail.com>
+References: <1501596257-20825-1-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <150164925133.3914.939655218385978578.stgit@devbox>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f169.google.com ([209.85.223.169]:33693 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752902AbdHGMF0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 08:05:26 -0400
+Received: by mail-io0-f169.google.com with SMTP id j32so1856203iod.0
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 05:05:26 -0700 (PDT)
+In-Reply-To: <1501596257-20825-1-git-send-email-aisheng.dong@nxp.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Bai Ping <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, Dong Aisheng <dongas86@gmail.com>, Sascha Hauer <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Peter Chen <peter.chen@nxp.com>
 
-On Wed, Aug 2, 2017 at 6:47 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Tue, Aug 1, 2017 at 4:04 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
 
-> Check user-given gpio number and reject it before
-> calling gpio_to_desc() because gpio_to_desc() is
-> for kernel driver and it expects given gpio number
-> is valid (means 0 to 511).
-> If given number is invalid, gpio_to_desc() calls
-> WARN() and dump registers and stack for debug.
-> This means user can easily kick WARN() just by
-> writing invalid gpio number (e.g. 512) to
-> /sys/class/gpio/export.
+> The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
+> on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
+> RGPIO2P has an extra Port Data Direction Register (PDDR) used
+> to configure the individual port pins for input or output.
 >
-> Fixes: 0e9a5edf5d01 ("gpio: fix deferred probe detection for legacy API")
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> We introduce a bool have_paddr with fsl_gpio_soc_data data
+> to distinguish this differences. And we support getting the output
+> status by checking the GPIO direction in PDDR.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Fugang Duan <fugang.duan@nxp.com>
+> Cc: Peter Chen <peter.chen@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+>
 > ---
->   Changes in v3:
->    - Remove unneeded empty lines.
+> ChangeLog:
+> v1->v2:
+>  * remove flags and use bool have_paddr instead
 
-Patch applied for fixes.
+Patch applied.
 
 Yours,
 Linus Walleij
