@@ -1,30 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: add __rcu annotations to fix sparse warnings
-Date: Mon, 7 Aug 2017 15:15:38 +0200
-Message-ID: <CACRpkda-z45g77Qv9dqoaEvUF6zhSWYf-3LSW0zN0kUP8jxz6A@mail.gmail.com>
-References: <1501822325-25512-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: gpio: davinci: Add keystone-k2g compatible
+Date: Mon, 7 Aug 2017 15:17:23 +0200
+Message-ID: <CACRpkdb+b=xKXWN2vN7td3XeYJ+GWUdUumpUE9gDhCXVFk2FGg@mail.gmail.com>
+References: <1501825654-19266-1-git-send-email-j-keerthy@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f48.google.com ([209.85.214.48]:35786 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751493AbdHGNPj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 09:15:39 -0400
-Received: by mail-it0-f48.google.com with SMTP id 76so3296653ith.0
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 06:15:39 -0700 (PDT)
-In-Reply-To: <1501822325-25512-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1501825654-19266-1-git-send-email-j-keerthy@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Keerthy <j-keerthy@ti.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Aug 4, 2017 at 6:52 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Fri, Aug 4, 2017 at 7:47 AM, Keerthy <j-keerthy@ti.com> wrote:
 
-> Sparse reports "warning: incorrect type in assignment (different
-> address spaces)".
+> The patch adds keystone-k2g compatible, specific properties and
+> an example. The patch also adds the details of supported SoCs
+> for each compatible.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>
+> Changes in v4:
+>
+>   * Changed documentation links.
+>   * Added Rob's Ack.
+>   * Replaced keystone-k2g with 66AK2G
+>   * Corrected the $Subject
+>   * Changed compatible to ti,k2g-gpio
 
 Patch applied.
 
