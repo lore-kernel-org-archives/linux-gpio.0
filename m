@@ -1,7 +1,7 @@
 From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 3/8] gpio: zynq: Shift zynq_gpio_init() to subsys_initcall level
-Date: Mon,  7 Aug 2017 13:01:56 +0200
-Message-ID: <a05cc4f104097bef71ed381229aa8c746717ebce.1502103715.git.michal.simek@xilinx.com>
+Subject: [PATCH 7/8] gpio: zynq: Fix warnings in the driver
+Date: Mon,  7 Aug 2017 13:02:00 +0200
+Message-ID: <58146421d2af970cedef5fd4b9e1b2d07bd13d6e.1502103715.git.michal.simek@xilinx.com>
 References: <cover.1502103715.git.michal.simek@xilinx.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1502103715.git.michal.simek@xilinx.com>
@@ -14,41 +14,54 @@ List-Id: linux-gpio@vger.kernel.org
 
 From: Nava kishore Manne <nava.manne@xilinx.com>
 
-In general situation on-SoC GPIO controller drivers should be probed
-after pinctrl/pinmux controller driver, because on-SoC GPIOs utilize a
-pin/pad as a resource provided and controlled by pinctrl subsystem.
-
-  GPIO must come after pinctrl as gpios may need to mux pins....etc
-
-Looking at Xilinx SoC series pinctrl drivers, zynq*_pinctrl_init()
-functions are called at arch_initcall init levels,
-so the change of initcall level for gpio-zynq driver from
-postcore_initcall to subsys_initcall level is sufficient. Also note
-that the most of GPIO controller drivers settled at subsys_initcall
-level.
-
-If pinctrl subsystem manages pads with GPIO functions, the change is
-needed to avoid unwanted driver probe deferrals during kernel boot.
+This patch fixes the below warning
+	-->Block comments should align the * on each line.
+	-->suspect code indent for conditional statements.
+	-->Prefer 'unsigned int' to bare use of 'unsigned'
 
 Signed-off-by: Nava kishore Manne <navam@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
- drivers/gpio/gpio-zynq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-zynq.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 5198fa6e016a..bcf11f0ef5c3 100644
+index 2d9f27e34d31..26653bf89e58 100644
 --- a/drivers/gpio/gpio-zynq.c
 +++ b/drivers/gpio/gpio-zynq.c
-@@ -929,7 +929,7 @@ static int __init zynq_gpio_init(void)
- {
- 	return platform_driver_register(&zynq_gpio_driver);
- }
--postcore_initcall(zynq_gpio_init);
-+subsys_initcall(zynq_gpio_init);
+@@ -198,10 +198,10 @@ static inline void zynq_gpio_get_bank_pin(unsigned int pin_num,
+ 	for (bank = 0; bank < gpio->p_data->max_bank; bank++) {
+ 		if ((pin_num >= gpio->p_data->bank_min[bank]) &&
+ 			(pin_num <= gpio->p_data->bank_max[bank])) {
+-				*bank_num = bank;
+-				*bank_pin_num = pin_num -
+-						gpio->p_data->bank_min[bank];
+-				return;
++			*bank_num = bank;
++			*bank_pin_num = pin_num -
++					gpio->p_data->bank_min[bank];
++			return;
+ 		}
+ 	}
  
- static void __exit zynq_gpio_exit(void)
+@@ -751,7 +751,7 @@ static int __maybe_unused zynq_gpio_runtime_resume(struct device *dev)
+ 	return clk_prepare_enable(gpio->clk);
+ }
+ 
+-static int zynq_gpio_request(struct gpio_chip *chip, unsigned offset)
++static int zynq_gpio_request(struct gpio_chip *chip, unsigned int offset)
  {
+ 	int ret;
+ 
+@@ -764,7 +764,7 @@ static int zynq_gpio_request(struct gpio_chip *chip, unsigned offset)
+ 	return ret < 0 ? ret : 0;
+ }
+ 
+-static void zynq_gpio_free(struct gpio_chip *chip, unsigned offset)
++static void zynq_gpio_free(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	pm_runtime_put(chip->parent);
+ }
 -- 
 1.9.1
