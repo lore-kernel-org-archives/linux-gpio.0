@@ -1,7 +1,7 @@
 From: Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH 8/8] gpio: zynq: Fix driver function parameters alignment
-Date: Mon,  7 Aug 2017 13:02:01 +0200
-Message-ID: <67e187a3dbc2ef8b6bacd1b173ae9e91c18aa429.1502103715.git.michal.simek@xilinx.com>
+Subject: [PATCH 6/8] gpio: zynq: Fix empty lines in driver
+Date: Mon,  7 Aug 2017 13:01:59 +0200
+Message-ID: <35852b459f0001981e0376c8fade8a498fd6e66e.1502103715.git.michal.simek@xilinx.com>
 References: <cover.1502103715.git.michal.simek@xilinx.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <cover.1502103715.git.michal.simek@xilinx.com>
@@ -12,64 +12,44 @@ To: linux-kernel@vger.kernel.org, monstr@monstr.eu
 Cc: =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, linux-gpio@vger.kernel.org, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Fix function parameters alignment reported by checkpatch.
+Remove one additional line and add two new. All are reported by checkpatch.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+
+empty
+
 ---
 
- drivers/gpio/gpio-zynq.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/gpio/gpio-zynq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 26653bf89e58..97b53e557c15 100644
+index 573bd8303d5d..2d9f27e34d31 100644
 --- a/drivers/gpio/gpio-zynq.c
 +++ b/drivers/gpio/gpio-zynq.c
-@@ -197,7 +197,7 @@ static inline void zynq_gpio_get_bank_pin(unsigned int pin_num,
+@@ -63,7 +63,6 @@
+ #define ZYNQ_GPIO_BANK5_PIN_MAX(str)	(ZYNQ_GPIO_BANK5_PIN_MIN(str) + \
+ 					ZYNQ##str##_GPIO_BANK5_NGPIO - 1)
  
- 	for (bank = 0; bank < gpio->p_data->max_bank; bank++) {
- 		if ((pin_num >= gpio->p_data->bank_min[bank]) &&
--			(pin_num <= gpio->p_data->bank_max[bank])) {
-+		    (pin_num <= gpio->p_data->bank_max[bank])) {
- 			*bank_num = bank;
- 			*bank_pin_num = pin_num -
- 					gpio->p_data->bank_min[bank];
-@@ -313,7 +313,7 @@ static int zynq_gpio_dir_in(struct gpio_chip *chip, unsigned int pin)
- 	 * as inputs.
- 	 */
- 	if (zynq_gpio_is_zynq(gpio) && bank_num == 0 &&
--		(bank_pin_num == 7 || bank_pin_num == 8))
-+	    (bank_pin_num == 7 || bank_pin_num == 8))
- 		return -EINVAL;
- 
- 	/* clear the bit in direction mode reg to set the pin as input */
-@@ -514,13 +514,14 @@ static int zynq_gpio_set_irq_type(struct irq_data *irq_data, unsigned int type)
- 	writel_relaxed(int_any,
- 		       gpio->base_addr + ZYNQ_GPIO_INTANY_OFFSET(bank_num));
- 
--	if (type & IRQ_TYPE_LEVEL_MASK) {
-+	if (type & IRQ_TYPE_LEVEL_MASK)
- 		irq_set_chip_handler_name_locked(irq_data,
--			&zynq_gpio_level_irqchip, handle_fasteoi_irq, NULL);
--	} else {
-+						 &zynq_gpio_level_irqchip,
-+						 handle_fasteoi_irq, NULL);
-+	else
- 		irq_set_chip_handler_name_locked(irq_data,
--			&zynq_gpio_edge_irqchip, handle_level_irq, NULL);
--	}
-+						 &zynq_gpio_edge_irqchip,
-+						 handle_level_irq, NULL);
- 
- 	return 0;
- }
-@@ -772,7 +773,7 @@ static void zynq_gpio_free(struct gpio_chip *chip, unsigned int offset)
- static const struct dev_pm_ops zynq_gpio_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(zynq_gpio_suspend, zynq_gpio_resume)
- 	SET_RUNTIME_PM_OPS(zynq_gpio_runtime_suspend,
--			zynq_gpio_runtime_resume, NULL)
-+			   zynq_gpio_runtime_resume, NULL)
+-
+ /* Register offsets for the GPIO device */
+ /* LSW Mask & Data -WO */
+ #define ZYNQ_GPIO_DATA_LSW_OFFSET(BANK)	(0x000 + (8 * BANK))
+@@ -115,6 +114,7 @@ struct gpio_regs {
+ 	u32 int_polarity[ZYNQMP_GPIO_MAX_BANK];
+ 	u32 int_any[ZYNQMP_GPIO_MAX_BANK];
  };
- 
- static const struct zynq_platform_data zynqmp_gpio_def = {
++
+ /**
+  * struct zynq_gpio - gpio device private data structure
+  * @chip:	instance of the gpio_chip
+@@ -700,6 +700,7 @@ static void zynq_gpio_restore_context(struct zynq_gpio *gpio)
+ 			       ZYNQ_GPIO_INTANY_OFFSET(bank_num));
+ 	}
+ }
++
+ static int __maybe_unused zynq_gpio_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
 -- 
 1.9.1
