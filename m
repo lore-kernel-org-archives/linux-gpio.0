@@ -1,98 +1,110 @@
-From: Ludovic Desroches <ludovic.desroches@o2linux.fr>
-Subject: [PATCH] pinctrl: generic: update references to Documentation/pinctrl.txt
-Date: Sun,  6 Aug 2017 16:00:05 +0200
-Message-ID: <20170806140005.7135-1-ludovic.desroches@o2linux.fr>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: linus.walleij@linaro.org, corbet@lwn.net, linux-kernel@vger.kernel.org, Ludovic Desroches <ludovic.desroches@o2linux.fr>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v4 15/17] ASoC: cs47l35: Add codec driver
+ for Cirrus Logic CS47L35
+Date: Mon, 7 Aug 2017 09:32:19 +0100
+Message-ID: <1502094739.5479.21.camel@rf-debian.wolfsonmicro.main>
+References: <201707300644.LqBZNeVM%fengguang.wu@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <201707300644.LqBZNeVM%fengguang.wu@intel.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, broonie@kernel.org, lee.jones@linaro.org
+Cc: linux-gpio@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Update deprecated references to Documentation/pinctrl.txt since it has been
-moved to Documentation/driver-api/pinctl.rst.
+On Sun, 2017-07-30 at 07:01 +0800, kbuild test robot wrote:
+> Hi Richard,
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.13-rc2 next-20170728]
+> [cannot apply to ljones-mfd/for-mfd-next asoc/for-next]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Richard-Fitzgerald/Add-support-for-Cirrus-Logic-CS47L35-L85-L90-L91-codecs/20170730-062737
+> config: x86_64-allmodconfig (attached as .config)
+> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> Note: the linux-review/Richard-Fitzgerald/Add-support-for-Cirrus-Logic-CS47L35-L85-L90-L91-codecs/20170730-062737 HEAD 15487144eec6910ecfbbbbd97bb5a2c7efdb259f builds fine.
+>       It only hurts bisectibility.
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> sound/soc//codecs/madera.c:146:2: error: 'MADERA_IRQ_DSP1_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP1_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >> sound/soc//codecs/madera.c:147:2: error: 'MADERA_IRQ_DSP2_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP2_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >> sound/soc//codecs/madera.c:148:2: error: 'MADERA_IRQ_DSP3_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP3_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >> sound/soc//codecs/madera.c:149:2: error: 'MADERA_IRQ_DSP4_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP4_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >> sound/soc//codecs/madera.c:150:2: error: 'MADERA_IRQ_DSP5_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP5_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >> sound/soc//codecs/madera.c:151:2: error: 'MADERA_IRQ_DSP6_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP6_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >> sound/soc//codecs/madera.c:152:2: error: 'MADERA_IRQ_DSP7_BUS_ERROR' undeclared here (not in a function)
+>      MADERA_IRQ_DSP7_BUS_ERROR,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~
+> 
 
-Signed-off-by: Ludovic Desroches <ludovic.desroches@o2linux.fr>
-Fixes: 5a9b73832e9e ("pinctrl.txt: move it to the driver-api book")
----
+Oops. The rename of these somehow got merged into the top patch instead
+of going into #14 where it should be. I'll wait a while and see what
+comments I get on the earlier patches, maybe they will all be accepted
+for merge and then I'll only have to reissue the top 4 patches to fix
+this.
 
-Hi,
-
-Last time I wanted to have a look at the pinctrl documentation, I didn't find
-it, I had to browse git logs to find the new place.
-
-I don't know if it is better to update all the places where
-Documentation/pinctrl.txt was mentionned at once or if I have to split this
-patch.
-Other variant of this patch can be to reintroduce a Documentation/pinctrl.txt
-file indicating the new location as it is done for several files already.
-
-Please tell me your preference and I'll update the patch according to.
-
-Regards
-
-Ludovic
-
-
- Documentation/gpio/gpio-legacy.txt      | 2 +-
- MAINTAINERS                             | 2 +-
- include/linux/device.h                  | 2 +-
- include/linux/pinctrl/pinconf-generic.h | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/gpio/gpio-legacy.txt b/Documentation/gpio/gpio-legacy.txt
-index b34fd94f7089..5eacc147ea87 100644
---- a/Documentation/gpio/gpio-legacy.txt
-+++ b/Documentation/gpio/gpio-legacy.txt
-@@ -459,7 +459,7 @@ pin controller?
- 
- This is done by registering "ranges" of pins, which are essentially
- cross-reference tables. These are described in
--Documentation/pinctrl.txt
-+Documentation/driver-api/pinctl.rst
- 
- While the pin allocation is totally managed by the pinctrl subsystem,
- gpio (under gpiolib) is still maintained by gpio drivers. It may happen
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 672b5d5402f0..3a47d9facf0a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10450,7 +10450,7 @@ L:	linux-gpio@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- S:	Maintained
- F:	Documentation/devicetree/bindings/pinctrl/
--F:	Documentation/pinctrl.txt
-+F:	Documentation/driver-api/pinctl.rst
- F:	drivers/pinctrl/
- F:	include/linux/pinctrl/
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index c29dd5ec7f6a..5db26b9c0fcc 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -843,7 +843,7 @@ struct dev_links_info {
-  * 		hibernation, system resume and during runtime PM transitions
-  * 		along with subsystem-level and driver-level callbacks.
-  * @pins:	For device pin management.
-- *		See Documentation/pinctrl.txt for details.
-+ *		See Documentation/driver-api/pinctl.rst for details.
-  * @msi_list:	Hosts MSI descriptors
-  * @msi_domain: The generic MSI domain this device is using.
-  * @numa_node:	NUMA node this device is close to.
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 231d3075815a..e91d1b6a260d 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -81,8 +81,8 @@
-  * 	it.
-  * @PIN_CONFIG_OUTPUT: this will configure the pin as an output and drive a
-  * 	value on the line. Use argument 1 to indicate high level, argument 0 to
-- * 	indicate low level. (Please see Documentation/pinctrl.txt, section
-- * 	"GPIO mode pitfalls" for a discussion around this parameter.)
-+ *	indicate low level. (Please see Documentation/driver-api/pinctl.rst,
-+ *	section "GPIO mode pitfalls" for a discussion around this parameter.)
-  * @PIN_CONFIG_POWER_SOURCE: if the pin can select between different power
-  *	supplies, the argument to this parameter (on a custom format) tells
-  *	the driver which alternative power source to use.
--- 
-2.13.3
-
+> vim +/MADERA_IRQ_DSP1_BUS_ERROR +146 sound/soc//codecs/madera.c
+> 
+> da1efc4cc Richard Fitzgerald 2017-07-28  130  
+> da1efc4cc Richard Fitzgerald 2017-07-28  131  #define madera_fll_err(_fll, fmt, ...) \
+> da1efc4cc Richard Fitzgerald 2017-07-28  132  	dev_err(_fll->madera->dev, "FLL%d: " fmt, _fll->id, ##__VA_ARGS__)
+> da1efc4cc Richard Fitzgerald 2017-07-28  133  #define madera_fll_warn(_fll, fmt, ...) \
+> da1efc4cc Richard Fitzgerald 2017-07-28  134  	dev_warn(_fll->madera->dev, "FLL%d: " fmt, _fll->id, ##__VA_ARGS__)
+> da1efc4cc Richard Fitzgerald 2017-07-28  135  #define madera_fll_dbg(_fll, fmt, ...) \
+> da1efc4cc Richard Fitzgerald 2017-07-28  136  	dev_dbg(_fll->madera->dev, "FLL%d: " fmt, _fll->id, ##__VA_ARGS__)
+> da1efc4cc Richard Fitzgerald 2017-07-28  137  
+> da1efc4cc Richard Fitzgerald 2017-07-28  138  #define madera_aif_err(_dai, fmt, ...) \
+> da1efc4cc Richard Fitzgerald 2017-07-28  139  	dev_err(_dai->dev, "AIF%d: " fmt, _dai->id, ##__VA_ARGS__)
+> da1efc4cc Richard Fitzgerald 2017-07-28  140  #define madera_aif_warn(_dai, fmt, ...) \
+> da1efc4cc Richard Fitzgerald 2017-07-28  141  	dev_warn(_dai->dev, "AIF%d: " fmt, _dai->id, ##__VA_ARGS__)
+> da1efc4cc Richard Fitzgerald 2017-07-28  142  #define madera_aif_dbg(_dai, fmt, ...) \
+> da1efc4cc Richard Fitzgerald 2017-07-28  143  	dev_dbg(_dai->dev, "AIF%d: " fmt, _dai->id, ##__VA_ARGS__)
+> da1efc4cc Richard Fitzgerald 2017-07-28  144  
+> da1efc4cc Richard Fitzgerald 2017-07-28  145  static const int madera_dsp_bus_error_irqs[MADERA_MAX_ADSP] = {
+> da1efc4cc Richard Fitzgerald 2017-07-28 @146  	MADERA_IRQ_DSP1_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28 @147  	MADERA_IRQ_DSP2_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28 @148  	MADERA_IRQ_DSP3_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28 @149  	MADERA_IRQ_DSP4_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28 @150  	MADERA_IRQ_DSP5_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28 @151  	MADERA_IRQ_DSP6_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28 @152  	MADERA_IRQ_DSP7_BUS_ERROR,
+> da1efc4cc Richard Fitzgerald 2017-07-28  153  };
+> da1efc4cc Richard Fitzgerald 2017-07-28  154  
+> 
+> :::::: The code at line 146 was first introduced by commit
+> :::::: da1efc4cc715281f9599274bb5ff408b19cd3335 ASoC: madera: Add common support for Cirrus Logic Madera codecs
+> 
+> :::::: TO: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+> :::::: CC: 0day robot <fengguang.wu@intel.com>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
