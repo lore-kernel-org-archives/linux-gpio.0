@@ -1,32 +1,126 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/3] gpio: davinci: Handle the return value of
- davinci_gpio_irq_setup function
-Date: Mon, 7 Aug 2017 15:33:34 +0200
-Message-ID: <CACRpkdZM2AkzjpArBPGcuoFP4Jm=u=f7gkTR-sjr+vwqNafpaA@mail.gmail.com>
-References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com> <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
+From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Subject: Re: [PATCH] gpio: uniphier: add UniPhier GPIO controller driver
+Date: Mon, 7 Aug 2017 22:50:50 +0900
+Message-ID: <CAK7LNAT4FvsX2-hYrKYmrftEZZb_RZOrfZoKWvR8hopt9jT8-Q@mail.gmail.com>
+References: <1501758371-25316-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdZWxjwDnVy5f2rLAWs=+T=5SnwyU8dz1FW1eg8dk8JN_Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:37979 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751375AbdHGNdg (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 09:33:36 -0400
-Received: by mail-it0-f44.google.com with SMTP id m34so3380777iti.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 06:33:36 -0700 (PDT)
-In-Reply-To: <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdZWxjwDnVy5f2rLAWs=+T=5SnwyU8dz1FW1eg8dk8JN_Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Masami Hiramatsu <mhiramat-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, fcooper@ti.com, Suman Anna <s-anna@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>
 
-On Thu, Jul 20, 2017 at 11:42 AM, Keerthy <j-keerthy@ti.com> wrote:
+Hi Linus,
 
-> Currently davinci_gpio_irq_setup return value is ignored. Handle the
-> return value appropriately.
+
+2017-08-07 21:42 GMT+09:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
+> On Thu, Aug 3, 2017 at 1:06 PM, Masahiro Yamada
+> <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
 >
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> This GPIO controller device is used on UniPhier SoCs.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> (...)
+>> +static const u32 uniphier_gpio_irq_parent_hwirqs[] = {
+>> +       80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
+>> +       186, 187, 188, 189, 190, 249, 250, 251,
+>> +};
+> (..)
+>> +               /* parent is UniPhier AIDET */
+>> +               parent_fwspec.fwnode = domain->parent->fwnode;
+>> +               parent_fwspec.param_count = 2;
+>> +               parent_fwspec.param[0] = uniphier_gpio_irq_parent_hwirqs[hwirq];
+>> +               parent_fwspec.param[1] = type;
+>> +
+>> +               ret = irq_domain_alloc_irqs_parent(domain, virq, 1,
+>> +                                                  &parent_fwspec);
+>
+> This is not right.
+>
+> That parent IRQ needs to come from the device tree, not from a static array
+> like this, and it is definately to use hierarchical irqdomain.
+>
+> Please look at similar drivers merged recently for inspiration:
+> gpio/gpio-xgene-sb.c
+> pinctrl/stm32/pinctrl-stm32.c
+>
 
-Patch applied.
+I was waiting for such a comment!
 
-Yours,
-Linus Walleij
+
+I was actually tackling to specify IRQ-mapping
+with "interrupts" property.
+
+Adding "interrupts" property in DT causes
+of_pupulate_default_populate() to assign virtual IRQ numbers
+before driver probing.  So it does not work well with IRQ domain hierarchy.
+
+
+I send a question:
+https://lkml.org/lkml/2017/7/6/758
+
+But, I did not get any answer.
+
+So, I thought the only solution is to specify the IRQ-remapping
+somehow in the driver.
+
+
+
+
+
+For gpio/gpio-xgene-sb.c, the driver code seems suspicious.
+
+
+As you see xgene_gpio_sb_probe(),
+it uses the first entry of "interrupts" for just getting the ->parent_irq_base.
+The assigned virtual IRQs will not be used.
+
+
+      ret = platform_get_irq(pdev, 0);
+      if (ret > 0) {
+              priv->parent_irq_base = irq_get_irq_data(ret)->hwirq;
+              parent_domain = irq_get_irq_data(ret)->domain;
+      }
+
+
+
+Then, xgene_gpio_sb_domain_alloc() allocates different virtual IRQs
+expecting a particular binding between the parent.
+
+    parent_fwspec.fwnode = domain->parent->fwnode;
+    if (is_of_node(parent_fwspec.fwnode)) {
+            parent_fwspec.param_count = 3;
+            parent_fwspec.param[0] = 0;/* SPI */
+            /* Skip SGIs and PPIs*/
+            parent_fwspec.param[1] = hwirq + priv->parent_irq_base - 32;
+            parent_fwspec.param[2] = fwspec->param[1];
+    } else if (is_fwnode_irqchip(parent_fwspec.fwnode)) {
+            parent_fwspec.param_count = 2;
+            parent_fwspec.param[0] = hwirq + priv->parent_irq_base;
+            parent_fwspec.param[1] = fwspec->param[1];
+    } else
+            return -EINVAL;
+
+
+
+It uses ->parent_irq_base derived from DT,
+but other parts are really hard-coded.
+
+
+
+For pinctrl/stm32/pinctrl-stm32.c,
+I do not see "interrupts", so it just straight maps the irq numbers.
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
