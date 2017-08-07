@@ -1,70 +1,204 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH] pinctrl: sirf: atlas7: fix of_irq_get() error check
-Date: Mon, 7 Aug 2017 19:20:59 +0300
-Message-ID: <8bc7c683-f9a5-6040-d704-46cff9d7e4f2@cogentembedded.com>
-References: <20170730193855.099325987@cogentembedded.com>
- <CACRpkdbW2efOy+qH+JPHYnbaUHkf2eqcWGm66C9a1K+uj_QNdA@mail.gmail.com>
- <5ce7636a-e839-7aab-ce33-7c1e57437d8a@cogentembedded.com>
- <CACRpkdbftXpS2W+=nBZnfmskjM30f5W0xxChBsCteAm5hy1fsw@mail.gmail.com>
- <1810e3d5-792b-f108-0f1a-1d9bd24c0876@cogentembedded.com>
- <CACRpkdZrOjrBj+WU6EH0pe1K+oZSq0gWmDMoOqhdVMZUS7=S9Q@mail.gmail.com>
+From: Andrey Utkin <andrey_utkin@fastmail.com>
+Subject: Re: [PATCH] [media] solo6x10: export hardware GPIO pins 8:31 to
+ gpiolib interface
+Date: Mon, 7 Aug 2017 18:26:44 +0100
+Message-ID: <20170807172644.GA21591@dell-m4800>
+References: <20170802141659.GA31617@magpie-gentoo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:37814 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752090AbdHGQVD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 12:21:03 -0400
-Received: by mail-lf0-f47.google.com with SMTP id m86so3993451lfi.4
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 09:21:02 -0700 (PDT)
-In-Reply-To: <CACRpkdZrOjrBj+WU6EH0pe1K+oZSq0gWmDMoOqhdVMZUS7=S9Q@mail.gmail.com>
-Content-Language: en-MW
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170802141659.GA31617@magpie-gentoo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Sviridenko <anton@corp.bluecherry.net>
+Cc: Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey.utkin@corp.bluecherry.net>, Ismael Luceno <ismael@iodev.co.uk>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Barry Song <baohua@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 08/07/2017 04:30 PM, Linus Walleij wrote:
+Hi Anton,
 
->>>>>> of_irq_get() may return  any negative error number as well as 0 on
->>>>>> failure,
->>>>>> while the driver only checks for -EPROBE_DEFER, blithely continuing
->>>>>> with
->>>>>> the call to gpiochip_set_chained_irqchip() -- that function expects the
->>>>>> parent IRQ as *unsigned int*, so would probably do nothing  when a
->>>>>> large
->>>>>> IRQ number resulting from a conversion of a negative error number is
->>>>>> passed
->>>>>> to it, however passing 0 would probably work but the driver won't
->>>>>> receive
->>>>>> valid GPIO bank interrupts.
->>>>>>
->>>>>> Check for 'ret <= 0' instead and return -ENXIO from the driver's probe
->>>>>> iff
->>>>>> of_irq_get() returned 0.
->>>>>>
->>>>>> Fixes: f9367793293d ("pinctrl: sirf: add sirf atlas7 pinctrl and gpio
->>>>>> support")
->>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>>>
->>>>> Patch applied!
->>>>
->>>>     Thanks! But to which branch? I'm not seeing it in linux-pinctrl.git...
->>>
->>> devel.
->>
->>     Still not seeing the patch, perhaps you forgot to push?
+Nothing serious, just some purist nitpicking below.
+
+On Wed, Aug 02, 2017 at 06:17:02PM +0400, Anton Sviridenko wrote:
+> 24 GPIO pins from 32 available on solo6x10 chips are exported
+> to gpiolib. First 8 GPIOs are reserved for internal use on capture card
+> boards, GPIOs in range 8:15 are configured as outputs to control relays,
+> remaining 16:31 are configured as inputs to read sensor states.
+> Now with this patch userspace DVR software can switch relays and read
+> sensor states when GPIO extension cards are attached to Softlogic solo6x10
+> based video capture cards.
 > 
-> Nah just haven't had time to push yet...
+> Signed-off-by: Anton Sviridenko <anton@corp.bluecherry.net>
+> ---
+>  drivers/media/pci/solo6x10/solo6x10-gpio.c | 97 ++++++++++++++++++++++++++++++
+>  drivers/media/pci/solo6x10/solo6x10.h      |  5 ++
+>  2 files changed, 102 insertions(+)
+> 
+> diff --git a/drivers/media/pci/solo6x10/solo6x10-gpio.c b/drivers/media/pci/solo6x10/solo6x10-gpio.c
+> index 6d3b4a36bc11..3d0d1aa2f6a8 100644
+> --- a/drivers/media/pci/solo6x10/solo6x10-gpio.c
+> +++ b/drivers/media/pci/solo6x10/solo6x10-gpio.c
+> @@ -57,6 +57,9 @@ static void solo_gpio_mode(struct solo_dev *solo_dev,
+>  			ret |= 1 << port;
+>  	}
+>  
+> +	/* Enable GPIO[31:16] */
+> +	ret |= 0xffff0000;
+> +
+>  	solo_reg_write(solo_dev, SOLO_GPIO_CONFIG_1, ret);
+>  }
+>  
+> @@ -90,16 +93,110 @@ static void solo_gpio_config(struct solo_dev *solo_dev)
+>  
 
-    Ah... seeing the patches now, thanks!
+>  	/* Initially set relay status to 0 */
 
-> My mailbox is filling up with new patches at the same pace that I
-> apply them it seems.
+Do you mean that relay is initially disabled?
+Maybe a rewording would make it clearer.
 
-    The joys of being a maintainer. :-)
+>  	solo_gpio_clear(solo_dev, 0xff00);
+> +
 
-> Linus
+> +	/* Set input pins direction */
 
-MBR, Sergei
+IMHO "Configure pins 16:31 as inputs" would be easier to read.
+
+> +	solo_gpio_mode(solo_dev, 0xffff0000, 0);
+> +}
+> +
+> +#ifdef CONFIG_GPIOLIB
+
+> +/* Pins 0-7 are not exported, because it seems from code above they are
+
+Comment opening ("/*") is usually left on empty line without text.
+The style you have here is discouraged.
+
+Also, the comment reveals that you are not sure ("it seems from the code
+above..."). Please research and/or ask somebody to gain confidence, or
+state your lack of confidence in cover letter, but keep uncertainity out
+of the codebase. That's abstract advice, sorry I can't now check the
+actual issue to resolve this uncertainity.
+
+Also, is there a chance that somebody, e.g. you, may want to edit or at
+last to check in runtime how first 8 pins are configured, e.g. in
+debugging purposes? This is an argument for using offset 0 for physical
+pin 0.
+
+> + * used for internal purposes. So offset 0 corresponds to pin 8, therefore
+> + * offsets 0-7 are relay GPIOs, 8-23 - input GPIOs.
+> + */
+> +static int solo_gpiochip_get_direction(struct gpio_chip *chip,
+> +				       unsigned int offset)
+> +{
+> +	int ret, mode;
+> +	struct solo_dev *solo_dev = gpiochip_get_data(chip);
+> +
+> +	if (offset < 8) {
+> +		ret = solo_reg_read(solo_dev, SOLO_GPIO_CONFIG_0);
+
+> +		mode = 3 & (ret >> ((offset + 8) * 2));
+
+Mask of 0x3 is used, but result other than 0 and 1 yields "return -1". I
+haven't checked the spec, this just looks suspicious. Is the code
+correct?
+
+Maybe some comment on meaning of "mode" value would help.
+
+> +	} else {
+> +		ret = solo_reg_read(solo_dev, SOLO_GPIO_CONFIG_1);
+> +		mode =  1 & (ret >> (offset - 8));
+> +	}
+> +
+> +	if (!mode)
+> +		return 1;
+> +	else if (mode == 1)
+> +		return 0;
+> +
+> +	return -1;
+>  }
+>  
+> +static int solo_gpiochip_direction_input(struct gpio_chip *chip,
+> +					 unsigned int offset)
+> +{
+> +	return -1;
+> +}
+> +
+> +static int solo_gpiochip_direction_output(struct gpio_chip *chip,
+> +					  unsigned int offset, int value)
+> +{
+> +	return -1;
+> +}
+> +
+
+> +static int solo_gpiochip_get(struct gpio_chip *chip,
+> +						unsigned int offset)
+
+line continuation is misaligned
+
+> +{
+> +	int ret;
+> +	struct solo_dev *solo_dev = gpiochip_get_data(chip);
+> +
+> +	ret = solo_reg_read(solo_dev, SOLO_GPIO_DATA_IN);
+> +
+> +	return 1 & (ret >> (offset + 8));
+> +}
+> +
+
+> +static void solo_gpiochip_set(struct gpio_chip *chip,
+> +						unsigned int offset, int value)
+
+line continuation is misaligned
+
+> +{
+> +	struct solo_dev *solo_dev = gpiochip_get_data(chip);
+> +
+> +	if (value)
+> +		solo_gpio_set(solo_dev, 1 << (offset + 8));
+> +	else
+> +		solo_gpio_clear(solo_dev, 1 << (offset + 8));
+> +}
+> +#endif
+> +
+>  int solo_gpio_init(struct solo_dev *solo_dev)
+>  {
+> +	int ret;
+> +
+>  	solo_gpio_config(solo_dev);
+> +#ifdef CONFIG_GPIOLIB
+
+> +	solo_dev->gpio_dev.label = SOLO6X10_NAME"_gpio";
+
+my eyeballs as well as 'checkpatch.pl --strict' say:
+
+Concatenated strings should use spaces between elements
+
+> diff --git a/drivers/media/pci/solo6x10/solo6x10.h b/drivers/media/pci/solo6x10/solo6x10.h
+> index 3f8da5e8c430..3a1893ae2dad 100644
+> --- a/drivers/media/pci/solo6x10/solo6x10.h
+> +++ b/drivers/media/pci/solo6x10/solo6x10.h
+> @@ -31,6 +31,7 @@
+>  #include <linux/atomic.h>
+>  #include <linux/slab.h>
+>  #include <linux/videodev2.h>
+> +#include <linux/gpio/driver.h>
+>  
+>  #include <media/v4l2-dev.h>
+>  #include <media/v4l2-device.h>
+> @@ -199,6 +200,10 @@ struct solo_dev {
+>  	u32			irq_mask;
+>  	u32			motion_mask;
+>  	struct v4l2_device	v4l2_dev;
+
+> +#ifdef CONFIG_GPIOLIB
+> +	/* GPIO */
+> +	struct gpio_chip	gpio_dev;
+> +#endif
+
+The comment is unnecessary.
+
+>  
+>  	/* tw28xx accounting */
+>  	u8			tw2865, tw2864, tw2815;
+> -- 
+> 2.13.0
+> 
