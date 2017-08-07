@@ -1,64 +1,44 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: add gpio_add_lookup_tables() to add several tables
- at once
-Date: Mon, 7 Aug 2017 14:18:40 +0200
-Message-ID: <CACRpkdY6i18Jv2-GZUAvcRHaThg7KnvsScaCo3b2YDev0XOLxA@mail.gmail.com>
-References: <20170725205800.GA25245@dtor-ws> <1501064497.29303.251.camel@linux.intel.com>
- <20170801192418.GE28401@dtor-ws> <1501675570.29303.353.camel@linux.intel.com>
+From: Peng Fan <peng.fan-3arQi8VN3Tc@public.gmane.org>
+Subject: [PATCH 1/2] devicetree: gpio: 74x164: optional enable-gpios
+Date: Mon,  7 Aug 2017 20:27:12 +0800
+Message-ID: <1502108833-10317-1-git-send-email-peng.fan@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1501675570.29303.353.camel@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peng Fan <peng.fan-3arQi8VN3Tc@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 2, 2017 at 2:06 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Tue, 2017-08-01 at 12:24 -0700, Dmitry Torokhov wrote:
->> On Wed, Jul 26, 2017 at 01:21:37PM +0300, Andy Shevchenko wrote:
->> > On Tue, 2017-07-25 at 13:58 -0700, Dmitry Torokhov wrote:
->> > > When converting legacy board to use gpiod API() there migt be
->> > > several
->> > > lookup tables in board file, let's provide a way to register them
->> > > all
->> > > at
->> > > once.
->> >
->> > Looking into the code which is using several GPIO look up tables I
->> > noticed that the pattern often something like
->> >
->> >
->> > gpiod_add_lookup_table(x_tbl);
->> > platform_device_register(x_dev);
->> >
->> > ...
->> >
->> > gpiod_add_lookup_table(y_tbl);
->> > platform_device_register(y_dev);
->> >
->> > which looks also logical.
->> >
->> > So, I have no strong opinion here, though it would be nice to have
->> > an
->> > example where it makes sense.
->>
->> Here is an example. It actually does not have multiple GPIO tables,
->> but
->> it allows to keep the structure of init sequence for the board, which
->> relies on having series of arrays conditionally populated with devices
->> and other data that need to be registered.
->
-> I see your point. Okay, no objections from me.
->
-> Please, add a stub for !GPIOLIB case.
->
-> After addressing it,
->
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+There is an OE(low active) input pin for 74hc595 and 74lv595.
+To some boards, the OE pin is controlled by GPIO, so add an
+optional property "enable-gpios".
 
-OK I wait for the stub-inclusive patch.
+Signed-off-by: Peng Fan <peng.fan-3arQi8VN3Tc@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+ Documentation/devicetree/bindings/gpio/gpio-74x164.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
+index ce1b223..c878834 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-74x164.txt
+@@ -12,6 +12,9 @@ Required properties:
+       1 = active low
+ - registers-number: Number of daisy-chained shift registers
+ 
++Optional properties:
++- enable-gpios: Specifier of the GPIO connected to OE pin
++
+ Example:
+ 
+ gpio5: gpio5@0 {
+-- 
+2.6.6
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
