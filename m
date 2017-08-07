@@ -1,48 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 1/1] gpio: gpio-vf610: add imx7ulp support
-Date: Mon, 7 Aug 2017 14:05:25 +0200
-Message-ID: <CACRpkda6AmCUyDz-zNQbh9XCCDjUcKqhMH07oET6CEXzXV=0rw@mail.gmail.com>
-References: <1501596257-20825-1-git-send-email-aisheng.dong@nxp.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: mt2712: add binding document
+Date: Mon, 7 Aug 2017 14:07:27 +0200
+Message-ID: <CACRpkdaGk408zHDfJPcvbX13Kvz-srG8c_gZ+A-d0aPZgpvuzw@mail.gmail.com>
+References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com> <1501489333-23145-2-git-send-email-zhiyong.tao@mediatek.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:33693 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752902AbdHGMF0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 08:05:26 -0400
-Received: by mail-io0-f169.google.com with SMTP id j32so1856203iod.0
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 05:05:26 -0700 (PDT)
-In-Reply-To: <1501596257-20825-1-git-send-email-aisheng.dong@nxp.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1501489333-23145-2-git-send-email-zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, srv_heupstream-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, liguo.zhang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, "Joe.C" <yingjoe.chen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, hongkun.cao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Biao Huang <biao.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, yt.shen-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Erin Lo <erin.lo-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawnguo@kernel.org>, Stefan Agner <stefan@agner.ch>, Bai Ping <ping.bai@nxp.com>, Andy Duan <fugang.duan@nxp.com>, Dong Aisheng <dongas86@gmail.com>, Sascha Hauer <kernel@pengutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Peter Chen <peter.chen@nxp.com>
 
-On Tue, Aug 1, 2017 at 4:04 PM, Dong Aisheng <aisheng.dong@nxp.com> wrote:
+On Mon, Jul 31, 2017 at 10:22 AM, Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org> wrote:
 
-> The Rapid General-Purpose Input and Output with 2 Ports (RGPIO2P)
-> on MX7ULP is similar to GPIO on Vibrid. But unlike Vibrid, the
-> RGPIO2P has an extra Port Data Direction Register (PDDR) used
-> to configure the individual port pins for input or output.
+> The commit adds mt2712 compatible node in binding document.
 >
-> We introduce a bool have_paddr with fsl_gpio_soc_data data
-> to distinguish this differences. And we support getting the output
-> status by checking the GPIO direction in PDDR.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Fugang Duan <fugang.duan@nxp.com>
-> Cc: Peter Chen <peter.chen@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
->
-> ---
-> ChangeLog:
-> v1->v2:
->  * remove flags and use bool have_paddr instead
+> Signed-off-by: Zhiyong Tao <zhiyong.tao-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
 
-Patch applied.
+Patch applied with Rob's ACK
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
