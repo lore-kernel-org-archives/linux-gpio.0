@@ -1,35 +1,33 @@
-From: "santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org" <santosh.shilimkar-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] ARM: dts: keystone-k2g: Add gpio nodes
-Date: Mon, 7 Aug 2017 06:23:23 -0700
-Message-ID: <bccc7075-43eb-6131-7bbd-4f266d1fb509@oracle.com>
-References: <1501825654-19266-1-git-send-email-j-keerthy@ti.com>
- <1501825654-19266-2-git-send-email-j-keerthy@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1] pinctrl: intel: merrifield: Correct UART pin lists
+Date: Mon, 7 Aug 2017 15:23:57 +0200
+Message-ID: <CACRpkdZrN+p+rG46eQ4dBXcjttGHVT0MunKav-rwa+HOy1k2vA@mail.gmail.com>
+References: <20170804162634.25854-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1501825654-19266-2-git-send-email-j-keerthy-l0cyMroinI0@public.gmane.org>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>, ssantosh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f46.google.com ([209.85.214.46]:36038 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbdHGNX7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 09:23:59 -0400
+Received: by mail-it0-f46.google.com with SMTP id 77so3383711itj.1
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 06:23:59 -0700 (PDT)
+In-Reply-To: <20170804162634.25854-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On 8/3/17 10:47 PM, Keerthy wrote:
-> 66AK2G has 2 instances of gpio. The first one has all the 144 GPIOs
-> functional. 9 banks with 16 gpios making a total of 144. The second
-> instance has only the GPIO0:GPIO67 functional and rest are marked
-> reserved.
-> 
-> Signed-off-by: Keerthy <j-keerthy-l0cyMroinI0@public.gmane.org>
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
-> 
-Applied 2/2. I see Linus W has picked up 1/2.
+On Fri, Aug 4, 2017 at 6:26 PM, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Regards,
-Santosh
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> UART pin lists consist GPIO numbers which is simply wrong.
+> Replace it by pin numbers.
+>
+> Fixes: 4e80c8f50574 ("pinctrl: intel: Add Intel Merrifield pin controller support")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+Patch applied for fixes with Mika's ACK.
+
+Yours,
+Linus Walleij
