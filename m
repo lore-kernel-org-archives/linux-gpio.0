@@ -1,65 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Mon, 7 Aug 2017 17:37:10 +0200
-Message-ID: <CACRpkdZ26q09s-L2wVy+Vv5rV0Enjith0AJ_sJCAH3kvzvjn1Q@mail.gmail.com>
-References: <1501758371-25316-1-git-send-email-yamada.masahiro@socionext.com>
- <CACRpkdZWxjwDnVy5f2rLAWs=+T=5SnwyU8dz1FW1eg8dk8JN_Q@mail.gmail.com> <CAK7LNAT4FvsX2-hYrKYmrftEZZb_RZOrfZoKWvR8hopt9jT8-Q@mail.gmail.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] pinctrl: sirf: atlas7: fix of_irq_get() error check
+Date: Mon, 7 Aug 2017 19:20:59 +0300
+Message-ID: <8bc7c683-f9a5-6040-d704-46cff9d7e4f2@cogentembedded.com>
+References: <20170730193855.099325987@cogentembedded.com>
+ <CACRpkdbW2efOy+qH+JPHYnbaUHkf2eqcWGm66C9a1K+uj_QNdA@mail.gmail.com>
+ <5ce7636a-e839-7aab-ce33-7c1e57437d8a@cogentembedded.com>
+ <CACRpkdbftXpS2W+=nBZnfmskjM30f5W0xxChBsCteAm5hy1fsw@mail.gmail.com>
+ <1810e3d5-792b-f108-0f1a-1d9bd24c0876@cogentembedded.com>
+ <CACRpkdZrOjrBj+WU6EH0pe1K+oZSq0gWmDMoOqhdVMZUS7=S9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:37920 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751398AbdHGPhM (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 11:37:12 -0400
-Received: by mail-it0-f46.google.com with SMTP id m34so5125994iti.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 08:37:12 -0700 (PDT)
-In-Reply-To: <CAK7LNAT4FvsX2-hYrKYmrftEZZb_RZOrfZoKWvR8hopt9jT8-Q@mail.gmail.com>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:37814 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752090AbdHGQVD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 12:21:03 -0400
+Received: by mail-lf0-f47.google.com with SMTP id m86so3993451lfi.4
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 09:21:02 -0700 (PDT)
+In-Reply-To: <CACRpkdZrOjrBj+WU6EH0pe1K+oZSq0gWmDMoOqhdVMZUS7=S9Q@mail.gmail.com>
+Content-Language: en-MW
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, Keerthy <j-keerthy@ti.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Barry Song <baohua@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Mon, Aug 7, 2017 at 3:50 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On 08/07/2017 04:30 PM, Linus Walleij wrote:
 
-> Adding "interrupts" property in DT causes
-> of_pupulate_default_populate() to assign virtual IRQ numbers
-> before driver probing.  So it does not work well with IRQ domain hierarchy.
+>>>>>> of_irq_get() may return  any negative error number as well as 0 on
+>>>>>> failure,
+>>>>>> while the driver only checks for -EPROBE_DEFER, blithely continuing
+>>>>>> with
+>>>>>> the call to gpiochip_set_chained_irqchip() -- that function expects the
+>>>>>> parent IRQ as *unsigned int*, so would probably do nothing  when a
+>>>>>> large
+>>>>>> IRQ number resulting from a conversion of a negative error number is
+>>>>>> passed
+>>>>>> to it, however passing 0 would probably work but the driver won't
+>>>>>> receive
+>>>>>> valid GPIO bank interrupts.
+>>>>>>
+>>>>>> Check for 'ret <= 0' instead and return -ENXIO from the driver's probe
+>>>>>> iff
+>>>>>> of_irq_get() returned 0.
+>>>>>>
+>>>>>> Fixes: f9367793293d ("pinctrl: sirf: add sirf atlas7 pinctrl and gpio
+>>>>>> support")
+>>>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>>>
+>>>>> Patch applied!
+>>>>
+>>>>     Thanks! But to which branch? I'm not seeing it in linux-pinctrl.git...
+>>>
+>>> devel.
+>>
+>>     Still not seeing the patch, perhaps you forgot to push?
+> 
+> Nah just haven't had time to push yet...
 
-I think I heard some noise about this the week before.
+    Ah... seeing the patches now, thanks!
 
-> For pinctrl/stm32/pinctrl-stm32.c,
-> I do not see "interrupts", so it just straight maps the irq numbers.
+> My mailbox is filling up with new patches at the same pace that I
+> apply them it seems.
 
-I think OMAP and DaVinci does someting similar too. This is from a recent
-DaVinci patch from Keerthy:
+    The joys of being a maintainer. :-)
 
-+Example for 66AK2G:
-+
-+gpio0: gpio@2603000 {
-+       compatible = "ti,k2g-gpio", "ti,keystone-gpio";
-+       reg = <0x02603000 0x100>;
-+       gpio-controller;
-+       #gpio-cells = <2>;
-+       interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
-+                       <GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
-+       interrupt-controller;
-+       #interrupt-cells = <2>;
-+       ti,ngpio = <144>;
-+       ti,davinci-gpio-unbanked = <0>;
-+       clocks = <&k2g_clks 0x001b 0x0>;
-+       clock-names = "gpio";
-+};
+> Linus
 
-
-That looks fairly similar.
-
-Yours,
-Linus Walleij
+MBR, Sergei
