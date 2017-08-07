@@ -1,33 +1,33 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1] pinctrl: intel: merrifield: Correct UART pin lists
-Date: Mon, 7 Aug 2017 15:23:57 +0200
-Message-ID: <CACRpkdZrN+p+rG46eQ4dBXcjttGHVT0MunKav-rwa+HOy1k2vA@mail.gmail.com>
-References: <20170804162634.25854-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: generic: update references to Documentation/pinctrl.txt
+Date: Mon, 7 Aug 2017 15:27:31 +0200
+Message-ID: <CACRpkdYr-nBDo-E9AQ59zNLz7zPZc2MjkbxFtt_F020TsRK3VQ@mail.gmail.com>
+References: <20170806140005.7135-1-ludovic.desroches@o2linux.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f46.google.com ([209.85.214.46]:36038 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbdHGNX7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 09:23:59 -0400
-Received: by mail-it0-f46.google.com with SMTP id 77so3383711itj.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 06:23:59 -0700 (PDT)
-In-Reply-To: <20170804162634.25854-1-andriy.shevchenko@linux.intel.com>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:35464 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbdHGN1c (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 09:27:32 -0400
+Received: by mail-io0-f181.google.com with SMTP id m88so2521875iod.2
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 06:27:32 -0700 (PDT)
+In-Reply-To: <20170806140005.7135-1-ludovic.desroches@o2linux.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Ludovic Desroches <ludovic.desroches@o2linux.fr>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Fri, Aug 4, 2017 at 6:26 PM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Sun, Aug 6, 2017 at 4:00 PM, Ludovic Desroches
+<ludovic.desroches@o2linux.fr> wrote:
 
-> UART pin lists consist GPIO numbers which is simply wrong.
-> Replace it by pin numbers.
+> Update deprecated references to Documentation/pinctrl.txt since it has been
+> moved to Documentation/driver-api/pinctl.rst.
 >
-> Fixes: 4e80c8f50574 ("pinctrl: intel: Add Intel Merrifield pin controller support")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@o2linux.fr>
+> Fixes: 5a9b73832e9e ("pinctrl.txt: move it to the driver-api book")
 
-Patch applied for fixes with Mika's ACK.
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
