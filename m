@@ -1,75 +1,51 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: 74x164: handling enable-gpios
-Date: Mon, 7 Aug 2017 09:36:19 -0300
-Message-ID: <CAOMZO5Dn2Ztt6_4Zjew4HGcmn8kMD22iSpP7_O_O_6sHtkJ02w@mail.gmail.com>
-References: <1502108833-10317-1-git-send-email-peng.fan@nxp.com> <1502108833-10317-2-git-send-email-peng.fan@nxp.com>
+From: Keerthy <j-keerthy@ti.com>
+Subject: Re: [PATCH v2 2/3] gpio: davinci: Handle the return value of
+ davinci_gpio_irq_setup function
+Date: Mon, 7 Aug 2017 18:08:32 +0530
+Message-ID: <3fc67c9e-4a03-cda0-1cd1-02f995fd9ab2@ti.com>
+References: <1500543738-9696-1-git-send-email-j-keerthy@ti.com>
+ <1500543738-9696-3-git-send-email-j-keerthy@ti.com>
+ <32ca2ace-bca3-4819-d3fb-10331cd0213c@ti.com>
+ <CACRpkdanDK338_eEKpekD39MedJKbCkFMtLbGske3QpTQKv28g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:35651 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbdHGMgV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 08:36:21 -0400
-In-Reply-To: <1502108833-10317-2-git-send-email-peng.fan@nxp.com>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:62541 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753216AbdHGMjB (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 08:39:01 -0400
+In-Reply-To: <CACRpkdanDK338_eEKpekD39MedJKbCkFMtLbGske3QpTQKv28g@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tero Kristo <t-kristo@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, fcooper@ti.com, Suman Anna <s-anna@ti.com>, "Nori, Sekhar" <nsekhar@ti.com>
 
-Hi Peng,
 
-On Mon, Aug 7, 2017 at 9:27 AM, Peng Fan <peng.fan@nxp.com> wrote:
-> To 74hc595 and 74lv595, there is an OE(low active) input pin.
-> To some boards, this pin is controller by GPIO, so handling
-> this pin in driver. When driver probe, use GPIOD_OUT_LOW flag
-> when requesting the gpio, so OE is set to low when probe.
 
-Well, this depends of the GPIO polarity.
+On Monday 07 August 2017 05:42 PM, Linus Walleij wrote:
+> On Wed, Aug 2, 2017 at 12:59 PM, Keerthy <j-keerthy@ti.com> wrote:
+>> On Thursday 20 July 2017 03:12 PM, Keerthy wrote:
+>>> Currently davinci_gpio_irq_setup return value is ignored. Handle the
+>>> return value appropriately.
+>>
+>> Linus,
+>>
+>> Any comments on this? Sorry if i pinged too soon. The rest 2 of this
+>> series were pulled by you. So just wanted to check on this one if you
+>> had specific comments.
+> 
+> I got the impression you would send this in a series with a new
+> patch requested by Johan.
+> 
+> Do we have consensus that this patch should be applied as-is?
 
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
->  drivers/gpio/gpio-74x164.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-74x164.c b/drivers/gpio/gpio-74x164.c
-> index a6607fa..e44422c 100644
-> --- a/drivers/gpio/gpio-74x164.c
-> +++ b/drivers/gpio/gpio-74x164.c
-> @@ -23,6 +23,7 @@ struct gen_74x164_chip {
->         struct gpio_chip        gpio_chip;
->         struct mutex            lock;
->         u32                     registers;
-> +       struct gpio_desc        *enable_gpio;
->         /*
->          * Since the registers are chained, every byte sent will make
->          * the previous byte shift to the next register in the
-> @@ -142,6 +143,12 @@ static int gen_74x164_probe(struct spi_device *spi)
->         chip->gpio_chip.parent = &spi->dev;
->         chip->gpio_chip.owner = THIS_MODULE;
->
-> +       chip->enable_gpio = devm_gpiod_get(&spi->dev, "enable", GPIOD_OUT_LOW);
+IIUC a separate patch is needed to implement remove function. This can
+still be independent of that.
 
-It would be better to use devm_gpiod_get_optional instead.
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1450395.html
 
-> +       if (IS_ERR(chip->enable_gpio)) {
-> +               dev_dbg(&spi->dev, "No enable-gpios property\n");
-> +               chip->enable_gpio = NULL;
-> +       }
-> +
->         mutex_init(&chip->lock);
->
->         ret = __gen_74x164_write_config(chip);
-> @@ -164,6 +171,8 @@ static int gen_74x164_remove(struct spi_device *spi)
->  {
->         struct gen_74x164_chip *chip = spi_get_drvdata(spi);
->
-> +       if (chip->enable_gpio)
-> +               gpiod_set_value(chip->enable_gpio, 0);
-
-It would be better to use the cansleep variant instead.
-
-Actually I have worked on adding this optional property, but haven't
-submitted yet:
-https://pastebin.com/u839DVD3
+> 
+> Yours,
+> Linus Walleij
+> 
