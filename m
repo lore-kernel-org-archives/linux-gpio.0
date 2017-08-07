@@ -1,39 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] gpio: Add FT232H CBUS GPIO driver
-Date: Mon, 7 Aug 2017 11:24:50 +0200
-Message-ID: <CACRpkda00FBjcWfX2g2MFPsTL_pnixSOfcfk5iM8Y6S-sSJBOA@mail.gmail.com>
-References: <1499374158-12388-1-git-send-email-agust@denx.de>
- <1499374158-12388-3-git-send-email-agust@denx.de> <CACRpkdb7jOtNscyJPJYXL+VmvwBtHmBH1hhwZ75rBquWpSUVMQ@mail.gmail.com>
- <20170801092404.GA30136@localhost>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] pinctrl: sirf: atlas7: fix of_irq_get() error check
+Date: Mon, 7 Aug 2017 12:53:27 +0300
+Message-ID: <1810e3d5-792b-f108-0f1a-1d9bd24c0876@cogentembedded.com>
+References: <20170730193855.099325987@cogentembedded.com>
+ <CACRpkdbW2efOy+qH+JPHYnbaUHkf2eqcWGm66C9a1K+uj_QNdA@mail.gmail.com>
+ <5ce7636a-e839-7aab-ce33-7c1e57437d8a@cogentembedded.com>
+ <CACRpkdbftXpS2W+=nBZnfmskjM30f5W0xxChBsCteAm5hy1fsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170801092404.GA30136@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Anatolij Gustschin <agust@denx.de>, Lee Jones <lee.jones@linaro.org>, Alan Tull <atull@kernel.org>, Moritz Fischer <moritz.fischer@ettus.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-fpga@vger.kernel.org, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:36937 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752924AbdHGJxa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 7 Aug 2017 05:53:30 -0400
+Received: by mail-lf0-f43.google.com with SMTP id m86so27779513lfi.4
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Aug 2017 02:53:29 -0700 (PDT)
+In-Reply-To: <CACRpkdbftXpS2W+=nBZnfmskjM30f5W0xxChBsCteAm5hy1fsw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Barry Song <baohua@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Aug 1, 2017 at 11:24 AM, Johan Hovold <johan@kernel.org> wrote:
-> On Tue, Aug 01, 2017 at 08:49:02AM +0200, Linus Walleij wrote:
->> On Thu, Jul 6, 2017 at 10:49 PM, Anatolij Gustschin <agust@denx.de> wrote:
+Hello!
+
+On 8/7/2017 12:07 PM, Linus Walleij wrote:
+
+>>>> of_irq_get() may return  any negative error number as well as 0 on
+>>>> failure,
+>>>> while the driver only checks for -EPROBE_DEFER, blithely continuing with
+>>>> the call to gpiochip_set_chained_irqchip() -- that function expects the
+>>>> parent IRQ as *unsigned int*, so would probably do nothing  when a large
+>>>> IRQ number resulting from a conversion of a negative error number is
+>>>> passed
+>>>> to it, however passing 0 would probably work but the driver won't receive
+>>>> valid GPIO bank interrupts.
+>>>>
+>>>> Check for 'ret <= 0' instead and return -ENXIO from the driver's probe
+>>>> iff
+>>>> of_irq_get() returned 0.
+>>>>
+>>>> Fixes: f9367793293d ("pinctrl: sirf: add sirf atlas7 pinctrl and gpio
+>>>> support")
+>>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>>
+>>>
+>>> Patch applied!
 >>
->> > Add driver for CBUS pins on FT232H. The driver supports setting
->> > GPIO direction and getting/setting CBUS 0-3 pin value. The CBUS
->> > pins have to be enabled by configuring I/O mode in the FTDI EEPROM.
->> >
->> > Signed-off-by: Anatolij Gustschin <agust@denx.de>
->
->> Apart from these small things it looks like a solid and nice driver,
->> do you plan to merge this into MFD or should I merge it? Since it depends
->> on the Kconfig symbol I guess I can merge it orthogonally if I am sure
->> Lee will pick the MFD part.
->
-> There are some fundamental problems with this series which prevents it
-> from being merged. Please take a look at the discussion following patch
-> 1/3.
+>>
+>>    Thanks! But to which branch? I'm not seeing it in linux-pinctrl.git...
+> 
+> devel.
 
-Allright it is on hold pending the MFD discussion.
+    Still not seeing the patch, perhaps you forgot to push?
 
-Yours,
-Linus Walleij
+> It seems the SiRF people are not using upstream (see other mails) so I do
+> not see we need to expediate it to fixes.
+
+    Up to you.
+
+> Yours,
+> Linus Walleij
+
+MBR, Sergei
