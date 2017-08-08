@@ -1,92 +1,33 @@
-From: Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCH] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Tue, 8 Aug 2017 09:45:42 +0530
-Message-ID: <059c7046-06cd-fce8-1603-3de7a3dc3d5d@ti.com>
-References: <1501758371-25316-1-git-send-email-yamada.masahiro@socionext.com>
- <CACRpkdZWxjwDnVy5f2rLAWs=+T=5SnwyU8dz1FW1eg8dk8JN_Q@mail.gmail.com>
- <CAK7LNAT4FvsX2-hYrKYmrftEZZb_RZOrfZoKWvR8hopt9jT8-Q@mail.gmail.com>
- <CACRpkdZ26q09s-L2wVy+Vv5rV0Enjith0AJ_sJCAH3kvzvjn1Q@mail.gmail.com>
- <CAK7LNATCZ9r6KCbFLAW68r9WtYrQ2OvWOZd0AXW4GbdHjHQDVw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:59144 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750770AbdHHER2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 8 Aug 2017 00:17:28 -0400
-In-Reply-To: <CAK7LNATCZ9r6KCbFLAW68r9WtYrQ2OvWOZd0AXW4GbdHjHQDVw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH 0/2] Fix clock name in Aspeed GPIO bindings and driver
+Date: Tue,  8 Aug 2017 15:37:34 +0930
+Message-ID: <20170808060736.1917-1-andrew@aj.id.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: Andrew Jeffery <andrew@aj.id.au>, robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au, chen@aspeedtech.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+Hello,
 
+Joel discovered I brain-farted the referenced clock name in the patches
+introducing the debounce capability for the Aspeed driver. The datasheet says
+PCLK but I wrote HPLL for whatever reason, so clean up that mistake by simply
+removing references to HPLL and put the onus on the devicetree author to
+get it right.
 
-On Tuesday 08 August 2017 06:36 AM, Masahiro Yamada wrote:
-> Hi Linus,
-> 
-> 2017-08-08 0:37 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
->> On Mon, Aug 7, 2017 at 3:50 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>
->>> Adding "interrupts" property in DT causes
->>> of_pupulate_default_populate() to assign virtual IRQ numbers
->>> before driver probing.  So it does not work well with IRQ domain hierarchy.
->>
->> I think I heard some noise about this the week before.
->>
->>> For pinctrl/stm32/pinctrl-stm32.c,
->>> I do not see "interrupts", so it just straight maps the irq numbers.
->>
->> I think OMAP and DaVinci does someting similar too. This is from a recent
->> DaVinci patch from Keerthy:
->>
->> +Example for 66AK2G:
->> +
->> +gpio0: gpio@2603000 {
->> +       compatible = "ti,k2g-gpio", "ti,keystone-gpio";
->> +       reg = <0x02603000 0x100>;
->> +       gpio-controller;
->> +       #gpio-cells = <2>;
->> +       interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
->> +                       <GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
->> +       interrupt-controller;
->> +       #interrupt-cells = <2>;
->> +       ti,ngpio = <144>;
->> +       ti,davinci-gpio-unbanked = <0>;
->> +       clocks = <&k2g_clks 0x001b 0x0>;
->> +       clock-names = "gpio";
->> +};
->>
->>
->> That looks fairly similar.
->>
-> 
-> I do not think so.
-> 
-> 
-> I do not see .alloc hook in drivers/gpio/gpio-davinci.c
-> so this driver is unrelated to IRQ domain hierarchy.
+Cheers,
 
-Hi Masahiro,
+Andrew
 
-Yes CONFIG_IRQ_DOMAIN_HIERARCHY is not enabled in keystone_defconfig or
-davinci_all_defconfig.
+Andrew Jeffery (2):
+  dt-bindings: gpio: aspeed: Remove reference to clock name
+  gpio: aspeed: Remove reference to clock name in debounce warning
+    message
 
-Regards,
-Keerthy
+ Documentation/devicetree/bindings/gpio/gpio-aspeed.txt | 2 +-
+ drivers/gpio/gpio-aspeed.c                             | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> 
-> 
-> 
-> 
-> 
+-- 
+2.11.0
