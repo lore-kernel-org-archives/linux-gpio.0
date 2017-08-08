@@ -1,35 +1,44 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [RESEND PATCH 2/2] gpio: aspeed: Remove reference to clock name in debounce warning message
-Date: Tue,  8 Aug 2017 15:46:34 +0930
-Message-ID: <20170808061634.11857-3-andrew@aj.id.au>
-References: <20170808061634.11857-1-andrew@aj.id.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170808061634.11857-1-andrew@aj.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: Andrew Jeffery <andrew@aj.id.au>, robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au, ryan_chen@aspeedtech.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v6 1/3] mfd: Add new mfd device TPS68470
+Date: Tue, 8 Aug 2017 08:39:37 +0100
+Message-ID: <20170808073937.w4bj37a47xaxnnpj@dell>
+References: <1501288226-27469-1-git-send-email-rajmohan.mani@intel.com>
+ <1501288226-27469-2-git-send-email-rajmohan.mani@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1501288226-27469-2-git-send-email-rajmohan.mani@intel.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, sakari.ailus@linux.intel.com, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-HPLL was in fact not the clock we need. Remove description of which
-clock to avoid any further error.
+On Fri, 28 Jul 2017, Rajmohan Mani wrote:
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/gpio/gpio-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The TPS68470 device is an advanced power management
+> unit that powers a Compact Camera Module (CCM),
+> generates clocks for image sensors, drives a dual
+> LED for Flash and incorporates two LED drivers for
+> general purpose indicators.
+> 
+> This patch adds support for TPS68470 mfd device.
+> 
+> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> ---
+>  drivers/mfd/Kconfig          |  18 ++++++++
+>  drivers/mfd/Makefile         |   1 +
+>  drivers/mfd/tps68470.c       | 106 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/tps68470.h |  97 +++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 222 insertions(+)
+>  create mode 100644 drivers/mfd/tps68470.c
+>  create mode 100644 include/linux/mfd/tps68470.h
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index 4ca436e66bdb..bfc53995064a 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -834,7 +834,7 @@ static int __init aspeed_gpio_probe(struct platform_device *pdev)
- 	gpio->clk = of_clk_get(pdev->dev.of_node, 0);
- 	if (IS_ERR(gpio->clk)) {
- 		dev_warn(&pdev->dev,
--				"No HPLL clock phandle provided, debouncing disabled\n");
-+				"Failed to get clock from devicetree, debouncing disabled\n");
- 		gpio->clk = NULL;
- 	}
- 
+Applied, thanks.
+
 -- 
-2.11.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
