@@ -1,32 +1,71 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v8 11/12] mfd: rk808: Add RK805 power key support
-Date: Tue, 8 Aug 2017 11:50:08 +0100
-Message-ID: <20170808105008.xnd4xigzvvne3aam@dell>
-References: <1501762841-20262-1-git-send-email-chenjh@rock-chips.com>
- <1501763170-20636-1-git-send-email-chenjh@rock-chips.com>
+Subject: Re: [PATCH v4 01/17] mfd: madera: Add register
+ definitions for Cirrus Logic Madera codecs
+Date: Tue, 8 Aug 2017 12:03:19 +0100
+Message-ID: <20170808110319.ssagukhfp72r5vys@dell>
+References: <1501235239-11145-1-git-send-email-rf@opensource.wolfsonmicro.com>
+ <1501235239-11145-2-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-input-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <1501763170-20636-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Joseph Chen <chenjh@rock-chips.com>
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, tony.xie@rock-chips.com, zhangqing@rock-chips.com, wdc@rock-chips.com, devicetree@vger.kernel.org, w.egorov@phytec.de, lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org
+In-Reply-To: <1501235239-11145-2-git-send-email-rf@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Cc: gnurou@gmail.com, alsa-devel@alsa-project.org, jason@lakedaemon.net, devicetree@vger.kernel.org, linus.walleij@linaro.org, patches@opensource.wolfsonmicro.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, tglx@linutronix.de
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 03 Aug 2017, Joseph Chen wrote:
-
-> Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-> ---
->  drivers/mfd/rk808.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+T24gRnJpLCAyOCBKdWwgMjAxNywgUmljaGFyZCBGaXR6Z2VyYWxkIHdyb3RlOgoKPiBUaGlzIHBh
+dGNoIGFkZHMgYSBoZWFkZXIgZmlsZSBvZiByZWdpc3RlciBkZWZpbml0aW9ucyBmb3IgQ2lycnVz
+Cj4gTG9naWMgIk1hZGVyYSIgY2xhc3MgY29kZWNzLiBUaGVzZSBjb2RlY3MgYXJlIGFsbCBiYXNl
+ZCBvZmYgYSBjb21tb24KPiBzZXQgb2YgaGFyZHdhcmUgSVAgc28gaGF2ZSBhIGNvbW1vbiByZWdp
+c3RlciBtYXAgKHdpdGggYSBmZXcgbWlub3IKPiBkZXZpY2UtdG8tZGV2aWNlIHZhcmlhdGlvbnMp
+Lgo+IAo+IFRoZSByZWdpc3RlcnMuaCBmaWxlIGlzIHRvb2wtZ2VuZXJhdGVkIGRpcmVjdGx5IGZy
+b20gdGhlIGhhcmR3YXJlIGRlc2lnbgo+IGJ1dCBoYXMgYmVlbiBtYW51YWxseSBzdHJpcHBlZCBk
+b3duIHRvIHJlZHVjZSBzaXplIChmdWxsIHJlZ2lzdGVyCj4gbWFwIGlzID40NDAwMCBsaW5lcyku
+IEFsbCBuYW1lcyBhcmUga2VwdCB0aGUgc2FtZSBhcyBkYXRhc2hlZXQgbmFtZXMKPiBzbyB0aGF0
+IHRoZXkgY2FuIGJlIGNyb3NzLXJlZmVyZW5jZWQgYmV0d2VlbiBzb3VyY2UgYW5kIGRhdGFzaGVl
+dCB3aXRob3V0Cj4gY29uZnVzaW9uLgo+IAo+IFRoZSByZWdpc3RlciBtYXAgbGF5b3V0IGlzIGtl
+cHQgZnVsbHktZGVmaW5lZCByYXRoZXIgdGhhbiBmYWN0b3JlZCBpbnRvCj4gbWFjcm9zIGFuZC9v
+ciBibG9jay1pbmRleGluZyBjb2RlLiBUaGUgbWFqb3IgcmVhc29ucyBmb3IgdGhpcyBhcmU6Cj4g
+Cj4gIC0gIzEgaXMgdGhhdCBpdCBtYWtlcyB0aGUgc291cmNlIGhpZ2hseSBncmVwcGFibGUsIHdo
+aWNoIGlzIGltcG9ydGFudC4KPiAgICAiV2hhdCBkb2VzIHRoZSBkcml2ZXIgZG8gd2l0aCByZWdp
+c3RlciBiaXRzIFhZWiIgb3IgIldoZXJlIGRvZXMgaXQgdXNlCj4gICAgcmVnaXN0ZXIgYml0cyBY
+WVoiIGFyZSBjb21tb25seSB0eXBlcyBvZiBxdWVzdGlvbnMuIFRoZXNlIGNhbiBiZSBxdWlja2x5
+Cj4gICAgYW5zd2VyZWQgYnkgYSBncmVwLiBTcXVhc2hpbmcgZGVmaW5pdGlvbnMgaW50byBnZW5l
+cmF0b3IgbWFjcm9zIG9yIGJsb2NrLQo+ICAgIGluZGV4aW5nIGNvZGUgaXMgYSB3YXkgb2YgZGVm
+ZWF0aW5nIGdyZXAuCj4gCj4gIC0gbW9zdCBvZiB0aGUgcmVnaXN0ZXIgZGVmaW5pdGlvbnMgYXJl
+IHVzZWQgaW4gdGFibGVzLCBzbyBhIGNvbnN0YW50IHZhbHVlCj4gICAgaXMgcmVxdWlyZWQuIFVz
+aW5nIGdlbmVyYXRvciBtYWNyb3MgbWFrZSB0aGUgdGFibGUgZGVmaW5pdGlvbiBjbHVua3kgYW5k
+Cj4gICAgb2JzY3VyZS4KPiAKPiAgLSB0aGUgY29kZSBpcyBjbGVhcmVyIHdoZW4gaXQncyB0aGVy
+ZSBpbiB0aGUgc291cmNlIGV4YWN0bHkgd2hhdCByZWdpc3Rlcgo+ICAgIGFuZCBmaWVsZCBpdCBp
+cyB1c2luZwo+IAo+ICAtIGl0IGlzIGVhc2llciB0byBkaWZmIHRoZSByZWdpc3RlciBtYXAgb2Yg
+YSBuZXcgKHVuc3VwcG9ydGVkKSBjb2RlYyBhZ2FpbnN0Cj4gICAgd2hhdCBpcyBhbHJlYWR5IHN1
+cHBvcnRlZCBhbmQgbWVyZ2UgaW4gZGlmZmVyZW5jZXMKPiAKPiAgLSBpdCBtYWtlcyB0aGUgcmVn
+aXN0ZXIgbWFwIGF2YWlsYWJsZSBpbiBzb3VyY2UgZm9yIG1haW50ZW5hbmNlL2RlYnVnZ2luZwo+
+ICAgIGluc3RlYWQgb2YgaGF2aW5nIHRvIHJlZmVyIGJhY2sgdG8gdGhlIGRhdGFzaGVldCBmb3Ig
+YSByZWdpc3RlciBtYXAKPiAKPiBTaWduZWQtb2ZmLWJ5OiBSaWNoYXJkIEZpdHpnZXJhbGQgPHJm
+QG9wZW5zb3VyY2Uud29sZnNvbm1pY3JvLmNvbT4KPiAtLS0KPiBDaGFuZ2VzIHNpbmNlIFYzOgo+
+IC0gTWFudWFsbHkgc3RyaXBwZWQgb3V0IGEgbG90IG1vcmUgc3R1ZmYsIGRlZmluZXMgd2UncmUg
+bm90IHVzaW5nIHJpZ2h0IG5vdwo+IC0gQWRkZWQgdGhlIGV4cGxhbmF0aW9uIGFib3ZlIHRvIHRo
+ZSBjb21taXQgbWVzc2FnZSBvZiB3aHkgd2UgZGVmaW5lIHRoZQo+ICAgbWFwIGVmZmVjdGl2ZWx5
+IHZlcmJhdGltCj4gCj4gIE1BSU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAg
+MTAgKwo+ICBpbmNsdWRlL2xpbnV4L21mZC9tYWRlcmEvcmVnaXN0ZXJzLmggfCAzOTg3ICsrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgMiBmaWxlcyBjaGFuZ2VkLCAzOTk3IGlu
+c2VydGlvbnMoKykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvbGludXgvbWZkL21hZGVy
+YS9yZWdpc3RlcnMuaAoKRm9yIG15IG93biByZWZlcmVuY2U6CiAgQWNrZWQtZm9yLU1GRC1ieTog
+TGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4KCi0tIApMZWUgSm9uZXMKTGluYXJvIFNU
+TWljcm9lbGVjdHJvbmljcyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKUgiBPcGVuIHNv
+dXJjZSBzb2Z0d2FyZSBmb3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0
+dGVyIHwgQmxvZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0
+cDovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
