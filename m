@@ -1,56 +1,34 @@
-From: David Daney <david.daney@cavium.com>
-Subject: [PATCH v7 1/5] genirq: Export more irq_chip_*_parent() functions.
-Date: Wed,  9 Aug 2017 15:51:35 -0700
-Message-ID: <1502319099-2782-2-git-send-email-david.daney@cavium.com>
-References: <1502319099-2782-1-git-send-email-david.daney@cavium.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/5 v2] pinctrl: Add DT bindings for Cortina Gemini
+Date: Wed, 9 Aug 2017 18:47:37 -0500
+Message-ID: <20170809234737.tpjapxylixaqnmnl@rob-hp-laptop>
+References: <20170731213050.4794-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502319099-2782-1-git-send-email-david.daney@cavium.com>
+Content-Disposition: inline
+In-Reply-To: <20170731213050.4794-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Many of the family of functions including irq_chip_mask_parent(),
-irq_chip_unmask_parent() are exported, but not all.
+On Mon, Jul 31, 2017 at 11:30:50PM +0200, Linus Walleij wrote:
+> The Cortina Gemini pin controller uses the standard pin control
+> bindings for muxing functions with groups so these bindings
+> should be entirely uncontroversial.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - State that the pin controller must be a subnode of the
+>   system controller.
+> - Drop the phandle to the system controller: we can simply
+>   look up the parent.
+> ---
+>  .../bindings/pinctrl/cortina,gemini-pinctrl.txt    | 59 ++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
 
-Add EXPORT_SYMBOL_GPL to irq_chip_enable_parent,
-irq_chip_disable_parent and irq_chip_set_affinity_parent, so they
-likewise are usable from modules.
-
-Signed-off-by: David Daney <david.daney@cavium.com>
----
- kernel/irq/chip.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index a3cc37c..6514f07 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1105,6 +1105,7 @@ void irq_chip_enable_parent(struct irq_data *data)
- 	else
- 		data->chip->irq_unmask(data);
- }
-+EXPORT_SYMBOL_GPL(irq_chip_enable_parent);
- 
- /**
-  * irq_chip_disable_parent - Disable the parent interrupt (defaults to mask if
-@@ -1119,6 +1120,7 @@ void irq_chip_disable_parent(struct irq_data *data)
- 	else
- 		data->chip->irq_mask(data);
- }
-+EXPORT_SYMBOL_GPL(irq_chip_disable_parent);
- 
- /**
-  * irq_chip_ack_parent - Acknowledge the parent interrupt
-@@ -1181,6 +1183,7 @@ int irq_chip_set_affinity_parent(struct irq_data *data,
- 
- 	return -ENOSYS;
- }
-+EXPORT_SYMBOL_GPL(irq_chip_set_affinity_parent);
- 
- /**
-  * irq_chip_set_type_parent - Set IRQ type on the parent interrupt
--- 
-1.8.3.1
+Acked-by: Rob Herring <robh@kernel.org>
