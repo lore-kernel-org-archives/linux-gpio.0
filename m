@@ -1,66 +1,56 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] gpio: brcmstb: check return value of gpiochip_irqchip_add()
-Date: Thu, 10 Aug 2017 07:51:27 +0900
-Message-ID: <1502319087-23396-1-git-send-email-yamada.masahiro@socionext.com>
+From: David Daney <david.daney@cavium.com>
+Subject: [PATCH v7 1/5] genirq: Export more irq_chip_*_parent() functions.
+Date: Wed,  9 Aug 2017 15:51:35 -0700
+Message-ID: <1502319099-2782-2-git-send-email-david.daney@cavium.com>
+References: <1502319099-2782-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-gpio@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, bcm-kernel-feedback-list@broadcom.com, Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502319099-2782-1-git-send-email-david.daney@cavium.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Because gpiochip_irqchip_add() may fail, its return value should
-be checked.
+Many of the family of functions including irq_chip_mask_parent(),
+irq_chip_unmask_parent() are exported, but not all.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Add EXPORT_SYMBOL_GPL to irq_chip_enable_parent,
+irq_chip_disable_parent and irq_chip_set_affinity_parent, so they
+likewise are usable from modules.
+
+Signed-off-by: David Daney <david.daney@cavium.com>
 ---
+ kernel/irq/chip.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/gpio/gpio-brcmstb.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index e6489143721a..51485997f680 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -339,6 +339,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 	struct brcmstb_gpio_priv *priv = bank->parent_priv;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
-+	int err;
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index a3cc37c..6514f07 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1105,6 +1105,7 @@ void irq_chip_enable_parent(struct irq_data *data)
+ 	else
+ 		data->chip->irq_unmask(data);
+ }
++EXPORT_SYMBOL_GPL(irq_chip_enable_parent);
  
- 	bank->irq_chip.name = dev_name(dev);
- 	bank->irq_chip.irq_mask = brcmstb_gpio_irq_mask;
-@@ -355,8 +356,6 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 			dev_warn(dev,
- 				"Couldn't get wake IRQ - GPIOs will not be able to wake from sleep");
- 		} else {
--			int err;
--
- 			/*
- 			 * Set wakeup capability before requesting wakeup
- 			 * interrupt, so we can process boot-time "wakeups"
-@@ -383,8 +382,10 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 	if (priv->can_wake)
- 		bank->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+ /**
+  * irq_chip_disable_parent - Disable the parent interrupt (defaults to mask if
+@@ -1119,6 +1120,7 @@ void irq_chip_disable_parent(struct irq_data *data)
+ 	else
+ 		data->chip->irq_mask(data);
+ }
++EXPORT_SYMBOL_GPL(irq_chip_disable_parent);
  
--	gpiochip_irqchip_add(&bank->gc, &bank->irq_chip, 0,
--			handle_simple_irq, IRQ_TYPE_NONE);
-+	err = gpiochip_irqchip_add(&bank->gc, &bank->irq_chip, 0,
-+				   handle_simple_irq, IRQ_TYPE_NONE);
-+	if (err)
-+		return err;
- 	gpiochip_set_chained_irqchip(&bank->gc, &bank->irq_chip,
- 			priv->parent_irq, brcmstb_gpio_irq_handler);
+ /**
+  * irq_chip_ack_parent - Acknowledge the parent interrupt
+@@ -1181,6 +1183,7 @@ int irq_chip_set_affinity_parent(struct irq_data *data,
  
+ 	return -ENOSYS;
+ }
++EXPORT_SYMBOL_GPL(irq_chip_set_affinity_parent);
+ 
+ /**
+  * irq_chip_set_type_parent - Set IRQ type on the parent interrupt
 -- 
-2.7.4
+1.8.3.1
