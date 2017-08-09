@@ -1,91 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.13, take one
-Date: Wed, 9 Aug 2017 23:11:08 +0200
-Message-ID: <CACRpkdaqeE-Bx5Z1CYiTwQM4mYQtF7u9YvQWKkyGttmsDfCjbw@mail.gmail.com>
+From: David Daney <david.daney@cavium.com>
+Subject: [PATCH v7 0/5] genirq/gpio: Add driver for ThunderX and OCTEON-TX SoCs
+Date: Wed,  9 Aug 2017 15:51:34 -0700
+Message-ID: <1502319099-2782-1-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+The ThunderX/OCTEON-TX GPIO hardware looks like a PCIe device, with
+the interrupt signal from each GPIO line being routed to a dedicated
+MSI-X.  This interrupt routing requires that we add some custom
+processing to the beginning of the MSI-X irqdomain hierarchy.
 
-these are the pin control fixes I have gathered since the return from my
-vacation. They boiled in -next a while so let's get them in.
+Changes from v6:
 
-Details in the signed tag. Apart from the documentation build it is purely
-driver fixes. Which is nice. The Intel fixes seem kind of important.
+ - Trivial rebase to v4.13.0-rc4:  Omit device tree bindings patch,
+   which was already merged, and fix MAINTAINERS patch collision.
 
-Please pull it in!
+Changes from v5:
 
-Yours,
-Linus Walleij
+ - Added .irq_{request,release}_resources() functions to irq_chip.
 
+ - Quit calling irq_set_irq_type() in the irq_map() function.
 
-The following changes since commit 16f73eb02d7e1765ccab3d2018e0bd98eb93d973:
+ - Added more error condition checking to irq_domain_{push,pop}_irq()
 
-  Linux 4.13-rc3 (2017-07-30 12:40:36 -0700)
+Changes from v4:
 
-are available in the git repository at:
+ - Rebased to post-v4.10 to support .set_config() function.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.13-2
+ - Added .get_direction() support.
 
-for you to fetch changes up to 0cca6c8920ade95e2741b2062cf1397dc546fb0f:
+ - Added PIN_CONFIG_INPUT_DEBOUNCE support.
 
-  pinctrl: generic: update references to Documentation/pinctrl.txt
-(2017-08-07 15:26:34 +0200)
+ - Removed some improper use of ENOSYS.
 
-----------------------------------------------------------------
-Pin control fixes for the v4.13 cycle:
+Changes from v3:
 
-- Fix the documentation build as the docs were moved.
+ - Add some "depends on" to the driver Kconfig to avoid build errors
+   in some architectures when doing COMPILE_TEST builds.
 
-- Correct the UART pin list on the Intell Merrifield.
+Changes from v2:
 
-- Fix pin assignment and number of pins on the Marvell Armada
-  37xx pin controller.
+ - in 4/6: Added Rob Harring's Acked-by
 
-- Cover the Setzer models in the Chromebook DMI quirk in the
-  Intel cheryview driver so they start working.
+ - Added three patches to genirq/irqdomain to support interrupt code
+   in the driver.
 
-- Add the missing "sim" function to the sunxi driver.
+ - Rewrite irq code in driver to use irqdomain hierarchy.
 
-- Fix USB pin definitions on Uniphier Pro4.
+ - Other naming and style changes as recommended by Linus Walleij.
 
-- Smatch fix for invalid reference in the zx pin control driver.
+Changes from v1:
 
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      pinctrl: cherryview: Add Setzer models to the Chromebook DMI quirk
-      pinctrl: intel: merrifield: Correct UART pin lists
+ - in 1/3: Addressed Rob Harring's comments.
 
-Gregory CLEMENT (2):
-      pinctrl: armada-37xx: Fix the pin 23 on south bridge
-      pinctrl: armada-37xx: Fix number of pin in south bridge
+ - in 2/3: Trivial cleanups found in internal review + add some
+   comments.
 
-Icenowy Zheng (1):
-      pinctrl: sunxi: add a missing function of A10/A20 pinctrl driver
+David Daney (5):
+  genirq: Export more irq_chip_*_parent() functions.
+  genirq: Add handle_fasteoi_{level,edge}_irq flow handlers.
+  irqdomain: Add irq_domain_{push,pop}_irq() functions.
+  gpio: Add gpio driver support for ThunderX and OCTEON-TX
+  MAINTAINERS: Add entry for THUNDERX GPIO Driver.
 
-Kunihiko Hayashi (1):
-      pinctrl: uniphier: fix USB3 pin assignment for Pro4
+ MAINTAINERS                  |   5 +
+ drivers/gpio/Kconfig         |   8 +
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-thunderx.c | 639 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/irq.h          |   2 +
+ include/linux/irqdomain.h    |   3 +
+ kernel/irq/chip.c            | 105 +++++++
+ kernel/irq/irqdomain.c       | 178 ++++++++++++
+ 8 files changed, 941 insertions(+)
+ create mode 100644 drivers/gpio/gpio-thunderx.c
 
-Ludovic Desroches (1):
-      pinctrl: generic: update references to Documentation/pinctrl.txt
-
-Shawn Guo (1):
-      pinctrl: zte: fix dereference of 'data' in zx_set_mux()
-
- Documentation/gpio/gpio-legacy.txt               |  2 +-
- MAINTAINERS                                      |  2 +-
- drivers/pinctrl/intel/pinctrl-cherryview.c       |  7 +++++++
- drivers/pinctrl/intel/pinctrl-merrifield.c       |  6 +++---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c      | 25 +++++++++++++++++-------
- drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c        |  1 +
- drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c |  2 +-
- drivers/pinctrl/zte/pinctrl-zx.c                 | 11 +++++++----
- include/linux/device.h                           |  2 +-
- include/linux/pinctrl/pinconf-generic.h          |  4 ++--
- 10 files changed, 42 insertions(+), 20 deletions(-)
+-- 
+1.8.3.1
