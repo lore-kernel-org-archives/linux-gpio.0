@@ -1,70 +1,34 @@
-From: Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] gpio: rcar: reinstate generic compat string
-Date: Wed,  9 Aug 2017 10:21:06 +0200
-Message-ID: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v9 00/12] rk808: Add RK805 support
+Date: Wed, 09 Aug 2017 11:35:53 +0200
+Message-ID: <1741653.yAH6rPlhTH@phil>
+References: <1502244643-11712-1-git-send-email-chenjh@rock-chips.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502244643-11712-1-git-send-email-chenjh@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-rockchip@lists.infradead.org
+Cc: Joseph Chen <chenjh@rock-chips.com>, gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, huangtao@rock-chips.com, devicetree@vger.kernel.org, tony.xie@rock-chips.com, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, linux-gpio@vger.kernel.org, wdc@rock-chips.com, broonie@kernel.org, linux-input@vger.kernel.org, mark.rutland@arm.com, w.egorov@phytec.de
 List-Id: linux-gpio@vger.kernel.org
 
-commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
-strings") deprecated the generic compat string, renesas,gpio-rcar. After
-further discussion this appears not to have been desirable as that compat
-string is compatible with all R-Car SoCs supported in upstream.
+Hi Joseph,
 
-This commit partially reverts that commit, and updates related
-documentation and examples.
+Am Mittwoch, 9. August 2017, 10:10:41 CEST schrieb Joseph Chen:
+> change in v9:
+> PATCH V9 1/12:  (1) fix spelling issue: s/Chip/chip/
+> 		(2) add: Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> PATCH V9 2/12 ~ 12/12: they are applied and no changes, so I don't resend them.
 
-Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility strings")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- .../devicetree/bindings/gpio/renesas,gpio-rcar.txt     | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+I don't know Lee's workflow, but I'm not sure that is actually true.
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 48634b01f1bf..347d8ede2982 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -16,11 +16,13 @@ Required Properties:
-     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
-     - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
-     - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
--    - "renesas,gpio-rcar": deprecated.
-+    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
- 
--    When compatible with the generic version nodes must list the
--    SoC-specific version corresponding to the platform first followed by
--    the generic version.
-+    Nodes should list all of the following that are compatible
-+    in this order:
-+    - A SoC-specific version
-+    - A generic R-Car generation version
-+    - The generic R-Car version
- 
-   - reg: Base address and length of each memory resource used by the GPIO
-     controller hardware module.
-@@ -50,7 +52,9 @@ interrupt-controller/interrupts.txt.
- Example: R8A7779 (R-Car H1) GPIO controller nodes
- 
- 	gpio0: gpio@ffc40000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
-+		compatible = "renesas,gpio-r8a7779",
-+			     "renesas,rcar-gen1-gpio",
-+			     "renesas,gpio-rcar";
- 		reg = <0xffc40000 0x2c>;
- 		interrupt-parent = <&gic>;
- 		interrupts = <0 141 0x4>;
-@@ -62,7 +66,9 @@ Example: R8A7779 (R-Car H1) GPIO controller nodes
- 	};
- 	...
- 	gpio6: gpio@ffc46000 {
--		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
-+		compatible = "renesas,gpio-r8a7779",
-+			     "renesas,rcar-gen1-gpio",
-+			     "renesas,gpio-rcar";
- 		reg = <0xffc46000 0x2c>;
- 		interrupt-parent = <&gic>;
- 		interrupts = <0 147 0x4>;
--- 
-2.1.4
+I.e. he added "for his own reference" Acked-for-MFD-by: tags to the
+patches, but did not apply them (and therefore you cannot find them on [0])
+
+So I'd think you might need to send everything again?
+
+
+Heiko
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/log/?h=for-mfd-next
