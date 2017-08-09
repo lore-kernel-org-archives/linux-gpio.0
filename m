@@ -1,39 +1,54 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 0/8] gpio: use devres for irq generic chip
-Date: Wed,  9 Aug 2017 14:24:59 +0200
-Message-ID: <20170809122507.11149-1-brgl@bgdev.pl>
+Subject: [PATCH v2 4/8] gpio: sta2x11: use devres for irq generic chip
+Date: Wed,  9 Aug 2017 14:25:03 +0200
+Message-ID: <20170809122507.11149-5-brgl@bgdev.pl>
+References: <20170809122507.11149-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170809122507.11149-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-We now provide resource managed versions of irq_alloc_generic_chip()
-and irq_setup_generic_chip(). Use them in all relevant gpio drivers.
+Use resource managed variants of irq_alloc_generic_chip() and
+irq_setup_generic_chip().
 
-v1 -> v2:
-- added three patches which explicitly disable driver unbinding for
-  non-modular drivers, only updated those built-in modules which already
-  use devres in their probe() functions
-- left out the sodaville patch since it explictly says it doesn't free
-  any resources
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/gpio/gpio-sta2x11.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Bartosz Golaszewski (8):
-  gpio: mxc: disallow unbinding the driver
-  gpio: mxs: disallow unbinding the driver
-  gpio: sta2x11: disallow unbinding the driver
-  gpio: sta2x11: use devres for irq generic chip
-  gpio: ml-ioh: use devres for irq generic chip
-  gpio: pch: use devres for irq generic chip
-  gpio: mxc: use devres for irq generic chip
-  gpio: mxs: use devres for irq generic chip
-
- drivers/gpio/gpio-ml-ioh.c  | 12 +++++++-----
- drivers/gpio/gpio-mxc.c     | 16 +++++++++++-----
- drivers/gpio/gpio-mxs.c     | 15 ++++++++++-----
- drivers/gpio/gpio-pch.c     | 12 +++++++-----
- drivers/gpio/gpio-sta2x11.c | 14 ++++++++++----
- 5 files changed, 45 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/gpio/gpio-sta2x11.c b/drivers/gpio/gpio-sta2x11.c
+index 56beb31c03db..407359da08f9 100644
+--- a/drivers/gpio/gpio-sta2x11.c
++++ b/drivers/gpio/gpio-sta2x11.c
+@@ -324,9 +324,11 @@ static int gsta_alloc_irq_chip(struct gsta_gpio *chip)
+ {
+ 	struct irq_chip_generic *gc;
+ 	struct irq_chip_type *ct;
++	int rv;
+ 
+-	gc = irq_alloc_generic_chip(KBUILD_MODNAME, 1, chip->irq_base,
+-				     chip->reg_base, handle_simple_irq);
++	gc = devm_irq_alloc_generic_chip(chip->dev, KBUILD_MODNAME, 1,
++					 chip->irq_base,
++					 chip->reg_base, handle_simple_irq);
+ 	if (!gc)
+ 		return -ENOMEM;
+ 
+@@ -338,8 +340,11 @@ static int gsta_alloc_irq_chip(struct gsta_gpio *chip)
+ 	ct->chip.irq_enable = gsta_irq_enable;
+ 
+ 	/* FIXME: this makes at most 32 interrupts. Request 0 by now */
+-	irq_setup_generic_chip(gc, 0 /* IRQ_MSK(GSTA_GPIO_PER_BLOCK) */, 0,
+-			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
++	rv = devm_irq_setup_generic_chip(chip->dev, gc,
++					 0 /* IRQ_MSK(GSTA_GPIO_PER_BLOCK) */,
++					 0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
++	if (rv)
++		return rv;
+ 
+ 	/* Set up all all 128 interrupts: code from setup_generic_chip */
+ 	{
 -- 
 2.13.2
