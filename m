@@ -1,81 +1,70 @@
-From: Joseph Chen <chenjh@rock-chips.com>
-Subject: [PATCH v9 01/12] mfd: rk808: fix up the chip id get failed
-Date: Wed,  9 Aug 2017 10:10:42 +0800
-Message-ID: <1502244643-11712-2-git-send-email-chenjh@rock-chips.com>
-References: <1502244643-11712-1-git-send-email-chenjh@rock-chips.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502244643-11712-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com
-Cc: huangtao@rock-chips.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org, lgirdwood@gmail.com, linux-rockchip@lists.infradead.org, wdc@rock-chips.com, tony.xie@rock-chips.com, linux-input@vger.kernel.org, mark.rutland@arm.com, w.egorov@phytec.de, Joseph Chen <chenjh@rock-chips.com>
+From: Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] gpio: rcar: reinstate generic compat string
+Date: Wed,  9 Aug 2017 10:21:06 +0200
+Message-ID: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
+strings") deprecated the generic compat string, renesas,gpio-rcar. After
+further discussion this appears not to have been desirable as that compat
+string is compatible with all R-Car SoCs supported in upstream.
 
-the rk8xx chip id is:
-((MSB << 8) | LSB) & 0xfff0
+This commit partially reverts that commit, and updates related
+documentation and examples.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility strings")
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/mfd/rk808.c       | 21 +++++++++++++++------
- include/linux/mfd/rk808.h |  1 +
- 2 files changed, 16 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/gpio/renesas,gpio-rcar.txt     | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-index fd087cb..8e60eba 100644
---- a/drivers/mfd/rk808.c
-+++ b/drivers/mfd/rk808.c
-@@ -325,7 +325,7 @@ static int rk808_probe(struct i2c_client *client,
- 	void (*pm_pwroff_fn)(void);
- 	int nr_pre_init_regs;
- 	int nr_cells;
--	int pm_off = 0;
-+	int pm_off = 0, msb, lsb;
- 	int ret;
- 	int i;
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+index 48634b01f1bf..347d8ede2982 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
++++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+@@ -16,11 +16,13 @@ Required Properties:
+     - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+     - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+     - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
+-    - "renesas,gpio-rcar": deprecated.
++    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
  
-@@ -333,14 +333,23 @@ static int rk808_probe(struct i2c_client *client,
- 	if (!rk808)
- 		return -ENOMEM;
+-    When compatible with the generic version nodes must list the
+-    SoC-specific version corresponding to the platform first followed by
+-    the generic version.
++    Nodes should list all of the following that are compatible
++    in this order:
++    - A SoC-specific version
++    - A generic R-Car generation version
++    - The generic R-Car version
  
--	rk808->variant = i2c_smbus_read_word_data(client, RK808_ID_MSB);
--	if (rk808->variant < 0) {
--		dev_err(&client->dev, "Failed to read the chip id at 0x%02x\n",
-+	/* Read chip variant */
-+	msb = i2c_smbus_read_byte_data(client, RK808_ID_MSB);
-+	if (msb < 0) {
-+		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
- 			RK808_ID_MSB);
--		return rk808->variant;
-+		return msb;
- 	}
+   - reg: Base address and length of each memory resource used by the GPIO
+     controller hardware module.
+@@ -50,7 +52,9 @@ interrupt-controller/interrupts.txt.
+ Example: R8A7779 (R-Car H1) GPIO controller nodes
  
--	dev_dbg(&client->dev, "Chip id: 0x%x\n", (unsigned int)rk808->variant);
-+	lsb = i2c_smbus_read_byte_data(client, RK808_ID_LSB);
-+	if (lsb < 0) {
-+		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
-+			RK808_ID_LSB);
-+		return lsb;
-+	}
-+
-+	rk808->variant = ((msb << 8) | lsb) & RK8XX_ID_MSK;
-+	dev_info(&client->dev, "chip id: 0x%x\n", (unsigned int)rk808->variant);
- 
- 	switch (rk808->variant) {
- 	case RK808_ID:
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index 83701ef..54feb14 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -298,6 +298,7 @@ enum rk818_reg {
- #define VOUT_LO_INT	BIT(0)
- #define CLK32KOUT2_EN	BIT(0)
- 
-+#define RK8XX_ID_MSK			0xfff0
- enum {
- 	BUCK_ILMIN_50MA,
- 	BUCK_ILMIN_100MA,
+ 	gpio0: gpio@ffc40000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
++		compatible = "renesas,gpio-r8a7779",
++			     "renesas,rcar-gen1-gpio",
++			     "renesas,gpio-rcar";
+ 		reg = <0xffc40000 0x2c>;
+ 		interrupt-parent = <&gic>;
+ 		interrupts = <0 141 0x4>;
+@@ -62,7 +66,9 @@ Example: R8A7779 (R-Car H1) GPIO controller nodes
+ 	};
+ 	...
+ 	gpio6: gpio@ffc46000 {
+-		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
++		compatible = "renesas,gpio-r8a7779",
++			     "renesas,rcar-gen1-gpio",
++			     "renesas,gpio-rcar";
+ 		reg = <0xffc46000 0x2c>;
+ 		interrupt-parent = <&gic>;
+ 		interrupts = <0 147 0x4>;
 -- 
-1.9.1
+2.1.4
