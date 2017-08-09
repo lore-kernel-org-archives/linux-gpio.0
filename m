@@ -1,54 +1,40 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 4/8] gpio: sta2x11: use devres for irq generic chip
-Date: Wed,  9 Aug 2017 14:25:03 +0200
-Message-ID: <20170809122507.11149-5-brgl@bgdev.pl>
+Subject: [PATCH v2 3/8] gpio: sta2x11: disallow unbinding the driver
+Date: Wed,  9 Aug 2017 14:25:02 +0200
+Message-ID: <20170809122507.11149-4-brgl@bgdev.pl>
 References: <20170809122507.11149-1-brgl@bgdev.pl>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:34206 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752716AbdHIMZN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 9 Aug 2017 08:25:13 -0400
+Received: by mail-wm0-f47.google.com with SMTP id t138so13484531wmt.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Aug 2017 05:25:13 -0700 (PDT)
 In-Reply-To: <20170809122507.11149-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-List-Id: linux-gpio@vger.kernel.org
 
-Use resource managed variants of irq_alloc_generic_chip() and
-irq_setup_generic_chip().
+This driver is non-modular so explicitly disallow a driver unbind.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/gpio/gpio-sta2x11.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-sta2x11.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpio/gpio-sta2x11.c b/drivers/gpio/gpio-sta2x11.c
-index 56beb31c03db..407359da08f9 100644
+index 9e705162da8d..56beb31c03db 100644
 --- a/drivers/gpio/gpio-sta2x11.c
 +++ b/drivers/gpio/gpio-sta2x11.c
-@@ -324,9 +324,11 @@ static int gsta_alloc_irq_chip(struct gsta_gpio *chip)
- {
- 	struct irq_chip_generic *gc;
- 	struct irq_chip_type *ct;
-+	int rv;
- 
--	gc = irq_alloc_generic_chip(KBUILD_MODNAME, 1, chip->irq_base,
--				     chip->reg_base, handle_simple_irq);
-+	gc = devm_irq_alloc_generic_chip(chip->dev, KBUILD_MODNAME, 1,
-+					 chip->irq_base,
-+					 chip->reg_base, handle_simple_irq);
- 	if (!gc)
- 		return -ENOMEM;
- 
-@@ -338,8 +340,11 @@ static int gsta_alloc_irq_chip(struct gsta_gpio *chip)
- 	ct->chip.irq_enable = gsta_irq_enable;
- 
- 	/* FIXME: this makes at most 32 interrupts. Request 0 by now */
--	irq_setup_generic_chip(gc, 0 /* IRQ_MSK(GSTA_GPIO_PER_BLOCK) */, 0,
--			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
-+	rv = devm_irq_setup_generic_chip(chip->dev, gc,
-+					 0 /* IRQ_MSK(GSTA_GPIO_PER_BLOCK) */,
-+					 0, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
-+	if (rv)
-+		return rv;
- 
- 	/* Set up all all 128 interrupts: code from setup_generic_chip */
- 	{
+@@ -432,6 +432,7 @@ static int gsta_probe(struct platform_device *dev)
+ static struct platform_driver sta2x11_gpio_platform_driver = {
+ 	.driver = {
+ 		.name	= "sta2x11-gpio",
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = gsta_probe,
+ };
 -- 
 2.13.2
+
