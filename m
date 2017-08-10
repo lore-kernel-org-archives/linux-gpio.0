@@ -1,44 +1,68 @@
-From: Lars Persson <lars.persson@axis.com>
-Subject: Re: [PATCH 02/17] pinctrl: artpec6: constify pinconf_ops,
+From: Baruch Siach <baruch@tkos.co.il>
+Subject: Re: [PATCH 07/17] pinctrl: digicolor: constify pinconf_ops,
  pinctrl_ops, and pinmux_ops structures
-Date: Thu, 10 Aug 2017 14:31:14 +0200
-Message-ID: <41b88970-c34a-efb0-e2ce-c26ac918390e@axis.com>
+Date: Thu, 10 Aug 2017 15:39:15 +0300
+Message-ID: <20170810123915.3mqvg4f3qqx4e45f@tarshish>
 References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502359589-15970-3-git-send-email-Julia.Lawall@lip6.fr>
+ <1502359589-15970-8-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bes.se.axis.com ([195.60.68.10]:41900 "EHLO bes.se.axis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752091AbdHJMb0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 10 Aug 2017 08:31:26 -0400
-In-Reply-To: <1502359589-15970-3-git-send-email-Julia.Lawall@lip6.fr>
-Content-Language: sv
+Received: from guitar.tcltek.co.il ([192.115.133.116]:46158 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752060AbdHJMjU (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 10 Aug 2017 08:39:20 -0400
+Content-Disposition: inline
+In-Reply-To: <1502359589-15970-8-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>, Jesper Nilsson <jespern@axis.com>
-Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, bhumirks@gmail.com, kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
+Hi Julia,
 
-
-On 08/10/2017 12:06 PM, Julia Lawall wrote:
-> This pinctrl_ops structure is only stored in the const pctlops
-> field of a pinctrl_desc structure. Make the pinctrl_ops structure
-> const as well.
+On Thu, Aug 10, 2017 at 12:06:19PM +0200, Julia Lawall wrote:
+> These structures are only stored in fields of a pinctrl_desc
+> structure (pctlops and pmxops) that are const. Make the
+> structures const as well.
 > 
 > Done with the help of Coccinelle.
 > 
 > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
+
+Acked-by: Baruch Siach <baruch@tkos.co.il>
+
+Thanks,
+baruch
+
 > ---
->   drivers/pinctrl/pinctrl-artpec6.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pinctrl/pinctrl-digicolor.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+> index 639a57e..ce269ce 100644
+> --- a/drivers/pinctrl/pinctrl-digicolor.c
+> +++ b/drivers/pinctrl/pinctrl-digicolor.c
+> @@ -79,7 +79,7 @@ static int dc_get_group_pins(struct pinctrl_dev *pctldev, unsigned selector,
+>  	return 0;
+>  }
 >  
+> -static struct pinctrl_ops dc_pinctrl_ops = {
+> +static const struct pinctrl_ops dc_pinctrl_ops = {
+>  	.get_groups_count	= dc_get_groups_count,
+>  	.get_group_name		= dc_get_group_name,
+>  	.get_group_pins		= dc_get_group_pins,
+> @@ -161,7 +161,7 @@ static int dc_pmx_request_gpio(struct pinctrl_dev *pcdev,
+>  	return 0;
+>  }
+>  
+> -static struct pinmux_ops dc_pmxops = {
+> +static const struct pinmux_ops dc_pmxops = {
+>  	.get_functions_count	= dc_get_functions_count,
+>  	.get_function_name	= dc_get_fname,
+>  	.get_function_groups	= dc_get_groups,
 
-Hi,
-
-Acked-by: Lars Persson <lars.persson@axis.com>
-
-BR,
-  Lars
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
