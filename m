@@ -1,32 +1,90 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: uniphier: add Audio out pin-mux settings
-Date: Thu, 10 Aug 2017 11:18:36 +0900
-Message-ID: <CAK7LNARQaAb1wKZqHw-u_0YyDgeX5PCNdKXxxjbo1pyYW9-Rjg@mail.gmail.com>
-References: <20170809131614.31478-1-suzuki.katsuhiro@socionext.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] gpio: rcar: reinstate generic compat string
+Date: Thu, 10 Aug 2017 10:06:25 +0200
+Message-ID: <20170810080624.GF16647@verge.net.au>
+References: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170809131614.31478-1-suzuki.katsuhiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:57421 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750909AbdHJIGb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 10 Aug 2017 04:06:31 -0400
+Content-Disposition: inline
+In-Reply-To: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 
-Hi.
+On Wed, Aug 09, 2017 at 10:21:06AM +0200, Simon Horman wrote:
+> commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
+> strings") deprecated the generic compat string, renesas,gpio-rcar. After
+> further discussion this appears not to have been desirable as that compat
+> string is compatible with all R-Car SoCs supported in upstream.
+> 
+> This commit partially reverts that commit, and updates related
+> documentation and examples.
+> 
+> Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility strings")
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
+Hi Linus,
 
-2017-08-09 22:16 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> The UniPhier LD11/20 SoC audio core use following 8 pins:
->   AO1IEC, AO1ARC, AO1DACCK, AO1BCK, AO1LRCK, AO1D[0-2]
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+I believe Geert is on holidays at the moment (maybe you are to‽).
+I'd like to wait for feedback from him on this as I feel that
+its not at all urgent and it would be best to try to avoid further
+churn in this area.
 
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-Thanks.
-
-
--- 
-Best Regards
-Masahiro Yamada
+> ---
+>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt     | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> index 48634b01f1bf..347d8ede2982 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> @@ -16,11 +16,13 @@ Required Properties:
+>      - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+>      - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+>      - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
+> -    - "renesas,gpio-rcar": deprecated.
+> +    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+>  
+> -    When compatible with the generic version nodes must list the
+> -    SoC-specific version corresponding to the platform first followed by
+> -    the generic version.
+> +    Nodes should list all of the following that are compatible
+> +    in this order:
+> +    - A SoC-specific version
+> +    - A generic R-Car generation version
+> +    - The generic R-Car version
+>  
+>    - reg: Base address and length of each memory resource used by the GPIO
+>      controller hardware module.
+> @@ -50,7 +52,9 @@ interrupt-controller/interrupts.txt.
+>  Example: R8A7779 (R-Car H1) GPIO controller nodes
+>  
+>  	gpio0: gpio@ffc40000 {
+> -		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+> +		compatible = "renesas,gpio-r8a7779",
+> +			     "renesas,rcar-gen1-gpio",
+> +			     "renesas,gpio-rcar";
+>  		reg = <0xffc40000 0x2c>;
+>  		interrupt-parent = <&gic>;
+>  		interrupts = <0 141 0x4>;
+> @@ -62,7 +66,9 @@ Example: R8A7779 (R-Car H1) GPIO controller nodes
+>  	};
+>  	...
+>  	gpio6: gpio@ffc46000 {
+> -		compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+> +		compatible = "renesas,gpio-r8a7779",
+> +			     "renesas,rcar-gen1-gpio",
+> +			     "renesas,gpio-rcar";
+>  		reg = <0xffc46000 0x2c>;
+>  		interrupt-parent = <&gic>;
+>  		interrupts = <0 147 0x4>;
+> -- 
+> 2.1.4
+> 
