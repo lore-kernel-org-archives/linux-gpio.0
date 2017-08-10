@@ -1,50 +1,44 @@
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Subject: Re: [PATCH 04/17] pinctrl: st: constify pinconf_ops, pinctrl_ops, and
- pinmux_ops structures
-Date: Thu, 10 Aug 2017 11:03:42 +0000
-Message-ID: <ff3ddade-259e-0638-b066-cb20c9161cb7@st.com>
+From: Lars Persson <lars.persson@axis.com>
+Subject: Re: [PATCH 02/17] pinctrl: artpec6: constify pinconf_ops,
+ pinctrl_ops, and pinmux_ops structures
+Date: Thu, 10 Aug 2017 14:31:14 +0200
+Message-ID: <41b88970-c34a-efb0-e2ce-c26ac918390e@axis.com>
 References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
- <1502359589-15970-5-git-send-email-Julia.Lawall@lip6.fr>
+ <1502359589-15970-3-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <1502359589-15970-5-git-send-email-Julia.Lawall@lip6.fr>
-Content-Language: en-US
-Content-ID: <49FCEF2A64D7D84D87CF8762A10911C2@st.com>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: "bhumirks@gmail.com" <bhumirks@gmail.com>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bes.se.axis.com ([195.60.68.10]:41900 "EHLO bes.se.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752091AbdHJMb0 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 10 Aug 2017 08:31:26 -0400
+In-Reply-To: <1502359589-15970-3-git-send-email-Julia.Lawall@lip6.fr>
+Content-Language: sv
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, Jesper Nilsson <jespern@axis.com>
+Cc: bhumirks@gmail.com, kernel-janitors@vger.kernel.org, Lars Persson <larper@axis.com>, Niklas Cassel <niklass@axis.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@axis.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgSnVsaWENCg0KT24gMDgvMTAvMjAxNyAxMjowNiBQTSwgSnVsaWEgTGF3YWxsIHdyb3RlOg0K
-PiBUaGVzZSBzdHJ1Y3R1cmVzIGFyZSBvbmx5IHN0b3JlZCBpbiBmaWVsZHMgb2YgYSBwaW5jdHJs
-X2Rlc2MNCj4gc3RydWN0dXJlIChjb25mb3BzLCBwY3Rsb3BzLCBhbmQgcG14b3BzKSB0aGF0IGFy
-ZSBjb25zdC4gTWFrZSB0aGUNCj4gc3RydWN0dXJlcyBjb25zdCBhcyB3ZWxsLg0KPiANCj4gRG9u
-ZSB3aXRoIHRoZSBoZWxwIG9mIENvY2NpbmVsbGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKdWxp
-YSBMYXdhbGwgPEp1bGlhLkxhd2FsbEBsaXA2LmZyPg0KPiANCj4gLS0tDQo+ICAgZHJpdmVycy9w
-aW5jdHJsL3BpbmN0cmwtc3QuYyB8ICAgIDYgKysrLS0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDMg
-aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L3BpbmN0cmwvcGluY3RybC1zdC5jIGIvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3QuYw0KPiBp
-bmRleCA3YWM4YjFlLi5hZWQ4MDA2IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwvcGlu
-Y3RybC1zdC5jDQo+ICsrKyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0LmMNCj4gQEAgLTg2
-MSw3ICs4NjEsNyBAQCBzdGF0aWMgdm9pZCBzdF9wY3RsX2R0X2ZyZWVfbWFwKHN0cnVjdCBwaW5j
-dHJsX2RldiAqcGN0bGRldiwNCj4gICB7DQo+ICAgfQ0KPiAgIA0KPiAtc3RhdGljIHN0cnVjdCBw
-aW5jdHJsX29wcyBzdF9wY3Rsb3BzID0gew0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBwaW5jdHJs
-X29wcyBzdF9wY3Rsb3BzID0gew0KPiAgIAkuZ2V0X2dyb3Vwc19jb3VudAk9IHN0X3BjdGxfZ2V0
-X2dyb3Vwc19jb3VudCwNCj4gICAJLmdldF9ncm91cF9waW5zCQk9IHN0X3BjdGxfZ2V0X2dyb3Vw
-X3BpbnMsDQo+ICAgCS5nZXRfZ3JvdXBfbmFtZQkJPSBzdF9wY3RsX2dldF9ncm91cF9uYW1lLA0K
-PiBAQCAtOTI4LDcgKzkyOCw3IEBAIHN0YXRpYyBpbnQgc3RfcG14X3NldF9ncGlvX2RpcmVjdGlv
-bihzdHJ1Y3QgcGluY3RybF9kZXYgKnBjdGxkZXYsDQo+ICAgCXJldHVybiAwOw0KPiAgIH0NCj4g
-ICANCj4gLXN0YXRpYyBzdHJ1Y3QgcGlubXV4X29wcyBzdF9wbXhvcHMgPSB7DQo+ICtzdGF0aWMg
-Y29uc3Qgc3RydWN0IHBpbm11eF9vcHMgc3RfcG14b3BzID0gew0KPiAgIAkuZ2V0X2Z1bmN0aW9u
-c19jb3VudAk9IHN0X3BteF9nZXRfZnVuY3NfY291bnQsDQo+ICAgCS5nZXRfZnVuY3Rpb25fbmFt
-ZQk9IHN0X3BteF9nZXRfZm5hbWUsDQo+ICAgCS5nZXRfZnVuY3Rpb25fZ3JvdXBzCT0gc3RfcG14
-X2dldF9ncm91cHMsDQo+IEBAIC0xMDI1LDcgKzEwMjUsNyBAQCBzdGF0aWMgdm9pZCBzdF9waW5j
-b25mX2RiZ19zaG93KHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCj4gICAJCVNUX1BJTkNP
-TkZfVU5QQUNLX1JUX0RFTEFZKGNvbmZpZykpOw0KPiAgIH0NCj4gICANCj4gLXN0YXRpYyBzdHJ1
-Y3QgcGluY29uZl9vcHMgc3RfY29uZm9wcyA9IHsNCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcGlu
-Y29uZl9vcHMgc3RfY29uZm9wcyA9IHsNCj4gICAJLnBpbl9jb25maWdfZ2V0CQk9IHN0X3BpbmNv
-bmZfZ2V0LA0KPiAgIAkucGluX2NvbmZpZ19zZXQJCT0gc3RfcGluY29uZl9zZXQsDQo+ICAgCS5w
-aW5fY29uZmlnX2RiZ19zaG93CT0gc3RfcGluY29uZl9kYmdfc2hvdywNCj4gDQoNCkFja2VkLWJ5
-OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw==
+
+
+On 08/10/2017 12:06 PM, Julia Lawall wrote:
+> This pinctrl_ops structure is only stored in the const pctlops
+> field of a pinctrl_desc structure. Make the pinctrl_ops structure
+> const as well.
+> 
+> Done with the help of Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
+>   drivers/pinctrl/pinctrl-artpec6.c |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>  
+
+Hi,
+
+Acked-by: Lars Persson <lars.persson@axis.com>
+
+BR,
+  Lars
