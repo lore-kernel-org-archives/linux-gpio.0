@@ -1,26 +1,63 @@
-From: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
-Subject: Re: [RESEND PATCH 2/2] gpio: aspeed: Remove reference to clock name
- in debounce warning message
-Date: Fri, 11 Aug 2017 12:30:34 +0930
-Message-ID: <CACPK8XfGohtL9d-RHryuLOGKGgyVQpmn-P3NejzeVg1TGaxbMQ@mail.gmail.com>
-References: <20170808061634.11857-1-andrew@aj.id.au> <20170808061634.11857-3-andrew@aj.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170808061634.11857-3-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ryan Chen <ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] pinctrl: samsung: Changes for v4.14
+Date: Fri, 11 Aug 2017 07:50:48 +0200
+Message-ID: <1502430648-3676-1-git-send-email-krzk@kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:36380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752363AbdHKFu5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 11 Aug 2017 01:50:57 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Tue, Aug 8, 2017 at 3:46 PM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
-> HPLL was in fact not the clock we need. Remove description of which
-> clock to avoid any further error.
->
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Hi,
 
-Acked-by: Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Two fixes in this pull request were not regressions from current merge
+window and one was known for some time, so I did not push them
+to this cycle.
+
+Best regards,
+Krzysztof
+
+
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.14
+
+for you to fetch changes up to bbed85f45b2b727bb776b914b84c67e8fd825433:
+
+  pinctrl: samsung: Remove unneeded local variable initialization (2017-07-24 06:56:02 +0200)
+
+----------------------------------------------------------------
+Samsung pinctrl driver changes for v4.14:
+1. Fix NULL pointer dereference on S3C24XX.  This was reported some time ago and
+   unfortunately it took few releases to fix.
+2. Fix invalid register offset used for external interrupts on Exynos5433.
+   This was caused by the same commit as above, although on different path.
+3. Consolidate between drivers and bindings the defines for pin mux functions.
+4. Minor code improvements.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (7):
+      pinctrl: samsung: Fix NULL pointer exception on external interrupts on S3C24xx
+      pinctrl: samsung: Fix invalid register offset used for Exynos5433 external interrupts
+      pinctrl: samsung: dt-bindings: Use better name for external interrupt function
+      pinctrl: samsung: Use define from dt-bindings for pin mux function
+      pinctrl: samsung: Use unsigned int for number of controller IO mem resources
+      pinctrl: samsung: Consistently use unsigned instead of u32 for nr_banks
+      pinctrl: samsung: Remove unneeded local variable initialization
+
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 32 ++++++++++---------------
+ drivers/pinctrl/samsung/pinctrl-exynos.h  |  1 -
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 37 +++++++++++++++-------------
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 40 ++++++++++++++-----------------
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 12 ++++++++--
+ drivers/pinctrl/samsung/pinctrl-samsung.h | 15 ++++++------
+ include/dt-bindings/pinctrl/samsung.h     |  3 ++-
+ 7 files changed, 71 insertions(+), 69 deletions(-)
