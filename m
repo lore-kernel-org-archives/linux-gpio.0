@@ -1,39 +1,41 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V2 2/2] pinctrl: qcom: spmi-gpio: Add dtest route for
- digital input
-Date: Fri, 11 Aug 2017 09:27:22 -0700
-Message-ID: <20170811162722.GF2016@tuxbook>
-References: <20170719063136.5300-1-fenglinw@codeaurora.org>
- <20170719063136.5300-3-fenglinw@codeaurora.org>
+From: Mr Abdul Karim <abdul7karim76@gmail.com>
+Subject: Assalamu`Alaikum.
+Date: Fri, 11 Aug 2017 18:37:36 +0200
+Message-ID: <CAA020W-asuQP78HS38nh25YNFk9X+TPn4ZqGJCN1ZdQfjwS-=g__3426.99834513969$1502469466$gmane$org@mail.gmail.com>
+Reply-To: abdulkarim7543@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170719063136.5300-3-fenglinw@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: fenglinw@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, kgunda@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35671 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753004AbdHKQhi (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Aug 2017 12:37:38 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r77so7065660wmd.2
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Aug 2017 09:37:37 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue 18 Jul 23:30 PDT 2017, fenglinw@codeaurora.org wrote:
-[..]
-> @@ -528,6 +547,20 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (pad->dtest_buffer == 0) {
-> +		val = 0;
-> +	} else {
-> +		if (pad->lv_mv_type) {
-> +			val = pad->dtest_buffer - 1;
-> +			val |= PMIC_GPIO_LV_MV_DIG_IN_DTEST_EN;
-> +		} else {
-> +			val = 1 << (pad->dtest_buffer - 1);
+Greetings from Mr. Abdul Karim
 
-val = BIT(pad->dtest_buffer - 1);
+ Assalamu`Alaikum.
 
+My Name is Mr. Abdul Karim I am a banker by profession. I'm from
+Ouagadougou, Burkina Faso, West Africa. My reason for contacting you
+is to transfer an abandoned $15.5M to your account.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The owner of this fund died since 2004 with his Next Of Kin. I want to
+present you to the bank as the Next of Kin/beneficiary of this fund.
 
-Regards,
-Bjorn
+Further details of the transaction shall be forwarded to you as soon
+as I receive your return mail indicating your interest.
+
+ 1) YOUR FULL NAME...............................
+ (2) YOUR AGE AND SEX............................
+ (3) YOUR CONTACT ADDRESS..................
+ (4) YOUR PRIVATE PHONE N0..........
+ (5) FAX NUMBER..............
+ (6) YOUR COUNTRY OF ORIGIN..................
+ (7) YOUR OCCUPATION.........................
+
+ Have a great day,
+Mr. Abdul Karim.
