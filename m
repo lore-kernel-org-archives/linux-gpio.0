@@ -1,61 +1,57 @@
-From: Yong Li <sdliyong@gmail.com>
-Subject: [PATCH] pinctrl: aspeed: Fix hardware strap register write logic
-Date: Fri, 11 Aug 2017 15:27:52 +0800
-Message-ID: <1502436472-136063-1-git-send-email-sdliyong@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:60764 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751370AbdHKH16 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Aug 2017 03:27:58 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
+Subject: [PATCH] pinctrl: intel: Disable GPIO pin interrupts in suspend
+Date: Fri, 11 Aug 2017 13:53:44 +0530
+Message-ID: <1502439824-18733-1-git-send-email-rushikesh.s.kadam@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, rajneesh.bhardwaj@intel.com, andy@infradead.org, rjw@rjwysocki.net, Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, andrew@aj.id.au, joel@jms.id.au, arnd@arndb.de, raltherr@google.com, robh@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: sdliyong@gmail.com
 
-The hardware strap register(SCU70) only accepts write ‘1’,
-to clear it to ‘0’, must set bits(write  ‘1’) to SCU7C
+The fix prevents unintended wakes from second level GPIO pin interrupts.
 
-Signed-off-by: Yong Li <sdliyong@gmail.com>
+On some Intel Kabylake platforms, it is observed that GPIO pin interrupts
+can wake the platform from suspend-to-idle, even though the IRQ is not
+configured as IRQF_NO_SUSPEND or enable_irq_wake().
+
+This can cause undesired wakes on Mobile devices such as Laptops and
+Chromebook devices. For example a headset jack insertion is not a desired
+wake source on Chromebook devices.
+
+The pinctrl-intel (GPIO controller) driver implements a "Shared IRQ" model.
+All GPIO pin interrupts are OR'ed and mapped to a first level IRQ14 (or
+IRQ15). The driver registers an irq_chip struct and maps an irq_domain for
+the GPIO pin interrupts. The IRQ14 handler demuxes and calls the second
+level IRQ for the respective pin.
+
+In the suspend entry flow, at suspend_noirq stage, the kernel disables IRQs
+that are not marked for wake. The pinctrl-intel driver does not implement a
+irq_disable()  callback (to take advantage of lazy disabling). The
+pinctrl-intel GPIO interrupts are not disabled in hardware during suspend
+entry, and thus are able to wake the SoC out of suspend-to-idle.
+
+This patch sets the IRQCHIP_MASK_ON_SUSPEND flag for the GPIO irq_chip, to
+disable the second level interrupts at suspend_noirq stage via the irq_mask
+callbacks. The irq_mask callback disables the IRQs in hardware by
+programming the corresponding GPIO pad registers. Only IRQs that are not
+marked for wake are disabled.
+
+Signed-off-by: Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
 ---
- drivers/pinctrl/aspeed/pinctrl-aspeed.c | 9 +++++++--
- drivers/pinctrl/aspeed/pinctrl-aspeed.h | 1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/pinctrl/intel/pinctrl-intel.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-index a86a4d6..4305052 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-@@ -213,8 +213,13 @@ static int aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
- 		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP2)
- 			continue;
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 6dc1096..8f87215 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1035,6 +1035,7 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
+ 	.irq_unmask = intel_gpio_irq_unmask,
+ 	.irq_set_type = intel_gpio_irq_type,
+ 	.irq_set_wake = intel_gpio_irq_wake,
++	.flags = IRQCHIP_MASK_ON_SUSPEND,
+ };
  
--		ret = regmap_update_bits(maps[desc->ip], desc->reg,
--					 desc->mask, val);
-+		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP1 &&
-+			val == 0)
-+			ret = regmap_update_bits(maps[desc->ip], HW_REVISION_ID,
-+				desc->mask, desc->mask);
-+		else
-+			ret = regmap_update_bits(maps[desc->ip], desc->reg,
-+				desc->mask, val);
- 
- 		if (ret)
- 			return ret;
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.h b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-index fa125db..d4d7f03 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
-@@ -251,6 +251,7 @@
- #define SCU3C           0x3C /* System Reset Control/Status Register */
- #define SCU48           0x48 /* MAC Interface Clock Delay Setting */
- #define HW_STRAP1       0x70 /* AST2400 strapping is 33 bits, is split */
-+#define HW_REVISION_ID  0x7C /* Silicon revision ID register */
- #define SCU80           0x80 /* Multi-function Pin Control #1 */
- #define SCU84           0x84 /* Multi-function Pin Control #2 */
- #define SCU88           0x88 /* Multi-function Pin Control #3 */
+ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
 -- 
-2.7.4
-
+1.9.1
