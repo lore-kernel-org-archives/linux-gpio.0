@@ -1,40 +1,31 @@
-From: Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 2/2] arm64: allwinner: h5: fix pinctrl IRQs
-Date: Fri, 11 Aug 2017 22:27:35 +0800
-Message-ID: <20170811142735.2970-3-icenowy@aosc.io>
-References: <20170811142735.2970-1-icenowy@aosc.io>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V2 1/2] pinctrl: qcom: spmi-gpio: Add support for GPIO
+ LV/MV subtype
+Date: Fri, 11 Aug 2017 09:10:20 -0700
+Message-ID: <20170811161020.GE2016@tuxbook>
+References: <20170719063136.5300-1-fenglinw@codeaurora.org>
+ <20170719063136.5300-2-fenglinw@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170811142735.2970-1-icenowy@aosc.io>
+Content-Disposition: inline
+In-Reply-To: <20170719063136.5300-2-fenglinw@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+To: fenglinw@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, kgunda@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
 
-The pin controller of H5 has three IRQs at the chip's GIC, which
-represents three banks of pinctrl IRQs. However, the device tree used to
-miss the third IRQ of the pin controller, which makes the PG bank IRQ
-not usable.
+On Tue 18 Jul 23:30 PDT 2017, fenglinw@codeaurora.org wrote:
 
-Add the missing IRQ to the pinctrl node.
+> From: Fenglin Wu <fenglinw@codeaurora.org>
+> 
+> GPIO LV (low voltage)/MV (medium voltage) subtypes have different
+> features and register mappings than 4CH/8CH subtypes. Add support
+> for LV and MV subtypes.
+> 
+> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
 
-Fixes: 4e36de179f27 ("arm64: allwinner: h5: add Allwinner H5 .dtsi")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-index 732e2e06f503..d9a720bff05d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
-@@ -120,5 +120,8 @@
- };
- 
- &pio {
-+	interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+		     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
-+		     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 	compatible = "allwinner,sun50i-h5-pinctrl";
- };
--- 
-2.13.0
+Regards,
+Bjorn
