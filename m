@@ -1,63 +1,39 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: Changes for v4.14
-Date: Fri, 11 Aug 2017 07:50:48 +0200
-Message-ID: <1502430648-3676-1-git-send-email-krzk@kernel.org>
+From: Vinay Simha BN <simhavcs@gmail.com>
+Subject: [PATCH 1/2] pinctrl: msm: GP clock for pinctrl-apq8064 binding
+Date: Fri, 11 Aug 2017 12:25:15 +0530
+Message-ID: <1502434516-9056-1-git-send-email-simhavcs@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752363AbdHKFu5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 11 Aug 2017 01:50:57 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:32923 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751299AbdHKGzm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Aug 2017 02:55:42 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: Vinay Simha BN <simhavcs@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:PIN CONTROLLER - QUALCOMM" <linux-arm-msm@vger.kernel.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Hi,
+DT binding documentation for qcom,apq8064-pinctrl driver
+for general purpose (GP) clocks.
 
-Two fixes in this pull request were not regressions from current merge
-window and one was known for some time, so I did not push them
-to this cycle.
+Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+---
+ Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+index a7bde64..a752a47 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+@@ -46,7 +46,8 @@ Valid values for pins are:
+   gpio0-gpio89
+ 
+ Valid values for function are:
+-  cam_mclk, codec_mic_i2s, codec_spkr_i2s, gpio, gsbi1, gsbi2, gsbi3, gsbi4,
++  cam_mclk, codec_mic_i2s, codec_spkr_i2s, gp_clk_0a, gp_clk_0b, gp_clk_1a,
++  gp_clk_1b, gp_clk_2a, gp_clk_2b, gpio, gsbi1, gsbi2, gsbi3, gsbi4,
+   gsbi4_cam_i2c, gsbi5, gsbi5_spi_cs1, gsbi5_spi_cs2, gsbi5_spi_cs3, gsbi6,
+   gsbi6_spi_cs1, gsbi6_spi_cs2, gsbi6_spi_cs3, gsbi7, gsbi7_spi_cs1,
+   gsbi7_spi_cs2, gsbi7_spi_cs3, gsbi_cam_i2c, hdmi, mi2s, riva_bt, riva_fm,
+-- 
+2.7.4
 
-
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
-
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-4.14
-
-for you to fetch changes up to bbed85f45b2b727bb776b914b84c67e8fd825433:
-
-  pinctrl: samsung: Remove unneeded local variable initialization (2017-07-24 06:56:02 +0200)
-
-----------------------------------------------------------------
-Samsung pinctrl driver changes for v4.14:
-1. Fix NULL pointer dereference on S3C24XX.  This was reported some time ago and
-   unfortunately it took few releases to fix.
-2. Fix invalid register offset used for external interrupts on Exynos5433.
-   This was caused by the same commit as above, although on different path.
-3. Consolidate between drivers and bindings the defines for pin mux functions.
-4. Minor code improvements.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (7):
-      pinctrl: samsung: Fix NULL pointer exception on external interrupts on S3C24xx
-      pinctrl: samsung: Fix invalid register offset used for Exynos5433 external interrupts
-      pinctrl: samsung: dt-bindings: Use better name for external interrupt function
-      pinctrl: samsung: Use define from dt-bindings for pin mux function
-      pinctrl: samsung: Use unsigned int for number of controller IO mem resources
-      pinctrl: samsung: Consistently use unsigned instead of u32 for nr_banks
-      pinctrl: samsung: Remove unneeded local variable initialization
-
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 32 ++++++++++---------------
- drivers/pinctrl/samsung/pinctrl-exynos.h  |  1 -
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c | 37 +++++++++++++++-------------
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 40 ++++++++++++++-----------------
- drivers/pinctrl/samsung/pinctrl-samsung.c | 12 ++++++++--
- drivers/pinctrl/samsung/pinctrl-samsung.h | 15 ++++++------
- include/dt-bindings/pinctrl/samsung.h     |  3 ++-
- 7 files changed, 71 insertions(+), 69 deletions(-)
