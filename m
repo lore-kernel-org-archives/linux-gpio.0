@@ -1,41 +1,76 @@
-From: Mr Abdul Karim <abdul7karim76@gmail.com>
-Subject: Assalamu`Alaikum.
-Date: Fri, 11 Aug 2017 18:37:36 +0200
-Message-ID: <CAA020W-asuQP78HS38nh25YNFk9X+TPn4ZqGJCN1ZdQfjwS-=g__3426.99834513969$1502469466$gmane$org@mail.gmail.com>
-Reply-To: abdulkarim7543@gmail.com
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] gpio: uniphier: add UniPhier GPIO controller driver
+Date: Sat, 12 Aug 2017 08:19:08 +0900
+Message-ID: <CAK7LNASHO63yAJWicNL_+sSMxs3yqOt_R7z_xg+kU_iD=Aum9Q@mail.gmail.com>
+References: <1501758371-25316-1-git-send-email-yamada.masahiro@socionext.com>
+ <CACRpkdZWxjwDnVy5f2rLAWs=+T=5SnwyU8dz1FW1eg8dk8JN_Q@mail.gmail.com>
+ <CAK7LNAT4FvsX2-hYrKYmrftEZZb_RZOrfZoKWvR8hopt9jT8-Q@mail.gmail.com> <CACRpkdZ26q09s-L2wVy+Vv5rV0Enjith0AJ_sJCAH3kvzvjn1Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35671 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753004AbdHKQhi (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Aug 2017 12:37:38 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r77so7065660wmd.2
-        for <linux-gpio@vger.kernel.org>; Fri, 11 Aug 2017 09:37:37 -0700 (PDT)
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:22701 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750714AbdHKXT6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Aug 2017 19:19:58 -0400
+In-Reply-To: <CACRpkdZ26q09s-L2wVy+Vv5rV0Enjith0AJ_sJCAH3kvzvjn1Q@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Keerthy <j-keerthy@ti.com>, Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Greetings from Mr. Abdul Karim
+2017-08-08 0:37 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Mon, Aug 7, 2017 at 3:50 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>
+>> Adding "interrupts" property in DT causes
+>> of_pupulate_default_populate() to assign virtual IRQ numbers
+>> before driver probing.  So it does not work well with IRQ domain hierarchy.
+>
+> I think I heard some noise about this the week before.
+>
+>> For pinctrl/stm32/pinctrl-stm32.c,
+>> I do not see "interrupts", so it just straight maps the irq numbers.
+>
+> I think OMAP and DaVinci does someting similar too. This is from a recent
+> DaVinci patch from Keerthy:
+>
+> +Example for 66AK2G:
+> +
+> +gpio0: gpio@2603000 {
+> +       compatible = "ti,k2g-gpio", "ti,keystone-gpio";
+> +       reg = <0x02603000 0x100>;
+> +       gpio-controller;
+> +       #gpio-cells = <2>;
+> +       interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
+> +                       <GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
+> +       interrupt-controller;
+> +       #interrupt-cells = <2>;
+> +       ti,ngpio = <144>;
+> +       ti,davinci-gpio-unbanked = <0>;
+> +       clocks = <&k2g_clks 0x001b 0x0>;
+> +       clock-names = "gpio";
+> +};
+>
+>
+> That looks fairly similar.
+>
+> Yours,
+> Linus Walleij
+> --
 
- Assalamu`Alaikum.
 
-My Name is Mr. Abdul Karim I am a banker by profession. I'm from
-Ouagadougou, Burkina Faso, West Africa. My reason for contacting you
-is to transfer an abandoned $15.5M to your account.
+I will send v2 for this driver.
 
-The owner of this fund died since 2004 with his Next Of Kin. I want to
-present you to the bank as the Next of Kin/beneficiary of this fund.
+Thanks.
 
-Further details of the transaction shall be forwarded to you as soon
-as I receive your return mail indicating your interest.
 
- 1) YOUR FULL NAME...............................
- (2) YOUR AGE AND SEX............................
- (3) YOUR CONTACT ADDRESS..................
- (4) YOUR PRIVATE PHONE N0..........
- (5) FAX NUMBER..............
- (6) YOUR COUNTRY OF ORIGIN..................
- (7) YOUR OCCUPATION.........................
-
- Have a great day,
-Mr. Abdul Karim.
+-- 
+Best Regards
+Masahiro Yamada
