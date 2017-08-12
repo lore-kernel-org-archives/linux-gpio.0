@@ -1,251 +1,86 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 1/3] irq/irq_sim: add a simple interrupt simulator
- framework
-Date: Sat, 12 Aug 2017 12:43:57 +0100
-Message-ID: <20170812124357.56ddd01d@archlinux>
-References: <20170801145028.7558-1-brgl@bgdev.pl>
-        <20170801145028.7558-2-brgl@bgdev.pl>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
+Date: Sat, 12 Aug 2017 13:43:57 +0200
+Message-ID: <20170812114357.v4ru75dw5hq7wemx@ninjato>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170719211515.46a1196c@windsurf>
+ <1500543415.2354.37.camel@pengutronix.de>
+ <20170720123640.43c2ce01@windsurf>
+ <1500555312.2354.75.camel@pengutronix.de>
+ <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
+ <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
+ <1500885221.2391.50.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751205AbdHLLoF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 12 Aug 2017 07:44:05 -0400
-In-Reply-To: <20170801145028.7558-2-brgl@bgdev.pl>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7165033882226333407=="
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1500885221.2391.50.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, DRI <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>linux
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
 
-On Tue,  1 Aug 2017 16:50:26 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> Implement a simple, irq_work-based framework for simulating
-> interrupts. Currently the API exposes routines for initializing and
-> deinitializing the simulator object, enqueueing the interrupts and
-> retrieving the allocated interrupt numbers based on the offset of the
-> dummy interrupt in the simulator struct.
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Looks good to me.
+--===============7165033882226333407==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ya5itqvemst3o4e7"
+Content-Disposition: inline
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Only tiny thing is the lack of a specified license for the code...
-+ checkpatch is warning about wrong file mode...
-#105: 
-new file mode 100644
+--ya5itqvemst3o4e7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Though I have no idea why...
 
-+ behind a certain firewall so no Google available...
-> ---
->  include/linux/irq_sim.h |  37 +++++++++++++++
->  init/Kconfig            |   4 ++
->  kernel/Makefile         |   1 +
->  kernel/irq_sim.c        | 119 ++++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 161 insertions(+)
->  create mode 100644 include/linux/irq_sim.h
->  create mode 100644 kernel/irq_sim.c
-> 
-> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> new file mode 100644
-> index 000000000000..0c1abf0e3244
-> --- /dev/null
-> +++ b/include/linux/irq_sim.h
-> @@ -0,0 +1,37 @@
-> +/*
-> + * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-> + *
-> + * Provides a framework for allocating simulated interrupts which can be
-> + * requested like normal irqs and enqueued from process context.
-> + */
-> +
-> +#ifndef _LINUX_IRQ_SIM_H
-> +#define _LINUX_IRQ_SIM_H
-> +
-> +#include <linux/irq_work.h>
-> +
-> +struct irq_sim_work_ctx {
-> +	struct irq_work work;
-> +	int irq;
-> +};
-> +
-> +struct irq_sim_irq_ctx {
-> +	int irqnum;
-> +	bool enabled;
-> +};
-> +
-> +struct irq_sim {
-> +	struct irq_sim_work_ctx work_ctx;
-> +	int irq_base;
-> +	unsigned int irq_count;
-> +	struct irq_sim_irq_ctx *irqs;
-> +};
-> +
-> +int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
-> +void irq_sim_fini(struct irq_sim *sim);
-> +
-> +void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
-> +
-> +int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
-> +
-> +#endif /* _LINUX_IRQ_SIM_H */
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 8514b25db21c..220456599c3f 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -23,6 +23,10 @@ config CONSTRUCTORS
->  config IRQ_WORK
->  	bool
->  
-> +config IRQ_SIM
-> +	bool
-You could make this tristate, but then the handling of the
-users would get complex so perhaps given it's so small boolean
-is the way to go.
-> +	select IRQ_WORK
-> +
->  config BUILDTIME_EXTABLE_SORT
->  	bool
->  
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index 4cb8e8b23c6e..4472567c5835 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -97,6 +97,7 @@ obj-$(CONFIG_TRACE_CLOCK) += trace/
->  obj-$(CONFIG_RING_BUFFER) += trace/
->  obj-$(CONFIG_TRACEPOINTS) += trace/
->  obj-$(CONFIG_IRQ_WORK) += irq_work.o
-> +obj-$(CONFIG_IRQ_SIM) += irq_sim.o
->  obj-$(CONFIG_CPU_PM) += cpu_pm.o
->  obj-$(CONFIG_BPF) += bpf/
->  
-> diff --git a/kernel/irq_sim.c b/kernel/irq_sim.c
-> new file mode 100644
-> index 000000000000..4387e2bee97c
-> --- /dev/null
-> +++ b/kernel/irq_sim.c
-> @@ -0,0 +1,119 @@
-> +/*
-> + * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-> + *
-> + * Provides a framework for allocating simulated interrupts which can be
-> + * requested like normal irqs and enqueued from process context.
-> + */
-> +
-> +#include <linux/irq_sim.h>
-> +#include <linux/irq.h>
-> +
-> +static void irq_sim_irqmask(struct irq_data *data)
-> +{
-> +	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-> +
-> +	irq_ctx->enabled = false;
-> +}
-> +
-> +static void irq_sim_irqunmask(struct irq_data *data)
-> +{
-> +	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-> +
-> +	irq_ctx->enabled = true;
-> +}
-> +
-> +static struct irq_chip irq_sim_irqchip = {
-> +	.name		= "irq_sim",
-> +	.irq_mask	= irq_sim_irqmask,
-> +	.irq_unmask	= irq_sim_irqunmask,
-> +};
-> +
-> +static void irq_sim_handle_irq(struct irq_work *work)
-> +{
-> +	struct irq_sim_work_ctx *work_ctx;
-> +
-> +	work_ctx = container_of(work, struct irq_sim_work_ctx, work);
-> +	handle_simple_irq(irq_to_desc(work_ctx->irq));
-> +}
-> +
-> +/**
-> + * irq_sim_init - Initialize the interrupt simulator: allocate a range of
-> + *                dummy interrupts.
-> + *
-> + * @sim:        The interrupt simulator object to initialize.
-> + * @num_irqs:   Number of interrupts to allocate
-> + *
-> + * Returns 0 on success and a negative error number on failure.
-> + */
-> +int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
-> +{
-> +	int i;
-> +
-> +	sim->irqs = kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP_KERNEL);
-> +	if (!sim->irqs)
-> +		return -ENOMEM;
-> +
-> +	sim->irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
-> +	if (sim->irq_base < 0) {
-> +		kfree(sim->irqs);
-> +		return sim->irq_base;
-> +	}
-> +
-> +	for (i = 0; i < num_irqs; i++) {
-> +		sim->irqs[i].irqnum = sim->irq_base + i;
-> +		sim->irqs[i].enabled = false;
-> +		irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
-> +		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
-> +		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
-> +		irq_modify_status(sim->irq_base + i,
-> +				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
-> +	}
-> +
-> +	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
-> +	sim->irq_count = num_irqs;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(irq_sim_init);
-> +
-> +/**
-> + * irq_sim_fini - Deinitialize the interrupt simulator: free the interrupt
-> + *                descriptors and allocated memory.
-> + *
-> + * @sim:        The interrupt simulator to tear down.
-> + */
-> +void irq_sim_fini(struct irq_sim *sim)
-> +{
-> +	irq_work_sync(&sim->work_ctx.work);
-> +	irq_free_descs(sim->irq_base, sim->irq_count);
-> +	kfree(sim->irqs);
-> +}
-> +EXPORT_SYMBOL_GPL(irq_sim_fini);
-> +
-> +/**
-> + * irq_sim_fire - Enqueue an interrupt.
-> + *
-> + * @sim:        The interrupt simulator object.
-> + * @offset:     Offset of the simulated interrupt which should be fired.
-> + */
-> +void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> +{
-> +	if (sim->irqs[offset].enabled) {
-> +		sim->work_ctx.irq = irq_sim_irqnum(sim, offset);
-> +		irq_work_queue(&sim->work_ctx.work);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(irq_sim_fire);
-> +
-> +/**
-> + * irq_sim_irqnum - Get the allocated number of a dummy interrupt.
-> + *
-> + * @sim:        The interrupt simulator object.
-> + * @offset:     Offset of the simulated interrupt for which to retrieve
-> + *              the number.
-> + */
-> +int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
-> +{
-> +	return sim->irqs[offset].irqnum;
-> +}
-> +EXPORT_SYMBOL_GPL(irq_sim_irqnum);
+> Thanks for the hint and the references. It seems this turned out okay,
+> but I wouldn't dare to introduce such macro horror^Wmagic.
+> I'd rather have all users converted to the _exclusive/_shared function
+> calls and maybe then replace the internal __reset_control_get with
+> Thomas' suggestion.
 
+I didn't follow the discussion closely. Shall I still apply the i2c
+patches?
+
+
+--ya5itqvemst3o4e7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmO6f0ACgkQFA3kzBSg
+KbYSDw//cXJWh0R/3hL6jnBlw+6I5dbp1tZ9oKChNr2r4yN5M2w5s5CTcGdaO8dM
+UwF9vYlg/rs2t+2VsPDOLzYDRuZRcNuJMFCAF1mU1ZlPA6JJBLaQNVrKM1EROR67
+oslTA46qVHphTZjUBbPSwe4f1Q+KKfgKqOq/16dLq5yO/ZYrPxjP/rUcurd/haYl
+MIPsJ0KBqI90zV744gYGruOO8aykoeC5TmUNkQLJg9LCqhNH2qEp63PJYyBrsgeZ
+dZKvcZwzqaWI9cNzqAdCD320bBfStL3sF/B4jJzHLHy2JUbFGO9yXxoKaJKr3NpN
+fRhsqqCyF0mfzjxccXR22sioSllqbmy6ZnxpRnnIEi+AQHvbRxCYhy/62qRdk0X1
+XApulPWKQo2cJKBeRGSmSYxL5I1wnJDlNuCEuVUyekGajocLfnEGpPFvs8EB2+tu
+kHP96bLxWIA6iwwYTNwjLEabbQ+Zba8P5evWVJg8soKI2S5KHQoNjV8KWGYLP7XX
++ibLSHV1IqsBDwNzVEOLFGzrP/xsqjMWqhdcfeDELCHA4iKlS/W/eQpxDjuKBWHn
+U8aM26YWAq7W/c5h6pz1my9yYNvRehpQR+lcehb69cCDsBwwBgyj2jwGcDPDsT0O
+rgEaw9CJV07s0eK4D9XLOjFjhzTCUor7Ykz6zknwFYn1l8iL/ck=
+=sXni
+-----END PGP SIGNATURE-----
+
+--ya5itqvemst3o4e7--
+
+
+--===============7165033882226333407==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-mediatek mailing list
+Linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
+--===============7165033882226333407==--
