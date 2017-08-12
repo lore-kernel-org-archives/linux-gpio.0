@@ -1,173 +1,121 @@
 From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 3/3] gpio: mockup: use irq_sim
-Date: Sat, 12 Aug 2017 12:46:48 +0100
-Message-ID: <20170812124648.74d7ea5f@archlinux>
+Subject: Re: [PATCH v2 2/3] irq/irq_sim: add a devres variant of
+ irq_sim_init()
+Date: Sat, 12 Aug 2017 12:47:34 +0100
+Message-ID: <20170812124513.0e6d91f9@archlinux>
 References: <20170801145028.7558-1-brgl@bgdev.pl>
-        <20170801145028.7558-4-brgl@bgdev.pl>
+ <20170801145028.7558-3-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750844AbdHLLq5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sat, 12 Aug 2017 07:46:57 -0400
-In-Reply-To: <20170801145028.7558-4-brgl@bgdev.pl>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170801145028.7558-3-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-On Tue,  1 Aug 2017 16:50:28 +0200
+On Tue,  1 Aug 2017 16:50:27 +0200
 Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> Shrink the driver by removing the code dealing with dummy interrupts
-> and replacing it with calls to the irq_sim API.
+> Add a resource managed version of irq_sim_init(). This can be
+> conveniently used in device drivers.
 > 
 > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Looks straight forward to me.
+Looks pretty standard to me.
 
 Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > ---
->  drivers/gpio/Kconfig       |  2 +-
->  drivers/gpio/gpio-mockup.c | 77 +++++-----------------------------------------
->  2 files changed, 8 insertions(+), 71 deletions(-)
+>  Documentation/driver-model/devres.txt |  1 +
+>  include/linux/irq_sim.h               |  4 ++++
+>  kernel/irq_sim.c                      | 43 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 48 insertions(+)
 > 
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index f235eae04c16..e2264fb31f87 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -311,7 +311,7 @@ config GPIO_MOCKUP
->  	depends on GPIOLIB && SYSFS
->  	select GPIO_SYSFS
->  	select GPIOLIB_IRQCHIP
-> -	select IRQ_WORK
-> +	select IRQ_SIM
->  	help
->  	  This enables GPIO Testing driver, which provides a way to test GPIO
->  	  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
-> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-> index a6565e128f9e..6db7163e6d98 100644
-> --- a/drivers/gpio/gpio-mockup.c
-> +++ b/drivers/gpio/gpio-mockup.c
-> @@ -20,7 +20,7 @@
->  #include <linux/slab.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> -#include <linux/irq_work.h>
-> +#include <linux/irq_sim.h>
->  #include <linux/debugfs.h>
->  #include <linux/uaccess.h>
+> diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+> index 30e04f7a690d..69f08c0f23a8 100644
+> --- a/Documentation/driver-model/devres.txt
+> +++ b/Documentation/driver-model/devres.txt
+> @@ -312,6 +312,7 @@ IRQ
+>    devm_irq_alloc_descs_from()
+>    devm_irq_alloc_generic_chip()
+>    devm_irq_setup_generic_chip()
+> +  devm_irq_sim_init()
 >  
-> @@ -47,18 +47,12 @@ enum {
->  struct gpio_mockup_line_status {
->  	int dir;
->  	bool value;
-> -	bool irq_enabled;
-> -};
-> -
-> -struct gpio_mockup_irq_context {
-> -	struct irq_work work;
-> -	int irq;
->  };
+>  LED
+>    devm_led_classdev_register()
+> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+> index 0c1abf0e3244..94c4bfc9b7a9 100644
+> --- a/include/linux/irq_sim.h
+> +++ b/include/linux/irq_sim.h
+> @@ -9,6 +9,7 @@
+>  #define _LINUX_IRQ_SIM_H
 >  
->  struct gpio_mockup_chip {
->  	struct gpio_chip gc;
->  	struct gpio_mockup_line_status *lines;
-> -	struct gpio_mockup_irq_context irq_ctx;
-> +	struct irq_sim irqsim;
->  	struct dentry *dbg_dir;
->  };
+>  #include <linux/irq_work.h>
+> +#include <linux/device.h>
 >  
-> @@ -144,65 +138,11 @@ static int gpio_mockup_name_lines(struct device *dev,
->  	return 0;
+>  struct irq_sim_work_ctx {
+>  	struct irq_work work;
+> @@ -30,6 +31,9 @@ struct irq_sim {
+>  int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
+>  void irq_sim_fini(struct irq_sim *sim);
+>  
+> +int devm_irq_sim_init(struct device *dev,
+> +		      struct irq_sim *sim, unsigned int num_irqs);
+> +
+>  void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
+>  
+>  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
+> diff --git a/kernel/irq_sim.c b/kernel/irq_sim.c
+> index 4387e2bee97c..92686c0c7790 100644
+> --- a/kernel/irq_sim.c
+> +++ b/kernel/irq_sim.c
+> @@ -90,6 +90,49 @@ void irq_sim_fini(struct irq_sim *sim)
 >  }
+>  EXPORT_SYMBOL_GPL(irq_sim_fini);
 >  
-> -static int gpio_mockup_to_irq(struct gpio_chip *chip, unsigned int offset)
-> -{
-> -	return chip->irq_base + offset;
-> -}
-> -
-> -static void gpio_mockup_irqmask(struct irq_data *data)
-> +static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
->  {
-> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
->  	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
->  
-> -	chip->lines[data->irq - gc->irq_base].irq_enabled = false;
-> -}
-> -
-> -static void gpio_mockup_irqunmask(struct irq_data *data)
-> -{
-> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-> -	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
-> -
-> -	chip->lines[data->irq - gc->irq_base].irq_enabled = true;
-> -}
-> -
-> -static struct irq_chip gpio_mockup_irqchip = {
-> -	.name		= GPIO_MOCKUP_NAME,
-> -	.irq_mask	= gpio_mockup_irqmask,
-> -	.irq_unmask	= gpio_mockup_irqunmask,
-> -};
-> -
-> -static void gpio_mockup_handle_irq(struct irq_work *work)
-> -{
-> -	struct gpio_mockup_irq_context *irq_ctx;
-> -
-> -	irq_ctx = container_of(work, struct gpio_mockup_irq_context, work);
-> -	handle_simple_irq(irq_to_desc(irq_ctx->irq));
-> -}
-> -
-> -static int gpio_mockup_irqchip_setup(struct device *dev,
-> -				     struct gpio_mockup_chip *chip)
-> -{
-> -	struct gpio_chip *gc = &chip->gc;
-> -	int irq_base, i;
-> -
-> -	irq_base = devm_irq_alloc_descs(dev, -1, 0, gc->ngpio, 0);
-> -	if (irq_base < 0)
-> -		return irq_base;
-> -
-> -	gc->irq_base = irq_base;
-> -	gc->irqchip = &gpio_mockup_irqchip;
-> -
-> -	for (i = 0; i < gc->ngpio; i++) {
-> -		irq_set_chip(irq_base + i, gc->irqchip);
-> -		irq_set_chip_data(irq_base + i, gc);
-> -		irq_set_handler(irq_base + i, &handle_simple_irq);
-> -		irq_modify_status(irq_base + i,
-> -				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
-> -	}
-> -
-> -	init_irq_work(&chip->irq_ctx.work, gpio_mockup_handle_irq);
-> -
-> -	return 0;
-> +	return irq_sim_irqnum(&chip->irqsim, offset);
->  }
->  
->  static ssize_t gpio_mockup_event_write(struct file *file,
-> @@ -228,11 +168,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
->  	chip = priv->chip;
->  	gc = &chip->gc;
->  
-> -	if (chip->lines[priv->offset].irq_enabled) {
-> -		gpiod_set_value_cansleep(desc, val);
-> -		priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
-> -		irq_work_queue(&priv->chip->irq_ctx.work);
-> -	}
-> +	gpiod_set_value_cansleep(desc, val);
-> +	irq_sim_fire(&chip->irqsim, priv->offset);
->  
->  	return size;
->  }
-> @@ -319,7 +256,7 @@ static int gpio_mockup_add(struct device *dev,
->  			return ret;
->  	}
->  
-> -	ret = gpio_mockup_irqchip_setup(dev, chip);
-> +	ret = devm_irq_sim_init(dev, &chip->irqsim, gc->ngpio);
->  	if (ret)
->  		return ret;
->  
-
+> +struct irq_sim_devres {
+> +	struct irq_sim *sim;
+> +};
+> +
+> +static void devm_irq_sim_release(struct device *dev, void *res)
+> +{
+> +	struct irq_sim_devres *this = res;
+> +
+> +	irq_sim_fini(this->sim);
+> +}
+> +
+> +/**
+> + * irq_sim_init - Initialize the interrupt simulator for a managed device.
+> + *
+> + * @dev:        Device to initialize the simulator object for.
+> + * @sim:        The interrupt simulator object to initialize.
+> + * @num_irqs:   Number of interrupts to allocate
+> + *
+> + * Returns 0 on success and a negative error number on failure.
+> + */
+> +int devm_irq_sim_init(struct device *dev,
+> +		      struct irq_sim *sim, unsigned int num_irqs)
+> +{
+> +	struct irq_sim_devres *dr;
+> +	int rv;
+> +
+> +	dr = devres_alloc(devm_irq_sim_release, sizeof(*dr), GFP_KERNEL);
+> +	if (!dr)
+> +		return -ENOMEM;
+> +
+> +	rv = irq_sim_init(sim, num_irqs);
+> +	if (rv) {
+> +		devres_free(dr);
+> +		return rv;
+> +	}
+> +
+> +	dr->sim = sim;
+> +	devres_add(dev, dr);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+> +
+>  /**
+>   * irq_sim_fire - Enqueue an interrupt.
+>   *
