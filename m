@@ -1,76 +1,59 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Sat, 12 Aug 2017 08:19:08 +0900
-Message-ID: <CAK7LNASHO63yAJWicNL_+sSMxs3yqOt_R7z_xg+kU_iD=Aum9Q@mail.gmail.com>
-References: <1501758371-25316-1-git-send-email-yamada.masahiro@socionext.com>
- <CACRpkdZWxjwDnVy5f2rLAWs=+T=5SnwyU8dz1FW1eg8dk8JN_Q@mail.gmail.com>
- <CAK7LNAT4FvsX2-hYrKYmrftEZZb_RZOrfZoKWvR8hopt9jT8-Q@mail.gmail.com> <CACRpkdZ26q09s-L2wVy+Vv5rV0Enjith0AJ_sJCAH3kvzvjn1Q@mail.gmail.com>
+From: icenowy@aosc.io
+Subject: Re: [PATCH v3 08/10] clk: sunxi-ng: support R40 SoC
+Date: Sat, 12 Aug 2017 12:04:14 +0800
+Message-ID: <7e211ba8fd8ae0296f678294d09fcf0d@aosc.io>
+References: <20170527102308.1988-1-icenowy@aosc.io>
+ <20170527102308.1988-9-icenowy@aosc.io>
+ <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:22701 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750714AbdHKXT6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 11 Aug 2017 19:19:58 -0400
-In-Reply-To: <CACRpkdZ26q09s-L2wVy+Vv5rV0Enjith0AJ_sJCAH3kvzvjn1Q@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170529073428.f5os7g5e666v4xnp@wens.csie.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Keerthy <j-keerthy@ti.com>, Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-2017-08-08 0:37 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Mon, Aug 7, 2017 at 3:50 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> Adding "interrupts" property in DT causes
->> of_pupulate_default_populate() to assign virtual IRQ numbers
->> before driver probing.  So it does not work well with IRQ domain hierarchy.
->
-> I think I heard some noise about this the week before.
->
->> For pinctrl/stm32/pinctrl-stm32.c,
->> I do not see "interrupts", so it just straight maps the irq numbers.
->
-> I think OMAP and DaVinci does someting similar too. This is from a recent
-> DaVinci patch from Keerthy:
->
-> +Example for 66AK2G:
-> +
-> +gpio0: gpio@2603000 {
-> +       compatible = "ti,k2g-gpio", "ti,keystone-gpio";
-> +       reg = <0x02603000 0x100>;
-> +       gpio-controller;
-> +       #gpio-cells = <2>;
-> +       interrupts = <GIC_SPI 432 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 433 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 434 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 435 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 436 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 437 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 438 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 439 IRQ_TYPE_EDGE_RISING>,
-> +                       <GIC_SPI 440 IRQ_TYPE_EDGE_RISING>;
-> +       interrupt-controller;
-> +       #interrupt-cells = <2>;
-> +       ti,ngpio = <144>;
-> +       ti,davinci-gpio-unbanked = <0>;
-> +       clocks = <&k2g_clks 0x001b 0x0>;
-> +       clock-names = "gpio";
-> +};
->
->
-> That looks fairly similar.
->
-> Yours,
-> Linus Walleij
-> --
+在 2017-05-29 15:34，Chen-Yu Tsai 写道：
+> Hi,
+> 
+> On Sat, May 27, 2017 at 06:23:06PM +0800, Icenowy Zheng wrote:
+>> Allwinner R40 SoC have a clock controller module in the style of the
+>> SoCs beyond sun6i, however, it's more rich and complex.
+>> 
+>> Add support for it.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes in v3:
+>> - Rebased on current linux-next.
+>> Changes in v2:
+>> - Fixes according to the SoC's user manual.
+>> 
+>>  drivers/clk/sunxi-ng/Kconfig              |   10 +
+>>  drivers/clk/sunxi-ng/Makefile             |    1 +
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c      | 1153 
+>> +++++++++++++++++++++++++++++
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      |   68 ++
+>>  include/dt-bindings/clock/sun8i-r40-ccu.h |  191 +++++
+>>  include/dt-bindings/reset/sun8i-r40-ccu.h |  129 ++++
+>>  6 files changed, 1552 insertions(+)
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+>>  create mode 100644 include/dt-bindings/clock/sun8i-r40-ccu.h
+>>  create mode 100644 include/dt-bindings/reset/sun8i-r40-ccu.h
+>> 
+> ...
+>> +static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_ddr1_clk, "pll-ddr1",
+>> +				   "osc24M", 0x04c,
+>> +				   8, 7,	/* N */
+> 
+> N has minimum and maximum limits.
 
+These constraints are never implemented in old SoCs.
 
-I will send v2 for this driver.
-
-Thanks.
-
-
--- 
-Best Regards
-Masahiro Yamada
+>> --
+>> 2.12.2
+>> 
