@@ -1,86 +1,173 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 000/102] Convert drivers to explicit reset API
-Date: Sat, 12 Aug 2017 13:43:57 +0200
-Message-ID: <20170812114357.v4ru75dw5hq7wemx@ninjato>
-References: <20170719152646.25903-1-p.zabel@pengutronix.de>
- <20170719211515.46a1196c@windsurf>
- <1500543415.2354.37.camel@pengutronix.de>
- <20170720123640.43c2ce01@windsurf>
- <1500555312.2354.75.camel@pengutronix.de>
- <CAKdAkRTx8jd8UToz5_EgMmdW3V47i2uo++YvVB_yzytqSA=P1Q@mail.gmail.com>
- <CACRpkdaXOv7mX+b-q1K34CB5w0SWPXCKa21wHaxL7qjf91PJXQ@mail.gmail.com>
- <1500885221.2391.50.camel@pengutronix.de>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH v2 3/3] gpio: mockup: use irq_sim
+Date: Sat, 12 Aug 2017 12:46:48 +0100
+Message-ID: <20170812124648.74d7ea5f@archlinux>
+References: <20170801145028.7558-1-brgl@bgdev.pl>
+        <20170801145028.7558-4-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7165033882226333407=="
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1500885221.2391.50.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, DRI <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, linux-clk <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Xinliang Liu <z.liuxinliang-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>, Bin Liu <b-liu-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>linux
-List-Id: linux-gpio@vger.kernel.org
-
-
---===============7165033882226333407==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ya5itqvemst3o4e7"
-Content-Disposition: inline
-
-
---ya5itqvemst3o4e7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-> Thanks for the hint and the references. It seems this turned out okay,
-> but I wouldn't dare to introduce such macro horror^Wmagic.
-> I'd rather have all users converted to the _exclusive/_shared function
-> calls and maybe then replace the internal __reset_control_get with
-> Thomas' suggestion.
-
-I didn't follow the discussion closely. Shall I still apply the i2c
-patches?
-
-
---ya5itqvemst3o4e7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmO6f0ACgkQFA3kzBSg
-KbYSDw//cXJWh0R/3hL6jnBlw+6I5dbp1tZ9oKChNr2r4yN5M2w5s5CTcGdaO8dM
-UwF9vYlg/rs2t+2VsPDOLzYDRuZRcNuJMFCAF1mU1ZlPA6JJBLaQNVrKM1EROR67
-oslTA46qVHphTZjUBbPSwe4f1Q+KKfgKqOq/16dLq5yO/ZYrPxjP/rUcurd/haYl
-MIPsJ0KBqI90zV744gYGruOO8aykoeC5TmUNkQLJg9LCqhNH2qEp63PJYyBrsgeZ
-dZKvcZwzqaWI9cNzqAdCD320bBfStL3sF/B4jJzHLHy2JUbFGO9yXxoKaJKr3NpN
-fRhsqqCyF0mfzjxccXR22sioSllqbmy6ZnxpRnnIEi+AQHvbRxCYhy/62qRdk0X1
-XApulPWKQo2cJKBeRGSmSYxL5I1wnJDlNuCEuVUyekGajocLfnEGpPFvs8EB2+tu
-kHP96bLxWIA6iwwYTNwjLEabbQ+Zba8P5evWVJg8soKI2S5KHQoNjV8KWGYLP7XX
-+ibLSHV1IqsBDwNzVEOLFGzrP/xsqjMWqhdcfeDELCHA4iKlS/W/eQpxDjuKBWHn
-U8aM26YWAq7W/c5h6pz1my9yYNvRehpQR+lcehb69cCDsBwwBgyj2jwGcDPDsT0O
-rgEaw9CJV07s0eK4D9XLOjFjhzTCUor7Ykz6zknwFYn1l8iL/ck=
-=sXni
------END PGP SIGNATURE-----
-
---ya5itqvemst3o4e7--
-
-
---===============7165033882226333407==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:43238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750844AbdHLLq5 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Sat, 12 Aug 2017 07:46:57 -0400
+In-Reply-To: <20170801145028.7558-4-brgl@bgdev.pl>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
 
-_______________________________________________
-Linux-mediatek mailing list
-Linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-http://lists.infradead.org/mailman/listinfo/linux-mediatek
+On Tue,  1 Aug 2017 16:50:28 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
---===============7165033882226333407==--
+> Shrink the driver by removing the code dealing with dummy interrupts
+> and replacing it with calls to the irq_sim API.
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Looks straight forward to me.
+
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/gpio/Kconfig       |  2 +-
+>  drivers/gpio/gpio-mockup.c | 77 +++++-----------------------------------------
+>  2 files changed, 8 insertions(+), 71 deletions(-)
+> 
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index f235eae04c16..e2264fb31f87 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -311,7 +311,7 @@ config GPIO_MOCKUP
+>  	depends on GPIOLIB && SYSFS
+>  	select GPIO_SYSFS
+>  	select GPIOLIB_IRQCHIP
+> -	select IRQ_WORK
+> +	select IRQ_SIM
+>  	help
+>  	  This enables GPIO Testing driver, which provides a way to test GPIO
+>  	  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index a6565e128f9e..6db7163e6d98 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -20,7 +20,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+> -#include <linux/irq_work.h>
+> +#include <linux/irq_sim.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/uaccess.h>
+>  
+> @@ -47,18 +47,12 @@ enum {
+>  struct gpio_mockup_line_status {
+>  	int dir;
+>  	bool value;
+> -	bool irq_enabled;
+> -};
+> -
+> -struct gpio_mockup_irq_context {
+> -	struct irq_work work;
+> -	int irq;
+>  };
+>  
+>  struct gpio_mockup_chip {
+>  	struct gpio_chip gc;
+>  	struct gpio_mockup_line_status *lines;
+> -	struct gpio_mockup_irq_context irq_ctx;
+> +	struct irq_sim irqsim;
+>  	struct dentry *dbg_dir;
+>  };
+>  
+> @@ -144,65 +138,11 @@ static int gpio_mockup_name_lines(struct device *dev,
+>  	return 0;
+>  }
+>  
+> -static int gpio_mockup_to_irq(struct gpio_chip *chip, unsigned int offset)
+> -{
+> -	return chip->irq_base + offset;
+> -}
+> -
+> -static void gpio_mockup_irqmask(struct irq_data *data)
+> +static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+>  {
+> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+>  	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+>  
+> -	chip->lines[data->irq - gc->irq_base].irq_enabled = false;
+> -}
+> -
+> -static void gpio_mockup_irqunmask(struct irq_data *data)
+> -{
+> -	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+> -	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+> -
+> -	chip->lines[data->irq - gc->irq_base].irq_enabled = true;
+> -}
+> -
+> -static struct irq_chip gpio_mockup_irqchip = {
+> -	.name		= GPIO_MOCKUP_NAME,
+> -	.irq_mask	= gpio_mockup_irqmask,
+> -	.irq_unmask	= gpio_mockup_irqunmask,
+> -};
+> -
+> -static void gpio_mockup_handle_irq(struct irq_work *work)
+> -{
+> -	struct gpio_mockup_irq_context *irq_ctx;
+> -
+> -	irq_ctx = container_of(work, struct gpio_mockup_irq_context, work);
+> -	handle_simple_irq(irq_to_desc(irq_ctx->irq));
+> -}
+> -
+> -static int gpio_mockup_irqchip_setup(struct device *dev,
+> -				     struct gpio_mockup_chip *chip)
+> -{
+> -	struct gpio_chip *gc = &chip->gc;
+> -	int irq_base, i;
+> -
+> -	irq_base = devm_irq_alloc_descs(dev, -1, 0, gc->ngpio, 0);
+> -	if (irq_base < 0)
+> -		return irq_base;
+> -
+> -	gc->irq_base = irq_base;
+> -	gc->irqchip = &gpio_mockup_irqchip;
+> -
+> -	for (i = 0; i < gc->ngpio; i++) {
+> -		irq_set_chip(irq_base + i, gc->irqchip);
+> -		irq_set_chip_data(irq_base + i, gc);
+> -		irq_set_handler(irq_base + i, &handle_simple_irq);
+> -		irq_modify_status(irq_base + i,
+> -				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
+> -	}
+> -
+> -	init_irq_work(&chip->irq_ctx.work, gpio_mockup_handle_irq);
+> -
+> -	return 0;
+> +	return irq_sim_irqnum(&chip->irqsim, offset);
+>  }
+>  
+>  static ssize_t gpio_mockup_event_write(struct file *file,
+> @@ -228,11 +168,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+>  	chip = priv->chip;
+>  	gc = &chip->gc;
+>  
+> -	if (chip->lines[priv->offset].irq_enabled) {
+> -		gpiod_set_value_cansleep(desc, val);
+> -		priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
+> -		irq_work_queue(&priv->chip->irq_ctx.work);
+> -	}
+> +	gpiod_set_value_cansleep(desc, val);
+> +	irq_sim_fire(&chip->irqsim, priv->offset);
+>  
+>  	return size;
+>  }
+> @@ -319,7 +256,7 @@ static int gpio_mockup_add(struct device *dev,
+>  			return ret;
+>  	}
+>  
+> -	ret = gpio_mockup_irqchip_setup(dev, chip);
+> +	ret = devm_irq_sim_init(dev, &chip->irqsim, gc->ngpio);
+>  	if (ret)
+>  		return ret;
+>  
+
