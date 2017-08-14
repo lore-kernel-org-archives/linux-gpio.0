@@ -1,80 +1,72 @@
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Subject: Re: [PATCH v2 1/3] irq/irq_sim: add a simple interrupt simulator framework
-Date: Mon, 14 Aug 2017 18:04:12 +0800
-Message-ID: <9179B569-5F66-4F50-8D8D-DE2DB8F91243@jic23.retrosnub.co.uk>
-References: <20170801145028.7558-1-brgl@bgdev.pl> <20170801145028.7558-2-brgl@bgdev.pl> <20170812124357.56ddd01d@archlinux> <CAMRc=MdZXbY4Lp-a=qu+d7civ9PFQi2niXqzeFYqvVF03sy=Cw@mail.gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v7 2/5] genirq: Add handle_fasteoi_{level,edge}_irq flow
+ handlers.
+Date: Mon, 14 Aug 2017 12:25:01 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1708141221440.1865@nanos>
+References: <1502319099-2782-1-git-send-email-david.daney@cavium.com> <1502319099-2782-3-git-send-email-david.daney@cavium.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:43032 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752709AbdHNKEY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2017 06:04:24 -0400
-In-Reply-To: <CAMRc=MdZXbY4Lp-a=qu+d7civ9PFQi2niXqzeFYqvVF03sy=Cw@mail.gmail.com>
+Received: from Galois.linutronix.de ([146.0.238.70]:45468 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752222AbdHNKZH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2017 06:25:07 -0400
+In-Reply-To: <1502319099-2782-3-git-send-email-david.daney@cavium.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron <jic23@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+To: David Daney <david.daney@cavium.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Wed, 9 Aug 2017, David Daney wrote:
+>  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
 
+Can we please make them conditional in order not to bloat all kernels with
+it? Like we do for handle_edge_eoi_irq() ?
 
-On 14 August 2017 17:54:22 GMT+08:00, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->2017-08-12 13:43 GMT+02:00 Jonathan Cameron <jic23@kernel.org>:
->> On Tue,  1 Aug 2017 16:50:26 +0200
->> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>
->>> Implement a simple, irq_work-based framework for simulating
->>> interrupts. Currently the API exposes routines for initializing and
->>> deinitializing the simulator object, enqueueing the interrupts and
->>> retrieving the allocated interrupt numbers based on the offset of
->the
->>> dummy interrupt in the simulator struct.
->>>
->>> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->> Looks good to me.
->>
->> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->>
->> Only tiny thing is the lack of a specified license for the code...
->
->I'll send a v3 with license added.
->
->> + checkpatch is warning about wrong file mode...
->> #105:
->> new file mode 100644
->>
->> Though I have no idea why...
->>
->
->I think this only says that a file was created with given mode, it's
->not a warning. The actual warning is about missing a new entry in
->MAINTAINERS.
-Doh, how did I miss that!
+>  /**
+> + *	handle_fasteoi_edge_irq - irq handler for edge hierarchy
+> + *	stacked on transparent controllers
+> + *
+> + *	@desc:	the interrupt description structure for this irq
+> + *
+> + *	Like handle_fasteoi_irq(), but for use with hierarchy where
+> + *	the irq_chip also needs to have its ->irq_ack() function
+> + *	called.
+> + */
+> +void handle_fasteoi_edge_irq(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *chip = desc->irq_data.chip;
+> +
+> +	raw_spin_lock(&desc->lock);
+> +
+> +	if (!irq_may_run(desc))
+> +		goto out;
+> +
+> +	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
+> +
+> +	/*
+> +	 * If its disabled or no action available
+> +	 * then mask it and get out of here:
+> +	 */
+> +	if (unlikely(!desc->action || irqd_irq_disabled(&desc->irq_data))) {
+> +		desc->istate |= IRQS_PENDING;
+> +		mask_irq(desc);
+> +		goto out;
+> +	}
+> +
+> +	kstat_incr_irqs_this_cpu(desc);
+> +	if (desc->istate & IRQS_ONESHOT)
+> +		mask_irq(desc);
+> +
+> +	/* Start handling the irq */
+> +	desc->irq_data.chip->irq_ack(&desc->irq_data);
+> +
+> +	preflow_handler(desc);
+> +	handle_irq_event(desc);
 
+Hmm. That's quite different to the way we handle edge interrupts
+normally. See handle_edge_irq() and handle_edge_eoi_irq().
 
->
->>> --- a/init/Kconfig
->>> +++ b/init/Kconfig
->>> @@ -23,6 +23,10 @@ config CONSTRUCTORS
->>>  config IRQ_WORK
->>>       bool
->>>
->>> +config IRQ_SIM
->>> +     bool
->> You could make this tristate, but then the handling of the
->> users would get complex so perhaps given it's so small boolean
->> is the way to go.
->>
->
->Nah, irq_work is built-in to at even greater size. Let's just leave it
->like this, especially when only testing modules select it.
->
-Fair enough.
+Thanks,
 
->Thanks,
->Bartosz
-
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+	tglx
