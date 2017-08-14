@@ -1,36 +1,41 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 1/3] irq/irq_sim: add a simple interrupt simulator
- framework
-Date: Mon, 14 Aug 2017 15:06:29 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1708141505160.1865@nanos>
-References: <20170814112056.3751-1-brgl@bgdev.pl> <20170814112056.3751-2-brgl@bgdev.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 2/3] gpio: Add support for TPS68470 GPIOs
+Date: Mon, 14 Aug 2017 15:39:16 +0200
+Message-ID: <CACRpkdbu0nhXjdvA7X6DPZwKnTEU896EPe3MZsXgi=rgz_w5Kg@mail.gmail.com>
+References: <1501288226-27469-1-git-send-email-rajmohan.mani@intel.com> <1501288226-27469-3-git-send-email-rajmohan.mani@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170814112056.3751-2-brgl@bgdev.pl>
+In-Reply-To: <1501288226-27469-3-git-send-email-rajmohan.mani@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+To: Rajmohan Mani <rajmohan.mani@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, sakari.ailus@linux.intel.com, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, 14 Aug 2017, Bartosz Golaszewski wrote:
+On Sat, Jul 29, 2017 at 2:30 AM, Rajmohan Mani <rajmohan.mani@intel.com> wrote:
 
-> Implement a simple, irq_work-based framework for simulating
-> interrupts. Currently the API exposes routines for initializing and
-> deinitializing the simulator object, enqueueing the interrupts and
-> retrieving the allocated interrupt numbers based on the offset of the
-> dummy interrupt in the simulator struct.
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  include/linux/irq_sim.h |  44 ++++++++++++++++++
->  init/Kconfig            |   4 ++
->  kernel/Makefile         |   1 +
->  kernel/irq_sim.c        | 121 ++++++++++++++++++++++++++++++++++++++++++++++++
+> This patch adds support for TPS68470 GPIOs.
+> There are 7 GPIOs and a few sensor related GPIOs.
+> These GPIOs can be requested and configured as
+> appropriate.
+>
+> The GPIOs are also provided with descriptive names.
+> However, the typical use case is that the OS GPIO
+> driver will interact with TPS68470 GPIO driver
+> to configure these GPIOs, as requested by the
+> platform firmware.
+>
+> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Please move this to kernel/irq/ ... and the config option to kernel/irq/Kconfig.
+(...)
 
-Thanks,
+> +config GPIO_TPS68470
+> +       bool "TPS68470 GPIO"
+> +       depends on MFD_TPS68470
 
-	tglx
+Guarded by this symbol, so:
+patch applied to the GPIO tree, thanks!
+
+Yours,
+Linus Walleij
