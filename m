@@ -1,72 +1,52 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v7 2/5] genirq: Add handle_fasteoi_{level,edge}_irq flow
- handlers.
-Date: Mon, 14 Aug 2017 12:25:01 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1708141221440.1865@nanos>
-References: <1502319099-2782-1-git-send-email-david.daney@cavium.com> <1502319099-2782-3-git-send-email-david.daney@cavium.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:45468 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752222AbdHNKZH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2017 06:25:07 -0400
-In-Reply-To: <1502319099-2782-3-git-send-email-david.daney@cavium.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 0/3] simulated interrupts
+Date: Mon, 14 Aug 2017 13:20:53 +0200
+Message-ID: <20170814112056.3751-1-brgl@bgdev.pl>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <david.daney@cavium.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 9 Aug 2017, David Daney wrote:
->  #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+Some frameworks (e.g. iio, gpiolib) use irq_work to implement simulated
+interrupts that can be 'fired' from process context when needed and
+requested just like normal interrupts. This is useful for testing and
+development purposes.
 
-Can we please make them conditional in order not to bloat all kernels with
-it? Like we do for handle_edge_eoi_irq() ?
+Currently this code is reimplemented by every user. This series
+proposes to add a new set of functions that can be used by drivers
+that want to simulate interrupts without having to duplicate any
+boilerplate code.
 
->  /**
-> + *	handle_fasteoi_edge_irq - irq handler for edge hierarchy
-> + *	stacked on transparent controllers
-> + *
-> + *	@desc:	the interrupt description structure for this irq
-> + *
-> + *	Like handle_fasteoi_irq(), but for use with hierarchy where
-> + *	the irq_chip also needs to have its ->irq_ack() function
-> + *	called.
-> + */
-> +void handle_fasteoi_edge_irq(struct irq_desc *desc)
-> +{
-> +	struct irq_chip *chip = desc->irq_data.chip;
-> +
-> +	raw_spin_lock(&desc->lock);
-> +
-> +	if (!irq_may_run(desc))
-> +		goto out;
-> +
-> +	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
-> +
-> +	/*
-> +	 * If its disabled or no action available
-> +	 * then mask it and get out of here:
-> +	 */
-> +	if (unlikely(!desc->action || irqd_irq_disabled(&desc->irq_data))) {
-> +		desc->istate |= IRQS_PENDING;
-> +		mask_irq(desc);
-> +		goto out;
-> +	}
-> +
-> +	kstat_incr_irqs_this_cpu(desc);
-> +	if (desc->istate & IRQS_ONESHOT)
-> +		mask_irq(desc);
-> +
-> +	/* Start handling the irq */
-> +	desc->irq_data.chip->irq_ack(&desc->irq_data);
-> +
-> +	preflow_handler(desc);
-> +	handle_irq_event(desc);
+The first patch adds a simple irq simulator framework. The second
+extends it with resource management. The third uses the new
+functionality in the gpio-mockup testing driver.
 
-Hmm. That's quite different to the way we handle edge interrupts
-normally. See handle_edge_irq() and handle_edge_eoi_irq().
+NOTE: The next candidate for using this API would be iio-dummy-evgen.
 
-Thanks,
+v1 -> v2:
+- added a call to irq_work_sync in irq_sim_fini()
 
-	tglx
+v2 -> v3:
+- added the license header to new files
+- added Acked-by's and Reviewed-by's
+
+Bartosz Golaszewski (3):
+  irq/irq_sim: add a simple interrupt simulator framework
+  irq/irq_sim: add a devres variant of irq_sim_init()
+  gpio: mockup: use irq_sim
+
+ Documentation/driver-model/devres.txt |   1 +
+ drivers/gpio/Kconfig                  |   2 +-
+ drivers/gpio/gpio-mockup.c            |  77 ++--------------
+ include/linux/irq_sim.h               |  48 ++++++++++
+ init/Kconfig                          |   4 +
+ kernel/Makefile                       |   1 +
+ kernel/irq_sim.c                      | 164 ++++++++++++++++++++++++++++++++++
+ 7 files changed, 226 insertions(+), 71 deletions(-)
+ create mode 100644 include/linux/irq_sim.h
+ create mode 100644 kernel/irq_sim.c
+
+-- 
+2.13.2
+
