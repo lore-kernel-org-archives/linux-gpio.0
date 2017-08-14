@@ -1,107 +1,156 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 3/3] mfd: twl: move header file out of I2C realm
-Date: Sun, 13 Aug 2017 15:37:00 +0200
-Message-ID: <20170813133700.tv4ka7anvbzcplr7@ninjato>
-References: <20170521220212.1404-1-wsa@the-dreams.de>
- <20170521220212.1404-4-wsa@the-dreams.de>
- <20170706064453.GH16144@ulmo.fritz.box>
- <20170706070352.xdecvsnremwqed72@dell>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH v2] pinctrl: aspeed: Fix ast2500 strap register write
+ logic
+Date: Mon, 14 Aug 2017 10:23:13 +0930
+Message-ID: <1502671993.7946.25.camel@aj.id.au>
+References: <1502461363-70990-1-git-send-email-sdliyong@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bf2u36sx3yv46k44"
-Return-path: <rtc-linux+bncBDP47C6LHEIP3K6BZQCRUBG2SV53C-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170706070352.xdecvsnremwqed72@dell>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-hFb5YnaPsqyLlJJJs9gh"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:42589 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751406AbdHNAx0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Sun, 13 Aug 2017 20:53:26 -0400
+In-Reply-To: <1502461363-70990-1-git-send-email-sdliyong@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yong Li <sdliyong@gmail.com>, linus.walleij@linaro.org, joel@jms.id.au, arnd@arndb.de, raltherr@google.com, robh@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---bf2u36sx3yv46k44
+--=-hFb5YnaPsqyLlJJJs9gh
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 06, 2017 at 08:03:52AM +0100, Lee Jones wrote:
-> On Thu, 06 Jul 2017, Thierry Reding wrote:
-> 
-> > On Mon, May 22, 2017 at 12:02:10AM +0200, Wolfram Sang wrote:
-> > > include/linux/i2c is not for client devices. Move the header file to a
-> > > more appropriate location.
-> > > 
-> > > Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-> > > ---
-> > >  arch/arm/mach-omap2/common.h            | 2 +-
-> > >  arch/arm/mach-omap2/omap_twl.c          | 2 +-
-> > >  drivers/gpio/gpio-twl4030.c             | 2 +-
-> > >  drivers/iio/adc/twl4030-madc.c          | 2 +-
-> > >  drivers/iio/adc/twl6030-gpadc.c         | 2 +-
-> > >  drivers/input/keyboard/twl4030_keypad.c | 2 +-
-> > >  drivers/input/misc/twl4030-pwrbutton.c  | 2 +-
-> > >  drivers/input/misc/twl4030-vibra.c      | 2 +-
-> > >  drivers/mfd/twl-core.c                  | 6 +++---
-> > >  drivers/mfd/twl4030-audio.c             | 2 +-
-> > >  drivers/mfd/twl4030-irq.c               | 2 +-
-> > >  drivers/mfd/twl4030-power.c             | 2 +-
-> > >  drivers/mfd/twl6030-irq.c               | 2 +-
-> > >  drivers/phy/phy-twl4030-usb.c           | 2 +-
-> > >  drivers/power/supply/twl4030_charger.c  | 2 +-
-> > >  drivers/pwm/pwm-twl-led.c               | 2 +-
-> > >  drivers/pwm/pwm-twl.c                   | 2 +-
-> > >  drivers/regulator/twl-regulator.c       | 2 +-
-> > >  drivers/regulator/twl6030-regulator.c   | 2 +-
-> > >  drivers/rtc/rtc-twl.c                   | 2 +-
-> > >  drivers/usb/phy/phy-twl6030-usb.c       | 2 +-
-> > >  drivers/video/backlight/pandora_bl.c    | 2 +-
-> > >  drivers/watchdog/twl4030_wdt.c          | 2 +-
-> > >  include/linux/{i2c => mfd}/twl.h        | 0
-> > >  sound/soc/codecs/twl4030.c              | 2 +-
-> > >  25 files changed, 26 insertions(+), 26 deletions(-)
-> > >  rename include/linux/{i2c => mfd}/twl.h (100%)
-> > 
-> > I didn't see this get applied yet, so just in case anyone was waiting
-> > for me (this is trivial, so I don't think there's a need):
-> 
-> You're not the last. :)
+Hi Yong,
 
-Given the triviality of the change for non-MFD subsystems, can we apply
-this for 4.14?
+On Fri, 2017-08-11 at 22:22 +0800, Yong Li wrote:
+> On AST2500, the hardware strap register(SCU70) only accepts write =E2=80=
+=981=E2=80=99,
+> to clear it to =E2=80=980=E2=80=99, must set bits(write=C2=A0=C2=A0=E2=80=
+=981=E2=80=99) to SCU7C
+>=20
+> > Signed-off-by: Yong Li <sdliyong@gmail.com>
+> ---
+> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c | 20 ++++++++++++++++++--
+> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.h |=C2=A0=C2=A01 +
+> =C2=A02 files changed, 19 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/as=
+peed/pinctrl-aspeed.c
+> index a86a4d6..9d2b2e9 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> @@ -183,6 +183,7 @@ static int aspeed_sig_expr_set(const struct aspeed_si=
+g_expr *expr,
+> =C2=A0{
+> > =C2=A0	int ret;
+> > =C2=A0	int i;
+> > +	unsigned int rev_id;
+> =C2=A0
+> > =C2=A0	for (i =3D 0; i < expr->ndescs; i++) {
+> > =C2=A0		const struct aspeed_sig_desc *desc =3D &expr->descs[i];
+> @@ -213,8 +214,23 @@ static int aspeed_sig_expr_set(const struct aspeed_s=
+ig_expr *expr,
+> > =C2=A0		if (desc->ip =3D=3D ASPEED_IP_SCU && desc->reg =3D=3D HW_STRAP2=
+)
+> > =C2=A0			continue;
+> =C2=A0
+> > -		ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
+> > -					=C2=A0desc->mask, val);
+> > +		/* On AST2500, Set bits in SCU7C are cleared from SCU70 */
+> > +		if (desc->ip =3D=3D ASPEED_IP_SCU && desc->reg =3D=3D HW_STRAP1 &&
+> +			val =3D=3D 0) {
 
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+The AST2500 strapping register contains several multi-bit bit-fields.
+Currently we know we'll only reach this test if we're modifying the
+GPIO passthrough bits for bank D and E (bits 21 and 22 respectively),
+so the 'val =3D=3D 0' test is functional but I wonder if we shouldn't be
+more flexible. If we're more flexible here then we may only need to
+modify the strap register test above this hunk to change the behaviour,
+rather than needing to rework your additions here as well. More on this
+below.
 
---bf2u36sx3yv46k44
+> +			ret =3D regmap_read(maps[ASPEED_IP_SCU],
+> > +				HW_REVISION_ID, &rev_id);
+> > +			if (ret < 0)
+> > +				return ret;
+> +
+> > +			if (0x04 =3D=3D ((rev_id >> 24) & 0xff))
+> > +				ret =3D regmap_update_bits(maps[desc->ip],
+> +					HW_REVISION_ID, desc->mask, desc->mask);
+
+regmap_update_bits() will do a read-modify-write operation whilst only
+taking the regmap lock once, making the modification atomic. However,
+HW_REVISION_ID is a W1C (write 1 to clear) register associated with
+SCU70, so we don't actually need the read operation under the lock. We
+can simply use regmap_write() here.
+
+Addressing my comment on 'val =3D=3D 0' above, I think we can remove that
+test if we instead write this as:
+
+    ret =3D regmap_write(maps[    desc->ip], HW_REVISION_ID, (~val & desc->=
+mask));
+
+That way if we ever expand the HW_STRAP1 capabilites to cover the
+bitfields (e.g. maybe we want to be able to dynamically switch SPI into
+debug mode) the code should (hopefully) just work.
+
+Cheers,
+
+Andrew
+
+> +			else
+> > +				ret =3D regmap_update_bits(maps[desc->ip],
+> > +					desc->reg, desc->mask, val);
+> > +		} else
+> +			ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
+> > +				desc->mask, val);
+> =C2=A0
+> > =C2=A0		if (ret)
+> > =C2=A0			return ret;
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.h b/drivers/pinctrl/as=
+peed/pinctrl-aspeed.h
+> index fa125db..d4d7f03 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.h
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.h
+> @@ -251,6 +251,7 @@
+> =C2=A0#define SCU3C=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A00x3C /* System Reset Control/Status Register */
+> =C2=A0#define SCU48=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A00x48 /* MAC Interface Clock Delay Setting */
+> =C2=A0#define HW_STRAP1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x70 /* =
+AST2400 strapping is 33 bits, is split */
+> +#define HW_REVISION_ID=C2=A0=C2=A00x7C /* Silicon revision ID register *=
+/
+> =C2=A0#define SCU80=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A00x80 /* Multi-function Pin Control #1 */
+> =C2=A0#define SCU84=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A00x84 /* Multi-function Pin Control #2 */
+> =C2=A0#define SCU88=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A00x88 /* Multi-function Pin Control #3 */
+--=-hFb5YnaPsqyLlJJJs9gh
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlmQVfwACgkQFA3kzBSg
-KbanFg//dxik+zStgiZtWtrgtgSmpeUOGOsX3FXnRhJCPNTaXUuGOMuuhjFgK3p3
-uDOXYfGtsdDPrnAGj3m8yjJI8JqQ1GI/9FtMxW9Jwcr3N6ZJ9dQYqzN7XMXwgnhd
-prXN/iTZgkF/XT1ZOc6GMXne2jbqhJOuRY3sk+N40xQHsOBa8ThqxqssFyJbn0BF
-jjSQP5TNp0KefTYS9ZyJGbnFxNZQhMb+AWHCMDgib2jCTQIIAQD5iMLH3aoCZEOn
-rQDxnEHlOwcR+qYKdz8LVPU5tOR2uEsY16F4awUYVR+6lkx3KLKsBFHZr7tZ2QPn
-+w0767Mr+wyphuuG77YoBvTLU8pDJxwSYR21XGYqvJvYNdwVHCy5Y4M+DTV3xG8g
-DsY45lDHNspdDJvwBpZZRBO29uGPtqfCJfDgUpxvDllF99ES72urbNUXn5YrdvVy
-sTrUzmgX4kiBRzA6mpyG4autZE9Z6q/xNslSrV/0ll0arUMbzpMmVFQwE6yRgRsB
-1Ha3prXevF/UNZQcvnhHruUcakuzPgvK0hpdhirON2OTqXChTOHLKWquA+aYQ9lB
-cBe7cZhAUXkimtWvNheqOYEg8ZStjW1uNup5eHujXNYw/HY8+3p/cr/9Jf05xvQz
-H3Qawecv5x3sLjvuv0PuhEdFPr5dKQfLGoDZrLqmFLfYTJ3NWoE=
-=hKZZ
+iQIcBAABCgAGBQJZkPR5AAoJEJ0dnzgO5LT5TsYP/0RLgFXxw7MqVYwmy9A2R5aT
+4JOvtQ0wLU6KX7E2Mgk2biU4l1birLnd+R815NOQ0TA9EEkashuwGONhZ9alOhSo
+JHUoZoQ88lESAZmkpMR8Y5KsQ6QKsHaA0uCQPTH5TjmxnG/WjBlVDcINmmVsN73f
+driZckLCjg72Ep/Hl35RF/kSvkFEgknRCKM8pIefDWpvAXYpLghZiA7O6CpIknEU
+wC28vlfOzoEEnTJDr/2NTUPZKmU5ql1aywqUPsJl05sCZw1XqLQA1GdtFLZJXX1L
+MZc++pmxkgArGFNV0abV7OonP2mFk5HU34jZ7qo2pyhi8vDfaZ1OXtVfZJ5yfqK8
+DFiFE2rhgrGOa41xtdoMz3lo6wyteIZRyBZCy/LsFhaWZN04GaaJxBlYzskLGn7M
+WWqvqna9SNiVulFod7UVK0efK8eQLWs5QvsSQ32sD5lolw++mV9SFf8XmSoF3Apt
+A/WKvugwj+iHMxv9H/Q/EdPUQL0XTw9o/597G10g+eTPpWsjpyLK4rWNau/AnOtZ
+PYrYhvI78JmEn/gH4M878W5hmBboDs8YMGuwzqJAWhBayhxHOvAbVqa6Tp/hwtsR
+QT8X1R001keLTs9JwiRIZluO3Hiryq9e/AS4pY/Z8tWbZZgoiKxAI4RowHb6VVNK
+HTo4Zc54CnROaBvpBNoW
+=qVEP
 -----END PGP SIGNATURE-----
 
---bf2u36sx3yv46k44--
+--=-hFb5YnaPsqyLlJJJs9gh--
+
