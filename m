@@ -1,7 +1,7 @@
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 3/3] gpio: mockup: use irq_sim
-Date: Mon, 14 Aug 2017 13:20:56 +0200
-Message-ID: <20170814112056.3751-4-brgl@bgdev.pl>
+Subject: [PATCH v3 1/3] irq/irq_sim: add a simple interrupt simulator framework
+Date: Mon, 14 Aug 2017 13:20:54 +0200
+Message-ID: <20170814112056.3751-2-brgl@bgdev.pl>
 References: <20170814112056.3751-1-brgl@bgdev.pl>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170814112056.3751-1-brgl@bgdev.pl>
@@ -10,153 +10,226 @@ To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.d
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
 List-Id: linux-gpio@vger.kernel.org
 
-Shrink the driver by removing the code dealing with dummy interrupts
-and replacing it with calls to the irq_sim API.
+Implement a simple, irq_work-based framework for simulating
+interrupts. Currently the API exposes routines for initializing and
+deinitializing the simulator object, enqueueing the interrupts and
+retrieving the allocated interrupt numbers based on the offset of the
+dummy interrupt in the simulator struct.
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 ---
- drivers/gpio/Kconfig       |  2 +-
- drivers/gpio/gpio-mockup.c | 77 +++++-----------------------------------------
- 2 files changed, 8 insertions(+), 71 deletions(-)
+ include/linux/irq_sim.h |  44 ++++++++++++++++++
+ init/Kconfig            |   4 ++
+ kernel/Makefile         |   1 +
+ kernel/irq_sim.c        | 121 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 170 insertions(+)
+ create mode 100644 include/linux/irq_sim.h
+ create mode 100644 kernel/irq_sim.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 461d6fc3688b..f858faa5731a 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -311,7 +311,7 @@ config GPIO_MOCKUP
- 	depends on GPIOLIB && SYSFS
- 	select GPIO_SYSFS
- 	select GPIOLIB_IRQCHIP
--	select IRQ_WORK
-+	select IRQ_SIM
- 	help
- 	  This enables GPIO Testing driver, which provides a way to test GPIO
- 	  subsystem through sysfs(or char device) and debugfs. GPIO_SYSFS
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index a6565e128f9e..6db7163e6d98 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -20,7 +20,7 @@
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
--#include <linux/irq_work.h>
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+new file mode 100644
+index 000000000000..9ee1a4f8bd94
+--- /dev/null
++++ b/include/linux/irq_sim.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#ifndef _LINUX_IRQ_SIM_H
++#define _LINUX_IRQ_SIM_H
++
++#include <linux/irq_work.h>
++
++/*
++ * Provides a framework for allocating simulated interrupts which can be
++ * requested like normal irqs and enqueued from process context.
++ */
++
++struct irq_sim_work_ctx {
++	struct irq_work work;
++	int irq;
++};
++
++struct irq_sim_irq_ctx {
++	int irqnum;
++	bool enabled;
++};
++
++struct irq_sim {
++	struct irq_sim_work_ctx work_ctx;
++	int irq_base;
++	unsigned int irq_count;
++	struct irq_sim_irq_ctx *irqs;
++};
++
++int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
++void irq_sim_fini(struct irq_sim *sim);
++
++void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
++
++int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
++
++#endif /* _LINUX_IRQ_SIM_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index 8514b25db21c..220456599c3f 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -23,6 +23,10 @@ config CONSTRUCTORS
+ config IRQ_WORK
+ 	bool
+ 
++config IRQ_SIM
++	bool
++	select IRQ_WORK
++
+ config BUILDTIME_EXTABLE_SORT
+ 	bool
+ 
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 4cb8e8b23c6e..4472567c5835 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -97,6 +97,7 @@ obj-$(CONFIG_TRACE_CLOCK) += trace/
+ obj-$(CONFIG_RING_BUFFER) += trace/
+ obj-$(CONFIG_TRACEPOINTS) += trace/
+ obj-$(CONFIG_IRQ_WORK) += irq_work.o
++obj-$(CONFIG_IRQ_SIM) += irq_sim.o
+ obj-$(CONFIG_CPU_PM) += cpu_pm.o
+ obj-$(CONFIG_BPF) += bpf/
+ 
+diff --git a/kernel/irq_sim.c b/kernel/irq_sim.c
+new file mode 100644
+index 000000000000..31a2c12a79ae
+--- /dev/null
++++ b/kernel/irq_sim.c
+@@ -0,0 +1,121 @@
++/*
++ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
 +#include <linux/irq_sim.h>
- #include <linux/debugfs.h>
- #include <linux/uaccess.h>
- 
-@@ -47,18 +47,12 @@ enum {
- struct gpio_mockup_line_status {
- 	int dir;
- 	bool value;
--	bool irq_enabled;
--};
--
--struct gpio_mockup_irq_context {
--	struct irq_work work;
--	int irq;
- };
- 
- struct gpio_mockup_chip {
- 	struct gpio_chip gc;
- 	struct gpio_mockup_line_status *lines;
--	struct gpio_mockup_irq_context irq_ctx;
-+	struct irq_sim irqsim;
- 	struct dentry *dbg_dir;
- };
- 
-@@ -144,65 +138,11 @@ static int gpio_mockup_name_lines(struct device *dev,
- 	return 0;
- }
- 
--static int gpio_mockup_to_irq(struct gpio_chip *chip, unsigned int offset)
--{
--	return chip->irq_base + offset;
--}
--
--static void gpio_mockup_irqmask(struct irq_data *data)
-+static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
- {
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
- 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
- 
--	chip->lines[data->irq - gc->irq_base].irq_enabled = false;
--}
--
--static void gpio_mockup_irqunmask(struct irq_data *data)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
--	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
--
--	chip->lines[data->irq - gc->irq_base].irq_enabled = true;
--}
--
--static struct irq_chip gpio_mockup_irqchip = {
--	.name		= GPIO_MOCKUP_NAME,
--	.irq_mask	= gpio_mockup_irqmask,
--	.irq_unmask	= gpio_mockup_irqunmask,
--};
--
--static void gpio_mockup_handle_irq(struct irq_work *work)
--{
--	struct gpio_mockup_irq_context *irq_ctx;
--
--	irq_ctx = container_of(work, struct gpio_mockup_irq_context, work);
--	handle_simple_irq(irq_to_desc(irq_ctx->irq));
--}
--
--static int gpio_mockup_irqchip_setup(struct device *dev,
--				     struct gpio_mockup_chip *chip)
--{
--	struct gpio_chip *gc = &chip->gc;
--	int irq_base, i;
--
--	irq_base = devm_irq_alloc_descs(dev, -1, 0, gc->ngpio, 0);
--	if (irq_base < 0)
--		return irq_base;
--
--	gc->irq_base = irq_base;
--	gc->irqchip = &gpio_mockup_irqchip;
--
--	for (i = 0; i < gc->ngpio; i++) {
--		irq_set_chip(irq_base + i, gc->irqchip);
--		irq_set_chip_data(irq_base + i, gc);
--		irq_set_handler(irq_base + i, &handle_simple_irq);
--		irq_modify_status(irq_base + i,
--				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
--	}
--
--	init_irq_work(&chip->irq_ctx.work, gpio_mockup_handle_irq);
--
--	return 0;
-+	return irq_sim_irqnum(&chip->irqsim, offset);
- }
- 
- static ssize_t gpio_mockup_event_write(struct file *file,
-@@ -228,11 +168,8 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	chip = priv->chip;
- 	gc = &chip->gc;
- 
--	if (chip->lines[priv->offset].irq_enabled) {
--		gpiod_set_value_cansleep(desc, val);
--		priv->chip->irq_ctx.irq = gc->irq_base + priv->offset;
--		irq_work_queue(&priv->chip->irq_ctx.work);
--	}
-+	gpiod_set_value_cansleep(desc, val);
-+	irq_sim_fire(&chip->irqsim, priv->offset);
- 
- 	return size;
- }
-@@ -319,7 +256,7 @@ static int gpio_mockup_add(struct device *dev,
- 			return ret;
- 	}
- 
--	ret = gpio_mockup_irqchip_setup(dev, chip);
-+	ret = devm_irq_sim_init(dev, &chip->irqsim, gc->ngpio);
- 	if (ret)
- 		return ret;
- 
++#include <linux/irq.h>
++
++static void irq_sim_irqmask(struct irq_data *data)
++{
++	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
++
++	irq_ctx->enabled = false;
++}
++
++static void irq_sim_irqunmask(struct irq_data *data)
++{
++	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
++
++	irq_ctx->enabled = true;
++}
++
++static struct irq_chip irq_sim_irqchip = {
++	.name		= "irq_sim",
++	.irq_mask	= irq_sim_irqmask,
++	.irq_unmask	= irq_sim_irqunmask,
++};
++
++static void irq_sim_handle_irq(struct irq_work *work)
++{
++	struct irq_sim_work_ctx *work_ctx;
++
++	work_ctx = container_of(work, struct irq_sim_work_ctx, work);
++	handle_simple_irq(irq_to_desc(work_ctx->irq));
++}
++
++/**
++ * irq_sim_init - Initialize the interrupt simulator: allocate a range of
++ *                dummy interrupts.
++ *
++ * @sim:        The interrupt simulator object to initialize.
++ * @num_irqs:   Number of interrupts to allocate
++ *
++ * Returns 0 on success and a negative error number on failure.
++ */
++int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
++{
++	int i;
++
++	sim->irqs = kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP_KERNEL);
++	if (!sim->irqs)
++		return -ENOMEM;
++
++	sim->irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
++	if (sim->irq_base < 0) {
++		kfree(sim->irqs);
++		return sim->irq_base;
++	}
++
++	for (i = 0; i < num_irqs; i++) {
++		sim->irqs[i].irqnum = sim->irq_base + i;
++		sim->irqs[i].enabled = false;
++		irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
++		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
++		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
++		irq_modify_status(sim->irq_base + i,
++				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
++	}
++
++	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
++	sim->irq_count = num_irqs;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(irq_sim_init);
++
++/**
++ * irq_sim_fini - Deinitialize the interrupt simulator: free the interrupt
++ *                descriptors and allocated memory.
++ *
++ * @sim:        The interrupt simulator to tear down.
++ */
++void irq_sim_fini(struct irq_sim *sim)
++{
++	irq_work_sync(&sim->work_ctx.work);
++	irq_free_descs(sim->irq_base, sim->irq_count);
++	kfree(sim->irqs);
++}
++EXPORT_SYMBOL_GPL(irq_sim_fini);
++
++/**
++ * irq_sim_fire - Enqueue an interrupt.
++ *
++ * @sim:        The interrupt simulator object.
++ * @offset:     Offset of the simulated interrupt which should be fired.
++ */
++void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
++{
++	if (sim->irqs[offset].enabled) {
++		sim->work_ctx.irq = irq_sim_irqnum(sim, offset);
++		irq_work_queue(&sim->work_ctx.work);
++	}
++}
++EXPORT_SYMBOL_GPL(irq_sim_fire);
++
++/**
++ * irq_sim_irqnum - Get the allocated number of a dummy interrupt.
++ *
++ * @sim:        The interrupt simulator object.
++ * @offset:     Offset of the simulated interrupt for which to retrieve
++ *              the number.
++ */
++int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
++{
++	return sim->irqs[offset].irqnum;
++}
++EXPORT_SYMBOL_GPL(irq_sim_irqnum);
 -- 
 2.13.2
