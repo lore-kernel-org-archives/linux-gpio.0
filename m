@@ -1,40 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: rcar: reinstate generic compat string
-Date: Mon, 14 Aug 2017 14:59:09 +0200
-Message-ID: <CACRpkdYai2x3hD+cm2SvZXtuiw7ZHyvi0+CTvHZKMm0EeYZCbg@mail.gmail.com>
-References: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au> <20170810080624.GF16647@verge.net.au>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 1/3] irq/irq_sim: add a simple interrupt simulator
+ framework
+Date: Mon, 14 Aug 2017 15:06:29 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1708141505160.1865@nanos>
+References: <20170814112056.3751-1-brgl@bgdev.pl> <20170814112056.3751-2-brgl@bgdev.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170810080624.GF16647@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170814112056.3751-2-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 10, 2017 at 10:06 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Aug 09, 2017 at 10:21:06AM +0200, Simon Horman wrote:
->> commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
->> strings") deprecated the generic compat string, renesas,gpio-rcar. After
->> further discussion this appears not to have been desirable as that compa=
-t
->> string is compatible with all R-Car SoCs supported in upstream.
->>
->> This commit partially reverts that commit, and updates related
->> documentation and examples.
->>
->> Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility st=
-rings")
->> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->
-> Hi Linus,
->
-> I believe Geert is on holidays at the moment (maybe you are to=E2=80=BD).
+On Mon, 14 Aug 2017, Bartosz Golaszewski wrote:
 
-Nah neither of us are as it seems :)
+> Implement a simple, irq_work-based framework for simulating
+> interrupts. Currently the API exposes routines for initializing and
+> deinitializing the simulator object, enqueueing the interrupts and
+> retrieving the allocated interrupt numbers based on the offset of the
+> dummy interrupt in the simulator struct.
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  include/linux/irq_sim.h |  44 ++++++++++++++++++
+>  init/Kconfig            |   4 ++
+>  kernel/Makefile         |   1 +
+>  kernel/irq_sim.c        | 121 ++++++++++++++++++++++++++++++++++++++++++++++++
 
-I wait for the two of you to figure this out before applying anything.
+Please move this to kernel/irq/ ... and the config option to kernel/irq/Kconfig.
 
-Yours,
-Linus Walleij
+Thanks,
+
+	tglx
