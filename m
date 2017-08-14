@@ -1,235 +1,91 @@
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 1/3] irq/irq_sim: add a simple interrupt simulator framework
-Date: Mon, 14 Aug 2017 13:20:54 +0200
-Message-ID: <20170814112056.3751-2-brgl@bgdev.pl>
-References: <20170814112056.3751-1-brgl@bgdev.pl>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170814112056.3751-1-brgl@bgdev.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio: rcar: reinstate generic compat string
+Date: Mon, 14 Aug 2017 13:44:52 +0200
+Message-ID: <CAMuHMdWQ=UksGVGUxR0DQYfbhPSZY=rsgHVq=gO3sHRndOfZ+Q@mail.gmail.com>
+References: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Implement a simple, irq_work-based framework for simulating
-interrupts. Currently the API exposes routines for initializing and
-deinitializing the simulator object, enqueueing the interrupts and
-retrieving the allocated interrupt numbers based on the offset of the
-dummy interrupt in the simulator struct.
+Hi Simon,
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- include/linux/irq_sim.h |  44 ++++++++++++++++++
- init/Kconfig            |   4 ++
- kernel/Makefile         |   1 +
- kernel/irq_sim.c        | 121 ++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 170 insertions(+)
- create mode 100644 include/linux/irq_sim.h
- create mode 100644 kernel/irq_sim.c
+On Wed, Aug 9, 2017 at 10:21 AM, Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
+> strings") deprecated the generic compat string, renesas,gpio-rcar. After
+> further discussion this appears not to have been desirable as that compat
+> string is compatible with all R-Car SoCs supported in upstream.
 
-diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-new file mode 100644
-index 000000000000..9ee1a4f8bd94
---- /dev/null
-+++ b/include/linux/irq_sim.h
-@@ -0,0 +1,44 @@
-+/*
-+ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#ifndef _LINUX_IRQ_SIM_H
-+#define _LINUX_IRQ_SIM_H
-+
-+#include <linux/irq_work.h>
-+
-+/*
-+ * Provides a framework for allocating simulated interrupts which can be
-+ * requested like normal irqs and enqueued from process context.
-+ */
-+
-+struct irq_sim_work_ctx {
-+	struct irq_work work;
-+	int irq;
-+};
-+
-+struct irq_sim_irq_ctx {
-+	int irqnum;
-+	bool enabled;
-+};
-+
-+struct irq_sim {
-+	struct irq_sim_work_ctx work_ctx;
-+	int irq_base;
-+	unsigned int irq_count;
-+	struct irq_sim_irq_ctx *irqs;
-+};
-+
-+int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
-+void irq_sim_fini(struct irq_sim *sim);
-+
-+void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
-+
-+int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
-+
-+#endif /* _LINUX_IRQ_SIM_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index 8514b25db21c..220456599c3f 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -23,6 +23,10 @@ config CONSTRUCTORS
- config IRQ_WORK
- 	bool
- 
-+config IRQ_SIM
-+	bool
-+	select IRQ_WORK
-+
- config BUILDTIME_EXTABLE_SORT
- 	bool
- 
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 4cb8e8b23c6e..4472567c5835 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -97,6 +97,7 @@ obj-$(CONFIG_TRACE_CLOCK) += trace/
- obj-$(CONFIG_RING_BUFFER) += trace/
- obj-$(CONFIG_TRACEPOINTS) += trace/
- obj-$(CONFIG_IRQ_WORK) += irq_work.o
-+obj-$(CONFIG_IRQ_SIM) += irq_sim.o
- obj-$(CONFIG_CPU_PM) += cpu_pm.o
- obj-$(CONFIG_BPF) += bpf/
- 
-diff --git a/kernel/irq_sim.c b/kernel/irq_sim.c
-new file mode 100644
-index 000000000000..31a2c12a79ae
---- /dev/null
-+++ b/kernel/irq_sim.c
-@@ -0,0 +1,121 @@
-+/*
-+ * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/irq_sim.h>
-+#include <linux/irq.h>
-+
-+static void irq_sim_irqmask(struct irq_data *data)
-+{
-+	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-+
-+	irq_ctx->enabled = false;
-+}
-+
-+static void irq_sim_irqunmask(struct irq_data *data)
-+{
-+	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
-+
-+	irq_ctx->enabled = true;
-+}
-+
-+static struct irq_chip irq_sim_irqchip = {
-+	.name		= "irq_sim",
-+	.irq_mask	= irq_sim_irqmask,
-+	.irq_unmask	= irq_sim_irqunmask,
-+};
-+
-+static void irq_sim_handle_irq(struct irq_work *work)
-+{
-+	struct irq_sim_work_ctx *work_ctx;
-+
-+	work_ctx = container_of(work, struct irq_sim_work_ctx, work);
-+	handle_simple_irq(irq_to_desc(work_ctx->irq));
-+}
-+
-+/**
-+ * irq_sim_init - Initialize the interrupt simulator: allocate a range of
-+ *                dummy interrupts.
-+ *
-+ * @sim:        The interrupt simulator object to initialize.
-+ * @num_irqs:   Number of interrupts to allocate
-+ *
-+ * Returns 0 on success and a negative error number on failure.
-+ */
-+int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
-+{
-+	int i;
-+
-+	sim->irqs = kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP_KERNEL);
-+	if (!sim->irqs)
-+		return -ENOMEM;
-+
-+	sim->irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
-+	if (sim->irq_base < 0) {
-+		kfree(sim->irqs);
-+		return sim->irq_base;
-+	}
-+
-+	for (i = 0; i < num_irqs; i++) {
-+		sim->irqs[i].irqnum = sim->irq_base + i;
-+		sim->irqs[i].enabled = false;
-+		irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
-+		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
-+		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
-+		irq_modify_status(sim->irq_base + i,
-+				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
-+	}
-+
-+	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
-+	sim->irq_count = num_irqs;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(irq_sim_init);
-+
-+/**
-+ * irq_sim_fini - Deinitialize the interrupt simulator: free the interrupt
-+ *                descriptors and allocated memory.
-+ *
-+ * @sim:        The interrupt simulator to tear down.
-+ */
-+void irq_sim_fini(struct irq_sim *sim)
-+{
-+	irq_work_sync(&sim->work_ctx.work);
-+	irq_free_descs(sim->irq_base, sim->irq_count);
-+	kfree(sim->irqs);
-+}
-+EXPORT_SYMBOL_GPL(irq_sim_fini);
-+
-+/**
-+ * irq_sim_fire - Enqueue an interrupt.
-+ *
-+ * @sim:        The interrupt simulator object.
-+ * @offset:     Offset of the simulated interrupt which should be fired.
-+ */
-+void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-+{
-+	if (sim->irqs[offset].enabled) {
-+		sim->work_ctx.irq = irq_sim_irqnum(sim, offset);
-+		irq_work_queue(&sim->work_ctx.work);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(irq_sim_fire);
-+
-+/**
-+ * irq_sim_irqnum - Get the allocated number of a dummy interrupt.
-+ *
-+ * @sim:        The interrupt simulator object.
-+ * @offset:     Offset of the simulated interrupt for which to retrieve
-+ *              the number.
-+ */
-+int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
-+{
-+	return sim->irqs[offset].irqnum;
-+}
-+EXPORT_SYMBOL_GPL(irq_sim_irqnum);
--- 
-2.13.2
+While "renesas,gpio-rcar" is treated as a GPIO controller on R-Car Gen1 SoCs,
+it can indeed be used on R-Car Gen2 and Gen3, with reduced functionality.
+In se this is compatible with the spirit of multiple compatible values.
+
+> This commit partially reverts that commit, and updates related
+> documentation and examples.
+>
+> Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility strings")
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt     | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> index 48634b01f1bf..347d8ede2982 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> @@ -16,11 +16,13 @@ Required Properties:
+>      - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+>      - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
+>      - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
+> -    - "renesas,gpio-rcar": deprecated.
+> +    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
+>
+> -    When compatible with the generic version nodes must list the
+> -    SoC-specific version corresponding to the platform first followed by
+> -    the generic version.
+> +    Nodes should list all of the following that are compatible
+> +    in this order:
+> +    - A SoC-specific version
+> +    - A generic R-Car generation version
+> +    - The generic R-Car version
+
+The main objective of commit d10bbd156926 ("gpio: rcar: add gen[123] fallback
+compatibility strings") was avoiding the need to add more SoC-specific
+compatible values to the match table in the driver, when adding driver
+support for more R-Car and RZ/G SoCs.
+
+With this amendment, this objective is met at the expense of adding a third
+compatible value to each and every GPIO device node in R-Car .dtsi files :-(
+IMHO keeping "renesas,gpio-rcar" everywhere adds little value.  The only
+exception might be running an old kernel on a new SoC, but that is ruled out
+for a few core components like clocks and PFC anyway.
+
+Of course the driver has to keep matching on the deprecated value, which is
+already the case without this amendment.
+
+>    - reg: Base address and length of each memory resource used by the GPIO
+>      controller hardware module.
+> @@ -50,7 +52,9 @@ interrupt-controller/interrupts.txt.
+>  Example: R8A7779 (R-Car H1) GPIO controller nodes
+>
+>         gpio0: gpio@ffc40000 {
+> -               compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
+> +               compatible = "renesas,gpio-r8a7779",
+> +                            "renesas,rcar-gen1-gpio",
+> +                            "renesas,gpio-rcar";
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
