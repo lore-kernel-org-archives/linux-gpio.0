@@ -1,83 +1,75 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio: rcar: reinstate generic compat string
-Date: Mon, 14 Aug 2017 13:44:52 +0200
-Message-ID: <CAMuHMdWQ=UksGVGUxR0DQYfbhPSZY=rsgHVq=gO3sHRndOfZ+Q@mail.gmail.com>
-References: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+Subject: Re: [PATCH v2 0/4] sh: sh7722/sh7757i/sh7264/sh7269: Fix pinctrl registration
+Date: Mon, 14 Aug 2017 14:53:53 +0200
+Message-ID: <CAMuHMdUQJ38mtsrgY2HJ83RsnCtWRB6dCU=d5RfA3Eq1Q_oQfA@mail.gmail.com>
+References: <1494489813-27321-1-git-send-email-geert+renesas@glider.be> <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1502266866-11277-1-git-send-email-horms+renesas@verge.net.au>
+In-Reply-To: <CAMuHMdXMA7Ux2yiYUrPMGKKJ2AxTLwHOYbnKQHYRwjaSY5+Z7w@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Simon Horman <horms+renesas@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Linux-sh list <linux-sh@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Simon,
-
-On Wed, Aug 9, 2017 at 10:21 AM, Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> commit d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility
-> strings") deprecated the generic compat string, renesas,gpio-rcar. After
-> further discussion this appears not to have been desirable as that compat
-> string is compatible with all R-Car SoCs supported in upstream.
-
-While "renesas,gpio-rcar" is treated as a GPIO controller on R-Car Gen1 SoCs,
-it can indeed be used on R-Car Gen2 and Gen3, with reduced functionality.
-In se this is compatible with the spirit of multiple compatible values.
-
-> This commit partially reverts that commit, and updates related
-> documentation and examples.
+On Fri, Jun 30, 2017 at 10:10 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Thu, May 11, 2017 at 10:03 AM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> Magnus reported that on sh7722/Migo-R, pinctrl registration fails with:
+>>
+>>     sh-pfc pfc-sh7722: pin 0 already registered
+>>     sh-pfc pfc-sh7722: error during pin registration
+>>     sh-pfc pfc-sh7722: could not register: -22
+>>     sh-pfc: probe of pfc-sh7722 failed with error -22
+>>
+>> pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
+>> array initializers, where the GPIO_* enums serve as indices.
+>> Apparently GPIO_PTQ7 was defined in the enum, but never used.
+>> If enum values are defined, but never used, pinmux_pins[] contains
+>> (zero-filled) holes.  Hence such entries are treated as pin zero, which
+>> was registered before, and pinctrl registration fails.
+>>
+>> I can't see how this ever worked, as at the time of commit f5e25ae52feff2dc
+>> ("sh-pfc: Add sh7722 pinmux support"), pinmux_gpios[] in
+>> drivers/pinctrl/sh-pfc/pfc-sh7722.c already had the hole, and
+>> drivers/pinctrl/core.c already had the check.
+>>
+>> Some scripting revealed a few more broken drivers:
+>>   - sh7757 has four holes, due to nonexistent GPIO_PT[JLNQ]7_RESV.
+>>   - sh7264 and sh7269 define GPIO_PH[0-7], but don't use it with
+>>     PINMUX_GPIO().
+>>
+>> Patch 1 fixes the issue on sh7722, and was tested.
+>> Patches 3-4 should fix the issue on the other 3 SoCs, but was untested due
+>> to lack of hardware.
+>>
+>> Changes compared to v1:
+>>   - Replace fake error messages by references to sh7722,
+>>   - Add Reviewed-by, Tested-by.
+>>
+>> Thanks for applying!
+>>
+>> Geert Uytterhoeven (4):
+>>   sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
+>>   sh: sh7757: Remove nonexistent GPIO_PT[JLNQ]7_RESV to fix pinctrl
+>>     registration
+>>   sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>>     registration
+>>   sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl
+>>     registration
+>>
+>>  arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
+>>  arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+>>  arch/sh/include/cpu-sh4/cpu/sh7722.h  | 2 +-
+>>  arch/sh/include/cpu-sh4/cpu/sh7757.h  | 8 ++++----
+>>  4 files changed, 7 insertions(+), 11 deletions(-)
 >
-> Fixes: d10bbd156926 ("gpio: rcar: add gen[123] fallback compatibility strings")
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  .../devicetree/bindings/gpio/renesas,gpio-rcar.txt     | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> index 48634b01f1bf..347d8ede2982 100644
-> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-> @@ -16,11 +16,13 @@ Required Properties:
->      - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
->      - "renesas,rcar-gen2-gpio": for a generic R-Car Gen2 or RZ/G1 GPIO controller.
->      - "renesas,rcar-gen3-gpio": for a generic R-Car Gen3 GPIO controller.
-> -    - "renesas,gpio-rcar": deprecated.
-> +    - "renesas,gpio-rcar": for generic R-Car GPIO controller.
->
-> -    When compatible with the generic version nodes must list the
-> -    SoC-specific version corresponding to the platform first followed by
-> -    the generic version.
-> +    Nodes should list all of the following that are compatible
-> +    in this order:
-> +    - A SoC-specific version
-> +    - A generic R-Car generation version
-> +    - The generic R-Car version
+> Are these patches planned for inclusion in v4.13?
+> I don't see them in next-2016.
 
-The main objective of commit d10bbd156926 ("gpio: rcar: add gen[123] fallback
-compatibility strings") was avoiding the need to add more SoC-specific
-compatible values to the match table in the driver, when adding driver
-support for more R-Car and RZ/G SoCs.
-
-With this amendment, this objective is met at the expense of adding a third
-compatible value to each and every GPIO device node in R-Car .dtsi files :-(
-IMHO keeping "renesas,gpio-rcar" everywhere adds little value.  The only
-exception might be running an old kernel on a new SoC, but that is ruled out
-for a few core components like clocks and PFC anyway.
-
-Of course the driver has to keep matching on the deprecated value, which is
-already the case without this amendment.
-
->    - reg: Base address and length of each memory resource used by the GPIO
->      controller hardware module.
-> @@ -50,7 +52,9 @@ interrupt-controller/interrupts.txt.
->  Example: R8A7779 (R-Car H1) GPIO controller nodes
->
->         gpio0: gpio@ffc40000 {
-> -               compatible = "renesas,gpio-r8a7779", "renesas,rcar-gen1-gpio";
-> +               compatible = "renesas,gpio-r8a7779",
-> +                            "renesas,rcar-gen1-gpio",
-> +                            "renesas,gpio-rcar";
+In v4.14, perhaps?
+I don't see them in next-20170811...
 
 Gr{oetje,eeting}s,
 
