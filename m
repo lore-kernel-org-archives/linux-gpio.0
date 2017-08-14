@@ -1,48 +1,58 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: General Purpose clocks for apq8064
-Date: Mon, 14 Aug 2017 08:23:41 -0700
-Message-ID: <20170814152341.GN29306@minitux>
-References: <1502434516-9056-1-git-send-email-simhavcs@gmail.com>
- <1502434516-9056-2-git-send-email-simhavcs@gmail.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 3/3] mfd: twl: move header file out of I2C realm
+Date: Mon, 14 Aug 2017 09:22:20 -0700
+Message-ID: <20170814162219.GX8569@atomide.com>
+References: <20170521220212.1404-1-wsa@the-dreams.de>
+ <20170521220212.1404-4-wsa@the-dreams.de>
+ <20170706064453.GH16144@ulmo.fritz.box>
+ <20170706070352.xdecvsnremwqed72@dell>
+ <20170813133700.tv4ka7anvbzcplr7@ninjato>
+ <20170814064247.qvggx4ito4vgjqvs@dell>
+ <20170814084340.65morabelapfegph@ninjato>
+Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <rtc-linux+bncBCQPVKWLVAIRBRE4Y7GAKGQEQSRITUA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <1502434516-9056-2-git-send-email-simhavcs@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinay Simha BN <simhavcs@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "open list:PIN CONTROLLER - QUALCOMM" <linux-arm-msm@vger.kernel.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <20170814084340.65morabelapfegph@ninjato>
+List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/rtc-linux
+List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/rtc-linux/subscribe>
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Peter Meerwald-Stadler <pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu 10 Aug 23:55 PDT 2017, Vinay Simha BN wrote:
-
-> Add support for general purpose (GP) clocks
-> for apq8064
+* Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org> [170814 01:43]:
 > 
-> Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+> > > Given the triviality of the change for non-MFD subsystems, can we apply
+> > > this for 4.14?
+> > 
+> > I can't apply anything without Acks for *all* of the subsystems above.
 > 
-> ---
-> v1:
-> * only gp_clk_1b tested in nexus7 anx7808 slimport.
-> ---
->  drivers/pinctrl/qcom/pinctrl-apq8064.c | 37 ++++++++++++++++++++++++++++------
->  1 file changed, 31 insertions(+), 6 deletions(-)
+> Well, there are cases when you can. Those should be exceptions and well
+> justified, of course.
 > 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-apq8064.c b/drivers/pinctrl/qcom/pinctrl-apq8064.c
-[..]
-> @@ -453,6 +477,7 @@ static const struct msm_function apq8064_functions[] = {
->  	FUNCTION(codec_mic_i2s),
->  	FUNCTION(codec_spkr_i2s),
->  	FUNCTION(gpio),
-> +	FUNCTION(gp_clk_1b),
+> > My suggestion would be to collect the Acks you've received up until
+> > this point and identify which SS's are still lacking in change log
+> > section of a RESEND.
+> 
+> I agree, though, that I can try a second round to get the acks.
 
-You missed the others variants here.
+As long as it's been compile tested with omap2plus_defconfig:
 
-Other than that this looks good. So please add the other 5 functions and
-you can resend this with my Acked-by.
+Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
 
-PS. For small incremental patches like this, feel free to send the DT
-binding updates in the same patch as the driver changes.
 
-Regards,
-Bjorn
+-- 
+You received this message because you are subscribed to "rtc-linux".
+Membership options at http://groups.google.com/group/rtc-linux .
+Please read http://groups.google.com/group/rtc-linux/web/checklist
+before submitting a driver.
+--- 
+You received this message because you are subscribed to the Google Groups "rtc-linux" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
