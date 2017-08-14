@@ -1,109 +1,43 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used as
- IRQ controller
-Date: Mon, 14 Aug 2017 15:53:46 +0200
-Message-ID: <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
-References: <cover.1502103715.git.michal.simek@xilinx.com> <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+Subject: Re: [PATCH 3/8] gpio: zynq: Shift zynq_gpio_init() to subsys_initcall level
+Date: Mon, 14 Aug 2017 15:55:55 +0200
+Message-ID: <CACRpkdbUBe6z2C9U9THaaLq0JLuu=EsGAVQfaSY55tMUotKvvg@mail.gmail.com>
+References: <cover.1502103715.git.michal.simek@xilinx.com> <a05cc4f104097bef71ed381229aa8c746717ebce.1502103715.git.michal.simek@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+In-Reply-To: <a05cc4f104097bef71ed381229aa8c746717ebce.1502103715.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "monstr@monstr.eu" <monstr@monstr.eu>, Borsodi Petr <Petr.Borsodi@i.cz>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "monstr@monstr.eu" <monstr@monstr.eu>, Nava kishore Manne <nava.manne@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
 On Mon, Aug 7, 2017 at 1:01 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-> From: Borsodi Petr <Petr.Borsodi@i.cz>
+> From: Nava kishore Manne <nava.manne@xilinx.com>
 >
-> There is a problem with GPIO driver when used as IRQ controller.
-> It is not working because the module is sleeping (clock is disabled).
-> The patch enables clocks when IP is used as IRQ controller.
+> In general situation on-SoC GPIO controller drivers should be probed
+> after pinctrl/pinmux controller driver, because on-SoC GPIOs utilize a
+> pin/pad as a resource provided and controlled by pinctrl subsystem.
 >
-> Signed-off-by: Borsodi Petr <Petr.Borsodi@i.cz>
+>   GPIO must come after pinctrl as gpios may need to mux pins....etc
+>
+> Looking at Xilinx SoC series pinctrl drivers, zynq*_pinctrl_init()
+> functions are called at arch_initcall init levels,
+> so the change of initcall level for gpio-zynq driver from
+> postcore_initcall to subsys_initcall level is sufficient. Also note
+> that the most of GPIO controller drivers settled at subsys_initcall
+> level.
+>
+> If pinctrl subsystem manages pads with GPIO functions, the change is
+> needed to avoid unwanted driver probe deferrals during kernel boot.
+>
+> Signed-off-by: Nava kishore Manne <navam@xilinx.com>
 > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-I'm a bit worried about this patch.
-
-> +static int zynq_gpio_irq_request_resources(struct irq_data *d)
-> +{
-> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +       int ret;
-> +
-> +       if (!try_module_get(chip->gpiodev->owner))
-> +               return -ENODEV;
-
-You are poking around in gpiolib internals, I don't really like that.
-I prefer that you use accessors and try to make the core deal with
-this instead of fixing it up with a local hack in the driver.
-
-> +       ret = pm_runtime_get_sync(chip->parent);
-> +       if (ret < 0) {
-> +               module_put(chip->gpiodev->owner);
-> +               return ret;
-> +       }
-
-What you essentially do is disable runtime PM while IRQs are in
-use, the patch commit log should say this.
-
-> +       if (gpiochip_lock_as_irq(chip, d->hwirq)) {
-> +               chip_err(chip, "unable to lock HW IRQ %lu for IRQ\n", d->hwirq);
-> +               pm_runtime_put(chip->parent);
-> +               module_put(chip->gpiodev->owner);
-> +               return -EINVAL;
-> +       }
-
-This is essentially a separate patch that should be done orthogonally.
-(I don't care super-much about that though.)
-
-> +static void zynq_gpio_irq_release_resources(struct irq_data *d)
-> +{
-> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-> +
-> +       gpiochip_unlock_as_irq(chip, d->hwirq);
-> +       pm_runtime_put(chip->parent);
-> +       module_put(chip->gpiodev->owner);
-> +}
-(...)
-> +       .irq_request_resources = zynq_gpio_irq_request_resources,
-> +       .irq_release_resources = zynq_gpio_irq_release_resources,
-
-Look at this from gpiolib.c:
-
-static int gpiochip_irq_reqres(struct irq_data *d)
-{
-        struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-
-        if (!try_module_get(chip->gpiodev->owner))
-                return -ENODEV;
-
-        if (gpiochip_lock_as_irq(chip, d->hwirq)) {
-                chip_err(chip,
-                        "unable to lock HW IRQ %lu for IRQ\n",
-                        d->hwirq);
-                module_put(chip->gpiodev->owner);
-                return -EINVAL;
-        }
-        return 0;
-}
-
-static void gpiochip_irq_relres(struct irq_data *d)
-{
-        struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-
-        gpiochip_unlock_as_irq(chip, d->hwirq);
-        module_put(chip->gpiodev->owner);
-}
-
-If you add pm_runtime_get_sync()/put to this and export
-the functions you have the same thing and you can just reuse this
-code instead of copying it.
-
-Arguably the above should indeed have that runtime PM code
-(unless we know a better way to deal with IRQs).
-
-So can we fix this in the core and reuse it from there?
+Can't you just move it all the way to device_initcall and
+simply use the standard module init macros?
+builtin_platform_driver(), module_platform_driver()?
 
 Yours,
 Linus Walleij
