@@ -1,34 +1,109 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/8] gpio: zynq: Add support for suspend resume
-Date: Mon, 14 Aug 2017 15:44:18 +0200
-Message-ID: <CACRpkda-J_LOrRVtAGDcdzsyV50ScokFoNmkXxFyZnnCzS+W8A@mail.gmail.com>
-References: <cover.1502103715.git.michal.simek@xilinx.com> <7a7b593881f94318d3d9e318b183f05adeadf449.1502103715.git.michal.simek@xilinx.com>
+Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used as
+ IRQ controller
+Date: Mon, 14 Aug 2017 15:53:46 +0200
+Message-ID: <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
+References: <cover.1502103715.git.michal.simek@xilinx.com> <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:33813 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751082AbdHNNoT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 14 Aug 2017 09:44:19 -0400
-Received: by mail-oi0-f45.google.com with SMTP id x3so84207831oia.1
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Aug 2017 06:44:19 -0700 (PDT)
-In-Reply-To: <7a7b593881f94318d3d9e318b183f05adeadf449.1502103715.git.michal.simek@xilinx.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "monstr@monstr.eu" <monstr@monstr.eu>, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "monstr@monstr.eu" <monstr@monstr.eu>, Borsodi Petr <Petr.Borsodi@i.cz>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, Peter Crosthwaite <peter.crosthwaite@xilinx.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robherring2@gmail.com>, Josh Cartwright <josh.cartwright@ni.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-gpio@vger.kernel.org
 
 On Mon, Aug 7, 2017 at 1:01 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> From: Borsodi Petr <Petr.Borsodi@i.cz>
 >
-> Add support for suspend resume. Now that we can lose context across
-> a suspend/ resume cycle. Add support for the context restore.
+> There is a problem with GPIO driver when used as IRQ controller.
+> It is not working because the module is sleeping (clock is disabled).
+> The patch enables clocks when IP is used as IRQ controller.
 >
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> Signed-off-by: Borsodi Petr <Petr.Borsodi@i.cz>
 > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-Patch applied.
+I'm a bit worried about this patch.
+
+> +static int zynq_gpio_irq_request_resources(struct irq_data *d)
+> +{
+> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> +       int ret;
+> +
+> +       if (!try_module_get(chip->gpiodev->owner))
+> +               return -ENODEV;
+
+You are poking around in gpiolib internals, I don't really like that.
+I prefer that you use accessors and try to make the core deal with
+this instead of fixing it up with a local hack in the driver.
+
+> +       ret = pm_runtime_get_sync(chip->parent);
+> +       if (ret < 0) {
+> +               module_put(chip->gpiodev->owner);
+> +               return ret;
+> +       }
+
+What you essentially do is disable runtime PM while IRQs are in
+use, the patch commit log should say this.
+
+> +       if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+> +               chip_err(chip, "unable to lock HW IRQ %lu for IRQ\n", d->hwirq);
+> +               pm_runtime_put(chip->parent);
+> +               module_put(chip->gpiodev->owner);
+> +               return -EINVAL;
+> +       }
+
+This is essentially a separate patch that should be done orthogonally.
+(I don't care super-much about that though.)
+
+> +static void zynq_gpio_irq_release_resources(struct irq_data *d)
+> +{
+> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> +
+> +       gpiochip_unlock_as_irq(chip, d->hwirq);
+> +       pm_runtime_put(chip->parent);
+> +       module_put(chip->gpiodev->owner);
+> +}
+(...)
+> +       .irq_request_resources = zynq_gpio_irq_request_resources,
+> +       .irq_release_resources = zynq_gpio_irq_release_resources,
+
+Look at this from gpiolib.c:
+
+static int gpiochip_irq_reqres(struct irq_data *d)
+{
+        struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+
+        if (!try_module_get(chip->gpiodev->owner))
+                return -ENODEV;
+
+        if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+                chip_err(chip,
+                        "unable to lock HW IRQ %lu for IRQ\n",
+                        d->hwirq);
+                module_put(chip->gpiodev->owner);
+                return -EINVAL;
+        }
+        return 0;
+}
+
+static void gpiochip_irq_relres(struct irq_data *d)
+{
+        struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+
+        gpiochip_unlock_as_irq(chip, d->hwirq);
+        module_put(chip->gpiodev->owner);
+}
+
+If you add pm_runtime_get_sync()/put to this and export
+the functions you have the same thing and you can just reuse this
+code instead of copying it.
+
+Arguably the above should indeed have that runtime PM code
+(unless we know a better way to deal with IRQs).
+
+So can we fix this in the core and reuse it from there?
 
 Yours,
 Linus Walleij
