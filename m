@@ -1,55 +1,53 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD, Input and RTC due for the
- v3.14 merge window
-Date: Tue, 15 Aug 2017 08:13:24 +0100
-Message-ID: <20170815071324.uh74pxo6puhh3qqm@dell>
+Subject: Re: [PATCH v2 2/3] mfd: tps65010: move header file out of I2C realm
+Date: Tue, 15 Aug 2017 09:19:28 +0100
+Message-ID: <20170815081928.kqrmcxwz4mbezpsr@dell>
 References: <20170814163424.2197-1-wsa@the-dreams.de>
- <20170814163424.2197-2-wsa@the-dreams.de>
+ <20170814163424.2197-3-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:35390 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753097AbdHOHN2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2017 03:13:28 -0400
-Received: by mail-wr0-f173.google.com with SMTP id k71so556408wrc.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Aug 2017 00:13:27 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170814163424.2197-2-wsa@the-dreams.de>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+In-Reply-To: <20170814163424.2197-3-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tony Lindgren <tony@atomide.com>
+List-Id: linux-gpio@vger.kernel.org
 
-Enjoy!
+On Mon, 14 Aug 2017, Wolfram Sang wrote:
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+> include/linux/i2c is not for client devices. Move the header file to a
+> more appropriate location.
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> ---
+> Change since V1:
+> 
+> * rebased to v4.13-rc5, no changes needed
+> * acks added. I think none are missing.
+> 
+>  arch/arm/mach-omap1/board-h2-mmc.c      | 2 +-
+>  arch/arm/mach-omap1/board-h2.c          | 2 +-
+>  arch/arm/mach-omap1/board-h3-mmc.c      | 2 +-
+>  arch/arm/mach-omap1/board-h3.c          | 2 +-
+>  arch/arm/mach-omap1/board-osk.c         | 2 +-
+>  arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 2 +-
+>  arch/arm/mach-s3c24xx/mach-osiris.c     | 2 +-
+>  drivers/mfd/tps65010.c                  | 2 +-
+>  drivers/usb/host/ohci-omap.c            | 2 +-
+>  drivers/usb/phy/phy-isp1301-omap.c      | 2 +-
+>  drivers/video/fbdev/omap/lcd_h3.c       | 2 +-
+>  include/linux/{i2c => mfd}/tps65010.h   | 2 +-
+>  12 files changed, 12 insertions(+), 12 deletions(-)
+>  rename include/linux/{i2c => mfd}/tps65010.h (99%)
 
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+Applied, thanks.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-input-rtc-v4.14
-
-for you to fetch changes up to 0335a9554b4d6acc2d17efe752bff54ce59b57eb:
-
-  mfd: dm355evm_msp: Move header file out of I2C realm (2017-08-15 08:06:14 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, Input and RTC due for the v3.14 merge window
-
-----------------------------------------------------------------
-Wolfram Sang (1):
-      mfd: dm355evm_msp: Move header file out of I2C realm
-
- drivers/input/misc/dm355evm_keys.c        | 2 +-
- drivers/mfd/dm355evm_msp.c                | 2 +-
- drivers/rtc/rtc-dm355evm.c                | 2 +-
- include/linux/{i2c => mfd}/dm355evm_msp.h | 0
- 4 files changed, 3 insertions(+), 3 deletions(-)
- rename include/linux/{i2c => mfd}/dm355evm_msp.h (100%)
- 
 -- 
 Lee Jones
 Linaro STMicroelectronics Landing Team Lead
