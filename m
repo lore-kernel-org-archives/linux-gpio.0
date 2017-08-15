@@ -1,549 +1,553 @@
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v6 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
- region driver
-Date: Mon, 14 Aug 2017 23:39:00 +0300
-Message-ID: <20170814203900.qobophvzcrdtv34s@kekkonen.localdomain>
-References: <1501288226-27469-1-git-send-email-rajmohan.mani@intel.com>
- <1501288226-27469-4-git-send-email-rajmohan.mani@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1501288226-27469-4-git-send-email-rajmohan.mani@intel.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Rajmohan Mani <rajmohan.mani@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
+From: fenglinw@codeaurora.org
+Subject: [PATCH V3 1/2] pinctrl: qcom: spmi-gpio: Add support for GPIO LV/MV subtype
+Date: Tue, 15 Aug 2017 08:38:37 +0800
+Message-ID: <20170815003918.8332-2-fenglinw@codeaurora.org>
+References: <20170815003918.8332-1-fenglinw@codeaurora.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170815003918.8332-1-fenglinw@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Fenglin Wu <fenglinw@codeaurora.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, kgunda@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Jul 28, 2017 at 05:30:26PM -0700, Rajmohan Mani wrote:
-> The Kabylake platform coreboot (Chrome OS equivalent of
-> BIOS) has defined 4 operation regions for the TI TPS68470 PMIC.
-> These operation regions are to enable/disable voltage
-> regulators, configure voltage regulators, enable/disable
-> clocks and to configure clocks.
-> 
-> This config adds ACPI operation region support for TI TPS68470 PMIC.
-> TPS68470 device is an advanced power management unit that powers
-> a Compact Camera Module (CCM), generates clocks for image sensors,
-> drives a dual LED for flash and incorporates two LED drivers for
-> general purpose indicators.
-> This driver enables ACPI operation region support to control voltage
-> regulators and clocks for the TPS68470 PMIC.
-> 
-> Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+From: Fenglin Wu <fenglinw@codeaurora.org>
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+GPIO LV (low voltage)/MV (medium voltage) subtypes have different
+features and register mappings than 4CH/8CH subtypes. Add support
+for LV and MV subtypes.
 
-> ---
->  drivers/acpi/Kconfig              |  16 ++
->  drivers/acpi/Makefile             |   2 +
->  drivers/acpi/pmic/tps68470_pmic.c | 455 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 473 insertions(+)
->  create mode 100644 drivers/acpi/pmic/tps68470_pmic.c
-> 
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index 1ce52f8..e124a82d 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -535,4 +535,20 @@ if ARM64
->  source "drivers/acpi/arm64/Kconfig"
->  endif
->  
-> +config TPS68470_PMIC_OPREGION
-> +	bool "ACPI operation region support for TPS68470 PMIC"
-> +	depends on MFD_TPS68470
-> +	help
-> +	  This config adds ACPI operation region support for TI TPS68470 PMIC.
-> +	  TPS68470 device is an advanced power management unit that powers
-> +	  a Compact Camera Module (CCM), generates clocks for image sensors,
-> +	  drives a dual LED for flash and incorporates two LED drivers for
-> +	  general purpose indicators.
-> +	  This driver enables ACPI operation region support control voltage
-> +	  regulators and clocks.
-> +
-> +	  This option is a bool as it provides an ACPI operation
-> +	  region, which must be available before any of the devices
-> +	  using this, are probed.
-> +
->  endif	# ACPI
-> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> index b1aacfc..2d70a7f 100644
-> --- a/drivers/acpi/Makefile
-> +++ b/drivers/acpi/Makefile
-> @@ -106,6 +106,8 @@ obj-$(CONFIG_CHT_WC_PMIC_OPREGION) += pmic/intel_pmic_chtwc.o
->  
->  obj-$(CONFIG_ACPI_CONFIGFS)	+= acpi_configfs.o
->  
-> +obj-$(CONFIG_TPS68470_PMIC_OPREGION)	+= pmic/tps68470_pmic.o
-> +
->  video-objs			+= acpi_video.o video_detect.o
->  obj-y				+= dptf/
->  
-> diff --git a/drivers/acpi/pmic/tps68470_pmic.c b/drivers/acpi/pmic/tps68470_pmic.c
-> new file mode 100644
-> index 0000000..7f3c567
-> --- /dev/null
-> +++ b/drivers/acpi/pmic/tps68470_pmic.c
-> @@ -0,0 +1,455 @@
-> +/*
-> + * TI TPS68470 PMIC operation region driver
-> + *
-> + * Copyright (C) 2017 Intel Corporation. All rights reserved.
-> + *
-> + * Author: Rajmohan Mani <rajmohan.mani@intel.com>
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License version
-> + * 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * Based on drivers/acpi/pmic/intel_pmic* drivers
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/mfd/tps68470.h>
-> +#include <linux/init.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +struct tps68470_pmic_table {
-> +	u32 address;		/* operation region address */
-> +	u32 reg;		/* corresponding register */
-> +	u32 bitmask;		/* bit mask for power, clock */
-> +};
-> +
-> +#define TI_PMIC_POWER_OPREGION_ID		0xB0
-> +#define TI_PMIC_VR_VAL_OPREGION_ID		0xB1
-> +#define TI_PMIC_CLOCK_OPREGION_ID		0xB2
-> +#define TI_PMIC_CLKFREQ_OPREGION_ID		0xB3
-> +
-> +struct tps68470_pmic_opregion {
-> +	struct mutex lock;
-> +	struct regmap *regmap;
-> +};
-> +
-> +#define S_IO_I2C_EN	(BIT(0) | BIT(1))
-> +
-> +static const struct tps68470_pmic_table power_table[] = {
-> +	{
-> +		.address = 0x00,
-> +		.reg = TPS68470_REG_S_I2C_CTL,
-> +		.bitmask = S_IO_I2C_EN,
-> +		/* S_I2C_CTL */
-> +	},
-> +	{
-> +		.address = 0x04,
-> +		.reg = TPS68470_REG_VCMCTL,
-> +		.bitmask = BIT(0),
-> +		/* VCMCTL */
-> +	},
-> +	{
-> +		.address = 0x08,
-> +		.reg = TPS68470_REG_VAUX1CTL,
-> +		.bitmask = BIT(0),
-> +		/* VAUX1_CTL */
-> +	},
-> +	{
-> +		.address = 0x0C,
-> +		.reg = TPS68470_REG_VAUX2CTL,
-> +		.bitmask = BIT(0),
-> +		/* VAUX2CTL */
-> +	},
-> +	{
-> +		.address = 0x10,
-> +		.reg = TPS68470_REG_VACTL,
-> +		.bitmask = BIT(0),
-> +		/* VACTL */
-> +	},
-> +	{
-> +		.address = 0x14,
-> +		.reg = TPS68470_REG_VDCTL,
-> +		.bitmask = BIT(0),
-> +		/* VDCTL */
-> +	},
-> +};
-> +
-> +/* Table to set voltage regulator value */
-> +static const struct tps68470_pmic_table vr_val_table[] = {
-> +	{
-> +		.address = 0x00,
-> +		.reg = TPS68470_REG_VSIOVAL,
-> +		.bitmask = TPS68470_VSIOVAL_IOVOLT_MASK,
-> +		/* TPS68470_REG_VSIOVAL */
-> +	},
-> +	{
-> +		.address = 0x04,
-> +		.reg = TPS68470_REG_VIOVAL,
-> +		.bitmask = TPS68470_VIOVAL_IOVOLT_MASK,
-> +		/* TPS68470_REG_VIOVAL */
-> +	},
-> +	{
-> +		.address = 0x08,
-> +		.reg = TPS68470_REG_VCMVAL,
-> +		.bitmask = TPS68470_VCMVAL_VCVOLT_MASK,
-> +		/* TPS68470_REG_VCMVAL */
-> +	},
-> +	{
-> +		.address = 0x0C,
-> +		.reg = TPS68470_REG_VAUX1VAL,
-> +		.bitmask = TPS68470_VAUX1VAL_AUX1VOLT_MASK,
-> +		/* TPS68470_REG_VAUX1VAL */
-> +	},
-> +	{
-> +		.address = 0x10,
-> +		.reg = TPS68470_REG_VAUX2VAL,
-> +		.bitmask = TPS68470_VAUX2VAL_AUX2VOLT_MASK,
-> +		/* TPS68470_REG_VAUX2VAL */
-> +	},
-> +	{
-> +		.address = 0x14,
-> +		.reg = TPS68470_REG_VAVAL,
-> +		.bitmask = TPS68470_VAVAL_AVOLT_MASK,
-> +		/* TPS68470_REG_VAVAL */
-> +	},
-> +	{
-> +		.address = 0x18,
-> +		.reg = TPS68470_REG_VDVAL,
-> +		.bitmask = TPS68470_VDVAL_DVOLT_MASK,
-> +		/* TPS68470_REG_VDVAL */
-> +	},
-> +};
-> +
-> +/* Table to configure clock frequency */
-> +static const struct tps68470_pmic_table clk_freq_table[] = {
-> +	{
-> +		.address = 0x00,
-> +		.reg = TPS68470_REG_POSTDIV2,
-> +		.bitmask = BIT(0) | BIT(1),
-> +		/* TPS68470_REG_POSTDIV2 */
-> +	},
-> +	{
-> +		.address = 0x04,
-> +		.reg = TPS68470_REG_BOOSTDIV,
-> +		.bitmask = 0x1F,
-> +		/* TPS68470_REG_BOOSTDIV */
-> +	},
-> +	{
-> +		.address = 0x08,
-> +		.reg = TPS68470_REG_BUCKDIV,
-> +		.bitmask = 0x0F,
-> +		/* TPS68470_REG_BUCKDIV */
-> +	},
-> +	{
-> +		.address = 0x0C,
-> +		.reg = TPS68470_REG_PLLSWR,
-> +		.bitmask = 0x13,
-> +		/* TPS68470_REG_PLLSWR */
-> +	},
-> +	{
-> +		.address = 0x10,
-> +		.reg = TPS68470_REG_XTALDIV,
-> +		.bitmask = 0xFF,
-> +		/* TPS68470_REG_XTALDIV */
-> +	},
-> +	{
-> +		.address = 0x14,
-> +		.reg = TPS68470_REG_PLLDIV,
-> +		.bitmask = 0xFF,
-> +		/* TPS68470_REG_PLLDIV */
-> +	},
-> +	{
-> +		.address = 0x18,
-> +		.reg = TPS68470_REG_POSTDIV,
-> +		.bitmask = 0x83,
-> +		/* TPS68470_REG_POSTDIV */
-> +	},
-> +};
-> +
-> +/* Table to configure and enable clocks */
-> +static const struct tps68470_pmic_table clk_table[] = {
-> +	{
-> +		.address = 0x00,
-> +		.reg = TPS68470_REG_PLLCTL,
-> +		.bitmask = 0xF5,
-> +		/* TPS68470_REG_PLLCTL */
-> +	},
-> +	{
-> +		.address = 0x04,
-> +		.reg = TPS68470_REG_PLLCTL2,
-> +		.bitmask = BIT(0),
-> +		/* TPS68470_REG_PLLCTL2 */
-> +	},
-> +	{
-> +		.address = 0x08,
-> +		.reg = TPS68470_REG_CLKCFG1,
-> +		.bitmask = TPS68470_CLKCFG1_MODE_A_MASK |
-> +			TPS68470_CLKCFG1_MODE_B_MASK,
-> +		/* TPS68470_REG_CLKCFG1 */
-> +	},
-> +	{
-> +		.address = 0x0C,
-> +		.reg = TPS68470_REG_CLKCFG2,
-> +		.bitmask = TPS68470_CLKCFG1_MODE_A_MASK |
-> +			TPS68470_CLKCFG1_MODE_B_MASK,
-> +		/* TPS68470_REG_CLKCFG2 */
-> +	},
-> +};
-> +
-> +static int pmic_get_reg_bit(u64 address,
-> +			    const struct tps68470_pmic_table *table,
-> +			    const unsigned int table_size, int *reg,
-> +			    int *bitmask)
-> +{
-> +	u64 i;
-> +
-> +	i = address / 4;
-> +	if (i >= table_size)
-> +		return -ENOENT;
-> +
-> +	if (!reg || !bitmask)
-> +		return -EINVAL;
-> +
-> +	*reg = table[i].reg;
-> +	*bitmask = table[i].bitmask;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tps68470_pmic_get_power(struct regmap *regmap, int reg,
-> +				       int bitmask, u64 *value)
-> +{
-> +	unsigned int data;
-> +
-> +	if (regmap_read(regmap, reg, &data))
-> +		return -EIO;
-> +
-> +	*value = (data & bitmask) ? 1 : 0;
-> +	return 0;
-> +}
-> +
-> +static int tps68470_pmic_get_vr_val(struct regmap *regmap, int reg,
-> +				       int bitmask, u64 *value)
-> +{
-> +	unsigned int data;
-> +
-> +	if (regmap_read(regmap, reg, &data))
-> +		return -EIO;
-> +
-> +	*value = data & bitmask;
-> +	return 0;
-> +}
-> +
-> +static int tps68470_pmic_get_clk(struct regmap *regmap, int reg,
-> +				       int bitmask, u64 *value)
-> +{
-> +	unsigned int data;
-> +
-> +	if (regmap_read(regmap, reg, &data))
-> +		return -EIO;
-> +
-> +	*value = (data & bitmask) ? 1 : 0;
-> +	return 0;
-> +}
-> +
-> +static int tps68470_pmic_get_clk_freq(struct regmap *regmap, int reg,
-> +				       int bitmask, u64 *value)
-> +{
-> +	unsigned int data;
-> +
-> +	if (regmap_read(regmap, reg, &data))
-> +		return -EIO;
-> +
-> +	*value = data & bitmask;
-> +	return 0;
-> +}
-> +
-> +static int ti_tps68470_regmap_update_bits(struct regmap *regmap, int reg,
-> +					int bitmask, u64 value)
-> +{
-> +	return regmap_update_bits(regmap, reg, bitmask, value);
-> +}
-> +
-> +static acpi_status tps68470_pmic_common_handler(u32 function,
-> +					  acpi_physical_address address,
-> +					  u32 bits, u64 *value,
-> +					  void *region_context,
-> +					  int (*get)(struct regmap *,
-> +						     int, int, u64 *),
-> +					  int (*update)(struct regmap *,
-> +							int, int, u64),
-> +					  const struct tps68470_pmic_table *tbl,
-> +					  unsigned int tbl_size)
-> +{
-> +	struct tps68470_pmic_opregion *opregion = region_context;
-> +	struct regmap *regmap = opregion->regmap;
-> +	int reg, ret, bitmask;
-> +
-> +	if (bits != 32)
-> +		return AE_BAD_PARAMETER;
-> +
-> +	ret = pmic_get_reg_bit(address, tbl, tbl_size, &reg, &bitmask);
-> +	if (ret < 0)
-> +		return AE_BAD_PARAMETER;
-> +
-> +	if (function == ACPI_WRITE && *value > bitmask)
-> +		return AE_BAD_PARAMETER;
-> +
-> +	mutex_lock(&opregion->lock);
-> +
-> +	ret = (function == ACPI_READ) ?
-> +		get(regmap, reg, bitmask, value) :
-> +		update(regmap, reg, bitmask, *value);
-> +
-> +	mutex_unlock(&opregion->lock);
-> +
-> +	return ret ? AE_ERROR : AE_OK;
-> +}
-> +
-> +static acpi_status tps68470_pmic_cfreq_handler(u32 function,
-> +					    acpi_physical_address address,
-> +					    u32 bits, u64 *value,
-> +					    void *handler_context,
-> +					    void *region_context)
-> +{
-> +	return tps68470_pmic_common_handler(function, address, bits, value,
-> +				region_context,
-> +				tps68470_pmic_get_clk_freq,
-> +				ti_tps68470_regmap_update_bits,
-> +				clk_freq_table,
-> +				ARRAY_SIZE(clk_freq_table));
-> +}
-> +
-> +static acpi_status tps68470_pmic_clk_handler(u32 function,
-> +				       acpi_physical_address address, u32 bits,
-> +				       u64 *value, void *handler_context,
-> +				       void *region_context)
-> +{
-> +	return tps68470_pmic_common_handler(function, address, bits, value,
-> +				region_context,
-> +				tps68470_pmic_get_clk,
-> +				ti_tps68470_regmap_update_bits,
-> +				clk_table,
-> +				ARRAY_SIZE(clk_table));
-> +}
-> +
-> +static acpi_status tps68470_pmic_vrval_handler(u32 function,
-> +					  acpi_physical_address address,
-> +					  u32 bits, u64 *value,
-> +					  void *handler_context,
-> +					  void *region_context)
-> +{
-> +	return tps68470_pmic_common_handler(function, address, bits, value,
-> +				region_context,
-> +				tps68470_pmic_get_vr_val,
-> +				ti_tps68470_regmap_update_bits,
-> +				vr_val_table,
-> +				ARRAY_SIZE(vr_val_table));
-> +}
-> +
-> +static acpi_status tps68470_pmic_pwr_handler(u32 function,
-> +					 acpi_physical_address address,
-> +					 u32 bits, u64 *value,
-> +					 void *handler_context,
-> +					 void *region_context)
-> +{
-> +	if (bits != 32)
-> +		return AE_BAD_PARAMETER;
-> +
-> +	/* set/clear for bit 0, bits 0 and 1 together */
-> +	if (function == ACPI_WRITE &&
-> +	    !(*value == 0 || *value == 1 || *value == 3)) {
-> +		return AE_BAD_PARAMETER;
-> +	}
-> +
-> +	return tps68470_pmic_common_handler(function, address, bits, value,
-> +				region_context,
-> +				tps68470_pmic_get_power,
-> +				ti_tps68470_regmap_update_bits,
-> +				power_table,
-> +				ARRAY_SIZE(power_table));
-> +}
-> +
-> +static int tps68470_pmic_opregion_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *tps68470_regmap = dev_get_drvdata(pdev->dev.parent);
-> +	acpi_handle handle = ACPI_HANDLE(pdev->dev.parent);
-> +	struct device *dev = &pdev->dev;
-> +	struct tps68470_pmic_opregion *opregion;
-> +	acpi_status status;
-> +
-> +	if (!dev || !tps68470_regmap) {
-> +		dev_warn(dev, "dev or regmap is NULL\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!handle) {
-> +		dev_warn(dev, "acpi handle is NULL\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	opregion = devm_kzalloc(dev, sizeof(*opregion), GFP_KERNEL);
-> +	if (!opregion)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&opregion->lock);
-> +	opregion->regmap = tps68470_regmap;
-> +
-> +	status = acpi_install_address_space_handler(handle,
-> +						    TI_PMIC_POWER_OPREGION_ID,
-> +						    tps68470_pmic_pwr_handler,
-> +						    NULL, opregion);
-> +	if (ACPI_FAILURE(status))
-> +		goto out_mutex_destroy;
-> +
-> +	status = acpi_install_address_space_handler(handle,
-> +						    TI_PMIC_VR_VAL_OPREGION_ID,
-> +						    tps68470_pmic_vrval_handler,
-> +						    NULL, opregion);
-> +	if (ACPI_FAILURE(status))
-> +		goto out_remove_power_handler;
-> +
-> +	status = acpi_install_address_space_handler(handle,
-> +						    TI_PMIC_CLOCK_OPREGION_ID,
-> +						    tps68470_pmic_clk_handler,
-> +						    NULL, opregion);
-> +	if (ACPI_FAILURE(status))
-> +		goto out_remove_vr_val_handler;
-> +
-> +	status = acpi_install_address_space_handler(handle,
-> +						    TI_PMIC_CLKFREQ_OPREGION_ID,
-> +						    tps68470_pmic_cfreq_handler,
-> +						    NULL, opregion);
-> +	if (ACPI_FAILURE(status))
-> +		goto out_remove_clk_handler;
-> +
-> +	return 0;
-> +
-> +out_remove_clk_handler:
-> +	acpi_remove_address_space_handler(handle, TI_PMIC_CLOCK_OPREGION_ID,
-> +					  tps68470_pmic_clk_handler);
-> +out_remove_vr_val_handler:
-> +	acpi_remove_address_space_handler(handle, TI_PMIC_VR_VAL_OPREGION_ID,
-> +					  tps68470_pmic_vrval_handler);
-> +out_remove_power_handler:
-> +	acpi_remove_address_space_handler(handle, TI_PMIC_POWER_OPREGION_ID,
-> +					  tps68470_pmic_pwr_handler);
-> +out_mutex_destroy:
-> +	mutex_destroy(&opregion->lock);
-> +	return -ENODEV;
-> +}
-> +
-> +static struct platform_driver tps68470_pmic_opregion_driver = {
-> +	.probe = tps68470_pmic_opregion_probe,
-> +	.driver = {
-> +		.name = "tps68470_pmic_opregion",
-> +	},
-> +};
-> +
-> +builtin_platform_driver(tps68470_pmic_opregion_driver)
-> -- 
-> 1.9.1
-> 
+Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt |  17 +-
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 281 +++++++++++++++++----
+ include/dt-bindings/pinctrl/qcom,pmic-gpio.h       |   2 +
+ 3 files changed, 250 insertions(+), 50 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index 8d893a8..d9d2054 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -98,7 +98,10 @@ to specify in a pin configuration subnode:
+ 		    "dtest1",
+ 		    "dtest2",
+ 		    "dtest3",
+-		    "dtest4"
++		    "dtest4",
++		    And following values are supported by LV/MV GPIO subtypes:
++		    "func3",
++		    "func4"
+ 
+ - bias-disable:
+ 	Usage: optional
+@@ -183,6 +186,18 @@ to specify in a pin configuration subnode:
+ 	Value type: <none>
+ 	Definition: The specified pins are configured in open-source mode.
+ 
++- qcom,analog-pass:
++	Usage: optional
++	Value type: <none>
++	Definition: The specified pins are configured in analog-pass-through mode.
++
++- qcom,atest:
++	Usage: optional
++	Value type: <u32>
++	Definition: Selects ATEST rail to route to GPIO when it's configured
++		    in analog-pass-through mode.
++		    Valid values are 1-4 corresponding to ATEST1 to ATEST4.
++
+ Example:
+ 
+ 	pm8921_gpio: gpio@150 {
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 664b641..6b21832 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -40,6 +40,8 @@
+ #define PMIC_GPIO_SUBTYPE_GPIOC_4CH		0x5
+ #define PMIC_GPIO_SUBTYPE_GPIO_8CH		0x9
+ #define PMIC_GPIO_SUBTYPE_GPIOC_8CH		0xd
++#define PMIC_GPIO_SUBTYPE_GPIO_LV		0x10
++#define PMIC_GPIO_SUBTYPE_GPIO_MV		0x11
+ 
+ #define PMIC_MPP_REG_RT_STS			0x10
+ #define PMIC_MPP_REG_RT_STS_VAL_MASK		0x1
+@@ -48,8 +50,10 @@
+ #define PMIC_GPIO_REG_MODE_CTL			0x40
+ #define PMIC_GPIO_REG_DIG_VIN_CTL		0x41
+ #define PMIC_GPIO_REG_DIG_PULL_CTL		0x42
++#define PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL	0x44
+ #define PMIC_GPIO_REG_DIG_OUT_CTL		0x45
+ #define PMIC_GPIO_REG_EN_CTL			0x46
++#define PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL	0x4A
+ 
+ /* PMIC_GPIO_REG_MODE_CTL */
+ #define PMIC_GPIO_REG_MODE_VALUE_SHIFT		0x1
+@@ -58,6 +62,12 @@
+ #define PMIC_GPIO_REG_MODE_DIR_SHIFT		4
+ #define PMIC_GPIO_REG_MODE_DIR_MASK		0x7
+ 
++#define PMIC_GPIO_MODE_DIGITAL_INPUT		0
++#define PMIC_GPIO_MODE_DIGITAL_OUTPUT		1
++#define PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT	2
++#define PMIC_GPIO_MODE_ANALOG_PASS_THRU		3
++#define PMIC_GPIO_REG_LV_MV_MODE_DIR_MASK	0x3
++
+ /* PMIC_GPIO_REG_DIG_VIN_CTL */
+ #define PMIC_GPIO_REG_VIN_SHIFT			0
+ #define PMIC_GPIO_REG_VIN_MASK			0x7
+@@ -69,6 +79,11 @@
+ #define PMIC_GPIO_PULL_DOWN			4
+ #define PMIC_GPIO_PULL_DISABLE			5
+ 
++/* PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL for LV/MV */
++#define PMIC_GPIO_LV_MV_OUTPUT_INVERT		0x80
++#define PMIC_GPIO_LV_MV_OUTPUT_INVERT_SHIFT	7
++#define PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK	0xF
++
+ /* PMIC_GPIO_REG_DIG_OUT_CTL */
+ #define PMIC_GPIO_REG_OUT_STRENGTH_SHIFT	0
+ #define PMIC_GPIO_REG_OUT_STRENGTH_MASK		0x3
+@@ -88,9 +103,28 @@
+ 
+ #define PMIC_GPIO_PHYSICAL_OFFSET		1
+ 
++/* PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL */
++#define PMIC_GPIO_LV_MV_ANA_MUX_SEL_MASK		0x3
++
+ /* Qualcomm specific pin configurations */
+ #define PMIC_GPIO_CONF_PULL_UP			(PIN_CONFIG_END + 1)
+ #define PMIC_GPIO_CONF_STRENGTH			(PIN_CONFIG_END + 2)
++#define PMIC_GPIO_CONF_ATEST			(PIN_CONFIG_END + 3)
++#define PMIC_GPIO_CONF_ANALOG_PASS		(PIN_CONFIG_END + 4)
++
++/* The index of each function in pmic_gpio_functions[] array */
++enum pmic_gpio_func_index {
++	PMIC_GPIO_FUNC_INDEX_NORMAL,
++	PMIC_GPIO_FUNC_INDEX_PAIRED,
++	PMIC_GPIO_FUNC_INDEX_FUNC1,
++	PMIC_GPIO_FUNC_INDEX_FUNC2,
++	PMIC_GPIO_FUNC_INDEX_FUNC3,
++	PMIC_GPIO_FUNC_INDEX_FUNC4,
++	PMIC_GPIO_FUNC_INDEX_DTEST1,
++	PMIC_GPIO_FUNC_INDEX_DTEST2,
++	PMIC_GPIO_FUNC_INDEX_DTEST3,
++	PMIC_GPIO_FUNC_INDEX_DTEST4,
++};
+ 
+ /**
+  * struct pmic_gpio_pad - keep current GPIO settings
+@@ -102,12 +136,15 @@
+  *	open-drain or open-source mode.
+  * @output_enabled: Set to true if GPIO output logic is enabled.
+  * @input_enabled: Set to true if GPIO input buffer logic is enabled.
++ * @analog_pass: Set to true if GPIO is in analog-pass-through mode.
++ * @lv_mv_type: Set to true if GPIO subtype is GPIO_LV(0x10) or GPIO_MV(0x11).
+  * @num_sources: Number of power-sources supported by this GPIO.
+  * @power_source: Current power-source used.
+  * @buffer_type: Push-pull, open-drain or open-source.
+  * @pullup: Constant current which flow trough GPIO output buffer.
+  * @strength: No, Low, Medium, High
+  * @function: See pmic_gpio_functions[]
++ * @atest: the ATEST selection for GPIO analog-pass-through mode
+  */
+ struct pmic_gpio_pad {
+ 	u16		base;
+@@ -117,12 +154,15 @@ struct pmic_gpio_pad {
+ 	bool		have_buffer;
+ 	bool		output_enabled;
+ 	bool		input_enabled;
++	bool		analog_pass;
++	bool		lv_mv_type;
+ 	unsigned int	num_sources;
+ 	unsigned int	power_source;
+ 	unsigned int	buffer_type;
+ 	unsigned int	pullup;
+ 	unsigned int	strength;
+ 	unsigned int	function;
++	unsigned int	atest;
+ };
+ 
+ struct pmic_gpio_state {
+@@ -135,12 +175,16 @@ struct pmic_gpio_state {
+ static const struct pinconf_generic_params pmic_gpio_bindings[] = {
+ 	{"qcom,pull-up-strength",	PMIC_GPIO_CONF_PULL_UP,		0},
+ 	{"qcom,drive-strength",		PMIC_GPIO_CONF_STRENGTH,	0},
++	{"qcom,atest",			PMIC_GPIO_CONF_ATEST,		0},
++	{"qcom,analog-pass",		PMIC_GPIO_CONF_ANALOG_PASS,	0},
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+ static const struct pin_config_item pmic_conf_items[ARRAY_SIZE(pmic_gpio_bindings)] = {
+ 	PCONFDUMP(PMIC_GPIO_CONF_PULL_UP,  "pull up strength", NULL, true),
+ 	PCONFDUMP(PMIC_GPIO_CONF_STRENGTH, "drive-strength", NULL, true),
++	PCONFDUMP(PMIC_GPIO_CONF_ATEST, "atest", NULL, true),
++	PCONFDUMP(PMIC_GPIO_CONF_ANALOG_PASS, "analog-pass", NULL, true),
+ };
+ #endif
+ 
+@@ -153,10 +197,16 @@ struct pmic_gpio_state {
+ };
+ 
+ static const char *const pmic_gpio_functions[] = {
+-	PMIC_GPIO_FUNC_NORMAL, PMIC_GPIO_FUNC_PAIRED,
+-	PMIC_GPIO_FUNC_FUNC1, PMIC_GPIO_FUNC_FUNC2,
+-	PMIC_GPIO_FUNC_DTEST1, PMIC_GPIO_FUNC_DTEST2,
+-	PMIC_GPIO_FUNC_DTEST3, PMIC_GPIO_FUNC_DTEST4,
++	[PMIC_GPIO_FUNC_INDEX_NORMAL]	= PMIC_GPIO_FUNC_NORMAL,
++	[PMIC_GPIO_FUNC_INDEX_PAIRED]	= PMIC_GPIO_FUNC_PAIRED,
++	[PMIC_GPIO_FUNC_INDEX_FUNC1]	= PMIC_GPIO_FUNC_FUNC1,
++	[PMIC_GPIO_FUNC_INDEX_FUNC2]	= PMIC_GPIO_FUNC_FUNC2,
++	[PMIC_GPIO_FUNC_INDEX_FUNC3]	= PMIC_GPIO_FUNC_FUNC3,
++	[PMIC_GPIO_FUNC_INDEX_FUNC4]	= PMIC_GPIO_FUNC_FUNC4,
++	[PMIC_GPIO_FUNC_INDEX_DTEST1]	= PMIC_GPIO_FUNC_DTEST1,
++	[PMIC_GPIO_FUNC_INDEX_DTEST2]	= PMIC_GPIO_FUNC_DTEST2,
++	[PMIC_GPIO_FUNC_INDEX_DTEST3]	= PMIC_GPIO_FUNC_DTEST3,
++	[PMIC_GPIO_FUNC_INDEX_DTEST4]	= PMIC_GPIO_FUNC_DTEST4,
+ };
+ 
+ static int pmic_gpio_read(struct pmic_gpio_state *state,
+@@ -244,25 +294,67 @@ static int pmic_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+ 	unsigned int val;
+ 	int ret;
+ 
++	if (function > PMIC_GPIO_FUNC_INDEX_DTEST4) {
++		pr_err("function: %d is not defined\n", function);
++		return -EINVAL;
++	}
++
+ 	pad = pctldev->desc->pins[pin].drv_data;
++	/*
++	 * Non-LV/MV subtypes only support 2 special functions,
++	 * offsetting the dtestx function values by 2
++	 */
++	if (!pad->lv_mv_type) {
++		if (function == PMIC_GPIO_FUNC_INDEX_FUNC3 ||
++				function == PMIC_GPIO_FUNC_INDEX_FUNC4) {
++			pr_err("LV/MV subtype doesn't have func3/func4\n");
++			return -EINVAL;
++		}
++		if (function >= PMIC_GPIO_FUNC_INDEX_DTEST1)
++			function -= (PMIC_GPIO_FUNC_INDEX_DTEST1 -
++					PMIC_GPIO_FUNC_INDEX_FUNC3);
++	}
+ 
+ 	pad->function = function;
+ 
+-	val = 0;
+-	if (pad->output_enabled) {
+-		if (pad->input_enabled)
+-			val = 2;
+-		else
+-			val = 1;
+-	}
++	if (pad->analog_pass)
++		val = PMIC_GPIO_MODE_ANALOG_PASS_THRU;
++	else if (pad->output_enabled && pad->input_enabled)
++		val = PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT;
++	else if (pad->output_enabled)
++		val = PMIC_GPIO_MODE_DIGITAL_OUTPUT;
++	else
++		val = PMIC_GPIO_MODE_DIGITAL_INPUT;
+ 
+-	val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
+-	val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
+-	val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++	if (pad->lv_mv_type) {
++		ret = pmic_gpio_write(state, pad,
++				PMIC_GPIO_REG_MODE_CTL, val);
++		if (ret < 0)
++			return ret;
+ 
+-	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
+-	if (ret < 0)
+-		return ret;
++		val = pad->atest - 1;
++		ret = pmic_gpio_write(state, pad,
++				PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL, val);
++		if (ret < 0)
++			return ret;
++
++		val = pad->out_value
++			<< PMIC_GPIO_LV_MV_OUTPUT_INVERT_SHIFT;
++		val |= pad->function
++			& PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK;
++		ret = pmic_gpio_write(state, pad,
++			PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL, val);
++		if (ret < 0)
++			return ret;
++	} else {
++		val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
++		val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
++		val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++
++		ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
+ 
+@@ -322,6 +414,12 @@ static int pmic_gpio_config_get(struct pinctrl_dev *pctldev,
+ 	case PMIC_GPIO_CONF_STRENGTH:
+ 		arg = pad->strength;
+ 		break;
++	case PMIC_GPIO_CONF_ATEST:
++		arg = pad->atest;
++		break;
++	case PMIC_GPIO_CONF_ANALOG_PASS:
++		arg = pad->analog_pass;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -396,6 +494,16 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 				return -EINVAL;
+ 			pad->strength = arg;
+ 			break;
++		case PMIC_GPIO_CONF_ATEST:
++			if (!pad->lv_mv_type || arg > 4)
++				return -EINVAL;
++			pad->atest = arg;
++			break;
++		case PMIC_GPIO_CONF_ANALOG_PASS:
++			if (!pad->lv_mv_type)
++				return -EINVAL;
++			pad->analog_pass = true;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -420,19 +528,46 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	val = 0;
+-	if (pad->output_enabled) {
+-		if (pad->input_enabled)
+-			val = 2;
+-		else
+-			val = 1;
+-	}
++	if (pad->analog_pass)
++		val = PMIC_GPIO_MODE_ANALOG_PASS_THRU;
++	else if (pad->output_enabled && pad->input_enabled)
++		val = PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT;
++	else if (pad->output_enabled)
++		val = PMIC_GPIO_MODE_DIGITAL_OUTPUT;
++	else
++		val = PMIC_GPIO_MODE_DIGITAL_INPUT;
+ 
+-	val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
+-	val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
+-	val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++	if (pad->lv_mv_type) {
++		ret = pmic_gpio_write(state, pad,
++				PMIC_GPIO_REG_MODE_CTL, val);
++		if (ret < 0)
++			return ret;
++
++		val = pad->atest - 1;
++		ret = pmic_gpio_write(state, pad,
++				PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL, val);
++		if (ret < 0)
++			return ret;
++
++		val = pad->out_value
++			<< PMIC_GPIO_LV_MV_OUTPUT_INVERT_SHIFT;
++		val |= pad->function
++			& PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK;
++		ret = pmic_gpio_write(state, pad,
++			PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL, val);
++		if (ret < 0)
++			return ret;
++	} else {
++		val = val << PMIC_GPIO_REG_MODE_DIR_SHIFT;
++		val |= pad->function << PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
++		val |= pad->out_value & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
+ 
+-	return pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
++		ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_MODE_CTL, val);
++		if (ret < 0)
++			return ret;
++	}
++
++	return ret;
+ }
+ 
+ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+@@ -440,7 +575,7 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ {
+ 	struct pmic_gpio_state *state = pinctrl_dev_get_drvdata(pctldev);
+ 	struct pmic_gpio_pad *pad;
+-	int ret, val;
++	int ret, val, function;
+ 
+ 	static const char *const biases[] = {
+ 		"pull-up 30uA", "pull-up 1.5uA", "pull-up 31.5uA",
+@@ -462,7 +597,6 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ 	if (val < 0 || !(val >> PMIC_GPIO_REG_MASTER_EN_SHIFT)) {
+ 		seq_puts(s, " ---");
+ 	} else {
+-
+ 		if (pad->input_enabled) {
+ 			ret = pmic_gpio_read(state, pad, PMIC_MPP_REG_RT_STS);
+ 			if (ret < 0)
+@@ -471,14 +605,28 @@ static void pmic_gpio_config_dbg_show(struct pinctrl_dev *pctldev,
+ 			ret &= PMIC_MPP_REG_RT_STS_VAL_MASK;
+ 			pad->out_value = ret;
+ 		}
+-
+-		seq_printf(s, " %-4s", pad->output_enabled ? "out" : "in");
+-		seq_printf(s, " %-7s", pmic_gpio_functions[pad->function]);
++		/*
++		 * For the non-LV/MV subtypes only 2 special functions are
++		 * available, offsetting the dtest function values by 2.
++		 */
++		function = pad->function;
++		if (!pad->lv_mv_type &&
++				pad->function >= PMIC_GPIO_FUNC_INDEX_FUNC3)
++			function += PMIC_GPIO_FUNC_INDEX_DTEST1 -
++				PMIC_GPIO_FUNC_INDEX_FUNC3;
++
++		if (pad->analog_pass)
++			seq_puts(s, " analog-pass");
++		else
++			seq_printf(s, " %-4s",
++					pad->output_enabled ? "out" : "in");
++		seq_printf(s, " %-7s", pmic_gpio_functions[function]);
+ 		seq_printf(s, " vin-%d", pad->power_source);
+ 		seq_printf(s, " %-27s", biases[pad->pullup]);
+ 		seq_printf(s, " %-10s", buffer_types[pad->buffer_type]);
+ 		seq_printf(s, " %-4s", pad->out_value ? "high" : "low");
+ 		seq_printf(s, " %-7s", strengths[pad->strength]);
++		seq_printf(s, " atest-%d", pad->atest);
+ 	}
+ }
+ 
+@@ -618,40 +766,71 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
+ 	case PMIC_GPIO_SUBTYPE_GPIOC_8CH:
+ 		pad->num_sources = 8;
+ 		break;
++	case PMIC_GPIO_SUBTYPE_GPIO_LV:
++		pad->num_sources = 1;
++		pad->have_buffer = true;
++		pad->lv_mv_type = true;
++		break;
++	case PMIC_GPIO_SUBTYPE_GPIO_MV:
++		pad->num_sources = 2;
++		pad->have_buffer = true;
++		pad->lv_mv_type = true;
++		break;
+ 	default:
+ 		dev_err(state->dev, "unknown GPIO type 0x%x\n", subtype);
+ 		return -ENODEV;
+ 	}
+ 
+-	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_MODE_CTL);
+-	if (val < 0)
+-		return val;
++	if (pad->lv_mv_type) {
++		val = pmic_gpio_read(state, pad,
++				PMIC_GPIO_REG_LV_MV_DIG_OUT_SOURCE_CTL);
++		if (val < 0)
++			return val;
++
++		pad->out_value = !!(val & PMIC_GPIO_LV_MV_OUTPUT_INVERT);
++		pad->function = val & PMIC_GPIO_LV_MV_OUTPUT_SOURCE_SEL_MASK;
++
++		val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_MODE_CTL);
++		if (val < 0)
++			return val;
++
++		dir = val & PMIC_GPIO_REG_LV_MV_MODE_DIR_MASK;
++	} else {
++		val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_MODE_CTL);
++		if (val < 0)
++			return val;
+ 
+-	pad->out_value = val & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++		pad->out_value = val & PMIC_GPIO_REG_MODE_VALUE_SHIFT;
++
++		dir = val >> PMIC_GPIO_REG_MODE_DIR_SHIFT;
++		dir &= PMIC_GPIO_REG_MODE_DIR_MASK;
++		pad->function = val >> PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
++		pad->function &= PMIC_GPIO_REG_MODE_FUNCTION_MASK;
++	}
+ 
+-	dir = val >> PMIC_GPIO_REG_MODE_DIR_SHIFT;
+-	dir &= PMIC_GPIO_REG_MODE_DIR_MASK;
+ 	switch (dir) {
+-	case 0:
++	case PMIC_GPIO_MODE_DIGITAL_INPUT:
+ 		pad->input_enabled = true;
+ 		pad->output_enabled = false;
+ 		break;
+-	case 1:
++	case PMIC_GPIO_MODE_DIGITAL_OUTPUT:
+ 		pad->input_enabled = false;
+ 		pad->output_enabled = true;
+ 		break;
+-	case 2:
++	case PMIC_GPIO_MODE_DIGITAL_INPUT_OUTPUT:
+ 		pad->input_enabled = true;
+ 		pad->output_enabled = true;
+ 		break;
++	case PMIC_GPIO_MODE_ANALOG_PASS_THRU:
++		if (!pad->lv_mv_type)
++			return -ENODEV;
++		pad->analog_pass = true;
++		break;
+ 	default:
+ 		dev_err(state->dev, "unknown GPIO direction\n");
+ 		return -ENODEV;
+ 	}
+ 
+-	pad->function = val >> PMIC_GPIO_REG_MODE_FUNCTION_SHIFT;
+-	pad->function &= PMIC_GPIO_REG_MODE_FUNCTION_MASK;
+-
+ 	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_DIG_VIN_CTL);
+ 	if (val < 0)
+ 		return val;
+@@ -666,16 +845,20 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
+ 	pad->pullup = val >> PMIC_GPIO_REG_PULL_SHIFT;
+ 	pad->pullup &= PMIC_GPIO_REG_PULL_MASK;
+ 
+-	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_DIG_OUT_CTL);
+-	if (val < 0)
+-		return val;
+-
+ 	pad->strength = val >> PMIC_GPIO_REG_OUT_STRENGTH_SHIFT;
+ 	pad->strength &= PMIC_GPIO_REG_OUT_STRENGTH_MASK;
+ 
+ 	pad->buffer_type = val >> PMIC_GPIO_REG_OUT_TYPE_SHIFT;
+ 	pad->buffer_type &= PMIC_GPIO_REG_OUT_TYPE_MASK;
+ 
++	if (pad->lv_mv_type) {
++		val = pmic_gpio_read(state, pad,
++				PMIC_GPIO_REG_LV_MV_ANA_PASS_THRU_SEL);
++		if (val < 0)
++			return val;
++		pad->atest = (val & PMIC_GPIO_LV_MV_ANA_MUX_SEL_MASK) + 1;
++	}
++
+ 	/* Pin could be disabled with PIN_CONFIG_BIAS_HIGH_IMPEDANCE */
+ 	pad->is_enabled = true;
+ 	return 0;
+diff --git a/include/dt-bindings/pinctrl/qcom,pmic-gpio.h b/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
+index d33f17c..b8ff882 100644
+--- a/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
++++ b/include/dt-bindings/pinctrl/qcom,pmic-gpio.h
+@@ -98,6 +98,8 @@
+ #define PMIC_GPIO_FUNC_PAIRED		"paired"
+ #define PMIC_GPIO_FUNC_FUNC1		"func1"
+ #define PMIC_GPIO_FUNC_FUNC2		"func2"
++#define PMIC_GPIO_FUNC_FUNC3		"func3"
++#define PMIC_GPIO_FUNC_FUNC4		"func4"
+ #define PMIC_GPIO_FUNC_DTEST1		"dtest1"
+ #define PMIC_GPIO_FUNC_DTEST2		"dtest2"
+ #define PMIC_GPIO_FUNC_DTEST3		"dtest3"
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
