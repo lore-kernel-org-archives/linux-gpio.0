@@ -1,80 +1,89 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.12 59/65] pinctrl: samsung: Remove bogus irq_[un]mask from
- resource management
-Date: Mon, 14 Aug 2017 18:19:50 -0700
-Message-ID: <20170815011944.741233665@linuxfoundation.org>
-References: <20170815011942.395714306@linuxfoundation.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH v2] gpio: add gpio_add_lookup_tables() to add several tables
+ at once
+Date: Mon, 14 Aug 2017 21:59:55 -0700
+Message-ID: <20170815045955.GA40297@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170815011942.395714306@linuxfoundation.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, stable@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33839 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbdHOE77 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2017 00:59:59 -0400
+Content-Disposition: inline
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-4.12-stable review patch.  If anyone has any objections, please let me know.
+When converting legacy board to use gpiod API() there might be several
+lookup tables in board file, let's provide a way to register them all at
+once.
 
-------------------
-
-From: Thomas Gleixner <tglx@linutronix.de>
-
-commit 3fa53ec2ed885b0aec3f0472e3b4a8a6f1cd748c upstream.
-
-The irq chip callbacks irq_request/release_resources() have absolutely no
-business with masking and unmasking the irq.
-
-The core code unmasks the interrupt after complete setup and masks it
-before invoking irq_release_resources().
-
-The unmask is actually harmful as it happens before the interrupt is
-completely initialized in __setup_irq().
-
-Remove it.
-
-Fixes: f6a8249f9e55 ("pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c |    4 ----
- 1 file changed, 4 deletions(-)
 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -205,8 +205,6 @@ static int exynos_irq_request_resources(
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
- 
--	exynos_irq_unmask(irqd);
--
- 	return 0;
+V2:
+- added the !CONFIG_GPIOLIB stub (Andy)
+- changed size from unsigned int to size_t at Mika's suggestion
+- added Reviewed-bys.
+
+ drivers/gpio/gpiolib.c       | 17 +++++++++++++++++
+ include/linux/gpio/machine.h |  3 +++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a42a1eea5714..667289ca4913 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3010,6 +3010,23 @@ void gpiod_add_lookup_table(struct gpiod_lookup_table *table)
+ 	mutex_unlock(&gpio_lookup_lock);
  }
  
-@@ -226,8 +224,6 @@ static void exynos_irq_release_resources
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
++/**
++ * gpiod_add_lookup_tables() - register GPIO device consumers
++ * @tables: list of tables of consumers to register
++ * @n: number of tables in the list
++ */
++void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n)
++{
++	unsigned int i;
++
++	mutex_lock(&gpio_lookup_lock);
++
++	for (i = 0; i < n; i++)
++		list_add_tail(&tables[i]->list, &gpio_lookup_list);
++
++	mutex_unlock(&gpio_lookup_lock);
++}
++
+ /**
+  * gpiod_remove_lookup_table() - unregister GPIO device consumers
+  * @table: table of consumers to unregister
+diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
+index f738d50cc17d..ec80fa7c0c7d 100644
+--- a/include/linux/gpio/machine.h
++++ b/include/linux/gpio/machine.h
+@@ -58,11 +58,14 @@ struct gpiod_lookup_table {
  
--	exynos_irq_mask(irqd);
--
- 	spin_lock_irqsave(&bank->slock, flags);
+ #ifdef CONFIG_GPIOLIB
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table);
++void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n);
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table);
+ #else
+ static inline
+ void gpiod_add_lookup_table(struct gpiod_lookup_table *table) {}
+ static inline
++void gpiod_add_lookup_tables(struct gpiod_lookup_table **tables, size_t n) {}
++static inline
+ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table) {}
+ #endif
  
- 	con = readl(bank->eint_base + reg_con);
+-- 
+2.14.0.434.g98096fd7a8-goog
+
+
+-- 
+Dmitry
