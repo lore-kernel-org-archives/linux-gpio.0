@@ -1,66 +1,33 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v7 3/5] irqdomain: Add irq_domain_{push,pop}_irq() functions.
-Date: Tue, 15 Aug 2017 20:02:02 +0100
-Message-ID: <861socy7rp.fsf@arm.com>
-References: <1502319099-2782-1-git-send-email-david.daney@cavium.com>
-        <1502319099-2782-4-git-send-email-david.daney@cavium.com>
-        <d87a6ff4-5b06-3883-f24a-b1ce5afb09e9@arm.com>
-        <84b23b62-0813-34eb-5afc-da21597d218f@caviumnetworks.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] tools/gpio: add gpio util to get or set gpio lines
+Date: Tue, 15 Aug 2017 21:57:43 +0200
+Message-ID: <CACRpkdatkVstMAX0yT+kKJMLRGv__9fVH8df8usZw15s+dKvDA@mail.gmail.com>
+References: <20170724143218.8510-1-mnhu@prevas.dk> <CACRpkdYMfaZDd3Tp-MfdtEpYLYWFJgGVKzwhjp1-swoufuzWrQ@mail.gmail.com>
+ <B76AFF4C-51DC-4FC5-85C4-4F9D4404C8A5@prevas.dk> <CACRpkdbn5daKVUU7-5P_x==KmBQix7EQ667STKC8ncOhAySdYg@mail.gmail.com>
+ <53785496-f20c-1c93-4487-737d0d92c9b6@prevas.dk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56164 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751576AbdHOTCG (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 15 Aug 2017 15:02:06 -0400
-In-Reply-To: <84b23b62-0813-34eb-5afc-da21597d218f@caviumnetworks.com> (David
-        Daney's message of "Tue, 15 Aug 2017 11:00:19 -0700")
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:34846 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751138AbdHOT5o (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 15 Aug 2017 15:57:44 -0400
+Received: by mail-oi0-f52.google.com with SMTP id e124so17265149oig.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Aug 2017 12:57:44 -0700 (PDT)
+In-Reply-To: <53785496-f20c-1c93-4487-737d0d92c9b6@prevas.dk>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <ddaney@caviumnetworks.com>
-Cc: David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?UTF-8?Q?Martin_Hundeb=C3=B8ll?= <martin.hundeboll@prevas.dk>
+Cc: =?UTF-8?Q?Martin_Hundeb=C3=B8ll?= <mnhu@prevas.dk>, Bartosz Golaszewski <brgl@bgdev.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Aug 15 2017 at 11:00:19 am BST, David Daney <ddaney@caviumnetworks.com> wrote:
-> On 08/15/2017 06:50 AM, Marc Zyngier wrote:
->> Hi David,
->>
->> On 09/08/17 23:51, David Daney wrote:
-> [...]
->>> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
->>> index f1f2514..629f770 100644
->>> --- a/kernel/irq/irqdomain.c
->>> +++ b/kernel/irq/irqdomain.c
->>> @@ -1448,6 +1448,184 @@ int __irq_domain_alloc_irqs(struct
-> irq_domain *domain, int irq_base,
->>>   	return ret;
->>>   }
->>>   +/* The irq_data was moved, fix the revmap to refer to the new
->>> location */
->>> +static void irq_domain_fix_revmap(struct irq_data *d)
->>> +{
->>> +	void **slot;
->>> +
->>> +	if (d->hwirq < d->domain->revmap_size)
->>> +		return; /* Not using radix tree. */
->>> +
->>> +	/* Fix up the revmap. */
->>> +	mutex_lock(&revmap_trees_mutex);
->>> +	slot = radix_tree_lookup_slot(&d->domain->revmap_tree, d->hwirq);
->>> +	if (slot)
->>> +		radix_tree_replace_slot(&d->domain->revmap_tree, slot, d);
->>
->> radix_tree_replace_slot already deals with non-existing entries, so the
->> initial radix_tree_lookup_slot call is superfluous.
->
-> This comment I don't understand.  To replace an element in the tree,
-> you must know the slot.  I see no alternative to calling
-> radix_tree_lookup_slot().  If I am mistaken, it would be helpful to
-> know in a little more detail how you think it should be done.
+On Tue, Aug 15, 2017 at 2:54 PM, Martin Hundeb=C3=B8ll
+<martin.hundeboll@prevas.dk> wrote:
 
-Nah, you're right. I'm just grossly mistaken. Ignore this.
+> Would you accept a patch updating the documentation with a hint about
+> tools/gpio and libgpiod?
 
-Thanks,
+Easily, it would be much appreciated!
 
-	M.
--- 
-Jazz is not dead. It just smells funny.
+Yours,
+Linus Walleij
