@@ -1,30 +1,46 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RESEND PATCH 2/2] gpio: aspeed: Remove reference to clock name
- in debounce warning message
-Date: Tue, 15 Aug 2017 11:26:44 +0200
-Message-ID: <CACRpkdZB47CVqTLrAAb==uNOujxK0BFOJ2Yro+g7Jj3MROn+bw@mail.gmail.com>
-References: <20170808061634.11857-1-andrew@aj.id.au> <20170808061634.11857-3-andrew@aj.id.au>
+From: =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <martin.hundeboll@prevas.dk>
+Subject: Re: [PATCH] tools/gpio: add gpio util to get or set gpio lines
+Date: Tue, 15 Aug 2017 14:54:05 +0200
+Message-ID: <53785496-f20c-1c93-4487-737d0d92c9b6@prevas.dk>
+References: <20170724143218.8510-1-mnhu@prevas.dk>
+ <CACRpkdYMfaZDd3Tp-MfdtEpYLYWFJgGVKzwhjp1-swoufuzWrQ@mail.gmail.com>
+ <B76AFF4C-51DC-4FC5-85C4-4F9D4404C8A5@prevas.dk>
+ <CACRpkdbn5daKVUU7-5P_x==KmBQix7EQ667STKC8ncOhAySdYg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170808061634.11857-3-andrew-zrmu5oMJ5Fs@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Joel Stanley <joel-U3u1mxZcP9KHXe+LvDLADg@public.gmane.org>, Ryan Chen <ryan_chen-SAlXDmAnmOAqDJ6do+/SaQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-aspeed-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail01.prevas.se ([62.95.78.3]:51597 "EHLO mail01.prevas.se"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750997AbdHONEQ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 15 Aug 2017 09:04:16 -0400
+In-Reply-To: <CACRpkdbn5daKVUU7-5P_x==KmBQix7EQ667STKC8ncOhAySdYg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <mnhu@prevas.dk>, Bartosz Golaszewski <brgl@bgdev.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Aug 8, 2017 at 8:16 AM, Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org> wrote:
+On 2017-08-07 14:33, Linus Walleij wrote:
+> On Thu, Aug 3, 2017 at 10:31 AM, Martin Hundebøll
+> <martin.hundeboll@prevas.dk> wrote:
+> 
+>>> Maybe it should be two tools? One fo setting and one for getting a
+>>> line?
+>>
+>> Correct. I can update the patch into two utils, but with libgpiod in the mix, we can just drop this?
+> 
+> I would like Bartosz library to be used widely so let's drop this.
 
-> HPLL was in fact not the clock we need. Remove description of which
-> clock to avoid any further error.
->
-> Signed-off-by: Andrew Jeffery <andrew-zrmu5oMJ5Fs@public.gmane.org>
+Would you accept a patch updating the documentation with a hint about 
+tools/gpio and libgpiod?
 
-Patch applied with Joel's ACK.
+-- 
+MARTIN HUNDEBØLL, Prevas A/S
+Software Developer
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hedeager 3, DK-8200 Aarhus N
+Phone +45 87438070
+Mobile +45 25562438
+Martin.Hundeboll@prevas.dk
+www.prevas.com
