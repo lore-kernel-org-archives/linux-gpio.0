@@ -1,58 +1,35 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [GIT PULL] Immutable branch between MFD, ARM, USB and Video due for
- the v4.14 merge window
-Date: Tue, 15 Aug 2017 09:20:17 +0100
-Message-ID: <20170815082017.6k4xf3hp5wpabzrc@dell>
-References: <20170814163424.2197-1-wsa@the-dreams.de>
- <20170814163424.2197-3-wsa@the-dreams.de>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V3 1/2] pinctrl: qcom: spmi-gpio: Add support for GPIO
+ LV/MV subtype
+Date: Tue, 15 Aug 2017 11:17:16 +0200
+Message-ID: <CACRpkdagZTSz+OUZOJzfNQ5EiMj77_i2dC4zV4Y2CQrrxTZbHg@mail.gmail.com>
+References: <20170815003918.8332-1-fenglinw@codeaurora.org> <20170815003918.8332-2-fenglinw@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170814163424.2197-3-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170815003918.8332-2-fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+Cc: "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Andy Gross <andy.gross-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Srinivas Kandagatla <srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Collins <collinsd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, aghayal-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, wruan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kgunda-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-Enjoy!
+On Tue, Aug 15, 2017 at 2:38 AM,  <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
 
-The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
+> From: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+>
+> GPIO LV (low voltage)/MV (medium voltage) subtypes have different
+> features and register mappings than 4CH/8CH subtypes. Add support
+> for LV and MV subtypes.
+>
+> Signed-off-by: Fenglin Wu <fenglinw-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Acked-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
+Patch applied.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-arm-usb-video-v4.14
-
-for you to fetch changes up to 9787076c43a86f3465d46aa344cc3e2f607ae72f:
-
-  mfd: tps65010: Move header file out of I2C realm (2017-08-15 08:27:22 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, ARM, USB and Video due for the v4.14 merge window
-----------------------------------------------------------------
-Wolfram Sang (1):
-      mfd: tps65010: Move header file out of I2C realm
-
- arch/arm/mach-omap1/board-h2-mmc.c      | 2 +-
- arch/arm/mach-omap1/board-h2.c          | 2 +-
- arch/arm/mach-omap1/board-h3-mmc.c      | 2 +-
- arch/arm/mach-omap1/board-h3.c          | 2 +-
- arch/arm/mach-omap1/board-osk.c         | 2 +-
- arch/arm/mach-s3c24xx/mach-osiris-dvs.c | 2 +-
- arch/arm/mach-s3c24xx/mach-osiris.c     | 2 +-
- drivers/mfd/tps65010.c                  | 2 +-
- drivers/usb/host/ohci-omap.c            | 2 +-
- drivers/usb/phy/phy-isp1301-omap.c      | 2 +-
- drivers/video/fbdev/omap/lcd_h3.c       | 2 +-
- include/linux/{i2c => mfd}/tps65010.h   | 2 +-
- 12 files changed, 12 insertions(+), 12 deletions(-)
- rename include/linux/{i2c => mfd}/tps65010.h (99%)
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
