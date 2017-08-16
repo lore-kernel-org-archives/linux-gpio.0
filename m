@@ -1,46 +1,57 @@
-From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND v9 09/12] Input: Add power key driver for
- Rockchip RK805 PMIC
-Date: Wed, 16 Aug 2017 11:34:12 -0700
-Message-ID: <20170816183412.GC25491@dtor-ws>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
- <1502848894-29511-1-git-send-email-chenjh@rock-chips.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Jiandi An <anjiandi@codeaurora.org>
+Subject: Re: [PATCH 2/3] [v3] pinctrl: qcom: disable GPIO groups with no pins
+Date: Wed, 16 Aug 2017 14:30:37 -0500
+Message-ID: <417198b9-ded1-bd98-e489-3a2925505984@codeaurora.org>
+References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
+ <1501179565-26466-3-git-send-email-timur@codeaurora.org>
+ <CACRpkdZj+tnMcEpic6PrQS-qMJDodmc_uFJVudxc=USCTXpyKg@mail.gmail.com>
+ <d0b16753-b202-5756-1cba-1cd083af52ed@codeaurora.org>
+ <7c278367-bf3b-6a26-e31f-ee696cb5534e@codeaurora.org>
+ <66bfbee6-245d-fddb-f6cb-a2c3c06ffc9b@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <rtc-linux+bncBDP6N55ZUYDRBKFA2LGAKGQEVUZRILY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <1502848894-29511-1-git-send-email-chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Joseph Chen <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, huangtao-TNX95d0MmH7DzftRWevZcw@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, zhangqing-TNX95d0MmH7DzftRWevZcw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, wdc-TNX95d0MmH7DzftRWevZcw@public.gmane.org, tony.xie-TNX95d0MmH7DzftRWevZcw@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, w.egorov-guT5V/WYfQezQB+pC5nmwQ@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <66bfbee6-245d-fddb-f6cb-a2c3c06ffc9b@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: anjiandi@codeaurora.org
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 16, 2017 at 10:01:34AM +0800, Joseph Chen wrote:
-> This driver provides a input driver for the power
-> key on the Rockchip RK805 PMIC.
-> 
-> Signed-off-by: Joseph Chen <chenjh-TNX95d0MmH7DzftRWevZcw@public.gmane.org>
 
-This driver is in my tree already, no need to resend it again.
 
-Thanks.
+On 08/16/2017 01:32 PM, Timur Tabi wrote:
+> On 08/16/2017 01:10 PM, Jiandi An wrote:
+>>
+>> Technically the same check added in msm_gpio_irq_mask() and
+>> msm_gpio_irq_unmask() should be added in msm_gpio_irq_ack(),
+>> msm_gpio_irq_set_type(), and msm_gpio_irq_set_wake() if it's
+>> registered with irq domain.
+>
+> I assume that if the GPIO is never unmasked, then msm_gpio_irq_ack()
+> will never be called.
+>
+> msm_gpio_irq_set_type() and msm_gpio_irq_set_wake() might be called, so
+> I can add checks for those functions.  I'm hoping that won't be
+> necessary, however.  The GPIO and IRQ code is too entangled for me to
+> figure out whether unclaimed GPIOs can still have their interrupts
+> programmed.
+>
+
+That is why the suggestion is instead of patching in each of the op
+function of registered irq_chip for the unavailable gpio that won't
+have use for all that anyways, simply don't register irq for the
+unavailable gpio.  What's the use of registering  irq if you know
+the gpio is unavailable and not going to use any of the irq_chip
+functions.  It's unnecessarily adding an irq_desc in the list.
+
+Technically machine_kexec_mask_interrupts() is not blindly disable
+all IRQs.  If you don't register irq, it won't be in the irq_desc
+list.
 
 -- 
-Dmitry
-
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
