@@ -1,92 +1,149 @@
-From: Joseph Chen <chenjh@rock-chips.com>
-Subject: [RESEND v9 12/12] pinctrl: dt-bindings: add bindings for Rockchip RK805 PMIC
-Date: Wed, 16 Aug 2017 10:02:25 +0800
-Message-ID: <1502848945-8574-1-git-send-email-chenjh@rock-chips.com>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-input-owner@vger.kernel.org
-To: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, lee.jones@linaro.org
-Cc: linux-kernel@vger.kernel.org, huangtao@rock-chips.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org, lgirdwood@gmail.com, linux-rockchip@lists.infradead.org, wdc@rock-chips.com, tony.xie@rock-chips.com, linux-input@vger.kernel.org, mark.rutland@arm.com, w.egorov@phytec.de, linux-clk@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, rtc-linux@googlegroups.com, Joseph Chen <chenjh@rock-chips.com>
+From: Vinay Simha BN <simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] pinctrl: qcom: General Purpose clocks for apq8064
+Date: Wed, 16 Aug 2017 11:32:17 +0530
+Message-ID: <1502863338-6946-1-git-send-email-simhavcs@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Vinay Simha BN <simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:PIN CONTROLLER - QUALCOMM" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Add support for general purpose (GP) clocks
+for apq8064
+
+DT binding documentation updated for
+qcom,apq8064-pinctrl general purpose (GP) clocks.
+
+Acked-by: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Vinay Simha BN <simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
 ---
- .../devicetree/bindings/pinctrl/pinctrl-rk805.txt  | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
+v1:
+* only gp_clk_1b tested in nexus7 anx7808 slimport.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-new file mode 100644
-index 0000000..eee3dc2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-@@ -0,0 +1,63 @@
-+Pincontrol driver for RK805 Power management IC.
-+
-+RK805 has 2 pins which can be configured as GPIO output only.
-+
-+Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
-+for details of the common pinctrl bindings used by client devices,
-+including the meaning of the phrase "pin configuration node".
-+
-+Optional Pinmux properties:
-+--------------------------
-+Following properties are required if default setting of pins are required
-+at boot.
-+- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
-+- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
-+		<pinctrl-binding.txt>.
-+
-+The pin configurations are defined as child of the pinctrl states node. Each
-+sub-node have following properties:
-+
-+Required properties:
-+------------------
-+- #gpio-cells: Should be two. The first cell is the pin number and the
-+  second is the GPIO flags.
-+
-+- gpio-controller: Marks the device node as a GPIO controller.
-+
-+- pins: List of pins. Valid values of pins properties are: gpio0, gpio1.
-+
-+First 2 properties must be added in the RK805 PMIC node, documented in
-+Documentation/devicetree/bindings/mfd/rk808.txt
-+
-+Optional properties:
-+-------------------
-+Following are optional properties defined as pinmux DT binding document
-+<pinctrl-bindings.txt>. Absence of properties will leave the configuration
-+on default.
-+	function,
-+	output-low,
-+	output-high.
-+
-+Valid values for function properties are: gpio.
-+
-+Theres is also not customised properties for any GPIO.
-+
-+Example:
-+--------
-+rk805: rk805@18 {
-+	compatible = "rockchip,rk805";
-+	...
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmic_int_l>, <&rk805_default>;
-+
-+	rk805_default: pinmux {
-+		gpio01 {
-+			pins = "gpio0", "gpio1";
-+			function = "gpio";
-+			output-high;
-+		};
-+	};
+v2:
+* bjorn review comments incorporated
+  added gp clock functions
+  merged documentation and driver to single patch
+---
+---
+ .../bindings/pinctrl/qcom,apq8064-pinctrl.txt      |  3 +-
+ drivers/pinctrl/qcom/pinctrl-apq8064.c             | 42 ++++++++++++++++++----
+ 2 files changed, 38 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+index a7bde64..a752a47 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+@@ -46,7 +46,8 @@ Valid values for pins are:
+   gpio0-gpio89
+ 
+ Valid values for function are:
+-  cam_mclk, codec_mic_i2s, codec_spkr_i2s, gpio, gsbi1, gsbi2, gsbi3, gsbi4,
++  cam_mclk, codec_mic_i2s, codec_spkr_i2s, gp_clk_0a, gp_clk_0b, gp_clk_1a,
++  gp_clk_1b, gp_clk_2a, gp_clk_2b, gpio, gsbi1, gsbi2, gsbi3, gsbi4,
+   gsbi4_cam_i2c, gsbi5, gsbi5_spi_cs1, gsbi5_spi_cs2, gsbi5_spi_cs3, gsbi6,
+   gsbi6_spi_cs1, gsbi6_spi_cs2, gsbi6_spi_cs3, gsbi7, gsbi7_spi_cs1,
+   gsbi7_spi_cs2, gsbi7_spi_cs3, gsbi_cam_i2c, hdmi, mi2s, riva_bt, riva_fm,
+diff --git a/drivers/pinctrl/qcom/pinctrl-apq8064.c b/drivers/pinctrl/qcom/pinctrl-apq8064.c
+index cd96699..bcf9e61 100644
+--- a/drivers/pinctrl/qcom/pinctrl-apq8064.c
++++ b/drivers/pinctrl/qcom/pinctrl-apq8064.c
+@@ -295,6 +295,12 @@ enum apq8064_functions {
+ 	APQ_MUX_cam_mclk,
+ 	APQ_MUX_codec_mic_i2s,
+ 	APQ_MUX_codec_spkr_i2s,
++	APQ_MUX_gp_clk_0a,
++	APQ_MUX_gp_clk_0b,
++	APQ_MUX_gp_clk_1a,
++	APQ_MUX_gp_clk_1b,
++	APQ_MUX_gp_clk_2a,
++	APQ_MUX_gp_clk_2b,
+ 	APQ_MUX_gpio,
+ 	APQ_MUX_gsbi1,
+ 	APQ_MUX_gsbi2,
+@@ -354,6 +360,24 @@ static const char * const gpio_groups[] = {
+ 	"gpio78", "gpio79", "gpio80", "gpio81", "gpio82", "gpio83", "gpio84",
+ 	"gpio85", "gpio86", "gpio87", "gpio88", "gpio89"
+ };
++static const char * const gp_clk_0a_groups[] = {
++	"gpio3"
 +};
++static const char * const gp_clk_0b_groups[] = {
++	"gpio34"
++};
++static const char * const gp_clk_1a_groups[] = {
++	"gpio4"
++};
++static const char * const gp_clk_1b_groups[] = {
++	"gpio50"
++};
++static const char * const gp_clk_2a_groups[] = {
++	"gpio32"
++};
++static const char * const gp_clk_2b_groups[] = {
++	"gpio25"
++};
+ static const char * const ps_hold_groups[] = {
+ 	"gpio78"
+ };
+@@ -452,6 +476,12 @@ static const struct msm_function apq8064_functions[] = {
+ 	FUNCTION(cam_mclk),
+ 	FUNCTION(codec_mic_i2s),
+ 	FUNCTION(codec_spkr_i2s),
++	FUNCTION(gp_clk_0a),
++	FUNCTION(gp_clk_0b),
++	FUNCTION(gp_clk_1a),
++	FUNCTION(gp_clk_1b),
++	FUNCTION(gp_clk_2a),
++	FUNCTION(gp_clk_2b),
+ 	FUNCTION(gpio),
+ 	FUNCTION(gsbi1),
+ 	FUNCTION(gsbi2),
+@@ -490,8 +520,8 @@ static const struct msm_pingroup apq8064_groups[] = {
+ 	PINGROUP(0, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(1, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(2, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+-	PINGROUP(3, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+-	PINGROUP(4, NA, NA, cam_mclk, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(3, NA, gp_clk_0a, NA, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(4, NA, NA, cam_mclk, gp_clk_1a, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(5, NA, cam_mclk, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(6, gsbi3, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(7, gsbi3, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+@@ -512,16 +542,16 @@ static const struct msm_pingroup apq8064_groups[] = {
+ 	PINGROUP(22, gsbi2, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(23, gsbi2, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(24, gsbi2, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+-	PINGROUP(25, gsbi2, NA, NA, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(25, gsbi2, gp_clk_2b, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(26, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(27, mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(28, mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(29, mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(30, mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(31, mi2s, NA, gsbi5_spi_cs2, gsbi6_spi_cs2, gsbi7_spi_cs2, NA, NA, NA, NA, NA),
+-	PINGROUP(32, mi2s, NA, NA, NA, NA, gsbi5_spi_cs3, gsbi6_spi_cs3, gsbi7_spi_cs3, NA, NA),
++	PINGROUP(32, mi2s, gp_clk_2a, NA, NA, NA, gsbi5_spi_cs3, gsbi6_spi_cs3, gsbi7_spi_cs3, NA, NA),
+ 	PINGROUP(33, mi2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+-	PINGROUP(34, codec_mic_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(34, codec_mic_i2s, gp_clk_0b, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(35, codec_mic_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(36, codec_mic_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(37, codec_mic_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+@@ -537,7 +567,7 @@ static const struct msm_pingroup apq8064_groups[] = {
+ 	PINGROUP(47, spkr_i2s, gsbi5_spi_cs1, gsbi6_spi_cs1, gsbi7_spi_cs1, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(48, spkr_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(49, spkr_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
+-	PINGROUP(50, spkr_i2s, NA, NA, NA, NA, NA, NA, NA, NA, NA),
++	PINGROUP(50, spkr_i2s, gp_clk_1b, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(51, NA, gsbi5, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(52, NA, gsbi5, NA, NA, NA, NA, NA, NA, NA, NA),
+ 	PINGROUP(53, NA, gsbi5, NA, NA, NA, NA, NA, NA, NA, NA),
 -- 
-1.9.1
+2.7.4
 
-
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
