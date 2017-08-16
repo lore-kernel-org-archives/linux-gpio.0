@@ -1,63 +1,77 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v7 2/5] genirq: Add handle_fasteoi_{level,edge}_irq flow
- handlers.
-Date: Wed, 16 Aug 2017 18:26:06 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1708161824250.1987@nanos>
-References: <1502319099-2782-1-git-send-email-david.daney@cavium.com> <1502319099-2782-3-git-send-email-david.daney@cavium.com> <alpine.DEB.2.20.1708141221440.1865@nanos> <5d9b51c1-a2bd-9932-8917-a743854192db@caviumnetworks.com>
+From: Jiandi An <anjiandi@codeaurora.org>
+Subject: Re: [PATCH 2/3] [v3] pinctrl: qcom: disable GPIO groups with no pins
+Date: Wed, 16 Aug 2017 13:10:12 -0500
+Message-ID: <7c278367-bf3b-6a26-e31f-ee696cb5534e@codeaurora.org>
+References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
+ <1501179565-26466-3-git-send-email-timur@codeaurora.org>
+ <CACRpkdZj+tnMcEpic6PrQS-qMJDodmc_uFJVudxc=USCTXpyKg@mail.gmail.com>
+ <d0b16753-b202-5756-1cba-1cd083af52ed@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:59160 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbdHPQ0O (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Aug 2017 12:26:14 -0400
-In-Reply-To: <5d9b51c1-a2bd-9932-8917-a743854192db@caviumnetworks.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:48758 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751893AbdHPSKQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Aug 2017 14:10:16 -0400
+In-Reply-To: <d0b16753-b202-5756-1cba-1cd083af52ed@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <ddaney@caviumnetworks.com>
-Cc: David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, 16 Aug 2017, David Daney wrote:
+During a kexec shutdown, machine_kexec_mask_interrupts() will attempt
+to disable all IRQs that are registered.  If gpio is not available,
+don't register IRQs and it won't be in the irq_desc list it walks through.
 
-> On 08/14/2017 03:25 AM, Thomas Gleixner wrote:
-> > On Wed, 9 Aug 2017, David Daney wrote:
-> > >   #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
-> > 
-> > Can we please make them conditional in order not to bloat all kernels with
-> > it? Like we do for handle_edge_eoi_irq() ?
-> 
-> 
-> Yes.  Because these are initially used by exactly one driver, I could just
-> make it conditional on that driver being enabled.
-> 
-> Alternately, I could invent a new Kconfig symbol to gate these and select that
-> when the driver is enabled.
-> 
-> Do you have a preference?
+If gpio is unavailable, perhaps a more correct fix that covers more is 
+to not calling gpiochip_irqchip_add() to register msm_gpio_irq_chip in 
+msm_gpio_init().
 
-The latter.
+When registering interrupt for msm_qpio_irq_chip the following are 
+registered, not just irq_mask and irq_unmask.
 
-> > Hmm. That's quite different to the way we handle edge interrupts
-> > normally. See handle_edge_irq() and handle_edge_eoi_irq().
-> 
-> Yes, these are not standard edge interrupts.  If they were, I wouldn't need
-> new handlers.
-> 
-> For this particular irqdomain hierarchy, I need exactly handle_fasteoi_irq()
-> semantics with the addition of a call to the chip->irq_ack() function *before*
-> the handler is called.  I chose to "clone" and enhance handle_fasteoi_irq(),
-> rather than adding hooks with runtime checks to the existing
-> handle_fasteoi_irq().  There is code bloat this way, but a smaller risk of
-> breaking other things.
-> 
-> Any additional "stuff" that is not needed to cover this use case would just be
-> adding dead code.  In the future, if there is a need to enable more users of
-> these functions, I would not object to doing more.
+static struct irq_chip msm_gpio_irq_chip = {
+	.name           = "msmgpio",
+	.irq_mask       = msm_gpio_irq_mask,
+	.irq_unmask     = msm_gpio_irq_unmask,
+	.irq_ack        = msm_gpio_irq_ack,
+	.irq_set_type   = msm_gpio_irq_set_type,
+	.irq_set_wake   = msm_gpio_irq_set_wake,
+};
 
-Ok, so we might rename that thing to something else than edge() as all
-edge handlers have this processing loop which is required not to lose
-edges.
+Technically the same check added in msm_gpio_irq_mask() and 
+msm_gpio_irq_unmask() should be added in msm_gpio_irq_ack(), 
+msm_gpio_irq_set_type(), and msm_gpio_irq_set_wake() if it's registered 
+with irq domain.
 
-Thanks
+To cover more bases, the more correct way is to not register interrupt 
+with irq domain at all if gpio is unavailable.
 
-	tglx
+
+On 08/09/2017 02:02 PM, Timur Tabi wrote:
+> On 07/31/2017 08:36 AM, Linus Walleij wrote:
+>>> To support sparse GPIO maps, pinctrl-msm client drivers can specify
+>>> that a given GPIO has a pin count of zero.  These GPIOs will be
+>>> considered "hidden".  Any attempt to claim the GPIO will fail, and they
+>>> will not be listed in debugfs.
+>>>
+>>> During a kexec shutdown, machine_kexec_mask_interrupts() will attempt
+>>> to disable all IRQs, even those that aren't enabled.  This includes
+>>> GPIOs that are unavailable (npins == 0), so add a check to the irq mask
+>>> and unmask functions.
+>>>
+>>> Signed-off-by: Timur Tabi<timur@codeaurora.org>
+>
+>> I'm waiting for Björn's review of the two remaining patches.
+>
+> Björn, do you have time to review these patches?  I'm hoping to get them
+> into 4.14.
+>
+
+-- 
+Jiandi An
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
+Linux Foundation Collaborative Project.
