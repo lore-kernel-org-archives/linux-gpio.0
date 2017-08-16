@@ -1,34 +1,47 @@
-From: Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH ] gpio: rcar: Add r8a7745 (RZ/G1E) support
-Date: Wed, 16 Aug 2017 12:12:16 +0100
-Message-ID: <1502881936-39357-1-git-send-email-biju.das@bp.renesas.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, Chris Paterson <chris.paterson2@renesas.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/9] pinctrl: sh-pfc: r8a7795: Fix MOD_SEL1 bit[25:24] to
+ 0x3 when using STP_ISEN_1_D
+Date: Wed, 16 Aug 2017 13:55:37 +0200
+Message-ID: <CAMuHMdXrM3vNBuEAV0Or-+Ga7=LOvM=XynFToq_gbNt=2xs5kA@mail.gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-2-git-send-email-ykaneko0929@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35859 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbdHPLzj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 16 Aug 2017 07:55:39 -0400
+In-Reply-To: <1501242081-3805-2-git-send-email-ykaneko0929@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Renesas RZ/G1E (R8A7745) SoC GPIO blocks are identical to the R-Car Gen2
-family. Add support for its GPIO controllers.
+On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch fixes the implementation incorrect of MOD_SEL1 bit[25:24]
+> value when STP_ISEN_1_D pin function is selected for IPSR17 bit[27:24].
+>
+> This is a correction to the incorrect implementation of MOD_SEL register
+> pin assignment for R8A7795 SoC specification of R-Car Gen3 Hardware
+> User's Manual Rev.0.51E or later.
+>
+> Fixes: 0b0ffc96dbe3 ("pinctrl: sh-pfc: Initial R8A7795 PFC support)
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch is tested against linux-next tag next-20170816 as well as gpio-devel.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+i.e. will queue in sh-pfc-for-v4.14.
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-index 48634b0..51c86f6 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-+++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
-@@ -4,6 +4,7 @@ Required Properties:
- 
-   - compatible: should contain one or more of the following:
-     - "renesas,gpio-r8a7743": for R8A7743 (RZ/G1M) compatible GPIO controller.
-+    - "renesas,gpio-r8a7745": for R8A7745 (RZ/G1E) compatible GPIO controller.
-     - "renesas,gpio-r8a7778": for R8A7778 (R-Mobile M1) compatible GPIO controller.
-     - "renesas,gpio-r8a7779": for R8A7779 (R-Car H1) compatible GPIO controller.
-     - "renesas,gpio-r8a7790": for R8A7790 (R-Car H2) compatible GPIO controller.
--- 
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
