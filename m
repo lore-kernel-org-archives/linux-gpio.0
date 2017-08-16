@@ -1,13 +1,13 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 4/9] pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and
- FMIN{_C,_D} pin function definitions
-Date: Wed, 16 Aug 2017 14:04:39 +0200
-Message-ID: <CAMuHMdUvOTx7XK_Me+AQjUWHEYLP6qYBMOCXLGi9FAhKouZBiQ@mail.gmail.com>
-References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
+Subject: Re: [PATCH 5/9] pinctrl: sh-pfc: r8a7795: Fix NFDATA{0..13} and
+ NF{ALE,CLE,WE_N,RE_N} pin function definitions
+Date: Wed, 16 Aug 2017 14:06:53 +0200
+Message-ID: <CAMuHMdVeC8pVZ46O_Q98BhMR3Hb0o2SJjMLzR0=s-Dv6W8jvKA@mail.gmail.com>
+References: <1501242081-3805-1-git-send-email-ykaneko0929@gmail.com> <1501242081-3805-6-git-send-email-ykaneko0929@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501242081-3805-5-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1501242081-3805-6-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
@@ -17,7 +17,7 @@ On Fri, Jul 28, 2017 at 1:41 PM, Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
 > This patch fixes the implementation incorrect of IPSR register value
-> definitions for FMCLK{_C,_D} and FMIN{_C,_D} pins function.
+> definitions for NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pins function.
 >
 > This is a correction to the incorrect implementation of IPSR register pin
 > assignment of the specifications updated for R8A7795 ES2.0 SoC in R-Car
