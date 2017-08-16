@@ -1,13 +1,14 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: Change USB3_{OVC,PWEN} definitions
-Date: Wed, 16 Aug 2017 10:20:51 +0200
-Message-ID: <CAMuHMdVdziF9i1UQES2FAUTvxoZfLtLH=eF4d8r5KLnom_7QvA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups
+ and functions
+Date: Wed, 16 Aug 2017 10:38:37 +0200
+Message-ID: <CAMuHMdUSr4ceoCX1Y_ZFVfNTypUghOVmqXc3kSzkaObMYjObBQ@mail.gmail.com>
 References: <1501068491-3926-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1501068491-3926-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1501068491-3926-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1501068491-3926-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1501068491-3926-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
@@ -15,8 +16,7 @@ List-Id: linux-gpio@vger.kernel.org
 
 On Wed, Jul 26, 2017 at 1:28 PM, Yoshihiro Shimoda
 <yoshihiro.shimoda.uh@renesas.com> wrote:
-> Since the latest datasheet revises the names, this patch changes
-> the definitions from USB3_{OVC,PWEN} to USB2_CH3_{OVC,PWEN}.
+> Add pins, groups, and functions for USB 2.0 on R-Car H3 ES2.0.
 >
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
