@@ -1,115 +1,107 @@
-From: Ryder Lee <ryder.lee@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: update PCIe pinmux data
-Date: Thu, 17 Aug 2017 17:26:28 +0800
-Message-ID: <1502961988.29938.3.camel@mtkswgap22>
-References: <7e51745301c377eb8527bdf6171eaf26fc53b0b4.1502959698.git.ryder.lee@mediatek.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:38304 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750755AbdHQJ0c (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2017 05:26:32 -0400
-In-Reply-To: <7e51745301c377eb8527bdf6171eaf26fc53b0b4.1502959698.git.ryder.lee@mediatek.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.14
+Date: Thu, 17 Aug 2017 11:30:35 +0200
+Message-ID: <1502962235-4877-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-gpio@vger.kernel.org
 
-Hi Linus,
+	Hi Linus,
 
-Please ignore this wrong patch. Sorry for the inconvenience.
+The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
 
-On Thu, 2017-08-17 at 16:57 +0800, Ryder Lee wrote:
-> Update pinmux data so that PCIe function can work normally.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h b/drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h
-> index f906420..bdbb491 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-mt2701.h
-> @@ -223,11 +223,11 @@
->  		MTK_EINT_FUNCTION(0, 0),
->  		MTK_FUNCTION(0, "GPIO22"),
->  		MTK_FUNCTION(1, "UCTS0"),
-> +		MTK_FUNCTION(2, "PCIE0_PERST_N"),
->  		MTK_FUNCTION(3, "KCOL3"),
->  		MTK_FUNCTION(4, "CONN_DSP_JDO"),
->  		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-> -		MTK_FUNCTION(7, "DBG_MON_A[30]"),
-> -		MTK_FUNCTION(10, "PCIE0_PERST_N")
-> +		MTK_FUNCTION(7, "DBG_MON_A[30]")
->  	),
->  	MTK_PIN(
->  		PINCTRL_PIN(23, "EINT1"),
-> @@ -235,11 +235,11 @@
->  		MTK_EINT_FUNCTION(0, 1),
->  		MTK_FUNCTION(0, "GPIO23"),
->  		MTK_FUNCTION(1, "URTS0"),
-> +		MTK_FUNCTION(2, "PCIE1_PERST_N"),
->  		MTK_FUNCTION(3, "KCOL2"),
->  		MTK_FUNCTION(4, "CONN_MCU_TDO"),
->  		MTK_FUNCTION(5, "EXT_FRAME_SYNC"),
-> -		MTK_FUNCTION(7, "DBG_MON_A[29]"),
-> -		MTK_FUNCTION(10, "PCIE1_PERST_N")
-> +		MTK_FUNCTION(7, "DBG_MON_A[29]")
->  	),
->  	MTK_PIN(
->  		PINCTRL_PIN(24, "EINT2"),
-> @@ -247,10 +247,10 @@
->  		MTK_EINT_FUNCTION(0, 2),
->  		MTK_FUNCTION(0, "GPIO24"),
->  		MTK_FUNCTION(1, "UCTS1"),
-> +		MTK_FUNCTION(2, "PCIE2_PERST_N"),
->  		MTK_FUNCTION(3, "KCOL1"),
->  		MTK_FUNCTION(4, "CONN_MCU_DBGACK_N"),
-> -		MTK_FUNCTION(7, "DBG_MON_A[28]"),
-> -		MTK_FUNCTION(10, "PCIE2_PERST_N")
-> +		MTK_FUNCTION(7, "DBG_MON_A[28]")
->  	),
->  	MTK_PIN(
->  		PINCTRL_PIN(25, "EINT3"),
-> @@ -308,8 +308,8 @@
->  		MTK_FUNCTION(3, "KROW0"),
->  		MTK_FUNCTION(4, "CONN_MCU_TMS"),
->  		MTK_FUNCTION(5, "CONN_MCU_AICE_JMSC"),
-> -		MTK_FUNCTION(7, "DBG_MON_A[23]"),
-> -		MTK_FUNCTION(14, "PCIE2_PERST_N")
-> +		MTK_FUNCTION(6, "PCIE2_PERST_N"),
-> +		MTK_FUNCTION(7, "DBG_MON_A[23]")
->  	),
->  	MTK_PIN(
->  		PINCTRL_PIN(30, "I2S5_LRCK"),
-> @@ -1787,10 +1787,10 @@
->  		MTK_FUNCTION(0, "GPIO208"),
->  		MTK_FUNCTION(1, "AUD_EXT_CK1"),
->  		MTK_FUNCTION(2, "PWM0"),
-> +		MTK_FUNCTION(3, "PCIE0_PERST_N"),
->  		MTK_FUNCTION(4, "ANT_SEL5"),
->  		MTK_FUNCTION(5, "DISP_PWM"),
-> -		MTK_FUNCTION(7, "DBG_MON_A[31]"),
-> -		MTK_FUNCTION(11, "PCIE0_PERST_N")
-> +		MTK_FUNCTION(7, "DBG_MON_A[31]")
->  	),
->  	MTK_PIN(
->  		PINCTRL_PIN(209, "AUD_EXT_CK2"),
-> @@ -1798,10 +1798,10 @@
->  		MTK_EINT_FUNCTION(0, 121),
->  		MTK_FUNCTION(0, "GPIO209"),
->  		MTK_FUNCTION(1, "AUD_EXT_CK2"),
-> +		MTK_FUNCTION(3, "PCIE1_PERST_N"),
->  		MTK_FUNCTION(2, "MSDC1_WP"),
->  		MTK_FUNCTION(5, "PWM1"),
-> -		MTK_FUNCTION(7, "DBG_MON_A[32]"),
-> -		MTK_FUNCTION(11, "PCIE1_PERST_N")
-> +		MTK_FUNCTION(7, "DBG_MON_A[32]")
->  	),
->  	MTK_PIN(
->  		PINCTRL_PIN(210, "AUD_CLOCK"),
+  Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
 
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.14-tag1
+
+for you to fetch changes up to 56d57391ab6720c4b7bbc0a0cbc079c7b7d653fb:
+
+  pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC (2017-08-16 14:26:32 +0200)
+
+----------------------------------------------------------------
+A bit delayed due to holidays, but here they are!
+
+pinctrl: sh-pfc: Updates for v4.14
+
+  - Propagate errors on group config, now r8a7740-armadillo800eva.dts is
+    fixed,
+  - Add MSIOF and USB2.0 pin groups on R-Car H3 ES2.0,
+  - Add USB2.0 and USB3.0 pin groups on R-Car M3-W,
+  - Add a missing MMC pin group on R-Car M2-W and RZ/G1M,
+  - Add initial support for R-Car D3,
+  - Small fixes and cleanups.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (3):
+      pinctrl: sh-pfc: r8a7795: Add MSIOF pins, groups and functions
+      pinctrl: sh-pfc: r8a7796: Fix MSIOF3 SS2_E mux
+      pinctrl: sh-pfc: r8a7791: Add missing mmc_data8_b pin group
+
+Takeshi Kihara (30):
+      pinctrl: sh-pfc: r8a7795: Fix MSIOF3_{SS1,SS2}_E pin function definitions
+      pinctrl: sh-pfc: r8a7796: Fix MSIOF3_{SS1,SS2}_E pin function definitions
+      pinctrl: sh-pfc: r8a7796: Fix IPSR setting for MSIOF3_SS1_E pin
+      pinctrl: sh-pfc: r8a7796: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
+      pinctrl: sh-pfc: r8a7796: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
+      pinctrl: sh-pfc: r8a7796: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment to MOD_SEL1 bit10
+      pinctrl: sh-pfc: r8a7796: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
+      pinctrl: sh-pfc: r8a7796: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pin function definitions
+      pinctrl: sh-pfc: r8a7796: Fix MOD_SEL register pin assignment for TCLK{1,2}_{A,B} pins group
+      pinctrl: sh-pfc: r8a7796: Fix to delete FSCLKST pin and IPSR7 bit[15:12] register definitions
+      pinctrl: sh-pfc: r8a7796: Fix to delete SATA_DEVSLP_B pins function definitions
+      pinctrl: sh-pfc: r8a7796: Fix to delete MOD_SEL0 bit2 register definitions
+      pinctrl: sh-pfc: r8a7796: Fix IPSR and MOD_SEL register pin assignment for FSO pins group
+      pinctrl: sh-pfc: r8a7796: Rename CS1# pin function definitions
+      pinctrl: sh-pfc: r8a7795: Fix MOD_SEL1 bit[25:24] to 0x3 when using STP_ISEN_1_D
+      pinctrl: sh-pfc: r8a7795: Fix MOD_SEL2 bit26 to 0x0 when using SCK5_A
+      pinctrl: sh-pfc: r8a7795: Fix SCIF_CLK_{A,B} pin's MOD_SEL assignment to MOD_SEL1 bit10
+      pinctrl: sh-pfc: r8a7795: Fix FMCLK{_C,_D} and FMIN{_C,_D} pin function definitions
+      pinctrl: sh-pfc: r8a7795: Fix NFDATA{0..13} and NF{ALE,CLE,WE_N,RE_N} pin function definitions
+      pinctrl: sh-pfc: r8a7795: Fix MOD_SEL register pin assignment for TCLK{1,2}_{A,B} pins group
+      pinctrl: sh-pfc: r8a7795: Fix to delete FSCLKST pin and IPSR7 bit[15:12] register definitions
+      pinctrl: sh-pfc: r8a7795: Rename CS1# pin function definitions
+      pinctrl: sh-pfc: r8a7795: Fix to reserved MOD_SEL2 bit22
+      pinctrl: sh-pfc: r8a7796: Add USB2.0 host pins, groups and functions
+      pinctrl: sh-pfc: r8a7796: Add USB3.0 host pins, groups and functions
+      pinctrl: sh-pfc: Initial R8A77995 PFC support
+      pinctrl: sh-pfc: r8a77995: Add SCIF pins, groups and functions
+      pinctrl: sh-pfc: r8a77995: Add I2C pins, groups and functions
+      pinctrl: sh-pfc: r8a77995: Add MMC pins, groups and functions
+      pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC
+
+Wolfram Sang (1):
+      pinctrl: sh-pfc: Propagate errors on group config
+
+Yoshihiro Shimoda (3):
+      pinctrl: sh-pfc: r8a7795: Change USB3_{OVC,PWEN} definitions
+      pinctrl: sh-pfc: r8a7795: Add USB 2.0 pins, groups and functions
+      pinctrl: sh-pfc: Add PORT_GP_{10,2[01]} helper macros
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |    1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |    5 +
+ drivers/pinctrl/sh-pfc/Makefile                    |    1 +
+ drivers/pinctrl/sh-pfc/core.c                      |    6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c               |   15 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 1082 +++++++++++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |  146 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c              | 1812 ++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pinctrl.c                   |    9 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   23 +-
+ 10 files changed, 2978 insertions(+), 122 deletions(-)
+ create mode 100644 drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
