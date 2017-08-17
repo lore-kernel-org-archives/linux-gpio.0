@@ -1,30 +1,30 @@
 From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] pinctrl: msm: GP clock for pinctrl-apq8064 binding
-Date: Thu, 17 Aug 2017 10:27:58 -0500
-Message-ID: <20170817152758.zq5dpktcy4mkc6fn@rob-hp-laptop>
-References: <1502434516-9056-1-git-send-email-simhavcs@gmail.com>
+Subject: Re: [RESEND v9 12/12] pinctrl: dt-bindings: add bindings for
+ Rockchip RK805 PMIC
+Date: Thu, 17 Aug 2017 16:46:41 -0500
+Message-ID: <20170817214641.wjwh3zlvdpjt7eaj@rob-hp-laptop>
+References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
+ <1502848945-8574-1-git-send-email-chenjh@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:34830 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752567AbdHQP2L (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2017 11:28:11 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:37691 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752632AbdHQVqn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 17 Aug 2017 17:46:43 -0400
 Content-Disposition: inline
-In-Reply-To: <1502434516-9056-1-git-send-email-simhavcs@gmail.com>
+In-Reply-To: <1502848945-8574-1-git-send-email-chenjh@rock-chips.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Vinay Simha BN <simhavcs@gmail.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "open list:PIN CONTROLLER - QUALCOMM" <linux-arm-msm@vger.kernel.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Joseph Chen <chenjh@rock-chips.com>
+Cc: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, lee.jones@linaro.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, zhangqing@rock-chips.com, lgirdwood@gmail.com, linux-rockchip@lists.infradead.org, wdc@rock-chips.com, tony.xie@rock-chips.com, linux-input@vger.kernel.org, mark.rutland@arm.com, w.egorov@phytec.de, linux-clk@vger.kernel.org, a.zummo@towertech.it, alexandre.belloni@free-electrons.com, rtc-linux@googlegroups.com
 
-On Fri, Aug 11, 2017 at 12:25:15PM +0530, Vinay Simha BN wrote:
-> DT binding documentation for qcom,apq8064-pinctrl driver
-> for general purpose (GP) clocks.
-> 
-> Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+On Wed, Aug 16, 2017 at 10:02:25AM +0800, Joseph Chen wrote:
+> Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/pinctrl/pinctrl-rk805.txt  | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
 
 Acked-by: Rob Herring <robh@kernel.org>
-
