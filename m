@@ -1,47 +1,99 @@
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH 1/2] pinctrl: intel: Add Intel Cannon Lake PCH-H pin controller support
-Date: Fri, 18 Aug 2017 13:05:54 +0300
-Message-ID: <20170818100555.13311-1-mika.westerberg@linux.intel.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:29036 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751055AbdHRKF7 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 18 Aug 2017 06:05:59 -0400
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Subject: [PATCH 2/2] pinctrl: intel: Add Intel Lewisburg GPIO support
+Date: Fri, 18 Aug 2017 13:05:55 +0300
+Message-ID: <20170818100555.13311-2-mika.westerberg@linux.intel.com>
+References: <20170818100555.13311-1-mika.westerberg@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170818100555.13311-1-mika.westerberg@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 
-This is desktop version Intel Cannon Lake PCH. The GPIO hardware is the
-same but pin list differs a bit. Add support for this to the existing
-Cannon Lake pin controller driver.
+Intel Lewisburg has the same GPIO hardware than Intel Sunrisepoint-H
+except few differences in register offsets and pin lists. Because of
+this we add a separate pinctrl driver for Lewisburg.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/pinctrl/intel/pinctrl-cannonlake.c | 424 ++++++++++++++++++++++++++++-
- 1 file changed, 423 insertions(+), 1 deletion(-)
+ drivers/pinctrl/intel/Kconfig             |   8 +
+ drivers/pinctrl/intel/Makefile            |   1 +
+ drivers/pinctrl/intel/pinctrl-lewisburg.c | 343 ++++++++++++++++++++++++++++++
+ 3 files changed, 352 insertions(+)
+ create mode 100644 drivers/pinctrl/intel/pinctrl-lewisburg.c
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cannonlake.c b/drivers/pinctrl/intel/pinctrl-cannonlake.c
-index 3bc609b67dc2..e130599be571 100644
---- a/drivers/pinctrl/intel/pinctrl-cannonlake.c
-+++ b/drivers/pinctrl/intel/pinctrl-cannonlake.c
-@@ -2,7 +2,8 @@
-  * Intel Cannon Lake PCH pinctrl/GPIO driver
-  *
-  * Copyright (C) 2017, Intel Corporation
-- * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
-+ * Authors: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-+ *          Mika Westerberg <mika.westerberg@linux.intel.com>
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -42,6 +43,426 @@
- 		.ngpps = ARRAY_SIZE(g),			\
- 	}
+diff --git a/drivers/pinctrl/intel/Kconfig b/drivers/pinctrl/intel/Kconfig
+index aba2af032615..db29dfd54d25 100644
+--- a/drivers/pinctrl/intel/Kconfig
++++ b/drivers/pinctrl/intel/Kconfig
+@@ -80,6 +80,14 @@ config PINCTRL_GEMINILAKE
+ 	  This pinctrl driver provides an interface that allows configuring
+ 	  of Intel Gemini Lake SoC pins and using them as GPIOs.
  
-+/* Cannon Lake-H */
-+static const struct pinctrl_pin_desc cnlh_pins[] = {
++config PINCTRL_LEWISBURG
++	tristate "Intel Lewisburg pinctrl and GPIO driver"
++	depends on ACPI
++	select PINCTRL_INTEL
++	help
++	  This pinctrl driver provides an interface that allows configuring
++	  of Intel Lewisburg pins and using them as GPIOs.
++
+ config PINCTRL_SUNRISEPOINT
+ 	tristate "Intel Sunrisepoint pinctrl and GPIO driver"
+ 	depends on ACPI
+diff --git a/drivers/pinctrl/intel/Makefile b/drivers/pinctrl/intel/Makefile
+index d9b31f7e2b1b..c12874da5992 100644
+--- a/drivers/pinctrl/intel/Makefile
++++ b/drivers/pinctrl/intel/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_PINCTRL_BROXTON)		+= pinctrl-broxton.o
+ obj-$(CONFIG_PINCTRL_CANNONLAKE)	+= pinctrl-cannonlake.o
+ obj-$(CONFIG_PINCTRL_DENVERTON)		+= pinctrl-denverton.o
+ obj-$(CONFIG_PINCTRL_GEMINILAKE)	+= pinctrl-geminilake.o
++obj-$(CONFIG_PINCTRL_LEWISBURG)		+= pinctrl-lewisburg.o
+ obj-$(CONFIG_PINCTRL_SUNRISEPOINT)	+= pinctrl-sunrisepoint.o
+diff --git a/drivers/pinctrl/intel/pinctrl-lewisburg.c b/drivers/pinctrl/intel/pinctrl-lewisburg.c
+new file mode 100644
+index 000000000000..14d56ea6cfdc
+--- /dev/null
++++ b/drivers/pinctrl/intel/pinctrl-lewisburg.c
+@@ -0,0 +1,343 @@
++/*
++ * Intel Lewisburg pinctrl/GPIO driver
++ *
++ * Copyright (C) 2017, Intel Corporation
++ * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/acpi.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/pinctrl/pinctrl.h>
++
++#include "pinctrl-intel.h"
++
++#define LBG_PAD_OWN	0x020
++#define LBG_PADCFGLOCK	0x060
++#define LBG_HOSTSW_OWN	0x080
++#define LBG_GPI_IE	0x110
++
++#define LBG_COMMUNITY(b, s, e)				\
++	{						\
++		.barno = (b),				\
++		.padown_offset = LBG_PAD_OWN,		\
++		.padcfglock_offset = LBG_PADCFGLOCK,	\
++		.hostown_offset = LBG_HOSTSW_OWN,	\
++		.ie_offset = LBG_GPI_IE,		\
++		.gpp_size = 24,				\
++		.pin_base = (s),			\
++		.npins = ((e) - (s) + 1),		\
++	}
++
++static const struct pinctrl_pin_desc lbg_pins[] = {
 +	/* GPP_A */
 +	PINCTRL_PIN(0, "RCINB"),
 +	PINCTRL_PIN(1, "LAD_0"),
@@ -57,420 +109,296 @@ index 3bc609b67dc2..e130599be571 100644
 +	PINCTRL_PIN(11, "PMEB"),
 +	PINCTRL_PIN(12, "BM_BUSYB"),
 +	PINCTRL_PIN(13, "SUSWARNB_SUSPWRDNACK"),
-+	PINCTRL_PIN(14, "SUS_STATB"),
++	PINCTRL_PIN(14, "ESPI_RESETB"),
 +	PINCTRL_PIN(15, "SUSACKB"),
-+	PINCTRL_PIN(16, "CLKOUT_48"),
-+	PINCTRL_PIN(17, "SD_VDD1_PWR_EN_B"),
-+	PINCTRL_PIN(18, "ISH_GP_0"),
-+	PINCTRL_PIN(19, "ISH_GP_1"),
-+	PINCTRL_PIN(20, "ISH_GP_2"),
-+	PINCTRL_PIN(21, "ISH_GP_3"),
-+	PINCTRL_PIN(22, "ISH_GP_4"),
-+	PINCTRL_PIN(23, "ISH_GP_5"),
-+	PINCTRL_PIN(24, "ESPI_CLK_LOOPBK"),
++	PINCTRL_PIN(16, "CLKOUT_LPC_2"),
++	PINCTRL_PIN(17, "GPP_A_17"),
++	PINCTRL_PIN(18, "GPP_A_18"),
++	PINCTRL_PIN(19, "GPP_A_19"),
++	PINCTRL_PIN(20, "GPP_A_20"),
++	PINCTRL_PIN(21, "GPP_A_21"),
++	PINCTRL_PIN(22, "GPP_A_22"),
++	PINCTRL_PIN(23, "GPP_A_23"),
 +	/* GPP_B */
-+	PINCTRL_PIN(25, "GSPI0_CS1B"),
-+	PINCTRL_PIN(26, "GSPI1_CS1B"),
-+	PINCTRL_PIN(27, "VRALERTB"),
-+	PINCTRL_PIN(28, "CPU_GP_2"),
-+	PINCTRL_PIN(29, "CPU_GP_3"),
-+	PINCTRL_PIN(30, "SRCCLKREQB_0"),
-+	PINCTRL_PIN(31, "SRCCLKREQB_1"),
-+	PINCTRL_PIN(32, "SRCCLKREQB_2"),
-+	PINCTRL_PIN(33, "SRCCLKREQB_3"),
-+	PINCTRL_PIN(34, "SRCCLKREQB_4"),
-+	PINCTRL_PIN(35, "SRCCLKREQB_5"),
-+	PINCTRL_PIN(36, "SSP_MCLK"),
-+	PINCTRL_PIN(37, "SLP_S0B"),
-+	PINCTRL_PIN(38, "PLTRSTB"),
-+	PINCTRL_PIN(39, "SPKR"),
-+	PINCTRL_PIN(40, "GSPI0_CS0B"),
-+	PINCTRL_PIN(41, "GSPI0_CLK"),
-+	PINCTRL_PIN(42, "GSPI0_MISO"),
-+	PINCTRL_PIN(43, "GSPI0_MOSI"),
-+	PINCTRL_PIN(44, "GSPI1_CS0B"),
-+	PINCTRL_PIN(45, "GSPI1_CLK"),
-+	PINCTRL_PIN(46, "GSPI1_MISO"),
-+	PINCTRL_PIN(47, "GSPI1_MOSI"),
-+	PINCTRL_PIN(48, "SML1ALERTB"),
-+	PINCTRL_PIN(49, "GSPI0_CLK_LOOPBK"),
-+	PINCTRL_PIN(50, "GSPI1_CLK_LOOPBK"),
-+	/* GPP_C */
-+	PINCTRL_PIN(51, "SMBCLK"),
-+	PINCTRL_PIN(52, "SMBDATA"),
-+	PINCTRL_PIN(53, "SMBALERTB"),
-+	PINCTRL_PIN(54, "SML0CLK"),
-+	PINCTRL_PIN(55, "SML0DATA"),
-+	PINCTRL_PIN(56, "SML0ALERTB"),
-+	PINCTRL_PIN(57, "SML1CLK"),
-+	PINCTRL_PIN(58, "SML1DATA"),
-+	PINCTRL_PIN(59, "UART0_RXD"),
-+	PINCTRL_PIN(60, "UART0_TXD"),
-+	PINCTRL_PIN(61, "UART0_RTSB"),
-+	PINCTRL_PIN(62, "UART0_CTSB"),
-+	PINCTRL_PIN(63, "UART1_RXD"),
-+	PINCTRL_PIN(64, "UART1_TXD"),
-+	PINCTRL_PIN(65, "UART1_RTSB"),
-+	PINCTRL_PIN(66, "UART1_CTSB"),
-+	PINCTRL_PIN(67, "I2C0_SDA"),
-+	PINCTRL_PIN(68, "I2C0_SCL"),
-+	PINCTRL_PIN(69, "I2C1_SDA"),
-+	PINCTRL_PIN(70, "I2C1_SCL"),
-+	PINCTRL_PIN(71, "UART2_RXD"),
-+	PINCTRL_PIN(72, "UART2_TXD"),
-+	PINCTRL_PIN(73, "UART2_RTSB"),
-+	PINCTRL_PIN(74, "UART2_CTSB"),
-+	/* GPP_D */
-+	PINCTRL_PIN(75, "SPI1_CSB"),
-+	PINCTRL_PIN(76, "SPI1_CLK"),
-+	PINCTRL_PIN(77, "SPI1_MISO_IO_1"),
-+	PINCTRL_PIN(78, "SPI1_MOSI_IO_0"),
-+	PINCTRL_PIN(79, "ISH_I2C2_SDA"),
-+	PINCTRL_PIN(80, "SSP2_SFRM"),
-+	PINCTRL_PIN(81, "SSP2_TXD"),
-+	PINCTRL_PIN(82, "SSP2_RXD"),
-+	PINCTRL_PIN(83, "SSP2_SCLK"),
-+	PINCTRL_PIN(84, "ISH_SPI_CSB"),
-+	PINCTRL_PIN(85, "ISH_SPI_CLK"),
-+	PINCTRL_PIN(86, "ISH_SPI_MISO"),
-+	PINCTRL_PIN(87, "ISH_SPI_MOSI"),
-+	PINCTRL_PIN(88, "ISH_UART0_RXD"),
-+	PINCTRL_PIN(89, "ISH_UART0_TXD"),
-+	PINCTRL_PIN(90, "ISH_UART0_RTSB"),
-+	PINCTRL_PIN(91, "ISH_UART0_CTSB"),
-+	PINCTRL_PIN(92, "DMIC_CLK_1"),
-+	PINCTRL_PIN(93, "DMIC_DATA_1"),
-+	PINCTRL_PIN(94, "DMIC_CLK_0"),
-+	PINCTRL_PIN(95, "DMIC_DATA_0"),
-+	PINCTRL_PIN(96, "SPI1_IO_2"),
-+	PINCTRL_PIN(97, "SPI1_IO_3"),
-+	PINCTRL_PIN(98, "ISH_I2C2_SCL"),
-+	/* GPP_G */
-+	PINCTRL_PIN(99, "SD3_CMD"),
-+	PINCTRL_PIN(100, "SD3_D0"),
-+	PINCTRL_PIN(101, "SD3_D1"),
-+	PINCTRL_PIN(102, "SD3_D2"),
-+	PINCTRL_PIN(103, "SD3_D3"),
-+	PINCTRL_PIN(104, "SD3_CDB"),
-+	PINCTRL_PIN(105, "SD3_CLK"),
-+	PINCTRL_PIN(106, "SD3_WP"),
-+	/* AZA */
-+	PINCTRL_PIN(107, "HDA_BCLK"),
-+	PINCTRL_PIN(108, "HDA_RSTB"),
-+	PINCTRL_PIN(109, "HDA_SYNC"),
-+	PINCTRL_PIN(110, "HDA_SDO"),
-+	PINCTRL_PIN(111, "HDA_SDI_0"),
-+	PINCTRL_PIN(112, "HDA_SDI_1"),
-+	PINCTRL_PIN(113, "SSP1_SFRM"),
-+	PINCTRL_PIN(114, "SSP1_TXD"),
-+	/* vGPIO */
-+	PINCTRL_PIN(115, "CNV_BTEN"),
-+	PINCTRL_PIN(116, "CNV_GNEN"),
-+	PINCTRL_PIN(117, "CNV_WFEN"),
-+	PINCTRL_PIN(118, "CNV_WCEN"),
-+	PINCTRL_PIN(119, "CNV_BT_HOST_WAKEB"),
-+	PINCTRL_PIN(120, "vCNV_GNSS_HOST_WAKEB"),
-+	PINCTRL_PIN(121, "vSD3_CD_B"),
-+	PINCTRL_PIN(122, "CNV_BT_IF_SELECT"),
-+	PINCTRL_PIN(123, "vCNV_BT_UART_TXD"),
-+	PINCTRL_PIN(124, "vCNV_BT_UART_RXD"),
-+	PINCTRL_PIN(125, "vCNV_BT_UART_CTS_B"),
-+	PINCTRL_PIN(126, "vCNV_BT_UART_RTS_B"),
-+	PINCTRL_PIN(127, "vCNV_MFUART1_TXD"),
-+	PINCTRL_PIN(128, "vCNV_MFUART1_RXD"),
-+	PINCTRL_PIN(129, "vCNV_MFUART1_CTS_B"),
-+	PINCTRL_PIN(130, "vCNV_MFUART1_RTS_B"),
-+	PINCTRL_PIN(131, "vCNV_GNSS_UART_TXD"),
-+	PINCTRL_PIN(132, "vCNV_GNSS_UART_RXD"),
-+	PINCTRL_PIN(133, "vCNV_GNSS_UART_CTS_B"),
-+	PINCTRL_PIN(134, "vCNV_GNSS_UART_RTS_B"),
-+	PINCTRL_PIN(135, "vUART0_TXD"),
-+	PINCTRL_PIN(136, "vUART0_RXD"),
-+	PINCTRL_PIN(137, "vUART0_CTS_B"),
-+	PINCTRL_PIN(138, "vUART0_RTSB"),
-+	PINCTRL_PIN(139, "vISH_UART0_TXD"),
-+	PINCTRL_PIN(140, "vISH_UART0_RXD"),
-+	PINCTRL_PIN(141, "vISH_UART0_CTS_B"),
-+	PINCTRL_PIN(142, "vISH_UART0_RTSB"),
-+	PINCTRL_PIN(143, "vISH_UART1_TXD"),
-+	PINCTRL_PIN(144, "vISH_UART1_RXD"),
-+	PINCTRL_PIN(145, "vISH_UART1_CTS_B"),
-+	PINCTRL_PIN(146, "vISH_UART1_RTS_B"),
-+	PINCTRL_PIN(147, "vCNV_BT_I2S_BCLK"),
-+	PINCTRL_PIN(148, "vCNV_BT_I2S_WS_SYNC"),
-+	PINCTRL_PIN(149, "vCNV_BT_I2S_SDO"),
-+	PINCTRL_PIN(150, "vCNV_BT_I2S_SDI"),
-+	PINCTRL_PIN(151, "vSSP2_SCLK"),
-+	PINCTRL_PIN(152, "vSSP2_SFRM"),
-+	PINCTRL_PIN(153, "vSSP2_TXD"),
-+	PINCTRL_PIN(154, "vSSP2_RXD"),
-+	/* GPP_K */
-+	PINCTRL_PIN(155, "FAN_TACH_0"),
-+	PINCTRL_PIN(156, "FAN_TACH_1"),
-+	PINCTRL_PIN(157, "FAN_TACH_2"),
-+	PINCTRL_PIN(158, "FAN_TACH_3"),
-+	PINCTRL_PIN(159, "FAN_TACH_4"),
-+	PINCTRL_PIN(160, "FAN_TACH_5"),
-+	PINCTRL_PIN(161, "FAN_TACH_6"),
-+	PINCTRL_PIN(162, "FAN_TACH_7"),
-+	PINCTRL_PIN(163, "FAN_PWM_0"),
-+	PINCTRL_PIN(164, "FAN_PWM_1"),
-+	PINCTRL_PIN(165, "FAN_PWM_2"),
-+	PINCTRL_PIN(166, "FAN_PWM_3"),
-+	PINCTRL_PIN(167, "GSXDOUT"),
-+	PINCTRL_PIN(168, "GSXSLOAD"),
-+	PINCTRL_PIN(169, "GSXDIN"),
-+	PINCTRL_PIN(170, "GSXSRESETB"),
-+	PINCTRL_PIN(171, "GSXCLK"),
-+	PINCTRL_PIN(172, "ADR_COMPLETE"),
-+	PINCTRL_PIN(173, "NMIB"),
-+	PINCTRL_PIN(174, "SMIB"),
-+	PINCTRL_PIN(175, "CORE_VID_0"),
-+	PINCTRL_PIN(176, "CORE_VID_1"),
-+	PINCTRL_PIN(177, "IMGCLKOUT_0"),
-+	PINCTRL_PIN(178, "IMGCLKOUT_1"),
-+	/* GPP_H */
-+	PINCTRL_PIN(179, "SRCCLKREQB_6"),
-+	PINCTRL_PIN(180, "SRCCLKREQB_7"),
-+	PINCTRL_PIN(181, "SRCCLKREQB_8"),
-+	PINCTRL_PIN(182, "SRCCLKREQB_9"),
-+	PINCTRL_PIN(183, "SRCCLKREQB_10"),
-+	PINCTRL_PIN(184, "SRCCLKREQB_11"),
-+	PINCTRL_PIN(185, "SRCCLKREQB_12"),
-+	PINCTRL_PIN(186, "SRCCLKREQB_13"),
-+	PINCTRL_PIN(187, "SRCCLKREQB_14"),
-+	PINCTRL_PIN(188, "SRCCLKREQB_15"),
-+	PINCTRL_PIN(189, "SML2CLK"),
-+	PINCTRL_PIN(190, "SML2DATA"),
-+	PINCTRL_PIN(191, "SML2ALERTB"),
-+	PINCTRL_PIN(192, "SML3CLK"),
-+	PINCTRL_PIN(193, "SML3DATA"),
-+	PINCTRL_PIN(194, "SML3ALERTB"),
-+	PINCTRL_PIN(195, "SML4CLK"),
-+	PINCTRL_PIN(196, "SML4DATA"),
-+	PINCTRL_PIN(197, "SML4ALERTB"),
-+	PINCTRL_PIN(198, "ISH_I2C0_SDA"),
-+	PINCTRL_PIN(199, "ISH_I2C0_SCL"),
-+	PINCTRL_PIN(200, "ISH_I2C1_SDA"),
-+	PINCTRL_PIN(201, "ISH_I2C1_SCL"),
-+	PINCTRL_PIN(202, "TIME_SYNC_0"),
-+	/* GPP_E */
-+	PINCTRL_PIN(203, "SATAXPCIE_0"),
-+	PINCTRL_PIN(204, "SATAXPCIE_1"),
-+	PINCTRL_PIN(205, "SATAXPCIE_2"),
-+	PINCTRL_PIN(206, "CPU_GP_0"),
-+	PINCTRL_PIN(207, "SATA_DEVSLP_0"),
-+	PINCTRL_PIN(208, "SATA_DEVSLP_1"),
-+	PINCTRL_PIN(209, "SATA_DEVSLP_2"),
-+	PINCTRL_PIN(210, "CPU_GP_1"),
-+	PINCTRL_PIN(211, "SATA_LEDB"),
-+	PINCTRL_PIN(212, "USB2_OCB_0"),
-+	PINCTRL_PIN(213, "USB2_OCB_1"),
-+	PINCTRL_PIN(214, "USB2_OCB_2"),
-+	PINCTRL_PIN(215, "USB2_OCB_3"),
++	PINCTRL_PIN(24, "CORE_VID_0"),
++	PINCTRL_PIN(25, "CORE_VID_1"),
++	PINCTRL_PIN(26, "VRALERTB"),
++	PINCTRL_PIN(27, "CPU_GP_2"),
++	PINCTRL_PIN(28, "CPU_GP_3"),
++	PINCTRL_PIN(29, "SRCCLKREQB_0"),
++	PINCTRL_PIN(30, "SRCCLKREQB_1"),
++	PINCTRL_PIN(31, "SRCCLKREQB_2"),
++	PINCTRL_PIN(32, "SRCCLKREQB_3"),
++	PINCTRL_PIN(33, "SRCCLKREQB_4"),
++	PINCTRL_PIN(34, "SRCCLKREQB_5"),
++	PINCTRL_PIN(35, "GPP_B_11"),
++	PINCTRL_PIN(36, "GLB_RST_WARN_N"),
++	PINCTRL_PIN(37, "PLTRSTB"),
++	PINCTRL_PIN(38, "SPKR"),
++	PINCTRL_PIN(39, "GPP_B_15"),
++	PINCTRL_PIN(40, "GPP_B_16"),
++	PINCTRL_PIN(41, "GPP_B_17"),
++	PINCTRL_PIN(42, "GPP_B_18"),
++	PINCTRL_PIN(43, "GPP_B_19"),
++	PINCTRL_PIN(44, "GPP_B_20"),
++	PINCTRL_PIN(45, "GPP_B_21"),
++	PINCTRL_PIN(46, "GPP_B_22"),
++	PINCTRL_PIN(47, "SML1ALERTB"),
 +	/* GPP_F */
-+	PINCTRL_PIN(216, "SATAXPCIE_3"),
-+	PINCTRL_PIN(217, "SATAXPCIE_4"),
-+	PINCTRL_PIN(218, "SATAXPCIE_5"),
-+	PINCTRL_PIN(219, "SATAXPCIE_6"),
-+	PINCTRL_PIN(220, "SATAXPCIE_7"),
-+	PINCTRL_PIN(221, "SATA_DEVSLP_3"),
-+	PINCTRL_PIN(222, "SATA_DEVSLP_4"),
-+	PINCTRL_PIN(223, "SATA_DEVSLP_5"),
-+	PINCTRL_PIN(224, "SATA_DEVSLP_6"),
-+	PINCTRL_PIN(225, "SATA_DEVSLP_7"),
-+	PINCTRL_PIN(226, "SATA_SCLOCK"),
-+	PINCTRL_PIN(227, "SATA_SLOAD"),
-+	PINCTRL_PIN(228, "SATA_SDATAOUT1"),
-+	PINCTRL_PIN(229, "SATA_SDATAOUT0"),
-+	PINCTRL_PIN(230, "EXT_PWR_GATEB"),
-+	PINCTRL_PIN(231, "USB2_OCB_4"),
-+	PINCTRL_PIN(232, "USB2_OCB_5"),
-+	PINCTRL_PIN(233, "USB2_OCB_6"),
-+	PINCTRL_PIN(234, "USB2_OCB_7"),
-+	PINCTRL_PIN(235, "L_VDDEN"),
-+	PINCTRL_PIN(236, "L_BKLTEN"),
-+	PINCTRL_PIN(237, "L_BKLTCTL"),
-+	PINCTRL_PIN(238, "DDPF_CTRLCLK"),
-+	PINCTRL_PIN(239, "DDPF_CTRLDATA"),
-+	/* SPI */
-+	PINCTRL_PIN(240, "SPI0_IO_2"),
-+	PINCTRL_PIN(241, "SPI0_IO_3"),
-+	PINCTRL_PIN(242, "SPI0_MOSI_IO_0"),
-+	PINCTRL_PIN(243, "SPI0_MISO_IO_1"),
-+	PINCTRL_PIN(244, "SPI0_TPM_CSB"),
-+	PINCTRL_PIN(245, "SPI0_FLASH_0_CSB"),
-+	PINCTRL_PIN(246, "SPI0_FLASH_1_CSB"),
-+	PINCTRL_PIN(247, "SPI0_CLK"),
-+	PINCTRL_PIN(248, "SPI0_CLK_LOOPBK"),
-+	/* CPU */
-+	PINCTRL_PIN(249, "HDACPU_SDI"),
-+	PINCTRL_PIN(250, "HDACPU_SDO"),
-+	PINCTRL_PIN(251, "HDACPU_SCLK"),
-+	PINCTRL_PIN(252, "PM_SYNC"),
-+	PINCTRL_PIN(253, "PECI"),
-+	PINCTRL_PIN(254, "CPUPWRGD"),
-+	PINCTRL_PIN(255, "THRMTRIPB"),
-+	PINCTRL_PIN(256, "PLTRST_CPUB"),
-+	PINCTRL_PIN(257, "PM_DOWN"),
-+	PINCTRL_PIN(258, "TRIGGER_IN"),
-+	PINCTRL_PIN(259, "TRIGGER_OUT"),
-+	/* JTAG */
-+	PINCTRL_PIN(260, "JTAG_TDO"),
-+	PINCTRL_PIN(261, "JTAGX"),
-+	PINCTRL_PIN(262, "PRDYB"),
-+	PINCTRL_PIN(263, "PREQB"),
-+	PINCTRL_PIN(264, "CPU_TRSTB"),
-+	PINCTRL_PIN(265, "JTAG_TDI"),
-+	PINCTRL_PIN(266, "JTAG_TMS"),
-+	PINCTRL_PIN(267, "JTAG_TCK"),
-+	PINCTRL_PIN(268, "ITP_PMODE"),
++	PINCTRL_PIN(48, "SATAXPCIE_3"),
++	PINCTRL_PIN(49, "SATAXPCIE_4"),
++	PINCTRL_PIN(50, "SATAXPCIE_5"),
++	PINCTRL_PIN(51, "SATAXPCIE_6"),
++	PINCTRL_PIN(52, "SATAXPCIE_7"),
++	PINCTRL_PIN(53, "SATA_DEVSLP_3"),
++	PINCTRL_PIN(54, "SATA_DEVSLP_4"),
++	PINCTRL_PIN(55, "SATA_DEVSLP_5"),
++	PINCTRL_PIN(56, "SATA_DEVSLP_6"),
++	PINCTRL_PIN(57, "SATA_DEVSLP_7"),
++	PINCTRL_PIN(58, "SATA_SCLOCK"),
++	PINCTRL_PIN(59, "SATA_SLOAD"),
++	PINCTRL_PIN(60, "SATA_SDATAOUT1"),
++	PINCTRL_PIN(61, "SATA_SDATAOUT0"),
++	PINCTRL_PIN(62, "SSATA_LEDB"),
++	PINCTRL_PIN(63, "USB2_OCB_4"),
++	PINCTRL_PIN(64, "USB2_OCB_5"),
++	PINCTRL_PIN(65, "USB2_OCB_6"),
++	PINCTRL_PIN(66, "USB2_OCB_7"),
++	PINCTRL_PIN(67, "GBE_SMBUS_CLK"),
++	PINCTRL_PIN(68, "GBE_SMBDATA"),
++	PINCTRL_PIN(69, "GBE_SMBALRTN"),
++	PINCTRL_PIN(70, "SSATA_SCLOCK"),
++	PINCTRL_PIN(71, "SSATA_SLOAD"),
++	/* GPP_C */
++	PINCTRL_PIN(72, "SMBCLK"),
++	PINCTRL_PIN(73, "SMBDATA"),
++	PINCTRL_PIN(74, "SMBALERTB"),
++	PINCTRL_PIN(75, "SML0CLK"),
++	PINCTRL_PIN(76, "SML0DATA"),
++	PINCTRL_PIN(77, "SML0ALERTB"),
++	PINCTRL_PIN(78, "SML1CLK"),
++	PINCTRL_PIN(79, "SML1DATA"),
++	PINCTRL_PIN(80, "GPP_C_8"),
++	PINCTRL_PIN(81, "GPP_C_9"),
++	PINCTRL_PIN(82, "GPP_C_10"),
++	PINCTRL_PIN(83, "GPP_C_11"),
++	PINCTRL_PIN(84, "GPP_C_12"),
++	PINCTRL_PIN(85, "GPP_C_13"),
++	PINCTRL_PIN(86, "GPP_C_14"),
++	PINCTRL_PIN(87, "GPP_C_15"),
++	PINCTRL_PIN(88, "GPP_C_16"),
++	PINCTRL_PIN(89, "GPP_C_17"),
++	PINCTRL_PIN(90, "GPP_C_18"),
++	PINCTRL_PIN(91, "GPP_C_19"),
++	PINCTRL_PIN(92, "GPP_C_20"),
++	PINCTRL_PIN(93, "GPP_C_21"),
++	PINCTRL_PIN(94, "GPP_C_22"),
++	PINCTRL_PIN(95, "GPP_C_23"),
++	/* GPP_D */
++	PINCTRL_PIN(96, "GPP_D_0"),
++	PINCTRL_PIN(97, "GPP_D_1"),
++	PINCTRL_PIN(98, "GPP_D_2"),
++	PINCTRL_PIN(99, "GPP_D_3"),
++	PINCTRL_PIN(100, "GPP_D_4"),
++	PINCTRL_PIN(101, "SSP0_SFRM"),
++	PINCTRL_PIN(102, "SSP0_TXD"),
++	PINCTRL_PIN(103, "SSP0_RXD"),
++	PINCTRL_PIN(104, "SSP0_SCLK"),
++	PINCTRL_PIN(105, "SSATA_DEVSLP_3"),
++	PINCTRL_PIN(106, "SSATA_DEVSLP_4"),
++	PINCTRL_PIN(107, "SSATA_DEVSLP_5"),
++	PINCTRL_PIN(108, "SSATA_SDATAOUT1"),
++	PINCTRL_PIN(109, "SML0BCLK_SML0BCLKIE"),
++	PINCTRL_PIN(110, "SML0BDATA_SML0BDATAIE"),
++	PINCTRL_PIN(111, "SSATA_SDATAOUT0"),
++	PINCTRL_PIN(112, "SML0BALERTB_SML0BALERTBIE"),
++	PINCTRL_PIN(113, "DMIC_CLK_1"),
++	PINCTRL_PIN(114, "DMIC_DATA_1"),
++	PINCTRL_PIN(115, "DMIC_CLK_0"),
++	PINCTRL_PIN(116, "DMIC_DATA_0"),
++	PINCTRL_PIN(117, "IE_UART_RXD"),
++	PINCTRL_PIN(118, "IE_UART_TXD"),
++	PINCTRL_PIN(119, "GPP_D_23"),
++	/* GPP_E */
++	PINCTRL_PIN(120, "SATAXPCIE_0"),
++	PINCTRL_PIN(121, "SATAXPCIE_1"),
++	PINCTRL_PIN(122, "SATAXPCIE_2"),
++	PINCTRL_PIN(123, "CPU_GP_0"),
++	PINCTRL_PIN(124, "SATA_DEVSLP_0"),
++	PINCTRL_PIN(125, "SATA_DEVSLP_1"),
++	PINCTRL_PIN(126, "SATA_DEVSLP_2"),
++	PINCTRL_PIN(127, "CPU_GP_1"),
++	PINCTRL_PIN(128, "SATA_LEDB"),
++	PINCTRL_PIN(129, "USB2_OCB_0"),
++	PINCTRL_PIN(130, "USB2_OCB_1"),
++	PINCTRL_PIN(131, "USB2_OCB_2"),
++	PINCTRL_PIN(132, "USB2_OCB_3"),
 +	/* GPP_I */
-+	PINCTRL_PIN(269, "DDSP_HPD_0"),
-+	PINCTRL_PIN(270, "DDSP_HPD_1"),
-+	PINCTRL_PIN(271, "DDSP_HPD_2"),
-+	PINCTRL_PIN(272, "DDSP_HPD_3"),
-+	PINCTRL_PIN(273, "EDP_HPD"),
-+	PINCTRL_PIN(274, "DDPB_CTRLCLK"),
-+	PINCTRL_PIN(275, "DDPB_CTRLDATA"),
-+	PINCTRL_PIN(276, "DDPC_CTRLCLK"),
-+	PINCTRL_PIN(277, "DDPC_CTRLDATA"),
-+	PINCTRL_PIN(278, "DDPD_CTRLCLK"),
-+	PINCTRL_PIN(279, "DDPD_CTRLDATA"),
-+	PINCTRL_PIN(280, "M2_SKT2_CFG_0"),
-+	PINCTRL_PIN(281, "M2_SKT2_CFG_1"),
-+	PINCTRL_PIN(282, "M2_SKT2_CFG_2"),
-+	PINCTRL_PIN(283, "M2_SKT2_CFG_3"),
-+	PINCTRL_PIN(284, "SYS_PWROK"),
-+	PINCTRL_PIN(285, "SYS_RESETB"),
-+	PINCTRL_PIN(286, "MLK_RSTB"),
++	PINCTRL_PIN(133, "GBE_TDO"),
++	PINCTRL_PIN(134, "GBE_TCK"),
++	PINCTRL_PIN(135, "GBE_TMS"),
++	PINCTRL_PIN(136, "GBE_TDI"),
++	PINCTRL_PIN(137, "DO_RESET_INB"),
++	PINCTRL_PIN(138, "DO_RESET_OUTB"),
++	PINCTRL_PIN(139, "RESET_DONE"),
++	PINCTRL_PIN(140, "GBE_TRST_N"),
++	PINCTRL_PIN(141, "GBE_PCI_DIS"),
++	PINCTRL_PIN(142, "GBE_LAN_DIS"),
++	PINCTRL_PIN(143, "GPP_I_10"),
++	PINCTRL_PIN(144, "GPIO_RCOMP_3P3"),
 +	/* GPP_J */
-+	PINCTRL_PIN(287, "CNV_PA_BLANKING"),
-+	PINCTRL_PIN(288, "CNV_GNSS_FTA"),
-+	PINCTRL_PIN(289, "CNV_GNSS_SYSCK"),
-+	PINCTRL_PIN(290, "CNV_RF_RESET_B"),
-+	PINCTRL_PIN(291, "CNV_BRI_DT"),
-+	PINCTRL_PIN(292, "CNV_BRI_RSP"),
-+	PINCTRL_PIN(293, "CNV_RGI_DT"),
-+	PINCTRL_PIN(294, "CNV_RGI_RSP"),
-+	PINCTRL_PIN(295, "CNV_MFUART2_RXD"),
-+	PINCTRL_PIN(296, "CNV_MFUART2_TXD"),
-+	PINCTRL_PIN(297, "CNV_MODEM_CLKREQ"),
-+	PINCTRL_PIN(298, "A4WP_PRESENT"),
++	PINCTRL_PIN(145, "GBE_LED_0_0"),
++	PINCTRL_PIN(146, "GBE_LED_0_1"),
++	PINCTRL_PIN(147, "GBE_LED_1_0"),
++	PINCTRL_PIN(148, "GBE_LED_1_1"),
++	PINCTRL_PIN(149, "GBE_LED_2_0"),
++	PINCTRL_PIN(150, "GBE_LED_2_1"),
++	PINCTRL_PIN(151, "GBE_LED_3_0"),
++	PINCTRL_PIN(152, "GBE_LED_3_1"),
++	PINCTRL_PIN(153, "GBE_SCL_0"),
++	PINCTRL_PIN(154, "GBE_SDA_0"),
++	PINCTRL_PIN(155, "GBE_SCL_1"),
++	PINCTRL_PIN(156, "GBE_SDA_1"),
++	PINCTRL_PIN(157, "GBE_SCL_2"),
++	PINCTRL_PIN(158, "GBE_SDA_2"),
++	PINCTRL_PIN(159, "GBE_SCL_3"),
++	PINCTRL_PIN(160, "GBE_SDA_3"),
++	PINCTRL_PIN(161, "GBE_SDP_0_0"),
++	PINCTRL_PIN(162, "GBE_SDP_0_1"),
++	PINCTRL_PIN(163, "GBE_SDP_1_0"),
++	PINCTRL_PIN(164, "GBE_SDP_1_1"),
++	PINCTRL_PIN(165, "GBE_SDP_2_0"),
++	PINCTRL_PIN(166, "GBE_SDP_2_1"),
++	PINCTRL_PIN(167, "GBE_SDP_3_0"),
++	PINCTRL_PIN(168, "GBE_SDP_3_1"),
++	/* GPP_K */
++	PINCTRL_PIN(169, "GBE_RMIICLK"),
++	PINCTRL_PIN(170, "GBE_RMII_TXD_0"),
++	PINCTRL_PIN(171, "GBE_RMII_TXD_1"),
++	PINCTRL_PIN(172, "GBE_RMII_TX_EN"),
++	PINCTRL_PIN(173, "GBE_RMII_CRS_DV"),
++	PINCTRL_PIN(174, "GBE_RMII_RXD_0"),
++	PINCTRL_PIN(175, "GBE_RMII_RXD_1"),
++	PINCTRL_PIN(176, "GBE_RMII_RX_ER"),
++	PINCTRL_PIN(177, "GBE_RMII_ARBIN"),
++	PINCTRL_PIN(178, "GBE_RMII_ARB_OUT"),
++	PINCTRL_PIN(179, "PE_RST_N"),
++	PINCTRL_PIN(180, "GPIO_RCOMP_1P8_3P3"),
++	/* GPP_G */
++	PINCTRL_PIN(181, "FAN_TACH_0"),
++	PINCTRL_PIN(182, "FAN_TACH_1"),
++	PINCTRL_PIN(183, "FAN_TACH_2"),
++	PINCTRL_PIN(184, "FAN_TACH_3"),
++	PINCTRL_PIN(185, "FAN_TACH_4"),
++	PINCTRL_PIN(186, "FAN_TACH_5"),
++	PINCTRL_PIN(187, "FAN_TACH_6"),
++	PINCTRL_PIN(188, "FAN_TACH_7"),
++	PINCTRL_PIN(189, "FAN_PWM_0"),
++	PINCTRL_PIN(190, "FAN_PWM_1"),
++	PINCTRL_PIN(191, "FAN_PWM_2"),
++	PINCTRL_PIN(192, "FAN_PWM_3"),
++	PINCTRL_PIN(193, "GSXDOUT"),
++	PINCTRL_PIN(194, "GSXSLOAD"),
++	PINCTRL_PIN(195, "GSXDIN"),
++	PINCTRL_PIN(196, "GSXSRESETB"),
++	PINCTRL_PIN(197, "GSXCLK"),
++	PINCTRL_PIN(198, "ADR_COMPLETE"),
++	PINCTRL_PIN(199, "NMIB"),
++	PINCTRL_PIN(200, "SMIB"),
++	PINCTRL_PIN(201, "SSATA_DEVSLP_0"),
++	PINCTRL_PIN(202, "SSATA_DEVSLP_1"),
++	PINCTRL_PIN(203, "SSATA_DEVSLP_2"),
++	PINCTRL_PIN(204, "SSATAXPCIE0_SSATAGP0"),
++	/* GPP_H */
++	PINCTRL_PIN(205, "SRCCLKREQB_6"),
++	PINCTRL_PIN(206, "SRCCLKREQB_7"),
++	PINCTRL_PIN(207, "SRCCLKREQB_8"),
++	PINCTRL_PIN(208, "SRCCLKREQB_9"),
++	PINCTRL_PIN(209, "SRCCLKREQB_10"),
++	PINCTRL_PIN(210, "SRCCLKREQB_11"),
++	PINCTRL_PIN(211, "SRCCLKREQB_12"),
++	PINCTRL_PIN(212, "SRCCLKREQB_13"),
++	PINCTRL_PIN(213, "SRCCLKREQB_14"),
++	PINCTRL_PIN(214, "SRCCLKREQB_15"),
++	PINCTRL_PIN(215, "SML2CLK"),
++	PINCTRL_PIN(216, "SML2DATA"),
++	PINCTRL_PIN(217, "SML2ALERTB"),
++	PINCTRL_PIN(218, "SML3CLK"),
++	PINCTRL_PIN(219, "SML3DATA"),
++	PINCTRL_PIN(220, "SML3ALERTB"),
++	PINCTRL_PIN(221, "SML4CLK"),
++	PINCTRL_PIN(222, "SML4DATA"),
++	PINCTRL_PIN(223, "SML4ALERTB"),
++	PINCTRL_PIN(224, "SSATAXPCIE1_SSATAGP1"),
++	PINCTRL_PIN(225, "SSATAXPCIE2_SSATAGP2"),
++	PINCTRL_PIN(226, "SSATAXPCIE3_SSATAGP3"),
++	PINCTRL_PIN(227, "SSATAXPCIE4_SSATAGP4"),
++	PINCTRL_PIN(228, "SSATAXPCIE5_SSATAGP5"),
++	/* GPP_L */
++	PINCTRL_PIN(229, "VISA2CH0_D0"),
++	PINCTRL_PIN(230, "VISA2CH0_D1"),
++	PINCTRL_PIN(231, "VISA2CH0_D2"),
++	PINCTRL_PIN(232, "VISA2CH0_D3"),
++	PINCTRL_PIN(233, "VISA2CH0_D4"),
++	PINCTRL_PIN(234, "VISA2CH0_D5"),
++	PINCTRL_PIN(235, "VISA2CH0_D6"),
++	PINCTRL_PIN(236, "VISA2CH0_D7"),
++	PINCTRL_PIN(237, "VISA2CH0_CLK"),
++	PINCTRL_PIN(238, "VISA2CH1_D0"),
++	PINCTRL_PIN(239, "VISA2CH1_D1"),
++	PINCTRL_PIN(240, "VISA2CH1_D2"),
++	PINCTRL_PIN(241, "VISA2CH1_D3"),
++	PINCTRL_PIN(242, "VISA2CH1_D4"),
++	PINCTRL_PIN(243, "VISA2CH1_D5"),
++	PINCTRL_PIN(244, "VISA2CH1_D6"),
++	PINCTRL_PIN(245, "VISA2CH1_D7"),
++	PINCTRL_PIN(246, "VISA2CH1_CLK"),
 +};
 +
-+static const struct intel_padgroup cnlh_community0_gpps[] = {
-+	CNL_GPP(0, 0, 24),	/* GPP_A */
-+	CNL_GPP(1, 25, 50),	/* GPP_B */
++static const struct intel_community lbg_communities[] = {
++	LBG_COMMUNITY(0, 0, 71),
++	LBG_COMMUNITY(1, 72, 132),
++	LBG_COMMUNITY(3, 133, 144),
++	LBG_COMMUNITY(4, 145, 180),
++	LBG_COMMUNITY(5, 181, 246),
 +};
 +
-+static const struct intel_padgroup cnlh_community1_gpps[] = {
-+	CNL_GPP(0, 51, 74),	/* GPP_C */
-+	CNL_GPP(1, 75, 98),	/* GPP_D */
-+	CNL_GPP(2, 99, 106),	/* GPP_G */
-+	CNL_GPP(3, 107, 114),	/* AZA */
-+	CNL_GPP(4, 115, 146),	/* vGPIO_0 */
-+	CNL_GPP(5, 147, 154),	/* vGPIO_1 */
++static const struct intel_pinctrl_soc_data lbg_soc_data = {
++	.pins = lbg_pins,
++	.npins = ARRAY_SIZE(lbg_pins),
++	.communities = lbg_communities,
++	.ncommunities = ARRAY_SIZE(lbg_communities),
 +};
 +
-+static const struct intel_padgroup cnlh_community3_gpps[] = {
-+	CNL_GPP(0, 155, 178),	/* GPP_K */
-+	CNL_GPP(1, 179, 202),	/* GPP_H */
-+	CNL_GPP(2, 203, 215),	/* GPP_E */
-+	CNL_GPP(3, 216, 239),	/* GPP_F */
-+	CNL_GPP(4, 240, 248),	/* SPI */
++static int lbg_pinctrl_probe(struct platform_device *pdev)
++{
++	return intel_pinctrl_probe(pdev, &lbg_soc_data);
++}
++
++static const struct dev_pm_ops lbg_pinctrl_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(intel_pinctrl_suspend,
++				     intel_pinctrl_resume)
 +};
 +
-+static const struct intel_padgroup cnlh_community4_gpps[] = {
-+	CNL_GPP(0, 249, 259),	/* CPU */
-+	CNL_GPP(1, 260, 268),	/* JTAG */
-+	CNL_GPP(2, 269, 286),	/* GPP_I */
-+	CNL_GPP(3, 287, 298),	/* GPP_J */
++static const struct acpi_device_id lbg_pinctrl_acpi_match[] = {
++	{ "INT3536" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, lbg_pinctrl_acpi_match);
++
++static struct platform_driver lbg_pinctrl_driver = {
++	.probe = lbg_pinctrl_probe,
++	.driver = {
++		.name = "lewisburg-pinctrl",
++		.acpi_match_table = lbg_pinctrl_acpi_match,
++		.pm = &lbg_pinctrl_pm_ops,
++	},
 +};
 +
-+static const unsigned int cnlh_spi0_pins[] = { 40, 41, 42, 43 };
-+static const unsigned int cnlh_spi1_pins[] = { 44, 45, 46, 47 };
-+static const unsigned int cnlh_spi2_pins[] = { 84, 85, 86, 87 };
++module_platform_driver(lbg_pinctrl_driver);
 +
-+static const unsigned int cnlh_uart0_pins[] = { 59, 60, 61, 62 };
-+static const unsigned int cnlh_uart1_pins[] = { 63, 64, 65, 66 };
-+static const unsigned int cnlh_uart2_pins[] = { 71, 72, 73, 74 };
-+
-+static const unsigned int cnlh_i2c0_pins[] = { 67, 68 };
-+static const unsigned int cnlh_i2c1_pins[] = { 69, 70 };
-+static const unsigned int cnlh_i2c2_pins[] = { 88, 89 };
-+static const unsigned int cnlh_i2c3_pins[] = { 79, 98 };
-+
-+static const struct intel_pingroup cnlh_groups[] = {
-+	PIN_GROUP("spi0_grp", cnlh_spi0_pins, 1),
-+	PIN_GROUP("spi1_grp", cnlh_spi1_pins, 1),
-+	PIN_GROUP("spi2_grp", cnlh_spi2_pins, 3),
-+	PIN_GROUP("uart0_grp", cnlh_uart0_pins, 1),
-+	PIN_GROUP("uart1_grp", cnlh_uart1_pins, 1),
-+	PIN_GROUP("uart2_grp", cnlh_uart2_pins, 1),
-+	PIN_GROUP("i2c0_grp", cnlh_i2c0_pins, 1),
-+	PIN_GROUP("i2c1_grp", cnlh_i2c1_pins, 1),
-+	PIN_GROUP("i2c2_grp", cnlh_i2c2_pins, 3),
-+	PIN_GROUP("i2c3_grp", cnlh_i2c3_pins, 2),
-+};
-+
-+static const char * const cnlh_spi0_groups[] = { "spi0_grp" };
-+static const char * const cnlh_spi1_groups[] = { "spi1_grp" };
-+static const char * const cnlh_spi2_groups[] = { "spi2_grp" };
-+static const char * const cnlh_uart0_groups[] = { "uart0_grp" };
-+static const char * const cnlh_uart1_groups[] = { "uart1_grp" };
-+static const char * const cnlh_uart2_groups[] = { "uart2_grp" };
-+static const char * const cnlh_i2c0_groups[] = { "i2c0_grp" };
-+static const char * const cnlh_i2c1_groups[] = { "i2c1_grp" };
-+static const char * const cnlh_i2c2_groups[] = { "i2c2_grp" };
-+static const char * const cnlh_i2c3_groups[] = { "i2c3_grp" };
-+
-+static const struct intel_function cnlh_functions[] = {
-+	FUNCTION("spi0", cnlh_spi0_groups),
-+	FUNCTION("spi1", cnlh_spi1_groups),
-+	FUNCTION("spi2", cnlh_spi2_groups),
-+	FUNCTION("uart0", cnlh_uart0_groups),
-+	FUNCTION("uart1", cnlh_uart1_groups),
-+	FUNCTION("uart2", cnlh_uart2_groups),
-+	FUNCTION("i2c0", cnlh_i2c0_groups),
-+	FUNCTION("i2c1", cnlh_i2c1_groups),
-+	FUNCTION("i2c2", cnlh_i2c2_groups),
-+	FUNCTION("i2c3", cnlh_i2c3_groups),
-+};
-+
-+static const struct intel_community cnlh_communities[] = {
-+	CNL_COMMUNITY(0, 0, 50, cnlh_community0_gpps),
-+	CNL_COMMUNITY(1, 51, 154, cnlh_community1_gpps),
-+	/*
-+	 * ACPI MMIO resources are returned in reverse order for
-+	 * communities 3 and 4.
-+	 */
-+	CNL_COMMUNITY(3, 155, 248, cnlh_community3_gpps),
-+	CNL_COMMUNITY(2, 249, 298, cnlh_community4_gpps),
-+};
-+
-+static const struct intel_pinctrl_soc_data cnlh_soc_data = {
-+	.pins = cnlh_pins,
-+	.npins = ARRAY_SIZE(cnlh_pins),
-+	.groups = cnlh_groups,
-+	.ngroups = ARRAY_SIZE(cnlh_groups),
-+	.functions = cnlh_functions,
-+	.nfunctions = ARRAY_SIZE(cnlh_functions),
-+	.communities = cnlh_communities,
-+	.ncommunities = ARRAY_SIZE(cnlh_communities),
-+};
-+
- /* Cannon Lake-LP */
- static const struct pinctrl_pin_desc cnllp_pins[] = {
- 	/* GPP_A */
-@@ -403,6 +824,7 @@ static const struct intel_pinctrl_soc_data cnllp_soc_data = {
- };
- 
- static const struct acpi_device_id cnl_pinctrl_acpi_match[] = {
-+	{ "INT3450", (kernel_ulong_t)&cnlh_soc_data },
- 	{ "INT34BB", (kernel_ulong_t)&cnllp_soc_data },
- 	{ },
- };
++MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
++MODULE_DESCRIPTION("Intel Lewisburg pinctrl/GPIO driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.14.1
-
