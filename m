@@ -1,48 +1,32 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Subject: Re: [PATCH v8 0/7] genirq/gpio: Add driver for ThunderX and OCTEON-TX
- SoCs
-Date: Fri, 18 Aug 2017 11:07:24 -0700
-Message-ID: <f663518b-6330-dfc7-1c55-79b4a5de33fe@caviumnetworks.com>
-References: <1503017616-3252-1-git-send-email-david.daney@cavium.com>
- <alpine.DEB.2.20.1708181123330.1929@nanos>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v3 07/10] dt-bindings: add compatible string for Allwinner
+ R40 CCU
+Date: Sat, 19 Aug 2017 16:17:23 +0800
+Message-ID: <CAGb2v65CdqK1JZWwQAby5VRaLYMFYPttLcwb9XaRJ6_PMrPEjQ@mail.gmail.com>
+References: <20170527102308.1988-1-icenowy@aosc.io> <20170527102308.1988-8-icenowy@aosc.io>
+ <CAGb2v65174+qJTyReMH7ov0NWvp+f6YC3+ovPVZghw9tsokmZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0053.outbound.protection.outlook.com ([104.47.37.53]:28768
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750944AbdHRSHa (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 18 Aug 2017 14:07:30 -0400
-In-Reply-To: <alpine.DEB.2.20.1708181123330.1929@nanos>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAGb2v65174+qJTyReMH7ov0NWvp+f6YC3+ovPVZghw9tsokmZw@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Maxime Ripard <maxime.ripard@free-electrons.com>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, David Daney <david.daney@cavium.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/18/2017 02:24 AM, Thomas Gleixner wrote:
-> On Thu, 17 Aug 2017, David Daney wrote:
-> 
->> The ThunderX/OCTEON-TX GPIO hardware looks like a PCIe device, with
->> the interrupt signal from each GPIO line being routed to a dedicated
->> MSI-X.  This interrupt routing requires that we add some custom
->> processing to the beginning of the MSI-X irqdomain hierarchy.
-> 
-> I merged the irq core patches into
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/for-gpio
-> 
-> This branch can be pulled into the GPIO tree to avoid pull request
-> dependencies.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
+On Sun, May 28, 2017 at 11:09 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Sat, May 27, 2017 at 6:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> Allwinner R40 has a clock controlling unit like the ones on other
+>> Allwinner SoCs after sun6i, and can also use a CCU-based driver.
+>>
+>> Add a compatible string for it.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-Thanks everybody for helping me work through the challenges of preparing 
-this patch set.  Touching multiple subsystems under the stewardship of 
-multiple maintainers can be difficult, but I think this worked out well.
+Fixed the conflict and applied for 4.14. Next time please include this when you
+send the driver patches.
 
-David Daney
+ChenYu
