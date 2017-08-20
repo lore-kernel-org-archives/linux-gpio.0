@@ -1,31 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 0/3] simulated interrupts
-Date: Mon, 21 Aug 2017 00:11:41 +0200
-Message-ID: <CACRpkdaF+iZjYQn0t7OKStgaaaSTEPkmQmhTQCh2zwvgvCxXwA@mail.gmail.com>
-References: <20170814145318.6495-1-brgl@bgdev.pl> <alpine.DEB.2.20.1708161642270.1987@nanos>
+Subject: Re: [PATCH v3 3/3] gpio: mockup: use irq_sim
+Date: Mon, 21 Aug 2017 00:13:23 +0200
+Message-ID: <CACRpkdbjmdHKQkSoTX54DKfB6zQmvTWkKp4-bV-RAmP9OYz0kg@mail.gmail.com>
+References: <20170814112056.3751-1-brgl@bgdev.pl> <20170814112056.3751-4-brgl@bgdev.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36104 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753344AbdHTWLm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Aug 2017 18:11:42 -0400
-Received: by mail-oi0-f51.google.com with SMTP id g131so138588529oic.3
-        for <linux-gpio@vger.kernel.org>; Sun, 20 Aug 2017 15:11:42 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.20.1708161642270.1987@nanos>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20170814112056.3751-4-brgl@bgdev.pl>
+Sender: linux-doc-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Marc Zyngier <marc.zyngier@arm.com>, Jonathan Corbet <corbet@lwn.net>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 
-On Wed, Aug 16, 2017 at 4:44 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+On Mon, Aug 14, 2017 at 1:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> I merged the irq part (1+2) into a separate branch, which can be consumed
-> by the gpio folks so the mockup driver patch can be merged as well.
+> Shrink the driver by removing the code dealing with dummy interrupts
+> and replacing it with calls to the irq_sim API.
 >
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/for-gpio
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Awesome, thanks Thomas. I pulled this into the GPIO devel branch.
+I applied this to the GPIO tree after pulling the infrastructure
+from Thomas branch.
 
 Yours,
 Linus Walleij
