@@ -1,38 +1,32 @@
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] gpio: zevio: make gpio_chip const
-Date: Sun, 20 Aug 2017 23:57:46 +0530
-Message-ID: <1503253666-29088-1-git-send-email-bhumirks@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34489 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753176AbdHTS1z (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Aug 2017 14:27:55 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/6] gpio: use devres for irq generic chip
+Date: Sun, 20 Aug 2017 23:56:51 +0200
+Message-ID: <CACRpkdZ+gKigSJa2GC7Q4LhCXrvmYzchE1SpoU8xbFzXHd+a9w@mail.gmail.com>
+References: <20170802075126.17637-1-brgl@bgdev.pl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170802075126.17637-1-brgl@bgdev.pl>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: julia.lawall@lip6.fr, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
 
-Make this const as it is only used as a copy operation.
-Done using Coccinelle.
+On Wed, Aug 2, 2017 at 9:51 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/gpio/gpio-zevio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> We now provide resource managed versions of irq_alloc_generic_chip()
+> and irq_setup_generic_chip(). Use them in all relevant gpio drivers.
+>
+> Bartosz Golaszewski (6):
+>   gpio: sta2x11: use devres for irq generic chip
+>   gpio: ml-ioh: use devres for irq generic chip
+>   gpio: pch: use devres for irq generic chip
+>   gpio: mxc: use devres for irq generic chip
+>   gpio: mxs: use devres for irq generic chip
+>   gpio: sodaville: use devres for irq generic chip
 
-diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
-index e23ef7b..3926ce9 100644
---- a/drivers/gpio/gpio-zevio.c
-+++ b/drivers/gpio/gpio-zevio.c
-@@ -156,7 +156,7 @@ static int zevio_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
- 	return -ENXIO;
- }
- 
--static struct gpio_chip zevio_gpio_chip = {
-+static const struct gpio_chip zevio_gpio_chip = {
- 	.direction_input	= zevio_gpio_direction_input,
- 	.direction_output	= zevio_gpio_direction_output,
- 	.set			= zevio_gpio_set,
--- 
-1.9.1
+I applied all of these. Sorry for being flimsy
+about them.
 
+Yours,
+Linus Walleij
