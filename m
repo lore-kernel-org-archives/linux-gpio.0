@@ -1,42 +1,38 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v8 0/7] genirq/gpio: Add driver for ThunderX and OCTEON-TX
- SoCs
-Date: Sun, 20 Aug 2017 11:36:41 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1708201135080.6785@nanos>
-References: <1503017616-3252-1-git-send-email-david.daney@cavium.com> <alpine.DEB.2.20.1708181123330.1929@nanos> <f663518b-6330-dfc7-1c55-79b4a5de33fe@caviumnetworks.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] gpio: zevio: make gpio_chip const
+Date: Sun, 20 Aug 2017 23:57:46 +0530
+Message-ID: <1503253666-29088-1-git-send-email-bhumirks@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:46982 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbdHTJhb (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Aug 2017 05:37:31 -0400
-In-Reply-To: <f663518b-6330-dfc7-1c55-79b4a5de33fe@caviumnetworks.com>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34489 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753176AbdHTS1z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 20 Aug 2017 14:27:55 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <ddaney@caviumnetworks.com>
-Cc: David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: julia.lawall@lip6.fr, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 
-On Fri, 18 Aug 2017, David Daney wrote:
-> On 08/18/2017 02:24 AM, Thomas Gleixner wrote:
-> > On Thu, 17 Aug 2017, David Daney wrote:
-> > 
-> > > The ThunderX/OCTEON-TX GPIO hardware looks like a PCIe device, with
-> > > the interrupt signal from each GPIO line being routed to a dedicated
-> > > MSI-X.  This interrupt routing requires that we add some custom
-> > > processing to the beginning of the MSI-X irqdomain hierarchy.
-> > 
-> > I merged the irq core patches into
-> > 
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/for-gpio
-> > 
-> > This branch can be pulled into the GPIO tree to avoid pull request
-> > dependencies.
-> 
-> Thanks everybody for helping me work through the challenges of preparing this
-> patch set.  Touching multiple subsystems under the stewardship of multiple
-> maintainers can be difficult, but I think this worked out well.
+Make this const as it is only used as a copy operation.
+Done using Coccinelle.
 
-Thanks for your patience and the excellent work!
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/gpio/gpio-zevio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-       tglx
+diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+index e23ef7b..3926ce9 100644
+--- a/drivers/gpio/gpio-zevio.c
++++ b/drivers/gpio/gpio-zevio.c
+@@ -156,7 +156,7 @@ static int zevio_gpio_to_irq(struct gpio_chip *chip, unsigned pin)
+ 	return -ENXIO;
+ }
+ 
+-static struct gpio_chip zevio_gpio_chip = {
++static const struct gpio_chip zevio_gpio_chip = {
+ 	.direction_input	= zevio_gpio_direction_input,
+ 	.direction_output	= zevio_gpio_direction_output,
+ 	.set			= zevio_gpio_set,
+-- 
+1.9.1
+
