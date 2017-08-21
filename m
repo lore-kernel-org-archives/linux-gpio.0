@@ -1,38 +1,61 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 1/3] gliolib: request the gpio before querying its
- direction
-Date: Mon, 21 Aug 2017 16:23:50 -0500
-Message-ID: <103341c8-6cc5-3d3f-eef7-28b9f31cdc71@codeaurora.org>
-References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
- <1501179565-26466-2-git-send-email-timur@codeaurora.org>
- <CACRpkdYPBd4ZvuXo__LRQezTQD3u=3r2WO+2dTzBanLL1zX72w@mail.gmail.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v5 0/3] TPS68470 PMIC drivers
+Date: Mon, 21 Aug 2017 22:58:27 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A5972FA69A3@FMSMSX114.amr.corp.intel.com>
+References: <1500648378-10294-1-git-send-email-rajmohan.mani@intel.com>
+ <3425487.LgIRMVflim@aspire.rjw.lan>
+ <CAHp75VdtEh8MAFjQN2LWVFbJj7_bPrhjo77SEsCYVmuOCWvOfQ@mail.gmail.com>
+ <2076994.J7nKrPWSDx@aspire.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49012 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753983AbdHUVXw (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Aug 2017 17:23:52 -0400
-In-Reply-To: <CACRpkdYPBd4ZvuXo__LRQezTQD3u=3r2WO+2dTzBanLL1zX72w@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <2076994.J7nKrPWSDx@aspire.rjw.lan>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 07/31/2017 08:35 AM, Linus Walleij wrote:
->> Before querying a GPIO to determine its direction, the GPIO should be
->> formally requested.  This allows the GPIO driver to block access to
->> unavailable GPIOs, which makes it easier for some drivers to support
->> sparse GPIO maps.
->>
->> Signed-off-by: Timur Tabi<timur@codeaurora.org>
-> This makes all kind of semantic change, so patch applied.
+Hi Andy,
 
-Have you push it to git.kernel.org?  I don't see it.
+> > >> > This is the patch series for TPS68470 PMIC that works as a camera PMIC.
+> > >> >
+> > >> > The patch series provide the following 3 drivers, to help configure the
+> voltage regulators, clocks and GPIOs provided by the TPS68470 PMIC, to be
+> able to use the camera sensors connected to this PMIC.
+> > >> >
+> > >> > TPS68470 MFD driver:
+> > >> > This is the multi function driver that initializes the TPS68470 PMIC and
+> supports the GPIO and Op Region functions.
+> > >> >
+> > >> > TPS68470 GPIO driver:
+> > >> > This is the PMIC GPIO driver that will be used by the OS GPIO layer,
+> when the BIOS / firmware triggered GPIO access is done.
+> > >> >
+> > >> > TPS68470 Op Region driver:
+> > >> > This is the driver that will be invoked, when the BIOS / firmware
+> configures the voltage / clock for the sensors / vcm devices connected to the
+> PMIC.
+> > >> >
+> > >>
+> > >> All three patches are good to me (we did few rounds of internal
+> > >> review before posting v4)
+> > >>
+> > >> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > >
+> > > OK, so how should they be routed?
+> >
+> > Good question. I don't know how last time PMIC drivers were merged,
+> > here I think is just sane to route vi MFD with immutable branch
+> > created.
+> 
+> OK
+> 
+> I will assume that the series will go in through MFD then.
+> 
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Now that the MFD and GPIO patches of v6 of this series have been applied on respective trees, can you advise the next steps for the ACPI / PMIC Opregion driver?
+
+Thanks
+Raj
