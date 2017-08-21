@@ -1,57 +1,100 @@
-From: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH 0/4] GPIO driver for Maxim MAX3191x
+From: Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH 1/4] bitops: Introduce assign_bit()
 Date: Mon, 21 Aug 2017 15:12:00 +0200
-Message-ID: <cover.1503319573.git.lukas@wunner.de>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>, Phil Elwell <phil-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Bart Van Assche <bart.vanassche-Sjgp3cTcYWE@public.gmane.org>, Alasdair Kergon <agk-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Message-ID: <5487a5f7d1a4be1bb13e7d1f392281d18c0e935e.1503319573.git.lukas@wunner.de>
+References: <cover.1503319573.git.lukas@wunner.de>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout3.hostsharing.net ([176.9.242.54]:37017 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753110AbdHUNMW (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Aug 2017 09:12:22 -0400
+In-Reply-To: <cover.1503319573.git.lukas@wunner.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
 
-GPIO driver for Maxim MAX31910, MAX31911, MAX31912, MAX31913,
-MAX31953 and MAX31963 industrial serializer, a daisy-chainable
-chip to make 8 digital 24V inputs available via SPI.  Supports
-CRC checksums to guard against electromagnetic interference,
-as well as undervoltage and overtemperature detection.
+A common idiom is to assign a value to a bit with:
 
-The chip is used by the "Revolution Pi" family of open source PLCs
-based on the Raspberry Pi (https://revolution.kunbus.com/).
+    if (value)
+        set_bit(nr, addr);
+    else
+        clear_bit(nr, addr);
 
-In a typical SCADA system, all input signals are read periodically,
-say, every 5 or 10 ms, and stored in a so-called "process image".
-To make this perform well with serializers, add a ->get_multiple
-callback to struct gpio_chip, add corresponding consumer functions
-and wire it up with linehandle_ioctl().
+Likewise common is the one-line expression variant:
 
-Thanks,
+    value ? set_bit(nr, addr) : clear_bit(nr, addr);
 
-Lukas
+Commit 9a8ac3ae682e ("dm mpath: cleanup QUEUE_IF_NO_PATH bit
+manipulation by introducing assign_bit()") introduced assign_bit()
+to the md subsystem for brevity.
 
+Make it available to others, in particular gpiolib and the upcoming
+driver for Maxim MAX3191x industrial serializer chips.
 
-Lukas Wunner (4):
-  bitops: Introduce assign_bit()
-  gpio: Introduce ->get_multiple callback
-  dt-bindings: gpio: max3191x: Document new driver
-  gpio: Add driver for Maxim MAX3191x industrial serializer
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+---
+ drivers/md/dm-mpath.c  |  8 --------
+ include/linux/bitops.h | 24 ++++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 8 deletions(-)
 
- .../devicetree/bindings/gpio/gpio-max3191x.txt     |  37 ++
- drivers/gpio/Kconfig                               |  10 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-max3191x.c                       | 482 +++++++++++++++++++++
- drivers/gpio/gpiolib.c                             | 181 +++++++-
- drivers/gpio/gpiolib.h                             |   4 +
- drivers/md/dm-mpath.c                              |   8 -
- include/linux/bitops.h                             |  24 +
- include/linux/gpio/consumer.h                      |  44 ++
- include/linux/gpio/driver.h                        |   5 +
- 10 files changed, 777 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
- create mode 100644 drivers/gpio/gpio-max3191x.c
-
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index 0e8ab5bb3575..c79c113b7e7d 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -638,14 +638,6 @@ static void process_queued_bios(struct work_struct *work)
+ 	blk_finish_plug(&plug);
+ }
+ 
+-static void assign_bit(bool value, long nr, unsigned long *addr)
+-{
+-	if (value)
+-		set_bit(nr, addr);
+-	else
+-		clear_bit(nr, addr);
+-}
+-
+ /*
+  * If we run out of usable paths, should we queue I/O or error it?
+  */
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index a83c822c35c2..097af36887c0 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -226,6 +226,30 @@ static inline unsigned long __ffs64(u64 word)
+ 	return __ffs((unsigned long)word);
+ }
+ 
++/**
++ * assign_bit - Assign value to a bit in memory
++ * @value: the value to assign
++ * @nr: the bit to set
++ * @addr: the address to start counting from
++ */
++static __always_inline void assign_bit(bool value, long nr,
++				       volatile unsigned long *addr)
++{
++	if (value)
++		set_bit(nr, addr);
++	else
++		clear_bit(nr, addr);
++}
++
++static __always_inline void __assign_bit(bool value, long nr,
++					 volatile unsigned long *addr)
++{
++	if (value)
++		__set_bit(nr, addr);
++	else
++		__clear_bit(nr, addr);
++}
++
+ #ifdef __KERNEL__
+ 
+ #ifndef set_mask_bits
 -- 
 2.11.0
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
