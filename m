@@ -1,45 +1,57 @@
-From: Rachel Sanders <reccruitmenttrrsrllp@gmail.com>
-Subject: QJDND
-Date: Mon, 21 Aug 2017 12:19:48 +0100
-Message-ID: <CAC6TXgGiuDMsNxKNPN2L9ZUzAkqva3B2BhuHScLhDXj4vc7wPg@mail.gmail.com>
-Reply-To: recruitmentstafingsolutionllp@gmail.com
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="f403045cf5b422aafe055741a8d5"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38616 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753518AbdHULTt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 21 Aug 2017 07:19:49 -0400
-Received: by mail-wr0-f194.google.com with SMTP id k10so4462271wre.5
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Aug 2017 04:19:49 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH 0/4] GPIO driver for Maxim MAX3191x
+Date: Mon, 21 Aug 2017 15:12:00 +0200
+Message-ID: <cover.1503319573.git.lukas@wunner.de>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>, Phil Elwell <phil-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Bart Van Assche <bart.vanassche-Sjgp3cTcYWE@public.gmane.org>, Alasdair Kergon <agk-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Mike Snitzer <snitzer-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
---f403045cf5b422aafe055741a8d5
-Content-Type: text/plain; charset="UTF-8"
+GPIO driver for Maxim MAX31910, MAX31911, MAX31912, MAX31913,
+MAX31953 and MAX31963 industrial serializer, a daisy-chainable
+chip to make 8 digital 24V inputs available via SPI.  Supports
+CRC checksums to guard against electromagnetic interference,
+as well as undervoltage and overtemperature detection.
+
+The chip is used by the "Revolution Pi" family of open source PLCs
+based on the Raspberry Pi (https://revolution.kunbus.com/).
+
+In a typical SCADA system, all input signals are read periodically,
+say, every 5 or 10 ms, and stored in a so-called "process image".
+To make this perform well with serializers, add a ->get_multiple
+callback to struct gpio_chip, add corresponding consumer functions
+and wire it up with linehandle_ioctl().
+
+Thanks,
+
+Lukas
 
 
+Lukas Wunner (4):
+  bitops: Introduce assign_bit()
+  gpio: Introduce ->get_multiple callback
+  dt-bindings: gpio: max3191x: Document new driver
+  gpio: Add driver for Maxim MAX3191x industrial serializer
 
---f403045cf5b422aafe055741a8d5
-Content-Type: text/plain; charset="US-ASCII"; name="Help.txt"
-Content-Disposition: attachment; filename="Help.txt"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: file0
+ .../devicetree/bindings/gpio/gpio-max3191x.txt     |  37 ++
+ drivers/gpio/Kconfig                               |  10 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max3191x.c                       | 482 +++++++++++++++++++++
+ drivers/gpio/gpiolib.c                             | 181 +++++++-
+ drivers/gpio/gpiolib.h                             |   4 +
+ drivers/md/dm-mpath.c                              |   8 -
+ include/linux/bitops.h                             |  24 +
+ include/linux/gpio/consumer.h                      |  44 ++
+ include/linux/gpio/driver.h                        |   5 +
+ 10 files changed, 777 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
+ create mode 100644 drivers/gpio/gpio-max3191x.c
 
-SGVsbG8sDQoNCk15IG5hbWUgaXMgUmFjaGVsIFNhbmRlcnMuIEkgYW0gYSByZWNydWl0bWVudCBj
-b25zdWx0YW50IGF0IFJlY3J1aXRtZW50IFN0YWZmaW5nIFNvbHV0aW9ucyBMTFAuIFdlIGFyZSBy
-ZWNydWl0aW5nIHN0YWZmcyBvbiBiZWhhbGYgb2Ygb3VyIGNsaWVudCBsb2NhdGVkIGluIHRoZSBV
-bml0ZWQgS2luZ2RvbSBvbiBhIGRpcmVjdCBoaXJlIGJhc2lzLg0KDQpJIGhhdmUgY2hlY2tlZCB5
-b3VyIHByb2ZpbGUgZnJvbSBMaW5rZWRJbiBhbmQgSSB3aXNoIHRvIGludml0ZSB5b3UgdG8gYXBw
-bHkgZm9yIHRoZSBvbmdvaW5nIGpvYiB2YWNhbmN5IHJlbGF0ZWQgdG8geW91ciBleHBlcmllbmNl
-LiBLaW5kbHksIGNvbnRhY3QgbWUgZm9yIHRoZSBkZXRhaWxzIG9mIHRoZSBvbmdvaW5nIHZhY2Fu
-Y3kgaWYgeW91IGFyZSBpbnRlcmVzdGVkIGluIHdvcmtpbmcgYXQgdGhlaXIgZmFjaWxpdHkgaW4g
-VUsuIFBsZWFzZSwgaW5jbHVkZSBjb3B5IG9mIHlvdXIgbW9zdCByZWNlbnQgQ1Ygd2hlbiB5b3Ug
-cmVwbHkuIFlvdSBzaG91bGQgc3VibWl0IHlvdXIgQ1YgdG8gdGhpcyBlLW1haWwgYWRkcmVzczog
-cmVjcnVpdG1lbnRzdGFmaW5nc29sdXRpb25sbHBAZ21haWwuY29tDQoNClNpbmNlcmVseSwNCg0K
-UmFjaGVsIFNhbmRlcnMNClJlY3J1aXRtZW50IENvbnN1bHRhbnQNClJlY3J1aXRtZW50IFN0YWZm
-aW5nIFNvbHV0aW9ucyBMTFANClRoZSBBc3BlbiBCdWlsZGluZywgDQpWYW50YWdlIFBvaW50IEJ1
-c2luZXNzIFZpbGxhZ2UsIE1pdGNoZWxkZWFuLCANCkdsb3VjZXN0ZXJzaGlyZSwgR0wxNyAwREQN
-CkNvbXBhbnkgTm86IE9DMzUyMTU2DQpFbWFpbDogcmVjcnVpdG1lbnRzdGFmaW5nc29sdXRpb25s
-bHBAZ21haWwuY29t
---f403045cf5b422aafe055741a8d5--
+-- 
+2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
