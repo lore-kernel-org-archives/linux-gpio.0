@@ -1,35 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.14
-Date: Tue, 22 Aug 2017 15:33:08 +0200
-Message-ID: <CACRpkdaX6QdvmRoSkH4MOYqU-JD_tUumK3cu8oVaf7Z=DtNs2Q@mail.gmail.com>
-References: <1502962235-4877-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH ] gpio: rcar: Add r8a7745 (RZ/G1E) support
+Date: Tue, 22 Aug 2017 15:39:57 +0200
+Message-ID: <CACRpkdZzQfe-Mdv0hnf_rTHh0KwX9QrKOUUd0tam_DndkCTy5A@mail.gmail.com>
+References: <1502881936-39357-1-git-send-email-biju.das@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1502962235-4877-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1502881936-39357-1-git-send-email-biju.das@bp.renesas.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Chris Paterson <chris.paterson2@renesas.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Aug 17, 2017 at 11:30 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Wed, Aug 16, 2017 at 1:12 PM, Biju Das <biju.das@bp.renesas.com> wrote:
 
->         Hi Linus,
+> Renesas RZ/G1E (R8A7745) SoC GPIO blocks are identical to the R-Car Gen2
+> family. Add support for its GPIO controllers.
 >
-> The following changes since commit 5771a8c08880cdca3bfb4a3fc6d309d6bba20877:
->
->   Linux v4.13-rc1 (2017-07-15 15:22:10 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.14-tag1
->
-> for you to fetch changes up to 56d57391ab6720c4b7bbc0a0cbc079c7b7d653fb:
->
->   pinctrl: sh-pfc: r8a77995: Add voltage switch operations for MMC (2017-08-16 14:26:32 +0200)
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Pulled into my devel branch for v4.14, excellent work as usual!
+Patch applied with the ACKs
 
 Yours,
 Linus Walleij
