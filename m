@@ -1,26 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: add Audio out pin-mux settings
-Date: Tue, 22 Aug 2017 14:35:38 +0200
-Message-ID: <CACRpkdZA_GpoAaHZQtzb6BHSgqCgHfMCqWQNe=nHaCs8oyKNWQ@mail.gmail.com>
-References: <20170809131614.31478-1-suzuki.katsuhiro@socionext.com>
+Subject: Re: [PATCH 00/17] constify pinconf_ops, pinctrl_ops, and pinmux_ops structures
+Date: Tue, 22 Aug 2017 14:43:49 +0200
+Message-ID: <CACRpkdZA_Nff+5Gk9wexoroX2=-tMzNJFVQbWmV8nhWooEwWbA@mail.gmail.com>
+References: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170809131614.31478-1-suzuki.katsuhiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34618 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932652AbdHVMnu (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Aug 2017 08:43:50 -0400
+Received: by mail-oi0-f51.google.com with SMTP id j144so56282333oib.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Aug 2017 05:43:49 -0700 (PDT)
+In-Reply-To: <1502359589-15970-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-arm-kernel@axis.com, Bhumika Goyal <bhumirks@gmail.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Aug 9, 2017 at 3:16 PM, Katsuhiro Suzuki
-<suzuki.katsuhiro@socionext.com> wrote:
+On Thu, Aug 10, 2017 at 12:06 PM, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
 
-> The UniPhier LD11/20 SoC audio core use following 8 pins:
->   AO1IEC, AO1ARC, AO1DACCK, AO1BCK, AO1LRCK, AO1D[0-2]
+> These structures are only stored in fields of a pinctrl_desc
+> structure that are const. Make the structures const as well.
 >
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Done with the help of Coccinelle.
 
-Patch applied with Masahiro's ACK.
+Thanks Julia, all patches applied with relevant ACKs collected.
 
 Yours,
 Linus Walleij
