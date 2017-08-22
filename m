@@ -1,38 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: sunxi: fix wrong irq_banks number for H5 pinctrl
-Date: Tue, 22 Aug 2017 14:49:10 +0200
-Message-ID: <CACRpkdY9YraRZrfLZ7izmEyBtYsW4F4cxBewRSLznHTm3v9GvA@mail.gmail.com>
-References: <20170811142735.2970-1-icenowy@aosc.io> <20170811142735.2970-2-icenowy@aosc.io>
+Subject: Re: [PATCH v3] pinctrl: aspeed: Fix ast2500 strap register write logic
+Date: Tue, 22 Aug 2017 14:52:30 +0200
+Message-ID: <CACRpkdaXreebGTf_cxrttwmdcRqYfaHx8WrQ64KA+o3AijBYfQ@mail.gmail.com>
+References: <1502814110-90168-1-git-send-email-sdliyong@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34085 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932685AbdHVMtL (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Aug 2017 08:49:11 -0400
-Received: by mail-oi0-f51.google.com with SMTP id j144so56421291oib.1
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Aug 2017 05:49:11 -0700 (PDT)
-In-Reply-To: <20170811142735.2970-2-icenowy@aosc.io>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1502814110-90168-1-git-send-email-sdliyong@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yong Li <sdliyong@gmail.com>
+Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>, Rick Altherr <raltherr@google.com>, Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Fri, Aug 11, 2017 at 4:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+On Tue, Aug 15, 2017 at 6:21 PM, Yong Li <sdliyong@gmail.com> wrote:
 
-> The pin controller of Allwinner H5 has three IRQ banks, however in old
-> versions of drivers and device trees, only two are set, which makes
-> PG bank IRQ not available.
+> On AST2500, the hardware strap register(SCU70) only accepts write =E2=80=
+=981=E2=80=99,
+> to clear it to =E2=80=980=E2=80=99, must set bits(write  =E2=80=981=E2=80=
+=99) to SCU7C
 >
-> If it's directly set to 3, the old device trees will fail to boot.
->
-> Add a workaround (and a warning) for older device trees, and allow new
-> device trees to use correct 3 IRQ banks.
->
-> Fixes: 838adb576d4a ("drivers: pinctrl: add driver for Allwinner H5 SoC")
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Yong Li <sdliyong@gmail.com>
 
-Patch applied with Chen-Yu's ACK.
+Patch applied with Andrew's review/test tags.
 
 Yours,
 Linus Walleij
