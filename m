@@ -1,35 +1,52 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] arm64: dts: mt2712: add pintcrl device node.
-Date: Tue, 22 Aug 2017 15:04:31 +0200
-Message-ID: <CACRpkdZHyXec+L8ueRHOs=9TLT1Arqe3KeQpRZ6D0K1Ag1c+Zw@mail.gmail.com>
-References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
- <1501489333-23145-3-git-send-email-zhiyong.tao@mediatek.com> <2f883a8a-5402-5625-bada-bcfed53c098e@gmail.com>
+Subject: Re: [PATCH v2 3/3] mfd: twl: move header file out of I2C realm
+Date: Tue, 22 Aug 2017 15:06:31 +0200
+Message-ID: <CACRpkdZd1TecLVQA2uPiPM_fWDw1mS2-kpmN06xp=dP4Wh-vYQ@mail.gmail.com>
+References: <20170814163424.2197-1-wsa@the-dreams.de> <20170814163424.2197-4-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2f883a8a-5402-5625-bada-bcfed53c098e@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Zhiyong Tao <zhiyong.tao@mediatek.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, srv_heupstream@mediatek.com, Liguo Zhang <liguo.zhang@mediatek.com>, "Joe.C" <yingjoe.chen@mediatek.com>, hongkun.cao@mediatek.com, Biao Huang <biao.huang@mediatek.com>, YT Shen <yt.shen@mediatek.com>, Hongzhou Yang <hongzhou.yang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:35119 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932729AbdHVNGc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Aug 2017 09:06:32 -0400
+Received: by mail-oi0-f41.google.com with SMTP id r200so48890553oie.2
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Aug 2017 06:06:32 -0700 (PDT)
+In-Reply-To: <20170814163424.2197-4-wsa@the-dreams.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, LINUXWATCHDOG <linux-watchdog@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee.jones@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, Mark Brown <broonie@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>, Daniel Thompson <daniel>
 
-On Mon, Aug 14, 2017 at 5:23 PM, Matthias Brugger
-<matthias.bgg@gmail.com> wrote:
-> On 07/31/2017 10:22 AM, Zhiyong Tao wrote:
->>
->> The commit includes two change:
->> 1)add pintcrl device node for mt2712.
->> 2)add pinfunc file for mt2712.
->>
->> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
->> ---
->>   arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h | 1014
->> +++++++++++++++++++++++++
->
->
-> Shouldn't this file be in include/dt-bindings/pinctrl?
+On Mon, Aug 14, 2017 at 6:34 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
 
-Only if it is also #included in the driver.
+> include/linux/i2c is not for client devices. Move the header file to a
+> more appropriate location.
+>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> Acked-by: Jonathan Cameron <jic23@kernel.org>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Thierry Reding <thierry.reding@gmail.com>
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> ---
+>
+> Change since V1:
+>
+> * rebased to v4.13-rc5, one change needed (twl4030-adc.h gone, too)
+> * acks added. I think gpio and hwmon acks are missing.
+>   Linus, Guenter, pretty please? :)
+
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+For anything hitting GPIO.
 
 Yours,
 Linus Walleij
