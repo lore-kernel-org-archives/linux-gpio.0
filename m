@@ -1,30 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: aspeed: Fix hardware strap register write logic
-Date: Tue, 22 Aug 2017 14:45:31 +0200
-Message-ID: <CACRpkdb=Hby0fa1hZASBAbUv+U29RWBM-bAJYFsRj9=V281xug@mail.gmail.com>
-References: <1502436472-136063-1-git-send-email-sdliyong@gmail.com>
+Subject: Re: [PATCH] pinctrl: intel: Disable GPIO pin interrupts in suspend
+Date: Tue, 22 Aug 2017 14:47:15 +0200
+Message-ID: <CACRpkdbWnv=DGD90JFdKjk=YAVy_PEMiXjtPLF6VOLoxTpt7Dw@mail.gmail.com>
+References: <1502439824-18733-1-git-send-email-rushikesh.s.kadam@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502436472-136063-1-git-send-email-sdliyong@gmail.com>
+In-Reply-To: <1502439824-18733-1-git-send-email-rushikesh.s.kadam@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yong Li <sdliyong@gmail.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>, Rick Altherr <raltherr@google.com>, Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rajneesh.bhardwaj@intel.com, andy@infradead.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Aug 11, 2017 at 9:27 AM, Yong Li <sdliyong@gmail.com> wrote:
+On Fri, Aug 11, 2017 at 10:23 AM, Rushikesh S Kadam
+<rushikesh.s.kadam@intel.com> wrote:
 
-> The hardware strap register(SCU70) only accepts write =E2=80=981=E2=80=99=
-,
-> to clear it to =E2=80=980=E2=80=99, must set bits(write  =E2=80=981=E2=80=
-=99) to SCU7C
+> The fix prevents unintended wakes from second level GPIO pin interrupts.
 >
-> Signed-off-by: Yong Li <sdliyong@gmail.com>
+> On some Intel Kabylake platforms, it is observed that GPIO pin interrupts
+> can wake the platform from suspend-to-idle, even though the IRQ is not
+> configured as IRQF_NO_SUSPEND or enable_irq_wake().
+>
+> This can cause undesired wakes on Mobile devices such as Laptops and
+> Chromebook devices. For example a headset jack insertion is not a desired
+> wake source on Chromebook devices.
+>
+> The pinctrl-intel (GPIO controller) driver implements a "Shared IRQ" model.
+> All GPIO pin interrupts are OR'ed and mapped to a first level IRQ14 (or
+> IRQ15). The driver registers an irq_chip struct and maps an irq_domain for
+> the GPIO pin interrupts. The IRQ14 handler demuxes and calls the second
+> level IRQ for the respective pin.
+>
+> In the suspend entry flow, at suspend_noirq stage, the kernel disables IRQs
+> that are not marked for wake. The pinctrl-intel driver does not implement a
+> irq_disable()  callback (to take advantage of lazy disabling). The
+> pinctrl-intel GPIO interrupts are not disabled in hardware during suspend
+> entry, and thus are able to wake the SoC out of suspend-to-idle.
+>
+> This patch sets the IRQCHIP_MASK_ON_SUSPEND flag for the GPIO irq_chip, to
+> disable the second level interrupts at suspend_noirq stage via the irq_mask
+> callbacks. The irq_mask callback disables the IRQs in hardware by
+> programming the corresponding GPIO pad registers. Only IRQs that are not
+> marked for wake are disabled.
+>
+> Signed-off-by: Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
 
-I'm waiting for an updated patch addressing Andrew's comment
-(unless there is one in my mailbox, already, I am swamped as
-usual).
+Excellent work, patch applied with the collected ACKs.
 
 Yours,
 Linus Walleij
