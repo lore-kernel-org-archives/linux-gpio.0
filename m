@@ -1,2465 +1,761 @@
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] mfd: Add support for TI LMP92001
-Date: Tue, 22 Aug 2017 15:03:30 +0100
-Message-ID: <20170822150330.00007eeb@huawei.com>
-References: <1503383171-15515-1-git-send-email-s.abhisit@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v3] gpio: uniphier: add UniPhier GPIO controller driver
+Date: Wed, 23 Aug 2017 01:16:41 +0900
+Message-ID: <1503418601-9728-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1503383171-15515-1-git-send-email-s.abhisit@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: s.abhisit@gmail.com
-Cc: lee.jones@linaro.org, pmeerw@pmeerw.net, jacopo@jmondi.org, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, knaack.h@gmx.de, lars@metafoo.de, fabrice.gasnier@st.com, robh@kernel.org, akinobu.mita@gmail.com, marek.vasut+renesas@gmail.com, jacopo+renesas@jmondi.org, mike.looijmans@topic.nl, peda@axentia.se, jeff.dagenais@gmail.com, linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-gpio@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Jassi Brar <jaswinder.singh@linaro.org>, Rob Herring <robh+dt@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "David S. Miller" <davem@davemloft.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, 22 Aug 2017 13:26:11 +0700
-<s.abhisit@gmail.com> wrote:
-
-> From: Abhisit Sangjan <s.abhisit@gmail.com>
-> 
-> TI LMP92001 Analog System Monitor and Controller
-> 
-> 8-bit GPIOs.
-> 12 DACs with 12-bit resolution.
-> The GPIOs and DACs are shared port function with Cy function pin to
-> take control the pin suddenly from external hardware.
-> DAC's referance voltage selectable for Internal/External.
-> 
-> 16 + 1 ADCs with 12-bit resolution.
-> Built-in internal Temperature Sensor on channel 17.
-> Windows Comparator Function is supported on channel 1-3 and 9-11 for
-> monitoring with interrupt signal (pending to implement for interrupt).
-> ADC's referance voltage selectable for Internal/External.
-> 
-> Signed-off-by: Abhisit Sangjan <s.abhisit@gmail.com>
-
-As Lee said, break this up.  I've done a quick read through but much easier
-to parse in smaller parts!
-
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio-lmp920001  |  92 ++++
->  .../devicetree/bindings/gpio/gpio-lmp92001.txt     |  22 +
->  .../bindings/iio/adc/ti-lmp92001-adc.txt           |  21 +
->  .../bindings/iio/dac/ti-lmp92001-dac.txt           |  35 ++
->  drivers/gpio/Kconfig                               |   7 +
->  drivers/gpio/Makefile                              |   1 +
->  drivers/gpio/gpio-lmp92001.c                       | 209 +++++++++
->  drivers/iio/adc/Kconfig                            |  10 +
->  drivers/iio/adc/Makefile                           |   1 +
->  drivers/iio/adc/lmp92001-adc.c                     | 500 +++++++++++++++++++++
->  drivers/iio/dac/Kconfig                            |   9 +
->  drivers/iio/dac/Makefile                           |   1 +
->  drivers/iio/dac/lmp92001-dac.c                     | 390 ++++++++++++++++
->  drivers/mfd/Kconfig                                |  12 +
->  drivers/mfd/Makefile                               |   4 +
->  drivers/mfd/lmp92001-core.c                        | 308 +++++++++++++
->  drivers/mfd/lmp92001-debug.c                       |  67 +++
->  drivers/mfd/lmp92001-i2c.c                         | 215 +++++++++
->  include/linux/mfd/lmp92001/core.h                  | 119 +++++
->  include/linux/mfd/lmp92001/debug.h                 |  28 ++
->  20 files changed, 2051 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-lmp920001
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
->  create mode 100644 drivers/gpio/gpio-lmp92001.c
->  create mode 100644 drivers/iio/adc/lmp92001-adc.c
->  create mode 100644 drivers/iio/dac/lmp92001-dac.c
->  create mode 100644 drivers/mfd/lmp92001-core.c
->  create mode 100644 drivers/mfd/lmp92001-debug.c
->  create mode 100644 drivers/mfd/lmp92001-i2c.c
->  create mode 100644 include/linux/mfd/lmp92001/core.h
->  create mode 100644 include/linux/mfd/lmp92001/debug.h
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-lmp920001 b/Documentation/ABI/testing/sysfs-bus-iio-lmp920001
-> new file mode 100644
-> index 0000000..bd4e733
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-lmp920001
-> @@ -0,0 +1,92 @@
-> +What:           /sys/bus/iio/devices/iio:deviceX/gang
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		Controls the association of analog output channels OUTx with
-> +		asynchronous control inputs Cy for DAC.
-> +                Can be either:
-> +                - "0"
-> +                - "1"
-> +
-> +			Cy to OUTx Assignment
-> +		----------------------------------
-> +		| Cy | CDAC:GANG=0 | CDAC:GANG=1 |
-> +		----------------------------------
-> +		| C1 | OUT[1:4]    | OUT[1:3]    |
-> +		----------------------------------
-> +		| C2 | OUT[5:6]    | OUT[4:6]    |
-> +		----------------------------------
-> +		| C3 | OUT[7:8]    | OUT[7:9]    |
-> +		----------------------------------
-> +		| C4 | OUT[9:12]   | OUT[10:12]  |
-> +		----------------------------------
-
-Hmm. I'll want to think about this one.  It probably wants a more
-descriptive name.
-> +
-> +What:           /sys/bus/iio/devices/iio:deviceX/outx
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		The pin output mode for DAC.
-> +                Can be either:
-> +                - "hiz" = High impedance state.
-> +                - "dac" = DAC output.
-> +		- "0" = Drive it to low.
-> +		- "1" = Drive it to high.
-Look at the existing ABI for powerdown modes.  Covers this.
-
-> +
-> +What:           /sys/bus/iio/devices/iio:deviceX/vref
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		This is voltage referance source for DACs.
-> +                Can be either:
-> +                - "external"
-> +                - "internal"
-
-Normal assumption is that if an external reference is provided by
-the hardware (specified in DT of similar) then we want to use it,
-if not fall back to internal.
-
-i.e. I don't think we have ever exposed this to userspace.
-
-> +
-> +What:           /sys/devices/socX/soc/XXXXXXX.aips-bus/XXXXXXX.i2c/i2c-X/X-00XX/lmp92001-adc.X.auto/iio:deviceX/en
-
-Why the insanely long path rather than
-/sys/bus/iio/device/iio:deviceX/en ?
-
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		This is ADC Conversion Enable for each channel.
-> +                Can be either:
-> +                - "enable"
-> +                - "disable"
-
-Current form isn't per channel. Should be covered by buffered mode
-scan_elements or the driver should be able to figure it out based
-on what channel is being read.  Would not expect to see individual
-channel enables for an ADC.
-
-
-> +
-> +What:           /sys/devices/socX/soc/XXXXXXX.aips-bus/XXXXXXX.i2c/i2c-X/X-00XX/lmp92001-adc.X.auto/iio:deviceX/mode
-
-Again, short path please.
-
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		This is conversion mode for all of ADCs.
-> +                Can be either:
-> +                - "continuous" = Continuously conversion all the time.
-> +                - "single-shot" = Once time conversion and stop.
-
-Which of these makes sense is usually possible to figure out from the way the
-driver is being used.  This isn't something we want userspace to have to
-specify.
-
-> +
-> +What:           /sys/devices/socX/soc/XXXXXXX.aips-bus/XXXXXXX.i2c/i2c-X/X-00XX/lmp92001-adc.X.auto/iio:deviceX/vref
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		This is voltage referance source for ADCs.
-> +                Can be either:
-> +                - "external"
-> +                - "internal"
-
-Again, tends to be a hardware platform defined thing rather than
-something it makes sense to expose to userspace.
-
-> +
-> +What:           /sys/devices/socX/soc/XXXXXXX.aips-bus/XXXXXXX.i2c/i2c-X/X-00XX/lmp92001-adc.X.auto/iio:deviceX/events/in_voltageX_thresh_{falling|rising}_en
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		This is ADC's Windows Comparator Function enable for falling and rising.
-> +		Supported channels are 1-3 and 9-11.
-
-This is standard ABI - you don't need to document it.
-
-> +
-> +What:           /sys/devices/socX/soc/XXXXXXX.aips-bus/XXXXXXX.i2c/i2c-X/X-00XX/lmp92001-adc.X.auto/iio:deviceX/events/in_voltageX_thresh_{falling|rising}_value
-> +Date:		August 2016
-> +KernelVersion:  4.1.15
-> +Contact:        Abhisit Sangjan <s.abhisit@gmail.com>
-> +Description:
-> +		This is ADC's Windows Comparator Function value for falling and rising.
-> +		Supported channels are 1-3 and 9-11.
-> +		The possible range is 0 - 2047.
-
-Standard ABI again, no need to document here.
-
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
-> new file mode 100644
-> index 0000000..c68784e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
-> @@ -0,0 +1,22 @@
-> +* Texas Instruments' LMP92001 GPIOs
-> +
-> +Required properties:
-> + - compatible: Must be set to "ti,lmp92001-gpio".
-> + - reg: i2c chip address for the device.
-> + - gpio-controller: Marks the device node as a gpio controller.
-> + - #gpio-cells : Should be two.  The first cell is the pin number and the
-> +  second cell is used to specify the gpio polarity:
-> +        0 = Active high
-> +        1 = Active low
-> +
-> +Example:
-> +lmp92001@20 {
-> +        compatible = "ti,lmp92001";
-> +        reg = <0x20>;
-> +
-> +        lmp92001_gpio: lmp92001-gpio {
-> +                compatible = "ti,lmp92001-gpio";
-> +                gpio-controller;
-> +                #gpio-cells = <2>;
-> +        };
-> +};
-> diff --git a/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
-> new file mode 100644
-> index 0000000..34d7809
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
-> @@ -0,0 +1,21 @@
-> +* Texas Instruments' LMP92001 ADCs
-> +
-> +Required properties:
-> + - compatible: Must be set to "ti,lmp92001-adc".
-> + - reg: i2c chip address for the device.
-> + - ti,lmp92001-adc-mode: adc operation, either continuous or single-shot.
-> + - ti,lmp92001-adc-mask: bit mask for which channel is enable.
-> +        0 = Off
-> +        1 = On
-
-There is a standard IIO syntax for defining which channels are enabled.
-Take a look at other bindings.
-
-There is often some extra stuff to be specified for each channel so a mask
-isn't sufficient.  Hence we use a child node to specify each channel.
-
-> +
-> +Example:
-> +lmp92001@20 {
-> +        compatible = "ti,lmp92001";
-> +        reg = <0x20>;
-> +
-> +        lmp92001-adc {
-> +                compatible = "ti,lmp92001-adc";
-> +                ti,lmp92001-adc-mode = "continuous";
-> +                ti,lmp92001-adc-mask = <0x00000079>;
-
-Would definitely expect to see an external reference specified here..
-
-> +        };
-> +};
-> \ No newline at end of file
-
-Add one please.
-
-> diff --git a/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-> new file mode 100644
-> index 0000000..882db9c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-> @@ -0,0 +1,35 @@
-> +* Texas Instruments' LMP92001 DACs
-> +
-> +Required properties:
-> + - compatible: Must be set to "ti,lmp92001-dac".
-> + - reg: i2c chip address for the device.
-> + - ti,lmp92001-dac-hiz: hi-impedance control,
-> +        1 = Forces all OUT[1:12] outputs to hi-z, 0 = normal
-
-Leave control of this to userspace unless it is a feature controlled
-by the associated circuitry.
-
-> + - ti,lmp92001-dac-outx:
-> +        Cy = 0, 1 = will force associated OUTx outputs to VDD
-> +        Cy = 0, 0 = will force associated OUTx outputs to GND
-> + - ti,lmp92001-dac-gang: What group of Cy is governed to.
-> +        -----------------------------------------
-> +        |  Cy   | CDAC:GANG = 0 | CDAC:GANG = 1 |
-> +        -----------------------------------------
-> +        |  C1   |   OUT[1:4]    |    OUT[1:3]   |
-> +        -----------------------------------------
-> +        |  C2   |   OUT[5:6]    |    OUT[4:6]   |
-> +        -----------------------------------------
-> +        |  C3   |   OUT[7:8]    |    OUT[7:9]   |
-> +        -----------------------------------------
-> +        |  C4   |   OUT[9:12]   |    OUT[10:12] |
-> +        -----------------------------------------
-
-If this is here, then why are we exposing it to userspace?
-Either this is a feature of the hardware or it's not...
-
-> +
-> +Example:
-> +lmp92001@20 {
-> +        compatible = "ti,lmp92001";
-> +        reg = <0x20>;
-> +
-> +        lmp92001-dac {
-> +                compatible = "ti,lmp92001-dac";
-> +                ti,lmp92001-dac-hiz  = /bits/ 8 <0>;
-> +                ti,lmp92001-dac-outx = /bits/ 8 <0>;
-> +                ti,lmp92001-dac-gang = /bits/ 8 <0>;
-> +        };
-> +};
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 461d6fc..5962ea0 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -948,6 +948,13 @@ config GPIO_KEMPLD
->  	  This driver can also be built as a module. If so, the module will be
->  	  called gpio-kempld.
->  
-> +config GPIO_LMP92001
-> +       tristate "LMP92001 GPIOs"
-> +       depends on MFD_LMP92001
-> +       help
-> +         Say yes here to access the GPIO signals of TI LMP92001 Analog System
-> +         Monitor and Controller.
-> +
->  config GPIO_LP3943
->  	tristate "TI/National Semiconductor LP3943 GPIO expander"
->  	depends on MFD_LP3943
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index a9fda6c..560d59c 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -62,6 +62,7 @@ obj-$(CONFIG_GPIO_JANZ_TTL)	+= gpio-janz-ttl.o
->  obj-$(CONFIG_GPIO_KEMPLD)	+= gpio-kempld.o
->  obj-$(CONFIG_ARCH_KS8695)	+= gpio-ks8695.o
->  obj-$(CONFIG_GPIO_INTEL_MID)	+= gpio-intel-mid.o
-> +obj-$(CONFIG_GPIO_LMP92001)	+= gpio-lmp92001.o
->  obj-$(CONFIG_GPIO_LOONGSON)	+= gpio-loongson.o
->  obj-$(CONFIG_GPIO_LP3943)	+= gpio-lp3943.o
->  obj-$(CONFIG_GPIO_LPC18XX)	+= gpio-lpc18xx.o
-> diff --git a/drivers/gpio/gpio-lmp92001.c b/drivers/gpio/gpio-lmp92001.c
-> new file mode 100644
-> index 0000000..b80ba4e
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-lmp92001.c
-> @@ -0,0 +1,209 @@
-> +/*
-> + * gpio-lmp92001.c - Support for TI LMP92001 GPIOs
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-
-Drop this blank line.
-
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +
-> +#include <linux/mfd/lmp92001/core.h>
-> +
-> +#define SGEN_GPI	(1 << 0) /* 1 - if any bit in SGPI is set. */
-> +
-> +struct lmp92001_gpio {
-> +	struct lmp92001 *lmp92001;
-> +	struct gpio_chip gpio_chip;
-> +};
-> +
-> +static int lmp92001_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> +	struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CGPO, &val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return (val >> offset) & BIT(0);
-
-return !!(val & BIT(offset))?
-
-> +}
-> +
-> +static int lmp92001_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> +	struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> +
-> +	return regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, BIT(offset),
-> +					BIT(offset));
-> +}
-> +
-> +static int lmp92001_gpio_get(struct gpio_chip *chip, unsigned offset)
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> +	struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> +	unsigned int val, sgen;
-> +
-> +	/*
-> +	 * Does the GPIO input mode?
-> +	 * Does the GPIO was set?
-> +	 * Reading indicated logic level.
-> +	 * Clear indicated logic level.
-> +	 */
-> +	regmap_read(lmp92001->regmap, LMP92001_CGPO, &val);
-> +	if ((val >> offset) & BIT(0)) {
-> +		regmap_read(lmp92001->regmap, LMP92001_SGEN, &sgen);
-> +		if (sgen & SGEN_GPI) {
-> +			regmap_read(lmp92001->regmap, LMP92001_SGPI, &val);
-> +			regmap_update_bits(lmp92001->regmap, LMP92001_CGPO,
-> +						0xFF, val);
-> +		}
-> +	}
-> +
-> +	return !!(val & BIT(offset));
-
-Consistency!
-
-> +}
-> +
-> +static int lmp92001_gpio_direction_out(struct gpio_chip *chip, unsigned offset,
-> +	int value)
-
-Fix indenting of parameters to align please.
-
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> +	struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> +
-> +	return regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, BIT(offset),
-> +					0 << offset);
-
-shifting 0 does seem a little odd.
-
-> +}
-> +
-> +static void lmp92001_gpio_set(struct gpio_chip *chip, unsigned offset,
-> +	int value)
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> +	struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> +
-> +	regmap_update_bits(lmp92001->regmap, LMP92001_CGPO, BIT(offset),
-> +				value << offset);
-> +}
-> +
-> +#ifdef CONFIG_DEBUG_FS
-> +static void lmp92001_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> +	struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> +	int i, gpio;
-> +	unsigned int cgpo;
-> +	const char *label, *dir, *logic;
-> +
-> +	for (i = 0; i < chip->ngpio; i++) {
-> +		gpio = i + chip->base;
-> +
-> +		label = gpiochip_is_requested(chip, i);
-> +		if (!label)
-> +			continue;
-> +
-> +		regmap_read(lmp92001->regmap, LMP92001_CGPO, &cgpo);
-> +		if ((cgpo>>i) & BIT(0))
-> +			dir = "in";
-> +		else
-> +			dir = "out";
-> +
-> +		if (lmp92001_gpio_get(chip, i))
-> +			logic = "hi";
-> +		else
-> +			logic = "lo";
-> +
-> +		seq_printf(s, " gpio-%-3d (%-20.20s) %-3.3s %-2.2s\n",
-> +				gpio, label, dir, logic);
-> +	}
-> +}
-> +#else
-> +#define lmp92001_gpio_dbg_show NULL
-> +#endif
-> +
-> +static struct gpio_chip lmp92001_gpio_chip = {
-> +	.label			= "lmp92001",
-> +	.owner			= THIS_MODULE,
-> +	.get_direction		= lmp92001_gpio_get_direction,
-> +	.direction_input	= lmp92001_gpio_direction_in,
-> +	.get			= lmp92001_gpio_get,
-> +	.direction_output	= lmp92001_gpio_direction_out,
-> +	.set			= lmp92001_gpio_set,
-> +	.dbg_show		= lmp92001_gpio_dbg_show,
-> +};
-> +
-> +static int lmp92001_gpio_probe(struct platform_device *pdev)
-> +{
-> +	struct lmp92001 *lmp92001 = dev_get_drvdata(pdev->dev.parent);
-> +	struct lmp92001_gpio *lmp92001_gpio;
-> +	int ret;
-> +
-> +	lmp92001_gpio = devm_kzalloc(&pdev->dev, sizeof(*lmp92001_gpio),
-> +					GFP_KERNEL);
-> +	if (!lmp92001_gpio)
-> +		return -ENOMEM;
-> +
-> +	lmp92001_gpio->lmp92001 = lmp92001;
-> +	lmp92001_gpio->gpio_chip = lmp92001_gpio_chip;
-> +	lmp92001_gpio->gpio_chip.ngpio = 8;
-> +	lmp92001_gpio->gpio_chip.parent = &pdev->dev;
-> +	lmp92001_gpio->gpio_chip.base = -1;
-> +
-> +	ret = devm_gpiochip_add_data(&pdev->dev, &lmp92001_gpio->gpio_chip,
-> +					lmp92001_gpio);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, lmp92001_gpio);
-> +
-> +	return ret;
-> +}
-> +
-> +static int lmp92001_gpio_remove(struct platform_device *pdev)
-> +{
-> +	struct lmp92001_gpio *lmp92001_gpio = platform_get_drvdata(pdev);
-> +
-> +	devm_gpiochip_remove(&pdev->dev, &lmp92001_gpio->gpio_chip);
-
-Look up what devm is all about please.  This is not needed - nor is the
-remove at all...
-
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver lmp92001_gpio_driver = {
-> +	.driver.name	= "lmp92001-gpio",
-> +	.probe		= lmp92001_gpio_probe,
-> +	.remove		= lmp92001_gpio_remove,
-> +};
-> +
-> +static int __init lmp92001_gpio_init(void)
-> +{
-> +	return platform_driver_register(&lmp92001_gpio_driver);
-> +}
-> +subsys_initcall(lmp92001_gpio_init);
-
-Do we actually need to do this as a subsys_initcall rather than
-relying on deferred probing?
-
-> +
-> +static void __exit lmp92001_gpio_exit(void)
-> +{
-> +	platform_driver_unregister(&lmp92001_gpio_driver);
-> +}
-> +module_exit(lmp92001_gpio_exit);
-> +
-> +MODULE_AUTHOR("Abhisit Sangjan <s.abhisit@gmail.com>");
-> +MODULE_DESCRIPTION("GPIO interface for TI LMP92001");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:lmp92001-gpio");
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 614fa41..2adeba5 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -331,6 +331,16 @@ config IMX7D_ADC
->  	  This driver can also be built as a module. If so, the module will be
->  	  called imx7d_adc.
->  
-> +config LMP92001_ADC
-> +       tristate "TI LMP92001 ADC Driver"
-> +       depends on MFD_LMP92001
-> +       help
-> +         If you say yes here you get support for TI LMP92001 ADCs
-> +         conversion.
-> +
-> +         This driver can also be built as a module. If so, the module will
-> +         be called lmp92001_adc.
-> +
->  config LP8788_ADC
->  	tristate "LP8788 ADC driver"
->  	depends on MFD_LP8788
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index b546736a..2ed8986 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -31,6 +31,7 @@ obj-$(CONFIG_HI8435) += hi8435.o
->  obj-$(CONFIG_HX711) += hx711.o
->  obj-$(CONFIG_IMX7D_ADC) += imx7d_adc.o
->  obj-$(CONFIG_INA2XX_ADC) += ina2xx-adc.o
-> +obj-$(CONFIG_LMP92001_ADC) += lmp92001-adc.o
->  obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
->  obj-$(CONFIG_LPC18XX_ADC) += lpc18xx_adc.o
->  obj-$(CONFIG_LPC32XX_ADC) += lpc32xx_adc.o
-> diff --git a/drivers/iio/adc/lmp92001-adc.c b/drivers/iio/adc/lmp92001-adc.c
-> new file mode 100644
-> index 0000000..8e64b51
-> --- /dev/null
-> +++ b/drivers/iio/adc/lmp92001-adc.c
-> @@ -0,0 +1,500 @@
-> +/*
-> + * lmp92001-adc.c - Support for TI LMP92001 ADCs
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x and ad5064 drivers.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/iio/iio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <linux/mfd/lmp92001/core.h>
-> +
-> +#define CGEN_STRT	(1 << 0) /* Is continuous conversion all of ADCs? */
-> +#define CGEN_LCK	(1 << 1) /* Is lock the HW register? */
-
-BIT() where appropriate.
-
-> +#define CGEN_RST	(1 << 7) /* Reset all registers. */
-> +
-> +#define CREF_AEXT	(1 << 1) /* 1 - ADC external reference.
-> +				  * 0 - ADC internal reference.
-> +				  */
-
-Just move the comments above rather than doing this - also
-please use standard multiline comment syntax.
-
-> +
-> +static int lmp92001_read_raw(struct iio_dev *indio_dev,
-> +	struct iio_chan_spec const *channel,
-> +	int *val, int *val2,
-> +	long mask)
-
-Align paramaters.
-
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int code, cgen, sgen, try;
-> +	int ret;
-> +
-> +	mutex_lock(&lmp92001->adc_lock);
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CGEN, &cgen);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	/*
-> +	 * Is not continuous conversion?
-> +	 * Lock the HW registers (if needed).
-> +	 * Triggering single-short conversion.
-> +	 * Waiting for conversion successfully.
-> +	 */
-> +	if (!(cgen & CGEN_STRT)) {
-> +		if (!(cgen & CGEN_LCK)) {
-> +			ret = regmap_update_bits(lmp92001->regmap,
-> +					LMP92001_CGEN, CGEN_LCK, CGEN_LCK);
-> +			if (ret < 0)
-> +				goto exit;
-> +		}
-> +
-> +		/* Writing any value to triggered Single-Shot conversion. */
-> +		ret = regmap_write(lmp92001->regmap, LMP92001_CTRIG, 1);
-> +		if (ret < 0)
-> +			goto exit;
-> +
-> +		/* In case of conversion is in-progress, repeat for 10 times. */
-> +		try = 10;
-> +		do {
-> +			ret = regmap_read(lmp92001->regmap,
-> +						LMP92001_SGEN, &sgen);
-> +			if (ret < 0)
-> +				goto exit;
-> +		} while ((sgen & CGEN_RST) && (--try > 0));
-> +
-> +		if (!try) {
-> +			ret = -ETIME;
-> +			goto exit;
-> +		}
-> +	}
-Move this whole block to be single shot only.  Keep continuous for
-triggered buffer usage.
-
-Does this device have a dataready interrupt? Otherwise you'll probably want to
-do buffers with out the trigger and use a thread to monitor this complete
-signal at 2x the expected frequency (so we don't miss any samples).
-
-
-> +
-> +	ret = regmap_read(lmp92001->regmap, 0x1F + channel->channel, &code);
-unlock here.
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		switch (channel->type) {
-> +		case IIO_VOLTAGE:
-> +		case IIO_TEMP:
-> +			*val = code;
-> +			ret = IIO_VAL_INT;
-> +			goto exit;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	/* In case of no match channel info/type is return here. */
-> +	ret = -EINVAL;
-Move this into the default and direct return in the switch statement.
-
-You will need an error handling path still to do the unlock of course.
-
-
-> +
-> +exit:
-> +	mutex_unlock(&lmp92001->adc_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct iio_info lmp92001_info = {
-> +	.read_raw = lmp92001_read_raw,
-> +	.driver_module = THIS_MODULE,
-
-I'll probably clean this up during a merge, but the need
-to set driver_module is going away very soon.
-
-> +};
-> +
-> +static ssize_t lmp92001_avref_read(struct iio_dev *indio_dev,
-> +	uintptr_t private, struct iio_chan_spec const *channel, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cref;
-> +	int ret;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CREF, &cref);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return sprintf(buf, "%s\n", cref & CREF_AEXT ? "external" : "internal");
-> +}
-> +
-> +static ssize_t lmp92001_avref_write(struct iio_dev *indio_dev,
-> +	uintptr_t private, struct iio_chan_spec const *channel,
-> +	const char *buf, size_t len)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cref;
-> +	int ret;
-> +
-> +	if (strncmp("external", buf, 8) == 0)
-> +		cref = 2;
-> +	else if (strncmp("internal", buf, 8) == 0)
-> +		cref = 0;
-> +	else
-> +		return -EINVAL;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CREF, CREF_AEXT,
-> +					cref);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t lmp92001_enable_read(struct iio_dev *indio_dev,
-> +	uintptr_t private, struct iio_chan_spec const *channel, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int reg, cad;
-> +	int ret;
-
-As stated below, do this all by supplying triggered  buffer support.
-For sysfs reads the overhead is huge anyway so just use oneshot.
-It's not a fast path in any sensible userspace code.
-
-> +
-> +	switch (channel->channel) {
-> +	case 1 ... 8:
-> +		reg = LMP92001_CAD1;
-> +		break;
-> +	case 9 ... 16:
-> +		reg = LMP92001_CAD2;
-> +		break;
-> +	case 17:
-> +		reg = LMP92001_CAD3;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = regmap_read(lmp92001->regmap, reg, &cad);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (channel->channel <= 8)
-> +		cad >>= channel->channel - 1;
-> +	else if (channel->channel > 8)
-> +		cad >>= channel->channel - 9;
-> +	else if (channel->channel > 16)
-> +		cad >>= channel->channel - 17;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return sprintf(buf, "%s\n", cad & BIT(0) ? "enable" : "disable");
-> +}
-> +
-> +static ssize_t lmp92001_enable_write(struct iio_dev *indio_dev,
-> +	uintptr_t private, struct iio_chan_spec const *channel,
-> +	const char *buf, size_t len)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int reg, enable, shif, mask;
-> +	int ret;
-> +
-> +	switch (channel->channel) {
-> +	case 1 ... 8:
-> +		reg = LMP92001_CAD1;
-> +		shif = (channel->channel - 1);
-> +		break;
-> +	case 9 ... 16:
-> +		reg = LMP92001_CAD2;
-> +		shif = (channel->channel - 9);
-> +		break;
-> +	case 17:
-> +		reg = LMP92001_CAD3;
-> +		shif = (channel->channel - 17);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (strncmp("enable", buf, 6) == 0)
-> +		enable = 1;
-> +	else if (strncmp("disable", buf, 7) == 0)
-> +		enable = 0;
-> +	else
-> +		return -EINVAL;
-> +
-> +	enable <<= shif;
-> +	mask = 1 << shif;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, reg, mask, enable);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t lmp92001_mode_read(struct iio_dev *indio_dev,
-> +	uintptr_t private, struct iio_chan_spec const *channel, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cgen;
-> +	int ret;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CGEN, &cgen);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return sprintf(buf, "%s\n",
-> +			cgen & BIT(0) ? "continuous" : "single-shot");
-> +}
-> +
-> +static ssize_t lmp92001_mode_write(struct iio_dev *indio_dev,
-> +	uintptr_t private, struct iio_chan_spec const *channel,
-> +	const char *buf, size_t len)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-iio_priv.
-> +	unsigned int cgen;
-> +	int ret;
-> +
-> +	if (strncmp("continuous", buf, 10) == 0)
-> +		cgen = 1;
-> +	else if (strncmp("single-shot", buf, 11) == 0)
-> +		cgen = 0;
-> +	else
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * Unlock the HW registers.
-> +	 * Set conversion mode.
-> +	 * Lock the HW registers.
-> +	 */
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CGEN, CGEN_LCK, 0);
-> +	if (ret < 0)
-> +		return ret;
-I'd suggest a utility function for the unlock, update, lock cycle.
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CGEN, CGEN_STRT,
-> +					cgen);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CGEN, CGEN_LCK,
-> +					CGEN_LCK);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static const struct iio_chan_spec_ext_info lmp92001_ext_info[] = {
-> +	{
-> +		.name = "vref",
-> +		.read = lmp92001_avref_read,
-> +		.write = lmp92001_avref_write,
-> +	.shared = IIO_SHARED_BY_ALL,
-> +	},
-> +	{
-}, { preferred.
-> +		.name = "en",
-> +		.read = lmp92001_enable_read,
-> +		.write = lmp92001_enable_write,
-> +		.shared = IIO_SEPARATE,
-> +	},
-> +	{
-> +		.name = "mode",
-> +		.read = lmp92001_mode_read,
-> +		.write = lmp92001_mode_write,
-> +		.shared = IIO_SHARED_BY_ALL,
-> +	},
-
-As ever with custom ABI, these need a lot of justifying before we'll
-take them.  The result of this stuff is that standard userspace code has
-no idea what to do with this device to make it work.
-
-> +	{ },
-> +};
-> +
-> +static const struct iio_event_spec lmp92001_events[] = {
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_RISING,
-> +		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-> +			BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +	{
-> +		.type = IIO_EV_TYPE_THRESH,
-> +		.dir = IIO_EV_DIR_FALLING,
-> +		.mask_separate = BIT(IIO_EV_INFO_ENABLE) |
-> +			BIT(IIO_EV_INFO_VALUE),
-> +	},
-> +	{ },
-> +};
-> +
-> +#define LMP92001_CHAN_SPEC(_ch, _type, _event, _nevent) \
-> +{ \
-> +	.channel = _ch, \
-> +	.type = _type, \
-> +	.indexed = 1, \
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
-> +	.event_spec = _event, \
-> +	.num_event_specs = _nevent, \
-> +	.ext_info = lmp92001_ext_info, \
-> +}
-> +
-> +static const struct iio_chan_spec lmp92001_adc_channels[] = {
-> +	LMP92001_CHAN_SPEC(1, IIO_VOLTAGE, lmp92001_events,
-> +			ARRAY_SIZE(lmp92001_events)),
-> +	LMP92001_CHAN_SPEC(2, IIO_VOLTAGE, lmp92001_events,
-> +			ARRAY_SIZE(lmp92001_events)),
-> +	LMP92001_CHAN_SPEC(3, IIO_VOLTAGE, lmp92001_events,
-> +			ARRAY_SIZE(lmp92001_events)),
-> +	LMP92001_CHAN_SPEC(4, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(5, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(6, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(7, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(8, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(9, IIO_VOLTAGE, lmp92001_events,
-> +			ARRAY_SIZE(lmp92001_events)),
-> +	LMP92001_CHAN_SPEC(10, IIO_VOLTAGE, lmp92001_events,
-> +			ARRAY_SIZE(lmp92001_events)),
-> +	LMP92001_CHAN_SPEC(11, IIO_VOLTAGE, lmp92001_events,
-> +			ARRAY_SIZE(lmp92001_events)),
-> +	LMP92001_CHAN_SPEC(12, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(13, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(14, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(15, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(16, IIO_VOLTAGE, NULL, 0),
-> +	LMP92001_CHAN_SPEC(17,    IIO_TEMP, NULL, 0),
-> +};
-> +
-> +static int lmp92001_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct lmp92001 *lmp92001 = dev_get_drvdata(pdev->dev.parent);
-> +	struct iio_dev *indio_dev;
-> +	struct device_node *np = pdev->dev.of_node;
-> +	const char *conversion;
-> +	unsigned int cgen = 0, cad1, cad2, cad3;
-> +	u32 mask;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*lmp92001));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&lmp92001->adc_lock);
-> +
-> +	iio_device_set_drvdata(indio_dev, lmp92001);
-
-Why?  You can always get the lmp92001 from iio_priv(indio_dev)
-
-> +
-> +	indio_dev->name = pdev->name;
-> +	indio_dev->dev.parent = &pdev->dev;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &lmp92001_info;
-> +	indio_dev->channels = lmp92001_adc_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(lmp92001_adc_channels);
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CGEN,
-> +					CGEN_RST, CGEN_RST);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to self reset all registers\n");
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Turn on all of them, if you are pretty sure they are must be
-> +	 * real-time update or specify which channel is needed to be used to
-> +	 * save conversion time for a cycle.
-> +	 */
-> +	ret = of_property_read_u32(np, "ti,lmp92001-adc-mask", &mask);
-> +	if (ret < 0) {
-> +		cad1 = cad2 = cad3 = 0xFF;
-> +		dev_info(&pdev->dev, "turn on all of channels by default\n");
-> +	} else {
-> +		cad1 = mask & 0xFF;
-> +		cad2 = (mask >> 8) & 0xFF;
-> +		cad3 = (mask >> 16) & 0xFF;
-> +	}
-
-If you need these efficiencies, use the buffered mode interface of IIO and
-switch into continuous mode with just the right channels.  For single reads
-use oneshot.
-
-This will then all be handled in the update_scan_mask callback.
-
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CAD1, 0xFF, cad1);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to enable/disable channels 1-8\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CAD2, 0xFF, cad2);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to enable/disable channels 9-16\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CAD3, BIT(0), cad3);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev,
-> +			"failed to enable/disable channel 17 (temperature)\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = of_property_read_string_index(np, "ti,lmp92001-adc-mode", 0,
-> +						&conversion);
-> +	if (!ret) {
-> +		if (strncmp("continuous", conversion, 10) == 0) {
-> +			cgen |= 1;
-> +		} else if (strncmp("single-shot", conversion, 11) == 0) {
-> +			/* Okay */
-> +		} else {
-> +			dev_warn(&pdev->dev,
-> +			"wrong adc mode! set to single-short conversion\n");
-> +		}
-> +	} else
-> +		dev_info(&pdev->dev,
-> +			"single-short conversion was chosen by default\n");
-> +
-> +	/* Lock the HW registers and set conversion mode. */
-> +	ret = regmap_update_bits(lmp92001->regmap,
-> +					LMP92001_CGEN, CGEN_LCK | CGEN_STRT,
-> +					cgen | CGEN_LCK);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-> +
-> +	return devm_iio_device_register(&pdev->dev, indio_dev);
-
-Can't do this as you need to unwind some setup. Do it with iio_device_register
-and manually unwind in remove.
-
-> +}
-> +
-> +static int lmp92001_adc_remove(struct platform_device *pdev)
-> +{
-> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +
-> +	/*
-> +	 * To stop ADC conversion to save power
-> +	 *
-> +	 * Unlock the HW registers.
-> +	 * Set conversion mode to single-shot.
-> +	 * Lock the HW registers.
-> +	 */
-> +	regmap_update_bits(lmp92001->regmap, LMP92001_CGEN, CGEN_LCK, 0);
-> +	regmap_update_bits(lmp92001->regmap, LMP92001_CGEN, CGEN_STRT, 0);
-> +	regmap_update_bits(lmp92001->regmap, LMP92001_CGEN, CGEN_LCK, CGEN_LCK);
-> +
-> +	devm_iio_device_unregister(&pdev->dev, indio_dev);
-
-Again, look up what devm does.   You can't use it here though as when used
-correctly it will result in remove not being the reverse order of probe.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver lmp92001_adc_driver = {
-> +	.driver.name	= "lmp92001-adc",
-> +	.probe		= lmp92001_adc_probe,
-> +	.remove		= lmp92001_adc_remove,
-> +};
-> +
-> +static int __init lmp92001_adc_init(void)
-> +{
-> +	return platform_driver_register(&lmp92001_adc_driver);
-> +}
-> +subsys_initcall(lmp92001_adc_init);
-Why?  
-> +
-> +static void __exit lmp92001_adc_exit(void)
-> +{
-> +	platform_driver_unregister(&lmp92001_adc_driver);
-> +}
-> +module_exit(lmp92001_adc_exit);
-
-use the magic platform macros to drop this boiler plate unless
-you have a good reason for the subsys_initcall.
-> +
-> +MODULE_AUTHOR("Abhisit Sangjan <s.abhisit@gmail.com>");
-> +MODULE_DESCRIPTION("IIO ADC interface for TI LMP92001");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:lmp92001-adc");
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index 25bed2d..3e0d816 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -221,6 +221,15 @@ config DPOT_DAC
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called dpot-dac.
->  
-> +config LMP92001_DAC
-> +        tristate "TI LMP92001 DAC Driver"
-> +        depends on MFD_LMP92001
-> +        help
-> +          If you say yes here you get support for TI LMP92001 DACs.
-> +
-> +          This driver can also be built as a module. If so, the module will
-> +          be called lmp92001_dac.
-> +
->  config LPC18XX_DAC
->  	tristate "NXP LPC18xx DAC driver"
->  	depends on ARCH_LPC18XX || COMPILE_TEST
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index 603587c..516d2be 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -23,6 +23,7 @@ obj-$(CONFIG_AD7303) += ad7303.o
->  obj-$(CONFIG_AD8801) += ad8801.o
->  obj-$(CONFIG_CIO_DAC) += cio-dac.o
->  obj-$(CONFIG_DPOT_DAC) += dpot-dac.o
-> +obj-$(CONFIG_LMP92001_DAC) += lmp92001-dac.o
->  obj-$(CONFIG_LPC18XX_DAC) += lpc18xx_dac.o
->  obj-$(CONFIG_LTC2632) += ltc2632.o
->  obj-$(CONFIG_M62332) += m62332.o
-> diff --git a/drivers/iio/dac/lmp92001-dac.c b/drivers/iio/dac/lmp92001-dac.c
-> new file mode 100644
-> index 0000000..8ea981b
-> --- /dev/null
-> +++ b/drivers/iio/dac/lmp92001-dac.c
-> @@ -0,0 +1,390 @@
-> +/*
-> + * lmp92001-dac.c - Support for TI LMP92001 DACs
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-
-Lots of comments would be about the ABI but we've already covered that above.
-
-> +
-> +#include <linux/iio/iio.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <linux/mfd/lmp92001/core.h>
-> +
-> +#define CREF_DEXT	(1 << 0) /* 1 - DAC external reference.
-> +				  * 0 - DAC internal reference.
-> +				  */
-> +#define CDAC_OFF	(1 << 0) /* 1 - Forces all outputs to high impedance. */
-> +#define CDAC_OLVL	(1 << 1) /* 1 - Cy=0 will force associated OUTx outputs
-> +				  *     to VDD.
-> +				  * 0 - Cy=0 will force associated OUTx outputs
-> +				  *     to GND.
-> +				  */
-> +#define CDAC_GANG	(1 << 2) /* Controls the association of analog output
-> +				  * channels OUTx with asynchronous control
-> +				  * inputs Cy.
-> +				  *
-> +				  *         Cy to OUTx Assignment
-> +				  * --------------------------------------
-> +				  * | Cy | CDAC:GANG = 0 | CDAC:GANG = 1 |
-> +				  * --------------------------------------
-> +				  * | C1 | OUT[1:4]      | OUT[1:3]      |
-> +				  * --------------------------------------
-> +				  * | C2 | OUT[5:6]      | OUT[4:6]      |
-> +				  * --------------------------------------
-> +				  * | C3 | OUT[7:8]      | OUT[7:9]      |
-> +				  * --------------------------------------
-> +				  * | C4 | OUT[9:12]     | OUT[10:12]    |
-> +				  * --------------------------------------
-> +				  */
-> +
-> +static int lmp92001_read_raw(struct iio_dev *indio_dev,
-> +	struct iio_chan_spec const *channel,
-> +	int *val, int *val2,
-> +	long mask)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	int ret;
-> +
-> +	mutex_lock(&lmp92001->dac_lock);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		switch (channel->type) {
-> +		case IIO_VOLTAGE:
-> +			ret = regmap_read(lmp92001->regmap,
-> +					0x7F + channel->channel, val);
-Again, move the lock in here.
-> +			if (ret < 0)
-> +				goto exit;
-> +
-> +			ret = IIO_VAL_INT;
-> +			goto exit;
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	/* In case of no match channel info/type is return here. */
-> +	ret = -EINVAL;
-> +
-> +exit:
-> +	mutex_unlock(&lmp92001->dac_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +int lmp92001_write_raw(struct iio_dev *indio_dev,
-> +	struct iio_chan_spec const *channel,
-> +	int val, int val2,
-> +	long mask)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	int ret;
-> +
-> +	mutex_lock(&lmp92001->dac_lock);
-> +
-> +	if (val < 0 || val > 4095) {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		switch (channel->type) {
-> +		case IIO_VOLTAGE:
-Move lock in here... Will simplify code flow by allowing direct returns.
-> +			ret = regmap_write(lmp92001->regmap,
-> +					0x7F + channel->channel, val);
-> +			if (ret < 0)
-> +				goto exit;
-> +
-> +			ret = 0;
-> +			goto exit;
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-
-> +
-> +	/* In case of no match channel info/type is return here. */
-> +	ret = -EINVAL;
-> +
-> +exit:
-> +	mutex_unlock(&lmp92001->dac_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct iio_info lmp92001_info = {
-> +	.read_raw = lmp92001_read_raw,
-> +	.write_raw = lmp92001_write_raw,
-> +	.driver_module = THIS_MODULE,
-> +};
-> +
-> +ssize_t lmp92001_dvref_read(struct iio_dev *indio_dev, uintptr_t private,
-> +	struct iio_chan_spec const *channel, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cref;
-> +	int ret;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CREF, &cref);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return sprintf(buf, "%s\n", cref & CREF_DEXT ? "external" : "internal");
-> +}
-> +
-> +ssize_t lmp92001_dvref_write(struct iio_dev *indio_dev, uintptr_t private,
-> +	struct iio_chan_spec const *channel, const char *buf, size_t len)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cref;
-> +	int ret;
-> +
-> +	if (strncmp("external", buf, 8) == 0)
-> +		cref = 1;
-> +	else if (strncmp("internal", buf, 8) == 0)
-> +		cref = 0;
-> +	else
-> +		return -EINVAL;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CREF, CREF_DEXT,
-> +					cref);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +ssize_t lmp92001_outx_read(struct iio_dev *indio_dev, uintptr_t private,
-> +	struct iio_chan_spec const *channel, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cdac;
-> +	const char *outx;
-> +	int ret;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CDAC, &cdac);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (cdac & CDAC_OFF)
-> +		outx = "hiz";
-> +	else {
-> +		if (cdac & CDAC_OLVL)
-> +			outx = "1 or dac";
-> +		else
-> +			outx = "0 or dac";
-> +	}
-> +
-> +	return sprintf(buf, "%s\n", outx);
-> +}
-> +
-> +ssize_t lmp92001_outx_write(struct iio_dev *indio_dev, uintptr_t private,
-> +	struct iio_chan_spec const *channel, const char *buf, size_t len)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cdac, mask;
-> +	int ret;
-> +
-> +	if (strncmp("hiz", buf, 3) == 0) {
-> +		cdac = CDAC_OFF;
-> +		mask = CDAC_OFF;
-> +	} else if (strncmp("dac", buf, 3) == 0) {
-> +		cdac = ~CDAC_OFF;
-> +		mask = CDAC_OFF;
-> +	} else if (strncmp("0", buf, 1) == 0) {
-> +		cdac = ~(CDAC_OLVL | CDAC_OFF);
-> +		mask = CDAC_OLVL | CDAC_OFF;
-> +	} else if (strncmp("1", buf, 1) == 0) {
-> +		cdac = CDAC_OLVL;
-> +		mask = CDAC_OLVL | CDAC_OFF;
-> +	} else
-> +		return -EINVAL;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CDAC, mask, cdac);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +ssize_t lmp92001_gang_read(struct iio_dev *indio_dev, uintptr_t private,
-> +	struct iio_chan_spec const *channel, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cdac;
-> +	int ret;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_CDAC, &cdac);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return sprintf(buf, "%s\n", cdac & CDAC_GANG ? "1" : "0");
-> +}
-> +
-> +ssize_t lmp92001_gang_write(struct iio_dev *indio_dev, uintptr_t private,
-> +	struct iio_chan_spec const *channel, const char *buf, size_t len)
-> +{
-> +	struct lmp92001 *lmp92001 = iio_device_get_drvdata(indio_dev);
-> +	unsigned int cdac = 0;
-> +	int ret;
-> +
-> +	if (strncmp("0", buf, 1) == 0)
-> +		cdac = ~CDAC_GANG;
-> +	else if (strncmp("1", buf, 1) == 0)
-> +		cdac = CDAC_GANG;
-> +	else
-> +		return -EINVAL;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CDAC, CDAC_GANG,
-> +					cdac);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
-> +
-> +static const struct iio_chan_spec_ext_info lmp92001_ext_info[] = {
-> +	{
-> +		.name = "vref",
-> +		.read = lmp92001_dvref_read,
-> +		.write = lmp92001_dvref_write,
-> +		.shared = IIO_SHARED_BY_ALL,
-> +	},
-> +	{
-> +		.name = "outx",
-> +		.read = lmp92001_outx_read,
-> +		.write = lmp92001_outx_write,
-> +		.shared = IIO_SHARED_BY_ALL,
-> +	},
-> +	{
-> +		.name = "gang",
-> +		.read = lmp92001_gang_read,
-> +		.write = lmp92001_gang_write,
-> +		.shared = IIO_SHARED_BY_ALL,
-> +	},
-> +	{ },
-> +};
-> +
-> +#define LMP92001_CHAN_SPEC(_ch) \
-> +{ \
-> +	.channel = _ch, \
-> +	.type = IIO_VOLTAGE, \
-> +	.indexed = 1, \
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
-> +	.ext_info = lmp92001_ext_info, \
-> +	.output = 1, \
-> +}
-> +
-> +static const struct iio_chan_spec lmp92001_dac_channels[] = {
-> +	LMP92001_CHAN_SPEC(1),
-> +	LMP92001_CHAN_SPEC(2),
-> +	LMP92001_CHAN_SPEC(3),
-> +	LMP92001_CHAN_SPEC(4),
-> +	LMP92001_CHAN_SPEC(5),
-> +	LMP92001_CHAN_SPEC(6),
-> +	LMP92001_CHAN_SPEC(7),
-> +	LMP92001_CHAN_SPEC(8),
-> +	LMP92001_CHAN_SPEC(9),
-> +	LMP92001_CHAN_SPEC(10),
-> +	LMP92001_CHAN_SPEC(11),
-> +	LMP92001_CHAN_SPEC(12),
-> +};
-> +
-> +static int lmp92001_dac_probe(struct platform_device *pdev)
-> +{
-> +	struct lmp92001 *lmp92001 = dev_get_drvdata(pdev->dev.parent);
-> +	struct iio_dev *indio_dev;
-> +	struct device_node *np = pdev->dev.of_node;
-> +	u8 gang = 0, outx = 0, hiz = 0;
-> +	unsigned int cdac = 0;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*lmp92001));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&lmp92001->dac_lock);
-> +
-> +	iio_device_set_drvdata(indio_dev, lmp92001);
-again, why? Use iio_priv(indio_dev) where ever you have been using
-drvdata.
-> +
-> +	indio_dev->name = pdev->name;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &lmp92001_info;
-> +	indio_dev->channels = lmp92001_dac_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(lmp92001_dac_channels);
-> +
-> +	of_property_read_u8(np, "ti,lmp92001-dac-hiz", &hiz);
-> +	cdac |= hiz;
-cdac = hiz and drop the = 0 above.  Also handle errors.
-> +
-> +	of_property_read_u8(np, "ti,lmp92001-dac-outx", &outx);
-> +	cdac |= outx << 1;
-> +
-> +	of_property_read_u8(np, "ti,lmp92001-dac-gang", &gang);
-> +	cdac |= gang << 2;
-> +
-> +	ret = regmap_update_bits(lmp92001->regmap, LMP92001_CDAC,
-> +					CDAC_GANG | CDAC_OLVL | CDAC_OFF, cdac);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	platform_set_drvdata(pdev, indio_dev);
-> +
-> +	return devm_iio_device_register(&pdev->dev, indio_dev);
-> +}
-> +
-> +static int lmp92001_dac_remove(struct platform_device *pdev)
-> +{
-> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-> +
-> +	devm_iio_device_unregister(&pdev->dev, indio_dev);
-Same as for the ADC.
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver lmp92001_dac_driver = {
-> +	.driver.name	= "lmp92001-dac",
-> +	.probe		= lmp92001_dac_probe,
-> +	.remove		= lmp92001_dac_remove,
-> +};
-> +
-> +static int __init lmp92001_dac_init(void)
-> +{
-> +	return platform_driver_register(&lmp92001_dac_driver);
-> +}
-> +subsys_initcall(lmp92001_dac_init);
-Why subsys_initcall?
-
-> +
-> +static void __exit lmp92001_dac_exit(void)
-> +{
-> +	platform_driver_unregister(&lmp92001_dac_driver);
-> +}
-> +module_exit(lmp92001_dac_exit);
-
-Standard boilerplate remove macro once you have gotten rid
-of the subsys initcall.
-> +
-> +MODULE_AUTHOR("Abhisit Sangjan <s.abhisit@gmail.com>");
-> +MODULE_DESCRIPTION("IIO DAC interface for TI LMP92001");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:lmp92001-dac");
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 94ad2c1..a20389a 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1528,6 +1528,18 @@ config MFD_LM3533
->  	  additional drivers must be enabled in order to use the LED,
->  	  backlight or ambient-light-sensor functionality of the device.
->  
-> +config MFD_LMP92001
-> +       tristate "TI LMP92001 Analog System Monitor and Controller"
-> +       depends on I2C
-> +       select MFD_CORE
-> +       select REGMAP_I2C
-> +       help
-> +         Say yes here to enable support for TI LMP92001 Analog System
-> +         Monitor and Controller
-> +
-> +         This driver provide support for 16 ADC, 12 DAC, Voltage Reference,
-> +         Analog Temperature Sensor and 8-bit GPIO Port.
-> +
->  config MFD_TIMBERDALE
->  	tristate "Timberdale FPGA"
->  	select MFD_CORE
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 080793b..20d2e65 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -199,6 +199,10 @@ obj-$(CONFIG_MFD_RN5T618)	+= rn5t618.o
->  obj-$(CONFIG_MFD_SEC_CORE)	+= sec-core.o sec-irq.o
->  obj-$(CONFIG_MFD_SYSCON)	+= syscon.o
->  obj-$(CONFIG_MFD_LM3533)	+= lm3533-core.o lm3533-ctrlbank.o
-> +
-> +lmp92001-objs			:= lmp92001-core.o lmp92001-i2c.o lmp92001-debug.o
-> +obj-$(CONFIG_MFD_LMP92001)	+= lmp92001.o
-> +
->  obj-$(CONFIG_MFD_VEXPRESS_SYSREG)	+= vexpress-sysreg.o
->  obj-$(CONFIG_MFD_RETU)		+= retu-mfd.o
->  obj-$(CONFIG_MFD_AS3711)	+= as3711.o
-> diff --git a/drivers/mfd/lmp92001-core.c b/drivers/mfd/lmp92001-core.c
-> new file mode 100644
-> index 0000000..55bc9ab
-> --- /dev/null
-> +++ b/drivers/mfd/lmp92001-core.c
-> @@ -0,0 +1,308 @@
-> +/*
-> + * lmp92001-core.c - Device access for TI LMP92001
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/mfd/lmp92001/core.h>
-> +#include <linux/mfd/lmp92001/debug.h>
-> +
-> +static const struct mfd_cell lmp92001_devs[] = {
-> +	{
-> +		.name = "lmp92001-gpio",
-> +		.of_compatible = "ti,lmp92001-gpio",
-> +	},
-> +	{
-> +		.name = "lmp92001-adc",
-> +		.of_compatible = "ti,lmp92001-adc",
-> +	},
-> +	{
-> +		.name = "lmp92001-dac",
-> +		.of_compatible = "ti,lmp92001-dac",
-> +	},
-> +};
-> +
-> +static struct reg_default lmp92001_defaults[] = {
-> +	{ LMP92001_SGEN,  0x40   },
-> +	{ LMP92001_SHIL,  0x00   },
-> +	{ LMP92001_SLOL,  0x00   },
-> +	{ LMP92001_CGEN,  0x00   },
-> +	{ LMP92001_CDAC,  0x03   },
-> +	{ LMP92001_CGPO,  0xFF   },
-> +	{ LMP92001_CINH,  0x00   },
-> +	{ LMP92001_CINL,  0x00   },
-> +	{ LMP92001_CAD1,  0x00   },
-> +	{ LMP92001_CAD2,  0x00   },
-> +	{ LMP92001_CAD3,  0x00   },
-> +	{ LMP92001_CTRIG, 0x00   },
-> +	{ LMP92001_CREF,  0x07   },
-> +	{ LMP92001_ADC1,  0x0000 },
-> +	{ LMP92001_ADC2,  0x0000 },
-> +	{ LMP92001_ADC3,  0x0000 },
-> +	{ LMP92001_ADC4,  0x0000 },
-> +	{ LMP92001_ADC5,  0x0000 },
-> +	{ LMP92001_ADC6,  0x0000 },
-> +	{ LMP92001_ADC7,  0x0000 },
-> +	{ LMP92001_ADC8,  0x0000 },
-> +	{ LMP92001_ADC9,  0x0000 },
-> +	{ LMP92001_ADC10, 0x0000 },
-> +	{ LMP92001_ADC11, 0x0000 },
-> +	{ LMP92001_ADC12, 0x0000 },
-> +	{ LMP92001_ADC13, 0x0000 },
-> +	{ LMP92001_ADC14, 0x0000 },
-> +	{ LMP92001_ADC15, 0x0000 },
-> +	{ LMP92001_ADC16, 0x0000 },
-> +	{ LMP92001_LIH1,  0x0FFF },
-> +	{ LMP92001_LIH2,  0x0FFF },
-> +	{ LMP92001_LIH3,  0x0FFF },
-> +	{ LMP92001_LIH9,  0x0FFF },
-> +	{ LMP92001_LIH10, 0x0FFF },
-> +	{ LMP92001_LIH11, 0x0FFF },
-> +	{ LMP92001_LIL1,  0x0000 },
-> +	{ LMP92001_LIL2,  0x0000 },
-> +	{ LMP92001_LIL3,  0x0000 },
-> +	{ LMP92001_LIL9,  0x0000 },
-> +	{ LMP92001_LIL10, 0x0000 },
-> +	{ LMP92001_LIL11, 0x0000 },
-> +	{ LMP92001_DAC1,  0x0000 },
-> +	{ LMP92001_DAC2,  0x0000 },
-> +	{ LMP92001_DAC3,  0x0000 },
-> +	{ LMP92001_DAC4,  0x0000 },
-> +	{ LMP92001_DAC5,  0x0000 },
-> +	{ LMP92001_DAC6,  0x0000 },
-> +	{ LMP92001_DAC7,  0x0000 },
-> +	{ LMP92001_DAC8,  0x0000 },
-> +	{ LMP92001_DAC9,  0x0000 },
-> +	{ LMP92001_DAC10, 0x0000 },
-> +	{ LMP92001_DAC11, 0x0000 },
-> +	{ LMP92001_DAC12, 0x0000 },
-> +	{ LMP92001_DALL,  0x0000 },
-> +};
-> +
-> +static bool lmp92001_reg_readable(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	case LMP92001_ID:
-> +	case LMP92001_VER:
-> +	case LMP92001_SGEN:
-> +	case LMP92001_SGPI:
-> +	case LMP92001_SHIL:
-> +	case LMP92001_SLOL:
-> +	case LMP92001_CGEN:
-> +	case LMP92001_CDAC:
-> +	case LMP92001_CGPO:
-> +	case LMP92001_CINH:
-> +	case LMP92001_CINL:
-> +	case LMP92001_CAD1:
-> +	case LMP92001_CAD2:
-> +	case LMP92001_CAD3:
-> +	case LMP92001_ADC1:
-> +	case LMP92001_ADC2:
-> +	case LMP92001_ADC3:
-> +	case LMP92001_ADC4:
-> +	case LMP92001_ADC5:
-> +	case LMP92001_ADC6:
-> +	case LMP92001_ADC7:
-> +	case LMP92001_ADC8:
-> +	case LMP92001_ADC9:
-> +	case LMP92001_ADC10:
-> +	case LMP92001_ADC11:
-> +	case LMP92001_ADC12:
-> +	case LMP92001_ADC13:
-> +	case LMP92001_ADC14:
-> +	case LMP92001_ADC15:
-> +	case LMP92001_ADC16:
-> +	case LMP92001_ADC17:
-> +	case LMP92001_LIH1:
-> +	case LMP92001_LIH2:
-> +	case LMP92001_LIH3:
-> +	case LMP92001_LIH9:
-> +	case LMP92001_LIH10:
-> +	case LMP92001_LIH11:
-> +	case LMP92001_LIL1:
-> +	case LMP92001_LIL2:
-> +	case LMP92001_LIL3:
-> +	case LMP92001_LIL9:
-> +	case LMP92001_LIL10:
-> +	case LMP92001_LIL11:
-> +	case LMP92001_CREF:
-> +	case LMP92001_DAC1:
-> +	case LMP92001_DAC2:
-> +	case LMP92001_DAC3:
-> +	case LMP92001_DAC4:
-> +	case LMP92001_DAC5:
-> +	case LMP92001_DAC6:
-> +	case LMP92001_DAC7:
-> +	case LMP92001_DAC8:
-> +	case LMP92001_DAC9:
-> +	case LMP92001_DAC10:
-> +	case LMP92001_DAC11:
-> +	case LMP92001_DAC12:
-> +	case LMP92001_BLK0:
-> +	case LMP92001_BLK1:
-> +	case LMP92001_BLK2:
-> +	case LMP92001_BLK3:
-> +	case LMP92001_BLK4:
-> +	case LMP92001_BLK5:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static bool lmp92001_reg_writeable(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	case LMP92001_CGEN:
-> +	case LMP92001_CDAC:
-> +	case LMP92001_CGPO:
-> +	case LMP92001_CINH:
-> +	case LMP92001_CINL:
-> +	case LMP92001_CAD1:
-> +	case LMP92001_CAD2:
-> +	case LMP92001_CAD3:
-> +	case LMP92001_CTRIG:
-> +	case LMP92001_LIH1:
-> +	case LMP92001_LIH2:
-> +	case LMP92001_LIH3:
-> +	case LMP92001_LIH9:
-> +	case LMP92001_LIH10:
-> +	case LMP92001_LIH11:
-> +	case LMP92001_LIL1:
-> +	case LMP92001_LIL2:
-> +	case LMP92001_LIL3:
-> +	case LMP92001_LIL9:
-> +	case LMP92001_LIL10:
-> +	case LMP92001_LIL11:
-> +	case LMP92001_CREF:
-> +	case LMP92001_DAC1:
-> +	case LMP92001_DAC2:
-> +	case LMP92001_DAC3:
-> +	case LMP92001_DAC4:
-> +	case LMP92001_DAC5:
-> +	case LMP92001_DAC6:
-> +	case LMP92001_DAC7:
-> +	case LMP92001_DAC8:
-> +	case LMP92001_DAC9:
-> +	case LMP92001_DAC10:
-> +	case LMP92001_DAC11:
-> +	case LMP92001_DAC12:
-> +	case LMP92001_DALL:
-> +	case LMP92001_BLK0:
-> +	case LMP92001_BLK1:
-> +	case LMP92001_BLK4:
-> +	case LMP92001_BLK5:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +static bool lmp92001_reg_volatile(struct device *dev, unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	case LMP92001_SGEN:
-> +	case LMP92001_SGPI:
-> +	case LMP92001_SHIL:
-> +	case LMP92001_SLOL:
-> +	case LMP92001_CGEN:
-> +	case LMP92001_ADC1:
-> +	case LMP92001_ADC2:
-> +	case LMP92001_ADC3:
-> +	case LMP92001_ADC4:
-> +	case LMP92001_ADC5:
-> +	case LMP92001_ADC6:
-> +	case LMP92001_ADC7:
-> +	case LMP92001_ADC8:
-> +	case LMP92001_ADC9:
-> +	case LMP92001_ADC10:
-> +	case LMP92001_ADC11:
-> +	case LMP92001_ADC12:
-> +	case LMP92001_ADC13:
-> +	case LMP92001_ADC14:
-> +	case LMP92001_ADC15:
-> +	case LMP92001_ADC16:
-> +	case LMP92001_ADC17:
-> +	case LMP92001_BLK2:
-> +	case LMP92001_BLK3:
-> +		return true;
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
-> +struct regmap_config lmp92001_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 16,
-> +
-> +	.cache_type = REGCACHE_RBTREE,
-> +
-> +	.reg_defaults = lmp92001_defaults,
-> +	.num_reg_defaults = ARRAY_SIZE(lmp92001_defaults),
-> +
-> +	.max_register = LMP92001_BLK5,
-> +	.readable_reg = lmp92001_reg_readable,
-> +	.writeable_reg = lmp92001_reg_writeable,
-> +	.volatile_reg = lmp92001_reg_volatile,
-> +};
-> +
-> +int lmp92001_device_init(struct lmp92001 *lmp92001, unsigned long id, int irq)
-> +{
-> +	int ret;
-> +	unsigned int comid, ver;
-> +
-> +	dev_set_drvdata(lmp92001->dev, lmp92001);
-> +
-> +	ret  = regmap_read(lmp92001->regmap, LMP92001_ID, &comid);
-
-Why the two spaces after ret...
-
-> +	if (ret < 0) {
-> +		dev_err(lmp92001->dev, "failed to read Company ID: %d\n", ret);
-> +		goto exit;
-> +	}
-> +
-> +	ret  = regmap_read(lmp92001->regmap, LMP92001_VER, &ver);
-> +	if (ret < 0) {
-> +		dev_err(lmp92001->dev, "failed to read Version: %d\n", ret);
-> +		goto exit;
-> +	}
-> +
-> +	dev_info(lmp92001->dev, "Company ID 0x%.2x, Version 0x%.2x\n",
-> +			comid, ver);
-> +
-> +	ret = mfd_add_devices(lmp92001->dev, PLATFORM_DEVID_AUTO,
-> +				lmp92001_devs, ARRAY_SIZE(lmp92001_devs),
-> +				NULL, 0, NULL);
-> +	if (ret != 0) {
-> +		dev_err(lmp92001->dev, "failed to add children\n");
-> +		goto exit;
-> +	}
-> +
-> +	ret = lmp92001_debug_init(lmp92001);
-> +	if (ret < 0) {
-> +		dev_err(lmp92001->dev, "failed to initial debug fs.\n");
-> +		goto exit;
-> +	}
-> +
-> +exit:
-> +	return ret;
-> +}
-> +
-> +void lmp92001_device_exit(struct lmp92001 *lmp92001)
-> +{
-> +	lmp92001_debug_exit(lmp92001);
-> +	mfd_remove_devices(lmp92001->dev);
-> +}
-
-I'm not convinced there is any benefit in breaking this up into lots of files...
-
-> diff --git a/drivers/mfd/lmp92001-debug.c b/drivers/mfd/lmp92001-debug.c
-> new file mode 100644
-> index 0000000..d733e67
-> --- /dev/null
-> +++ b/drivers/mfd/lmp92001-debug.c
-> @@ -0,0 +1,67 @@
-> +/*
-> + * lmp92001-debug.c - Debug file system for TI LMP92001
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/kernel.h>
-> +
-> +#include <linux/mfd/lmp92001/core.h>
-> +
-> +static ssize_t lmp92001_id_ver_show(struct device *dev,
-> +	struct device_attribute *attr, char *buf)
-> +{
-> +	struct lmp92001 *lmp92001 = dev_get_drvdata(dev);
-> +	int ret;
-> +	unsigned int comid, ver;
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_ID, &comid);
-> +	if (ret < 0) {
-> +		dev_err(lmp92001->dev, "failed to read Company ID: %d\n", ret);
-> +		return 0;
-return ret... everywhere you've done this please.
-> +	}
-> +
-> +	ret = regmap_read(lmp92001->regmap, LMP92001_VER, &ver);
-> +	if (ret < 0) {
-> +		dev_err(lmp92001->dev, "failed to read Version: %d\n", ret);
-> +		return 0;
-> +	}
-> +
-> +	ret = sprintf(buf, "Company ID 0x%02x (%d), Version 0x%02x (%d)\n",
-> +			comid, comid, ver, ver);
-> +
-> +	return ret;
-return sprintf(...
-> +}
-> +static DEVICE_ATTR(lmp92001_id_ver, 0444, lmp92001_id_ver_show, NULL);
-> +
-> +int lmp92001_debug_init(struct lmp92001 *lmp92001)
-> +{
-> +	int ret;
-> +
-> +	ret = device_create_file(lmp92001->dev, &dev_attr_lmp92001_id_ver);
-> +	if (ret != 0)
-> +		dev_err(lmp92001->dev,
-> +			"unique ID attribute is not created: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +void lmp92001_debug_exit(struct lmp92001 *lmp92001)
-> +{
-> +	device_remove_file(lmp92001->dev, &dev_attr_lmp92001_id_ver);
-> +}
-> diff --git a/drivers/mfd/lmp92001-i2c.c b/drivers/mfd/lmp92001-i2c.c
-> new file mode 100644
-> index 0000000..bbb1dad
-> --- /dev/null
-> +++ b/drivers/mfd/lmp92001-i2c.c
-> @@ -0,0 +1,215 @@
-> +/*
-> + * lmp92001-i2c.c - I2C access for TI LMP92001
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <linux/mfd/lmp92001/core.h>
-> +
-> +static const unsigned short lmp92001_i2c_addresses[] = {
-> +	0x40, 0x42, 0x44, 0x46, 0x48, 0x4A, 0x4C, 0x4E, 0x50, I2C_CLIENT_END
-> +};
-> +
-> +/* TODO: To read/write block access, it may need to re-ordering endianness! */
-> +static int lmp92001_reg_read(void *context, unsigned int reg, unsigned int *val)
-> +{
-> +	struct device *dev = context;
-> +	struct i2c_client *i2c = to_i2c_client(dev);
-> +	int ret;
-> +
-> +	if (reg > 0xff)
-> +		return -EINVAL;
-> +
-> +	switch (reg) {
-> +	case LMP92001_ID ... LMP92001_CTRIG:
-> +	case LMP92001_CREF:
-> +		ret = i2c_smbus_read_byte_data(i2c, reg);
-> +		break;
-> +	case LMP92001_ADC1 ... LMP92001_LIL11:
-> +	case LMP92001_DAC1 ... LMP92001_DALL:
-> +		ret = i2c_smbus_read_word_swapped(i2c, reg);
-> +		break;
-> +	case LMP92001_BLK0 ... LMP92001_BLK5:
-> +		ret = i2c_smbus_read_block_data(i2c, reg,
-> +						(u8 *)((uintptr_t)*val));
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (reg <= LMP92001_DALL)
-> +		*val = ret;
-Cleaner to push this up into the case statements perhaps? Or at least
-return ret for the BLK one up there.
-> +
-> +	return 0;
-> +}
-> +
-> +static int lmp92001_reg_write(void *context, unsigned int reg, unsigned int val)
-> +{
-> +	struct device *dev = context;
-> +	struct i2c_client *i2c = to_i2c_client(dev);
-> +	int ret;
-> +
-> +	if (reg > 0xff)
-> +		return -EINVAL;
-> +
-> +	switch (reg) {
-> +	case LMP92001_ID ... LMP92001_CTRIG:
-> +	case LMP92001_CREF:
-> +		ret = i2c_smbus_write_byte_data(i2c, reg, val);
-> +		break;
-> +	case LMP92001_ADC1 ... LMP92001_LIL11:
-> +	case LMP92001_DAC1 ... LMP92001_DALL:
-> +		ret = i2c_smbus_write_word_swapped(i2c, reg, val);
-> +		break;
-> +	/* To call this function/case, must be passed val as pointer */
-> +	case LMP92001_BLK0:
-> +	case LMP92001_BLK4:
-> +		ret = i2c_smbus_write_block_data(i2c, reg, 24,
-> +						(u8 *)((uintptr_t)val));
-> +		break;
-> +	case LMP92001_BLK1:
-> +	case LMP92001_BLK5:
-> +		ret = i2c_smbus_write_block_data(i2c, reg, 12,
-> +						(u8 *)((uintptr_t)val));
-> +		break;
-> +	case LMP92001_BLK2:
-> +		ret = i2c_smbus_write_block_data(i2c, reg, 34,
-> +						(u8 *)((uintptr_t)val));
-> +		break;
-> +	case LMP92001_BLK3:
-> +		ret = i2c_smbus_write_block_data(i2c, reg, 18,
-> +						(u8 *)((uintptr_t)val));
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int lmp92001_i2c_probe(struct i2c_client *i2c,
-> +	const struct i2c_device_id *id)
-> +{
-> +	struct lmp92001 *lmp92001;
-> +	int ret;
-> +
-> +	lmp92001 = devm_kzalloc(&i2c->dev, sizeof(struct lmp92001), GFP_KERNEL);
-> +	if (!lmp92001)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(i2c, lmp92001);
-> +	lmp92001->dev = &i2c->dev;
-> +
-> +	lmp92001_regmap_config.reg_read = lmp92001_reg_read;
-> +	lmp92001_regmap_config.reg_write = lmp92001_reg_write;
-> +
-> +	lmp92001->regmap = devm_regmap_init(&i2c->dev, NULL, &i2c->dev,
-> +						&lmp92001_regmap_config);
-> +	if (IS_ERR(lmp92001->regmap)) {
-> +		ret = PTR_ERR(lmp92001->regmap);
-> +		dev_err(lmp92001->dev, "failed to allocate register map: %d\n",
-> +				ret);
-> +		return ret;
-> +	}
-> +
-> +	return lmp92001_device_init(lmp92001, id->driver_data, i2c->irq);
-> +}
-> +
-> +static int lmp92001_i2c_remove(struct i2c_client *i2c)
-> +{
-> +	struct lmp92001 *lmp92001 = i2c_get_clientdata(i2c);
-> +
-> +	lmp92001_device_exit(lmp92001);
-> +
-> +	return 0;
-> +}
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id lmp92001_dt_ids[] = {
-> +	{ .compatible = "ti,lmp92001", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, lmp92001_dt_ids);
-> +#endif
-> +
-> +static const struct i2c_device_id lmp92001_i2c_ids[] = {
-> +	{ "lmp92001" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(i2c, lmp92001_i2c_ids);
-> +
-> +static int lmp92001_i2c_detect(struct i2c_client *i2c,
-> +	struct i2c_board_info *info)
-> +{
-> +	struct i2c_adapter *adapter = i2c->adapter;
-> +	s32 comid, ver;
-> +
-> +	if (!i2c_check_functionality(adapter,
-> +					I2C_FUNC_SMBUS_BYTE_DATA |
-> +					I2C_FUNC_SMBUS_WORD_DATA |
-> +					I2C_FUNC_SMBUS_BLOCK_DATA))
-> +		return -ENODEV;
-> +
-> +	comid = i2c_smbus_read_byte_data(i2c, LMP92001_ID);
-> +	ver = i2c_smbus_read_byte_data(i2c, LMP92001_VER);
-> +
-> +	if (comid != 0x01 || ver != 0x10)
-> +		return -ENODEV;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct i2c_driver lmp92001_i2c_driver = {
-> +	.driver = {
-> +		.name = "lmp92001",
-> +		.of_match_table = of_match_ptr(lmp92001_dt_ids),
-> +	},
-> +	.probe		= lmp92001_i2c_probe,
-> +	.remove		= lmp92001_i2c_remove,
-> +	.id_table	= lmp92001_i2c_ids,
-> +	.detect		= lmp92001_i2c_detect,
-> +	.address_list	= lmp92001_i2c_addresses,
-> +};
-> +
-> +static int __init lmp92001_i2c_init(void)
-> +{
-> +	return i2c_add_driver(&lmp92001_i2c_driver);
-> +}
-> +subsys_initcall(lmp92001_i2c_init);
-> +
-> +static void __exit lmp92001_i2c_exit(void)
-> +{
-> +	i2c_del_driver(&lmp92001_i2c_driver);
-> +}
-> +module_exit(lmp92001_i2c_exit);
-> +
-> +MODULE_DESCRIPTION("i2c driver for TI LMP92001");
-> +MODULE_AUTHOR("Abhisit Sangjan <s.abhisit@gmail.com>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/lmp92001/core.h b/include/linux/mfd/lmp92001/core.h
-> new file mode 100644
-> index 0000000..9039000
-> --- /dev/null
-> +++ b/include/linux/mfd/lmp92001/core.h
-> @@ -0,0 +1,119 @@
-> +/*
-> + * include/linux/mfd/lmp92001/core.h - Core interface for TI LMP92001
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#ifndef __MFD_LMP92001_CORE_H__
-> +#define __MFD_LMP92001_CORE_H__
-> +
-> +#include <linux/device.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mutex.h>
-> +#include <linux/regmap.h>
-> +
-> +/*
-> + * Register values.
-> + */
-> +/* ID */
-> +#define LMP92001_ID	0x0E
-> +#define LMP92001_VER	0x0F
-> +/* STATUS */
-> +#define LMP92001_SGEN	0x10
-> +#define LMP92001_SGPI	0x11
-> +#define LMP92001_SHIL	0x12
-> +#define LMP92001_SLOL	0x13
-> +/* CONTROL */
-> +#define LMP92001_CGEN	0x14
-> +#define LMP92001_CDAC	0x15
-> +#define LMP92001_CGPO	0x16
-> +#define LMP92001_CINH	0x17
-> +#define LMP92001_CINL	0x18
-> +#define LMP92001_CAD1	0x19
-> +#define LMP92001_CAD2	0x1A
-> +#define LMP92001_CAD3	0x1B
-> +#define LMP92001_CTRIG	0x1C
-> +/* ADC OUTPUT DATA */
-> +#define LMP92001_ADC1	0x20
-> +#define LMP92001_ADC2	0x21
-> +#define LMP92001_ADC3	0x22
-> +#define LMP92001_ADC4	0x23
-> +#define LMP92001_ADC5	0x24
-> +#define LMP92001_ADC6	0x25
-> +#define LMP92001_ADC7	0x26
-> +#define LMP92001_ADC8	0x27
-> +#define LMP92001_ADC9	0x28
-> +#define LMP92001_ADC10	0x29
-> +#define LMP92001_ADC11	0x2A
-> +#define LMP92001_ADC12	0x2B
-> +#define LMP92001_ADC13	0x2C
-> +#define LMP92001_ADC14	0x2D
-> +#define LMP92001_ADC15	0x2E
-> +#define LMP92001_ADC16	0x2F
-> +#define LMP92001_ADC17	0x30
-> +/* ADC WINDOW COMPARATOR LIMITS */
-> +#define LMP92001_LIH1	0x40
-> +#define LMP92001_LIH2	0x41
-> +#define LMP92001_LIH3	0x42
-> +#define LMP92001_LIH9	0x43
-> +#define LMP92001_LIH10	0x44
-> +#define LMP92001_LIH11	0x45
-> +#define LMP92001_LIL1	0x46
-> +#define LMP92001_LIL2	0x47
-> +#define LMP92001_LIL3	0x48
-> +#define LMP92001_LIL9	0x49
-> +#define LMP92001_LIL10	0x4A
-> +#define LMP92001_LIL11	0x4B
-> +/* INTERNAL REFERENCE CONTROL */
-> +#define LMP92001_CREF	0x66
-> +/* DAC INPUT DATA */
-> +#define LMP92001_DAC1	0x80
-> +#define LMP92001_DAC2	0x81
-> +#define LMP92001_DAC3	0x82
-> +#define LMP92001_DAC4	0x83
-> +#define LMP92001_DAC5	0x84
-> +#define LMP92001_DAC6	0x85
-> +#define LMP92001_DAC7	0x86
-> +#define LMP92001_DAC8	0x87
-> +#define LMP92001_DAC9	0x88
-> +#define LMP92001_DAC10	0x89
-> +#define LMP92001_DAC11	0x8A
-> +#define LMP92001_DAC12	0x8B
-> +#define LMP92001_DALL	0x90
-> +/* MEMORY MAPPED BLOCK COMMANDS */
-> +#define LMP92001_BLK0	0xF0
-> +#define LMP92001_BLK1	0xF1
-> +#define LMP92001_BLK2	0xF2
-> +#define LMP92001_BLK3	0xF3
-> +#define LMP92001_BLK4	0xF4
-> +#define LMP92001_BLK5	0xF5
-> +
-> +struct lmp92001 {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +
-> +	struct mutex adc_lock;
-> +	struct mutex dac_lock;
-> +};
-> +
-> +extern struct regmap_config lmp92001_regmap_config;
-> +
-> +int lmp92001_device_init(struct lmp92001 *lmp92001, unsigned long id, int irq);
-> +void lmp92001_device_exit(struct lmp92001 *lmp92001);
-> +
-> +#endif /* __MFD_LMP92001_CORE_H__ */
-> diff --git a/include/linux/mfd/lmp92001/debug.h b/include/linux/mfd/lmp92001/debug.h
-> new file mode 100644
-> index 0000000..efef95f
-> --- /dev/null
-> +++ b/include/linux/mfd/lmp92001/debug.h
-> @@ -0,0 +1,28 @@
-> +/*
-> + * include/linux/mfd/lmp92001/debug.h - Debug interface for TI 92001
-> + *
-> + * Copyright 2016-2017 Celestica Ltd.
-> + *
-> + * Author: Abhisit Sangjan <s.abhisit@gmail.com>
-> + *
-> + * Inspired by wm831x driver.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#ifndef __MFD_LMP92001_DEBUG_H__
-> +#define __MFD_LMP92001_DEBUG_H__
-> +
-> +int lmp92001_debug_init(struct lmp92001 *lmp92001);
-> +void lmp92001_debug_exit(struct lmp92001 *lmp92001);
-> +
-> +#endif /* __MFD_LMP92001_DEBUG_H__ */
-
-Ran out of time towards the end of this so review was rather less detailed!
-
-Will take a look at the next version after you've broken this up.
-
-Jonathan
+This GPIO controller device is used on UniPhier SoCs.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v3:
+  - Add .irq_set_affinity() hook
+  - Use irq_domain_create_hierarchy() instead of legacy
+    irq_domain_add_hierarchy().
+
+Changes in v2:
+  - Remove +32 offset for parent interrupts to follow the GIC
+    binding convention
+  - Let uniphier_gpio_irq_alloc() fail if nr_irqs != 1
+  - Allocate gpio_chip statically because just one instance is
+    supported
+  - Fix suspend and resume hooks
+
+ .../devicetree/bindings/gpio/gpio-uniphier.txt     |  42 ++
+ MAINTAINERS                                        |   1 +
+ drivers/gpio/Kconfig                               |   7 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-uniphier.c                       | 589 +++++++++++++++++++++
+ include/dt-bindings/gpio/uniphier-gpio.h           |  18 +
+ 6 files changed, 658 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+ create mode 100644 drivers/gpio/gpio-uniphier.c
+ create mode 100644 include/dt-bindings/gpio/uniphier-gpio.h
+
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt b/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+new file mode 100644
+index 000000000000..8e3e1fe0d072
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+@@ -0,0 +1,42 @@
++UniPhier GPIO controller
++
++Required properties:
++- compatible: Should be one of the following:
++    "socionext,uniphier-ld4-gpio"  - for LD4 SoC
++    "socionext,uniphier-pro4-gpio" - for Pro4 SoC
++    "socionext,uniphier-sld8-gpio" - for sLD8 SoC
++    "socionext,uniphier-pro5-gpio" - for Pro5 SoC
++    "socionext,uniphier-pxs2-gpio" - for PXs2/LD6b SoC
++    "socionext,uniphier-ld11-gpio" - for LD11 SoC
++    "socionext,uniphier-ld20-gpio" - for LD20 SoC
++    "socionext,uniphier-pxs3-gpio" - for PXs3 SoC
++- reg: Specifies offset and length of the register set for the device.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be 2.  The first cell is the pin number and the second
++  cell is used to specify optional parameters
++- interrupt-parent: Specifies the parent interrupt controller.
++- interrupt-controller: Marks the device node as an interrupt controller
++- #interrupt-cells: Should be 2.  The first cell defines the interrupt number.
++  The second cell bits[3:0] is used to specify trigger type as follows:
++    1 = low-to-high edge triggered
++    2 = high-to-low edge triggered
++    4 = active high level-sensitive
++    8 = active low level-sensitive
++  Valid combinations are 1, 2, 3, 4, 8.
++- gpio-ranges: Mapping to pin controller pins (as described in gpio.txt)
++
++Optional properties:
++- gpio-ranges-group-names: Used for named gpio ranges (as described in gpio.txt)
++
++Example:
++	gpio: gpio@55000000 {
++		compatible = "socionext,uniphier-pro4-gpio";
++		reg = <0x55000000 0x200>;
++		interrupt-parent = <&aidet>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-ranges = <&pinctrl 0 0 0>;
++		gpio-ranges-group-names = "gpio_range";
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7b84f047b3fd..9a1f94ff99a6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1992,6 +1992,7 @@ F:	arch/arm/mm/cache-uniphier.c
+ F:	arch/arm64/boot/dts/socionext/
+ F:	drivers/bus/uniphier-system-bus.c
+ F:	drivers/clk/uniphier/
++F:	drivers/gpio/gpio-uniphier.c
+ F:	drivers/i2c/busses/i2c-uniphier*
+ F:	drivers/irqchip/irq-uniphier-aidet.c
+ F:	drivers/pinctrl/uniphier/
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 461d6fc3688b..5f6d2e984bb6 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -465,6 +465,13 @@ config GPIO_TZ1090_PDC
+ 	help
+ 	  Say yes here to support Toumaz Xenif TZ1090 PDC GPIOs.
+ 
++config GPIO_UNIPHIER
++	tristate "UniPhier GPIO support"
++	depends on ARCH_UNIPHIER
++	depends on OF_GPIO
++	help
++	  Say yes here to support UniPhier GPIOs.
++
+ config GPIO_VF610
+ 	def_bool y
+ 	depends on ARCH_MXC && SOC_VF610
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index a9fda6c55113..1de9fdb8cff9 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -129,6 +129,7 @@ obj-$(CONFIG_GPIO_TWL6040)	+= gpio-twl6040.o
+ obj-$(CONFIG_GPIO_TZ1090)	+= gpio-tz1090.o
+ obj-$(CONFIG_GPIO_TZ1090_PDC)	+= gpio-tz1090-pdc.o
+ obj-$(CONFIG_GPIO_UCB1400)	+= gpio-ucb1400.o
++obj-$(CONFIG_GPIO_UNIPHIER)	+= gpio-uniphier.o
+ obj-$(CONFIG_GPIO_VF610)	+= gpio-vf610.o
+ obj-$(CONFIG_GPIO_VIPERBOARD)	+= gpio-viperboard.o
+ obj-$(CONFIG_GPIO_VR41XX)	+= gpio-vr41xx.o
+diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+new file mode 100644
+index 000000000000..e0cd408f8871
+--- /dev/null
++++ b/drivers/gpio/gpio-uniphier.c
+@@ -0,0 +1,589 @@
++/*
++ * Copyright (C) 2017 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/bitops.h>
++#include <linux/gpio/driver.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_irq.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++#include <dt-bindings/gpio/uniphier-gpio.h>
++
++#define UNIPHIER_GPIO_BANK_MASK		\
++				GENMASK((UNIPHIER_GPIO_LINES_PER_BANK) - 1, 0)
++
++#define UNIPHIER_GPIO_IRQ_NUM		24
++
++#define UNIPHIER_GPIO_PORT_DATA		0x0	/* data */
++#define UNIPHIER_GPIO_PORT_DIR		0x4	/* direction (1:in, 0:out) */
++#define UNIPHIER_GPIO_IRQ_EN		0x90	/* irq enable */
++#define UNIPHIER_GPIO_IRQ_MODE		0x94	/* irq mode (1: both edge) */
++#define UNIPHIER_GPIO_IRQ_FLT_EN	0x98	/* noise filter enable */
++#define UNIPHIER_GPIO_IRQ_FLT_CYC	0x9c	/* noise filter clock cycle */
++
++struct uniphier_gpio_socdata {
++	unsigned int ngpio;
++	bool (*is_valid_irq)(unsigned int hwirq);
++	bool (*is_input_only)(unsigned int offset);
++};
++
++struct uniphier_gpio_priv {
++	struct irq_domain *domain;
++	const struct uniphier_gpio_socdata *socdata;
++	void __iomem *regs;
++	spinlock_t lock;
++	u32 saved_vals[0];
++};
++
++static unsigned int uniphier_gpio_bank_to_reg(unsigned int bank)
++{
++	unsigned int reg;
++
++	reg = (bank + 1) * 8;
++
++	/*
++	 * Unfortunately, the GPIO port registers are not contiguous because
++	 * offset 0x90-0x9f is used for IRQ.  Add 0x10 when crossing the region.
++	 */
++	if (reg >= UNIPHIER_GPIO_IRQ_EN)
++		reg += 0x10;
++
++	return reg;
++}
++
++static void uniphier_gpio_get_bank_and_mask(unsigned int offset,
++					    unsigned int *bank, u32 *mask)
++{
++	*bank = offset / UNIPHIER_GPIO_LINES_PER_BANK;
++	*mask = BIT(offset % UNIPHIER_GPIO_LINES_PER_BANK);
++}
++
++static void uniphier_gpio_reg_update(struct uniphier_gpio_priv *priv,
++				     unsigned int reg, u32 mask, u32 val)
++{
++	unsigned long flags;
++	u32 tmp;
++
++	spin_lock_irqsave(&priv->lock, flags);
++	tmp = readl(priv->regs + reg);
++	tmp &= ~mask;
++	tmp |= mask & val;
++	writel(tmp, priv->regs + reg);
++	spin_unlock_irqrestore(&priv->lock, flags);
++}
++
++static void uniphier_gpio_bank_write(struct gpio_chip *chip, unsigned int bank,
++				     unsigned int reg, u32 mask, u32 val)
++{
++	struct uniphier_gpio_priv *priv = gpiochip_get_data(chip);
++
++	if (!mask)
++		return;
++
++	uniphier_gpio_reg_update(priv, uniphier_gpio_bank_to_reg(bank) + reg,
++				 mask, val);
++}
++
++static void uniphier_gpio_offset_write(struct gpio_chip *chip,
++				       unsigned int offset, unsigned int reg,
++				       int val)
++{
++	unsigned int bank;
++	u32 mask;
++
++	uniphier_gpio_get_bank_and_mask(offset, &bank, &mask);
++
++	uniphier_gpio_bank_write(chip, bank, reg, mask, val ? mask : 0);
++}
++
++static int uniphier_gpio_offset_read(struct gpio_chip *chip,
++				     unsigned int offset, unsigned int reg)
++{
++	struct uniphier_gpio_priv *priv = gpiochip_get_data(chip);
++	unsigned int bank, reg_offset;
++	u32 mask;
++
++	uniphier_gpio_get_bank_and_mask(offset, &bank, &mask);
++	reg_offset = uniphier_gpio_bank_to_reg(bank) + reg;
++
++	return !!(readl(priv->regs + reg_offset) & mask);
++}
++
++static int uniphier_gpio_get_direction(struct gpio_chip *chip,
++				       unsigned int offset)
++{
++	return uniphier_gpio_offset_read(chip, offset, UNIPHIER_GPIO_PORT_DIR);
++}
++
++static int uniphier_gpio_direction_input(struct gpio_chip *chip,
++					 unsigned int offset)
++{
++	uniphier_gpio_offset_write(chip, offset, UNIPHIER_GPIO_PORT_DIR, 1);
++
++	return 0;
++}
++
++static int uniphier_gpio_direction_output(struct gpio_chip *chip,
++					  unsigned int offset, int val)
++{
++	struct uniphier_gpio_priv *priv = gpiochip_get_data(chip);
++
++	if (priv->socdata->is_input_only &&
++	    priv->socdata->is_input_only(offset)) {
++		dev_err(chip->parent, "GPIO%d is input only port\n", offset);
++		return -EINVAL;
++	}
++
++	uniphier_gpio_offset_write(chip, offset, UNIPHIER_GPIO_PORT_DATA, val);
++	uniphier_gpio_offset_write(chip, offset, UNIPHIER_GPIO_PORT_DIR, 0);
++
++	return 0;
++}
++
++static int uniphier_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	return uniphier_gpio_offset_read(chip, offset, UNIPHIER_GPIO_PORT_DATA);
++}
++
++static void uniphier_gpio_set(struct gpio_chip *chip,
++			      unsigned int offset, int val)
++{
++	uniphier_gpio_offset_write(chip, offset, UNIPHIER_GPIO_PORT_DATA, val);
++}
++
++static void uniphier_gpio_set_multiple(struct gpio_chip *chip,
++				       unsigned long *mask, unsigned long *bits)
++{
++	unsigned int bank, shift, bank_mask, bank_bits;
++	int i;
++
++	for (i = 0; i < chip->ngpio; i += UNIPHIER_GPIO_LINES_PER_BANK) {
++		bank = i / UNIPHIER_GPIO_LINES_PER_BANK;
++		shift = i % BITS_PER_LONG;
++		bank_mask = (mask[BIT_WORD(i)] >> shift) &
++						UNIPHIER_GPIO_BANK_MASK;
++		bank_bits = bits[BIT_WORD(i)] >> shift;
++
++		uniphier_gpio_bank_write(chip, bank, UNIPHIER_GPIO_PORT_DATA,
++					 bank_mask, bank_bits);
++	}
++}
++
++static int uniphier_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
++{
++	struct irq_fwspec fwspec;
++
++	if (offset < UNIPHIER_GPIO_IRQ_OFFSET)
++		return -ENXIO;
++
++	fwspec.fwnode = of_node_to_fwnode(chip->parent->of_node);
++	fwspec.param_count = 2;
++	fwspec.param[0] = offset - UNIPHIER_GPIO_IRQ_OFFSET;
++	fwspec.param[1] = IRQ_TYPE_NONE;
++
++	return irq_create_fwspec_mapping(&fwspec);
++}
++
++static struct gpio_chip uniphier_gpio_chip = {
++	.label = "UniPhier GPIO",
++	.request = gpiochip_generic_request,
++	.free = gpiochip_generic_free,
++	.get_direction = uniphier_gpio_get_direction,
++	.direction_input = uniphier_gpio_direction_input,
++	.direction_output = uniphier_gpio_direction_output,
++	.get = uniphier_gpio_get,
++	.set = uniphier_gpio_set,
++	.set_multiple = uniphier_gpio_set_multiple,
++	.to_irq = uniphier_gpio_to_irq,
++	.base = -1,
++};
++
++static void uniphier_gpio_irq_mask(struct irq_data *data)
++{
++	struct uniphier_gpio_priv *priv = data->chip_data;
++	u32 mask = BIT(data->hwirq);
++
++	uniphier_gpio_reg_update(priv, UNIPHIER_GPIO_IRQ_EN, mask, 0);
++
++	return irq_chip_mask_parent(data);
++}
++
++static void uniphier_gpio_irq_unmask(struct irq_data *data)
++{
++	struct uniphier_gpio_priv *priv = data->chip_data;
++	u32 mask = BIT(data->hwirq);
++
++	uniphier_gpio_reg_update(priv, UNIPHIER_GPIO_IRQ_EN, mask, mask);
++
++	return irq_chip_unmask_parent(data);
++}
++
++static int uniphier_gpio_irq_set_type(struct irq_data *data, unsigned int type)
++{
++	struct uniphier_gpio_priv *priv = data->chip_data;
++	u32 mask = BIT(data->hwirq);
++	u32 val = 0;
++
++	if (type == IRQ_TYPE_EDGE_BOTH) {
++		val = mask;
++		type = IRQ_TYPE_EDGE_FALLING;
++	}
++
++	uniphier_gpio_reg_update(priv, UNIPHIER_GPIO_IRQ_MODE, mask, val);
++	/* To enable both edge detection, the noise filter must be enabled. */
++	uniphier_gpio_reg_update(priv, UNIPHIER_GPIO_IRQ_FLT_EN, mask, val);
++
++	return irq_chip_set_type_parent(data, type);
++}
++
++static struct irq_chip uniphier_gpio_irq_chip = {
++	.name = "GPIO",
++	.irq_mask = uniphier_gpio_irq_mask,
++	.irq_unmask = uniphier_gpio_irq_unmask,
++	.irq_eoi = irq_chip_eoi_parent,
++	.irq_set_affinity = irq_chip_set_affinity_parent,
++	.irq_set_type = uniphier_gpio_irq_set_type,
++};
++
++static const u32 uniphier_gpio_irq_parent_hwirqs[] = {
++	48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
++	154, 155, 156, 157, 158, 217, 218, 219,
++};
++
++static int uniphier_gpio_irq_domain_translate(struct irq_domain *domain,
++					      struct irq_fwspec *fwspec,
++					      unsigned long *out_hwirq,
++					      unsigned int *out_type)
++{
++	if (WARN_ON(fwspec->param_count < 2))
++		return -EINVAL;
++
++	*out_hwirq = fwspec->param[0];
++	*out_type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
++
++	return 0;
++}
++
++static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
++					  unsigned int virq,
++					  unsigned int nr_irqs, void *arg)
++{
++	struct uniphier_gpio_priv *priv = domain->host_data;
++	struct irq_fwspec parent_fwspec;
++	irq_hw_number_t hwirq;
++	unsigned int type;
++	int ret;
++
++	if (WARN_ON(nr_irqs != 1))
++		return -EINVAL;
++
++	ret = uniphier_gpio_irq_domain_translate(domain, arg, &hwirq, &type);
++	if (ret)
++		return ret;
++
++	if (!priv->socdata->is_valid_irq(hwirq))
++		return -ENXIO;
++
++	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
++					    &uniphier_gpio_irq_chip, priv);
++	if (ret)
++		return ret;
++
++	if (type == IRQ_TYPE_EDGE_BOTH)
++		type = IRQ_TYPE_EDGE_FALLING;
++
++	BUILD_BUG_ON(ARRAY_SIZE(uniphier_gpio_irq_parent_hwirqs) >
++		     UNIPHIER_GPIO_IRQ_NUM);
++
++	/* parent is UniPhier AIDET */
++	parent_fwspec.fwnode = domain->parent->fwnode;
++	parent_fwspec.param_count = 2;
++	parent_fwspec.param[0] = uniphier_gpio_irq_parent_hwirqs[hwirq];
++	parent_fwspec.param[1] = type;
++
++	return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
++}
++
++static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
++					      struct irq_data *data)
++{
++	gpiochip_lock_as_irq(&uniphier_gpio_chip,
++			     data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
++}
++
++static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
++						struct irq_data *data)
++{
++	gpiochip_unlock_as_irq(&uniphier_gpio_chip,
++			       data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
++}
++
++static const struct irq_domain_ops uniphier_gpio_irq_domain_ops = {
++	.alloc = uniphier_gpio_irq_domain_alloc,
++	.free = irq_domain_free_irqs_common,
++	.activate = uniphier_gpio_irq_domain_activate,
++	.deactivate = uniphier_gpio_irq_domain_deactivate,
++	.translate = uniphier_gpio_irq_domain_translate,
++};
++
++static void uniphier_gpio_hw_init(struct uniphier_gpio_priv *priv)
++{
++	/*
++	 * To detect both edge interrupts, the noise filter must be enabled.
++	 * This filter is intended to remove the noise from the irq lines.
++	 * It does not work for GPIO input, so GPIO debounce is not supported.
++	 * Unfortunately, the filter period is shared among all irq lines.
++	 * Just choose a sensible period here.
++	 */
++	writel(0xff, priv->regs + UNIPHIER_GPIO_IRQ_FLT_CYC);
++}
++
++static unsigned int uniphier_gpio_get_nbanks(unsigned int ngpio)
++{
++	return DIV_ROUND_UP(ngpio, UNIPHIER_GPIO_LINES_PER_BANK);
++}
++
++static int uniphier_gpio_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *parent_np;
++	struct irq_domain *parent_domain;
++	struct uniphier_gpio_priv *priv;
++	const struct uniphier_gpio_socdata *data;
++	struct resource *regs;
++	unsigned int nregs;
++	int ret;
++
++	parent_np = of_irq_find_parent(dev->of_node);
++	if (!parent_np)
++		return -ENXIO;
++
++	parent_domain = irq_find_host(parent_np);
++	of_node_put(parent_np);
++	if (!parent_domain)
++		return -EPROBE_DEFER;
++
++	data = of_device_get_match_data(dev);
++	if (WARN_ON(!data || !data->is_valid_irq))
++		return -EINVAL;
++
++	nregs = uniphier_gpio_get_nbanks(data->ngpio) * 2 + 3;
++	priv = devm_kzalloc(dev,
++			    sizeof(*priv) + sizeof(priv->saved_vals[0]) * nregs,
++			    GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->regs = devm_ioremap_resource(dev, regs);
++	if (IS_ERR(priv->regs))
++		return PTR_ERR(priv->regs);
++
++	spin_lock_init(&priv->lock);
++	priv->socdata = data;
++
++	uniphier_gpio_hw_init(priv);
++
++	uniphier_gpio_chip.parent = dev;
++	uniphier_gpio_chip.ngpio = data->ngpio;
++
++	ret = devm_gpiochip_add_data(dev, &uniphier_gpio_chip, priv);
++	if (ret)
++		return ret;
++
++	priv->domain = irq_domain_create_hierarchy(
++					parent_domain, 0, UNIPHIER_GPIO_IRQ_NUM,
++					of_node_to_fwnode(dev->of_node),
++					&uniphier_gpio_irq_domain_ops, priv);
++	if (!priv->domain)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++
++	return 0;
++}
++
++static int uniphier_gpio_remove(struct platform_device *pdev)
++{
++	struct uniphier_gpio_priv *priv = platform_get_drvdata(pdev);
++
++	irq_domain_remove(priv->domain);
++
++	return 0;
++}
++
++static int __maybe_unused uniphier_gpio_suspend(struct device *dev)
++{
++	struct uniphier_gpio_priv *priv = dev_get_drvdata(dev);
++	unsigned int nbanks = uniphier_gpio_get_nbanks(priv->socdata->ngpio);
++	u32 *val = priv->saved_vals;
++	unsigned int reg;
++	int i;
++
++	for (i = 0; i < nbanks; i++) {
++		reg = uniphier_gpio_bank_to_reg(i);
++
++		*val++ = readl(priv->regs + reg + UNIPHIER_GPIO_PORT_DATA);
++		*val++ = readl(priv->regs + reg + UNIPHIER_GPIO_PORT_DIR);
++	}
++
++	*val++ = readl(priv->regs + UNIPHIER_GPIO_IRQ_EN);
++	*val++ = readl(priv->regs + UNIPHIER_GPIO_IRQ_MODE);
++	*val++ = readl(priv->regs + UNIPHIER_GPIO_IRQ_FLT_EN);
++
++	return 0;
++}
++
++static int __maybe_unused uniphier_gpio_resume(struct device *dev)
++{
++	struct uniphier_gpio_priv *priv = dev_get_drvdata(dev);
++	unsigned int nbanks = uniphier_gpio_get_nbanks(priv->socdata->ngpio);
++	const u32 *val = priv->saved_vals;
++	unsigned int reg;
++	int i;
++
++	for (i = 0; i < nbanks; i++) {
++		reg = uniphier_gpio_bank_to_reg(i);
++
++		writel(*val++, priv->regs + reg + UNIPHIER_GPIO_PORT_DATA);
++		writel(*val++, priv->regs + reg + UNIPHIER_GPIO_PORT_DIR);
++	}
++
++	writel(*val++, priv->regs + UNIPHIER_GPIO_IRQ_EN);
++	writel(*val++, priv->regs + UNIPHIER_GPIO_IRQ_MODE);
++	writel(*val++, priv->regs + UNIPHIER_GPIO_IRQ_FLT_EN);
++
++	uniphier_gpio_hw_init(priv);
++
++	return 0;
++}
++
++static const struct dev_pm_ops uniphier_gpio_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(uniphier_gpio_suspend,
++				     uniphier_gpio_resume)
++};
++
++static bool uniphier_ld4_gpio_is_valid_irq(unsigned int hwirq)
++{
++	return hwirq < 16 && hwirq != 13;
++}
++
++static const struct uniphier_gpio_socdata uniphier_ld4_gpio_data = {
++	.ngpio = 136,
++	.is_valid_irq = uniphier_ld4_gpio_is_valid_irq,
++};
++
++static bool uniphier_pro4_gpio_is_valid_irq(unsigned int hwirq)
++{
++	return hwirq < 21;
++}
++
++static const struct uniphier_gpio_socdata uniphier_pro4_gpio_data = {
++	.ngpio = 248,
++	.is_valid_irq = uniphier_pro4_gpio_is_valid_irq,
++};
++
++static bool uniphier_pxs2_gpio_is_valid_irq(unsigned int hwirq)
++{
++	return hwirq < 24;
++}
++
++static const struct uniphier_gpio_socdata uniphier_pxs2_gpio_data = {
++	.ngpio = 232,
++	.is_valid_irq = uniphier_pxs2_gpio_is_valid_irq,
++};
++
++static bool uniphier_ld11_gpio_is_input_only(unsigned int offset)
++{
++	return offset >= 144 && offset <= 151;
++}
++
++static const struct uniphier_gpio_socdata uniphier_ld11_gpio_data = {
++	.ngpio = 200,
++	.is_valid_irq = uniphier_pxs2_gpio_is_valid_irq,
++	.is_input_only = uniphier_ld11_gpio_is_input_only,
++};
++
++static const struct uniphier_gpio_socdata uniphier_ld20_gpio_data = {
++	.ngpio = 205,
++	.is_valid_irq = uniphier_pxs2_gpio_is_valid_irq,
++	.is_input_only = uniphier_ld11_gpio_is_input_only,
++};
++
++static bool uniphier_pxs3_gpio_is_input_only(unsigned int offset)
++{
++	return offset >= 144 && offset <= 161;
++}
++
++static const struct uniphier_gpio_socdata uniphier_pxs3_gpio_data = {
++	.ngpio = 286,
++	.is_valid_irq = uniphier_pxs2_gpio_is_valid_irq,
++	.is_input_only = uniphier_pxs3_gpio_is_input_only,
++};
++
++static const struct of_device_id uniphier_gpio_match[] = {
++	{
++		.compatible = "socionext,uniphier-ld4-gpio",
++		.data = &uniphier_ld4_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-pro4-gpio",
++		.data = &uniphier_pro4_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-sld8-gpio",
++		.data = &uniphier_ld4_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-pro5-gpio",
++		.data = &uniphier_pro4_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-pxs2-gpio",
++		.data = &uniphier_pxs2_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-ld11-gpio",
++		.data = &uniphier_ld11_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-ld20-gpio",
++		.data = &uniphier_ld20_gpio_data,
++	},
++	{
++		.compatible = "socionext,uniphier-pxs3-gpio",
++		.data = &uniphier_pxs3_gpio_data,
++	},
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, uniphier_gpio_match);
++
++static struct platform_driver uniphier_gpio_driver = {
++	.probe = uniphier_gpio_probe,
++	.remove = uniphier_gpio_remove,
++	.driver = {
++		.name = "uniphier-gpio",
++		.of_match_table = uniphier_gpio_match,
++		.pm = &uniphier_gpio_pm_ops,
++	},
++};
++module_platform_driver(uniphier_gpio_driver);
++
++MODULE_AUTHOR("Masahiro Yamada <yamada.masahiro@socionext.com>");
++MODULE_DESCRIPTION("UniPhier GPIO driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/dt-bindings/gpio/uniphier-gpio.h b/include/dt-bindings/gpio/uniphier-gpio.h
+new file mode 100644
+index 000000000000..9f0ad174f61c
+--- /dev/null
++++ b/include/dt-bindings/gpio/uniphier-gpio.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2017 Socionext Inc.
++ *   Author: Masahiro Yamada <yamada.masahiro@socionext.com>
++ */
++
++#ifndef _DT_BINDINGS_GPIO_UNIPHIER_H
++#define _DT_BINDINGS_GPIO_UNIPHIER_H
++
++#define UNIPHIER_GPIO_LINES_PER_BANK	8
++
++#define UNIPHIER_GPIO_IRQ_OFFSET	((UNIPHIER_GPIO_LINES_PER_BANK) * 15)
++
++#define UNIPHIER_GPIO_PORT(bank, line)	\
++			((UNIPHIER_GPIO_LINES_PER_BANK) * (bank) + (line))
++
++#define UNIPHIER_GPIO_IRQ(n)		((UNIPHIER_GPIO_IRQ_OFFSET) + (n))
++
++#endif /* _DT_BINDINGS_GPIO_UNIPHIER_H */
+-- 
+2.7.4
