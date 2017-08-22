@@ -1,51 +1,38 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: intel: Disable GPIO pin interrupts in suspend
-Date: Tue, 22 Aug 2017 14:47:15 +0200
-Message-ID: <CACRpkdbWnv=DGD90JFdKjk=YAVy_PEMiXjtPLF6VOLoxTpt7Dw@mail.gmail.com>
-References: <1502439824-18733-1-git-send-email-rushikesh.s.kadam@intel.com>
+Subject: Re: [PATCH 1/2] pinctrl: sunxi: fix wrong irq_banks number for H5 pinctrl
+Date: Tue, 22 Aug 2017 14:49:10 +0200
+Message-ID: <CACRpkdY9YraRZrfLZ7izmEyBtYsW4F4cxBewRSLznHTm3v9GvA@mail.gmail.com>
+References: <20170811142735.2970-1-icenowy@aosc.io> <20170811142735.2970-2-icenowy@aosc.io>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502439824-18733-1-git-send-email-rushikesh.s.kadam@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, rajneesh.bhardwaj@intel.com, andy@infradead.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34085 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932685AbdHVMtL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Aug 2017 08:49:11 -0400
+Received: by mail-oi0-f51.google.com with SMTP id j144so56421291oib.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Aug 2017 05:49:11 -0700 (PDT)
+In-Reply-To: <20170811142735.2970-2-icenowy@aosc.io>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Fri, Aug 11, 2017 at 10:23 AM, Rushikesh S Kadam
-<rushikesh.s.kadam@intel.com> wrote:
+On Fri, Aug 11, 2017 at 4:27 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-> The fix prevents unintended wakes from second level GPIO pin interrupts.
+> The pin controller of Allwinner H5 has three IRQ banks, however in old
+> versions of drivers and device trees, only two are set, which makes
+> PG bank IRQ not available.
 >
-> On some Intel Kabylake platforms, it is observed that GPIO pin interrupts
-> can wake the platform from suspend-to-idle, even though the IRQ is not
-> configured as IRQF_NO_SUSPEND or enable_irq_wake().
+> If it's directly set to 3, the old device trees will fail to boot.
 >
-> This can cause undesired wakes on Mobile devices such as Laptops and
-> Chromebook devices. For example a headset jack insertion is not a desired
-> wake source on Chromebook devices.
+> Add a workaround (and a warning) for older device trees, and allow new
+> device trees to use correct 3 IRQ banks.
 >
-> The pinctrl-intel (GPIO controller) driver implements a "Shared IRQ" model.
-> All GPIO pin interrupts are OR'ed and mapped to a first level IRQ14 (or
-> IRQ15). The driver registers an irq_chip struct and maps an irq_domain for
-> the GPIO pin interrupts. The IRQ14 handler demuxes and calls the second
-> level IRQ for the respective pin.
->
-> In the suspend entry flow, at suspend_noirq stage, the kernel disables IRQs
-> that are not marked for wake. The pinctrl-intel driver does not implement a
-> irq_disable()  callback (to take advantage of lazy disabling). The
-> pinctrl-intel GPIO interrupts are not disabled in hardware during suspend
-> entry, and thus are able to wake the SoC out of suspend-to-idle.
->
-> This patch sets the IRQCHIP_MASK_ON_SUSPEND flag for the GPIO irq_chip, to
-> disable the second level interrupts at suspend_noirq stage via the irq_mask
-> callbacks. The irq_mask callback disables the IRQs in hardware by
-> programming the corresponding GPIO pad registers. Only IRQs that are not
-> marked for wake are disabled.
->
-> Signed-off-by: Rushikesh S Kadam <rushikesh.s.kadam@intel.com>
+> Fixes: 838adb576d4a ("drivers: pinctrl: add driver for Allwinner H5 SoC")
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Excellent work, patch applied with the collected ACKs.
+Patch applied with Chen-Yu's ACK.
 
 Yours,
 Linus Walleij
