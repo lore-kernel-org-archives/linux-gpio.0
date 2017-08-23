@@ -1,81 +1,99 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH v3] pinctrl: aspeed: Fix ast2500 strap register write
- logic
-Date: Wed, 23 Aug 2017 09:24:08 +0930
-Message-ID: <1503446048.7266.28.camel@aj.id.au>
-References: <1502814110-90168-1-git-send-email-sdliyong@gmail.com>
-         <CACRpkdaXreebGTf_cxrttwmdcRqYfaHx8WrQ64KA+o3AijBYfQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/4] dt-bindings: gpio: max3191x: Document new driver
+Date: Tue, 22 Aug 2017 19:48:47 -0500
+Message-ID: <20170823004847.jmkb53xtdmmn6vtf@rob-hp-laptop>
+References: <cover.1503319573.git.lukas@wunner.de>
+ <7fe7636eecba238d57ab6178cfa3f6b7deca98f1.1503319573.git.lukas@wunner.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-B45AcKom5OeECxhnnNlV"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdaXreebGTf_cxrttwmdcRqYfaHx8WrQ64KA+o3AijBYfQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Yong Li <sdliyong@gmail.com>
-Cc: Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>, Rick Altherr <raltherr@google.com>, Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33789 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752897AbdHWAst (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 22 Aug 2017 20:48:49 -0400
+Content-Disposition: inline
+In-Reply-To: <7fe7636eecba238d57ab6178cfa3f6b7deca98f1.1503319573.git.lukas@wunner.de>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
 
+On Mon, Aug 21, 2017 at 03:12:00PM +0200, Lukas Wunner wrote:
+> Add device tree bindings for Maxim MAX3191x industrial serializer.
+> 
+> Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>  .../devicetree/bindings/gpio/gpio-max3191x.txt     | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-max3191x.txt b/Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
+> new file mode 100644
+> index 000000000000..18182ecaa199
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
+> @@ -0,0 +1,37 @@
+> +GPIO driver for Maxim MAX3191x industrial serializer
+> +
+> +Required properties:
+> + - compatible:		"maxim,max31910", "maxim,max31911", "maxim,max31912",
+> +			"maxim,max31913", "maxim,max31953", "maxim,max31963"
 
---=-B45AcKom5OeECxhnnNlV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+One valid combination per line please.
 
-Hi Linus,
+> + - gpio-controller:	Marks the device node as a GPIO controller.
+> + - #gpio-cells: 	Should be two. For consumer use see gpio.txt.
+> +
+> +Optional properties:
+> + - maxim,nchips:	Number of chips in the daisy-chain (default is 1).
+> + - modesel-gpios:	GPIO pins to configure modesel of each chip.
+> +			The number of GPIOs must be equal to "maxim,nchips".
+> + - fault-gpios: 	GPIO pins to read undervoltage fault of each chip.
+> + - db0-gpios:		GPIO pins to configure debounce of each chip.
+> + - db1-gpios:		GPIO pins to configure debounce of each chip.
 
-On Tue, 2017-08-22 at 14:52 +0200, Linus Walleij wrote:
-> > On Tue, Aug 15, 2017 at 6:21 PM, Yong Li <sdliyong@gmail.com> wrote:
->=C2=A0
-> > On AST2500, the hardware strap register(SCU70) only accepts write =E2=
-=80=981=E2=80=99,
-> > to clear it to =E2=80=980=E2=80=99, must set bits(write=C2=A0=C2=A0=E2=
-=80=981=E2=80=99) to SCU7C
-> >=C2=A0
-> > Signed-off-by: Yong Li <sdliyong@gmail.com>
->=C2=A0
-> Patch applied with Andrew's review/test tags.
+Perhaps an array db-gpios with 2 entries.
 
-I realised after I sent the tags on v3 that I'd made a mistake: There's a
-slightly awkward to test bug in the v3 implementation. I followed up on v3 =
-with
-this:
+These gpios all need a vendor prefix.
 
-	https://lkml.org/lkml/2017/8/16/905
+> + - maxim,modesel:	Mode to use if hardwired (and thus not selectable
+> +			through GPIOs): 0 for 16-bit mode, 1 for 8-bit mode.
 
-And Yong sent out a corresponding v4:
+Make this a boolean and define the default when not present (and 
+modesel-gpios not present).
 
-	https://patchwork.ozlabs.org/patch/802946/
+> + - maxim,no-vcc24v:	Boolean, whether the chips are powered through 5VOUT
+> +			instead of VCC24V.
 
-I see you've pushed Yong's v3 in pinctrl/devel - can we revert/remove that =
-and
-apply v4?
+Use the regulator binding here?
 
-Sorry for the confusion.
+> +
+> +For other required and optional properties of SPI slave nodes please refer to
+> +../spi/spi-bus.txt.
+> +
+> +Example:
+> +	gpio@0 {
+> +		compatible = "maxim,max31913";
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		modesel-gpios = <&gpio2 23>;
+> +		fault-gpios   = <&gpio2 24 GPIO_ACTIVE_LOW>;
+> +		db0-gpios     = <&gpio2 25>;
+> +		db1-gpios     = <&gpio2 26>;
+> +
+> +		reg = <0>;
 
-Andrew
+reg usually comes after compatible. Also, reg needs to be documented 
+above.
 
->=C2=A0
-> Yours,
-> Linus Walleij
---=-B45AcKom5OeECxhnnNlV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCgAGBQJZnMQgAAoJEJ0dnzgO5LT5qp4P/RuZXTb7II5WsMNfwVetiNDY
-ol4D+znHefCU4dONVMgO4auUJomTyBNpQGE57iR7GFOg03kZdciynr0GfZlEh6FO
-NtHJGHikEeBNxBjgNnGJm1yqJfmJL4UgJFQbqXS5r3ps3P6y5U+tjbqkWapz6443
-EIHv4JAQfWOtUzLvQvW26dzGczvZLr3o7YDi0yFLI8y8N86/ENwtFu16fzCmxKnt
-+Tdws7ukgDwHZOyQ1aBTJ8V5hApPkf7yuGfb6nYg7M1UERkWMsjXXmh6nDrrOdKc
-B/344VixRFt83gNp0376L/1pfrtcC3Cs6G01jws8HEKQU7ciBr4CHFPJ/cyjXrmo
-h2o7cNDhlfQ/iUlVmxQut4Iui8s0fNcdyQRQysN6lK8wekECY1w1r90U00SLfBKn
-wAmtFS2hLPBa3TyBLda+yTWDWdJNaEaiz6QW+gX+ZRFYI4MJbXM6iz7OuPR44qKY
-uGPnXB+EgSO2tDI1ZCUWImIdkUsDKBs2U/+hXFxvCwn4X9Tp853wManR9kZp3VjO
-cpcL5eK0i9Jhj6QTmOeMtGFv99b8fU5bAgBYlD3wJzsOq9qzPtI5NRF2gerPVhQQ
-jNAhZ+dQ5YogN16df1L7MeatFUOyyOcm/QI8hDRfcTkonHK+ZQQfvYsElf5PdQyy
-l0LdNfGW/b5CAbBo5T/V
-=APSc
------END PGP SIGNATURE-----
-
---=-B45AcKom5OeECxhnnNlV--
+> +		spi-max-frequency = <25000000>;
+> +	};
+> -- 
+> 2.11.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
