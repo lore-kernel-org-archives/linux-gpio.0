@@ -1,120 +1,48 @@
-From: David Wu <david.wu@rock-chips.com>
-Subject: [PATCH v2] pinctrl: rockchip: Add rv1108 recalculated iomux support
-Date: Wed, 23 Aug 2017 16:00:07 +0800
-Message-ID: <1503475207-30288-1-git-send-email-david.wu@rock-chips.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.135]:45811 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753386AbdHWHzK (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2017 03:55:10 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/4] gpio: Add driver for Maxim MAX3191x industrial serializer
+Date: Wed, 23 Aug 2017 10:09:56 +0200
+Message-ID: <CACRpkdYVSTgPo=7DVWr+RMMOZma8pzzmA9AAdjWhy-LVJ35RvQ@mail.gmail.com>
+References: <cover.1503319573.git.lukas@wunner.de> <df530ae703fcfdf52d27a1b6d19b6d1a4724b103.1503319573.git.lukas@wunner.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <df530ae703fcfdf52d27a1b6d19b6d1a4724b103.1503319573.git.lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Cc: Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>, Phil Elwell <phil-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: heiko@sntech.de, linus.walleij@linaro.org
-Cc: huangtao@rock-chips.com, andy.yan@rock-chips.com, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, David Wu <david.wu@rock-chips.com>
 
-The pins from GPIO1A0 to GPIO1B1 are special, need to recalculate
-iomux. And the register offset is larger than the u8 range, so changed
-to u32.
+On Mon, Aug 21, 2017 at 3:12 PM, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org> wrote:
 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
----
- drivers/pinctrl/pinctrl-rockchip.c | 68 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 67 insertions(+), 1 deletion(-)
+> The driver was developed for and tested with the MAX31913 built into
+> the Revolution Pi by KUNBUS, but should work with all members of the
+> MAX3191x family:
+>
+> MAX31910: low power
+> MAX31911: LED drivers
+> MAX31912: LED drivers + 2nd voltage monitor + low power
+> MAX31913: LED drivers + 2nd voltage monitor
+> MAX31953: LED drivers + 2nd voltage monitor + isolation
+> MAX31963: LED drivers + 2nd voltage monitor + isolation + buck regulator
+>
+> They are similar to but more versatile than the TI SN65HVS880/2/3/5
+> supported by gpio-pisosr.c as they clock out a CRC checksum to guard
+> against electromagnetic interference, as well as undervoltage and
+> overtemperature indicator bits.  If these features are not needed
+> they can be disabled by pulling the "modesel" pin high and then
+> gpio-pisosr.c can be used instead of the present driver.
+>
+> Cc: Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>
+> Signed-off-by: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index c6f472e..b5cb785 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -301,7 +301,7 @@ struct rockchip_pin_bank {
- struct rockchip_mux_recalced_data {
- 	u8 num;
- 	u8 pin;
--	u8 reg;
-+	u32 reg;
- 	u8 bit;
- 	u8 mask;
- };
-@@ -558,6 +558,70 @@ static void rockchip_dt_free_map(struct pinctrl_dev *pctldev,
-  * Hardware access
-  */
- 
-+static struct rockchip_mux_recalced_data rv1108_mux_recalced_data[] = {
-+	{
-+		.num = 1,
-+		.pin = 0,
-+		.reg = 0x418,
-+		.bit = 0,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 1,
-+		.reg = 0x418,
-+		.bit = 2,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 2,
-+		.reg = 0x418,
-+		.bit = 4,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 3,
-+		.reg = 0x418,
-+		.bit = 6,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 4,
-+		.reg = 0x418,
-+		.bit = 8,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 5,
-+		.reg = 0x418,
-+		.bit = 10,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 6,
-+		.reg = 0x418,
-+		.bit = 12,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 7,
-+		.reg = 0x418,
-+		.bit = 14,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 8,
-+		.reg = 0x41c,
-+		.bit = 0,
-+		.mask = 0x3
-+	}, {
-+		.num = 1,
-+		.pin = 9,
-+		.reg = 0x41c,
-+		.bit = 2,
-+		.mask = 0x3
-+	},
-+};
-+
- static  struct rockchip_mux_recalced_data rk3128_mux_recalced_data[] = {
- 	{
- 		.num = 2,
-@@ -3162,6 +3226,8 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	.type			= RV1108,
- 	.grf_mux_offset		= 0x10,
- 	.pmu_mux_offset		= 0x0,
-+	.iomux_recalced		= rv1108_mux_recalced_data,
-+	.niomux_recalced	= ARRAY_SIZE(rv1108_mux_recalced_data),
- 	.pull_calc_reg		= rv1108_calc_pull_reg_and_bit,
- 	.drv_calc_reg		= rv1108_calc_drv_reg_and_bit,
- 	.schmitt_calc_reg	= rv1108_calc_schmitt_reg_and_bit,
--- 
-1.9.1
+This looks like a fine piece of driver.
 
+We just need to get the infrastructure in place and I can
+merge it.
 
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
