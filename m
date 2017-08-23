@@ -1,52 +1,38 @@
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] pinctrl: freescale: make mxs_regs const
-Date: Wed, 23 Aug 2017 19:19:12 +0530
-Message-ID: <1503496152-4926-1-git-send-email-bhumirks@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH] gpio: pl061: constify amba_id
+Date: Wed, 23 Aug 2017 21:45:09 +0530
+Message-ID: <e3ea7773c305ca105b8564821028f91fb529087a.1503504813.git.arvind.yadav.cs@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33497 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754007AbdHWNt1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2017 09:49:27 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35263 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932303AbdHWQPT (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2017 12:15:19 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: julia.lawall@lip6.fr, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-Make these const as they are only stored in the const field of a
-mxs_pinctrl_soc_data structure.
+amba_id are not supposed to change at runtime. All functions
+working with const amba_id. So mark the non-const structs as const.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/pinctrl/freescale/pinctrl-imx23.c | 2 +-
- drivers/pinctrl/freescale/pinctrl-imx28.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pl061.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx23.c b/drivers/pinctrl/freescale/pinctrl-imx23.c
-index 89b4f16..c940568 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx23.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx23.c
-@@ -257,7 +257,7 @@ enum imx23_pin_enum {
- 	MXS_PINCTRL_PIN(EMI_CLKN),
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 3d3d6b6..6aaaab7 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -405,7 +405,7 @@ static const struct dev_pm_ops pl061_dev_pm_ops = {
  };
+ #endif
  
--static struct mxs_regs imx23_regs = {
-+static const struct mxs_regs imx23_regs = {
- 	.muxsel = 0x100,
- 	.drive = 0x200,
- 	.pull = 0x400,
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx28.c b/drivers/pinctrl/freescale/pinctrl-imx28.c
-index 295236d..87deb9e 100644
---- a/drivers/pinctrl/freescale/pinctrl-imx28.c
-+++ b/drivers/pinctrl/freescale/pinctrl-imx28.c
-@@ -373,7 +373,7 @@ enum imx28_pin_enum {
- 	MXS_PINCTRL_PIN(EMI_CKE),
- };
- 
--static struct mxs_regs imx28_regs = {
-+static const struct mxs_regs imx28_regs = {
- 	.muxsel = 0x100,
- 	.drive = 0x300,
- 	.pull = 0x600,
+-static struct amba_id pl061_ids[] = {
++static const struct amba_id pl061_ids[] = {
+ 	{
+ 		.id	= 0x00041061,
+ 		.mask	= 0x000fffff,
 -- 
-1.9.1
+2.7.4
 
