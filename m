@@ -1,61 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] gpio: Introduce ->get_multiple callback
-Date: Wed, 23 Aug 2017 09:38:21 +0200
-Message-ID: <CACRpkdYfHGHNGKKMs+Yqhfeyhs=L0G4K_6OYneDG1RkNpxLXkA@mail.gmail.com>
-References: <cover.1503319573.git.lukas@wunner.de> <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
+From: jmondi <jacopo@jmondi.org>
+Subject: Re: [PATCH] pinctrl: rza1: off by one in rza1_parse_gpiochip()
+Date: Wed, 23 Aug 2017 09:42:18 +0200
+Message-ID: <20170823074218.GA8135@w540>
+References: <20170818103248.ddguatdt5jhm5zx7@mwanda>
+ <CAMuHMdWu3rpXMwKe3KLPHo+Cmg25uCOFJjd_zdQCoLT3qi-f9A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:36766 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753329AbdHWHiW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2017 03:38:22 -0400
-Received: by mail-oi0-f47.google.com with SMTP id g131so9026169oic.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Aug 2017 00:38:22 -0700 (PDT)
-In-Reply-To: <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWu3rpXMwKe3KLPHo+Cmg25uCOFJjd_zdQCoLT3qi-f9A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Aug 21, 2017 at 3:12 PM, Lukas Wunner <lukas@wunner.de> wrote:
+Hi Linus,
+   sorry for being late.
 
-> SPI-attached GPIO controllers typically read out all inputs in one go.
-> If callers desire the values of multipe inputs, ideally a single readout
-> should take place to return the desired values.  However the current
-> driver API only offers a ->get callback but no ->get_multiple (unlike
-> ->set_multiple, which is present).  Thus, to read multiple inputs, a
-> full readout needs to be performed for every single value (barring
-> driver-internal caching), which is inefficient.
+With Geert's approval I guess my ack is not that necessary, but...
+
+On Wed, Aug 23, 2017 at 09:35:42AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Aug 18, 2017 at 12:32 PM, Dan Carpenter
+> <dan.carpenter@oracle.com> wrote:
+> > The rza1_pctl->ports[] array has RZA1_NPORTS (12) elements.  The > here
+> > should be >= to prevent an out of bounds access.
+> >
+> > Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 >
-> In fact, the lack of a ->get_multiple callback has been bemoaned
-> repeatedly by the gpio subsystem maintainer:
-> http://www.spinics.net/lists/linux-gpio/msg10571.html
-> http://www.spinics.net/lists/devicetree/msg121734.html
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+
 >
-> Introduce the missing callback.  Add corresponding consumer functions
-> such as gpiod_get_array_value().  Amend linehandle_ioctl() to take
-> advantage of the newly added infrastructure.
+> Gr{oetje,eeting}s,
 >
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-
-Lean, mean, and clean and introducing the interface that I've
-been missing for some time. Good work!
-
-Let's hope we can merge this early for v4.15 once v4.14-rc1 is out
-and pile some drivers supporting it on top of it too.
-
-I am only worried on how to get __assign_bit() into place in time,
-or whether I should carry that patch in the GPIO tree simply?
-We *could* add a local version of it and then switch it over
-with a follow-up patch...
-
-Could you please patch
-Documentation/gpio/consumer.txt
-to mention the new functions as well?
-
-Maybe we should have a section in Documentation/gpio/driver.txt,
-that doc is a bit incomplete right now.
-
-Yours,
-Linus Walleij
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
