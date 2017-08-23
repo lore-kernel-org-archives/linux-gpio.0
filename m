@@ -1,58 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] pinctrl: aspeed: Fix ast2500 strap register write logic
-Date: Wed, 23 Aug 2017 10:23:48 +0200
-Message-ID: <CACRpkdbBjfi-=oEu+pXgqy_kcVaP85Dy=C6_VnwNjBe89yXFMg@mail.gmail.com>
-References: <1502814110-90168-1-git-send-email-sdliyong@gmail.com>
- <CACRpkdaXreebGTf_cxrttwmdcRqYfaHx8WrQ64KA+o3AijBYfQ@mail.gmail.com> <1503446048.7266.28.camel@aj.id.au>
+Subject: Re: [PATCH 1/3] gliolib: request the gpio before querying its direction
+Date: Wed, 23 Aug 2017 10:32:08 +0200
+Message-ID: <CACRpkdZv0NjXfwm_-TSoY=QFeP64V-ZoKvmLXk3qkV49fq1UtQ@mail.gmail.com>
+References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
+ <1501179565-26466-2-git-send-email-timur@codeaurora.org> <CACRpkdYPBd4ZvuXo__LRQezTQD3u=3r2WO+2dTzBanLL1zX72w@mail.gmail.com>
+ <103341c8-6cc5-3d3f-eef7-28b9f31cdc71@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36576 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753471AbdHWIXt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 23 Aug 2017 04:23:49 -0400
-Received: by mail-oi0-f43.google.com with SMTP id g131so9832990oic.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Aug 2017 01:23:48 -0700 (PDT)
-In-Reply-To: <1503446048.7266.28.camel@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <103341c8-6cc5-3d3f-eef7-28b9f31cdc71@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Jeffery <andrew@aj.id.au>
-Cc: Yong Li <sdliyong@gmail.com>, Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>, Rick Altherr <raltherr@google.com>, Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Aug 23, 2017 at 1:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote:
-> On Tue, 2017-08-22 at 14:52 +0200, Linus Walleij wrote:
->> > On Tue, Aug 15, 2017 at 6:21 PM, Yong Li <sdliyong@gmail.com> wrote:
+On Mon, Aug 21, 2017 at 11:23 PM, Timur Tabi <timur@codeaurora.org> wrote:
+> On 07/31/2017 08:35 AM, Linus Walleij wrote:
+>>>
+>>> Before querying a GPIO to determine its direction, the GPIO should be
+>>> formally requested.  This allows the GPIO driver to block access to
+>>> unavailable GPIOs, which makes it easier for some drivers to support
+>>> sparse GPIO maps.
+>>>
+>>> Signed-off-by: Timur Tabi<timur@codeaurora.org>
 >>
->> > On AST2500, the hardware strap register(SCU70) only accepts write =E2=
-=80=981=E2=80=99,
->> > to clear it to =E2=80=980=E2=80=99, must set bits(write  =E2=80=981=E2=
-=80=99) to SCU7C
->> >
->> > Signed-off-by: Yong Li <sdliyong@gmail.com>
->>
->> Patch applied with Andrew's review/test tags.
+>> This makes all kind of semantic change, so patch applied.
 >
-> I realised after I sent the tags on v3 that I'd made a mistake: There's a
-> slightly awkward to test bug in the v3 implementation. I followed up on v=
-3 with
-> this:
->
->         https://lkml.org/lkml/2017/8/16/905
->
-> And Yong sent out a corresponding v4:
->
->         https://patchwork.ozlabs.org/patch/802946/
+> Have you push it to git.kernel.org?  I don't see it.
 
-Ah. I got confused and picked the wrong version.
-
-> I see you've pushed Yong's v3 in pinctrl/devel - can we revert/remove tha=
-t and
-> apply v4?
-
-No I would have to revert the patch.
-
-Can't we simply make a small fixup patch?
+It's right there on the "devel" branch from the GPIO git tree.
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
 
 Yours,
 Linus Walleij
