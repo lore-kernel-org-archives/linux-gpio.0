@@ -1,121 +1,79 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: Add support for TI LMP92001
-Date: Wed, 23 Aug 2017 14:21:49 +0100
-Message-ID: <20170823132149.svvvhtvrxv3fxhax@dell>
-References: <1503383171-15515-1-git-send-email-s.abhisit@gmail.com>
- <alpine.DEB.2.20.1708220911130.5706@vps.pmeerw.net>
- <CAMV_pUbBCkX6NME1c4NG-e48c0Vcs48N8JDYaDQqqypC0VjmDw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH] pinctrl: aspeed: Rework strap register write logic for the AST2500
+Date: Wed, 23 Aug 2017 23:11:25 +0930
+Message-ID: <20170823134125.2339-1-andrew@aj.id.au>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMV_pUbBCkX6NME1c4NG-e48c0Vcs48N8JDYaDQqqypC0VjmDw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Abhisit Sangjan <s.abhisit@gmail.com>
-Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, jmondi <jacopo@jmondi.org>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Andrew Jeffery <andrew@aj.id.au>, linus.walleij@linaro.org, joel@jms.id.au, linux-kernel@vger.kernel.org, Yong Li <sdliyong@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, 23 Aug 2017, Abhisit Sangjan wrote:
-> > > From: Abhisit Sangjan <s.abhisit@gmail.com>
-> > >
-> > > TI LMP92001 Analog System Monitor and Controller
+Yong Li found that writes to the AST2500 strapping register were not
+properly supported by the Aspeed pinctrl core and provided a patch to
+rectify the problem. Several revisions of the patch were posted and
+ultimately v4 should have been applied, however some unfortunate
+liberal application of tags on my part lead to confusion between v3[1]
+and v4[2].
+
+Generate the diff between v3 and v4 to apply as a fixup patch.
+
+[1] http://patchwork.ozlabs.org/patch/801662/
+[2] http://patchwork.ozlabs.org/patch/802946/
+
+Cc: Yong Li <sdliyong@gmail.com>
+Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+---
+ drivers/pinctrl/aspeed/pinctrl-aspeed.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+index f2d5133f6993..7f13ce8450a3 100644
+--- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
++++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+@@ -183,7 +183,6 @@ static int aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
+ {
+ 	int ret;
+ 	int i;
+-	unsigned int rev_id;
  
-[...]
-
-> > > Signed-off-by: Abhisit Sangjan <s.abhisit@gmail.com>
-> > > ---
-> > >  Documentation/ABI/testing/sysfs-bus-iio-lmp920001  |  92 ++++
-> > >  .../devicetree/bindings/gpio/gpio-lmp92001.txt     |  22 +
-> > >  .../bindings/iio/adc/ti-lmp92001-adc.txt           |  21 +
-> > >  .../bindings/iio/dac/ti-lmp92001-dac.txt           |  35 ++
-> > >  drivers/gpio/Kconfig                               |   7 +
-> > >  drivers/gpio/Makefile                              |   1 +
-> > >  drivers/gpio/gpio-lmp92001.c                       | 209 +++++++++
-> > >  drivers/iio/adc/Kconfig                            |  10 +
-> > >  drivers/iio/adc/Makefile                           |   1 +
-> > >  drivers/iio/adc/lmp92001-adc.c                     | 500
-> > +++++++++++++++++++++
-> > >  drivers/iio/dac/Kconfig                            |   9 +
-> > >  drivers/iio/dac/Makefile                           |   1 +
-> > >  drivers/iio/dac/lmp92001-dac.c                     | 390
-> > ++++++++++++++++
-> > >  drivers/mfd/Kconfig                                |  12 +
-> > >  drivers/mfd/Makefile                               |   4 +
-> > >  drivers/mfd/lmp92001-core.c                        | 308 +++++++++++++
-> > >  drivers/mfd/lmp92001-debug.c                       |  67 +++
-> > >  drivers/mfd/lmp92001-i2c.c                         | 215 +++++++++
-> > >  include/linux/mfd/lmp92001/core.h                  | 119 +++++
-> > >  include/linux/mfd/lmp92001/debug.h                 |  28 ++
-> > >  20 files changed, 2051 insertions(+)
-> > >  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-lmp920001
-> > >  create mode 100644 Documentation/devicetree/
-> > bindings/gpio/gpio-lmp92001.txt
-> > >  create mode 100644 Documentation/devicetree/
-> > bindings/iio/adc/ti-lmp92001-adc.txt
-> > >  create mode 100644 Documentation/devicetree/
-> > bindings/iio/dac/ti-lmp92001-dac.txt
-> > >  create mode 100644 drivers/gpio/gpio-lmp92001.c
-> > >  create mode 100644 drivers/iio/adc/lmp92001-adc.c
-> > >  create mode 100644 drivers/iio/dac/lmp92001-dac.c
-> > >  create mode 100644 drivers/mfd/lmp92001-core.c
-> > >  create mode 100644 drivers/mfd/lmp92001-debug.c
-> > >  create mode 100644 drivers/mfd/lmp92001-i2c.c
-> > >  create mode 100644 include/linux/mfd/lmp92001/core.h
-> > >  create mode 100644 include/linux/mfd/lmp92001/debug.h
-
-[...]
-
-> > > +struct lmp92001_gpio {
-> > > +     struct lmp92001 *lmp92001;
-> > > +     struct gpio_chip gpio_chip;
-> > > +};
-> > > +
-> > > +static int lmp92001_gpio_get_direction(struct gpio_chip *chip,
-> > unsigned offset)
-> >
-> > unsigned vs unsigned int
-> >
-> 
-> I am follow the function prototype, it is unsigned.
-> 
-> struct gpio_chip {
-> ...
-> int (*get_direction)(struct gpio_chip *chip,
-> unsigned offset);
-> ...
-> };
-
-[...]
-
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +static void lmp92001_gpio_dbg_show(struct seq_file *s, struct gpio_chip
-> > *chip)
-> > > +{
-> > > +     struct lmp92001_gpio *lmp92001_gpio = gpiochip_get_data(chip);
-> > > +     struct lmp92001 *lmp92001 = lmp92001_gpio->lmp92001;
-> > > +     int i, gpio;
-> > > +     unsigned int cgpo;
-> > > +     const char *label, *dir, *logic;
-> > > +
-> > > +     for (i = 0; i < chip->ngpio; i++) {
-> > > +             gpio = i + chip->base;
-> > > +
-> > > +             label = gpiochip_is_requested(chip, i);
-> > > +             if (!label)
-> > > +                     continue;
-> > > +
-> > > +             regmap_read(lmp92001->regmap, LMP92001_CGPO, &cgpo);
-> >
-> > retval is not checked here (and elsewhere)
-> >
-> 
-> This function is return void.
-
-Please clip your responses!
-
+ 	for (i = 0; i < expr->ndescs; i++) {
+ 		const struct aspeed_sig_desc *desc = &expr->descs[i];
+@@ -216,20 +215,27 @@ static int aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
+ 
+ 		/* On AST2500, Set bits in SCU7C are cleared from SCU70 */
+ 		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP1) {
++			unsigned int rev_id;
++
+ 			ret = regmap_read(maps[ASPEED_IP_SCU],
+ 				HW_REVISION_ID, &rev_id);
+ 			if (ret < 0)
+ 				return ret;
+ 
+-			if (0x04 == ((rev_id >> 24) & 0xff))
+-				ret = regmap_write(maps[desc->ip],
+-					HW_REVISION_ID, (~val & desc->mask));
+-			else
+-				ret = regmap_update_bits(maps[desc->ip],
+-					desc->reg, desc->mask, val);
+-		} else
+-			ret = regmap_update_bits(maps[desc->ip], desc->reg,
+-				desc->mask, val);
++			if (0x04 == (rev_id >> 24)) {
++				u32 value = ~val & desc->mask;
++
++				if (value) {
++					ret = regmap_write(maps[desc->ip],
++						HW_REVISION_ID, value);
++					if (ret < 0)
++						return ret;
++				}
++			}
++		}
++
++		ret = regmap_update_bits(maps[desc->ip], desc->reg,
++					 desc->mask, val);
+ 
+ 		if (ret)
+ 			return ret;
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.11.0
