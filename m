@@ -1,35 +1,54 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gliolib: request the gpio before querying its direction
-Date: Wed, 23 Aug 2017 10:32:08 +0200
-Message-ID: <CACRpkdZv0NjXfwm_-TSoY=QFeP64V-ZoKvmLXk3qkV49fq1UtQ@mail.gmail.com>
-References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
- <1501179565-26466-2-git-send-email-timur@codeaurora.org> <CACRpkdYPBd4ZvuXo__LRQezTQD3u=3r2WO+2dTzBanLL1zX72w@mail.gmail.com>
- <103341c8-6cc5-3d3f-eef7-28b9f31cdc71@codeaurora.org>
+Subject: [GIT PULL] GPIO fixes for v4.13
+Date: Wed, 23 Aug 2017 10:48:19 +0200
+Message-ID: <CACRpkdagSGZTBMvQdKhFNORdfJoAV=N8OrNNc_Kn0PTQPo+g5Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <103341c8-6cc5-3d3f-eef7-28b9f31cdc71@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Masami Hiramatsu <masami.hiramatsu@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 21, 2017 at 11:23 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> On 07/31/2017 08:35 AM, Linus Walleij wrote:
->>>
->>> Before querying a GPIO to determine its direction, the GPIO should be
->>> formally requested.  This allows the GPIO driver to block access to
->>> unavailable GPIOs, which makes it easier for some drivers to support
->>> sparse GPIO maps.
->>>
->>> Signed-off-by: Timur Tabi<timur@codeaurora.org>
->>
->> This makes all kind of semantic change, so patch applied.
->
-> Have you push it to git.kernel.org?  I don't see it.
+Hi Linus,
 
-It's right there on the "devel" branch from the GPIO git tree.
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+here are the (hopefully) last GPIO fixes for v4.13.
+
+Details in the signed tag.
+
+Please pull them in!
 
 Yours,
 Linus Walleij
+
+The following changes since commit ef954844c7ace62f773f4f23e28d2d915adc419f:
+
+  Linux 4.13-rc5 (2017-08-13 16:01:32 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.13-3
+
+for you to fetch changes up to 3f13b6a24f192da3096389b82202f16eff2c11ee:
+
+  gpio: mvebu: Fix cause computation in irq handler (2017-08-14 15:00:43 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v4.13 series:
+
+- An important core fix to reject invalid GPIOs *before* trying
+  to obtain a GPIO descriptor for it.
+
+- A driver fix for the mvebu driver IRQ handling.
+
+----------------------------------------------------------------
+Gregory CLEMENT (1):
+      gpio: mvebu: Fix cause computation in irq handler
+
+Masami Hiramatsu (1):
+      gpio: reject invalid gpio before getting gpio_desc
+
+ drivers/gpio/gpio-mvebu.c    |  2 +-
+ drivers/gpio/gpiolib-sysfs.c | 10 ++++++++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
