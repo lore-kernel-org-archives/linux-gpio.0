@@ -1,79 +1,104 @@
 From: Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] pinctrl: aspeed: Rework strap register write logic for the AST2500
-Date: Wed, 23 Aug 2017 23:11:25 +0930
-Message-ID: <20170823134125.2339-1-andrew@aj.id.au>
+Subject: Re: [PATCH v3] pinctrl: aspeed: Fix ast2500 strap register write
+ logic
+Date: Wed, 23 Aug 2017 23:17:02 +0930
+Message-ID: <1503496022.7266.40.camel@aj.id.au>
+References: <1502814110-90168-1-git-send-email-sdliyong@gmail.com>
+         <CACRpkdaXreebGTf_cxrttwmdcRqYfaHx8WrQ64KA+o3AijBYfQ@mail.gmail.com>
+         <1503446048.7266.28.camel@aj.id.au>
+         <CACRpkdbBjfi-=oEu+pXgqy_kcVaP85Dy=C6_VnwNjBe89yXFMg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-XxKMkMZp9rMsVa4g1trH"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbBjfi-=oEu+pXgqy_kcVaP85Dy=C6_VnwNjBe89yXFMg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Andrew Jeffery <andrew@aj.id.au>, linus.walleij@linaro.org, joel@jms.id.au, linux-kernel@vger.kernel.org, Yong Li <sdliyong@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Yong Li <sdliyong@gmail.com>, Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>, Rick Altherr <raltherr@google.com>, Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Yong Li found that writes to the AST2500 strapping register were not
-properly supported by the Aspeed pinctrl core and provided a patch to
-rectify the problem. Several revisions of the patch were posted and
-ultimately v4 should have been applied, however some unfortunate
-liberal application of tags on my part lead to confusion between v3[1]
-and v4[2].
 
-Generate the diff between v3 and v4 to apply as a fixup patch.
+--=-XxKMkMZp9rMsVa4g1trH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[1] http://patchwork.ozlabs.org/patch/801662/
-[2] http://patchwork.ozlabs.org/patch/802946/
+On Wed, 2017-08-23 at 10:23 +0200, Linus Walleij wrote:
+> > On Wed, Aug 23, 2017 at 1:54 AM, Andrew Jeffery <andrew@aj.id.au> wrote=
+:
+> > On Tue, 2017-08-22 at 14:52 +0200, Linus Walleij wrote:
+> > > > > > > > On Tue, Aug 15, 2017 at 6:21 PM, Yong Li <sdliyong@gmail.co=
+m> wrote:
+> > > > On AST2500, the hardware strap register(SCU70) only accepts write =
+=E2=80=981=E2=80=99,
+> > > > to clear it to =E2=80=980=E2=80=99, must set bits(write=C2=A0=C2=A0=
+=E2=80=981=E2=80=99) to SCU7C
+> > > >=C2=A0
+> > > > Signed-off-by: Yong Li <sdliyong@gmail.com>
+> > >=C2=A0
+> > > Patch applied with Andrew's review/test tags.
+> >=C2=A0
+> > I realised after I sent the tags on v3 that I'd made a mistake: There's=
+ a
+> > slightly awkward to test bug in the v3 implementation. I followed up on=
+ v3 with
+> > this:
+> >=C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0https://lkml.org/lkml/2=
+017/8/16/905
+> >=C2=A0
+> > And Yong sent out a corresponding v4:
+> >=C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0https://patchwork.ozlab=
+s.org/patch/802946/
+>=C2=A0
+> Ah. I got confused and picked the wrong version.
 
-Cc: Yong Li <sdliyong@gmail.com>
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+Entirely my fault. Apologies again for the confusion. I owe you a few drink=
+s if
+we ever meet :)
 
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-index f2d5133f6993..7f13ce8450a3 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-@@ -183,7 +183,6 @@ static int aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
- {
- 	int ret;
- 	int i;
--	unsigned int rev_id;
- 
- 	for (i = 0; i < expr->ndescs; i++) {
- 		const struct aspeed_sig_desc *desc = &expr->descs[i];
-@@ -216,20 +215,27 @@ static int aspeed_sig_expr_set(const struct aspeed_sig_expr *expr,
- 
- 		/* On AST2500, Set bits in SCU7C are cleared from SCU70 */
- 		if (desc->ip == ASPEED_IP_SCU && desc->reg == HW_STRAP1) {
-+			unsigned int rev_id;
-+
- 			ret = regmap_read(maps[ASPEED_IP_SCU],
- 				HW_REVISION_ID, &rev_id);
- 			if (ret < 0)
- 				return ret;
- 
--			if (0x04 == ((rev_id >> 24) & 0xff))
--				ret = regmap_write(maps[desc->ip],
--					HW_REVISION_ID, (~val & desc->mask));
--			else
--				ret = regmap_update_bits(maps[desc->ip],
--					desc->reg, desc->mask, val);
--		} else
--			ret = regmap_update_bits(maps[desc->ip], desc->reg,
--				desc->mask, val);
-+			if (0x04 == (rev_id >> 24)) {
-+				u32 value = ~val & desc->mask;
-+
-+				if (value) {
-+					ret = regmap_write(maps[desc->ip],
-+						HW_REVISION_ID, value);
-+					if (ret < 0)
-+						return ret;
-+				}
-+			}
-+		}
-+
-+		ret = regmap_update_bits(maps[desc->ip], desc->reg,
-+					 desc->mask, val);
- 
- 		if (ret)
- 			return ret;
--- 
-2.11.0
+>=C2=A0
+> > I see you've pushed Yong's v3 in pinctrl/devel - can we revert/remove t=
+hat and
+> > apply v4?
+>=C2=A0
+> No I would have to revert the patch.
+>=C2=A0
+> Can't we simply make a small fixup patch?
+
+I couldn't recall what the rebase policy was for pinctrl/devel.
+
+I have sent the fixup patch:
+
+	http://patchwork.ozlabs.org/patch/804981/
+
+Cheers,
+
+Andrew
+
+>=C2=A0
+> Yours,
+> Linus Walleij
+--=-XxKMkMZp9rMsVa4g1trH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJZnYdWAAoJEJ0dnzgO5LT51rwP/jJwigBrkYbTw852FRFlCQjF
+2vcce3dSvuGJf60xPzQhtSu/Pxz06FQKfNamIavJOQT1rVluBeLwsWD/41QpFsIF
+hTMnIOQz2IClsmITPHaDrHc0bc7dFruTnwDHJ1XdJAYxgRiOjZQcn5XmIzPoLY4b
+OtDpuRHxys0wDPymFT4EsJJ6xR7wtATNJYO9ywv/0NHDJEwQKEe7gEYjpbIaMtrL
+XVmhLGlhYDK+U/Es+8hnNc6dv0J0vS8vRhy0EnmNZZnkca8PF8U24ZhnJ09gbrEE
+gtnilzxDWQTgKfIVn2W9oSef5XWfcYicd6oWhtO2QLWOBWJat/wa0HD9/MREm1CK
+Z3oylKjFeSKvwtjJTYmHAWnPOMtGaxLpa6fOgGpkE9sK8NY4ydvRiJx99R/iGEve
+d+daTOjbbrpkb77W8ah3N6/iKV2PyMDLpCjaijTvp+roREeN7X/gZV1CeccPvtgt
+H7MJBoykGSS/q8scpYVVD/zYMJ1wGkKqhOUT9d+sPqpdEifOZHng2uCFuEw4+Rm0
+BLOMhfzpUWFZMyEQH06BRnlUIO2E1dEWQL+P5kis/5Q1ocycq/ermOg/Y3218byP
+aDAqQ58zlgKrQRu2HgoE9ahhZrkzfoimB1+jsX/PCOkYNXxO69tDWYMIg+sg130+
+gjC5KYhUl2fcOm8f3Fg2
+=2fdX
+-----END PGP SIGNATURE-----
+
+--=-XxKMkMZp9rMsVa4g1trH--
