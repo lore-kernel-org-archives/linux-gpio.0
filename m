@@ -1,36 +1,30 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [RESEND v9 06/12] rtc: Kconfig: Name RK805 in Kconfig for
- RTC_DRV_RK808
-Date: Thu, 24 Aug 2017 11:17:50 +0200
-Message-ID: <20170824091750.yoo5wzg77ftt2wyt@piout.net>
-References: <1502848628-27757-1-git-send-email-chenjh@rock-chips.com>
- <1502848835-24800-1-git-send-email-chenjh@rock-chips.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v1 1/2] pinctrl: intel: Read back TX buffer state
+Date: Thu, 24 Aug 2017 12:29:10 +0300
+Message-ID: <20170824092910.GM2327@lahna.fi.intel.com>
+References: <20170824081934.85859-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga05.intel.com ([192.55.52.43]:22921 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751274AbdHXJ3N (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 24 Aug 2017 05:29:13 -0400
 Content-Disposition: inline
-In-Reply-To: <1502848835-24800-1-git-send-email-chenjh@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Joseph Chen <chenjh@rock-chips.com>
-Cc: gnurou@gmail.com, linus.walleij@linaro.org, dmitry.torokhov@gmail.com, lee.jones@linaro.org, linux-kernel@vger.kernel.org, huangtao@rock-chips.com, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, broonie@kernel.org, zhangqing@rock-chips.com, robh+dt@kernel.org, lgirdwood@gmail.com, linux-rockchip@lists.infradead.org, wdc@rock-chips.com, tony.xie@rock-chips.com, linux-input@vger.kernel.org, mark.rutland@arm.com, w.egorov@phytec.de, linux-clk@vger.kernel.org, a.zummo@towertech.it, rtc-linux@googlegroups.com
+In-Reply-To: <20170824081934.85859-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Bourque, Francis" <francis.bourque@intel.com>
 
-On 16/08/2017 at 10:00:35 +0800, Joseph Chen wrote:
-> From: Elaine Zhang <zhangqing@rock-chips.com>
+On Thu, Aug 24, 2017 at 11:19:33AM +0300, Andy Shevchenko wrote:
+> In the same way as it's done in pinctrl-cherryview.c we would provide
+> a readback TX buffer state.
 > 
-> The RK808 and RK805 PMICs are using a similar register map.
-> We can reuse the rtc driver for the RK805 PMIC. So let's add
-> the RK805 in the Kconfig description.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> Signed-off-by: Joseph Chen <chenjh@rock-chips.com>
-> ---
->  drivers/rtc/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Applied, thanks.
+> Fixes: 17fab473693 ("pinctrl: intel: Set pin direction properly")
+> Reported-by: "Bourque, Francis" <francis.bourque@intel.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Thanks Andy for taking care of this!
+
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
