@@ -1,70 +1,61 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: [PATCH] gpio: xgene-sb: Tidy up fwnode usage
-Date: Thu, 24 Aug 2017 18:24:11 +0100
-Message-ID: <2ccfa46003fb5cf5970dc5cd8771953d375fed77.1503594687.git.robin.murphy@arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/4] bitops: Introduce assign_bit()
+Date: Thu, 24 Aug 2017 21:52:02 +0200
+Message-ID: <CACRpkda52Ci1vreCUUPZbJHOk3yZOT0X1wgUS-J4CbnNvho_9A@mail.gmail.com>
+References: <cover.1503319573.git.lukas@wunner.de> <5487a5f7d1a4be1bb13e7d1f392281d18c0e935e.1503319573.git.lukas@wunner.de>
+ <CACRpkdaa7JXhjgGxG=eMZxh2kfC3MJ4O_Sc5h5qZsmL5sWNVmg@mail.gmail.com> <1503508187.2484.9.camel@wdc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:45000 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753968AbdHXRYW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 24 Aug 2017 13:24:22 -0400
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:35863 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753041AbdHXTwE (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2017 15:52:04 -0400
+Received: by mail-oi0-f45.google.com with SMTP id r9so4444137oie.3
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Aug 2017 12:52:03 -0700 (PDT)
+In-Reply-To: <1503508187.2484.9.camel@wdc.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, yvo@apm.com, qnguyen@apm.com
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "lukas@wunner.de" <lukas@wunner.de>, "agk@redhat.com" <agk@redhat.com>, "phil@raspberrypi.org" <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "m.duckeck@kunbus.de" <m.duckeck@kunbus.de>, "snitzer@redhat.com" <snitzer@redhat.com>
 
-Since f94277af03ea ("of/platform: Initialise dev->fwnode appropriately"),
-of_platform_device_create() already initialises dev->fwnode to that of
-the appropriate device_node, so within the driver we shouldn't need to
-care whether we probed via DT or ACPI.
+On Wed, Aug 23, 2017 at 7:09 PM, Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
+> On Wed, 2017-08-23 at 09:32 +0200, Linus Walleij wrote:
+>> Can someone explain when I use the bitop_foo() and when I
+>> use the __bitop_foo(). I am asking so I can understand patch
+>> 2/4 in this series.
+>
+> That's easy. From Documentation/core-api/atomic_ops.rst:
+>
+> ----------------------------------------------------------------------
+> Finally, there are non-atomic versions of the bitmask operations
+> provided.  They are used in contexts where some other higher-level SMP
+> locking scheme is being used to protect the bitmask, and thus less
+> expensive non-atomic operations may be used in the implementation.
+> They have names similar to the above bitmask operation interfaces,
+> except that two underscores are prefixed to the interface name. ::
+>
+>         void __set_bit(unsigned long nr, volatile unsigned long *addr);
+>         void __clear_bit(unsigned long nr, volatile unsigned long *addr);
+>         void __change_bit(unsigned long nr, volatile unsigned long *addr);
+>         int __test_and_set_bit(unsigned long nr, volatile unsigned long *addr);
+>         int __test_and_clear_bit(unsigned long nr, volatile unsigned long *addr);
+>         int __test_and_change_bit(unsigned long nr, volatile unsigned long *addr);
+>
+> These non-atomic variants also do not require any special memory
+> barrier semantics.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+All right that makes sense.
 
-Not tested, just an opportunity I happened to spot whilst looking
-at something else.
+On Rusty Russell's API ladder
+http://sweng.the-davies.net/Home/rustys-api-design-manifesto
+this scores 3/10 "read the documentation and you will get
+it right".
 
- drivers/gpio/gpio-xgene-sb.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+We could raise it to 6-7 by renaming them all
+set_bit_nonatomic() etc (or even set_bit_na()), I almost feel like
+sending a script to Torvalds to do that after the merge window, but I
+fear some people would beat me up for it.
 
-diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
-index 033258634b8c..82c3ee6da66a 100644
---- a/drivers/gpio/gpio-xgene-sb.c
-+++ b/drivers/gpio/gpio-xgene-sb.c
-@@ -130,10 +130,7 @@ static int xgene_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
- 			(gpio > HWIRQ_TO_GPIO(priv, priv->nirq)))
- 		return -ENXIO;
- 
--	if (gc->parent->of_node)
--		fwspec.fwnode = of_node_to_fwnode(gc->parent->of_node);
--	else
--		fwspec.fwnode = gc->parent->fwnode;
-+	fwspec.fwnode = gc->parent->fwnode;
- 	fwspec.param_count = 2;
- 	fwspec.param[0] = GPIO_TO_HWIRQ(priv, gpio);
- 	fwspec.param[1] = IRQ_TYPE_NONE;
-@@ -231,7 +228,6 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	void __iomem *regs;
- 	struct irq_domain *parent_domain = NULL;
--	struct fwnode_handle *fwnode;
- 	u32 val32;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-@@ -285,13 +281,8 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, priv);
- 
--	if (pdev->dev.of_node)
--		fwnode = of_node_to_fwnode(pdev->dev.of_node);
--	else
--		fwnode = pdev->dev.fwnode;
--
- 	priv->irq_domain = irq_domain_create_hierarchy(parent_domain,
--					0, priv->nirq, fwnode,
-+					0, priv->nirq, pdev->dev.fwnode,
- 					&xgene_gpio_sb_domain_ops, priv);
- 	if (!priv->irq_domain)
- 		return -ENODEV;
--- 
-2.13.4.dirty
-
+Yours,
+Linus Walleij
