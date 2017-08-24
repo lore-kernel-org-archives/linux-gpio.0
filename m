@@ -1,30 +1,52 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [RFC, PATCH v1 2/2] pinctrl: intel: Decrease indentation in
- intel_gpio_set()
-Date: Thu, 24 Aug 2017 12:30:14 +0300
-Message-ID: <20170824093014.GN2327@lahna.fi.intel.com>
-References: <20170824081934.85859-1-andriy.shevchenko@linux.intel.com>
- <20170824081934.85859-2-andriy.shevchenko@linux.intel.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH][gpio-next] gpio: mockup: remove unused variable gc
+Date: Thu, 24 Aug 2017 12:34:22 +0100
+Message-ID: <20170824113422.22214-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:41890 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751667AbdHXJaS (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 24 Aug 2017 05:30:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20170824081934.85859-2-andriy.shevchenko@linux.intel.com>
+Received: from youngberry.canonical.com ([91.189.89.112]:50463 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751290AbdHXLeY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2017 07:34:24 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Thu, Aug 24, 2017 at 11:19:34AM +0300, Andy Shevchenko wrote:
-> Decrease indentation in intel_gpio_set() to make it looking slightly better
-> and be in align with intel_gpio_get().
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-No objections from me. Looks better this way :)
+The variable gc is assigned but never read and is redundant. Remove it.
+Cleans up clang warning:
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+drivers/gpio/gpio-mockup.c:169:2: warning: Value stored to 'gc' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpio/gpio-mockup.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 6db7163e6d98..9532d86a82f7 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -153,7 +153,6 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 	struct gpio_mockup_chip *chip;
+ 	struct seq_file *sfile;
+ 	struct gpio_desc *desc;
+-	struct gpio_chip *gc;
+ 	int rv, val;
+ 
+ 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
+@@ -166,7 +165,6 @@ static ssize_t gpio_mockup_event_write(struct file *file,
+ 	priv = sfile->private;
+ 	desc = priv->desc;
+ 	chip = priv->chip;
+-	gc = &chip->gc;
+ 
+ 	gpiod_set_value_cansleep(desc, val);
+ 	irq_sim_fire(&chip->irqsim, priv->offset);
+-- 
+2.14.1
+
