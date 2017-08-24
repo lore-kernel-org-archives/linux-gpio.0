@@ -1,57 +1,50 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Correct power_source range
- check
-Date: Wed, 23 Aug 2017 22:03:26 -0700
-Message-ID: <20170824050326.GD29306@minitux>
-References: <20170719064121.13948-1-fenglinw@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/2] pinctrl: intel: Read back TX buffer state
+Date: Thu, 24 Aug 2017 11:19:33 +0300
+Message-ID: <20170824081934.85859-1-andriy.shevchenko@linux.intel.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f43.google.com ([74.125.83.43]:34330 "EHLO
-        mail-pg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751038AbdHXFDa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2017 01:03:30 -0400
-Received: by mail-pg0-f43.google.com with SMTP id s14so11055740pgs.1
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Aug 2017 22:03:30 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20170719064121.13948-1-fenglinw@codeaurora.org>
+Received: from mga06.intel.com ([134.134.136.31]:30126 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752463AbdHXITx (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 24 Aug 2017 04:19:53 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: fenglinw@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, kgunda@codeaurora.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, "Bourque, Francis" <francis.bourque@intel.com>
 
-On Tue 18 Jul 23:39 PDT 2017, fenglinw@codeaurora.org wrote:
+In the same way as it's done in pinctrl-cherryview.c we would provide
+a readback TX buffer state.
 
-> From: Fenglin Wu <fenglinw@codeaurora.org>
-> 
-> Power source selection in DIG_VIN_CTL is indexed from 0, in the range
-> check it shouldn't be equal to the total number of power sources.
-> 
+Fixes: 17fab473693 ("pinctrl: intel: Set pin direction properly")
+Reported-by: "Bourque, Francis" <francis.bourque@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 6dc1096d3d34..c8675611b768 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -751,12 +751,17 @@ static int intel_gpio_get(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct intel_pinctrl *pctrl = gpiochip_get_data(chip);
+ 	void __iomem *reg;
++	u32 padcfg0;
+ 
+ 	reg = intel_get_padcfg(pctrl, offset, PADCFG0);
+ 	if (!reg)
+ 		return -EINVAL;
+ 
+-	return !!(readl(reg) & PADCFG0_GPIORXSTATE);
++	padcfg0 = readl(reg);
++	if (!(padcfg0 & PADCFG0_GPIOTXDIS))
++		return !!(padcfg0 & PADCFG0_GPIOTXSTATE);
++
++	return !!(padcfg0 & PADCFG0_GPIORXSTATE);
+ }
+ 
+ static void intel_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+-- 
+2.14.1
 
-Regards,
-Bjorn
-
-> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> index 664b641..8b77c04 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -375,7 +375,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->  			pad->is_enabled = false;
->  			break;
->  		case PIN_CONFIG_POWER_SOURCE:
-> -			if (arg > pad->num_sources)
-> +			if (arg >= pad->num_sources)
->  				return -EINVAL;
->  			pad->power_source = arg;
->  			break;
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project.
-> 
