@@ -1,52 +1,70 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][gpio-next] gpio: mockup: remove unused variable gc
-Date: Thu, 24 Aug 2017 12:34:22 +0100
-Message-ID: <20170824113422.22214-1-colin.king@canonical.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] gpio: xgene-sb: Tidy up fwnode usage
+Date: Thu, 24 Aug 2017 18:24:11 +0100
+Message-ID: <2ccfa46003fb5cf5970dc5cd8771953d375fed77.1503594687.git.robin.murphy@arm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:50463 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751290AbdHXLeY (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 24 Aug 2017 07:34:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:45000 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753968AbdHXRYW (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 24 Aug 2017 13:24:22 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, yvo@apm.com, qnguyen@apm.com
 
-From: Colin Ian King <colin.king@canonical.com>
+Since f94277af03ea ("of/platform: Initialise dev->fwnode appropriately"),
+of_platform_device_create() already initialises dev->fwnode to that of
+the appropriate device_node, so within the driver we shouldn't need to
+care whether we probed via DT or ACPI.
 
-The variable gc is assigned but never read and is redundant. Remove it.
-Cleans up clang warning:
-
-drivers/gpio/gpio-mockup.c:169:2: warning: Value stored to 'gc' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/gpio/gpio-mockup.c | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
-index 6db7163e6d98..9532d86a82f7 100644
---- a/drivers/gpio/gpio-mockup.c
-+++ b/drivers/gpio/gpio-mockup.c
-@@ -153,7 +153,6 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	struct gpio_mockup_chip *chip;
- 	struct seq_file *sfile;
- 	struct gpio_desc *desc;
--	struct gpio_chip *gc;
- 	int rv, val;
+Not tested, just an opportunity I happened to spot whilst looking
+at something else.
+
+ drivers/gpio/gpio-xgene-sb.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpio/gpio-xgene-sb.c b/drivers/gpio/gpio-xgene-sb.c
+index 033258634b8c..82c3ee6da66a 100644
+--- a/drivers/gpio/gpio-xgene-sb.c
++++ b/drivers/gpio/gpio-xgene-sb.c
+@@ -130,10 +130,7 @@ static int xgene_gpio_sb_to_irq(struct gpio_chip *gc, u32 gpio)
+ 			(gpio > HWIRQ_TO_GPIO(priv, priv->nirq)))
+ 		return -ENXIO;
  
- 	rv = kstrtoint_from_user(usr_buf, size, 0, &val);
-@@ -166,7 +165,6 @@ static ssize_t gpio_mockup_event_write(struct file *file,
- 	priv = sfile->private;
- 	desc = priv->desc;
- 	chip = priv->chip;
--	gc = &chip->gc;
+-	if (gc->parent->of_node)
+-		fwspec.fwnode = of_node_to_fwnode(gc->parent->of_node);
+-	else
+-		fwspec.fwnode = gc->parent->fwnode;
++	fwspec.fwnode = gc->parent->fwnode;
+ 	fwspec.param_count = 2;
+ 	fwspec.param[0] = GPIO_TO_HWIRQ(priv, gpio);
+ 	fwspec.param[1] = IRQ_TYPE_NONE;
+@@ -231,7 +228,6 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	void __iomem *regs;
+ 	struct irq_domain *parent_domain = NULL;
+-	struct fwnode_handle *fwnode;
+ 	u32 val32;
  
- 	gpiod_set_value_cansleep(desc, val);
- 	irq_sim_fire(&chip->irqsim, priv->offset);
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+@@ -285,13 +281,8 @@ static int xgene_gpio_sb_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
+-	if (pdev->dev.of_node)
+-		fwnode = of_node_to_fwnode(pdev->dev.of_node);
+-	else
+-		fwnode = pdev->dev.fwnode;
+-
+ 	priv->irq_domain = irq_domain_create_hierarchy(parent_domain,
+-					0, priv->nirq, fwnode,
++					0, priv->nirq, pdev->dev.fwnode,
+ 					&xgene_gpio_sb_domain_ops, priv);
+ 	if (!priv->irq_domain)
+ 		return -ENODEV;
 -- 
-2.14.1
+2.13.4.dirty
 
