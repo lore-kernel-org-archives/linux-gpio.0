@@ -1,42 +1,34 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 1/3] gliolib: request the gpio before querying its
- direction
-Date: Thu, 24 Aug 2017 17:00:37 -0500
-Message-ID: <038c4c8a-ec3f-2c61-420f-2bd5b54b5c3c@codeaurora.org>
-References: <1501179565-26466-1-git-send-email-timur@codeaurora.org>
- <1501179565-26466-2-git-send-email-timur@codeaurora.org>
- <CACRpkdYPBd4ZvuXo__LRQezTQD3u=3r2WO+2dTzBanLL1zX72w@mail.gmail.com>
- <103341c8-6cc5-3d3f-eef7-28b9f31cdc71@codeaurora.org>
- <CACRpkdZv0NjXfwm_-TSoY=QFeP64V-ZoKvmLXk3qkV49fq1UtQ@mail.gmail.com>
- <e1eae89c-f007-2e0b-cbb8-1aba71dae0e1@codeaurora.org>
- <CACRpkdZ-=uyFntmwL3Z8dg32ovRwRuz0XRXr833TEjokvg+5=A@mail.gmail.com>
+From: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v2] pinctrl: rockchip: Add rv1108 recalculated iomux support
+Date: Fri, 25 Aug 2017 11:23:17 +0200
+Message-ID: <23515351.KtMKrjq6Hm@phil>
+References: <1503475207-30288-1-git-send-email-david.wu@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZ-=uyFntmwL3Z8dg32ovRwRuz0XRXr833TEjokvg+5=A@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:60716 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754880AbdHYJX1 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 25 Aug 2017 05:23:27 -0400
+In-Reply-To: <1503475207-30288-1-git-send-email-david.wu@rock-chips.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Wu <david.wu@rock-chips.com>
+Cc: linus.walleij@linaro.org, huangtao@rock-chips.com, andy.yan@rock-chips.com, linux-rockchip@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/24/2017 04:28 PM, Linus Walleij wrote:
-> I don't see how you can have a merge conflict between this
-> patch that only affects gpiolib.c and something in the pin
-> control tree?
+Am Mittwoch, 23. August 2017, 16:00:07 CEST schrieb David Wu:
+> The pins from GPIO1A0 to GPIO1B1 are special, need to recalculate
+> iomux. And the register offset is larger than the u8 range, so changed
+> to u32.
+> 
+> Signed-off-by: David Wu <david.wu@rock-chips.com>
 
-Actually, the merge conflict is because this is missing in the gpio tree:
+While I'm still struggling trying to understand why some chip-designer
+would move these iomux settings into the general SOC_CON registers,
+this matches the documentation for the rv1108, so
 
-pinctrl: msm: add support to configure ipq40xx GPIO_PULL bits
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-> The merge window is imminent, so if it is not extremely urgent
-> I would opt to wait until after.
 
-As long as it gets into 4.14-final, I don't care which specific RC it 
-appears in.  Thanks.
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Heiko
