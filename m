@@ -1,59 +1,73 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] mfd: twl: move header file out of I2C realm
-Date: Sun, 27 Aug 2017 09:44:44 -0700
-Message-ID: <20170827164444.GB22819@roeck-us.net>
-References: <20170814163424.2197-1-wsa@the-dreams.de>
- <20170814163424.2197-4-wsa@the-dreams.de>
- <CACRpkdZd1TecLVQA2uPiPM_fWDw1mS2-kpmN06xp=dP4Wh-vYQ@mail.gmail.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 2/4] gpio: Introduce ->get_multiple callback
+Date: Sun, 27 Aug 2017 19:34:59 +0200
+Message-ID: <20170827173459.GB13399@wunner.de>
+References: <cover.1503319573.git.lukas@wunner.de>
+ <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
+ <CACRpkdYfHGHNGKKMs+Yqhfeyhs=L0G4K_6OYneDG1RkNpxLXkA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout1.hostsharing.net ([83.223.95.204]:56039 "EHLO
+        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751243AbdH0Rec (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Aug 2017 13:34:32 -0400
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZd1TecLVQA2uPiPM_fWDw1mS2-kpmN06xp=dP4Wh-vYQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LINUXWATCHDOG <linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Reichel <sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Daniel Thompson <daniel.t>
+In-Reply-To: <CACRpkdYfHGHNGKKMs+Yqhfeyhs=L0G4K_6OYneDG1RkNpxLXkA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Aug 22, 2017 at 03:06:31PM +0200, Linus Walleij wrote:
-> On Mon, Aug 14, 2017 at 6:34 PM, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org> wrote:
-> 
-> > include/linux/i2c is not for client devices. Move the header file to a
-> > more appropriate location.
+On Wed, Aug 23, 2017 at 09:38:21AM +0200, Linus Walleij wrote:
+> On Mon, Aug 21, 2017 at 3:12 PM, Lukas Wunner <lukas@wunner.de> wrote:
+> > SPI-attached GPIO controllers typically read out all inputs in one go.
+> > If callers desire the values of multipe inputs, ideally a single readout
+> > should take place to return the desired values.  However the current
+> > driver API only offers a ->get callback but no ->get_multiple (unlike
+> > ->set_multiple, which is present).  Thus, to read multiple inputs, a
+> > full readout needs to be performed for every single value (barring
+> > driver-internal caching), which is inefficient.
 > >
-> > Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-> > Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> > Acked-by: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > Acked-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Acked-by: Sebastian Reichel <sebastian.reichel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-> > Acked-by: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > Acked-by: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Acked-by: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-> > Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-> > Acked-by: Daniel Thompson <daniel.thompson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-> > ---
+> > In fact, the lack of a ->get_multiple callback has been bemoaned
+> > repeatedly by the gpio subsystem maintainer:
+> > http://www.spinics.net/lists/linux-gpio/msg10571.html
+> > http://www.spinics.net/lists/devicetree/msg121734.html
 > >
-> > Change since V1:
-> >
-> > * rebased to v4.13-rc5, one change needed (twl4030-adc.h gone, too)
-> > * acks added. I think gpio and hwmon acks are missing.
-> >   Linus, Guenter, pretty please? :)
+> > Introduce the missing callback.  Add corresponding consumer functions
+> > such as gpiod_get_array_value().  Amend linehandle_ioctl() to take
+> > advantage of the newly added infrastructure.
 > 
-> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> For anything hitting GPIO.
-> 
-For hwmon:
+> Could you please patch
+> Documentation/gpio/consumer.txt
+> to mention the new functions as well?
 
-Acked-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Missed that, will fix in v2.  There is an oddity in that document
+in that it claims gpiod_get_value() / gpiod_set_value() do not return
+errors.  The kerneldoc in gpiolib.c and driver.h says otherwise,
+it allows the get functions to return a negative errno.  Now what?
 
-Sorry, I am a bit behind ...
+Here are the two occurrences of the false claim in consumer.txt:
 
-Guenter
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	It should be checked, since the get/set calls don't return errors
+	and since misconfiguration is possible.
+
+	The get/set calls do not return errors because "invalid GPIO"
+	should have been reported earlier from gpiod_direction_*().
+
+At least with SPI-attached GPIO controllers, the transmission is never
+guaranteed to succeed, so errors can occur both for input and output
+GPIOs.  The MAX3191x is input-only and does pass SPI errors back to
+the caller.  Output drivers such as gpio-74x164.c silently ignore
+SPI errors, which is arguably a problem.
+
+> Maybe we should have a section in Documentation/gpio/driver.txt,
+> that doc is a bit incomplete right now.
+
+First time I've seen that file. :-)  I used the kerneldoc as guidance
+when writing the gpio-max3191x.c driver and found it sufficient, so I'm
+not sure how driver.txt could be expanded?
+
+Thanks!
+
+Lukas
