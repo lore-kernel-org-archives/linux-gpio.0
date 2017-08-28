@@ -1,39 +1,37 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: uniphier: fix members of rmii group for Pro4
-Date: Mon, 28 Aug 2017 11:28:14 +0900
-Message-ID: <CAK7LNASqOQsTDjCNkWjtxp__gns_0kM6BVgsGuNQFpUc3MVM7g@mail.gmail.com>
-References: <1503886886-30065-1-git-send-email-hayashi.kunihiko@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: fenglinw@codeaurora.org
+Subject: [PATCH V2] pinctrl: qcom: spmi-gpio: Correct power_source range check
+Date: Mon, 28 Aug 2017 11:00:42 +0800
+Message-ID: <20170828030227.16796-1-fenglinw@codeaurora.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1503886886-30065-1-git-send-email-hayashi.kunihiko@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, kgunda@codeaurora.org, Fenglin Wu <fenglinw@codeaurora.org>
 List-Id: linux-gpio@vger.kernel.org
 
-2017-08-28 11:21 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
-> The ether_rmii_groups should have "ether_rmii" and "ether_rmiib" as
-> members. This patch replaces to them.
+From: Fenglin Wu <fenglinw@codeaurora.org>
 
+Power source selection in DIG_VIN_CTL is indexed from 0, in the range
+check it shouldn't be equal to the total number of power sources.
 
-Linus,
-When you pick up this, please add
+Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: 1e359ab1285e ("1e359ab1285eaa7")
-
-
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-
-
-Otherwise, looks good to me.
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
-
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index 664b641..8b77c04 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -375,7 +375,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			pad->is_enabled = false;
+ 			break;
+ 		case PIN_CONFIG_POWER_SOURCE:
+-			if (arg > pad->num_sources)
++			if (arg >= pad->num_sources)
+ 				return -EINVAL;
+ 			pad->power_source = arg;
+ 			break;
 -- 
-Best Regards
-Masahiro Yamada
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
