@@ -1,56 +1,49 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] pinctrl: uniphier: fix members of rmii group for Pro4
-Date: Mon, 28 Aug 2017 12:16:51 +0900
-Message-ID: <CAK7LNARqNZe0qgWG_rKAmsnutYVF_=EiHSfvN3GsV=1G_nTfeQ@mail.gmail.com>
-References: <1503886886-30065-1-git-send-email-hayashi.kunihiko@socionext.com> <CAK7LNASqOQsTDjCNkWjtxp__gns_0kM6BVgsGuNQFpUc3MVM7g@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH] Revert "pinctrl: sunxi: Don't enforce bias
+ disable (for now)"
+Date: Mon, 28 Aug 2017 08:46:32 +0200
+Message-ID: <20170828064632.kcj4pleyuuulwjq7@flea.lan>
+References: <20170827125523.29208-1-plaes@plaes.org>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:27872 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751726AbdH1DRf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 27 Aug 2017 23:17:35 -0400
-In-Reply-To: <CAK7LNASqOQsTDjCNkWjtxp__gns_0kM6BVgsGuNQFpUc3MVM7g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tkndvtxm2g27czo5"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBU7YR3GQKGQEEBRILTA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <20170827125523.29208-1-plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-
-2017-08-28 11:28 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> 2017-08-28 11:21 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
->> The ether_rmii_groups should have "ether_rmii" and "ether_rmiib" as
->> members. This patch replaces to them.
->
->
-> Linus,
-> When you pick up this, please add
->
-> Fixes: 1e359ab1285e ("1e359ab1285eaa7")
-
-My mistake.  I mean,
-
-Fixes: 1e359ab1285e ("pinctrl: uniphier: add Ethernet pin-mux settings")
 
 
+--tkndvtxm2g27czo5
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
->
->> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
->
->
-> Otherwise, looks good to me.
->
-> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
->
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+1;4803;0c
+On Sun, Aug 27, 2017 at 03:55:23PM +0300, Priit Laes wrote:
+> This reverts commit 2154d94b40ea2a5de05245521371d0461bb0d669.
+> 
+> The original patch was intented to avoid some issues with the sunxi
+> gpio rework and was supposed to be reverted after all the required
+> DT bits had been merged around v4.10.
+> 
+> Signed-off-by: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
 
+Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 
+Thanks!
+Maxime
 
 -- 
-Best Regards
-Masahiro Yamada
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--tkndvtxm2g27czo5--
