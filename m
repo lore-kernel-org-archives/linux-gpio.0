@@ -1,49 +1,55 @@
-From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] Revert "pinctrl: sunxi: Don't enforce bias
- disable (for now)"
-Date: Mon, 28 Aug 2017 08:46:32 +0200
-Message-ID: <20170828064632.kcj4pleyuuulwjq7@flea.lan>
-References: <20170827125523.29208-1-plaes@plaes.org>
-Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tkndvtxm2g27czo5"
-Return-path: <linux-sunxi+bncBDSJBYGBRIMBBU7YR3GQKGQEEBRILTA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170827125523.29208-1-plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] pinctrl: intel: merrifield: Introduce OF device table
+Date: Mon, 28 Aug 2017 16:42:27 +0300
+Message-ID: <20170828134227.65736-1-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:1698 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750866AbdH1Nna (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Mon, 28 Aug 2017 09:43:30 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+On Intel Merrifield the pin control device is a separate IP block
+without any PCI or ACPI ID assigned. We need some means to allow the
+device be enumerated in ACPI environment (*).
 
---tkndvtxm2g27czo5
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+To achieve this without allocation special ACPI ID, which is really long
+and pretty much unachievable procedure, we just re-use special ACPI ID
+and standard compatible string.
 
-1;4803;0c
-On Sun, Aug 27, 2017 at 03:55:23PM +0300, Priit Laes wrote:
-> This reverts commit 2154d94b40ea2a5de05245521371d0461bb0d669.
-> 
-> The original patch was intented to avoid some issues with the sunxi
-> gpio rework and was supposed to be reverted after all the required
-> DT bits had been merged around v4.10.
-> 
-> Signed-off-by: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
+(*) ACPI is enabled via second bootloader, i.e. U-Boot,
+    firmware is still left untouched and being SFI enabled.
 
-Acked-by: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/pinctrl/intel/pinctrl-merrifield.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks!
-Maxime
-
+diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
+index 86c4b3fab7b0..46fe30702a79 100644
+--- a/drivers/pinctrl/intel/pinctrl-merrifield.c
++++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
+@@ -931,10 +931,17 @@ static int mrfld_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id mrfld_of_table[] = {
++	{ .compatible = "intel,merrifield-pinctrl" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, mrfld_of_table);
++
+ static struct platform_driver mrfld_pinctrl_driver = {
+ 	.probe = mrfld_pinctrl_probe,
+ 	.driver = {
+ 		.name = "pinctrl-merrifield",
++		.of_match_table = mrfld_of_table,
+ 	},
+ };
+ 
 -- 
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---tkndvtxm2g27czo5--
+2.14.1
+
