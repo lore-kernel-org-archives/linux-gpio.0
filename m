@@ -1,59 +1,85 @@
-From: Fenglin Wu <fenglinw@codeaurora.org>
-Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Add support for
- qcom,gpios-disallowed property
-Date: Tue, 29 Aug 2017 10:04:07 +0800
-Message-ID: <0446a53f-3d78-39be-8cea-d39e39453910@codeaurora.org>
-References: <20170719071804.3816-1-fenglinw@codeaurora.org>
- <20170828145435.GJ3685@dragon>
- <a9d4117d-9bc6-9273-7b8b-5b153c7a4ceb@codeaurora.org>
- <20170829015112.GK3685@dragon>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: intel: wrap Intel pin control drivers in an
+ architecture check
+Date: Tue, 29 Aug 2017 16:49:20 +0300
+Message-ID: <1504014560.25945.145.camel@linux.intel.com>
+References: <20170704064947.10792-1-pbrobinson@gmail.com>
+         <20170704095459.GB1250@kuha.fi.intel.com>
+         <1499163673.22624.248.camel@linux.intel.com>
+         <CALeDE9NAsehP8X60BSWP1tcLSX+rD738bd9h9DtyunCz39HSHQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170829015112.GK3685@dragon>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, kgunda@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:63771 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752218AbdH2NtY (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 29 Aug 2017 09:49:24 -0400
+In-Reply-To: <CALeDE9NAsehP8X60BSWP1tcLSX+rD738bd9h9DtyunCz39HSHQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Peter Robinson <pbrobinson@gmail.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On 8/29/2017 9:51 AM, Shawn Guo wrote:
-> On Tue, Aug 29, 2017 at 09:03:02AM +0800, Fenglin Wu wrote:
->> I agree the GPIO's ownership is configurable and it always configured at
->> the very beginning of the device boot up which is not visible by linux
->> kernel drivers/image. Normally, this configuration is fixed in one
->> platform and it's been protected and not allowed to be configured in
->> linux kernel driver. So from linux driver point of view, this is a
->> hardware configuration. I agree the coming patch "spmi: pmic-arb: Move
->> the ownership check to irq_chip callback" would fix the pinctrl-
->> spmi-gpio driver probe failure caused by the ownership mismatch, but
->> this is just hiding the mistake of the kernel configured the GPIOs which
->> not owned by APPS processor.
+On Wed, 2017-07-05 at 09:01 +0100, Peter Robinson wrote:
+> On Tue, Jul 4, 2017 at 11:21 AM, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, 2017-07-04 at 12:54 +0300, Heikki Krogerus wrote:
+> > > On Tue, Jul 04, 2017 at 07:49:47AM +0100, Peter Robinson wrote:
+
+> > > > --- a/drivers/pinctrl/intel/Kconfig
+> > > > +++ b/drivers/pinctrl/intel/Kconfig
+> > > > @@ -1,6 +1,7 @@
+> > > >  #
+> > > >  # Intel pin control drivers
+> > > >  #
+> > > > +if (X86 || COMPILE_TEST)
+> > 
+> > And what about ARM et al. architectures?
 > 
-> The kernel does everything just right, using the GPIO that device tree
-> tells to use.  If there is something wrong about ownership check, it
-> should be fault of that device tree specifies the wrong GPIO, or
-> firmware doesn't configure ownership as needed.
-> > Shawn
+> If you look in the various sub directories you'll see that the various
+> arch sub directories have similar for their SoC eg ARCH_SUNXI or
+> explicit depends on the SoC achieving the same outcome.
+
+ARM world is too fragmented. I can't take it as a good example.
+Most of distros would like to maintain less kernels (ideally one per
+architecture). In the above example it's a sub-arch.
+
+Yes, I know that x86 has 3 let's say "sub-arches" which require
+different settings to kernel. (None of them makes difference to pin
+control case though)
+
+> > Instead I would propose to reorganize parent Kconfig to have
+> > something
+> > like
 > 
+> Well they're done in alphabetical and there's appropriate depends
+> ARCH_ or SOC_ etc so that those architectures don't randomly pop up in
+> configs for other unrelated things, the intel/ one is one of the only
+> ones that doesn't do this (hence this patch)
+> 
+> > if (ARM || COMPILE_TEST)
+> > ...ARM stuff...
+> > endif
+> > 
+> > if (X86 || COMPILE_TEST)
+> > ...X86 stuff...
+> > endif
+> > 
+> > But personally I don't like any of the above. So, what's the issue
+> > this
+> > patch is targeting against?
+> 
+> So that every time (in my case a distro) they don't have to explicitly
+> have unrelated "# CONFIG_PINCTRL_CHERRYVIEW is not set" style bits
+> through all their configs because it's completely unrelated to the
+> platform.
 
-If you thought that the driver registers pins for the GPIOs not owned by
-APPS processor is correct, then this patch is no needed.
-I agreed with others.
-Thanks
+Okay, so, what's wrong with defining big blocks on per ARCH basis as I
+pointed above?
 
-Fenglin
-
->> And these GPIOs will be registered
->> successfully as pinctrl pins and any APPS processor consumer drivers
->> could use this pins. This is not correct even the select_state operation
->> for these pins would failed due to the mode protection in spmi write_cmd
->> calling. I am thinking that not allowing these pins to be register as
->> pinctrl pins should be more straightforward and easy understanding. So I
->> think this patch still have value even the probe failure has been fixed
->> by the coming spmi patch.
+ARM, ARM64, X86, etc.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
