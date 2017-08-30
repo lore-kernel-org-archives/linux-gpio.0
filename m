@@ -1,136 +1,352 @@
-From: Andrew Jeffery <andrew@aj.id.au>
-Subject: Re: [PATCH] pinctrl: aspeed: Rework strap register write logic for
- the AST2500
-Date: Wed, 30 Aug 2017 11:08:16 +0930
-Message-ID: <1504057096.5933.12.camel@aj.id.au>
-References: <20170823134125.2339-1-andrew@aj.id.au>
+From: Dirk Behme <dirk.behme@de.bosch.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Re-add DRIF support
+Date: Wed, 30 Aug 2017 10:05:48 +0200
+Message-ID: <20170830080548.17383-1-dirk.behme@de.bosch.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-9pakij4eImAE9b00LrnU"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37399 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751318AbdH3Bi1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 29 Aug 2017 21:38:27 -0400
-In-Reply-To: <20170823134125.2339-1-andrew@aj.id.au>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Dirk Behme <dirk.behme@de.bosch.com>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linus.walleij@linaro.org, joel@jms.id.au, linux-kernel@vger.kernel.org, Yong Li <sdliyong@gmail.com>
 
+DRIF support for r8a7795 was initially added with commit 2d775831988
+("pinctrl: sh-pfc: r8a7795: Add DRIF support") and later dropped from
+the new pfc-r8a7795.c while re-naming the initial pfc-r8a7795.c to
+pfc-r8a7795-es1.c in commit b205914c8f8 ("pinctrl: sh-pfc: r8a7795:
+Add support for R-Car H3 ES2.0"). As the DRIF doesn't differ, re-add
+it here.
 
---=-9pakij4eImAE9b00LrnU
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+---
 
-Hi Linus,
+Patch based on sh-pfc-for-v4.14-tag1 
 
-On Wed, 2017-08-23 at 23:11 +0930, Andrew Jeffery wrote:
-> Yong Li found that writes to the AST2500 strapping register were not
-> properly supported by the Aspeed pinctrl core and provided a patch to
-> rectify the problem. Several revisions of the patch were posted and
-> ultimately v4 should have been applied, however some unfortunate
-> liberal application of tags on my part lead to confusion between v3[1]
-> and v4[2].
->=C2=A0
-> Generate the diff between v3 and v4 to apply as a fixup patch.
->=C2=A0
-> [1] http://patchwork.ozlabs.org/patch/801662/
-> [2] http://patchwork.ozlabs.org/patch/802946/
->=C2=A0
-> > Cc: Yong Li <sdliyong@gmail.com>
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 291 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 291 insertions(+)
 
-Just wondering if you're going to pick this up? It's a fix for "1865af212df=
-a
-pinctrl: aspeed: Fix ast2500 strap register write logic" in pinctrl/devel a=
-nd
-pinctrl/for-next.
-
-Cheers,
-
-Andrew
-
-> ---
-> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c | 26 ++++++++++++++++------=
-----
-> =C2=A01 file changed, 16 insertions(+), 10 deletions(-)
->=C2=A0
-> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/as=
-peed/pinctrl-aspeed.c
-> index f2d5133f6993..7f13ce8450a3 100644
-> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
-> @@ -183,7 +183,6 @@ static int aspeed_sig_expr_set(const struct aspeed_si=
-g_expr *expr,
-> =C2=A0{
-> > =C2=A0	int ret;
-> > =C2=A0	int i;
-> > -	unsigned int rev_id;
-> =C2=A0
-> > =C2=A0	for (i =3D 0; i < expr->ndescs; i++) {
-> > =C2=A0		const struct aspeed_sig_desc *desc =3D &expr->descs[i];
-> @@ -216,20 +215,27 @@ static int aspeed_sig_expr_set(const struct aspeed_=
-sig_expr *expr,
-> =C2=A0
-> > =C2=A0		/* On AST2500, Set bits in SCU7C are cleared from SCU70 */
-> > =C2=A0		if (desc->ip =3D=3D ASPEED_IP_SCU && desc->reg =3D=3D HW_STRAP1=
-) {
-> > +			unsigned int rev_id;
-> +
-> > =C2=A0			ret =3D regmap_read(maps[ASPEED_IP_SCU],
-> > =C2=A0				HW_REVISION_ID, &rev_id);
-> > =C2=A0			if (ret < 0)
-> > =C2=A0				return ret;
-> =C2=A0
-> > -			if (0x04 =3D=3D ((rev_id >> 24) & 0xff))
-> > -				ret =3D regmap_write(maps[desc->ip],
-> > -					HW_REVISION_ID, (~val & desc->mask));
-> > -			else
-> > -				ret =3D regmap_update_bits(maps[desc->ip],
-> > -					desc->reg, desc->mask, val);
-> > -		} else
-> > -			ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
-> > -				desc->mask, val);
-> > +			if (0x04 =3D=3D (rev_id >> 24)) {
-> > +				u32 value =3D ~val & desc->mask;
-> +
-> > +				if (value) {
-> > +					ret =3D regmap_write(maps[desc->ip],
-> > +						HW_REVISION_ID, value);
-> > +					if (ret < 0)
-> > +						return ret;
-> > +				}
-> > +			}
-> > +		}
-> +
-> > +		ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
-> > +					=C2=A0desc->mask, val);
-> =C2=A0
-> > =C2=A0		if (ret)
-> > =C2=A0			return ret;
---=-9pakij4eImAE9b00LrnU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCgAGBQJZphcIAAoJEJ0dnzgO5LT5SMsP/ikLQi0q7bxskhGtBuFVWXji
-eycX1uebji0tySmmyTiUbjHhm8Pc3GZiiU8ZVe783CiVAtSR+N4zTHUirkqz0ZwO
-rv9JAQ9qQXAYQkLwnBJONSRyZLKYgm3ZpjGvlgpsm45cyscio+hI7bwKwaIZeMoN
-LWpfdWjyByDi7PBOj5Ss8g/AiyOqeuHb1eVAMHxnIIIuqsIRD8WinqX89I10BhNL
-tVnxoVi/JQu5MSRY+LnBOn3owFiJZmEmdIT52BC/Mm8CbVt+IiOa9vd/+9mPDxgM
-PaakC+MRwunecnT9OvHkbtqHOwxDRfuXchI+VkL6Uyagfo6cGgJSYHEhyvzBaJvk
-OAf3FFDuDjYPrK3QPJBYuEAq1uRq++LEuSbe7vuwCIjhNGghZjlS/mRyX7QGW1pH
-JlU69Riuxi6A+D2fmmUyLLYCNi3No0Efb4PQLmGUHAxwyi5L/Gf+YbWjLW1jGgoC
-4JWKDvIurIpc9j8Kk7G6Yw2kO+MfIYW9LPkFLEfz9UAbusNNRuB4S/ZlbfmkMpXC
-50dY/5pF1CgvwQhoCC+bahjcC/sgp20fPOa/OMPKtIJiKj17QXHIn6FXe3mDJHUV
-yUE2mGk/76rbwuE1NFV/pTWWY8HRRYGc7ArXrev3w6Y6+HTBTahEwH4mp9cNMkiA
-CzYbpMinp+hNWLkbuKqa
-=rUeh
------END PGP SIGNATURE-----
-
---=-9pakij4eImAE9b00LrnU--
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index b225bc2f9bea..9e420f7fed72 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -1659,6 +1659,221 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
+ 	AVB_AVTP_CAPTURE_B_MARK,
+ };
+ 
++/* - DRIF0 --------------------------------------------------------------- */
++static const unsigned int drif0_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int drif0_ctrl_a_mux[] = {
++	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
++};
++static const unsigned int drif0_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int drif0_data0_a_mux[] = {
++	RIF0_D0_A_MARK,
++};
++static const unsigned int drif0_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 7),
++};
++static const unsigned int drif0_data1_a_mux[] = {
++	RIF0_D1_A_MARK,
++};
++static const unsigned int drif0_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
++};
++static const unsigned int drif0_ctrl_b_mux[] = {
++	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
++};
++static const unsigned int drif0_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 1),
++};
++static const unsigned int drif0_data0_b_mux[] = {
++	RIF0_D0_B_MARK,
++};
++static const unsigned int drif0_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 2),
++};
++static const unsigned int drif0_data1_b_mux[] = {
++	RIF0_D1_B_MARK,
++};
++static const unsigned int drif0_ctrl_c_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 15),
++};
++static const unsigned int drif0_ctrl_c_mux[] = {
++	RIF0_CLK_C_MARK, RIF0_SYNC_C_MARK,
++};
++static const unsigned int drif0_data0_c_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 13),
++};
++static const unsigned int drif0_data0_c_mux[] = {
++	RIF0_D0_C_MARK,
++};
++static const unsigned int drif0_data1_c_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 14),
++};
++static const unsigned int drif0_data1_c_mux[] = {
++	RIF0_D1_C_MARK,
++};
++/* - DRIF1 --------------------------------------------------------------- */
++static const unsigned int drif1_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
++};
++static const unsigned int drif1_ctrl_a_mux[] = {
++	RIF1_CLK_A_MARK, RIF1_SYNC_A_MARK,
++};
++static const unsigned int drif1_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 19),
++};
++static const unsigned int drif1_data0_a_mux[] = {
++	RIF1_D0_A_MARK,
++};
++static const unsigned int drif1_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 20),
++};
++static const unsigned int drif1_data1_a_mux[] = {
++	RIF1_D1_A_MARK,
++};
++static const unsigned int drif1_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 3),
++};
++static const unsigned int drif1_ctrl_b_mux[] = {
++	RIF1_CLK_B_MARK, RIF1_SYNC_B_MARK,
++};
++static const unsigned int drif1_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 7),
++};
++static const unsigned int drif1_data0_b_mux[] = {
++	RIF1_D0_B_MARK,
++};
++static const unsigned int drif1_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 8),
++};
++static const unsigned int drif1_data1_b_mux[] = {
++	RIF1_D1_B_MARK,
++};
++static const unsigned int drif1_ctrl_c_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 11),
++};
++static const unsigned int drif1_ctrl_c_mux[] = {
++	RIF1_CLK_C_MARK, RIF1_SYNC_C_MARK,
++};
++static const unsigned int drif1_data0_c_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 6),
++};
++static const unsigned int drif1_data0_c_mux[] = {
++	RIF1_D0_C_MARK,
++};
++static const unsigned int drif1_data1_c_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 10),
++};
++static const unsigned int drif1_data1_c_mux[] = {
++	RIF1_D1_C_MARK,
++};
++/* - DRIF2 --------------------------------------------------------------- */
++static const unsigned int drif2_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
++};
++static const unsigned int drif2_ctrl_a_mux[] = {
++	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
++};
++static const unsigned int drif2_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 7),
++};
++static const unsigned int drif2_data0_a_mux[] = {
++	RIF2_D0_A_MARK,
++};
++static const unsigned int drif2_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 10),
++};
++static const unsigned int drif2_data1_a_mux[] = {
++	RIF2_D1_A_MARK,
++};
++static const unsigned int drif2_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
++};
++static const unsigned int drif2_ctrl_b_mux[] = {
++	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
++};
++static const unsigned int drif2_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 30),
++};
++static const unsigned int drif2_data0_b_mux[] = {
++	RIF2_D0_B_MARK,
++};
++static const unsigned int drif2_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 31),
++};
++static const unsigned int drif2_data1_b_mux[] = {
++	RIF2_D1_B_MARK,
++};
++/* - DRIF3 --------------------------------------------------------------- */
++static const unsigned int drif3_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
++};
++static const unsigned int drif3_ctrl_a_mux[] = {
++	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
++};
++static const unsigned int drif3_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 19),
++};
++static const unsigned int drif3_data0_a_mux[] = {
++	RIF3_D0_A_MARK,
++};
++static const unsigned int drif3_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 20),
++};
++static const unsigned int drif3_data1_a_mux[] = {
++	RIF3_D1_A_MARK,
++};
++static const unsigned int drif3_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
++};
++static const unsigned int drif3_ctrl_b_mux[] = {
++	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
++};
++static const unsigned int drif3_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(6, 28),
++};
++static const unsigned int drif3_data0_b_mux[] = {
++	RIF3_D0_B_MARK,
++};
++static const unsigned int drif3_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(6, 29),
++};
++static const unsigned int drif3_data1_b_mux[] = {
++	RIF3_D1_B_MARK,
++};
++
+ /* - DU --------------------------------------------------------------------- */
+ static const unsigned int du_rgb666_pins[] = {
+ 	/* R[7:2], G[7:2], B[7:2] */
+@@ -3001,6 +3216,36 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
++	SH_PFC_PIN_GROUP(drif0_ctrl_a),
++	SH_PFC_PIN_GROUP(drif0_data0_a),
++	SH_PFC_PIN_GROUP(drif0_data1_a),
++	SH_PFC_PIN_GROUP(drif0_ctrl_b),
++	SH_PFC_PIN_GROUP(drif0_data0_b),
++	SH_PFC_PIN_GROUP(drif0_data1_b),
++	SH_PFC_PIN_GROUP(drif0_ctrl_c),
++	SH_PFC_PIN_GROUP(drif0_data0_c),
++	SH_PFC_PIN_GROUP(drif0_data1_c),
++	SH_PFC_PIN_GROUP(drif1_ctrl_a),
++	SH_PFC_PIN_GROUP(drif1_data0_a),
++	SH_PFC_PIN_GROUP(drif1_data1_a),
++	SH_PFC_PIN_GROUP(drif1_ctrl_b),
++	SH_PFC_PIN_GROUP(drif1_data0_b),
++	SH_PFC_PIN_GROUP(drif1_data1_b),
++	SH_PFC_PIN_GROUP(drif1_ctrl_c),
++	SH_PFC_PIN_GROUP(drif1_data0_c),
++	SH_PFC_PIN_GROUP(drif1_data1_c),
++	SH_PFC_PIN_GROUP(drif2_ctrl_a),
++	SH_PFC_PIN_GROUP(drif2_data0_a),
++	SH_PFC_PIN_GROUP(drif2_data1_a),
++	SH_PFC_PIN_GROUP(drif2_ctrl_b),
++	SH_PFC_PIN_GROUP(drif2_data0_b),
++	SH_PFC_PIN_GROUP(drif2_data1_b),
++	SH_PFC_PIN_GROUP(drif3_ctrl_a),
++	SH_PFC_PIN_GROUP(drif3_data0_a),
++	SH_PFC_PIN_GROUP(drif3_data1_a),
++	SH_PFC_PIN_GROUP(drif3_ctrl_b),
++	SH_PFC_PIN_GROUP(drif3_data0_b),
++	SH_PFC_PIN_GROUP(drif3_data1_b),
+ 	SH_PFC_PIN_GROUP(du_rgb666),
+ 	SH_PFC_PIN_GROUP(du_rgb888),
+ 	SH_PFC_PIN_GROUP(du_clk_out_0),
+@@ -3195,6 +3440,48 @@ static const char * const avb_groups[] = {
+ 	"avb_avtp_capture_b",
+ };
+ 
++static const char * const drif0_groups[] = {
++	"drif0_ctrl_a",
++	"drif0_data0_a",
++	"drif0_data1_a",
++	"drif0_ctrl_b",
++	"drif0_data0_b",
++	"drif0_data1_b",
++	"drif0_ctrl_c",
++	"drif0_data0_c",
++	"drif0_data1_c",
++};
++
++static const char * const drif1_groups[] = {
++	"drif1_ctrl_a",
++	"drif1_data0_a",
++	"drif1_data1_a",
++	"drif1_ctrl_b",
++	"drif1_data0_b",
++	"drif1_data1_b",
++	"drif1_ctrl_c",
++	"drif1_data0_c",
++	"drif1_data1_c",
++};
++
++static const char * const drif2_groups[] = {
++	"drif2_ctrl_a",
++	"drif2_data0_a",
++	"drif2_data1_a",
++	"drif2_ctrl_b",
++	"drif2_data0_b",
++	"drif2_data1_b",
++};
++
++static const char * const drif3_groups[] = {
++	"drif3_ctrl_a",
++	"drif3_data0_a",
++	"drif3_data1_a",
++	"drif3_ctrl_b",
++	"drif3_data0_b",
++	"drif3_data1_b",
++};
++
+ static const char * const du_groups[] = {
+ 	"du_rgb666",
+ 	"du_rgb888",
+@@ -3457,6 +3744,10 @@ static const char * const usb2_ch3_groups[] = {
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb),
++	SH_PFC_FUNCTION(drif0),
++	SH_PFC_FUNCTION(drif1),
++	SH_PFC_FUNCTION(drif2),
++	SH_PFC_FUNCTION(drif3),
+ 	SH_PFC_FUNCTION(du),
+ 	SH_PFC_FUNCTION(msiof0),
+ 	SH_PFC_FUNCTION(msiof1),
+-- 
+2.14.1
