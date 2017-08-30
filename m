@@ -1,61 +1,38 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: linux-next regression caused by "gpiolib: request the gpio before querying its direction"
-Date: Wed, 30 Aug 2017 15:59:00 +0200
-Message-ID: <87ziah2m3f.fsf@free-electrons.com>
-References: <20170830112424.7a3a7c36@windsurf.lan>
-        <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7795: Add SDHI0-3 support
+Date: Wed, 30 Aug 2017 16:14:28 +0200
+Message-ID: <CAMuHMdWb1kLNSRpBB4uaqmHPPGn3dK17snFgStHskT6SckEwzw@mail.gmail.com>
+References: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:42563 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbdH3N7I (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2017 09:59:08 -0400
-In-Reply-To: <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org> (Timur
-        Tabi's message of "Wed, 30 Aug 2017 07:31:41 -0500")
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Dirk Behme <dirk.behme@de.bosch.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Antoine =?utf-8?Q?T=C3=A9nart?= <antoine.tenart@free-electrons.com>, =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>
 
-Hi Timur,
- 
- On mer., août 30 2017, Timur Tabi <timur@codeaurora.org> wrote:
-
-> On 8/30/17 4:24 AM, Thomas Petazzoni wrote:
->> Therefore, with Timur's commit applied, when the system boots, we get
->> serial output, up to the point where gpiochip_add_data() is called, and
->> requests all GPIOs. Since our UART pins are not requested at the
->> pinctrl level, the gpio_request succeeds and re-muxes those pins as
->> GPIOs: we lose the UART.
+On Tue, Aug 29, 2017 at 5:51 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
-> This part I don't understand.  My patch just only impacts the code
-> that queries the direction of the GPIO.  It does not set the
-> direction.
+> Add SDHI0-3 support for R-Car H3 ES2.0 based on a patch from the Renesas
+> BSP. SDHI pin config is identical to H3 ES1.*.
 >
-> When gpiochip_add_data() calls chip->request, what function is that
-> calling?
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-the request callback is gpiochip_generic_request so I would be surprised
-that there was a bug in it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I.e. will queue in sh-pfc-for-v4.15.
 
->
-> The only thing I can think of is that the ->request function is not
-> just returning status, but is also muxing the GPIO.  If so, then I
-> think that's a bug.
+Gr{oetje,eeting}s,
 
-Gregory
+                        Geert
 
->
-> -- 
-> Sent by an employee of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the
-> Code Aurora Forum, hosted by The Linux Foundation.
->
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
