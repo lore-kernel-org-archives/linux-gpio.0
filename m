@@ -1,338 +1,136 @@
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3] pinctrl: sh-pfc: r8a7795: Add SDHI0-3 support
-Date: Tue, 29 Aug 2017 17:51:57 +0200
-Message-ID: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Dirk Behme <dirk.behme@de.bosch.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Andrew Jeffery <andrew@aj.id.au>
+Subject: Re: [PATCH] pinctrl: aspeed: Rework strap register write logic for
+ the AST2500
+Date: Wed, 30 Aug 2017 11:08:16 +0930
+Message-ID: <1504057096.5933.12.camel@aj.id.au>
+References: <20170823134125.2339-1-andrew@aj.id.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-9pakij4eImAE9b00LrnU"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37399 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751318AbdH3Bi1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 29 Aug 2017 21:38:27 -0400
+In-Reply-To: <20170823134125.2339-1-andrew@aj.id.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: linus.walleij@linaro.org, joel@jms.id.au, linux-kernel@vger.kernel.org, Yong Li <sdliyong@gmail.com>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Add SDHI0-3 support for R-Car H3 ES2.0 based on a patch from the Renesas
-BSP. SDHI pin config is identical to H3 ES1.*.
+--=-9pakij4eImAE9b00LrnU
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Hi Linus,
 
-Changes since V2 (from Dirk):
-	* re-added Takeshi's SoB and authorship
-	* rebased to sh-pfc-for-v4.14-tag1
-	* reworded commit message
-	* did more testing
+On Wed, 2017-08-23 at 23:11 +0930, Andrew Jeffery wrote:
+> Yong Li found that writes to the AST2500 strapping register were not
+> properly supported by the Aspeed pinctrl core and provided a patch to
+> rectify the problem. Several revisions of the patch were posted and
+> ultimately v4 should have been applied, however some unfortunate
+> liberal application of tags on my part lead to confusion between v3[1]
+> and v4[2].
+>=C2=A0
+> Generate the diff between v3 and v4 to apply as a fixup patch.
+>=C2=A0
+> [1] http://patchwork.ozlabs.org/patch/801662/
+> [2] http://patchwork.ozlabs.org/patch/802946/
+>=C2=A0
+> > Cc: Yong Li <sdliyong@gmail.com>
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 275 +++++++++++++++++++++++++++++++++++
- 1 file changed, 275 insertions(+)
+Just wondering if you're going to pick this up? It's a fix for "1865af212df=
+a
+pinctrl: aspeed: Fix ast2500 strap register write logic" in pinctrl/devel a=
+nd
+pinctrl/for-next.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 8b35772cda9864..b225bc2f9bea9f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2734,6 +2734,213 @@ static const unsigned int scif5_clk_b_mux[] = {
- 	SCK5_B_MARK,
- };
- 
-+/* - SDHI0 ------------------------------------------------------------------ */
-+static const unsigned int sdhi0_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(3, 2),
-+};
-+static const unsigned int sdhi0_data1_mux[] = {
-+	SD0_DAT0_MARK,
-+};
-+static const unsigned int sdhi0_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
-+	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
-+};
-+static const unsigned int sdhi0_data4_mux[] = {
-+	SD0_DAT0_MARK, SD0_DAT1_MARK,
-+	SD0_DAT2_MARK, SD0_DAT3_MARK,
-+};
-+static const unsigned int sdhi0_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(3, 0), RCAR_GP_PIN(3, 1),
-+};
-+static const unsigned int sdhi0_ctrl_mux[] = {
-+	SD0_CLK_MARK, SD0_CMD_MARK,
-+};
-+static const unsigned int sdhi0_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(3, 12),
-+};
-+static const unsigned int sdhi0_cd_mux[] = {
-+	SD0_CD_MARK,
-+};
-+static const unsigned int sdhi0_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(3, 13),
-+};
-+static const unsigned int sdhi0_wp_mux[] = {
-+	SD0_WP_MARK,
-+};
-+/* - SDHI1 ------------------------------------------------------------------ */
-+static const unsigned int sdhi1_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(3, 8),
-+};
-+static const unsigned int sdhi1_data1_mux[] = {
-+	SD1_DAT0_MARK,
-+};
-+static const unsigned int sdhi1_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(3, 8),  RCAR_GP_PIN(3, 9),
-+	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int sdhi1_data4_mux[] = {
-+	SD1_DAT0_MARK, SD1_DAT1_MARK,
-+	SD1_DAT2_MARK, SD1_DAT3_MARK,
-+};
-+static const unsigned int sdhi1_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
-+};
-+static const unsigned int sdhi1_ctrl_mux[] = {
-+	SD1_CLK_MARK, SD1_CMD_MARK,
-+};
-+static const unsigned int sdhi1_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(3, 14),
-+};
-+static const unsigned int sdhi1_cd_mux[] = {
-+	SD1_CD_MARK,
-+};
-+static const unsigned int sdhi1_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(3, 15),
-+};
-+static const unsigned int sdhi1_wp_mux[] = {
-+	SD1_WP_MARK,
-+};
-+/* - SDHI2 ------------------------------------------------------------------ */
-+static const unsigned int sdhi2_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(4, 2),
-+};
-+static const unsigned int sdhi2_data1_mux[] = {
-+	SD2_DAT0_MARK,
-+};
-+static const unsigned int sdhi2_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(4, 2), RCAR_GP_PIN(4, 3),
-+	RCAR_GP_PIN(4, 4), RCAR_GP_PIN(4, 5),
-+};
-+static const unsigned int sdhi2_data4_mux[] = {
-+	SD2_DAT0_MARK, SD2_DAT1_MARK,
-+	SD2_DAT2_MARK, SD2_DAT3_MARK,
-+};
-+static const unsigned int sdhi2_data8_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(4, 2),  RCAR_GP_PIN(4, 3),
-+	RCAR_GP_PIN(4, 4),  RCAR_GP_PIN(4, 5),
-+	RCAR_GP_PIN(3, 8),  RCAR_GP_PIN(3, 9),
-+	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11),
-+};
-+static const unsigned int sdhi2_data8_mux[] = {
-+	SD2_DAT0_MARK, SD2_DAT1_MARK,
-+	SD2_DAT2_MARK, SD2_DAT3_MARK,
-+	SD2_DAT4_MARK, SD2_DAT5_MARK,
-+	SD2_DAT6_MARK, SD2_DAT7_MARK,
-+};
-+static const unsigned int sdhi2_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(4, 0), RCAR_GP_PIN(4, 1),
-+};
-+static const unsigned int sdhi2_ctrl_mux[] = {
-+	SD2_CLK_MARK, SD2_CMD_MARK,
-+};
-+static const unsigned int sdhi2_cd_a_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(4, 13),
-+};
-+static const unsigned int sdhi2_cd_a_mux[] = {
-+	SD2_CD_A_MARK,
-+};
-+static const unsigned int sdhi2_cd_b_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int sdhi2_cd_b_mux[] = {
-+	SD2_CD_B_MARK,
-+};
-+static const unsigned int sdhi2_wp_a_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(4, 14),
-+};
-+static const unsigned int sdhi2_wp_a_mux[] = {
-+	SD2_WP_A_MARK,
-+};
-+static const unsigned int sdhi2_wp_b_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int sdhi2_wp_b_mux[] = {
-+	SD2_WP_B_MARK,
-+};
-+static const unsigned int sdhi2_ds_pins[] = {
-+	/* DS */
-+	RCAR_GP_PIN(4, 6),
-+};
-+static const unsigned int sdhi2_ds_mux[] = {
-+	SD2_DS_MARK,
-+};
-+/* - SDHI3 ------------------------------------------------------------------ */
-+static const unsigned int sdhi3_data1_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(4, 9),
-+};
-+static const unsigned int sdhi3_data1_mux[] = {
-+	SD3_DAT0_MARK,
-+};
-+static const unsigned int sdhi3_data4_pins[] = {
-+	/* D[0:3] */
-+	RCAR_GP_PIN(4, 9),  RCAR_GP_PIN(4, 10),
-+	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
-+};
-+static const unsigned int sdhi3_data4_mux[] = {
-+	SD3_DAT0_MARK, SD3_DAT1_MARK,
-+	SD3_DAT2_MARK, SD3_DAT3_MARK,
-+};
-+static const unsigned int sdhi3_data8_pins[] = {
-+	/* D[0:7] */
-+	RCAR_GP_PIN(4, 9),  RCAR_GP_PIN(4, 10),
-+	RCAR_GP_PIN(4, 11), RCAR_GP_PIN(4, 12),
-+	RCAR_GP_PIN(4, 13), RCAR_GP_PIN(4, 14),
-+	RCAR_GP_PIN(4, 15), RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int sdhi3_data8_mux[] = {
-+	SD3_DAT0_MARK, SD3_DAT1_MARK,
-+	SD3_DAT2_MARK, SD3_DAT3_MARK,
-+	SD3_DAT4_MARK, SD3_DAT5_MARK,
-+	SD3_DAT6_MARK, SD3_DAT7_MARK,
-+};
-+static const unsigned int sdhi3_ctrl_pins[] = {
-+	/* CLK, CMD */
-+	RCAR_GP_PIN(4, 7), RCAR_GP_PIN(4, 8),
-+};
-+static const unsigned int sdhi3_ctrl_mux[] = {
-+	SD3_CLK_MARK, SD3_CMD_MARK,
-+};
-+static const unsigned int sdhi3_cd_pins[] = {
-+	/* CD */
-+	RCAR_GP_PIN(4, 15),
-+};
-+static const unsigned int sdhi3_cd_mux[] = {
-+	SD3_CD_MARK,
-+};
-+static const unsigned int sdhi3_wp_pins[] = {
-+	/* WP */
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int sdhi3_wp_mux[] = {
-+	SD3_WP_MARK,
-+};
-+static const unsigned int sdhi3_ds_pins[] = {
-+	/* DS */
-+	RCAR_GP_PIN(4, 17),
-+};
-+static const unsigned int sdhi3_ds_mux[] = {
-+	SD3_DS_MARK,
-+};
-+
- /* - SCIF Clock ------------------------------------------------------------- */
- static const unsigned int scif_clk_a_pins[] = {
- 	/* SCIF_CLK */
-@@ -2943,6 +3150,32 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif5_clk_b),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
-+	SH_PFC_PIN_GROUP(sdhi0_data1),
-+	SH_PFC_PIN_GROUP(sdhi0_data4),
-+	SH_PFC_PIN_GROUP(sdhi0_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi0_cd),
-+	SH_PFC_PIN_GROUP(sdhi0_wp),
-+	SH_PFC_PIN_GROUP(sdhi1_data1),
-+	SH_PFC_PIN_GROUP(sdhi1_data4),
-+	SH_PFC_PIN_GROUP(sdhi1_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi1_cd),
-+	SH_PFC_PIN_GROUP(sdhi1_wp),
-+	SH_PFC_PIN_GROUP(sdhi2_data1),
-+	SH_PFC_PIN_GROUP(sdhi2_data4),
-+	SH_PFC_PIN_GROUP(sdhi2_data8),
-+	SH_PFC_PIN_GROUP(sdhi2_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi2_cd_a),
-+	SH_PFC_PIN_GROUP(sdhi2_wp_a),
-+	SH_PFC_PIN_GROUP(sdhi2_cd_b),
-+	SH_PFC_PIN_GROUP(sdhi2_wp_b),
-+	SH_PFC_PIN_GROUP(sdhi2_ds),
-+	SH_PFC_PIN_GROUP(sdhi3_data1),
-+	SH_PFC_PIN_GROUP(sdhi3_data4),
-+	SH_PFC_PIN_GROUP(sdhi3_data8),
-+	SH_PFC_PIN_GROUP(sdhi3_ctrl),
-+	SH_PFC_PIN_GROUP(sdhi3_cd),
-+	SH_PFC_PIN_GROUP(sdhi3_wp),
-+	SH_PFC_PIN_GROUP(sdhi3_ds),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-@@ -3168,6 +3401,44 @@ static const char * const scif_clk_groups[] = {
- 	"scif_clk_b",
- };
- 
-+static const char * const sdhi0_groups[] = {
-+	"sdhi0_data1",
-+	"sdhi0_data4",
-+	"sdhi0_ctrl",
-+	"sdhi0_cd",
-+	"sdhi0_wp",
-+};
-+
-+static const char * const sdhi1_groups[] = {
-+	"sdhi1_data1",
-+	"sdhi1_data4",
-+	"sdhi1_ctrl",
-+	"sdhi1_cd",
-+	"sdhi1_wp",
-+};
-+
-+static const char * const sdhi2_groups[] = {
-+	"sdhi2_data1",
-+	"sdhi2_data4",
-+	"sdhi2_data8",
-+	"sdhi2_ctrl",
-+	"sdhi2_cd_a",
-+	"sdhi2_wp_a",
-+	"sdhi2_cd_b",
-+	"sdhi2_wp_b",
-+	"sdhi2_ds",
-+};
-+
-+static const char * const sdhi3_groups[] = {
-+	"sdhi3_data1",
-+	"sdhi3_data4",
-+	"sdhi3_data8",
-+	"sdhi3_ctrl",
-+	"sdhi3_cd",
-+	"sdhi3_wp",
-+	"sdhi3_ds",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -3205,6 +3476,10 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(scif4),
- 	SH_PFC_FUNCTION(scif5),
- 	SH_PFC_FUNCTION(scif_clk),
-+	SH_PFC_FUNCTION(sdhi0),
-+	SH_PFC_FUNCTION(sdhi1),
-+	SH_PFC_FUNCTION(sdhi2),
-+	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
--- 
-2.11.0
+Cheers,
+
+Andrew
+
+> ---
+> =C2=A0drivers/pinctrl/aspeed/pinctrl-aspeed.c | 26 ++++++++++++++++------=
+----
+> =C2=A01 file changed, 16 insertions(+), 10 deletions(-)
+>=C2=A0
+> diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed.c b/drivers/pinctrl/as=
+peed/pinctrl-aspeed.c
+> index f2d5133f6993..7f13ce8450a3 100644
+> --- a/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed.c
+> @@ -183,7 +183,6 @@ static int aspeed_sig_expr_set(const struct aspeed_si=
+g_expr *expr,
+> =C2=A0{
+> > =C2=A0	int ret;
+> > =C2=A0	int i;
+> > -	unsigned int rev_id;
+> =C2=A0
+> > =C2=A0	for (i =3D 0; i < expr->ndescs; i++) {
+> > =C2=A0		const struct aspeed_sig_desc *desc =3D &expr->descs[i];
+> @@ -216,20 +215,27 @@ static int aspeed_sig_expr_set(const struct aspeed_=
+sig_expr *expr,
+> =C2=A0
+> > =C2=A0		/* On AST2500, Set bits in SCU7C are cleared from SCU70 */
+> > =C2=A0		if (desc->ip =3D=3D ASPEED_IP_SCU && desc->reg =3D=3D HW_STRAP1=
+) {
+> > +			unsigned int rev_id;
+> +
+> > =C2=A0			ret =3D regmap_read(maps[ASPEED_IP_SCU],
+> > =C2=A0				HW_REVISION_ID, &rev_id);
+> > =C2=A0			if (ret < 0)
+> > =C2=A0				return ret;
+> =C2=A0
+> > -			if (0x04 =3D=3D ((rev_id >> 24) & 0xff))
+> > -				ret =3D regmap_write(maps[desc->ip],
+> > -					HW_REVISION_ID, (~val & desc->mask));
+> > -			else
+> > -				ret =3D regmap_update_bits(maps[desc->ip],
+> > -					desc->reg, desc->mask, val);
+> > -		} else
+> > -			ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
+> > -				desc->mask, val);
+> > +			if (0x04 =3D=3D (rev_id >> 24)) {
+> > +				u32 value =3D ~val & desc->mask;
+> +
+> > +				if (value) {
+> > +					ret =3D regmap_write(maps[desc->ip],
+> > +						HW_REVISION_ID, value);
+> > +					if (ret < 0)
+> > +						return ret;
+> > +				}
+> > +			}
+> > +		}
+> +
+> > +		ret =3D regmap_update_bits(maps[desc->ip], desc->reg,
+> > +					=C2=A0desc->mask, val);
+> =C2=A0
+> > =C2=A0		if (ret)
+> > =C2=A0			return ret;
+--=-9pakij4eImAE9b00LrnU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCgAGBQJZphcIAAoJEJ0dnzgO5LT5SMsP/ikLQi0q7bxskhGtBuFVWXji
+eycX1uebji0tySmmyTiUbjHhm8Pc3GZiiU8ZVe783CiVAtSR+N4zTHUirkqz0ZwO
+rv9JAQ9qQXAYQkLwnBJONSRyZLKYgm3ZpjGvlgpsm45cyscio+hI7bwKwaIZeMoN
+LWpfdWjyByDi7PBOj5Ss8g/AiyOqeuHb1eVAMHxnIIIuqsIRD8WinqX89I10BhNL
+tVnxoVi/JQu5MSRY+LnBOn3owFiJZmEmdIT52BC/Mm8CbVt+IiOa9vd/+9mPDxgM
+PaakC+MRwunecnT9OvHkbtqHOwxDRfuXchI+VkL6Uyagfo6cGgJSYHEhyvzBaJvk
+OAf3FFDuDjYPrK3QPJBYuEAq1uRq++LEuSbe7vuwCIjhNGghZjlS/mRyX7QGW1pH
+JlU69Riuxi6A+D2fmmUyLLYCNi3No0Efb4PQLmGUHAxwyi5L/Gf+YbWjLW1jGgoC
+4JWKDvIurIpc9j8Kk7G6Yw2kO+MfIYW9LPkFLEfz9UAbusNNRuB4S/ZlbfmkMpXC
+50dY/5pF1CgvwQhoCC+bahjcC/sgp20fPOa/OMPKtIJiKj17QXHIn6FXe3mDJHUV
+yUE2mGk/76rbwuE1NFV/pTWWY8HRRYGc7ArXrev3w6Y6+HTBTahEwH4mp9cNMkiA
+CzYbpMinp+hNWLkbuKqa
+=rUeh
+-----END PGP SIGNATURE-----
+
+--=-9pakij4eImAE9b00LrnU--
+
