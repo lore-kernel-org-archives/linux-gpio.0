@@ -1,45 +1,35 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Regression in next with gpiolib
-Date: Wed, 30 Aug 2017 14:41:28 -0700
-Message-ID: <20170830214127.GJ6008@atomide.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: Regression in next with gpiolib
+Date: Wed, 30 Aug 2017 16:49:43 -0500
+Message-ID: <5c672146-2a4c-6da5-85b1-5f2bb2ae5649@codeaurora.org>
+References: <20170830214127.GJ6008@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:38978 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750844AbdH3Vlb (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 30 Aug 2017 17:41:31 -0400
-Content-Disposition: inline
+Received: from smtp.codeaurora.org ([198.145.29.96]:44070 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750761AbdH3Vtp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2017 17:49:45 -0400
+In-Reply-To: <20170830214127.GJ6008@atomide.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+To: Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
 
-Hi Timur, Linus & Grygorii,
+On 08/30/2017 04:41 PM, Tony Lindgren wrote:
+> It seems to be that we're now calling request and free on all gpios
+> before they are properly configured?
 
-Looks like commit 108d23e322a2 ("gpiolib: request the gpio before
-querying its direction") caused a regression on at least pandaboard
-es with booting hanging shortly after gpio init.
+Yes, that's what my patch does.  At the time, it seemed like a good idea 
+-- request the GPIO before touching its hardware.  But it appears that 
+the 'request' function of some drivers also re-muxes the GPIO in order 
+to honor the request.
 
-It seems to be that we're now calling request and free on all gpios
-before they are properly configured?
+The question is whether that's correct behavior.  I don't know.
 
-I narrowed the hang down to gpio bank1 lines 7 and possibly 8 where
-not calling omap_gpio_free() on them makes the system boot again.
-
-These lines are used for the leds in omap4-panda-common.dtsi, and
-omap_gpio_free() will by default set the unused lines for input
-and bad things happen. I guess hardware failure could also happen
-although I have not seen it here.
-
-It seems a similar issue can exist on other platforms too,
-so it's probably a good idea to revert this for now.
-
-Any ideas on how we should fix this?
-
-Regards,
-
-Tony
-
-
-
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
