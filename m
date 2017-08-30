@@ -1,41 +1,75 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: linux-next regression caused by "gpiolib: request the gpio before
- querying its direction"
-Date: Wed, 30 Aug 2017 07:31:41 -0500
-Message-ID: <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org>
-References: <20170830112424.7a3a7c36@windsurf.lan>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: The RZ/A1 pin controller driver will be broken for 4.13
+Date: Wed, 30 Aug 2017 12:57:29 +0000
+Message-ID: <SG2PR06MB116525C9B2E8573DB427FA958A9C0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <SG2PR06MB1165ADDEBA8097EA034C27D28A9F0@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <CAMuHMdVNNX7xHjmnrLndDpKb9OfxCCVHO7wLUEiFsExk578zsg@mail.gmail.com>
+ <20170830120141.GB1863@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:35106 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751318AbdH3Mbo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2017 08:31:44 -0400
-In-Reply-To: <20170830112424.7a3a7c36@windsurf.lan>
+Received: from relmlor4.renesas.com ([210.160.252.174]:17184 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751399AbdH3M5g (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 30 Aug 2017 08:57:36 -0400
+In-Reply-To: <20170830120141.GB1863@w540>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?Q?Gr=c3=a9gory_Clement?= <gregory.clement@free-electrons.com>, =?UTF-8?Q?Antoine_T=c3=a9nart?= <antoine.tenart@free-electrons.com>, =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>
+To: jmondi <jacopo@jmondi.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Timur Tabi <timur@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 8/30/17 4:24 AM, Thomas Petazzoni wrote:
-> Therefore, with Timur's commit applied, when the system boots, we get
-> serial output, up to the point where gpiochip_add_data() is called, and
-> requests all GPIOs. Since our UART pins are not requested at the
-> pinctrl level, the gpio_request succeeds and re-muxes those pins as
-> GPIOs: we lose the UART.
-
-This part I don't understand.  My patch just only impacts the code that 
-queries the direction of the GPIO.  It does not set the direction.
-
-When gpiochip_add_data() calls chip->request, what function is that calling?
-
-The only thing I can think of is that the ->request function is not just 
-returning status, but is also muxing the GPIO.  If so, then I think 
-that's a bug.
-
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the
-Code Aurora Forum, hosted by The Linux Foundation.
+SGkgSmFjb3BvLA0KDQpUaGFuayB5b3UgZm9yIHRoZSBxdWljayBhbmFseXNpcy4NCg0KT24gV2Vk
+bmVzZGF5LCBBdWd1c3QgMzAsIDIwMTcsIGptb25kaSB3cm90ZToNCj4gQWZ0ZXIgc29tZSBpbnZl
+c3RpZ2F0aW9ucywgaXQgdHVybnMgb3V0IHNvbWUgcmVnaXN0ZXIgc2V0dGluZ3MNCj4gcGVyZm9y
+bWVkIGR1cmluZyBwaW5fcmVzZXQoKSBhcmUgaW52YWxpZCBhbmQgaGFuZyB0aGUgc3lzdGVtIEJV
+VCBvbmx5DQo+IHdoZW4gcGVyZm9ybWVkIG9uIFBvcnRfOS4NCj4gDQo+IFNwZWNpZmljYWxseSwg
+c2V0dGluZyBQTUMgYW5kIFBJUEMgcmVnaXN0ZXJzIHRvIDAgKGRlZmF1bHQgaW5pdGlhbCBzdGF0
+ZSkNCj4gb24gUG9ydF85LCBoYW5ncyB0aGUgc3lzdGVtLg0KPiANCj4gVGhlcmUgaXMgbm8gbWVu
+dGlvbiAobm9uZSB0aGF0IEkndmUgZm91bmQpIGluIHRoZSBwcm9jZXNzb3IgbWFudWFsIG9mDQo+
+IHNwZWNpZmljIHByb2NlZHVyZXMgdG8gYmUgcGVyZm9ybWVkIHdoZW4gcmVzZXR0aW5nIHRoYXQg
+cG9ydCB0byBpdHMNCj4gaW5pdGlhbCBzdGF0ZSwgc28gSSBndWVzcyB0aGlzIG1heSBlaXRoZXIg
+YmUgYW4gaW5kaWNhdGlvbiBvZg0KPiBzb21ldGhpbmcgZWxzZSBnb2luZyB3cm9uZyAobGlrZSB3
+cml0aW5nIHRvIHNvbWUgaW52YWxpZCBtZW1vcnkNCj4gYWRkcmVzcykgb3IgaXQncyBhbiBIVyBp
+c3N1ZSBub3QgeWV0IGRvY3VtZW50ZWQuDQo+IA0KPiBUaW11cidzIHBhdGNoIGRvZXMgdHJpZ2dl
+ciBhICJyZXNldCIgb24gYWxsIFBvcnRzIGR1cmluZyBncGlvY2hpcA0KPiByZWdpc3RyYXRpb24g
+LCB3aGlsZSBiZWZvcmUgdGhhdCBwYXRjaCBtYWRlIGludG8gLW5leHQgYnJhbmNoLCByZXNldA0K
+PiB3YXMgb25seSB0cmlnZ2VyZWQgd2hlbiBhY3R1YWxseSByZXF1ZXN0aW5nIGEgZ3BpbyBvciB3
+aGVuIHBlcmZvcm1pbmcNCj4gbXV4aW5nIG9uIGEgcGluLg0KPiANCj4gQXBwYXJlbnRseSwgd2Ug
+bmV2ZXIgbXVsdGlwbGV4ZWQgYW55IHBpbiBvbiBQb3J0Xzkgbm9yIHRlc3RlZCBncGlvDQo+IGZ1
+bmN0aW9uYWxpdGllcyBvbiB0aGF0IHBvcnQgYmVmb3JlLg0KDQpBY3R1YWxseSwgd2UgZGlkLiBU
+aGUgUVNQSSBGbGFzaCB3YXMgYWx3YXlzIG9uIHBvcnQgOSBhbmQgc2V0IHVwIGJ5IA0KdS1ib290
+LiBTaW5jZSBpdCdzIHNldCB1cCBpbiBYSVAtbW9kZSBhbmQgbGluZWFybHkgbWFwcGVkIHRvIGlu
+dGVybmFsIA0KYWRkcmVzcyBzcGFjZSwgdGhlIGtlcm5lbCBuZXZlciBuZWVkZWQgdG8ga25vdyBh
+Ym91dCBhbnkgcGlucyBvciBkcml2ZXIgZm9yIA0KaXQuDQoNClNvLCBpZiB5b3Ugc2V0IHRoZSBR
+U1BJIHBpbnMgYmFjayB0byBHUElPLCB5b3UgZGllIHByZXR0eSBxdWlja2x5IA0KKGVzcGVjaWFs
+bHkgd2l0aCBhbiBYSVAga2VybmVsKS4NCg0KPiBUaGlzOg0KPiANCj4gQEAgLTQ4Nyw4ICs0OTEs
+MTAgQEAgc3RhdGljIHZvaWQgcnphMV9waW5fcmVzZXQoc3RydWN0IHJ6YTFfcG9ydCAqcG9ydCwN
+Cj4gdW5zaWduZWQgaW50IHBpbikNCj4gICAgICAgICByemExX3NldF9iaXQocG9ydCwgUlpBMV9Q
+QkRDX1JFRywgcGluLCAwKTsNCj4gDQo+ICAgICAgICAgcnphMV9zZXRfYml0KHBvcnQsIFJaQTFf
+UE1fUkVHLCBwaW4sIDEpOw0KPiAtICAgICAgIHJ6YTFfc2V0X2JpdChwb3J0LCBSWkExX1BNQ19S
+RUcsIHBpbiwgMCk7DQo+IC0gICAgICAgcnphMV9zZXRfYml0KHBvcnQsIFJaQTFfUElQQ19SRUcs
+IHBpbiwgMCk7DQo+ICsgICAgICAgaWYgKHBvcnQtPmlkICE9IDkpIHsNCj4gKyAgICAgICAgICAg
+ICAgIHJ6YTFfc2V0X2JpdChwb3J0LCBSWkExX1BNQ19SRUcsIHBpbiwgMCk7DQo+ICsgICAgICAg
+ICAgICAgICByemExX3NldF9iaXQocG9ydCwgUlpBMV9QSVBDX1JFRywgcGluLCAwKTsNCj4gKyAg
+ICAgICB9DQo+ICAgICAgICAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcG9ydC0+bG9jaywgaXJx
+ZmxhZ3MpOw0KPiAgfQ0KPiANCj4gRml4ZXMgdGhlIGlzc3VlLCBidXQgSSdtIG5vdCB0aGF0IHNh
+dGlzZmllZCB3aXRoIHRoaXMgYXMgSSB3b3VsZCBsaWtlDQo+IHRvIGtub3cgaWYgdGhlIHNhbWUg
+aXNzdWUgaGFwcGVucyBvbiBvdGhlciBwcm9jZXNzb3JzIG9mIHRoZSBSWi9BMSBmYW1pbHkNCj4g
+b3RoZXIgdGhhbiBSWi9BMUggYmVmb3JlIHByb3Bvc2luZyB0aGlzIGFzIGEgcHJvcGVyIGZpeC4N
+Cj4gDQo+IENocmlzLCBkbyB5b3UgaGF2ZSBSWi9BMSogZGV2aWNlcyB3aGVyZSB0byB0ZXN0IHRo
+aXM/DQoNCg0KUlovQTFIIGFuZCBSWi9BMU0gYXJlIHRoZSBzYW1lIHBhcnQsIGp1c3Qgd2l0aCBk
+aWZmZXJlbnQgUkFNIHNpemVzLCBzbyANCm9ubHkgUlovQTFMIGlzIHRoZSBkaWZmZXJlbnQgb25l
+Lg0KDQpCdXQsIGlmIHlvdSByZW1lbWJlciwgSSBoYXZlIG5vdCBhZGRlZCB0aGUgbG9vay11cCB0
+YWJsZSBmb3IgdGhlIFJaL0ExTCANCmluIHRoZSBkcml2ZXIgeWV0Lg0KDQpGb3IgdGhlIFJaL0Ex
+TCwgUVNQSSBpcyBvbiBwb3J0IDQuDQoNCg0KSW4gZ2VuZXJhbCwgSSBkaXNhZ3JlZSB3aXRoIHRo
+ZSBrZXJuZWwgYmxpbmRseSByZXNldHRpbmcgcG9ydHMgdGhhdCBpdCANCmtub3dzIG5vdGhpbmcg
+YWJvdXQuIE1heWJlIHRoZXJlJ3MgYSByZWFzb24gaXQgZG9lc24ndCBrbm93IGFib3V0IHRoZW0u
+DQoNCldoYXQgYWJvdXQgdGhlIGV4dGVybmFsIG1lbW9yeSBjb25uZWN0aW9ucyB0aGF0IGlzIHNl
+dCB1cCBpbiB1LWJvb3Q/IElzIA0KaXQgZ29pbmcgdG8gcmVzZXQgdGhvc2UgcGlucyBhcyB3ZWxs
+Pw0KTWF5YmUgdGhhdCdzIHdoeSBteSBzeXN0ZW0gd2FzIGNyYXNoaW5nIG9uIHRoZSBpbml0IG9m
+IHBvcnQgMiAod2hlcmUgbXkgDQpTRFJBTSBjb25uZWN0aW9ucyBhcmUpIGJlY2F1c2UgSSB3YXMg
+cnVubmluZyBhbiBYSVBfS0VSTkVMICsgZXh0ZXJuYWwgDQpTRFJBTSwgc28gSSBuZXZlciBldmVu
+IG1hZGUgaXQgdG8gcG9ydCA5Lg0KDQoNCg0KQ2hyaXMNCg0K
