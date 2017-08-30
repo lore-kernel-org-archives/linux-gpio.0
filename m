@@ -1,208 +1,66 @@
-From: s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Subject: [PATCH 5/5] lmp92001: mfd: doc: Add support LMP92001
-Date: Thu, 31 Aug 2017 01:25:28 +0700
-Message-ID: <20170830182528.9479-1-s.abhisit@gmail.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Jonathan.Cameron-hv44wF8Li93QT0dZR+AlfA@public.gmane.org, pmeerw-jW+XmwGofnusTnJN9+BGXg@public.gmane.org, jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, knaack.h-Mmb7MZpHnFY@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, fabrice.gasnier-qxv4g6HH51o@public.gmane.org, akinobu.mita-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, marek.vasut+renesas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org, mike.looijmans-Oq418RWZeHk@public.gmane.org, peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org, jeff.dagenais-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org, adi.reus-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next regression caused by "gpiolib: request the gpio before
+ querying its direction"
+Date: Wed, 30 Aug 2017 21:38:23 +0200
+Message-ID: <CAMuHMdUYqZe8CzckGg39ej1AuOwHGMBsNbZN1h+yCOb-vAhAJA@mail.gmail.com>
+References: <20170830112424.7a3a7c36@windsurf.lan> <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org>
+ <87ziah2m3f.fsf@free-electrons.com> <20170830161730.41919554@windsurf.lan>
+ <442accaa-15a0-4efb-4e5c-cebca7140213@codeaurora.org> <20170830163255.4e7c1422@windsurf.lan>
+ <20170830162440.GE1863@w540>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35697 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750975AbdH3TiY (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2017 15:38:24 -0400
+Received: by mail-pg0-f67.google.com with SMTP id r133so5737112pgr.2
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Aug 2017 12:38:24 -0700 (PDT)
+In-Reply-To: <20170830162440.GE1863@w540>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: jmondi <jacopo@jmondi.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Timur Tabi <timur@codeaurora.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Antoine_T=C3=A9nart?= <antoine.tenart@free-electrons.com>, =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>
 
-From: Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Wed, Aug 30, 2017 at 6:24 PM, jmondi <jacopo@jmondi.org> wrote:
+> On Wed, Aug 30, 2017 at 04:32:55PM +0200, Thomas Petazzoni wrote:
+>> On Wed, 30 Aug 2017 09:22:55 -0500, Timur Tabi wrote:
+>> > No, that's it.  The question is, what exactly should the 'request'
+>> > function do?  Should it be modifying the hardware to satisfy the
+>> > request?  When I wrote my patch, I assumed that it wouldn't.  I thought
+>> > that request simply answered the question, "can I touch this GPIO"?
+>>
+>> No, it also muxes the pin in GPIO, and you can see the "reference"
+>> implementation pinctrl-single also does it.
+>>
+>> Let's see what Linus W. has to say about the semantic of the "request"
+>> operation.
+>>
+>> But if we change the semantic of "request" to no longer mux the hardware
+>> as GPIO, then you will also have regressions, because there are plenty
+>> of GPIOs that are requested, but not explicitly muxed as GPIOs in the
+>> DT, precisely because today requesting a GPIO is sufficient to have it
+>> re-muxed as GPIO at the pinctrl level.
+>
+> Just to point out one of Renesas' pin controller devices seems to
+> suffer from the same problem, introduced by Timur's commit
+>
+> https://www.spinics.net/lists/linux-renesas-soc/msg17647.html
+>
+> This is indeed caused by the "request" introduced by the above said
+> commit, that in rza1 pincontroller, actually muxes the requested
+> pin as GPIO.
 
-TI LMP92001 Analog System Monitor and Controller
+To clarify: which causes havoc if that pin is used as e.g. an SDRAM
+address line.
 
-8-bit GPIOs.
-12 DACs with 12-bit resolution.
+Gr{oetje,eeting}s,
 
-The GPIOs and DACs are shared port function with Cy function pin to
-take control the pin suddenly from external hardware.
-DAC's referance voltage selectable for Internal/External.
+                        Geert
 
-16 + 1 ADCs with 12-bit resolution.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Built-in internal Temperature Sensor on channel 17.
-Window Comparator Function is supported on channel 1-3 and 9-11 for
-monitoring with interrupt signal (pending to implement for interrupt).
-ADC's referance voltage selectable for Internal/External.
-
-Signed-off-by: Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- Documentation/ABI/testing/sysfs-bus-iio-lmp920001  | 65 ++++++++++++++++++++++
- .../devicetree/bindings/gpio/gpio-lmp92001.txt     | 22 ++++++++
- .../bindings/iio/adc/ti-lmp92001-adc.txt           | 20 +++++++
- .../bindings/iio/dac/ti-lmp92001-dac.txt           | 35 ++++++++++++
- 4 files changed, 142 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-lmp920001
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
- create mode 100644 Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
- create mode 100644 Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-lmp920001 b/Documentation/ABI/testing/sysfs-bus-iio-lmp920001
-new file mode 100644
-index 000000000000..f0965e7d823f
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-lmp920001
-@@ -0,0 +1,65 @@
-+What:           /sys/bus/iio/devices/iio:deviceX/gang
-+Date:           August 2016
-+KernelVersion:  4.12
-+Contact:        Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+Description:
-+                Controls the association of analog output channels OUTx with
-+                asynchronous control inputs Cy for DAC.
-+                Can be either:
-+                - "0"
-+                - "1"
-+
-+                        Cy to OUTx Assignment
-+                ----------------------------------
-+                | Cy | CDAC:GANG=0 | CDAC:GANG=1 |
-+                ----------------------------------
-+                | C1 | OUT[1:4]    | OUT[1:3]    |
-+                ----------------------------------
-+                | C2 | OUT[5:6]    | OUT[4:6]    |
-+                ----------------------------------
-+                | C3 | OUT[7:8]    | OUT[7:9]    |
-+                ----------------------------------
-+                | C4 | OUT[9:12]   | OUT[10:12]  |
-+                ----------------------------------
-+
-+What:           /sys/bus/iio/devices/iio:deviceX/outx
-+Date:           August 2016
-+KernelVersion:  4.12
-+Contact:        Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+Description:
-+                The pin output mode for DAC.
-+                Can be either:
-+                - "hiz" = High impedance state.
-+                - "dac" = DAC output.
-+                - "0" = Drive it to low.
-+                - "1" = Drive it to high.
-+
-+What:           /sys/bus/iio/devices/iio:deviceX/vref
-+Date:           August 2016
-+KernelVersion:  4.12
-+Contact:        Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+Description:
-+                This is voltage reference source for DACs.
-+                Can be either:
-+                - "external"
-+                - "internal"
-+
-+What:           /sys/devices/.../iio:deviceX/en
-+Date:           August 2016
-+KernelVersion:  4.12
-+Contact:        Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+Description:
-+                This is ADC Conversion Enable for each channel.
-+                Can be either:
-+                - "enable"
-+                - "disable"
-+
-+What:           /sys/devices/.../iio:deviceX/vref
-+Date:           August 2016
-+KernelVersion:  4.12
-+Contact:        Abhisit Sangjan <s.abhisit-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-+Description:
-+                This is voltage reference source for ADCs.
-+                Can be either:
-+                - "external"
-+                - "internal"
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
-new file mode 100644
-index 000000000000..f9a18c492145
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-lmp92001.txt
-@@ -0,0 +1,22 @@
-+* Texas Instruments' LMP92001 GPIOs
-+
-+Required properties:
-+ - compatible: Must be set to "ti,lmp92001-gpio".
-+ - reg: i2c chip address for the device.
-+ - gpio-controller: Marks the device node as a gpio controller.
-+ - #gpio-cells : Should be two.  The first cell is the pin number and the
-+  second cell is used to specify the gpio polarity:
-+        0 = Active high
-+        1 = Active low
-+
-+Example:
-+lmp92001@20 {
-+        compatible = "ti,lmp92001";
-+        reg = <0x20>;
-+
-+        gpio-controller {
-+                compatible = "ti,lmp92001-gpio";
-+                gpio-controller;
-+                #gpio-cells = <2>;
-+        };
-+};
-diff --git a/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
-new file mode 100644
-index 000000000000..4565961bf511
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/ti-lmp92001-adc.txt
-@@ -0,0 +1,20 @@
-+* Texas Instruments' LMP92001 ADCs
-+
-+Required properties:
-+ - compatible: Must be set to "ti,lmp92001-adc".
-+ - reg: i2c chip address for the device.
-+ - ti,lmp92001-adc-mask: bit mask for which channel is enable.
-+        0 = Off
-+        1 = On
-+
-+Example:
-+lmp92001@20 {
-+        compatible = "ti,lmp92001";
-+        reg = <0x20>;
-+
-+        lmp92001-adc {
-+                compatible = "ti,lmp92001-adc";
-+                ti,lmp92001-adc-mode = "continuous";
-+                ti,lmp92001-adc-mask = <0x00000079>;
-+        };
-+};
-diff --git a/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-new file mode 100644
-index 000000000000..882db9ca92f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/dac/ti-lmp92001-dac.txt
-@@ -0,0 +1,35 @@
-+* Texas Instruments' LMP92001 DACs
-+
-+Required properties:
-+ - compatible: Must be set to "ti,lmp92001-dac".
-+ - reg: i2c chip address for the device.
-+ - ti,lmp92001-dac-hiz: hi-impedance control,
-+        1 = Forces all OUT[1:12] outputs to hi-z, 0 = normal
-+ - ti,lmp92001-dac-outx:
-+        Cy = 0, 1 = will force associated OUTx outputs to VDD
-+        Cy = 0, 0 = will force associated OUTx outputs to GND
-+ - ti,lmp92001-dac-gang: What group of Cy is governed to.
-+        -----------------------------------------
-+        |  Cy   | CDAC:GANG = 0 | CDAC:GANG = 1 |
-+        -----------------------------------------
-+        |  C1   |   OUT[1:4]    |    OUT[1:3]   |
-+        -----------------------------------------
-+        |  C2   |   OUT[5:6]    |    OUT[4:6]   |
-+        -----------------------------------------
-+        |  C3   |   OUT[7:8]    |    OUT[7:9]   |
-+        -----------------------------------------
-+        |  C4   |   OUT[9:12]   |    OUT[10:12] |
-+        -----------------------------------------
-+
-+Example:
-+lmp92001@20 {
-+        compatible = "ti,lmp92001";
-+        reg = <0x20>;
-+
-+        lmp92001-dac {
-+                compatible = "ti,lmp92001-dac";
-+                ti,lmp92001-dac-hiz  = /bits/ 8 <0>;
-+                ti,lmp92001-dac-outx = /bits/ 8 <0>;
-+                ti,lmp92001-dac-gang = /bits/ 8 <0>;
-+        };
-+};
--- 
-2.13.0
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
