@@ -1,38 +1,57 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3] pinctrl: sh-pfc: r8a7795: Add SDHI0-3 support
-Date: Wed, 30 Aug 2017 16:14:28 +0200
-Message-ID: <CAMuHMdWb1kLNSRpBB4uaqmHPPGn3dK17snFgStHskT6SckEwzw@mail.gmail.com>
-References: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: linux-next regression caused by "gpiolib: request the gpio
+ before querying its direction"
+Date: Wed, 30 Aug 2017 16:17:30 +0200
+Message-ID: <20170830161730.41919554@windsurf.lan>
+References: <20170830112424.7a3a7c36@windsurf.lan>
+        <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org>
+        <87ziah2m3f.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20170829155157.6272-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Dirk Behme <dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:43288 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbdH3ORm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 30 Aug 2017 10:17:42 -0400
+In-Reply-To: <87ziah2m3f.fsf@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Timur Tabi <timur@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Antoine =?UTF-8?B?VMOpbmFydA==?= <antoine.tenart@free-electrons.com>, =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>
 
-On Tue, Aug 29, 2017 at 5:51 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Add SDHI0-3 support for R-Car H3 ES2.0 based on a patch from the Renesas
-> BSP. SDHI pin config is identical to H3 ES1.*.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hello,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-I.e. will queue in sh-pfc-for-v4.15.
+On Wed, 30 Aug 2017 15:59:00 +0200, Gregory CLEMENT wrote:
 
-Gr{oetje,eeting}s,
+> > When gpiochip_add_data() calls chip->request, what function is that
+> > calling?  
+> 
+> the request callback is gpiochip_generic_request so I would be surprised
+> that there was a bug in it.
 
-                        Geert
+The call chain leading to the problem is:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ gpiochip_add_data()
+  chip->request() == gpiochip_generic_request()
+   pinctrl_request_gpio()
+    pinmux_request_gpio()
+     pin_request()
+      ops->gpio_request_enable() == mvebu_pinmux_gpio_request_enable()
+       mvebu_pinconf_group_set()
+        grp->ctrl->mpp_set() == mvebu_regmap_mpp_ctrl_set()
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+So what Timur is saying perhaps is that
+mvebu_pinmux_gpio_request_enable() shouldn't be changing the type of
+muxing, and therefore shouldn't be calling mvebu_pinconf_group_set().
+
+However, even the "reference" pinctrl-single.c implementation does it,
+in pcs_request_gpio().
+
+Am I missing something ?
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
