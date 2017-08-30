@@ -1,57 +1,60 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: RE: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-Date: Wed, 30 Aug 2017 13:07:21 +0000
-Message-ID: <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH 5/8] pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins,
+ groups and functions
+Date: Wed, 30 Aug 2017 13:13:33 +0000
+Message-ID: <TY1PR06MB099216F35EEA6909DFE6AC80D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
 References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
+ <1502281187-24068-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWQD9Gnt0hCHf8nwdq0etWQW=zSuXqFe7qrxmQ7SAEVjw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:61453 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751345AbdH3NH1 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 30 Aug 2017 09:07:27 -0400
-In-Reply-To: <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAMuHMdWQD9Gnt0hCHf8nwdq0etWQW=zSuXqFe7qrxmQ7SAEVjw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: ja-JP
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, TAKESHI KIHARA <takeshi.kihara.df-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQpJJ20gc29ycnkuIEkgbWlzc2VkIHRoaXMgZW1haWwuLi4NCg0KPiBG
-cm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4NCj4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIw
-MTcgODoxMSBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+IA0KPiBPbiBX
-ZWQsIEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhp
-cm8uc2hpbW9kYS51aEByZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gRnJvbTogVGFrZXNoaSBLaWhh
-cmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogVGFrZXNoaSBLaWhhcmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KPiA+IFNp
-Z25lZC1vZmYtYnk6IFlvc2hpaGlybyBTaGltb2RhIDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5l
-c2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9waW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc5
-OTUuYyB8IDE1ICsrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0
-aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZj
-LXI4YTc3OTk1LmMgYi9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4g
-aW5kZXggOWViMGNlZi4uNWMwYTk0ZiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BpbmN0cmwv
-c2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gKysrIGIvZHJpdmVycy9waW5jdHJsL3NoLXBmYy9w
-ZmMtcjhhNzc5OTUuYw0KPiA+IEBAIC0xMzAyLDYgKzEzMDIsMTUgQEAgZW51bSB7DQo+ID4gICAg
-ICAgICBTQ0lGX0NMS19NQVJLLA0KPiA+ICB9Ow0KPiA+DQo+ID4gKy8qIC0gVVNCMCAtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tICovDQo+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdXNiMF9waW5zW10gPSB7DQo+
-ID4gKyAgICAgICAvKiBQV0VOLCBPVkMgKi8NCj4gPiArICAgICAgIFJDQVJfR1BfUElOKDAsIDAp
-LCBSQ0FSX0dQX1BJTigwLCAxKSwNCj4gPiArfTsNCj4gPiArc3RhdGljIGNvbnN0IHVuc2lnbmVk
-IGludCB1c2IwX211eFtdID0gew0KPiA+ICsgICAgICAgVVNCMF9QV0VOX01BUkssIFVTQjBfT1ZD
-X01BUkssDQo+ID4gK307DQo+IA0KPiBXaGF0IGFib3V0IFVTQjBfSURQVSBhbmQgVVNCMF9JRElO
-Pw0KPiBBcmUgdGhleSBuZWVkZWQgZm9yIG5vcm1hbCBvcGVyYXRpb24sIG9yIGNhbiB0aGV5IGJl
-IGFkZGVkIGxhdGVyPw0KDQpJIGRvbid0IGtub3cgYWJvdXQgdGhlc2UgcGlucy4gVGhlIGRhdGFz
-aGVldCBkb2Vzbid0IG1lbnRpb24gdXNhZ2UgaW4gVVNCIHNlY3Rpb25zLi4uDQpTbywgSSdtIGFz
-a2luZyBIVyB0ZWFtIG5vdy4gKEkgdGhpbmsgdGhleSBjYW4gYmUgYWRkZWQgbGF0ZXIuKQ0KDQpC
-ZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IFRoYW5rcyENCj4gDQo+IEdye29l
-dGplLGVldGluZ31zLA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+
-IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25k
-IGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNh
-dGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQN
-Cj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVy
-IiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+SGkgR2VlcnQtc2FuLA0KDQpTb3JyeSwgSSBhbHNvIG1pc3NlZCB0aGlzIGVtYWlsLi4uDQoNCj4g
+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuDQo+
+IFNlbnQ6IFdlZG5lc2RheSwgQXVndXN0IDE2LCAyMDE3IDg6MDYgUE0NCj4gDQo+IEhpIFNoaW1v
+ZGEtc2FuLCBLaWhhcmEtc2FuLA0KPiANCj4gT24gV2VkLCBBdWcgOSwgMjAxNyBhdCAyOjE5IFBN
+LCBZb3NoaWhpcm8gU2hpbW9kYQ0KPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
+IHdyb3RlOg0KPiA+IEZyb206IFRha2VzaGkgS2loYXJhIDx0YWtlc2hpLmtpaGFyYS5kZkByZW5l
+c2FzLmNvbT4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFRha2VzaGkgS2loYXJhIDx0YWtlc2hp
+LmtpaGFyYS5kZkByZW5lc2FzLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hp
+bW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+DQo+IA0KPiBSZXZpZXdlZC1i
+eTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4gDQo+IEJ1
+dCBiZWZvcmUgSSBhcHBseSB0aGlzLCBwbGVhc2Ugc2VlIG15IHF1ZXN0aW9uIGJlbG93Li4uDQo+
+IA0KPiA+IC0tLSBhL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZjLXI4YTc3OTk1LmMNCj4gPiAr
+KysgYi9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+IA0KPiA+ICtzdGF0
+aWMgY29uc3QgY2hhciAqIGNvbnN0IGF2YjBfZ3JvdXBzW10gPSB7DQo+ID4gKyAgICAgICAiYXZi
+MF90ZCIsDQo+ID4gKyAgICAgICAiYXZiMF9yZCIsDQo+ID4gKyAgICAgICAiYXZiMF90eF9jdGwi
+LA0KPiA+ICsgICAgICAgImF2YjBfcnhfY3RsIiwNCj4gPiArICAgICAgICJhdmIwX3R4YyIsDQo+
+ID4gKyAgICAgICAiYXZiMF9yeGMiLA0KPiA+ICsgICAgICAgImF2YjBfdHhjcmVmY2xrIiwNCj4g
+PiArICAgICAgICJhdmIwX2xpbmsiLA0KPiA+ICsgICAgICAgImF2YjBfbWFnaWMiLA0KPiA+ICsg
+ICAgICAgImF2YjBfcGh5X2ludCIsDQo+ID4gKyAgICAgICAiYXZiMF9tZGMiLA0KPiA+ICsgICAg
+ICAgImF2YjBfbWRpbyIsDQo+ID4gKyAgICAgICAiYXZiMF9hdnRwX3Bwc19hIiwNCj4gPiArICAg
+ICAgICJhdmIwX2F2dHBfbWF0Y2hfYSIsDQo+ID4gKyAgICAgICAiYXZiMF9hdnRwX2NhcHR1cmVf
+YSIsDQo+ID4gKyAgICAgICAiYXZiMF9hdnRwX3Bwc19iIiwNCj4gPiArICAgICAgICJhdmIwX2F2
+dHBfbWF0Y2hfYiIsDQo+ID4gKyAgICAgICAiYXZiMF9hdnRwX2NhcHR1cmVfYiIsDQo+ID4gK307
+DQo+IA0KPiBJcyB0aGVyZSBhbnkgc3BlY2lmaWMgcmVhc29uIHRoaXMgdXNlcyBhIGRpZmZlcmVu
+dCBzcGxpdCB0aGFuIHRoZQ0KPiBFdGhlckFWQiBncm91cHMNCj4gaW4gcGluY3RybCBkcml2ZXJz
+IGZvciBvdGhlciBTb0NzPw0KDQpJIHdpbGwgY2hlY2sgdGhpcyB0b21vcnJvdyAob3IgbGF0ZXIu
+Li4pLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IE5vdGUgdGhhdCBJ
+IGRvIHVuZGVyc3RhbmQgdGhhdCB0aGUgZGlmZmVyZW50IHByZWZpeCAoImF2YjAiIHZzLiAiYXZi
+IikNCj4gd2FzIHVzZWQgdG8NCj4gbWF0Y2ggdGhlIFItQ2FyIEQzIGRhdGFzaGVldCwgd2hpY2gg
+aXMgdGh1cyBPSy4NCj4gDQo+IFRoYW5rcyENCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiAN
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRl
+cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
+dXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmlj
+YWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2lu
+ZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlr
+ZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZh
+bGRzDQo=
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
