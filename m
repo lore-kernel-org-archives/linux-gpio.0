@@ -1,31 +1,45 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: msm: GP clock for pinctrl-apq8064 binding
-Date: Thu, 31 Aug 2017 11:31:14 +0200
-Message-ID: <CACRpkdYDWfCgjebckX=8qd8tOMTtaWj=hxBmCB934-AXL7W0Cw@mail.gmail.com>
-References: <1502434516-9056-1-git-send-email-simhavcs@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: qcom: General Purpose clocks for apq8064
+Date: Thu, 31 Aug 2017 11:33:35 +0200
+Message-ID: <CACRpkdbsa37eT27rJSCNoDAjyiXQYJKYh9LoMQwvv6jGFN8pOA@mail.gmail.com>
+References: <1502863338-6946-1-git-send-email-simhavcs@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1502434516-9056-1-git-send-email-simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinay Simha BN <simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Andersson <bjorn.andersson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "open list:PIN CONTROLLER - QUALCOMM" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:36532 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751286AbdHaJdg (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Aug 2017 05:33:36 -0400
+Received: by mail-oi0-f44.google.com with SMTP id t75so1242527oie.3
+        for <linux-gpio@vger.kernel.org>; Thu, 31 Aug 2017 02:33:36 -0700 (PDT)
+In-Reply-To: <1502863338-6946-1-git-send-email-simhavcs@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Vinay Simha BN <simhavcs@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:PIN CONTROLLER - QUALCOMM" <linux-arm-msm@vger.kernel.org>, "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On Fri, Aug 11, 2017 at 8:55 AM, Vinay Simha BN <simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Wed, Aug 16, 2017 at 8:02 AM, Vinay Simha BN <simhavcs@gmail.com> wrote:
 
-> DT binding documentation for qcom,apq8064-pinctrl driver
-> for general purpose (GP) clocks.
+> Add support for general purpose (GP) clocks
+> for apq8064
 >
-> Signed-off-by: Vinay Simha BN <simhavcs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> DT binding documentation updated for
+> qcom,apq8064-pinctrl general purpose (GP) clocks.
+>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Vinay Simha BN <simhavcs@gmail.com>
+>
+> ---
+> v1:
+> * only gp_clk_1b tested in nexus7 anx7808 slimport.
+>
+> v2:
+> * bjorn review comments incorporated
+>   added gp clock functions
+>   merged documentation and driver to single patch
 
-Patch applied with Rob's ACK.
-I don't think Bj=C3=B6rn will mind.
+I applied this v2 instead of v1 which has the right ACKs and also
+added Rob's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
