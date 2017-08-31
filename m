@@ -1,36 +1,44 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] Revert "pinctrl: sunxi: Don't enforce bias
- disable (for now)"
-Date: Thu, 31 Aug 2017 15:52:39 +0200
-Message-ID: <CACRpkdbNexCr-o1YozD4OaTivptV+W+ow8LpL7m5z+qvVvVP+A@mail.gmail.com>
-References: <20170827125523.29208-1-plaes@plaes.org>
-Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: Regression in next with gpiolib
+Date: Thu, 31 Aug 2017 07:02:21 -0700
+Message-ID: <20170831140221.GK6008@atomide.com>
+References: <20170830214127.GJ6008@atomide.com>
+ <CACRpkdYUd2+FjhL_koEYjJXnci+khSOM9H6ahpXnzJoiYFCJdQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDE6RCFOWIARBKFJUDGQKGQEJJLEFQA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20170827125523.29208-1-plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYUd2+FjhL_koEYjJXnci+khSOM9H6ahpXnzJoiYFCJdQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Timur Tabi <timur@codeaurora.org>, Grygorii Strashko <grygorii.strashko@ti.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun, Aug 27, 2017 at 2:55 PM, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org> wrote:
+* Linus Walleij <linus.walleij@linaro.org> [170830 22:59]:
+> On Wed, Aug 30, 2017 at 11:41 PM, Tony Lindgren <tony@atomide.com> wrote:
+> 
+> > Hi Timur, Linus & Grygorii,
+> >
+> > Looks like commit 108d23e322a2 ("gpiolib: request the gpio before
+> > querying its direction") caused a regression on at least pandaboard
+> > es with booting hanging shortly after gpio init.
+> >
+> > It seems to be that we're now calling request and free on all gpios
+> > before they are properly configured?
+> >
+> > I narrowed the hang down to gpio bank1 lines 7 and possibly 8 where
+> > not calling omap_gpio_free() on them makes the system boot again.
+> >
+> > These lines are used for the leds in omap4-panda-common.dtsi, and
+> > omap_gpio_free() will by default set the unused lines for input
+> > and bad things happen. I guess hardware failure could also happen
+> > although I have not seen it here.
+> >
+> > It seems a similar issue can exist on other platforms too,
+> > so it's probably a good idea to revert this for now.
+> 
+> I reverted it for now.
 
-> This reverts commit 2154d94b40ea2a5de05245521371d0461bb0d669.
->
-> The original patch was intented to avoid some issues with the sunxi
-> gpio rework and was supposed to be reverted after all the required
-> DT bits had been merged around v4.10.
->
-> Signed-off-by: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
+OK thanks!
 
-Patch applied with Maxime's ACK.
-
-Yours,
-Linus Walleij
+Tony
