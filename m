@@ -1,34 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/2] pinctrl: intel: Read back TX buffer state
-Date: Thu, 31 Aug 2017 15:28:25 +0200
-Message-ID: <CACRpkdZ8uYKfGJ5-9km3yzQvF09h53Au5R6chDKmWiZVc-Fx0g@mail.gmail.com>
-References: <20170824081934.85859-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3] gpio: uniphier: add UniPhier GPIO controller driver
+Date: Thu, 31 Aug 2017 15:41:49 +0200
+Message-ID: <CACRpkdYG3BFhhpouwAkQN+x0YpC5EhsVhTkqyuNdRd26Ne-r9A@mail.gmail.com>
+References: <1503418601-9728-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:33261 "EHLO
-        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750908AbdHaN20 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Aug 2017 09:28:26 -0400
-Received: by mail-oi0-f48.google.com with SMTP id r203so5465975oih.0
-        for <linux-gpio@vger.kernel.org>; Thu, 31 Aug 2017 06:28:26 -0700 (PDT)
-In-Reply-To: <20170824081934.85859-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1503418601-9728-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "Bourque, Francis" <francis.bourque@intel.com>
 
-On Thu, Aug 24, 2017 at 10:19 AM, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Tue, Aug 22, 2017 at 6:16 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> In the same way as it's done in pinctrl-cherryview.c we would provide
-> a readback TX buffer state.
+> This GPIO controller device is used on UniPhier SoCs.
 >
-> Fixes: 17fab473693 ("pinctrl: intel: Set pin direction properly")
-> Reported-by: "Bourque, Francis" <francis.bourque@intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+> Changes in v3:
+>   - Add .irq_set_affinity() hook
+>   - Use irq_domain_create_hierarchy() instead of legacy
+>     irq_domain_add_hierarchy().
 
-Patch applied with the ACKs.
+This is getting better and better.
+
+> +static const u32 uniphier_gpio_irq_parent_hwirqs[] = {
+> +       48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+> +       154, 155, 156, 157, 158, 217, 218, 219,
+> +};
+
+This array which is used when allocating the hierarchical domain
+looks like configuration data. Why is it not in the device tree?
 
 Yours,
 Linus Walleij
