@@ -1,26 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: fix members of rmii group for Pro4
-Date: Thu, 31 Aug 2017 15:51:05 +0200
-Message-ID: <CACRpkdZ6Db=FivejdqG=WHbwot80Jq9xEeF58F1h9n7EuL94Hg@mail.gmail.com>
-References: <1503886886-30065-1-git-send-email-hayashi.kunihiko@socionext.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] Revert "pinctrl: sunxi: Don't enforce bias
+ disable (for now)"
+Date: Thu, 31 Aug 2017 15:52:39 +0200
+Message-ID: <CACRpkdbNexCr-o1YozD4OaTivptV+W+ow8LpL7m5z+qvVvVP+A@mail.gmail.com>
+References: <20170827125523.29208-1-plaes@plaes.org>
+Reply-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1503886886-30065-1-git-send-email-hayashi.kunihiko@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-sunxi+bncBDE6RCFOWIARBKFJUDGQKGQEJJLEFQA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170827125523.29208-1-plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
+Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Aug 28, 2017 at 4:21 AM, Kunihiko Hayashi
-<hayashi.kunihiko@socionext.com> wrote:
+On Sun, Aug 27, 2017 at 2:55 PM, Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org> wrote:
 
-> The ether_rmii_groups should have "ether_rmii" and "ether_rmiib" as
-> members. This patch replaces to them.
+> This reverts commit 2154d94b40ea2a5de05245521371d0461bb0d669.
 >
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> The original patch was intented to avoid some issues with the sunxi
+> gpio rework and was supposed to be reverted after all the required
+> DT bits had been merged around v4.10.
+>
+> Signed-off-by: Priit Laes <plaes-q/aMd4JkU83YtjvyW6yDsg@public.gmane.org>
 
-Patch applied with Fixes: tag and ACKs.
+Patch applied with Maxime's ACK.
 
 Yours,
 Linus Walleij
