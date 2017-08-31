@@ -1,45 +1,54 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 2/4] gpio: Introduce ->get_multiple callback
-Date: Thu, 31 Aug 2017 17:46:21 +0200
-Message-ID: <20170831154621.GA21777@wunner.de>
-References: <cover.1503319573.git.lukas@wunner.de>
- <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
- <CACRpkdYfHGHNGKKMs+Yqhfeyhs=L0G4K_6OYneDG1RkNpxLXkA@mail.gmail.com>
- <20170827173459.GB13399@wunner.de>
- <CACRpkdZo5EzJJUwF8uYqchDC1JC3uZnp9LCpR0DxOdy2K4J_wg@mail.gmail.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: linux-next regression caused by "gpiolib: request the gpio before
+ querying its direction"
+Date: Thu, 31 Aug 2017 13:39:22 -0500
+Message-ID: <a841b6f2-ded1-2b16-3713-fc29af43d7a7@codeaurora.org>
+References: <20170830112424.7a3a7c36@windsurf.lan>
+ <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org>
+ <87ziah2m3f.fsf@free-electrons.com> <20170830161730.41919554@windsurf.lan>
+ <CACRpkdbxdkHukALfYMrM7w=1KNJKLBhGebbkEpMb3C3+nCfWOA@mail.gmail.com>
+ <20170831091812.6f7d417e@windsurf.lan>
+ <CAMuHMdVGkTQ0vnOg5o+t1J9qe79ySm0R8aE4msyuNLoVGHLD6A@mail.gmail.com>
+ <20170831092211.GP20805@n2100.armlinux.org.uk>
+ <20170831113935.38028ff8@windsurf.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout2.hostsharing.net ([83.223.90.233]:54833 "EHLO
-        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752492AbdHaPqX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Aug 2017 11:46:23 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZo5EzJJUwF8uYqchDC1JC3uZnp9LCpR0DxOdy2K4J_wg@mail.gmail.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:52770 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750996AbdHaSjZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Aug 2017 14:39:25 -0400
+In-Reply-To: <20170831113935.38028ff8@windsurf.lan>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linus Walleij <linus.walleij@linaro.org>, =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, =?UTF-8?Q?Antoine_T=c3=a9nart?= <antoine.tenart@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Aug 31, 2017 at 03:48:15PM +0200, Linus Walleij wrote:
-> On Sun, Aug 27, 2017 at 7:34 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> > At least with SPI-attached GPIO controllers, the transmission is never
-> > guaranteed to succeed, so errors can occur both for input and output
-> > GPIOs.  The MAX3191x is input-only and does pass SPI errors back to
-> > the caller.  Output drivers such as gpio-74x164.c silently ignore
-> > SPI errors, which is arguably a problem.
-> 
-> This has historical reasons.
+On 08/31/2017 04:39 AM, Thomas Petazzoni wrote:
+>>
+>> IMHO, the pinmux settings should always be specified in DT, and that's
+>> what we should be using everywhere, not doing broken backdoor games like
+>> "the gpio is being requested, it's obvious that we want this pin to be
+>> a gpio" - that really doesn't follow.
+> Agreed.
 
-Would you generally be open for allowing errors to be returned from
-the set functions as well?  The Revolution Pi uses SPI-attached
-digital outputs and knowing if access to them fails would be useful.
+How many drivers need to be "fixed" if this is the plan?  I don't think 
+we can make a blanket change to all drivers whose ->request functions 
+touch the muxes without testing on all those platforms.  And it's not 
+just the muxes.  The whole point behind my patch was to avoid 
+gpiochip_add_data() touching the hardware without claiming the GPIO first.
 
-For consumers, switching the return value from void to int shouldn't
-cause any fallout.  They just don't check the return value initially.
-However the ->set and ->set_multiple callbacks in all the GPIO drivers
-would need to be changed, that's where the real work is.
+The overall goal of my patch was to allow "sparse" GPIO maps.  The 
+problem with gpiochip_add_data() is that it touches all GPIOs even 
+before I call gpiochip_add_pin_range().
 
-Thanks,
+Maybe the for-loop that it's in gpiochip_add_data() should be moved to 
+gpiochip_add_pin_range(), so that we only query the direction of a pin 
+after it's been added, not before?
 
-Lukas
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
