@@ -1,44 +1,55 @@
-From: Baolin Wang <baolin.wang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RESEND PATCH v5 3/3] pinctrl: sprd: Add Spreadtrum pin control driver
-Date: Thu, 31 Aug 2017 16:46:52 +0800
-Message-ID: <CAMz4kuKgU1zO4Vqk3qcJu2oYtDr1o=L6yJ_VZqKLExn9fOw4zg@mail.gmail.com>
-References: <eb7925c9642efb8a1ee5804a9b06f06d9f082089.1500018536.git.baolin.wang@spreadtrum.com>
- <f41270ddc53d11b746c2cc7c66b323e11381938f.1500018536.git.baolin.wang@spreadtrum.com>
- <CACRpkdZ=mHqGX0sdjWaOOvib9O-bW5tJoO1fJ4_-hxKODBusjw@mail.gmail.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: linux-next regression caused by "gpiolib: request the gpio
+ before querying its direction"
+Date: Thu, 31 Aug 2017 10:22:12 +0100
+Message-ID: <20170831092211.GP20805@n2100.armlinux.org.uk>
+References: <20170830112424.7a3a7c36@windsurf.lan>
+ <3cce6903-d167-1bfc-38b4-1fdd7b3ff24b@codeaurora.org>
+ <87ziah2m3f.fsf@free-electrons.com>
+ <20170830161730.41919554@windsurf.lan>
+ <CACRpkdbxdkHukALfYMrM7w=1KNJKLBhGebbkEpMb3C3+nCfWOA@mail.gmail.com>
+ <20170831091812.6f7d417e@windsurf.lan>
+ <CAMuHMdVGkTQ0vnOg5o+t1J9qe79ySm0R8aE4msyuNLoVGHLD6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZ=mHqGX0sdjWaOOvib9O-bW5tJoO1fJ4_-hxKODBusjw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:46308 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbdHaJW2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Aug 2017 05:22:28 -0400
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVGkTQ0vnOg5o+t1J9qe79ySm0R8aE4msyuNLoVGHLD6A@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Antoine =?iso-8859-1?Q?T=E9nart?= <antoine.tenart@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Timur Tabi <timur@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Linusw,
+On Thu, Aug 31, 2017 at 09:30:54AM +0200, Geert Uytterhoeven wrote:
+> > Note that on my side, I've however not been convinced by this semantic:
+> > I find it weird that when you request a GPIO, it gets automatically
+> > muxed as such, without an explicit pinctrl configuration in the DT.
+> 
+> On lots of hardware, you first have to select between GPIO and "other
+> function".
+> For "other function", you have to select the actual function later.
+> In that case, switching to a GPIO can be done by flipping a single bit.
 
-On 31 August 2017 at 15:25, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, Aug 17, 2017 at 8:50 AM, Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org> wrote:
->
->> This patch adds the pin control driver for Spreadtrum SC9860 platform.
->>
->> Signed-off-by: Baolin Wang <baolin.wang-lxIno14LUO0EEoCn2XhGlw@public.gmane.org>
->> ---
->> Changes since v4:
->>  - Remove sleep configs.
->>  - Use one standard sleep hardware state config to indicate sleep configs.
->
-> Patch applied.
->
-> AFAICT this is a fine driver and you did a good job.
->
-> Thanks for standing out to my slowness.
+What about hardware which you can configure for some alternate function
+but still monitor the pin via GPIO, even though it's not mux'd as GPIO.
 
-Thanks.
+For instance, you may have a timer block which can capture on both
+edges of an external event signal, which needs the pin to be muxed for
+that function.  However, you need to read the state of the pin, and
+that is only available through GPIO.  Muxing the pin to be a GPIO just
+because someone requests the GPIO is, imho, ill thought-out and breaks
+some use cases.
+
+IMHO, the pinmux settings should always be specified in DT, and that's
+what we should be using everywhere, not doing broken backdoor games like
+"the gpio is being requested, it's obvious that we want this pin to be
+a gpio" - that really doesn't follow.
 
 -- 
-Baolin.wang
-Best Regards
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
