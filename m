@@ -1,91 +1,45 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Fri, 1 Sep 2017 00:36:27 +0900
-Message-ID: <CAK7LNAQz_mGUo71-FvchPrp_B6+A+74t=LDaZdGE7Bzxpeh9Mg@mail.gmail.com>
-References: <1503418601-9728-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdYG3BFhhpouwAkQN+x0YpC5EhsVhTkqyuNdRd26Ne-r9A@mail.gmail.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 2/4] gpio: Introduce ->get_multiple callback
+Date: Thu, 31 Aug 2017 17:46:21 +0200
+Message-ID: <20170831154621.GA21777@wunner.de>
+References: <cover.1503319573.git.lukas@wunner.de>
+ <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
+ <CACRpkdYfHGHNGKKMs+Yqhfeyhs=L0G4K_6OYneDG1RkNpxLXkA@mail.gmail.com>
+ <20170827173459.GB13399@wunner.de>
+ <CACRpkdZo5EzJJUwF8uYqchDC1JC3uZnp9LCpR0DxOdy2K4J_wg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYG3BFhhpouwAkQN+x0YpC5EhsVhTkqyuNdRd26Ne-r9A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mailout2.hostsharing.net ([83.223.90.233]:54833 "EHLO
+        mailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752492AbdHaPqX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 31 Aug 2017 11:46:23 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZo5EzJJUwF8uYqchDC1JC3uZnp9LCpR0DxOdy2K4J_wg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Thu, Aug 31, 2017 at 03:48:15PM +0200, Linus Walleij wrote:
+> On Sun, Aug 27, 2017 at 7:34 PM, Lukas Wunner <lukas@wunner.de> wrote:
+> > At least with SPI-attached GPIO controllers, the transmission is never
+> > guaranteed to succeed, so errors can occur both for input and output
+> > GPIOs.  The MAX3191x is input-only and does pass SPI errors back to
+> > the caller.  Output drivers such as gpio-74x164.c silently ignore
+> > SPI errors, which is arguably a problem.
+> 
+> This has historical reasons.
 
+Would you generally be open for allowing errors to be returned from
+the set functions as well?  The Revolution Pi uses SPI-attached
+digital outputs and knowing if access to them fails would be useful.
 
-2017-08-31 22:41 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Tue, Aug 22, 2017 at 6:16 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> This GPIO controller device is used on UniPhier SoCs.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> Changes in v3:
->>   - Add .irq_set_affinity() hook
->>   - Use irq_domain_create_hierarchy() instead of legacy
->>     irq_domain_add_hierarchy().
->
-> This is getting better and better.
->
->> +static const u32 uniphier_gpio_irq_parent_hwirqs[] = {
->> +       48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
->> +       154, 155, 156, 157, 158, 217, 218, 219,
->> +};
->
-> This array which is used when allocating the hierarchical domain
-> looks like configuration data. Why is it not in the device tree?
+For consumers, switching the return value from void to int shouldn't
+cause any fallout.  They just don't check the return value initially.
+However the ->set and ->set_multiple callbacks in all the GPIO drivers
+would need to be changed, that's where the real work is.
 
+Thanks,
 
-The same comment as in v1.
-
-There is no systematic way to map hwirqs to the parent
-for irqdomain hierarchy:
-https://lkml.org/lkml/2017/7/6/758
-
-
-
-If you see irqchip drivers using domain hierarchy,
-many drivers hard-code
-
-    parent_fwspec.param_count = 3;
-
-without parsing #interrupt-cells property of the parent.
-
-It is hard-coded configuration data, isn't it?
-
-
-
-The array of parent hwirqs is more or less SoC specific data.
-
-
-This is just a matter of taste, but
-if you like, I can move the array to the SoC data associated
-with compatible.
-
-
-.ngpio is already associated with compatible,
-so adding more data would not hurt...
-
-
-static const u32 uniphier_pxs2_gpio_irqs[] = {
-        48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-        154, 155, 156, 157, 158, 217, 218, 219,
-};
-
-static const struct uniphier_gpio_socdata uniphier_pxs2_gpio_data = {
-        .ngpio = 232,
-        .irqs = uniphier_pxs2_gpio_irqs,
-        .nirqs = ARRAY_SIZE(uniphier_pxs2_gpio_irqs),
-};
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Lukas
