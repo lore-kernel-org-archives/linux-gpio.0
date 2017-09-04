@@ -1,58 +1,70 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/4] gpio: Introduce ->get_multiple callback
-Date: Sun, 3 Sep 2017 16:58:38 +0200
-Message-ID: <CACRpkdZ9j_Q0cqWoJkmD_1redDuG8uMKb1qYmb=+ojgxhJFYLw@mail.gmail.com>
-References: <cover.1503319573.git.lukas@wunner.de> <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
- <CACRpkdYfHGHNGKKMs+Yqhfeyhs=L0G4K_6OYneDG1RkNpxLXkA@mail.gmail.com>
- <20170827173459.GB13399@wunner.de> <CACRpkdZo5EzJJUwF8uYqchDC1JC3uZnp9LCpR0DxOdy2K4J_wg@mail.gmail.com>
- <20170831154621.GA21777@wunner.de>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH][pinctrl-next] pinctrl: sprd: make three local functions static
+Date: Mon,  4 Sep 2017 11:53:22 +0100
+Message-ID: <20170904105322.23228-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:36245 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbdICO6j (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 3 Sep 2017 10:58:39 -0400
-Received: by mail-oi0-f43.google.com with SMTP id t75so29740948oie.3
-        for <linux-gpio@vger.kernel.org>; Sun, 03 Sep 2017 07:58:39 -0700 (PDT)
-In-Reply-To: <20170831154621.GA21777@wunner.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@spreadtrum.com>, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, Aug 31, 2017 at 5:46 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> On Thu, Aug 31, 2017 at 03:48:15PM +0200, Linus Walleij wrote:
->> On Sun, Aug 27, 2017 at 7:34 PM, Lukas Wunner <lukas@wunner.de> wrote:
->> > At least with SPI-attached GPIO controllers, the transmission is never
->> > guaranteed to succeed, so errors can occur both for input and output
->> > GPIOs.  The MAX3191x is input-only and does pass SPI errors back to
->> > the caller.  Output drivers such as gpio-74x164.c silently ignore
->> > SPI errors, which is arguably a problem.
->>
->> This has historical reasons.
->
-> Would you generally be open for allowing errors to be returned from
-> the set functions as well?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes if we can make a series fixing the fallout.
+The functions sprd_pmx_get_function_count, sprd_pmx_get_function_name
+and sprd_pmx_get_function_groups are local to the source and do not
+need to be in global scope, so make them static.
 
->  The Revolution Pi uses SPI-attached
-> digital outputs and knowing if access to them fails would be useful.
+Cleans up sparse warnings:
+"symbol 'sprd_pmx_get_function_count' was not declared. Should it be 
+static?"
+"symbol 'sprd_pmx_get_function_name' was not declared. Should it be
+static?"
+"symbol 'sprd_pmx_get_function_groups' was not declared. Should it be 
+static?"
 
-True.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/sprd/pinctrl-sprd.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> For consumers, switching the return value from void to int shouldn't
-> cause any fallout.  They just don't check the return value initially.
-
-Indeed.
-
-> However the ->set and ->set_multiple callbacks in all the GPIO drivers
-> would need to be changed, that's where the real work is.
-
-Yeah :/
-
-But there are not so many of them, luckily.
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 7e7b9ac7e836..c178b4a6d7f5 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -353,13 +353,13 @@ static const struct pinctrl_ops sprd_pctrl_ops = {
+ 	.dt_free_map = pinctrl_utils_free_map,
+ };
+ 
+-int sprd_pmx_get_function_count(struct pinctrl_dev *pctldev)
++static int sprd_pmx_get_function_count(struct pinctrl_dev *pctldev)
+ {
+ 	return PIN_FUNC_MAX;
+ }
+ 
+-const char *sprd_pmx_get_function_name(struct pinctrl_dev *pctldev,
+-				       unsigned int selector)
++static const char *sprd_pmx_get_function_name(struct pinctrl_dev *pctldev,
++					      unsigned int selector)
+ {
+ 	switch (selector) {
+ 	case PIN_FUNC_1:
+@@ -375,10 +375,10 @@ const char *sprd_pmx_get_function_name(struct pinctrl_dev *pctldev,
+ 	}
+ }
+ 
+-int sprd_pmx_get_function_groups(struct pinctrl_dev *pctldev,
+-				 unsigned int selector,
+-				 const char * const **groups,
+-				 unsigned int * const num_groups)
++static int sprd_pmx_get_function_groups(struct pinctrl_dev *pctldev,
++					unsigned int selector,
++					const char * const **groups,
++					unsigned int * const num_groups)
+ {
+ 	struct sprd_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
+ 	struct sprd_pinctrl_soc_info *info = pctl->info;
+-- 
+2.14.1
