@@ -1,43 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 2/2] pinctrl: sprd: add CONFIG_OF dependency
-Date: Tue,  5 Sep 2017 09:58:02 +0200
-Message-ID: <20170905075826.893066-2-arnd@arndb.de>
-References: <20170905075826.893066-1-arnd@arndb.de>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 3/4] dt-bindings: gpio: max3191x: Document new driver
+Date: Tue, 5 Sep 2017 10:16:24 +0200
+Message-ID: <20170905081624.GA15374@wunner.de>
+References: <cover.1503319573.git.lukas@wunner.de>
+ <7fe7636eecba238d57ab6178cfa3f6b7deca98f1.1503319573.git.lukas@wunner.de>
+ <20170823004847.jmkb53xtdmmn6vtf@rob-hp-laptop>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.75]:52084 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750704AbdIEH6y (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2017 03:58:54 -0400
-In-Reply-To: <20170905075826.893066-1-arnd@arndb.de>
+Received: from mailout3.hostsharing.net ([176.9.242.54]:40105 "EHLO
+        mailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbdIEIQR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 5 Sep 2017 04:16:17 -0400
+Content-Disposition: inline
+In-Reply-To: <20170823004847.jmkb53xtdmmn6vtf@rob-hp-laptop>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@spreadtrum.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
 
-Without CONFIG_OF, we run into a build error:
+Hi Rob,
 
-drivers/pinctrl/sprd/pinctrl-sprd.c: In function 'sprd_dt_node_to_map':
-drivers/pinctrl/sprd/pinctrl-sprd.c:290:8: error: implicit declaration of function 'pinconf_generic_parse_dt_config'; did you mean 'pinconf_generic_dump_config'? [-Werror=implicit-function-declaration]
+sorry to bother you again, one more question popped up regarding the
+MAX3191x DT bindings:
 
-This adds a Kconfig dependency for it.
+On Tue, Aug 22, 2017 at 07:48:47PM -0500, Rob Herring wrote:
+> On Mon, Aug 21, 2017 at 03:12:00PM +0200, Lukas Wunner wrote:
+> > Add device tree bindings for Maxim MAX3191x industrial serializer.
+[snip]
+> > +Optional properties:
+> > + - maxim,nchips:	Number of chips in the daisy-chain (default is 1).
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/sprd/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Many I/O chips are daisy-chainable, so I've been wondering if a
+common property should be introduced?
 
-diff --git a/drivers/pinctrl/sprd/Kconfig b/drivers/pinctrl/sprd/Kconfig
-index ec21b8bae487..e75cde2e1b46 100644
---- a/drivers/pinctrl/sprd/Kconfig
-+++ b/drivers/pinctrl/sprd/Kconfig
-@@ -4,6 +4,7 @@
- 
- config PINCTRL_SPRD
- 	bool "Spreadtrum pinctrl driver"
-+	depends on OF
- 	select PINMUX
- 	select PINCONF
- 	select GENERIC_PINCONF
--- 
-2.9.0
+The existing gpio-74x164.c uses "registers-number" to convey the number
+of chips in the daisy chain.  (Sans vendor prefix, multiple vendors sell
+compatible versions of this chip.)
 
+gpio-pisosr.c takes a different approach and calculates the number of
+chips in the daisy-chain by taking the common "ngpios" property
+(Documentation/devicetree/bindings/gpio/gpio.txt) and dividing it by 8
+(which assumes that each chip has 8 inputs).
+
+Thanks,
+
+Lukas
