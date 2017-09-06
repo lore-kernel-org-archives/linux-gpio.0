@@ -1,61 +1,128 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of
- depends on
-Date: Wed, 6 Sep 2017 13:20:11 +0900
-Message-ID: <CAK7LNAQeRZZTrX-aOkJ3u+69ZG3+Tgsm=TbKyNb-aqp9=F3Csw@mail.gmail.com>
-References: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com> <32679e9c-7ad7-a632-4842-6e8e8b820d26@caviumnetworks.com>
+From: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: [PATCH v5 00/17] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
+Date: Wed, 6 Sep 2017 14:20:26 +0100
+Message-ID: <1504704043-8052-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:28023 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbdIFEU6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Sep 2017 00:20:58 -0400
-In-Reply-To: <32679e9c-7ad7-a632-4842-6e8e8b820d26@caviumnetworks.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <ddaney@caviumnetworks.com>
-Cc: linux-gpio@vger.kernel.org, David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi David,
+The Cirrus Logic CS47L35, CS47L85, CS47L90/91 codecs are complex audio SoC
+devices. In addition to the core audio capability they have onboard GPIO,
+regulators, DSPs and interrupt controller and a large register map space
+accessed over SPI or I2C. This family of codecs is based around common IP
+blocks and they are managed by a set of common drivers referred to as "Madera".
 
+Summary of changes since V4:
+- Fixed review comments on MFD code
+- Fixed dependency error in core codec driver
+- minor bugfix to core codec driver
 
-2017-09-06 11:09 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
-> On 09/05/2017 06:40 PM, Masahiro Yamada wrote:
->>
->> IRQ_DOMAIN_HIERARCHY is not user-configurable, but supposed to be
->> selected by drivers that need IRQ domain hierarchy support.
->>
->> GPIO_THUNDERX is the only user of "depends on IRQ_DOMAIN_HIERARCHY".
->> This means, we can not enable GPIO_THUNDERX unless other drivers
->> select IRQ_DOMAIN_HIERARCHY elsewhere.  This is odd.  Flip the logic.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
->
-> IRQ_DOMAIN_HIERARCHY is set as a result of ARCH_THUNDER (this SoC hardware),
-> so it actually works as-is.
+Richard Fitzgerald (17):
+  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
+  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
+  mfd: madera: Add common support for Cirrus Logic Madera codecs
+  mfd: madera: Register map tables for Cirrus Logic CS47L35
+  mfd: madera: Register map tables for Cirrus Logic CS47L85
+  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
+  regulator: arizona-micsupp: Add support for Cirrus Logic Madera codecs
+  regulator: arizona-ldo1: Add support for Cirrus Logic Madera codecs
+  irqchip: Add driver for Cirrus Logic Madera codecs
+  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
+  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
+  gpio: madera: Support Cirrus Logic Madera class codecs
+  ASoC: madera: Add DT bindings for Cirrus Logic Madera codecs
+  ASoC: madera: Add common support for Cirrus Logic Madera codecs
+  ASoC: cs47l35: Add codec driver for Cirrus Logic CS47L35
+  ASoC: cs47l85: Add codec driver for Cirrus Logic CS47L85
+  ASoC: cs47l90: Add codec driver for Cirrus Logic CS47L90
 
-
-Right, ARCH_THUNDER does not select it directly,
-but does it indirectly.  (this is not so clear...)
-
-ARCH_THUNDER  -> ARM64 -> ARM_GIC -> IRQ_DOMAIN_HIERARCHY
-
-
-
->  That said, this looks like a reasonable
-> improvement, and will allow the COMPILE_TEST to enable it, so...
->
-> Acked-by: David Daney <david.daney@cavium.com>
-
-
-BTW, I could not understand your intention of
-(64BIT && COMPILE_TEST)
-
-Why can COMPILE_TEST be enabled when 64BIT?
-
+ Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
+ .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
+ .../bindings/regulator/arizona-regulator.txt       |    3 +-
+ Documentation/devicetree/bindings/sound/madera.txt |   67 +
+ MAINTAINERS                                        |   23 +
+ drivers/gpio/Kconfig                               |    6 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-madera.c                         |  196 +
+ drivers/irqchip/Kconfig                            |    3 +
+ drivers/irqchip/Makefile                           |    1 +
+ drivers/irqchip/irq-madera.c                       |  301 ++
+ drivers/mfd/Kconfig                                |   48 +
+ drivers/mfd/Makefile                               |   13 +
+ drivers/mfd/cs47l35-tables.c                       | 1610 +++++++
+ drivers/mfd/cs47l85-tables.c                       | 3010 +++++++++++++
+ drivers/mfd/cs47l90-tables.c                       | 2675 ++++++++++++
+ drivers/mfd/madera-core.c                          |  599 +++
+ drivers/mfd/madera-i2c.c                           |  139 +
+ drivers/mfd/madera-spi.c                           |  138 +
+ drivers/mfd/madera.h                               |   44 +
+ drivers/pinctrl/Kconfig                            |    1 +
+ drivers/pinctrl/Makefile                           |    1 +
+ drivers/pinctrl/cirrus/Kconfig                     |   15 +
+ drivers/pinctrl/cirrus/Makefile                    |   11 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   46 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   60 +
+ drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   58 +
+ drivers/pinctrl/cirrus/pinctrl-madera.c            | 1074 +++++
+ drivers/pinctrl/cirrus/pinctrl-madera.h            |   40 +
+ drivers/regulator/Kconfig                          |   15 +-
+ drivers/regulator/arizona-ldo1.c                   |   82 +-
+ drivers/regulator/arizona-micsupp.c                |   71 +-
+ include/dt-bindings/sound/madera.h                 |   27 +
+ include/linux/irqchip/irq-madera-pdata.h           |   23 +
+ include/linux/irqchip/irq-madera.h                 |   98 +
+ include/linux/mfd/madera/core.h                    |  196 +
+ include/linux/mfd/madera/pdata.h                   |   61 +
+ include/linux/mfd/madera/registers.h               | 3987 ++++++++++++++++++
+ include/sound/madera-pdata.h                       |   61 +
+ sound/soc/codecs/Kconfig                           |   23 +
+ sound/soc/codecs/Makefile                          |    8 +
+ sound/soc/codecs/cs47l35.c                         | 1748 ++++++++
+ sound/soc/codecs/cs47l85.c                         | 2722 ++++++++++++
+ sound/soc/codecs/cs47l90.c                         | 2661 ++++++++++++
+ sound/soc/codecs/madera.c                          | 4439 ++++++++++++++++++++
+ sound/soc/codecs/madera.h                          |  470 +++
+ 46 files changed, 27066 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/madera.txt
+ create mode 100644 drivers/gpio/gpio-madera.c
+ create mode 100644 drivers/irqchip/irq-madera.c
+ create mode 100644 drivers/mfd/cs47l35-tables.c
+ create mode 100644 drivers/mfd/cs47l85-tables.c
+ create mode 100644 drivers/mfd/cs47l90-tables.c
+ create mode 100644 drivers/mfd/madera-core.c
+ create mode 100644 drivers/mfd/madera-i2c.c
+ create mode 100644 drivers/mfd/madera-spi.c
+ create mode 100644 drivers/mfd/madera.h
+ create mode 100644 drivers/pinctrl/cirrus/Kconfig
+ create mode 100644 drivers/pinctrl/cirrus/Makefile
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
+ create mode 100644 include/dt-bindings/sound/madera.h
+ create mode 100644 include/linux/irqchip/irq-madera-pdata.h
+ create mode 100644 include/linux/irqchip/irq-madera.h
+ create mode 100644 include/linux/mfd/madera/core.h
+ create mode 100644 include/linux/mfd/madera/pdata.h
+ create mode 100644 include/linux/mfd/madera/registers.h
+ create mode 100644 include/sound/madera-pdata.h
+ create mode 100644 sound/soc/codecs/cs47l35.c
+ create mode 100644 sound/soc/codecs/cs47l85.c
+ create mode 100644 sound/soc/codecs/cs47l90.c
+ create mode 100644 sound/soc/codecs/madera.c
+ create mode 100644 sound/soc/codecs/madera.h
 
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
