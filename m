@@ -1,54 +1,68 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] pinctrl: sprd: Restrict PINCTRL_SPRD to ARCH_SPRD or
- COMPILE_TEST
-Date: Wed, 6 Sep 2017 09:18:15 -0700
-Message-ID: <811f2034-0bba-d8a8-eb50-d1a5c974a863@infradead.org>
-References: <1504714085-17731-1-git-send-email-geert+renesas@glider.be>
+From: David Daney <ddaney@caviumnetworks.com>
+Subject: Re: [PATCH] gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of
+ depends on
+Date: Wed, 6 Sep 2017 10:36:06 -0700
+Message-ID: <8cfd9a26-39d9-6c1d-3414-e0f5f3123ced@caviumnetworks.com>
+References: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com>
+ <32679e9c-7ad7-a632-4842-6e8e8b820d26@caviumnetworks.com>
+ <CAK7LNAQeRZZTrX-aOkJ3u+69ZG3+Tgsm=TbKyNb-aqp9=F3Csw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:47581 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752462AbdIFQSS (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Sep 2017 12:18:18 -0400
-In-Reply-To: <1504714085-17731-1-git-send-email-geert+renesas@glider.be>
+Received: from mail-sn1nam01on0067.outbound.protection.outlook.com ([104.47.32.67]:16297
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751994AbdIFRgM (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 6 Sep 2017 13:36:12 -0400
+In-Reply-To: <CAK7LNAQeRZZTrX-aOkJ3u+69ZG3+Tgsm=TbKyNb-aqp9=F3Csw@mail.gmail.com>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Baolin Wang <baolin.wang@spreadtrum.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, David Daney <ddaney@caviumnetworks.com>
+Cc: linux-gpio@vger.kernel.org, David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 09/06/17 09:08, Geert Uytterhoeven wrote:
-> The Spreadtrum pinctrl drivers are only useful when building for a
-> Spreadtrum platform.
+On 09/05/2017 09:20 PM, Masahiro Yamada wrote:
+> Hi David,
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> On top of Arnd's:
->   - pinctrl: sprd: add missing Kconfig dependency
->   - pinctrl: sprd: add CONFIG_OF dependency
-
-or (probably with fuzz) on top of my previous patch:
-https://lkml.org/lkml/2017/9/4/336
-
->  drivers/pinctrl/sprd/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/pinctrl/sprd/Kconfig b/drivers/pinctrl/sprd/Kconfig
-> index e75cde2e1b460d66..bc7f3fab22f1c431 100644
-> --- a/drivers/pinctrl/sprd/Kconfig
-> +++ b/drivers/pinctrl/sprd/Kconfig
-> @@ -5,6 +5,7 @@
->  config PINCTRL_SPRD
->  	bool "Spreadtrum pinctrl driver"
->  	depends on OF
-> +	depends on ARCH_SPRD || COMPILE_TEST
->  	select PINMUX
->  	select PINCONF
->  	select GENERIC_PINCONF
+> 2017-09-06 11:09 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
+>> On 09/05/2017 06:40 PM, Masahiro Yamada wrote:
+>>>
+>>> IRQ_DOMAIN_HIERARCHY is not user-configurable, but supposed to be
+>>> selected by drivers that need IRQ domain hierarchy support.
+>>>
+>>> GPIO_THUNDERX is the only user of "depends on IRQ_DOMAIN_HIERARCHY".
+>>> This means, we can not enable GPIO_THUNDERX unless other drivers
+>>> select IRQ_DOMAIN_HIERARCHY elsewhere.  This is odd.  Flip the logic.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>
+>>
+>> IRQ_DOMAIN_HIERARCHY is set as a result of ARCH_THUNDER (this SoC hardware),
+>> so it actually works as-is.
+> 
+> 
+> Right, ARCH_THUNDER does not select it directly,
+> but does it indirectly.  (this is not so clear...)
+> 
+> ARCH_THUNDER  -> ARM64 -> ARM_GIC -> IRQ_DOMAIN_HIERARCHY
+> 
+> 
+> 
+>>   That said, this looks like a reasonable
+>> improvement, and will allow the COMPILE_TEST to enable it, so...
+>>
+>> Acked-by: David Daney <david.daney@cavium.com>
+> 
+> 
+> BTW, I could not understand your intention of
+> (64BIT && COMPILE_TEST)
 > 
 
+The driver uses readq()/writeq(), which are not available in some 32BIT 
+kernels.  So to ensure that it can build without error we depend on 
+64BIT as a proxy for the availability of readq()/writeq()
 
--- 
-~Randy
+
+David
