@@ -1,237 +1,80 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
-Date: Thu,  7 Sep 2017 10:33:28 -0500
-Message-ID: <1504798409-32041-2-git-send-email-timur@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, andy.gross@linaro.org, david.brown@linaro.org, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Cc: timur@codeaurora.org
+From: David Daney <ddaney@caviumnetworks.com>
+Subject: Re: [PATCH v4 1/6] irqdomain: rename variables in
+ irq_domain_{push,pop}_irq()
+Date: Thu, 7 Sep 2017 10:45:34 -0700
+Message-ID: <c9fd0412-6dce-95e9-4ca3-d4d61f9feeca@caviumnetworks.com>
+References: <1504784522-26841-1-git-send-email-yamada.masahiro@socionext.com>
+ <1504784522-26841-2-git-send-email-yamada.masahiro@socionext.com>
+ <fb4a28cb-2005-4e9b-8b3d-4d9f4c667c8f@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <fb4a28cb-2005-4e9b-8b3d-4d9f4c667c8f@arm.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Masami Hiramatsu <mhiramat@kernel.org>, David Daney <david.daney@cavium.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-pinctrl-msm only accepts an array of GPIOs from 0 to n-1, and it expects
-each group to support have only one pin (npins == 1).
+On 09/07/2017 05:47 AM, Marc Zyngier wrote:
+> On 07/09/17 12:41, Masahiro Yamada wrote:
+>> The meaning of "root" in irq_domain_{push,pop} is opposite to the
+>> documentation.  Documentation/IRQ-domain.txt depicts the hierarchy
+>> IRQ domain as follows:
+>>
+>>      CPU Vector irq_domain (root irq_domain to manage CPU vectors)
+>>              ^
+>>              |
+>>      Interrupt Remapping irq_domain (manage irq_remapping entries)
+>>              ^
+>>              |
+>>      IOAPIC irq_domain (manage IOAPIC delivery entries/pins)
+>>
+>>  From above, the inner-most domain (nearest to the CPU) is "root".
+>>
+>> The document also says, "When building irq_domain hierarchy, the
+>> irq_domain near to the device is child and the irq_domain near to
+>> CPU is parent."  This is how irq_data->parent_data works.  In
+>> contrast, these function use a variable "child_irq_data" for that.
+> The exact opposite argument could be used for the data structure. The
+> irq_desc is the root of the list ordered with parent_data.
+> 
+> Yes, this is confusing, but because we're using the same English words
+> to describe two different things, we're bound to make one thing more
+> difficult. I'm unconvinced that this change helps anything (it certainly
+> confuses me more than anything else).
+> 
 
-We can support "sparse" GPIO maps if we allow for some groups to have zero
-pins (npins == 0).  These pins are "hidden" from the rest of the driver
-and gpiolib.
+There may be room for improvement here.
 
-A new boolean 'sparse' indicates whether the GPIO map is sparse.  If any
-GPIO has an 'npins' value of 0, then 'sparse' must be set to True.
+Here is my recollection of how I choose the names:
 
-Most access to unavailable GPIOs can be blocked via the gpio_chip.request
-function.  The one exception is when gpiochip_add_data() scans all of
-the GPIOs without "requesting" them.  To cover this case,
-msm_gpio_get_direction() separately checks if the GPIO is available.
+"root" is the thing embedded in the struct irq_desc, if you think about 
+a typical linked list structure like this, we can refer to the starting 
+point as the "root".  Sometimes it might be referred to as the "head" of 
+the list, but usually not the "tail"
 
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 110 +++++++++++++++++++++++++++++++++++--
- drivers/pinctrl/qcom/pinctrl-msm.h |   2 +
- 2 files changed, 106 insertions(+), 6 deletions(-)
+"child" was used to indicate the thing we get to by traversing the link 
+in the list.  The fact that ->parent is the name of the next pointer and 
+that it points to something called "child" is confusing here.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index ff491da64dab..ca4ae3d76eb4 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -443,6 +443,14 @@ static int msm_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- 	g = &pctrl->soc->groups[offset];
- 
-+	/*
-+	 * During initialization, gpiolib may query all GPIOs for their
-+	 * initial direction, regardless if they exist, so block access
-+	 * to those that are unavailable.
-+	 */
-+	if (!g->npins)
-+		return -ENODEV;
-+
- 	val = readl(pctrl->regs + g->ctl_reg);
- 
- 	/* 0 = output, 1 = input */
-@@ -507,6 +515,11 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 	};
- 
- 	g = &pctrl->soc->groups[offset];
-+
-+	/* If the GPIO group has no pins, then don't show it. */
-+	if (!g->npins)
-+		return;
-+
- 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
- 
- 	is_out = !!(ctl_reg & BIT(g->oe_bit));
-@@ -516,7 +529,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 
- 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
- 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
--	seq_printf(s, " %s", pulls[pull]);
-+	seq_printf(s, " %s\n", pulls[pull]);
- }
- 
- static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-@@ -524,23 +537,36 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	unsigned gpio = chip->base;
- 	unsigned i;
- 
--	for (i = 0; i < chip->ngpio; i++, gpio++) {
-+	for (i = 0; i < chip->ngpio; i++, gpio++)
- 		msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
--		seq_puts(s, "\n");
--	}
- }
- 
- #else
- #define msm_gpio_dbg_show NULL
- #endif
- 
-+/*
-+ * If the requested GPIO has no pins, then treat it as unavailable.
-+ * Otherwise, call the standard request function.
-+ */
-+static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
-+
-+	if (!g->npins)
-+		return -ENODEV;
-+
-+	return gpiochip_generic_request(chip, offset);
-+}
-+
- static const struct gpio_chip msm_gpio_template = {
- 	.direction_input  = msm_gpio_direction_input,
- 	.direction_output = msm_gpio_direction_output,
- 	.get_direction    = msm_gpio_get_direction,
- 	.get              = msm_gpio_get,
- 	.set              = msm_gpio_set,
--	.request          = gpiochip_generic_request,
-+	.request          = msm_gpio_request,
- 	.free             = gpiochip_generic_free,
- 	.dbg_show         = msm_gpio_dbg_show,
- };
-@@ -808,11 +834,57 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+/**
-+ * msm_gpio_get_next_range() - find next range of consecutive gpios
-+ * @pctrl: msm_pinctrl object
-+ * @pstart: pointer to index of next starting position
-+ *
-+ * In a sparse GPIO map, available GPIOs are typically collected into blocks.
-+ * Given a starting index into the groups[] array, this function will scan all
-+ * the gpios until it finds the next block of available GPIOs.
-+ *
-+ * If groups[*pstart] already points to an available GPIO, then assume that
-+ * it is the start of a block.
-+ *
-+ * The caller is responsible for moving *pstart to after the end of the
-+ * previous block so that it this function can find the next block.
-+ *
-+ * Return: The count of the block starting at @pstart, or 0 if there are no
-+ *         more blocks.
-+ */
-+static unsigned int msm_gpio_get_next_range(struct msm_pinctrl *pctrl,
-+					    unsigned int *pstart)
-+{
-+	const struct msm_pingroup *groups = pctrl->soc->groups;
-+	unsigned int ngpio = pctrl->soc->ngpios;
-+	unsigned int count = 0;
-+	unsigned int start = *pstart;
-+
-+	/* Find the first available GPIO */
-+	while (!groups[start].npins)
-+		if (++start == ngpio)
-+			/* None found, so just exit */
-+			return 0;
-+
-+	*pstart = start;
-+
-+	/* Count the number of those GPIOs in a row */
-+	while (groups[start].npins) {
-+		count++;
-+		if (++start == ngpio)
-+			break;
-+	}
-+
-+	return count;
-+}
-+
- static int msm_gpio_init(struct msm_pinctrl *pctrl)
- {
- 	struct gpio_chip *chip;
- 	int ret;
- 	unsigned ngpio = pctrl->soc->ngpios;
-+	const struct msm_pingroup *groups = pctrl->soc->groups;
-+	unsigned int i, start = 0, count;
- 
- 	if (WARN_ON(ngpio > MAX_NR_GPIO))
- 		return -EINVAL;
-@@ -825,13 +897,39 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	chip->owner = THIS_MODULE;
- 	chip->of_node = pctrl->dev->of_node;
- 
-+	/* If the GPIO map is sparse, then we need to disable specific IRQs */
-+	chip->irq_need_valid_mask = pctrl->soc->sparse;
-+
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed register gpiochip\n");
- 		return ret;
- 	}
- 
--	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
-+	/*
-+	 * If irq_need_valid_mask is true, then gpiochip_add_data() will
-+	 * initialize irq_valid_mask to all 1s.  We need to clear all the
-+	 * GPIOs that are unavailable, and we need to find each block
-+	 * of consecutive available GPIOs are add them as pin ranges.
-+	 */
-+	if (chip->irq_need_valid_mask) {
-+		for (i = 0; i < ngpio; i++)
-+			if (!groups[i].npins)
-+				clear_bit(i, pctrl->chip.irq_valid_mask);
-+
-+		while ((count = msm_gpio_get_next_range(pctrl, &start))) {
-+			ret = gpiochip_add_pin_range(&pctrl->chip,
-+						     dev_name(pctrl->dev),
-+						     start, start, count);
-+			if (ret)
-+				break;
-+			start += count;
-+		}
-+	} else {
-+		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
-+					     0, 0, ngpio);
-+	}
-+
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed to add pin range\n");
- 		gpiochip_remove(&pctrl->chip);
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 9b9feea540ff..70762bcb84cb 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -107,6 +107,7 @@ struct msm_pingroup {
-  * @ngroups:	    The numbmer of entries in @groups.
-  * @ngpio:	    The number of pingroups the driver should expose as GPIOs.
-  * @pull_no_keeper: The SoC does not support keeper bias.
-+ * @sparse:         The GPIO map is sparse (some GPIOs have npins == 0)
-  */
- struct msm_pinctrl_soc_data {
- 	const struct pinctrl_pin_desc *pins;
-@@ -117,6 +118,7 @@ struct msm_pinctrl_soc_data {
- 	unsigned ngroups;
- 	unsigned ngpios;
- 	bool pull_no_keeper;
-+	bool sparse;
- };
- 
- int msm_pinctrl_probe(struct platform_device *pdev,
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+So what do I think should be done?  This:
+
+Either
+   A) s/child_irq_data/parent_irq_data/g  As this patch does, but leave 
+the root_irq_data name unchanged.
+
+   B) Change the name of the ->parent in struct irq_data to ->next
+
+But that is just my $0.02
+
+I fear we risk a Bike Shedding type of discussion here.
+
+
+David Daney
+
+> Thanks,
+> 
+> 	M.
+> 
