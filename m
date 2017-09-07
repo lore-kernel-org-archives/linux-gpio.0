@@ -1,115 +1,46 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Subject: Re: [PATCH] gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of
- depends on
-Date: Wed, 6 Sep 2017 18:18:45 -0700
-Message-ID: <cdf28d33-03ee-f46f-db3e-de1d8928ea50@caviumnetworks.com>
-References: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com>
- <32679e9c-7ad7-a632-4842-6e8e8b820d26@caviumnetworks.com>
- <CAK7LNAQeRZZTrX-aOkJ3u+69ZG3+Tgsm=TbKyNb-aqp9=F3Csw@mail.gmail.com>
- <8cfd9a26-39d9-6c1d-3414-e0f5f3123ced@caviumnetworks.com>
- <CAK7LNAQ9kjUKFL6+Hm+XjQvUDTp6aeeCLQJcgin=Fs446cdQRw@mail.gmail.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] gpio: acpi: work around false-positive -Wstring-overflow
+ warning
+Date: Thu, 7 Sep 2017 09:50:59 +0300
+Message-ID: <20170907065059.GD2477@lahna.fi.intel.com>
+References: <20170906154756.2133726-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-by2nam01on0060.outbound.protection.outlook.com ([104.47.34.60]:32999
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751369AbdIGBSv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 6 Sep 2017 21:18:51 -0400
-In-Reply-To: <CAK7LNAQ9kjUKFL6+Hm+XjQvUDTp6aeeCLQJcgin=Fs446cdQRw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170906154756.2133726-1-arnd@arndb.de>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 09/06/2017 06:03 PM, Masahiro Yamada wrote:
-> Hi David,
+On Wed, Sep 06, 2017 at 05:47:45PM +0200, Arnd Bergmann wrote:
+> gcc-7 notices that the pin_table is an array of 16-bit numbers,
+> but fails to take the following range check into account:
 > 
+> drivers/gpio/gpiolib-acpi.c: In function 'acpi_gpiochip_request_interrupt':
+> drivers/gpio/gpiolib-acpi.c:206:24: warning: '%02X' directive writing between 2 and 4 bytes into a region of size 3 [-Wformat-overflow=]
+>    sprintf(ev_name, "_%c%02X",
+>                         ^~~~
+> drivers/gpio/gpiolib-acpi.c:206:20: note: directive argument in the range [0, 65535]
+>    sprintf(ev_name, "_%c%02X",
+>                     ^~~~~~~~~
+> drivers/gpio/gpiolib-acpi.c:206:3: note: 'sprintf' output between 5 and 7 bytes into a destination of size 5
+>    sprintf(ev_name, "_%c%02X",
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     agpio->triggering == ACPI_EDGE_SENSITIVE ? 'E' : 'L',
+>     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     pin);
+>     ~~~~
 > 
-> 2017-09-07 2:36 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
->> On 09/05/2017 09:20 PM, Masahiro Yamada wrote:
->>>
->>> Hi David,
->>>
->>>
->>> 2017-09-06 11:09 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
->>>>
->>>> On 09/05/2017 06:40 PM, Masahiro Yamada wrote:
->>>>>
->>>>>
->>>>> IRQ_DOMAIN_HIERARCHY is not user-configurable, but supposed to be
->>>>> selected by drivers that need IRQ domain hierarchy support.
->>>>>
->>>>> GPIO_THUNDERX is the only user of "depends on IRQ_DOMAIN_HIERARCHY".
->>>>> This means, we can not enable GPIO_THUNDERX unless other drivers
->>>>> select IRQ_DOMAIN_HIERARCHY elsewhere.  This is odd.  Flip the logic.
->>>>>
->>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>
->>>>
->>>>
->>>> IRQ_DOMAIN_HIERARCHY is set as a result of ARCH_THUNDER (this SoC
->>>> hardware),
->>>> so it actually works as-is.
->>>
->>>
->>>
->>> Right, ARCH_THUNDER does not select it directly,
->>> but does it indirectly.  (this is not so clear...)
->>>
->>> ARCH_THUNDER  -> ARM64 -> ARM_GIC -> IRQ_DOMAIN_HIERARCHY
->>>
->>>
->>>
->>>>    That said, this looks like a reasonable
->>>> improvement, and will allow the COMPILE_TEST to enable it, so...
->>>>
->>>> Acked-by: David Daney <david.daney@cavium.com>
->>>
->>>
->>>
->>> BTW, I could not understand your intention of
->>> (64BIT && COMPILE_TEST)
->>>
->>
->> The driver uses readq()/writeq(), which are not available in some 32BIT
->> kernels.  So to ensure that it can build without error we depend on 64BIT as
->> a proxy for the availability of readq()/writeq()
->>
->>
+> As suggested by Andy, this changes the format string to have a fixed length.
+> Since modifying the range check did not help, I also opened a bug against
+> gcc, see link below.
 > 
-> 
-> IMHO, drivers code should not depend on CPU architecture too much.
-> 
+> Fixes: 0d1c28a449c6 ("gpiolib-acpi: Add ACPI5 event model support to gpio.")
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Link: https://patchwork.kernel.org/patch/9840801/
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82123
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-The CPU and the device are in a SoC (both on the same silicon die), 
-there is no way they can be used apart from one another.
-
-
-> 
-> Does the following make sense for your driver?
-> 
-> 
-> - split {read,write}q into two transactions of {read,write}l
-
-No.  The registers must be accessed with 64-bit operations.
-
-We are not going to screw around complicating the driver so that it can 
-work on hypothetical non-existent systems.
-
-If we ever put this GPIO hardware unit in a system with a 32-bit CPU, we 
-will at that time, and only then, modify it to work with 32-bit operations.
-
-> 
-> or
-> 
-> - include <linux/io-64-nonatomic-hi-lo.h> or
->            <linux-io-64-nonatomic-lo-hi.h>
->     (choose a suitable one for your driver)
-> 
-> 
-> 
-> 
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
