@@ -1,37 +1,97 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] gpio: acpi: work around false-positive
- -Wstring-overflow warning
-Date: Wed, 06 Sep 2017 16:42:10 -0700
-Message-ID: <1504741330.7546.6.camel@perches.com>
-References: <20170906154756.2133726-1-arnd@arndb.de>
-         <1504713173.7546.3.camel@perches.com>
-         <CAK8P3a2RGZFc3_XpgyfuxwYy-vOoYkkamxQzma8JKwLjCCJasQ@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of
+ depends on
+Date: Thu, 7 Sep 2017 10:03:51 +0900
+Message-ID: <CAK7LNAQ9kjUKFL6+Hm+XjQvUDTp6aeeCLQJcgin=Fs446cdQRw@mail.gmail.com>
+References: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com>
+ <32679e9c-7ad7-a632-4842-6e8e8b820d26@caviumnetworks.com> <CAK7LNAQeRZZTrX-aOkJ3u+69ZG3+Tgsm=TbKyNb-aqp9=F3Csw@mail.gmail.com>
+ <8cfd9a26-39d9-6c1d-3414-e0f5f3123ced@caviumnetworks.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a2RGZFc3_XpgyfuxwYy-vOoYkkamxQzma8JKwLjCCJasQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-gpio@vger.kernel.org, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:25355 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbdIGBEo (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 6 Sep 2017 21:04:44 -0400
+In-Reply-To: <8cfd9a26-39d9-6c1d-3414-e0f5f3123ced@caviumnetworks.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Daney <ddaney@caviumnetworks.com>
+Cc: linux-gpio@vger.kernel.org, David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, 2017-09-06 at 21:53 +0200, Arnd Bergmann wrote:
-> On Wed, Sep 6, 2017 at 5:52 PM, Joe Perches <joe@perches.com> wrote:
-> > On Wed, 2017-09-06 at 17:47 +0200, Arnd Bergmann wrote:
-> > > As suggested by Andy, this changes the format string to have a fixed length.
-> > > Since modifying the range check did not help, I also opened a bug against
-> > > gcc, see link below.
-> > 
-> > The code has
-> > 
-> >         int pin
-> > 
-> > does changing pin to unsigned int matter?
-> 
-> No difference, see also the gcc bugzilla report.
+Hi David,
 
-Perhaps the bug report does not apply here as the
-function is casting a unsigned int to an int through
-a pointer when the int could now be negative, the int
-is tested for < 256 and is then printed.
+
+2017-09-07 2:36 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
+> On 09/05/2017 09:20 PM, Masahiro Yamada wrote:
+>>
+>> Hi David,
+>>
+>>
+>> 2017-09-06 11:09 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
+>>>
+>>> On 09/05/2017 06:40 PM, Masahiro Yamada wrote:
+>>>>
+>>>>
+>>>> IRQ_DOMAIN_HIERARCHY is not user-configurable, but supposed to be
+>>>> selected by drivers that need IRQ domain hierarchy support.
+>>>>
+>>>> GPIO_THUNDERX is the only user of "depends on IRQ_DOMAIN_HIERARCHY".
+>>>> This means, we can not enable GPIO_THUNDERX unless other drivers
+>>>> select IRQ_DOMAIN_HIERARCHY elsewhere.  This is odd.  Flip the logic.
+>>>>
+>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>
+>>>
+>>>
+>>> IRQ_DOMAIN_HIERARCHY is set as a result of ARCH_THUNDER (this SoC
+>>> hardware),
+>>> so it actually works as-is.
+>>
+>>
+>>
+>> Right, ARCH_THUNDER does not select it directly,
+>> but does it indirectly.  (this is not so clear...)
+>>
+>> ARCH_THUNDER  -> ARM64 -> ARM_GIC -> IRQ_DOMAIN_HIERARCHY
+>>
+>>
+>>
+>>>   That said, this looks like a reasonable
+>>> improvement, and will allow the COMPILE_TEST to enable it, so...
+>>>
+>>> Acked-by: David Daney <david.daney@cavium.com>
+>>
+>>
+>>
+>> BTW, I could not understand your intention of
+>> (64BIT && COMPILE_TEST)
+>>
+>
+> The driver uses readq()/writeq(), which are not available in some 32BIT
+> kernels.  So to ensure that it can build without error we depend on 64BIT as
+> a proxy for the availability of readq()/writeq()
+>
+>
+
+
+IMHO, drivers code should not depend on CPU architecture too much.
+
+
+Does the following make sense for your driver?
+
+
+- split {read,write}q into two transactions of {read,write}l
+
+or
+
+- include <linux/io-64-nonatomic-hi-lo.h> or
+          <linux-io-64-nonatomic-lo-hi.h>
+   (choose a suitable one for your driver)
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
