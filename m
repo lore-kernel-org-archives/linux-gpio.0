@@ -1,50 +1,198 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v4 1/6] irqdomain: rename variables in
- irq_domain_{push,pop}_irq()
-Date: Thu, 7 Sep 2017 13:47:16 +0100
-Message-ID: <fb4a28cb-2005-4e9b-8b3d-4d9f4c667c8f@arm.com>
-References: <1504784522-26841-1-git-send-email-yamada.masahiro@socionext.com>
- <1504784522-26841-2-git-send-email-yamada.masahiro@socionext.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1504784522-26841-2-git-send-email-yamada.masahiro@socionext.com>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Masami Hiramatsu <mhiramat@kernel.org>, David Daney <david.daney@cavium.com>, linux-kernel@vger.kernel.org
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: [PATCH] pinctrl: armada-37xx: Fix gpio interrupt setup
+Date: Thu,  7 Sep 2017 16:54:07 +0200
+Message-ID: <20170907145407.32368-1-gregory.clement@free-electrons.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:38039 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752808AbdIGOyX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2017 10:54:23 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, stable@vger.kernel.org
 
-On 07/09/17 12:41, Masahiro Yamada wrote:
-> The meaning of "root" in irq_domain_{push,pop} is opposite to the
-> documentation.  Documentation/IRQ-domain.txt depicts the hierarchy
-> IRQ domain as follows:
-> 
->     CPU Vector irq_domain (root irq_domain to manage CPU vectors)
->             ^
->             |
->     Interrupt Remapping irq_domain (manage irq_remapping entries)
->             ^
->             |
->     IOAPIC irq_domain (manage IOAPIC delivery entries/pins)
-> 
-> From above, the inner-most domain (nearest to the CPU) is "root".
-> 
-> The document also says, "When building irq_domain hierarchy, the
-> irq_domain near to the device is child and the irq_domain near to
-> CPU is parent."  This is how irq_data->parent_data works.  In
-> contrast, these function use a variable "child_irq_data" for that.
-The exact opposite argument could be used for the data structure. The
-irq_desc is the root of the list ordered with parent_data.
+Since commit dc749a09ea5e ("gpiolib: allow gpio irqchip to map irqs
+dynamically"), the irqs for gpio are not statically allocated during in
+gpiochip_irqchip_add.
 
-Yes, this is confusing, but because we're using the same English words
-to describe two different things, we're bound to make one thing more
-difficult. I'm unconvinced that this change helps anything (it certainly
-confuses me more than anything else).
+This driver was based on this assumption for initializing the mask
+associated to each interrupt this led to a NULL pointer crash in the
+kernel:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000000
+Mem abort info:
+  Exception class = DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+Data abort info:
+  ISV = 0, ISS = 0x00000068
+  CM = 0, WnR = 1
+[0000000000000000] user address but active_mm is swapper
+Internal error: Oops: 96000044 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.13.0-06657-g3b9f8ed25dbe #576
+Hardware name: Marvell Armada 3720 Development Board DB-88F3720-DDR3 (DT)
+task: ffff80001d908000 task.stack: ffff000008068000
+PC is at armada_37xx_pinctrl_probe+0x5f8/0x670
+LR is at armada_37xx_pinctrl_probe+0x5e8/0x670
+pc : [<ffff000008e25cdc>] lr : [<ffff000008e25ccc>] pstate: 60000045
+sp : ffff00000806bb80
+x29: ffff00000806bb80 x28: 0000000000000024
+x27: 000000000000000c x26: 0000000000000001
+x25: ffff80001efee760 x24: 0000000000000000
+x23: ffff80001db6f570 x22: ffff80001db6f438
+x21: 0000000000000000 x20: ffff80001d9f4810
+x19: ffff80001db6f418 x18: 0000000000000000
+x17: 0000000000000001 x16: 0000000000000019
+x15: ffffffffffffffff x14: 0140000000000000
+x13: 0000000000000000 x12: 0000000000000030
+x11: 0101010101010101 x10: 0000000000000040
+x9 : ffff000009923580 x8 : ffff80001d400248
+x7 : ffff80001d400270 x6 : 0000000000000000
+x5 : ffff80001d400248 x4 : ffff80001d400270
+x3 : 0000000000000000 x2 : 0000000000000001
+x1 : 0000000000000001 x0 : 0000000000000000
+Process swapper/0 (pid: 1, stack limit = 0xffff000008068000)
+Call trace:
+Exception stack(0xffff00000806ba40 to 0xffff00000806bb80)
+ba40: 0000000000000000 0000000000000001 0000000000000001 0000000000000000
+ba60: ffff80001d400270 ffff80001d400248 0000000000000000 ffff80001d400270
+ba80: ffff80001d400248 ffff000009923580 0000000000000040 0101010101010101
+baa0: 0000000000000030 0000000000000000 0140000000000000 ffffffffffffffff
+bac0: 0000000000000019 0000000000000001 0000000000000000 ffff80001db6f418
+bae0: ffff80001d9f4810 0000000000000000 ffff80001db6f438 ffff80001db6f570
+bb00: 0000000000000000 ffff80001efee760 0000000000000001 000000000000000c
+bb20: 0000000000000024 ffff00000806bb80 ffff000008e25ccc ffff00000806bb80
+bb40: ffff000008e25cdc 0000000060000045 ffff00000806bb60 ffff0000081189b8
+bb60: ffffffffffffffff ffff00000811cf1c ffff00000806bb80 ffff000008e25cdc
+[<ffff000008e25cdc>] armada_37xx_pinctrl_probe+0x5f8/0x670
+[<ffff00000859d8c8>] platform_drv_probe+0x58/0xb8
+[<ffff00000859bb44>] driver_probe_device+0x22c/0x2d8
+[<ffff00000859bcac>] __driver_attach+0xbc/0xc0
+[<ffff000008599c84>] bus_for_each_dev+0x4c/0x98
+[<ffff00000859b440>] driver_attach+0x20/0x28
+[<ffff00000859af90>] bus_add_driver+0x1b8/0x228
+[<ffff00000859c648>] driver_register+0x60/0xf8
+[<ffff00000859df64>] __platform_driver_probe+0x74/0x130
+[<ffff000008e256dc>] armada_37xx_pinctrl_driver_init+0x20/0x28
+[<ffff000008083980>] do_one_initcall+0x38/0x128
+[<ffff000008e00cf4>] kernel_init_freeable+0x188/0x22c
+[<ffff0000089b56e8>] kernel_init+0x10/0x100
+[<ffff000008084bb0>] ret_from_fork+0x10/0x18
+Code: f9403fa2 12001341 1100075a 9ac12041 (b9000001)
+---[ end trace 8b0f4e05e1603208 ]---
+
+This patch moves the initialization of the mask field in the irq_startup
+function. However some callbacks such as irq_set_type and irq_set_wake
+could be called before irq_startup. For those functions the mask is
+computed at each call which is not a issue as these functions are not
+located in a hot path but are used sporadically for configuration.
+
+Fixes: dc749a09ea5e ("gpiolib: allow gpio irqchip to map irqs
+dynamically")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+Hi Linus,
+
+It would be very nice if you could appliy this patch for being merged in v4.14-rc1.
 
 Thanks,
 
-	M.
+Gregory
+
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 41 ++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index b8b6ab072cd0..71b944748304 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -550,9 +550,9 @@ static int armada_37xx_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	spin_lock_irqsave(&info->irq_lock, flags);
+ 	val = readl(info->base + reg);
+ 	if (on)
+-		val |= d->mask;
++		val |= (BIT(d->hwirq % GPIO_PER_REG));
+ 	else
+-		val &= ~d->mask;
++		val &= ~(BIT(d->hwirq % GPIO_PER_REG));
+ 	writel(val, info->base + reg);
+ 	spin_unlock_irqrestore(&info->irq_lock, flags);
+ 
+@@ -571,10 +571,10 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
+ 	val = readl(info->base + reg);
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_RISING:
+-		val &= ~d->mask;
++		val &= ~(BIT(d->hwirq % GPIO_PER_REG));
+ 		break;
+ 	case IRQ_TYPE_EDGE_FALLING:
+-		val |= d->mask;
++		val |= (BIT(d->hwirq % GPIO_PER_REG));
+ 		break;
+ 	default:
+ 		spin_unlock_irqrestore(&info->irq_lock, flags);
+@@ -624,11 +624,27 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++static unsigned int armada_37xx_irq_startup(struct irq_data *d)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
++	int irq = d->hwirq - chip->irq_base;
++	/*
++	 * The mask field is a "precomputed bitmask for accessing the
++	 * chip registers" which was introduced for the generic
++	 * irqchip framework. As we don't use this framework, we can
++	 * reuse this field for our own usage.
++	 */
++	d->mask = BIT(irq % GPIO_PER_REG);
++
++	armada_37xx_irq_unmask(d);
++
++	return 0;
++}
++
+ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 					struct armada_37xx_pinctrl *info)
+ {
+ 	struct device_node *np = info->dev->of_node;
+-	int nrirqs = info->data->nr_pins;
+ 	struct gpio_chip *gc = &info->gpio_chip;
+ 	struct irq_chip *irqchip = &info->irq_chip;
+ 	struct resource res;
+@@ -666,8 +682,8 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 	irqchip->irq_unmask = armada_37xx_irq_unmask;
+ 	irqchip->irq_set_wake = armada_37xx_irq_set_wake;
+ 	irqchip->irq_set_type = armada_37xx_irq_set_type;
++	irqchip->irq_startup = armada_37xx_irq_startup;
+ 	irqchip->name = info->data->name;
+-
+ 	ret = gpiochip_irqchip_add(gc, irqchip, 0,
+ 				   handle_edge_irq, IRQ_TYPE_NONE);
+ 	if (ret) {
+@@ -680,19 +696,6 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
+ 	 * controller. But we do not take advantage of this and use
+ 	 * the chained irq with all of them.
+ 	 */
+-	for (i = 0; i < nrirqs; i++) {
+-		struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
+-
+-		/*
+-		 * The mask field is a "precomputed bitmask for
+-		 * accessing the chip registers" which was introduced
+-		 * for the generic irqchip framework. As we don't use
+-		 * this framework, we can reuse this field for our own
+-		 * usage.
+-		 */
+-		d->mask = BIT(i % GPIO_PER_REG);
+-	}
+-
+ 	for (i = 0; i < nr_irq_parent; i++) {
+ 		int irq = irq_of_parse_and_map(np, i);
+ 
 -- 
-Jazz is not dead. It just smells funny...
+2.14.1
+
