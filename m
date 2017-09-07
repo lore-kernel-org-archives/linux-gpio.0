@@ -1,198 +1,231 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH] pinctrl: armada-37xx: Fix gpio interrupt setup
-Date: Thu,  7 Sep 2017 16:54:07 +0200
-Message-ID: <20170907145407.32368-1-gregory.clement@free-electrons.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:38039 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbdIGOyX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 7 Sep 2017 10:54:23 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 2/2] [v3] pinctrl: qcom: qdf2xxx: add support for new ACPI HID QCOM8002
+Date: Thu,  7 Sep 2017 10:33:29 -0500
+Message-ID: <1504798409-32041-3-git-send-email-timur@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, andy.gross@linaro.org, david.brown@linaro.org, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Cc: timur@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, stable@vger.kernel.org
 
-Since commit dc749a09ea5e ("gpiolib: allow gpio irqchip to map irqs
-dynamically"), the irqs for gpio are not statically allocated during in
-gpiochip_irqchip_add.
+Newer versions of the firmware for the Qualcomm Datacenter Technologies
+QDF2400 restricts access to a subset of the GPIOs on the TLMM.  To
+prevent older kernels from accidentally accessing the restricted GPIOs,
+we change the ACPI HID for the TLMM block from QCOM8001 to QCOM8002,
+and introduce a new property "gpios".  This property is an array of
+specific GPIOs that are accessible.  When an older kernel boots on
+newer (restricted) firmware, it will fail to probe.
 
-This driver was based on this assumption for initializing the mask
-associated to each interrupt this led to a NULL pointer crash in the
-kernel:
+To implement the sparse GPIO map, we register all of the GPIOs, but set
+the pin count for the unavailable GPIOs to zero.  The pinctrl-msm
+driver will block those unavailable GPIOs from being accessed.
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000000
-Mem abort info:
-  Exception class = DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000068
-  CM = 0, WnR = 1
-[0000000000000000] user address but active_mm is swapper
-Internal error: Oops: 96000044 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.13.0-06657-g3b9f8ed25dbe #576
-Hardware name: Marvell Armada 3720 Development Board DB-88F3720-DDR3 (DT)
-task: ffff80001d908000 task.stack: ffff000008068000
-PC is at armada_37xx_pinctrl_probe+0x5f8/0x670
-LR is at armada_37xx_pinctrl_probe+0x5e8/0x670
-pc : [<ffff000008e25cdc>] lr : [<ffff000008e25ccc>] pstate: 60000045
-sp : ffff00000806bb80
-x29: ffff00000806bb80 x28: 0000000000000024
-x27: 000000000000000c x26: 0000000000000001
-x25: ffff80001efee760 x24: 0000000000000000
-x23: ffff80001db6f570 x22: ffff80001db6f438
-x21: 0000000000000000 x20: ffff80001d9f4810
-x19: ffff80001db6f418 x18: 0000000000000000
-x17: 0000000000000001 x16: 0000000000000019
-x15: ffffffffffffffff x14: 0140000000000000
-x13: 0000000000000000 x12: 0000000000000030
-x11: 0101010101010101 x10: 0000000000000040
-x9 : ffff000009923580 x8 : ffff80001d400248
-x7 : ffff80001d400270 x6 : 0000000000000000
-x5 : ffff80001d400248 x4 : ffff80001d400270
-x3 : 0000000000000000 x2 : 0000000000000001
-x1 : 0000000000000001 x0 : 0000000000000000
-Process swapper/0 (pid: 1, stack limit = 0xffff000008068000)
-Call trace:
-Exception stack(0xffff00000806ba40 to 0xffff00000806bb80)
-ba40: 0000000000000000 0000000000000001 0000000000000001 0000000000000000
-ba60: ffff80001d400270 ffff80001d400248 0000000000000000 ffff80001d400270
-ba80: ffff80001d400248 ffff000009923580 0000000000000040 0101010101010101
-baa0: 0000000000000030 0000000000000000 0140000000000000 ffffffffffffffff
-bac0: 0000000000000019 0000000000000001 0000000000000000 ffff80001db6f418
-bae0: ffff80001d9f4810 0000000000000000 ffff80001db6f438 ffff80001db6f570
-bb00: 0000000000000000 ffff80001efee760 0000000000000001 000000000000000c
-bb20: 0000000000000024 ffff00000806bb80 ffff000008e25ccc ffff00000806bb80
-bb40: ffff000008e25cdc 0000000060000045 ffff00000806bb60 ffff0000081189b8
-bb60: ffffffffffffffff ffff00000811cf1c ffff00000806bb80 ffff000008e25cdc
-[<ffff000008e25cdc>] armada_37xx_pinctrl_probe+0x5f8/0x670
-[<ffff00000859d8c8>] platform_drv_probe+0x58/0xb8
-[<ffff00000859bb44>] driver_probe_device+0x22c/0x2d8
-[<ffff00000859bcac>] __driver_attach+0xbc/0xc0
-[<ffff000008599c84>] bus_for_each_dev+0x4c/0x98
-[<ffff00000859b440>] driver_attach+0x20/0x28
-[<ffff00000859af90>] bus_add_driver+0x1b8/0x228
-[<ffff00000859c648>] driver_register+0x60/0xf8
-[<ffff00000859df64>] __platform_driver_probe+0x74/0x130
-[<ffff000008e256dc>] armada_37xx_pinctrl_driver_init+0x20/0x28
-[<ffff000008083980>] do_one_initcall+0x38/0x128
-[<ffff000008e00cf4>] kernel_init_freeable+0x188/0x22c
-[<ffff0000089b56e8>] kernel_init+0x10/0x100
-[<ffff000008084bb0>] ret_from_fork+0x10/0x18
-Code: f9403fa2 12001341 1100075a 9ac12041 (b9000001)
----[ end trace 8b0f4e05e1603208 ]---
+To allow newer kernels to support older firmware, the driver retains
+support for QCOM8001.
 
-This patch moves the initialization of the mask field in the irq_startup
-function. However some callbacks such as irq_set_type and irq_set_wake
-could be called before irq_startup. For those functions the mask is
-computed at each call which is not a issue as these functions are not
-located in a hot path but are used sporadically for configuration.
-
-Fixes: dc749a09ea5e ("gpiolib: allow gpio irqchip to map irqs
-dynamically")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
 ---
-Hi Linus,
+ drivers/pinctrl/qcom/pinctrl-qdf2xxx.c | 145 +++++++++++++++++++++++++--------
+ 1 file changed, 109 insertions(+), 36 deletions(-)
 
-It would be very nice if you could appliy this patch for being merged in v4.14-rc1.
-
-Thanks,
-
-Gregory
-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 41 ++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index b8b6ab072cd0..71b944748304 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -550,9 +550,9 @@ static int armada_37xx_irq_set_wake(struct irq_data *d, unsigned int on)
- 	spin_lock_irqsave(&info->irq_lock, flags);
- 	val = readl(info->base + reg);
- 	if (on)
--		val |= d->mask;
-+		val |= (BIT(d->hwirq % GPIO_PER_REG));
- 	else
--		val &= ~d->mask;
-+		val &= ~(BIT(d->hwirq % GPIO_PER_REG));
- 	writel(val, info->base + reg);
- 	spin_unlock_irqrestore(&info->irq_lock, flags);
+diff --git a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+index bb3ce5c3e18b..37f746f6eb8c 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
++++ b/drivers/pinctrl/qcom/pinctrl-qdf2xxx.c
+@@ -38,68 +38,147 @@
+ /* maximum size of each gpio name (enough room for "gpioXXX" + null) */
+ #define NAME_SIZE	8
  
-@@ -571,10 +571,10 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
- 	val = readl(info->base + reg);
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
--		val &= ~d->mask;
-+		val &= ~(BIT(d->hwirq % GPIO_PER_REG));
- 		break;
- 	case IRQ_TYPE_EDGE_FALLING:
--		val |= d->mask;
-+		val |= (BIT(d->hwirq % GPIO_PER_REG));
- 		break;
- 	default:
- 		spin_unlock_irqrestore(&info->irq_lock, flags);
-@@ -624,11 +624,27 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
++enum {
++	QDF2XXX_V1,
++	QDF2XXX_V2,
++};
++
++static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
++	{"QCOM8001", QDF2XXX_V1},
++	{"QCOM8002", QDF2XXX_V2},
++	{},
++};
++MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
++
+ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ {
++	const struct acpi_device_id *id =
++		acpi_match_device(qdf2xxx_acpi_ids, &pdev->dev);
+ 	struct pinctrl_pin_desc *pins;
+ 	struct msm_pingroup *groups;
+ 	char (*names)[NAME_SIZE];
+ 	unsigned int i;
+ 	u32 num_gpios;
++	unsigned int avail_gpios; /* The number of GPIOs we support */
++	u16 *gpios; /* An array of supported GPIOs */
+ 	int ret;
+ 
+ 	/* Query the number of GPIOs from ACPI */
+ 	ret = device_property_read_u32(&pdev->dev, "num-gpios", &num_gpios);
+ 	if (ret < 0) {
+-		dev_warn(&pdev->dev, "missing num-gpios property\n");
++		dev_err(&pdev->dev, "missing 'num-gpios' property\n");
+ 		return ret;
+ 	}
+-
+ 	if (!num_gpios || num_gpios > MAX_GPIOS) {
+-		dev_warn(&pdev->dev, "invalid num-gpios property\n");
++		dev_err(&pdev->dev, "invalid 'num-gpios' property\n");
+ 		return -ENODEV;
+ 	}
+ 
++	/*
++	 * The QCOM8001 HID contains only the number of GPIOs, and assumes
++	 * that all of them are available. avail_gpios is the same as num_gpios.
++	 *
++	 * The QCOM8002 HID introduces the 'gpios' DSD, which lists
++	 * specific GPIOs that the driver is allowed to access.
++	 *
++	 * The make the common code simpler, in both cases we create an
++	 * array of GPIOs that are accessible.  So for QCOM8001, that would
++	 * be all of the GPIOs.
++	 */
++	if (id->driver_data == QDF2XXX_V1) {
++		avail_gpios = num_gpios;
++
++		gpios = devm_kcalloc(&pdev->dev, avail_gpios, sizeof(gpios[0]),
++				     GFP_KERNEL);
++		if (!gpios)
++			return -ENOMEM;
++
++		for (i = 0; i < avail_gpios; i++)
++			gpios[i] = i;
++	} else {
++		/* The number of GPIOs in the approved list */
++		ret = device_property_read_u16_array(&pdev->dev, "gpios",
++						     NULL, 0);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "missing 'num-gpios' property\n");
++			return ret;
++		}
++		if (!ret || ret > MAX_GPIOS) {
++			dev_err(&pdev->dev, "invalid 'num-gpios' property\n");
++			return -ENODEV;
++		}
++		avail_gpios = ret;
++
++		gpios = devm_kcalloc(&pdev->dev, avail_gpios, sizeof(gpios[0]),
++				     GFP_KERNEL);
++		if (!gpios)
++			return -ENOMEM;
++
++		ret = device_property_read_u16_array(&pdev->dev, "gpios", gpios,
++						     avail_gpios);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "could not read list of GPIOs\n");
++			return ret;
++		}
++
++		/*
++		 * Because we have a specific list of GPIOs, the GPIO map
++		 * is 'sparse'.
++		 */
++		qdf2xxx_pinctrl.sparse = true;
++	}
++
+ 	pins = devm_kcalloc(&pdev->dev, num_gpios,
+ 		sizeof(struct pinctrl_pin_desc), GFP_KERNEL);
+ 	groups = devm_kcalloc(&pdev->dev, num_gpios,
+ 		sizeof(struct msm_pingroup), GFP_KERNEL);
+-	names = devm_kcalloc(&pdev->dev, num_gpios, NAME_SIZE, GFP_KERNEL);
++	names = devm_kcalloc(&pdev->dev, avail_gpios, NAME_SIZE, GFP_KERNEL);
+ 
+ 	if (!pins || !groups || !names)
+ 		return -ENOMEM;
+ 
++	/*
++	 * Initialize the array.  GPIOs not listed in the 'gpios' array
++	 * still need a number, but nothing else.
++	 */
+ 	for (i = 0; i < num_gpios; i++) {
+-		snprintf(names[i], NAME_SIZE, "gpio%u", i);
+-
+ 		pins[i].number = i;
+-		pins[i].name = names[i];
+-
+-		groups[i].npins = 1;
+-		groups[i].name = names[i];
+ 		groups[i].pins = &pins[i].number;
++	}
+ 
+-		groups[i].ctl_reg = 0x10000 * i;
+-		groups[i].io_reg = 0x04 + 0x10000 * i;
+-		groups[i].intr_cfg_reg = 0x08 + 0x10000 * i;
+-		groups[i].intr_status_reg = 0x0c + 0x10000 * i;
+-		groups[i].intr_target_reg = 0x08 + 0x10000 * i;
+-
+-		groups[i].mux_bit = 2;
+-		groups[i].pull_bit = 0;
+-		groups[i].drv_bit = 6;
+-		groups[i].oe_bit = 9;
+-		groups[i].in_bit = 0;
+-		groups[i].out_bit = 1;
+-		groups[i].intr_enable_bit = 0;
+-		groups[i].intr_status_bit = 0;
+-		groups[i].intr_target_bit = 5;
+-		groups[i].intr_target_kpss_val = 1;
+-		groups[i].intr_raw_status_bit = 4;
+-		groups[i].intr_polarity_bit = 1;
+-		groups[i].intr_detection_bit = 2;
+-		groups[i].intr_detection_width = 2;
++	/* Populate the entries that are meant to be exposes as GPIOs. */
++	for (i = 0; i < avail_gpios; i++) {
++		unsigned int gpio = gpios[i];
++
++		groups[gpio].npins = 1;
++		snprintf(names[i], NAME_SIZE, "gpio%u", gpio);
++		pins[gpio].name = names[i];
++		groups[gpio].name = names[i];
++
++		groups[gpio].ctl_reg = 0x10000 * gpio;
++		groups[gpio].io_reg = 0x04 + 0x10000 * gpio;
++		groups[gpio].intr_cfg_reg = 0x08 + 0x10000 * gpio;
++		groups[gpio].intr_status_reg = 0x0c + 0x10000 * gpio;
++		groups[gpio].intr_target_reg = 0x08 + 0x10000 * gpio;
++
++		groups[gpio].mux_bit = 2;
++		groups[gpio].pull_bit = 0;
++		groups[gpio].drv_bit = 6;
++		groups[gpio].oe_bit = 9;
++		groups[gpio].in_bit = 0;
++		groups[gpio].out_bit = 1;
++		groups[gpio].intr_enable_bit = 0;
++		groups[gpio].intr_status_bit = 0;
++		groups[gpio].intr_target_bit = 5;
++		groups[gpio].intr_target_kpss_val = 1;
++		groups[gpio].intr_raw_status_bit = 4;
++		groups[gpio].intr_polarity_bit = 1;
++		groups[gpio].intr_detection_bit = 2;
++		groups[gpio].intr_detection_width = 2;
+ 	}
+ 
++	devm_kfree(&pdev->dev, gpios);
++
+ 	qdf2xxx_pinctrl.pins = pins;
+ 	qdf2xxx_pinctrl.groups = groups;
+ 	qdf2xxx_pinctrl.npins = num_gpios;
+@@ -109,12 +188,6 @@ static int qdf2xxx_pinctrl_probe(struct platform_device *pdev)
+ 	return msm_pinctrl_probe(pdev, &qdf2xxx_pinctrl);
  }
  
-+static unsigned int armada_37xx_irq_startup(struct irq_data *d)
-+{
-+	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
-+	int irq = d->hwirq - chip->irq_base;
-+	/*
-+	 * The mask field is a "precomputed bitmask for accessing the
-+	 * chip registers" which was introduced for the generic
-+	 * irqchip framework. As we don't use this framework, we can
-+	 * reuse this field for our own usage.
-+	 */
-+	d->mask = BIT(irq % GPIO_PER_REG);
-+
-+	armada_37xx_irq_unmask(d);
-+
-+	return 0;
-+}
-+
- static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 					struct armada_37xx_pinctrl *info)
- {
- 	struct device_node *np = info->dev->of_node;
--	int nrirqs = info->data->nr_pins;
- 	struct gpio_chip *gc = &info->gpio_chip;
- 	struct irq_chip *irqchip = &info->irq_chip;
- 	struct resource res;
-@@ -666,8 +682,8 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 	irqchip->irq_unmask = armada_37xx_irq_unmask;
- 	irqchip->irq_set_wake = armada_37xx_irq_set_wake;
- 	irqchip->irq_set_type = armada_37xx_irq_set_type;
-+	irqchip->irq_startup = armada_37xx_irq_startup;
- 	irqchip->name = info->data->name;
+-static const struct acpi_device_id qdf2xxx_acpi_ids[] = {
+-	{"QCOM8001"},
+-	{},
+-};
+-MODULE_DEVICE_TABLE(acpi, qdf2xxx_acpi_ids);
 -
- 	ret = gpiochip_irqchip_add(gc, irqchip, 0,
- 				   handle_edge_irq, IRQ_TYPE_NONE);
- 	if (ret) {
-@@ -680,19 +696,6 @@ static int armada_37xx_irqchip_register(struct platform_device *pdev,
- 	 * controller. But we do not take advantage of this and use
- 	 * the chained irq with all of them.
- 	 */
--	for (i = 0; i < nrirqs; i++) {
--		struct irq_data *d = irq_get_irq_data(gc->irq_base + i);
--
--		/*
--		 * The mask field is a "precomputed bitmask for
--		 * accessing the chip registers" which was introduced
--		 * for the generic irqchip framework. As we don't use
--		 * this framework, we can reuse this field for our own
--		 * usage.
--		 */
--		d->mask = BIT(i % GPIO_PER_REG);
--	}
--
- 	for (i = 0; i < nr_irq_parent; i++) {
- 		int irq = irq_of_parse_and_map(np, i);
- 
+ static struct platform_driver qdf2xxx_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "qdf2xxx-pinctrl",
 -- 
-2.14.1
-
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
