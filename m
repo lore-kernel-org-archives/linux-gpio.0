@@ -1,63 +1,115 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: Re: [PATCH v3] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Thu, 7 Sep 2017 10:11:42 +0900
-Message-ID: <CAK7LNAS0CEcS=DReDWj2xhKKy4_QMSu_m=Rc-DELsaj3T73uPg@mail.gmail.com>
-References: <1503418601-9728-1-git-send-email-yamada.masahiro@socionext.com> <CACRpkdYG3BFhhpouwAkQN+x0YpC5EhsVhTkqyuNdRd26Ne-r9A@mail.gmail.com>
+From: David Daney <ddaney@caviumnetworks.com>
+Subject: Re: [PATCH] gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of
+ depends on
+Date: Wed, 6 Sep 2017 18:18:45 -0700
+Message-ID: <cdf28d33-03ee-f46f-db3e-de1d8928ea50@caviumnetworks.com>
+References: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com>
+ <32679e9c-7ad7-a632-4842-6e8e8b820d26@caviumnetworks.com>
+ <CAK7LNAQeRZZTrX-aOkJ3u+69ZG3+Tgsm=TbKyNb-aqp9=F3Csw@mail.gmail.com>
+ <8cfd9a26-39d9-6c1d-3414-e0f5f3123ced@caviumnetworks.com>
+ <CAK7LNAQ9kjUKFL6+Hm+XjQvUDTp6aeeCLQJcgin=Fs446cdQRw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYG3BFhhpouwAkQN+x0YpC5EhsVhTkqyuNdRd26Ne-r9A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Masami Hiramatsu <mhiramat-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mauro Carvalho Chehab <mchehab-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-by2nam01on0060.outbound.protection.outlook.com ([104.47.34.60]:32999
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751369AbdIGBSv (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 6 Sep 2017 21:18:51 -0400
+In-Reply-To: <CAK7LNAQ9kjUKFL6+Hm+XjQvUDTp6aeeCLQJcgin=Fs446cdQRw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, David Daney <david.daney@cavium.com>, Linus Walleij <linus.walleij@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Linus,
-
-
-2017-08-31 22:41 GMT+09:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
-> On Tue, Aug 22, 2017 at 6:16 PM, Masahiro Yamada
-> <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
->
->> This GPIO controller device is used on UniPhier SoCs.
+On 09/06/2017 06:03 PM, Masahiro Yamada wrote:
+> Hi David,
+> 
+> 
+> 2017-09-07 2:36 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
+>> On 09/05/2017 09:20 PM, Masahiro Yamada wrote:
+>>>
+>>> Hi David,
+>>>
+>>>
+>>> 2017-09-06 11:09 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
+>>>>
+>>>> On 09/05/2017 06:40 PM, Masahiro Yamada wrote:
+>>>>>
+>>>>>
+>>>>> IRQ_DOMAIN_HIERARCHY is not user-configurable, but supposed to be
+>>>>> selected by drivers that need IRQ domain hierarchy support.
+>>>>>
+>>>>> GPIO_THUNDERX is the only user of "depends on IRQ_DOMAIN_HIERARCHY".
+>>>>> This means, we can not enable GPIO_THUNDERX unless other drivers
+>>>>> select IRQ_DOMAIN_HIERARCHY elsewhere.  This is odd.  Flip the logic.
+>>>>>
+>>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>>
+>>>>
+>>>>
+>>>> IRQ_DOMAIN_HIERARCHY is set as a result of ARCH_THUNDER (this SoC
+>>>> hardware),
+>>>> so it actually works as-is.
+>>>
+>>>
+>>>
+>>> Right, ARCH_THUNDER does not select it directly,
+>>> but does it indirectly.  (this is not so clear...)
+>>>
+>>> ARCH_THUNDER  -> ARM64 -> ARM_GIC -> IRQ_DOMAIN_HIERARCHY
+>>>
+>>>
+>>>
+>>>>    That said, this looks like a reasonable
+>>>> improvement, and will allow the COMPILE_TEST to enable it, so...
+>>>>
+>>>> Acked-by: David Daney <david.daney@cavium.com>
+>>>
+>>>
+>>>
+>>> BTW, I could not understand your intention of
+>>> (64BIT && COMPILE_TEST)
+>>>
 >>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
->> ---
+>> The driver uses readq()/writeq(), which are not available in some 32BIT
+>> kernels.  So to ensure that it can build without error we depend on 64BIT as
+>> a proxy for the availability of readq()/writeq()
 >>
->> Changes in v3:
->>   - Add .irq_set_affinity() hook
->>   - Use irq_domain_create_hierarchy() instead of legacy
->>     irq_domain_add_hierarchy().
->
-> This is getting better and better.
->
->> +static const u32 uniphier_gpio_irq_parent_hwirqs[] = {
->> +       48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
->> +       154, 155, 156, 157, 158, 217, 218, 219,
->> +};
->
-> This array which is used when allocating the hierarchical domain
-> looks like configuration data. Why is it not in the device tree?
->
+>>
+> 
+> 
+> IMHO, drivers code should not depend on CPU architecture too much.
+> 
+
+The CPU and the device are in a SoC (both on the same silicon die), 
+there is no way they can be used apart from one another.
 
 
-Another solution might be
-to use the brand-new irq_domain_push_irq().
+> 
+> Does the following make sense for your driver?
+> 
+> 
+> - split {read,write}q into two transactions of {read,write}l
 
+No.  The registers must be accessed with 64-bit operations.
 
-With a quick look at it, the hierarchy IRQ domain can work with
-#interrupts property by inserting the outer-most irq_data with
-irq_domain_push_irq().
+We are not going to screw around complicating the driver so that it can 
+work on hypothetical non-existent systems.
 
+If we ever put this GPIO hardware unit in a system with a 32-bit CPU, we 
+will at that time, and only then, modify it to work with 32-bit operations.
 
-If you are unhappy with hard-coded configuration parameters,
-I will switch to generic compatible + DT properties approach.
+> 
+> or
+> 
+> - include <linux/io-64-nonatomic-hi-lo.h> or
+>            <linux-io-64-nonatomic-lo-hi.h>
+>     (choose a suitable one for your driver)
+> 
+> 
+> 
+> 
 
-
--- 
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
