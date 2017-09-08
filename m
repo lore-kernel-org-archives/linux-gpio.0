@@ -1,66 +1,125 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: Should irq_enable/disable be flagging/unflagging gpio lines used
- as irq?
-Date: Fri, 8 Sep 2017 16:22:40 +0200
-Message-ID: <CACRpkdaB1_xJAPxikmMaZYT3CXgHubNdqbnUYyWpkjfF4zz8zA@mail.gmail.com>
-References: <20170711195518.34aa849888e9d67a0736a990@videhug.ch>
- <CACRpkdaqJT5SLSCDtHtfXXpF4j+ig5CQeDhLFJw47Lcgmc6rCQ@mail.gmail.com>
- <alpine.DEB.2.20.1707122330060.2510@nanos> <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
- <CACRpkdZ2gm6gE+M2OLHBchUtS+F-L+UYSVSZyXOJin9j9Q4EVg@mail.gmail.com> <20170826004514.be093db11518876eb85f4e10@videhug.ch>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v4 1/6] irqdomain: rename variables in irq_domain_{push,pop}_irq()
+Date: Sat, 9 Sep 2017 00:05:49 +0900
+Message-ID: <CAK7LNARboWo4-zkioMAxtpM84f9avtL8Z4z_s0cU5UHXkGotPg@mail.gmail.com>
+References: <1504784522-26841-1-git-send-email-yamada.masahiro@socionext.com>
+ <1504784522-26841-2-git-send-email-yamada.masahiro@socionext.com>
+ <fb4a28cb-2005-4e9b-8b3d-4d9f4c667c8f@arm.com> <c9fd0412-6dce-95e9-4ca3-d4d61f9feeca@caviumnetworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:33780 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755196AbdIHOWl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Sep 2017 10:22:41 -0400
-Received: by mail-oi0-f53.google.com with SMTP id r20so15551406oie.0
-        for <linux-gpio@vger.kernel.org>; Fri, 08 Sep 2017 07:22:40 -0700 (PDT)
-In-Reply-To: <20170826004514.be093db11518876eb85f4e10@videhug.ch>
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:21453 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbdIHPGm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 8 Sep 2017 11:06:42 -0400
+In-Reply-To: <c9fd0412-6dce-95e9-4ca3-d4d61f9feeca@caviumnetworks.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Davide Hug <d@videhug.ch>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Grygorii Strashko <grygorii.strashko@ti.com>, Marc Zyngier <marc.zyngier@arm.com>
+To: David Daney <ddaney@caviumnetworks.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Masami Hiramatsu <mhiramat@kernel.org>, David Daney <david.daney@cavium.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Sat, Aug 26, 2017 at 12:45 AM, Davide Hug <d@videhug.ch> wrote:
-> On Tue, 1 Aug 2017 09:37:12 +0200
-> Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi Marc, David,
+
+
+2017-09-08 2:45 GMT+09:00 David Daney <ddaney@caviumnetworks.com>:
+> On 09/07/2017 05:47 AM, Marc Zyngier wrote:
+>>
+>> On 07/09/17 12:41, Masahiro Yamada wrote:
+>>>
+>>> The meaning of "root" in irq_domain_{push,pop} is opposite to the
+>>> documentation.  Documentation/IRQ-domain.txt depicts the hierarchy
+>>> IRQ domain as follows:
+>>>
+>>>      CPU Vector irq_domain (root irq_domain to manage CPU vectors)
+>>>              ^
+>>>              |
+>>>      Interrupt Remapping irq_domain (manage irq_remapping entries)
+>>>              ^
+>>>              |
+>>>      IOAPIC irq_domain (manage IOAPIC delivery entries/pins)
+>>>
+>>>  From above, the inner-most domain (nearest to the CPU) is "root".
+>>>
+>>> The document also says, "When building irq_domain hierarchy, the
+>>> irq_domain near to the device is child and the irq_domain near to
+>>> CPU is parent."  This is how irq_data->parent_data works.  In
+>>> contrast, these function use a variable "child_irq_data" for that.
+>>
+>> The exact opposite argument could be used for the data structure. The
+>> irq_desc is the root of the list ordered with parent_data.
+>>
+>> Yes, this is confusing, but because we're using the same English words
+>> to describe two different things, we're bound to make one thing more
+>> difficult. I'm unconvinced that this change helps anything (it certainly
+>> confuses me more than anything else).
+>>
 >
->> I'm not so sure about that. You might be the only one with the right hardware
->> to fix the problem. Also it is never our intention to discourage anyone to
->> hack on the kernel.
+> There may be room for improvement here.
 >
-> You are right. I shouldn't give up that quickly.
+> Here is my recollection of how I choose the names:
 >
-> I have tried a few things and I would like to ask if one of these is an appropriate approach.
-> Sorry this is long! If there is a better place for me to ask these, please point me there.
+> "root" is the thing embedded in the struct irq_desc, if you think about a
+> typical linked list structure like this, we can refer to the starting point
+> as the "root".  Sometimes it might be referred to as the "head" of the list,
+> but usually not the "tail"
 >
-> My main question is if "timer based polling" is the way to go, is my
-> approach with timers below (3.) appropriate?
+> "child" was used to indicate the thing we get to by traversing the link in
+> the list.  The fact that ->parent is the name of the next pointer and that
+> it points to something called "child" is confusing here.
+> So what do I think should be done?  This:
+>
+> Either
+>   A) s/child_irq_data/parent_irq_data/g  As this patch does, but leave the
+> root_irq_data name unchanged.
 
-...
-> 1. Naive approach: just `msleep` long enough.
 
-This is wrong atleastm since msleep() has no guarantees for the
-time it sleeps, it's "this amount or more".
+Sounds better than the current situation.
 
-> 2. Naive polling: `msleep` repeatedly in a loop and check for the data line to be low each time.
 
-Same problem.
 
-> 3. Polling with timer: use a timer for polling and `wait_event_timeout` to wait for the polling to succeed.
 
-This seems reasonable.
+>   B) Change the name of the ->parent in struct irq_data to ->next
 
-> 4. Fix the irq problem in the current driver by calling `devm_request_irq` and
-> `devm_free_irq` instead of just using `disable_irq_nosync` and `enable_irq`,
-> to prevent setting as output a gpio requested as irq.
 
-This makes me feel there is something that needs to be fixed.
+This is a bad idea.
 
-If IRQs are available we should always try to use them somehow.
-I don't remember the discussuin fully, but I guess the timer in (3)
-is started in response to an IRQ? That should work fine.
+irq_data->parent_data corresponds to irq_domain->parent.
+We should not lose consistency/symmetry.
 
-Yours,
-Linus Walleij
+irq_domain->parent originates in the "parent" argument
+passed to irq_domain_create_hierarchy().
+If we change this, it will introduce horrible confusion.
+
+As the document says, when we talk about the hierarchy,
+"the irq_domain near to the device is
+child and the irq_domain near to CPU is parent"
+This is the original concept, and should not be changed.
+
+
+We can excuse that all the variables in these two helpers
+were named from the point of linked-list view,
+not talking about the hierarchy.
+
+
+However, what I thought more confusing was the comment block.
+
+/**
+ * irq_domain_push_irq() - Push a domain in to the top of a hierarchy.
+
+
+This comment is talking about the "hierarchy" at first glance.
+So, what is my mind is the picture in Documentation/IRQ-domain.txt
+
+But, from the term "top", this is talking about the linked list here too.
+The linked list is just implementation detail...
+
+
+
+
+> But that is just my $0.02
+>
+> I fear we risk a Bike Shedding type of discussion here.
+
+-- 
+Best Regards
+Masahiro Yamada
