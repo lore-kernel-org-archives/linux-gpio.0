@@ -1,78 +1,60 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 6/6] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Thu, 7 Sep 2017 14:41:40 -0500
-Message-ID: <CAL_Jsq+Da1=myQGEpA_0f+dEU0Rk6RB3BJHVCzq0M0MyJ3UDoQ@mail.gmail.com>
-References: <1504784522-26841-1-git-send-email-yamada.masahiro@socionext.com> <1504784522-26841-7-git-send-email-yamada.masahiro@socionext.com>
+From: "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Subject: RE: [PATCH v5 0/3] TPS68470 PMIC drivers
+Date: Fri, 8 Sep 2017 00:45:59 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A5972FBDA4A@FMSMSX114.amr.corp.intel.com>
+References: <1500648378-10294-1-git-send-email-rajmohan.mani@intel.com>
+ <3425487.LgIRMVflim@aspire.rjw.lan>
+ <CAHp75VdtEh8MAFjQN2LWVFbJj7_bPrhjo77SEsCYVmuOCWvOfQ@mail.gmail.com>
+ <2076994.J7nKrPWSDx@aspire.rjw.lan>
+ <6F87890CF0F5204F892DEA1EF0D77A5972FA69A3@FMSMSX114.amr.corp.intel.com>
+ <CAJZ5v0hO3oSJWT_CxcP0ogO2yAU=YKYRwGokPqbQbAvWY7mzQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1504784522-26841-7-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Masami Hiramatsu <mhiramat-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Language: en-US
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andy Shevchenko <andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 7, 2017 at 6:42 AM, Masahiro Yamada
-<yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
-> This GPIO controller device is used on UniPhier SoCs.
->
-> It also serves as an interrupt controller, but interrupt signals are
-> just delivered to the parent irqchip without any latching or OR'ing.
-> This is implemented by using hierarchy IRQ domain.
->
-> Implementation note:
-> Unfortunately, the IRQ mapping from this controller to the parent is
-> random. (48, 49, ..., 63, 154, 155, ...)
-> If "interrupts" property is used, IRQ resources may be statically
-> allocated when platform devices are populated from DT.  This can be
-> a problem for the hierarchy IRQ domain because IRQ allocation must
-> happen from the outer-most domain up to the root domain in order to
-> build up the stacked IRQ.  (https://lkml.org/lkml/2017/7/6/758)
-> Solutions to work around it could be to hard-code parent hwirqs or
-> to invent a driver-specific DT property.
->
-> Here, the new API irq_domain_push_irq() was merged by v4.14-rc1.
-> It allows to add irq_data to the existing hierarchy.  It will help
-> to make this driver work whether the parent has already initialized
-> the hierarchy or not.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-> ---
->
-> Changes in v4:
->   - Add COMPILE_TEST and select IRQ_DOMAIN_HIERARCHY
->   - Reimplement irqchip part by using irq_domain_push_irq()
->
-> Changes in v3:
->   - Add .irq_set_affinity() hook
->   - Use irq_domain_create_hierarchy() instead of legacy
->     irq_domain_add_hierarchy()
->
-> Changes in v2:
->   - Remove +32 offset for parent interrupts to follow the GIC
->     binding convention
->   - Let uniphier_gpio_irq_alloc() fail if nr_irqs != 1
->   - Allocate gpio_chip statically because just one instance is
->     supported
->   - Fix suspend and resume hooks
->
->  .../devicetree/bindings/gpio/gpio-uniphier.txt     |  43 ++
-
-What happened to my ack? One line here more that before, but I'm not
-going to diff your patches for you.
-
-BTW, it is preferred to split bindings to a separate patch.
-
->  MAINTAINERS                                        |   1 +
->  drivers/gpio/Kconfig                               |   8 +
->  drivers/gpio/Makefile                              |   1 +
->  drivers/gpio/gpio-uniphier.c                       | 486 +++++++++++++++++++++
->  include/dt-bindings/gpio/uniphier-gpio.h           |  18 +
->  6 files changed, 557 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
->  create mode 100644 drivers/gpio/gpio-uniphier.c
->  create mode 100644 include/dt-bindings/gpio/uniphier-gpio.h
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgUmFmYWVsLA0KDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjUgMC8zXSBUUFM2ODQ3MCBQTUlD
+IGRyaXZlcnMNCj4gDQo+IEhpIFJhZmFlbCwNCj4gDQo+ID4gPj4gPiA+PiA+IFRoaXMgaXMgdGhl
+IHBhdGNoIHNlcmllcyBmb3IgVFBTNjg0NzAgUE1JQyB0aGF0IHdvcmtzIGFzIGENCj4gPiA+PiA+
+ID4+ID4gY2FtZXJhDQo+ID4gUE1JQy4NCj4gPiA+PiA+ID4+ID4NCj4gPiA+PiA+ID4+ID4gVGhl
+IHBhdGNoIHNlcmllcyBwcm92aWRlIHRoZSBmb2xsb3dpbmcgMyBkcml2ZXJzLCB0byBoZWxwDQo+
+ID4gPj4gPiA+PiA+IGNvbmZpZ3VyZSB0aGUNCj4gPiA+PiB2b2x0YWdlIHJlZ3VsYXRvcnMsIGNs
+b2NrcyBhbmQgR1BJT3MgcHJvdmlkZWQgYnkgdGhlIFRQUzY4NDcwIFBNSUMsDQo+ID4gPj4gdG8g
+YmUgYWJsZSB0byB1c2UgdGhlIGNhbWVyYSBzZW5zb3JzIGNvbm5lY3RlZCB0byB0aGlzIFBNSUMu
+DQo+ID4gPj4gPiA+PiA+DQo+ID4gPj4gPiA+PiA+IFRQUzY4NDcwIE1GRCBkcml2ZXI6DQo+ID4g
+Pj4gPiA+PiA+IFRoaXMgaXMgdGhlIG11bHRpIGZ1bmN0aW9uIGRyaXZlciB0aGF0IGluaXRpYWxp
+emVzIHRoZQ0KPiA+ID4+ID4gPj4gPiBUUFM2ODQ3MCBQTUlDIGFuZA0KPiA+ID4+IHN1cHBvcnRz
+IHRoZSBHUElPIGFuZCBPcCBSZWdpb24gZnVuY3Rpb25zLg0KPiA+ID4+ID4gPj4gPg0KPiA+ID4+
+ID4gPj4gPiBUUFM2ODQ3MCBHUElPIGRyaXZlcjoNCj4gPiA+PiA+ID4+ID4gVGhpcyBpcyB0aGUg
+UE1JQyBHUElPIGRyaXZlciB0aGF0IHdpbGwgYmUgdXNlZCBieSB0aGUgT1MNCj4gPiA+PiA+ID4+
+ID4gR1BJTyBsYXllciwNCj4gPiA+PiB3aGVuIHRoZSBCSU9TIC8gZmlybXdhcmUgdHJpZ2dlcmVk
+IEdQSU8gYWNjZXNzIGlzIGRvbmUuDQo+ID4gPj4gPiA+PiA+DQo+ID4gPj4gPiA+PiA+IFRQUzY4
+NDcwIE9wIFJlZ2lvbiBkcml2ZXI6DQo+ID4gPj4gPiA+PiA+IFRoaXMgaXMgdGhlIGRyaXZlciB0
+aGF0IHdpbGwgYmUgaW52b2tlZCwgd2hlbiB0aGUgQklPUyAvDQo+ID4gPj4gPiA+PiA+IGZpcm13
+YXJlDQo+ID4gPj4gY29uZmlndXJlcyB0aGUgdm9sdGFnZSAvIGNsb2NrIGZvciB0aGUgc2Vuc29y
+cyAvIHZjbSBkZXZpY2VzDQo+ID4gPj4gY29ubmVjdGVkIHRvIHRoZSBQTUlDLg0KPiA+ID4+ID4g
+Pj4gPg0KPiA+ID4+ID4gPj4NCj4gPiA+PiA+ID4+IEFsbCB0aHJlZSBwYXRjaGVzIGFyZSBnb29k
+IHRvIG1lICh3ZSBkaWQgZmV3IHJvdW5kcyBvZg0KPiA+ID4+ID4gPj4gaW50ZXJuYWwgcmV2aWV3
+IGJlZm9yZSBwb3N0aW5nIHY0KQ0KPiA+ID4+ID4gPj4NCj4gPiA+PiA+ID4+IFJldmlld2VkLWJ5
+OiBBbmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+DQo+ID4gPj4gPiA+
+DQo+ID4gPj4gPiA+IE9LLCBzbyBob3cgc2hvdWxkIHRoZXkgYmUgcm91dGVkPw0KPiA+ID4+ID4N
+Cj4gPiA+PiA+IEdvb2QgcXVlc3Rpb24uIEkgZG9uJ3Qga25vdyBob3cgbGFzdCB0aW1lIFBNSUMg
+ZHJpdmVycyB3ZXJlDQo+ID4gPj4gPiBtZXJnZWQsIGhlcmUgSSB0aGluayBpcyBqdXN0IHNhbmUg
+dG8gcm91dGUgdmkgTUZEIHdpdGggaW1tdXRhYmxlDQo+ID4gPj4gPiBicmFuY2ggY3JlYXRlZC4N
+Cj4gPiA+Pg0KPiA+ID4+IE9LDQo+ID4gPj4NCj4gPiA+PiBJIHdpbGwgYXNzdW1lIHRoYXQgdGhl
+IHNlcmllcyB3aWxsIGdvIGluIHRocm91Z2ggTUZEIHRoZW4uDQo+ID4gPj4NCj4gPiA+DQo+ID4g
+PiBOb3cgdGhhdCB0aGUgTUZEIGFuZCBHUElPIHBhdGNoZXMgb2YgdjYgb2YgdGhpcyBzZXJpZXMg
+aGF2ZSBiZWVuDQo+ID4gPiBhcHBsaWVkDQo+ID4gb24gcmVzcGVjdGl2ZSB0cmVlcywgY2FuIHlv
+dSBhZHZpc2UgdGhlIG5leHQgc3RlcHMgZm9yIHRoZSBBQ1BJIC8gUE1JQw0KPiA+IE9wcmVnaW9u
+IGRyaXZlcj8NCj4gPg0KPiA+IFdlbGwsIGl0IHdvdWxkIGhhdmUgYmVlbiBiZXR0ZXIgdG8gcm91
+dGUgdGhlIHdob2xlIHNlcmllcyB0aHJvdWdoIG9uZSB0cmVlLg0KPiA+IE5vdyBpdCdzIGJldHRl
+ciB0byB3YWl0IHVudGlsIHRoZSB0d28gb3RoZXIgdHJlZXMgZ2V0IG1lcmdlZCBhbmQgdGhlbg0K
+PiA+IGFwcGx5IHRoZSBvcHJlZ2lvbiBwYXRjaC4NCj4gPg0KPiANCj4gQWNrLg0KPiBMZXQgbWUg
+Z2V0IGJhY2sgb25jZSB0aGUgb3RoZXIgMiB0cmVlcyBhcmUgbWVyZ2VkLg0KPiANCg0KQm90aCBN
+RkQgYW5kIEdQSU8gcGF0Y2hlcyBvZiB0aGlzIHNlcmllcyBnb3QgbWVyZ2VkIHVwc3RyZWFtIGFz
+IG9mIHRvZGF5Lg0KDQpUaGFua3MNClJhag0K
