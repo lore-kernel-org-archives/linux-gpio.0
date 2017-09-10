@@ -1,70 +1,108 @@
-From: Davide Hug <d@videhug.ch>
-Subject: Re: Should irq_enable/disable be flagging/unflagging gpio lines
- used as irq?
-Date: Sun, 10 Sep 2017 16:16:00 +0200
-Message-ID: <20170910161600.e1643057e6b8fd1e7834c3a8@videhug.ch>
-References: <20170711195518.34aa849888e9d67a0736a990@videhug.ch>
-        <CACRpkdaqJT5SLSCDtHtfXXpF4j+ig5CQeDhLFJw47Lcgmc6rCQ@mail.gmail.com>
-        <alpine.DEB.2.20.1707122330060.2510@nanos>
-        <20170713221729.cb6352445665b4e3d71d1cb1@videhug.ch>
-        <CACRpkdZ2gm6gE+M2OLHBchUtS+F-L+UYSVSZyXOJin9j9Q4EVg@mail.gmail.com>
-        <20170826004514.be093db11518876eb85f4e10@videhug.ch>
-        <CACRpkdaB1_xJAPxikmMaZYT3CXgHubNdqbnUYyWpkjfF4zz8zA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 2/5] gpio: Make it possible for consumers to enforce open drain
+Date: Sun, 10 Sep 2017 23:44:21 +0200
+Message-ID: <20170910214424.14945-3-linus.walleij@linaro.org>
+References: <20170910214424.14945-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from s067.cyon.net ([149.126.4.76]:47174 "EHLO s067.cyon.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751737AbdIJOQE (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Sun, 10 Sep 2017 10:16:04 -0400
-In-Reply-To: <CACRpkdaB1_xJAPxikmMaZYT3CXgHubNdqbnUYyWpkjfF4zz8zA@mail.gmail.com>
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:33389 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751827AbdIJVop (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Sep 2017 17:44:45 -0400
+Received: by mail-lf0-f47.google.com with SMTP id c80so14448527lfh.0
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Sep 2017 14:44:44 -0700 (PDT)
+In-Reply-To: <20170910214424.14945-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Grygorii Strashko <grygorii.strashko@ti.com>, Marc Zyngier <marc.zyngier@arm.com>
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org, adi-buildroot-devel@lists.sourceforge.net, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Fri, 8 Sep 2017 16:22:40 +0200
-Linus Walleij <linus.walleij@linaro.org> wrote:
+Some busses, like I2C, strictly need to have the line handled
+as open drain, i.e. not actively driven high. For this reason
+the i2c-gpio.c bit-banged I2C driver is reimplementing open
+drain handling outside of gpiolib.
 
-> On Sat, Aug 26, 2017 at 12:45 AM, Davide Hug <d@videhug.ch> wrote:
-> > 1. Naive approach: just `msleep` long enough.
-> 
-> This is wrong atleastm since msleep() has no guarantees for the
-> time it sleeps, it's "this amount or more".
+This is not very optimal. Instead make it possible for a
+consumer to explcitly express that the line must be handled
+as open drain instead of allowing local hacks papering over
+this issue.
 
-I read Documentation/timers/timers-howto.txt and msleep seemed the right choice
-since it is suggested for delays >10ms and the measurement takes 20-230ms. Also
-the sensor stores the measurement till it is retrieved so I thought it wouldn't
-be a problem if msleep takes some more time.
+The descriptor tables, whether DT, ACPI or board files, should
+of course have flagged these lines as open drain. E.g.:
+enum gpio_lookup_flags GPIO_OPEN_DRAIN for a board file, or
+gpios = <&foo 42 GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN>; in a
+device tree using <dt-bindings/gpio/gpio.h>
 
-Should I use usleep_range instead?
+But more often than not, these descriptors are wrong. So
+we need to make it possible for consumers to enforce this
+open drain behaviour.
 
-> 
-> > 2. Naive polling: `msleep` repeatedly in a loop and check for the data line to be low each time.
-> 
-> Same problem.
-> 
-> > 3. Polling with timer: use a timer for polling and `wait_event_timeout` to wait for the polling to succeed.
-> 
-> This seems reasonable.
-> 
-> > 4. Fix the irq problem in the current driver by calling `devm_request_irq` and
-> > `devm_free_irq` instead of just using `disable_irq_nosync` and `enable_irq`,
-> > to prevent setting as output a gpio requested as irq.
-> 
-> This makes me feel there is something that needs to be fixed.
-> 
-> If IRQs are available we should always try to use them somehow.
-> I don't remember the discussuin fully, but I guess the timer in (3)
-> is started in response to an IRQ? That should work fine.
+We now have two new enumerated GPIO descriptor config flags:
+GPIOD_OUT_LOW_OPEN_DRAIN and GPIOD_OUT_HIGH_OPEN_DRAIN
+that will set up the lined enforced as open drain as output
+low or high, using open drain (if the driver supports it)
+or using open drain emulation (setting the line as input
+to drive it high) from the gpiolib core.
 
-At each measurement the bidirectional data line is used by the sensor as data
-ready signal. So the IRQ is used only to detect the data ready signal. After that
-the IRQ is disabled to avoid triggering interrupts during the serial
-communication.
-In (3) the IRQ is replaced by polling. So it avoids using IRQs altogether. I
-posted a patch implementing this in linux-hwmon.
+Cc: linux-gpio@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+Obviously I authorize this patch to be applied directly
+to the I2C tree as part of the refactorings.
+---
+ drivers/gpio/gpiolib.c        | 13 +++++++++++++
+ include/linux/gpio/consumer.h |  6 ++++++
+ 2 files changed, 19 insertions(+)
 
-Thanks
-Davide
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index cd003b74512f..cb73a50a5d5d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -3228,8 +3228,21 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+ 
+ 	if (lflags & GPIO_ACTIVE_LOW)
+ 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
++
+ 	if (lflags & GPIO_OPEN_DRAIN)
+ 		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
++	else if (dflags & GPIOD_FLAGS_BIT_OPEN_DRAIN) {
++		/*
++		 * This enforces open drain mode from the consumer side.
++		 * This is necessary for some busses like I2C, but the lookup
++		 * should *REALLY* have specified them as open drain in the
++		 * first place, so print a little warning here.
++		 */
++		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
++		gpiod_warn(desc,
++			   "enforced open drain please flag it properly in DT/ACPI DSDT/board file\n");
++	}
++
+ 	if (lflags & GPIO_OPEN_SOURCE)
+ 		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+ 	if (lflags & GPIO_SLEEP_MAY_LOOSE_VALUE)
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index 8f702fcbe485..5f72a49d1aa3 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -28,6 +28,7 @@ struct gpio_descs {
+ #define GPIOD_FLAGS_BIT_DIR_SET		BIT(0)
+ #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
+ #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
++#define GPIOD_FLAGS_BIT_OPEN_DRAIN	BIT(3)
+ 
+ /**
+  * Optional flags that can be passed to one of gpiod_* to configure direction
+@@ -39,6 +40,11 @@ enum gpiod_flags {
+ 	GPIOD_OUT_LOW	= GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
+ 	GPIOD_OUT_HIGH	= GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
+ 			  GPIOD_FLAGS_BIT_DIR_VAL,
++	GPIOD_OUT_LOW_OPEN_DRAIN = GPIOD_FLAGS_BIT_DIR_SET |
++			  GPIOD_FLAGS_BIT_DIR_OUT | GPIOD_FLAGS_BIT_OPEN_DRAIN,
++	GPIOD_OUT_HIGH_OPEN_DRAIN = GPIOD_FLAGS_BIT_DIR_SET |
++			  GPIOD_FLAGS_BIT_DIR_OUT | GPIOD_FLAGS_BIT_DIR_VAL |
++			  GPIOD_FLAGS_BIT_OPEN_DRAIN,
+ };
+ 
+ #ifdef CONFIG_GPIOLIB
+-- 
+2.13.5
+
