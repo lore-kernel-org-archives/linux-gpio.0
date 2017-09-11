@@ -1,159 +1,81 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: [PATCH] pinctrl/amd: save pin registers over suspend/resume
-Date: Mon, 11 Sep 2017 14:11:56 +0800
-Message-ID: <20170911061156.31872-1-drake@endlessm.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:36699 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbdIKGMI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2017 02:12:08 -0400
-Received: by mail-pf0-f170.google.com with SMTP id e199so12617359pfh.3
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Sep 2017 23:12:08 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 6/6] gpio: uniphier: add UniPhier GPIO controller
+ driver
+Date: Mon, 11 Sep 2017 15:15:15 -0500
+Message-ID: <20170911201515.d4vki3yhrywpmdvc@rob-hp-laptop>
+References: <1504784522-26841-1-git-send-email-yamada.masahiro@socionext.com>
+ <1504784522-26841-7-git-send-email-yamada.masahiro@socionext.com>
+ <CAL_Jsq+Da1=myQGEpA_0f+dEU0Rk6RB3BJHVCzq0M0MyJ3UDoQ@mail.gmail.com>
+ <CAK7LNARwusK2i2mp7LE4AW28oYs81tWxgXG7pgBa-hu=2ZTW7A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARwusK2i2mp7LE4AW28oYs81tWxgXG7pgBa-hu=2ZTW7A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Masami Hiramatsu <mhiramat@kernel.org>, David Daney <david.daney@cavium.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com, linux@endlessm.com
 
-The touchpad in the Asus laptop models X505BA/BP and X542BA/BP is
-unresponsive after suspend/resume. The following error appears during
-resume:
+On Sat, Sep 09, 2017 at 12:14:45AM +0900, Masahiro Yamada wrote:
+> Hi Rob,
+> 
+> 
+> 2017-09-08 4:41 GMT+09:00 Rob Herring <robh+dt@kernel.org>:
+> > On Thu, Sep 7, 2017 at 6:42 AM, Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> >> This GPIO controller device is used on UniPhier SoCs.
+> >>
+> >> It also serves as an interrupt controller, but interrupt signals are
+> >> just delivered to the parent irqchip without any latching or OR'ing.
+> >> This is implemented by using hierarchy IRQ domain.
+> >>
+> >> Implementation note:
+> >> Unfortunately, the IRQ mapping from this controller to the parent is
+> >> random. (48, 49, ..., 63, 154, 155, ...)
+> >> If "interrupts" property is used, IRQ resources may be statically
+> >> allocated when platform devices are populated from DT.  This can be
+> >> a problem for the hierarchy IRQ domain because IRQ allocation must
+> >> happen from the outer-most domain up to the root domain in order to
+> >> build up the stacked IRQ.  (https://lkml.org/lkml/2017/7/6/758)
+> >> Solutions to work around it could be to hard-code parent hwirqs or
+> >> to invent a driver-specific DT property.
+> >>
+> >> Here, the new API irq_domain_push_irq() was merged by v4.14-rc1.
+> >> It allows to add irq_data to the existing hierarchy.  It will help
+> >> to make this driver work whether the parent has already initialized
+> >> the hierarchy or not.
+> >>
+> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >> ---
+> >>
+> >> Changes in v4:
+> >>   - Add COMPILE_TEST and select IRQ_DOMAIN_HIERARCHY
+> >>   - Reimplement irqchip part by using irq_domain_push_irq()
+> >>
+> >> Changes in v3:
+> >>   - Add .irq_set_affinity() hook
+> >>   - Use irq_domain_create_hierarchy() instead of legacy
+> >>     irq_domain_add_hierarchy()
+> >>
+> >> Changes in v2:
+> >>   - Remove +32 offset for parent interrupts to follow the GIC
+> >>     binding convention
+> >>   - Let uniphier_gpio_irq_alloc() fail if nr_irqs != 1
+> >>   - Allocate gpio_chip statically because just one instance is
+> >>     supported
+> >>   - Fix suspend and resume hooks
+> >>
+> >>  .../devicetree/bindings/gpio/gpio-uniphier.txt     |  43 ++
+> >
+> > What happened to my ack? One line here more that before, but I'm not
+> > going to diff your patches for you.
+> 
+> I changed the binding for this version.
+> It includes a new one you have not acked yet.
+> 
+> Maybe I was too worried about it.
 
-  i2c_hid i2c-ELAN1300:00: failed to reset device.
+Probably so, but I still don't know what you changed.
 
-The problem here is that i2c_hid does not notice the interrupt being
-generated at this point, because the GPIO is no longer configured
-for interrupts.
-
-Fix this by saving pinctrl-amd pin registers during suspend and
-restoring them at resume time.
-
-Based on code from pinctrl-intel.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
----
- drivers/pinctrl/pinctrl-amd.c | 75 +++++++++++++++++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-amd.h |  1 +
- 2 files changed, 76 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 38af1ec2df0c..3f6b34febbf1 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -36,6 +36,7 @@
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinconf-generic.h>
- 
-+#include "core.h"
- #include "pinctrl-utils.h"
- #include "pinctrl-amd.h"
- 
-@@ -725,6 +726,69 @@ static const struct pinconf_ops amd_pinconf_ops = {
- 	.pin_config_group_set = amd_pinconf_group_set,
- };
- 
-+#ifdef CONFIG_PM_SLEEP
-+static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
-+{
-+	const struct pin_desc *pd = pin_desc_get(gpio_dev->pctrl, pin);
-+
-+	if (!pd)
-+		return false;
-+
-+	/*
-+	 * Only restore the pin if it is actually in use by the kernel (or
-+	 * by userspace).
-+	 */
-+	if (pd->mux_owner || pd->gpio_owner ||
-+	    gpiochip_line_is_irq(&gpio_dev->gc, pin))
-+		return true;
-+
-+	return false;
-+}
-+
-+int amd_gpio_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
-+	int i;
-+
-+	for (i = 0; i < desc->npins; i++) {
-+		int pin = desc->pins[i].number;
-+
-+		if (!amd_gpio_should_save(gpio_dev, pin))
-+			continue;
-+
-+		gpio_dev->saved_regs[i] = readl(gpio_dev->base + pin*4);
-+	}
-+
-+	return 0;
-+}
-+
-+int amd_gpio_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-+	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
-+	int i;
-+
-+	for (i = 0; i < desc->npins; i++) {
-+		int pin = desc->pins[i].number;
-+
-+		if (!amd_gpio_should_save(gpio_dev, pin))
-+			continue;
-+
-+		writel(gpio_dev->saved_regs[i], gpio_dev->base + pin*4);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops amd_gpio_pm_ops = {
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(amd_gpio_suspend,
-+				     amd_gpio_resume)
-+};
-+#endif
-+
- static struct pinctrl_desc amd_pinctrl_desc = {
- 	.pins	= kerncz_pins,
- 	.npins = ARRAY_SIZE(kerncz_pins),
-@@ -764,6 +828,14 @@ static int amd_gpio_probe(struct platform_device *pdev)
- 		return irq_base;
- 	}
- 
-+#ifdef CONFIG_PM_SLEEP
-+	gpio_dev->saved_regs = devm_kcalloc(&pdev->dev, amd_pinctrl_desc.npins,
-+					    sizeof(*gpio_dev->saved_regs),
-+					    GFP_KERNEL);
-+	if (!gpio_dev->saved_regs)
-+		return -ENOMEM;
-+#endif
-+
- 	gpio_dev->pdev = pdev;
- 	gpio_dev->gc.direction_input	= amd_gpio_direction_input;
- 	gpio_dev->gc.direction_output	= amd_gpio_direction_output;
-@@ -853,6 +925,9 @@ static struct platform_driver amd_gpio_driver = {
- 	.driver		= {
- 		.name	= "amd_gpio",
- 		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
-+#ifdef CONFIG_PM_SLEEP
-+		.pm	= &amd_gpio_pm_ops,
-+#endif
- 	},
- 	.probe		= amd_gpio_probe,
- 	.remove		= amd_gpio_remove,
-diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
-index 5b1cb965c767..8fa453a59da5 100644
---- a/drivers/pinctrl/pinctrl-amd.h
-+++ b/drivers/pinctrl/pinctrl-amd.h
-@@ -97,6 +97,7 @@ struct amd_gpio {
- 	unsigned int            hwbank_num;
- 	struct resource         *res;
- 	struct platform_device  *pdev;
-+	u32			*saved_regs;
- };
- 
- /*  KERNCZ configuration*/
--- 
-2.11.0
-
+Rob
