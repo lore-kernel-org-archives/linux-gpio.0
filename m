@@ -1,108 +1,159 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/5] gpio: Make it possible for consumers to enforce open drain
-Date: Sun, 10 Sep 2017 23:44:21 +0200
-Message-ID: <20170910214424.14945-3-linus.walleij@linaro.org>
-References: <20170910214424.14945-1-linus.walleij@linaro.org>
+From: Daniel Drake <drake@endlessm.com>
+Subject: [PATCH] pinctrl/amd: save pin registers over suspend/resume
+Date: Mon, 11 Sep 2017 14:11:56 +0800
+Message-ID: <20170911061156.31872-1-drake@endlessm.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:33389 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdIJVop (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 10 Sep 2017 17:44:45 -0400
-Received: by mail-lf0-f47.google.com with SMTP id c80so14448527lfh.0
-        for <linux-gpio@vger.kernel.org>; Sun, 10 Sep 2017 14:44:44 -0700 (PDT)
-In-Reply-To: <20170910214424.14945-1-linus.walleij@linaro.org>
+Received: from mail-pf0-f170.google.com ([209.85.192.170]:36699 "EHLO
+        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbdIKGMI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 11 Sep 2017 02:12:08 -0400
+Received: by mail-pf0-f170.google.com with SMTP id e199so12617359pfh.3
+        for <linux-gpio@vger.kernel.org>; Sun, 10 Sep 2017 23:12:08 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org, adi-buildroot-devel@lists.sourceforge.net, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com, linux@endlessm.com
 
-Some busses, like I2C, strictly need to have the line handled
-as open drain, i.e. not actively driven high. For this reason
-the i2c-gpio.c bit-banged I2C driver is reimplementing open
-drain handling outside of gpiolib.
+The touchpad in the Asus laptop models X505BA/BP and X542BA/BP is
+unresponsive after suspend/resume. The following error appears during
+resume:
 
-This is not very optimal. Instead make it possible for a
-consumer to explcitly express that the line must be handled
-as open drain instead of allowing local hacks papering over
-this issue.
+  i2c_hid i2c-ELAN1300:00: failed to reset device.
 
-The descriptor tables, whether DT, ACPI or board files, should
-of course have flagged these lines as open drain. E.g.:
-enum gpio_lookup_flags GPIO_OPEN_DRAIN for a board file, or
-gpios = <&foo 42 GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN>; in a
-device tree using <dt-bindings/gpio/gpio.h>
+The problem here is that i2c_hid does not notice the interrupt being
+generated at this point, because the GPIO is no longer configured
+for interrupts.
 
-But more often than not, these descriptors are wrong. So
-we need to make it possible for consumers to enforce this
-open drain behaviour.
+Fix this by saving pinctrl-amd pin registers during suspend and
+restoring them at resume time.
 
-We now have two new enumerated GPIO descriptor config flags:
-GPIOD_OUT_LOW_OPEN_DRAIN and GPIOD_OUT_HIGH_OPEN_DRAIN
-that will set up the lined enforced as open drain as output
-low or high, using open drain (if the driver supports it)
-or using open drain emulation (setting the line as input
-to drive it high) from the gpiolib core.
+Based on code from pinctrl-intel.
 
-Cc: linux-gpio@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
 ---
-Obviously I authorize this patch to be applied directly
-to the I2C tree as part of the refactorings.
----
- drivers/gpio/gpiolib.c        | 13 +++++++++++++
- include/linux/gpio/consumer.h |  6 ++++++
- 2 files changed, 19 insertions(+)
+ drivers/pinctrl/pinctrl-amd.c | 75 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-amd.h |  1 +
+ 2 files changed, 76 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index cd003b74512f..cb73a50a5d5d 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3228,8 +3228,21 @@ int gpiod_configure_flags(struct gpio_desc *desc, const char *con_id,
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 38af1ec2df0c..3f6b34febbf1 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -36,6 +36,7 @@
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
  
- 	if (lflags & GPIO_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
-+
- 	if (lflags & GPIO_OPEN_DRAIN)
- 		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-+	else if (dflags & GPIOD_FLAGS_BIT_OPEN_DRAIN) {
-+		/*
-+		 * This enforces open drain mode from the consumer side.
-+		 * This is necessary for some busses like I2C, but the lookup
-+		 * should *REALLY* have specified them as open drain in the
-+		 * first place, so print a little warning here.
-+		 */
-+		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
-+		gpiod_warn(desc,
-+			   "enforced open drain please flag it properly in DT/ACPI DSDT/board file\n");
-+	}
-+
- 	if (lflags & GPIO_OPEN_SOURCE)
- 		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 	if (lflags & GPIO_SLEEP_MAY_LOOSE_VALUE)
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 8f702fcbe485..5f72a49d1aa3 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -28,6 +28,7 @@ struct gpio_descs {
- #define GPIOD_FLAGS_BIT_DIR_SET		BIT(0)
- #define GPIOD_FLAGS_BIT_DIR_OUT		BIT(1)
- #define GPIOD_FLAGS_BIT_DIR_VAL		BIT(2)
-+#define GPIOD_FLAGS_BIT_OPEN_DRAIN	BIT(3)
++#include "core.h"
+ #include "pinctrl-utils.h"
+ #include "pinctrl-amd.h"
  
- /**
-  * Optional flags that can be passed to one of gpiod_* to configure direction
-@@ -39,6 +40,11 @@ enum gpiod_flags {
- 	GPIOD_OUT_LOW	= GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
- 	GPIOD_OUT_HIGH	= GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT |
- 			  GPIOD_FLAGS_BIT_DIR_VAL,
-+	GPIOD_OUT_LOW_OPEN_DRAIN = GPIOD_FLAGS_BIT_DIR_SET |
-+			  GPIOD_FLAGS_BIT_DIR_OUT | GPIOD_FLAGS_BIT_OPEN_DRAIN,
-+	GPIOD_OUT_HIGH_OPEN_DRAIN = GPIOD_FLAGS_BIT_DIR_SET |
-+			  GPIOD_FLAGS_BIT_DIR_OUT | GPIOD_FLAGS_BIT_DIR_VAL |
-+			  GPIOD_FLAGS_BIT_OPEN_DRAIN,
+@@ -725,6 +726,69 @@ static const struct pinconf_ops amd_pinconf_ops = {
+ 	.pin_config_group_set = amd_pinconf_group_set,
  };
  
- #ifdef CONFIG_GPIOLIB
++#ifdef CONFIG_PM_SLEEP
++static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
++{
++	const struct pin_desc *pd = pin_desc_get(gpio_dev->pctrl, pin);
++
++	if (!pd)
++		return false;
++
++	/*
++	 * Only restore the pin if it is actually in use by the kernel (or
++	 * by userspace).
++	 */
++	if (pd->mux_owner || pd->gpio_owner ||
++	    gpiochip_line_is_irq(&gpio_dev->gc, pin))
++		return true;
++
++	return false;
++}
++
++int amd_gpio_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
++	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
++	int i;
++
++	for (i = 0; i < desc->npins; i++) {
++		int pin = desc->pins[i].number;
++
++		if (!amd_gpio_should_save(gpio_dev, pin))
++			continue;
++
++		gpio_dev->saved_regs[i] = readl(gpio_dev->base + pin*4);
++	}
++
++	return 0;
++}
++
++int amd_gpio_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
++	struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
++	int i;
++
++	for (i = 0; i < desc->npins; i++) {
++		int pin = desc->pins[i].number;
++
++		if (!amd_gpio_should_save(gpio_dev, pin))
++			continue;
++
++		writel(gpio_dev->saved_regs[i], gpio_dev->base + pin*4);
++	}
++
++	return 0;
++}
++
++static const struct dev_pm_ops amd_gpio_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(amd_gpio_suspend,
++				     amd_gpio_resume)
++};
++#endif
++
+ static struct pinctrl_desc amd_pinctrl_desc = {
+ 	.pins	= kerncz_pins,
+ 	.npins = ARRAY_SIZE(kerncz_pins),
+@@ -764,6 +828,14 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 		return irq_base;
+ 	}
+ 
++#ifdef CONFIG_PM_SLEEP
++	gpio_dev->saved_regs = devm_kcalloc(&pdev->dev, amd_pinctrl_desc.npins,
++					    sizeof(*gpio_dev->saved_regs),
++					    GFP_KERNEL);
++	if (!gpio_dev->saved_regs)
++		return -ENOMEM;
++#endif
++
+ 	gpio_dev->pdev = pdev;
+ 	gpio_dev->gc.direction_input	= amd_gpio_direction_input;
+ 	gpio_dev->gc.direction_output	= amd_gpio_direction_output;
+@@ -853,6 +925,9 @@ static struct platform_driver amd_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "amd_gpio",
+ 		.acpi_match_table = ACPI_PTR(amd_gpio_acpi_match),
++#ifdef CONFIG_PM_SLEEP
++		.pm	= &amd_gpio_pm_ops,
++#endif
+ 	},
+ 	.probe		= amd_gpio_probe,
+ 	.remove		= amd_gpio_remove,
+diff --git a/drivers/pinctrl/pinctrl-amd.h b/drivers/pinctrl/pinctrl-amd.h
+index 5b1cb965c767..8fa453a59da5 100644
+--- a/drivers/pinctrl/pinctrl-amd.h
++++ b/drivers/pinctrl/pinctrl-amd.h
+@@ -97,6 +97,7 @@ struct amd_gpio {
+ 	unsigned int            hwbank_num;
+ 	struct resource         *res;
+ 	struct platform_device  *pdev;
++	u32			*saved_regs;
+ };
+ 
+ /*  KERNCZ configuration*/
 -- 
-2.13.5
+2.11.0
 
