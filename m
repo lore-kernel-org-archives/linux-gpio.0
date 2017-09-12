@@ -1,62 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/5] lmp92001: mfd: gpio: Add support LMP92001
-Date: Tue, 12 Sep 2017 11:11:06 +0200
-Message-ID: <CACRpkdaVxdSh69k-eDXx7ABxrVEuGpDpT4abFxhVMHN-c4ohuA@mail.gmail.com>
-References: <20170830182100.9311-1-s.abhisit@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 11/17] pinctrl: madera: Add driver for Cirrus Logic
+ Madera codecs
+Date: Tue, 12 Sep 2017 11:16:02 +0200
+Message-ID: <CACRpkdaY0fWHaCF3eEEHpXunenUYv5m_eH6=2x5zTjhR4WZYNQ@mail.gmail.com>
+References: <1504704043-8052-1-git-send-email-rf@opensource.wolfsonmicro.com> <1504704043-8052-12-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170830182100.9311-1-s.abhisit@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Abhisit Sangjan <s.abhisit@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Meerwald <pmeerw@pmeerw.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, jacopo <jacopo@jmondi.org>, Lars-Peter Clausen <lars@metafoo.de>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1504704043-8052-12-git-send-email-rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Aug 30, 2017 at 8:21 PM,  <s.abhisit@gmail.com> wrote:
+On Wed, Sep 6, 2017 at 3:20 PM, Richard Fitzgerald
+<rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org> wrote:
 
-> From: Abhisit Sangjan <s.abhisit@gmail.com>
+> These codecs have a variable number of I/O lines each of which
+> is individually selectable to a wide range of possible functions.
 >
-> TI LMP92001 Analog System Monitor and Controller
+> The functionality is slightly different from the traditional muxed
+> GPIO since most of the functions can be mapped to any pin (and even
+> the same function to multiple pins). Most pins have a dedicated
+> "alternate" function that is only available on that pin. The
+> alternate functions are usually a group of signals, though it is
+> not always necessary to enable the full group, depending on the
+> alternate function and how it is to be used. The mapping between
+> alternate functions and GPIO pins varies between codecs depending
+> on the number of alternate functions and available pins.
 >
-> 8-bit GPIOs.
-> 12 DACs with 12-bit resolution.
+> Note on the Kconfig options:
+> The formula "default y if..." is used for PINCTRL_MADERA so that its
+> select options will be processed, allowing us to group selects for
+> pinctrl into the pinctrl Kconfig where they logically belong instead
+> of accumulating under the parent MFD Kconfig.
 >
-> The GPIOs and DACs are shared port function with Cy function pin to
-> take control the pin suddenly from external hardware.
-> DAC's referance voltage selectable for Internal/External.
->
-> 16 + 1 ADCs with 12-bit resolution.
->
-> Built-in internal Temperature Sensor on channel 17.
-> Window Comparator Function is supported on channel 1-3 and 9-11 for
-> monitoring with interrupt signal (pending to implement for interrupt).
-> ADC's referance voltage selectable for Internal/External.
->
-> Signed-off-by: Abhisit Sangjan <s.abhisit@gmail.com>
+> Signed-off-by: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> ---
+> No changes since V4
 
-Maybe you can trim the commit message to only be about
-GPIO on this patch, since it is only about GPIO?
-
-> +config GPIO_LMP92001
-> +       tristate "LMP92001 GPIOs"
-> +       depends on MFD_LMP92001
-
-select GPIOLIB
-
-> +static int __init lmp92001_gpio_init(void)
-> +{
-> +       return platform_driver_register(&lmp92001_gpio_driver);
-> +}
-> +subsys_initcall(lmp92001_gpio_init);
-> +
-> +static void __exit lmp92001_gpio_exit(void)
-> +{
-> +       platform_driver_unregister(&lmp92001_gpio_driver);
-> +}
-> +module_exit(lmp92001_gpio_exit);
-
-Is this necessary? Can't you just have module_platform_driver() and be
-done with it?
+I think I reviewed this? Did I miss it?
+Anyways
+Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
