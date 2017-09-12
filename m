@@ -1,27 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: uniphier: include <linux/build_bug.h> instead of <linux/bug.h>
-Date: Tue, 12 Sep 2017 09:35:21 +0200
-Message-ID: <CACRpkdZjbaAEjUGmA0Auk_auMPQaaHrOu8rYAjVyCwPt_eRg-Q@mail.gmail.com>
-References: <1504373178-1022-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH][pinctrl-next] pinctrl: sprd: make three local functions static
+Date: Tue, 12 Sep 2017 09:38:38 +0200
+Message-ID: <CACRpkdbodwJqXrFTKFBzGUw9sGRCbnbuPTMfvtDC1y9HBsKs=Q@mail.gmail.com>
+References: <20170904105322.23228-1-colin.king@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1504373178-1022-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20170904105322.23228-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Baolin Wang <baolin.wang@spreadtrum.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Sat, Sep 2, 2017 at 7:26 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Mon, Sep 4, 2017 at 12:53 PM, Colin King <colin.king@canonical.com> wrote:
 
-> The #includes <linux/bug.h> is here to use BUILD_BUG_ON_ZERO().
+> From: Colin Ian King <colin.king@canonical.com>
 >
-> Thanks to commit bc6245e5efd7 ("bug: split BUILD_BUG stuff out into
-> <linux/build_bug.h>"), it is now possible to reduce the number of
-> headers pulled in.
+> The functions sprd_pmx_get_function_count, sprd_pmx_get_function_name
+> and sprd_pmx_get_function_groups are local to the source and do not
+> need to be in global scope, so make them static.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cleans up sparse warnings:
+> "symbol 'sprd_pmx_get_function_count' was not declared. Should it be
+> static?"
+> "symbol 'sprd_pmx_get_function_name' was not declared. Should it be
+> static?"
+> "symbol 'sprd_pmx_get_function_groups' was not declared. Should it be
+> static?"
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
 Patch applied for fixes.
 
