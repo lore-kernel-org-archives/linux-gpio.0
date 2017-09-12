@@ -1,62 +1,62 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 resend 1/4] sh: sh7722: Remove nonexistent GPIO_PTQ7 to fix pinctrl registration
-Date: Tue, 12 Sep 2017 10:40:54 +0200
-Message-ID: <1505205657-18012-2-git-send-email-geert+renesas@glider.be>
-References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:51532 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751332AbdILIlD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2017 04:41:03 -0400
-In-Reply-To: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4/5] lmp92001: mfd: gpio: Add support LMP92001
+Date: Tue, 12 Sep 2017 11:11:06 +0200
+Message-ID: <CACRpkdaVxdSh69k-eDXx7ABxrVEuGpDpT4abFxhVMHN-c4ohuA@mail.gmail.com>
+References: <20170830182100.9311-1-s.abhisit@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170830182100.9311-1-s.abhisit@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Abhisit Sangjan <s.abhisit@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Peter Meerwald <pmeerw@pmeerw.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, jacopo <jacopo@jmondi.org>, Lars-Peter Clausen <lars@metafoo.de>
 List-Id: linux-gpio@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-On sh7722/Migo-R, pinctrl registration fails with:
+On Wed, Aug 30, 2017 at 8:21 PM,  <s.abhisit@gmail.com> wrote:
 
-    sh-pfc pfc-sh7722: pin 0 already registered
-    sh-pfc pfc-sh7722: error during pin registration
-    sh-pfc pfc-sh7722: could not register: -22
-    sh-pfc: probe of pfc-sh7722 failed with error -22
+> From: Abhisit Sangjan <s.abhisit@gmail.com>
+>
+> TI LMP92001 Analog System Monitor and Controller
+>
+> 8-bit GPIOs.
+> 12 DACs with 12-bit resolution.
+>
+> The GPIOs and DACs are shared port function with Cy function pin to
+> take control the pin suddenly from external hardware.
+> DAC's referance voltage selectable for Internal/External.
+>
+> 16 + 1 ADCs with 12-bit resolution.
+>
+> Built-in internal Temperature Sensor on channel 17.
+> Window Comparator Function is supported on channel 1-3 and 9-11 for
+> monitoring with interrupt signal (pending to implement for interrupt).
+> ADC's referance voltage selectable for Internal/External.
+>
+> Signed-off-by: Abhisit Sangjan <s.abhisit@gmail.com>
 
-pinmux_pins[] is initialized through PINMUX_GPIO(), using designated
-array initializers, where the GPIO_* enums serve as indices.
-As GPIO_PTQ7 is defined in the enum, but never used, pinmux_pins[]
-contains a (zero-filled) hole. Hence this entry is treated as pin zero,
-which was registered before, and pinctrl registration fails.
+Maybe you can trim the commit message to only be about
+GPIO on this patch, since it is only about GPIO?
 
-According to the datasheet, port PTQ7 does not exist. Hence remove
-GPIO_PTQ7 from the enum to fix this.
+> +config GPIO_LMP92001
+> +       tristate "LMP92001 GPIOs"
+> +       depends on MFD_LMP92001
 
-Fixes: 8d7b5b0af7e070b9 ("sh: Add sh7722 pinmux code")
-Reported-by: Magnus Damm <magnus.damm@gmail.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-Tested on sh7722/Migo-R.
+select GPIOLIB
 
-v2:
-  - Add Reviewed-by, Tested-by.
----
- arch/sh/include/cpu-sh4/cpu/sh7722.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +static int __init lmp92001_gpio_init(void)
+> +{
+> +       return platform_driver_register(&lmp92001_gpio_driver);
+> +}
+> +subsys_initcall(lmp92001_gpio_init);
+> +
+> +static void __exit lmp92001_gpio_exit(void)
+> +{
+> +       platform_driver_unregister(&lmp92001_gpio_driver);
+> +}
+> +module_exit(lmp92001_gpio_exit);
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7722.h b/arch/sh/include/cpu-sh4/cpu/sh7722.h
-index 3bb74e534d0f8ca4..78961ab78a5a9c83 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7722.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7722.h
-@@ -67,7 +67,7 @@ enum {
- 	GPIO_PTN3, GPIO_PTN2, GPIO_PTN1, GPIO_PTN0,
- 
- 	/* PTQ */
--	GPIO_PTQ7, GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
-+	GPIO_PTQ6, GPIO_PTQ5, GPIO_PTQ4,
- 	GPIO_PTQ3, GPIO_PTQ2, GPIO_PTQ1, GPIO_PTQ0,
- 
- 	/* PTR */
--- 
-2.7.4
+Is this necessary? Can't you just have module_platform_driver() and be
+done with it?
 
+Yours,
+Linus Walleij
