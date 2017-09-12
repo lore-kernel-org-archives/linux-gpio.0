@@ -1,71 +1,45 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] pinctrl: uniphier: make arrays static, reduces object code size
-Date: Tue, 12 Sep 2017 12:21:24 +0100
-Message-ID: <20170912112124.1143-1-colin.king@canonical.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] pinctrl: uniphier: make arrays static, reduces object
+ code size
+Date: Tue, 12 Sep 2017 22:33:35 +0900
+Message-ID: <CAK7LNAS+gobUD_rxfSoG8v1jB564=Oa3=jVuVUV7J4odefrTRw@mail.gmail.com>
+References: <20170912112124.1143-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:40103 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751326AbdILLV0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2017 07:21:26 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:41876 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbdILNef (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2017 09:34:35 -0400
+In-Reply-To: <20170912112124.1143-1-colin.king@canonical.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Colin King <colin.king@canonical.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+2017-09-12 20:21 GMT+09:00 Colin King <colin.king@canonical.com>:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Don't populate const arrays on the stack, instead make them
+> static.  Makes the object code smaller nearly 1000 bytes. Also
+> line break wide lines to avoid checkpatch warnings.
+>
+> Before:
+>    text    data     bss     dec     hex filename
+>   13112    1996       0   15108    3b04 pinctrl-uniphier-core.o
+>
+> After:
+>    text    data     bss     dec     hex filename
+>   11642    2476       0   14118    3726 pinctrl-uniphier-core.o
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Don't populate const arrays on the stack, instead make them
-static.  Makes the object code smaller nearly 1000 bytes. Also
-line break wide lines to avoid checkpatch warnings.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  13112	   1996	      0	  15108	   3b04	pinctrl-uniphier-core.o
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-  11642	   2476	      0	  14118	   3726	pinctrl-uniphier-core.o
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/uniphier/pinctrl-uniphier-core.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+Thanks!
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-index f9267fabe6b0..26fda5c53e65 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-core.c
-@@ -204,9 +204,10 @@ static int uniphier_conf_pin_drive_get(struct pinctrl_dev *pctldev,
- 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
- 	enum uniphier_pin_drv_type type =
- 				uniphier_pin_get_drv_type(desc->drv_data);
--	const unsigned int strength_1bit[] = {4, 8};
--	const unsigned int strength_2bit[] = {8, 12, 16, 20};
--	const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12, 14, 16};
-+	static const unsigned int strength_1bit[] = {4, 8};
-+	static const unsigned int strength_2bit[] = {8, 12, 16, 20};
-+	static const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12,
-+						     14, 16};
- 	const unsigned int *supported_strength;
- 	unsigned int drvctrl, reg, shift, mask, width, val;
- 	int ret;
-@@ -399,9 +400,10 @@ static int uniphier_conf_pin_drive_set(struct pinctrl_dev *pctldev,
- 	const struct pin_desc *desc = pin_desc_get(pctldev, pin);
- 	enum uniphier_pin_drv_type type =
- 				uniphier_pin_get_drv_type(desc->drv_data);
--	const unsigned int strength_1bit[] = {4, 8, -1};
--	const unsigned int strength_2bit[] = {8, 12, 16, 20, -1};
--	const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12, 14, 16, -1};
-+	static const unsigned int strength_1bit[] = {4, 8, -1};
-+	static const unsigned int strength_2bit[] = {8, 12, 16, 20, -1};
-+	static const unsigned int strength_3bit[] = {4, 5, 7, 9, 11, 12, 14,
-+						     16, -1};
- 	const unsigned int *supported_strength;
- 	unsigned int drvctrl, reg, shift, mask, width, val;
- 
 -- 
-2.14.1
-
+Best Regards
+Masahiro Yamada
