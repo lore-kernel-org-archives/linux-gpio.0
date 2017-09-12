@@ -1,32 +1,68 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
-Date: Wed, 13 Sep 2017 12:09:40 -0500
-Message-ID: <0dbd161e-5437-7acb-9bc9-4a7b5869a4d7@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <CACRpkdb563nCp9iptfzZOUPX6B0-qU+iWzurn-JL4PQCPHqStw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdb563nCp9iptfzZOUPX6B0-qU+iWzurn-JL4PQCPHqStw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] gpio: Clarify consumer stubs use-cases
+Date: Tue, 12 Sep 2017 09:34:02 +0200
+Message-ID: <20170912073402.2893-1-linus.walleij@linaro.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:35332 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751015AbdILHeI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2017 03:34:08 -0400
+Received: by mail-lf0-f41.google.com with SMTP id d17so24100283lfe.2
+        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2017 00:34:08 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Andrew Lunn <andrew@lunn.ch>
 
-On 09/08/2017 07:50 AM, Linus Walleij wrote:
->>   Since gpiochip_add_data no longer requests GPIOs before scanning for
->>   the direction (that patch was reverted), pinctrl-msm.c now specifically
->>   checks for special case.
-> Waiting for Bjorn's review on these.
+After discussion we add a few blurbs to clarify how the stubs
+in the consumer API are supposed to be used.
 
-Bjorn,
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ Documentation/gpio/consumer.txt | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-Do you think you will have a chance to review these patches in time for 
-4.14?
-
+diff --git a/Documentation/gpio/consumer.txt b/Documentation/gpio/consumer.txt
+index 912568baabb9..ddbfa775a78a 100644
+--- a/Documentation/gpio/consumer.txt
++++ b/Documentation/gpio/consumer.txt
+@@ -10,14 +10,30 @@ Guidelines for GPIOs consumers
+ ==============================
+ 
+ Drivers that can't work without standard GPIO calls should have Kconfig entries
+-that depend on GPIOLIB. The functions that allow a driver to obtain and use
+-GPIOs are available by including the following file:
++that depend on GPIOLIB or select GPIOLIB. The functions that allow a driver to
++obtain and use GPIOs are available by including the following file:
+ 
+ 	#include <linux/gpio/consumer.h>
+ 
++There are static inline stubs for all functions in the header file in the case
++where GPIOLIB is disabled. When these stubs are called they will emit
++warnings. These stubs are used for two use cases:
++
++- Simple compile coverage with e.g. COMPILE_TEST - it does not matter that
++  the current platform does not enable or select GPIOLIB because we are not
++  going to execute the system anyway.
++
++- Truly optional GPIOLIB support - where the driver does not really make use
++  of the GPIOs on certain compile-time configurations for certain systems, but
++  will use it under other compile-time configurations. In this case the
++  consumer must make sure not to call into these functions, or the user will
++  be met with console warnings that may be perceived as intimidating.
++
+ All the functions that work with the descriptor-based GPIO interface are
+ prefixed with gpiod_. The gpio_ prefix is used for the legacy interface. No
+-other function in the kernel should use these prefixes.
++other function in the kernel should use these prefixes. The use of the legacy
++functions is strongly discouraged, new code should use <linux/gpio/consumer.h>
++and descriptors exclusively.
+ 
+ 
+ Obtaining and Disposing GPIOs
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.13.5
+
