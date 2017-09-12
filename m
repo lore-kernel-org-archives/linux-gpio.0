@@ -1,36 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: sprd: Restrict PINCTRL_SPRD to ARCH_SPRD or COMPILE_TEST
-Date: Tue, 12 Sep 2017 11:21:49 +0200
-Message-ID: <CACRpkdYErV7knMmRdaD0rbAxC0_GAd1q_ty+JLDgCN8yiSRzbQ@mail.gmail.com>
-References: <1504714085-17731-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH] gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of
+ depends on
+Date: Tue, 12 Sep 2017 11:24:08 +0200
+Message-ID: <CACRpkdbt-g5L76UEBK64GmdfRrjaS=MK5x8CE==9XKR0m1uNjw@mail.gmail.com>
+References: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:45882 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbdILJVu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 12 Sep 2017 05:21:50 -0400
-Received: by mail-it0-f53.google.com with SMTP id v19so21738814ite.0
-        for <linux-gpio@vger.kernel.org>; Tue, 12 Sep 2017 02:21:50 -0700 (PDT)
-In-Reply-To: <1504714085-17731-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1504662052-12478-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Daney <david.daney@cavium.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Baolin Wang <baolin.wang@spreadtrum.com>, Arnd Bergmann <arnd@arndb.de>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 6, 2017 at 6:08 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Wed, Sep 6, 2017 at 3:40 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-> The Spreadtrum pinctrl drivers are only useful when building for a
-> Spreadtrum platform.
+> IRQ_DOMAIN_HIERARCHY is not user-configurable, but supposed to be
+> selected by drivers that need IRQ domain hierarchy support.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> On top of Arnd's:
->   - pinctrl: sprd: add missing Kconfig dependency
->   - pinctrl: sprd: add CONFIG_OF dependency
+> GPIO_THUNDERX is the only user of "depends on IRQ_DOMAIN_HIERARCHY".
+> This means, we can not enable GPIO_THUNDERX unless other drivers
+> select IRQ_DOMAIN_HIERARCHY elsewhere.  This is odd.  Flip the logic.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Fuzzed on top of Randy's patch and applied.
+Patch applied with David's ACK.
 
 Yours,
 Linus Walleij
