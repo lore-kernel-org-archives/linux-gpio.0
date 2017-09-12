@@ -1,11 +1,11 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 resend 4/4] sh: sh7269: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
-Date: Tue, 12 Sep 2017 10:40:57 +0200
-Message-ID: <1505205657-18012-5-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 resend 3/4] sh: sh7264: Remove nonexistent GPIO_PH[0-7] to fix pinctrl registration
+Date: Tue, 12 Sep 2017 10:40:56 +0200
+Message-ID: <1505205657-18012-4-git-send-email-geert+renesas@glider.be>
 References: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1505205657-18012-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Magnus Damm <magnus.damm@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
@@ -24,7 +24,7 @@ seen on sh7722:
 
 Remove GPIO_PH[0-7] from the enum to fix this.
 
-Fixes: ef0fa5331a73e479 ("sh: Add pinmux for sh7269")
+Fixes: 41797f75486d8ca3 ("sh: Add pinmux for sh7264")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
@@ -34,14 +34,14 @@ v2:
   - Replace fake error messages by reference to sh7722,
   - Add Reviewed-by.
 ---
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 4 +---
+ arch/sh/include/cpu-sh2a/cpu/sh7264.h | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-index 2a0ca8780f0d8c34..13c495a9fc0007b4 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-@@ -45,9 +45,7 @@ enum {
+diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
+index 4d1ef6d74bd6050c..2ae0e938b657a109 100644
+--- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
++++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
+@@ -43,9 +43,7 @@ enum {
  	GPIO_PG7, GPIO_PG6, GPIO_PG5, GPIO_PG4,
  	GPIO_PG3, GPIO_PG2, GPIO_PG1, GPIO_PG0,
  
