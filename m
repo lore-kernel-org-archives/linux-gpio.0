@@ -1,96 +1,73 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: Re: [PATCH v4 6/6] gpio: uniphier: add UniPhier GPIO controller driver
-Date: Wed, 13 Sep 2017 17:31:26 +0900
-Message-ID: <CAK7LNAQpO+NYu2uOwEx+c1srabO8=uOjQ-9+sh6-Q1eDP0TOSA@mail.gmail.com>
-References: <1504784522-26841-1-git-send-email-yamada.masahiro@socionext.com>
- <1504784522-26841-7-git-send-email-yamada.masahiro@socionext.com>
- <CACRpkdZLG=ezxj62R=WkULh2vfpQwqh8P-6FhtONzU7yRbyeuA@mail.gmail.com> <7e46f2a3-114f-0c34-d3c5-49e6422b9200@caviumnetworks.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7e46f2a3-114f-0c34-d3c5-49e6422b9200-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Masami Hiramatsu <mhiramat-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v5 1/3] irqdomain: export of_phandle_args_to_fwspec
+Date: Wed, 13 Sep 2017 17:56:28 +0900
+Message-ID: <1505292990-22957-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1505292990-22957-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from conuserg-09.nifty.com ([210.131.2.76]:63482 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751509AbdIMI5y (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 13 Sep 2017 04:57:54 -0400
+In-Reply-To: <1505292990-22957-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, David Daney <david.daney@cavium.com>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, linux-kernel@vger.kernel.org
 
-Hi.
+This helper will be useful for irqchip drivers that need to convert
+DT binding into IRQ fwspec.
 
-2017-09-13 0:44 GMT+09:00 David Daney <ddaney-M3mlKVOIwJVv6pq1l3V1OdBPR1lH4CV8@public.gmane.org>:
-> On 09/12/2017 07:03 AM, Linus Walleij wrote:
->>
->> On Thu, Sep 7, 2017 at 1:42 PM, Masahiro Yamada
->> <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
->>
->>> This GPIO controller device is used on UniPhier SoCs.
->>>
->>> It also serves as an interrupt controller, but interrupt signals are
->>> just delivered to the parent irqchip without any latching or OR'ing.
->>> This is implemented by using hierarchy IRQ domain.
->>>
->>> Implementation note:
->>> Unfortunately, the IRQ mapping from this controller to the parent is
->>> random. (48, 49, ..., 63, 154, 155, ...)
->>> If "interrupts" property is used, IRQ resources may be statically
->>> allocated when platform devices are populated from DT.  This can be
->>> a problem for the hierarchy IRQ domain because IRQ allocation must
->>> happen from the outer-most domain up to the root domain in order to
->>> build up the stacked IRQ.  (https://lkml.org/lkml/2017/7/6/758)
->>> Solutions to work around it could be to hard-code parent hwirqs or
->>> to invent a driver-specific DT property.
->>>
->>> Here, the new API irq_domain_push_irq() was merged by v4.14-rc1.
->>> It allows to add irq_data to the existing hierarchy.  It will help
->>> to make this driver work whether the parent has already initialized
->>> the hierarchy or not.
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
->>> ---
->>>
->>> Changes in v4:
->>>    - Add COMPILE_TEST and select IRQ_DOMAIN_HIERARCHY
->>>    - Reimplement irqchip part by using irq_domain_push_irq()
->>
->>
->> Awesome improvement. There was a build error and I also
->> would like David Daney to have a look at this so we know we
->> use things the right way,
->
->
-> It looks correct to me.
->
-> I haven't verified it, but I think the OF device-tree probing code for the
-> platform devices will automatically xlat-and-map all those irqs, so that the
-> irq_domain_push_irq() is required to get the domain hierarchy properly
-> configured.  It would be similar to the PCI case where we configure all the
-> MSI-X and then do the irq_domain_push_irq() in the Cavium ThunderX driver.
->
-> If interrupt handling has been verified to work with this driver, I would
-> say that we are probably using things "the right way".
->
-> David.
->
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-V4 depends on 5 patches that got negative feedback in irqdomain subsystem.
-One more problem for this approach is to virtual IRQs are statically
-allocated during the driver probe.
-This looks a step backward to me.
-Recently, gpio_irqchip migrated to on-the-fly allocation in case some
-controllers may have lots of
-GPIO lines.
+This patch is necessary for my GPIO driver.
+Since it is trivial enough, I hope Marc will allow this to go
+though the GPIO subsystem.
+
+If this patch is rejected, I can copy this function into my GPIO
+driver, but I'd like to avoid code duplication.
 
 
-Finally, I came up with another (I think, better) solution.
-I think v5 is less controversial,
-and works very well in on-the-fly manner.
+ include/linux/irqdomain.h | 2 ++
+ kernel/irq/irqdomain.c    | 5 +++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-I am sending it shortly...
-
-
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 81e4889..440772c 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -259,6 +259,8 @@ extern void irq_set_default_host(struct irq_domain *host);
+ extern int irq_domain_alloc_descs(int virq, unsigned int nr_irqs,
+ 				  irq_hw_number_t hwirq, int node,
+ 				  const struct cpumask *affinity);
++extern void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
++				      struct irq_fwspec *fwspec);
+ 
+ static inline struct fwnode_handle *of_node_to_fwnode(struct device_node *node)
+ {
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index e84b705..e34cd63 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -727,8 +727,8 @@ static int irq_domain_translate(struct irq_domain *d,
+ 	return 0;
+ }
+ 
+-static void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
+-				      struct irq_fwspec *fwspec)
++void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
++			       struct irq_fwspec *fwspec)
+ {
+ 	int i;
+ 
+@@ -738,6 +738,7 @@ static void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
+ 	for (i = 0; i < irq_data->args_count; i++)
+ 		fwspec->param[i] = irq_data->args[i];
+ }
++EXPORT_SYMBOL_GPL(of_phandle_args_to_fwspec);
+ 
+ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+ {
 -- 
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.7.4
+
