@@ -1,51 +1,32 @@
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][pinctrl-next] pinctrl/amd: make functions amd_gpio_suspend and amd_gpio_resume static
-Date: Wed, 13 Sep 2017 17:15:01 +0100
-Message-ID: <20170913161501.7356-1-colin.king@canonical.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Wed, 13 Sep 2017 12:09:40 -0500
+Message-ID: <0dbd161e-5437-7acb-9bc9-4a7b5869a4d7@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <CACRpkdb563nCp9iptfzZOUPX6B0-qU+iWzurn-JL4PQCPHqStw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Daniel Drake <drake@endlessm.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdb563nCp9iptfzZOUPX6B0-qU+iWzurn-JL4PQCPHqStw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 09/08/2017 07:50 AM, Linus Walleij wrote:
+>>   Since gpiochip_add_data no longer requests GPIOs before scanning for
+>>   the direction (that patch was reverted), pinctrl-msm.c now specifically
+>>   checks for special case.
+> Waiting for Bjorn's review on these.
 
-The functions amd_gpio_suspend and amd_gpio_resume are local to the
-source and do not need to be in global scope, so make them static.
+Bjorn,
 
-Cleans up sparse warnings:
-symbol 'amd_gpio_suspend' was not declared. Should it be static?
-symbol 'amd_gpio_resume' was not declared. Should it be static?
+Do you think you will have a chance to review these patches in time for 
+4.14?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pinctrl/pinctrl-amd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 3f6b34febbf1..d10d280ab1c9 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -745,7 +745,7 @@ static bool amd_gpio_should_save(struct amd_gpio *gpio_dev, unsigned int pin)
- 	return false;
- }
- 
--int amd_gpio_suspend(struct device *dev)
-+static int amd_gpio_suspend(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
-@@ -764,7 +764,7 @@ int amd_gpio_suspend(struct device *dev)
- 	return 0;
- }
- 
--int amd_gpio_resume(struct device *dev)
-+static int amd_gpio_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct amd_gpio *gpio_dev = platform_get_drvdata(pdev);
 -- 
-2.14.1
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
