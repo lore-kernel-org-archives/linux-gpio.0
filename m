@@ -1,73 +1,55 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Subject: Re: [PATCH] gpio: thunderx: remove unused .map() hook from
- irq_domain_ops
-Date: Thu, 14 Sep 2017 09:59:26 -0700
-Message-ID: <fe9c91d8-33a4-2ecf-8665-3031aa33547f@caviumnetworks.com>
-References: <1505356645-19765-1-git-send-email-yamada.masahiro@socionext.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 14/16] gpio: Add support for banked GPIO controllers
+Date: Thu, 14 Sep 2017 16:37:32 -0700
+Message-ID: <20170914233731.GU5024@atomide.com>
+References: <20170901185736.28051-1-thierry.reding@gmail.com>
+ <20170901185736.28051-15-thierry.reding@gmail.com>
+ <CACRpkdZ7QwyrqqO8iLXDcDimWk5iwOEKZBvXQ-2mBO5s+vg13A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-bn3nam01on0074.outbound.protection.outlook.com ([104.47.33.74]:56192
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751277AbdINQ7h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 14 Sep 2017 12:59:37 -0400
-In-Reply-To: <1505356645-19765-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Language: en-US
+Received: from muru.com ([72.249.23.125]:40724 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751380AbdINXhg (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 14 Sep 2017 19:37:36 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ7QwyrqqO8iLXDcDimWk5iwOEKZBvXQ-2mBO5s+vg13A@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, David Daney <david.daney@cavium.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-omap@vger.kernel.org
 
-On 09/13/2017 07:37 PM, Masahiro Yamada wrote:
-> This driver implements .alloc() hook, so .map() is not used.
+* Linus Walleij <linus.walleij@linaro.org> [170914 07:00]:
+> On Fri, Sep 1, 2017 at 8:57 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
 > 
-
-Have you tested this?
-
-I will have to test this on a real system next week before I can really 
-comment on it.
-
-David.
-
-
-
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Some GPIO controllers are subdivided into multiple logical blocks called
+> > banks (or ports). This is often caused by the design assigning separate
+> > resources, such as register regions or interrupts, to each bank, or some
+> > set of banks.
+> >
+> > This commit adds support for describing controllers that have such a
+> > banked design and provides common code for dealing with them.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > 
->   drivers/gpio/gpio-thunderx.c | 13 -------------
->   1 file changed, 13 deletions(-)
+> This patch makes me really happy.
 > 
-> diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-> index 57efb25..b5adb79 100644
-> --- a/drivers/gpio/gpio-thunderx.c
-> +++ b/drivers/gpio/gpio-thunderx.c
-> @@ -417,18 +417,6 @@ static struct irq_chip thunderx_gpio_irq_chip = {
->   	.flags			= IRQCHIP_SET_TYPE_MASKED
->   };
->   
-> -static int thunderx_gpio_irq_map(struct irq_domain *d, unsigned int irq,
-> -				 irq_hw_number_t hwirq)
-> -{
-> -	struct thunderx_gpio *txgpio = d->host_data;
-> -
-> -	if (hwirq >= txgpio->chip.ngpio)
-> -		return -EINVAL;
-> -	if (!thunderx_gpio_is_gpio_nowarn(txgpio, hwirq))
-> -		return -EPERM;
-> -	return 0;
-> -}
-> -
->   static int thunderx_gpio_irq_translate(struct irq_domain *d,
->   				       struct irq_fwspec *fwspec,
->   				       irq_hw_number_t *hwirq,
-> @@ -455,7 +443,6 @@ static int thunderx_gpio_irq_alloc(struct irq_domain *d, unsigned int virq,
->   }
->   
->   static const struct irq_domain_ops thunderx_gpio_irqd_ops = {
-> -	.map		= thunderx_gpio_irq_map,
->   	.alloc		= thunderx_gpio_irq_alloc,
->   	.translate	= thunderx_gpio_irq_translate
->   };
+> It pulls in a lot of weirdness to the OF core and creates a coherent
+> way of handling these "banked" GPIO chips.
 > 
+> CC to Tony to make sure he checks that OMAP is ready to use this
+> too.
+
+Adding Grygorii to Cc as well, we'll take a look.
+
+Probably the runtime PM will be an issue here still. We must currently
+do runtime PM on per GPIO bank basis instead of per GPIO pin level as
+we constantly runtime_suspend/resume the whole GPIO bank for idle modes
+on the SoCs that support PM. So the usage count for the bank needs to
+be either 0 or 1 and cannot be the lines used in the bank.
+
+Regards,
+
+Tony
