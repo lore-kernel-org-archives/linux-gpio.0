@@ -1,60 +1,73 @@
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: RE: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-Date: Thu, 14 Sep 2017 09:35:46 +0000
-Message-ID: <TY1PR06MB09922F8C146BCB91568C9F05D86F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
- <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Subject: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+Date: Thu, 14 Sep 2017 19:29:21 +0900
+Message-ID: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
-Content-Language: ja-JP
 Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>, TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IFlvc2hpaGlybyBTaGltb2RhDQo+IFNlbnQ6IFdlZG5l
-c2RheSwgQXVndXN0IDMwLCAyMDE3IDEwOjA3IFBNDQo+IA0KPiBIaSBHZWVydC1zYW4sDQo+IA0K
-PiBJJ20gc29ycnkuIEkgbWlzc2VkIHRoaXMgZW1haWwuLi4NCj4gDQo+ID4gRnJvbTogR2VlcnQg
-VXl0dGVyaG9ldmVuDQo+ID4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIwMTcgODoxMSBQ
-TQ0KPiA+DQo+ID4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+ID4NCj4gPiBPbiBXZWQs
-IEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+ID4gPHlvc2hpaGly
-by5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IFRha2VzaGkgS2lo
-YXJhIDx0YWtlc2hpLmtpaGFyYS5kZkByZW5lc2FzLmNvbT4NCj4gPiA+DQo+ID4gPiBTaWduZWQt
-b2ZmLWJ5OiBUYWtlc2hpIEtpaGFyYSA8dGFrZXNoaS5raWhhcmEuZGZAcmVuZXNhcy5jb20+DQo+
-ID4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
-dWhAcmVuZXNhcy5jb20+DQo+ID4gPiAtLS0NCj4gPiA+ICBkcml2ZXJzL3BpbmN0cmwvc2gtcGZj
-L3BmYy1yOGE3Nzk5NS5jIHwgMTUgKysrKysrKysrKysrKysrDQo+ID4gPiAgMSBmaWxlIGNoYW5n
-ZWQsIDE1IGluc2VydGlvbnMoKykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9w
-aW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc5OTUuYyBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZj
-LXI4YTc3OTk1LmMNCj4gPiA+IGluZGV4IDllYjBjZWYuLjVjMGE5NGYgMTAwNjQ0DQo+ID4gPiAt
-LS0gYS9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gPiArKysgYi9k
-cml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gPiBAQCAtMTMwMiw2ICsx
-MzAyLDE1IEBAIGVudW0gew0KPiA+ID4gICAgICAgICBTQ0lGX0NMS19NQVJLLA0KPiA+ID4gIH07
-DQo+ID4gPg0KPiA+ID4gKy8qIC0gVVNCMCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tICovDQo+ID4gPiArc3RhdGljIGNv
-bnN0IHVuc2lnbmVkIGludCB1c2IwX3BpbnNbXSA9IHsNCj4gPiA+ICsgICAgICAgLyogUFdFTiwg
-T1ZDICovDQo+ID4gPiArICAgICAgIFJDQVJfR1BfUElOKDAsIDApLCBSQ0FSX0dQX1BJTigwLCAx
-KSwNCj4gPiA+ICt9Ow0KPiA+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdXNiMF9tdXhb
-XSA9IHsNCj4gPiA+ICsgICAgICAgVVNCMF9QV0VOX01BUkssIFVTQjBfT1ZDX01BUkssDQo+ID4g
-PiArfTsNCj4gPg0KPiA+IFdoYXQgYWJvdXQgVVNCMF9JRFBVIGFuZCBVU0IwX0lESU4/DQo+ID4g
-QXJlIHRoZXkgbmVlZGVkIGZvciBub3JtYWwgb3BlcmF0aW9uLCBvciBjYW4gdGhleSBiZSBhZGRl
-ZCBsYXRlcj8NCj4gDQo+IEkgZG9uJ3Qga25vdyBhYm91dCB0aGVzZSBwaW5zLiBUaGUgZGF0YXNo
-ZWV0IGRvZXNuJ3QgbWVudGlvbiB1c2FnZSBpbiBVU0Igc2VjdGlvbnMuLi4NCj4gU28sIEknbSBh
-c2tpbmcgSFcgdGVhbSBub3cuIChJIHRoaW5rIHRoZXkgY2FuIGJlIGFkZGVkIGxhdGVyLikNCg0K
-SFcgdGVhbSBzYWlkIGl0IGlzIGFuIGVycm9yIGluIHdyaXRpbmcsIGFuZCB0aGVzZSBwaW5zIGRl
-c2NyaXB0aW9ucyB3aWxsIGJlDQpyZW1vdmVkIGluIHRoZSBmdXR1cmUuIFNvLCBJIHdpbGwgcmVi
-YXNlIHRoaXMgcGF0Y2ggb24gZXRoZXJldmIgcGZjIHBhdGNoIHdoaWNoIEkgc2VudC4NCg0KQmVz
-dCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBCZXN0IHJlZ2FyZHMsDQo+IFlvc2hp
-aGlybyBTaGltb2RhDQo+IA0KPiA+IFRoYW5rcyENCj4gPg0KPiA+IEdye29ldGplLGVldGluZ31z
-LA0KPiA+DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gPg0KPiA+IC0tDQo+
-ID4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEz
-MiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiA+DQo+ID4gSW4gcGVyc29uYWwgY29udmVyc2F0
-aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
-PiA+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1l
-ciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Changes from v1:
+  - Rebase this patch on renesas-drivers' 2017-09-05 tag +
+    https://patchwork.kernel.org/patch/9952291/ patch.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 0e803e9..dbe6b1c 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -1295,6 +1295,15 @@ enum {
+ 	SCIF_CLK_MARK,
+ };
+ 
++/* - USB0 ------------------------------------------------------------------- */
++static const unsigned int usb0_pins[] = {
++	/* PWEN, OVC */
++	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
++};
++static const unsigned int usb0_mux[] = {
++	USB0_PWEN_MARK, USB0_OVC_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb0_link),
+ 	SH_PFC_PIN_GROUP(avb0_magic),
+@@ -1342,6 +1351,7 @@ enum {
+ 	SH_PFC_PIN_GROUP(scif5_data_b),
+ 	SH_PFC_PIN_GROUP(scif5_clk_b),
+ 	SH_PFC_PIN_GROUP(scif_clk),
++	SH_PFC_PIN_GROUP(usb0),
+ };
+ 
+ static const char * const avb0_groups[] = {
+@@ -1428,6 +1438,10 @@ enum {
+ 	"scif_clk",
+ };
+ 
++static const char * const usb0_groups[] = {
++	"usb0",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb0),
+ 	SH_PFC_FUNCTION(i2c0),
+@@ -1442,6 +1456,7 @@ enum {
+ 	SH_PFC_FUNCTION(scif4),
+ 	SH_PFC_FUNCTION(scif5),
+ 	SH_PFC_FUNCTION(scif_clk),
++	SH_PFC_FUNCTION(usb0),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-- 
+1.9.1
