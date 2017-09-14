@@ -1,93 +1,60 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.14 take one
-Date: Thu, 14 Sep 2017 11:34:36 +0200
-Message-ID: <CACRpkdZR_mEDmoVCuf7n6zC3F0Y+rp07kDFom-gVcDpQBU-wZA@mail.gmail.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: RE: [PATCH 6/8] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
+Date: Thu, 14 Sep 2017 09:35:46 +0000
+Message-ID: <TY1PR06MB09922F8C146BCB91568C9F05D86F0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1502281187-24068-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1502281187-24068-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdW27kVU2cB=iL-H7t44KeEboL+Ki0zvxkavRpZCepYuLw@mail.gmail.com>
+ <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:45082 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751536AbdINJei (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 14 Sep 2017 05:34:38 -0400
-Received: by mail-it0-f53.google.com with SMTP id v19so3779969ite.0
-        for <linux-gpio@vger.kernel.org>; Thu, 14 Sep 2017 02:34:38 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <TY1PR06MB0992563B4C992762105E8590D89C0@TY1PR06MB0992.apcprd06.prod.outlook.com>
+Content-Language: ja-JP
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
-
-this slew of fixes for pin control was noticed and patched up early,
-so to get the annoyance out of the way for -rc1 it would make sense
-to send them already.
-
-As predicted, it is based on a random merge commit at this point.
-It's beeen boiled in linux-next.
-
-Please pull it in!
-
-Yours,
-Linus Walleij
-
-
-The following changes since commit 5969d1bb3082b41eba8fd2c826559abe38ccb6df:
-
-  Merge branch 'gperf-removal' (2017-09-07 21:39:15 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.14-2
-
-for you to fetch changes up to 79d2c8bede2c93f9432d7da0bc2f76a195c90fc0:
-
-  pinctrl/amd: save pin registers over suspend/resume (2017-09-12
-15:58:45 +0200)
-
-----------------------------------------------------------------
-A first set of pin control fixes noted early in the kernel cycle:
-
-- Fix a build include in the Uniphier driver to keep pace with
-  ongoing refactorings.
-
-- Fix a slew of minor semantic and syntactic issues as well as
-  stricting up Kconfig for the new Spreadtrum driver.
-
-- Fix the GPIO interrupt set-up on the Marvell 37xx Armada as
-  fallout for dynamically allocating irq descriptors from the
-  core. (Also tagged for stable.)
-
-- Fix AMD register suspend/resume state spool/unspooling so that
-  wakeup works as it should. (Also tagged for stable.)
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      pinctrl: sprd: make three local functions static
-
-Dan Carpenter (2):
-      pinctrl: sprd: check for allocation failure
-      pinctrl: sprd: fix off by one bugs
-
-Daniel Drake (1):
-      pinctrl/amd: save pin registers over suspend/resume
-
-Geert Uytterhoeven (1):
-      pinctrl: sprd: Restrict PINCTRL_SPRD to ARCH_SPRD or COMPILE_TEST
-
-Gregory CLEMENT (1):
-      pinctrl: armada-37xx: Fix gpio interrupt setup
-
-Masahiro Yamada (1):
-      pinctrl: uniphier: include <linux/build_bug.h> instead of <linux/bug.h>
-
-Randy Dunlap (1):
-      pinctrl: sprd: fix build errors and dependencies
-
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 41 ++++++++--------
- drivers/pinctrl/pinctrl-amd.c               | 75 +++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-amd.h               |  1 +
- drivers/pinctrl/sprd/Kconfig                |  3 ++
- drivers/pinctrl/sprd/pinctrl-sprd.c         | 32 ++++++------
- drivers/pinctrl/uniphier/pinctrl-uniphier.h |  2 +-
- 6 files changed, 120 insertions(+), 34 deletions(-)
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IFlvc2hpaGlybyBTaGltb2RhDQo+IFNlbnQ6IFdlZG5l
+c2RheSwgQXVndXN0IDMwLCAyMDE3IDEwOjA3IFBNDQo+IA0KPiBIaSBHZWVydC1zYW4sDQo+IA0K
+PiBJJ20gc29ycnkuIEkgbWlzc2VkIHRoaXMgZW1haWwuLi4NCj4gDQo+ID4gRnJvbTogR2VlcnQg
+VXl0dGVyaG9ldmVuDQo+ID4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMTYsIDIwMTcgODoxMSBQ
+TQ0KPiA+DQo+ID4gSGkgU2hpbW9kYS1zYW4sIEtpaGFyYS1zYW4sDQo+ID4NCj4gPiBPbiBXZWQs
+IEF1ZyA5LCAyMDE3IGF0IDI6MTkgUE0sIFlvc2hpaGlybyBTaGltb2RhDQo+ID4gPHlvc2hpaGly
+by5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IFRha2VzaGkgS2lo
+YXJhIDx0YWtlc2hpLmtpaGFyYS5kZkByZW5lc2FzLmNvbT4NCj4gPiA+DQo+ID4gPiBTaWduZWQt
+b2ZmLWJ5OiBUYWtlc2hpIEtpaGFyYSA8dGFrZXNoaS5raWhhcmEuZGZAcmVuZXNhcy5jb20+DQo+
+ID4gPiBTaWduZWQtb2ZmLWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEu
+dWhAcmVuZXNhcy5jb20+DQo+ID4gPiAtLS0NCj4gPiA+ICBkcml2ZXJzL3BpbmN0cmwvc2gtcGZj
+L3BmYy1yOGE3Nzk5NS5jIHwgMTUgKysrKysrKysrKysrKysrDQo+ID4gPiAgMSBmaWxlIGNoYW5n
+ZWQsIDE1IGluc2VydGlvbnMoKykNCj4gPiA+DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9w
+aW5jdHJsL3NoLXBmYy9wZmMtcjhhNzc5OTUuYyBiL2RyaXZlcnMvcGluY3RybC9zaC1wZmMvcGZj
+LXI4YTc3OTk1LmMNCj4gPiA+IGluZGV4IDllYjBjZWYuLjVjMGE5NGYgMTAwNjQ0DQo+ID4gPiAt
+LS0gYS9kcml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gPiArKysgYi9k
+cml2ZXJzL3BpbmN0cmwvc2gtcGZjL3BmYy1yOGE3Nzk5NS5jDQo+ID4gPiBAQCAtMTMwMiw2ICsx
+MzAyLDE1IEBAIGVudW0gew0KPiA+ID4gICAgICAgICBTQ0lGX0NMS19NQVJLLA0KPiA+ID4gIH07
+DQo+ID4gPg0KPiA+ID4gKy8qIC0gVVNCMCAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tICovDQo+ID4gPiArc3RhdGljIGNv
+bnN0IHVuc2lnbmVkIGludCB1c2IwX3BpbnNbXSA9IHsNCj4gPiA+ICsgICAgICAgLyogUFdFTiwg
+T1ZDICovDQo+ID4gPiArICAgICAgIFJDQVJfR1BfUElOKDAsIDApLCBSQ0FSX0dQX1BJTigwLCAx
+KSwNCj4gPiA+ICt9Ow0KPiA+ID4gK3N0YXRpYyBjb25zdCB1bnNpZ25lZCBpbnQgdXNiMF9tdXhb
+XSA9IHsNCj4gPiA+ICsgICAgICAgVVNCMF9QV0VOX01BUkssIFVTQjBfT1ZDX01BUkssDQo+ID4g
+PiArfTsNCj4gPg0KPiA+IFdoYXQgYWJvdXQgVVNCMF9JRFBVIGFuZCBVU0IwX0lESU4/DQo+ID4g
+QXJlIHRoZXkgbmVlZGVkIGZvciBub3JtYWwgb3BlcmF0aW9uLCBvciBjYW4gdGhleSBiZSBhZGRl
+ZCBsYXRlcj8NCj4gDQo+IEkgZG9uJ3Qga25vdyBhYm91dCB0aGVzZSBwaW5zLiBUaGUgZGF0YXNo
+ZWV0IGRvZXNuJ3QgbWVudGlvbiB1c2FnZSBpbiBVU0Igc2VjdGlvbnMuLi4NCj4gU28sIEknbSBh
+c2tpbmcgSFcgdGVhbSBub3cuIChJIHRoaW5rIHRoZXkgY2FuIGJlIGFkZGVkIGxhdGVyLikNCg0K
+SFcgdGVhbSBzYWlkIGl0IGlzIGFuIGVycm9yIGluIHdyaXRpbmcsIGFuZCB0aGVzZSBwaW5zIGRl
+c2NyaXB0aW9ucyB3aWxsIGJlDQpyZW1vdmVkIGluIHRoZSBmdXR1cmUuIFNvLCBJIHdpbGwgcmVi
+YXNlIHRoaXMgcGF0Y2ggb24gZXRoZXJldmIgcGZjIHBhdGNoIHdoaWNoIEkgc2VudC4NCg0KQmVz
+dCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0KPiBCZXN0IHJlZ2FyZHMsDQo+IFlvc2hp
+aGlybyBTaGltb2RhDQo+IA0KPiA+IFRoYW5rcyENCj4gPg0KPiA+IEdye29ldGplLGVldGluZ31z
+LA0KPiA+DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gPg0KPiA+IC0tDQo+
+ID4gR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEz
+MiAtLSBnZWVydEBsaW51eC1tNjhrLm9yZw0KPiA+DQo+ID4gSW4gcGVyc29uYWwgY29udmVyc2F0
+aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0K
+PiA+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1l
+ciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQo=
