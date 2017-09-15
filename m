@@ -1,32 +1,94 @@
-From: Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
-Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77995: add GPIO device nodes
-Date: Fri, 15 Sep 2017 09:27:55 +0200
-Message-ID: <20170915072755.GB3924@verge.net.au>
-References: <1505298839-17435-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs
+ dynamically
+Date: Fri, 15 Sep 2017 10:26:00 +0200
+Message-ID: <1505463960.16701.37.camel@baylibre.com>
+References: <20170721164900.7070-1-grygorii.strashko@ti.com>
+         <CACRpkdbFVV669PxGDXO9Xzf-jj0sEKyQTvhdLMA_of16wBp7PQ@mail.gmail.com>
+         <1501574614.2759.9.camel@baylibre.com>
+         <835101ba-e5d5-fd5e-e0c2-06001d02f850@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1505298839-17435-1-git-send-email-yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <835101ba-e5d5-fd5e-e0c2-06001d02f850@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 13, 2017 at 07:33:59PM +0900, Yoshihiro Shimoda wrote:
-> This patch adds GPIO device nodes for r8a77995.
+On Tue, 2017-08-01 at 13:27 -0500, Grygorii Strashko wrote:
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-> ---
->  Changes from v1:
->   - Change power-domains property in each node.
->   - Add Reviewed-by (Thanks Geert-san!).
+> On 08/01/2017 03:03 AM, Jerome Brunet wrote:
+> > On Tue, 2017-08-01 at 09:52 +0200, Linus Walleij wrote:
+> > > On Fri, Jul 21, 2017 at 6:49 PM, Grygorii Strashko
+> > > <grygorii.strashko@ti.com> wrote:
+> > > 
+> > > > Now IRQ mappings are always created for all (allowed) GPIOs in gpiochip
+> > > > in
+> > > > gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ
+> > > > and,
+> > > > as result, leads to:
+> > > >   - increasing of memory consumption for IRQ descriptors most of which
+> > > > will
+> > > > never ever be used (espessially on platform with a high number of
+> > > > GPIOs).
+> > > > (sizeof(struct irq_desc) == 256 on my tested platforms)
+> > > >   - imposibility to use GPIO irqchip APIs by gpio drivers when HW
+> > > > implements
+> > > > GPIO IRQ functionality as IRQ crossbar/router which has only limited
+> > > > number of IRQ outputs (example from [1], all GPIOs can be mapped on only
+> > > > 8
+> > > > IRQs).
+> > 
+> > Sorry, I forgot to reply to this thread until now.
+> > This patch is generalization of create mapping in the gpio_to_irq, right ?
+> > 
+> > So the issue of mapping left lying around until the gpio driver is unloaded
+> > is
+> > still there ?
 > 
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 112 ++++++++++++++++++++++++++++++
+> Yep. But this should unblock you work and allow to use static boot time IRQ
+> mappings (if you'll be able to implement irq_domain hierarchy properly). 
+> 
+> > 
+> > Having gpio_irq_prepare/gpio_irq_unprepare would solve that, I suppose
+> > (Again, sorry I could not send an RFC for this yet ...)
+> 
+> Sry, but still do not see how it will work :( But hope you might find the way
+> :) 
+> Few notes to take into account:
+> 
+> There is no way now to know when you can release mappings and when it's safe
+> to do :(,
+> except when gpio driver is unloaded.
+> 
+> 1) drivers using GPIO IRQ directly (no gpio_to_irq() calls). IRQ can be
+> shared.
+> IRQ mappings will happen in platform_get_irq()/of_irq_get().
+> Drivers may call request_irq/free_irq() many times using the same Linux IRQ
+> number.
+> Such drivers, in many cases, do not expect to call any kind of GPIO APIs.
+> 
+> 2) drivers using GPIO as IRQ (gpio_to_irq() calls).
+> IRQ mappings will happen in gpio_to_irq(). Theoretically driver can call
+> some API to dispose mappings as it knows when its safe to do, but...
+> The same IRQ still can be used by another driver as shared IRQ.
+> 
+> Note. IRQ mappings have no refcount.
 
-Thanks, applied.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+You're right. It took me a while to realise there is a (serious) flaw in my plan
+ :( Thanks for pointing it out Grygorii.
+
+I initially planned to do some refcounting in the gpio layer but that would make
+no sense, as you pointed out, the irq could be shared. This refcounting would
+only make sense at the irq level.
+
+On a more general note, I wonder when is it safe for a driver to dispose of the
+mapping of a possibly shared irq ? There is no way to know if the mapping is
+still used somewhere else, or am I missing something again ?
+
+> 
+> Regarding, your use case - MMC issue can be WA using irq_valid_mask.
+> (don't blame me it's just WA).
+> 
