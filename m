@@ -1,33 +1,47 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH] gpio: omap: omap_gpio_show_rev is not __init
-Date: Mon, 18 Sep 2017 11:18:23 -0700
-Message-ID: <ffcec36b-f7b3-c03d-58fc-a2c9c5235350@oracle.com>
-References: <20170916204234.725130-1-arnd@arndb.de>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Tue, 19 Sep 2017 00:04:22 -0700
+Message-ID: <20170919070422.GI3349@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170916204234.725130-1-arnd@arndb.de>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, david.brown@linaro.org, andy.gross@linaro.org, anjiandi@codeaurora.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
+On 09/07, Timur Tabi wrote:
+> First patch allows for for pinctrl-msm to understand GPIO groups with
+> no pins.  Such pins are "hidden" and can't be exported or accessed.
+> 
+> Second patch updates the QDF2xxx driver to take advantage of all that.
+> 
+> v5:
+>  Since gpiochip_add_data no longer requests GPIOs before scanning for
+>  the direction (that patch was reverted), pinctrl-msm.c now specifically
+>  checks for special case.
 
-On 9/16/2017 1:42 PM, Arnd Bergmann wrote:
-> The probe function calls omap_gpio_show_rev(), which on most
-> compilers is inlined, but on the old gcc-4.6 is not, causing
-> a valid warning about the incorrect __init annotation:
-> 
-> WARNING: vmlinux.o(.text+0x40f614): Section mismatch in reference from the function omap_gpio_probe() to the function .init.text:omap_gpio_show_rev()
-> The function omap_gpio_probe() references
-> the function __init omap_gpio_show_rev().
-> This is often because omap_gpio_probe lacks a __init
-> annotation or the annotation of omap_gpio_show_rev is wrong.
-> 
-> This removes the __init.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Can we add a new gpiochip op that checks for "availability". I
+read the other thread where the change was reverted (please add a
+pointer next time), and as I understand it the gpio request
+method can also change the muxing to a gpio instead of something
+else. Perhaps we can add another hook for our purposes here that
+tells gpiolib that the gpio is not usable and to skip it. The
+semantics would be clear, it's just about probing availability of
+this pin as a gpio and doesn't mux any pins.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
