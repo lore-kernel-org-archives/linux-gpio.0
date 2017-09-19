@@ -1,34 +1,58 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-Date: Tue, 19 Sep 2017 16:17:15 +0200
-Message-ID: <CAMuHMdXYpsm9qJKCd5Pxt0aiV1t18pr3E6u8jhrVq08306SJjQ@mail.gmail.com>
-References: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] pinctrl: single: make two arrays static const, reduces object code size
+Date: Tue, 19 Sep 2017 15:42:18 +0100
+Message-ID: <20170919144218.23607-1-colin.king@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1505384961-1445-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:36600 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbdISOmV (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Sep 2017 10:42:21 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 14, 2017 at 12:29 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15...
+Don't populate the read-only arrays prop2 and prop4 on the stack, instead
+make them static const.  Makes the object code smaller by over 230 bytes:
 
-Gr{oetje,eeting}s,
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  28235	   5820	    192	  34247	   85c7	drivers/pinctrl/pinctrl-single.o
 
-                        Geert
+After:
+   text	   data	    bss	    dec	    hex	filename
+  27839	   5980	    192	  34011	   84db	drivers/pinctrl/pinctrl-single.o
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index b8b3d932cd73..e6cd8de793e2 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -873,13 +873,13 @@ static int pcs_parse_pinconf(struct pcs_device *pcs, struct device_node *np,
+ 	int i = 0, nconfs = 0;
+ 	unsigned long *settings = NULL, *s = NULL;
+ 	struct pcs_conf_vals *conf = NULL;
+-	struct pcs_conf_type prop2[] = {
++	static const struct pcs_conf_type prop2[] = {
+ 		{ "pinctrl-single,drive-strength", PIN_CONFIG_DRIVE_STRENGTH, },
+ 		{ "pinctrl-single,slew-rate", PIN_CONFIG_SLEW_RATE, },
+ 		{ "pinctrl-single,input-schmitt", PIN_CONFIG_INPUT_SCHMITT, },
+ 		{ "pinctrl-single,low-power-mode", PIN_CONFIG_LOW_POWER_MODE, },
+ 	};
+-	struct pcs_conf_type prop4[] = {
++	static const struct pcs_conf_type prop4[] = {
+ 		{ "pinctrl-single,bias-pullup", PIN_CONFIG_BIAS_PULL_UP, },
+ 		{ "pinctrl-single,bias-pulldown", PIN_CONFIG_BIAS_PULL_DOWN, },
+ 		{ "pinctrl-single,input-schmitt-enable",
+-- 
+2.14.1
+
