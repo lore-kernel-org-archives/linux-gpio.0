@@ -1,36 +1,51 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
-Date: Tue, 19 Sep 2017 07:32:22 -0500
-Message-ID: <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <20170919070422.GI3349@codeaurora.org>
- <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins,
+ groups and functions
+Date: Tue, 19 Sep 2017 16:08:25 +0200
+Message-ID: <CAMuHMdXiu0UiH1U__zPJYA-dRs6Ym0JdAcvEq=xwpMJn9i7afQ@mail.gmail.com>
+References: <1505346762-3666-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50564 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbdISMcc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 19 Sep 2017 08:32:32 -0400
-In-Reply-To: <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1505346762-3666-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 9/19/17 3:15 AM, Linus Walleij wrote:
-> Oh we already have that I think, Mika Westerberg and Andy Shevcheno
-> implemented that for anyone using CONFIG_GPIOLIB_IRQCHIP, and
-> this driver does. Timur please check: irq_need_valid_mask, irq_valid_mask
-> usage.
+Hi Shimoda-san,
 
-These patches already use irq_valid_mask!  But that doesn't block 
-complete access to the GPIO.
+On Thu, Sep 14, 2017 at 1:52 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  About AVB'0', I don't get any feedback from HW team... So, I'd like to follow
+>  the current PFC section in the manual.
+>
+>  Changes from v1:
+>   - Changes the groups like other SoCs (r8a7795 and r8a7796).
 
+Thanks for the update!
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the
-Code Aurora Forum, hosted by The Linux Foundation.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15...
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+> @@ -936,6 +936,99 @@ enum {
+
+> +static const unsigned int avb0_mdc_pins[] = {
+> +       /* AVB0_MDC, AVB_MDIO */
+
+... with s/AVB_MDIO/AVB0_MDIO/.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
