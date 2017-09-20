@@ -1,33 +1,84 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] pinctrl: meson: fix incorrect usage of ENOSYS
-Date: Wed, 20 Sep 2017 16:08:15 +0200
-Message-ID: <20170920140815.20776-1-jbrunet@baylibre.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] gpio: Wakeup gpio controller when it is used as IRQ
+ controller
+Date: Wed, 20 Sep 2017 15:07:17 -0500
+Message-ID: <2cf9c866-5ace-b056-c80b-a7354fb951fc@ti.com>
+References: <09258550e475aa7135db7b91bb96deeaf900f8c2.1505891674.git.michal.simek@xilinx.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:24998 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbdITUHj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Sep 2017 16:07:39 -0400
+In-Reply-To: <09258550e475aa7135db7b91bb96deeaf900f8c2.1505891674.git.michal.simek@xilinx.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Michal Simek <michal.simek@xilinx.com>, linux-kernel@vger.kernel.org, monstr@monstr.eu
+Cc: Borsodi Petr <Petr.Borsodi@i.cz>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 
-ENOSYS is special and should only be used for incorrect syscall number.
-It is not the case here. let's use ENOTSUPP instead.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/meson/pinctrl-meson.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index c9cd54de0449..71bccb7acbf8 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -399,7 +399,7 @@ static int meson_pinconf_group_set(struct pinctrl_dev *pcdev,
- static int meson_pinconf_group_get(struct pinctrl_dev *pcdev,
- 				   unsigned int group, unsigned long *config)
- {
--	return -ENOSYS;
-+	return -ENOTSUPP;
- }
- 
- static const struct pinconf_ops meson_pinconf_ops = {
+On 09/20/2017 02:14 AM, Michal Simek wrote:
+> From: Borsodi Petr <Petr.Borsodi@i.cz>
+> 
+> There is a problem with GPIO driver when used as IRQ controller.
+> It is not working because the module is sleeping (clock is disabled).
+> The patch enables clocks when IP is used as IRQ controller.
+
+I think, it should be solved already in genirq core.
+commit be45beb "genirq: Add runtime power management support for IRQ chips"
+
+
+> 
+> Signed-off-by: Borsodi Petr <Petr.Borsodi@i.cz>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+> 
+> Based on discussion with Linus here https://lkml.org/lkml/2017/8/22/400
+> ---
+>   drivers/gpio/gpiolib.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index eb80dac4e26a..17258ad1fadb 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1676,14 +1676,22 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
+>   static int gpiochip_irq_reqres(struct irq_data *d)
+>   {
+>   	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+> +	int ret;
+>   
+>   	if (!try_module_get(chip->gpiodev->owner))
+>   		return -ENODEV;
+>   
+> +	ret = pm_runtime_get_sync(chip->parent);
+> +	if (ret < 0) {
+> +		module_put(chip->gpiodev->owner);
+> +		return ret;
+> +	}
+> +
+>   	if (gpiochip_lock_as_irq(chip, d->hwirq)) {
+>   		chip_err(chip,
+>   			"unable to lock HW IRQ %lu for IRQ\n",
+>   			d->hwirq);
+> +		pm_runtime_put(chip->parent);
+>   		module_put(chip->gpiodev->owner);
+>   		return -EINVAL;
+>   	}
+> @@ -1695,6 +1703,7 @@ static void gpiochip_irq_relres(struct irq_data *d)
+>   	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+>   
+>   	gpiochip_unlock_as_irq(chip, d->hwirq);
+> +	pm_runtime_put(chip->parent);
+>   	module_put(chip->gpiodev->owner);
+>   }
+>   
+> 
+
 -- 
-2.13.5
+regards,
+-grygorii
