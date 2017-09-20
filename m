@@ -1,41 +1,54 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
-Date: Wed, 20 Sep 2017 08:04:19 -0500
-Message-ID: <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <20170919070422.GI3349@codeaurora.org>
- <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
- <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
- <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60494 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751529AbdITNEW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 20 Sep 2017 09:04:22 -0400
-In-Reply-To: <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/8] pinctrl: meson: clean pin offsets
+Date: Wed, 20 Sep 2017 15:39:19 +0200
+Message-ID: <20170920133927.17390-1-jbrunet@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 9/20/17 6:43 AM, Linus Walleij wrote:
-> Doesn't that mean we need something like irq_valid_mask but rather
-> gpio_valid_mask that just block all usage of certain GPIOs?
+The initial goal of this series was move to TEST_N pin from the EE
+controller to AO controller, where it belongs. This meant modify the
+EE_OFF value.
 
-That raises a lot of questions.  In the meantime, my current patches for 
-4.14 work fine.
+This offset is a quirk we brought from the vendor driver when it was
+initially merged. There no reason to keep this around and we could simply
+let pinctrl figure the pin base value.
 
-Do we replace irq_valid_mask with gpio_valid_mask?  That would break 
-drivers where the GPIO is valid but the interrupt is not.  If we keep 
-both, what happens if gpio_valid_mask is false but irq_valid_mask is 
-true?  And then we would need to audit all gpio drivers to see which 
-ones should be updated for the new infrastructure.
+Removing this offset, while simple, ends up being quite a patch bomb.
+This is why I split the change over 5 first patches, so the important
+change, patch #1 remains visible. Of course, to avoid breaking bisect,
+these first 5 patches should be squashed into one. (If you prefer that I
+squash it myself, I may have to send you a PR as the patch would exceed
+VGER 100000 characters limit)
+
+The last change is this series, while not directly related, also requires
+to adjust the gpio-line-names property in DT. Having these changes going
+together would make it easier to coordinate the DTS changes.
+
+This was changeset has been test on gxbb P200, gxl libretech-cc.  It was
+also boot tested on meson8 (Thx Martin!)
+
+Jerome Brunet (8):
+  pinctrl: meson: remove offset from pinctrl
+  pinctrl: meson: remove offset continued - gxbb
+  pinctrl: meson: remove offset continued - gxl
+  pinctrl: meson: remove offset continued - meson8
+  pinctrl: meson: remove offset continued - meson8b
+  pinctrl: meson: get rid of pin_base
+  pinctrl: meson-gx: TEST_N belongs to the AO controller
+  pinctrl: meson-gxbb: add missing GPIOX_22 pin
+
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 859 +++++++++++++------------
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 818 ++++++++++++------------
+ drivers/pinctrl/meson/pinctrl-meson.c      |  48 +-
+ drivers/pinctrl/meson/pinctrl-meson.h      |   8 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c     | 964 ++++++++++++++---------------
+ drivers/pinctrl/meson/pinctrl-meson8b.c    | 780 ++++++++++++-----------
+ include/dt-bindings/gpio/meson-gxbb-gpio.h |   2 +-
+ include/dt-bindings/gpio/meson-gxl-gpio.h  |   2 +-
+ 8 files changed, 1713 insertions(+), 1768 deletions(-)
 
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the
-Code Aurora Forum, hosted by The Linux Foundation.
+2.13.5
