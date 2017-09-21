@@ -1,82 +1,104 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 0/8] pinctrl: meson: clean pin offsets
-Date: Thu, 21 Sep 2017 17:00:09 +0200
-Message-ID: <1506006009.2703.175.camel@baylibre.com>
-References: <20170920133927.17390-1-jbrunet@baylibre.com>
-         <CACRpkdYmO2PSKU-qkBMW7C35kHf=usfOoEAobQDMMdzd1RFSTw@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: add pinctrl_force_sleep() for "sleep"
+ pinctrl state
+Date: Fri, 22 Sep 2017 01:14:45 +0900
+Message-ID: <CA+Ln22GXr4TRDvgSm1HWQbucBjJ8c=dfnTOARXyM4EZU64QQww@mail.gmail.com>
+References: <CGME20170921123230epcas1p4d3c1de108af7d34053d2c4f40dd42119@epcas1p4.samsung.com>
+ <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:49772 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751876AbdIUPAN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 11:00:13 -0400
-Received: by mail-wm0-f54.google.com with SMTP id r74so2653209wme.4
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2017 08:00:13 -0700 (PDT)
-In-Reply-To: <CACRpkdYmO2PSKU-qkBMW7C35kHf=usfOoEAobQDMMdzd1RFSTw@mail.gmail.com>
+Received: from mail-it0-f52.google.com ([209.85.214.52]:47061 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbdIUQOq (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 12:14:46 -0400
+In-Reply-To: <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Thu, 2017-09-21 at 14:21 +0200, Linus Walleij wrote:
-> On Wed, Sep 20, 2017 at 3:39 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> 
-> > The initial goal of this series was move to TEST_N pin from the EE
-> > controller to AO controller, where it belongs. This meant modify the
-> > EE_OFF value.
-> > 
-> > This offset is a quirk we brought from the vendor driver when it was
-> > initially merged. There no reason to keep this around and we could simply
-> > let pinctrl figure the pin base value.
-> > 
-> > Removing this offset, while simple, ends up being quite a patch bomb.
-> > This is why I split the change over 5 first patches, so the important
-> > change, patch #1 remains visible. Of course, to avoid breaking bisect,
-> > these first 5 patches should be squashed into one. (If you prefer that I
-> > squash it myself, I may have to send you a PR as the patch would exceed
-> > VGER 100000 characters limit)
-> > 
-> > The last change is this series, while not directly related, also requires
-> > to adjust the gpio-line-names property in DT. Having these changes going
-> > together would make it easier to coordinate the DTS changes.
-> > 
-> > This was changeset has been test on gxbb P200, gxl libretech-cc.  It was
-> > also boot tested on meson8 (Thx Martin!)
-> > 
-> > Jerome Brunet (8):
-> >   pinctrl: meson: remove offset from pinctrl
-> >   pinctrl: meson: remove offset continued - gxbb
-> >   pinctrl: meson: remove offset continued - gxl
-> >   pinctrl: meson: remove offset continued - meson8
-> >   pinctrl: meson: remove offset continued - meson8b
-> >   pinctrl: meson: get rid of pin_base
-> >   pinctrl: meson-gx: TEST_N belongs to the AO controller
-> >   pinctrl: meson-gxbb: add missing GPIOX_22 pin
-> 
-> Looks good just waiting for review from Carlo && || Kevin.
+Hi Youngmin,
 
-Thanks Linus,
+2017-09-21 21:32 GMT+09:00 =EB=82=A8=EC=98=81=EB=AF=BC <youngmin.nam@samsun=
+g.com>:
+> This patch adds pinctrl_for_sleep() in samsung_pinctrl_suspend()
+> to support configuration of "sleep" pinctrl state.
+>
+> For example, we can configure "sleep" pinctrl state of "gpf1-6"
+> as "INPUT, PULL DOWN" by configuring power down mode register.
+>
+> &pinctrl_5 {
+>         pinctrl-names =3D "default","sleep";
+>         pinctrl-0 =3D <&initial5>;
+>         pinctrl-1 =3D <&sleep5>;
+>
+>         initial5: initial-state {
+>                 samsung,pins =3D gpf1-6;
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+>         };
+>         sleep5: sleep-state {
+>                 samsung,pins =3D gpf1-6;
+>                 samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_INPUT>;
+>                 samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_DOWN>;
 
-After doing this rework, I noticed that this driver (not the only one though)
-assume gpio offset (param of gpio calls) and pin offset are the same thing ...
-instead of relying pinctrl (and gpio-ranges) to do the translation.
+This isn't a very good example, because pin-con-pdn and pin-pud-pdn
+are used to program dedicated sleep state registers in the pin
+controller and they can be programmed at any time. Typically one would
+include them in "default" state.
 
-To make things a bit more clean, I was thinking about forwarding all gpios
-framework calls to pinconf, so the gpio to pin offset would go through the
-proper mapping function.
+As for pins which don't have dedicated sleep state registers, i.e. the
+alive banks, which retain their value, the DT node of device
+associated with the pins would have "sleep" pinctrl state and its
+driver would activate it on suspend.
 
-Is this the way to do it ?
+The only remaining use case would be pins in alive banks not
+associated with any device, but I can't imagine any practical case
+that would need to change the value on suspend in such case.
 
-Using gpio_pinctrl_set_config() I should be able to achieve almost any "write"
-functions but I got stuck on gpio_get()
+Do you have an example of a real use case for this patch?
 
-ATM the moment there is no gpio_pinctrl_get_config() or something similar to
-read stuff in the gpio framework from pinconf. Would you be open to add
-something like this ?
+>         };
+> };
+>
+> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
+samsung/pinctrl-samsung.c
+> index e04f7fe0a65d..b4d12f8db475 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1099,6 +1099,11 @@ static int __maybe_unused samsung_pinctrl_suspend(=
+struct device *dev)
+>  {
+>         struct samsung_pinctrl_drv_data *drvdata =3D dev_get_drvdata(dev)=
+;
+>         int i;
+> +       int ret;
+> +
+> +       ret =3D pinctrl_force_sleep(drvdata->pctl_dev);
+> +       if (ret)
+> +               dev_err(dev, "could not set sleep pinstate %d\n", ret);
+>
+>         for (i =3D 0; i < drvdata->nr_banks; i++) {
+>                 struct samsung_pin_bank *bank =3D &drvdata->pin_banks[i];
+> @@ -1187,6 +1192,11 @@ static int __maybe_unused samsung_pinctrl_resume(s=
+truct device *dev)
+>         if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
+>                 drvdata->retention_ctrl->disable(drvdata);
+>
+> +       /* For changing state without writing register. */
+> +       if (!IS_ERR(drvdata->pctl_dev->p) &&
+> +           !IS_ERR(drvdata->pctl_dev->hog_default))
+> +               drvdata->pctl_dev->p->state =3D drvdata->pctl_dev->hog_de=
+fault;
 
-> 
-> Yours,
-> Linus Walleij
+How is this supposed to work? The pins were reconfigured at suspend,
+where are they restored back to the values before suspend?
 
+Best regards,
+Tomasz
