@@ -1,40 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: omap: omap_gpio_show_rev is not __init
-Date: Thu, 21 Sep 2017 14:02:39 +0200
-Message-ID: <CACRpkdajuXZyg547s5Jss5-gffu6yazNrWpzOOo49oQZFCSodQ@mail.gmail.com>
-References: <20170916204234.725130-1-arnd@arndb.de>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v5 1/3] irqdomain: export of_phandle_args_to_fwspec
+Date: Thu, 21 Sep 2017 21:04:22 +0900
+Message-ID: <CAK7LNAR6A2mqe42_OROUF0ucwmo-vN2+a3rWK_DSCE518JB=fg@mail.gmail.com>
+References: <1505292990-22957-1-git-send-email-yamada.masahiro@socionext.com>
+ <1505292990-22957-2-git-send-email-yamada.masahiro@socionext.com> <CACRpkdb_4xMvN=5TH=UNiHhKC7X-C4g+t2JoiR992Y12Q-818w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f180.google.com ([209.85.223.180]:54270 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751581AbdIUMCk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 08:02:40 -0400
-Received: by mail-io0-f180.google.com with SMTP id q11so10174797ioe.10
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2017 05:02:40 -0700 (PDT)
-In-Reply-To: <20170916204234.725130-1-arnd@arndb.de>
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:25443 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751387AbdIUMFI (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 08:05:08 -0400
+In-Reply-To: <CACRpkdb_4xMvN=5TH=UNiHhKC7X-C4g+t2JoiR992Y12Q-818w@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh@kernel.org>, David Daney <david.daney@cavium.com>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Sep 16, 2017 at 10:42 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+Hi Linus,
 
-> The probe function calls omap_gpio_show_rev(), which on most
-> compilers is inlined, but on the old gcc-4.6 is not, causing
-> a valid warning about the incorrect __init annotation:
+2017-09-21 20:34 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Wed, Sep 13, 2017 at 10:56 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
 >
-> WARNING: vmlinux.o(.text+0x40f614): Section mismatch in reference from the function omap_gpio_probe() to the function .init.text:omap_gpio_show_rev()
-> The function omap_gpio_probe() references
-> the function __init omap_gpio_show_rev().
-> This is often because omap_gpio_probe lacks a __init
-> annotation or the annotation of omap_gpio_show_rev is wrong.
+>> This helper will be useful for irqchip drivers that need to convert
+>> DT binding into IRQ fwspec.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 >
-> This removes the __init.
+> I'm waiting for the irqchip maintainers to have a look at this.
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> I can carry it in the GPIO tree, but Thomas often prefers to handle
+> me an immutable git branch for infrastructure.
+>
+> Yours,
+> Linus Walleij
 
-Patch applied for fixes.
 
-Yours,
-Linus Walleij
+I found a problem in 3/3, so I will fix it in v6.
+
+But, I'd like to know if this approach is basically OK or not.
+
+
+Thanks.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
