@@ -1,32 +1,39 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH][pinctrl-next] pinctrl/amd: make functions
- amd_gpio_suspend and amd_gpio_resume static
-Date: Thu, 21 Sep 2017 13:37:16 +0200
-Message-ID: <CACRpkdYeOgyS45V8xWFy0OTdrb-h-xfy6X=q6BPv3uqO-1KxNg@mail.gmail.com>
-References: <20170913161501.7356-1-colin.king@canonical.com>
+Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs dynamically
+Date: Thu, 21 Sep 2017 13:41:45 +0200
+Message-ID: <CACRpkdZAJ1c6VyHA+2P6P4GaMY51q-ANc2NLF_2o4atzz2mqrg@mail.gmail.com>
+References: <20170721164900.7070-1-grygorii.strashko@ti.com>
+ <CACRpkdbFVV669PxGDXO9Xzf-jj0sEKyQTvhdLMA_of16wBp7PQ@mail.gmail.com>
+ <1501574614.2759.9.camel@baylibre.com> <835101ba-e5d5-fd5e-e0c2-06001d02f850@ti.com>
+ <1505463960.16701.37.camel@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170913161501.7356-1-colin.king@canonical.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Colin King <colin.king@canonical.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f51.google.com ([209.85.214.51]:55819 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751754AbdIULlr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 07:41:47 -0400
+Received: by mail-it0-f51.google.com with SMTP id 4so246043itv.4
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2017 04:41:46 -0700 (PDT)
+In-Reply-To: <1505463960.16701.37.camel@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh@kernel.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 13, 2017 at 6:15 PM, Colin King <colin.king@canonical.com> wrote:
+On Fri, Sep 15, 2017 at 10:26 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> I initially planned to do some refcounting in the gpio layer but that would make
+> no sense, as you pointed out, the irq could be shared. This refcounting would
+> only make sense at the irq level.
 >
-> The functions amd_gpio_suspend and amd_gpio_resume are local to the
-> source and do not need to be in global scope, so make them static.
->
-> Cleans up sparse warnings:
-> symbol 'amd_gpio_suspend' was not declared. Should it be static?
-> symbol 'amd_gpio_resume' was not declared. Should it be static?
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> On a more general note, I wonder when is it safe for a driver to dispose of the
+> mapping of a possibly shared irq ? There is no way to know if the mapping is
+> still used somewhere else, or am I missing something again ?
 
-Patch applied with Daniel's review tag.
+I have no idea, but maybe Marc Z or Rob H knows this?
+
+They usually have a bit of deeper IRQ-centric knowledge.
 
 Yours,
 Linus Walleij
