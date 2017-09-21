@@ -1,42 +1,62 @@
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v2 1/2] gpio: brcmstb: Handle return value of devm_kasprintf
-Date: Thu, 21 Sep 2017 10:44:13 +0530
-Message-ID: <1cfed20c00d642a34d8f93c5e9591412d387fa2a.1505970542.git.arvind.yadav.cs@gmail.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+Subject: enable gpio for pin groups
+Date: Thu, 21 Sep 2017 08:28:08 +0200
+Message-ID: <20170921062808.fde5bpvn3wfau67h@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37861 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbdIUFPN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 01:15:13 -0400
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:49837 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751581AbdIUG2K (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 21 Sep 2017 02:28:10 -0400
+Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: gregory.0xf0@gmail.com, linus.walleij@linaro.org, computersforpeace@gmail.com, f.fainelli@gmail.com
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de
 
-devm_kasprintf() can fail here and we must check its return value.
+Hello,
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
-changes in v2 :
-		Set return 'err' to -ENOMEM.
+on an i.MX25 machine on my desk a UART RX line is guarded by a transistor
+like this:
 
- drivers/gpio/gpio-brcmstb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+	,------------------------.
+	| ,---------.            |
+	| |  imx25  o--RX----◁---o---
+	| |         o--GPIO--'   |
+	| `---------'            |
+	`------------------------'
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index dd0308c..27e92e5 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -485,6 +485,10 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
- 		gc->of_node = np;
- 		gc->owner = THIS_MODULE;
- 		gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", dev->of_node);
-+		if (!gc->label) {
-+			err = -ENOMEM;
-+			goto fail;
-+		}
- 		gc->base = gpio_base;
- 		gc->of_gpio_n_cells = 2;
- 		gc->of_xlate = brcmstb_gpio_of_xlate;
+The reason is that the reset default setting of the pin in question
+(MX25_PAD_LBA) is driving the line. So after switching the pad to its
+UART function the gpio must be driven to make the transistor
+transparent.
+
+My first idea was to make this a property of the UART and added a
+enable-gpios property for it[1]. But now I wonder if this is better
+abstracted as an enable-gpios property in the pinctrl node. Something
+like:
+
+	pinctrl_uart5: uart5 {
+		fsl,pins = <
+			MX25_PAD_ECB__UART5_TXD                 0x00002080 /* TXD */
+			MX25_PAD_LBA__UART5_RXD                 0x00000000 /* RXD */
+			MX25_PAD_CS4__UART5_CTS                 0x00002001 /* RTS */
+			MX25_PAD_CS5__GPIO_3_21                 0x00002001 /* #RXD_EN */
+		>;
+		enable-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
+	};
+
+Would this make sense? Maybe with a more intuitive name?
+
+Best regards
+Uwe
+
+[1] http://patchwork.ozlabs.org/patch/647787/
+
 -- 
-1.9.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
