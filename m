@@ -1,104 +1,97 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] pinctrl: samsung: add pinctrl_force_sleep() for "sleep"
- pinctrl state
-Date: Fri, 22 Sep 2017 01:14:45 +0900
-Message-ID: <CA+Ln22GXr4TRDvgSm1HWQbucBjJ8c=dfnTOARXyM4EZU64QQww@mail.gmail.com>
-References: <CGME20170921123230epcas1p4d3c1de108af7d34053d2c4f40dd42119@epcas1p4.samsung.com>
- <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
+From: Kyle Roeschley <kyle.roeschley@ni.com>
+Subject: [PATCH] pinctrl: intel: Mask interrupts on driver probe
+Date: Thu, 21 Sep 2017 14:20:03 -0500
+Message-ID: <20170921192003.17324-1-kyle.roeschley@ni.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f52.google.com ([209.85.214.52]:47061 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbdIUQOq (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 12:14:46 -0400
-In-Reply-To: <006801d332d5$b0ca09d0$125e1d70$@samsung.com>
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:52319 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751666AbdIUTUH (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 21 Sep 2017 15:20:07 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: =?UTF-8?B?64Ko7JiB66+8?= <youngmin.nam@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: mika.westerberg@linux.intel.com, heikki.krogerus@linux.intel.com, linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Youngmin,
+Powering off the system on Apollo Lake does not clear the interrupt
+enable registers for the GPIOs. To avoid an interrupt storm on driver
+probe, clear all interrupt enables before enabling our interrupt line.
 
-2017-09-21 21:32 GMT+09:00 =EB=82=A8=EC=98=81=EB=AF=BC <youngmin.nam@samsun=
-g.com>:
-> This patch adds pinctrl_for_sleep() in samsung_pinctrl_suspend()
-> to support configuration of "sleep" pinctrl state.
->
-> For example, we can configure "sleep" pinctrl state of "gpf1-6"
-> as "INPUT, PULL DOWN" by configuring power down mode register.
->
-> &pinctrl_5 {
->         pinctrl-names =3D "default","sleep";
->         pinctrl-0 =3D <&initial5>;
->         pinctrl-1 =3D <&sleep5>;
->
->         initial5: initial-state {
->                 samsung,pins =3D gpf1-6;
->                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
->         };
->         sleep5: sleep-state {
->                 samsung,pins =3D gpf1-6;
->                 samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_INPUT>;
->                 samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_DOWN>;
+Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 43 +++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
 
-This isn't a very good example, because pin-con-pdn and pin-pud-pdn
-are used to program dedicated sleep state registers in the pin
-controller and they can be programmed at any time. Typically one would
-include them in "default" state.
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 71df0f70b61f..f08006417aed 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1043,6 +1043,26 @@ static struct irq_chip intel_gpio_irqchip = {
+ 	.flags = IRQCHIP_MASK_ON_SUSPEND,
+ };
+ 
++static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
++{
++	size_t i;
++
++	for (i = 0; i < pctrl->ncommunities; i++) {
++		const struct intel_community *community;
++		void __iomem *base;
++		unsigned gpp;
++
++		community = &pctrl->communities[i];
++		base = community->regs;
++
++		for (gpp = 0; gpp < community->ngpps; gpp++) {
++			/* Mask and clear all interrupts */
++			writel(0, base + community->ie_offset + gpp * 4);
++			writel(0xffff, base + GPI_IS + gpp * 4);
++		}
++	}
++}
++
+ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ {
+ 	int ret;
+@@ -1068,6 +1088,9 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ 		return ret;
+ 	}
+ 
++	/* Mask all interrupts */
++	intel_gpio_irq_init(pctrl);
++
+ 	/*
+ 	 * We need to request the interrupt here (instead of providing chip
+ 	 * to the irq directly) because on some platforms several GPIO
+@@ -1341,26 +1364,6 @@ int intel_pinctrl_suspend(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(intel_pinctrl_suspend);
+ 
+-static void intel_gpio_irq_init(struct intel_pinctrl *pctrl)
+-{
+-	size_t i;
+-
+-	for (i = 0; i < pctrl->ncommunities; i++) {
+-		const struct intel_community *community;
+-		void __iomem *base;
+-		unsigned gpp;
+-
+-		community = &pctrl->communities[i];
+-		base = community->regs;
+-
+-		for (gpp = 0; gpp < community->ngpps; gpp++) {
+-			/* Mask and clear all interrupts */
+-			writel(0, base + community->ie_offset + gpp * 4);
+-			writel(0xffff, base + GPI_IS + gpp * 4);
+-		}
+-	}
+-}
+-
+ int intel_pinctrl_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-- 
+2.14.1
 
-As for pins which don't have dedicated sleep state registers, i.e. the
-alive banks, which retain their value, the DT node of device
-associated with the pins would have "sleep" pinctrl state and its
-driver would activate it on suspend.
-
-The only remaining use case would be pins in alive banks not
-associated with any device, but I can't imagine any practical case
-that would need to change the value on suspend in such case.
-
-Do you have an example of a real use case for this patch?
-
->         };
-> };
->
-> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> ---
->  drivers/pinctrl/samsung/pinctrl-samsung.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/=
-samsung/pinctrl-samsung.c
-> index e04f7fe0a65d..b4d12f8db475 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -1099,6 +1099,11 @@ static int __maybe_unused samsung_pinctrl_suspend(=
-struct device *dev)
->  {
->         struct samsung_pinctrl_drv_data *drvdata =3D dev_get_drvdata(dev)=
-;
->         int i;
-> +       int ret;
-> +
-> +       ret =3D pinctrl_force_sleep(drvdata->pctl_dev);
-> +       if (ret)
-> +               dev_err(dev, "could not set sleep pinstate %d\n", ret);
->
->         for (i =3D 0; i < drvdata->nr_banks; i++) {
->                 struct samsung_pin_bank *bank =3D &drvdata->pin_banks[i];
-> @@ -1187,6 +1192,11 @@ static int __maybe_unused samsung_pinctrl_resume(s=
-truct device *dev)
->         if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
->                 drvdata->retention_ctrl->disable(drvdata);
->
-> +       /* For changing state without writing register. */
-> +       if (!IS_ERR(drvdata->pctl_dev->p) &&
-> +           !IS_ERR(drvdata->pctl_dev->hog_default))
-> +               drvdata->pctl_dev->p->state =3D drvdata->pctl_dev->hog_de=
-fault;
-
-How is this supposed to work? The pins were reconfigured at suspend,
-where are they restored back to the values before suspend?
-
-Best regards,
-Tomasz
