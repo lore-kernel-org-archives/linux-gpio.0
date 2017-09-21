@@ -1,62 +1,59 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: enable gpio for pin groups
-Date: Thu, 21 Sep 2017 08:28:08 +0200
-Message-ID: <20170921062808.fde5bpvn3wfau67h@pengutronix.de>
+From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: Re: [PATCH 2/3] arm64: dts: mt2712: add pintcrl device node.
+Date: Thu, 21 Sep 2017 16:13:12 +0800
+Message-ID: <1505981592.22452.7.camel@mhfsdcap03>
+References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
+ <1501489333-23145-3-git-send-email-zhiyong.tao@mediatek.com>
+ <2f883a8a-5402-5625-bada-bcfed53c098e@gmail.com>
+ <CACRpkdZHyXec+L8ueRHOs=9TLT1Arqe3KeQpRZ6D0K1Ag1c+Zw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:49837 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751581AbdIUG2K (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 21 Sep 2017 02:28:10 -0400
-Content-Disposition: inline
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdZHyXec+L8ueRHOs=9TLT1Arqe3KeQpRZ6D0K1Ag1c+Zw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, hongkun.cao@mediatek.com, srv_heupstream@mediatek.com, Hongzhou Yang <hongzhou.yang@mediatek.com>, Biao Huang <biao.huang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>, Liguo Zhang <liguo.zhang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, YT Shen <yt.shen@mediatek.com>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/Mediatek SoC
+ support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, "Joe.C" <yingjoe.chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-gpio@vger.kernel.org
 
-Hello,
+On Tue, 2017-08-22 at 15:04 +0200, Linus Walleij wrote:
+> On Mon, Aug 14, 2017 at 5:23 PM, Matthias Brugger
+> <matthias.bgg@gmail.com> wrote:
+> > On 07/31/2017 10:22 AM, Zhiyong Tao wrote:
+> >>
+> >> The commit includes two change:
+> >> 1)add pintcrl device node for mt2712.
+> >> 2)add pinfunc file for mt2712.
+> >>
+> >> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> >> ---
+> >>   arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h | 1014
+> >> +++++++++++++++++++++++++
+> >
+> >
+> > Shouldn't this file be in include/dt-bindings/pinctrl?
+> 
+> Only if it is also #included in the driver.
+> 
+> Yours,
+> Linus Walleij
 
-on an i.MX25 machine on my desk a UART RX line is guarded by a transistor
-like this:
+==>
+Thanks for your comment. 
+We see our some ICs(mt7623) which move the file to
+"include/dt-bindings/pinctrl". other ICs(mt2701) which is put in
+"arch/arm64/boot/dts/mediatek".
+In mt2712, mt2712-pinfunc.h is only include by dts file. It won't be
+included by driver. So which is better? "arch/arm64/boot/dts/mediatek/"
+or "include/dt-bindings/pinctrl".
 
-	,------------------------.
-	| ,---------.            |
-	| |  imx25  o--RX----◁---o---
-	| |         o--GPIO--'   |
-	| `---------'            |
-	`------------------------'
-
-The reason is that the reset default setting of the pin in question
-(MX25_PAD_LBA) is driving the line. So after switching the pad to its
-UART function the gpio must be driven to make the transistor
-transparent.
-
-My first idea was to make this a property of the UART and added a
-enable-gpios property for it[1]. But now I wonder if this is better
-abstracted as an enable-gpios property in the pinctrl node. Something
-like:
-
-	pinctrl_uart5: uart5 {
-		fsl,pins = <
-			MX25_PAD_ECB__UART5_TXD                 0x00002080 /* TXD */
-			MX25_PAD_LBA__UART5_RXD                 0x00000000 /* RXD */
-			MX25_PAD_CS4__UART5_CTS                 0x00002001 /* RTS */
-			MX25_PAD_CS5__GPIO_3_21                 0x00002001 /* #RXD_EN */
-		>;
-		enable-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
-	};
-
-Would this make sense? Maybe with a more intuitive name?
-
-Best regards
-Uwe
-
-[1] http://patchwork.ozlabs.org/patch/647787/
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks.
