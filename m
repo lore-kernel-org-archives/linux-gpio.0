@@ -1,31 +1,29 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: thunderx: remove unused .map() hook from irq_domain_ops
-Date: Thu, 21 Sep 2017 13:30:28 +0200
-Message-ID: <CACRpkdbEvV8H=QPqp+zcN6sN8NfPRUGcSmhfSL1+2vwSG_ijYA@mail.gmail.com>
-References: <1505356645-19765-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v5 1/3] irqdomain: export of_phandle_args_to_fwspec
+Date: Thu, 21 Sep 2017 13:34:53 +0200
+Message-ID: <CACRpkdb_4xMvN=5TH=UNiHhKC7X-C4g+t2JoiR992Y12Q-818w@mail.gmail.com>
+References: <1505292990-22957-1-git-send-email-yamada.masahiro@socionext.com> <1505292990-22957-2-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:55434 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751450AbdIULa3 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 07:30:29 -0400
-Received: by mail-it0-f42.google.com with SMTP id 4so219043itv.4
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2017 04:30:29 -0700 (PDT)
-In-Reply-To: <1505356645-19765-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1505292990-22957-2-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Daney <david.daney@cavium.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh@kernel.org>, David Daney <david.daney@cavium.com>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 14, 2017 at 4:37 AM, Masahiro Yamada
+On Wed, Sep 13, 2017 at 10:56 AM, Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 
-> This driver implements .alloc() hook, so .map() is not used.
+> This helper will be useful for irqchip drivers that need to convert
+> DT binding into IRQ fwspec.
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Waiting for David to test this patch before applying.
+I'm waiting for the irqchip maintainers to have a look at this.
+
+I can carry it in the GPIO tree, but Thomas often prefers to handle
+me an immutable git branch for infrastructure.
 
 Yours,
 Linus Walleij
