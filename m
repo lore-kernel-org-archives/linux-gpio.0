@@ -1,39 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs dynamically
-Date: Thu, 21 Sep 2017 13:41:45 +0200
-Message-ID: <CACRpkdZAJ1c6VyHA+2P6P4GaMY51q-ANc2NLF_2o4atzz2mqrg@mail.gmail.com>
-References: <20170721164900.7070-1-grygorii.strashko@ti.com>
- <CACRpkdbFVV669PxGDXO9Xzf-jj0sEKyQTvhdLMA_of16wBp7PQ@mail.gmail.com>
- <1501574614.2759.9.camel@baylibre.com> <835101ba-e5d5-fd5e-e0c2-06001d02f850@ti.com>
- <1505463960.16701.37.camel@baylibre.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gZ3Bpbzogc3lzY29uOiBkbyBub3QgdXNlIHJhdyAic2V0?=
+ =?UTF-8?B?IiBjYWxsYmFjayBpbiBzeXNjb25fZ3Bpb19kaXJfb3V0?=
+Date: Thu, 21 Sep 2017 14:56:18 +0300
+Message-ID: <1505994978.366886647@f249.i.mail.ru>
+References: <1504104641-8369-1-git-send-email-vladimir.murzin@arm.com>
+ <CACRpkdayo0Upfx21q7FJbVRRiqWTuHGfF=vYUpZHd+17TDUQbQ@mail.gmail.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f51.google.com ([209.85.214.51]:55819 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751754AbdIULlr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 07:41:47 -0400
-Received: by mail-it0-f51.google.com with SMTP id 4so246043itv.4
-        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2017 04:41:46 -0700 (PDT)
-In-Reply-To: <1505463960.16701.37.camel@baylibre.com>
+Received: from fallback5.mail.ru ([94.100.181.253]:49596 "EHLO
+        fallback.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751768AbdIUL4Z (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 07:56:25 -0400
+Received: from [10.161.45.13] (port=57686 helo=f249.i.mail.ru)
+        by fallback5.mail.ru with esmtp (envelope-from <shc_work@mail.ru>)
+        id 1dv05f-0007Xt-0u
+        for linux-gpio@vger.kernel.org; Thu, 21 Sep 2017 14:56:23 +0300
+In-Reply-To: <CACRpkdayo0Upfx21q7FJbVRRiqWTuHGfF=vYUpZHd+17TDUQbQ@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh@kernel.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: =?UTF-8?B?TGludXMgV2FsbGVpag==?= <linus.walleij@linaro.org>
+Cc: =?UTF-8?B?bGludXgtZ3Bpb0B2Z2VyLmtlcm5lbC5vcmc=?= <linux-gpio@vger.kernel.org>, =?UTF-8?B?R3J5Z29yaWkgU3RyYXNoa28=?= <grygorii.strashko@ti.com>, =?UTF-8?B?VmxhZGltaXIgTXVyemlu?= <vladimir.murzin@arm.com>
 
-On Fri, Sep 15, 2017 at 10:26 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-
-> I initially planned to do some refcounting in the gpio layer but that would make
-> no sense, as you pointed out, the irq could be shared. This refcounting would
-> only make sense at the irq level.
->
-> On a more general note, I wonder when is it safe for a driver to dispose of the
-> mapping of a possibly shared irq ? There is no way to know if the mapping is
-> still used somewhere else, or am I missing something again ?
-
-I have no idea, but maybe Marc Z or Rob H knows this?
-
-They usually have a bit of deeper IRQ-centric knowledge.
-
-Yours,
-Linus Walleij
+PtCn0LXRgtCy0LXRgNCzLCAyMSDRgdC10L3RgtGP0LHRgNGPIDIwMTcsIDE0OjIzICswMzowMCDQ
+vtGCIExpbnVzIFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz46Cj4KPkkgcmVhbGx5
+IG5lZWQgQWxleGFuZGVyIFNoaXlhbiB0byBsb29rIGF0IHRoaXMgcGF0Y2guCj4KPlRoZSB3YXkg
+aSBwZXJjaWV2ZSBpdCwgLnNldCBpcyBOVUxMIGlmIHRoZSBjaGlwIGRvZXMgbm90Cj5zdXBwb3J0
+IG91dHB1dC4KPgo+V2Ugc2hvdWxkIHByaW50IHRoZSByaWdodCBlcnJvciBtZXNzYWdlcyBhbmQg
+YmFpbCBvdXQKPmlmIHRoZSB1c2VyIGlzIGFueXdheSB0cnlpbmcgdG8gc2V0IGEgbGluZSBsaWtl
+IHRoYXQuCgpIZWxsby4KClVzaW5nICJjaGlwLT5zZXQiLCBpbnN0ZWFkIG9mICJwcml2LT5kYXRh
+LT5zZXQiLCBpcyBtb3JlIHByb3BlciB3YXkgb24gbXkgb3Bpbmlvbi4KSG93ZXZlciwgaWYgdGhl
+IGRyaXZlciBpcyBub3QgY29uZmlndXJlZCBmb3Igb3V0cHV0LCB0aGUgYW55IGVycm9ycyBzaG91
+bGQgbm90IG9jY3VyIGluIGFueSBjYXNlLgoKPk9uIFdlZCwgQXVnIDMwLCAyMDE3IGF0IDQ6NTAg
+UE0sIFZsYWRpbWlyIE11cnppbgo+PCB2bGFkaW1pci5tdXJ6aW5AYXJtLmNvbSA+IHdyb3RlOgo+
+Cj4+ICJzZXQiIGNhbGxiYWNrIGlzIG9wdGlvbmFsIGFuZCBjYW4gYmUgTlVMTCwgaW5zdGVhZCB1
+c2UgY2hpcC0+c2V0Cj4+IHdoaWNoIGFsd2F5cyBwb2ludHMgYXQgcHJvcGVyIGNhbGxiYWNrIGZ1
+bmN0aW9uLgo+Pgo+PiBGaXhlcyAyYzM0MWQ2MmViNGIgKCJncGlvOiBzeXNjb246IGFkZCBzb2Mg
+c3BlY2lmaWMgY2FsbGJhY2sgdG8gYXNzaWduIG91dHB1dCB2YWx1ZSIpCj4+Cj4+IFNpZ25lZC1v
+ZmYtYnk6IFZsYWRpbWlyIE11cnppbiA8IHZsYWRpbWlyLm11cnppbkBhcm0uY29tID4KPj4gLS0t
+Cj4+ICBkcml2ZXJzL2dwaW8vZ3Bpby1zeXNjb24uYyB8IDIgKy0KPj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9ncGlvL2dwaW8tc3lzY29uLmMgYi9kcml2ZXJzL2dwaW8vZ3Bpby1zeXNjb24uYwo+PiBpbmRl
+eCA1MzdjZWM3Li5jZjg4YTBiIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1zeXNj
+b24uYwo+PiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1zeXNjb24uYwo+PiBAQCAtMTIyLDcgKzEy
+Miw3IEBAIHN0YXRpYyBpbnQgc3lzY29uX2dwaW9fZGlyX291dChzdHJ1Y3QgZ3Bpb19jaGlwICpj
+aGlwLCB1bnNpZ25lZCBvZmZzZXQsIGludCB2YWwpCj4+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgQklUKG9mZnMgJSBTWVNDT05fUkVHX0JJVFMpKTsKPj4gICAgICAgICB9Cj4+
+Cj4+IC0gICAgICAgcHJpdi0+ZGF0YS0+c2V0KGNoaXAsIG9mZnNldCwgdmFsKTsKPj4gKyAgICAg
+ICBjaGlwLT5zZXQoY2hpcCwgb2Zmc2V0LCB2YWwpOwo+Pgo+PiAgICAgICAgIHJldHVybiAwOwo+
+PiAgfQoKLS0tCg==
