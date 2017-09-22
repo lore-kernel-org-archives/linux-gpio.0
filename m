@@ -1,84 +1,76 @@
-From: Vladimir Murzin <vladimir.murzin@arm.com>
-Subject: Re: [PATCH] gpio: syscon: do not use raw "set" callback in
- syscon_gpio_dir_out
-Date: Fri, 22 Sep 2017 15:12:06 +0100
-Message-ID: <d7d4970d-2de7-9645-b992-7b992c2ca5d1@arm.com>
-References: <1504104641-8369-1-git-send-email-vladimir.murzin@arm.com>
- <CACRpkdayo0Upfx21q7FJbVRRiqWTuHGfF=vYUpZHd+17TDUQbQ@mail.gmail.com>
- <1505994978.366886647@f249.i.mail.ru>
- <7e4a2e92-1186-4bad-986e-e3cb39b9c36c@arm.com>
- <CACRpkdaJVf1BCaXk-BWnc3tjuB7kGbq_7M-5JLzC-dei86NHZA@mail.gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
+ state
+Date: Fri, 22 Sep 2017 09:45:48 -0700
+Message-ID: <bbb3e112-c9ed-889b-713c-c4b5641d22d8@gmail.com>
+References: <20170921010421.7467-1-f.fainelli@gmail.com>
+ <20170921010421.7467-2-f.fainelli@gmail.com>
+ <20170922124704.yfu46ak4rypai3vp@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:57894 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752148AbdIVOMJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 22 Sep 2017 10:12:09 -0400
-In-Reply-To: <CACRpkdaJVf1BCaXk-BWnc3tjuB7kGbq_7M-5JLzC-dei86NHZA@mail.gmail.com>
-Content-Language: en-GB
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170922124704.yfu46ak4rypai3vp@localhost.localdomain>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, bcm-kernel-feedback-list@broadcom.com
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexander Shiyan <shc_work@mail.ru>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lee Jones <lee.jones@linaro.org>
 
-On 22/09/17 14:47, Linus Walleij wrote:
-> On Fri, Sep 22, 2017 at 12:23 PM, Vladimir Murzin
-> <vladimir.murzin@arm.com> wrote:
+On 09/22/2017 05:47 AM, Charles Keepax wrote:
+> On Wed, Sep 20, 2017 at 06:04:20PM -0700, Florian Fainelli wrote:
+>> It may happen that a device needs to force applying a state, e.g:
+>> because it only defines one state of pin states (default) but loses
+>> power/register contents when entering low power modes. Add a
+>> pinctrl_dev::flags bitmask to help describe future quirks and define
+>> PINCTRL_FLG_FORCE_STATE as such a settable flag.
+>>
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>> ---
+>>  drivers/pinctrl/core.c | 15 +++++++++++++++
+>>  drivers/pinctrl/core.h |  4 ++++
+>>  2 files changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+>> index 56fbe4c3e800..c450a97de88f 100644
+>> --- a/drivers/pinctrl/core.c
+>> +++ b/drivers/pinctrl/core.c
+>> @@ -1197,11 +1197,26 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
+>>  {
+>>  	struct pinctrl_setting *setting, *setting2;
+>>  	struct pinctrl_state *old_state = p->state;
+>> +	bool force = false;
+>>  	int ret;
+>>  
+>>  	if (p->state == state)
+>>  		return 0;
 > 
->> I tried to use gpio-syscon to fit into my case which is very
->> similar to those pseudo-GPIOs in drivers/mfd/vexpress-sysreg.c
-> 
-> I do not like what that driver is doing and it should not be
-> taken as inspiration.
-> 
-> I have several times slammed down on people trying to shoehorn
-> things that are not GPIO into the GPIO subsystem just out of
-> convenience.
-> 
+> I am guessing you probably intended to remove these two lines.
 
-It is why I submitted only this patch, if you think there is no
-issue I'm fine :)
-
-> The question to ask is always: is this bit/line/pin really
-> "general purpose input/output"?
-
-In my case definitely it is not. These are some bits which 
-control simple CLCD panel [1]. The only reason I've looked
-into gpio-syscon is that I saw you forced keystone bits in
-there with that "it is not general purpose" reason, but
-from your response it seems it is not the right place for
-such stuff.
-
-> 
-> Not "how can I quickly code up something that makes this
-> thing work?"
-> 
-> See for example drivers/leds/leds-syscon.c
-> That was my response to someone trying to first use
-> syscon-gpio on a register and then gpio-leds on top of
-> that, hilarious layers of indirection!
-> 
-> If the use case is MMC card detect, we need card detection
-> using syscon directly in the MMC subsystem, not hacks
-> like what the Vexpress MFD driver is doing.
-
-No, it is not MMC card detect.
+Argh right, I cherry-picked what I done on an earlier kernel version and
+this resolved to this, thanks for noticing!
 
 > 
-> I have the Versatile Express in my office and one day I will
-> fix up this thing.
-
-Understood.
-
-[1] http://infocenter.arm.com/help/topic/com.arm.doc.dai0399c/index.html#arm_toc19 (FPGAIO->MISC)
-
-Cheers
-Vladimir
-
+>>  
+>> +	if (p->state) {
+>> +		list_for_each_entry(setting, &p->state->settings, node) {
+>> +			if (setting->pctldev->flags & PINCTRL_FLG_FORCE_STATE)
+>> +				force = true;
+>> +		}
+>> +	}
+>> +
+>> +	/* Some controllers may want to force this operation when they define
+>> +	 * only one set of functions and lose power state, e.g: pinctrl-single
+>> +	 * with its pinctrl-single,low-power-state-loss property.
+>> +	 */
+>> +	if (p->state == state && !force)
+>> +		return 0;
+>> +
 > 
-> Yours,
-> Linus Walleij
+> Thanks,
+> Charles
 > 
 
+
+-- 
+Florian
