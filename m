@@ -1,145 +1,64 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a state
-Date: Fri, 22 Sep 2017 13:55:22 +0200
-Message-ID: <CACRpkdbVs1b0y91xWtb+8EwcDnkeLd4jbcZnWFnzOytmCLvDXw@mail.gmail.com>
-References: <20170921010421.7467-1-f.fainelli@gmail.com> <20170921010421.7467-2-f.fainelli@gmail.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
+ state
+Date: Fri, 22 Sep 2017 13:47:04 +0100
+Message-ID: <20170922124704.yfu46ak4rypai3vp@localhost.localdomain>
+References: <20170921010421.7467-1-f.fainelli@gmail.com>
+ <20170921010421.7467-2-f.fainelli@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20170921010421.7467-2-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>, ext Tony Lindgren <tony@atomide.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, bcm-kernel-feedback-list@broadcom.com
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Sep 21, 2017 at 3:04 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-
+On Wed, Sep 20, 2017 at 06:04:20PM -0700, Florian Fainelli wrote:
 > It may happen that a device needs to force applying a state, e.g:
 > because it only defines one state of pin states (default) but loses
 > power/register contents when entering low power modes. Add a
 > pinctrl_dev::flags bitmask to help describe future quirks and define
 > PINCTRL_FLG_FORCE_STATE as such a settable flag.
->
+> 
 > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  drivers/pinctrl/core.c | 15 +++++++++++++++
+>  drivers/pinctrl/core.h |  4 ++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+> index 56fbe4c3e800..c450a97de88f 100644
+> --- a/drivers/pinctrl/core.c
+> +++ b/drivers/pinctrl/core.c
+> @@ -1197,11 +1197,26 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
+>  {
+>  	struct pinctrl_setting *setting, *setting2;
+>  	struct pinctrl_state *old_state = p->state;
+> +	bool force = false;
+>  	int ret;
+>  
+>  	if (p->state == state)
+>  		return 0;
 
-But I'm uncertain about the design.
+I am guessing you probably intended to remove these two lines.
 
-A while back, I applied this patch to the GPIO subsystem:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/gpio/machine.h?id=05f479bf7d239f01ff6546f2bdeb14ad0fe65601
+>  
+> +	if (p->state) {
+> +		list_for_each_entry(setting, &p->state->settings, node) {
+> +			if (setting->pctldev->flags & PINCTRL_FLG_FORCE_STATE)
+> +				force = true;
+> +		}
+> +	}
+> +
+> +	/* Some controllers may want to force this operation when they define
+> +	 * only one set of functions and lose power state, e.g: pinctrl-single
+> +	 * with its pinctrl-single,low-power-state-loss property.
+> +	 */
+> +	if (p->state == state && !force)
+> +		return 0;
+> +
 
-commit 05f479bf7d239f01ff6546f2bdeb14ad0fe65601
-Author: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Date:   Tue May 23 15:47:29 2017 +0100
-
-    gpio: Add new flags to control sleep status of GPIOs
-
-    Add new flags to allow users to specify that they are not concerned with
-    the status of GPIOs whilst in a sleep/low power state.
-
-    Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-    Acked-by: Rob Herring <robh@kernel.org>
-    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-
-diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
-index c0d712d22b07..13adadf53c09 100644
---- a/include/linux/gpio/machine.h
-+++ b/include/linux/gpio/machine.h
-@@ -9,6 +9,8 @@ enum gpio_lookup_flags {
-        GPIO_ACTIVE_LOW = (1 << 0),
-        GPIO_OPEN_DRAIN = (1 << 1),
-        GPIO_OPEN_SOURCE = (1 << 2),
-+       GPIO_SLEEP_MAINTAIN_VALUE = (0 << 3),
-+       GPIO_SLEEP_MAY_LOOSE_VALUE = (1 << 3),
- };
-
-Charles is also working on pin control and will probably have some
-input on design.
-
-Maybe we could do the same: a flag to maintain the value and
-a flag to allow it to be lost across suspend/resume, which is the
-core issue here.
-
-Your case is analogous to GPIO_SLEEP_MAY_LOOSE_VALUE
-and you restore the state when you come back from sleep.
-
-Note how gpiolib does this:
-
-bool gpiochip_line_is_persistent(struct gpio_chip *chip, unsigned int offset)
-{
-        if (offset >= chip->ngpio)
-                return false;
-
-        return !test_bit(FLAG_SLEEP_MAY_LOOSE_VALUE,
-                         &chip->gpiodev->descs[offset].flags);
-}
-EXPORT_SYMBOL_GPL(gpiochip_line_is_persistent);
-
-(Notice ! in front of test_bit(), the name of the function makes sense.)
-
-Then the driver in drivers/gpio/gpio-arizona.c does some
-special quirks like this:
-
-static int arizona_gpio_direction_in(struct gpio_chip *chip, unsigned offset)
-{
-        struct arizona_gpio *arizona_gpio = gpiochip_get_data(chip);
-        struct arizona *arizona = arizona_gpio->arizona;
-        bool persistent = gpiochip_line_is_persistent(chip, offset);
-        bool change;
-        int ret;
-
-        ret = regmap_update_bits_check(arizona->regmap,
-                                       ARIZONA_GPIO1_CTRL + offset,
-                                       ARIZONA_GPN_DIR, ARIZONA_GPN_DIR,
-                                       &change);
-        if (ret < 0)
-                return ret;
-
-        if (change && persistent) {
-                pm_runtime_mark_last_busy(chip->parent);
-                pm_runtime_put_autosuspend(chip->parent);
-        }
-
-        return 0;
-}
-
-So what this driver does is allow the GPIO block to loose power
-using runtime PM if and only if the line is flagged as persistent, i.e. it
-will not loose its state when sleeping, so let it sleep.
-
-Next point, this commit from Baolin:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt?id=6606bc9dee63ad8cda2cc310d2ad5992673a785a
-
-output-low - set the pin to output mode with low level
-output-high - set the pin to output mode with high level
-+sleep-hardware-state - indicate this is sleep related state which
-will be programmed
-+ into the registers for the sleep state.
-slew-rate - set the slew rate
-
-This is another thing: here we are defining a state that will be managed
-by autonomous hardware. The state settings will be poked into some
-special registers that will automatically take effect when the system
-goes into sleep.
-
-This is a hardware-induced state: the SLEEP line for the entire SoC
-is asserted.
-
-What you want is something different: a flag like:
-
-sleep-restore-state - indicate that this state needs to be restored after sleep
-  as the hardware loose states when sleeping.
-
-The driver could look for this in a more granular per-state manner, instead
-of all states of the pin controller being restored, we mark what
-states need to be restored on the way up after sleep.
-
-What are your thoughts about this?
-
-I do not rule out a global flag for the whole controller, it is just a bit
-confusing if we start to have per-state, per-pin and per-controller
-sleep behaviour. If we have to have this we have to, but I want to
-fully understand the problem first.
-
-Yours,
-Linus Walleij
+Thanks,
+Charles
