@@ -1,75 +1,40 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a state
-Date: Fri, 22 Sep 2017 15:57:16 +0200
-Message-ID: <CACRpkdbkSE6jckE9HekQZg=nAd6e91Uv7CwGEdPy24YyoQcnog@mail.gmail.com>
-References: <20170921010421.7467-1-f.fainelli@gmail.com> <20170921010421.7467-2-f.fainelli@gmail.com>
- <CACRpkdbVs1b0y91xWtb+8EwcDnkeLd4jbcZnWFnzOytmCLvDXw@mail.gmail.com> <20170922132011.wssbhnsggteffgte@localhost.localdomain>
+From: Kyle Roeschley <kyle.roeschley@ni.com>
+Subject: Re: [PATCH] pinctrl: intel: Mask interrupts on driver probe
+Date: Fri, 22 Sep 2017 09:01:25 -0500
+Message-ID: <20170922140124.ptueogzngqaq3hcv@senary>
+References: <20170921192003.17324-1-kyle.roeschley@ni.com>
+ <20170922054712.GW4630@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f54.google.com ([209.85.214.54]:51825 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751979AbdIVN5R (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2017 09:57:17 -0400
-Received: by mail-it0-f54.google.com with SMTP id o200so1380951itg.0
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Sep 2017 06:57:17 -0700 (PDT)
-In-Reply-To: <20170922132011.wssbhnsggteffgte@localhost.localdomain>
+Received: from mx0b-00010702.pphosted.com ([148.163.158.57]:44744 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751882AbdIVOIJ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 22 Sep 2017 10:08:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20170922054712.GW4630@lahna.fi.intel.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, ext Tony Lindgren <tony@atomide.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: heikki.krogerus@linux.intel.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 22, 2017 at 3:20 PM, Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
-> On Fri, Sep 22, 2017 at 01:55:22PM +0200, Linus Walleij wrote:
+On Fri, Sep 22, 2017 at 08:47:12AM +0300, Mika Westerberg wrote:
+> On Thu, Sep 21, 2017 at 02:20:03PM -0500, Kyle Roeschley wrote:
+> > Powering off the system on Apollo Lake does not clear the interrupt
+> > enable registers for the GPIOs. To avoid an interrupt storm on driver
+> > probe, clear all interrupt enables before enabling our interrupt line.
+> 
+> It is up to the BIOS to set the proper mask and program the pads
+> accordingly. Which platform and BIOS this is?
+> 
+> I would rather not do this because it might cause other problems.
 
->> Next point, this commit from Baolin:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt?id=6606bc9dee63ad8cda2cc310d2ad5992673a785a
->>
->> output-low - set the pin to output mode with low level
->> output-high - set the pin to output mode with high level
->> +sleep-hardware-state - indicate this is sleep related state which
->> will be programmed
->> + into the registers for the sleep state.
->> slew-rate - set the slew rate
->>
->> This is another thing: here we are defining a state that will be managed
->> by autonomous hardware. The state settings will be poked into some
->> special registers that will automatically take effect when the system
->> goes into sleep.
->>
->> This is a hardware-induced state: the SLEEP line for the entire SoC
->> is asserted.
->>
->
-> Just to make sure I understand this property is used to specify a
-> pinctrl state that will be automatically applied by the hardware when
-> entering suspend?
+I haven't seen any issues in testing. This is on a platform based on the Oxbow
+Hill CRB, but it's entirely possible that there's a bug in the BIOS power
+sequencing behavior. I'll dig around and see if something's been missed.
 
-Yes. It is quite common in SoCs, we just never supported it properly.
-
-> Kind of an odd one, feels like something you
-> could just have the software apply as part of the suspend
-> process.
-
-Not really. It has special registers just for this purpose,
-and the driver is completely unaware that sleep is happening,
-instead it is driven to the hardware by special hardware sleep
-lines inside the SoC. So it needs to be set up when the default
-state is programmed.
-
-> Almost would have wondered should this be a driver
-> specific binding rather than a generic pinctrl one?
-
-No, I've seen it in several hardwares. (The Nomadik pin controller
-has this too.)
-
-> I guess from looking at the driver using this I assume that said
-> hardware also automatically replies the non-sleep settings on
-> resume?
-
-Yep.
-
-Yours,
-Linus Walleij
+-- 
+Kyle Roeschley
+Software Engineer
+National Instruments
