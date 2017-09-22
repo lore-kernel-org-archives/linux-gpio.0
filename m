@@ -1,65 +1,63 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/4] pinctrl: meson: Use library functions
-Date: Fri, 22 Sep 2017 11:22:42 +0200
-Message-ID: <20170922092243.7546-3-linus.walleij@linaro.org>
+Subject: [PATCH 4/4] gpio: pxa: Use library functions
+Date: Fri, 22 Sep 2017 11:22:43 +0200
+Message-ID: <20170922092243.7546-4-linus.walleij@linaro.org>
 References: <20170922092243.7546-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:43763 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751809AbdIVJWz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2017 05:22:55 -0400
-Received: by mail-lf0-f53.google.com with SMTP id c80so559803lfh.0
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Sep 2017 02:22:54 -0700 (PDT)
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:50028 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751809AbdIVJW5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2017 05:22:57 -0400
+Received: by mail-lf0-f41.google.com with SMTP id r17so557221lff.6
+        for <linux-gpio@vger.kernel.org>; Fri, 22 Sep 2017 02:22:56 -0700 (PDT)
 In-Reply-To: <20170922092243.7546-1-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 
 These request/free functions are just reimplementations of the
 standard helpers in gpiolib. Delete them and replace with the
 helpers.
 
-Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-pxa.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index e6e12a7b21e0..da2c41e23f10 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -410,18 +410,6 @@ static const struct pinconf_ops meson_pinconf_ops = {
- 	.is_generic		= true,
- };
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index da68d6cbc1e4..f480fb896963 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -330,16 +330,6 @@ static int pxa_gpio_of_xlate(struct gpio_chip *gc,
+ }
+ #endif
  
--static int meson_gpio_request(struct gpio_chip *chip, unsigned gpio)
+-static int pxa_gpio_request(struct gpio_chip *chip, unsigned int offset)
 -{
--	return pinctrl_gpio_request(chip->base + gpio);
+-	return pinctrl_gpio_request(chip->base + offset);
 -}
 -
--static void meson_gpio_free(struct gpio_chip *chip, unsigned gpio)
+-static void pxa_gpio_free(struct gpio_chip *chip, unsigned int offset)
 -{
--	struct meson_pinctrl *pc = gpiochip_get_data(chip);
--
--	pinctrl_gpio_free(pc->data->pin_base + gpio);
+-	pinctrl_gpio_free(chip->base + offset);
 -}
 -
- static int meson_gpio_direction_input(struct gpio_chip *chip, unsigned gpio)
+ static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
+ 			      struct device_node *np, void __iomem *regbase)
  {
- 	struct meson_pinctrl *pc = gpiochip_get_data(chip);
-@@ -539,8 +527,8 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
- 
- 	pc->chip.label = pc->data->name;
- 	pc->chip.parent = pc->dev;
--	pc->chip.request = meson_gpio_request;
--	pc->chip.free = meson_gpio_free;
-+	pc->chip.request = gpiochip_generic_request;
-+	pc->chip.free = gpiochip_generic_free;
- 	pc->chip.direction_input = meson_gpio_direction_input;
- 	pc->chip.direction_output = meson_gpio_direction_output;
- 	pc->chip.get = meson_gpio_get;
+@@ -358,8 +348,8 @@ static int pxa_init_gpio_chip(struct pxa_gpio_chip *pchip, int ngpio,
+ 	pchip->chip.set = pxa_gpio_set;
+ 	pchip->chip.to_irq = pxa_gpio_to_irq;
+ 	pchip->chip.ngpio = ngpio;
+-	pchip->chip.request = pxa_gpio_request;
+-	pchip->chip.free = pxa_gpio_free;
++	pchip->chip.request = gpiochip_generic_request;
++	pchip->chip.free = gpiochip_generic_free;
+ #ifdef CONFIG_OF_GPIO
+ 	pchip->chip.of_node = np;
+ 	pchip->chip.of_xlate = pxa_gpio_of_xlate;
 -- 
 2.13.5
 
