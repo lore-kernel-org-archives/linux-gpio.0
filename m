@@ -1,31 +1,73 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: thunderx: remove unused .map() hook from irq_domain_ops
-Date: Fri, 22 Sep 2017 15:32:58 +0200
-Message-ID: <CACRpkdbTrA16oRU_2cm_qyfdFy05PrdsSaZqULMdsm-CQsOyqQ@mail.gmail.com>
-References: <1505356645-19765-1-git-send-email-yamada.masahiro@socionext.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Fri, 22 Sep 2017 08:37:07 -0500
+Message-ID: <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <20170919070422.GI3349@codeaurora.org>
+ <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+ <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
+ <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
+ <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
+ <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
+ <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org>
+ <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:53127 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751955AbdIVNc7 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2017 09:32:59 -0400
-Received: by mail-it0-f43.google.com with SMTP id c195so1306839itb.1
-        for <linux-gpio@vger.kernel.org>; Fri, 22 Sep 2017 06:32:59 -0700 (PDT)
-In-Reply-To: <1505356645-19765-1-git-send-email-yamada.masahiro@socionext.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:50242 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751877AbdIVNhK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 22 Sep 2017 09:37:10 -0400
+In-Reply-To: <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, David Daney <david.daney@cavium.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, Sep 14, 2017 at 4:37 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On 09/22/2017 08:29 AM, Linus Walleij wrote:
+> 
+> What is your response to Stephen's comment:
+> 
+>> [Stephen Boyd]
+>> Perhaps we can add another hook for our purposes here that
+>> tells gpiolib that the gpio is not usable and to skip it. The
+>> semantics would be clear, it's just about probing availability of
+>> this pin as a gpio and doesn't mux any pins.
 
-> This driver implements .alloc() hook, so .map() is not used.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> I think this kind of related to my response (after I realized it
+> was not just about IRQs):
 
-Patch applied with David's Tested-by.
+We already have 95% of this.  We can already specify individual pin 
+ranges, and the vast majority of the code recognizes the ranges.  There 
+is only one small loophole, and that's in gpiochip_add_data().  The 
+for-loop iterates over all GPIOs:
 
-Yours,
-Linus Walleij
+	for (i = 0; i < chip->ngpio; i++) {
+		struct gpio_desc *desc = &gdev->descs[i];
+
+		desc->gdev = gdev;
+		/*
+		 * REVISIT: most hardware initializes GPIOs as inputs
+		 * (often with pullups enabled) so power usage is
+		 * minimized. Linux code should set the gpio direction
+		 * first thing; but until it does, and in case
+		 * chip->get_direction is not set, we may expose the
+		 * wrong direction in sysfs.
+		 */
+
+I believe the real problem is that this for-loop should be moved from 
+gpiochip_add_data() into some other function that is called *after* the 
+pin ranges are defined.  We can put it in gpiochip_add_pin_range(), maybe.
+
+My patch covers the loophole by adding a check inside get_direction(). 
+If we fix gpiochip_add_data(), I can remove that patch.
+
+However, I think that change is risky and will require a lot of testing 
+and review.
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
