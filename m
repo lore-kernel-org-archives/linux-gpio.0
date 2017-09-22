@@ -1,73 +1,104 @@
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: Re: [PATCH 2/3] arm64: dts: mt2712: add pintcrl device node.
-Date: Fri, 22 Sep 2017 09:31:34 +0800
-Message-ID: <1506043894.22452.19.camel@mhfsdcap03>
-References: <1501489333-23145-1-git-send-email-zhiyong.tao@mediatek.com>
- <1501489333-23145-3-git-send-email-zhiyong.tao@mediatek.com>
- <2f883a8a-5402-5625-bada-bcfed53c098e@gmail.com>
- <CACRpkdZHyXec+L8ueRHOs=9TLT1Arqe3KeQpRZ6D0K1Ag1c+Zw@mail.gmail.com>
- <1505981592.22452.7.camel@mhfsdcap03>
- <CACRpkdaX0n7BZVkXYFEh_XSN3P7huvhE6j5My=p=2Lh45oFZaQ@mail.gmail.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: pinctrl-amd: GPIO interrupts not behaving correctly
+Date: Fri, 22 Sep 2017 11:51:44 +0800
+Message-ID: <CAD8Lp44PLhFen1dKboBM5bQYDT4heeW-Vv37HvSFO7+ys8gzjw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaX0n7BZVkXYFEh_XSN3P7huvhE6j5My=p=2Lh45oFZaQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, hongkun.cao@mediatek.com, srv_heupstream@mediatek.com, Hongzhou Yang <hongzhou.yang@mediatek.com>, Biao Huang <biao.huang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>, Liguo Zhang <liguo.zhang@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, YT Shen <yt.shen@mediatek.com>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/Mediatek SoC
- support" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, "Joe.C" <yingjoe.chen@mediatek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f180.google.com ([209.85.223.180]:57265 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751795AbdIVDvp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 21 Sep 2017 23:51:45 -0400
+Received: by mail-io0-f180.google.com with SMTP id m103so350274iod.13
+        for <linux-gpio@vger.kernel.org>; Thu, 21 Sep 2017 20:51:45 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Ken.Xue@amd.com, Shyam-sundar.S-k@amd.com, Nehal-bakulchandra.Shah@amd.com
+Cc: Linux Upstreaming Team <linux@endlessm.com>, linux-gpio@vger.kernel.org, Chris Chiu <chiu@endlessm.com>
 
-On Thu, 2017-09-21 at 14:17 +0200, Linus Walleij wrote:
-> On Thu, Sep 21, 2017 at 10:13 AM, Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
-> > On Tue, 2017-08-22 at 15:04 +0200, Linus Walleij wrote:
-> >> On Mon, Aug 14, 2017 at 5:23 PM, Matthias Brugger
-> >> <matthias.bgg@gmail.com> wrote:
-> >> > On 07/31/2017 10:22 AM, Zhiyong Tao wrote:
-> >> >>
-> >> >> The commit includes two change:
-> >> >> 1)add pintcrl device node for mt2712.
-> >> >> 2)add pinfunc file for mt2712.
-> >> >>
-> >> >> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> >> >> ---
-> >> >>   arch/arm64/boot/dts/mediatek/mt2712-pinfunc.h | 1014
-> >> >> +++++++++++++++++++++++++
-> >> >
-> >> >
-> >> > Shouldn't this file be in include/dt-bindings/pinctrl?
-> >>
-> >> Only if it is also #included in the driver.
-> >>
-> >> Yours,
-> >> Linus Walleij
-> >
-> > ==>
-> > Thanks for your comment.
-> > We see our some ICs(mt7623) which move the file to
-> > "include/dt-bindings/pinctrl". other ICs(mt2701) which is put in
-> > "arch/arm64/boot/dts/mediatek".
-> > In mt2712, mt2712-pinfunc.h is only include by dts file. It won't be
-> > included by driver. So which is better? "arch/arm64/boot/dts/mediatek/"
-> > or "include/dt-bindings/pinctrl".
-> 
-> If it is used in both arm and arm64 it is helpful to have it in
-> include/dt-bindings so it can be shared between the two
-> archs.
-> 
-> If it is just (ever) for arm64 it can stay inside the arch tree.
-> 
-> Yours,
-> Linus Walleij
+Hi,
 
-==> Thanks for your comment. mt2712-pinfunc.h is only used in arm64. so
-it can stay inside the arch tree.
+We are working with several AMD-based laptop models which are having
+trouble with I2C-HID touchpads (from 2 touchpad vendors). The same
+touchpads work fine on non-AMD setups.
+
+These setups use a GPIO as the I2C-HID interrupt source, and in the
+problematic cases this GPIO is managed by pinctrl-amd. The laptop I am
+looking at today has a AMD E2-9000 RADEON R2 SoC.
+
+Under the I2C-HID spec, the device interrupt is level-triggered. When
+the touchpad has data to report, it will bring the GPIO level low
+(this is active-low), which should signal the host to read input
+report data. The device will hold the GPIO low until there is no more
+data that needs to be delivered.
+
+The user-visible problem is that the touchpad appears to stop
+responding after a short period of usage. At the i2c-hid driver level,
+no more interrupts are arriving. We have checked with a scope that the
+interrupt line is being held low at this point, which should mean that
+the interrupt handler should be executed again since there is more
+data to be read, but that is not happening here.
+
+An easy way to reproduce this issue is to press multiple fingers on
+the touchpad, which will result in a large amount of input data to be
+queued up on the device side; however the interrupt handler will soon
+stop firing so not all the data will be read, and everything stops
+there...
+
+We observed that at the point where no more interrupts arrive, no
+EOI_MASK write was sent at the point when i2c_irq_hid returned for the
+last time (and is never called again). We found a potential solution
+to this problem: by adding the IRQCHIP_EOI_THREADED flag, an EOI will
+be sent at this point, and we are now unable to get the touchpad to
+hang.
+
+But I have some doubts when reviewing this change, and don't really
+handle the relationship between amd-pinctrl's irq_enable / irq_disable
+/ irq_mask / irq_unmask / irq_eoi functions.
+
+The first thing that I find rather strange is that even with no
+modifications, irq_mask is not doing what I think it should. I have
+added printks to those functions plus amd_gpio_irq_handler() and
+i2c_hid_irq() and this is the result when I use the touchpad:
+
+ amd_gpio_irq_handler status=1f00000000200000
+ amd_gpio_irq_mask hwirq=86
+ amd_gpio_irq_handler signal EOI
+ amd_gpio_irq_handler status=1f00000000200000
+ amd_gpio_irq_handler signal EOI
+ amd_gpio_irq_handler status=1f00000000200000
+ amd_gpio_irq_handler signal EOI
+ amd_gpio_irq_handler status=1f00000000200000
+ i2c_hid_irq enter
+ [...]
+
+The first line is where I touched the touchpad, generating an
+interrupt. On the next line, the interrupt is masked, which should now
+mean that this GPIO interrupt does not fire any more until it is
+unmasked, right?
+
+Then on line 3 we send EOI and on line 4 the interrupt fires again -
+even though it is masked. And it fires again and again, firing a total
+of 4 times before i2c_hid_irq is called (this is a threaded interrupt
+handler, so there is some delay), and it goes on and on like this.
+
+So amd_gpio_irq_mask seems to have no effect. I also tried
+amd_gpio_irq_disable at this point and no change; amd_gpio_irq_handler
+keeps firing with the same status value.
+
+I tried eliminating the EOI sending in amd_gpio_irq_handler, thinking
+that we should maybe only send EOI at the point where i2c_hid_irq has
+really finished and is ready to fire again, but this results in
+amd_gpio_irq_handler being called repeatedly wth status value
+1f00000000000000 and instantaneously resulting in "irq 7 nobody cared"
+since that status value does not map to any IRQs to handle.
+
+Are there any specifications available that can help me understand the
+usage and behaviour of the registers controlled by pinctrl-amd?
+
+Can anyone explain why irq_mask is apparently not having any effect?
+Any ideas towards solutions if the IRQCHIP_EOI_THREADED flag addition
+is not correct in itself?
+
+Thanks
+Daniel
