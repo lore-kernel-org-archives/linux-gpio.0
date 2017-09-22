@@ -1,64 +1,45 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
- state
-Date: Fri, 22 Sep 2017 13:47:04 +0100
-Message-ID: <20170922124704.yfu46ak4rypai3vp@localhost.localdomain>
-References: <20170921010421.7467-1-f.fainelli@gmail.com>
- <20170921010421.7467-2-f.fainelli@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: single: Allow indicating loss of pin states
+ during low-power
+Date: Fri, 22 Sep 2017 15:03:45 +0200
+Message-ID: <CACRpkdbmrEottfArW-Hnv63M1k4zASfMg7W+SUNY6D1N2nxOVA@mail.gmail.com>
+References: <20170921010421.7467-1-f.fainelli@gmail.com> <20170921010421.7467-3-f.fainelli@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170921010421.7467-2-f.fainelli@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, swarren@nvidia.com, andy.shevchenko@gmail.com, alcooperx@gmail.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170921010421.7467-3-f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, ext Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Al Cooper <alcooperx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 20, 2017 at 06:04:20PM -0700, Florian Fainelli wrote:
-> It may happen that a device needs to force applying a state, e.g:
-> because it only defines one state of pin states (default) but loses
-> power/register contents when entering low power modes. Add a
-> pinctrl_dev::flags bitmask to help describe future quirks and define
-> PINCTRL_FLG_FORCE_STATE as such a settable flag.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  drivers/pinctrl/core.c | 15 +++++++++++++++
->  drivers/pinctrl/core.h |  4 ++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-> index 56fbe4c3e800..c450a97de88f 100644
-> --- a/drivers/pinctrl/core.c
-> +++ b/drivers/pinctrl/core.c
-> @@ -1197,11 +1197,26 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
->  {
->  	struct pinctrl_setting *setting, *setting2;
->  	struct pinctrl_state *old_state = p->state;
-> +	bool force = false;
->  	int ret;
->  
->  	if (p->state == state)
->  		return 0;
+On Thu, Sep 21, 2017 at 3:04 AM, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-I am guessing you probably intended to remove these two lines.
+> Some platforms (e.g: Broadcom STB: BMIPS_GENERIC/ARCH_BRCMSTB) will lose
+> their register contents when entering their lower power state. In such a
+> case, the pinctrl-single driver that is used will not be able to restore
+> the power states without telling the core about it and having
+> pinctrl_select_state() check for that.
+>
+> This patch adds a new optional boolean property that Device Tree can
+> define in order to obtain exactly that and having the core pinctrl code
+> take that into account.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
->  
-> +	if (p->state) {
-> +		list_for_each_entry(setting, &p->state->settings, node) {
-> +			if (setting->pctldev->flags & PINCTRL_FLG_FORCE_STATE)
-> +				force = true;
-> +		}
-> +	}
-> +
-> +	/* Some controllers may want to force this operation when they define
-> +	 * only one set of functions and lose power state, e.g: pinctrl-single
-> +	 * with its pinctrl-single,low-power-state-loss property.
-> +	 */
-> +	if (p->state == state && !force)
-> +		return 0;
-> +
+If we use this per-controller approach rather than the per-state approach
+I discuss in reply to patch 1/2, we should probably make it a generic
+property for pin controllers and not just a pinctrl-single business.
 
-Thanks,
-Charles
+So patch pinctrl-bindings.txt and put the code somewhere in
+core.
+
+But that is more of a detail, first we need to figure out how to
+handle this business in general.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
