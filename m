@@ -1,36 +1,41 @@
-From: Hoan Tran <hotran@apm.com>
-Subject: [PATCH] MAINTAINERS: Add entry for Synopsys DesignWare APB GPIO driver
-Date: Fri, 22 Sep 2017 14:33:22 -0700
-Message-ID: <1506116002-10918-1-git-send-email-hotran@apm.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Jamie Iles <jamie@jamieiles.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, lho@apm.com, kdinh@apm.com, patches@apm.com, Hoan Tran <hotran@apm.com>
+From: Mr Soumaila Sorgho <nicolemarois7410@gmail.com>
+Subject: Greetings From Mr. Soumaila Sorgho
+Date: Sun, 24 Sep 2017 00:28:45 +0000
+Message-ID: <CAEPXuGP_S1nzOuCb92T8n+CdQLo_m87=bkNTKma0apv7oMyY3w__34635.8552262702$1506212952$gmane$org@mail.gmail.com>
+Reply-To: soumailasorgho@yandex.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:33822 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751787AbdIXA2q (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2017 20:28:46 -0400
+Received: by mail-vk0-f67.google.com with SMTP id 78so1113238vkc.1
+        for <linux-gpio@vger.kernel.org>; Sat, 23 Sep 2017 17:28:46 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-This patch adds maintainer for Synopsys DesignWare APB GPIO driver.
-
-Signed-off-by: Hoan Tran <hotran@apm.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 36cf85d..7ee8957 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12929,6 +12929,12 @@ F:	arch/arc/plat-axs10x
- F:	arch/arc/boot/dts/ax*
- F:	Documentation/devicetree/bindings/arc/axs10*
- 
-+SYNOPSYS DESIGNWARE APB GPIO DRIVER
-+M:	Hoan Tran <hotran@apm.com>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	drivers/gpio/gpio-dwapb.c
-+
- SYNOPSYS DESIGNWARE DMAC DRIVER
- M:	Viresh Kumar <vireshk@kernel.org>
- M:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 -- 
-1.9.1
+Greetings From Mr. Soumaila Sorgho
+
+	I have a Mutual/Beneficial Business Project that would be beneficial
+to you. I only have two questions to ask of you, if you are
+interested.
+
+1. Can you handle this project?
+2. Can I give you this trust?
+
+Please note that the deal requires high level of maturity, honesty and
+secrecy. This will involve moving some money from my office, on trust
+to your hands or bank account. Also note that i will do everything to
+make sure that the money is moved as a purely legitimate fund, so you
+will not be exposed to any risk.
+
+I request for your full co-operation. I will give you details and
+procedure when I receive your reply, to commence this transaction, I
+require you to immediately indicate your interest by a return reply. I
+will be waiting for your response in a timely manner.
+
+Contact  Email: soumailasorgho@yandex.com
+Best Regard,
+Mr. Soumaila Sorgho
