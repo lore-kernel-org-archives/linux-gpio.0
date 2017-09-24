@@ -1,115 +1,124 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 1/8] extcon: gpio: Add DT bindings
-Date: Sun, 24 Sep 2017 16:56:15 +0200
-Message-ID: <20170924145622.4031-2-linus.walleij@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 2/8] extcon: gpio: Localize platform data
+Date: Sun, 24 Sep 2017 16:56:16 +0200
+Message-ID: <20170924145622.4031-3-linus.walleij@linaro.org>
 References: <20170924145622.4031-1-linus.walleij@linaro.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170924145622.4031-1-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mike Lockwood <lockwood-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f52.google.com ([74.125.83.52]:44971 "EHLO
+        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752540AbdIXO6v (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 24 Sep 2017 10:58:51 -0400
+Received: by mail-pg0-f52.google.com with SMTP id j16so2734207pga.1
+        for <linux-gpio@vger.kernel.org>; Sun, 24 Sep 2017 07:58:51 -0700 (PDT)
+In-Reply-To: <20170924145622.4031-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Mike Lockwood <lockwood@google.com>, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>
 
-Add some reasonable device tree bindings and also add the cable defines
-to the extcon include in <dt-bindings/extcon/connectors.h> since
-the GPIO extcon definately need to specify which cable/connector it is
-detecting.
+Nothing in the entire kernel #includes <linux/extcon/extcon-gpio.h>
+so move the platform data declaration inside of the driver.
 
-Adding the include file makes the (as it happens) Linux numbers into an
-ABI, but I do not see any better method. It is possible to define strings
-for all cable types but it seems like overkill, just reusing Linux'
-enumerators seems like a good idea.
-
-The binding supports any number of GPIOs and connectors, but the driver
-currently only supports one connector on one GPIO line.
-
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../devicetree/bindings/extcon/extcon-gpio.txt     | 24 ++++++++++++++
- include/dt-bindings/extcon/connectors.h            | 38 ++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/extcon/extcon-gpio.txt
- create mode 100644 include/dt-bindings/extcon/connectors.h
+ drivers/extcon/extcon-gpio.c       | 22 +++++++++++++++++-
+ include/linux/extcon/extcon-gpio.h | 47 --------------------------------------
+ 2 files changed, 21 insertions(+), 48 deletions(-)
+ delete mode 100644 include/linux/extcon/extcon-gpio.h
 
-diff --git a/Documentation/devicetree/bindings/extcon/extcon-gpio.txt b/Documentation/devicetree/bindings/extcon/extcon-gpio.txt
-new file mode 100644
-index 000000000000..2f5e21b94a64
---- /dev/null
-+++ b/Documentation/devicetree/bindings/extcon/extcon-gpio.txt
-@@ -0,0 +1,24 @@
-+External Connector Using GPIO
-+
-+Required properties:
-+- compatible: should be "extcon-gpio"
-+- extcon-gpios: the GPIO lines used for the external connectors
-+  See gpio/gpio.txt
-+- extcon-connector-types: set to an unsigned integer value arrat representing the types
-+  of this connector, matched to the corresponding GPIO lines in the previous array.
-+  Those are defined with unique IDs in <dt-bindings/extcon/connectors.h>
-+- input-debounce: The number of microseconds to wait for the
-+  connector state to stabilize. This property is reused from pin control
-+  See pinctrl/pinctrl-bindings.txt
-+
-+Example:
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/extcon/connectors.h>
-+
-+extcon {
-+	compatible = "extcon-gpio";
-+	extcon-gpios = <&gpio0 42 GPIO_ACTIVE_LOW>;
-+	extcon-connector-types = <EXTCON_USB>;
-+	input-debounce = <20000>; /* 20 ms */
+diff --git a/drivers/extcon/extcon-gpio.c b/drivers/extcon/extcon-gpio.c
+index ebed22f22d75..6abf5f70fdbf 100644
+--- a/drivers/extcon/extcon-gpio.c
++++ b/drivers/extcon/extcon-gpio.c
+@@ -18,7 +18,6 @@
+  */
+ 
+ #include <linux/extcon.h>
+-#include <linux/extcon/extcon-gpio.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+@@ -29,6 +28,27 @@
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+ 
++/**
++ * struct gpio_extcon_pdata - A simple GPIO-controlled extcon device.
++ * @extcon_id:		The unique id of specific external connector.
++ * @gpio:		Corresponding GPIO.
++ * @gpio_active_low:	Boolean describing whether gpio active state is 1 or 0
++ *			If true, low state of gpio means active.
++ *			If false, high state of gpio means active.
++ * @debounce:		Debounce time for GPIO IRQ in ms.
++ * @irq_flags:		IRQ Flags (e.g., IRQF_TRIGGER_LOW).
++ * @check_on_resume:	Boolean describing whether to check the state of gpio
++ *			while resuming from sleep.
++ */
++struct gpio_extcon_pdata {
++	unsigned int extcon_id;
++	unsigned gpio;
++	bool gpio_active_low;
++	unsigned long debounce;
++	unsigned long irq_flags;
++	bool check_on_resume;
 +};
-diff --git a/include/dt-bindings/extcon/connectors.h b/include/dt-bindings/extcon/connectors.h
-new file mode 100644
-index 000000000000..61bed24eaadc
---- /dev/null
-+++ b/include/dt-bindings/extcon/connectors.h
-@@ -0,0 +1,38 @@
-+#ifndef _DT_BINDINGS_EXTCON_CONNECTORS_H
-+#define _DT_BINDINGS_EXTCON_CONNECTORS_H
 +
-+/* USB external connector */
-+#define EXTCON_USB		1
-+#define EXTCON_USB_HOST		2
-+#define EXTCON_CHG_USB_SDP	5	/* Standard Downstream Port */
-+#define EXTCON_CHG_USB_DCP	6	/* Dedicated Charging Port */
-+#define EXTCON_CHG_USB_CDP	7	/* Charging Downstream Port */
-+#define EXTCON_CHG_USB_ACA	8	/* Accessory Charger Adapter */
-+#define EXTCON_CHG_USB_FAST	9
-+#define EXTCON_CHG_USB_SLOW	10
-+#define EXTCON_CHG_WPT		11	/* Wireless Power Transfer */
-+#define EXTCON_CHG_USB_PD	12	/* USB Power Delivery */
-+/* Jack external connector */
-+#define EXTCON_JACK_MICROPHONE	20
-+#define EXTCON_JACK_HEADPHONE	21
-+#define EXTCON_JACK_LINE_IN	22
-+#define EXTCON_JACK_LINE_OUT	23
-+#define EXTCON_JACK_VIDEO_IN	24
-+#define EXTCON_JACK_VIDEO_OUT	25
-+#define EXTCON_JACK_SPDIF_IN	26	/* Sony Philips Digital InterFace */
-+#define EXTCON_JACK_SPDIF_OUT	27
-+/* Display external connector */
-+#define EXTCON_DISP_HDMI	40	/* High-Definition Multimedia Interface */
-+#define EXTCON_DISP_MHL		41	/* Mobile High-Definition Link */
-+#define EXTCON_DISP_DVI		42	/* Digital Visual Interface */
-+#define EXTCON_DISP_VGA		43	/* Video Graphics Array */
-+#define EXTCON_DISP_DP		44	/* Display Port */
-+#define EXTCON_DISP_HMD		45	/* Head-Mounted Display */
-+/* Miscellaneous external connector */
-+#define EXTCON_DOCK		60
-+#define EXTCON_JIG		61
-+#define EXTCON_MECHANICAL	62
-+
-+#define EXTCON_NUM		63
-+
-+#endif /* _DT_BINDINGS_EXTCON_CONNECTORS_H */
+ struct gpio_extcon_data {
+ 	struct extcon_dev *edev;
+ 	int irq;
+diff --git a/include/linux/extcon/extcon-gpio.h b/include/linux/extcon/extcon-gpio.h
+deleted file mode 100644
+index 7cacafb78b09..000000000000
+--- a/include/linux/extcon/extcon-gpio.h
++++ /dev/null
+@@ -1,47 +0,0 @@
+-/*
+- * Single-state GPIO extcon driver based on extcon class
+- *
+- * Copyright (C) 2012 Samsung Electronics
+- * Author: MyungJoo Ham <myungjoo.ham@samsung.com>
+- *
+- * based on switch class driver
+- * Copyright (C) 2008 Google, Inc.
+- * Author: Mike Lockwood <lockwood@android.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-#ifndef __EXTCON_GPIO_H__
+-#define __EXTCON_GPIO_H__ __FILE__
+-
+-#include <linux/extcon.h>
+-
+-/**
+- * struct gpio_extcon_pdata - A simple GPIO-controlled extcon device.
+- * @extcon_id:		The unique id of specific external connector.
+- * @gpio:		Corresponding GPIO.
+- * @gpio_active_low:	Boolean describing whether gpio active state is 1 or 0
+- *			If true, low state of gpio means active.
+- *			If false, high state of gpio means active.
+- * @debounce:		Debounce time for GPIO IRQ in ms.
+- * @irq_flags:		IRQ Flags (e.g., IRQF_TRIGGER_LOW).
+- * @check_on_resume:	Boolean describing whether to check the state of gpio
+- *			while resuming from sleep.
+- */
+-struct gpio_extcon_pdata {
+-	unsigned int extcon_id;
+-	unsigned gpio;
+-	bool gpio_active_low;
+-	unsigned long debounce;
+-	unsigned long irq_flags;
+-
+-	bool check_on_resume;
+-};
+-
+-#endif /* __EXTCON_GPIO_H__ */
 -- 
 2.13.5
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
