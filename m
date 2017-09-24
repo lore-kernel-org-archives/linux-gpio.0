@@ -1,41 +1,45 @@
-From: Mr Soumaila Sorgho <nicolemarois7410@gmail.com>
-Subject: Greetings From Mr. Soumaila Sorgho
-Date: Sun, 24 Sep 2017 00:28:45 +0000
-Message-ID: <CAEPXuGP_S1nzOuCb92T8n+CdQLo_m87=bkNTKma0apv7oMyY3w__34635.8552262702$1506212952$gmane$org@mail.gmail.com>
-Reply-To: soumailasorgho@yandex.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:33822 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751787AbdIXA2q (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 23 Sep 2017 20:28:46 -0400
-Received: by mail-vk0-f67.google.com with SMTP id 78so1113238vkc.1
-        for <linux-gpio@vger.kernel.org>; Sat, 23 Sep 2017 17:28:46 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/8] GPIO extcon modernization
+Date: Sun, 24 Sep 2017 16:56:14 +0200
+Message-ID: <20170924145622.4031-1-linus.walleij@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Stultz <john.stultz@linaro.org>, Mike Lockwood <lockwood@google.com>, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-gpio@vger.kernel.org
 
+Like with the GPIO mouse input, I found that this driver has no in-tree
+users at all.
+
+I *could* just propose to delete it. But the driver seems generally useful,
+so I made a patch series shaping it up to get configuration from device
+tree or ACPI DSDT using device properties instead.
+
+We start off the series by defining a set of device tree bindings for it.
+
+It would be great to have some input from the initial authors on this
+rewrite. I think we would not merge any board file using the platform
+data anymore, so making it an all-in device property (device tree || ACPI)
+driver seems reasonable.
+
+Linus Walleij (8):
+  extcon: gpio: Add DT bindings
+  extcon: gpio: Localize platform data
+  extcon: gpio: Move platform data into state container
+  extcon: gpio: Convert to fully use GPIO descriptor
+  extcon: gpio: Request reasonable interrupts
+  extcon: gpio: Get debounce setting from device property
+  extcon: gpio: Get connector type from device property
+  extcon: gpio: Always check state on resume
+
+ .../devicetree/bindings/extcon/extcon-gpio.txt     |  24 ++++
+ drivers/extcon/extcon-gpio.c                       | 132 ++++++++++++---------
+ include/dt-bindings/extcon/connectors.h            |  38 ++++++
+ include/linux/extcon/extcon-gpio.h                 |  47 --------
+ 4 files changed, 135 insertions(+), 106 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/extcon/extcon-gpio.txt
+ create mode 100644 include/dt-bindings/extcon/connectors.h
+ delete mode 100644 include/linux/extcon/extcon-gpio.h
+
 -- 
-Greetings From Mr. Soumaila Sorgho
-
-	I have a Mutual/Beneficial Business Project that would be beneficial
-to you. I only have two questions to ask of you, if you are
-interested.
-
-1. Can you handle this project?
-2. Can I give you this trust?
-
-Please note that the deal requires high level of maturity, honesty and
-secrecy. This will involve moving some money from my office, on trust
-to your hands or bank account. Also note that i will do everything to
-make sure that the money is moved as a purely legitimate fund, so you
-will not be exposed to any risk.
-
-I request for your full co-operation. I will give you details and
-procedure when I receive your reply, to commence this transaction, I
-require you to immediately indicate your interest by a return reply. I
-will be waiting for your response in a timely manner.
-
-Contact  Email: soumailasorgho@yandex.com
-Best Regard,
-Mr. Soumaila Sorgho
+2.13.5
