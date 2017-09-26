@@ -1,105 +1,71 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 08/10] ARM: dts: add dtsi for AXP813 PMIC
-Date: Tue, 26 Sep 2017 21:53:12 +0800
-Message-ID: <CAGb2v674xOzsn5+ixZuz8-i4_FfKQ7XF9kNBX+1WPVnASJbqqA@mail.gmail.com>
-References: <cover.1c314f4154a6d27354625f03d0a5269eee55a9c5.1506428208.git-series.quentin.schulz@free-electrons.com>
- <d0d72d485596fa2b6bb0000c67132c97374798ce.1506428208.git-series.quentin.schulz@free-electrons.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
+ state
+Date: Tue, 26 Sep 2017 15:16:28 +0100
+Message-ID: <20170926141628.h27hcrujzhxu4sph@localhost.localdomain>
+References: <20170921010421.7467-1-f.fainelli@gmail.com>
+ <20170921010421.7467-2-f.fainelli@gmail.com>
+ <CACRpkdbVs1b0y91xWtb+8EwcDnkeLd4jbcZnWFnzOytmCLvDXw@mail.gmail.com>
+ <20170922132011.wssbhnsggteffgte@localhost.localdomain>
+ <dbd6df33-0af4-7014-bc46-3378c1346726@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:60712 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968208AbdIZNxj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2017 09:53:39 -0400
-In-Reply-To: <d0d72d485596fa2b6bb0000c67132c97374798ce.1506428208.git-series.quentin.schulz@free-electrons.com>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47134 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965237AbdIZOQn (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 26 Sep 2017 10:16:43 -0400
+Content-Disposition: inline
+In-Reply-To: <dbd6df33-0af4-7014-bc46-3378c1346726@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Maxime Ripard <maxime.ripard@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 
-On Tue, Sep 26, 2017 at 8:17 PM, Quentin Schulz
-<quentin.schulz@free-electrons.com> wrote:
-> From: Maxime Ripard <maxime.ripard@free-electrons.com>
->
-> The AXP813 PMIC is used with some Allwinner SoCs. Create a dtsi to
-> include in each board embedding it.
->
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> ---
->  arch/arm/boot/dts/axp813.dtsi | 58 ++++++++++++++++++++++++++++++++++++-
->  1 file changed, 58 insertions(+)
->  create mode 100644 arch/arm/boot/dts/axp813.dtsi
->
-> diff --git a/arch/arm/boot/dts/axp813.dtsi b/arch/arm/boot/dts/axp813.dtsi
-> new file mode 100644
-> index 0000000..e7f95e8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/axp813.dtsi
-> @@ -0,0 +1,58 @@
-> +/*
-> + * Copyright 2017 Free Electrons
-> + *
-> + * Quentin Schulz <quentin.schulz@free-electrons.com>
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-> + *
-> + *  a) This file is free software; you can redistribute it and/or
-> + *     modify it under the terms of the GNU General Public License as
-> + *     published by the Free Software Foundation; either version 2 of the
-> + *     License, or (at your option) any later version.
-> + *
-> + *     This file is distributed in the hope that it will be useful,
-> + *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + *     GNU General Public License for more details.
-> + *
-> + * Or, alternatively,
-> + *
-> + *  b) Permission is hereby granted, free of charge, to any person
-> + *     obtaining a copy of this software and associated documentation
-> + *     files (the "Software"), to deal in the Software without
-> + *     restriction, including without limitation the rights to use,
-> + *     copy, modify, merge, publish, distribute, sublicense, and/or
-> + *     sell copies of the Software, and to permit persons to whom the
-> + *     Software is furnished to do so, subject to the following
-> + *     conditions:
-> + *
-> + *     The above copyright notice and this permission notice shall be
-> + *     included in all copies or substantial portions of the Software.
-> + *
-> + *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-> + *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-> + *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-> + *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-> + *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-> + *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-> + *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + *     OTHER DEALINGS IN THE SOFTWARE.
-> + */
-> +
-> +/*
-> + * AXP813 Integrated Power Management Chip
-> + */
-> +
-> +&axp813 {
+On Fri, Sep 22, 2017 at 09:57:22AM -0700, Florian Fainelli wrote:
+> On 09/22/2017 06:20 AM, Charles Keepax wrote:
+> > On Fri, Sep 22, 2017 at 01:55:22PM +0200, Linus Walleij wrote:
+> >> On Thu, Sep 21, 2017 at 3:04 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > I guess in our case we didn't really consider the restore aspect
+> > because we essentially get that for free from regmap. Regmap
+> > cache's all our register state and provides a mechanism to sync
+> > that back to the hardware, so we simply invoke that on resume and
+> > all our GPIO/pinctrl state is restored.
+> 
+> As you may see, the problem in my case is that the hardware has only onw
+> pinctrl state: "default", and it loses its hardware register contents,
+> and because of early check in pinctrl_select_state(), we do nothing (the
+> state has not changed per-se), so we are left with SW thinking we
+> applied the "default" state again, while in fact we did not.
+> 
 
-I'd like to name the label axp81x instead. And possibly the filename as well.
+That is exactly the situation we have on the CODECs when they go
+into runtime suspend, power is removed, and everything is back at
+defaults when we resume. Just in our case we re-apply the state
+as part of the CODEC resume using a regmap sync.
 
-See https://github.com/wens/linux/commit/05b9ca82c795816f7f2569ce96dc35b62487f89c
+> The approach taken here was to move this to the core pinctrl code
+> because this is not something a pinctrl consumer should be aware of,
+> when it calls pinctrl_select_state(), it should do what it asked for.
+> 
 
-ChenYu
+Apologies if I have missed something here, but does the consumer
+not still to some extent need to be aware with this solution
+since it needs to re-request the pin state in resume?
 
-> +       interrupt-controller;
-> +       #interrupt-cells = <1>;
-> +
-> +       axp_pctl: axp_pctl {
-> +               compatible = "x-powers,axp813-pctl";
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
-> +};
-> --
-> git-series 0.9.1
+I think that is really my only reservation here, is it feels
+like this should be something that is purely implemented on the
+provider, and be invisible to the consumer, and I am not clear
+this is.
+
+> I also decided to make this a per-provider property as opposed to a
+> per-group property because chances are that the state retention is on a
+> per-controller basis, and not per-bank/group, although I may be wrong.
+> 
+
+It seems quite likely that this property would mostly be
+per-provider to me as well.
+
+Thanks,
+Charles
