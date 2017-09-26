@@ -1,43 +1,149 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 01/10] pinctrl: move gpio-axp209 to pinctrl
-Date: Tue, 26 Sep 2017 21:08:54 +0800
-Message-ID: <CAGb2v65nJLVrTRu1W52dp3SUb-9Sx63Xyr1z+tjerNKwCwGLGg@mail.gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 06/10] pinctrl: axp209: add support for
+ AXP813 GPIOs
+Date: Tue, 26 Sep 2017 15:12:56 +0200
+Message-ID: <20170926131256.bqfzgqs2k63liqjj@flea>
 References: <cover.1c314f4154a6d27354625f03d0a5269eee55a9c5.1506428208.git-series.quentin.schulz@free-electrons.com>
- <e193f8efe9092171ebeffb77ab77422179fd3cab.1506428208.git-series.quentin.schulz@free-electrons.com>
- <20170926125518.kulkohinaojty2zl@flea> <cca522e6-1dbf-b682-b8fe-907fa293f335@free-electrons.com>
+ <b950efcbb2f4d399812591cdf5dce11d0d35b42b.1506428208.git-series.quentin.schulz@free-electrons.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:60632 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966345AbdIZNJU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2017 09:09:20 -0400
-In-Reply-To: <cca522e6-1dbf-b682-b8fe-907fa293f335@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ghy5ao52fovi7777"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBY5EVHHAKGQEILDBIPQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Disposition: inline
+In-Reply-To: <b950efcbb2f4d399812591cdf5dce11d0d35b42b.1506428208.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-On Tue, Sep 26, 2017 at 8:59 PM, Quentin Schulz
-<quentin.schulz@free-electrons.com> wrote:
-> Hi Maxime,
->
-> On 26/09/2017 14:55, Maxime Ripard wrote:
->> On Tue, Sep 26, 2017 at 12:17:11PM +0000, Quentin Schulz wrote:
->>> To prepare the driver for the upcoming pinctrl features, move the GPIO
->>> driver AXP209 from GPIO to pinctrl subsystem.
->>>
->>> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
->>
->> I'm not sure we actually need to do this. Can't we just keep the
->> driver here?
->>
->
-> That's not what I understood from:
-> https://lkml.org/lkml/2016/11/24/360 and the following answers from
-> Linus on the first version.
 
-Please remember to add -M to git format-patch, as Linus mentioned,
-if you resend.
+--ghy5ao52fovi7777
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 
-Chenyu
+On Tue, Sep 26, 2017 at 12:17:16PM +0000, Quentin Schulz wrote:
+> The AXP813 has only two GPIOs. GPIO0 can either be used as a GPIO, an
+> LDO regulator or an ADC. GPIO1 can be used either as a GPIO or an LDO
+> regulator.
+> 
+> Moreover, the status bit of the GPIOs when in input mode is not offset
+> by 4 unlike the AXP209.
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-axp209.txt | 13 ++-
+>  drivers/pinctrl/pinctrl-axp209.c                             | 30 ++++++-
+>  2 files changed, 39 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-axp209.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-axp209.txt
+> index a5bfe87..a1d5dec 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-axp209.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-axp209.txt
+> @@ -4,7 +4,9 @@ This driver follows the usual GPIO bindings found in
+>  Documentation/devicetree/bindings/gpio/gpio.txt
+>  
+>  Required properties:
+> -- compatible: Should be "x-powers,axp209-gpio"
+> +- compatible: Should be one of:
+> +	- "x-powers,axp209-gpio"
+> +	- "x-powers,axp813-pctl"
+>  - #gpio-cells: Should be two. The first cell is the pin number and the
+>    second is the GPIO flags.
+>  - gpio-controller: Marks the device node as a GPIO controller.
+> @@ -49,8 +51,17 @@ Example:
+>  GPIOs and their functions
+>  -------------------------
+>  
+> +axp209
+> +------
+>  GPIO	|	Functions
+>  ------------------------
+>  GPIO0	|	gpio_in, gpio_out, ldo, adc
+>  GPIO1	|	gpio_in, gpio_out, ldo, adc
+>  GPIO2	|	gpio_in, gpio_out
+> +
+> +axp813
+> +------
+> +GPIO	|	Functions
+> +------------------------
+> +GPIO0	|	gpio_in, gpio_out, ldo, adc
+> +GPIO1	|	gpio_in, gpio_out, ldo
+> diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+> index 11f871e..500862b 100644
+> --- a/drivers/pinctrl/pinctrl-axp209.c
+> +++ b/drivers/pinctrl/pinctrl-axp209.c
+> @@ -108,11 +108,28 @@ static const struct axp20x_desc_pin axp209_pins[] = {
+>  		   AXP20X_FUNCTION(0x2, "gpio_in")),
+>  };
+>  
+> +static const struct axp20x_desc_pin axp813_pins[] = {
+> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(0, "GPIO0", (void *)AXP20X_GPIO0_CTRL),
+> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+> +		   AXP20X_FUNCTION(0x2, "gpio_in"),
+> +		   AXP20X_FUNCTION(0x3, "ldo"),
+> +		   AXP20X_FUNCTION(0x4, "adc")),
+> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(1, "GPIO1", (void *)AXP20X_GPIO1_CTRL),
+> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+> +		   AXP20X_FUNCTION(0x2, "gpio_in"),
+> +		   AXP20X_FUNCTION(0x3, "ldo")),
+> +};
+> +
+>  static const struct axp20x_pinctrl_desc axp20x_pinctrl_data = {
+>  	.pins	= axp209_pins,
+>  	.npins	= ARRAY_SIZE(axp209_pins),
+>  };
+>  
+> +static const struct axp20x_pinctrl_desc axp813_pinctrl_data = {
+> +	.pins	= axp813_pins,
+> +	.npins	= ARRAY_SIZE(axp813_pins),
+> +};
+> +
+>  static int axp20x_gpio_input(struct gpio_chip *chip, unsigned offset)
+>  {
+>  	return pinctrl_gpio_direction_input(chip->base + offset);
+> @@ -479,6 +496,7 @@ static int axp20x_pctl_probe(struct platform_device *pdev)
+>  	struct axp20x_pctl *pctl;
+>  	struct pinctrl_desc *pctrl_desc;
+>  	struct pinctrl_pin_desc *pins;
+> +	struct device_node *np = pdev->dev.of_node;
+>  	int ret, i;
+>  
+>  	if (!of_device_is_available(pdev->dev.of_node))
+> @@ -505,13 +523,18 @@ static int axp20x_pctl_probe(struct platform_device *pdev)
+>  	pctl->chip.set			= axp20x_gpio_set;
+>  	pctl->chip.direction_input	= axp20x_gpio_input;
+>  	pctl->chip.direction_output	= axp20x_gpio_output;
+> -	pctl->chip.ngpio		= 3;
+>  
+>  	pctl->regmap = axp20x->regmap;
+>  
+> -	pctl->desc = &axp20x_pinctrl_data;
+> -	pctl->gpio_status_offset = 4;
+> +	if (of_device_is_compatible(np, "x-powers,axp209-gpio")) {
+> +		pctl->desc = &axp20x_pinctrl_data;
+> +		pctl->gpio_status_offset = 4;
+> +	} else {
+> +		pctl->desc = &axp813_pinctrl_data;
+> +		pctl->gpio_status_offset = 0;
+> +	}
+>  	pctl->dev = &pdev->dev;
+> +	pctl->chip.ngpio = pctl->desc->npins;
+
+This should be part of a structure that would be attached to the
+compatible.
+
+Thanks!
+Maxime
+
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--ghy5ao52fovi7777--
