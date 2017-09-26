@@ -1,61 +1,134 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v2 03/10] pinctrl: axp209: use drv_data of
- pinctrl_pin_desc to store pin reg
-Date: Tue, 26 Sep 2017 15:01:08 +0200
-Message-ID: <20170926130108.uibnri32b73elfy6@flea>
+From: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 02/10] pinctrl: axp209: add pinctrl features
+Date: Tue, 26 Sep 2017 15:08:21 +0200
+Message-ID: <5596280a-51bb-7491-31f4-5800219888ad@free-electrons.com>
 References: <cover.1c314f4154a6d27354625f03d0a5269eee55a9c5.1506428208.git-series.quentin.schulz@free-electrons.com>
- <7993a30fbc2e50a2d228fa0c8fad643c4034b101.1506428208.git-series.quentin.schulz@free-electrons.com>
+ <6b89df1bf07dac2ab295fca5fdf0e55179c47ed6.1506428208.git-series.quentin.schulz@free-electrons.com>
+ <20170926130009.r5isgrjvkwmm44nn@flea>
+Reply-To: quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xcnhxbzwbfsiulu2"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7993a30fbc2e50a2d228fa0c8fad643c4034b101.1506428208.git-series.quentin.schulz@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, linux@armlinux.org.uk, lee.jones@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com, thomas.petazzoni@free-electrons.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="Tu9tUEg7AlRafR3iP0u73KuJAKulJ18T1"
+Return-path: <linux-sunxi+bncBCLZXSNY5IDBBVFCVHHAKGQERNNILZA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20170926130009.r5isgrjvkwmm44nn@flea>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Tu9tUEg7AlRafR3iP0u73KuJAKulJ18T1
+Content-Type: multipart/mixed; boundary="e2OBghtpOGG1QeUKCkqwESRraeihPLNlk";
+ protected-headers="v1"
+From: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org,
+ wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org,
+ linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
+ linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org,
+ linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
+Message-ID: <5596280a-51bb-7491-31f4-5800219888ad-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 02/10] pinctrl: axp209: add pinctrl features
+References: <cover.1c314f4154a6d27354625f03d0a5269eee55a9c5.1506428208.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+ <6b89df1bf07dac2ab295fca5fdf0e55179c47ed6.1506428208.git-series.quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+ <20170926130009.r5isgrjvkwmm44nn@flea>
+In-Reply-To: <20170926130009.r5isgrjvkwmm44nn@flea>
 
---xcnhxbzwbfsiulu2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--e2OBghtpOGG1QeUKCkqwESRraeihPLNlk
+Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
 
-On Tue, Sep 26, 2017 at 12:17:13PM +0000, Quentin Schulz wrote:
-> Instead of using a function to retrieve each pin's correct control
-> register, use drv_data within pinctrl_pin_desc to store the ctrl reg.
->=20
-> Remove axp20x_gpio_get_reg and replace every occurrence by a get from
-> drv_data.
+Hi Maxime,
 
-Why do you need to do that? This should be explained.
+On 26/09/2017 15:00, Maxime Ripard wrote:
+> On Tue, Sep 26, 2017 at 12:17:12PM +0000, Quentin Schulz wrote:
+>> +static const struct axp20x_desc_pin axp209_pins[] = {
+>> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(0, "GPIO0"),
+>> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+>> +		   AXP20X_FUNCTION(0x2, "gpio_in"),
+>> +		   AXP20X_FUNCTION(0x3, "ldo"),
+>> +		   AXP20X_FUNCTION(0x4, "adc")),
+>> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(1, "GPIO1"),
+>> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+>> +		   AXP20X_FUNCTION(0x2, "gpio_in"),
+>> +		   AXP20X_FUNCTION(0x3, "ldo"),
+>> +		   AXP20X_FUNCTION(0x4, "adc")),
+>> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(2, "GPIO2"),
+>> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+>> +		   AXP20X_FUNCTION(0x2, "gpio_in")),
+>> +};
+> 
+> If all the functions are the same, and at the same offset, can't we
+> just hardcode it, instead of having (and duplicate) all the logic
+> below?
+> 
 
-Maxime
+AXP20X_PIN(AXP20X_PINCTRL_PIN(0, "GPIO0"),
+		AXP20X_GPIO_OUT,
+		AXP20X_GPIO_IN,
+		AXP20X_LDO,
+		AXP20X_ADC))
 
---=20
-Maxime Ripard, Free Electrons
+That's what you mean?
+
+>> +	pctrl_desc = devm_kzalloc(&pdev->dev, sizeof(*pctrl_desc), GFP_KERNEL);
+>> +	if (!pctrl_desc)
+>> +		return -ENOMEM;
+>> +
+>> +	pctrl_desc->name = dev_name(&pdev->dev);
+>> +	pctrl_desc->owner = THIS_MODULE;
+>> +	pctrl_desc->pins = pins;
+>> +	pctrl_desc->npins = gpio->desc->npins;
+>> +	pctrl_desc->pctlops = &axp20x_pctrl_ops;
+>> +	pctrl_desc->pmxops = &axp20x_pmx_ops;
+> 
+> The strict flag needs to be set too in order to avoid concurrent uses
+> of GPIO and other functions.
+> 
+
+Strict is a property of pinmux_ops struct (pmxops) and it is set.
+
+Thanks,
+Quentin
+-- 
+Quentin Schulz, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---xcnhxbzwbfsiulu2
+-- 
+You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
+
+--e2OBghtpOGG1QeUKCkqwESRraeihPLNlk--
+
+--Tu9tUEg7AlRafR3iP0u73KuJAKulJ18T1
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJZyk+UAAoJEBx+YmzsjxAg6AwP/R4vBxjKUB+aMJfyAPv2oLoQ
-mMxZTK7syyuZ8WMNiDB0I/dPVnvR8qRqiPUDpZwO2XBJfhb2QvrKN/I2YYomdiQB
-dgWzuCkkKSKnlKiASPW86fi7M3MbT3HAr+7jOwPIiYJYYwh7xtQGEBpQMXOW1oaH
-Bhs/jxCfRK42CqF2dlaEpMCgZMNjbOREqzx5gWmCgoDs+HbwVNEVK62poI+ATRnS
-A6che+T8GRX9qbY9K/VHg81sX40x6AAOzA6Kt36Pd34/MGmATn1u/MnWluQBRzfV
-nfsx0o8pIn9d1nN5HzKYfcli16b/n3iNMRVqKl60acmLdEVCPUtlAllxgInYJec4
-PqZ7J2+6qukUBVHNr5vd2ncJscvC5UIODyUmYRQoR0Uu4ddsuSuSm5Nrk0PZ8uas
-G34/jEmUY/g2mJiG/Y8WpuiCKamoExr6IZocXmRRVApZkYPY2U919Ur0ilb6WIBN
-jOXPa4cUVS9H1QZTRXZBNRoWfcUeaT//jOQHSQRSkb+xkfVoeiDyPSkwEGQnb1cd
-2oi3IM7pJOMJxdiX2WvvdrjdarImBWozSOLY+GsGVAcQ9aJMfgvVYa1buNjGMpdb
-hgyWhkP6wlRGnpS5M3H5dl9WvXQZnlog6thTPxBJquVD6dz+iRlDo74UWeX+t5JC
-I9LrkE5iL40o8jiQ/qMk
-=JSNs
+iQIcBAEBCAAGBQJZylFFAAoJEIS4mnU+4PGj6z4QAKAu+SJQMQl+/74HftfG1OFT
+55DXQHJbz61AS44x7x4LNfR9roQ9IgD8PBPxEGnyTTLZnnSPxGGZ3XoIEFoeUYvn
++DCh7uLWv5Cx+ZKicyP77rm8IqkCMu82P8+zl98XKInKwJ79bkz0yF4NN8ON+FZx
+0+xioSzQDvlddiBOEuEu+3gnkkiMetXeV1GitIt1fqndaQ4kCYmA6koJ2C68IBSo
+cx+MBoLahXgrMjCyA+eroJ1QOKhhbkntresQJ0yytgTKT9kkB2qoMmoqzt9Wisiw
+GYRbqP2znGLLVSwLELKIjoFxhDtire4sLpCeZbl/aiN4nKUGm8dhpr+fdnGp4x7J
+EOiRMLKzjQAxAFqsGqstH5ca3d6V63oNNSTwrKRZmWrAH5rV4o7PK9xSxtAEdMKb
+EUaTYXlxM5kwUX0NpHLZtlni+DU7KbAD1hQaCg7XluMmT2mm03c5etbBbKzJK8ar
+GU5lyyXuHipnX4YYX2OHaMEkXCctAGMQ9IAL157pwfrH/gFJykKU8SHPKZFt+dJc
+0bux0wvHZez0Qi4qwUaFAZ7RMTHE+cPYZt2mUiNw5wpeQZSWvkTlzVdqSlHTgNV8
+htnWTr7sU7DlENUOVb1eS2TgVTINZzqqaBfQapIOJKHYD3GNmny7ub79tZfJelp1
+g+BmhDats/9794trLzgG
+=Weq+
 -----END PGP SIGNATURE-----
 
---xcnhxbzwbfsiulu2--
+--Tu9tUEg7AlRafR3iP0u73KuJAKulJ18T1--
