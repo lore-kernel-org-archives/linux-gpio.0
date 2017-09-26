@@ -1,71 +1,105 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
- state
-Date: Tue, 26 Sep 2017 15:16:28 +0100
-Message-ID: <20170926141628.h27hcrujzhxu4sph@localhost.localdomain>
-References: <20170921010421.7467-1-f.fainelli@gmail.com>
- <20170921010421.7467-2-f.fainelli@gmail.com>
- <CACRpkdbVs1b0y91xWtb+8EwcDnkeLd4jbcZnWFnzOytmCLvDXw@mail.gmail.com>
- <20170922132011.wssbhnsggteffgte@localhost.localdomain>
- <dbd6df33-0af4-7014-bc46-3378c1346726@gmail.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2] gpio: omap: Fix lost edge interrupts
+Date: Tue, 26 Sep 2017 10:54:26 -0500
+Message-ID: <01f236f2-b1f2-87af-a9f3-047ae0f02443@ti.com>
+References: <20170926113203.2bhqq6ini7dtk4l2@lenoch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:47134 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965237AbdIZOQn (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Tue, 26 Sep 2017 10:16:43 -0400
-Content-Disposition: inline
-In-Reply-To: <dbd6df33-0af4-7014-bc46-3378c1346726@gmail.com>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:59339 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966056AbdIZPyh (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2017 11:54:37 -0400
+In-Reply-To: <20170926113203.2bhqq6ini7dtk4l2@lenoch>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+To: Ladislav Michl <ladis@linux-mips.org>, linux-omap@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>
 
-On Fri, Sep 22, 2017 at 09:57:22AM -0700, Florian Fainelli wrote:
-> On 09/22/2017 06:20 AM, Charles Keepax wrote:
-> > On Fri, Sep 22, 2017 at 01:55:22PM +0200, Linus Walleij wrote:
-> >> On Thu, Sep 21, 2017 at 3:04 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > I guess in our case we didn't really consider the restore aspect
-> > because we essentially get that for free from regmap. Regmap
-> > cache's all our register state and provides a mechanism to sync
-> > that back to the hardware, so we simply invoke that on resume and
-> > all our GPIO/pinctrl state is restored.
+cc: Linus, linux-gpio
+
+On 09/26/2017 06:32 AM, Ladislav Michl wrote:
+> From: Grygorii Strashko <grygorii.strashko@ti.com>
 > 
-> As you may see, the problem in my case is that the hardware has only onw
-> pinctrl state: "default", and it loses its hardware register contents,
-> and because of early check in pinctrl_select_state(), we do nothing (the
-> state has not changed per-se), so we are left with SW thinking we
-> applied the "default" state again, while in fact we did not.
+> Use handle_simple_irq and clear edge interrupts early in
+> omap_gpio_irq_handler to avoid loosing interrupts.
+
+Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+
+not sure, but you might need to re-send it with proper cc list.
+
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+> ---
+>   drivers/gpio/gpio-omap.c |   22 +++++++++++++---------
+>   1 file changed, 13 insertions(+), 9 deletions(-)
+> 
+>   Changes:
+>   -v2: use handle_simple_irq to handle edge interrupts
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index dbf869fb63ce..0c8005285124 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -518,7 +518,13 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+>   	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+>   		irq_set_handler_locked(d, handle_level_irq);
+>   	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+> -		irq_set_handler_locked(d, handle_edge_irq);
+> +		/*
+> +		 * Edge IRQs are already cleared/acked in irq_handler and
+> +		 * not need to be masked, as result handle_edge_irq()
+> +		 * logic is excessed here and may cause lose of interrupts.
+> +		 * So just use handle_simple_irq.
+> +		 */
+> +		irq_set_handler_locked(d, handle_simple_irq);
+>   
+>   	return 0;
+>   
+> @@ -678,7 +684,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+>   static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+>   {
+>   	void __iomem *isr_reg = NULL;
+> -	u32 isr;
+> +	u32 enabled, isr, level_mask;
+>   	unsigned int bit;
+>   	struct gpio_bank *bank = gpiobank;
+>   	unsigned long wa_lock_flags;
+> @@ -691,23 +697,21 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+>   	pm_runtime_get_sync(bank->chip.parent);
+>   
+>   	while (1) {
+> -		u32 isr_saved, level_mask = 0;
+> -		u32 enabled;
+> -
+>   		raw_spin_lock_irqsave(&bank->lock, lock_flags);
+>   
+>   		enabled = omap_get_gpio_irqbank_mask(bank);
+> -		isr_saved = isr = readl_relaxed(isr_reg) & enabled;
+> +		isr = readl_relaxed(isr_reg) & enabled;
+>   
+>   		if (bank->level_mask)
+>   			level_mask = bank->level_mask & enabled;
+> +		else
+> +			level_mask = 0;
+>   
+>   		/* clear edge sensitive interrupts before handler(s) are
+>   		called so that we don't miss any interrupt occurred while
+>   		executing them */
+> -		omap_disable_gpio_irqbank(bank, isr_saved & ~level_mask);
+> -		omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
+> -		omap_enable_gpio_irqbank(bank, isr_saved & ~level_mask);
+> +		if (isr & ~level_mask)
+> +			omap_clear_gpio_irqbank(bank, isr & ~level_mask);
+>   
+>   		raw_spin_unlock_irqrestore(&bank->lock, lock_flags);
+>   
 > 
 
-That is exactly the situation we have on the CODECs when they go
-into runtime suspend, power is removed, and everything is back at
-defaults when we resume. Just in our case we re-apply the state
-as part of the CODEC resume using a regmap sync.
-
-> The approach taken here was to move this to the core pinctrl code
-> because this is not something a pinctrl consumer should be aware of,
-> when it calls pinctrl_select_state(), it should do what it asked for.
-> 
-
-Apologies if I have missed something here, but does the consumer
-not still to some extent need to be aware with this solution
-since it needs to re-request the pin state in resume?
-
-I think that is really my only reservation here, is it feels
-like this should be something that is purely implemented on the
-provider, and be invisible to the consumer, and I am not clear
-this is.
-
-> I also decided to make this a per-provider property as opposed to a
-> per-group property because chances are that the state retention is on a
-> per-controller basis, and not per-bank/group, although I may be wrong.
-> 
-
-It seems quite likely that this property would mostly be
-per-provider to me as well.
-
-Thanks,
-Charles
+-- 
+regards,
+-grygorii
