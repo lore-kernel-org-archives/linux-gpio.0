@@ -1,19 +1,19 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 4/8] extcon: gpio: Convert to fully use GPIO descriptor
-Date: Tue, 26 Sep 2017 11:18:01 +0900
-Message-ID: <59C9B8D9.6050203@samsung.com>
+Subject: Re: [PATCH 5/8] extcon: gpio: Request reasonable interrupts
+Date: Tue, 26 Sep 2017 11:19:41 +0900
+Message-ID: <59C9B93D.2080109@samsung.com>
 References: <20170924145622.4031-1-linus.walleij@linaro.org>
-        <CGME20170924150004epcas4p3217d627df09c3292114f93ec0a66e3b4@epcas4p3.samsung.com>
-        <20170924145622.4031-5-linus.walleij@linaro.org>
+        <CGME20170924150052epcas2p1d9069ef18771b6aceba7e1361d47a65e@epcas2p1.samsung.com>
+        <20170924145622.4031-6-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:61760 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934681AbdIZCSE (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Sep 2017 22:18:04 -0400
-In-reply-to: <20170924145622.4031-5-linus.walleij@linaro.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:31307 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934681AbdIZCTm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 25 Sep 2017 22:19:42 -0400
+In-reply-to: <20170924145622.4031-6-linus.walleij@linaro.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
@@ -21,160 +21,105 @@ Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, John Stultz <john.
 
 Hi Linus,
 
-Looks good to me. But, there is one comment
-of gpiod_to_irq()'s return value.
-
-If you modify it, feel free to add my tag:
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
 On 2017년 09월 24일 23:56, Linus Walleij wrote:
-> Since we are not getting the GPIO from any platform data and global
-> GPIO numberspace, we simply get the named "extcon" GPIO directly from
-> the device. Cut away "active low" since GPIO descriptors already know
-> if the line is active high or low. Simplify a bit with a
-> struct device *dev helper variable in probe() and cut the complex
-> init() function.
+> The only thing that makes sense is to request a falling edge interrupt
+> if the line is active low and a rising edge interrupt if the line is
+> active high, so just do that and get rid of the assignment from
+> platform data. The GPIO descriptor knows if the line is active high
+> or low.
+> 
+> Also make irq a local variable in probe(), it's not used anywhere else.
 > 
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  drivers/extcon/extcon-gpio.c | 66 ++++++++++----------------------------------
->  1 file changed, 15 insertions(+), 51 deletions(-)
+>  drivers/extcon/extcon-gpio.c | 29 +++++++++++++++++++----------
+>  1 file changed, 19 insertions(+), 10 deletions(-)
+
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 > 
 > diff --git a/drivers/extcon/extcon-gpio.c b/drivers/extcon/extcon-gpio.c
-> index 9c4094edd123..86f3ec6d6014 100644
+> index 86f3ec6d6014..6d9cb4ed11c2 100644
 > --- a/drivers/extcon/extcon-gpio.c
 > +++ b/drivers/extcon/extcon-gpio.c
-> @@ -18,7 +18,6 @@
->   */
->  
->  #include <linux/extcon.h>
-> -#include <linux/gpio.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/init.h>
->  #include <linux/interrupt.h>
-> @@ -35,12 +34,8 @@
+> @@ -30,26 +30,22 @@
+>  /**
+>   * struct gpio_extcon_data - A simple GPIO-controlled extcon device state container.
+>   * @edev:		Extcon device.
+> - * @irq:		Interrupt line for the external connector.
 >   * @work:		Work fired by the interrupt.
 >   * @debounce_jiffies:	Number of jiffies to wait for the GPIO to stabilize, from the debounce
 >   *			value.
-> - * @id_gpiod:		GPIO descriptor for this external connector.
-> + * @gpiod:		GPIO descriptor for this external connector.
+>   * @gpiod:		GPIO descriptor for this external connector.
 >   * @extcon_id:		The unique id of specific external connector.
-> - * @gpio:		Corresponding GPIO.
-> - * @gpio_active_low:	Boolean describing whether gpio active state is 1 or 0
-> - *			If true, low state of gpio means active.
-> - *			If false, high state of gpio means active.
 >   * @debounce:		Debounce time for GPIO IRQ in ms.
->   * @irq_flags:		IRQ Flags (e.g., IRQF_TRIGGER_LOW).
+> - * @irq_flags:		IRQ Flags (e.g., IRQF_TRIGGER_LOW).
 >   * @check_on_resume:	Boolean describing whether to check the state of gpio
-> @@ -51,10 +46,8 @@ struct gpio_extcon_data {
->  	int irq;
+>   *			while resuming from sleep.
+>   */
+>  struct gpio_extcon_data {
+>  	struct extcon_dev *edev;
+> -	int irq;
 >  	struct delayed_work work;
 >  	unsigned long debounce_jiffies;
-> -	struct gpio_desc *id_gpiod;
-> +	struct gpio_desc *gpiod;
+>  	struct gpio_desc *gpiod;
 >  	unsigned int extcon_id;
-> -	unsigned gpio;
-> -	bool gpio_active_low;
 >  	unsigned long debounce;
->  	unsigned long irq_flags;
+> -	unsigned long irq_flags;
 >  	bool check_on_resume;
-> @@ -67,10 +60,7 @@ static void gpio_extcon_work(struct work_struct *work)
->  		container_of(to_delayed_work(work), struct gpio_extcon_data,
->  			     work);
+>  };
 >  
-> -	state = gpiod_get_value_cansleep(data->id_gpiod);
-> -	if (data->gpio_active_low)
-> -		state = !state;
-> -
-> +	state = gpiod_get_value_cansleep(data->gpiod);
->  	extcon_set_state_sync(data->edev, data->extcon_id, state);
->  }
->  
-> @@ -83,60 +73,34 @@ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> -static int gpio_extcon_init(struct device *dev, struct gpio_extcon_data *data)
-> -{
-> -	int ret;
-> -
-> -	ret = devm_gpio_request_one(dev, data->gpio, GPIOF_DIR_IN,
-> -				dev_name(dev));
-> -	if (ret < 0)
-> -		return ret;
-> -
-> -	data->id_gpiod = gpio_to_desc(data->gpio);
-> -	if (!data->id_gpiod)
-> -		return -EINVAL;
-> -
-> -	if (data->debounce) {
-> -		ret = gpiod_set_debounce(data->id_gpiod,
-> -					 data->debounce * 1000);
-> -		if (ret < 0)
-> -			data->debounce_jiffies =
-> -				msecs_to_jiffies(data->debounce);
-> -	}
-> -
-> -	data->irq = gpiod_to_irq(data->id_gpiod);
-> -	if (data->irq < 0)
-> -		return data->irq;
-> -
-> -	return 0;
-> -}
-> -
->  static int gpio_extcon_probe(struct platform_device *pdev)
+> @@ -77,21 +73,34 @@ static int gpio_extcon_probe(struct platform_device *pdev)
 >  {
 >  	struct gpio_extcon_data *data;
-> +	struct device *dev = &pdev->dev;
+>  	struct device *dev = &pdev->dev;
+> +	unsigned long irq_flags;
+> +	int irq;
 >  	int ret;
 >  
-> -	data = devm_kzalloc(&pdev->dev, sizeof(struct gpio_extcon_data),
-> -				   GFP_KERNEL);
-> +	data = devm_kzalloc(dev, sizeof(struct gpio_extcon_data), GFP_KERNEL);
+>  	data = devm_kzalloc(dev, sizeof(struct gpio_extcon_data), GFP_KERNEL);
 >  	if (!data)
 >  		return -ENOMEM;
 >  
->  	if (!data->irq_flags || data->extcon_id > EXTCON_NONE)
+> -	if (!data->irq_flags || data->extcon_id > EXTCON_NONE)
+> +	if (data->extcon_id > EXTCON_NONE)
 >  		return -EINVAL;
 >  
-> -	/* Initialize the gpio */
-> -	ret = gpio_extcon_init(&pdev->dev, data);
-> -	if (ret < 0)
-> -		return ret;
-> +	data->gpiod = devm_gpiod_get(dev, "extcon", GPIOD_IN);
-> +	if (IS_ERR(data->gpiod))
-> +		return PTR_ERR(data->gpiod);
-> +	data->irq = gpiod_to_irq(data->gpiod);
-> +	if (data->irq <= 0)
-
-"if (data->irq < 0)" is enough. If irq is zero, gpiod_to_irq()
-returns the -ENXIO.
-
-> +		return data->irq;
+>  	data->gpiod = devm_gpiod_get(dev, "extcon", GPIOD_IN);
+>  	if (IS_ERR(data->gpiod))
+>  		return PTR_ERR(data->gpiod);
+> -	data->irq = gpiod_to_irq(data->gpiod);
+> -	if (data->irq <= 0)
+> -		return data->irq;
+> +	irq = gpiod_to_irq(data->gpiod);
+> +	if (irq <= 0)
+> +		return irq;
+> +
+> +	/*
+> +	 * It is unlikely that this is an acknowledged interrupt that goes
+> +	 * away after handling, what we are looking for are falling edges
+> +	 * if the signal is active low, and rising edges if the signal is
+> +	 * active high.
+> +	 */
+> +	if (gpiod_is_active_low(data->gpiod))
+> +		irq_flags = IRQF_TRIGGER_FALLING;
+> +	else
+> +		irq_flags = IRQF_TRIGGER_RISING;
 >  
 >  	/* Allocate the memory of extcon devie and register extcon device */
-> -	data->edev = devm_extcon_dev_allocate(&pdev->dev, &data->extcon_id);
-> +	data->edev = devm_extcon_dev_allocate(dev, &data->extcon_id);
->  	if (IS_ERR(data->edev)) {
-> -		dev_err(&pdev->dev, "failed to allocate extcon device\n");
-> +		dev_err(dev, "failed to allocate extcon device\n");
->  		return -ENOMEM;
->  	}
->  
-> -	ret = devm_extcon_dev_register(&pdev->dev, data->edev);
-> +	ret = devm_extcon_dev_register(dev, data->edev);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -146,7 +110,7 @@ static int gpio_extcon_probe(struct platform_device *pdev)
+>  	data->edev = devm_extcon_dev_allocate(dev, &data->extcon_id);
+> @@ -110,8 +119,8 @@ static int gpio_extcon_probe(struct platform_device *pdev)
 >  	 * Request the interrupt of gpio to detect whether external connector
 >  	 * is attached or detached.
 >  	 */
-> -	ret = devm_request_any_context_irq(&pdev->dev, data->irq,
-> +	ret = devm_request_any_context_irq(dev, data->irq,
->  					gpio_irq_handler, data->irq_flags,
+> -	ret = devm_request_any_context_irq(dev, data->irq,
+> -					gpio_irq_handler, data->irq_flags,
+> +	ret = devm_request_any_context_irq(dev, irq,
+> +					gpio_irq_handler, irq_flags,
 >  					pdev->name, data);
 >  	if (ret < 0)
+>  		return ret;
 > 
 
 
