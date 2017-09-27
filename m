@@ -1,96 +1,94 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: enable gpio for pin groups
-Date: Wed, 27 Sep 2017 08:43:52 +0200
-Message-ID: <20170927064352.cscr47rzjbeshjx6@pengutronix.de>
-References: <20170921062808.fde5bpvn3wfau67h@pengutronix.de>
- <CACRpkdacz+oC_8J5VHSsKXHGqxn96ETziu+ifUp4XHHrwcqbtA@mail.gmail.com>
- <20170922180219.chvjuxmrharnw332@pengutronix.de>
- <CACRpkdZn=DogDy8-iXavmrkd1d=FoeL94jb-Sb4iPwb-s+GJjA@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
+ state
+Date: Wed, 27 Sep 2017 09:26:41 +0100
+Message-ID: <20170927082641.cuwuettnwcwofh7k@localhost.localdomain>
+References: <20170921010421.7467-1-f.fainelli@gmail.com>
+ <20170921010421.7467-2-f.fainelli@gmail.com>
+ <CACRpkdbVs1b0y91xWtb+8EwcDnkeLd4jbcZnWFnzOytmCLvDXw@mail.gmail.com>
+ <20170922132011.wssbhnsggteffgte@localhost.localdomain>
+ <dbd6df33-0af4-7014-bc46-3378c1346726@gmail.com>
+ <20170926141628.h27hcrujzhxu4sph@localhost.localdomain>
+ <61d19678-e90c-3b3a-099a-81200873edc8@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZn=DogDy8-iXavmrkd1d=FoeL94jb-Sb4iPwb-s+GJjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <61d19678-e90c-3b3a-099a-81200873edc8@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Sep 27, 2017 at 01:52:45AM +0200, Linus Walleij wrote:
-> On Fri, Sep 22, 2017 at 8:02 PM, Uwe Kleine-König
-> <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
-> > On Fri, Sep 22, 2017 at 03:23:05PM +0200, Linus Walleij wrote:
-> >> On Thu, Sep 21, 2017 at 8:28 AM, Uwe Kleine-König
-> >> <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> wrote:
+On Tue, Sep 26, 2017 at 10:51:14AM -0700, Florian Fainelli wrote:
+> On 09/26/2017 07:16 AM, Charles Keepax wrote:
+> > On Fri, Sep 22, 2017 at 09:57:22AM -0700, Florian Fainelli wrote:
+> >> On 09/22/2017 06:20 AM, Charles Keepax wrote:
+> >>> On Fri, Sep 22, 2017 at 01:55:22PM +0200, Linus Walleij wrote:
+> >>>> On Thu, Sep 21, 2017 at 3:04 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >>> I guess in our case we didn't really consider the restore aspect
+> >>> because we essentially get that for free from regmap. Regmap
+> >>> cache's all our register state and provides a mechanism to sync
+> >>> that back to the hardware, so we simply invoke that on resume and
+> >>> all our GPIO/pinctrl state is restored.
 > >>
-> >> > on an i.MX25 machine on my desk a UART RX line is guarded by a transistor
-> >> > like this:
-> >> >
-> >> >         ,------------------------.
-> >> >         | ,---------.            |
-> >> >         | |  imx25  o--RX----◁---o---
-> >> >         | |         o--GPIO--'   |
-> >> >         | `---------'            |
-> >> >         `------------------------'
+> >> As you may see, the problem in my case is that the hardware has only onw
+> >> pinctrl state: "default", and it loses its hardware register contents,
+> >> and because of early check in pinctrl_select_state(), we do nothing (the
+> >> state has not changed per-se), so we are left with SW thinking we
+> >> applied the "default" state again, while in fact we did not.
 > >>
-> >> This is inside the SoC, right, not outside it?
+> > 
+> > That is exactly the situation we have on the CODECs when they go
+> > into runtime suspend, power is removed, and everything is back at
+> > defaults when we resume. Just in our case we re-apply the state
+> > as part of the CODEC resume using a regmap sync.
+> 
+> Do you just re-apply the previous state, or do you force a "fake" state
+> by moving to a state different than the current during suspend, just to
+> force a transition during resume?
+> 
+
+Yes we just reapply the state, I guess the important thing here
+is we arn't doing that through pinctrl we are just returning
+the registers to the appropriate values (which regmap handily
+provides) as part of resume.
+
+It looks like there are other pinctrl drivers also doing this,
+although often hardcoding it rather than using regmap. See either
+pinctrl-exynos-arm.c or pinctrl-at91-pio4.c
+
+> > 
+> >> The approach taken here was to move this to the core pinctrl code
+> >> because this is not something a pinctrl consumer should be aware of,
+> >> when it calls pinctrl_select_state(), it should do what it asked for.
 > >>
-> >> In the rest of my answer I assume this.
-> >
-> > No, that's on the board. So your reply unfortunately doesn't match the
-> > problem :-|
+> > 
+> > Apologies if I have missed something here, but does the consumer
+> > not still to some extent need to be aware with this solution
+> > since it needs to re-request the pin state in resume?
 > 
-> OK sorry for my stupid and pointless assumption about this being
-> inside the SoC, I should ask before I talk.
+> Consumers may indeed have to call pinctrl_select_state() but because of
+> the current check that does:
 > 
-> >> If this is on the board, using enable-gpios is proper.
-> >
-> > enable-gpios as I suggested below that is? If so I assume you will be
-> > open for a generic approach to implement this?
+> if (p->state == state)
 > 
-> So the enable-gpios as part of the pin control state like below:
+> this is not happening, but you are absolutely right, consumers that wish
+> to see their pin state be (re)configured during driver resume absolutely
+> need to tell the core about it, I am not thinking about any of this
+> happening "under the hood", this absolutely would not be right.
 > 
-> >> > My first idea was to make this a property of the UART and added a
-> >> > enable-gpios property for it[1]. But now I wonder if this is better
-> >> > abstracted as an enable-gpios property in the pinctrl node. Something
-> >> > like:
-> >> >
-> >> >         pinctrl_uart5: uart5 {
-> >> >                 fsl,pins = <
-> >> >                         MX25_PAD_ECB__UART5_TXD                 0x00002080 /* TXD */
-> >> >                         MX25_PAD_LBA__UART5_RXD                 0x00000000 /* RXD */
-> >> >                         MX25_PAD_CS4__UART5_CTS                 0x00002001 /* RTS */
-> >> >                         MX25_PAD_CS5__GPIO_3_21                 0x00002001 /* #RXD_EN */
-> >> >                 >;
-> >> >                 enable-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
-> >> >         };
-> >> >
-> >> > Would this make sense? Maybe with a more intuitive name?
-> 
-> I would nominally make it part of the UART node and picked up by the
-> UART driver. Unless there is compelling reasons to believe that this is
-> something we will see a lot and not a particular oddity.
 
-Well, I didn't see it much before, but that's also a reason to not put
-it into the UART driver. :-)
+See that's the bit that is concerning me, shouldn't the default
+position be you get your pin state reconfigured during resume,
+without having to do anything. Anything else seems to violate the
+principle of least surprise.
 
-Conceptually the construct is there not because the pin has an UART
-function but because the pin is an output by default but should be an
-input later. This is more related to the pinctrl part of the SoC than of
-its UART IMHO. Also the GPIO is free to be activated once the pinmuxing
-is setup, so the timing depends on the pinctrl driver. (Well, ok, once
-the UART driver starts to act the pinctrl stuff is already done and so
-the timing is fine, too. That's more a conceptual argument.)
+It also feels to me the provider driver should be handling that,
+rather than expecting the consumer to call pinctrl_select_state
+again. So for example from the consumer I should be fine just to
+call pinctrl_select_state in probe and have that state remain
+until someone changes it.
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Charles
