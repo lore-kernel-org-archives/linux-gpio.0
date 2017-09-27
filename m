@@ -1,94 +1,122 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH 1/2] pinctrl: Allow a device to indicate when to force a
- state
-Date: Wed, 27 Sep 2017 09:26:41 +0100
-Message-ID: <20170927082641.cuwuettnwcwofh7k@localhost.localdomain>
-References: <20170921010421.7467-1-f.fainelli@gmail.com>
- <20170921010421.7467-2-f.fainelli@gmail.com>
- <CACRpkdbVs1b0y91xWtb+8EwcDnkeLd4jbcZnWFnzOytmCLvDXw@mail.gmail.com>
- <20170922132011.wssbhnsggteffgte@localhost.localdomain>
- <dbd6df33-0af4-7014-bc46-3378c1346726@gmail.com>
- <20170926141628.h27hcrujzhxu4sph@localhost.localdomain>
- <61d19678-e90c-3b3a-099a-81200873edc8@gmail.com>
+From: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 02/10] pinctrl: axp209: add pinctrl features
+Date: Wed, 27 Sep 2017 11:28:15 +0200
+Message-ID: <20170927092815.4y57ej5qbilioxr5@flea>
+References: <cover.1c314f4154a6d27354625f03d0a5269eee55a9c5.1506428208.git-series.quentin.schulz@free-electrons.com>
+ <6b89df1bf07dac2ab295fca5fdf0e55179c47ed6.1506428208.git-series.quentin.schulz@free-electrons.com>
+ <20170926130009.r5isgrjvkwmm44nn@flea>
+ <5596280a-51bb-7491-31f4-5800219888ad@free-electrons.com>
+ <20170926132709.od3myumh5xtungvs@flea>
+ <0bc7efe6-8d0e-ddae-617b-36e4357f76ce@free-electrons.com>
+Reply-To: maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sktdlgeaimlfa47o"
+Return-path: <linux-sunxi+bncBDSJBYGBRIMBBOW6VXHAKGQEZZVRACY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <61d19678-e90c-3b3a-099a-81200873edc8@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, Al Cooper <alcooperx@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
+In-Reply-To: <0bc7efe6-8d0e-ddae-617b-36e4357f76ce-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Sep 26, 2017 at 10:51:14AM -0700, Florian Fainelli wrote:
-> On 09/26/2017 07:16 AM, Charles Keepax wrote:
-> > On Fri, Sep 22, 2017 at 09:57:22AM -0700, Florian Fainelli wrote:
-> >> On 09/22/2017 06:20 AM, Charles Keepax wrote:
-> >>> On Fri, Sep 22, 2017 at 01:55:22PM +0200, Linus Walleij wrote:
-> >>>> On Thu, Sep 21, 2017 at 3:04 AM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >>> I guess in our case we didn't really consider the restore aspect
-> >>> because we essentially get that for free from regmap. Regmap
-> >>> cache's all our register state and provides a mechanism to sync
-> >>> that back to the hardware, so we simply invoke that on resume and
-> >>> all our GPIO/pinctrl state is restored.
+
+--sktdlgeaimlfa47o
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+
+On Tue, Sep 26, 2017 at 01:37:37PM +0000, Quentin Schulz wrote:
+> On 26/09/2017 15:27, Maxime Ripard wrote:
+> > On Tue, Sep 26, 2017 at 01:08:21PM +0000, Quentin Schulz wrote:
+> >> Hi Maxime,
 > >>
-> >> As you may see, the problem in my case is that the hardware has only onw
-> >> pinctrl state: "default", and it loses its hardware register contents,
-> >> and because of early check in pinctrl_select_state(), we do nothing (the
-> >> state has not changed per-se), so we are left with SW thinking we
-> >> applied the "default" state again, while in fact we did not.
+> >> On 26/09/2017 15:00, Maxime Ripard wrote:
+> >>> On Tue, Sep 26, 2017 at 12:17:12PM +0000, Quentin Schulz wrote:
+> >>>> +static const struct axp20x_desc_pin axp209_pins[] = {
+> >>>> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(0, "GPIO0"),
+> >>>> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+> >>>> +		   AXP20X_FUNCTION(0x2, "gpio_in"),
+> >>>> +		   AXP20X_FUNCTION(0x3, "ldo"),
+> >>>> +		   AXP20X_FUNCTION(0x4, "adc")),
+> >>>> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(1, "GPIO1"),
+> >>>> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+> >>>> +		   AXP20X_FUNCTION(0x2, "gpio_in"),
+> >>>> +		   AXP20X_FUNCTION(0x3, "ldo"),
+> >>>> +		   AXP20X_FUNCTION(0x4, "adc")),
+> >>>> +	AXP20X_PIN(AXP20X_PINCTRL_PIN(2, "GPIO2"),
+> >>>> +		   AXP20X_FUNCTION(0x0, "gpio_out"),
+> >>>> +		   AXP20X_FUNCTION(0x2, "gpio_in")),
+> >>>> +};
+> >>>
+> >>> If all the functions are the same, and at the same offset, can't we
+> >>> just hardcode it, instead of having (and duplicate) all the logic
+> >>> below?
+> >>>
 > >>
-> > 
-> > That is exactly the situation we have on the CODECs when they go
-> > into runtime suspend, power is removed, and everything is back at
-> > defaults when we resume. Just in our case we re-apply the state
-> > as part of the CODEC resume using a regmap sync.
-> 
-> Do you just re-apply the previous state, or do you force a "fake" state
-> by moving to a state different than the current during suspend, just to
-> force a transition during resume?
-> 
-
-Yes we just reapply the state, I guess the important thing here
-is we arn't doing that through pinctrl we are just returning
-the registers to the appropriate values (which regmap handily
-provides) as part of resume.
-
-It looks like there are other pinctrl drivers also doing this,
-although often hardcoding it rather than using regmap. See either
-pinctrl-exynos-arm.c or pinctrl-at91-pio4.c
-
-> > 
-> >> The approach taken here was to move this to the core pinctrl code
-> >> because this is not something a pinctrl consumer should be aware of,
-> >> when it calls pinctrl_select_state(), it should do what it asked for.
+> >> AXP20X_PIN(AXP20X_PINCTRL_PIN(0, "GPIO0"),
+> >> 		AXP20X_GPIO_OUT,
+> >> 		AXP20X_GPIO_IN,
+> >> 		AXP20X_LDO,
+> >> 		AXP20X_ADC))
 > >>
+> >> That's what you mean?
 > > 
-> > Apologies if I have missed something here, but does the consumer
-> > not still to some extent need to be aware with this solution
-> > since it needs to re-request the pin state in resume?
+> > What I mean is:
+> > 
+> > static int axp20x_get_func(char *func)
+> > {
+> > 	if (!strcmp(func, "gpio_out"))
+> > 		return 0;
+> > 
+> > 	if (!strcmp(func, "gpio_in"))
+> > 		return 2;
+> >  
+> > 	if (!strcmp(func, "ldo"))
+> >  		return 3;
+> >  
+> > 	if (!strcmp(func, "adc"))
+> >  		return 4;
+> > 
+> > 	return -EINVAL;
+> > }
+> > 
 > 
-> Consumers may indeed have to call pinctrl_select_state() but because of
-> the current check that does:
-> 
-> if (p->state == state)
-> 
-> this is not happening, but you are absolutely right, consumers that wish
-> to see their pin state be (re)configured during driver resume absolutely
-> need to tell the core about it, I am not thinking about any of this
-> happening "under the hood", this absolutely would not be right.
-> 
+> GPIO2 on AXP209 does not support ldo nor adc.
+> GPIO1 on AXP813 does not support adc.
 
-See that's the bit that is concerning me, shouldn't the default
-position be you get your pin state reconfigured during resume,
-without having to do anything. Anything else seems to violate the
-principle of least surprise.
+Right, and surely that can be caught as well. This was a global
+approach. You could add a bitmap for example to encode whether ldo and
+adc are available. It takes two bytes, and two or operations.
 
-It also feels to me the provider driver should be handling that,
-rather than expecting the consumer to call pinctrl_select_state
-again. So for example from the consumer I should be fine just to
-call pinctrl_select_state in probe and have that state remain
-until someone changes it.
+> I find it more complex to handle those two cases in a function than by
+> hardcoding it in structures like above.
 
-Thanks,
-Charles
+You find more complex to add a 10 lines function than 450 lines of
+code that you ripped off from another driver, that generates 4
+structures many structures (groups, functions, pins and pins'
+functions) and will provide three different lookup methods? Really? :)
+
+It's way overkill for that driver. Most of these lists can be
+hardcoded as well.
+
+> Moreover, nothing tells us that it would be the same offset for
+> other PMICs.
+
+Again, let's worry about those PMICs when we'll need to support
+them. Unless you already have an example in mind of course. Otherwise,
+it's just building things on theories that have never been proven (and
+might never be).
+
+Maxime
+
+-- 
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--sktdlgeaimlfa47o--
