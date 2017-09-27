@@ -1,234 +1,81 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] Add a GPIO driver for Altera FPGA Manager Fabric I/O
-Date: Wed, 27 Sep 2017 02:20:18 +0200
-Message-ID: <CACRpkda39LU8hynYtnMyKxm+A8Behkam8CWBTSkt+0U_Fw_VtQ@mail.gmail.com>
-References: <AM5PR0701MB2657A33A85F675C4A0175CE0E4670@AM5PR0701MB2657.eurprd07.prod.outlook.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v6 1/2] dt-bindings: gpio: uniphier: add UniPhier GPIO binding
+Date: Wed, 27 Sep 2017 11:40:21 +0900
+Message-ID: <1506480022-8995-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1506480022-8995-1-git-send-email-yamada.masahiro@socionext.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:43632 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964956AbdI0AUT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2017 20:20:19 -0400
-Received: by mail-io0-f170.google.com with SMTP id k101so14293103iod.0
-        for <linux-gpio@vger.kernel.org>; Tue, 26 Sep 2017 17:20:19 -0700 (PDT)
-In-Reply-To: <AM5PR0701MB2657A33A85F675C4A0175CE0E4670@AM5PR0701MB2657.eurprd07.prod.outlook.com>
+Received: from conuserg-08.nifty.com ([210.131.2.75]:58527 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967799AbdI0CmA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2017 22:42:00 -0400
+In-Reply-To: <1506480022-8995-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: linux-gpio@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Sep 22, 2017 at 8:41 PM, Bernd Edlinger
-<bernd.edlinger@hotmail.de> wrote:
+This GPIO controller is used on UniPhier SoC family.
 
-> This is an internal 32-bit input and 32-bit output port to the FPGA logic.
+The vendor specific property "socionext,interrupt-ranges" is for
+specifying interrupt mapping to the parent interrupt controller
+because the mapping is not contiguous.  It works like "ranges",
+but transforms "interrupts" instead of "reg".
 
-What does "internal" mean in this context? On the chip?
-
-I hope it still qualifies to be called "general purpose input/output".
-
-Otherwise it's not GPIO...
-
-> Instantiate this in the device tree as:
->
->    gpio3: gpio@ff706010 {
->     #address-cells = <1>;
->     #size-cells = <0>;
->     compatible = "altr,fpgamgr-gpio";
->     reg = <0xff706010 0x8>;
->     status = "okay";
->
->     portd: gpio-controller@0 {
->      compatible = "altr,fpgamgr-gpio-output";
->      gpio-controller;
->      #gpio-cells = <2>;
->      reg = <0>;
->     };
->
->     porte: gpio-controller@1 {
->      compatible = "altr,fpgamgr-gpio-input";
->      gpio-controller;
->      #gpio-cells = <2>;
->      reg = <1>;
->     };
-
-So one port is output-only and one is input-only?
-
-Fair enough.
-
-> +config GPIO_FPGAMGR
-
-Call it GPIO_ALTERA_FPGAMGR or something.
-
-"FPGAMGR" is too generic. There must be a plethora
-of FPGA managers in the world.
-
-> +obj-$(CONFIG_GPIO_FPGAMGR)     += gpio-fpgamgr.o
-
-So call that file gpio-altera-fpgamgr.o as well.
-
-> +/*
-
-Add a blurb here at the top describing the driver and what it is for.
-
-> + * Copyright (c) 2015 Softing Industrial Automation GmbH
-
-> +static int fpgamgr_gpio_add_port(struct fpgamgr_gpio *gpio,
-> +                                struct fpgamgr_port_property *pp,
-> +                                unsigned int offs)
-> +{
-> +       struct fpgamgr_gpio_port *port;
-> +       void __iomem *dat;
-> +       int err;
-> +
-> +       port = &gpio->ports[offs];
-> +       port->gpio = gpio;
-> +       port->idx = pp->idx;
-> +
-> +       dat = gpio->regs + (pp->idx * 4);
-> +
-> +       err = bgpio_init(&port->bgc, gpio->dev, 4, dat, NULL, NULL,
-> +                        NULL, NULL, 0);
-
-Nice reuse of MMIO GPIO.
-
-> +#ifdef CONFIG_OF_GPIO
-> +       port->bgc.of_node = pp->node;
-> +#endif
-
-Drop the #ifdef.
-
-The Kconfig already depends on OF_GPIO so this is always true.
-
-The concept of "port" is the same as "bank".
-
-Please read Thierry's proposed changes that I will merge as soon as
-he respins them, he creates a "bank" abstraction for gpiolib:
-https://marc.info/?l=linux-gpio&m=150429237121695&w=2
-
-I strongly feel you should use this infrastructure, even if Thierry's work
-is much centered around being able to have per-bank IRQs.
-
-> +static void fpgamgr_gpio_unregister(struct fpgamgr_gpio *gpio)
-> +{
-> +       unsigned int m;
-> +
-> +       for (m = 0; m < gpio->nr_ports; ++m)
-> +               if (gpio->ports[m].is_registered)
-> +                       gpiochip_remove(&gpio->ports[m].bgc);
-> +}
-
-Why can't you simply use devm_gpiochip_add_data() and get rid
-of the unregister business? (data can be NULL)
-
-> +static struct fpgamgr_platform_data *
-> +fpgamgr_gpio_get_pdata_of(struct device *dev)
-> +{
-> +       struct device_node *node, *port_np;
-
-Rename "node" to just "np" (node pointer) this is the convention
-we usually employ.
-
-Just declare it like this:
-
-struct device_node *np = dev->of_node;
-
-So you don't need to assign it later.
-
-> +       struct fpgamgr_platform_data *pdata;
-> +       struct fpgamgr_port_property *pp;
-> +       int nports;
-> +       int i;
-> +
-> +       node = dev->of_node;
-> +       if (!IS_ENABLED(CONFIG_OF_GPIO) || !node)
-> +               return ERR_PTR(-ENODEV);
-
-Drop this, as stated above it is always enabled when compiling
-and probing this code.
-
-> +       nports = of_get_child_count(node);
-> +       if (nports == 0)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       pdata = kzalloc(sizeof(*pdata), GFP_KERNEL);
-> +       if (!pdata)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       pdata->properties = kcalloc(nports, sizeof(*pp), GFP_KERNEL);
-> +       if (!pdata->properties) {
-> +               kfree(pdata);
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       pdata->nports = nports;
-
-Again important to use Thierry's infrastructure for ports/banks.
-
-> +static inline void fpgamgr_free_pdata_of(struct fpgamgr_platform_data
-> *pdata)
-> +{
-> +       if (!IS_ENABLED(CONFIG_OF_GPIO) || !pdata)
-> +               return;
-
-Drop that.
-
-> +static int fpgamgr_gpio_probe(struct platform_device *pdev)
-> +{
-
-Since you use the struct device * pointer a lot here, introduce a local
-variable like this:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
 
 
-struct device *dev = &pdev->dev;
+ .../devicetree/bindings/gpio/gpio-uniphier.txt     | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
 
-Then substitute &pdev->dev for just dev below. Make it so much
-easier to read.
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt b/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+new file mode 100644
+index 0000000..6d9251a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+@@ -0,0 +1,40 @@
++UniPhier GPIO controller
++
++Required properties:
++- compatible: Should be "socionext,uniphier-gpio".
++- reg: Specifies offset and length of the register set for the device.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be 2.  The first cell is the pin number and the second
++  cell is used to specify optional parameters.
++- interrupt-parent: Specifies the parent interrupt controller.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be 2.  The first cell defines the interrupt number.
++  The second cell bits[3:0] is used to specify trigger type as follows:
++    1 = low-to-high edge triggered
++    2 = high-to-low edge triggered
++    4 = active high level-sensitive
++    8 = active low level-sensitive
++  Valid combinations are 1, 2, 3, 4, 8.
++- ngpios: Specifies the number of GPIO lines.
++- gpio-ranges: Mapping to pin controller pins (as described in gpio.txt)
++- socionext,interrupt-ranges: Specifies an interrupt number mapping between
++  this GPIO controller and its interrupt parent, in the form of arbitrary
++  number of <child-interrupt-base parent-interrupt-base length> triplets.
++
++Optional properties:
++- gpio-ranges-group-names: Used for named gpio ranges (as described in gpio.txt)
++
++Example:
++	gpio: gpio@55000000 {
++		compatible = "socionext,uniphier-gpio";
++		reg = <0x55000000 0x200>;
++		interrupt-parent = <&aidet>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-ranges = <&pinctrl 0 0 0>;
++		gpio-ranges-group-names = "gpio_range";
++		ngpios = <248>;
++		socionext,interrupt-ranges = <0 48 16>, <16 154 5>, <21 217 3>;
++	};
+-- 
+2.7.4
 
-> +       unsigned int i;
-> +       struct resource *res;
-> +       struct fpgamgr_gpio *gpio;
-
-gpio is a bit ambigous here don't you think?
-
-At least call it "fgpio" or something.
-
-> +static const struct of_device_id fpgamgr_of_match[] = {
-> +       { .compatible = "altr,fpgamgr-gpio" },
-> +       { /* Sentinel */ }
-> +};
-
-Are these device tree bindings already merged? Else they need
-a separate patch with Cc to devicetree@vger.kernel.org.
-
-> +#ifdef CONFIG_PM_SLEEP
-> +static int fpgamgr_gpio_suspend(struct device *dev)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int fpgamgr_gpio_resume(struct device *dev)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(fpgamgr_gpio_pm_ops, fpgamgr_gpio_suspend,
-> +                        fpgamgr_gpio_resume);
-
-Either implement the suspend resume for real or drop this entire thing.
-Just skeleton functions are not going to help anyone.
-
-> +static struct platform_driver fpgamgr_gpio_driver = {
-> +       .driver         = {
-> +               .name   = "gpio-fpgamgr",
-
-gpio-altera-fpgamgr
-
-> +               .owner  = THIS_MODULE,
-> +               .pm     = &fpgamgr_gpio_pm_ops,
-
-Drop that too unless you implement it.
-
-Yours,
-Linus Walleij
