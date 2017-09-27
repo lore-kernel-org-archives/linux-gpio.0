@@ -1,50 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 1/2] dt-bindings: gpio: uniphier: add UniPhier GPIO binding
-Date: Wed, 27 Sep 2017 15:42:05 +0200
-Message-ID: <CACRpkdYJSXH+94QScrpSPdfy8ULa6dV2q0qRjsfKAAWSRuKTKQ@mail.gmail.com>
-References: <1506480343-9597-1-git-send-email-yamada.masahiro@socionext.com> <1506480343-9597-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] gpio: amd8111 Kconfig typo fix (trivial)
+Date: Wed, 27 Sep 2017 15:45:48 +0200
+Message-ID: <CACRpkdae+-jo2J09MsOpC8QCZnmNwuuv6xkt_H9AQhcYdfkm=w@mail.gmail.com>
+References: <1506458262-11755-1-git-send-email-nnyby@columbia.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:53860 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753127AbdI0NmH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2017 09:42:07 -0400
-Received: by mail-it0-f47.google.com with SMTP id 85so6599588ith.2
-        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2017 06:42:07 -0700 (PDT)
-In-Reply-To: <1506480343-9597-2-git-send-email-yamada.masahiro@socionext.com>
+Received: from mail-io0-f169.google.com ([209.85.223.169]:49954 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753155AbdI0Npt (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 27 Sep 2017 09:45:49 -0400
+Received: by mail-io0-f169.google.com with SMTP id 21so15694408iof.6
+        for <linux-gpio@vger.kernel.org>; Wed, 27 Sep 2017 06:45:49 -0700 (PDT)
+In-Reply-To: <1506458262-11755-1-git-send-email-nnyby@columbia.edu>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>, Rob Herring <robh@kernel.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Nik Nyby <nnyby@columbia.edu>
+Cc: Jiri Kosina <trivial@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Wed, Sep 27, 2017 at 4:45 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, Sep 26, 2017 at 10:37 PM, Nik Nyby <nnyby@columbia.edu> wrote:
 
-> This GPIO controller is used on UniPhier SoC family.
->
-> The vendor specific property "socionext,interrupt-ranges" is for
-> specifying interrupt mapping to the parent interrupt controller
-> because the mapping is not contiguous.  It works like "ranges",
-> but transforms "interrupts" instead of "reg".
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+> uncarefull -> uncareful
 
-I don't think Rob has seen the new interrupt range thing?
-(It's not a big deal. Things like these are a bit fuzzy.)
+Patch applied.
 
-> +               socionext,interrupt-ranges = <0 48 16>, <16 154 5>, <21 217 3>;
-
-If it is as you say, that other SoCs are doing the same, we should
-think about creating a generic property for this. Like
-hierarchy-interrupt-ranges or so.
-
-I kind of liked the old patch where it was just "interrupts" and
-then you looked it up from the irq subsystem. (tglx even ACKed
-the patch).
-
-But I want the DT people to say something here.
+This is weird english. Isn't it "careless", "sloppy" or "using without
+thinking"?
 
 Yours,
 Linus Walleij
