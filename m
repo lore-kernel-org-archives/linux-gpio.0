@@ -1,56 +1,81 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v5 1/3] irqdomain: export of_phandle_args_to_fwspec
-Date: Wed, 27 Sep 2017 11:42:54 +0900
-Message-ID: <CAK7LNATTfmheWvOUrwbEbuOsx=TKFJB1+XxZcKKQtYyPjgkO_g@mail.gmail.com>
-References: <1505292990-22957-1-git-send-email-yamada.masahiro@socionext.com>
- <1505292990-22957-2-git-send-email-yamada.masahiro@socionext.com>
- <CACRpkdb_4xMvN=5TH=UNiHhKC7X-C4g+t2JoiR992Y12Q-818w@mail.gmail.com> <alpine.DEB.2.20.1709251211050.15252@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:22671 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934771AbdI0Cny (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 26 Sep 2017 22:43:54 -0400
-In-Reply-To: <alpine.DEB.2.20.1709251211050.15252@nanos>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Subject: [PATCH v7 1/2] dt-bindings: gpio: uniphier: add UniPhier GPIO binding
+Date: Wed, 27 Sep 2017 11:45:42 +0900
+Message-ID: <1506480343-9597-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1506480343-9597-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1506480343-9597-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Masami Hiramatsu <mhiramat-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Marc Zyngier <marc.zyngier@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh@kernel.org>, David Daney <david.daney@cavium.com>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-2017-09-25 19:11 GMT+09:00 Thomas Gleixner <tglx@linutronix.de>:
-> On Thu, 21 Sep 2017, Linus Walleij wrote:
->
->> On Wed, Sep 13, 2017 at 10:56 AM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>
->> > This helper will be useful for irqchip drivers that need to convert
->> > DT binding into IRQ fwspec.
->> >
->> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>
->> I'm waiting for the irqchip maintainers to have a look at this.
->>
->> I can carry it in the GPIO tree, but Thomas often prefers to handle
->> me an immutable git branch for infrastructure.
->
-> I don't think we have colliding stuff coming up, so please carry it in your
-> tree with Acked-by-me.
->
-> Thanks,
->
->         tglx
-> --
+This GPIO controller is used on UniPhier SoC family.
+
+The vendor specific property "socionext,interrupt-ranges" is for
+specifying interrupt mapping to the parent interrupt controller
+because the mapping is not contiguous.  It works like "ranges",
+but transforms "interrupts" instead of "reg".
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
 
 
-Please hold it back now.
+ .../devicetree/bindings/gpio/gpio-uniphier.txt     | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
 
-I have sent v6,
-which is self-contained in the GPIO subsystem.
-
-I will wait for Linus to check v6.
-
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt b/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+new file mode 100644
+index 0000000..6d9251a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+@@ -0,0 +1,40 @@
++UniPhier GPIO controller
++
++Required properties:
++- compatible: Should be "socionext,uniphier-gpio".
++- reg: Specifies offset and length of the register set for the device.
++- gpio-controller: Marks the device node as a GPIO controller.
++- #gpio-cells: Should be 2.  The first cell is the pin number and the second
++  cell is used to specify optional parameters.
++- interrupt-parent: Specifies the parent interrupt controller.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells: Should be 2.  The first cell defines the interrupt number.
++  The second cell bits[3:0] is used to specify trigger type as follows:
++    1 = low-to-high edge triggered
++    2 = high-to-low edge triggered
++    4 = active high level-sensitive
++    8 = active low level-sensitive
++  Valid combinations are 1, 2, 3, 4, 8.
++- ngpios: Specifies the number of GPIO lines.
++- gpio-ranges: Mapping to pin controller pins (as described in gpio.txt)
++- socionext,interrupt-ranges: Specifies an interrupt number mapping between
++  this GPIO controller and its interrupt parent, in the form of arbitrary
++  number of <child-interrupt-base parent-interrupt-base length> triplets.
++
++Optional properties:
++- gpio-ranges-group-names: Used for named gpio ranges (as described in gpio.txt)
++
++Example:
++	gpio: gpio@55000000 {
++		compatible = "socionext,uniphier-gpio";
++		reg = <0x55000000 0x200>;
++		interrupt-parent = <&aidet>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-ranges = <&pinctrl 0 0 0>;
++		gpio-ranges-group-names = "gpio_range";
++		ngpios = <248>;
++		socionext,interrupt-ranges = <0 48 16>, <16 154 5>, <21 217 3>;
++	};
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
