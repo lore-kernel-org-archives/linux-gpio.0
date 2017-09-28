@@ -1,83 +1,150 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs
- dynamically
-Date: Thu, 28 Sep 2017 09:02:12 -0500
-Message-ID: <72bd64f4-a989-93c4-546f-a123dbd80e8c@ti.com>
-References: <20170721164900.7070-1-grygorii.strashko@ti.com>
- <20170928083348.GI4630@lahna.fi.intel.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
+ infrastructure
+Date: Thu, 28 Sep 2017 09:22:17 -0500
+Message-ID: <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:33517 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753029AbdI1ODN (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 28 Sep 2017 10:03:13 -0400
-In-Reply-To: <20170928083348.GI4630@lahna.fi.intel.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170928095628.21966-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, chrisjohgorman@gmail.com
 
 
 
-On 09/28/2017 03:33 AM, Mika Westerberg wrote:
-> On Fri, Jul 21, 2017 at 11:49:00AM -0500, Grygorii Strashko wrote:
->> Now IRQ mappings are always created for all (allowed) GPIOs in gpiochip in
->> gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ and,
->> as result, leads to:
->>   - increasing of memory consumption for IRQ descriptors most of which will
->> never ever be used (espessially on platform with a high number of GPIOs).
->> (sizeof(struct irq_desc) == 256 on my tested platforms)
->>   - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
->> GPIO IRQ functionality as IRQ crossbar/router which has only limited
->> number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
->> IRQs).
->>
->> Hence, remove static IRQ mapping code from gpiochip_irqchip_add_key() and
->> instead replace irq_find_mapping() with irq_create_mapping() in
->> gpiochip_to_irq(). Also add additional gpiochip_irqchip_irq_valid() calls
->> in gpiochip_to_irq() and gpiochip_irq_map().
->>
->> After this change gpio2irq mapping will happen the following way when GPIO
->> irqchip APIs are used by gpio driver:
->>   - IRQ mappings will be created statically if driver passes first_irq>0
->> vlaue in gpiochip_irqchip_add_key().
->>   - IRQ mappings will be created dynamically from gpio_to_irq() or
->> of_irq_get().
->>
->> Tested on am335x-evm and dra72-evm-revc.
->> - dra72-evm-revc: number of created irq mappings decreased from 402 -> 135
->>    Mem savings 267*256 = 68352 (66kB)
->> - am335x-evm: number of created irq mappings decreased from 188 -> 63
->>    Mem savings 125*256 = 32000 (31kB)
->>
->> [1] https://lkml.org/lkml/2017/6/15/428
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+On 09/28/2017 04:56 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Hi Grygorii,
+> Hi Linus,
 > 
-> It looks like dc749a09ea5e41 ("gpiolib: allow gpio irqchip to map irqs
-> dynamically") broke the quirk we added for some Intel Cherryview
-> systems [1]. Basically after this keyboard of those systems stopped
-> working again.
+> here's the latest series of patches that implement the tighter IRQ chip
+> integration as well as the banked GPIO infrastructure that we had
+> discussed a couple of weeks/months back.
 > 
-> Any idea what might be wrong?
+> The first couple of patches are mostly preparatory work in order to
+> consolidate all IRQ chip related fields in a new structure and create
+> the base functionality for adding IRQ chips.
+> 
+> After that, I've added the Tegra186 GPIO support patch that makes use of
+> the new tight integration.
+> 
+> To round things off the new banked GPIO infrastructure is added (along
+> with some more preparatory work), followed by the conversion of the two
+> Tegra GPIO drivers to the new infrastructure.
 
-Yes. kernel do not map all GPIO IRQs by default now.
-I've red related discussion and, as per my understanding (correct me if i'm wrong),
-on this platform all GPIO IRQs have to be mapped on fixed range of Linux IRQs.
-In this case, It's reasonable to specify first_irq parameter in gpiochip_irqchip_add()
-which should force IRQ mapping creation.
+Hm. So you've ignored my comments [1].
+
+Sry, but I do not agree with this series.
+- no prof that it can be re-used by other drivers than tegra
+ (at least I do not see reasons to re-use it for any TI drivers)
+- no split
+- all GPIO IRQs mapped statically
+- irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
+  which is waste of memory
+- DT binding changes not documented and no DT examples
+- below is ugly ;)
++	bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
++	pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
+
+[1] https://lkml.org/lkml/2017/9/15/442
 
 > 
-> I've CC'd Chris Gorman who reported the issue.
+> Changes in v2:
+> - rename pins to lines for consistent terminology
+> - rename gpio_irq_chip_banked_handler() to
+>    gpio_irq_chip_banked_chained_handler()
 > 
-> [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> Thierry
 > 
-
-
+> Thierry Reding (16):
+>    gpio: Implement tighter IRQ chip integration
+>    gpio: Move irqchip into struct gpio_irq_chip
+>    gpio: Move irqdomain into struct gpio_irq_chip
+>    gpio: Move irq_base to struct gpio_irq_chip
+>    gpio: Move irq_handler to struct gpio_irq_chip
+>    gpio: Move irq_default_type to struct gpio_irq_chip
+>    gpio: Move irq_chained_parent to struct gpio_irq_chip
+>    gpio: Move irq_nested into struct gpio_irq_chip
+>    gpio: Move irq_valid_mask into struct gpio_irq_chip
+>    gpio: Move lock_key into struct gpio_irq_chip
+>    gpio: Add Tegra186 support
+>    gpio: omap: Fix checkpatch warnings
+>    gpio: omap: Rename struct gpio_bank to struct omap_gpio_bank
+>    gpio: Add support for banked GPIO controllers
+>    gpio: tegra: Use banked GPIO infrastructure
+>    gpio: tegra186: Use banked GPIO infrastructure
+> 
+>   Documentation/gpio/driver.txt               |   6 +-
+>   drivers/bcma/driver_gpio.c                  |   2 +-
+>   drivers/gpio/Kconfig                        |  10 +
+>   drivers/gpio/Makefile                       |   1 +
+>   drivers/gpio/gpio-104-dio-48e.c             |   2 +-
+>   drivers/gpio/gpio-104-idi-48.c              |   2 +-
+>   drivers/gpio/gpio-104-idio-16.c             |   2 +-
+>   drivers/gpio/gpio-adnp.c                    |   2 +-
+>   drivers/gpio/gpio-altera.c                  |   4 +-
+>   drivers/gpio/gpio-aspeed.c                  |   6 +-
+>   drivers/gpio/gpio-ath79.c                   |   2 +-
+>   drivers/gpio/gpio-brcmstb.c                 |   2 +-
+>   drivers/gpio/gpio-crystalcove.c             |   2 +-
+>   drivers/gpio/gpio-dln2.c                    |   2 +-
+>   drivers/gpio/gpio-ftgpio010.c               |   2 +-
+>   drivers/gpio/gpio-ingenic.c                 |   2 +-
+>   drivers/gpio/gpio-intel-mid.c               |   2 +-
+>   drivers/gpio/gpio-lynxpoint.c               |   2 +-
+>   drivers/gpio/gpio-max732x.c                 |   2 +-
+>   drivers/gpio/gpio-merrifield.c              |   2 +-
+>   drivers/gpio/gpio-omap.c                    | 222 ++++++-----
+>   drivers/gpio/gpio-pca953x.c                 |   2 +-
+>   drivers/gpio/gpio-pcf857x.c                 |   2 +-
+>   drivers/gpio/gpio-pci-idio-16.c             |   2 +-
+>   drivers/gpio/gpio-pl061.c                   |   2 +-
+>   drivers/gpio/gpio-rcar.c                    |   2 +-
+>   drivers/gpio/gpio-reg.c                     |   4 +-
+>   drivers/gpio/gpio-stmpe.c                   |   6 +-
+>   drivers/gpio/gpio-tc3589x.c                 |   2 +-
+>   drivers/gpio/gpio-tegra.c                   | 203 +++++-----
+>   drivers/gpio/gpio-tegra186.c                | 571 ++++++++++++++++++++++++++++
+>   drivers/gpio/gpio-vf610.c                   |   2 +-
+>   drivers/gpio/gpio-wcove.c                   |   2 +-
+>   drivers/gpio/gpio-ws16c48.c                 |   2 +-
+>   drivers/gpio/gpio-xgene-sb.c                |   2 +-
+>   drivers/gpio/gpio-xlp.c                     |   2 +-
+>   drivers/gpio/gpio-zx.c                      |   2 +-
+>   drivers/gpio/gpio-zynq.c                    |   2 +-
+>   drivers/gpio/gpiolib-of.c                   | 101 +++++
+>   drivers/gpio/gpiolib.c                      | 320 ++++++++++++++--
+>   drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   5 +-
+>   drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
+>   drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
+>   drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
+>   drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
+>   drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   4 +-
+>   drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
+>   drivers/pinctrl/pinctrl-amd.c               |   2 +-
+>   drivers/pinctrl/pinctrl-at91.c              |   2 +-
+>   drivers/pinctrl/pinctrl-coh901.c            |   2 +-
+>   drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
+>   drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
+>   drivers/pinctrl/pinctrl-pic32.c             |   2 +-
+>   drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
+>   drivers/pinctrl/pinctrl-st.c                |   2 +-
+>   drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
+>   drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
+>   drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
+>   drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
+>   drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
+>   drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
+>   include/linux/gpio/driver.h                 | 272 +++++++++++--
+>   include/linux/of_gpio.h                     |  10 +
+>   63 files changed, 1505 insertions(+), 348 deletions(-)
+>   create mode 100644 drivers/gpio/gpio-tegra186.c
+> 
 
 -- 
 regards,
