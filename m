@@ -1,51 +1,61 @@
-From: "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>
-Subject: RE: pinctrl/amd: Configure GPIO register using BIOS settings
-Date: Thu, 28 Sep 2017 07:46:02 +0000
-Message-ID: <DM5PR12MB1417FDCFD60A59EDEAFD336CDC790@DM5PR12MB1417.namprd12.prod.outlook.com>
-References: <CY1PR12MB0042D650A9FCDC4B1676FB0EDCFA0@CY1PR12MB0042.namprd12.prod.outlook.com>
- <20170928065816.GA28901@dtor-ws>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs
+ dynamically
+Date: Thu, 28 Sep 2017 11:33:48 +0300
+Message-ID: <20170928083348.GI4630@lahna.fi.intel.com>
+References: <20170721164900.7070-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0089.outbound.protection.outlook.com ([104.47.36.89]:26093
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750943AbdI1HqF (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Thu, 28 Sep 2017 03:46:05 -0400
-In-Reply-To: <20170928065816.GA28901@dtor-ws>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170721164900.7070-1-grygorii.strashko@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, chrisjohgorman@gmail.com
 List-Id: linux-gpio@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "Sen, Pankaj" <Pankaj.Sen@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
------Original Message-----
-From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]=20
-Sent: Thursday, September 28, 2017 12:28 PM
-To: Agrawal, Nitesh-kumar <Nitesh-kumar.Agrawal@amd.com>
-Cc: linus.walleij@linaro.org; Sen, Pankaj <Pankaj.Sen@amd.com>; S-k, Shyam-=
-sundar <Shyam-sundar.S-k@amd.com>; linux-gpio@vger.kernel.org
-Subject: Re: pinctrl/amd: Configure GPIO register using BIOS settings
+On Fri, Jul 21, 2017 at 11:49:00AM -0500, Grygorii Strashko wrote:
+> Now IRQ mappings are always created for all (allowed) GPIOs in gpiochip in
+> gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ and,
+> as result, leads to:
+>  - increasing of memory consumption for IRQ descriptors most of which will
+> never ever be used (espessially on platform with a high number of GPIOs).
+> (sizeof(struct irq_desc) == 256 on my tested platforms)
+>  - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
+> GPIO IRQ functionality as IRQ crossbar/router which has only limited
+> number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
+> IRQs).
+> 
+> Hence, remove static IRQ mapping code from gpiochip_irqchip_add_key() and
+> instead replace irq_find_mapping() with irq_create_mapping() in
+> gpiochip_to_irq(). Also add additional gpiochip_irqchip_irq_valid() calls
+> in gpiochip_to_irq() and gpiochip_irq_map().
+> 
+> After this change gpio2irq mapping will happen the following way when GPIO
+> irqchip APIs are used by gpio driver:
+>  - IRQ mappings will be created statically if driver passes first_irq>0
+> vlaue in gpiochip_irqchip_add_key().
+>  - IRQ mappings will be created dynamically from gpio_to_irq() or
+> of_irq_get().
+> 
+> Tested on am335x-evm and dra72-evm-revc.
+> - dra72-evm-revc: number of created irq mappings decreased from 402 -> 135
+>   Mem savings 267*256 = 68352 (66kB)
+> - am335x-evm: number of created irq mappings decreased from 188 -> 63
+>   Mem savings 125*256 = 32000 (31kB)
+> 
+> [1] https://lkml.org/lkml/2017/6/15/428
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-On Fri, Sep 09, 2016 at 03:18:09PM +0000, Agrawal, Nitesh-kumar wrote:
-> In the function amd_gpio_irq_set_type, use the settings provided by=20
-> the BIOS,when the LevelTrig is Edge and activeLevel is HIGH, to=20
-> configure the GPIO registers. Ignore the settings from client.
->=20
-> Reviewed-by: Pankaj Sen <Pankaj.Sen@amd.com>
-> Signed-off-by: Nitesh Kumar Agrawal <Nitesh-kumar.Agrawal@amd.com>
+Hi Grygorii,
 
-Just found this patch in the tree. Can you please explain why it is needed =
-(the patch description unfortunately tells what the patch does, but not why=
-).
+It looks like dc749a09ea5e41 ("gpiolib: allow gpio irqchip to map irqs
+dynamically") broke the quirk we added for some Intel Cherryview
+systems [1]. Basically after this keyboard of those systems stopped
+working again.
 
-I would expect that we either allow reprogramming the trigger as client wis=
-hes or would error out and let the upper layers know. Silently "fixing" the=
- settings is wrong course of action in my opinion.
+Any idea what might be wrong?
 
-If this was trying to work around Elan touchpad drivers not working on AMD =
-platforms it needs to be solved in Elan driver, not here.
+I've CC'd Chris Gorman who reported the issue.
 
-[Nitesh]We have reverted the patch in the later version of the patch.
-
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
