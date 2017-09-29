@@ -1,167 +1,79 @@
-From: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-Subject: Re: [PATCH v2 02/10] pinctrl: axp209: add pinctrl
- features (fwd)
-Date: Fri, 29 Sep 2017 14:50:34 +0200 (CEST)
-Message-ID: <alpine.DEB.2.20.1709291449460.2863@hadrien>
-References: <alpine.DEB.2.20.1709291413090.2776@hadrien> <21b7da6c-1d93-c7a1-65b6-80a59d8c982e@free-electrons.com>
-Reply-To: julia.lawall-L2FTfq7BK8M@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDZJXP7F6YLRBHMDXHHAKGQERCAPX7Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <21b7da6c-1d93-c7a1-65b6-80a59d8c982e-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, kbuild-all-JC7UmRfGjtg@public.gmane.org
+From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: [PATCH v2] pinctrl: intel: merrifield: Introduce OF device table
+Date: Fri, 29 Sep 2017 16:55:39 +0300
+Message-ID: <20170929135539.4046-1-andriy.shevchenko@linux.intel.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-gpio @ vger . kernel . org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
+On Intel Merrifield the pin control device is a separate IP block
+without any PCI or ACPI ID assigned. We need some means to allow the
+device be enumerated in ACPI environment (*).
 
+To achieve this without allocation special ACPI ID, which is really long
+and pretty much unachievable procedure, we just re-use special ACPI ID
+and standard compatible string.
 
-On Fri, 29 Sep 2017, Quentin Schulz wrote:
+(*) ACPI is enabled via second bootloader, i.e. U-Boot,
+    firmware is still left untouched and being SFI enabled.
 
-> Hi Julia,
->
-> On 29/09/2017 14:15, Julia Lawall wrote:
-> > I'm not sure that it is allowed to do krealloc on devm allocated data.
-> > See lins 468 and 485.
-> >
->
-> Indeed, from a glance at the code, it does not look like it is a good idea.
->
-> For v3, this piece of code will be deleted anyway so it won't be a
-> problem anymore.
->
-> However, this logic is used in drivers/pinctrl/sunxi/pinctrl-sunxi.c[1][2]
->
-> @Maxime, @Chen-Yu:
-> We should check more thoroughly than what I did but I think Julia is right.
->
-> The following is my understanding from a very quick look at the code.
->
-> devm_kzalloc will register gpio->functions as a res of the device.
->
-> However it's possible that the pointer is different after krealloc. In
-> that case, krealloc will free the "old" gpio->functions[3] which is
-> managed by devres.
->
-> 1) We might be exposed to a free of a NULL pointer when devres takes
-> care of unregistering the device.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+---
+In v2:
+- add DT binding
+- we asked internally for ACPI ID about month ago with full silence in response
+ .../devicetree/bindings/pinctrl/intel,FLIS-pinctrl.txt      | 13 +++++++++++++
+ drivers/pinctrl/intel/pinctrl-merrifield.c                  |  7 +++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/intel,FLIS-pinctrl.txt
 
-I guess it would be a double free?  krealloc won't update the devres view
-of the pointer.
+diff --git a/Documentation/devicetree/bindings/pinctrl/intel,FLIS-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/intel,FLIS-pinctrl.txt
+new file mode 100644
+index 000000000000..8f5a32b2333b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/intel,FLIS-pinctrl.txt
+@@ -0,0 +1,13 @@
++Intel Corporation, Family-Level Interface Shim (FLIS) pin controller
++
++FLIS pin controller is a separate IP block on non-ACPI enabled Intel
++platforms, such as Intel Merrifield. Very known board based on it is
++Intel Edison.
++
++There is an ongoing effort to emulate ACPI on that kind of boards
++and, since it is near to impossible to allocate an ACPI ID for the
++such controller, the compatible string may be used along with special
++PRP0001 ACPI ID.
++
++Required properties for FLIS pin controller:
++- compatible: "intel,merrifield-pinctrl"
+diff --git a/drivers/pinctrl/intel/pinctrl-merrifield.c b/drivers/pinctrl/intel/pinctrl-merrifield.c
+index 86c4b3fab7b0..46fe30702a79 100644
+--- a/drivers/pinctrl/intel/pinctrl-merrifield.c
++++ b/drivers/pinctrl/intel/pinctrl-merrifield.c
+@@ -931,10 +931,17 @@ static int mrfld_pinctrl_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id mrfld_of_table[] = {
++	{ .compatible = "intel,merrifield-pinctrl" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, mrfld_of_table);
++
+ static struct platform_driver mrfld_pinctrl_driver = {
+ 	.probe = mrfld_pinctrl_probe,
+ 	.driver = {
+ 		.name = "pinctrl-merrifield",
++		.of_match_table = mrfld_of_table,
+ 	},
+ };
+ 
+-- 
+2.14.2
 
-> 2) The "new" gpio->functions would never be freed.
-
-That too.
-
-julia
-
->
-> Is that correct? If so, we should get rid of devm_kzalloc in favor of a
-> simple kzalloc and free the pointer in the remove function of the driver.
->
-> [1]
-> http://elixir.free-electrons.com/linux/latest/source/drivers/pinctrl/sunxi/pinctrl-sunxi.c#L1078
-> [2]
-> http://elixir.free-electrons.com/linux/latest/source/drivers/pinctrl/sunxi/pinctrl-sunxi.c#L1107
-> [3]
-> http://elixir.free-electrons.com/linux/latest/source/mm/slab_common.c#L1414
->
-> Thanks,
-> Quentin
->
-> > julia
-> >
-> > ---------- Forwarded message ----------
-> > Date: Fri, 29 Sep 2017 20:00:03 +0800
-> > From: kbuild test robot <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> > To: kbuild-JC7UmRfGjtg@public.gmane.org
-> > Cc: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-> > Subject: Re: [PATCH v2 02/10] pinctrl: axp209: add pinctrl features
-> >
-> > Hi Quentin,
-> >
-> > [auto build test WARNING on ]
-> >
-> > url:    https://github.com/0day-ci/linux/commits/Quentin-Schulz/add-pinmuxing-support-for-pins-in-AXP209-and-AXP813-PMICs/20170929-162846
-> > base:
-> > :::::: branch date: 4 hours ago
-> > :::::: commit date: 4 hours ago
-> >
-> >>> drivers/pinctrl/pinctrl-axp209.c:485:19-27: WARNING: invalid free of devm_ allocated data
-> >
-> > # https://github.com/0day-ci/linux/commit/1e016076fb841f90f047d2b001c9f8d9fd5e2953
-> > git remote add linux-review https://github.com/0day-ci/linux
-> > git remote update linux-review
-> > git checkout 1e016076fb841f90f047d2b001c9f8d9fd5e2953
-> > vim +485 drivers/pinctrl/pinctrl-axp209.c
-> >
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  446
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  447  static int axp20x_build_state(struct platform_device *pdev)
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  448  {
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  449  	struct axp20x_gpio *gpio = platform_get_drvdata(pdev);
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  450  	unsigned int npins = gpio->desc->npins;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  451  	const struct axp20x_desc_pin *pin;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  452  	struct axp20x_desc_function *func;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  453  	int i, ret;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  454
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  455  	gpio->ngroups = npins;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  456  	gpio->groups = devm_kzalloc(&pdev->dev,
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  457  				    gpio->ngroups * sizeof(*gpio->groups),
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  458  				    GFP_KERNEL);
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  459  	if (!gpio->groups)
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  460  		return -ENOMEM;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  461
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  462  	for (i = 0; i < npins; i++) {
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  463  		gpio->groups[i].name = gpio->desc->pins[i].pin.name;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  464  		gpio->groups[i].pin = gpio->desc->pins[i].pin.number;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  465  	}
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  466
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  467  	/* We assume 4 functions per pin should be enough as a default max */
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  468  	gpio->functions = devm_kzalloc(&pdev->dev,
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  469  				       npins * 4 * sizeof(*gpio->functions),
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  470  				       GFP_KERNEL);
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  471  	if (!gpio->functions)
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  472  		return -ENOMEM;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  473
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  474  	/* Create a list of uniquely named functions */
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  475  	for (i = 0; i < npins; i++) {
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  476  		pin = &gpio->desc->pins[i];
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  477  		func = pin->functions;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  478
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  479  		while (func->name) {
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  480  			axp20x_pinctrl_add_function(gpio, func->name);
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  481  			func++;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  482  		}
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  483  	}
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  484
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26 @485  	gpio->functions = krealloc(gpio->functions,
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  486  				   gpio->nfunctions * sizeof(*gpio->functions),
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  487  				   GFP_KERNEL);
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  488
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  489  	for (i = 0; i < npins; i++) {
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  490  		pin = &gpio->desc->pins[i];
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  491  		ret = axp20x_attach_group_function(pdev, pin);
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  492  		if (ret)
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  493  			return ret;
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  494  	}
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  495
-> > 1e016076fb drivers/pinctrl/pinctrl-axp209.c Quentin Schulz 2017-09-26  496  	return 0;
-> > f72f4b44df drivers/gpio/gpio-axp209.c       Maxime Ripard  2016-07-20  497  }
-> > f72f4b44df drivers/gpio/gpio-axp209.c       Maxime Ripard  2016-07-20  498
-> >
-> > ---
-> > 0-DAY kernel test infrastructure                Open Source Technology Center
-> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> >
->
-> --
-> Quentin Schulz, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
->
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
