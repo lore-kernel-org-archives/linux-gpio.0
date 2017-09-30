@@ -1,7 +1,7 @@
 From: Doug Berger <opendmb@gmail.com>
-Subject: [PATCH 5/7] gpio: brcmstb: enable masking of interrupts when changing type
-Date: Fri, 29 Sep 2017 20:40:55 -0700
-Message-ID: <20170930034057.15166-6-opendmb@gmail.com>
+Subject: [PATCH 2/7] gpio: brcmstb: release the bgpio lock during irq handlers
+Date: Fri, 29 Sep 2017 20:40:52 -0700
+Message-ID: <20170930034057.15166-3-opendmb@gmail.com>
 References: <20170930034057.15166-1-opendmb@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170930034057.15166-1-opendmb@gmail.com>
@@ -10,28 +10,68 @@ To: Gregory Fong <gregory.0xf0@gmail.com>
 Cc: Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Mask the GPIO interrupt while its type is being changed, just in case
-it can prevent a spurious interrupt.
+The basic memory-mapped GPIO controller lock must be released
+before calling the registered GPIO interrupt handlers to allow
+the interrupt handlers to access the hardware.  Otherwise, the
+hardware accesses will deadlock when they attempt to grab the
+lock.
 
+Since the lock is only needed to protect the calculation of
+unmasked pending interrupts create a dedicated function to
+perform this and hide the complexity.
+
+Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
 Signed-off-by: Doug Berger <opendmb@gmail.com>
 ---
- drivers/gpio/gpio-brcmstb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-brcmstb.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 0418cb266586..e2fff559c1ca 100644
+index 7f39b160a4d5..8945861876f9 100644
 --- a/drivers/gpio/gpio-brcmstb.c
 +++ b/drivers/gpio/gpio-brcmstb.c
-@@ -363,7 +363,9 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 	bank->irq_chip.irq_set_type = brcmstb_gpio_irq_set_type;
+@@ -62,6 +62,21 @@ brcmstb_gpio_gc_to_priv(struct gpio_chip *gc)
+ 	return bank->parent_priv;
+ }
  
- 	/* Ensures that all non-wakeup IRQs are disabled at suspend */
--	bank->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND;
-+	/* and that interrupts are masked when changing their type  */
-+	bank->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND |
-+			       IRQCHIP_SET_TYPE_MASKED;
++static unsigned long
++brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
++{
++	void __iomem *reg_base = bank->parent_priv->reg_base;
++	unsigned long status;
++	unsigned long flags;
++
++	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
++	status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
++		 bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
++	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
++
++	return status;
++}
++
+ static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
+ 		unsigned int offset, bool enable)
+ {
+@@ -204,11 +219,8 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+ 	struct irq_domain *irq_domain = bank->gc.irqdomain;
+ 	void __iomem *reg_base = priv->reg_base;
+ 	unsigned long status;
+-	unsigned long flags;
  
- 	if (IS_ENABLED(CONFIG_PM_SLEEP) && !priv->parent_wake_irq &&
- 			of_property_read_bool(np, "wakeup-source")) {
+-	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
+-	while ((status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
+-			 bank->gc.read_reg(reg_base + GIO_MASK(bank->id)))) {
++	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
+ 		int bit;
+ 
+ 		for_each_set_bit(bit, &status, 32) {
+@@ -223,7 +235,6 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+ 			generic_handle_irq(irq_find_mapping(irq_domain, bit));
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
+ }
+ 
+ /* Each UPG GIO block has one IRQ for all banks */
 -- 
 2.14.1
