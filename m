@@ -1,77 +1,51 @@
-From: Doug Berger <opendmb@gmail.com>
-Subject: [PATCH 2/7] gpio: brcmstb: release the bgpio lock during irq handlers
-Date: Fri, 29 Sep 2017 20:40:52 -0700
-Message-ID: <20170930034057.15166-3-opendmb@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 0/7] gpio: brcmstb: improved interrupt and wake support
+Date: Fri, 29 Sep 2017 22:34:08 -0700
+Message-ID: <b2758902-a1b7-1621-5eec-651f3ada92e7@gmail.com>
 References: <20170930034057.15166-1-opendmb@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:54357 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbdI3FeO (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Sep 2017 01:34:14 -0400
 In-Reply-To: <20170930034057.15166-1-opendmb@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Doug Berger <opendmb@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The basic memory-mapped GPIO controller lock must be released
-before calling the registered GPIO interrupt handlers to allow
-the interrupt handlers to access the hardware.  Otherwise, the
-hardware accesses will deadlock when they attempt to grab the
-lock.
 
-Since the lock is only needed to protect the calculation of
-unmasked pending interrupts create a dedicated function to
-perform this and hide the complexity.
 
-Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
----
- drivers/gpio/gpio-brcmstb.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+On 09/29/2017 08:40 PM, Doug Berger wrote:
+> This patch set collects a number of improvements to the GPIO driver
+> used by Broadcom Set-Top-Box devices.
+> 
+> Primarily they are aimed at correcting problems with the interrupt
+> controller implementation, but they also extend the functionality for
+> waking on GPIO interrupts.
 
-diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 7f39b160a4d5..8945861876f9 100644
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -62,6 +62,21 @@ brcmstb_gpio_gc_to_priv(struct gpio_chip *gc)
- 	return bank->parent_priv;
- }
- 
-+static unsigned long
-+brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
-+{
-+	void __iomem *reg_base = bank->parent_priv->reg_base;
-+	unsigned long status;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
-+	status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
-+		 bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
-+	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
-+
-+	return status;
-+}
-+
- static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
- 		unsigned int offset, bool enable)
- {
-@@ -204,11 +219,8 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
- 	struct irq_domain *irq_domain = bank->gc.irqdomain;
- 	void __iomem *reg_base = priv->reg_base;
- 	unsigned long status;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
--	while ((status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
--			 bank->gc.read_reg(reg_base + GIO_MASK(bank->id)))) {
-+	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
- 		int bit;
- 
- 		for_each_set_bit(bit, &status, 32) {
-@@ -223,7 +235,6 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
- 			generic_handle_irq(irq_find_mapping(irq_domain, bit));
- 		}
- 	}
--	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
- }
- 
- /* Each UPG GIO block has one IRQ for all banks */
+This all looks good to me, thanks a lot for sending those patches out!
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+
+> 
+> Doug Berger (7):
+>   gpio: brcmstb: allow all instances to be wakeup sources
+>   gpio: brcmstb: release the bgpio lock during irq handlers
+>   gpio: brcmstb: switch to handle_level_irq flow
+>   gpio: brcmstb: correct the configuration of level interrupts
+>   gpio: brcmstb: enable masking of interrupts when changing type
+>   gpio: brcmstb: consolidate interrupt domains
+>   gpio: brcmstb: implement suspend/resume/shutdown
+> 
+>  drivers/gpio/Kconfig        |   2 +-
+>  drivers/gpio/gpio-brcmstb.c | 419 +++++++++++++++++++++++++++++++++-----------
+>  2 files changed, 321 insertions(+), 100 deletions(-)
+> 
+
 -- 
-2.14.1
+Florian
