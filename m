@@ -1,7 +1,7 @@
 From: Doug Berger <opendmb@gmail.com>
-Subject: [PATCH 3/7] gpio: brcmstb: switch to handle_level_irq flow
-Date: Fri, 29 Sep 2017 20:40:53 -0700
-Message-ID: <20170930034057.15166-4-opendmb@gmail.com>
+Subject: [PATCH 1/7] gpio: brcmstb: allow all instances to be wakeup sources
+Date: Fri, 29 Sep 2017 20:40:51 -0700
+Message-ID: <20170930034057.15166-2-opendmb@gmail.com>
 References: <20170930034057.15166-1-opendmb@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170930034057.15166-1-opendmb@gmail.com>
@@ -10,79 +10,75 @@ To: Gregory Fong <gregory.0xf0@gmail.com>
 Cc: Doug Berger <opendmb@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-gpio@vger.kernel.org
 
-Reading and writing the gpio bank status register each time a pending
-interrupt bit is serviced could cause new pending bits to be cleared
-without servicing the associated interrupts.
+This commit allows a wakeup parent interrupt to be shared between
+instances.
 
-By using the handle_level_irq flow instead of the handle_simple_irq
-flow we get proper handling of interrupt masking as well as acking
-of interrupts.  The irq_ack method is added to support this.
+It also removes the redundant can_wake member of the private data
+structure by using whether the parent_wake_irq has been defined to
+indicate that the GPIO device can wake.
 
 Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
 Signed-off-by: Doug Berger <opendmb@gmail.com>
 ---
- drivers/gpio/gpio-brcmstb.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-brcmstb.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-index 8945861876f9..c186141927bb 100644
+index 27e92e57adae..7f39b160a4d5 100644
 --- a/drivers/gpio/gpio-brcmstb.c
 +++ b/drivers/gpio/gpio-brcmstb.c
-@@ -114,6 +114,16 @@ static void brcmstb_gpio_irq_unmask(struct irq_data *d)
- 	brcmstb_gpio_set_imask(bank, d->hwirq, true);
- }
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2015 Broadcom Corporation
++ * Copyright (C) 2015-2017 Broadcom
+  *
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License as
+@@ -46,7 +46,6 @@ struct brcmstb_gpio_priv {
+ 	struct platform_device *pdev;
+ 	int parent_irq;
+ 	int gpio_base;
+-	bool can_wake;
+ 	int parent_wake_irq;
+ 	struct notifier_block reboot_notifier;
+ };
+@@ -349,10 +348,11 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 	/* Ensures that all non-wakeup IRQs are disabled at suspend */
+ 	bank->irq_chip.flags = IRQCHIP_MASK_ON_SUSPEND;
  
-+static void brcmstb_gpio_irq_ack(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct brcmstb_gpio_bank *bank = gpiochip_get_data(gc);
-+	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-+	u32 mask = BIT(d->hwirq);
-+
-+	gc->write_reg(priv->reg_base + GIO_STAT(bank->id), mask);
-+}
-+
- static int brcmstb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -217,21 +227,16 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
- {
- 	struct brcmstb_gpio_priv *priv = bank->parent_priv;
- 	struct irq_domain *irq_domain = bank->gc.irqdomain;
--	void __iomem *reg_base = priv->reg_base;
- 	unsigned long status;
+-	if (IS_ENABLED(CONFIG_PM_SLEEP) && !priv->can_wake &&
++	if (IS_ENABLED(CONFIG_PM_SLEEP) && !priv->parent_wake_irq &&
+ 			of_property_read_bool(np, "wakeup-source")) {
+ 		priv->parent_wake_irq = platform_get_irq(pdev, 1);
+ 		if (priv->parent_wake_irq < 0) {
++			priv->parent_wake_irq = 0;
+ 			dev_warn(dev,
+ 				"Couldn't get wake IRQ - GPIOs will not be able to wake from sleep");
+ 		} else {
+@@ -364,8 +364,9 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 			device_set_wakeup_capable(dev, true);
+ 			device_wakeup_enable(dev);
+ 			err = devm_request_irq(dev, priv->parent_wake_irq,
+-					brcmstb_gpio_wake_irq_handler, 0,
+-					"brcmstb-gpio-wake", priv);
++					       brcmstb_gpio_wake_irq_handler,
++					       IRQF_SHARED,
++					       "brcmstb-gpio-wake", priv);
  
- 	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
- 		int bit;
- 
- 		for_each_set_bit(bit, &status, 32) {
--			u32 stat = bank->gc.read_reg(reg_base +
--						      GIO_STAT(bank->id));
- 			if (bit >= bank->width)
- 				dev_warn(&priv->pdev->dev,
- 					 "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
- 					 bank->id, bit);
--			bank->gc.write_reg(reg_base + GIO_STAT(bank->id),
--					    stat | BIT(bit));
- 			generic_handle_irq(irq_find_mapping(irq_domain, bit));
+ 			if (err < 0) {
+ 				dev_err(dev, "Couldn't request wake IRQ");
+@@ -375,11 +376,10 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+ 			priv->reboot_notifier.notifier_call =
+ 				brcmstb_gpio_reboot;
+ 			register_reboot_notifier(&priv->reboot_notifier);
+-			priv->can_wake = true;
  		}
  	}
-@@ -354,6 +359,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
- 	bank->irq_chip.name = dev_name(dev);
- 	bank->irq_chip.irq_mask = brcmstb_gpio_irq_mask;
- 	bank->irq_chip.irq_unmask = brcmstb_gpio_irq_unmask;
-+	bank->irq_chip.irq_ack = brcmstb_gpio_irq_ack;
- 	bank->irq_chip.irq_set_type = brcmstb_gpio_irq_set_type;
  
- 	/* Ensures that all non-wakeup IRQs are disabled at suspend */
-@@ -394,7 +400,7 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+-	if (priv->can_wake)
++	if (priv->parent_wake_irq)
  		bank->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
  
  	err = gpiochip_irqchip_add(&bank->gc, &bank->irq_chip, 0,
--				   handle_simple_irq, IRQ_TYPE_NONE);
-+				   handle_level_irq, IRQ_TYPE_NONE);
- 	if (err)
- 		return err;
- 	gpiochip_set_chained_irqchip(&bank->gc, &bank->irq_chip,
 -- 
 2.14.1
