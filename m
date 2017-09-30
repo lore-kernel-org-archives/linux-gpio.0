@@ -1,105 +1,48 @@
-From: Christian Lamparter <chunkeey@gmail.com>
-Subject: Re: [PATCH] Add a GPIO driver for Altera FPGA Manager Fabric I/O
-Date: Sat, 30 Sep 2017 18:02:51 +0200
-Message-ID: <100458277.LJ9hcby5He@debian64>
-References: <AM5PR0701MB2657A33A85F675C4A0175CE0E4670@AM5PR0701MB2657.eurprd07.prod.outlook.com> <CACRpkda39LU8hynYtnMyKxm+A8Behkam8CWBTSkt+0U_Fw_VtQ@mail.gmail.com> <8da7f1f2-7934-0b88-6eb1-8cdce8d5a7ea@hotmail.de>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH 0/8] pinctrl: meson: clean pin offsets
+Date: Sat, 30 Sep 2017 22:35:25 +0200
+Message-ID: <7hk20fexgy.fsf@baylibre.com>
+References: <20170920133927.17390-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:46090 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751028AbdI3QCz (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Sep 2017 12:02:55 -0400
-Received: by mail-wm0-f65.google.com with SMTP id m72so3983092wmc.1
-        for <linux-gpio@vger.kernel.org>; Sat, 30 Sep 2017 09:02:54 -0700 (PDT)
-In-Reply-To: <8da7f1f2-7934-0b88-6eb1-8cdce8d5a7ea@hotmail.de>
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:43260 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751202AbdI3Uf2 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Sep 2017 16:35:28 -0400
+Received: by mail-wr0-f173.google.com with SMTP id a43so1594162wrc.0
+        for <linux-gpio@vger.kernel.org>; Sat, 30 Sep 2017 13:35:28 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Hello,
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-On Saturday, September 30, 2017 1:15:38 PM CEST Bernd Edlinger wrote:
-> Absolutely it looks and feels like a general-purpose I/O facility.
-> It can be used to control arbitrary logic functions.
-Hm, Is it possible to differenciate it from a "syscon" device?
+> The initial goal of this series was move to TEST_N pin from the EE
+> controller to AO controller, where it belongs. This meant modify the
+> EE_OFF value.
+>
+> This offset is a quirk we brought from the vendor driver when it was
+> initially merged. There no reason to keep this around and we could simply
+> let pinctrl figure the pin base value.
+>
+> Removing this offset, while simple, ends up being quite a patch bomb.
+> This is why I split the change over 5 first patches, so the important
+> change, patch #1 remains visible. Of course, to avoid breaking bisect,
+> these first 5 patches should be squashed into one. (If you prefer that I
+> squash it myself, I may have to send you a PR as the patch would exceed
+> VGER 100000 characters limit)
+>
+> The last change is this series, while not directly related, also requires
+> to adjust the gpio-line-names property in DT. Having these changes going
+> together would make it easier to coordinate the DTS changes.
+>
+> This was changeset has been test on gxbb P200, gxl libretech-cc.  It was
+> also boot tested on meson8 (Thx Martin!)
 
-"System controller node represents a register region containing a set
-of miscellaneous registers. The registers are not cohesive enough to
-represent as any specific type of device. The typical use-case is for
-some other node's driver, or platform-specific code, to acquire a
-reference to the syscon node (e.g. by phandle, node path, or search
-using a specific compatible value), interrogate the node (or associated
-OS driver) to determine the location of the registers, and access the
-registers directly."
+Really nice cleanup, thanks!
 
-<http://elixir.free-electrons.com/linux/latest/source/Documentation/devicetree/bindings/mfd/syscon.txt>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
 
-> >> Instantiate this in the device tree as:
-> >>
-> >>     gpio3: gpio@ff706010 {
-> >>      #address-cells = <1>;
-> >>      #size-cells = <0>;
-> >>      compatible = "altr,fpgamgr-gpio";
-> >>      reg = <0xff706010 0x8>;
-> >>      status = "okay";
-> >>
-> >>      portd: gpio-controller@0 {
-> >>       compatible = "altr,fpgamgr-gpio-output";
-> >>       gpio-controller;
-> >>       #gpio-cells = <2>;
-> >>       reg = <0>;
-> >>      };
-> >>
-> >>      porte: gpio-controller@1 {
-> >>       compatible = "altr,fpgamgr-gpio-input";
-> >>       gpio-controller;
-> >>       #gpio-cells = <2>;
-> >>       reg = <1>;
-> >>      };
-> > 
-> > So one port is output-only and one is input-only?
-> > 
-> > Fair enough.
-
-The driver seemd fairly simple. So, You could actually get
-away with just adding the "altr,fpgamgr-gpio" compatible string
-to gpio-mmio.c's bgpio_of_match struct at [0] and change the dt
-to something like this:
-
-	portd: gpio@ff706010 {
-		compatible = "altr,fpgamgr-gpio";
-		reg = <0xff706010 0x4>;
-		reg-names = "dat";
-		gpio-controller;
-		#gpio-cells = <2>;
-   }
-
-   	porte: gpio@ff706014 {
-		compatible = "altr,fpgamgr-gpio";
-		reg = <0xff706014 0x4>;
-		reg-names = "dat";
-		gpio-controller;
-		#gpio-cells = <2>;
-		no-output;
-   }
-
-I added "no-output" property to the "porte" gpio definition.
-This property will force the direction of all of porte gpios
-to "in". (Which based on the "input", is what you want?)
-
-Note: If you need any insperation for the missing Device-tree
-binding document, you can look at:
-
-wd,mbl-gpio.txt [1] and ni,169445-nand-gpio.txt [2].
-
-Regards,
-Christian
-
-[0] <https://github.com/torvalds/linux/blob/master/drivers/gpio/gpio-mmio.c#L575>
-[1] <https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/gpio/wd%2Cmbl-gpio.txt
-[2] <https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/gpio/ni%2C169445-nand-gpio.txt>
-
-
+Kevin
