@@ -1,21 +1,15 @@
 From: Kevin Hilman <khilman@baylibre.com>
 Subject: Re: [PATCH 0/8] pinctrl: meson: clean pin offsets
-Date: Sat, 30 Sep 2017 22:35:25 +0200
-Message-ID: <7hk20fexgy.fsf@baylibre.com>
+Date: Sat, 30 Sep 2017 22:33:59 +0200
+Message-ID: <7hmv5cdiyw.fsf@baylibre.com>
 References: <20170920133927.17390-1-jbrunet@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:43260 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751202AbdI3Uf2 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 30 Sep 2017 16:35:28 -0400
-Received: by mail-wr0-f173.google.com with SMTP id a43so1594162wrc.0
-        for <linux-gpio@vger.kernel.org>; Sat, 30 Sep 2017 13:35:28 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
-List-Id: linux-gpio@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jerome Brunet <jbrunet@baylibre.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>, Carlo Caione <carlo@caione.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+List-Id: linux-gpio@vger.kernel.org
 
 Jerome Brunet <jbrunet@baylibre.com> writes:
 
