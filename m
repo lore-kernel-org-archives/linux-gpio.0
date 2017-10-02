@@ -1,75 +1,145 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: [PATCH] pinctrl/amd: fix masking of GPIO interrupts
-Date: Mon,  2 Oct 2017 12:00:54 +0800
-Message-ID: <20171002040054.2604-1-drake@endlessm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked infrastructure
+Date: Mon, 2 Oct 2017 09:55:24 +0200
+Message-ID: <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw@mail.gmail.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com> <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:45489 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbdJBEBD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 00:01:03 -0400
-Received: by mail-pf0-f179.google.com with SMTP id z84so2325398pfi.2
-        for <linux-gpio@vger.kernel.org>; Sun, 01 Oct 2017 21:01:03 -0700 (PDT)
+Received: from mail-io0-f171.google.com ([209.85.223.171]:46148 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbdJBHzZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 03:55:25 -0400
+Received: by mail-io0-f171.google.com with SMTP id d16so4061866ioj.3
+        for <linux-gpio@vger.kernel.org>; Mon, 02 Oct 2017 00:55:25 -0700 (PDT)
+In-Reply-To: <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: ken.xue@amd.com, shyam-sundar.s-k@amd.com, nehal-bakulchandra.shah@amd.com, linus.walleij@linaro.org
-Cc: linux@endlessm.com, linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Andrew Bresticker <abrestic@chromium.org>, James Hogan <james.hogan@imgtec.com>, Shawn Guo <shawn.guo@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Asus laptop models X505BA, X505BP, X542BA and X542BP, the i2c-hid
-touchpad (using a GPIO for interrupts) becomes unresponsive after a
-few minutes of usage, or after placing two fingers on the touchpad,
-which seems to have the effect of queuing up a large amount of input
-data to be transferred.
+On Thu, Sep 28, 2017 at 4:22 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
-When the touchpad is in unresponsive state, we observed that the GPIO
-level-triggered interrupt is still at it's active level, however the
-pinctrl-amd driver is not receiving/dispatching more interrupts at this
-point.
+> Sry, but I do not agree with this series.
+> - no prof that it can be re-used by other drivers than tegra
+>  (at least I do not see reasons to re-use it for any TI drivers)
 
-After the initial interrupt arrives, amd_gpio_irq_mask() is called
-however we then see amd_gpio_irq_handler() being called repeatedly for
-the same irq; the interrupt mask is not taking effect because of the
-following sequence of events:
- - amd_gpio_irq_handler fires, reads and caches pin reg
- - amd_gpio_irq_handler calls generic_handle_irq()
- - During IRQ handling, amd_gpio_irq_mask() is called and modifies pin reg
- - amd_gpio_irq_handler clears interrupt by writing cached value
+This is not necessarily a blocker if it can be shown that others than
+TI/OMAP can reuse it.
 
-The stale cached value written at the final stage undoes the masking.
-Fix this by re-reading the register before clearing the interrupt.
+I've looked at things like the imagination pistachio:
 
-I also spotted that the interrupt-clearing code can race against
-amd_gpio_irq_mask() / amd_gpio_irq_unmask(), so add locking there.
-Presumably this race was leading to the loss of interrupts.
+pinctrl@18101C00 {
+        compatible = "img,pistachio-system-pinctrl";
+        reg = <0x18101C00 0x400>;
 
-After these changes, the touchpad appears to be working fine.
+        gpio0: gpio0 {
+                interrupts = <GIC_SHARED 71 IRQ_TYPE_LEVEL_HIGH>;
 
-Signed-off-by: Daniel Drake <drake@endlessm.com>
----
- drivers/pinctrl/pinctrl-amd.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+                gpio-controller;
+                #gpio-cells = <2>;
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index 3f6b34febbf1..433af328d981 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -534,8 +534,16 @@ static irqreturn_t amd_gpio_irq_handler(int irq, void *dev_id)
- 				continue;
- 			irq = irq_find_mapping(gc->irqdomain, irqnr + i);
- 			generic_handle_irq(irq);
--			/* Clear interrupt */
-+
-+			/* Clear interrupt.
-+			 * We must read the pin register again, in case the
-+			 * value was changed while executing
-+			 * generic_handle_irq() above.
-+			 */
-+			raw_spin_lock_irqsave(&gpio_dev->lock, flags);
-+			regval = readl(regs + i);
- 			writel(regval, regs + i);
-+			raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 			ret = IRQ_HANDLED;
- 		}
- 	}
--- 
-2.11.0
+                interrupt-controller;
+                #interrupt-cells = <2>;
+        };
 
+        ...
+
+        gpio5: gpio5 {
+                interrupts = <GIC_SHARED 76 IRQ_TYPE_LEVEL_HIGH>;
+
+                gpio-controller;
+                #gpio-cells = <2>;
+
+                interrupt-controller;
+                #interrupt-cells = <2>;
+        };
+
+This looks like a clear candidate.
+CC: to  Andrew Bresticker, can you look into this?
+
+Another example would be gpio-tz1090, notably with interrupt optional:
+
+       gpios: gpio-controller@02005800 {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                compatible = "img,tz1090-gpio";
+                reg = <0x02005800 0x90>;
+
+                /* bank 0 with an interrupt */
+                gpios0: bank@0 {
+                        #gpio-cells = <2>;
+                        #interrupt-cells = <2>;
+                        reg = <0>;
+                        interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
+                        gpio-controller;
+                        gpio-ranges = <&pinctrl 0 0 30>;
+                        interrupt-controller;
+                };
+
+                /* bank 2 without interrupt */
+                gpios2: bank@2 {
+                        #gpio-cells = <2>;
+                        reg = <2>;
+                        gpio-controller;
+                        gpio-ranges = <&pinctrl 0 60 30>;
+                };
+        };
+
+CC to James Hogan to look at the series from this perspective.
+
+A third is gpio-mxs.c:
+
+pinctrl@80018000 {
+        compatible = "fsl,imx28-pinctrl", "simple-bus";
+        reg = <0x80018000 2000>;
+
+        gpio0: gpio@0 {
+                compatible = "fsl,imx28-gpio";
+                interrupts = <127>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                interrupt-controller;
+                #interrupt-cells = <2>;
+        };
+
+        gpio1: gpio@1 {
+                compatible = "fsl,imx28-gpio";
+                interrupts = <126>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                interrupt-controller;
+                #interrupt-cells = <2>;
+        };
+
+        gpio2: gpio@2 {
+                compatible = "fsl,imx28-gpio";
+                interrupts = <125>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                interrupt-controller;
+                #interrupt-cells = <2>;
+        };
+(...)
+
+CC to Shawn Guo to look into this.
+
+So in short I think there can be others that can make good use of this
+infrastructure.
+
+> - all GPIO IRQs mapped statically
+
+This really needs to be fixed.
+
+> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
+>   which is waste of memory
+> - DT binding changes not documented and no DT examples
+> - below is ugly ;)
+> +       bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
+> +       pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
+
+These should be fixable quite easily I think. Thierry?
+
+Yours,
+Linus Walleij
