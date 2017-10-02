@@ -1,51 +1,42 @@
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH RFC 2/4] pinctrl: Rename mux group to group_or_pin to
- prepare for pin support
-Date: Mon, 2 Oct 2017 11:10:37 +0100
-Message-ID: <20171002101037.yzna7dpvyhrounaz@localhost.localdomain>
-References: <20170929101503.6769-1-ckeepax@opensource.cirrus.com>
- <20170929101503.6769-3-ckeepax@opensource.cirrus.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795-es1: Add USB3.0 host support
+Date: Mon, 2 Oct 2017 13:23:04 +0200
+Message-ID: <CAMuHMdU9O94H+A=-TOzL_hTErihOJOjY-mvn51ra4yK8MB71_Q@mail.gmail.com>
+References: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1506937525-16965-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:53290 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750957AbdJBKKl (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 06:10:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20170929101503.6769-3-ckeepax@opensource.cirrus.com>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38401 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbdJBLXF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 07:23:05 -0400
+In-Reply-To: <1506937525-16965-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On Fri, Sep 29, 2017 at 11:15:01AM +0100, Charles Keepax wrote:
-> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> 
-> To prepare for adding support for muxing individual pins rename the
-> group member of the pinctrl_map_mux and pinctrl_setting_mux structs to
-> group_or_pin.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
->  include/linux/pinctrl/machine.h               |  2 +-
->  28 files changed, 59 insertions(+), 50 deletions(-)
+On Mon, Oct 2, 2017 at 11:45 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds USB3{0,1} (USB3.0 host) pinmux support to R8A7795 ES1.x
+> SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-> diff --git a/include/linux/pinctrl/machine.h b/include/linux/pinctrl/machine.h
-> index 7fa5d87190c2..ec58c3647eb8 100644
-> --- a/include/linux/pinctrl/machine.h
-> +++ b/include/linux/pinctrl/machine.h
-> @@ -32,7 +32,7 @@ enum pinctrl_map_type {
->   * @function: the mux function to select for the group
->   */
->  struct pinctrl_map_mux {
-> -	const char *group;
-> +	const char *group_or_pin;
->  	const char *function;
->  };
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I.e. will queue in sh-pfc-for-v4.15.
 
-One additional fix is required for PIN_MAP_MUX_GROUP in this
-file.
+Gr{oetje,eeting}s,
 
-Thanks,
-Charles
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
