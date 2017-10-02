@@ -1,37 +1,61 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB3.0 host support
-Date: Mon, 2 Oct 2017 13:23:20 +0200
-Message-ID: <CAMuHMdWw-Xy2VUj8JZ+zarb60qoF_MvcoRExPnz5T9NfjPk4tw@mail.gmail.com>
-References: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1506937525-16965-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH v3 04/12] pinctrl: axp209: add programmable gpio_status_offset
+Date: Mon,  2 Oct 2017 14:08:46 +0200
+Message-ID: <20171002120854.5212-5-quentin.schulz@free-electrons.com>
+References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
+Reply-To: quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1506937525-16965-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Return-path: <linux-sunxi+bncBCLZXSNY5IDBBG6ZZDHAKGQEEEYNO6Q-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20171002120854.5212-1-quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 2, 2017 at 11:45 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds USB3.0 ch0 pinmux support to R8A7795 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To prepare for patches that will add support for a new PMIC that has a
+different GPIO input status register, add a gpio_status_offset within
+axp20x_pctl structure and use it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-I.e. will queue in sh-pfc-for-v4.15.
+Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-axp209.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/pinctrl-axp209.c b/drivers/pinctrl/pinctrl-axp209.c
+index 3ddeba45feed..17146496b22a 100644
+--- a/drivers/pinctrl/pinctrl-axp209.c
++++ b/drivers/pinctrl/pinctrl-axp209.c
+@@ -45,6 +45,7 @@ struct axp20x_pctrl_desc {
+ 	unsigned int			ldo_mask;
+ 	/* Stores the pins supporting ADC function. Bit offset is pin number. */
+ 	unsigned int			adc_mask;
++	unsigned int			gpio_status_offset;
+ };
+ 
+ struct axp20x_pinctrl_function {
+@@ -74,6 +75,7 @@ static const struct axp20x_pctrl_desc axp20x_data = {
+ 	.npins	= ARRAY_SIZE(axp209_pins),
+ 	.ldo_mask = BIT(0) | BIT(1),
+ 	.adc_mask = BIT(0) | BIT(1),
++	.gpio_status_offset = 4,
+ };
+ 
+ static int axp20x_gpio_get_reg(unsigned offset)
+@@ -105,7 +107,7 @@ static int axp20x_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	if (ret)
+ 		return ret;
+ 
+-	return !!(val & BIT(offset + 4));
++	return !!(val & BIT(offset + pctl->desc->gpio_status_offset));
+ }
+ 
+ static int axp20x_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
+-- 
+2.11.0
