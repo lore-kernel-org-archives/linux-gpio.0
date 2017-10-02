@@ -1,89 +1,78 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for GPIO0/1 when
- used as LDOs
-Date: Mon, 2 Oct 2017 22:42:35 +0200
-Message-ID: <20171002204235.25d4437a2p5qzrrj@flea>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
- <20171002120854.5212-13-quentin.schulz@free-electrons.com>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
+Date: Mon, 2 Oct 2017 15:47:51 -0500
+Message-ID: <9f28c9dd-6277-6c75-1186-a834e15c5346@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <1504798409-32041-2-git-send-email-timur@codeaurora.org>
+ <20171002174414.GL1165@minitux>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wqqx2x777ffcgx3o"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:60676 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbdJBUmr (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 16:42:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20171002120854.5212-13-quentin.schulz@free-electrons.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42360 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750984AbdJBUrx (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 16:47:53 -0400
+In-Reply-To: <20171002174414.GL1165@minitux>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, wens@csie.org, linux@armlinux.org.uk, lee.jones@linaro.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, thomas.petazzoni@free-electrons.com, linux-sunxi@googlegroups.com
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, andy.gross@linaro.org, david.brown@linaro.org, anjiandi@codeaurora.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 
+On 10/02/2017 12:44 PM, Bjorn Andersson wrote:
+>> +	/*
+>> +	 * If irq_need_valid_mask is true, then gpiochip_add_data() will
+>> +	 * initialize irq_valid_mask to all 1s.  We need to clear all the
+>> +	 * GPIOs that are unavailable, and we need to find each block
+>> +	 * of consecutive available GPIOs are add them as pin ranges.
+>> +	 */
+>> +	if (chip->irq_need_valid_mask) {
+>> +		for (i = 0; i < ngpio; i++)
+>> +			if (!groups[i].npins)
+>> +				clear_bit(i, pctrl->chip.irq_valid_mask);
+>> +
+>> +		while ((count = msm_gpio_get_next_range(pctrl, &start))) {
+>> +			ret = gpiochip_add_pin_range(&pctrl->chip,
+>> +						     dev_name(pctrl->dev),
+>> +						     start, start, count);
+>> +			if (ret)
+>> +				break;
+>> +			start += count;
+> I do not fancy the idea of specifying a bitmap of valid irq pins and
+> then having the driver register the pin-ranges in-between. 
 
---wqqx2x777ffcgx3o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But that's exactly what abx500_gpio_probe() in pinctrl-abx500.c does. 
+Here's even a reference to holes in the GPIO space:
 
-On Mon, Oct 02, 2017 at 12:08:54PM +0000, Quentin Schulz wrote:
-> On AXP813/818, GPIO0 and GPIO1 can be used as LDO as (respectively)
-> ldo_io0 and ldo_io1.
->=20
-> Let's add the pinctrl properties to the said regulators.
->=20
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> ---
->  arch/arm/boot/dts/axp81x.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
-> index f90f257130d5..099b0ddc1bbb 100644
-> --- a/arch/arm/boot/dts/axp81x.dtsi
-> +++ b/arch/arm/boot/dts/axp81x.dtsi
-> @@ -52,6 +52,16 @@
->  		compatible =3D "x-powers,axp813-gpio";
->  		gpio-controller;
->  		#gpio-cells =3D <2>;
-> +
-> +		gpio0_ldo: gpio0_ldo {
-> +			pins =3D "GPIO0";
-> +			function =3D "ldo";
-> +		};
-> +
-> +		gpio1_ldo: gpio1_ldo {
-> +			pins =3D "GPIO1";
-> +			function =3D "ldo";
-> +		};
+/*
+  * Compute number of GPIOs from the last SoC gpio range descriptors
+  * These ranges may include "holes" but the GPIO number space shall
+  * still be homogeneous, so we need to detect and account for any
+  * such holes so that these are included in the number of GPIO pins.
+  */
 
-The node names are not supposed to contain any hyphens.
+ > If we provide
+> a bitmap of validity to the core it should support using this for the
+> pins as well. (Which I believe is what Linus answered in the discussion
+> following patch 0/2)
 
-Thanks!
-Maxime
+So you want to change "gpio_chip" to add an "available" callback?  And 
+every time gpiolib wants to call a gpio_chip callback, it should call 
+->available first?  Like this:
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+if (chip->available && chip->available())
+	status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
 
---wqqx2x777ffcgx3o
-Content-Type: application/pgp-signature; name="signature.asc"
+I can do that, but it just seems very redundant.  The core already knows 
+not to touch GPIOs that are not in a pin range.  The only exception is 
+gpiochip_add_data(), as I've stated before.
 
------BEGIN PGP SIGNATURE-----
+It just seems wrong to call an API every time to ask permission before 
+we can call any other API.  But since the API may not be defined, we 
+have to first check if the API exists before we can ask permission.
 
-iQIcBAEBAgAGBQJZ0qS7AAoJEBx+YmzsjxAgUkAQAIhv7hYV4R0prgkHdoQoO+Xu
-akcFEGWnDusYy3UFbQ92ePsI5mFHX6PJZNPDZDGL4GAUwunZk3m8X/tKfniye+uc
-O/MDjyFsS6lJ0WCuC+dN3os20KtokiImM4DW68zzJSMHVzN37HSLPRatspq1heTS
-82QrYa74Xl9UzhUFQf0eFrmniyP3u/ucGFoh0GFmP6GgGkI6xKn52qG/rpy8hbgd
-gtkWz/4/MO9mYWYavVdF9w/P2Tbq+NATsQTZkbchSlPU74fFViP7EHDYD5OLeR7H
-OftC+WIks1Nhl+vQgRXttzX3iaFATddUDwcCR9yX4P/D1kUTFeJNnowXyOojMSMf
-tOfzAYhHVDejwRaBFP7adV6y/DYYJMOwapblZBe2ump2WDO75+F3clCfH+SCD1LU
-de1xca2Go8QF/Amx1KxBEIEIimuvNu1bLak+gbXU58r1iBKI6lImzdfPz7fHlKgN
-IOwqjJi6oN8wbwmteOuOgKF1QgCkBG+6u9YvvTVE3q9AsehDQG9vgSmFY7NoOpyD
-fPSTkuY6VkzES0DSgtsBDIiiKL70vj6W7Y3OvN5KcYdBt9/UsTzI+/MvdqDeFdfE
-HdA0eBp6lqvZ6Mp9+7DdiXqTDE335ycOFaPaD1clrlXsooP4yFyCVEHuajGypCc9
-GMRgjoBhuwXi8V2sd0O9
-=tQBn
------END PGP SIGNATURE-----
-
---wqqx2x777ffcgx3o--
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
