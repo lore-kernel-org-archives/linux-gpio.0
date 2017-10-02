@@ -1,37 +1,47 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
-Date: Mon, 2 Oct 2017 11:02:50 -0500
-Message-ID: <0ede14eb-a9fc-ab90-4e18-c6c955da2601@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <20170919070422.GI3349@codeaurora.org>
- <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
- <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
- <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
- <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
- <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
- <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org>
- <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v6 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation
+ region driver
+Date: Mon, 2 Oct 2017 19:54:03 +0300
+Message-ID: <20171002165402.5ypqveemuz2ziuiq@valkosipuli.retiisi.org.uk>
+References: <1501288226-27469-1-git-send-email-rajmohan.mani@intel.com>
+ <1501288226-27469-4-git-send-email-rajmohan.mani@intel.com>
+ <20170814203900.qobophvzcrdtv34s@kekkonen.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170814203900.qobophvzcrdtv34s@kekkonen.localdomain>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Rajmohan Mani <rajmohan.mani@intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On 09/22/2017 08:29 AM, Linus Walleij wrote:
-> I am waiting for the maintainer, Bjorn Andersson, to provide review.
+Hi Rafael,
 
-Bjorn,
+On Mon, Aug 14, 2017 at 11:39:00PM +0300, Sakari Ailus wrote:
+> On Fri, Jul 28, 2017 at 05:30:26PM -0700, Rajmohan Mani wrote:
+> > The Kabylake platform coreboot (Chrome OS equivalent of
+> > BIOS) has defined 4 operation regions for the TI TPS68470 PMIC.
+> > These operation regions are to enable/disable voltage
+> > regulators, configure voltage regulators, enable/disable
+> > clocks and to configure clocks.
+> > 
+> > This config adds ACPI operation region support for TI TPS68470 PMIC.
+> > TPS68470 device is an advanced power management unit that powers
+> > a Compact Camera Module (CCM), generates clocks for image sensors,
+> > drives a dual LED for flash and incorporates two LED drivers for
+> > general purpose indicators.
+> > This driver enables ACPI operation region support to control voltage
+> > regulators and clocks for the TPS68470 PMIC.
+> > 
+> > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> 
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Would you please take a moment to review these patches?  I'm guessing 
-it's too late for 4.14, so I would like these merged into 4.15.  But 
-without your review, very little progress is being made.
+The other two patches from the set are in v4.14-rc1.
 
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
