@@ -1,74 +1,51 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Add USB3.0 host support
-Date: Mon,  2 Oct 2017 18:45:25 +0900
-Message-ID: <1506937525-16965-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+Subject: Re: [PATCH RFC 2/4] pinctrl: Rename mux group to group_or_pin to
+ prepare for pin support
+Date: Mon, 2 Oct 2017 11:10:37 +0100
+Message-ID: <20171002101037.yzna7dpvyhrounaz@localhost.localdomain>
+References: <20170929101503.6769-1-ckeepax@opensource.cirrus.com>
+ <20170929101503.6769-3-ckeepax@opensource.cirrus.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1506937525-16965-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: laurent.pinchart@ideasonboard.com, geert+renesas@glider.be, linus.walleij@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:53290 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750957AbdJBKKl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 06:10:41 -0400
+Content-Disposition: inline
+In-Reply-To: <20170929101503.6769-3-ckeepax@opensource.cirrus.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Fri, Sep 29, 2017 at 11:15:01AM +0100, Charles Keepax wrote:
+> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> 
+> To prepare for adding support for muxing individual pins rename the
+> group member of the pinctrl_map_mux and pinctrl_setting_mux structs to
+> group_or_pin.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+>  include/linux/pinctrl/machine.h               |  2 +-
+>  28 files changed, 59 insertions(+), 50 deletions(-)
 
-This patch adds USB3.0 ch0 pinmux support to R8A7795 SoC.
+> diff --git a/include/linux/pinctrl/machine.h b/include/linux/pinctrl/machine.h
+> index 7fa5d87190c2..ec58c3647eb8 100644
+> --- a/include/linux/pinctrl/machine.h
+> +++ b/include/linux/pinctrl/machine.h
+> @@ -32,7 +32,7 @@ enum pinctrl_map_type {
+>   * @function: the mux function to select for the group
+>   */
+>  struct pinctrl_map_mux {
+> -	const char *group;
+> +	const char *group_or_pin;
+>  	const char *function;
+>  };
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+One additional fix is required for PIN_MAP_MUX_GROUP in this
+file.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 9e420f7..39772ac 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3205,6 +3205,16 @@ enum {
- 	USB2_CH3_PWEN_MARK, USB2_CH3_OVC_MARK,
- };
- 
-+/* - USB30 ------------------------------------------------------------------ */
-+static const unsigned int usb30_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+
-+static const unsigned int usb30_mux[] = {
-+	USB30_PWEN_MARK, USB30_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_link),
- 	SH_PFC_PIN_GROUP(avb_magic),
-@@ -3425,6 +3435,7 @@ enum {
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
- 	SH_PFC_PIN_GROUP(usb2_ch3),
-+	SH_PFC_PIN_GROUP(usb30),
- };
- 
- static const char * const avb_groups[] = {
-@@ -3742,6 +3753,10 @@ enum {
- 	"usb2_ch3",
- };
- 
-+static const char * const usb30_groups[] = {
-+	"usb30",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
- 	SH_PFC_FUNCTION(drif0),
-@@ -3775,6 +3790,7 @@ enum {
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
- 	SH_PFC_FUNCTION(usb2_ch3),
-+	SH_PFC_FUNCTION(usb30),
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--- 
-1.9.1
+Thanks,
+Charles
