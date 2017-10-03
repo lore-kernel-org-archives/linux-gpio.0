@@ -1,62 +1,101 @@
-From: Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
-Date: Tue, 3 Oct 2017 15:40:51 +0000
-Message-ID: <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20171003073334.18917-1-chris.brandt@renesas.com>
- <20171003073334.18917-2-chris.brandt@renesas.com>
- <20171003083148.GG4037@w540>
- <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20171003150412.GI4037@w540>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
+Date: Tue, 3 Oct 2017 11:17:05 -0500
+Message-ID: <20171003161705.23398-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171003150412.GI4037@w540>
-Content-Language: en-US
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: jacopo mondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:16454 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751124AbdJCQRU (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 12:17:20 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>, Ladislav Michl <ladis@linux-mips.org>
 
-SGkgSmFjb3BvLA0KDQpPbiBUdWVzZGF5LCBPY3RvYmVyIDAzLCAyMDE3IDEsIGphY29wbyBtb25k
-aSB3cm90ZToNCj4gPiBBcyBmb3IgU1NJLCB0aGUgbWFudWFsIHNheXMgb25seSB0aGUgU1NJVHgg
-cGlucyBuZWVkIGJpLWRpciwgbm90IHRoZQ0KPiA+IFNTSVJ4IHBpbnMuDQo+IA0KPiBMb29raW5n
-IGF0IFJaL0ExSCB0YWJsZXMgeW91J3JlIHJpZ2h0LiBJIHdvbmRlciB3aHkgaW4gUlovQTFMIFNT
-SSBwaW5zDQo+IGFyZSBsaXN0ZWQgYXMgYmlkaXIgYW5kIGluIFJaL0ExSCB0aGV5J3JlIG5vdC4N
-Cg0KU29ycnksIHRvIGJlIGNsZWFyLCBTU0lUeCBwaW5zIGhhdmUgbm90aGluZyB0byBkbyB3aXRo
-ICJiaS1kaXIiLg0KDQpUaG9zZSB3ZXJlIHBpbnMgdGhhdCB5b3UgaGF2ZSB0byBhZGQgdG8gdGhl
-IHJ6YTFsX3N3aW9fcGluc1tdIGFycmF5IA0KYmVjYXVzZSB0aGV5IG11c3QgaGF2ZSB0byBoYXZl
-IGJvdGggUElQQ24uUElQQyBhbmQgUE0gYml0cyBzZXQgdG8gJzAnIChpZSwgDQpmb3JjZWQgdG8g
-b3V0cHV0KS4NCg0KSG93ZXZlciwgdGhlcmUgaXMgbm8gU1NJVHhENSBwaW4gaW4gUlovQTFMLg0K
-DQogIFJaL0ExSDogU1NJVHhEMCwgU1NJVHhEMSwgU1NJVHhEMywgU1NJVHhENQ0KICBSWi9BMUw6
-IFNTSVR4RDAsIFNTSVR4RDEsIFNTSVR4RDMNCg0KDQoNCj4gPiBJIHRob3VnaHQgd2Ugc2FpZCBU
-SU9DIGRpZG4ndCBuZWVkIHRvIGJlIGluIGEgdGFibGUgYmVjYXVzZSB0aGUgdXNlciBoYXMNCj4g
-PiB0byBzcGVjaWZ5IHRoZW0gYW55d2F5IGJlY2F1c2UgdGhlIHVzZXIgaGFzIHRvIGNob29zZSBp
-ZiBoZSB3YW50cyB0aGVtDQo+ID4gYXMgaW5wdXQgb3Igb3V0cHV0LCBzbyBpZiBoZSBkb2VzIHRo
-YXQsIHRoZW4gd2UgYXV0b21hdGljYWxseSBrbm93IGl0J3MNCj4gPiBhIHN3aW8gcGluLiBIbW0s
-IG1heWJlIEkgaGF2ZSB0byBnbyBiYWNrIGFuZCBsb29rIGF0IHdoYXQgdGhlIGRyaXZlcg0KPiA+
-IGVuZGVkIHVwIGltcGxlbWVudGluZy4NCj4gPg0KPiANCj4gQ2FuIGNvbmZpcm0gVElPQyBwaW5z
-IGFyZSBub3QgbGlzdGVkIGluIFNXSU8gdGFibGUgaW4gUlovQTFILg0KDQpZZXMsIHRoYXQgJ2Fy
-ZScgbGlzdGVkIGluIHRoZSB0YWJsZS4gQnV0IGZvciBhIGdvb2QgcmVhc29uLg0KDQpUaGUgVElP
-QyBwaW5zIGNhbiBiZSB1c2VzIGFzIGFuIG91dHB1dCAoUFdNIGZvciBleGFtcGxlKSBvciBhcyBh
-IGlucHV0IA0KKGlucHV0IGNhcHR1cmUgZm9yIGV4YW1wbGUpLCBzbyB0aGV5IGFyZSBub3QgcmVh
-bGx5IGEgZml4ZWQgZGlyZWN0aW9uLiANClRoYXQgaXMgd2h5IHRoZSB1c2VyIG5lZWRzIHRvIHNw
-ZWNpZnkgaG93IHRoZXkgcGxhbiB0byB1c2UgdGhlbSBpbiB0aGUgRFQuDQpBbmQuLi50aGF0J3Mg
-YWxzbyB3aHkgaXQgZG9lc24ndCBtYWtlIHNlbnNlIHRvIHB1dCB0aGVtIGluIHRoZSANCnJ6YTFs
-X3N3aW9fcGluc1tdIGFycmF5ICh3ZSBoYXZlIG5vIGlkZWEgaG93IHRoZXkgd2FudCB0byB1c2Ug
-dGhlbSkuDQoNClNvLCB0aGUgaGFyZHdhcmUgbWFudWFsIGhhcyB0aGUgVElPQyBwaW5zIGluIHRo
-ZSBTV0lPIHRhYmxlIHRvIHRlbGwgdGhlIA0KdXNlciAnaGV5LCB5b3UgaGF2ZSB0byBtYW51YWxs
-eSBzZXQgdGhlc2UgcGlucyB0byBlaXRoZXIgaW5wdXQgb3Igb3V0cHV0DQp5b3Vyc2VsZiBiZWNh
-dXNlIHdlIGNhbid0IG1hZ2ljYWxseSBrbm93IHdoYXQgeW91IHdhbnQgdG8gdXNlIHRoZW0gZm9y
-Lg0KDQpCdXQuLi4NClRoZSByZWFzb24gZm9yIHRoZSByemExbF9zd2lvX3BpbnNbXSBhcnJheSBp
-cyBmb3Igd2VpcmQgcGluIA0KY29uZmlndXJhdGlvbnMgdGhhdCBhcmUgZml4ZWQgKGxpa2UgTENE
-IExWRFMgb3V0cHV0IHBpbnMgbmVlZCB0byBiZSBjb25maWd1cmVkIGFzIA0KaW5wdXRzKS4NCg0K
-DQo+IFRoYW5rcyBmb3IgZG91YmxlIGNoZWNraW5nLiBZb3VyIHNvdXJjZSBmcm9tIEphcGFuIGlz
-IG1vcmUNCj4gYXV0aG9yaXRhdGl2ZSB0aGFuIG1hbnVhbHMgYW5kIGRlZmludGVseSBtb3JlIGFj
-Y3VyYXRlIHRoYW4gbWUgOykNCg0KU28sIGFmdGVyIGFsbCB0aGF0LCBJIGRvbid0IHRoaW5rIHdl
-IGZvdW5kIGFueSBpc3N1ZXMgd2l0aCBteSBwYXRjaC4NCkNvcnJlY3Q/Pz8NCg0KDQpUaGFua3Mh
-DQoNCkNocmlzDQoNCg==
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Now acking of edge irqs happens the following way:
+- omap_gpio_irq_handler
+  - "isr" = read irq status
+  - omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask); 
+	^ clear edge status, so irq can be accepted
+  - loop while "isr"
+	generic_handle_irq()
+	 - handle_edge_irq()
+	    - desc->irq_data.chip->irq_ack(&desc->irq_data); 
+		- omap_gpio_ack_irq()
+it might be that at this moment edge IRQ was triggered again and it will be
+cleared and IRQ will be lost.
+
+Use handle_simple_irq and clear edge interrupts early without disabling them in
+omap_gpio_irq_handler to avoid loosing interrupts.
+
+[1] https://marc.info/?l=linux-omap&m=149004465313534&w=2
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+---
+Resend with proper cc list.
+
+ drivers/gpio/gpio-omap.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index dbf869f..0c80052 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -518,7 +518,13 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
+ 	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+ 		irq_set_handler_locked(d, handle_level_irq);
+ 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+-		irq_set_handler_locked(d, handle_edge_irq);
++		/*
++		 * Edge IRQs are already cleared/acked in irq_handler and
++		 * not need to be masked, as result handle_edge_irq()
++		 * logic is excessed here and may cause lose of interrupts.
++		 * So just use handle_simple_irq.
++		 */
++		irq_set_handler_locked(d, handle_simple_irq);
+ 
+ 	return 0;
+ 
+@@ -678,7 +684,7 @@ static void omap_gpio_free(struct gpio_chip *chip, unsigned offset)
+ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ {
+ 	void __iomem *isr_reg = NULL;
+-	u32 isr;
++	u32 enabled, isr, level_mask;
+ 	unsigned int bit;
+ 	struct gpio_bank *bank = gpiobank;
+ 	unsigned long wa_lock_flags;
+@@ -691,23 +697,21 @@ static irqreturn_t omap_gpio_irq_handler(int irq, void *gpiobank)
+ 	pm_runtime_get_sync(bank->chip.parent);
+ 
+ 	while (1) {
+-		u32 isr_saved, level_mask = 0;
+-		u32 enabled;
+-
+ 		raw_spin_lock_irqsave(&bank->lock, lock_flags);
+ 
+ 		enabled = omap_get_gpio_irqbank_mask(bank);
+-		isr_saved = isr = readl_relaxed(isr_reg) & enabled;
++		isr = readl_relaxed(isr_reg) & enabled;
+ 
+ 		if (bank->level_mask)
+ 			level_mask = bank->level_mask & enabled;
++		else
++			level_mask = 0;
+ 
+ 		/* clear edge sensitive interrupts before handler(s) are
+ 		called so that we don't miss any interrupt occurred while
+ 		executing them */
+-		omap_disable_gpio_irqbank(bank, isr_saved & ~level_mask);
+-		omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
+-		omap_enable_gpio_irqbank(bank, isr_saved & ~level_mask);
++		if (isr & ~level_mask)
++			omap_clear_gpio_irqbank(bank, isr & ~level_mask);
+ 
+ 		raw_spin_unlock_irqrestore(&bank->lock, lock_flags);
+ 
+-- 
+2.10.1
+
