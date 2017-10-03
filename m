@@ -1,122 +1,147 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
- infrastructure
-Date: Tue, 3 Oct 2017 13:26:38 -0500
-Message-ID: <b583d903-03ea-eb74-e142-02b31ad3ddfb@ti.com>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
- <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw@mail.gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Tue, 3 Oct 2017 15:03:11 -0700
+Message-ID: <20171003220311.GU457@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <20170919070422.GI3349@codeaurora.org>
+ <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+ <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
+ <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
+ <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
+ <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
+ <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org>
+ <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+ <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:35958 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbdJCWDN (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 18:03:13 -0400
+Content-Disposition: inline
+In-Reply-To: <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-
-
-On 10/02/2017 02:55 AM, Linus Walleij wrote:
-> On Thu, Sep 28, 2017 at 4:22 PM, Grygorii Strashko
-> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
+On 09/22, Timur Tabi wrote:
+> On 09/22/2017 08:29 AM, Linus Walleij wrote:
+> >
+> >What is your response to Stephen's comment:
+> >
+> >>[Stephen Boyd]
+> >>Perhaps we can add another hook for our purposes here that
+> >>tells gpiolib that the gpio is not usable and to skip it. The
+> >>semantics would be clear, it's just about probing availability of
+> >>this pin as a gpio and doesn't mux any pins.
 > 
->> Sry, but I do not agree with this series.
->> - no prof that it can be re-used by other drivers than tegra
->>   (at least I do not see reasons to re-use it for any TI drivers)
+> >I think this kind of related to my response (after I realized it
+> >was not just about IRQs):
 > 
-> This is not necessarily a blocker if it can be shown that others than
-> TI/OMAP can reuse it.
-
-sure. My point is - this is big change in gpiolib, which is > 1000 lines,
-but current re-usability just 2 drivers (I'm comparing with your work when
-gpio irq infra was introduced - you did it bottom-up, by refactoring
-existing drivers and moving common code in gpiolib, so re usability is great). 
-
+> We already have 95% of this.  We can already specify individual pin
+> ranges, and the vast majority of the code recognizes the ranges.
+> There is only one small loophole, and that's in gpiochip_add_data().
+> The for-loop iterates over all GPIOs:
 > 
-> I've looked at things like the imagination pistachio:
+> 	for (i = 0; i < chip->ngpio; i++) {
+> 		struct gpio_desc *desc = &gdev->descs[i];
 > 
-> pinctrl@18101C00 {
->          compatible = "img,pistachio-system-pinctrl";
->          reg = <0x18101C00 0x400>;
+> 		desc->gdev = gdev;
+> 		/*
+> 		 * REVISIT: most hardware initializes GPIOs as inputs
+> 		 * (often with pullups enabled) so power usage is
+> 		 * minimized. Linux code should set the gpio direction
+> 		 * first thing; but until it does, and in case
+> 		 * chip->get_direction is not set, we may expose the
+> 		 * wrong direction in sysfs.
+> 		 */
 > 
->          gpio0: gpio0 {
->                  interrupts = <GIC_SHARED 71 IRQ_TYPE_LEVEL_HIGH>;
+> I believe the real problem is that this for-loop should be moved
+> from gpiochip_add_data() into some other function that is called
+> *after* the pin ranges are defined.  We can put it in
+> gpiochip_add_pin_range(), maybe.
 > 
->                  gpio-controller;
->                  #gpio-cells = <2>;
+> My patch covers the loophole by adding a check inside
+> get_direction(). If we fix gpiochip_add_data(), I can remove that
+> patch.
 > 
->                  interrupt-controller;
->                  #interrupt-cells = <2>;
->          };
-> 
->          ...
-> 
->          gpio5: gpio5 {
->                  interrupts = <GIC_SHARED 76 IRQ_TYPE_LEVEL_HIGH>;
-> 
->                  gpio-controller;
->                  #gpio-cells = <2>;
-> 
->                  interrupt-controller;
->                  #interrupt-cells = <2>;
->          };
-> 
-> This looks like a clear candidate.
-> CC: to  Andrew Bresticker, can you look into this?
+> However, I think that change is risky and will require a lot of
+> testing and review.
 > 
 
-[...]
+I've run into this now on our mobile SoCs after I pull in commit
+8e51533780ba ("pinctrl: qcom: add get_direction function").
+Before that commit we never read each pin of the device. On our
+mobile SoCs we have devicetree and it feels like having that
+describe which pins are available and not available is
+half-duplicating information we would already have via consumers
+indicating which pins they care about. I don't see any value
+beyond system wide debug in figuring out the default pin
+configuration of a pin that doesn't have a consumer in Linux.
 
-		gpio: gpio@226000 {
-			compatible = "ti,dm6441-gpio";
-			gpio-controller;
-			#gpio-cells = <2>;
-			reg = <0x226000 0x1000>;
-			interrupts = <42 IRQ_TYPE_EDGE_BOTH
-				43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
-				45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
-				47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
-				49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
-			ti,ngpio = <144>;
-			ti,davinci-gpio-unbanked = <0>;
-			status = "disabled";
-			interrupt-controller;
-			#interrupt-cells = <2>;
-		};
+Could we remove the pin direction finding part here in
+gpiochip_add_pin_range() and lazily resolve the pin direction
+when a pin is requested? We would need a similar check in the msm
+specific debugfs code where we skip pins that aren't requested.
+This is basically a revert of commit 72d320006177 ("gpio: set up
+initial state from .get_direction()").
 
-FYI. Above is gpio-dvinci example which defines the same, but without coding
-gpio banks in DT (note 2 IRQ lines per bank, bank 32 pins).
+ACPI can still describe only the pin ranges that they care about
+exposing, but from the devicetree side it's been working well
+enough to not touch pins that aren't used by anything in Linux.
 
-> 
-> CC to Shawn Guo to look into this.
-> 
-> So in short I think there can be others that can make good use of this
-> infrastructure.
-> 
->> - all GPIO IRQs mapped statically
-> 
-> This really needs to be fixed.
-> 
->> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
->>    which is waste of memory
->> - DT binding changes not documented and no DT examples
->> - below is ugly ;)
->> +       bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
->> +       pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
-> 
-> These should be fixable quite easily I think. Thierry?
-
-What I'm trying to understand is how GPIO client bindings will look like?
-Now it is: gpios = <&gpio2 14 GPIO_ACTIVE_LOW>; (pistachio_marduk.dts)
-
-But as per of_gpio_banked_xlate() it expected to be
-gpios = <&gpio [Linear gpio num] GPIO_ACTIVE_LOW>;
-Wouldn't this break DT compatibility and prevent re-using of this feature
-for pistachio, for example? (or i'm missing smth).
+---8<----
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index cd003b74512f..673028823bc5 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1210,16 +1210,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+ 		 * wrong direction in sysfs.
+ 		 */
+ 
+-		if (chip->get_direction) {
+-			/*
+-			 * If we have .get_direction, set up the initial
+-			 * direction flag from the hardware.
+-			 */
+-			int dir = chip->get_direction(chip, i);
+-
+-			if (!dir)
+-				set_bit(FLAG_IS_OUT, &desc->flags);
+-		} else if (!chip->direction_input) {
++		if (!chip->direction_input) {
+ 			/*
+ 			 * If the chip lacks the .direction_input callback
+ 			 * we logically assume all lines are outputs.
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 273badd92561..4a0aeceb42f1 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -24,7 +24,7 @@
+ #include <linux/pinctrl/pinconf.h>
+ #include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/slab.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/driver.h>
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
+ #include <linux/reboot.h>
+@@ -494,6 +494,12 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 	};
+ 
+ 	g = &pctrl->soc->groups[offset];
++
++	if (!gpiochip_is_requested(chip, gpio)) {
++		seq_printf(s, " %-8s:", g->name);
++		return;
++	}
++
+ 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
+ 
+ 	is_out = !!(ctl_reg & BIT(g->oe_bit));
 
 -- 
-regards,
--grygorii
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
