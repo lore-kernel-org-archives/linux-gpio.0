@@ -1,119 +1,121 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
- irqs mapping
-Date: Tue, 3 Oct 2017 13:20:05 -0500
-Message-ID: <1ff05c6b-9bac-b8e7-fb10-cd146e4e8bf8@ti.com>
-References: <20171003170049.24480-1-grygorii.strashko@ti.com>
- <CAHp75Vce0v0d9x4AiDnbNfqv4c_erxwNXsd+ApCTEfybCEOMdA@mail.gmail.com>
+From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 00/16] gpio: Tight IRQ chip integration and banked
+ infrastructure
+Date: Tue, 3 Oct 2017 13:26:38 -0500
+Message-ID: <b583d903-03ea-eb74-e142-02b31ad3ddfb@ti.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
+ <44cf41e3-834e-ddb3-4c9e-8ab00e0866cb@ti.com>
+ <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:20529 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751115AbdJCSUI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 14:20:08 -0400
-In-Reply-To: <CAHp75Vce0v0d9x4AiDnbNfqv4c_erxwNXsd+ApCTEfybCEOMdA@mail.gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdagAxotP=VZr1NUvmNmHgACfr4x2aHkh=nyyEhUWWgzPw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, James Hogan <james.hogan-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Gorman <chrisjohgorman@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, theadamlevy@gmail.com
 
 
 
-On 10/03/2017 12:54 PM, Andy Shevchenko wrote:
-> On Tue, Oct 3, 2017 at 8:00 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
->> New GPIO IRQs are allocated and mapped dynamically by default when
->> GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
->> This causes issues on some Intel platforms [1][2] with broken BIOS which
->> hardcodes Linux IRQ numbers in their ACPI tables.
->>
->> On such platforms cherryview-pinctrl driver should allocate and map all
->> GPIO IRQs at probe time.
->> Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
->> can be seen at boot log.
->>
->> NOTE. It still may fail if boot sequence will changed and some interrupt
->> controller will be probed before cherryview-pinctrl which will shift Linux IRQ
->> numbering (expected with CONFIG_SPARCE_IRQ enabled).
->>
->> [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
->> [2] https://lkml.org/lkml/2017/9/28/153
+On 10/02/2017 02:55 AM, Linus Walleij wrote:
+> On Thu, Sep 28, 2017 at 4:22 PM, Grygorii Strashko
+> <grygorii.strashko-l0cyMroinI0@public.gmane.org> wrote:
 > 
-> Btw, you might want to use one of
+>> Sry, but I do not agree with this series.
+>> - no prof that it can be re-used by other drivers than tegra
+>>   (at least I do not see reasons to re-use it for any TI drivers)
 > 
-> Buglink:
-> Bugzilla:
-> Link:
-> 
-> tags.
-> 
->> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
->> Cc: Chris Gorman <chrisjohgorman@gmail.com>
->> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->> Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
->> Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> 
-> I'm not sure about this approach. It might be some other broken BIOS
-> discovered with some other driver (like pinctrl-baytrail.c as an
-> hypothetical example).
+> This is not necessarily a blocker if it can be shown that others than
+> TI/OMAP can reuse it.
 
-It can be made more safe by fixing gpio chip base irq numbers, but this info
-should be passed to drivers somehow. Of course, above note will be still valid
-- as W/A, required IRQ ranges can be reserved very early during boot in platform code.
+sure. My point is - this is big change in gpiolib, which is > 1000 lines,
+but current re-usability just 2 drivers (I'm comparing with your work when
+gpio irq infra was introduced - you did it bottom-up, by refactoring
+existing drivers and moving common code in gpiolib, so re usability is great). 
 
 > 
-> Alternative is to deselect SPARSE_IRQ (though it makes it non-usable
-> in entire x86 world).
+> I've looked at things like the imagination pistachio:
+> 
+> pinctrl@18101C00 {
+>          compatible = "img,pistachio-system-pinctrl";
+>          reg = <0x18101C00 0x400>;
+> 
+>          gpio0: gpio0 {
+>                  interrupts = <GIC_SHARED 71 IRQ_TYPE_LEVEL_HIGH>;
+> 
+>                  gpio-controller;
+>                  #gpio-cells = <2>;
+> 
+>                  interrupt-controller;
+>                  #interrupt-cells = <2>;
+>          };
+> 
+>          ...
+> 
+>          gpio5: gpio5 {
+>                  interrupts = <GIC_SHARED 76 IRQ_TYPE_LEVEL_HIGH>;
+> 
+>                  gpio-controller;
+>                  #gpio-cells = <2>;
+> 
+>                  interrupt-controller;
+>                  #interrupt-cells = <2>;
+>          };
+> 
+> This looks like a clear candidate.
+> CC: to  Andrew Bresticker, can you look into this?
+> 
 
-:) nuke mix.
+[...]
+
+		gpio: gpio@226000 {
+			compatible = "ti,dm6441-gpio";
+			gpio-controller;
+			#gpio-cells = <2>;
+			reg = <0x226000 0x1000>;
+			interrupts = <42 IRQ_TYPE_EDGE_BOTH
+				43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
+				45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
+				47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
+				49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
+			ti,ngpio = <144>;
+			ti,davinci-gpio-unbanked = <0>;
+			status = "disabled";
+			interrupt-controller;
+			#interrupt-cells = <2>;
+		};
+
+FYI. Above is gpio-dvinci example which defines the same, but without coding
+gpio banks in DT (note 2 IRQ lines per bank, bank 32 pins).
 
 > 
->>   drivers/pinctrl/intel/pinctrl-cherryview.c | 14 +++++++++++++-
->>   1 file changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
->> index 04e929f..fadbca9 100644
->> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
->> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
->> @@ -1577,6 +1577,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
->>          struct gpio_chip *chip = &pctrl->chip;
->>          bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
->>          int ret, i, offset;
->> +       int irq_base;
->>
->>          *chip = chv_gpio_chip;
->>
->> @@ -1622,7 +1623,18 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
->>          /* Clear all interrupts */
->>          chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
->>
->> -       ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
->> +       if (!need_valid_mask) {
->> +               irq_base = devm_irq_alloc_descs(pctrl->dev, -1, 0,
->> +                                               chip->ngpio, NUMA_NO_NODE);
->> +               if (irq_base < 0) {
->> +                       dev_err(pctrl->dev, "Failed to allocate IRQ numbers\n");
->> +                       return irq_base;
->> +               }
->> +       } else {
->> +               irq_base = 0;
->> +       }
->> +
->> +       ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, irq_base,
->>                                     handle_bad_irq, IRQ_TYPE_NONE);
->>          if (ret) {
->>                  dev_err(pctrl->dev, "failed to add IRQ chip\n");
->> --
->> 2.10.1
->>
+> CC to Shawn Guo to look into this.
 > 
+> So in short I think there can be others that can make good use of this
+> infrastructure.
 > 
+>> - all GPIO IRQs mapped statically
 > 
+> This really needs to be fixed.
+> 
+>> - irq->map[offset + j] = irq->parents[parent]; holds IRQs for all pins
+>>    which is waste of memory
+>> - DT binding changes not documented and no DT examples
+>> - below is ugly ;)
+>> +       bank = (spec[0] >> gc->of_gpio_bank_mask) & gc->of_gpio_bank_shift;
+>> +       pin = (spec[0] >> gc->of_gpio_pin_mask) & gc->of_gpio_pin_shift;
+> 
+> These should be fixable quite easily I think. Thierry?
+
+What I'm trying to understand is how GPIO client bindings will look like?
+Now it is: gpios = <&gpio2 14 GPIO_ACTIVE_LOW>; (pistachio_marduk.dts)
+
+But as per of_gpio_banked_xlate() it expected to be
+gpios = <&gpio [Linear gpio num] GPIO_ACTIVE_LOW>;
+Wouldn't this break DT compatibility and prevent re-using of this feature
+for pistachio, for example? (or i'm missing smth).
 
 -- 
 regards,
