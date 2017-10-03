@@ -1,78 +1,62 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
-Date: Mon, 2 Oct 2017 15:47:51 -0500
-Message-ID: <9f28c9dd-6277-6c75-1186-a834e15c5346@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <1504798409-32041-2-git-send-email-timur@codeaurora.org>
- <20171002174414.GL1165@minitux>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for
+ GPIO0/1 when used as LDOs
+Date: Tue, 3 Oct 2017 10:06:29 +0800
+Message-ID: <CAGb2v67ZV0oZ41WS1Borrz0fDYiXV5B1DTKnPzRQVcodMOOLzQ@mail.gmail.com>
+References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
+ <20171002120854.5212-13-quentin.schulz@free-electrons.com> <20171002204235.25d4437a2p5qzrrj@flea>
+Reply-To: wens-jdAy2FN1RRM@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:42360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750984AbdJBUrx (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 2 Oct 2017 16:47:53 -0400
-In-Reply-To: <20171002174414.GL1165@minitux>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-sunxi+bncBCMILY6JWQBBBP7BZPHAKGQEQYQ7FRA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+In-Reply-To: <20171002204235.25d4437a2p5qzrrj@flea>
+List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/linux-sunxi
+List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/linux-sunxi/subscribe>
+To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, andy.gross@linaro.org, david.brown@linaro.org, anjiandi@codeaurora.org, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 
-On 10/02/2017 12:44 PM, Bjorn Andersson wrote:
->> +	/*
->> +	 * If irq_need_valid_mask is true, then gpiochip_add_data() will
->> +	 * initialize irq_valid_mask to all 1s.  We need to clear all the
->> +	 * GPIOs that are unavailable, and we need to find each block
->> +	 * of consecutive available GPIOs are add them as pin ranges.
->> +	 */
->> +	if (chip->irq_need_valid_mask) {
->> +		for (i = 0; i < ngpio; i++)
->> +			if (!groups[i].npins)
->> +				clear_bit(i, pctrl->chip.irq_valid_mask);
+On Tue, Oct 3, 2017 at 4:42 AM, Maxime Ripard
+<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> On Mon, Oct 02, 2017 at 12:08:54PM +0000, Quentin Schulz wrote:
+>> On AXP813/818, GPIO0 and GPIO1 can be used as LDO as (respectively)
+>> ldo_io0 and ldo_io1.
+>>
+>> Let's add the pinctrl properties to the said regulators.
+>>
+>> Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/axp81x.dtsi | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
+>> index f90f257130d5..099b0ddc1bbb 100644
+>> --- a/arch/arm/boot/dts/axp81x.dtsi
+>> +++ b/arch/arm/boot/dts/axp81x.dtsi
+>> @@ -52,6 +52,16 @@
+>>               compatible = "x-powers,axp813-gpio";
+>>               gpio-controller;
+>>               #gpio-cells = <2>;
 >> +
->> +		while ((count = msm_gpio_get_next_range(pctrl, &start))) {
->> +			ret = gpiochip_add_pin_range(&pctrl->chip,
->> +						     dev_name(pctrl->dev),
->> +						     start, start, count);
->> +			if (ret)
->> +				break;
->> +			start += count;
-> I do not fancy the idea of specifying a bitmap of valid irq pins and
-> then having the driver register the pin-ranges in-between. 
+>> +             gpio0_ldo: gpio0_ldo {
+>> +                     pins = "GPIO0";
+>> +                     function = "ldo";
+>> +             };
+>> +
+>> +             gpio1_ldo: gpio1_ldo {
+>> +                     pins = "GPIO1";
+>> +                     function = "ldo";
+>> +             };
+>
+> The node names are not supposed to contain any hyphens.
 
-But that's exactly what abx500_gpio_probe() in pinctrl-abx500.c does. 
-Here's even a reference to holes in the GPIO space:
+Hmm, I was under the impression that hyphens were preferred in
+node names, and a warning would be added to dtc later on.
+I might be wrong though.
 
-/*
-  * Compute number of GPIOs from the last SoC gpio range descriptors
-  * These ranges may include "holes" but the GPIO number space shall
-  * still be homogeneous, so we need to detect and account for any
-  * such holes so that these are included in the number of GPIO pins.
-  */
-
- > If we provide
-> a bitmap of validity to the core it should support using this for the
-> pins as well. (Which I believe is what Linus answered in the discussion
-> following patch 0/2)
-
-So you want to change "gpio_chip" to add an "available" callback?  And 
-every time gpiolib wants to call a gpio_chip callback, it should call 
-->available first?  Like this:
-
-if (chip->available && chip->available())
-	status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
-
-I can do that, but it just seems very redundant.  The core already knows 
-not to touch GPIOs that are not in a pin range.  The only exception is 
-gpiochip_add_data(), as I've stated before.
-
-It just seems wrong to call an API every time to ask permission before 
-we can call any other API.  But since the API may not be defined, we 
-have to first check if the API exists before we can ask permission.
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+ChenYu
