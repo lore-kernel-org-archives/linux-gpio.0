@@ -1,80 +1,62 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for
- GPIO0/1 when used as LDOs
-Date: Tue, 3 Oct 2017 23:08:11 +0800
-Message-ID: <CAGb2v64=XL34x7iGJcEmmVnmzkA5wmyZJd-g827bY=kdHcZOMA@mail.gmail.com>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
- <20171002120854.5212-13-quentin.schulz@free-electrons.com>
- <CACRpkdZYcSuhvn0b0qa0k1PQHoyXjNyjoyhR2sPme_t1pF12Dg@mail.gmail.com> <20171003144737.rhgtp3uwckhvoqdw@flea>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Chris Brandt <Chris.Brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
+Date: Tue, 3 Oct 2017 15:40:51 +0000
+Message-ID: <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20171003073334.18917-1-chris.brandt@renesas.com>
+ <20171003073334.18917-2-chris.brandt@renesas.com>
+ <20171003083148.GG4037@w540>
+ <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+ <20171003150412.GI4037@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBB5OPZ3HAKGQESAJXVTY-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20171003144737.rhgtp3uwckhvoqdw@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171003150412.GI4037@w540>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: jacopo mondi <jacopo-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 3, 2017 at 10:47 PM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> Hi Linus,
->
-> On Tue, Oct 03, 2017 at 09:27:17AM +0000, Linus Walleij wrote:
->> On Mon, Oct 2, 2017 at 2:08 PM, Quentin Schulz
->> <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->>
->> > On AXP813/818, GPIO0 and GPIO1 can be used as LDO as (respectively)
->> > ldo_io0 and ldo_io1.
->> (...)
->> > +               gpio0_ldo: gpio0_ldo {
->> > +                       pins = "GPIO0";
->> > +                       function = "ldo";
->> > +               };
->> (...)
->> > +                       pinctrl-names = "default";
->> > +                       pinctrl-0 = <&gpio0_ldo>;
->> >                         /* Disable by default to avoid conflicts with GPIO */
->> >                         status = "disabled";
->>
->> So this is still by default disabled, but you make the default
->> mode something called "ldo".
->>
->> And I think that is to be understood as a low-dropout regulator?
->>
->> So is the idea that this should be represented as a regulator
->> in the end?
->>
->> Then I think the state name should not be "default" rather
->> something like "regulator" and "default" should be the GPIO
->> mode, as I guess something like that exists.
->>
->> Activating a regulator using pin control "default" mode is
->> not very pretty. It would probably be unintuitive and end
->> up wasting power because people will get confused about
->> what is going on.
->
-> That's not really it. The PMIC has pins that can be muxed either to
-> (regular) GPIOs, an ADC or to an LDO regulator.
->
-> This is just muxing, the regulator will be enabled and disabled
-> separately through another register. If it wasn't the case, it would
-> indeed be very messy.
-
-No. Actually they are controlled in the same register, so it is
-very messy. The muxing options are:
-
-    - 0: drive low
-    - 1: drive high
-    - 2: input with interrupt triggering
-    - 3: LDO on
-    - 4: LDO off
-    - 5~7: floating (or ADC)
-
-ChenYu
+SGkgSmFjb3BvLA0KDQpPbiBUdWVzZGF5LCBPY3RvYmVyIDAzLCAyMDE3IDEsIGphY29wbyBtb25k
+aSB3cm90ZToNCj4gPiBBcyBmb3IgU1NJLCB0aGUgbWFudWFsIHNheXMgb25seSB0aGUgU1NJVHgg
+cGlucyBuZWVkIGJpLWRpciwgbm90IHRoZQ0KPiA+IFNTSVJ4IHBpbnMuDQo+IA0KPiBMb29raW5n
+IGF0IFJaL0ExSCB0YWJsZXMgeW91J3JlIHJpZ2h0LiBJIHdvbmRlciB3aHkgaW4gUlovQTFMIFNT
+SSBwaW5zDQo+IGFyZSBsaXN0ZWQgYXMgYmlkaXIgYW5kIGluIFJaL0ExSCB0aGV5J3JlIG5vdC4N
+Cg0KU29ycnksIHRvIGJlIGNsZWFyLCBTU0lUeCBwaW5zIGhhdmUgbm90aGluZyB0byBkbyB3aXRo
+ICJiaS1kaXIiLg0KDQpUaG9zZSB3ZXJlIHBpbnMgdGhhdCB5b3UgaGF2ZSB0byBhZGQgdG8gdGhl
+IHJ6YTFsX3N3aW9fcGluc1tdIGFycmF5IA0KYmVjYXVzZSB0aGV5IG11c3QgaGF2ZSB0byBoYXZl
+IGJvdGggUElQQ24uUElQQyBhbmQgUE0gYml0cyBzZXQgdG8gJzAnIChpZSwgDQpmb3JjZWQgdG8g
+b3V0cHV0KS4NCg0KSG93ZXZlciwgdGhlcmUgaXMgbm8gU1NJVHhENSBwaW4gaW4gUlovQTFMLg0K
+DQogIFJaL0ExSDogU1NJVHhEMCwgU1NJVHhEMSwgU1NJVHhEMywgU1NJVHhENQ0KICBSWi9BMUw6
+IFNTSVR4RDAsIFNTSVR4RDEsIFNTSVR4RDMNCg0KDQoNCj4gPiBJIHRob3VnaHQgd2Ugc2FpZCBU
+SU9DIGRpZG4ndCBuZWVkIHRvIGJlIGluIGEgdGFibGUgYmVjYXVzZSB0aGUgdXNlciBoYXMNCj4g
+PiB0byBzcGVjaWZ5IHRoZW0gYW55d2F5IGJlY2F1c2UgdGhlIHVzZXIgaGFzIHRvIGNob29zZSBp
+ZiBoZSB3YW50cyB0aGVtDQo+ID4gYXMgaW5wdXQgb3Igb3V0cHV0LCBzbyBpZiBoZSBkb2VzIHRo
+YXQsIHRoZW4gd2UgYXV0b21hdGljYWxseSBrbm93IGl0J3MNCj4gPiBhIHN3aW8gcGluLiBIbW0s
+IG1heWJlIEkgaGF2ZSB0byBnbyBiYWNrIGFuZCBsb29rIGF0IHdoYXQgdGhlIGRyaXZlcg0KPiA+
+IGVuZGVkIHVwIGltcGxlbWVudGluZy4NCj4gPg0KPiANCj4gQ2FuIGNvbmZpcm0gVElPQyBwaW5z
+IGFyZSBub3QgbGlzdGVkIGluIFNXSU8gdGFibGUgaW4gUlovQTFILg0KDQpZZXMsIHRoYXQgJ2Fy
+ZScgbGlzdGVkIGluIHRoZSB0YWJsZS4gQnV0IGZvciBhIGdvb2QgcmVhc29uLg0KDQpUaGUgVElP
+QyBwaW5zIGNhbiBiZSB1c2VzIGFzIGFuIG91dHB1dCAoUFdNIGZvciBleGFtcGxlKSBvciBhcyBh
+IGlucHV0IA0KKGlucHV0IGNhcHR1cmUgZm9yIGV4YW1wbGUpLCBzbyB0aGV5IGFyZSBub3QgcmVh
+bGx5IGEgZml4ZWQgZGlyZWN0aW9uLiANClRoYXQgaXMgd2h5IHRoZSB1c2VyIG5lZWRzIHRvIHNw
+ZWNpZnkgaG93IHRoZXkgcGxhbiB0byB1c2UgdGhlbSBpbiB0aGUgRFQuDQpBbmQuLi50aGF0J3Mg
+YWxzbyB3aHkgaXQgZG9lc24ndCBtYWtlIHNlbnNlIHRvIHB1dCB0aGVtIGluIHRoZSANCnJ6YTFs
+X3N3aW9fcGluc1tdIGFycmF5ICh3ZSBoYXZlIG5vIGlkZWEgaG93IHRoZXkgd2FudCB0byB1c2Ug
+dGhlbSkuDQoNClNvLCB0aGUgaGFyZHdhcmUgbWFudWFsIGhhcyB0aGUgVElPQyBwaW5zIGluIHRo
+ZSBTV0lPIHRhYmxlIHRvIHRlbGwgdGhlIA0KdXNlciAnaGV5LCB5b3UgaGF2ZSB0byBtYW51YWxs
+eSBzZXQgdGhlc2UgcGlucyB0byBlaXRoZXIgaW5wdXQgb3Igb3V0cHV0DQp5b3Vyc2VsZiBiZWNh
+dXNlIHdlIGNhbid0IG1hZ2ljYWxseSBrbm93IHdoYXQgeW91IHdhbnQgdG8gdXNlIHRoZW0gZm9y
+Lg0KDQpCdXQuLi4NClRoZSByZWFzb24gZm9yIHRoZSByemExbF9zd2lvX3BpbnNbXSBhcnJheSBp
+cyBmb3Igd2VpcmQgcGluIA0KY29uZmlndXJhdGlvbnMgdGhhdCBhcmUgZml4ZWQgKGxpa2UgTENE
+IExWRFMgb3V0cHV0IHBpbnMgbmVlZCB0byBiZSBjb25maWd1cmVkIGFzIA0KaW5wdXRzKS4NCg0K
+DQo+IFRoYW5rcyBmb3IgZG91YmxlIGNoZWNraW5nLiBZb3VyIHNvdXJjZSBmcm9tIEphcGFuIGlz
+IG1vcmUNCj4gYXV0aG9yaXRhdGl2ZSB0aGFuIG1hbnVhbHMgYW5kIGRlZmludGVseSBtb3JlIGFj
+Y3VyYXRlIHRoYW4gbWUgOykNCg0KU28sIGFmdGVyIGFsbCB0aGF0LCBJIGRvbid0IHRoaW5rIHdl
+IGZvdW5kIGFueSBpc3N1ZXMgd2l0aCBteSBwYXRjaC4NCkNvcnJlY3Q/Pz8NCg0KDQpUaGFua3Mh
+DQoNCkNocmlzDQoNCg==
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
