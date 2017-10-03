@@ -1,62 +1,59 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for
- GPIO0/1 when used as LDOs
-Date: Tue, 3 Oct 2017 10:06:29 +0800
-Message-ID: <CAGb2v67ZV0oZ41WS1Borrz0fDYiXV5B1DTKnPzRQVcodMOOLzQ@mail.gmail.com>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
- <20171002120854.5212-13-quentin.schulz@free-electrons.com> <20171002204235.25d4437a2p5qzrrj@flea>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: "Agrawal, Nitesh-kumar" <Nitesh-kumar.Agrawal@amd.com>
+Subject: RE: pinctrl/amd: Configure GPIO register using BIOS settings
+Date: Tue, 3 Oct 2017 04:52:04 +0000
+Message-ID: <DM5PR12MB1417A37593B15FD5D526C4AEDC720@DM5PR12MB1417.namprd12.prod.outlook.com>
+References: <CY1PR12MB0042D650A9FCDC4B1676FB0EDCFA0@CY1PR12MB0042.namprd12.prod.outlook.com>
+ <20170928065816.GA28901@dtor-ws>
+ <DM5PR12MB1417FDCFD60A59EDEAFD336CDC790@DM5PR12MB1417.namprd12.prod.outlook.com>
+ <CAKdAkRTb-aKQOOdSpx0iR0+KjdcBRz__Byyybu-QbSxLSRYVVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBBP7BZPHAKGQEQYQ7FRA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <20171002204235.25d4437a2p5qzrrj@flea>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-dm3nam03on0074.outbound.protection.outlook.com ([104.47.41.74]:10050
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750767AbdJCEwH (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 3 Oct 2017 00:52:07 -0400
+In-Reply-To: <CAKdAkRTb-aKQOOdSpx0iR0+KjdcBRz__Byyybu-QbSxLSRYVVA@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "Sen, Pankaj" <Pankaj.Sen@amd.com>, "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 3, 2017 at 4:42 AM, Maxime Ripard
-<maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> On Mon, Oct 02, 2017 at 12:08:54PM +0000, Quentin Schulz wrote:
->> On AXP813/818, GPIO0 and GPIO1 can be used as LDO as (respectively)
->> ldo_io0 and ldo_io1.
->>
->> Let's add the pinctrl properties to the said regulators.
->>
->> Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/axp81x.dtsi | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
->> index f90f257130d5..099b0ddc1bbb 100644
->> --- a/arch/arm/boot/dts/axp81x.dtsi
->> +++ b/arch/arm/boot/dts/axp81x.dtsi
->> @@ -52,6 +52,16 @@
->>               compatible = "x-powers,axp813-gpio";
->>               gpio-controller;
->>               #gpio-cells = <2>;
->> +
->> +             gpio0_ldo: gpio0_ldo {
->> +                     pins = "GPIO0";
->> +                     function = "ldo";
->> +             };
->> +
->> +             gpio1_ldo: gpio1_ldo {
->> +                     pins = "GPIO1";
->> +                     function = "ldo";
->> +             };
->
-> The node names are not supposed to contain any hyphens.
-
-Hmm, I was under the impression that hyphens were preferred in
-node names, and a warning would be added to dtc later on.
-I might be wrong though.
-
-ChenYu
+SGkgRG1pdHJ5LA0KDQpPbiBUaHUsIFNlcCAyOCwgMjAxNyBhdCAxMjo0NiBBTSwgQWdyYXdhbCwg
+Tml0ZXNoLWt1bWFyIDxOaXRlc2gta3VtYXIuQWdyYXdhbEBhbWQuY29tPiB3cm90ZToNCj4gLS0t
+LS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG1pdHJ5IFRvcm9raG92IFttYWlsdG86
+ZG1pdHJ5LnRvcm9raG92QGdtYWlsLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJlciAy
+OCwgMjAxNyAxMjoyOCBQTQ0KPiBUbzogQWdyYXdhbCwgTml0ZXNoLWt1bWFyIDxOaXRlc2gta3Vt
+YXIuQWdyYXdhbEBhbWQuY29tPg0KPiBDYzogbGludXMud2FsbGVpakBsaW5hcm8ub3JnOyBTZW4s
+IFBhbmthaiA8UGFua2FqLlNlbkBhbWQuY29tPjsgUy1rLCANCj4gU2h5YW0tc3VuZGFyIDxTaHlh
+bS1zdW5kYXIuUy1rQGFtZC5jb20+OyBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZw0KPiBTdWJq
+ZWN0OiBSZTogcGluY3RybC9hbWQ6IENvbmZpZ3VyZSBHUElPIHJlZ2lzdGVyIHVzaW5nIEJJT1Mg
+c2V0dGluZ3MNCj4NCj4gT24gRnJpLCBTZXAgMDksIDIwMTYgYXQgMDM6MTg6MDlQTSArMDAwMCwg
+QWdyYXdhbCwgTml0ZXNoLWt1bWFyIHdyb3RlOg0KPj4gSW4gdGhlIGZ1bmN0aW9uIGFtZF9ncGlv
+X2lycV9zZXRfdHlwZSwgdXNlIHRoZSBzZXR0aW5ncyBwcm92aWRlZCBieSANCj4+IHRoZSBCSU9T
+LHdoZW4gdGhlIExldmVsVHJpZyBpcyBFZGdlIGFuZCBhY3RpdmVMZXZlbCBpcyBISUdILCB0byAN
+Cj4+IGNvbmZpZ3VyZSB0aGUgR1BJTyByZWdpc3RlcnMuIElnbm9yZSB0aGUgc2V0dGluZ3MgZnJv
+bSBjbGllbnQuDQo+Pg0KPj4gUmV2aWV3ZWQtYnk6IFBhbmthaiBTZW4gPFBhbmthai5TZW5AYW1k
+LmNvbT4NCj4+IFNpZ25lZC1vZmYtYnk6IE5pdGVzaCBLdW1hciBBZ3Jhd2FsIDxOaXRlc2gta3Vt
+YXIuQWdyYXdhbEBhbWQuY29tPg0KPg0KPiBKdXN0IGZvdW5kIHRoaXMgcGF0Y2ggaW4gdGhlIHRy
+ZWUuIENhbiB5b3UgcGxlYXNlIGV4cGxhaW4gd2h5IGl0IGlzIG5lZWRlZCAodGhlIHBhdGNoIGRl
+c2NyaXB0aW9uIHVuZm9ydHVuYXRlbHkgdGVsbHMgd2hhdCB0aGUgcGF0Y2ggZG9lcywgYnV0IG5v
+dCB3aHkpLg0KPg0KPiBJIHdvdWxkIGV4cGVjdCB0aGF0IHdlIGVpdGhlciBhbGxvdyByZXByb2dy
+YW1taW5nIHRoZSB0cmlnZ2VyIGFzIGNsaWVudCB3aXNoZXMgb3Igd291bGQgZXJyb3Igb3V0IGFu
+ZCBsZXQgdGhlIHVwcGVyIGxheWVycyBrbm93LiBTaWxlbnRseSAiZml4aW5nIiB0aGUgc2V0dGlu
+Z3MgaXMgd3JvbmcgY291cnNlIG9mIGFjdGlvbiBpbiBteSBvcGluaW9uLg0KPg0KPiBJZiB0aGlz
+IHdhcyB0cnlpbmcgdG8gd29yayBhcm91bmQgRWxhbiB0b3VjaHBhZCBkcml2ZXJzIG5vdCB3b3Jr
+aW5nIG9uIEFNRCBwbGF0Zm9ybXMgaXQgbmVlZHMgdG8gYmUgc29sdmVkIGluIEVsYW4gZHJpdmVy
+LCBub3QgaGVyZS4NCj4NCj4gW05pdGVzaF1XZSBoYXZlIHJldmVydGVkIHRoZSBwYXRjaCBpbiB0
+aGUgbGF0ZXIgdmVyc2lvbiBvZiB0aGUgcGF0Y2guDQo+DQoNCldoZXJlIHdhcyBpdCByZXZlcnRl
+ZD8gSSBhbSBsb29raW5nIGF0IHRvZGF5J3MgbGludXgtbmV4dCwgYW5kIEkgYW0gc3RpbGwgc2Vl
+aW5nIHRoaXMgY29tbWVudCBpbiBwaW5jdHJsLWFtZC5jOg0KDQogICAgICAgIC8qIElnbm9yZSB0
+aGUgc2V0dGluZ3MgY29taW5nIGZyb20gdGhlIGNsaWVudCBhbmQNCiAgICAgICAgKiByZWFkIHRo
+ZSB2YWx1ZXMgZnJvbSB0aGUgQUNQSSB0YWJsZXMNCiAgICAgICAgKiB3aGlsZSBzZXR0aW5nIHRo
+ZSB0cmlnZ2VyIHR5cGUNCiAgICAgICAgKi8NCg0KDQpPay4gV2UgaGF2ZSByZXZlcnRlZCB0aGUg
+Y29kZSBidXQgdGhlIGNvbW1lbnRzIGFyZSBzdGlsbCB0aGVyZS4gV2Ugd2lsbCBzdWJtaXQgYSBw
+YXRjaCB0byByZXZlcnQgdGhlIGNvbW1lbnRzIGFsc28uIFRoYW5rcyBmb3IgcmV2aWV3aW5nIHRo
+ZSBwYXRjaC4NCg==
