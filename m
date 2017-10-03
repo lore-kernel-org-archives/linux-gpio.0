@@ -1,73 +1,105 @@
-From: Ladislav Michl <ladis@linux-mips.org>
-Subject: Re: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
-Date: Tue, 3 Oct 2017 19:22:28 +0200
-Message-ID: <20171003172228.2p5ebam7cpqrhmsa@lenoch>
-References: <20171003161705.23398-1-grygorii.strashko@ti.com>
- <7b8f3c6a-0f4b-98ed-3887-91a01ed6cdbb@oracle.com>
- <81906eda-58ac-38e3-bc0a-8ead2b6aa8df@ti.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
+ irqs mapping
+Date: Tue, 3 Oct 2017 20:54:30 +0300
+Message-ID: <CAHp75Vce0v0d9x4AiDnbNfqv4c_erxwNXsd+ApCTEfybCEOMdA@mail.gmail.com>
+References: <20171003170049.24480-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from eddie.linux-mips.org ([148.251.95.138]:58036 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbdJCRWd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 13:22:33 -0400
-Content-Disposition: inline
-In-Reply-To: <81906eda-58ac-38e3-bc0a-8ead2b6aa8df@ti.com>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33598 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbdJCRyb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 13:54:31 -0400
+In-Reply-To: <20171003170049.24480-1-grygorii.strashko@ti.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Gorman <chrisjohgorman@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-On Tue, Oct 03, 2017 at 11:52:01AM -0500, Grygorii Strashko wrote:
-> Hi Santosh,
-> 
-> On 10/03/2017 11:41 AM, Santosh Shilimkar wrote:
-> > 
-> > 
-> > On 10/3/2017 9:17 AM, Grygorii Strashko wrote:
-> >> Now acking of edge irqs happens the following way:
-> >> - omap_gpio_irq_handler
-> >>    - "isr" = read irq status
-> >>    - omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
-> >>     ^ clear edge status, so irq can be accepted
-> >>    - loop while "isr"
-> >>     generic_handle_irq()
-> >>      - handle_edge_irq()
-> >>         - desc->irq_data.chip->irq_ack(&desc->irq_data);
-> >>         - omap_gpio_ack_irq()
-> >> it might be that at this moment edge IRQ was triggered again and it 
-> >> will be
-> >> cleared and IRQ will be lost.
-> >>
-> >> Use handle_simple_irq and clear edge interrupts early without 
-> >> disabling them in
-> >> omap_gpio_irq_handler to avoid loosing interrupts.
-> >>
-> >> [1] 
-> >> https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Domap-26m-3D149004465313534-26w-3D2&d=DwIBAg&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=-JZAaXlsRBFYNqtZ-2KOemoupa4pL7ka9D3wKn6hX9o&s=c-1XuQUl3_1uYedoNhmY70xCO3fAftWB7cmFxgyC3j4&e= 
-> >>
-> >> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> >> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> >> ---
-> >> Resend with proper cc list.
-> >>
-> > This was one of the concern I was thinking when GPIO IRQ conversion
-> > was done. Grygorii since you did that conversion, can you please
-> > check since I see now that the irq code is becoming increasingly
-> > complex.
-> 
-> This patch was developed in coop with Ladislav and he intensively tested it and
-> this patch actually simplifies IRQ handling. Also, OMAP driver parts which
-> this patch touches are ancient.
+On Tue, Oct 3, 2017 at 8:00 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> New GPIO IRQs are allocated and mapped dynamically by default when
+> GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
+> This causes issues on some Intel platforms [1][2] with broken BIOS which
+> hardcodes Linux IRQ numbers in their ACPI tables.
+>
+> On such platforms cherryview-pinctrl driver should allocate and map all
+> GPIO IRQs at probe time.
+> Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
+> can be seen at boot log.
+>
+> NOTE. It still may fail if boot sequence will changed and some interrupt
+> controller will be probed before cherryview-pinctrl which will shift Linux IRQ
+> numbering (expected with CONFIG_SPARCE_IRQ enabled).
+>
+> [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> [2] https://lkml.org/lkml/2017/9/28/153
 
-Just for a reference, testing is described here:
-https://marc.info/?l=linux-omap&m=149022183102208&w=2
-But there's another missing piece to make edge irqs work on OMAPs:
-https://marc.info/?l=linux-omap&m=149037823114641&w=2
-Tony, what is the status of your patch? Perhaps we should spin-off
-separate thread for it...
+Btw, you might want to use one of
 
-Best regards,
-	ladis
+Buglink:
+Bugzilla:
+Link:
+
+tags.
+
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Chris Gorman <chrisjohgorman@gmail.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
+> Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+I'm not sure about this approach. It might be some other broken BIOS
+discovered with some other driver (like pinctrl-baytrail.c as an
+hypothetical example).
+
+Alternative is to deselect SPARSE_IRQ (though it makes it non-usable
+in entire x86 world).
+
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index 04e929f..fadbca9 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1577,6 +1577,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>         struct gpio_chip *chip = &pctrl->chip;
+>         bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
+>         int ret, i, offset;
+> +       int irq_base;
+>
+>         *chip = chv_gpio_chip;
+>
+> @@ -1622,7 +1623,18 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>         /* Clear all interrupts */
+>         chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+>
+> -       ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
+> +       if (!need_valid_mask) {
+> +               irq_base = devm_irq_alloc_descs(pctrl->dev, -1, 0,
+> +                                               chip->ngpio, NUMA_NO_NODE);
+> +               if (irq_base < 0) {
+> +                       dev_err(pctrl->dev, "Failed to allocate IRQ numbers\n");
+> +                       return irq_base;
+> +               }
+> +       } else {
+> +               irq_base = 0;
+> +       }
+> +
+> +       ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, irq_base,
+>                                    handle_bad_irq, IRQ_TYPE_NONE);
+>         if (ret) {
+>                 dev_err(pctrl->dev, "failed to add IRQ chip\n");
+> --
+> 2.10.1
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
