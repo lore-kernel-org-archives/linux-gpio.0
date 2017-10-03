@@ -1,49 +1,63 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v6 3/3] ACPI / PMIC: Add TI PMIC TPS68470 operation region driver
-Date: Tue, 03 Oct 2017 13:43:43 +0200
-Message-ID: <1897738.1BtWKn31FQ@aspire.rjw.lan>
-References: <1501288226-27469-1-git-send-email-rajmohan.mani@intel.com> <20170814203900.qobophvzcrdtv34s@kekkonen.localdomain> <20171002165402.5ypqveemuz2ziuiq@valkosipuli.retiisi.org.uk>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
+Date: Tue, 3 Oct 2017 13:36:57 +0000
+Message-ID: <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20171003073334.18917-1-chris.brandt@renesas.com>
+ <20171003073334.18917-2-chris.brandt@renesas.com>
+ <20171003083148.GG4037@w540>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:61743 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751421AbdJCLxD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 07:53:03 -0400
-In-Reply-To: <20171002165402.5ypqveemuz2ziuiq@valkosipuli.retiisi.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171003083148.GG4037@w540>
+Content-Language: en-US
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms+renesas@verge.net.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Rajmohan Mani <rajmohan.mani@intel.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Len Brown <lenb@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
 
-On Monday, October 2, 2017 6:54:03 PM CEST Sakari Ailus wrote:
-> Hi Rafael,
-> 
-> On Mon, Aug 14, 2017 at 11:39:00PM +0300, Sakari Ailus wrote:
-> > On Fri, Jul 28, 2017 at 05:30:26PM -0700, Rajmohan Mani wrote:
-> > > The Kabylake platform coreboot (Chrome OS equivalent of
-> > > BIOS) has defined 4 operation regions for the TI TPS68470 PMIC.
-> > > These operation regions are to enable/disable voltage
-> > > regulators, configure voltage regulators, enable/disable
-> > > clocks and to configure clocks.
-> > > 
-> > > This config adds ACPI operation region support for TI TPS68470 PMIC.
-> > > TPS68470 device is an advanced power management unit that powers
-> > > a Compact Camera Module (CCM), generates clocks for image sensors,
-> > > drives a dual LED for flash and incorporates two LED drivers for
-> > > general purpose indicators.
-> > > This driver enables ACPI operation region support to control voltage
-> > > regulators and clocks for the TPS68470 PMIC.
-> > > 
-> > > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
-> > 
-> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> The other two patches from the set are in v4.14-rc1.
-
-Thanks!
-
-I'll queue it up for 4.15 then.
-
-
+SGkgSmFjb3BvLA0KDQpPbiBUdWVzZGF5LCBPY3RvYmVyIDAzLCAyMDE3LCBqYWNvcG8gbW9uZGkg
+d3JvdGU6DQo+IERvIHlvdSBoYXZlIG90aGVyIGF1dGhvcml0YXRpdmUgc291cmNlcyBmb3IgcGlu
+J3MgYmlkaXIgc2V0dGluZ3M/DQo+IEFjY29yZGluZyB0byB0aGUgcHVibGljbHkgYXZhaWxhYmxl
+IG1hbnVhbCwgdGhlcmUgYXJlIG90aGVyIHBpbnMgdGhhdA0KPiBuZWVkcyBiaWRpciBub3QgbGlz
+dGVkIGhlcmUuDQo+IEFzIHRoZSBzYW1lIGhhcHBlbmVkIHdpdGggUlovQTFIIEknbSBub3QgdG9v
+IGNvbmNlcm5lZCwgYnV0IEknbQ0KPiBsaXN0aW5nIHNvbWUgb2YgdGhlcmUgaGVyZSBub25ldGhl
+bGVzcw0KDQpCYWNrIHdoZW4geW91IHdlcmUgd29ya2luZyBvbiB0aGlzLCBJIGRpc2N1c3NlZCB3
+aXRoIHRoZSBndXlzIGJhY2sgaW4gDQpKYXBhbi4gV2hpbGUgaW4gdGhlIHRhYmxlIHRoZXJlIGFy
+ZSBtdWx0aXBsZSBwaW5zIHRoYXQgc2hvdyANCidiaS1kaXJlY3Rpb25hbCBjYXBhYmxlJywgdGhl
+eSBkb24ndCBhbGwgbmVlZCB0aGUgYmktZGlyIGJpdCBzZXQuIFRoaXMgd2FzIHRoZSBsaXN0IG9m
+DQpwZXJpcGhlcmFsOg0KIEkyQywgTURJTyAoRVRIKSwgTU1DLCBTREhJLCBRU1BJLCBEYXRhIChE
+MC1EMzEpDQoNCg0KPiBQMiBoYXMgc2V2ZXJhbCBUSU9DIHBpbnMgaW4gbW9kZSA0IGFuZCBTU0kg
+aW4gbW9kZSAyDQoNClBvcnQgMj8/Pw0KUG9ydCAyLCBtb2RlIDQgaW4gdGhlIFJaL0ExTCBtYW51
+YWwgb25seSBoYXMgSVJRNyw2LDUsMiwxDQoNCg0KSSB0aG91Z2h0IHdlIGRlY2lkZWQgb24gdGhh
+dCBUSU9DIHBpbnMgYXJlIG9uZXMgdGhhdCBhcmUgbWFudWFsbHkgc2V0IHRvDQplaXRoZXIgaW5w
+dXQgKGlucHV0LWVuYWJsZSwgb3V0cHV0LWVuYWJsZSkgYnkgdGhlIHVzZXJzIERldmljZSBUcmVl
+LCBzbw0KdGhleSBkb24ndCBuZWVkIHRvIGJlIHB1dCBpbnRvIGEgdGFibGUuIElmIGlucHV0LWVu
+YWJsZSBvciANCm91dHB1dC1lbmFibGUgaXMgc3BlY2lmaWVkLCB0aGVuIHlvdSBtYW51YWxseSBz
+ZXQgaXQgdG8gdGhhdCBkaXJlY3Rpb24uDQoNCkFzIGZvciBTU0ksIHRoZSBtYW51YWwgc2F5cyBv
+bmx5IHRoZSBTU0lUeCBwaW5zIG5lZWQgYmktZGlyLCBub3QgdGhlIA0KU1NJUnggcGlucy4NCg0K
+DQo+IFRJT0MgaW4gbW9kZTMsIFNLQzMgYW5kIFNDSzEgaW4gbW9kZSA1DQo+ID4gKw0KPiA+ICtz
+dGF0aWMgY29uc3Qgc3RydWN0IHJ6YTFfYmlkaXJfcGluIHJ6YTFsX2JpZGlyX3BpbnNfcDRbXSA9
+IHsNCj4gPiArCXsgLnBpbiA9IDEsIC5mdW5jID0gNCB9LA0KPiA+ICsJeyAucGluID0gMiwgLmZ1
+bmMgPSAyIH0sDQo+ID4gKwl7IC5waW4gPSAzLCAuZnVuYyA9IDIgfSwNCj4gPiArCXsgLnBpbiA9
+IDYsIC5mdW5jID0gMiB9LA0KPiA+ICsJeyAucGluID0gNywgLmZ1bmMgPSAyIH0sDQo+ID4gK307
+DQo+IA0KPiBDb25mdXNlZCwgeW91J3JlIGhlcmUgbGlzdGluZyBUSU9DMkIgcGluIChwaW4gMSBt
+b2RlICM0KSBidXQgbm90IFRJT0MxQg0KPiAocGluIDAgbW9kZSAjNCkNCj4gRVRfTURJTyBpbiBt
+b2RlIDQsIHdoaWNoIHdlIGxpc3QgYXMgYmlkaXIgaW4gUlovQTFIDQoNClA0XzEgbW9kZSA0IGlz
+IEVUX01ESU8uDQoNClRJT0MxQiBpcyBQNF8wIG1vZGUgMy4NClRJT0MyQiBpcyBQNF8xIE1vZGUg
+Mw0KDQpBcmUgeW91IGxvb2tpbmcgYXQgVGFibGUgNDEuMTkgaW4gdGhlIFJldi4zLjAwIHZlcnNp
+b24gb2YgdGhlIFJaL0ExTCANCkhhcmR3YXJlIE1hbnVhbD8NCg0KPiA+ICtzdGF0aWMgY29uc3Qg
+c3RydWN0IHJ6YTFfc3dpb19waW4gcnphMWxfc3dpb19waW5zW10gPSB7DQo+ID4gKwl7IC5wb3J0
+ID0gMiwgLnBpbiA9IDgsIC5mdW5jID0gMiwgLmlucHV0ID0gMCB9LA0KPiA+ICsJeyAucG9ydCA9
+IDUsIC5waW4gPSA2LCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArCXsgLnBvcnQgPSA2
+LCAucGluID0gNiwgLmZ1bmMgPSAzLCAuaW5wdXQgPSAwIH0sDQo+ID4gKwl7IC5wb3J0ID0gNiwg
+LnBpbiA9IDEwLCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArCXsgLnBvcnQgPSA3LCAu
+cGluID0gMTAsIC5mdW5jID0gMiwgLmlucHV0ID0gMCB9LA0KPiA+ICsJeyAucG9ydCA9IDgsIC5w
+aW4gPSAyLCAuZnVuYyA9IDMsIC5pbnB1dCA9IDAgfSwNCj4gPiArfTsNCj4gDQo+IEkgY291bnQg
+MjAgU1dJTyBwaW5zDQo+IA0KPiBUSU9DWzAtNF1bQS1EXQ0KPiBTU0lUeFswLTNdDQo+IFdEVE9W
+Rg0KDQpJIHRob3VnaHQgd2Ugc2FpZCBUSU9DIGRpZG4ndCBuZWVkIHRvIGJlIGluIGEgdGFibGUg
+YmVjYXVzZSB0aGUgdXNlciBoYXMNCnRvIHNwZWNpZnkgdGhlbSBhbnl3YXkgYmVjYXVzZSB0aGUg
+dXNlciBoYXMgdG8gY2hvb3NlIGlmIGhlIHdhbnRzIHRoZW0gDQphcyBpbnB1dCBvciBvdXRwdXQs
+IHNvIGlmIGhlIGRvZXMgdGhhdCwgdGhlbiB3ZSBhdXRvbWF0aWNhbGx5IGtub3cgaXQncyANCmEg
+c3dpbyBwaW4uIEhtbSwgbWF5YmUgSSBoYXZlIHRvIGdvIGJhY2sgYW5kIGxvb2sgYXQgd2hhdCB0
+aGUgZHJpdmVyIA0KZW5kZWQgdXAgaW1wbGVtZW50aW5nLg0KDQoNCkNocmlzDQo=
