@@ -1,68 +1,53 @@
-From: jacopo mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH 1/2] pinctrl: rza1: add support for RZ/A1L
-Date: Tue, 3 Oct 2017 18:17:38 +0200
-Message-ID: <20171003161738.GK4037@w540>
-References: <20171003073334.18917-1-chris.brandt@renesas.com>
- <20171003073334.18917-2-chris.brandt@renesas.com>
- <20171003083148.GG4037@w540>
- <SG2PR06MB1165EE1D21AFC1D3005308538A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <20171003150412.GI4037@w540>
- <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
+Date: Tue, 3 Oct 2017 09:41:38 -0700
+Message-ID: <7b8f3c6a-0f4b-98ed-3887-91a01ed6cdbb@oracle.com>
+References: <20171003161705.23398-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39992 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbdJCQRp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 12:17:45 -0400
-Content-Disposition: inline
-In-Reply-To: <SG2PR06MB1165669027CDC7F76808EADB8A720@SG2PR06MB1165.apcprd06.prod.outlook.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:32801 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751158AbdJCQlS (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 3 Oct 2017 12:41:18 -0400
+In-Reply-To: <20171003161705.23398-1-grygorii.strashko@ti.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms+renesas@verge.net.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>
 
-Hi Chris,
 
-On Tue, Oct 03, 2017 at 03:40:51PM +0000, Chris Brandt wrote:
-> Hi Jacopo,
->
->
-> Yes, that 'are' listed in the table. But for a good reason.
->
-> The TIOC pins can be uses as an output (PWM for example) or as a input
-> (input capture for example), so they are not really a fixed direction.
-> That is why the user needs to specify how they plan to use them in the DT.
-> And...that's also why it doesn't make sense to put them in the
-> rza1l_swio_pins[] array (we have no idea how they want to use them).
->
-> So, the hardware manual has the TIOC pins in the SWIO table to tell the
-> user 'hey, you have to manually set these pins to either input or output
-> yourself because we can't magically know what you want to use them for.
->
-> But...
-> The reason for the rza1l_swio_pins[] array is for weird pin
-> configurations that are fixed (like LCD LVDS output pins need to be configured as
-> inputs).
->
->
-> > Thanks for double checking. Your source from Japan is more
-> > authoritative than manuals and defintely more accurate than me ;)
->
-> So, after all that, I don't think we found any issues with my patch.
-> Correct???
 
-Correct! :)
-After your clarification above, for both patches:
+On 10/3/2017 9:17 AM, Grygorii Strashko wrote:
+> Now acking of edge irqs happens the following way:
+> - omap_gpio_irq_handler
+>    - "isr" = read irq status
+>    - omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
+> 	^ clear edge status, so irq can be accepted
+>    - loop while "isr"
+> 	generic_handle_irq()
+> 	 - handle_edge_irq()
+> 	    - desc->irq_data.chip->irq_ack(&desc->irq_data);
+> 		- omap_gpio_ack_irq()
+> it might be that at this moment edge IRQ was triggered again and it will be
+> cleared and IRQ will be lost.
+> 
+> Use handle_simple_irq and clear edge interrupts early without disabling them in
+> omap_gpio_irq_handler to avoid loosing interrupts.
+> 
+> [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Domap-26m-3D149004465313534-26w-3D2&d=DwIBAg&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=-JZAaXlsRBFYNqtZ-2KOemoupa4pL7ka9D3wKn6hX9o&s=c-1XuQUl3_1uYedoNhmY70xCO3fAftWB7cmFxgyC3j4&e=
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+> ---
+> Resend with proper cc list.
+> 
+This was one of the concern I was thinking when GPIO IRQ conversion
+was done. Grygorii since you did that conversion, can you please
+check since I see now that the irq code is becoming increasingly
+complex.
 
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Regards,
+Santosh
 
-Thanks
-   j
-
->
->
-> Thanks!
->
-> Chris
->
