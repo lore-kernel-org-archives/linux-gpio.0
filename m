@@ -1,56 +1,56 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: rcar: Use of_device_get_match_data() helper
-Date: Wed,  4 Oct 2017 14:16:16 +0200
-Message-ID: <1507119376-12491-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:44244 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbdJDMQV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 08:16:21 -0400
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
+Date: Wed, 4 Oct 2017 15:58:12 +0200
+Message-ID: <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
+References: <20171003073334.18917-1-chris.brandt@renesas.com> <20171003073334.18917-3-chris.brandt@renesas.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171003073334.18917-3-chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Use the of_device_get_match_data() helper instead of open coding.
-Note that the gpio-rcar driver is used with DT only, so there's always a
-valid match.
+Hi Chris,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/gpio/gpio-rcar.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+On Tue, Oct 3, 2017 at 9:33 AM, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org> wrote:
+> Compatible "r7s72102-ports" was added for RZ/A1L devices
+>
+> Signed-off-by: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> index 43e21474528a..2a3366cee848 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
+> @@ -13,7 +13,8 @@ Pin controller node
+>
+>  Required properties:
+>    - compatible
+> -    this shall be "renesas,r7s72100-ports".
+> +    this shall be "renesas,r7s72100-ports" for RZ/A1H and RZ/A1M or
+> +    "renesas,r7s72102-ports" for RZ/A1L
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 1f0871553fd20d0f..de5c010e69266264 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -24,6 +24,7 @@
- #include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -393,16 +394,11 @@ MODULE_DEVICE_TABLE(of, gpio_rcar_of_table);
- static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
- {
- 	struct device_node *np = p->pdev->dev.of_node;
--	const struct of_device_id *match;
- 	const struct gpio_rcar_info *info;
- 	struct of_phandle_args args;
- 	int ret;
- 
--	match = of_match_node(gpio_rcar_of_table, np);
--	if (!match)
--		return -EINVAL;
--
--	info = match->data;
-+	info = of_device_get_match_data(&p->pdev->dev);
- 
- 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
- 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
--- 
-2.7.4
+Shouldn't you also document "renesas,r7s72101-ports" for RZ/A1M?
+You could use "renesas,r7s72100-ports" as a fallback property for RZ/A1M,
+though.
 
+BTW, is there a way to distinguish the various RZ/A1 SoCs at runtime?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
