@@ -1,36 +1,48 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77995: Add PWM pins, groups and functions
-Date: Wed, 4 Oct 2017 16:05:04 +0200
-Message-ID: <CAMuHMdWGjMqZE_--KH+TcEJ1A-6k+TkLybp3nqjpCdAc=t1CbA@mail.gmail.com>
-References: <1507112560-9802-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
+Date: Wed, 4 Oct 2017 14:16:25 +0000
+Message-ID: <SG2PR06MB1165B7C76F5E5528FDF7B7408A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
+References: <20171003073334.18917-1-chris.brandt@renesas.com>
+ <20171003073334.18917-3-chris.brandt@renesas.com>
+ <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1507112560-9802-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:27881 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752210AbdJDOQa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 10:16:30 -0400
+In-Reply-To: <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms+renesas@verge.net.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On Wed, Oct 4, 2017 at 12:22 PM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds support for PWM on r8a77995.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgT2N0b2JlciAwNCwgMjAxNywgR2VlcnQgVXl0dGVy
+aG9ldmVuIHdyb3RlOg0KPiA+ICBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ICAgIC0gY29tcGF0
+aWJsZQ0KPiA+IC0gICAgdGhpcyBzaGFsbCBiZSAicmVuZXNhcyxyN3M3MjEwMC1wb3J0cyIuDQo+
+ID4gKyAgICB0aGlzIHNoYWxsIGJlICJyZW5lc2FzLHI3czcyMTAwLXBvcnRzIiBmb3IgUlovQTFI
+IGFuZCBSWi9BMU0gb3INCj4gPiArICAgICJyZW5lc2FzLHI3czcyMTAyLXBvcnRzIiBmb3IgUlov
+QTFMDQo+IA0KPiBTaG91bGRuJ3QgeW91IGFsc28gZG9jdW1lbnQgInJlbmVzYXMscjdzNzIxMDEt
+cG9ydHMiIGZvciBSWi9BMU0/DQoNCkkgd2FzIHdvbmRlcmluZyBpZiB5b3Ugd2VyZSBnb2luZyB0
+byBhc2sgZm9yIHRoYXQuDQoNCkkgcHV0ICJmb3IgUlovQTFIIGFuZCBSWi9BMU0iIGluIHRoZSBE
+VCBkb2N1bWVudGF0aW9uLCBidXQgaWYgeW91IA0KcHJlZmVyLCBJIGNhbiBhbHNvIGp1c3QgYWRk
+IHRvIHBpbmN0cmwtcnphMS5jOg0KDQpzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBy
+emExX3BpbmN0cmxfb2ZfbWF0Y2hbXSA9IHsNCgl7DQoJCS8qIFJaL0ExSCAqLw0KCQkuY29tcGF0
+aWJsZQk9ICJyZW5lc2FzLHI3czcyMTAwLXBvcnRzIiwNCgkJLmRhdGEJCT0gJnJ6YTFoX3BteF9j
+b25mLA0KCX0sDQorCXsNCisJCS8qIFJaL0ExTSAqLw0KKwkJLmNvbXBhdGlibGUJPSAicmVuZXNh
+cyxyN3M3MjEwMS1wb3J0cyIsDQorCQkuZGF0YQkJPSAmcnphMWhfcG14X2NvbmYsDQorCX0sCXsN
+CgkJLyogUlovQTFMICovDQoJCS5jb21wYXRpYmxlCT0gInJlbmVzYXMscjdzNzIxMDItcG9ydHMi
+LA0KCQkuZGF0YQkJPSAmcnphMWxfcG14X2NvbmYsDQoJfSwNCgl7IH0NCn07DQoNCg0KDQo+IFlv
+dSBjb3VsZCB1c2UgInJlbmVzYXMscjdzNzIxMDAtcG9ydHMiIGFzIGEgZmFsbGJhY2sgcHJvcGVy
+dHkgZm9yIFJaL0ExTSwNCj4gdGhvdWdoLg0KDQpEbyB5b3UgbWVhbiBpbiB0aGUgRFQ/IE9yIGlu
+IHBpbmN0cmwtcnphMS5jPw0KDQo+IEJUVywgaXMgdGhlcmUgYSB3YXkgdG8gZGlzdGluZ3Vpc2gg
+dGhlIHZhcmlvdXMgUlovQTEgU29DcyBhdCBydW50aW1lPw0KDQpTYWRseSB0aGVyZSBpcyBub3Qu
+DQoNClRoZXJlIGlzIGEgdW5pcXVlIElEIG51bWJlciwgYnV0IGl0IGlzIG9ubHkgYWNjZXNzaWJs
+ZSB2aWEgSlRBRyANCmV4dGVybmFsbHkuDQoNCkludGVybmFsbHksIHlvdSB3b3VsZCBoYXZlIHRv
+IGxvb2sgZm9yIHJlZ2lzdGVycyB0aGF0IGRvbid0IGV4aXN0IChmb3IgDQp0aGUgUlovQTFMKS4g
+QnV0IGZvciBSWi9BMUggdnMgUlovQTFNLCB0aGUgb25seSBhY3R1YWwgZGlmZmVyZW5jZSBpcyB0
+aGUgDQphbW91bnQgb2YgUkFNLCBzbyB5b3Ugd291bGQgaGF2ZSB0byBkbyBhIHNldC1hbmQtdGVz
+dCBtZXRob2Qgb24gUkFNLg0KDQoNCkNocmlzDQoNCg==
