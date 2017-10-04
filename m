@@ -1,71 +1,62 @@
-From: Chris Gorman <chrisjohgorman@gmail.com>
-Subject: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio irqs mapping
-Date: Wed,  4 Oct 2017 12:07:34 -0400
-Message-ID: <1507133254-5054-1-git-send-email-chrisjohgorman@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: add I2C pin support
+Date: Wed, 4 Oct 2017 18:10:37 +0200
+Message-ID: <CAMuHMdVcBh2eKN+dRqJQRutdTDDE7EAptujfz0-ONoMD6P88eA@mail.gmail.com>
+References: <20171004155252.21080-1-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36029 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbdJDQHo (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 12:07:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:47393 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751120AbdJDQKj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 12:10:39 -0400
+In-Reply-To: <20171004155252.21080-1-wsa@the-dreams.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: mika.westerberg@linux.intel.com
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Grygorii Strashko <grygorii.strashko@ti.com>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+Hi Wolfram,
 
-New GPIO IRQs are allocated and mapped dynamically by default when
-GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
-This causes issues on some Intel platforms [1] with broken BIOS which
-hardcodes Linux IRQ numbers in their ACPI tables instead of GPIO number.
+On Wed, Oct 4, 2017 at 5:52 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Since pinmuxing for I2C is equal on H3 ES1.0 and later versions, copy
+> the I2C settings from ES1.0. Fixes this error in upstream for
+> Salvator-XS:
+>
+> sh-pfc e6060000.pin-controller: function 'i2c2' not supported
+> sh-pfc e6060000.pin-controller: invalid function i2c2 in map table
+> i2c-rcar: probe of e6510000.i2c failed with error -22
+>
+> Now, the bus works the same as with other Salvator boards.
 
-On such platforms cherryview-pinctrl driver should allocate and map all
-GPIO IRQs at probe time.
-Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
-can be seen at boot log.
+Thanks for your patch!
 
-NOTE. It still may fail if boot sequence will changed and any new interrupt
-controller will be probed before cherryview-pinctrl.
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Tested-by: Chris Gorman <chrisjohgorman@gmail.com>
----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15.
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 04e929f..fadbca9 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1577,6 +1577,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 	struct gpio_chip *chip = &pctrl->chip;
- 	bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
- 	int ret, i, offset;
-+	int irq_base;
- 
- 	*chip = chv_gpio_chip;
- 
-@@ -1622,7 +1623,18 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
- 	/* Clear all interrupts */
- 	chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
- 
--	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
-+	if (!need_valid_mask) {
-+		irq_base = devm_irq_alloc_descs(pctrl->dev, -1, 0,
-+						chip->ngpio, NUMA_NO_NODE);
-+		if (irq_base < 0) {
-+			dev_err(pctrl->dev, "Failed to allocate IRQ numbers\n");
-+			return irq_base;
-+		}
-+	} else {
-+		irq_base = 0;
-+	}
-+
-+	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, irq_base,
- 				   handle_bad_irq, IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to add IRQ chip\n");
--- 
-2.10.1
+> This patch is based on top of Geert's sh-pfc branch. I'd think it is a bugfix
+> for the above reasons and it would be really great to have it in v4.14. But you
+> guys will have the final word, of course.
 
+I tend to disagree: this is just part of the normal process of adding hardware
+support incrementally.
+
+While in this particular case hardware got (partially) enabled early due to
+.dtsi sharing, the same could have happened without sharing, as DT and PFC
+patches go in through different channels, and could arrive upstream in
+different released versions.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
