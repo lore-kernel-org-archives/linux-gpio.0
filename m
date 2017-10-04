@@ -1,85 +1,65 @@
-From: Doug Berger <opendmb@gmail.com>
-Subject: Re: [PATCH 6/7] gpio: brcmstb: consolidate interrupt domains
-Date: Wed, 4 Oct 2017 14:24:37 -0700
-Message-ID: <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
-References: <20170930034057.15166-1-opendmb@gmail.com>
- <20170930034057.15166-7-opendmb@gmail.com>
- <CADtm3G5v6_BHwanRYvCq1y-8Hdmn7gxX3zoVHx2c7cOFL-pj+Q@mail.gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Wed, 4 Oct 2017 14:50:23 -0700
+Message-ID: <20171004215023.GA457@codeaurora.org>
+References: <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+ <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
+ <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
+ <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
+ <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
+ <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org>
+ <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+ <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org>
+ <20171003220311.GU457@codeaurora.org>
+ <40a0ab68-dc3a-10e2-f78e-9a386b4a72bd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CADtm3G5v6_BHwanRYvCq1y-8Hdmn7gxX3zoVHx2c7cOFL-pj+Q@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:41096 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750951AbdJDVuZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 17:50:25 -0400
+Content-Disposition: inline
+In-Reply-To: <40a0ab68-dc3a-10e2-f78e-9a386b4a72bd@codeaurora.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Timur Tabi <timur@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On 10/03/2017 08:03 PM, Gregory Fong wrote:
-> Hi Doug,
+On 10/03, Timur Tabi wrote:
+> On 10/03/2017 05:03 PM, Stephen Boyd wrote:
+> >I've run into this now on our mobile SoCs after I pull in commit
+> >8e51533780ba ("pinctrl: qcom: add get_direction function").
+> >Before that commit we never read each pin of the device. On our
+> >mobile SoCs we have devicetree and it feels like having that
+> >describe which pins are available and not available is
+> >half-duplicating information we would already have via consumers
+> >indicating which pins they care about. I don't see any value
+> >beyond system wide debug in figuring out the default pin
+> >configuration of a pin that doesn't have a consumer in Linux.
 > 
-> On Fri, Sep 29, 2017 at 8:40 PM, Doug Berger <opendmb@gmail.com> wrote:
->> The GPIOLIB IRQ chip helpers were very appealing, but badly broke
->> the 1:1 mapping between a GPIO controller's device_node and its
->> interrupt domain.
-> 
-> Out of curiosity, what sort of problems have you seen from this?
-> 
-
-As you know, the BRCMSTB devices conceptually distinguish between an
-always-on GPIO device and a regular GPIO device that each can have many
-more than 32 General Purpose I/Os. The driver supports these by dividing
-the GPIO across a number of banks each of which is implemented as a
-separate gpiochip as an implementation convenience. The main issue is
-that each gpiochip that uses the GPIOLIB IRQ chip helpers creates its
-own irq domain even though they are associated with the same device and
-device-tree node.
-
-When another device-tree node references a GPIO device as its interrupt
-parent, the irq_create_of_mapping() function looks for the irq domain of
-the GPIO device and since all bank irq domains reference the same GPIO
-device node it always resolves to the irq domain of the first bank
-regardless of which bank the number of the GPIO should resolve. This
-domain can only map hwirq numbers 0-31 so interrupts on GPIO above that
-can't be mapped by the device-tree.
-
->>
->> This commit consolidates the per bank irq domains to a version
->> where we have one larger interrupt domain per GPIO controller
->> instance spanning multiple GPIO banks.
-> 
-> This works (and is reminiscent to my initially submitted
-> implementation at [1]), but I think it might make sense to keep as-is
-> (using the gpiolib irqchip helpers), and instead allocate an irqchip
-> fwnode per bank and use to_of_node() to set it as the of_node for the
-> gpiochip before calling gpiochip_irqchip_add().  OTOH, that capability
-> might go away...
-> 
-> Linus, can you comment on the FIXME in gpiochip_irqchip_add_key() that
-> says "get rid of this and use gpiochip->parent->of_node everywhere"?
-> It seems like it would still be beneficial to be able to override the
-> associated node for a gpiochip, since that's what's used for the
-> irqdomain, but if that's going away, obviously we don't want to start
-> using that now.
+> At the time I wrote that patch, the ACPI tables exposed all of the
+> GPIOs, even the ones it didn't care about.  The new ACPI tables list
+> only specific GPIOs, and so we no longer need to blindly read the
+> direction of all GPIOs.
 > 
 
-Yes, this is effectively a reversion to an earlier implementation. I
-produced an implementation based on the generic irqchip libraries, but
-that was stripped from this submission when I discovered that no support
-exists within the generic irqchip libraries for removal of domain
-generic chips and we wanted to preserve the module support of this driver.
+Do you avoid this problem on new ACPI tables because only pins
+that are able to be read are exposed?
 
-It is conceivable that the current GPIO device-tree nodes could be
-broken down into separate devices per bank, but it is believed that this
-would only confuse things for users of the device as the concept
-diverges from the concept expressed in device documentation.
-
-> Thanks,
-> Gregory
 > 
-> [1] https://patchwork.kernel.org/patch/6347811/
+> >This is basically a revert of commit 72d320006177 ("gpio: set up
+> >initial state from .get_direction()").
 > 
+> I would be in favor of either reverting that patch, or moving the
+> code into gpiochip_add_pin_range().
 
-Thanks for the review,
-    Doug
+If it's in gpiochip_add_pin_range() would we still read the
+hardware when creating the pin ranges? I don't want to have to
+describe pin ranges of "valid" pins that won't cause the system
+to blow up if we touch them, because those pins are never used by
+Linux so reading them is not useful.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
