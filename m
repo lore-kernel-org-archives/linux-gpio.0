@@ -1,60 +1,75 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v4.15
-Date: Wed,  4 Oct 2017 11:44:37 +0200
-Message-ID: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 01/14] pinctrl: sh-pfc: Remove matching on plain sh-pfc platform device
+Date: Wed, 04 Oct 2017 12:52:32 +0300
+Message-ID: <2182027.qnhtCa0uq9@avalon>
+References: <1507108033-8606-1-git-send-email-geert+renesas@glider.be> <1507108033-8606-2-git-send-email-geert+renesas@glider.be>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:57089 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbdJDJwa (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 05:52:30 -0400
+In-Reply-To: <1507108033-8606-2-git-send-email-geert+renesas@glider.be>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
 
-	Hi Linus,
+Hi Geert,
 
-The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+Thank you for the patch.
 
-  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+On Wednesday, 4 October 2017 12:07:00 EEST Geert Uytterhoeven wrote:
+> As of commit 8682b3c522c639f3 ("sh-pfc: Remove platform device
+> registration"), plain "sh-pfc" platform devices are no longer created.
+> Hence remove their match entry, and the now obsolete checks for missing
+> device IDs and driver data.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-are available in the git repository at:
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.15-tag1
+> ---
+>  drivers/pinctrl/sh-pfc/core.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+> index 0c5e952461fdf7c6..9cdbaeab2cf10d46 100644
+> --- a/drivers/pinctrl/sh-pfc/core.c
+> +++ b/drivers/pinctrl/sh-pfc/core.c
+> @@ -569,7 +569,6 @@ static const struct of_device_id sh_pfc_of_table[] = {
+> 
+>  static int sh_pfc_probe(struct platform_device *pdev)
+>  {
+> -	const struct platform_device_id *platid = platform_get_device_id(pdev);
+>  #ifdef CONFIG_OF
+>  	struct device_node *np = pdev->dev.of_node;
+>  #endif
+> @@ -582,10 +581,7 @@ static int sh_pfc_probe(struct platform_device *pdev)
+>  		info = of_device_get_match_data(&pdev->dev);
+>  	else
+>  #endif
+> -		info = platid ? (const void *)platid->driver_data : NULL;
+> -
+> -	if (info == NULL)
+> -		return -ENODEV;
+> +		info = (const void *)platform_get_device_id(pdev)->driver_data;
+> 
+>  	pfc = devm_kzalloc(&pdev->dev, sizeof(*pfc), GFP_KERNEL);
+>  	if (pfc == NULL)
+> @@ -683,7 +679,6 @@ static const struct platform_device_id sh_pfc_id_table[]
+> = { #ifdef CONFIG_PINCTRL_PFC_SHX3
+>  	{ "pfc-shx3", (kernel_ulong_t)&shx3_pinmux_info },
+>  #endif
+> -	{ "sh-pfc", 0 },
+>  	{ },
+>  };
 
-for you to fetch changes up to 5ec8a41a36715cf543cb7c109097fb3b4cdfb427:
 
-  pinctrl: sh-pfc: r8a7795: Add USB3.0 host support (2017-10-02 13:23:44 +0200)
+-- 
+Regards,
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v4.15
+Laurent Pinchart
 
-  - Add SDHI and DRIF pin groups on R-Car H3 ES2.0,
-  - Add USB3.0 host pin groups on R-Car H3 (ES1.x and ES2.0),
-  - Add EthernetAVB and USB2.0 host pin groups on R-Car D3.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Dirk Behme (1):
-      pinctrl: sh-pfc: r8a7795: Re-add DRIF support
-
-Takeshi Kihara (4):
-      pinctrl: sh-pfc: r8a7795: Add SDHI0-3 support
-      pinctrl: sh-pfc: r8a77995: Add USB2.0 host support
-      pinctrl: sh-pfc: r8a7795-es1: Add USB3.0 host support
-      pinctrl: sh-pfc: r8a7795: Add USB3.0 host support
-
-Yoshihiro Shimoda (1):
-      pinctrl: sh-pfc: r8a77995: Add EthernetAVB pins, groups and functions
-
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c |  29 ++
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 581 +++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 134 +++++++
- 3 files changed, 744 insertions(+)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
