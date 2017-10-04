@@ -1,60 +1,87 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: pinctrl: add support for RZ/A1M and RZ/A1L
-Date: Wed, 4 Oct 2017 18:47:15 +0200
-Message-ID: <CAMuHMdWy+sS1F1s0-E1MaeHQx4uLUtRdjL+PhwzAm60Wh5Xoww@mail.gmail.com>
-References: <20171004163111.54600-1-chris.brandt@renesas.com> <20171004163111.54600-3-chris.brandt@renesas.com>
+From: Chris Gorman <chrisjohgorman@gmail.com>
+Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
+ irqs mapping
+Date: Wed, 4 Oct 2017 13:01:48 -0400
+Message-ID: <CAHVeOW-1qm8MdKLa-LApx-sZs45XPNLNi3JeZ=MRKKNjA_yb9Q@mail.gmail.com>
+References: <20171003170049.24480-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171004163111.54600-3-chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-Renesas <linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54937 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751240AbdJDRBv (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 13:01:51 -0400
+In-Reply-To: <20171003170049.24480-1-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Hi Chris,
+Tested on 4.14.0-rc3 and this works for me.
 
-On Wed, Oct 4, 2017 at 6:31 PM, Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org> wrote:
-> Describe how to specify RZ/A1M and RZ/A1L devices.
+Tested by: Chris Gorman <chrisjohgorman@gmail.com>
+
+On Tue, Oct 3, 2017 at 1:00 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> New GPIO IRQs are allocated and mapped dynamically by default when
+> GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
+> This causes issues on some Intel platforms [1][2] with broken BIOS which
+> hardcodes Linux IRQ numbers in their ACPI tables.
 >
-> Signed-off-by: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+> On such platforms cherryview-pinctrl driver should allocate and map all
+> GPIO IRQs at probe time.
+> Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
+> can be seen at boot log.
+>
+> NOTE. It still may fail if boot sequence will changed and some interrupt
+> controller will be probed before cherryview-pinctrl which will shift Linux IRQ
+> numbering (expected with CONFIG_SPARCE_IRQ enabled).
+>
+> [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> [2] https://lkml.org/lkml/2017/9/28/153
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Cc: Chris Gorman <chrisjohgorman@gmail.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
+> Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 > ---
-> v2:
->  * Added description for RZ/A1M
-> ---
->  Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 >
-> diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-> index 43e21474528a..f2fc86f8dbab 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt
-> @@ -13,7 +13,9 @@ Pin controller node
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index 04e929f..fadbca9 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1577,6 +1577,7 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>         struct gpio_chip *chip = &pctrl->chip;
+>         bool need_valid_mask = !dmi_check_system(chv_no_valid_mask);
+>         int ret, i, offset;
+> +       int irq_base;
 >
->  Required properties:
->    - compatible
-> -    this shall be "renesas,r7s72100-ports".
-> +    this shall be "renesas,r7s72100-ports" for RZ/A1H, "renesas,r7s72101-ports"
-> +    with a fallback of "renesas,r7s72100-ports" for RZ/A1M (as A1M is compatible
-> +    with A1H), or "renesas,r7s72102-ports" for RZ/A1L
-
-Sorry to bother you again, but having this in a single long sentence is hard
-to read. What about splitting per SoC, like is done in other bindings?
-
-For the actual content:
-Reviewed-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>         *chip = chv_gpio_chip;
+>
+> @@ -1622,7 +1623,18 @@ static int chv_gpio_probe(struct chv_pinctrl *pctrl, int irq)
+>         /* Clear all interrupts */
+>         chv_writel(0xffff, pctrl->regs + CHV_INTSTAT);
+>
+> -       ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
+> +       if (!need_valid_mask) {
+> +               irq_base = devm_irq_alloc_descs(pctrl->dev, -1, 0,
+> +                                               chip->ngpio, NUMA_NO_NODE);
+> +               if (irq_base < 0) {
+> +                       dev_err(pctrl->dev, "Failed to allocate IRQ numbers\n");
+> +                       return irq_base;
+> +               }
+> +       } else {
+> +               irq_base = 0;
+> +       }
+> +
+> +       ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, irq_base,
+>                                    handle_bad_irq, IRQ_TYPE_NONE);
+>         if (ret) {
+>                 dev_err(pctrl->dev, "failed to add IRQ chip\n");
+> --
+> 2.10.1
+>
