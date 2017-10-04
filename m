@@ -1,107 +1,83 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH RFC] gpio: of: document gpio-init nodes
-Date: Thu, 5 Oct 2017 00:00:46 +0200
-Message-ID: <20171004220046.tfejhywhhowgf3ma@pengutronix.de>
-References: <20170922204138.29951-1-u.kleine-koenig@pengutronix.de>
- <20171004205306.wzvxmstcberpws25@rob-hp-laptop>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Wed, 4 Oct 2017 17:41:27 -0500
+Message-ID: <f8c20994-230e-0028-c46a-d001e59223ce@codeaurora.org>
+References: <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+ <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
+ <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
+ <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
+ <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
+ <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org>
+ <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+ <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org>
+ <20171003220311.GU457@codeaurora.org>
+ <40a0ab68-dc3a-10e2-f78e-9a386b4a72bd@codeaurora.org>
+ <20171004215023.GA457@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:48223 "EHLO
-        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750797AbdJDWAu (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 4 Oct 2017 18:00:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20171004205306.wzvxmstcberpws25@rob-hp-laptop>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171004215023.GA457@codeaurora.org>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de
 
-On Wed, Oct 04, 2017 at 03:53:06PM -0500, Rob Herring wrote:
-> On Fri, Sep 22, 2017 at 10:41:38PM +0200, Uwe Kleine-König wrote:
-> > Sometimes it is desirable to define a "safe" configuration for a GPIO in
-> > the device tree but let the operating system later still make use of
-> > this pin.
-> > 
-> > This might for example be useful to initially configure a debug pin that
-> > is usually unconnected as output to prevent floating until it is used
-> > later.
-> > 
-> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > ---
-> > Hello,
-> > 
-> > this picks up a discussion that pops up now and then with our customers.
-> > 
-> > Last time I discussed this topic with Linus Walleij my suggestion was to
-> > merge this usecase with gpio-hogs, but he wasn't happy with it because
-> > hogging implies that the pin is not free for other usage and he
-> > suggested to use "gpio-init" instead.
-> > 
-> > Maybe it's arguable if this "initial configuration" belongs into the
-> > device tree, but IMHO defining a "safe configuration" should have a
-> > place and the requirements are identical. This isn't implied by the name
-> > however, but I don't have a better idea for a different name.
+On 10/04/2017 04:50 PM, Stephen Boyd wrote:
+
+>> At the time I wrote that patch, the ACPI tables exposed all of the
+>> GPIOs, even the ones it didn't care about.  The new ACPI tables list
+>> only specific GPIOs, and so we no longer need to blindly read the
+>> direction of all GPIOs.
+>>
 > 
-> It can be argued that by the time the kernel boots, it is way to late to 
-> configure pins to a safe state. Of course, even secure world reads the 
-> DT these days (or are at least talking about doing so). Still any s/w 
-> handling this could be too slow to get to a safe state.
+> Do you avoid this problem on new ACPI tables because only pins
+> that are able to be read are exposed?
 
-Note I didn't target the kernel to implement this. I already have
-patches that implement this in barebox which is also using dt. (After
-all dt is about hardware description and not about what Linux should do,
-right? :-)
+Yes.  A recent firmware update enabled the "XPU" block which is being 
+programmed with a select subset of individual GPIOs.  On our silicon, 
+each TLMM GPIO is in a separate 64k page, and so the XPU can block any 
+individual GPIO.  Any attempt to touch those registers causes an XPU 
+violation which takes the whole system down.
 
-> Maybe "optimal default" state would be more accurate. 
+>>> This is basically a revert of commit 72d320006177 ("gpio: set up
+>>> initial state from .get_direction()").
+>>
+>> I would be in favor of either reverting that patch, or moving the
+>> code into gpiochip_add_pin_range().
 > 
-> > Thinking further (which was also discussed last time) it would also be
-> > nice to restrict usage. For example that a given pin that has
-> > "output-low" as its safe setting might be configured later als high
-> > output but not as input. Maybe:
-> 
-> I can't imagine that an output can't be an input.
+> If it's in gpiochip_add_pin_range() would we still read the
+> hardware when creating the pin ranges?
 
-It might make that line float which I'd consider "unsafe" (or "not
-optimal").
+I presume so.  The idea is that pinctrl-qdf2xxx/pinctrl-msm only submit 
+pin ranges that are present in the ACPI tables.
 
-> Regardless, what you're describing is constraints and that seems like
-> a whole other problem than default/initial state.
-> 
-> Plus, for constraints I'd think we want this done at the pin level, not 
-> GPIO. And we kind of already have that with pin states.
+ > I don't want to have to> describe pin ranges of "valid" pins that 
+won't cause the system
+> to blow up if we touch them, because those pins are never used by
+> Linux so reading them is not useful.
 
-Not 100% sure I'm up to date here, if you mean
+Well, that's exactly what I'm trying to do with current patch set :-) 
+It seems the most logical approach to me.  I don't understand the 
+dislike for it.  What else are pin ranges for, other than to specify 
+ranges of pins that can be accessed?
 
-	pinctrl-names = "default", "idle"
-	pinctrl-0 = ... /* that's default */
-	pinctrl-1 = ... /* that's idle */
+Another alternative was to enumerate all of the GPIOs starting from 0. 
+So the first GPIO in ACPI would be gpio0, regardless of what gpio number 
+it actually was.  E.g. GPIO 37 would appear as gpio0, GPIO 38 would 
+appear as gpio1, and so on.  That also worked, but it meant that 
+customers would need to figure out which GPIO that "gpio0" actually 
+pointed to.  That was not acceptable, so I dropped it.
 
-this doesn't help completely. If the idle/save state means that the pin
-should be configured as low-output, you cannot define that in general.
-You can only configure the pin into its gpio function but not say it
-should be an output driving the pin low.
+I'm at a loss on how else to do it.  I think a gpio_chip.available 
+callback is far less elegant than define pin ranges.  There is no chance 
+that unavailable GPIOs can be accessed because the physical addresses 
+are not in the msm_pingroup array.  That is, groups[0].ctrl_reg == 0, 
+not 0xFF02010000.
 
-> > 	companion-reset {
-> > 		gpio-somethingwithsafe;
-> > 		gpios = <12 0>;
-> 
-> "gpios" is already a defined property with a type (phandle + args). dtc 
-> checks for this now though gpio-hogs is already one exception, and I 
-> don't want to add another. Maybe it could be generalized to be allowed 
-> when the parent is a gpio-controller, but really I'd like to avoid this 
-> pattern from spreading.
-
-I choosed the same way as gpio-hogs because IMHO they are quite similar.
-Also if the propery is supposed to be located in a child node of a
-gpio-controller, repeating &gpioX seems to be at least arguable.
-
-Best regards
-Uwe
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
