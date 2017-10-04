@@ -1,37 +1,30 @@
-From: Chris Brandt <Chris.Brandt@renesas.com>
-Subject: RE: [PATCH 2/2] dt-bindings: pinctrl: add support for RZ/A1L
-Date: Wed, 4 Oct 2017 14:57:24 +0000
-Message-ID: <SG2PR06MB1165BA780786B3142D4C847F8A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
-References: <20171003073334.18917-1-chris.brandt@renesas.com>
- <20171003073334.18917-3-chris.brandt@renesas.com>
- <CAMuHMdVU_dmMvfSNQXOON1doW98EjRY9p8XT6XP7ccxa7414bw@mail.gmail.com>
- <SG2PR06MB1165B7C76F5E5528FDF7B7408A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdUh05qyi3eoao0KbahGD1NfEnGm03JpcZuFHVrEBSBU1Q@mail.gmail.com>
- <SG2PR06MB1165243813B8D662AE93911E8A730@SG2PR06MB1165.apcprd06.prod.outlook.com>
- <CAMuHMdVmFNyE0QfdWZ5X6fRp4xJy9k+uN7h+zi5_WAG1dcJV5g@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
+Date: Wed, 4 Oct 2017 08:48:38 -0700
+Message-ID: <20171004154838.GT4394@atomide.com>
+References: <20171003161705.23398-1-grygorii.strashko@ti.com>
+ <7b8f3c6a-0f4b-98ed-3887-91a01ed6cdbb@oracle.com>
+ <81906eda-58ac-38e3-bc0a-8ead2b6aa8df@ti.com>
+ <20171003172228.2p5ebam7cpqrhmsa@lenoch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdVmFNyE0QfdWZ5X6fRp4xJy9k+uN7h+zi5_WAG1dcJV5g@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms+renesas@verge.net.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171003172228.2p5ebam7cpqrhmsa@lenoch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar <santosh.shilimkar@oracle.com>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgT2N0b2JlciAwNCwgMjAxNyAxLCBHZWVydCBVeXR0
-ZXJob2V2ZW4gd3JvdGU6DQo+ID4gSSB3aWxsIHN1Ym1pdCBhIHYyIHdpdGg6DQo+ID4NCj4gPiBb
-IHJlbmVzYXMscnphMS1waW5jdHJsLnR4dCBdDQo+ID4NCj4gPiBSZXF1aXJlZCBwcm9wZXJ0aWVz
-Og0KPiA+ICAgLSBjb21wYXRpYmxlDQo+ID4gICAgIHRoaXMgc2hhbGwgYmUgInJlbmVzYXMscjdz
-NzIxMDAtcG9ydHMiIGZvciBSWi9BMUgsDQo+ID4gICAgICJyZW5lc2FzLHI3czcyMTAxLXBvcnRz
-IiBmb3IgUlovTSBvcg0KPiANCj4gLi4uIHdpdGggYSBmYWxsYmFjayBmb3IgInJlbmVzYXMscjdz
-NzIxMDAtcG9ydHMsIGFzIFJaL0ExTSBpcyBjb21wYXRpYmxlDQo+IHdpdGggUlovQTFIIChhbmQg
-SSBhc3N1bWUgUlovQTFIIGlzIHRoZSBwcmVkZWNlc3Nvcj8pLg0KDQpPSy4NCg0KKGFuZCB5ZXMs
-IFJaL0ExSCB3YXMgdGhlIHByZWRlY2Vzc29yIG9mIFJaL0ExTSkNCg0KDQo+ID4gICAgICJyZW5l
-c2FzLHI3czcyMTAyLXBvcnRzIiBmb3IgUlovQTFMDQo+ID4NCj4gPg0KPiA+IFsgcjdzNzIxMDAu
-ZHRzaSBdDQo+ID4gICAgICAgICBwaW5jdHJsOiBwaW4tY29udHJvbGxlckBmY2ZlMzAwMCB7DQo+
-ID4gICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAicmVuZXNhcyxyN3M3MjEwMS1wb3J0cyIs
-DQo+ICJyZW5lc2FzLHI3czcyMTAwLXBvcnRzIjsNCj4gDQo+IEkgbWVhbnQgaW4gcjdzNzIxMDEu
-ZHRzaSAod2hpY2ggd2UgZG9uJ3QgaGF2ZSEpLg0KDQpPaGhoaGgsIEkgc2VlICA6KQ0KDQoNClRo
-YW5rIHlvdS4NCg0KQ2hyaXMNCg0K
+* Ladislav Michl <ladis@linux-mips.org> [171003 10:23]:
+> But there's another missing piece to make edge irqs work on OMAPs:
+> https://marc.info/?l=linux-omap&m=149037823114641&w=2
+> Tony, what is the status of your patch? Perhaps we should spin-off
+> separate thread for it...
+
+Oh so did that fix things for you? It never went anywhere as I was waiting
+for you to test it.. Yeah let's start a separate thread on that one.
+
+Regards,
+
+Tony
