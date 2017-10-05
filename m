@@ -1,73 +1,69 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] pinctrl: sh-pfc: r8a7795-es1: Restore sort order
-Date: Thu,  5 Oct 2017 12:20:29 +0200
-Message-ID: <1507198830-26128-2-git-send-email-geert+renesas@glider.be>
-References: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Update GPIO EN_CTL when
+ setting pin config
+Date: Thu, 5 Oct 2017 09:27:50 -0700
+Message-ID: <20171005162750.GY1165@minitux>
+References: <20170912003331.3092-1-fenglinw@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170912003331.3092-1-fenglinw@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: fenglinw@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
 
-Move the USB30 pins where they belong.
+On Mon 11 Sep 17:32 PDT 2017, fenglinw@codeaurora.org wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 34 ++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+> From: Fenglin Wu <fenglinw@codeaurora.org>
+> 
+> GPIO is expected to be disabled iff PIN_CONFIG_BIAS_HIGH_IMPEDANCE is
+> configured. Update is_enabled flag in config_set() so that it can
+> reflect GPIO status correctly. Also modify EN_CTL register based on
+> is_enabled flag in config_set() to configure the GPIO properly.
+> 
+> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+> ---
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> index c2c0bab..a0edaa8 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> @@ -453,6 +453,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  
+>  	pad = pctldev->desc->pins[pin].drv_data;
+>  
+> +	pad->is_enabled = true;
+>  	for (i = 0; i < nconfs; i++) {
+>  		param = pinconf_to_config_param(configs[i]);
+>  		arg = pinconf_to_config_argument(configs[i]);
+> @@ -600,6 +601,10 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  			return ret;
+>  	}
+>  
+> +	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
+> +
+> +	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_EN_CTL, val);
+> +
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 78c1acf60445340e..20f34e675c60327a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -3101,23 +3101,6 @@ static const unsigned int pwm6_b_mux[] = {
- 	PWM6_B_MARK,
- };
- 
--/* - USB30 ------------------------------------------------------------------ */
--static const unsigned int usb30_pins[] = {
--	/* PWEN, OVC */
--	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
--};
--static const unsigned int usb30_mux[] = {
--	USB30_PWEN_MARK, USB30_OVC_MARK,
--};
--/* - USB31 ------------------------------------------------------------------ */
--static const unsigned int usb31_pins[] = {
--	/* PWEN, OVC */
--	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
--};
--static const unsigned int usb31_mux[] = {
--	USB31_PWEN_MARK, USB31_OVC_MARK,
--};
--
- /* - QSPI0 ------------------------------------------------------------------ */
- static const unsigned int qspi0_ctrl_pins[] = {
- 	/* QSPI0_SPCLK, QSPI0_SSL */
-@@ -3791,6 +3774,23 @@ static const unsigned int usb2_mux[] = {
- 	USB2_PWEN_MARK, USB2_OVC_MARK,
- };
- 
-+/* - USB30 ------------------------------------------------------------------ */
-+static const unsigned int usb30_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int usb30_mux[] = {
-+	USB30_PWEN_MARK, USB30_OVC_MARK,
-+};
-+/* - USB31 ------------------------------------------------------------------ */
-+static const unsigned int usb31_pins[] = {
-+	/* PWEN, OVC */
-+	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int usb31_mux[] = {
-+	USB31_PWEN_MARK, USB31_OVC_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
--- 
-2.7.4
+This looks good.
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+
+But I spotted another issue while reviewing this; currently the initial
+state of is_enabled is unconditionally set to enabled in
+pmic_gpio_populate(), so reading the initial pinconf or configuring a
+pinmux before setting a pinconf will operate on the potentially wrong
+information.
+
+So I think the initial value should be read out from REG_EN_CTL rather
+than being just "true".
+
+Can you please either submit another patch for this?
+
+Regards,
+Bjorn
