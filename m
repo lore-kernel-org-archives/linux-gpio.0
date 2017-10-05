@@ -1,18 +1,18 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4/8] pinctrl: meson: remove offset continued - meson8
-Date: Thu, 5 Oct 2017 13:26:34 +0200
-Message-ID: <CACRpkdZv4Vcf=SccQi5BnvxTMWK2xrjkqCJT4BfQpgkPrgTFpQ@mail.gmail.com>
-References: <20170920133927.17390-1-jbrunet@baylibre.com> <20170920133927.17390-5-jbrunet@baylibre.com>
+Subject: Re: [PATCH 5/8] pinctrl: meson: remove offset continued - meson8b
+Date: Thu, 5 Oct 2017 13:29:46 +0200
+Message-ID: <CACRpkdbVEsh5icOQaii9NubLmZx0ew4ibFCLXioxJjCw7DxNJQ@mail.gmail.com>
+References: <20170920133927.17390-1-jbrunet@baylibre.com> <20170920133927.17390-6-jbrunet@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:50631 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbdJEL0f (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2017 07:26:35 -0400
-Received: by mail-io0-f171.google.com with SMTP id 97so766258iok.7
-        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2017 04:26:35 -0700 (PDT)
-In-Reply-To: <20170920133927.17390-5-jbrunet@baylibre.com>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:49993 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751756AbdJEL3r (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2017 07:29:47 -0400
+Received: by mail-io0-f177.google.com with SMTP id 21so13110153iof.6
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2017 04:29:47 -0700 (PDT)
+In-Reply-To: <20170920133927.17390-6-jbrunet@baylibre.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Jerome Brunet <jbrunet@baylibre.com>
@@ -25,5 +25,4 @@ On Wed, Sep 20, 2017 at 3:39 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
 Patch applied.
 
-Yours,
 Linus Walleij
