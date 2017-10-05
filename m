@@ -1,43 +1,71 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 1/8] pinctrl: meson: remove offset from pinctrl
-Date: Thu, 05 Oct 2017 13:47:48 +0200
-Message-ID: <1507204068.17300.204.camel@baylibre.com>
-References: <20170920133927.17390-1-jbrunet@baylibre.com>
-         <20170920133927.17390-2-jbrunet@baylibre.com>
-         <CACRpkdZJ6YWaMig2HSf6kf3aHHRmQ-ZdB0GhqF7f-EXX6iWLUA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZJ6YWaMig2HSf6kf3aHHRmQ-ZdB0GhqF7f-EXX6iWLUA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] pinctrl: sh-pfc: r8a7795: Restore sort order
+Date: Thu,  5 Oct 2017 12:20:30 +0200
+Message-ID: <1507198830-26128-3-git-send-email-geert+renesas@glider.be>
+References: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1507198830-26128-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, 2017-10-05 at 13:22 +0200, Linus Walleij wrote:
-> On Wed, Sep 20, 2017 at 3:39 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> 
-> > Offset on meson pinctrl and gpios is something that was carried from the
-> > vendor driver, where there is a weird link between the 2
-> > controllers. Since these 2 controllers are independent, this offset adds
-> > an unnecessary complexity.
-> > 
-> > This patch remove this manually set offset and rely on pinctrl to figure
-> > out the gpio base offset
-> > 
-> > Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
-> Patch applied.
+Move the SCIF_CLK pins where they belong.
 
-Thx Linus.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-Just to be sure, did you remember to squash patch 1 to 5 together ?
-
-I know it is a bit unusual but, as explained earlier, those patches were only
-split to ease the review. Keeping the change split would break bisect.
-
-> 
-> Yours,
-> Linus Walleij
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index df6a95bce4f8061a..9772a6c7b303b5b7 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -3121,6 +3121,22 @@ static const unsigned int scif5_clk_b_mux[] = {
+ 	SCK5_B_MARK,
+ };
+ 
++/* - SCIF Clock ------------------------------------------------------------- */
++static const unsigned int scif_clk_a_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(6, 23),
++};
++static const unsigned int scif_clk_a_mux[] = {
++	SCIF_CLK_A_MARK,
++};
++static const unsigned int scif_clk_b_pins[] = {
++	/* SCIF_CLK */
++	RCAR_GP_PIN(5, 9),
++};
++static const unsigned int scif_clk_b_mux[] = {
++	SCIF_CLK_B_MARK,
++};
++
+ /* - SDHI0 ------------------------------------------------------------------ */
+ static const unsigned int sdhi0_data1_pins[] = {
+ 	/* D0 */
+@@ -3505,22 +3521,6 @@ static const unsigned int ssi9_ctrl_b_mux[] = {
+ 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
+ };
+ 
+-/* - SCIF Clock ------------------------------------------------------------- */
+-static const unsigned int scif_clk_a_pins[] = {
+-	/* SCIF_CLK */
+-	RCAR_GP_PIN(6, 23),
+-};
+-static const unsigned int scif_clk_a_mux[] = {
+-	SCIF_CLK_A_MARK,
+-};
+-static const unsigned int scif_clk_b_pins[] = {
+-	/* SCIF_CLK */
+-	RCAR_GP_PIN(5, 9),
+-};
+-static const unsigned int scif_clk_b_mux[] = {
+-	SCIF_CLK_B_MARK,
+-};
+-
+ /* - USB0 ------------------------------------------------------------------- */
+ static const unsigned int usb0_pins[] = {
+ 	/* PWEN, OVC */
+-- 
+2.7.4
