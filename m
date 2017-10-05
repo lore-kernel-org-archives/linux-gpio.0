@@ -1,19 +1,26 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/8] pinctrl: meson: remove offset continued - gxl
-Date: Thu, 5 Oct 2017 13:25:20 +0200
-Message-ID: <CACRpkdaXWc4cK+71fJuqe7NSR7SQcxzWswHce8briEGaKypLgg@mail.gmail.com>
-References: <20170920133927.17390-1-jbrunet@baylibre.com> <20170920133927.17390-4-jbrunet@baylibre.com>
+Subject: Re: [PATCH 4/8] pinctrl: meson: remove offset continued - meson8
+Date: Thu, 5 Oct 2017 13:26:34 +0200
+Message-ID: <CACRpkdZv4Vcf=SccQi5BnvxTMWK2xrjkqCJT4BfQpgkPrgTFpQ@mail.gmail.com>
+References: <20170920133927.17390-1-jbrunet@baylibre.com> <20170920133927.17390-5-jbrunet@baylibre.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170920133927.17390-4-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f171.google.com ([209.85.223.171]:50631 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751744AbdJEL0f (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2017 07:26:35 -0400
+Received: by mail-io0-f171.google.com with SMTP id 97so766258iok.7
+        for <linux-gpio@vger.kernel.org>; Thu, 05 Oct 2017 04:26:35 -0700 (PDT)
+In-Reply-To: <20170920133927.17390-5-jbrunet@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Jerome Brunet <jbrunet@baylibre.com>
 Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-List-Id: linux-gpio@vger.kernel.org
 
 On Wed, Sep 20, 2017 at 3:39 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
+> Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
 Patch applied.
