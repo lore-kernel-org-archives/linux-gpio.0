@@ -1,96 +1,31 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 2/2] gpio: mcp32s08: add support for mcp23018
-Date: Thu, 5 Oct 2017 14:56:56 +0800
-Message-ID: <de082b41-5bdc-d48b-41bf-da4ea0cadee0@electromag.com.au>
-References: <1507166615-4530-1-git-send-email-preid@electromag.com.au>
- <1507166615-4530-3-git-send-email-preid@electromag.com.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:35174 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751310AbdJEG47 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 5 Oct 2017 02:56:59 -0400
-In-Reply-To: <1507166615-4530-3-git-send-email-preid@electromag.com.au>
-Content-Language: en-AU
-Sender: linux-gpio-owner@vger.kernel.org
+From: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
+Subject: [PATCH] dt-bindings: pinctrl: Move mcp23s08 from gpio
+Date: Thu,  5 Oct 2017 09:50:02 +0200
+Message-ID: <20171005075002.9901-1-poeschel@lemonage.de>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
-On 5/10/2017 09:23, Phil Reid wrote:
-> This adds the required definitions for the mcp23018 which is the i2c
-> variant of the mcp23s18.
-> 
-> Signed-off-by: Phil Reid <preid@electromag.com.au>
-> ---
->   drivers/gpio/gpio-mcp23s08.c | 15 ++++++++++++++-
->   1 file changed, 14 insertions(+), 1 deletion(-)
+The mcp23s08 driver was moved from gpio to pinctrl. This moves it's
+devicetree binding doc as well. So driver and binding doc are in sync
+again.
 
-I've just noticed that this needs to be rebased as mcp23s08 driver has moved.
-Other that the new location the patch is the same so far.
-I have a couple of queries regarding the driver in another email, will wait for that first..
+Signed-off-by: Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>
+---
+ .../bindings/{gpio/gpio-mcp23s08.txt => pinctrl/pinctrl-mcp23s08.txt}     | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/{gpio/gpio-mcp23s08.txt => pinctrl/pinctrl-mcp23s08.txt} (100%)
 
-
-
-> 
-> diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-> index 2a57d024..92751e5 100644
-> --- a/drivers/gpio/gpio-mcp23s08.c
-> +++ b/drivers/gpio/gpio-mcp23s08.c
-> @@ -33,6 +33,7 @@
->   #define MCP_TYPE_008	2
->   #define MCP_TYPE_017	3
->   #define MCP_TYPE_S18    4
-> +#define MCP_TYPE_018    5
->   
->   /* Registers are all 8 bits wide.
->    *
-> @@ -595,6 +596,13 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->   		mcp->chip.ngpio = 16;
->   		mcp->chip.label = "mcp23017";
->   		break;
-> +
-> +	case MCP_TYPE_018:
-> +		mcp->regmap = devm_regmap_init_i2c(data, &mcp23x17_regmap);
-> +		mcp->reg_shift = 1;
-> +		mcp->chip.ngpio = 16;
-> +		mcp->chip.label = "mcp23018";
-> +		break;
->   #endif /* CONFIG_I2C */
->   
->   	default:
-> @@ -640,7 +648,7 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->   		if (mirror)
->   			status |= IOCON_MIRROR | (IOCON_MIRROR << 8);
->   
-> -		if (type == MCP_TYPE_S18)
-> +		if (type == MCP_TYPE_S18 || type == MCP_TYPE_018)
->   			status |= IOCON_INTCC | (IOCON_INTCC << 8);
->   
->   		ret = mcp_write(mcp, MCP_IOCON, status);
-> @@ -729,6 +737,10 @@ static int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
->   		.compatible = "microchip,mcp23017",
->   		.data = (void *) MCP_TYPE_017,
->   	},
-> +	{
-> +		.compatible = "microchip,mcp23018",
-> +		.data = (void *) MCP_TYPE_018,
-> +	},
->   /* NOTE: The use of the mcp prefix is deprecated and will be removed. */
->   	{
->   		.compatible = "mcp,mcp23008",
-> @@ -812,6 +824,7 @@ static int mcp230xx_remove(struct i2c_client *client)
->   static const struct i2c_device_id mcp230xx_id[] = {
->   	{ "mcp23008", MCP_TYPE_008 },
->   	{ "mcp23017", MCP_TYPE_017 },
-> +	{ "mcp23018", MCP_TYPE_018 },
->   	{ },
->   };
->   MODULE_DEVICE_TABLE(i2c, mcp230xx_id);
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/gpio/gpio-mcp23s08.txt
+rename to Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
 -- 
-Regards
-Phil Reid
+2.14.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
