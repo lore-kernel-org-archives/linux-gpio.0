@@ -1,66 +1,116 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7795: add newlines for better diff view
-Date: Fri, 6 Oct 2017 13:35:06 +0200
-Message-ID: <CAMuHMdVLCX_sjyOC+-bJoEF6O9jRZqM2WQ1-u2Lq6ictcNuyeg@mail.gmail.com>
-References: <20171006103725.13804-1-wsa+renesas@sang-engineering.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34455 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbdJFLfI (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2017 07:35:08 -0400
-In-Reply-To: <20171006103725.13804-1-wsa+renesas@sang-engineering.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add INTC-EX pins, groups and function
+Date: Fri,  6 Oct 2017 13:56:47 +0200
+Message-ID: <1507291007-23603-1-git-send-email-geert+renesas@glider.be>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Hi Wolfram,
+Add pins, groups, and a function for the INTC-EX interrupt controller on
+R-Car H3 ES2.0.
 
-On Fri, Oct 6, 2017 at 12:37 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Be consistent with the newlines after structs. This makes diffs a lot
-> easier to parse when comparing with other SoCs/versions.
+Extracted from a big patch in the BSP by Takeshi Kihara.
 
-I'm all for consistency, but...
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in sh-pfc-for-v4.15.
 
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> @@ -1678,6 +1678,7 @@ static const unsigned int audio_clkout2_b_pins[] = {
->  static const unsigned int audio_clkout2_b_mux[] = {
->         AUDIO_CLKOUT2_B_MARK,
->  };
-> +
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 60 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-That's a stray newline in both drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c and
-drivers/pinctrl/sh-pfc/pfc-r8a7796.c, which should be removed from the latter
-instead.
-
->  static const unsigned int audio_clkout3_a_pins[] = {
->         /* CLKOUT3 */
->         RCAR_GP_PIN(5, 19),
-> @@ -2967,6 +2968,7 @@ static const unsigned int msiof3_rxd_d_pins[] = {
->  static const unsigned int msiof3_rxd_d_mux[] = {
->         MSIOF3_RXD_D_MARK,
->  };
-> +
-
-drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c has a newline here because H3 ES1.x
-doesn't have the fifth set of MSIOF pins, thus msiof3_rxd_d_mux() is the
-last entry of the MSIOF section.
-
->  static const unsigned int msiof3_clk_e_pins[] = {
->         /* SCK */
->         RCAR_GP_PIN(2, 3),
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 62e04479e8153d72..3e577f31ae13c94f 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -2128,6 +2128,50 @@ static const unsigned int i2c6_c_mux[] = {
+ 	SDA6_C_MARK, SCL6_C_MARK,
+ };
+ 
++/* - INTC-EX ---------------------------------------------------------------- */
++static const unsigned int intc_ex_irq0_pins[] = {
++	/* IRQ0 */
++	RCAR_GP_PIN(2, 0),
++};
++static const unsigned int intc_ex_irq0_mux[] = {
++	IRQ0_MARK,
++};
++static const unsigned int intc_ex_irq1_pins[] = {
++	/* IRQ1 */
++	RCAR_GP_PIN(2, 1),
++};
++static const unsigned int intc_ex_irq1_mux[] = {
++	IRQ1_MARK,
++};
++static const unsigned int intc_ex_irq2_pins[] = {
++	/* IRQ2 */
++	RCAR_GP_PIN(2, 2),
++};
++static const unsigned int intc_ex_irq2_mux[] = {
++	IRQ2_MARK,
++};
++static const unsigned int intc_ex_irq3_pins[] = {
++	/* IRQ3 */
++	RCAR_GP_PIN(2, 3),
++};
++static const unsigned int intc_ex_irq3_mux[] = {
++	IRQ3_MARK,
++};
++static const unsigned int intc_ex_irq4_pins[] = {
++	/* IRQ4 */
++	RCAR_GP_PIN(2, 4),
++};
++static const unsigned int intc_ex_irq4_mux[] = {
++	IRQ4_MARK,
++};
++static const unsigned int intc_ex_irq5_pins[] = {
++	/* IRQ5 */
++	RCAR_GP_PIN(2, 5),
++};
++static const unsigned int intc_ex_irq5_mux[] = {
++	IRQ5_MARK,
++};
++
+ /* - MSIOF0 ----------------------------------------------------------------- */
+ static const unsigned int msiof0_clk_pins[] = {
+ 	/* SCK */
+@@ -3637,6 +3681,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(i2c6_a),
+ 	SH_PFC_PIN_GROUP(i2c6_b),
+ 	SH_PFC_PIN_GROUP(i2c6_c),
++	SH_PFC_PIN_GROUP(intc_ex_irq0),
++	SH_PFC_PIN_GROUP(intc_ex_irq1),
++	SH_PFC_PIN_GROUP(intc_ex_irq2),
++	SH_PFC_PIN_GROUP(intc_ex_irq3),
++	SH_PFC_PIN_GROUP(intc_ex_irq4),
++	SH_PFC_PIN_GROUP(intc_ex_irq5),
+ 	SH_PFC_PIN_GROUP(msiof0_clk),
+ 	SH_PFC_PIN_GROUP(msiof0_sync),
+ 	SH_PFC_PIN_GROUP(msiof0_ss1),
+@@ -3938,6 +3988,15 @@ static const char * const i2c6_groups[] = {
+ 	"i2c6_c",
+ };
+ 
++static const char * const intc_ex_groups[] = {
++	"intc_ex_irq0",
++	"intc_ex_irq1",
++	"intc_ex_irq2",
++	"intc_ex_irq3",
++	"intc_ex_irq4",
++	"intc_ex_irq5",
++};
++
+ static const char * const msiof0_groups[] = {
+ 	"msiof0_clk",
+ 	"msiof0_sync",
+@@ -4230,6 +4289,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
+ 	SH_PFC_FUNCTION(i2c6),
++	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(msiof0),
+ 	SH_PFC_FUNCTION(msiof1),
+ 	SH_PFC_FUNCTION(msiof2),
+-- 
+2.7.4
