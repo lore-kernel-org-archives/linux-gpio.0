@@ -1,47 +1,65 @@
-From: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
-Subject: [PATCH v2 6/7] pinctrl: mcp23s08: remove hardcoded irq polarity in irq_setup
-Date: Fri,  6 Oct 2017 13:08:10 +0800
-Message-ID: <1507266491-73971-7-git-send-email-preid@electromag.com.au>
-References: <1507266491-73971-1-git-send-email-preid@electromag.com.au>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1507266491-73971-1-git-send-email-preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org, preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org, sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
+ irqs mapping
+Date: Fri, 6 Oct 2017 11:19:49 +0300
+Message-ID: <20171006081949.GX2761@lahna.fi.intel.com>
+References: <20171003170049.24480-1-grygorii.strashko@ti.com>
+ <20171004064249.GP2761@lahna.fi.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:62993 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750882AbdJFI2h (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 6 Oct 2017 04:28:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20171004064249.GP2761@lahna.fi.intel.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Gorman <chrisjohgorman@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-The irq_active_high flag is for controlling the polarity of the output
-from the mcp23s08 series devices. The polarity of the irq could be altered
-by additional logic (eg inverters) between the device and irq input device.
-The device-tree already allows for this as the irq can be specified in the
-binding. So hardcoding it in the driver is overly restrictive.
+On Wed, Oct 04, 2017 at 09:42:49AM +0300, Mika Westerberg wrote:
+> On Tue, Oct 03, 2017 at 12:00:49PM -0500, Grygorii Strashko wrote:
+> > New GPIO IRQs are allocated and mapped dynamically by default when
+> > GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
+> > This causes issues on some Intel platforms [1][2] with broken BIOS which
+> > hardcodes Linux IRQ numbers in their ACPI tables.
+> > 
+> > On such platforms cherryview-pinctrl driver should allocate and map all
+> > GPIO IRQs at probe time.
+> > Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
+> > can be seen at boot log.
+> > 
+> > NOTE. It still may fail if boot sequence will changed and some interrupt
+> > controller will be probed before cherryview-pinctrl which will shift Linux IRQ
+> > numbering (expected with CONFIG_SPARCE_IRQ enabled).
+> > 
+> > [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
+> > [2] https://lkml.org/lkml/2017/9/28/153
+> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> > Cc: Chris Gorman <chrisjohgorman@gmail.com>
+> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com> 
+> > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
+> > Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> 
+> Looks reasonable to me. Thanks for taking care of this!
+> 
+> Chris, can you try if this fixes the issue and provide your Tested-by?
 
-There are no inkernel users of the mcp23s08 driver with irq's.
+Linus,
 
-Signed-off-by: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 5 -----
- 1 file changed, 5 deletions(-)
+Chris gave his tested-by in another thread:
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 150f216..8dceaa1 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -630,11 +630,6 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- 	int err;
- 	unsigned long irqflags = IRQF_ONESHOT | IRQF_SHARED;
- 
--	if (mcp->irq_active_high)
--		irqflags |= IRQF_TRIGGER_HIGH;
--	else
--		irqflags |= IRQF_TRIGGER_LOW;
--
- 	err = devm_request_threaded_irq(chip->parent, mcp->irq, NULL,
- 					mcp23s08_irq,
- 					irqflags, dev_name(chip->parent), mcp);
--- 
-1.8.3.1
+  https://patchwork.kernel.org/patch/9985087/
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Chris, please let me know if that was not your intention.
+
+I'm fine with the patch as well,
+
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+I guess this requires stable tag because if I understand comments in
+that bug right, it affects the whole v4.13.
