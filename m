@@ -1,124 +1,118 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add support for INTC-EX IRQ pins
-Date: Fri,  6 Oct 2017 13:57:37 +0200
-Message-ID: <1507291057-23678-1-git-send-email-geert+renesas@glider.be>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+From: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Subject: Re: [PATCH 01/16] dt-bindings: mvebu-uart: update documentation with extended UART
+Date: Fri, 06 Oct 2017 14:17:28 +0200
+Message-ID: <87376wh3mv.fsf@free-electrons.com>
+References: <20171006101344.15590-1-miquel.raynal@free-electrons.com>
+        <20171006101344.15590-2-miquel.raynal@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:55524 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751557AbdJFMRj (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2017 08:17:39 -0400
+In-Reply-To: <20171006101344.15590-2-miquel.raynal@free-electrons.com> (Miquel
+        Raynal's message of "Fri, 6 Oct 2017 12:13:29 +0200")
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@free-electrons.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jiri Slaby <jslaby@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree@vger.kernel.org, Antoine Tenart <antoine.tenart@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, Wilson Ding <dingwei@marvell.com>, linux-arm-kernel@lists.infradead.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-Most pins on the r8a7796 SoC can be configured in GPIO mode for
-interrupt and GPIO functionality, while a couple of them can also
-be routed to the INTC-EX hardware block (formerly known as IRQC).
-
-On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
-this patch adds support for them to the PFC driver as "intc_ex_irqN".
-
-[takeshi.kihara.df: Ported from commit bb46f6f3f3bf ("pinctrl: sh-pfc:
- r8a7795: Add support for INTC-EX IRQ pins")
- to drivers/pinctrl/sh-pfc/pfc-r8a7796.c]
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v4.15.
-
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 60 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 34fc7f7dbd4c1a40..aaf8cc2c157bff1a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -2393,6 +2393,50 @@ static const unsigned int i2c6_c_mux[] = {
- 	SDA6_C_MARK, SCL6_C_MARK,
- };
+Hi Miquel,
  
-+/* - INTC-EX ---------------------------------------------------------------- */
-+static const unsigned int intc_ex_irq0_pins[] = {
-+	/* IRQ0 */
-+	RCAR_GP_PIN(2, 0),
-+};
-+static const unsigned int intc_ex_irq0_mux[] = {
-+	IRQ0_MARK,
-+};
-+static const unsigned int intc_ex_irq1_pins[] = {
-+	/* IRQ1 */
-+	RCAR_GP_PIN(2, 1),
-+};
-+static const unsigned int intc_ex_irq1_mux[] = {
-+	IRQ1_MARK,
-+};
-+static const unsigned int intc_ex_irq2_pins[] = {
-+	/* IRQ2 */
-+	RCAR_GP_PIN(2, 2),
-+};
-+static const unsigned int intc_ex_irq2_mux[] = {
-+	IRQ2_MARK,
-+};
-+static const unsigned int intc_ex_irq3_pins[] = {
-+	/* IRQ3 */
-+	RCAR_GP_PIN(2, 3),
-+};
-+static const unsigned int intc_ex_irq3_mux[] = {
-+	IRQ3_MARK,
-+};
-+static const unsigned int intc_ex_irq4_pins[] = {
-+	/* IRQ4 */
-+	RCAR_GP_PIN(2, 4),
-+};
-+static const unsigned int intc_ex_irq4_mux[] = {
-+	IRQ4_MARK,
-+};
-+static const unsigned int intc_ex_irq5_pins[] = {
-+	/* IRQ5 */
-+	RCAR_GP_PIN(2, 5),
-+};
-+static const unsigned int intc_ex_irq5_mux[] = {
-+	IRQ5_MARK,
-+};
-+
- /* - MSIOF0 ----------------------------------------------------------------- */
- static const unsigned int msiof0_clk_pins[] = {
- 	/* SCK */
-@@ -3923,6 +3967,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(i2c6_a),
- 	SH_PFC_PIN_GROUP(i2c6_b),
- 	SH_PFC_PIN_GROUP(i2c6_c),
-+	SH_PFC_PIN_GROUP(intc_ex_irq0),
-+	SH_PFC_PIN_GROUP(intc_ex_irq1),
-+	SH_PFC_PIN_GROUP(intc_ex_irq2),
-+	SH_PFC_PIN_GROUP(intc_ex_irq3),
-+	SH_PFC_PIN_GROUP(intc_ex_irq4),
-+	SH_PFC_PIN_GROUP(intc_ex_irq5),
- 	SH_PFC_PIN_GROUP(msiof0_clk),
- 	SH_PFC_PIN_GROUP(msiof0_sync),
- 	SH_PFC_PIN_GROUP(msiof0_ss1),
-@@ -4287,6 +4337,15 @@ static const char * const i2c6_groups[] = {
- 	"i2c6_c",
- };
- 
-+static const char * const intc_ex_groups[] = {
-+	"intc_ex_irq0",
-+	"intc_ex_irq1",
-+	"intc_ex_irq2",
-+	"intc_ex_irq3",
-+	"intc_ex_irq4",
-+	"intc_ex_irq5",
-+};
-+
- static const char * const msiof0_groups[] = {
- 	"msiof0_clk",
- 	"msiof0_sync",
-@@ -4581,6 +4640,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
- 	SH_PFC_FUNCTION(i2c6),
-+	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
- 	SH_PFC_FUNCTION(msiof2),
+ On ven., oct. 06 2017, Miquel Raynal <miquel.raynal@free-electrons.com> wrote:
+
+> Update the Device Tree binding documentation for the Marvell EBU UART,
+> in order to allow describing the extended UART IP block, in addition to
+> the already supported standard UART IP. This requires adding a new
+> compatible string, the introduction of a clocks property, and extensions
+> to the interrupts property.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
+
+Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+
+Thanks,
+
+Gregory
+
+> ---
+>  .../devicetree/bindings/serial/mvebu-uart.txt      | 49 +++++++++++++++++++---
+>  1 file changed, 44 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/serial/mvebu-uart.txt b/Documentation/devicetree/bindings/serial/mvebu-uart.txt
+> index d37fabe17bd1..3df3a3fab4bb 100644
+> --- a/Documentation/devicetree/bindings/serial/mvebu-uart.txt
+> +++ b/Documentation/devicetree/bindings/serial/mvebu-uart.txt
+> @@ -1,13 +1,52 @@
+> -* Marvell UART : Non standard UART used in some of Marvell EBU SoCs (e.g., Armada-3700)
+> +* Marvell UART : Non standard UART used in some of Marvell EBU SoCs
+> +                 e.g., Armada-3700.
+>  
+>  Required properties:
+> -- compatible: "marvell,armada-3700-uart"
+> +- compatible:
+> +    - "marvell,armada-3700-uart" for the standard variant of the UART
+> +      (32 bytes FIFO, no DMA, level interrupts, 8-bit access to the
+> +      FIFO, baudrate limited to 230400).
+> +    - "marvell,armada-3700-uart-ext" for the extended variant of the
+> +      UART (128 bytes FIFO, DMA, front interrupts, 8-bit or 32-bit
+> +      accesses to the FIFO, baudrate unlimited by the dividers).
+>  - reg: offset and length of the register set for the device.
+> -- interrupts: device interrupt
+> +- clocks: UART reference clock used to derive the baudrate (only
+> +      mandatory with "marvell,armada-3700-uart-ext" compatible).
+> +- interrupts:
+> +    - Must contain three elements for the standard variant of the IP
+> +      (marvell,armada-3700-uart): "uart-sum", "uart-tx" and "uart-rx",
+> +      respectively the UART sum interrupt, the UART TX interrupt and
+> +      UART RX interrupt. A corresponding interrupt-names property must
+> +      be defined.
+> +    - Must contain two elements for the extended variant of the IP
+> +      (marvell,armada-3700-uart-ext): "uart-tx" and "uart-rx",
+> +      respectively the UART TX interrupt and the UART RX interrupt. A
+> +      corresponding interrupts-names property must be defined.
+> +    - For backward compatibility reasons, a single element interrupts
+> +      property is also supported for the standard variant of the IP,
+> +      containing only the UART sum interrupt. This form is deprecated
+> +      and should no longer be used.
+>  
+>  Example:
+> -	serial@12000 {
+> +	uart0: serial@12000 {
+>  		compatible = "marvell,armada-3700-uart";
+>  		reg = <0x12000 0x200>;
+> -		interrupts = <43>;
+> +		clocks = <&xtalclk>;
+> +		interrupts =
+> +		<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +		<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> +		<GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "uart-sum", "uart-tx", "uart-rx";
+> +		status = "disabled";
+> +	};
+> +
+> +	uart1: serial@12200 {
+> +		compatible = "marvell,armada-3700-uart-ext";
+> +		reg = <0x12200 0x30>;
+> +		clocks = <&xtalclk>;
+> +		interrupts =
+> +		<GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
+> +		<GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-names = "uart-tx", "uart-rx";
+> +		status = "disabled";
+>  	};
+> -- 
+> 2.11.0
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
 -- 
-2.7.4
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
