@@ -1,83 +1,71 @@
-From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 16/16] arm64: dts: marvell: armada-3720-espressobin: fill UART nodes
-Date: Fri, 06 Oct 2017 15:01:18 +0200
-Message-ID: <87fuawe8gx.fsf@free-electrons.com>
-References: <20171006101344.15590-1-miquel.raynal@free-electrons.com>
-        <20171006101344.15590-17-miquel.raynal@free-electrons.com>
+From: Chris Gorman <chrisjohgorman@gmail.com>
+Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
+ irqs mapping
+Date: Fri, 6 Oct 2017 09:02:43 -0400
+Message-ID: <CAHVeOW9xgYZ+YiLge8dErShJuTrWEWfrmcbuykULSV4WX=UHeQ@mail.gmail.com>
+References: <20171003170049.24480-1-grygorii.strashko@ti.com>
+ <20171004064249.GP2761@lahna.fi.intel.com> <20171006081949.GX2761@lahna.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171006101344.15590-17-miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-        (Miquel Raynal's message of "Fri, 6 Oct 2017 12:13:44 +0200")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171006081949.GX2761@lahna.fi.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-Hi Miquel,
- 
- On ven., oct. 06 2017, Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+Hello all,
 
-> Fill ESPRESSObin uart0 node with pinctrl information like in the
-> Armada-3720-DB device tree (which uses the same node).
+Apologies if you are receiving this acknowledgement a second time.  I
+have tested this patch on an Intel_Strago chromebook (Acer cb3-532)
+and it works to enable the keyboard.  I tested it on 4.14.0-rc3.  Let
+me know if you want me to test the patch on the stable branch.
+
+Tested-by: Chris Gorman <chrisjohgorman@gmail.com>
+
+On Fri, Oct 6, 2017 at 4:19 AM, Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Wed, Oct 04, 2017 at 09:42:49AM +0300, Mika Westerberg wrote:
+>> On Tue, Oct 03, 2017 at 12:00:49PM -0500, Grygorii Strashko wrote:
+>> > New GPIO IRQs are allocated and mapped dynamically by default when
+>> > GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
+>> > This causes issues on some Intel platforms [1][2] with broken BIOS which
+>> > hardcodes Linux IRQ numbers in their ACPI tables.
+>> >
+>> > On such platforms cherryview-pinctrl driver should allocate and map all
+>> > GPIO IRQs at probe time.
+>> > Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
+>> > can be seen at boot log.
+>> >
+>> > NOTE. It still may fail if boot sequence will changed and some interrupt
+>> > controller will be probed before cherryview-pinctrl which will shift Linux IRQ
+>> > numbering (expected with CONFIG_SPARCE_IRQ enabled).
+>> >
+>> > [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
+>> > [2] https://lkml.org/lkml/2017/9/28/153
+>> > Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+>> > Cc: Chris Gorman <chrisjohgorman@gmail.com>
+>> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>> > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> > Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
+>> > Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>>
+>> Looks reasonable to me. Thanks for taking care of this!
+>>
+>> Chris, can you try if this fixes the issue and provide your Tested-by?
 >
-> Also explain how to enable the second UART port available on the
-> headers. This second port is not enabled by default because both
-> headers are dedicated to expose general purpose pins and remapping
-> some of them to use the second UART would break existing users.
+> Linus,
 >
-> Suggested-by: László ÁSHIN <laszlo-3b5oun+KfQA@public.gmane.org>
-> Signed-off-by: Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Chris gave his tested-by in another thread:
 >
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> index 2ce52ba74f73..c05b274ab1a9 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> @@ -98,9 +98,17 @@
->  
->  /* Exported on the micro USB connector J5 through an FTDI */
->  &uart0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&uart1_pins>;
->  	status = "okay";
->  };
->  
-> +/*
-> + * Enabling the second UART on J17 (pins 24,26) is just a matter of copying the
-> + * uart1 node from armada-3720-db.dts with one difference: it works with 1.8V
-> + * TTL levels.
-
-This difference is not related to the device tree. So I would write:
- /*
-  * To enable the second UART on J17 (pins 24,26) refer to the uart1
-  * node from armada-3720-db.dts.
-  * Note that TX and RX signal are the ones coming directly from the SoC:
-  * 1.8V TTL.
-  */
-
-Thanks,
-
-Gregory
-
-> + */
-> +
->  /* J7 */
->  &usb3 {
->  	status = "okay";
-> -- 
-> 2.11.0
+>   https://patchwork.kernel.org/patch/9985087/
 >
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Chris, please let me know if that was not your intention.
+>
+> I'm fine with the patch as well,
+>
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>
+> I guess this requires stable tag because if I understand comments in
+> that bug right, it affects the whole v4.13.
