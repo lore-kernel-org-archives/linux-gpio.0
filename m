@@ -1,30 +1,36 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 3/3] pinctrl: sunxi: Enforce the strict mode by default
-Date: Fri, 6 Oct 2017 16:34:26 +0800
-Message-ID: <CAGb2v64FwRnthfP=OrxUp92oAtozzo6BEAOFbn8pMg5gXUpWjQ@mail.gmail.com>
-References: <cover.7a61d0bb31530def29efd8b4286d8c0afdaab347.1507236823.git-series.maxime.ripard@free-electrons.com>
- <817a66704d6c8f3caa034a526db11e25a9152a65.1507236823.git-series.maxime.ripard@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:33668 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751694AbdJFIew (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2017 04:34:52 -0400
-In-Reply-To: <817a66704d6c8f3caa034a526db11e25a9152a65.1507236823.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] pinctrl: meson: remove unused pin_base
+Date: Fri,  6 Oct 2017 10:54:07 +0200
+Message-ID: <20171006085407.27905-1-jbrunet@baylibre.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Fri, Oct 6, 2017 at 4:54 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> The strict mode should always have been enabled on our driver, and leaving
-> it unchecked just makes it harder to find a migration path as time passes.
->
-> Let's enable it by default now so that hopefully the new SoCs should be
-> safe.
->
-> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+While removing the need to have pin_base defined in meson pinctrl
+drivers, I forgot to remove the corresponding field from the
+pinctrl_data structure.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Fixing this now.
+
+Fixes: 70e5ecb1b994 ("pinctrl: meson: get rid of pin_base")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
+index 227b72a60c22..7ed0a80fd9dc 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.h
++++ b/drivers/pinctrl/meson/pinctrl-meson.h
+@@ -103,7 +103,6 @@ struct meson_pinctrl_data {
+ 	const struct pinctrl_pin_desc *pins;
+ 	struct meson_pmx_group *groups;
+ 	struct meson_pmx_func *funcs;
+-	unsigned int pin_base;
+ 	unsigned int num_pins;
+ 	unsigned int num_groups;
+ 	unsigned int num_funcs;
+-- 
+2.13.5
