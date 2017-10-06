@@ -1,89 +1,79 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] pinctrl: meson-gx: add TEST_N i2s pinmux
-Date: Fri,  6 Oct 2017 10:31:42 +0200
-Message-ID: <20171006083142.19325-1-jbrunet@baylibre.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 1/3] pinctrl: sunxi: Introduce the strict flag
+Date: Fri, 6 Oct 2017 16:32:23 +0800
+Message-ID: <CAGb2v65xhXKB10r4BhmKra+XLrSq9GjGL+sUbRDqkb2Y=nsE4A@mail.gmail.com>
+References: <cover.7a61d0bb31530def29efd8b4286d8c0afdaab347.1507236823.git-series.maxime.ripard@free-electrons.com>
+ <d05b00e25ec1c466bb5852b0ce06b3e67d93f9a7.1507236823.git-series.maxime.ripard@free-electrons.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <d05b00e25ec1c466bb5852b0ce06b3e67d93f9a7.1507236823.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-Add TEST_N pinmux for channel 6 and 7 of the i2s output
+On Fri, Oct 6, 2017 at 4:54 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Our pinctrl device should have had strict set all along. However, it wasn't
+> the case, and most of our old device trees also have a pinctrl group in
+> addition to the GPIOs properties, which mean that we can't really turn it
+> on now.
+>
+> All our new SoCs don't have that group, so we should still enable that mode
+> on the newer one though.
+>
+> In order to enable it by default, add a flag that will allow to disable
+> that mode that should be set by pinctrl drivers that cannot be migrated.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 5 ++++-
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.h | 1 +
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> index 52edf3b5988d..1753a5b1573f 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> @@ -690,7 +690,7 @@ sunxi_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
+>         return 0;
+>  }
+>
+> -static const struct pinmux_ops sunxi_pmx_ops = {
+> +static struct pinmux_ops sunxi_pmx_ops = {
+>         .get_functions_count    = sunxi_pmx_get_funcs_cnt,
+>         .get_function_name      = sunxi_pmx_get_func_name,
+>         .get_function_groups    = sunxi_pmx_get_func_groups,
+> @@ -1307,6 +1307,9 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+>         pctrl_desc->pctlops = &sunxi_pctrl_ops;
+>         pctrl_desc->pmxops =  &sunxi_pmx_ops;
+>
+> +       if (desc->disable_strict_mode)
+> +               sunxi_pmx_ops.strict = false;
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+This is a bad idea. We have two pinctrl instances sharing the
+same ops structure for later SoCs (the normal PIO and R_PIO).
+What if they don't match? It would be better to make a copy,
+(preferably) at runtime, or statically.
 
-Hi Linus,
+ChenYu
 
-FYI, This change depends on clean-up series you've just merged.
-
-Cheers,
-Jerome
-
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 5 +++++
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 6 +++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 62483b67f114..1881d4a0eca2 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -288,6 +288,7 @@ static const unsigned int i2s_out_lr_clk_pins[]	= { GPIOAO_10 };
- static const unsigned int i2s_out_ch01_ao_pins[] = { GPIOAO_11 };
- static const unsigned int i2s_out_ch23_ao_pins[] = { GPIOAO_12 };
- static const unsigned int i2s_out_ch45_ao_pins[] = { GPIOAO_13 };
-+static const unsigned int i2s_out_ch67_ao_pins[] = { GPIO_TEST_N };
- 
- static const unsigned int spdif_out_ao_6_pins[]	= { GPIOAO_6 };
- static const unsigned int spdif_out_ao_13_pins[] = { GPIOAO_13 };
-@@ -562,6 +563,9 @@ static struct meson_pmx_group meson_gxbb_aobus_groups[] = {
- 	GROUP(spdif_out_ao_13,	0,	4),
- 	GROUP(ao_cec,           0,      15),
- 	GROUP(ee_cec,           0,      14),
-+
-+	/* test n pin */
-+	GROUP(i2s_out_ch67_ao,	1,	2),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -748,6 +752,7 @@ static const char * const pwm_ao_b_groups[] = {
- static const char * const i2s_out_ao_groups[] = {
- 	"i2s_am_clk", "i2s_out_ao_clk", "i2s_out_lr_clk",
- 	"i2s_out_ch01_ao", "i2s_out_ch23_ao", "i2s_out_ch45_ao",
-+	"i2s_out_ch67_ao",
- };
- 
- static const char * const spdif_out_ao_groups[] = {
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 04334e807170..3a14ecae9f31 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -291,6 +291,7 @@ static const unsigned int pwm_ao_b_6_pins[]	= { GPIOAO_6 };
- 
- static const unsigned int i2s_out_ch23_ao_pins[] = { GPIOAO_8 };
- static const unsigned int i2s_out_ch45_ao_pins[] = { GPIOAO_9 };
-+static const unsigned int i2s_out_ch67_ao_pins[] = { GPIO_TEST_N };
- 
- static const unsigned int spdif_out_ao_6_pins[] = { GPIOAO_6 };
- static const unsigned int spdif_out_ao_9_pins[] = { GPIOAO_9 };
-@@ -557,6 +558,9 @@ static struct meson_pmx_group meson_gxl_aobus_groups[] = {
- 	GROUP(spdif_out_ao_9,	0,	4),
- 	GROUP(ao_cec,		0,	15),
- 	GROUP(ee_cec,		0,	14),
-+
-+	/* test n pin */
-+	GROUP(i2s_out_ch67_ao,	1,	2),
- };
- 
- static const char * const gpio_periphs_groups[] = {
-@@ -735,7 +739,7 @@ static const char * const pwm_ao_b_groups[] = {
- };
- 
- static const char * const i2s_out_ao_groups[] = {
--	"i2s_out_ch23_ao", "i2s_out_ch45_ao",
-+	"i2s_out_ch23_ao", "i2s_out_ch45_ao", "i2s_out_ch67_ao",
- };
- 
- static const char * const spdif_out_ao_groups[] = {
--- 
-2.13.5
+> +
+>         pctl->pctl_dev = devm_pinctrl_register(&pdev->dev, pctrl_desc, pctl);
+>         if (IS_ERR(pctl->pctl_dev)) {
+>                 dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
+> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> index 1bfc0d8a55df..11b128f54ed2 100644
+> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> @@ -112,6 +112,7 @@ struct sunxi_pinctrl_desc {
+>         unsigned                        irq_banks;
+>         unsigned                        irq_bank_base;
+>         bool                            irq_read_needs_mux;
+> +       bool                            disable_strict_mode;
+>  };
+>
+>  struct sunxi_pinctrl_function {
+> --
+> git-series 0.9.1
