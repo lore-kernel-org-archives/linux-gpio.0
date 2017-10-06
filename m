@@ -1,18 +1,18 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH 06/16] serial: mvebu-uart: add soft reset at probe
-Date: Fri, 06 Oct 2017 14:33:03 +0200
-Message-ID: <87h8vcfocg.fsf@free-electrons.com>
+Subject: Re: [PATCH 07/16] serial: mvebu-uart: add function to change baudrate
+Date: Fri, 06 Oct 2017 14:39:35 +0200
+Message-ID: <87d160fo1k.fsf@free-electrons.com>
 References: <20171006101344.15590-1-miquel.raynal@free-electrons.com>
-        <20171006101344.15590-7-miquel.raynal@free-electrons.com>
+        <20171006101344.15590-8-miquel.raynal@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:56355 "EHLO
+Received: from mail.free-electrons.com ([62.4.15.54]:56666 "EHLO
         mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbdJFMdP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2017 08:33:15 -0400
-In-Reply-To: <20171006101344.15590-7-miquel.raynal@free-electrons.com> (Miquel
-        Raynal's message of "Fri, 6 Oct 2017 12:13:34 +0200")
+        with ESMTP id S1751961AbdJFMjr (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 6 Oct 2017 08:39:47 -0400
+In-Reply-To: <20171006101344.15590-8-miquel.raynal@free-electrons.com> (Miquel
+        Raynal's message of "Fri, 6 Oct 2017 12:13:35 +0200")
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Miquel Raynal <miquel.raynal@free-electrons.com>
@@ -24,12 +24,18 @@ Hi Miquel,
 
 > From: Allen Yan <yanwei@marvell.com>
 >
-> The existing UART driver relies on the bootloader to initialize the
-> port(s). However, the secondary uart port may not be initialized
-> properly in early boot stage. This patch adds the UART soft reset when
-> probing, for all ports.
+> Until now, the first UART port baudrate was set by the bootloader.
+>
+> Add a function allowing to change the baudrate. Changes may be done
+> from userspace but also at probe time by the kernel. Use the simplest
+> method: baudrate divisor.
+>
+> Works for all UART ports until 230400 baud. To achieve higher baudrates,
+> software should implement the fractional divisor feature that allows
+> more accuracy for higher rates.
 >
 > Signed-off-by: Allen Yan <yanwei@marvell.com>
+> [<miquel.raynal@free-electrons.com>: changed termios handling]
 > Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
 
 Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
@@ -40,25 +46,117 @@ Gregory
 
 
 > ---
->  drivers/tty/serial/mvebu-uart.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/tty/serial/mvebu-uart.c | 69 ++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 65 insertions(+), 4 deletions(-)
 >
 > diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
-> index 82438884af1e..da756cfec0bb 100644
+> index da756cfec0bb..81a3d2714fd3 100644
 > --- a/drivers/tty/serial/mvebu-uart.c
 > +++ b/drivers/tty/serial/mvebu-uart.c
-> @@ -653,6 +653,11 @@ static int mvebu_uart_probe(struct platform_device *pdev)
+> @@ -72,6 +72,7 @@
+>  				 | STAT_PAR_ERR | STAT_OVR_ERR)
+>  
+>  #define UART_BRDV		0x10
+> +#define  BRDV_BAUD_MASK         0x3FF
+>  
+>  #define MVEBU_NR_UARTS		1
+>  
+> @@ -344,6 +345,31 @@ static void mvebu_uart_shutdown(struct uart_port *port)
+>  	free_irq(port->irq, port);
+>  }
+>  
+> +static int mvebu_uart_baud_rate_set(struct uart_port *port, unsigned int baud)
+> +{
+> +	struct mvebu_uart *mvuart = to_mvuart(port);
+> +	unsigned int baud_rate_div;
+> +	u32 brdv;
+> +
+> +	if (IS_ERR(mvuart->clk))
+> +		return -PTR_ERR(mvuart->clk);
+> +
+> +	/*
+> +	 * The UART clock is divided by the value of the divisor to generate
+> +	 * UCLK_OUT clock, which is 16 times faster than the baudrate.
+> +	 * This prescaler can achieve all standard baudrates until 230400.
+> +	 * Higher baudrates could be achieved for the extended UART by using the
+> +	 * programmable oversampling stack (also called fractional divisor).
+> +	 */
+> +	baud_rate_div = DIV_ROUND_UP(port->uartclk, baud * 16);
+> +	brdv = readl(port->membase + UART_BRDV);
+> +	brdv &= ~BRDV_BAUD_MASK;
+> +	brdv |= baud_rate_div;
+> +	writel(brdv, port->membase + UART_BRDV);
+> +
+> +	return 0;
+> +}
+> +
+>  static void mvebu_uart_set_termios(struct uart_port *port,
+>  				   struct ktermios *termios,
+>  				   struct ktermios *old)
+> @@ -367,11 +393,30 @@ static void mvebu_uart_set_termios(struct uart_port *port,
+>  	if ((termios->c_cflag & CREAD) == 0)
+>  		port->ignore_status_mask |= STAT_RX_RDY(port) | STAT_BRK_ERR;
+>  
+> -	if (old)
+> -		tty_termios_copy_hw(termios, old);
+> +	/*
+> +	 * Maximum achievable frequency with simple baudrate divisor is 230400.
+> +	 * Since the error per bit frame would be of more than 15%, achieving
+> +	 * higher frequencies would require to implement the fractional divisor
+> +	 * feature.
+> +	 */
+> +	baud = uart_get_baud_rate(port, termios, old, 0, 230400);
+> +	if (mvebu_uart_baud_rate_set(port, baud)) {
+> +		/* No clock available, baudrate cannot be changed */
+> +		if (old)
+> +			baud = uart_get_baud_rate(port, old, NULL, 0, 230400);
+> +	} else {
+> +		tty_termios_encode_baud_rate(termios, baud, baud);
+> +		uart_update_timeout(port, termios->c_cflag, baud);
+> +	}
+>  
+> -	baud = uart_get_baud_rate(port, termios, old, 0, 460800);
+> -	uart_update_timeout(port, termios->c_cflag, baud);
+> +	/* Only the following flag changes are supported */
+> +	if (old) {
+> +		termios->c_iflag &= INPCK | IGNPAR;
+> +		termios->c_iflag |= old->c_iflag & ~(INPCK | IGNPAR);
+> +		termios->c_cflag &= CREAD | CBAUD;
+> +		termios->c_cflag |= old->c_cflag & ~(CREAD | CBAUD);
+> +		termios->c_lflag = old->c_lflag;
+> +	}
+>  
+>  	spin_unlock_irqrestore(&port->lock, flags);
+>  }
+> @@ -647,12 +692,28 @@ static int mvebu_uart_probe(struct platform_device *pdev)
+>  	if (!mvuart)
+>  		return -ENOMEM;
+>  
+> +	/* Get controller data depending on the compatible string */
+>  	mvuart->data = (struct mvebu_uart_driver_data *)match->data;
+>  	mvuart->port = port;
+>  
 >  	port->private_data = mvuart;
 >  	platform_set_drvdata(pdev, mvuart);
 >  
-> +	/* UART Soft Reset*/
-> +	writel(CTRL_SOFT_RST, port->membase + UART_CTRL(port));
-> +	udelay(1);
-> +	writel(0, port->membase + UART_CTRL(port));
+> +	/* Get fixed clock frequency */
+> +	mvuart->clk = devm_clk_get(&pdev->dev, NULL);
+> +	if (IS_ERR(mvuart->clk)) {
+> +		if (PTR_ERR(mvuart->clk) == -EPROBE_DEFER)
+> +			return PTR_ERR(mvuart->clk);
 > +
->  	ret = uart_add_one_port(&mvebu_uart_driver, port);
->  	if (ret)
->  		return ret;
+> +		if (IS_EXTENDED(port)) {
+> +			dev_err(&pdev->dev, "unable to get UART clock\n");
+> +			return PTR_ERR(mvuart->clk);
+> +		}
+> +	} else {
+> +		if (!clk_prepare_enable(mvuart->clk))
+> +			port->uartclk = clk_get_rate(mvuart->clk);
+> +	}
+> +
+>  	/* UART Soft Reset*/
+>  	writel(CTRL_SOFT_RST, port->membase + UART_CTRL(port));
+>  	udelay(1);
 > -- 
 > 2.11.0
 >
