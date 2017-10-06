@@ -1,30 +1,38 @@
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7795: Add INTC-EX pins, groups and function
-Date: Fri,  6 Oct 2017 13:56:47 +0200
-Message-ID: <1507291007-23603-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7796: Add support for INTC-EX IRQ pins
+Date: Fri,  6 Oct 2017 13:57:37 +0200
+Message-ID: <1507291057-23678-1-git-send-email-geert+renesas@glider.be>
 Return-path: <linux-renesas-soc-owner@vger.kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Takeshi Kihara <takeshi.kihara.df@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-gpio@vger.kernel.org
 
-Add pins, groups, and a function for the INTC-EX interrupt controller on
-R-Car H3 ES2.0.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Extracted from a big patch in the BSP by Takeshi Kihara.
+Most pins on the r8a7796 SoC can be configured in GPIO mode for
+interrupt and GPIO functionality, while a couple of them can also
+be routed to the INTC-EX hardware block (formerly known as IRQC).
 
+On r8a7795 the INTC-EX hardware handles pins IRQ0 -> IRQ5 and
+this patch adds support for them to the PFC driver as "intc_ex_irqN".
+
+[takeshi.kihara.df: Ported from commit bb46f6f3f3bf ("pinctrl: sh-pfc:
+ r8a7795: Add support for INTC-EX IRQ pins")
+ to drivers/pinctrl/sh-pfc/pfc-r8a7796.c]
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 To be queued in sh-pfc-for-v4.15.
 
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 60 ++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 60 ++++++++++++++++++++++++++++++++++++
  1 file changed, 60 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 62e04479e8153d72..3e577f31ae13c94f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -2128,6 +2128,50 @@ static const unsigned int i2c6_c_mux[] = {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 34fc7f7dbd4c1a40..aaf8cc2c157bff1a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -2393,6 +2393,50 @@ static const unsigned int i2c6_c_mux[] = {
  	SDA6_C_MARK, SCL6_C_MARK,
  };
  
@@ -75,7 +83,7 @@ index 62e04479e8153d72..3e577f31ae13c94f 100644
  /* - MSIOF0 ----------------------------------------------------------------- */
  static const unsigned int msiof0_clk_pins[] = {
  	/* SCK */
-@@ -3637,6 +3681,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+@@ -3923,6 +3967,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
  	SH_PFC_PIN_GROUP(i2c6_a),
  	SH_PFC_PIN_GROUP(i2c6_b),
  	SH_PFC_PIN_GROUP(i2c6_c),
@@ -88,7 +96,7 @@ index 62e04479e8153d72..3e577f31ae13c94f 100644
  	SH_PFC_PIN_GROUP(msiof0_clk),
  	SH_PFC_PIN_GROUP(msiof0_sync),
  	SH_PFC_PIN_GROUP(msiof0_ss1),
-@@ -3938,6 +3988,15 @@ static const char * const i2c6_groups[] = {
+@@ -4287,6 +4337,15 @@ static const char * const i2c6_groups[] = {
  	"i2c6_c",
  };
  
@@ -104,7 +112,7 @@ index 62e04479e8153d72..3e577f31ae13c94f 100644
  static const char * const msiof0_groups[] = {
  	"msiof0_clk",
  	"msiof0_sync",
-@@ -4230,6 +4289,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+@@ -4581,6 +4640,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
  	SH_PFC_FUNCTION(i2c1),
  	SH_PFC_FUNCTION(i2c2),
  	SH_PFC_FUNCTION(i2c6),
