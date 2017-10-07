@@ -1,82 +1,35 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
-Date: Sat, 7 Oct 2017 13:07:50 +0200
-Message-ID: <CACRpkdYYp5TSM1QV-f+FmbwzY_ittgW-4MuXiZ9NW694GoMwKQ@mail.gmail.com>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <1504798409-32041-2-git-send-email-timur@codeaurora.org> <20171002174414.GL1165@minitux>
- <9f28c9dd-6277-6c75-1186-a834e15c5346@codeaurora.org>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.15
+Date: Sat, 7 Oct 2017 13:13:29 +0200
+Message-ID: <CACRpkdazgKfNEA4ZtHQ=EywJ3n1O_PAZUHygOXDD21YqkH3LkA@mail.gmail.com>
+References: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <9f28c9dd-6277-6c75-1186-a834e15c5346@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon, Oct 2, 2017 at 10:47 PM, Timur Tabi <timur@codeaurora.org> wrote:
-> On 10/02/2017 12:44 PM, Bjorn Andersson wrote:
->>>
->>> +       /*
->>> +        * If irq_need_valid_mask is true, then gpiochip_add_data() will
->>> +        * initialize irq_valid_mask to all 1s.  We need to clear all the
->>> +        * GPIOs that are unavailable, and we need to find each block
->>> +        * of consecutive available GPIOs are add them as pin ranges.
->>> +        */
->>> +       if (chip->irq_need_valid_mask) {
->>> +               for (i = 0; i < ngpio; i++)
->>> +                       if (!groups[i].npins)
->>> +                               clear_bit(i, pctrl->chip.irq_valid_mask);
->>> +
->>> +               while ((count = msm_gpio_get_next_range(pctrl, &start)))
->>> {
->>> +                       ret = gpiochip_add_pin_range(&pctrl->chip,
->>> +
->>> dev_name(pctrl->dev),
->>> +                                                    start, start,
->>> count);
->>> +                       if (ret)
->>> +                               break;
->>> +                       start += count;
->>
->> I do not fancy the idea of specifying a bitmap of valid irq pins and
->> then having the driver register the pin-ranges in-between.
+On Wed, Oct 4, 2017 at 11:44 AM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+
+>         Hi Linus,
 >
-> But that's exactly what abx500_gpio_probe() in pinctrl-abx500.c does. Here's
-> even a reference to holes in the GPIO space:
-
-This driver is not a good example of what is desireable.
-
-I am sorry that the kernel contains a lot of bad examples. These
-are historical artifacts, they cannot be used as an argument to write
-code in the same style.
-
->> If we provide
->>
->> a bitmap of validity to the core it should support using this for the
->> pins as well. (Which I believe is what Linus answered in the discussion
->> following patch 0/2)
+> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 >
-> So you want to change "gpio_chip" to add an "available" callback?  And every
-> time gpiolib wants to call a gpio_chip callback, it should call ->available
-> first?  Like this:
+>   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
 >
-> if (chip->available && chip->available())
->         status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.15-tag1
+>
+> for you to fetch changes up to 5ec8a41a36715cf543cb7c109097fb3b4cdfb427:
+>
+>   pinctrl: sh-pfc: r8a7795: Add USB3.0 host support (2017-10-02 13:23:44 +0200)
 
-I mean that you add
-unsigned long *line_valid_mask;
-to struct gpio_chip using the same type of logic
-as .irq_valid_mask. The mask should be optional.
-
-Then the operation gpiod_get[_index]() will FAIL if the
-line is not valid.
-
-There is no need to check on every operation, there should
-be no way to get a handle on the pin any other way.
-
-All new code should be using descriptors at this point so we
-only need to design for that case.
+Pulled into my devel branch, thanks!
 
 Yours,
 Linus Walleij
