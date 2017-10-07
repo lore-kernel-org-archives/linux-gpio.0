@@ -1,47 +1,30 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3 00/12] add pinmuxing support for pins in AXP209 and
- AXP813 PMICs
-Date: Sat, 7 Oct 2017 12:48:31 +0200
-Message-ID: <CACRpkdYBfuyr8hzVTH_RFfM4uYOMbWTHnH9SeF8SMGFe-shEWA@mail.gmail.com>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
+Subject: Re: [PATCH 1/7] gpio: brcmstb: allow all instances to be wakeup sources
+Date: Sat, 7 Oct 2017 12:52:47 +0200
+Message-ID: <CACRpkdaLBXeSJBMgXM2e5JhZWnLL4rq0Qt97AeRfTZ7V-_NLDA@mail.gmail.com>
+References: <20170930034057.15166-1-opendmb@gmail.com> <20170930034057.15166-2-opendmb@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:44510 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750974AbdJGKsc (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2017 06:48:32 -0400
-Received: by mail-it0-f49.google.com with SMTP id n195so4106891itg.1
-        for <linux-gpio@vger.kernel.org>; Sat, 07 Oct 2017 03:48:32 -0700 (PDT)
-In-Reply-To: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170930034057.15166-2-opendmb@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Berger <opendmb@gmail.com>
+Cc: Gregory Fong <gregory.0xf0@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Quentin Schulz <quentin.schulz@free-electrons.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>, Maxime Ripard <maxime.ripard@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-sunxi <linux-sunxi@googlegroups.com>
 
-On Mon, Oct 2, 2017 at 2:08 PM, Quentin Schulz
-<quentin.schulz@free-electrons.com> wrote:
+On Sat, Sep 30, 2017 at 5:40 AM, Doug Berger <opendmb@gmail.com> wrote:
 
-> The AXP209 and AXP813 PMICs have several pins (respectively 3 and 2) that can
-> be used either as GPIOs or for other purposes (ADC or LDO here).
+> This commit allows a wakeup parent interrupt to be shared between
+> instances.
 >
-> We already have a GPIO driver for the GPIO use of those pins on the AXP209.
-> Let's "upgrade" this driver to support all the functions these pins can have.
+> It also removes the redundant can_wake member of the private data
+> structure by using whether the parent_wake_irq has been defined to
+> indicate that the GPIO device can wake.
 >
-> Then we add support to this driver for the AXP813 which is slighlty different
-> (basically a different offset in a register and one less pin).
->
-> I suggest patches 1 to 6 go through Linus's tree and 7 to 12 via Maxime or
-> Chen-Yu's tree.
->
-> This version of the patchset is based on Chen-Yu's patchset for AXP813/818
-> regulators[1].
->
-> v3:
+> Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
 
-This is starting to look really good, but I see there are still comments.
-
-Keep the series going, we merge once Maxime and Chen-Yu are happy.
+Patch applied with Gregory's and Florian's ACKs.
 
 Yours,
 Linus Walleij
