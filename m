@@ -1,35 +1,51 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v4.15
-Date: Sat, 7 Oct 2017 13:13:29 +0200
-Message-ID: <CACRpkdazgKfNEA4ZtHQ=EywJ3n1O_PAZUHygOXDD21YqkH3LkA@mail.gmail.com>
-References: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
+Subject: Re: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
+Date: Sat, 7 Oct 2017 13:18:22 +0200
+Message-ID: <CACRpkdYj1+_J+-EN6QQOJzWzXNB_3N6hPPfa1sqzERZb8gsdLw@mail.gmail.com>
+References: <20171003161705.23398-1-grygorii.strashko@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1507110277-11785-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f182.google.com ([209.85.223.182]:54292 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750998AbdJGLSX (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2017 07:18:23 -0400
+Received: by mail-io0-f182.google.com with SMTP id h66so17969031ioh.11
+        for <linux-gpio@vger.kernel.org>; Sat, 07 Oct 2017 04:18:23 -0700 (PDT)
+In-Reply-To: <20171003161705.23398-1-grygorii.strashko@ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ladislav Michl <ladis@linux-mips.org>
 
-On Wed, Oct 4, 2017 at 11:44 AM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Tue, Oct 3, 2017 at 6:17 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
 
->         Hi Linus,
+> Now acking of edge irqs happens the following way:
+> - omap_gpio_irq_handler
+>   - "isr" = read irq status
+>   - omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
+>         ^ clear edge status, so irq can be accepted
+>   - loop while "isr"
+>         generic_handle_irq()
+>          - handle_edge_irq()
+>             - desc->irq_data.chip->irq_ack(&desc->irq_data);
+>                 - omap_gpio_ack_irq()
+> it might be that at this moment edge IRQ was triggered again and it will be
+> cleared and IRQ will be lost.
 >
-> The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+> Use handle_simple_irq and clear edge interrupts early without disabling them in
+> omap_gpio_irq_handler to avoid loosing interrupts.
 >
->   Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.15-tag1
->
-> for you to fetch changes up to 5ec8a41a36715cf543cb7c109097fb3b4cdfb427:
->
->   pinctrl: sh-pfc: r8a7795: Add USB3.0 host support (2017-10-02 13:23:44 +0200)
+> [1] https://marc.info/?l=linux-omap&m=149004465313534&w=2
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
 
-Pulled into my devel branch, thanks!
+Patch applied for fixes.
+
+I guess it is the right thing to do?
+
+Other maintainers need to tell me if I should hold it back.
 
 Yours,
 Linus Walleij
