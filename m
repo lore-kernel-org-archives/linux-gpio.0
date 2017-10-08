@@ -1,91 +1,59 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
- irqs mapping
-Date: Sun, 8 Oct 2017 02:42:21 +0200
-Message-ID: <CACRpkda3vBORtJPU=Y88TXukY=XbfmTau7GMSky98p63fhmfpw@mail.gmail.com>
-References: <20171003170049.24480-1-grygorii.strashko@ti.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Subject: Re: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
+Date: Sat, 7 Oct 2017 19:34:14 -0700
+Message-ID: <fe58a38c-6fa7-793d-ffd8-427f25c26770@oracle.com>
+References: <20171003161705.23398-1-grygorii.strashko@ti.com>
+ <CACRpkdYj1+_J+-EN6QQOJzWzXNB_3N6hPPfa1sqzERZb8gsdLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f169.google.com ([209.85.223.169]:55579 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbdJHAmW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2017 20:42:22 -0400
-Received: by mail-io0-f169.google.com with SMTP id z187so18760019ioz.12
-        for <linux-gpio@vger.kernel.org>; Sat, 07 Oct 2017 17:42:22 -0700 (PDT)
-In-Reply-To: <20171003170049.24480-1-grygorii.strashko@ti.com>
+Received: from userp1040.oracle.com ([156.151.31.81]:35678 "EHLO
+        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbdJHCep (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2017 22:34:45 -0400
+In-Reply-To: <CACRpkdYj1+_J+-EN6QQOJzWzXNB_3N6hPPfa1sqzERZb8gsdLw@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Gorman <chrisjohgorman@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ladislav Michl <ladis@linux-mips.org>
 
-On Tue, Oct 3, 2017 at 7:00 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+On 10/7/17 4:18 AM, Linus Walleij wrote:
+> On Tue, Oct 3, 2017 at 6:17 PM, Grygorii Strashko
+> <grygorii.strashko@ti.com> wrote:
+> 
+>> Now acking of edge irqs happens the following way:
+>> - omap_gpio_irq_handler
+>>    - "isr" = read irq status
+>>    - omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
+>>          ^ clear edge status, so irq can be accepted
+>>    - loop while "isr"
+>>          generic_handle_irq()
+>>           - handle_edge_irq()
+>>              - desc->irq_data.chip->irq_ack(&desc->irq_data);
+>>                  - omap_gpio_ack_irq()
+>> it might be that at this moment edge IRQ was triggered again and it will be
+>> cleared and IRQ will be lost.
+>>
+>> Use handle_simple_irq and clear edge interrupts early without disabling them in
+>> omap_gpio_irq_handler to avoid loosing interrupts.
+>>
+>> [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Domap-26m-3D149004465313534-26w-3D2&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=GC9UD4RPcq1Ss-JanXn4japAFhT1w4RZlq9WqDLSw_o&s=smHFYjIN3O5THK4qP413bHMnr8PaWUv4xyUbbTwXHk4&e=
 
-> New GPIO IRQs are allocated and mapped dynamically by default when
-> GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
-> This causes issues on some Intel platforms [1][2] with broken BIOS which
-> hardcodes Linux IRQ numbers in their ACPI tables.
->
-> On such platforms cherryview-pinctrl driver should allocate and map all
-> GPIO IRQs at probe time.
-> Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
-> can be seen at boot log.
->
-> NOTE. It still may fail if boot sequence will changed and some interrupt
-> controller will be probed before cherryview-pinctrl which will shift Linux IRQ
-> numbering (expected with CONFIG_SPARCE_IRQ enabled).
->
-> [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
-> [2] https://lkml.org/lkml/2017/9/28/153
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: Chris Gorman <chrisjohgorman@gmail.com>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
-> Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+This link doesn't need to be part of the changelog.
 
-OK patch applied for fixes.
+>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+> 
+> Patch applied for fixes.
+> 
+> I guess it is the right thing to do?
+> 
+> Other maintainers need to tell me if I should hold it back.
+> 
+Am fine with it after Grygorii's reasoning.
 
-But I'mm still very sceptical about this.
+Regards,
+Santosh
 
-Look at the following (just from grep irq_base drivers/gpio/):
-
-drivers/gpio/gpio-ml-ioh.c:
-
-static int ioh_gpio_to_irq(struct gpio_chip *gpio, unsigned offset)
-{
-        struct ioh_gpio *chip = gpiochip_get_data(gpio);
-        return chip->irq_base + offset;
-}
-
-(...)
-        ch = irq - chip->irq_base;
-        if (irq <= chip->irq_base + 7) {
-                im_reg = &chip->reg->regs[chip->ch].im_0;
-                im_pos = ch;
-(...)
-
-drivers/gpio/gpio-sta2x11.c:
-
-static int gsta_gpio_to_irq(struct gpio_chip *gpio, unsigned offset)
-{
-        struct gsta_gpio *chip = gpiochip_get_data(gpio);
-        return chip->irq_base + offset;
-}
-
-(etc)
-
-The thing is that the lines you deleted from gpiolib were the only
-thing ever assigning chip->irq_base. This patch, if performed
-properly should have removed the .irq_base field from struct
-gpio_chip altogether without regressions.
-
-As it is not, anything using .irq_base is regressing.
-
-Either you need to convince me you can quickfix all of these
-users, or we need to simply revert this change.
-
-Yours,
-Linus Walleij
