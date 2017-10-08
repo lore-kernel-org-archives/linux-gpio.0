@@ -1,59 +1,55 @@
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Subject: Re: [RESEND PATCH] gpio: omap: Fix lost edge interrupts
-Date: Sat, 7 Oct 2017 19:34:14 -0700
-Message-ID: <fe58a38c-6fa7-793d-ffd8-427f25c26770@oracle.com>
-References: <20171003161705.23398-1-grygorii.strashko@ti.com>
- <CACRpkdYj1+_J+-EN6QQOJzWzXNB_3N6hPPfa1sqzERZb8gsdLw@mail.gmail.com>
+From: Phil Reid <preid@electromag.com.au>
+Subject: Re: [PATCH 1/2] gpio: dt-bindings: add mcp23018 to mcp23s08
+ documentation
+Date: Sun, 8 Oct 2017 18:20:59 +0800
+Message-ID: <b2a9b5d7-2537-ce8e-82f4-4c2d131143a0@electromag.com.au>
+References: <1507166615-4530-1-git-send-email-preid@electromag.com.au>
+ <1507166615-4530-2-git-send-email-preid@electromag.com.au>
+ <CACRpkdY-NRR1wcBbaeCLHfWwCVoQB+s=P=nMxZgMSyuqdmkA6g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:35678 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbdJHCep (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 7 Oct 2017 22:34:45 -0400
-In-Reply-To: <CACRpkdYj1+_J+-EN6QQOJzWzXNB_3N6hPPfa1sqzERZb8gsdLw@mail.gmail.com>
-Content-Language: en-US
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:51547 "EHLO
+        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751651AbdJHKVF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Oct 2017 06:21:05 -0400
+In-Reply-To: <CACRpkdY-NRR1wcBbaeCLHfWwCVoQB+s=P=nMxZgMSyuqdmkA6g@mail.gmail.com>
+Content-Language: en-AU
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ladislav Michl <ladis@linux-mips.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 10/7/17 4:18 AM, Linus Walleij wrote:
-> On Tue, Oct 3, 2017 at 6:17 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
+On 8/10/2017 07:41, Linus Walleij wrote:
+> On Thu, Oct 5, 2017 at 3:23 AM, Phil Reid <preid@electromag.com.au> wrote:
 > 
->> Now acking of edge irqs happens the following way:
->> - omap_gpio_irq_handler
->>    - "isr" = read irq status
->>    - omap_clear_gpio_irqbank(bank, isr_saved & ~level_mask);
->>          ^ clear edge status, so irq can be accepted
->>    - loop while "isr"
->>          generic_handle_irq()
->>           - handle_edge_irq()
->>              - desc->irq_data.chip->irq_ack(&desc->irq_data);
->>                  - omap_gpio_ack_irq()
->> it might be that at this moment edge IRQ was triggered again and it will be
->> cleared and IRQ will be lost.
->>
->> Use handle_simple_irq and clear edge interrupts early without disabling them in
->> omap_gpio_irq_handler to avoid loosing interrupts.
->>
->> [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Domap-26m-3D149004465313534-26w-3D2&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=GC9UD4RPcq1Ss-JanXn4japAFhT1w4RZlq9WqDLSw_o&s=smHFYjIN3O5THK4qP413bHMnr8PaWUv4xyUbbTwXHk4&e=
+>> This adds the required definitions for the mcp23018 which is the i2c
+>> variant of the mcp23s18.
+> 
+> Which is logical if "s" stands for "SPI", "0" is normal or I2C.
+> 
+>>       - "microchip,mcp23s18" for 16 GPIO SPI version
+> 
+> So that is the SPI version
+> 
+>>       - "microchip,mcp23008" for  8 GPIO I2C version or
+>>       - "microchip,mcp23017" for 16 GPIO I2C version of the chip
+>> +    - "microchip,mcp23018" for 16 GPIO SPI version
+> 
+> And right here you say that this is also the SPI version, but the
+> commit message says it is the I2C version.
+> 
+G'day Linus,
 
-This link doesn't need to be part of the changelog.
+thanks for looking at this.
+Sorry, there's a v2 fixing that.
 
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> 
-> Patch applied for fixes.
-> 
-> I guess it is the right thing to do?
-> 
-> Other maintainers need to tell me if I should hold it back.
-> 
-Am fine with it after Grygorii's reasoning.
+Along with proposed patches for fixing the items raised in my RFI.
 
-Regards,
-Santosh
+Except for modelling the inverter. Not even sure how to approach that one.
 
+
+-- 
+Regards
+Phil Reid
