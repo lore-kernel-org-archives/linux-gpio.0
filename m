@@ -1,66 +1,96 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: Re: [PATCH v7 1/2] dt-bindings: gpio: uniphier: add UniPhier GPIO binding
-Date: Sun, 8 Oct 2017 22:42:22 +0900
-Message-ID: <CAK7LNASz+_v=AFJqVchVRZJbXH0Rne0dO9MUCSao0UrFYexGmw@mail.gmail.com>
-References: <1506480343-9597-1-git-send-email-yamada.masahiro@socionext.com>
- <1506480343-9597-2-git-send-email-yamada.masahiro@socionext.com> <CACRpkdYJSXH+94QScrpSPdfy8ULa6dV2q0qRjsfKAAWSRuKTKQ@mail.gmail.com>
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: Re: [PATCH v2 7/7] pinctrl: mcp23s08: remove unused variables from
+ pinconf_set
+Date: Sun, 8 Oct 2017 23:12:27 +0200
+Message-ID: <20171008211227.ye63jjbvjlxu4czh@earth>
+References: <1507266491-73971-1-git-send-email-preid@electromag.com.au>
+ <1507266491-73971-8-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYJSXH+94QScrpSPdfy8ULa6dV2q0qRjsfKAAWSRuKTKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Masami Hiramatsu <mhiramat-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jassi Brar <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2muw7nddynsrgcwa"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45562 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbdJHVMc (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Oct 2017 17:12:32 -0400
+Content-Disposition: inline
+In-Reply-To: <1507266491-73971-8-git-send-email-preid@electromag.com.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-
-Hi Linus,
-
-
-2017-09-27 22:42 GMT+09:00 Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>:
-> On Wed, Sep 27, 2017 at 4:45 AM, Masahiro Yamada
-> <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
->
->> This GPIO controller is used on UniPhier SoC family.
->>
->> The vendor specific property "socionext,interrupt-ranges" is for
->> specifying interrupt mapping to the parent interrupt controller
->> because the mapping is not contiguous.  It works like "ranges",
->> but transforms "interrupts" instead of "reg".
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
->> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->
-> I don't think Rob has seen the new interrupt range thing?
-> (It's not a big deal. Things like these are a bit fuzzy.)
->
->> +               socionext,interrupt-ranges = <0 48 16>, <16 154 5>, <21 217 3>;
->
-> If it is as you say, that other SoCs are doing the same, we should
-> think about creating a generic property for this. Like
-> hierarchy-interrupt-ranges or so.
->
-> I kind of liked the old patch where it was just "interrupts" and
-> then you looked it up from the irq subsystem. (tglx even ACKed
-> the patch).
->
-> But I want the DT people to say something here.
->
-> Yours,
-> Linus Walleij
+To: Phil Reid <preid@electromag.com.au>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, poeschel@lemonage.de, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 
 
-I explained the technical background of this approach,
-but I have not had any comment.
-(DT people are silent, too)
+--2muw7nddynsrgcwa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is this driver applicable?
+Hi,
 
+On Fri, Oct 06, 2017 at 01:08:11PM +0800, Phil Reid wrote:
+> Variable mask and val are not used in the mcp_pinconf_set().
+>=20
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
 
+Thanks, those are leftovers from before I added mcp_set_bit.
 
--- 
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+
+-- Sebastian
+
+> ---
+>  drivers/pinctrl/pinctrl-mcp23s08.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl=
+-mcp23s08.c
+> index 8dceaa1..8e461cc 100644
+> --- a/drivers/pinctrl/pinctrl-mcp23s08.c
+> +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+> @@ -279,8 +279,7 @@ static int mcp_pinconf_set(struct pinctrl_dev *pctlde=
+v, unsigned int pin,
+>  {
+>  	struct mcp23s08 *mcp =3D pinctrl_dev_get_drvdata(pctldev);
+>  	enum pin_config_param param;
+> -	u32 arg, mask;
+> -	u16 val;
+> +	u32 arg;
+>  	int ret =3D 0;
+>  	int i;
+> =20
+> @@ -290,8 +289,6 @@ static int mcp_pinconf_set(struct pinctrl_dev *pctlde=
+v, unsigned int pin,
+> =20
+>  		switch (param) {
+>  		case PIN_CONFIG_BIAS_PULL_UP:
+> -			val =3D arg ? 0xFFFF : 0x0000;
+> -			mask =3D BIT(pin);
+>  			ret =3D mcp_set_bit(mcp, MCP_GPPU, pin, arg);
+>  			break;
+>  		default:
+> --=20
+> 1.8.3.1
+>=20
+
+--2muw7nddynsrgcwa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlnalLgACgkQ2O7X88g7
++pqN4A/8DTUeiuA8sau6qJ6yTc6H7qa62pn/8SYMF3viHb8BYDlH5e/Rt8oQdGpJ
+45HQc+VSn5ACGyT3yl2Ja5cq7rRbohMzzkouIa5p2flfne5rbjBZyutamUAjd0NG
+hRVayKNhTMeyA3ddgToFJcoOaEGR78PVEF0ZdLkf9+NBDK6M5sXBhUdFE7jXGDxn
+goPAMg48LMVNF7HN3E+9Rj/ioONJAX9OXgcFEE2u/HDAHBJQm78udXEan6FzZsvQ
+x0aNGWsWtOQtmiUV5u3RpjIC9OwPfixqFVg+UKkuiY/U70pspvxrMsMGUQQv7ra5
+qYpYBqUlRLo8JYFLL3+W8RuKUrUzMK4ZpwGtpMgzOq+xVLzZHgY38CFbVpYfHfWd
+WF2iRVrIARmg7Q/CWGkrThXl4lS2RgvTvXzH2z8uytb6sebjEcJ4x5MJ8S5hsHpP
+Mr/H0X62D7V8IseTbpfpjmR2rJH1QIMPKvatw0/XM/5sJsFm62w4q62YSjrhrP1K
+dPKUKxNjCsCPYlzae/ZJNkE5ImjcBxSy0EKbjMWAZKLR8x3jmrB3vTHHleZZapym
+Px0IVrR8itpkVZH7MOqxVcpnmWNV8W5cNmzjIt41Hhcu0ftDJtxMoQ29YOqUr6mE
+33HB+IkutWG+zoKN+W155dHKvuOhcf0M2Rbr+9MKerovqh8Yj80=
+=RWMV
+-----END PGP SIGNATURE-----
+
+--2muw7nddynsrgcwa--
