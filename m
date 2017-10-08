@@ -1,55 +1,37 @@
-From: Phil Reid <preid@electromag.com.au>
-Subject: Re: [PATCH 1/2] gpio: dt-bindings: add mcp23018 to mcp23s08
- documentation
-Date: Sun, 8 Oct 2017 18:20:59 +0800
-Message-ID: <b2a9b5d7-2537-ce8e-82f4-4c2d131143a0@electromag.com.au>
-References: <1507166615-4530-1-git-send-email-preid@electromag.com.au>
- <1507166615-4530-2-git-send-email-preid@electromag.com.au>
- <CACRpkdY-NRR1wcBbaeCLHfWwCVoQB+s=P=nMxZgMSyuqdmkA6g@mail.gmail.com>
+From: Bernd Edlinger <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org>
+Subject: [PATCHv3 0/2] GPIO driver and bindings for Altera FPGA Manager I/O
+Date: Sun, 8 Oct 2017 11:30:18 +0000
+Message-ID: <AM5PR0701MB26574C348D239938F2E02482E4770@AM5PR0701MB2657.eurprd07.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from anchovy3.45ru.net.au ([203.30.46.155]:51547 "EHLO
-        anchovy.45ru.net.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751651AbdJHKVF (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Oct 2017 06:21:05 -0400
-In-Reply-To: <CACRpkdY-NRR1wcBbaeCLHfWwCVoQB+s=P=nMxZgMSyuqdmkA6g@mail.gmail.com>
-Content-Language: en-AU
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: de-DE
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 8/10/2017 07:41, Linus Walleij wrote:
-> On Thu, Oct 5, 2017 at 3:23 AM, Phil Reid <preid@electromag.com.au> wrote:
-> 
->> This adds the required definitions for the mcp23018 which is the i2c
->> variant of the mcp23s18.
-> 
-> Which is logical if "s" stands for "SPI", "0" is normal or I2C.
-> 
->>       - "microchip,mcp23s18" for 16 GPIO SPI version
-> 
-> So that is the SPI version
-> 
->>       - "microchip,mcp23008" for  8 GPIO I2C version or
->>       - "microchip,mcp23017" for 16 GPIO I2C version of the chip
->> +    - "microchip,mcp23018" for 16 GPIO SPI version
-> 
-> And right here you say that this is also the SPI version, but the
-> commit message says it is the I2C version.
-> 
-G'day Linus,
+As requested I re-send the GPIO driver and bindings as a patch series.
+FAOD I incremented the patch version to v3, although nothing has changed.
+First part is the bindings and second part is the driver.
+Sorry for the confusion.
 
-thanks for looking at this.
-Sorry, there's a v2 fixing that.
+Bernd Edlinger (2):
+  Add device tree bindings for Altera FPGA Manager GPIO
+  Add a GPIO driver for Altera FPGA Manager Fabric I/O
 
-Along with proposed patches for fixing the items raised in my RFI.
-
-Except for modelling the inverter. Not even sure how to approach that one.
-
+ .../bindings/gpio/gpio-altera-fpgamgr.txt          |  45 +++++
+ drivers/gpio/Kconfig                               |   6 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-altera-fpgamgr.c                 | 219 +++++++++++++++++++++
+ 4 files changed, 271 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
+ create mode 100644 drivers/gpio/gpio-altera-fpgamgr.c
 
 -- 
-Regards
-Phil Reid
+1.9.1
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
