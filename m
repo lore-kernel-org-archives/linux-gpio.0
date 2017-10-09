@@ -1,87 +1,118 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Update GPIO EN_CTL when
- setting pin config
-Date: Sun, 8 Oct 2017 22:56:43 -0700
-Message-ID: <20171009055643.GB1165@minitux>
-References: <20170912003331.3092-1-fenglinw@codeaurora.org>
- <20171005162750.GY1165@minitux>
- <c770e00d-9bd5-8cae-0f47-da4d4beee0c4@codeaurora.org>
+From: Miquel RAYNAL <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 04/16] serial: mvebu-uart: support probe of multiple
+ ports
+Date: Mon, 9 Oct 2017 09:17:11 +0200
+Message-ID: <20171009091711.528adddd@xps13>
+References: <20171006101344.15590-1-miquel.raynal@free-electrons.com>
+        <20171006101344.15590-5-miquel.raynal@free-electrons.com>
+        <87poa0foro.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <c770e00d-9bd5-8cae-0f47-da4d4beee0c4@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Fenglin Wu <fenglinw@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87poa0foro.fsf-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Yan <yanwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Sun 08 Oct 22:34 PDT 2017, Fenglin Wu wrote:
+On Fri, 06 Oct 2017 14:23:55 +0200
+Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-> On 10/6/2017 12:27 AM, Bjorn Andersson wrote:
-> > On Mon 11 Sep 17:32 PDT 2017, fenglinw@codeaurora.org wrote:
-> > 
-> > > From: Fenglin Wu <fenglinw@codeaurora.org>
-> > > 
-> > > GPIO is expected to be disabled iff PIN_CONFIG_BIAS_HIGH_IMPEDANCE is
-> > > configured. Update is_enabled flag in config_set() so that it can
-> > > reflect GPIO status correctly. Also modify EN_CTL register based on
-> > > is_enabled flag in config_set() to configure the GPIO properly.
-> > > 
-> > > Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
-> > > ---
-> > >   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 5 +++++
-> > >   1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> > > index c2c0bab..a0edaa8 100644
-> > > --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> > > +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> > > @@ -453,6 +453,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
-> > >   	pad = pctldev->desc->pins[pin].drv_data;
-> > > +	pad->is_enabled = true;
-> > >   	for (i = 0; i < nconfs; i++) {
-> > >   		param = pinconf_to_config_param(configs[i]);
-> > >   		arg = pinconf_to_config_argument(configs[i]);
-> > > @@ -600,6 +601,10 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
-> > >   			return ret;
-> > >   	}
-> > > +	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
-> > > +
-> > > +	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_EN_CTL, val);
-> > > +
-> > 
-> > This looks good.
-> > 
-> > Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > 
-> > 
-> > But I spotted another issue while reviewing this; currently the initial
-> > state of is_enabled is unconditionally set to enabled in
-> > pmic_gpio_populate(), so reading the initial pinconf or configuring a
-> > pinmux before setting a pinconf will operate on the potentially wrong
-> > information.
-> > 
-> > So I think the initial value should be read out from REG_EN_CTL rather
-> > than being just "true".
-> > 
-> > Can you please either submit another patch for this?
+> Hi Miquel,
+>  
+>  On ven., oct. 06 2017, Miquel Raynal
+> <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 > 
-> Hmm, considering a GPIO which is disabled by default in hardware
-> setting, what's its expected state if we only define "function" for it?
-> I was thinking we need to enable it once it has any setting in pinmux or
-> pinconf. If you think that we need to keep its original state until we
-> set pinconf for it, yes, I can submit a change to address this.
+> > From: Allen Yan <yanwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+> >
+> > Until now, the mvebu-uart driver only supported probing a single
+> > UART port. However, some platforms have multiple instances of this
+> > UART controller, and therefore the driver should support multiple
+> > ports.
+> >
+> > In order to achieve this, we make sure to assign port->line
+> > properly, instead of hardcoding it to zero.
+> >
+> > Signed-off-by: Allen Yan <yanwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+> > Signed-off-by: Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > ---
+> >  drivers/tty/serial/mvebu-uart.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/tty/serial/mvebu-uart.c
+> > b/drivers/tty/serial/mvebu-uart.c index 7e0a3e9fee15..25b11ede3a97
+> > 100644 --- a/drivers/tty/serial/mvebu-uart.c
+> > +++ b/drivers/tty/serial/mvebu-uart.c
+> > @@ -560,7 +560,16 @@ static int mvebu_uart_probe(struct
+> > platform_device *pdev) return -EINVAL;
+> >  	}
+> >  
+> > -	port = &mvebu_uart_ports[0];
+> > +	if (pdev->dev.of_node)
+> > +		pdev->id = of_alias_get_id(pdev->dev.of_node,
+> > "serial");  
+> 
+> If the id is retrieved using an of_ function, then I think that the
+> driver would depend on OF_CONFIG.
+
+Is this okay?
+
+if (pdev->dev.of_node && IS_ENABLED(CONFIG_OF))
+        pdev->id = of_alias_get_id(pdev->dev.of_node, "serial");
+else
+        pdev->id = 0;
+
+BTW, I could not test without CONFIG_OF as it is defined by default in
+our case: Selected by: ARM64 [=y]
+I don't think there will be a 32-bit SoC with this UART IP?
+
+Thanks,
+Miquèl
+
+> 
+> Gregory
+> 
+> 
+> > +
+> > +	if (pdev->id >= MVEBU_NR_UARTS) {
+> > +		dev_err(&pdev->dev, "cannot have more than %d UART
+> > ports\n",
+> > +			MVEBU_NR_UARTS);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	port = &mvebu_uart_ports[pdev->id];
+> >  
+> >  	spin_lock_init(&port->lock);
+> >  
+> > @@ -572,7 +581,7 @@ static int mvebu_uart_probe(struct
+> > platform_device *pdev) port->fifosize   = 32;
+> >  	port->iotype     = UPIO_MEM32;
+> >  	port->flags      = UPF_FIXED_PORT;
+> > -	port->line       = 0; /* single port: force line number
+> > to  0 */
+> > +	port->line       = pdev->id;
+> >  
+> >  	port->irq        = irq->start;
+> >  	port->irqflags   = 0;
+> > -- 
+> > 2.11.0
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel  
 > 
 
-Are there valid cases where only function should be selected and no
-other configuration is used? If so it makes sense to make
-pmic_gpio_set_mux() enable the block.
 
 
-Regardless of this, if there are disabled pins that are not mentioned in
-DT they will still appear as enabled in the debugfs interface; and this
-I consider an error worth fixing.
-
-Regards,
-Bjorn
+-- 
+Miquel Raynal, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
