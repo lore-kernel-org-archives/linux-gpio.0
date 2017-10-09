@@ -1,111 +1,99 @@
 From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] pinctrl: cherryview: fix issues caused by dynamic gpio
- irqs mapping
-Date: Mon, 9 Oct 2017 13:04:41 -0500
-Message-ID: <39deecb5-4dd4-6c45-7f93-278fd213b360@ti.com>
-References: <20171003170049.24480-1-grygorii.strashko@ti.com>
- <CACRpkda3vBORtJPU=Y88TXukY=XbfmTau7GMSky98p63fhmfpw@mail.gmail.com>
+Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs
+ dynamically
+Date: Mon, 9 Oct 2017 13:10:02 -0500
+Message-ID: <aabd3920-7170-3883-58a8-695d15664150@ti.com>
+References: <20170721164900.7070-1-grygorii.strashko@ti.com>
+ <20170928083348.GI4630@lahna.fi.intel.com>
+ <CACRpkdZVSXtj31stVo6QvQ05LN43nEVj_1BccrebbcT7Ee24-A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:62272 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752206AbdJISFa (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 14:05:30 -0400
-In-Reply-To: <CACRpkda3vBORtJPU=Y88TXukY=XbfmTau7GMSky98p63fhmfpw@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZVSXtj31stVo6QvQ05LN43nEVj_1BccrebbcT7Ee24-A@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, Chris Gorman <chrisjohgorman@gmail.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Chris Gorman <chrisjohgorman@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
 
 
-On 10/07/2017 07:42 PM, Linus Walleij wrote:
-> On Tue, Oct 3, 2017 at 7:00 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> 
->> New GPIO IRQs are allocated and mapped dynamically by default when
->> GPIO IRQ infrastructure is used by cherryview-pinctrl driver.
->> This causes issues on some Intel platforms [1][2] with broken BIOS which
->> hardcodes Linux IRQ numbers in their ACPI tables.
+On 10/07/2017 07:27 PM, Linus Walleij wrote:
+> On Thu, Sep 28, 2017 at 10:33 AM, Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+>> On Fri, Jul 21, 2017 at 11:49:00AM -0500, Grygorii Strashko wrote:
+>>> Now IRQ mappings are always created for all (allowed) GPIOs in gpiochip in
+>>> gpiochip_irqchip_add_key() which goes against the idea of SPARSE_IRQ and,
+>>> as result, leads to:
+>>>   - increasing of memory consumption for IRQ descriptors most of which will
+>>> never ever be used (espessially on platform with a high number of GPIOs).
+>>> (sizeof(struct irq_desc) == 256 on my tested platforms)
+>>>   - imposibility to use GPIO irqchip APIs by gpio drivers when HW implements
+>>> GPIO IRQ functionality as IRQ crossbar/router which has only limited
+>>> number of IRQ outputs (example from [1], all GPIOs can be mapped on only 8
+>>> IRQs).
+>>>
+>>> Hence, remove static IRQ mapping code from gpiochip_irqchip_add_key() and
+>>> instead replace irq_find_mapping() with irq_create_mapping() in
+>>> gpiochip_to_irq(). Also add additional gpiochip_irqchip_irq_valid() calls
+>>> in gpiochip_to_irq() and gpiochip_irq_map().
+>>>
+>>> After this change gpio2irq mapping will happen the following way when GPIO
+>>> irqchip APIs are used by gpio driver:
+>>>   - IRQ mappings will be created statically if driver passes first_irq>0
+>>> vlaue in gpiochip_irqchip_add_key().
+>>>   - IRQ mappings will be created dynamically from gpio_to_irq() or
+>>> of_irq_get().
+>>>
+>>> Tested on am335x-evm and dra72-evm-revc.
+>>> - dra72-evm-revc: number of created irq mappings decreased from 402 -> 135
+>>>    Mem savings 267*256 = 68352 (66kB)
+>>> - am335x-evm: number of created irq mappings decreased from 188 -> 63
+>>>    Mem savings 125*256 = 32000 (31kB)
+>>>
+>>> [1] https://lkml.org/lkml/2017/6/15/428
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 >>
->> On such platforms cherryview-pinctrl driver should allocate and map all
->> GPIO IRQs at probe time.
->> Side effect - "Cannot allocate irq_descs @ IRQ%d, assuming pre-allocated\n"
->> can be seen at boot log.
+>> Hi Grygorii,
 >>
->> NOTE. It still may fail if boot sequence will changed and some interrupt
->> controller will be probed before cherryview-pinctrl which will shift Linux IRQ
->> numbering (expected with CONFIG_SPARCE_IRQ enabled).
->>
->> [1] https://bugzilla.kernel.org/show_bug.cgi?id=194945
->> [2] https://lkml.org/lkml/2017/9/28/153
->> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
->> Cc: Chris Gorman <chrisjohgorman@gmail.com>
->> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->> Reported-by: Chris Gorman <chrisjohgorman@gmail.com>
->> Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+>> It looks like dc749a09ea5e41 ("gpiolib: allow gpio irqchip to map irqs
+>> dynamically") broke the quirk we added for some Intel Cherryview
+>> systems [1]. Basically after this keyboard of those systems stopped
+>> working again.
 > 
-> OK patch applied for fixes.
+> It seems like we need to revert this change.
 > 
-> But I'mm still very sceptical about this.
+> I have also noted the following:
 > 
-> Look at the following (just from grep irq_base drivers/gpio/):
+> -       /*
+> -        * Prepare the mapping since the irqchip shall be orthogonal to
+> -        * any gpiochip calls. If the first_irq was zero, this is
+> -        * necessary to allocate descriptors for all IRQs.
+> -        */
+> -       for (offset = 0; offset < gpiochip->ngpio; offset++) {
+> -               if (!gpiochip_irqchip_irq_valid(gpiochip, offset))
+> -                       continue;
+> -               irq_base = irq_create_mapping(gpiochip->irqdomain, offset);
+> -               if (!irq_base_set) {
+> -                       /*
+> -                        * Store the base into the gpiochip to be used when
+> -                        * unmapping the irqs.
+> -                        */
+> -                       gpiochip->irq_base = irq_base;
+> -                       irq_base_set = true;
+> -               }
 > 
-> drivers/gpio/gpio-ml-ioh.c:
+> Note assignment of gpiochip->irq_base.
 > 
-> static int ioh_gpio_to_irq(struct gpio_chip *gpio, unsigned offset)
-> {
->          struct ioh_gpio *chip = gpiochip_get_data(gpio);
+> A whole slew of drivers use this.
+> 
+> We cannot merge a change like this without also fixing all the users
+> of .irq_base, as it will cause regressions on them.
 
-It is ioh_gpio - not  gpio_chip ;)
-
->          return chip->irq_base + offset;
-> }
-> 
-> (...)
->          ch = irq - chip->irq_base;
->          if (irq <= chip->irq_base + 7) {
->                  im_reg = &chip->reg->regs[chip->ch].im_0;
->                  im_pos = ch;
-> (...)
-
-not an issue gpio-ml-ioh.c:
-ioh_gpio_probe()
- 		irq_base = devm_irq_alloc_descs(&pdev->dev, -1, IOH_IRQ_BASE,
-						num_ports[j], NUMA_NO_NODE);
-...
-		chip->irq_base = irq_base;
- 
-
-
-> 
-> drivers/gpio/gpio-sta2x11.c:
-> 
-> static int gsta_gpio_to_irq(struct gpio_chip *gpio, unsigned offset)
-> {
->          struct gsta_gpio *chip = gpiochip_get_data(gpio);
->          return chip->irq_base + offset;
-
-same. It is gsta_gpio - not  gpio_chip ;)
-
-> }
-> 
-> (etc)
-> 
-> The thing is that the lines you deleted from gpiolib were the only
-> thing ever assigning chip->irq_base. This patch, if performed
-> properly should have removed the .irq_base field from struct
-> gpio_chip altogether without regressions.
-> 
-> As it is not, anything using .irq_base is regressing.
-> 
-> Either you need to convince me you can quickfix all of these
-> users, or we need to simply revert this change.
+At the moment it was merged there were no user of irq_base except gpio-mockup.c.
+And actually there are shouldn't as calling irq_create_mapping() in cycle
+will not guarantee sequential Linux IRQ numbers allocation.
 
 
 
