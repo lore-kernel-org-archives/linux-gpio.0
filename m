@@ -1,48 +1,95 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7795: fix trivial typo in comment
-Date: Mon, 9 Oct 2017 10:38:37 +0200
-Message-ID: <20171009083836.te4v6zgadqfybn4f@ninjato>
-References: <20171009083516.6220-1-wsa+renesas@sang-engineering.com>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [PATCH 2/3] pinctrl: sunxi: Disable strict mode for old pinctrl
+ drivers
+Date: Mon, 9 Oct 2017 10:45:28 +0200
+Message-ID: <20171009084528.mooy74urkifioqhi@flea.lan>
+References: <cover.7a61d0bb31530def29efd8b4286d8c0afdaab347.1507236823.git-series.maxime.ripard@free-electrons.com>
+ <b09cdfbf4c7546f299031c2923b9f8fcef881e3d.1507236823.git-series.maxime.ripard@free-electrons.com>
+ <CAGb2v656TCA3yqGP=Jb36weFUvQryC=AMi5TxP_tMbz8w-ajdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yapq7lyk6bxgosv2"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5vd5irqu3nrxxnls"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:48794 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbdJIIpb (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 04:45:31 -0400
 Content-Disposition: inline
-In-Reply-To: <20171009083516.6220-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+In-Reply-To: <CAGb2v656TCA3yqGP=Jb36weFUvQryC=AMi5TxP_tMbz8w-ajdg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 
---yapq7lyk6bxgosv2
+--5vd5irqu3nrxxnls
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 09, 2017 at 10:35:15AM +0200, Wolfram Sang wrote:
-> From: Wolfram Sang <wsa@the-dreams.de>
+Hi,
 
-Oops, wrong email. Please use V2 and sorry for the noise!
+On Fri, Oct 06, 2017 at 08:34:07AM +0000, Chen-Yu Tsai wrote:
+> On Fri, Oct 6, 2017 at 4:54 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > Old pinctrl drivers will need to disable strict mode for various reason=
+s,
+> > among which:
+> >   - Some DT will still have a pinctrl group for each GPIO used, which w=
+ill
+> >     be rejected by pin_request. While we could remove those nodes, we s=
+till
+> >     have to deal with old DTs.
+> >   - Some GPIOs on these boards need to have their pin configuration cha=
+nged
+> >     (for bias or current), and there's no clear migration path
+> >
+> > Let's disable the strict mode on those SoCs so that there's no breakage.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> > ---
+> >  drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c | 1 +
+> >  drivers/pinctrl/sunxi/pinctrl-sun5i.c     | 1 +
+> >  drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c | 1 +
+> >  drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c | 1 +
+> >  drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c | 1 +
+> >  drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c  | 3 ++-
+> >  drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c | 1 +
+>=20
+> You should also set it for the R_PIO drivers.  IIRC you removed some
+> entries for them in your other patchset.
 
+I'll look into the R_PIO that can be switched on, but we won't be able
+to enable that flag on the one where we removed nodes.
 
---yapq7lyk6bxgosv2
+That would break the old DTs.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+
+--5vd5irqu3nrxxnls
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlnbNYkACgkQFA3kzBSg
-KbZR5g/7BULtlz9X1mwCYfy/EFTm39FV/Ot9STWVD/9d4UGDTdjVzqN3UJZxRPTS
-Rg+at/RTnymsXD33T+m5jzN9esYG4YSYOxpblFn4wLhUtr9DbE+ChV+5rlcmcaVy
-S/twGXvTHQdRg+MBpUBmg7mLv9RqzSEZNNu34ot2OyY5siD8Af5ZQ82Eql9ZgUyQ
-PezvVPkV2P6mvKrkls1xeP72pyRdB1NP4IDKw64NJ1AjqHym8W5WTjas558AzOWn
-6M+ou3SBDFLCtpLYAw71a/8yzEuzAcNaDfX12UP6CyMMfKfTxSTI4MIADHVp+qEI
-D2snHZmeKazN5mg7nIBgwTGsndmakgjNOPGsEHrRQVokH4HZsNpiPRxnHNp4hw1T
-rdPVk+jJnMAMF5xLojKFkHvJOy+h0eZTJrr05FKYBSexyatCr2HhpCBR1Cm57RH3
-yvutFzCS34SAUs9dShbq/WYlh2UjiniattMXzjq9mGIeRNmebbsRUJsxmdCivgGr
-KB5vHugvDGDGoMKHKkOKSPl8mtAEA+t79ET+jU2+MWycg0dhmwNLonKl5heEJdum
-JgLOrtp7wmUUhiYAlp0/7DrLxVv61uijArRCzIv2JCkH22VMLTMDDO29PxWV0Ysi
-LrX2PJhO1R/rsGM5d1to+l47e/Wnpn3rhT0JSvAU/56eL5W9+CY=
-=9pIo
+iQIcBAEBAgAGBQJZ2zcoAAoJEBx+YmzsjxAgIbIP/1RQh8nwSIQHOgPPV/YN2o6o
+1yGssTG5wDRt8Q27ioj6FOmjNUFJg7kYyXQTI7OSQBFzb0qucH4jzQjlJLPHGpk1
+9lqqz8JPvhHMMtVZCjfHjGcBvN3NzMblmpJqxuBG+lI9bvj3mGgqy7UHocsMdBIS
+Xm/g+BncX/32phU00zBm2+wDHo/I/XInu2RbnaQlXYYc4MR2p8e6IE1CmBYFT6w7
+dy7z2W/k5CbU5RuQ1edMR6vjAIl1Yjf4J6PXh0d1+retJhfiTzUfiDjysE/Uem9z
+r919pWQxDFBDlz9IPdxIE/IjCvp9ss3ieRxT0E26rBLBLgIFjCY+G97W22mVYEnS
+J2vNxIqySjns7MzNM1lPujvDUtKxnoiZlPE+ci8kYx2ZWIcfFp+f3xN0m54DVrQA
+BU3EN5OThKDhRUuUvOoqNkzN2p/FXISdM1unHZmMSdtJ2a8kjzQHZMslCzkhtEhg
+6TykdUvT7zhGPkJLoIT6qNQob+KNjkyV98A8doOMTGIwqXx2daDts/1LeQQoTrv3
+SkhusQKBzwp9DBgZGzYWxSl/7k3Cmm85Xonrti/ZPdtqq7MSzocbIJnCQ7ExM+FP
+Qx8kuUKb0MAJ3V4Fb13eWJaCc7wcAmJGua08NzG8EUqsOuTqjTTvB8wmx5zbQFzX
+btJtqUwBJC5/ZyIRKqSG
+=U+A5
 -----END PGP SIGNATURE-----
 
---yapq7lyk6bxgosv2--
+--5vd5irqu3nrxxnls--
