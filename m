@@ -1,53 +1,85 @@
-From: "David.Wu" <david.wu@rock-chips.com>
-Subject: Re: [PATCH 2/2] pinctrl: rockchip: Fix the correct routing config for
- the gmac-m1 pins of rmii and rgmii
-Date: Mon, 9 Oct 2017 09:21:22 +0800
-Message-ID: <19faa81c-aebb-0786-54fd-93b0a5a18b9a@rock-chips.com>
-References: <1506773601-27315-1-git-send-email-david.wu@rock-chips.com>
- <1506773601-27315-3-git-send-email-david.wu@rock-chips.com>
- <1908269.6t3djq65xf@phil>
- <CACRpkdYOuf_8_EWg1GtV-75YvmnLkpadKrGMfQZ2v2RRqbYvRw@mail.gmail.com>
+From: Fenglin Wu <fenglinw@codeaurora.org>
+Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Update GPIO EN_CTL when
+ setting pin config
+Date: Mon, 9 Oct 2017 13:34:05 +0800
+Message-ID: <c770e00d-9bd5-8cae-0f47-da4d4beee0c4@codeaurora.org>
+References: <20170912003331.3092-1-fenglinw@codeaurora.org>
+ <20171005162750.GY1165@minitux>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:44052 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753280AbdJIBVZ (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sun, 8 Oct 2017 21:21:25 -0400
-In-Reply-To: <CACRpkdYOuf_8_EWg1GtV-75YvmnLkpadKrGMfQZ2v2RRqbYvRw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171005162750.GY1165@minitux>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Tao Huang <huangtao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Linus,
-
-Thanks for you adding it.
-I left the office for a few days due to holiday.
-
-在 2017/10/7 18:32, Linus Walleij 写道:
-> On Sat, Sep 30, 2017 at 5:07 PM, Heiko Stuebner <heiko@sntech.de> wrote:
->> Am Samstag, 30. September 2017, 20:13:21 CEST schrieb David Wu:
->>> If the gmac-m1 optimization(bit10) is selected, the gpio function
->>> of gmac pins is not valid. We may use the rmii mode for gmac interface,
->>> the pins such as rx_d2, rx_d3, which the rgmii mode used, but rmii not
->>> used could be taken as gpio function. So gmac_rxd0m1 selects the bit2,
->>> and gmac_rxd0m3 select bit10 is more correct.
->>>
->>> Signed-off-by: David Wu <david.wu@rock-chips.com>
+On 10/6/2017 12:27 AM, Bjorn Andersson wrote:
+> On Mon 11 Sep 17:32 PDT 2017, fenglinw@codeaurora.org wrote:
+> 
+>> From: Fenglin Wu <fenglinw@codeaurora.org>
 >>
->> the patch subject should mention the the rk3328 whose routing gets fixed
->> (like adding a simple "on rk3328" to it), otherwise
+>> GPIO is expected to be disabled iff PIN_CONFIG_BIAS_HIGH_IMPEDANCE is
+>> configured. Update is_enabled flag in config_set() so that it can
+>> reflect GPIO status correctly. Also modify EN_CTL register based on
+>> is_enabled flag in config_set() to configure the GPIO properly.
 >>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+>> ---
+>>   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> index c2c0bab..a0edaa8 100644
+>> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> @@ -453,6 +453,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>>   
+>>   	pad = pctldev->desc->pins[pin].drv_data;
+>>   
+>> +	pad->is_enabled = true;
+>>   	for (i = 0; i < nconfs; i++) {
+>>   		param = pinconf_to_config_param(configs[i]);
+>>   		arg = pinconf_to_config_argument(configs[i]);
+>> @@ -600,6 +601,10 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>>   			return ret;
+>>   	}
+>>   
+>> +	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
+>> +
+>> +	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_EN_CTL, val);
+>> +
 > 
-> I added rk3328 to it, also assumed this Reviewed-by covers patch 1/2
-> as well and applied both with your tag.
+> This looks good.
 > 
-> Yours,
-> Linus Walleij
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > 
 > 
+> But I spotted another issue while reviewing this; currently the initial
+> state of is_enabled is unconditionally set to enabled in
+> pmic_gpio_populate(), so reading the initial pinconf or configuring a
+> pinmux before setting a pinconf will operate on the potentially wrong
+> information.
+> 
+> So I think the initial value should be read out from REG_EN_CTL rather
+> than being just "true".
+> 
+> Can you please either submit another patch for this?
+
+Hmm, considering a GPIO which is disabled by default in hardware
+setting, what's its expected state if we only define "function" for it?
+I was thinking we need to enable it once it has any setting in pinmux or
+pinconf. If you think that we need to keep its original state until we
+set pinconf for it, yes, I can submit a change to address this.
+
+
+> 
+> Regards,
+> Bjorn
 > 
 
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
