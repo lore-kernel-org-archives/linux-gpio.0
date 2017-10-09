@@ -1,42 +1,57 @@
-From: Lars Poeschel <poeschel@lemonage.de>
-Subject: Re: [PATCH] dt-bindings: pinctrl: Move mcp23s08 from gpio
-Date: Mon, 09 Oct 2017 11:39:02 +0200
-Message-ID: <8063886.6te7U6k3td@lem-wkst-02>
-References: <20171005075002.9901-1-poeschel@lemonage.de> <CACRpkdY=r8XBqHKrVeZ34jR8FJM-zmOUxCSMhEROc6fOjfwX-A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY=r8XBqHKrVeZ34jR8FJM-zmOUxCSMhEROc6fOjfwX-A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/2] pinctrl: meson: prepare for new SoC
+Date: Mon,  9 Oct 2017 12:17:45 +0200
+Message-ID: <20171009101747.16940-1-jbrunet@baylibre.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:52944 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbdJIKRw (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 06:17:52 -0400
+Received: by mail-wm0-f52.google.com with SMTP id k4so21965190wmc.1
+        for <linux-gpio@vger.kernel.org>; Mon, 09 Oct 2017 03:17:51 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 8, 2017 at 01:58:52 CEST Linus Walleij wrote:
+The goal of this patchset is to prepare meson pinctrl driver to
+add a new meson SoC support. This new SoC will share the same pinconf/gpio
+registers but the pinmux part will be slightly different.
 
-CCing-in Sebastian Reichel who did the move to pinctrl and pinctrl support as 
-well.
+First patch allows to compile and ship only the necessary pinctrl drivers,
+depending on the architecture and configuration needs. This should save
+a bit of memory.
 
-> On Thu, Oct 5, 2017 at 9:50 AM, Lars Poeschel <poeschel@lemonage.de> wrote:
-> > The mcp23s08 driver was moved from gpio to pinctrl. This moves it's
-> > devicetree binding doc as well. So driver and binding doc are in sync
-> > again.
-> > 
-> > Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
-> 
-> Are there no new references to the generic pin control binding
-> needed as well?
+Second patch provide a way to deal with a different pinmux scheme, while
+reusing most of the meson pinctrl driver.
 
-Well, yes there is one: As far as I can see it supports the bias-pull-up 
-property.
-My first intention was to have the doc as we have it in the right place, but 
-you are right: It needs an update as well. I can do this, but Sebastian, 
-please keep an eye on that.
+Linus, this series depends on
+* The offset clean-up series you've already merged [0]
+* the fixup regarding pin_base [1]
 
-As there are already patches depending on this patch (https://marc.info/?
-l=linux-gpio&m=150726650325394&w=4) I would suggest, that you pull in this 
-patch as is and I do the little update on the doc as a seperate patch.
+[0]: https://lkml.kernel.org/r/20170920133927.17390-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20171006085407.27905-1-jbrunet@baylibre.com
 
-Regards,
-Lars
+Jerome Brunet (2):
+  pinctrl: meson: separate soc drivers
+  pinctrl: meson: rework pinmux ops
+
+ drivers/pinctrl/Kconfig                    |  11 +--
+ drivers/pinctrl/meson/Kconfig              |  43 +++++++++
+ drivers/pinctrl/meson/Makefile             |   9 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c |  28 +++++-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  |  28 +++++-
+ drivers/pinctrl/meson/pinctrl-meson-pmx.c  | 107 +++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson-pmx.h  |  48 ++++++++++
+ drivers/pinctrl/meson/pinctrl-meson.c      | 147 ++---------------------------
+ drivers/pinctrl/meson/pinctrl-meson.h      |  42 +++------
+ drivers/pinctrl/meson/pinctrl-meson8.c     |  28 +++++-
+ drivers/pinctrl/meson/pinctrl-meson8b.c    |  28 +++++-
+ 11 files changed, 333 insertions(+), 186 deletions(-)
+ create mode 100644 drivers/pinctrl/meson/Kconfig
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-pmx.c
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-pmx.h
+
+-- 
+2.13.6
+
