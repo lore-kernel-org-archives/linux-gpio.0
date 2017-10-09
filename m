@@ -1,39 +1,66 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs dynamically
-Date: Mon, 9 Oct 2017 21:57:58 +0200
-Message-ID: <CACRpkdZe6uKqWo6hg4ROjiv4YUWyW0Upy4s6UCMH4ri3v3PF5g@mail.gmail.com>
-References: <20170721164900.7070-1-grygorii.strashko@ti.com>
- <20170928083348.GI4630@lahna.fi.intel.com> <CACRpkdZVSXtj31stVo6QvQ05LN43nEVj_1BccrebbcT7Ee24-A@mail.gmail.com>
- <aabd3920-7170-3883-58a8-695d15664150@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH v2 0/3] pinctrl: sunxi: Start to enforce the strict mode
+Date: Mon,  9 Oct 2017 22:53:36 +0200
+Message-ID: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:56933 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755072AbdJIT57 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 15:57:59 -0400
-Received: by mail-it0-f45.google.com with SMTP id g18so14233136itg.5
-        for <linux-gpio@vger.kernel.org>; Mon, 09 Oct 2017 12:57:59 -0700 (PDT)
-In-Reply-To: <aabd3920-7170-3883-58a8-695d15664150@ti.com>
+Received: from mail.free-electrons.com ([62.4.15.54]:44571 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755039AbdJIUxm (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 16:53:42 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, Chris Gorman <chrisjohgorman@gmail.com>
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 
-On Mon, Oct 9, 2017 at 8:10 PM, Grygorii Strashko
-<grygorii.strashko@ti.com> wrote:
+Hi,
 
-> At the moment it was merged there were no user of irq_base except gpio-mockup.c.
+Here is an attempt to enable pinctrl's strict mode on our pinctrl drivers.
+Indeed, our controllers should have had that mode enabled since its
+introduction.
 
-OK I feel calmer.
+However, there's a number of issues with old device trees that prevent from
+just enabling it for all the devices. There's basically two of them:
 
-> And actually there are shouldn't as calling irq_create_mapping() in cycle
-> will not guarantee sequential Linux IRQ numbers allocation.
+  - Most of our old DTs have a pinctrl node for GPIOs, which will result in
+    an error when the driver is going to request the gpio because it would
+    already be requested automatically by pinctrl. We cannot break those.
 
-Yeah. I always felt that was bad practice.
+  - Some of these GPIOs also need to change their pin configuration to add
+    a bias or change the current output, and there isn't a migration path.
 
-But we should really kill off that irq_base member from gpio_chip. It looks
-dangerous to have arond.
+Let's just keep the old behaviour for the old SoCs, and enforce it on the
+new one, and enabled it by default so that the situation at least doesn't
+get worse.
 
-Yours,
-Linus Walleij
+This has been tested on an A83t (strict on) and an H3 (strict off) board.
+
+Let me know what you think,
+Maxime
+
+Changes from v1:
+  - Duplicate the pmx_ops before modifying them
+  - Disable the strict mode for R_PIO as well
+
+Maxime Ripard (3):
+  pinctrl: sunxi: Introduce the strict flag
+  pinctrl: sunxi: Disable strict mode for old pinctrl drivers
+  pinctrl: sunxi: Enforce the strict mode by default
+
+ drivers/pinctrl/sunxi/pinctrl-sun4i-a10.c   |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun5i.c       |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31-r.c |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun6i-a31.c   |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23-r.c |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a23.c   |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c   |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-h3-r.c  |  3 ++-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-h3.c    |  3 ++-
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80-r.c |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun9i-a80.c   |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c       | 13 ++++++++++++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h       |  1 +
+ 13 files changed, 26 insertions(+), 3 deletions(-)
+
+base-commit: bba731ac5505e73c9b0681762ee0cfa52ccfffed
+-- 
+git-series 0.9.1
