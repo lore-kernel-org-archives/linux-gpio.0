@@ -1,95 +1,78 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH v2 15/16] gpio: tegra: Use banked GPIO infrastructure
-Date: Tue, 10 Oct 2017 14:31:15 -0500
-Message-ID: <ad79e202-1fdd-81d3-f0f6-925eed5049c1@ti.com>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <20170928095628.21966-16-thierry.reding@gmail.com>
- <dfeb33cf-34b5-259d-cf83-f065d75444f3@ti.com> <20171010102727.GA24484@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Alan Tull <atull@kernel.org>
+Subject: [PATCH] gpio: gpio-dwapb: add optional reset
+Date: Tue, 10 Oct 2017 16:26:17 -0500
+Message-ID: <20171010212617.3397-1-atull@kernel.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:49020 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751156AbdJJTcD (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2017 15:32:03 -0400
-In-Reply-To: <20171010102727.GA24484@ulmo>
-Content-Language: en-US
+Received: from mail.kernel.org ([198.145.29.99]:46556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756494AbdJJV00 (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Tue, 10 Oct 2017 17:26:26 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Alan Tull <atull@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Some platforms require reset to be released to allow register
+access.
 
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+ drivers/gpio/gpio-dwapb.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On 10/10/2017 05:27 AM, Thierry Reding wrote:
-> On Mon, Oct 09, 2017 at 04:22:29PM -0500, Grygorii Strashko wrote:
->>
->>
->> On 09/28/2017 04:56 AM, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Convert the Tegra GPIO driver to use the banked GPIO infrastructure,
->>> which simplifies some parts of the driver.
->>>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>>    drivers/gpio/Kconfig      |   1 +
->>>    drivers/gpio/gpio-tegra.c | 203 ++++++++++++++++++++++------------------------
->>>    2 files changed, 98 insertions(+), 106 deletions(-)
->>>
->>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
->>> index db3e446ad9b3..458157d6d491 100644
->>> --- a/drivers/gpio/Kconfig
->>> +++ b/drivers/gpio/Kconfig
->>> @@ -439,6 +439,7 @@ config GPIO_TEGRA
->>>    	default ARCH_TEGRA
->>>    	depends on ARCH_TEGRA || COMPILE_TEST
->>
->> ...
->>
->>> @@ -616,76 +617,66 @@ static int tegra_gpio_probe(struct platform_device *pdev)
->>>    	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
->>>    #endif
->>>    
->>> +	irq = &tgi->gc.irq;
->>> +	irq->chip = &tgi->ic;
->>> +	irq->handler = handle_simple_irq;
->>> +	irq->lock_key = &tegra_gpio_lock_class;
->>
->> As per current gpiolib design lockdep lock_class_key is assigned
->> automatically and hidden from gpiolib users.
->> Why do you need to do the same manually?
-> 
-> Can you elaborate? I don't see the lock class key getting set anywhere.
-> gpiolib does set if for interrupts, but only if the drivers assigned it
-> before adding the chip.
-> 
-
-include/linux/gpio/driver.h
-
-#ifdef CONFIG_LOCKDEP
-
-/*
- * Lockdep requires that each irqchip instance be created with a
- * unique key so as to avoid unnecessary warnings. This upfront
- * boilerplate static inlines provides such a key for each
- * unique instance.
- */
-static inline int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
-				       struct irq_chip *irqchip,
-				       unsigned int first_irq,
-				       irq_flow_handler_t handler,
-				       unsigned int type)
-{
-	static struct lock_class_key key;
-^^^
-
-	return gpiochip_irqchip_add_key(gpiochip, irqchip, first_irq,
-					handler, type, false, &key);
-}
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 5cdb7bc..f7ac625 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -25,6 +25,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
++#include <linux/reset.h>
+ #include <linux/spinlock.h>
+ #include <linux/platform_data/gpio-dwapb.h>
+ #include <linux/slab.h>
+@@ -98,6 +99,7 @@ struct dwapb_gpio {
+ 	unsigned int		nr_ports;
+ 	struct irq_domain	*domain;
+ 	unsigned int		flags;
++	struct reset_control	*rst;
+ };
  
-
+ static inline u32 gpio_reg_v2_convert(unsigned int offset)
+@@ -612,6 +614,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	int err;
+ 	struct device *dev = &pdev->dev;
+ 	struct dwapb_platform_data *pdata = dev_get_platdata(dev);
++	struct reset_control *rst;
+ 
+ 	if (!pdata) {
+ 		pdata = dwapb_gpio_get_pdata(dev);
+@@ -629,6 +632,15 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+ 	gpio->dev = &pdev->dev;
+ 	gpio->nr_ports = pdata->nports;
+ 
++	rst = devm_reset_control_get_optional_exclusive(dev, NULL);
++	if (IS_ERR(rst)) {
++		if (PTR_ERR(rst) == -EPROBE_DEFER)
++			return PTR_ERR(rst);
++	} else {
++		reset_control_deassert(rst);
++		gpio->rst = rst;
++	}
++
+ 	gpio->ports = devm_kcalloc(&pdev->dev, gpio->nr_ports,
+ 				   sizeof(*gpio->ports), GFP_KERNEL);
+ 	if (!gpio->ports)
+@@ -680,6 +692,8 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+ 
+ 	dwapb_gpio_unregister(gpio);
+ 	dwapb_irq_teardown(gpio);
++	if (gpio->rst)
++		reset_control_assert(gpio->rst);
+ 
+ 	return 0;
+ }
 -- 
-regards,
--grygorii
+2.7.4
+
