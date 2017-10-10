@@ -1,40 +1,95 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 05/12] pinctrl: axp209: add support for
- AXP813 GPIOs
-Date: Tue, 10 Oct 2017 13:33:58 -0500
-Message-ID: <20171010183358.e33h2lopppwdhncv@rob-hp-laptop>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
- <20171002120854.5212-6-quentin.schulz@free-electrons.com>
-Reply-To: robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH v2 15/16] gpio: tegra: Use banked GPIO infrastructure
+Date: Tue, 10 Oct 2017 14:31:15 -0500
+Message-ID: <ad79e202-1fdd-81d3-f0f6-925eed5049c1@ti.com>
+References: <20170928095628.21966-1-thierry.reding@gmail.com>
+ <20170928095628.21966-16-thierry.reding@gmail.com>
+ <dfeb33cf-34b5-259d-cf83-f065d75444f3@ti.com> <20171010102727.GA24484@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBDJIP47K7MERBGFF6THAKGQEGR5KSTA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20171002120854.5212-6-quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:49020 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751156AbdJJTcD (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2017 15:32:03 -0400
+In-Reply-To: <20171010102727.GA24484@ulmo>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 02, 2017 at 02:08:47PM +0200, Quentin Schulz wrote:
-> The AXP813 has only two GPIOs. GPIO0 can either be used as a GPIO, an
-> LDO regulator or an ADC. GPIO1 can be used either as a GPIO or an LDO
-> regulator.
+
+
+On 10/10/2017 05:27 AM, Thierry Reding wrote:
+> On Mon, Oct 09, 2017 at 04:22:29PM -0500, Grygorii Strashko wrote:
+>>
+>>
+>> On 09/28/2017 04:56 AM, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> Convert the Tegra GPIO driver to use the banked GPIO infrastructure,
+>>> which simplifies some parts of the driver.
+>>>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>    drivers/gpio/Kconfig      |   1 +
+>>>    drivers/gpio/gpio-tegra.c | 203 ++++++++++++++++++++++------------------------
+>>>    2 files changed, 98 insertions(+), 106 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+>>> index db3e446ad9b3..458157d6d491 100644
+>>> --- a/drivers/gpio/Kconfig
+>>> +++ b/drivers/gpio/Kconfig
+>>> @@ -439,6 +439,7 @@ config GPIO_TEGRA
+>>>    	default ARCH_TEGRA
+>>>    	depends on ARCH_TEGRA || COMPILE_TEST
+>>
+>> ...
+>>
+>>> @@ -616,76 +617,66 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+>>>    	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
+>>>    #endif
+>>>    
+>>> +	irq = &tgi->gc.irq;
+>>> +	irq->chip = &tgi->ic;
+>>> +	irq->handler = handle_simple_irq;
+>>> +	irq->lock_key = &tegra_gpio_lock_class;
+>>
+>> As per current gpiolib design lockdep lock_class_key is assigned
+>> automatically and hidden from gpiolib users.
+>> Why do you need to do the same manually?
 > 
-> Moreover, the status bit of the GPIOs when in input mode is not offset
-> by 4 unlike the AXP209.
+> Can you elaborate? I don't see the lock class key getting set anywhere.
+> gpiolib does set if for interrupts, but only if the drivers assigned it
+> before adding the chip.
 > 
-> Signed-off-by: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->  .../devicetree/bindings/pinctrl/pinctrl-axp209.txt | 13 ++++++++-
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+include/linux/gpio/driver.h
 
->  drivers/pinctrl/pinctrl-axp209.c                   | 32 ++++++++++++++++------
->  2 files changed, 36 insertions(+), 9 deletions(-)
+#ifdef CONFIG_LOCKDEP
+
+/*
+ * Lockdep requires that each irqchip instance be created with a
+ * unique key so as to avoid unnecessary warnings. This upfront
+ * boilerplate static inlines provides such a key for each
+ * unique instance.
+ */
+static inline int gpiochip_irqchip_add(struct gpio_chip *gpiochip,
+				       struct irq_chip *irqchip,
+				       unsigned int first_irq,
+				       irq_flow_handler_t handler,
+				       unsigned int type)
+{
+	static struct lock_class_key key;
+^^^
+
+	return gpiochip_irqchip_add_key(gpiochip, irqchip, first_irq,
+					handler, type, false, &key);
+}
+ 
+
+-- 
+regards,
+-grygorii
