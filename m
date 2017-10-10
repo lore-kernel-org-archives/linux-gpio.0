@@ -1,48 +1,102 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [RFT PATCH v2] gpiolib: allow gpio irqchip to map irqs
- dynamically
-Date: Mon, 9 Oct 2017 17:17:16 -0500
-Message-ID: <7ba9913d-9411-a75d-e7f0-2e9dcd71d742@ti.com>
-References: <20170721164900.7070-1-grygorii.strashko@ti.com>
- <20170928083348.GI4630@lahna.fi.intel.com>
- <CACRpkdZVSXtj31stVo6QvQ05LN43nEVj_1BccrebbcT7Ee24-A@mail.gmail.com>
- <aabd3920-7170-3883-58a8-695d15664150@ti.com>
- <CACRpkdZe6uKqWo6hg4ROjiv4YUWyW0Upy4s6UCMH4ri3v3PF5g@mail.gmail.com>
+From: Fenglin Wu <fenglinw@codeaurora.org>
+Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Update GPIO EN_CTL when
+ setting pin config
+Date: Tue, 10 Oct 2017 08:17:52 +0800
+Message-ID: <35aec5d7-8808-9930-8d6d-e0399df12a9e@codeaurora.org>
+References: <20170912003331.3092-1-fenglinw@codeaurora.org>
+ <20171005162750.GY1165@minitux>
+ <c770e00d-9bd5-8cae-0f47-da4d4beee0c4@codeaurora.org>
+ <20171009055643.GB1165@minitux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:61145 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754959AbdJIWRT (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 18:17:19 -0400
-In-Reply-To: <CACRpkdZe6uKqWo6hg4ROjiv4YUWyW0Upy4s6UCMH4ri3v3PF5g@mail.gmail.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43026 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755605AbdJJAR6 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 20:17:58 -0400
+In-Reply-To: <20171009055643.GB1165@minitux>
 Content-Language: en-US
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, Chris Gorman <chrisjohgorman@gmail.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
 
+On 10/9/2017 1:56 PM, Bjorn Andersson wrote:
+> On Sun 08 Oct 22:34 PDT 2017, Fenglin Wu wrote:
+> 
+>> On 10/6/2017 12:27 AM, Bjorn Andersson wrote:
+>>> On Mon 11 Sep 17:32 PDT 2017, fenglinw@codeaurora.org wrote:
+>>>
+>>>> From: Fenglin Wu <fenglinw@codeaurora.org>
+>>>>
+>>>> GPIO is expected to be disabled iff PIN_CONFIG_BIAS_HIGH_IMPEDANCE is
+>>>> configured. Update is_enabled flag in config_set() so that it can
+>>>> reflect GPIO status correctly. Also modify EN_CTL register based on
+>>>> is_enabled flag in config_set() to configure the GPIO properly.
+>>>>
+>>>> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+>>>> ---
+>>>>    drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 5 +++++
+>>>>    1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>>>> index c2c0bab..a0edaa8 100644
+>>>> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>>>> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>>>> @@ -453,6 +453,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>>>>    	pad = pctldev->desc->pins[pin].drv_data;
+>>>> +	pad->is_enabled = true;
+>>>>    	for (i = 0; i < nconfs; i++) {
+>>>>    		param = pinconf_to_config_param(configs[i]);
+>>>>    		arg = pinconf_to_config_argument(configs[i]);
+>>>> @@ -600,6 +601,10 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>>>>    			return ret;
+>>>>    	}
+>>>> +	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
+>>>> +
+>>>> +	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_EN_CTL, val);
+>>>> +
+>>>
+>>> This looks good.
+>>>
+>>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>
+>>>
+>>> But I spotted another issue while reviewing this; currently the initial
+>>> state of is_enabled is unconditionally set to enabled in
+>>> pmic_gpio_populate(), so reading the initial pinconf or configuring a
+>>> pinmux before setting a pinconf will operate on the potentially wrong
+>>> information.
+>>>
+>>> So I think the initial value should be read out from REG_EN_CTL rather
+>>> than being just "true".
+>>>
+>>> Can you please either submit another patch for this?
+>>
+>> Hmm, considering a GPIO which is disabled by default in hardware
+>> setting, what's its expected state if we only define "function" for it?
+>> I was thinking we need to enable it once it has any setting in pinmux or
+>> pinconf. If you think that we need to keep its original state until we
+>> set pinconf for it, yes, I can submit a change to address this.
+>>
+> 
+> Are there valid cases where only function should be selected and no
+> other configuration is used? If so it makes sense to make
+> pmic_gpio_set_mux() enable the block.
+> 
+> 
+> Regardless of this, if there are disabled pins that are not mentioned in
+> DT they will still appear as enabled in the debugfs interface; and this
+> I consider an error worth fixing.
+How about we do both: read the HW initial state in pmic_gpio_populate(),
+and also enable the GPIO block in pmic_gpio_set_mux()?
 
-
-On 10/09/2017 02:57 PM, Linus Walleij wrote:
-> On Mon, Oct 9, 2017 at 8:10 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
 > 
->> At the moment it was merged there were no user of irq_base except gpio-mockup.c.
+> Regards,
+> Bjorn
 > 
-> OK I feel calmer.
-> 
->> And actually there are shouldn't as calling irq_create_mapping() in cycle
->> will not guarantee sequential Linux IRQ numbers allocation.
-> 
-> Yeah. I always felt that was bad practice.
-> 
-> But we should really kill off that irq_base member from gpio_chip. It looks
-> dangerous to have arond.
-
-patch posted.
 
 -- 
-regards,
--grygorii
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
