@@ -1,102 +1,55 @@
-From: Fenglin Wu <fenglinw@codeaurora.org>
-Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Update GPIO EN_CTL when
- setting pin config
-Date: Tue, 10 Oct 2017 08:17:52 +0800
-Message-ID: <35aec5d7-8808-9930-8d6d-e0399df12a9e@codeaurora.org>
-References: <20170912003331.3092-1-fenglinw@codeaurora.org>
- <20171005162750.GY1165@minitux>
- <c770e00d-9bd5-8cae-0f47-da4d4beee0c4@codeaurora.org>
- <20171009055643.GB1165@minitux>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v2 0/3] pinctrl: sunxi: Start to enforce the strict mode
+Date: Tue, 10 Oct 2017 10:36:36 +0800
+Message-ID: <CAGb2v64PgArRi3gqq6mcT4f7bwY5-BHkaLOSrAQkCpBWHOXXMQ@mail.gmail.com>
+References: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43026 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755605AbdJJAR6 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 20:17:58 -0400
-In-Reply-To: <20171009055643.GB1165@minitux>
-Content-Language: en-US
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:43886 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754126AbdJJChC (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 22:37:02 -0400
+In-Reply-To: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On 10/9/2017 1:56 PM, Bjorn Andersson wrote:
-> On Sun 08 Oct 22:34 PDT 2017, Fenglin Wu wrote:
-> 
->> On 10/6/2017 12:27 AM, Bjorn Andersson wrote:
->>> On Mon 11 Sep 17:32 PDT 2017, fenglinw@codeaurora.org wrote:
->>>
->>>> From: Fenglin Wu <fenglinw@codeaurora.org>
->>>>
->>>> GPIO is expected to be disabled iff PIN_CONFIG_BIAS_HIGH_IMPEDANCE is
->>>> configured. Update is_enabled flag in config_set() so that it can
->>>> reflect GPIO status correctly. Also modify EN_CTL register based on
->>>> is_enabled flag in config_set() to configure the GPIO properly.
->>>>
->>>> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
->>>> ---
->>>>    drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 5 +++++
->>>>    1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->>>> index c2c0bab..a0edaa8 100644
->>>> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->>>> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->>>> @@ -453,6 +453,7 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->>>>    	pad = pctldev->desc->pins[pin].drv_data;
->>>> +	pad->is_enabled = true;
->>>>    	for (i = 0; i < nconfs; i++) {
->>>>    		param = pinconf_to_config_param(configs[i]);
->>>>    		arg = pinconf_to_config_argument(configs[i]);
->>>> @@ -600,6 +601,10 @@ static int pmic_gpio_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
->>>>    			return ret;
->>>>    	}
->>>> +	val = pad->is_enabled << PMIC_GPIO_REG_MASTER_EN_SHIFT;
->>>> +
->>>> +	ret = pmic_gpio_write(state, pad, PMIC_GPIO_REG_EN_CTL, val);
->>>> +
->>>
->>> This looks good.
->>>
->>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>
->>>
->>> But I spotted another issue while reviewing this; currently the initial
->>> state of is_enabled is unconditionally set to enabled in
->>> pmic_gpio_populate(), so reading the initial pinconf or configuring a
->>> pinmux before setting a pinconf will operate on the potentially wrong
->>> information.
->>>
->>> So I think the initial value should be read out from REG_EN_CTL rather
->>> than being just "true".
->>>
->>> Can you please either submit another patch for this?
->>
->> Hmm, considering a GPIO which is disabled by default in hardware
->> setting, what's its expected state if we only define "function" for it?
->> I was thinking we need to enable it once it has any setting in pinmux or
->> pinconf. If you think that we need to keep its original state until we
->> set pinconf for it, yes, I can submit a change to address this.
->>
-> 
-> Are there valid cases where only function should be selected and no
-> other configuration is used? If so it makes sense to make
-> pmic_gpio_set_mux() enable the block.
-> 
-> 
-> Regardless of this, if there are disabled pins that are not mentioned in
-> DT they will still appear as enabled in the debugfs interface; and this
-> I consider an error worth fixing.
-How about we do both: read the HW initial state in pmic_gpio_populate(),
-and also enable the GPIO block in pmic_gpio_set_mux()?
+On Tue, Oct 10, 2017 at 4:53 AM, Maxime Ripard
+<maxime.ripard@free-electrons.com> wrote:
+> Hi,
+>
+> Here is an attempt to enable pinctrl's strict mode on our pinctrl drivers.
+> Indeed, our controllers should have had that mode enabled since its
+> introduction.
+>
+> However, there's a number of issues with old device trees that prevent from
+> just enabling it for all the devices. There's basically two of them:
+>
+>   - Most of our old DTs have a pinctrl node for GPIOs, which will result in
+>     an error when the driver is going to request the gpio because it would
+>     already be requested automatically by pinctrl. We cannot break those.
+>
+>   - Some of these GPIOs also need to change their pin configuration to add
+>     a bias or change the current output, and there isn't a migration path.
+>
+> Let's just keep the old behaviour for the old SoCs, and enforce it on the
+> new one, and enabled it by default so that the situation at least doesn't
+> get worse.
+>
+> This has been tested on an A83t (strict on) and an H3 (strict off) board.
+>
+> Let me know what you think,
+> Maxime
+>
+> Changes from v1:
+>   - Duplicate the pmx_ops before modifying them
+>   - Disable the strict mode for R_PIO as well
+>
+> Maxime Ripard (3):
+>   pinctrl: sunxi: Introduce the strict flag
+>   pinctrl: sunxi: Disable strict mode for old pinctrl drivers
+>   pinctrl: sunxi: Enforce the strict mode by default
 
-> 
-> Regards,
-> Bjorn
-> 
-
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Acked-by: Chen-Yu Tsai <wens@csie.org>
