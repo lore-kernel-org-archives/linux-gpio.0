@@ -1,55 +1,143 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH v2 0/3] pinctrl: sunxi: Start to enforce the strict mode
-Date: Tue, 10 Oct 2017 10:36:36 +0800
-Message-ID: <CAGb2v64PgArRi3gqq6mcT4f7bwY5-BHkaLOSrAQkCpBWHOXXMQ@mail.gmail.com>
-References: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
+From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
+Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for GPIO0/1 when
+ used as LDOs
+Date: Tue, 10 Oct 2017 11:09:11 +0800
+Message-ID: <CAGb2v65-_MjUsfTHMoyzvczs_280p7NXEsStSaoR6wnvTCq5+A@mail.gmail.com>
+References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
+ <20171002120854.5212-13-quentin.schulz@free-electrons.com>
+ <CACRpkdZYcSuhvn0b0qa0k1PQHoyXjNyjoyhR2sPme_t1pF12Dg@mail.gmail.com>
+ <20171003144737.rhgtp3uwckhvoqdw@flea> <CAGb2v64=XL34x7iGJcEmmVnmzkA5wmyZJd-g827bY=kdHcZOMA@mail.gmail.com>
+ <8be22e47-8071-be4c-0bd4-38fa51cbe3ff@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:43886 "EHLO
-        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754126AbdJJChC (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 9 Oct 2017 22:37:02 -0400
-In-Reply-To: <cover.3e8ef5cb08d0164375d7644df0548e5f39b0fe66.1507582414.git-series.maxime.ripard@free-electrons.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <8be22e47-8071-be4c-0bd4-38fa51cbe3ff-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Tue, Oct 10, 2017 at 4:53 AM, Maxime Ripard
-<maxime.ripard@free-electrons.com> wrote:
-> Hi,
+On Wed, Oct 4, 2017 at 3:35 PM, Quentin Schulz
+<quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> Hi Chen-Yu, Linus,
 >
-> Here is an attempt to enable pinctrl's strict mode on our pinctrl drivers.
-> Indeed, our controllers should have had that mode enabled since its
-> introduction.
+> On 03/10/2017 17:08, Chen-Yu Tsai wrote:
+>> On Tue, Oct 3, 2017 at 10:47 PM, Maxime Ripard
+>> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>>> Hi Linus,
+>>>
+>>> On Tue, Oct 03, 2017 at 09:27:17AM +0000, Linus Walleij wrote:
+>>>> On Mon, Oct 2, 2017 at 2:08 PM, Quentin Schulz
+>>>> <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>>>>
+>>>>> On AXP813/818, GPIO0 and GPIO1 can be used as LDO as (respectively)
+>>>>> ldo_io0 and ldo_io1.
+>>>> (...)
+>>>>> +               gpio0_ldo: gpio0_ldo {
+>>>>> +                       pins = "GPIO0";
+>>>>> +                       function = "ldo";
+>>>>> +               };
+>>>> (...)
+>>>>> +                       pinctrl-names = "default";
+>>>>> +                       pinctrl-0 = <&gpio0_ldo>;
+>>>>>                         /* Disable by default to avoid conflicts with GPIO */
+>>>>>                         status = "disabled";
+>>>>
+>>>> So this is still by default disabled, but you make the default
+>>>> mode something called "ldo".
+>>>>
+>>>> And I think that is to be understood as a low-dropout regulator?
+>>>>
+>>>> So is the idea that this should be represented as a regulator
+>>>> in the end?
+>>>>
+>>>> Then I think the state name should not be "default" rather
+>>>> something like "regulator" and "default" should be the GPIO
+>>>> mode, as I guess something like that exists.
+>>>>
+>>>> Activating a regulator using pin control "default" mode is
+>>>> not very pretty. It would probably be unintuitive and end
+>>>> up wasting power because people will get confused about
+>>>> what is going on.
+>>>
+>>> That's not really it. The PMIC has pins that can be muxed either to
+>>> (regular) GPIOs, an ADC or to an LDO regulator.
+>>>
+>>> This is just muxing, the regulator will be enabled and disabled
+>>> separately through another register. If it wasn't the case, it would
+>>> indeed be very messy.
+>>
+>> No. Actually they are controlled in the same register, so it is
+>> very messy. The muxing options are:
+>>
+>>     - 0: drive low
+>>     - 1: drive high
+>>     - 2: input with interrupt triggering
+>>     - 3: LDO on
+>>     - 4: LDO off
+>>     - 5~7: floating (or ADC)
+>>
 >
-> However, there's a number of issues with old device trees that prevent from
-> just enabling it for all the devices. There's basically two of them:
+> Just to be a little more precise,
+>      - 0: drive low
+>      - 1: drive high
+>      - 2: input with interrupt triggering
+>      - 3: LDO on
+>      - 4: LDO off
+>      - 5~7: floating (or ADC)
 >
->   - Most of our old DTs have a pinctrl node for GPIOs, which will result in
->     an error when the driver is going to request the gpio because it would
->     already be requested automatically by pinctrl. We cannot break those.
+> for AXP813, and
+>      - 0: drive low
+>      - 1: drive high
+>      - 2: input with interrupt triggering
+>      - 3: LDO on
+>      - 4: ADC
+>      - 5~7: floating
 >
->   - Some of these GPIOs also need to change their pin configuration to add
->     a bias or change the current output, and there isn't a migration path.
+> for AXP209.
 >
-> Let's just keep the old behaviour for the old SoCs, and enforce it on the
-> new one, and enabled it by default so that the situation at least doesn't
-> get worse.
->
-> This has been tested on an A83t (strict on) and an H3 (strict off) board.
->
-> Let me know what you think,
-> Maxime
->
-> Changes from v1:
->   - Duplicate the pmx_ops before modifying them
->   - Disable the strict mode for R_PIO as well
->
-> Maxime Ripard (3):
->   pinctrl: sunxi: Introduce the strict flag
->   pinctrl: sunxi: Disable strict mode for old pinctrl drivers
->   pinctrl: sunxi: Enforce the strict mode by default
+> So I think what you suggested Linus is not really relevant here as the
+> regulator framework will take care of disabling the regulator when
+> needed (for AXP813 via the ldo_off "muxing" selected by the regulator
+> framework).
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Linus is suggesting that we use (switching between) pinctrl states to
+control the regulator, as opposed to overriding the register value
+directly. That would be nice, as both subsystems would have the same
+idea of what's actually happening in the hardware.
+
+As Linus mentioned, having the LDO on or off as the default pinctrl state
+is not pretty. It also means as soon as the device is brought up, the
+regulator state gets overridden. That would not work well for regulators
+that have/want the "always-on" or "boot-on" properties.
+
+> However, there is no LDO off bit for AXP209 and the LDO can't be set to
+> 0V in any other register. What's done now in the regulator driver for
+> AXP209 is to select the floating "muxing" for the pin when wanting to
+> disable the regulator. So I guess that's a way to handle it. Should we
+> do it another way?
+
+I can't think of one. :)
+
+You could have an actual pinmux option for "floating". If there's no
+"LDO off" state, the regulator driver could use the "floating" state
+instead.
+
+ChenYu
+
+> Thanks for raising the issue, I frankly haven't thought about that at all.
+>
+> I have to send a v4 to update the support for AXP813 (basically setting
+> ADC muxing to 0x5 instead of 0x4, for AXP813) as I misread the muxing
+> register description when adding support for it.
+>
+> Thanks,
+> Quentin
+> --
+> Quentin Schulz, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
