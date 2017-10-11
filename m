@@ -1,67 +1,94 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7795: fix trivial typo in
- comment
-Date: Wed, 11 Oct 2017 14:13:24 +0200
-Message-ID: <20171011121324.l42huohthvonceco@ninjato>
-References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
+From: Abhishek Shah <abhishek.shah@broadcom.com>
+Subject: Add hierarchical irq_domain for i2c based gpio expander pca9505
+Date: Wed, 11 Oct 2017 17:50:03 +0530
+Message-ID: <CAKUFe6aHg6CUwhorpXYvRjEO0BeMWw0nV-xjwG6F+ZvbHSMSRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3srp7xlsa4dzyqcu"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, takahiro.akashi@linaro.org
+Cc: linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Sandeep Tripathy <sandeep.tripathy@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
 
+Hi Linus,
 
---3srp7xlsa4dzyqcu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am facing one issue, where; while disabling/ masking interrupts just
+before kexec reboot, access to gpio expander pca9505 residing over
+i2c bus hangs, because i2c interrupts are disabled prior to writing
+pca9505 register.
+
+In our chip, we have 3 irq_domain, namely gicv3, bcm-iproc-gpio [GPIO
+controller with ~150 pins] and pca953x [40-pin IO expander pca9505].
+
+bcm-iproc-gpio and i2c interrupts among the other interrupts  are
+registered to gicv3 and
+pca953x interrupts are registered to bcm-iproc-gpio.
+
+So, interrupt from pca953x gets routed like...
+pca953x-> bcm-iproc-gpio-> gicv3
+
+Now, I see that, got GPIO controllers, an independent IRQ domain is
+added using gpiochip_irqchip_add_nested
+or gpiochip_irqchip_add, which makes use of irq_domain_add_simple like this:
+gpiochip->irqdomain = irq_domain_add_simple(of_node,
+                                        gpiochip->ngpio, first_irq,
+                                        &gpiochip_domain_ops, gpiochip);
+
+Is it possible to add hierarchical irq_domain for pca953x to be child
+of bcm-iproc-gpio and bcm-iproc-gpio irq_domain  to be child of gicv3
+using irq_domain_add_hierarchy instead of current  irq_domain_add_simple API??
+
+Would that make sure that first all interrupts of child irq_domain
+gets disabled?
 
 
-> > - * R8A7795 has 8 banks with 32 PGIOS in each =3D> 256 GPIOs.
-> > + * R8A7795 has 8 banks with 32 GPIOs IN EACH =3D> 256 GPIOs.
->=20
-> I don't think the capitalization of "in each" had to be changed?
-> (overzealous use of vim ~?)
+Now, this is where I am facing issue during kexec_reboot:
 
-Huh, how did this slip through? Sorry, Geert, and thanks for updating
-it.
+static void machine_kexec_mask_interrupts(void)                  /*
+function is present in arch/arm64/kernel/machine_kexec.c file */
+{
+        unsigned int i;
+        struct irq_desc *desc;
 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in sh-pfc-for-v4.15 with the above fixed, and once more
-> after filtering through s/r8a7795/r8a7795-es1/g.
+        for_each_irq_desc(i, desc) {
+                struct irq_chip *chip;
+                int ret;
 
-Good. I got the idea of checking es1 yesterday on the train, too, but
-didn't come around to do it yet.
+                chip = irq_desc_get_chip(desc);
+                if (!chip)
+                        continue;
 
-Thanks,
+                /*
+                 * First try to remove the active state. If this
+                 * fails, try to EOI the interrupt.
+                 */
+                ret = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE,
+false);   /* access to PCA9505 register hangs here and kexec reboot
+fails! */
 
-   Wolfram
+                if (ret && irqd_irq_inprogress(&desc->irq_data) &&
+                    chip->irq_eoi)
+                        chip->irq_eoi(&desc->irq_data);
+
+                if (chip->irq_mask)
+                        chip->irq_mask(&desc->irq_data);
+
+                if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
+                        chip->irq_disable(&desc->irq_data);
+        }
+}
+
+In my case, when this loop runs, initially it masks all GICv3
+interrupts,i.e. i2c interrupts are also disabled.
+Now when irq_set_irqchip_state gets executed in process of masking
+pca9505 interrupts, .irq_bus_sync_unlock
+callback (pca953x_irq_bus_sync_unlock) hangs because i2c interrupts are masked.
+
+Do you think adding "irq_domain_add_hierarchy" for GPIO controllers
+can solve this problem?
+or do you suggest change in the way "machine_kexec_mask_interrupts" is
+implemented?
 
 
---3srp7xlsa4dzyqcu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlneCt8ACgkQFA3kzBSg
-KbZ37A/9FCMsNGzKXtKIcPKkBtrvwkH0Js2T4K7hzgVIryc+d/ugFlBiASybnBp0
-VuQVvGrUJYRF71qjvoqRMCiJCBWlD7lrUzOzZ2I/bB7PRaZv8ZmPIo72FEUi384U
-2CySlB5dWxXSwqwnwTkBi6E4RQ0JdD3d1UOgDEdvrW2vS4VjrMSdJyOWZuVxTQUz
-/ezlFdLbJFXYZ7lZRFSc4/58/4tPH4YBagJ6ZJgRrOfET6Zm6MV/5ER0Ckg6KnkV
-dLEYAhTj3DLB0KrPeZ+S7dESW/KE7ASglrcoWR0ZCyJKDtKgHS7HW5EDrvnof5kF
-qfbfrOO4lHHlpp/ggig+n8YfOWRlCeA3ydx5zAYcOvyBXIzACskNsICd15Pr14aR
-TkwJZ95ZwBBj7ybb8VF0MGm0m0AdMhFl3T47LkF0mzDxblh9CMqbdKZqoXOflBEC
-huYL/2TIInJ1zGJKa+WclWhfAaW+UH6msNJh2vU5pcZAO3+RyJh8PmjAKWHJMDYH
-mXfgTVT/ybCkjHN4m7j1sgbRT7lHqG8GTU/Aop3X+72abjqkvEBNG+KbRcP+apIT
-PM8ZtvLDKvVkSy8LV9MEIvn5kNNoHGcUT/1au41Z/gig4OdCTWlxrQqeVyvJwvg9
-8VQ3jTYwvHZ9Na/bFkQusMzUln4X6Ph19LzxZXOY/6UcSG/QeGc=
-=9o7G
------END PGP SIGNATURE-----
-
---3srp7xlsa4dzyqcu--
+Regards,
+Abhishek
