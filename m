@@ -1,347 +1,496 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 01/16] gpio: Implement tighter IRQ chip integration
-Date: Tue, 10 Oct 2017 17:56:27 -0500
-Message-ID: <2701b79e-8d96-5805-c9b0-b779ab11757e@ti.com>
-References: <20170928095628.21966-1-thierry.reding@gmail.com>
- <20170928095628.21966-2-thierry.reding@gmail.com>
+From: Yixun Lan <yixun.lan@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: meson: separate soc drivers
+Date: Wed, 11 Oct 2017 10:55:04 +0800
+Message-ID: <CALecT5iPf593eWUuHmia80cccQw+vMB4iqMqVvXQqywXpPKVnQ@mail.gmail.com>
+References: <20171009101747.16940-1-jbrunet@baylibre.com> <20171009101747.16940-2-jbrunet@baylibre.com>
+ <f695448c-eb6c-2503-4381-93386fd6176f@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170928095628.21966-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:55097 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752762AbdJKCzG (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 10 Oct 2017 22:55:06 -0400
+In-Reply-To: <f695448c-eb6c-2503-4381-93386fd6176f@baylibre.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+
+hi jerome:
 
 
+On Mon, Oct 9, 2017 at 7:35 PM, Neil Armstrong <narmstrong@baylibre.com> wr=
+ote:
+> On 09/10/2017 12:17, Jerome Brunet wrote:
+>> When meson pinctrl is enabled, all meson platforms pinctrl drivers are
+>> built in the kernel, with a significant amount of data.
+>>
+>> This leads to situation where pinctrl drivers targeting an architecture
+>> are also compiled and shipped on another one (ex: meson8 - ARM - compile=
+d
+>> and shipped on ARM64 builds). This is a waste of memory we can easily
+>> avoid.
+>>
+>> This change makes 4 pinctrl drivers (1 per SoC) out the original single
+>> driver, allowing to compile and ship only the ones required.
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/pinctrl/Kconfig                    | 11 +------
+>>  drivers/pinctrl/meson/Kconfig              | 36 +++++++++++++++++++++
+>>  drivers/pinctrl/meson/Makefile             |  8 +++--
+>>  drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 25 +++++++++++++--
+>>  drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 25 +++++++++++++--
+>>  drivers/pinctrl/meson/pinctrl-meson.c      | 51 ++---------------------=
+-------
+>>  drivers/pinctrl/meson/pinctrl-meson.h      | 11 ++-----
+>>  drivers/pinctrl/meson/pinctrl-meson8.c     | 25 +++++++++++++--
+>>  drivers/pinctrl/meson/pinctrl-meson8b.c    | 25 +++++++++++++--
+>>  9 files changed, 140 insertions(+), 77 deletions(-)
+>>  create mode 100644 drivers/pinctrl/meson/Kconfig
+>>
+>> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+>> index 1778cf4f81c7..15b5b3b76ba9 100644
+>> --- a/drivers/pinctrl/Kconfig
+>> +++ b/drivers/pinctrl/Kconfig
+>> @@ -167,16 +167,6 @@ config PINCTRL_MCP23S08
+>>         This provides a GPIO interface supporting inputs and outputs.
+>>         The I2C versions of the chips can be used as interrupt-controlle=
+r.
+>>
+>> -config PINCTRL_MESON
+>> -     bool
+>> -     depends on OF
+>> -     select PINMUX
+>> -     select PINCONF
+>> -     select GENERIC_PINCONF
+>> -     select GPIOLIB
+>> -     select OF_GPIO
+>> -     select REGMAP_MMIO
+>> -
+>>  config PINCTRL_OXNAS
+>>       bool
+>>       depends on OF
+>> @@ -368,6 +358,7 @@ source "drivers/pinctrl/uniphier/Kconfig"
+>>  source "drivers/pinctrl/vt8500/Kconfig"
+>>  source "drivers/pinctrl/mediatek/Kconfig"
+>>  source "drivers/pinctrl/zte/Kconfig"
+>> +source "drivers/pinctrl/meson/Kconfig"
+>>
+>>  config PINCTRL_XWAY
+>>       bool
+>> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconf=
+ig
+>> new file mode 100644
+>> index 000000000000..15655bfd39b6
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/meson/Kconfig
+>> @@ -0,0 +1,36 @@
+>> +menuconfig PINCTRL_MESON
+>> +     bool "Amlogic SoC pinctrl drivers"
+>> +     depends on ARCH_MESON || COMPILE_TEST
+>> +     depends on OF
+>> +     select PINMUX
+>> +     select PINCONF
+>> +     select GENERIC_PINCONF
+>> +     select GPIOLIB
+>> +     select OF_GPIO
+>> +     select REGMAP_MMIO
+>> +     select PINMUX
+>> +     select GENERIC_PINCONF
+>> +
+>> +if PINCTRL_MESON
+>> +
+>> +config PINCTRL_MESON8
+>> +     bool "Meson 8 SoC pinctrl driver"
+>> +     depends on ARM
+>> +     default y
+>> +
+>> +config PINCTRL_MESON8B
+>> +     bool "Meson 8b SoC pinctrl driver"
+>> +     depends on ARM
+>> +     default y
+>> +
+>> +config PINCTRL_MESON_GXBB
+>> +     bool "Meson gxbb SoC pinctrl driver"
+>> +     depends on ARM64
+>> +     default y
+>> +
+>> +config PINCTRL_MESON_GXL
+>> +     bool "Meson gxl SoC pinctrl driver"
+>> +     depends on ARM64
+>> +     default y
+>> +
+>> +endif
+>> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Make=
+file
+>> index 27c5b5126008..a6ef5ff4e9b1 100644
+>> --- a/drivers/pinctrl/meson/Makefile
+>> +++ b/drivers/pinctrl/meson/Makefile
+>> @@ -1,3 +1,5 @@
+>> -obj-y        +=3D pinctrl-meson8.o pinctrl-meson8b.o
+>> -obj-y        +=3D pinctrl-meson-gxbb.o pinctrl-meson-gxl.o
+>> -obj-y        +=3D pinctrl-meson.o
+>> +obj-y +=3D pinctrl-meson.o
+>> +obj-$(CONFIG_PINCTRL_MESON8) +=3D pinctrl-meson8.o
+>> +obj-$(CONFIG_PINCTRL_MESON8B) +=3D pinctrl-meson8b.o
+>> +obj-$(CONFIG_PINCTRL_MESON_GXBB) +=3D pinctrl-meson-gxbb.o
+>> +obj-$(CONFIG_PINCTRL_MESON_GXL) +=3D pinctrl-meson-gxl.o
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctr=
+l/meson/pinctrl-meson-gxbb.c
+>> index 1881d4a0eca2..a87bdb17414b 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
+>> @@ -824,7 +824,7 @@ static struct meson_bank meson_gxbb_aobus_banks[] =
+=3D {
+>>       BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  0,  0, 16,  0,  0,  =
+0, 16,  1,  0),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data =3D {
+>>       .name           =3D "periphs-banks",
+>>       .pins           =3D meson_gxbb_periphs_pins,
+>>       .groups         =3D meson_gxbb_periphs_groups,
+>> @@ -836,7 +836,7 @@ struct meson_pinctrl_data meson_gxbb_periphs_pinctrl=
+_data =3D {
+>>       .num_banks      =3D ARRAY_SIZE(meson_gxbb_periphs_banks),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data =3D {
+>>       .name           =3D "aobus-banks",
+>>       .pins           =3D meson_gxbb_aobus_pins,
+>>       .groups         =3D meson_gxbb_aobus_groups,
+>> @@ -847,3 +847,24 @@ struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_=
+data =3D {
+>>       .num_funcs      =3D ARRAY_SIZE(meson_gxbb_aobus_functions),
+>>       .num_banks      =3D ARRAY_SIZE(meson_gxbb_aobus_banks),
+>>  };
+>> +
+>> +static const struct of_device_id meson_gxbb_pinctrl_dt_match[] =3D {
+>> +     {
+>> +             .compatible =3D "amlogic,meson-gxbb-periphs-pinctrl",
+>> +             .data =3D &meson_gxbb_periphs_pinctrl_data,
+>> +     },
+>> +     {
+>> +             .compatible =3D "amlogic,meson-gxbb-aobus-pinctrl",
+>> +             .data =3D &meson_gxbb_aobus_pinctrl_data,
+>> +     },
+>> +     { },
+>> +};
+>> +
+>> +static struct platform_driver meson_gxbb_pinctrl_driver =3D {
+>> +     .probe          =3D meson_pinctrl_probe,
+>> +     .driver =3D {
+>> +             .name   =3D "meson-gxbb-pinctrl",
+>> +             .of_match_table =3D meson_gxbb_pinctrl_dt_match,
+>> +     },
+>> +};
+>> +builtin_platform_driver(meson_gxbb_pinctrl_driver);
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl=
+/meson/pinctrl-meson-gxl.c
+>> index 3a14ecae9f31..088ac94f76b0 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
+>> @@ -809,7 +809,7 @@ static struct meson_bank meson_gxl_aobus_banks[] =3D=
+ {
+>>       BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 9, 0,  0,  0, 16,  0,  0,  0,=
+ 16,  1,  0),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data =3D {
+>>       .name           =3D "periphs-banks",
+>>       .pins           =3D meson_gxl_periphs_pins,
+>>       .groups         =3D meson_gxl_periphs_groups,
+>> @@ -821,7 +821,7 @@ struct meson_pinctrl_data meson_gxl_periphs_pinctrl_=
+data =3D {
+>>       .num_banks      =3D ARRAY_SIZE(meson_gxl_periphs_banks),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data =3D {
+>>       .name           =3D "aobus-banks",
+>>       .pins           =3D meson_gxl_aobus_pins,
+>>       .groups         =3D meson_gxl_aobus_groups,
+>> @@ -832,3 +832,24 @@ struct meson_pinctrl_data meson_gxl_aobus_pinctrl_d=
+ata =3D {
+>>       .num_funcs      =3D ARRAY_SIZE(meson_gxl_aobus_functions),
+>>       .num_banks      =3D ARRAY_SIZE(meson_gxl_aobus_banks),
+>>  };
+>> +
+>> +static const struct of_device_id meson_gxl_pinctrl_dt_match[] =3D {
+>> +     {
+>> +             .compatible =3D "amlogic,meson-gxl-periphs-pinctrl",
+>> +             .data =3D &meson_gxl_periphs_pinctrl_data,
+>> +     },
+>> +     {
+>> +             .compatible =3D "amlogic,meson-gxl-aobus-pinctrl",
+>> +             .data =3D &meson_gxl_aobus_pinctrl_data,
+>> +     },
+>> +     { },
+>> +};
+>> +
+>> +static struct platform_driver meson_gxl_pinctrl_driver =3D {
+>> +     .probe          =3D meson_pinctrl_probe,
+>> +     .driver =3D {
+>> +             .name   =3D "meson-gxl-pinctrl",
+>> +             .of_match_table =3D meson_gxl_pinctrl_dt_match,
+>> +     },
+>> +};
+>> +builtin_platform_driver(meson_gxl_pinctrl_driver);
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/mes=
+on/pinctrl-meson.c
+>> index 71bccb7acbf8..8fc1f1b45435 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.c
+>> @@ -481,42 +481,6 @@ static int meson_gpio_get(struct gpio_chip *chip, u=
+nsigned gpio)
+>>       return !!(val & BIT(bit));
+>>  }
+>>
+>> -static const struct of_device_id meson_pinctrl_dt_match[] =3D {
+>> -     {
+>> -             .compatible =3D "amlogic,meson8-cbus-pinctrl",
+>> -             .data =3D &meson8_cbus_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson8b-cbus-pinctrl",
+>> -             .data =3D &meson8b_cbus_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson8-aobus-pinctrl",
+>> -             .data =3D &meson8_aobus_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson8b-aobus-pinctrl",
+>> -             .data =3D &meson8b_aobus_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson-gxbb-periphs-pinctrl",
+>> -             .data =3D &meson_gxbb_periphs_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson-gxbb-aobus-pinctrl",
+>> -             .data =3D &meson_gxbb_aobus_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson-gxl-periphs-pinctrl",
+>> -             .data =3D &meson_gxl_periphs_pinctrl_data,
+>> -     },
+>> -     {
+>> -             .compatible =3D "amlogic,meson-gxl-aobus-pinctrl",
+>> -             .data =3D &meson_gxl_aobus_pinctrl_data,
+>> -     },
+>> -     { },
+>> -};
+>> -
+>>  static int meson_gpiolib_register(struct meson_pinctrl *pc)
+>>  {
+>>       int ret;
+>> @@ -624,7 +588,7 @@ static int meson_pinctrl_parse_dt(struct meson_pinct=
+rl *pc,
+>>       return 0;
+>>  }
+>>
+>> -static int meson_pinctrl_probe(struct platform_device *pdev)
+>> +int meson_pinctrl_probe(struct platform_device *pdev)
+>>  {
+>>       const struct of_device_id *match;
+>>       struct device *dev =3D &pdev->dev;
+>> @@ -636,10 +600,10 @@ static int meson_pinctrl_probe(struct platform_dev=
+ice *pdev)
+>>               return -ENOMEM;
+>>
+>>       pc->dev =3D dev;
+>> -     match =3D of_match_node(meson_pinctrl_dt_match, pdev->dev.of_node)=
+;
+>> +     match =3D of_match_node(dev->driver->of_match_table, dev->of_node)=
+;
+>
+>
+> Minor comment, maybe you could use of_device_get_match_data(dev) here, it=
+ will be simpler.
+>
+with the of_device_get_match_data() been used, I've got this error, probabl=
+y
+you should add "#include <linux/of_device.h>" ?
 
-On 09/28/2017 04:56 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Currently GPIO drivers are required to a GPIO chip and the corresponding
-> IRQ chip separately, which can result in a lot of boilerplate. Introduce
-> a new struct gpio_irq_chip, embedded in a struct gpio_chip, that drivers
-> can fill in if they want the GPIO core to automatically register the IRQ
-> chip associated with a GPIO chip.
+ AR      drivers/base/built-in.o
+drivers/pinctrl/meson/pinctrl-meson.c: In function =E2=80=98meson_pinctrl_p=
+robe=E2=80=99:
+drivers/pinctrl/meson/pinctrl-meson.c:520:43: error: implicit
+declaration of function =E2=80=98of_device_get_match_data=E2=80=99
+[-Werror=3Dimplicit-function-declaration]
+  pc->data =3D (struct meson_pinctrl_data *) of_device_get_match_data(dev);
+                                           ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/meson/pinctrl-meson.c:520:13: warning: cast to pointer
+from integer of different size [-Wint-to-pointer-cast]
+  pc->data =3D (struct meson_pinctrl_data *) of_device_get_match_data(dev);
+             ^
 
-few more comments.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   drivers/gpio/gpiolib.c      | 146 +++++++++++++++++++++++++++++++++++++++++++-
->   include/linux/gpio/driver.h |  64 +++++++++++++++++++
->   2 files changed, 207 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index eb80dac4e26a..b34d9cbd5809 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -72,6 +72,7 @@ static LIST_HEAD(gpio_lookup_list);
->   LIST_HEAD(gpio_devices);
->   
->   static void gpiochip_free_hogs(struct gpio_chip *chip);
-> +static int gpiochip_add_irqchip(struct gpio_chip *gpiochip);
->   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip);
->   static int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip);
->   static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip);
-> @@ -1260,6 +1261,10 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
->   	if (status)
->   		goto err_remove_from_list;
->   
-> +	status = gpiochip_add_irqchip(chip);
-> +	if (status)
-> +		goto err_remove_chip;
-> +
 
-lock_key - it better if drivers will not need to define it.
-
->   	status = of_gpiochip_add(chip);
->   	if (status)
->   		goto err_remove_chip;
-> @@ -1626,8 +1631,8 @@ EXPORT_SYMBOL_GPL(gpiochip_set_nested_irqchip);
->    * gpiochip by assigning the gpiochip as chip data, and using the irqchip
->    * stored inside the gpiochip.
->    */
-> -static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
-> -			    irq_hw_number_t hwirq)
-> +int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
-> +		     irq_hw_number_t hwirq)
->   {
->   	struct gpio_chip *chip = d->host_data;
->   
-> @@ -1655,8 +1660,9 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
->   
->   	return 0;
->   }
-> +EXPORT_SYMBOL_GPL(gpiochip_irq_map);
->   
-> -static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
-> +void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
->   {
->   	struct gpio_chip *chip = d->host_data;
->   
-> @@ -1665,6 +1671,7 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
->   	irq_set_chip_and_handler(irq, NULL, NULL);
->   	irq_set_chip_data(irq, NULL);
->   }
-> +EXPORT_SYMBOL_GPL(gpiochip_irq_unmap);
->   
->   static const struct irq_domain_ops gpiochip_domain_ops = {
->   	.map	= gpiochip_irq_map,
-> @@ -1705,6 +1712,124 @@ static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
->   	return irq_create_mapping(chip->irqdomain, offset);
->   }
->   
-> +/**
-> + * gpiochip_add_irqchip() - adds an IRQ chip to a GPIO chip
-> + * @gpiochip: the GPIO chip to add the IRQ chip to
-> + */
-> +static int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
-> +{
-> +	struct irq_chip *irqchip = gpiochip->irqchip;
-> +	const struct irq_domain_ops *ops;
-> +	struct device_node *np;
-> +	unsigned int type;
-> +	unsigned int i;
-> +
-> +	if (!irqchip)
-> +		return 0;
-> +
-> +	if (gpiochip->irq.parent_handler && gpiochip->can_sleep) {
-> +		chip_err(gpiochip, "you cannot have chained interrupts on a "
-> +			 "chip that may sleep\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	type = gpiochip->irq_default_type;
-> +	np = gpiochip->parent->of_node;
-> +
-> +#ifdef CONFIG_OF_GPIO
-> +	/*
-> +	 * If the gpiochip has an assigned OF node this takes precedence
-> +	 * FIXME: get rid of this and use gpiochip->parent->of_node
-> +	 * everywhere
-> +	 */
-> +	if (gpiochip->of_node)
-> +		np = gpiochip->of_node;
-> +#endif
-
-above can be retrieved from gpio_chip->gpiodev
-
-> +
-> +	/*
-> +	 * Specifying a default trigger is a terrible idea if DT or ACPI is
-> +	 * used to configure the interrupts, as you may end up with
-> +	 * conflicting triggers. Tell the user, and reset to NONE.
-> +	 */
-> +	if (WARN(np && type != IRQ_TYPE_NONE,
-> +		 "%s: Ignoring %u default trigger\n", np->full_name, type))
-> +		type = IRQ_TYPE_NONE;
-> +
-> +	if (has_acpi_companion(gpiochip->parent) && type != IRQ_TYPE_NONE) {
-> +		acpi_handle_warn(ACPI_HANDLE(gpiochip->parent),
-> +				 "Ignoring %u default trigger\n", type);
-> +		type = IRQ_TYPE_NONE;
-> +	}
-> +
-> +	gpiochip->to_irq = gpiochip_to_irq;
-> +	gpiochip->irq_default_type = type;
-> +
-> +	if (gpiochip->irq.domain_ops)
-> +		ops = gpiochip->irq.domain_ops;
-> +	else
-> +		ops = &gpiochip_domain_ops;
-> +
-> +	gpiochip->irqdomain = irq_domain_add_simple(np, gpiochip->ngpio,
-> +						    gpiochip->irq_base,
-> +						    ops, gpiochip);
-> +	if (!gpiochip->irqdomain)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * It is possible for a driver to override this, but only if the
-> +	 * alternative functions are both implemented.
-> +	 */
-> +	if (!irqchip->irq_request_resources &&
-> +	    !irqchip->irq_release_resources) {
-> +		irqchip->irq_request_resources = gpiochip_irq_reqres;
-> +		irqchip->irq_release_resources = gpiochip_irq_relres;
-> +	}
-> +
-> +	if (gpiochip->irq.parent_handler) {
-> +		void *data = gpiochip->irq.parent_handler_data ?: gpiochip;
-> +
-> +		for (i = 0; i < gpiochip->irq.num_parents; i++) {
-> +			/*
-> +			 * The parent IRQ chip is already using the chip_data
-> +			 * for this IRQ chip, so our callbacks simply use the
-> +			 * handler_data.
-> +			 */
-> +			irq_set_chained_handler_and_data(gpiochip->irq.parents[i],
-> +							 gpiochip->irq.parent_handler,
-> +							 data);
-> +		}
-> +
-> +		gpiochip->irq_nested = false;
-> +	} else {
-> +		gpiochip->irq_nested = true;
-
-GPIO driver might not specify parent_handler, but it doesn't mean it's irq_nested,
-as driver may use request_irq()
-
-> +	}
-> +
-> +	/*
-> +	 * Prepare the mapping since the IRQ chip shall be orthogonal to any
-> +	 * GPIO chip calls.
-> +	 */
-> +	for (i = 0; i < gpiochip->ngpio; i++) {
-> +		unsigned int irq;
-> +
-> +		if (!gpiochip_irqchip_irq_valid(gpiochip, i))
-> +			continue;
-> +
-> +		irq = irq_create_mapping(gpiochip->irqdomain, i);
-> +		if (!irq) {
-> +			chip_err(gpiochip,
-> +				 "failed to create IRQ mapping for GPIO#%u\n",
-> +				 i);
-> +			continue;
-> +		}
-> +
-> +		irq_set_parent(irq, gpiochip->irq.map[i]);
-> +	}
-> +
-> +	acpi_gpiochip_request_interrupts(gpiochip);
-> +
-> +	return 0;
-> +}
-> +
->   /**
->    * gpiochip_irqchip_remove() - removes an irqchip added to a gpiochip
->    * @gpiochip: the gpiochip to remove the irqchip from
-> @@ -1722,6 +1847,16 @@ static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip)
->   		irq_set_handler_data(gpiochip->irq_chained_parent, NULL);
->   	}
->   
-> +	if (gpiochip->irqchip) {
-> +		struct gpio_irq_chip *irq = &gpiochip->irq;
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < irq->num_parents; i++) {
-> +			irq_set_chained_handler(irq->parents[i], NULL);
-> +			irq_set_handler_data(irq->parents[i], NULL);
-> +		}
-> +	}
-> +
->   	/* Remove all IRQ mappings and delete the domain */
->   	if (gpiochip->irqdomain) {
->   		for (offset = 0; offset < gpiochip->ngpio; offset++) {
-> @@ -1842,6 +1977,11 @@ EXPORT_SYMBOL_GPL(gpiochip_irqchip_add_key);
->   
->   #else /* CONFIG_GPIOLIB_IRQCHIP */
->   
-> +static inline int gpiochip_add_irqchip(struct gpio_chip *gpiochip)
-> +{
-> +	return 0;
-> +}
-> +
->   static void gpiochip_irqchip_remove(struct gpio_chip *gpiochip) {}
->   static inline int gpiochip_irqchip_init_valid_mask(struct gpio_chip *gpiochip)
->   {
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index c97f8325e8bf..6100b171817e 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -19,6 +19,58 @@ struct module;
->   
->   #ifdef CONFIG_GPIOLIB
->   
-> +#ifdef CONFIG_GPIOLIB_IRQCHIP
-> +/**
-> + * struct gpio_irq_chip - GPIO interrupt controller
-> + */
-> +struct gpio_irq_chip {
-> +	/**
-> +	 * @domain_ops:
-> +	 *
-> +	 * Table of interrupt domain operations for this IRQ chip.
-> +	 */
-> +	const struct irq_domain_ops *domain_ops;
-> +
-> +	/**
-> +	 * @parent_handler:
-> +	 *
-> +	 * The interrupt handler for the GPIO chip's parent interrupts, may be
-> +	 * NULL if the parent interrupts are nested rather than cascaded.
-> +	 */
-> +	irq_flow_handler_t parent_handler;
-> +
-> +	/**
-> +	 * @parent_handler_data:
-> +	 *
-> +	 * Data associated, and passed to, the handler for the parent
-> +	 * interrupt.
-> +	 */
-> +	void *parent_handler_data;
-> +
-> +	/**
-> +	 * @num_parents:
-> +	 *
-> +	 * The number of interrupt parents of a GPIO chip.
-> +	 */
-> +	unsigned int num_parents;
-> +
-> +	/**
-> +	 * @parents:
-> +	 *
-> +	 * A list of interrupt parents of a GPIO chip. This is owned by the
-> +	 * driver, so the core will only reference this list, not modify it.
-> +	 */
-> +	unsigned int *parents;
-> +
-> +	/**
-> +	 * @map:
-> +	 *
-> +	 * A list of interrupt parents for each line of a GPIO chip.
-> +	 */
-> +	unsigned int *map;
-> +};
-> +#endif
-> +
->   /**
->    * struct gpio_chip - abstract a GPIO controller
->    * @label: a functional name for the GPIO device, such as a part
-> @@ -173,6 +225,14 @@ struct gpio_chip {
->   	bool			irq_need_valid_mask;
->   	unsigned long		*irq_valid_mask;
->   	struct lock_class_key	*lock_key;
-> +
-> +	/**
-> +	 * @irq:
-> +	 *
-> +	 * Integrates interrupt chip functionality with the GPIO chip. Can be
-> +	 * used to handle IRQs for most practical cases.
-> +	 */
-> +	struct gpio_irq_chip irq;
->   #endif
->   
->   #if defined(CONFIG_OF_GPIO)
-> @@ -264,6 +324,10 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
->   
->   #ifdef CONFIG_GPIOLIB_IRQCHIP
->   
-> +int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
-> +		     irq_hw_number_t hwirq);
-> +void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq);
-> +
->   void gpiochip_set_chained_irqchip(struct gpio_chip *gpiochip,
->   		struct irq_chip *irqchip,
->   		unsigned int parent_irq,
-> 
-
--- 
-regards,
--grygorii
+>>       pc->data =3D (struct meson_pinctrl_data *) match->data;
+>>
+>> -     ret =3D meson_pinctrl_parse_dt(pc, pdev->dev.of_node);
+>> +     ret =3D meson_pinctrl_parse_dt(pc, dev->of_node);
+>>       if (ret)
+>>               return ret;
+>>
+>> @@ -659,12 +623,3 @@ static int meson_pinctrl_probe(struct platform_devi=
+ce *pdev)
+>>
+>>       return meson_gpiolib_register(pc);
+>>  }
+>> -
+>> -static struct platform_driver meson_pinctrl_driver =3D {
+>> -     .probe          =3D meson_pinctrl_probe,
+>> -     .driver =3D {
+>> -             .name   =3D "meson-pinctrl",
+>> -             .of_match_table =3D meson_pinctrl_dt_match,
+>> -     },
+>> -};
+>> -builtin_platform_driver(meson_pinctrl_driver);
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/mes=
+on/pinctrl-meson.h
+>> index 7ed0a80fd9dc..284157d43612 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson.h
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson.h
+>> @@ -13,6 +13,7 @@
+>>
+>>  #include <linux/gpio.h>
+>>  #include <linux/pinctrl/pinctrl.h>
+>> +#include <linux/platform_device.h>
+>>  #include <linux/regmap.h>
+>>  #include <linux/types.h>
+>>
+>> @@ -165,11 +166,5 @@ struct meson_pinctrl {
+>>
+>>  #define MESON_PIN(x) PINCTRL_PIN(x, #x)
+>>
+>> -extern struct meson_pinctrl_data meson8_cbus_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson8_aobus_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson8b_cbus_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson8b_aobus_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data;
+>> -extern struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data;
+>> +/* Common probe function */
+>> +int meson_pinctrl_probe(struct platform_device *pdev);
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/me=
+son/pinctrl-meson8.c
+>> index fbf8ecd1c2b6..68b345fc105a 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson8.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson8.c
+>> @@ -1044,7 +1044,7 @@ static struct meson_bank meson8_aobus_banks[] =3D =
+{
+>>       BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  0,  0, 16,  0,  0, =
+ 0, 16,  1,  0),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson8_cbus_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson8_cbus_pinctrl_data =3D {
+>>       .name           =3D "cbus-banks",
+>>       .pins           =3D meson8_cbus_pins,
+>>       .groups         =3D meson8_cbus_groups,
+>> @@ -1056,7 +1056,7 @@ struct meson_pinctrl_data meson8_cbus_pinctrl_data=
+ =3D {
+>>       .num_banks      =3D ARRAY_SIZE(meson8_cbus_banks),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson8_aobus_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson8_aobus_pinctrl_data =3D {
+>>       .name           =3D "ao-bank",
+>>       .pins           =3D meson8_aobus_pins,
+>>       .groups         =3D meson8_aobus_groups,
+>> @@ -1067,3 +1067,24 @@ struct meson_pinctrl_data meson8_aobus_pinctrl_da=
+ta =3D {
+>>       .num_funcs      =3D ARRAY_SIZE(meson8_aobus_functions),
+>>       .num_banks      =3D ARRAY_SIZE(meson8_aobus_banks),
+>>  };
+>> +
+>> +static const struct of_device_id meson8_pinctrl_dt_match[] =3D {
+>> +     {
+>> +             .compatible =3D "amlogic,meson8-cbus-pinctrl",
+>> +             .data =3D &meson8_cbus_pinctrl_data,
+>> +     },
+>> +     {
+>> +             .compatible =3D "amlogic,meson8-aobus-pinctrl",
+>> +             .data =3D &meson8_aobus_pinctrl_data,
+>> +     },
+>> +     { },
+>> +};
+>> +
+>> +static struct platform_driver meson8_pinctrl_driver =3D {
+>> +     .probe          =3D meson_pinctrl_probe,
+>> +     .driver =3D {
+>> +             .name   =3D "meson8-pinctrl",
+>> +             .of_match_table =3D meson8_pinctrl_dt_match,
+>> +     },
+>> +};
+>> +builtin_platform_driver(meson8_pinctrl_driver);
+>> diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/m=
+eson/pinctrl-meson8b.c
+>> index 7af296db48c8..4d61df09bc3f 100644
+>> --- a/drivers/pinctrl/meson/pinctrl-meson8b.c
+>> +++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+>> @@ -904,7 +904,7 @@ static struct meson_bank meson8b_aobus_banks[] =3D {
+>>       BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  0,  0, 16,  0,  0, =
+ 0, 16,  1,  0),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson8b_cbus_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson8b_cbus_pinctrl_data =3D {
+>>       .name           =3D "cbus-banks",
+>>       .pins           =3D meson8b_cbus_pins,
+>>       .groups         =3D meson8b_cbus_groups,
+>> @@ -916,7 +916,7 @@ struct meson_pinctrl_data meson8b_cbus_pinctrl_data =
+=3D {
+>>       .num_banks      =3D ARRAY_SIZE(meson8b_cbus_banks),
+>>  };
+>>
+>> -struct meson_pinctrl_data meson8b_aobus_pinctrl_data =3D {
+>> +static struct meson_pinctrl_data meson8b_aobus_pinctrl_data =3D {
+>>       .name           =3D "aobus-banks",
+>>       .pins           =3D meson8b_aobus_pins,
+>>       .groups         =3D meson8b_aobus_groups,
+>> @@ -927,3 +927,24 @@ struct meson_pinctrl_data meson8b_aobus_pinctrl_dat=
+a =3D {
+>>       .num_funcs      =3D ARRAY_SIZE(meson8b_aobus_functions),
+>>       .num_banks      =3D ARRAY_SIZE(meson8b_aobus_banks),
+>>  };
+>> +
+>> +static const struct of_device_id meson8b_pinctrl_dt_match[] =3D {
+>> +     {
+>> +             .compatible =3D "amlogic,meson8b-cbus-pinctrl",
+>> +             .data =3D &meson8b_cbus_pinctrl_data,
+>> +     },
+>> +     {
+>> +             .compatible =3D "amlogic,meson8b-aobus-pinctrl",
+>> +             .data =3D &meson8b_aobus_pinctrl_data,
+>> +     },
+>> +     { },
+>> +};
+>> +
+>> +static struct platform_driver meson8b_pinctrl_driver =3D {
+>> +     .probe          =3D meson_pinctrl_probe,
+>> +     .driver =3D {
+>> +             .name   =3D "meson8b-pinctrl",
+>> +             .of_match_table =3D meson8b_pinctrl_dt_match,
+>> +     },
+>> +};
+>> +builtin_platform_driver(meson8b_pinctrl_driver);
+>>
+>
+> Apart the comment on of_device_get_match_data() :
+>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
