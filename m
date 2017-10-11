@@ -1,437 +1,67 @@
-From: Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 1/2] pinctrl: meson: separate soc drivers
-Date: Wed, 11 Oct 2017 14:02:29 +0200
-Message-ID: <20171011120230.30483-2-jbrunet@baylibre.com>
-References: <20171011120230.30483-1-jbrunet@baylibre.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:52836 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752005AbdJKMCj (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 08:02:39 -0400
-Received: by mail-wm0-f48.google.com with SMTP id k4so4127501wmc.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 05:02:38 -0700 (PDT)
-In-Reply-To: <20171011120230.30483-1-jbrunet@baylibre.com>
-Sender: linux-gpio-owner@vger.kernel.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7795: fix trivial typo in
+ comment
+Date: Wed, 11 Oct 2017 14:13:24 +0200
+Message-ID: <20171011121324.l42huohthvonceco@ninjato>
+References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3srp7xlsa4dzyqcu"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 
-When meson pinctrl is enabled, all meson platforms pinctrl drivers are
-built in the kernel, with a significant amount of data.
 
-This leads to situation where pinctrl drivers targeting an architecture
-are also compiled and shipped on another one (ex: meson8 - ARM - compiled
-and shipped on ARM64 builds). This is a waste of memory we can easily
-avoid.
+--3srp7xlsa4dzyqcu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This change makes 4 pinctrl drivers (1 per SoC) out the original single
-driver, allowing to compile and ship only the ones required.
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pinctrl/Kconfig                    | 11 +-----
- drivers/pinctrl/meson/Kconfig              | 36 ++++++++++++++++++++
- drivers/pinctrl/meson/Makefile             |  8 +++--
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 25 ++++++++++++--
- drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 25 ++++++++++++--
- drivers/pinctrl/meson/pinctrl-meson.c      | 54 +++---------------------------
- drivers/pinctrl/meson/pinctrl-meson.h      | 11 ++----
- drivers/pinctrl/meson/pinctrl-meson8.c     | 25 ++++++++++++--
- drivers/pinctrl/meson/pinctrl-meson8b.c    | 25 ++++++++++++--
- 9 files changed, 141 insertions(+), 79 deletions(-)
- create mode 100644 drivers/pinctrl/meson/Kconfig
+> > - * R8A7795 has 8 banks with 32 PGIOS in each =3D> 256 GPIOs.
+> > + * R8A7795 has 8 banks with 32 GPIOs IN EACH =3D> 256 GPIOs.
+>=20
+> I don't think the capitalization of "in each" had to be changed?
+> (overzealous use of vim ~?)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 1778cf4f81c7..15b5b3b76ba9 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -167,16 +167,6 @@ config PINCTRL_MCP23S08
- 	  This provides a GPIO interface supporting inputs and outputs.
- 	  The I2C versions of the chips can be used as interrupt-controller.
- 
--config PINCTRL_MESON
--	bool
--	depends on OF
--	select PINMUX
--	select PINCONF
--	select GENERIC_PINCONF
--	select GPIOLIB
--	select OF_GPIO
--	select REGMAP_MMIO
--
- config PINCTRL_OXNAS
- 	bool
- 	depends on OF
-@@ -368,6 +358,7 @@ source "drivers/pinctrl/uniphier/Kconfig"
- source "drivers/pinctrl/vt8500/Kconfig"
- source "drivers/pinctrl/mediatek/Kconfig"
- source "drivers/pinctrl/zte/Kconfig"
-+source "drivers/pinctrl/meson/Kconfig"
- 
- config PINCTRL_XWAY
- 	bool
-diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
-new file mode 100644
-index 000000000000..15655bfd39b6
---- /dev/null
-+++ b/drivers/pinctrl/meson/Kconfig
-@@ -0,0 +1,36 @@
-+menuconfig PINCTRL_MESON
-+	bool "Amlogic SoC pinctrl drivers"
-+	depends on ARCH_MESON || COMPILE_TEST
-+	depends on OF
-+	select PINMUX
-+	select PINCONF
-+	select GENERIC_PINCONF
-+	select GPIOLIB
-+	select OF_GPIO
-+	select REGMAP_MMIO
-+	select PINMUX
-+	select GENERIC_PINCONF
-+
-+if PINCTRL_MESON
-+
-+config PINCTRL_MESON8
-+	bool "Meson 8 SoC pinctrl driver"
-+	depends on ARM
-+	default y
-+
-+config PINCTRL_MESON8B
-+	bool "Meson 8b SoC pinctrl driver"
-+	depends on ARM
-+	default y
-+
-+config PINCTRL_MESON_GXBB
-+	bool "Meson gxbb SoC pinctrl driver"
-+	depends on ARM64
-+	default y
-+
-+config PINCTRL_MESON_GXL
-+	bool "Meson gxl SoC pinctrl driver"
-+	depends on ARM64
-+	default y
-+
-+endif
-diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
-index 27c5b5126008..a6ef5ff4e9b1 100644
---- a/drivers/pinctrl/meson/Makefile
-+++ b/drivers/pinctrl/meson/Makefile
-@@ -1,3 +1,5 @@
--obj-y	+= pinctrl-meson8.o pinctrl-meson8b.o
--obj-y	+= pinctrl-meson-gxbb.o pinctrl-meson-gxl.o
--obj-y	+= pinctrl-meson.o
-+obj-y += pinctrl-meson.o
-+obj-$(CONFIG_PINCTRL_MESON8) += pinctrl-meson8.o
-+obj-$(CONFIG_PINCTRL_MESON8B) += pinctrl-meson8b.o
-+obj-$(CONFIG_PINCTRL_MESON_GXBB) += pinctrl-meson-gxbb.o
-+obj-$(CONFIG_PINCTRL_MESON_GXL) += pinctrl-meson-gxl.o
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 1881d4a0eca2..a87bdb17414b 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -824,7 +824,7 @@ static struct meson_bank meson_gxbb_aobus_banks[] = {
- 	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
--struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
-+static struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_gxbb_periphs_pins,
- 	.groups		= meson_gxbb_periphs_groups,
-@@ -836,7 +836,7 @@ struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data = {
- 	.num_banks	= ARRAY_SIZE(meson_gxbb_periphs_banks),
- };
- 
--struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
-+static struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson_gxbb_aobus_pins,
- 	.groups		= meson_gxbb_aobus_groups,
-@@ -847,3 +847,24 @@ struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data = {
- 	.num_funcs	= ARRAY_SIZE(meson_gxbb_aobus_functions),
- 	.num_banks	= ARRAY_SIZE(meson_gxbb_aobus_banks),
- };
-+
-+static const struct of_device_id meson_gxbb_pinctrl_dt_match[] = {
-+	{
-+		.compatible = "amlogic,meson-gxbb-periphs-pinctrl",
-+		.data = &meson_gxbb_periphs_pinctrl_data,
-+	},
-+	{
-+		.compatible = "amlogic,meson-gxbb-aobus-pinctrl",
-+		.data = &meson_gxbb_aobus_pinctrl_data,
-+	},
-+	{ },
-+};
-+
-+static struct platform_driver meson_gxbb_pinctrl_driver = {
-+	.probe		= meson_pinctrl_probe,
-+	.driver = {
-+		.name	= "meson-gxbb-pinctrl",
-+		.of_match_table = meson_gxbb_pinctrl_dt_match,
-+	},
-+};
-+builtin_platform_driver(meson_gxbb_pinctrl_driver);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxl.c b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-index 3a14ecae9f31..088ac94f76b0 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxl.c
-@@ -809,7 +809,7 @@ static struct meson_bank meson_gxl_aobus_banks[] = {
- 	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 9, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
--struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
-+static struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
- 	.name		= "periphs-banks",
- 	.pins		= meson_gxl_periphs_pins,
- 	.groups		= meson_gxl_periphs_groups,
-@@ -821,7 +821,7 @@ struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data = {
- 	.num_banks	= ARRAY_SIZE(meson_gxl_periphs_banks),
- };
- 
--struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
-+static struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson_gxl_aobus_pins,
- 	.groups		= meson_gxl_aobus_groups,
-@@ -832,3 +832,24 @@ struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data = {
- 	.num_funcs	= ARRAY_SIZE(meson_gxl_aobus_functions),
- 	.num_banks	= ARRAY_SIZE(meson_gxl_aobus_banks),
- };
-+
-+static const struct of_device_id meson_gxl_pinctrl_dt_match[] = {
-+	{
-+		.compatible = "amlogic,meson-gxl-periphs-pinctrl",
-+		.data = &meson_gxl_periphs_pinctrl_data,
-+	},
-+	{
-+		.compatible = "amlogic,meson-gxl-aobus-pinctrl",
-+		.data = &meson_gxl_aobus_pinctrl_data,
-+	},
-+	{ },
-+};
-+
-+static struct platform_driver meson_gxl_pinctrl_driver = {
-+	.probe		= meson_pinctrl_probe,
-+	.driver = {
-+		.name	= "meson-gxl-pinctrl",
-+		.of_match_table = meson_gxl_pinctrl_dt_match,
-+	},
-+};
-+builtin_platform_driver(meson_gxl_pinctrl_driver);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 71bccb7acbf8..525e8b17d471 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -50,6 +50,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_device.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/pinctrl/pinconf.h>
- #include <linux/pinctrl/pinctrl.h>
-@@ -481,42 +482,6 @@ static int meson_gpio_get(struct gpio_chip *chip, unsigned gpio)
- 	return !!(val & BIT(bit));
- }
- 
--static const struct of_device_id meson_pinctrl_dt_match[] = {
--	{
--		.compatible = "amlogic,meson8-cbus-pinctrl",
--		.data = &meson8_cbus_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson8b-cbus-pinctrl",
--		.data = &meson8b_cbus_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson8-aobus-pinctrl",
--		.data = &meson8_aobus_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson8b-aobus-pinctrl",
--		.data = &meson8b_aobus_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson-gxbb-periphs-pinctrl",
--		.data = &meson_gxbb_periphs_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson-gxbb-aobus-pinctrl",
--		.data = &meson_gxbb_aobus_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson-gxl-periphs-pinctrl",
--		.data = &meson_gxl_periphs_pinctrl_data,
--	},
--	{
--		.compatible = "amlogic,meson-gxl-aobus-pinctrl",
--		.data = &meson_gxl_aobus_pinctrl_data,
--	},
--	{ },
--};
--
- static int meson_gpiolib_register(struct meson_pinctrl *pc)
- {
- 	int ret;
-@@ -624,9 +589,8 @@ static int meson_pinctrl_parse_dt(struct meson_pinctrl *pc,
- 	return 0;
- }
- 
--static int meson_pinctrl_probe(struct platform_device *pdev)
-+int meson_pinctrl_probe(struct platform_device *pdev)
- {
--	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	struct meson_pinctrl *pc;
- 	int ret;
-@@ -636,10 +600,9 @@ static int meson_pinctrl_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	pc->dev = dev;
--	match = of_match_node(meson_pinctrl_dt_match, pdev->dev.of_node);
--	pc->data = (struct meson_pinctrl_data *) match->data;
-+	pc->data = (struct meson_pinctrl_data *) of_device_get_match_data(dev);
- 
--	ret = meson_pinctrl_parse_dt(pc, pdev->dev.of_node);
-+	ret = meson_pinctrl_parse_dt(pc, dev->of_node);
- 	if (ret)
- 		return ret;
- 
-@@ -659,12 +622,3 @@ static int meson_pinctrl_probe(struct platform_device *pdev)
- 
- 	return meson_gpiolib_register(pc);
- }
--
--static struct platform_driver meson_pinctrl_driver = {
--	.probe		= meson_pinctrl_probe,
--	.driver = {
--		.name	= "meson-pinctrl",
--		.of_match_table = meson_pinctrl_dt_match,
--	},
--};
--builtin_platform_driver(meson_pinctrl_driver);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.h b/drivers/pinctrl/meson/pinctrl-meson.h
-index 7ed0a80fd9dc..284157d43612 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.h
-+++ b/drivers/pinctrl/meson/pinctrl-meson.h
-@@ -13,6 +13,7 @@
- 
- #include <linux/gpio.h>
- #include <linux/pinctrl/pinctrl.h>
-+#include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/types.h>
- 
-@@ -165,11 +166,5 @@ struct meson_pinctrl {
- 
- #define MESON_PIN(x) PINCTRL_PIN(x, #x)
- 
--extern struct meson_pinctrl_data meson8_cbus_pinctrl_data;
--extern struct meson_pinctrl_data meson8_aobus_pinctrl_data;
--extern struct meson_pinctrl_data meson8b_cbus_pinctrl_data;
--extern struct meson_pinctrl_data meson8b_aobus_pinctrl_data;
--extern struct meson_pinctrl_data meson_gxbb_periphs_pinctrl_data;
--extern struct meson_pinctrl_data meson_gxbb_aobus_pinctrl_data;
--extern struct meson_pinctrl_data meson_gxl_periphs_pinctrl_data;
--extern struct meson_pinctrl_data meson_gxl_aobus_pinctrl_data;
-+/* Common probe function */
-+int meson_pinctrl_probe(struct platform_device *pdev);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index fbf8ecd1c2b6..68b345fc105a 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -1044,7 +1044,7 @@ static struct meson_bank meson8_aobus_banks[] = {
- 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
--struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
-+static struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
- 	.name		= "cbus-banks",
- 	.pins		= meson8_cbus_pins,
- 	.groups		= meson8_cbus_groups,
-@@ -1056,7 +1056,7 @@ struct meson_pinctrl_data meson8_cbus_pinctrl_data = {
- 	.num_banks	= ARRAY_SIZE(meson8_cbus_banks),
- };
- 
--struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
-+static struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
- 	.name		= "ao-bank",
- 	.pins		= meson8_aobus_pins,
- 	.groups		= meson8_aobus_groups,
-@@ -1067,3 +1067,24 @@ struct meson_pinctrl_data meson8_aobus_pinctrl_data = {
- 	.num_funcs	= ARRAY_SIZE(meson8_aobus_functions),
- 	.num_banks	= ARRAY_SIZE(meson8_aobus_banks),
- };
-+
-+static const struct of_device_id meson8_pinctrl_dt_match[] = {
-+	{
-+		.compatible = "amlogic,meson8-cbus-pinctrl",
-+		.data = &meson8_cbus_pinctrl_data,
-+	},
-+	{
-+		.compatible = "amlogic,meson8-aobus-pinctrl",
-+		.data = &meson8_aobus_pinctrl_data,
-+	},
-+	{ },
-+};
-+
-+static struct platform_driver meson8_pinctrl_driver = {
-+	.probe		= meson_pinctrl_probe,
-+	.driver = {
-+		.name	= "meson8-pinctrl",
-+		.of_match_table = meson8_pinctrl_dt_match,
-+	},
-+};
-+builtin_platform_driver(meson8_pinctrl_driver);
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
-index 7af296db48c8..4d61df09bc3f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8b.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
-@@ -904,7 +904,7 @@ static struct meson_bank meson8b_aobus_banks[] = {
- 	BANK("AO",   GPIOAO_0, GPIO_TEST_N, 0, 13, 0,  0,  0, 16,  0,  0,  0, 16,  1,  0),
- };
- 
--struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
-+static struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
- 	.name		= "cbus-banks",
- 	.pins		= meson8b_cbus_pins,
- 	.groups		= meson8b_cbus_groups,
-@@ -916,7 +916,7 @@ struct meson_pinctrl_data meson8b_cbus_pinctrl_data = {
- 	.num_banks	= ARRAY_SIZE(meson8b_cbus_banks),
- };
- 
--struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
-+static struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
- 	.name		= "aobus-banks",
- 	.pins		= meson8b_aobus_pins,
- 	.groups		= meson8b_aobus_groups,
-@@ -927,3 +927,24 @@ struct meson_pinctrl_data meson8b_aobus_pinctrl_data = {
- 	.num_funcs	= ARRAY_SIZE(meson8b_aobus_functions),
- 	.num_banks	= ARRAY_SIZE(meson8b_aobus_banks),
- };
-+
-+static const struct of_device_id meson8b_pinctrl_dt_match[] = {
-+	{
-+		.compatible = "amlogic,meson8b-cbus-pinctrl",
-+		.data = &meson8b_cbus_pinctrl_data,
-+	},
-+	{
-+		.compatible = "amlogic,meson8b-aobus-pinctrl",
-+		.data = &meson8b_aobus_pinctrl_data,
-+	},
-+	{ },
-+};
-+
-+static struct platform_driver meson8b_pinctrl_driver = {
-+	.probe		= meson_pinctrl_probe,
-+	.driver = {
-+		.name	= "meson8b-pinctrl",
-+		.of_match_table = meson8b_pinctrl_dt_match,
-+	},
-+};
-+builtin_platform_driver(meson8b_pinctrl_driver);
--- 
-2.13.6
+Huh, how did this slip through? Sorry, Geert, and thanks for updating
+it.
 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in sh-pfc-for-v4.15 with the above fixed, and once more
+> after filtering through s/r8a7795/r8a7795-es1/g.
+
+Good. I got the idea of checking es1 yesterday on the train, too, but
+didn't come around to do it yet.
+
+Thanks,
+
+   Wolfram
+
+
+--3srp7xlsa4dzyqcu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlneCt8ACgkQFA3kzBSg
+KbZ37A/9FCMsNGzKXtKIcPKkBtrvwkH0Js2T4K7hzgVIryc+d/ugFlBiASybnBp0
+VuQVvGrUJYRF71qjvoqRMCiJCBWlD7lrUzOzZ2I/bB7PRaZv8ZmPIo72FEUi384U
+2CySlB5dWxXSwqwnwTkBi6E4RQ0JdD3d1UOgDEdvrW2vS4VjrMSdJyOWZuVxTQUz
+/ezlFdLbJFXYZ7lZRFSc4/58/4tPH4YBagJ6ZJgRrOfET6Zm6MV/5ER0Ckg6KnkV
+dLEYAhTj3DLB0KrPeZ+S7dESW/KE7ASglrcoWR0ZCyJKDtKgHS7HW5EDrvnof5kF
+qfbfrOO4lHHlpp/ggig+n8YfOWRlCeA3ydx5zAYcOvyBXIzACskNsICd15Pr14aR
+TkwJZ95ZwBBj7ybb8VF0MGm0m0AdMhFl3T47LkF0mzDxblh9CMqbdKZqoXOflBEC
+huYL/2TIInJ1zGJKa+WclWhfAaW+UH6msNJh2vU5pcZAO3+RyJh8PmjAKWHJMDYH
+mXfgTVT/ybCkjHN4m7j1sgbRT7lHqG8GTU/Aop3X+72abjqkvEBNG+KbRcP+apIT
+PM8ZtvLDKvVkSy8LV9MEIvn5kNNoHGcUT/1au41Z/gig4OdCTWlxrQqeVyvJwvg9
+8VQ3jTYwvHZ9Na/bFkQusMzUln4X6Ph19LzxZXOY/6UcSG/QeGc=
+=9o7G
+-----END PGP SIGNATURE-----
+
+--3srp7xlsa4dzyqcu--
