@@ -1,67 +1,40 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for GPIO0/1 when
- used as LDOs
-Date: Wed, 11 Oct 2017 09:43:40 +0200
-Message-ID: <CACRpkdbjHZ7=m1-6vOw3ru+XkoCfSvHJSEFtCtHo5LkB4cPyhA@mail.gmail.com>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
- <20171002120854.5212-13-quentin.schulz@free-electrons.com>
- <CACRpkdZYcSuhvn0b0qa0k1PQHoyXjNyjoyhR2sPme_t1pF12Dg@mail.gmail.com>
- <20171003144737.rhgtp3uwckhvoqdw@flea> <CAGb2v64=XL34x7iGJcEmmVnmzkA5wmyZJd-g827bY=kdHcZOMA@mail.gmail.com>
- <8be22e47-8071-be4c-0bd4-38fa51cbe3ff@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Wed, 11 Oct 2017 09:51:08 +0200
+Message-ID: <CACRpkdYXsY5eixYkEeuZTHJn7q6_6BdTxZ-2yneUyEKUjKF3Gw@mail.gmail.com>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <20170919070422.GI3349@codeaurora.org> <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+ <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org> <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
+ <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org> <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
+ <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org> <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+ <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org> <20171003220311.GU457@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8be22e47-8071-be4c-0bd4-38fa51cbe3ff-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171003220311.GU457@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Timur Tabi <timur@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Wed, Oct 4, 2017 at 9:35 AM, Quentin Schulz
-<quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+On Wed, Oct 4, 2017 at 12:03 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-> Just to be a little more precise,
->      - 0: drive low
->      - 1: drive high
->      - 2: input with interrupt triggering
->      - 3: LDO on
->      - 4: LDO off
->      - 5~7: floating (or ADC)
->
-> for AXP813, and
->      - 0: drive low
->      - 1: drive high
->      - 2: input with interrupt triggering
->      - 3: LDO on
->      - 4: ADC
->      - 5~7: floating
+> Could we remove the pin direction finding part here in
+> gpiochip_add_pin_range() and lazily resolve the pin direction
+> when a pin is requested? We would need a similar check in the msm
+> specific debugfs code where we skip pins that aren't requested.
+> This is basically a revert of commit 72d320006177 ("gpio: set up
+> initial state from .get_direction()").
 
-Fair enough, it's mux modes that the pin supports, no big surprises.
+It seems reasonable for the gpiolib to be able to call this
+function immediately after registering the new GPIO chip
+with its vtable.
 
-> So I think what you suggested Linus is not really relevant here as the
-> regulator framework will take care of disabling the regulator when
-> needed (for AXP813 via the ldo_off "muxing" selected by the regulator
-> framework).
-
-I think I see why I got confused.
-
-The point is that your mode for setting it to "LDO on" should have the
-pin control state connected to the relevant device.
-
-It should be connected to the regulator and nothing else, so if there is a fixed
-regulator or whatever in the device tree, it should have pinctrl-0
-and pinctrl-names = ".."; here is is for some obscure reason connected
-to the GPIO controller (!) instead, and the actual consumer of this state
-is NOT the GPIO controller, but quite obviously the regulator, so
-put the pinctrl business in that regulator node instead.
-
-"default" mode is OK on a regulator, as that can be expected to make the
-pin precisely a regulator pin. Forget my ramblings about a "regulator"
-state.
+I think it is more up to the driver to numb the reply with
+some dummy return value (i.e. input mode) or refactor the
+callback so that it is acceptable for gpiolib to get an -EINVAL
+or so from the driver (again it will assume input mode) if the
+driver can't return the direction at this time.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
