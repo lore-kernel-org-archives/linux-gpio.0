@@ -1,98 +1,102 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] pinctrl: Do not depend in GPIOLIB, select it
-Date: Wed, 11 Oct 2017 16:17:05 +0300
-Message-ID: <1507727825.16112.424.camel@linux.intel.com>
-References: <20171011100742.9912-1-linus.walleij@linaro.org>
+From: Alan Tull <atull@kernel.org>
+Subject: Re: [PATCH] gpio: gpio-dwapb: add optional reset
+Date: Wed, 11 Oct 2017 11:05:35 -0500
+Message-ID: <CANk1AXS0EgUjYhiDoc9sqFROfv1aLzBekBdVWs6_rfRpkmPsLQ@mail.gmail.com>
+References: <20171010212617.3397-1-atull@kernel.org> <CACRpkdbS6b9GW8HXmthOfaRPFMARMpyNGaR8He5BJbtfOXLMVw@mail.gmail.com>
+ <1507719418.22082.1.camel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:59591 "EHLO mga07.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751934AbdJKNRJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Wed, 11 Oct 2017 09:17:09 -0400
-In-Reply-To: <20171011100742.9912-1-linus.walleij@linaro.org>
+        id S1751350AbdJKQGR (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Oct 2017 12:06:17 -0400
+In-Reply-To: <1507719418.22082.1.camel@pengutronix.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Phil Reid <preid@electromag.com.au>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Mika Westerberg <mika.westerberg@linux.intel.com>, Peter Rosin <peda@axentia.se>, Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Hoan Tran <hotran@apm.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wed, 2017-10-11 at 12:07 +0200, Linus Walleij wrote:
-> Instead of depends on GPIOLIB and having to run around in
-> Kconfig menus looking for why your device is not available,
-> simply select it from the pin control drivers that need it.
-> 
-> The Kconfig for GPIOLIB is improved, selectable and this
-> should "just work".
-> 
-> Cc: Phil Reid <preid@electromag.com.au>
-> Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Wed, Oct 11, 2017 at 5:56 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-Fine by me:
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi Linus, Phillipp,
 
-P.S. Linus, btw, are you going to ELC 2017 Europe (Prague)?
+Thanks for the review.
 
-> ---
->  drivers/pinctrl/Kconfig       | 6 ++++--
->  drivers/pinctrl/intel/Kconfig | 3 ++-
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-> index 8da29e9e1bb2..034822c7144d 100644
-> --- a/drivers/pinctrl/Kconfig
-> +++ b/drivers/pinctrl/Kconfig
-> @@ -97,7 +97,7 @@ config PINCTRL_AT91PIO4
->  
->  config PINCTRL_AMD
->  	tristate "AMD GPIO pin control"
-> -	depends on GPIOLIB
-> +	select GPIOLIB
->  	select GPIOLIB_IRQCHIP
->  	select PINCONF
->  	select GENERIC_PINCONF
-> @@ -156,6 +156,7 @@ config PINCTRL_MCP23S08
->  	tristate "Microchip MCP23xxx I/O expander"
->  	depends on SPI_MASTER || I2C
->  	depends on I2C || I2C=n
-> +	select GPIOLIB
->  	select GPIOLIB_IRQCHIP
->  	select REGMAP_I2C if I2C
->  	select REGMAP_SPI if SPI_MASTER
-> @@ -224,10 +225,11 @@ config PINCTRL_SIRF
->  
->  config PINCTRL_SX150X
->  	bool "Semtech SX150x I2C GPIO expander pinctrl driver"
-> -	depends on GPIOLIB && I2C=y
-> +	depends on I2C=y
->  	select PINMUX
->  	select PINCONF
->  	select GENERIC_PINCONF
-> +	select GPIOLIB
->  	select GPIOLIB_IRQCHIP
->  	select REGMAP
->  	help
-> diff --git a/drivers/pinctrl/intel/Kconfig
-> b/drivers/pinctrl/intel/Kconfig
-> index f30720a752f3..7fb1b9937c39 100644
-> --- a/drivers/pinctrl/intel/Kconfig
-> +++ b/drivers/pinctrl/intel/Kconfig
-> @@ -5,7 +5,8 @@ if (X86 || COMPILE_TEST)
->  
->  config PINCTRL_BAYTRAIL
->  	bool "Intel Baytrail GPIO pin control"
-> -	depends on GPIOLIB && ACPI
-> +	depends on ACPI
-> +	select GPIOLIB
->  	select GPIOLIB_IRQCHIP
->  	select PINMUX
->  	select PINCONF
+> Hi Alan, Linus,
+>
+> On Wed, 2017-10-11 at 10:31 +0200, Linus Walleij wrote:
+>> On Tue, Oct 10, 2017 at 11:26 PM, Alan Tull <atull@kernel.org> wrote:
+>>
+>> > Some platforms require reset to be released to allow register
+>> > access.
+>> >
+>> > Signed-off-by: Alan Tull <atull@kernel.org>
+>>
+>> Fair enough.
+>>
+>> (...)
+>> > +       rst = devm_reset_control_get_optional_exclusive(dev, NULL);
+>
+> The way this reset control is used, it looks like you could use _shared
+> instead of _exclusive here. This relaxes the guarantees made by the API
+> a bit and may allow this driver to work with more reset controllers.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+OK, will use devm_reset_control_get_optional_shared().
+
+>
+>> > +       if (IS_ERR(rst)) {
+>> > +               if (PTR_ERR(rst) == -EPROBE_DEFER)
+>> > +                       return PTR_ERR(rst);
+>
+> The _optional variant of reset_control_get returns NULL if no reset is
+> specified in the device tree. If an error value is returned, it is
+> always an actual error (invalid device tree contents, reset is specified
+> in the device tree but the driver returns an error, etc.).
+> This should just be:
+>
+>         if (IS_ERR(rst))
+>                 return PTR_ERR(rst);
+
+That's great!
+
+>
+>> > +       } else {
+>> > +               reset_control_deassert(rst);
+>> > +               gpio->rst = rst;
+>
+> And this should be made unconditional. reset_control_deassert just
+> ignores rst == NULL.
+
+Nice.
+
+>
+>> > +       }
+>>
+>> I do not see why any error other than -EPROBE_DEFER
+>> should be ignored?
+>>
+>> I guess the _optional API returns NULL if there is no
+>> reset line so it should be fine to just return the error on
+>> any error.
+>
+> Correct. The _optional API together with NULL reset control handles
+> allows to simplify handling of optional resets in the consumer drivers.
+>
+>> > +       if (gpio->rst)
+>> > +               reset_control_assert(gpio->rst);
+>>
+>> Is this the right way to handle an optional reset line?
+>
+> Just as the deassert above, this should be made unconditional.
+
+I've made the requested changes which shrinks the patch to be even smaller :)
+
+Will send up v2 soon.
+
+Thanks,
+Alan
+
+>
+> regards
+> Philipp
