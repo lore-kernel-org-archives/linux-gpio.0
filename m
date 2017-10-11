@@ -1,57 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl/amd: fix masking of GPIO interrupts
-Date: Wed, 11 Oct 2017 09:33:55 +0200
-Message-ID: <CACRpkdZL7vTAYix8G9EoPwt6NerbqQ_vtFx8b4BNu2mCH7JQvA@mail.gmail.com>
-References: <20171002040054.2604-1-drake@endlessm.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for GPIO0/1 when
+ used as LDOs
+Date: Wed, 11 Oct 2017 09:43:40 +0200
+Message-ID: <CACRpkdbjHZ7=m1-6vOw3ru+XkoCfSvHJSEFtCtHo5LkB4cPyhA@mail.gmail.com>
+References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
+ <20171002120854.5212-13-quentin.schulz@free-electrons.com>
+ <CACRpkdZYcSuhvn0b0qa0k1PQHoyXjNyjoyhR2sPme_t1pF12Dg@mail.gmail.com>
+ <20171003144737.rhgtp3uwckhvoqdw@flea> <CAGb2v64=XL34x7iGJcEmmVnmzkA5wmyZJd-g827bY=kdHcZOMA@mail.gmail.com>
+ <8be22e47-8071-be4c-0bd4-38fa51cbe3ff@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f53.google.com ([209.85.214.53]:53736 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932145AbdJKHd4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 03:33:56 -0400
-Received: by mail-it0-f53.google.com with SMTP id n195so1728376itg.2
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 00:33:56 -0700 (PDT)
-In-Reply-To: <20171002040054.2604-1-drake@endlessm.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <8be22e47-8071-be4c-0bd4-38fa51cbe3ff-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: Ken Xue <ken.xue@amd.com>, "S-k, Shyam-sundar" <shyam-sundar.s-k@amd.com>, "Shah, Nehal-bakulchandra" <nehal-bakulchandra.shah@amd.com>, linux@endlessm.com, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Mon, Oct 2, 2017 at 6:00 AM, Daniel Drake <drake@endlessm.com> wrote:
+On Wed, Oct 4, 2017 at 9:35 AM, Quentin Schulz
+<quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-> On Asus laptop models X505BA, X505BP, X542BA and X542BP, the i2c-hid
-> touchpad (using a GPIO for interrupts) becomes unresponsive after a
-> few minutes of usage, or after placing two fingers on the touchpad,
-> which seems to have the effect of queuing up a large amount of input
-> data to be transferred.
+> Just to be a little more precise,
+>      - 0: drive low
+>      - 1: drive high
+>      - 2: input with interrupt triggering
+>      - 3: LDO on
+>      - 4: LDO off
+>      - 5~7: floating (or ADC)
 >
-> When the touchpad is in unresponsive state, we observed that the GPIO
-> level-triggered interrupt is still at it's active level, however the
-> pinctrl-amd driver is not receiving/dispatching more interrupts at this
-> point.
->
-> After the initial interrupt arrives, amd_gpio_irq_mask() is called
-> however we then see amd_gpio_irq_handler() being called repeatedly for
-> the same irq; the interrupt mask is not taking effect because of the
-> following sequence of events:
->  - amd_gpio_irq_handler fires, reads and caches pin reg
->  - amd_gpio_irq_handler calls generic_handle_irq()
->  - During IRQ handling, amd_gpio_irq_mask() is called and modifies pin reg
->  - amd_gpio_irq_handler clears interrupt by writing cached value
->
-> The stale cached value written at the final stage undoes the masking.
-> Fix this by re-reading the register before clearing the interrupt.
->
-> I also spotted that the interrupt-clearing code can race against
-> amd_gpio_irq_mask() / amd_gpio_irq_unmask(), so add locking there.
-> Presumably this race was leading to the loss of interrupts.
->
-> After these changes, the touchpad appears to be working fine.
->
-> Signed-off-by: Daniel Drake <drake@endlessm.com>
+> for AXP813, and
+>      - 0: drive low
+>      - 1: drive high
+>      - 2: input with interrupt triggering
+>      - 3: LDO on
+>      - 4: ADC
+>      - 5~7: floating
 
-Patch applied for fixes with Nehal-bakulchandra's ACK.
+Fair enough, it's mux modes that the pin supports, no big surprises.
+
+> So I think what you suggested Linus is not really relevant here as the
+> regulator framework will take care of disabling the regulator when
+> needed (for AXP813 via the ldo_off "muxing" selected by the regulator
+> framework).
+
+I think I see why I got confused.
+
+The point is that your mode for setting it to "LDO on" should have the
+pin control state connected to the relevant device.
+
+It should be connected to the regulator and nothing else, so if there is a fixed
+regulator or whatever in the device tree, it should have pinctrl-0
+and pinctrl-names = ".."; here is is for some obscure reason connected
+to the GPIO controller (!) instead, and the actual consumer of this state
+is NOT the GPIO controller, but quite obviously the regulator, so
+put the pinctrl business in that regulator node instead.
+
+"default" mode is OK on a regulator, as that can be expected to make the
+pin precisely a regulator pin. Forget my ramblings about a "regulator"
+state.
 
 Yours,
 Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
