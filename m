@@ -1,31 +1,34 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 1/7] pinctrl: change Kconfig PINCTRL variable to a menuconfig
-Date: Wed, 11 Oct 2017 09:58:51 +0200
-Message-ID: <CACRpkdaHWkr8766VMkTTfPPFYyCSdO7FWSb0m_WJb4YsJ1ycUw@mail.gmail.com>
-References: <1507266491-73971-1-git-send-email-preid@electromag.com.au> <1507266491-73971-2-git-send-email-preid@electromag.com.au>
+Subject: Re: [PATCH] dt-bindings: pinctrl: Move mcp23s08 from gpio
+Date: Wed, 11 Oct 2017 10:01:56 +0200
+Message-ID: <CACRpkdZ6WjKJJ0XyPUQwc0yNcwN927CeyLuHFwTW-WTdtPzuFw@mail.gmail.com>
+References: <20171005075002.9901-1-poeschel@lemonage.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f181.google.com ([209.85.223.181]:46309 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756600AbdJKH6w (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 03:58:52 -0400
-Received: by mail-io0-f181.google.com with SMTP id 101so1199134ioj.3
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 00:58:52 -0700 (PDT)
-In-Reply-To: <1507266491-73971-2-git-send-email-preid@electromag.com.au>
+Received: from mail-it0-f54.google.com ([209.85.214.54]:51342 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757231AbdJKIB5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 04:01:57 -0400
+Received: by mail-it0-f54.google.com with SMTP id o135so1826922itb.0
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 01:01:57 -0700 (PDT)
+In-Reply-To: <20171005075002.9901-1-poeschel@lemonage.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Phil Reid <preid@electromag.com.au>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lars Poeschel <poeschel@lemonage.de>, Sebastian Reichel <sre@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Lars Poeschel <poeschel@lemonage.de>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Oct 6, 2017 at 7:08 AM, Phil Reid <preid@electromag.com.au> wrote:
+On Thu, Oct 5, 2017 at 9:50 AM, Lars Poeschel <poeschel@lemonage.de> wrote:
 
-> This allows PINCTRL to be selected manually to allow enabling of the
-> mcp23s08 i2c/spi gpio driver. Which is not platform specific.
+> The mcp23s08 driver was moved from gpio to pinctrl. This moves it's
+> devicetree binding doc as well. So driver and binding doc are in sync
+> again.
 >
-> Signed-off-by: Phil Reid <preid@electromag.com.au>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 
-Patch applied with Sebastian's review tag.
+Patch applied with Sebastian's tag.
+
+Nothing controversial about this so why not.
 
 Yours,
 Linus Walleij
