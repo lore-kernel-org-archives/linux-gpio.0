@@ -1,65 +1,58 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH V1] pinctrl: qcom: spmi-gpio: Update GPIO EN_CTL when
- setting pin config
-Date: Tue, 10 Oct 2017 22:48:52 -0700
-Message-ID: <20171011054852.GH1165@minitux>
-References: <20170912003331.3092-1-fenglinw@codeaurora.org>
- <20171005162750.GY1165@minitux>
- <c770e00d-9bd5-8cae-0f47-da4d4beee0c4@codeaurora.org>
- <20171009055643.GB1165@minitux>
- <35aec5d7-8808-9930-8d6d-e0399df12a9e@codeaurora.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [GIT PULL] pin control fixes for v4.14
+Date: Wed, 11 Oct 2017 09:25:19 +0200
+Message-ID: <CACRpkdb-Pbyynt0254fjsL_BwxO3gtJon2vMv=qC483CPi-v1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <35aec5d7-8808-9930-8d6d-e0399df12a9e@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Fenglin Wu <fenglinw@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Mon 09 Oct 17:17 PDT 2017, Fenglin Wu wrote:
+Hi Linus,
 
-> On 10/9/2017 1:56 PM, Bjorn Andersson wrote:
-> > On Sun 08 Oct 22:34 PDT 2017, Fenglin Wu wrote:
-> > 
-> > > On 10/6/2017 12:27 AM, Bjorn Andersson wrote:
-[..]
-> > > > But I spotted another issue while reviewing this; currently the initial
-> > > > state of is_enabled is unconditionally set to enabled in
-> > > > pmic_gpio_populate(), so reading the initial pinconf or configuring a
-> > > > pinmux before setting a pinconf will operate on the potentially wrong
-> > > > information.
-> > > > 
-> > > > So I think the initial value should be read out from REG_EN_CTL rather
-> > > > than being just "true".
-> > > > 
-> > > > Can you please either submit another patch for this?
-> > > 
-> > > Hmm, considering a GPIO which is disabled by default in hardware
-> > > setting, what's its expected state if we only define "function" for it?
-> > > I was thinking we need to enable it once it has any setting in pinmux or
-> > > pinconf. If you think that we need to keep its original state until we
-> > > set pinconf for it, yes, I can submit a change to address this.
-> > > 
-> > 
-> > Are there valid cases where only function should be selected and no
-> > other configuration is used? If so it makes sense to make
-> > pmic_gpio_set_mux() enable the block.
-> > 
-> > 
-> > Regardless of this, if there are disabled pins that are not mentioned in
-> > DT they will still appear as enabled in the debugfs interface; and this
-> > I consider an error worth fixing.
-> How about we do both: read the HW initial state in pmic_gpio_populate(),
-> and also enable the GPIO block in pmic_gpio_set_mux()?
-> 
+here are some pin control fixes for v4.14 that stacked up.
+Two small things and a slightly larger thing in the Intel
+Cherryview.
 
-That sounds good.
+Please pull them in!
 
-Please do this as two separate patches, with the commit message clearly
-describing a case where the pinconf does not affect the function of the
-pin, so a pinmux is the only thing needed.
+Yours,
+Linus Walleij
 
-Regards,
-Bjorn
+The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
+
+  Linux 4.14-rc1 (2017-09-16 15:47:51 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.14-3
+
+for you to fetch changes up to 845e405e5e6c9dc9ed10306a4b5bfeaefebc2e84:
+
+  pinctrl: cherryview: fix issues caused by dynamic gpio irqs mapping
+(2017-10-08 02:32:59 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.14 series:
+
+- Fix two build problems.
+
+- Fix a regression on the Intel Cherryview interrupt path.
+
+----------------------------------------------------------------
+Corentin Labbe (1):
+      pinctrl: bcm2835: fix build warning in bcm2835_gpio_irq_handle_bank
+
+Grygorii Strashko (1):
+      pinctrl: cherryview: fix issues caused by dynamic gpio irqs mapping
+
+Petr Mladek (1):
+      pinctrl/amd: Fix build dependency on pinmux code
+
+ drivers/pinctrl/Kconfig                    |  1 +
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c      |  4 ----
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 14 +++++++++++++-
+ 3 files changed, 14 insertions(+), 5 deletions(-)
