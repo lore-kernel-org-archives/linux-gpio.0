@@ -1,63 +1,43 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: gpio: uniphier: add UniPhier GPIO binding
-Date: Wed, 11 Oct 2017 10:43:06 +0200
-Message-ID: <CACRpkdaNhzM=p971eW+wNhkaOLyNgszx3qwJp1C5RUgVQc9s6Q@mail.gmail.com>
-References: <1506480022-8995-1-git-send-email-yamada.masahiro@socionext.com>
- <1506480022-8995-2-git-send-email-yamada.masahiro@socionext.com> <CACRpkdaJE_-tfZ+Mr3UowY9W0EdEwWEMdfhCfkj7VVOzje7MrA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
+Date: Wed, 11 Oct 2017 11:21:38 +0200
+Message-ID: <CAMuHMdU+B33sm_5yfpT+bAeLA56a+MiaoyXrjFWdoAtiitcjmw@mail.gmail.com>
+References: <20171009082053.5281-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:44805 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757128AbdJKInH (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 04:43:07 -0400
-Received: by mail-it0-f47.google.com with SMTP id n195so12790157itg.1
-        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 01:43:07 -0700 (PDT)
-In-Reply-To: <CACRpkdaJE_-tfZ+Mr3UowY9W0EdEwWEMdfhCfkj7VVOzje7MrA@mail.gmail.com>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:49239 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbdJKJVk (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 05:21:40 -0400
+In-Reply-To: <20171009082053.5281-1-wsa+renesas@sang-engineering.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-On Wed, Oct 11, 2017 at 10:35 AM, Linus Walleij
-<linus.walleij@linaro.org> wrote:
-> On Wed, Sep 27, 2017 at 4:40 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
->> This GPIO controller is used on UniPhier SoC family.
->>
->> The vendor specific property "socionext,interrupt-ranges" is for
->> specifying interrupt mapping to the parent interrupt controller
->> because the mapping is not contiguous.  It works like "ranges",
->> but transforms "interrupts" instead of "reg".
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> Patch applied.
->
->> +- socionext,interrupt-ranges: Specifies an interrupt number mapping between
->> +  this GPIO controller and its interrupt parent, in the form of arbitrary
->> +  number of <child-interrupt-base parent-interrupt-base length> triplets.
-> (...)
->> +               socionext,interrupt-ranges = <0 48 16>, <16 154 5>, <21 217 3>;
->
-> Still uncertain about that thing.
->
-> But as it is, you need running code, and we have rough consensus.
->
-> So merging.
->
-> If it turns out to be a bad binding we may need to patch in an alternative
-> later.
+Hi Wolfram,
 
-Sorry I had to take it back out, because the <dt-bindings/*> stuff in the
-other patch should also be in this patch rather than in the driver.
+On Mon, Oct 9, 2017 at 10:20 AM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Change since V1:
+>         * added third set of pins for HSCIF2
 
-Please move that over here, and if you insist on those macros, also
-use them in the example so we understand how this is supposed to
-be used, i.e. also add a consumer node to the bindings example
-if it is gonna use magic macros.
+Thanks for the update!
 
-Yours,
-Linus Walleij
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
