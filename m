@@ -1,30 +1,55 @@
-From: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v2] pinctrl: intel: merrifield: Introduce OF device table
-Date: Wed, 11 Oct 2017 12:25:11 +0300
-Message-ID: <20171011092511.GJ2761@lahna.fi.intel.com>
-References: <20170929135539.4046-1-andriy.shevchenko@linux.intel.com>
- <20171010160155.GK27659@leverpostej>
- <1507653390.16112.422.camel@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7795: fix trivial typo in comment
+Date: Wed, 11 Oct 2017 11:28:14 +0200
+Message-ID: <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
+References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1507653390.16112.422.camel-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lv.zheng-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Tue, Oct 10, 2017 at 07:36:30PM +0300, Andy Shevchenko wrote:
-> > Surely there are other ACPI folk within Intel you can poke to move
-> > that
-> > along?
-> 
-> I dunno. Mika, do you know anyone else we may ask about?
+Hi Wolfram,
 
-Nope. Since this is not an ACPI platform originally nobody reserved ACPI
-IDs for it. We can try to ping the guy, though.
+On Mon, Oct 9, 2017 at 10:37 AM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Change since V1 for both patches:
+>         * corrected authorship email address (sorry for the noise!)
+>
+>  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> index 8fc5d659e2dc01..8ca59b35595068 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+> @@ -1508,7 +1508,7 @@ static const u16 pinmux_data[] = {
+>  };
+>
+>  /*
+> - * R8A7795 has 8 banks with 32 PGIOS in each => 256 GPIOs.
+> + * R8A7795 has 8 banks with 32 GPIOs IN EACH => 256 GPIOs.
+
+I don't think the capitalization of "in each" had to be changed?
+(overzealous use of vim ~?)
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15 with the above fixed, and once more
+after filtering through s/r8a7795/r8a7795-es1/g.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
