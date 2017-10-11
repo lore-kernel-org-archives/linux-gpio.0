@@ -1,94 +1,98 @@
-From: Abhishek Shah <abhishek.shah@broadcom.com>
-Subject: Add hierarchical irq_domain for i2c based gpio expander pca9505
-Date: Wed, 11 Oct 2017 17:50:03 +0530
-Message-ID: <CAKUFe6aHg6CUwhorpXYvRjEO0BeMWw0nV-xjwG6F+ZvbHSMSRQ@mail.gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] pinctrl: Do not depend in GPIOLIB, select it
+Date: Wed, 11 Oct 2017 16:17:05 +0300
+Message-ID: <1507727825.16112.424.camel@linux.intel.com>
+References: <20171011100742.9912-1-linus.walleij@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, takahiro.akashi@linaro.org
-Cc: linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:59591 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751934AbdJKNRJ (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Wed, 11 Oct 2017 09:17:09 -0400
+In-Reply-To: <20171011100742.9912-1-linus.walleij@linaro.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Phil Reid <preid@electromag.com.au>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Mika Westerberg <mika.westerberg@linux.intel.com>, Peter Rosin <peda@axentia.se>, Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Hi Linus,
+On Wed, 2017-10-11 at 12:07 +0200, Linus Walleij wrote:
+> Instead of depends on GPIOLIB and having to run around in
+> Kconfig menus looking for why your device is not available,
+> simply select it from the pin control drivers that need it.
+> 
+> The Kconfig for GPIOLIB is improved, selectable and this
+> should "just work".
+> 
+> Cc: Phil Reid <preid@electromag.com.au>
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-I am facing one issue, where; while disabling/ masking interrupts just
-before kexec reboot, access to gpio expander pca9505 residing over
-i2c bus hangs, because i2c interrupts are disabled prior to writing
-pca9505 register.
+Fine by me:
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-In our chip, we have 3 irq_domain, namely gicv3, bcm-iproc-gpio [GPIO
-controller with ~150 pins] and pca953x [40-pin IO expander pca9505].
+P.S. Linus, btw, are you going to ELC 2017 Europe (Prague)?
 
-bcm-iproc-gpio and i2c interrupts among the other interrupts  are
-registered to gicv3 and
-pca953x interrupts are registered to bcm-iproc-gpio.
+> ---
+>  drivers/pinctrl/Kconfig       | 6 ++++--
+>  drivers/pinctrl/intel/Kconfig | 3 ++-
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 8da29e9e1bb2..034822c7144d 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -97,7 +97,7 @@ config PINCTRL_AT91PIO4
+>  
+>  config PINCTRL_AMD
+>  	tristate "AMD GPIO pin control"
+> -	depends on GPIOLIB
+> +	select GPIOLIB
+>  	select GPIOLIB_IRQCHIP
+>  	select PINCONF
+>  	select GENERIC_PINCONF
+> @@ -156,6 +156,7 @@ config PINCTRL_MCP23S08
+>  	tristate "Microchip MCP23xxx I/O expander"
+>  	depends on SPI_MASTER || I2C
+>  	depends on I2C || I2C=n
+> +	select GPIOLIB
+>  	select GPIOLIB_IRQCHIP
+>  	select REGMAP_I2C if I2C
+>  	select REGMAP_SPI if SPI_MASTER
+> @@ -224,10 +225,11 @@ config PINCTRL_SIRF
+>  
+>  config PINCTRL_SX150X
+>  	bool "Semtech SX150x I2C GPIO expander pinctrl driver"
+> -	depends on GPIOLIB && I2C=y
+> +	depends on I2C=y
+>  	select PINMUX
+>  	select PINCONF
+>  	select GENERIC_PINCONF
+> +	select GPIOLIB
+>  	select GPIOLIB_IRQCHIP
+>  	select REGMAP
+>  	help
+> diff --git a/drivers/pinctrl/intel/Kconfig
+> b/drivers/pinctrl/intel/Kconfig
+> index f30720a752f3..7fb1b9937c39 100644
+> --- a/drivers/pinctrl/intel/Kconfig
+> +++ b/drivers/pinctrl/intel/Kconfig
+> @@ -5,7 +5,8 @@ if (X86 || COMPILE_TEST)
+>  
+>  config PINCTRL_BAYTRAIL
+>  	bool "Intel Baytrail GPIO pin control"
+> -	depends on GPIOLIB && ACPI
+> +	depends on ACPI
+> +	select GPIOLIB
+>  	select GPIOLIB_IRQCHIP
+>  	select PINMUX
+>  	select PINCONF
 
-So, interrupt from pca953x gets routed like...
-pca953x-> bcm-iproc-gpio-> gicv3
-
-Now, I see that, got GPIO controllers, an independent IRQ domain is
-added using gpiochip_irqchip_add_nested
-or gpiochip_irqchip_add, which makes use of irq_domain_add_simple like this:
-gpiochip->irqdomain = irq_domain_add_simple(of_node,
-                                        gpiochip->ngpio, first_irq,
-                                        &gpiochip_domain_ops, gpiochip);
-
-Is it possible to add hierarchical irq_domain for pca953x to be child
-of bcm-iproc-gpio and bcm-iproc-gpio irq_domain  to be child of gicv3
-using irq_domain_add_hierarchy instead of current  irq_domain_add_simple API??
-
-Would that make sure that first all interrupts of child irq_domain
-gets disabled?
-
-
-Now, this is where I am facing issue during kexec_reboot:
-
-static void machine_kexec_mask_interrupts(void)                  /*
-function is present in arch/arm64/kernel/machine_kexec.c file */
-{
-        unsigned int i;
-        struct irq_desc *desc;
-
-        for_each_irq_desc(i, desc) {
-                struct irq_chip *chip;
-                int ret;
-
-                chip = irq_desc_get_chip(desc);
-                if (!chip)
-                        continue;
-
-                /*
-                 * First try to remove the active state. If this
-                 * fails, try to EOI the interrupt.
-                 */
-                ret = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE,
-false);   /* access to PCA9505 register hangs here and kexec reboot
-fails! */
-
-                if (ret && irqd_irq_inprogress(&desc->irq_data) &&
-                    chip->irq_eoi)
-                        chip->irq_eoi(&desc->irq_data);
-
-                if (chip->irq_mask)
-                        chip->irq_mask(&desc->irq_data);
-
-                if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
-                        chip->irq_disable(&desc->irq_data);
-        }
-}
-
-In my case, when this loop runs, initially it masks all GICv3
-interrupts,i.e. i2c interrupts are also disabled.
-Now when irq_set_irqchip_state gets executed in process of masking
-pca9505 interrupts, .irq_bus_sync_unlock
-callback (pca953x_irq_bus_sync_unlock) hangs because i2c interrupts are masked.
-
-Do you think adding "irq_domain_add_hierarchy" for GPIO controllers
-can solve this problem?
-or do you suggest change in the way "machine_kexec_mask_interrupts" is
-implemented?
-
-
-Regards,
-Abhishek
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
