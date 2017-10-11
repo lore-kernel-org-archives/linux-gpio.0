@@ -1,43 +1,30 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7795: Add HSCIF pins, groups, and functions
-Date: Wed, 11 Oct 2017 11:21:38 +0200
-Message-ID: <CAMuHMdU+B33sm_5yfpT+bAeLA56a+MiaoyXrjFWdoAtiitcjmw@mail.gmail.com>
-References: <20171009082053.5281-1-wsa+renesas@sang-engineering.com>
+From: Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH v2] pinctrl: intel: merrifield: Introduce OF device table
+Date: Wed, 11 Oct 2017 12:25:11 +0300
+Message-ID: <20171011092511.GJ2761@lahna.fi.intel.com>
+References: <20170929135539.4046-1-andriy.shevchenko@linux.intel.com>
+ <20171010160155.GK27659@leverpostej>
+ <1507653390.16112.422.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:49239 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753307AbdJKJVk (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 05:21:40 -0400
-In-Reply-To: <20171009082053.5281-1-wsa+renesas@sang-engineering.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1507653390.16112.422.camel-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lv.zheng-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
 List-Id: linux-gpio@vger.kernel.org
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 
-Hi Wolfram,
+On Tue, Oct 10, 2017 at 07:36:30PM +0300, Andy Shevchenko wrote:
+> > Surely there are other ACPI folk within Intel you can poke to move
+> > that
+> > along?
+> 
+> I dunno. Mika, do you know anyone else we may ask about?
 
-On Mon, Oct 9, 2017 at 10:20 AM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Change since V1:
->         * added third set of pins for HSCIF2
-
-Thanks for the update!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Nope. Since this is not an ACPI platform originally nobody reserved ACPI
+IDs for it. We can try to ping the guy, though.
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
