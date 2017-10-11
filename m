@@ -1,29 +1,31 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: meson: remove unused pin_base
-Date: Wed, 11 Oct 2017 09:54:49 +0200
-Message-ID: <CACRpkda7z==geUfZFGRXHiVLPaUcZU6s9Pub2VSa4UNuEUr4fw@mail.gmail.com>
-References: <20171006085407.27905-1-jbrunet@baylibre.com>
+Subject: Re: [PATCH v2 1/7] pinctrl: change Kconfig PINCTRL variable to a menuconfig
+Date: Wed, 11 Oct 2017 09:58:51 +0200
+Message-ID: <CACRpkdaHWkr8766VMkTTfPPFYyCSdO7FWSb0m_WJb4YsJ1ycUw@mail.gmail.com>
+References: <1507266491-73971-1-git-send-email-preid@electromag.com.au> <1507266491-73971-2-git-send-email-preid@electromag.com.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171006085407.27905-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:46309 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756600AbdJKH6w (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 03:58:52 -0400
+Received: by mail-io0-f181.google.com with SMTP id 101so1199134ioj.3
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 00:58:52 -0700 (PDT)
+In-Reply-To: <1507266491-73971-2-git-send-email-preid@electromag.com.au>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Phil Reid <preid@electromag.com.au>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Lars Poeschel <poeschel@lemonage.de>, Sebastian Reichel <sre@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Fri, Oct 6, 2017 at 10:54 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Fri, Oct 6, 2017 at 7:08 AM, Phil Reid <preid@electromag.com.au> wrote:
 
-> While removing the need to have pin_base defined in meson pinctrl
-> drivers, I forgot to remove the corresponding field from the
-> pinctrl_data structure.
+> This allows PINCTRL to be selected manually to allow enabling of the
+> mcp23s08 i2c/spi gpio driver. Which is not platform specific.
 >
-> Fixing this now.
->
-> Fixes: 70e5ecb1b994 ("pinctrl: meson: get rid of pin_base")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Phil Reid <preid@electromag.com.au>
 
-Patch applied with Kevin's reviewed-by.
+Patch applied with Sebastian's review tag.
 
 Yours,
 Linus Walleij
