@@ -1,47 +1,27 @@
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7795: fix trivial typo in comment
-Date: Wed, 11 Oct 2017 11:28:14 +0200
-Message-ID: <CAMuHMdVEiCvkd25yx2V8Pud+x7F4hP+2EUEVqvZLdFkcvSKPHg@mail.gmail.com>
-References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: sh-pfc: r8a7796: fix trivial typo in comment
+Date: Wed, 11 Oct 2017 11:35:55 +0200
+Message-ID: <CAMuHMdW=iLSAoEWr6suO33tFskNwi88Fi8dQZ4bdv8K1tMp1aQ@mail.gmail.com>
+References: <20171009083725.6474-1-wsa+renesas@sang-engineering.com> <20171009083725.6474-2-wsa+renesas@sang-engineering.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20171009083725.6474-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:32908 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752063AbdJKJf5 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 05:35:57 -0400
+In-Reply-To: <20171009083725.6474-2-wsa+renesas@sang-engineering.com>
+Sender: linux-gpio-owner@vger.kernel.org
+List-Id: linux-gpio@vger.kernel.org
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-List-Id: linux-gpio@vger.kernel.org
-
-Hi Wolfram,
 
 On Mon, Oct 9, 2017 at 10:37 AM, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Change since V1 for both patches:
->         * corrected authorship email address (sorry for the noise!)
->
->  drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> index 8fc5d659e2dc01..8ca59b35595068 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-> @@ -1508,7 +1508,7 @@ static const u16 pinmux_data[] = {
->  };
->
->  /*
-> - * R8A7795 has 8 banks with 32 PGIOS in each => 256 GPIOs.
-> + * R8A7795 has 8 banks with 32 GPIOs IN EACH => 256 GPIOs.
-
-I don't think the capitalization of "in each" had to be changed?
-(overzealous use of vim ~?)
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.15 with the above fixed, and once more
-after filtering through s/r8a7795/r8a7795-es1/g.
+i.e. will queue in sh-pfc-for-v4.15.
 
 Gr{oetje,eeting}s,
 
