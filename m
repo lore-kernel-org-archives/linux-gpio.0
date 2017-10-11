@@ -1,22 +1,28 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [GIT PULL] pin control fixes for v4.14
-Date: Wed, 11 Oct 2017 09:25:19 +0200
-Message-ID: <CACRpkdb-Pbyynt0254fjsL_BwxO3gtJon2vMv=qC483CPi-v1g@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for v4.14
+Date: Wed, 11 Oct 2017 09:30:08 +0200
+Message-ID: <CACRpkdaWF_mQ=oAHk0Mg-WJixMa5rvCdbFrtKyf1pmSySo_6MA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:43490 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932617AbdJKHaK (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Wed, 11 Oct 2017 03:30:10 -0400
+Received: by mail-io0-f170.google.com with SMTP id f202so1155742ioe.0
+        for <linux-gpio@vger.kernel.org>; Wed, 11 Oct 2017 00:30:09 -0700 (PDT)
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 Hi Linus,
 
-here are some pin control fixes for v4.14 that stacked up.
-Two small things and a slightly larger thing in the Intel
-Cherryview.
+here are some smallish GPIO fixes for v4.14. Like with
+pin control: some build/Kconfig noise and one serious bug
+in a specific driver.
 
-Please pull them in!
+Please pull it in!
 
 Yours,
 Linus Walleij
@@ -27,32 +33,32 @@ The following changes since commit 2bd6bf03f4c1c59381d62c61d03f6cc3fe71f66e:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.14-3
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v4.14-2
 
-for you to fetch changes up to 845e405e5e6c9dc9ed10306a4b5bfeaefebc2e84:
+for you to fetch changes up to 80ac93c274411a55ae731f259f75e4ca5e499e8b:
 
-  pinctrl: cherryview: fix issues caused by dynamic gpio irqs mapping
-(2017-10-08 02:32:59 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v4.14 series:
-
-- Fix two build problems.
-
-- Fix a regression on the Intel Cherryview interrupt path.
+  gpio: omap: Fix lost edge interrupts (2017-10-07 13:17:07 +0200)
 
 ----------------------------------------------------------------
-Corentin Labbe (1):
-      pinctrl: bcm2835: fix build warning in bcm2835_gpio_irq_handle_bank
+GPIO fixes for the v4.14 series:
+
+- Three Kconfig/build warning fixes.
+
+- A fix for lost edge IRQs in the OMAP driver.
+
+----------------------------------------------------------------
+Arnd Bergmann (2):
+      gpio: acpi: work around false-positive -Wstring-overflow warning
+      gpio: omap: omap_gpio_show_rev is not __init
 
 Grygorii Strashko (1):
-      pinctrl: cherryview: fix issues caused by dynamic gpio irqs mapping
+      gpio: omap: Fix lost edge interrupts
 
-Petr Mladek (1):
-      pinctrl/amd: Fix build dependency on pinmux code
+Masahiro Yamada (1):
+      gpio: thunderx: select IRQ_DOMAIN_HIERARCHY instead of depends on
 
- drivers/pinctrl/Kconfig                    |  1 +
- drivers/pinctrl/bcm/pinctrl-bcm2835.c      |  4 ----
- drivers/pinctrl/intel/pinctrl-cherryview.c | 14 +++++++++++++-
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/gpio/Kconfig        |  3 ++-
+ drivers/gpio/gpio-omap.c    | 24 ++++++++++++++----------
+ drivers/gpio/gpiolib-acpi.c |  2 +-
+ 3 files changed, 17 insertions(+), 12 deletions(-)
