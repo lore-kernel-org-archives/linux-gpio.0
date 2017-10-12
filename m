@@ -1,61 +1,35 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] gpio-rcar: use devm_ioremap_resource()
-Date: Thu, 12 Oct 2017 23:15:30 +0300
-Message-ID: <20171012201537.102610518@cogentembedded.com>
+From: Tom Saeger <tom.saeger@oracle.com>
+Subject: [PATCH 8/8] Documentation: fix ref to gpio.txt
+Date: Thu, 12 Oct 2017 15:24:16 -0500
+Message-ID: <d57befdefdec3be5fb0ae56d3baf639850b04d10.1507838726.git.tom.saeger@oracle.com>
+References: <cover.1507838726.git.tom.saeger@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Content-Disposition: inline; filename=gpio-rcar-use-devm_ioremap_resource.patch
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1507838726.git.tom.saeger@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Tom Saeger <tom.saeger@oracle.com>, linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-Using devm_ioremap_resource() has several advantages over devm_ioremap():
-- it checks the passed resource's validity;
-- it calls devm_request_mem_region() to check for the resource overlap;
-- it prints an error message in case of error.
-
-We can call devm_ioremap_resource() instead of devm_ioremap_nocache()
-as ioremap() and ioremap_nocache()  are implemented identically on ARM.
-Doing this saves 2 LoCs and 80 bytes (AArch64 gcc 4.8.5).
-
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
+Signed-off-by: Tom Saeger <tom.saeger@oracle.com>
 ---
-The patch is against the 'devel' branch of Linus Walleij's 'linux-gpio.git'
-repo.
+ Documentation/ABI/obsolete/sysfs-gpio | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpio/gpio-rcar.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-Index: linux-gpio/drivers/gpio/gpio-rcar.c
-===================================================================
---- linux-gpio.orig/drivers/gpio/gpio-rcar.c
-+++ linux-gpio/drivers/gpio/gpio-rcar.c
-@@ -452,19 +452,17 @@ static int gpio_rcar_probe(struct platfo
+diff --git a/Documentation/ABI/obsolete/sysfs-gpio b/Documentation/ABI/obsolete/sysfs-gpio
+index 867c1fab20e2..32513dc2eec9 100644
+--- a/Documentation/ABI/obsolete/sysfs-gpio
++++ b/Documentation/ABI/obsolete/sysfs-gpio
+@@ -11,7 +11,7 @@ Description:
+   Kernel code may export it for complete or partial access.
  
- 	pm_runtime_enable(dev);
+   GPIOs are identified as they are inside the kernel, using integers in
+-  the range 0..INT_MAX.  See Documentation/gpio.txt for more information.
++  the range 0..INT_MAX.  See Documentation/gpio/gpio.txt for more information.
  
--	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--
--	if (!io || !irq) {
--		dev_err(dev, "missing IRQ or IOMEM\n");
-+	if (!irq) {
-+		dev_err(dev, "missing IRQ\n");
- 		ret = -EINVAL;
- 		goto err0;
- 	}
- 
--	p->base = devm_ioremap_nocache(dev, io->start, resource_size(io));
--	if (!p->base) {
--		dev_err(dev, "failed to remap I/O memory\n");
--		ret = -ENXIO;
-+	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	p->base = devm_ioremap_resource(dev, io);
-+	if (IS_ERR(p->base)) {
-+		ret = PTR_ERR(p->base);
- 		goto err0;
- 	}
- 
+     /sys/class/gpio
+ 	/export ... asks the kernel to export a GPIO to userspace
+-- 
+2.14.2
