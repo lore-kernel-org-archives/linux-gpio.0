@@ -1,45 +1,101 @@
-From: Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>
-Subject: Re: [PATCH v3 12/12] ARM: dtsi: axp81x: set pinmux for
- GPIO0/1 when used as LDOs
-Date: Thu, 12 Oct 2017 10:22:28 +0800
-Message-ID: <CAGb2v67c_67iS4MdR6kcB_To-wzUoTudpKgb6ZGPOHgsB5Jh=g@mail.gmail.com>
-References: <20171002120854.5212-1-quentin.schulz@free-electrons.com>
- <20171002120854.5212-13-quentin.schulz@free-electrons.com>
- <CACRpkdZYcSuhvn0b0qa0k1PQHoyXjNyjoyhR2sPme_t1pF12Dg@mail.gmail.com>
- <20171003144737.rhgtp3uwckhvoqdw@flea> <CAGb2v64=XL34x7iGJcEmmVnmzkA5wmyZJd-g827bY=kdHcZOMA@mail.gmail.com>
- <8be22e47-8071-be4c-0bd4-38fa51cbe3ff@free-electrons.com> <CAGb2v65-_MjUsfTHMoyzvczs_280p7NXEsStSaoR6wnvTCq5+A@mail.gmail.com>
- <20171011120036.bvw5dpz4myngtwu7@flea> <CACRpkdY0GWqjkbxm=OBfRsTmkQ7kc86Dw96XUT08azSbD57Xrw@mail.gmail.com>
-Reply-To: wens-jdAy2FN1RRM@public.gmane.org
+From: Abhishek Shah <abhishek.shah@broadcom.com>
+Subject: Re: Add hierarchical irq_domain for i2c based gpio expander pca9505
+Date: Thu, 12 Oct 2017 10:40:11 +0530
+Message-ID: <CAKUFe6Yeq+4s-28FTP2cJ8SQJj-Yoq5-Ewie8noy0Yoti0TbbQ@mail.gmail.com>
+References: <CAKUFe6aHg6CUwhorpXYvRjEO0BeMWw0nV-xjwG6F+ZvbHSMSRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-sunxi+bncBCMILY6JWQBBB7VD7PHAKGQESNLTG4A-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-In-Reply-To: <CACRpkdY0GWqjkbxm=OBfRsTmkQ7kc86Dw96XUT08azSbD57Xrw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Post: <https://groups.google.com/group/linux-sunxi/post>, <mailto:linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:linux-sunxi+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/linux-sunxi
-List-Subscribe: <https://groups.google.com/group/linux-sunxi/subscribe>, <mailto:linux-sunxi+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+1076902468213+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/linux-sunxi/subscribe>
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Quentin Schulz <quentin.schulz-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-sunxi <linux-sunxi-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKUFe6aHg6CUwhorpXYvRjEO0BeMWw0nV-xjwG6F+ZvbHSMSRQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Takahiro Akashi <takahiro.akashi@linaro.org>
+Cc: linux-gpio@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, Sandeep Tripathy <sandeep.tripathy@broadcom.com>, BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Oct 12, 2017 at 3:09 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Wed, Oct 11, 2017 at 2:00 PM, Maxime Ripard
-> <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
->
->> What about not enforcing any muxing state when we want to mux to the
->> "ldo" function? We just leave it to whatever value it is, that way we
->> keep it under the regulator framework's control, and we don't disrupt
->> anything when the pin is requested.
->
-> In a way since setting the bits one way means "LDO on" and another
-> setting means "LDO off" those bits should be handled by the
-> regulator framework when used as a regulator, not pin control.
->
-> So I would say yes.
++BCM kernel feedback.
+Sorry for duplicated mails, had HTML formatting issue.
 
-I agree. That would be the best solution.
-
-ChenYu
+On Wed, Oct 11, 2017 at 5:50 PM, Abhishek Shah
+<abhishek.shah@broadcom.com> wrote:
+> Hi Linus,
+>
+> I am facing one issue, where; while disabling/ masking interrupts just
+> before kexec reboot, access to gpio expander pca9505 residing over
+> i2c bus hangs, because i2c interrupts are disabled prior to writing
+> pca9505 register.
+>
+> In our chip, we have 3 irq_domain, namely gicv3, bcm-iproc-gpio [GPIO
+> controller with ~150 pins] and pca953x [40-pin IO expander pca9505].
+>
+> bcm-iproc-gpio and i2c interrupts among the other interrupts  are
+> registered to gicv3 and
+> pca953x interrupts are registered to bcm-iproc-gpio.
+>
+> So, interrupt from pca953x gets routed like...
+> pca953x-> bcm-iproc-gpio-> gicv3
+>
+> Now, I see that, got GPIO controllers, an independent IRQ domain is
+> added using gpiochip_irqchip_add_nested
+> or gpiochip_irqchip_add, which makes use of irq_domain_add_simple like this:
+> gpiochip->irqdomain = irq_domain_add_simple(of_node,
+>                                         gpiochip->ngpio, first_irq,
+>                                         &gpiochip_domain_ops, gpiochip);
+>
+> Is it possible to add hierarchical irq_domain for pca953x to be child
+> of bcm-iproc-gpio and bcm-iproc-gpio irq_domain  to be child of gicv3
+> using irq_domain_add_hierarchy instead of current  irq_domain_add_simple API??
+>
+> Would that make sure that first all interrupts of child irq_domain
+> gets disabled?
+>
+>
+> Now, this is where I am facing issue during kexec_reboot:
+>
+> static void machine_kexec_mask_interrupts(void)                  /*
+> function is present in arch/arm64/kernel/machine_kexec.c file */
+> {
+>         unsigned int i;
+>         struct irq_desc *desc;
+>
+>         for_each_irq_desc(i, desc) {
+>                 struct irq_chip *chip;
+>                 int ret;
+>
+>                 chip = irq_desc_get_chip(desc);
+>                 if (!chip)
+>                         continue;
+>
+>                 /*
+>                  * First try to remove the active state. If this
+>                  * fails, try to EOI the interrupt.
+>                  */
+>                 ret = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE,
+> false);   /* access to PCA9505 register hangs here and kexec reboot
+> fails! */
+>
+>                 if (ret && irqd_irq_inprogress(&desc->irq_data) &&
+>                     chip->irq_eoi)
+>                         chip->irq_eoi(&desc->irq_data);
+>
+>                 if (chip->irq_mask)
+>                         chip->irq_mask(&desc->irq_data);
+>
+>                 if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
+>                         chip->irq_disable(&desc->irq_data);
+>         }
+> }
+>
+> In my case, when this loop runs, initially it masks all GICv3
+> interrupts,i.e. i2c interrupts are also disabled.
+> Now when irq_set_irqchip_state gets executed in process of masking
+> pca9505 interrupts, .irq_bus_sync_unlock
+> callback (pca953x_irq_bus_sync_unlock) hangs because i2c interrupts are masked.
+>
+> Do you think adding "irq_domain_add_hierarchy" for GPIO controllers
+> can solve this problem?
+> or do you suggest change in the way "machine_kexec_mask_interrupts" is
+> implemented?
+>
+>
+> Regards,
+> Abhishek
