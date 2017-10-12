@@ -1,20 +1,51 @@
-From: Andrew Clement <afdbts@gmail.com>
-Subject: (unknown)
-Date: Thu, 12 Oct 2017 13:53:13 +0000
-Message-ID: <CAFfEW4fkW76L02AsWpeK3kBjHXJT0a6ONh1i7NpiTNdRh90vGg@mail.gmail.com>
-Reply-To: andrewclement69@gmail.com
+From: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
+Subject: Re: [PATCH v2 6/7] pinctrl: mcp23s08: remove hardcoded irq polarity
+ in irq_setup
+Date: Thu, 12 Oct 2017 22:27:15 +0800
+Message-ID: <de907c7d-23e0-e139-654c-f1b83e93d5ec@electromag.com.au>
+References: <1507266491-73971-1-git-send-email-preid@electromag.com.au>
+ <1507266491-73971-7-git-send-email-preid@electromag.com.au>
+ <CACRpkdaWNthg5OU3ZiSKjPe59cJF5A6jucQ=3bQdz3uAsJ=3dQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:47996 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751138AbdJLNxO (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Oct 2017 09:53:14 -0400
-Received: by mail-io0-f193.google.com with SMTP id h70so5557094ioi.4
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Oct 2017 06:53:14 -0700 (PDT)
-Subject: 
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdaWNthg5OU3ZiSKjPe59cJF5A6jucQ=3bQdz3uAsJ=3dQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-AU
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-I sent a message to you before which i am still waiting for your
-respones please do reply me.
+On 12/10/2017 17:04, Linus Walleij wrote:
+> On Fri, Oct 6, 2017 at 7:08 AM, Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org> wrote:
+> 
+>> The polarity of the irq could be altered
+>> by additional logic (eg inverters) between the device and irq input device.
+> 
+> Marc Zyngier has pointed out that inverters should be modeled
+> using hierarchichal irq domains. You would need to add a new
+> irqchip to invert the line.
+> 
+> See this PDF:
+> https://elinux.org/images/8/8c/Zyngier.pdf
+> 
+> drivers/irqchips/irq-uniphier-aidet.c supports inversion of IRQs
+> for example. For this it uses irq_domain_create_hierarchy()
+> 
+> I guess it would be helpful with a reusable generic "inverter
+> irq chip", that you can just enable and slam into your device
+> tree to tell the system that a line is statically inverted, i.e.
+> non-programmable logic on the board.
+> 
+G'day Linus.
+Thanks for the pointers, I'll see what I can come up with.
+
+
+-- 
+Regards
+Phil Reid
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
