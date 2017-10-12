@@ -1,52 +1,101 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 2/4] gpio: Introduce ->get_multiple callback
-Date: Thu, 12 Oct 2017 13:15:19 +0200
-Message-ID: <20171012111519.nchlhwniklo5njju@wunner.de>
-References: <cover.1503319573.git.lukas@wunner.de>
- <46dea76d0adfe25f30b564d9dc5b3f2b4de099c9.1503319573.git.lukas@wunner.de>
- <20171004203203.GC9195@wunner.de>
- <CACRpkdb4uKLTKUa_fwzMmvSHps8aXM4FQgXzhtf-UNmzt6=Q0g@mail.gmail.com>
+From: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 16/16] arm64: dts: marvell: armada-3720-espressobin: fill UART nodes
+Date: Thu, 12 Oct 2017 13:24:42 +0200
+Message-ID: <87zi8wbocl.fsf@free-electrons.com>
+References: <20171006101344.15590-1-miquel.raynal@free-electrons.com>
+        <20171006101344.15590-17-miquel.raynal@free-electrons.com>
+        <87fuawe8gx.fsf@free-electrons.com>
+        <20171006151521.440418a2@windsurf.lan> <20171009093025.78d45a9a@xps13>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.hostsharing.net ([83.223.95.204]:55109 "EHLO
-        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752824AbdJLLPW (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Oct 2017 07:15:22 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb4uKLTKUa_fwzMmvSHps8aXM4FQgXzhtf-UNmzt6=Q0g@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20171009093025.78d45a9a@xps13> (Miquel RAYNAL's message of "Mon,
+        9 Oct 2017 09:30:25 +0200")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Miquel RAYNAL <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-On Sat, Oct 07, 2017 at 01:23:17PM +0200, Linus Walleij wrote:
-> On Wed, Oct 4, 2017 at 10:32 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> > So I'm wondering if the const keyword does more harm than good in this case.
-> > Let me know what you think.
-> 
-> I've had similar experiences.
-> 
-> I'm not very sensitive about it, do whatever makes most sense to you.
-> 
-> What is important is that we get get_mutiple() in place.
+Hi Miquel,
+ 
+ On lun., oct. 09 2017, Miquel RAYNAL <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-Yes.  My apologies for the delay.
+> Hi Thomas, Gregory,
+>
+> On Fri, 6 Oct 2017 15:15:21 +0200
+> Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+>
+>> Hello,
+>> 
+>> On Fri, 06 Oct 2017 15:01:18 +0200, Gregory CLEMENT wrote:
+>> 
+>> >  /*
+>> >   * To enable the second UART on J17 (pins 24,26) refer to the uart1
+>> >   * node from armada-3720-db.dts.
+>> >   * Note that TX and RX signal are the ones coming directly from
+>> > the SoC:
+>> >   * 1.8V TTL.
+>> >   */  
+>> 
+>> One issue with this comment (and Miquèl's version as well) is that it
+>> does not explain why you don't enable this UART by default.
+>> 
+>> The real reason is in the commit log from Miquèl, and should probably
+>> be part of the comment. Perhaps something like:
+>> 
+>> /*
+>> 
+>>  * Connector J17 (pins X, Y, Z) exposes a number of different
+>>  * features:
+>>  *  - UART1 (pins 24 = RX, pins 26 = TX), see armada-3720-db.dts for
+>> an
+>>  *    example on how to enable UART1. Beware that the signals are 1.8V
+>>  *    TTL.
+>>  *  - SPIxyz
+>>  *  - I2Cxyz
+>>  */
+>
+> Thanks for both your comments, there is my version, inspired from both
+> comments:
+>
+> /*
+>  * Connector J17 exposes a number of different features. Some pins are
+>  * multiplexed. This is the case for the UART1 feature (pins 24 = RX,
+>  * pins 26 = TX). See armada-3720-db.dts for an example of how to enable it.
+>  * Beware that the signals are 1.8V TTL.
+>  */
 
-I've dropped the const qualifier, the rationale for the compiler error
-it triggers is given in:
+Seems good for me however I prefer Thomas version, easier to read and to
+extend latter with the description of other pins if needed.
 
-http://c-faq.com/ansi/constmismatch.html
+Gregory
 
-Briefly, it is legal to pass a pointer to non-const if the function
-signature specifies const, but not for a pointer-to-pointer, i.e.
-a second level of indirection.  The error is supposed to "help" the
-developer keep the const promises but I don't find it helpful at all.
-It necessitates a cast unless a const struct gpio_desc ** is passed in.
-When would that be the case in reality?  Only if the array is statically
-declared, but usually the gpio_desc structs are obtained at runtime,
-so the the cast would likely *always* be needed.
+>
+> Thanks,
+> Miquèl
+>
+>> 
+>> Otherwise, it's not clear at all why you don't just enable UART1. Or
+>> perhaps I misunderstood Miquèl's commit log ?
+>> 
+>> Best regards,
+>> 
+>> Thomas
+>
+>
+>
+> -- 
+> Miquel Raynal, Free Electrons
+> Embedded Linux and Kernel engineering
+> http://free-electrons.com
 
-Thanks,
-
-Lukas
+-- 
+Gregory Clement, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
