@@ -1,30 +1,85 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] gpio-rcar: document R8A77970 bindings
-Date: Thu, 12 Oct 2017 10:04:26 +0200
-Message-ID: <CACRpkdbVhAjVGsCXTUdEqc4s7VmY=j3thHGHZKx-X2mfyh8F6g@mail.gmail.com>
-References: <20171011195210.555925176@cogentembedded.com>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH] gpio: gpio-dwapb: add optional reset
+Date: Thu, 12 Oct 2017 10:18:31 +0200
+Message-ID: <1507796311.5084.1.camel@pengutronix.de>
+References: <20171011163444.2989-1-atull@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171011195210.555925176-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:35013 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752615AbdJLISe (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Thu, 12 Oct 2017 04:18:34 -0400
+In-Reply-To: <20171011163444.2989-1-atull@kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Alan Tull <atull@kernel.org>, Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 11, 2017 at 9:51 PM, Sergei Shtylyov
-<sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org> wrote:
+On Wed, 2017-10-11 at 11:34 -0500, Alan Tull wrote:
+> Some platforms require reset to be released to allow register
+> access.
+> 
+> Signed-off-by: Alan Tull <atull@kernel.org>
+> ---
+> v2: Request shared controller
+>     return all errors from reset controller request
+>     drop conditions on asserting/deasserting reset
 
-> Renesas R-Car V3M (R8A77970) SoC also has the R-Car gen3 compatible GPIO
-> controllers, so document the SoC specific bindings.
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Looks completely uncontroversial and innocent, so patch applied.
+Could you also update the device tree binding docs [1] to mention the
+optional resets phandle?
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1] Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+
+regards
+Philipp
+
+> ---
+>  drivers/gpio/gpio-dwapb.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index f051c45..0df8cdf 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/property.h>
+> +#include <linux/reset.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/platform_data/gpio-dwapb.h>
+>  #include <linux/slab.h>
+> @@ -97,6 +98,7 @@ struct dwapb_gpio {
+>  	unsigned int		nr_ports;
+>  	struct irq_domain	*domain;
+>  	unsigned int		flags;
+> +	struct reset_control	*rst;
+>  };
+>  
+>  static inline u32 gpio_reg_v2_convert(unsigned int offset)
+> @@ -608,6 +610,12 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
+>  	gpio->dev = &pdev->dev;
+>  	gpio->nr_ports = pdata->nports;
+>  
+> +	gpio->rst = devm_reset_control_get_optional_shared(dev, NULL);
+> +	if (IS_ERR(gpio->rst))
+> +		return PTR_ERR(gpio->rst);
+> +
+> +	reset_control_deassert(gpio->rst);
+> +
+>  	gpio->ports = devm_kcalloc(&pdev->dev, gpio->nr_ports,
+>  				   sizeof(*gpio->ports), GFP_KERNEL);
+>  	if (!gpio->ports)
+> @@ -659,6 +667,7 @@ static int dwapb_gpio_remove(struct platform_device *pdev)
+>  
+>  	dwapb_gpio_unregister(gpio);
+>  	dwapb_irq_teardown(gpio);
+> +	reset_control_assert(gpio->rst);
+>  
+>  	return 0;
+>  }
