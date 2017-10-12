@@ -1,41 +1,86 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 6/7] pinctrl: mcp23s08: remove hardcoded irq polarity
- in irq_setup
-Date: Thu, 12 Oct 2017 11:04:52 +0200
-Message-ID: <CACRpkdaWNthg5OU3ZiSKjPe59cJF5A6jucQ=3bQdz3uAsJ=3dQ@mail.gmail.com>
-References: <1507266491-73971-1-git-send-email-preid@electromag.com.au> <1507266491-73971-7-git-send-email-preid@electromag.com.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1507266491-73971-7-git-send-email-preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Lars Poeschel <poeschel-Xtl8qvBWbHwb1SvskN2V4Q@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH v2 0/5] GPIO driver for Maxim MAX3191x
+Date: Thu, 12 Oct 2017 12:40:10 +0200
+Message-ID: <cover.1507797496.git.lukas@wunner.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Rojhalat Ibrahim <imr@rtschenk.de>, Bart Van Assche <bart.vanassche@wdc.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Denys Vlasenko <dvlasenk@redhat.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-On Fri, Oct 6, 2017 at 7:08 AM, Phil Reid <preid-qgqNFa1JUf/o2iN0hyhwsIdd74u8MsAO@public.gmane.org> wrote:
+GPIO driver for Maxim MAX31910, MAX31911, MAX31912, MAX31913,
+MAX31953 and MAX31963 industrial serializer, a daisy-chainable
+chip to make 8 digital 24V inputs available via SPI.  Supports
+CRC checksums to guard against electromagnetic interference,
+as well as undervoltage and overtemperature detection.
 
-> The polarity of the irq could be altered
-> by additional logic (eg inverters) between the device and irq input device.
+The chip is used by the "Revolution Pi" family of open source PLCs
+based on the Raspberry Pi (https://revolution.kunbus.com/).
 
-Marc Zyngier has pointed out that inverters should be modeled
-using hierarchichal irq domains. You would need to add a new
-irqchip to invert the line.
+In a typical SCADA system, all input signals are read periodically,
+say, every 5 or 10 ms, and stored in a so-called "process image".
+To make this perform well with serializers, add a ->get_multiple
+callback to struct gpio_chip, add corresponding consumer functions
+and wire it up with linehandle_ioctl().
 
-See this PDF:
-https://elinux.org/images/8/8c/Zyngier.pdf
+Changes v1 -> v2:
 
-drivers/irqchips/irq-uniphier-aidet.c supports inversion of IRQs
-for example. For this it uses irq_domain_create_hierarchy()
+- Patch [1/5]: Change the argument order of assign_bit() to reflect
+  traditional "dst = src" in C. (Peter Zijlstra)
 
-I guess it would be helpful with a reusable generic "inverter
-irq chip", that you can just enable and slam into your device
-tree to tell the system that a line is statically inverted, i.e.
-non-programmable logic on the board.
+- Patch [2/5]: Update documentation. (Linus Walleij)
+  Drop const qualifier from struct gpio_desc ** in all function
+  signatures to avoid a cast when passing a non-const array created
+  with gpiod_get_array(), which is likely the most common use case.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+- Patch [3/5]: Newly inserted patch to introduce common property for
+  number of daisy-chained devices.
+
+- Patch [4/5]: Add vendor prefix to GPIO identifiers, use boolean
+  instead of integer to select mode, rename boolean to ignore
+  undervoltage alarms, separate compatible strings with newlines.
+  (Rob Herring)
+
+- Patch [5/5]: Optimize algorithm in max3191x_get_multiple() to
+  iterate over the bits in the mask, instead of iterating over every
+  chip, thus implicitly skipping chips which are not selected at all
+  by the mask.
+  Support configurations where all chips in a daisy-chain share the
+  same modesel, fault or debounce pin.
+  Verify that the number of db0 and db1 GPIOs specified in the DT is
+  identical.
+
+Link to v1:
+
+https://www.spinics.net/lists/linux-gpio/msg25067.html
+
+Thanks,
+
+Lukas
+
+
+Lukas Wunner (5):
+  bitops: Introduce assign_bit()
+  gpio: Introduce ->get_multiple callback
+  dt-bindings: Document common property for daisy-chained devices
+  dt-bindings: gpio: max3191x: Document new driver
+  gpio: Add driver for Maxim MAX3191x industrial serializer
+
+ .../devicetree/bindings/common-properties.txt      |  26 ++
+ .../devicetree/bindings/gpio/gpio-max3191x.txt     |  59 +++
+ Documentation/gpio/consumer.txt                    |  41 +-
+ drivers/gpio/Kconfig                               |  10 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-max3191x.c                       | 492 +++++++++++++++++++++
+ drivers/gpio/gpiolib.c                             | 179 +++++++-
+ drivers/gpio/gpiolib.h                             |   4 +
+ drivers/md/dm-mpath.c                              |  22 +-
+ include/linux/bitops.h                             |  24 +
+ include/linux/gpio/consumer.h                      |  43 ++
+ include/linux/gpio/driver.h                        |   5 +
+ 12 files changed, 869 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
+ create mode 100644 drivers/gpio/gpio-max3191x.c
+
+-- 
+2.11.0
