@@ -1,86 +1,140 @@
 From: Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH v2 0/5] GPIO driver for Maxim MAX3191x
+Subject: [PATCH v2 1/5] bitops: Introduce assign_bit()
 Date: Thu, 12 Oct 2017 12:40:10 +0200
-Message-ID: <cover.1507797496.git.lukas@wunner.de>
+Message-ID: <2ca70faf07383482eed6263c00cf9141f930653b.1507797496.git.lukas@wunner.de>
+References: <cover.1507797496.git.lukas@wunner.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1507797496.git.lukas@wunner.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Rojhalat Ibrahim <imr@rtschenk.de>, Bart Van Assche <bart.vanassche@wdc.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Denys Vlasenko <dvlasenk@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Denys Vlasenko <dvlasenk@redhat.com>, linux-kernel@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 
-GPIO driver for Maxim MAX31910, MAX31911, MAX31912, MAX31913,
-MAX31953 and MAX31963 industrial serializer, a daisy-chainable
-chip to make 8 digital 24V inputs available via SPI.  Supports
-CRC checksums to guard against electromagnetic interference,
-as well as undervoltage and overtemperature detection.
+A common idiom is to assign a value to a bit with:
 
-The chip is used by the "Revolution Pi" family of open source PLCs
-based on the Raspberry Pi (https://revolution.kunbus.com/).
+    if (value)
+        set_bit(nr, addr);
+    else
+        clear_bit(nr, addr);
 
-In a typical SCADA system, all input signals are read periodically,
-say, every 5 or 10 ms, and stored in a so-called "process image".
-To make this perform well with serializers, add a ->get_multiple
-callback to struct gpio_chip, add corresponding consumer functions
-and wire it up with linehandle_ioctl().
+Likewise common is the one-line expression variant:
 
+    value ? set_bit(nr, addr) : clear_bit(nr, addr);
+
+Commit 9a8ac3ae682e ("dm mpath: cleanup QUEUE_IF_NO_PATH bit
+manipulation by introducing assign_bit()") introduced assign_bit()
+to the md subsystem for brevity.
+
+Make it available to others, specifically gpiolib and the upcoming
+driver for Maxim MAX3191x industrial serializer chips.
+
+As requested by Peter Zijlstra, change the argument order to reflect
+traditional "dst = src" in C, hence "assign_bit(nr, addr, value)".
+
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Neil Brown <neilb@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+---
 Changes v1 -> v2:
 
-- Patch [1/5]: Change the argument order of assign_bit() to reflect
+- Change the argument order of assign_bit() to reflect
   traditional "dst = src" in C. (Peter Zijlstra)
 
-- Patch [2/5]: Update documentation. (Linus Walleij)
-  Drop const qualifier from struct gpio_desc ** in all function
-  signatures to avoid a cast when passing a non-const array created
-  with gpiod_get_array(), which is likely the most common use case.
+ drivers/md/dm-mpath.c  | 22 +++++++---------------
+ include/linux/bitops.h | 24 ++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 15 deletions(-)
 
-- Patch [3/5]: Newly inserted patch to introduce common property for
-  number of daisy-chained devices.
-
-- Patch [4/5]: Add vendor prefix to GPIO identifiers, use boolean
-  instead of integer to select mode, rename boolean to ignore
-  undervoltage alarms, separate compatible strings with newlines.
-  (Rob Herring)
-
-- Patch [5/5]: Optimize algorithm in max3191x_get_multiple() to
-  iterate over the bits in the mask, instead of iterating over every
-  chip, thus implicitly skipping chips which are not selected at all
-  by the mask.
-  Support configurations where all chips in a daisy-chain share the
-  same modesel, fault or debounce pin.
-  Verify that the number of db0 and db1 GPIOs specified in the DT is
-  identical.
-
-Link to v1:
-
-https://www.spinics.net/lists/linux-gpio/msg25067.html
-
-Thanks,
-
-Lukas
-
-
-Lukas Wunner (5):
-  bitops: Introduce assign_bit()
-  gpio: Introduce ->get_multiple callback
-  dt-bindings: Document common property for daisy-chained devices
-  dt-bindings: gpio: max3191x: Document new driver
-  gpio: Add driver for Maxim MAX3191x industrial serializer
-
- .../devicetree/bindings/common-properties.txt      |  26 ++
- .../devicetree/bindings/gpio/gpio-max3191x.txt     |  59 +++
- Documentation/gpio/consumer.txt                    |  41 +-
- drivers/gpio/Kconfig                               |  10 +
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-max3191x.c                       | 492 +++++++++++++++++++++
- drivers/gpio/gpiolib.c                             | 179 +++++++-
- drivers/gpio/gpiolib.h                             |   4 +
- drivers/md/dm-mpath.c                              |  22 +-
- include/linux/bitops.h                             |  24 +
- include/linux/gpio/consumer.h                      |  43 ++
- include/linux/gpio/driver.h                        |   5 +
- 12 files changed, 869 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max3191x.txt
- create mode 100644 drivers/gpio/gpio-max3191x.c
-
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index 11f273d2f018..0e211de9bc54 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -641,14 +641,6 @@ static void process_queued_bios(struct work_struct *work)
+ 	blk_finish_plug(&plug);
+ }
+ 
+-static void assign_bit(bool value, long nr, unsigned long *addr)
+-{
+-	if (value)
+-		set_bit(nr, addr);
+-	else
+-		clear_bit(nr, addr);
+-}
+-
+ /*
+  * If we run out of usable paths, should we queue I/O or error it?
+  */
+@@ -658,11 +650,11 @@ static int queue_if_no_path(struct multipath *m, bool queue_if_no_path,
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&m->lock, flags);
+-	assign_bit((save_old_value && test_bit(MPATHF_QUEUE_IF_NO_PATH, &m->flags)) ||
+-		   (!save_old_value && queue_if_no_path),
+-		   MPATHF_SAVED_QUEUE_IF_NO_PATH, &m->flags);
+-	assign_bit(queue_if_no_path || dm_noflush_suspending(m->ti),
+-		   MPATHF_QUEUE_IF_NO_PATH, &m->flags);
++	assign_bit(MPATHF_SAVED_QUEUE_IF_NO_PATH, &m->flags,
++		   (save_old_value && test_bit(MPATHF_QUEUE_IF_NO_PATH, &m->flags)) ||
++		   (!save_old_value && queue_if_no_path));
++	assign_bit(MPATHF_QUEUE_IF_NO_PATH, &m->flags,
++		   queue_if_no_path || dm_noflush_suspending(m->ti));
+ 	spin_unlock_irqrestore(&m->lock, flags);
+ 
+ 	if (!queue_if_no_path) {
+@@ -1588,8 +1580,8 @@ static void multipath_resume(struct dm_target *ti)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&m->lock, flags);
+-	assign_bit(test_bit(MPATHF_SAVED_QUEUE_IF_NO_PATH, &m->flags),
+-		   MPATHF_QUEUE_IF_NO_PATH, &m->flags);
++	assign_bit(MPATHF_QUEUE_IF_NO_PATH, &m->flags,
++		   test_bit(MPATHF_SAVED_QUEUE_IF_NO_PATH, &m->flags));
+ 	spin_unlock_irqrestore(&m->lock, flags);
+ }
+ 
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 8fbe259b197c..9a874deee6e2 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -227,6 +227,30 @@ static inline unsigned long __ffs64(u64 word)
+ 	return __ffs((unsigned long)word);
+ }
+ 
++/**
++ * assign_bit - Assign value to a bit in memory
++ * @nr: the bit to set
++ * @addr: the address to start counting from
++ * @value: the value to assign
++ */
++static __always_inline void assign_bit(long nr, volatile unsigned long *addr,
++				       bool value)
++{
++	if (value)
++		set_bit(nr, addr);
++	else
++		clear_bit(nr, addr);
++}
++
++static __always_inline void __assign_bit(long nr, volatile unsigned long *addr,
++					 bool value)
++{
++	if (value)
++		__set_bit(nr, addr);
++	else
++		__clear_bit(nr, addr);
++}
++
+ #ifdef __KERNEL__
+ 
+ #ifndef set_mask_bits
 -- 
 2.11.0
