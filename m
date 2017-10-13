@@ -1,41 +1,39 @@
-From: fenglinw@codeaurora.org
-Subject: [PATCH V1 2/2] pinctrl: qcom: spmi-gpio: Set is_enabled flag in set_mux()
-Date: Fri, 13 Oct 2017 14:15:04 +0800
-Message-ID: <20171013061550.996-3-fenglinw@codeaurora.org>
-References: <20171013061550.996-1-fenglinw@codeaurora.org>
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20171013061550.996-1-fenglinw@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
-Cc: collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org, Fenglin Wu <fenglinw@codeaurora.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] gpio-rcar: use devm_ioremap_resource()
+Date: Fri, 13 Oct 2017 08:50:29 +0200
+Message-ID: <CAMuHMdXy=kz1tK_vdEN7cyjAACa6Cd_D8BFWcqotqcP5rEVnSg@mail.gmail.com>
+References: <20171012201537.102610518@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20171012201537.102610518@cogentembedded.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
 
-From: Fenglin Wu <fenglinw@codeaurora.org>
+On Thu, Oct 12, 2017 at 10:15 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Using devm_ioremap_resource() has several advantages over devm_ioremap():
+> - it checks the passed resource's validity;
+> - it calls devm_request_mem_region() to check for the resource overlap;
+> - it prints an error message in case of error.
+>
+> We can call devm_ioremap_resource() instead of devm_ioremap_nocache()
+> as ioremap() and ioremap_nocache()  are implemented identically on ARM.
+> Doing this saves 2 LoCs and 80 bytes (AArch64 gcc 4.8.5).
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-The initial value of is_enabled flag is read out from hardware in
-pmic_gpio_populate(), and it will be set in pmic_gpio_config_set() if
-pinconf is defined. For any GPIOs disabled initially in hardware which
-only have pinmux defined, they won't be enabled in pmic_gpio_set_mux()
-calling. So set is_enabled flag in set_mux() to ensure the GPIO module
-could be enabled in above case.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 0a1e173..219c934 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -312,6 +312,7 @@ static int pmic_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 	}
- 
- 	pad = pctldev->desc->pins[pin].drv_data;
-+	pad->is_enabled = true;
- 	/*
- 	 * Non-LV/MV subtypes only support 2 special functions,
- 	 * offsetting the dtestx function values by 2
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
