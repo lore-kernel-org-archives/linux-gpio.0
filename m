@@ -1,73 +1,100 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH v2 04/16] serial: mvebu-uart: support probe of multiple ports
-Date: Fri, 13 Oct 2017 11:40:32 +0200
-Message-ID: <877evz9yi7.fsf@free-electrons.com>
-References: <20171013090200.31034-1-miquel.raynal@free-electrons.com>
-        <20171013090200.31034-5-miquel.raynal@free-electrons.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
+ serializer
+Date: Fri, 13 Oct 2017 13:11:24 +0200
+Message-ID: <20171013111124.GA12351@wunner.de>
+References: <cover.1507797496.git.lukas@wunner.de>
+ <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:44917 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751529AbdJMJko (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 05:40:44 -0400
-In-Reply-To: <20171013090200.31034-5-miquel.raynal@free-electrons.com> (Miquel
-        Raynal's message of "Fri, 13 Oct 2017 11:01:48 +0200")
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:58407 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757911AbdJMLL0 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 07:11:26 -0400
+Content-Disposition: inline
+In-Reply-To: <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Miquel Raynal <miquel.raynal@free-electrons.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jiri Slaby <jslaby@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Antoine Tenart <antoine.tenart@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Wilson Ding <dingwei@marvell.com>, Allen Yan <yanwei@marvell.com>
+To: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
 
-Hi Miquel,
- 
- On ven., oct. 13 2017, Miquel Raynal <miquel.raynal@free-electrons.com> wrote:
+[cc += William Breathitt Gray, Geert Uytterhoeven, Phil Reid,
+       David Daney, Iban Rodriguez]
 
-> -	port = &mvebu_uart_ports[0];
-> +	/* Assume that all UART ports have a DT alias or none has */
-> +	id = of_alias_get_id(pdev->dev.of_node, "serial");
+The drivers
 
-You stil need to check the pdev->dev.of_node before calling
-of_alias_get_id.
+       gpio-104-dio-48e.c, gpio-74x164.c, gpio-gpio-mm.c,
+       gpio-pca953x.c, gpio-thunderx.c, gpio-ws16c48.c,
+       gpio-xilinx.c
 
-Once it will be fixed, you can add:
+currently use an inefficient algorithm for their ->set_multiple
+callback:  They iterate over every chip (or bank or gpio pin),
+check if any bits are set in the mask for this particular chip,
+and if so, update the affected GPIOs.  If the mask is sparsely
+populated, you'll waste CPU time checking chips even though
+they're not affected by the operation at all.
 
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Iterating over the chips is backwards, it is more efficient to
+iterate over the bits set in the mask, identify the corresponding
+chip and update its affected GPIOs.  The gpio-max3191x.c driver
+I posted yesterday contains an example for such an algorithm and
+you may want to improve your ->set_mutiple implementation accordingly:
+
+
+> +static int max3191x_get_multiple(struct gpio_chip *gpio, unsigned long *mask,
+> +				 unsigned long *bits)
+> +{
+> +	struct max3191x_chip *max3191x = gpiochip_get_data(gpio);
+> +	int ret, bit = 0, wordlen = max3191x_wordlen(max3191x);
+> +
+> +	mutex_lock(&max3191x->lock);
+> +	ret = max3191x_readout_locked(max3191x);
+> +	if (ret)
+> +		goto out_unlock;
+> +
+> +	while ((bit = find_next_bit(mask, gpio->ngpio, bit)) != gpio->ngpio) {
+> +		unsigned int chipnum = bit / MAX3191X_NGPIO;
+> +		unsigned long in, shift, index;
+> +
+> +		if (max3191x_chip_is_faulting(max3191x, chipnum)) {
+> +			ret = -EIO;
+> +			goto out_unlock;
+> +		}
+> +
+> +		in = ((u8 *)max3191x->xfer.rx_buf)[chipnum * wordlen];
+> +		shift = round_down(bit % BITS_PER_LONG, MAX3191X_NGPIO);
+> +		index = bit / BITS_PER_LONG;
+> +		bits[index] &= ~(mask[index] & (0xff << shift));
+> +		bits[index] |= mask[index] & (in << shift); /* copy bits */
+> +
+> +		bit = (chipnum + 1) * MAX3191X_NGPIO; /* go to next chip */
+> +	}
+> +
+> +out_unlock:
+> +	mutex_unlock(&max3191x->lock);
+> +	return ret;
+> +}
+
+
+I've used a while loop, obviously the same can be achieved with a
+for loop but I found that harder to read and it didn't save any LoC.
+
+This particular chip has 8 inputs (= MAX3191X_NGPIO) that can be read
+concurrently.
+
+The series containing this driver introduces a ->get_multiple callback.
+Since you've implemented a ->set_multiple callback, you may want to
+add a ->get_multiple callback to your driver as well.  (If supported
+by the hardware, which is not the case for output-only chips such as
+gpio-74x164.c.)
+
+You can find the full series here:
+https://www.spinics.net/lists/linux-gpio/msg25997.html
+
+If you want to fetch the series from a git repo, use this branch:
+https://github.com/RevolutionPi/linux/commits/revpi-4.9
 
 Thanks,
 
-Gregory
-
-
-> +	if (!pdev->dev.of_node || id < 0)
-> +		pdev->id = uart_num_counter++;
-> +	else
-> +		pdev->id = id;
-> +
-> +	if (pdev->id >= MVEBU_NR_UARTS) {
-> +		dev_err(&pdev->dev, "cannot have more than %d UART ports\n",
-> +			MVEBU_NR_UARTS);
-> +		return -EINVAL;
-> +	}
-> +
-> +	port = &mvebu_uart_ports[pdev->id];
->  
->  	spin_lock_init(&port->lock);
->  
-> @@ -572,7 +588,7 @@ static int mvebu_uart_probe(struct platform_device *pdev)
->  	port->fifosize   = 32;
->  	port->iotype     = UPIO_MEM32;
->  	port->flags      = UPF_FIXED_PORT;
-> -	port->line       = 0; /* single port: force line number to  0 */
-> +	port->line       = pdev->id;
->  
->  	port->irq        = irq->start;
->  	port->irqflags   = 0;
-> -- 
-> 2.11.0
->
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Lukas
