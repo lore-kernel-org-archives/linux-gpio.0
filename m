@@ -1,81 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 01/13] gpio: Introduce struct gpio_irq_chip
-Date: Fri, 13 Oct 2017 17:49:01 +0200
-Message-ID: <20171013154913.29448-2-thierry.reding@gmail.com>
-References: <20171013154913.29448-1-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171013154913.29448-1-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: David Daney <ddaney@caviumnetworks.com>
+Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
+ serializer
+Date: Fri, 13 Oct 2017 09:53:06 -0700
+Message-ID: <797c3efc-c466-1371-bb3e-176915f81895@caviumnetworks.com>
+References: <cover.1507797496.git.lukas@wunner.de>
+ <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
+ <20171013111124.GA12351@wunner.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-cys01nam02on0061.outbound.protection.outlook.com ([104.47.37.61]:35392
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751057AbdJMQxL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 13 Oct 2017 12:53:11 -0400
+In-Reply-To: <20171013111124.GA12351@wunner.de>
+Content-Language: en-US
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Lukas Wunner <lukas@wunner.de>, Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 10/13/2017 04:11 AM, Lukas Wunner wrote:
+> [cc += William Breathitt Gray, Geert Uytterhoeven, Phil Reid,
+>         David Daney, Iban Rodriguez]
+> 
+> The drivers
+> 
+>         gpio-104-dio-48e.c, gpio-74x164.c, gpio-gpio-mm.c,
+>         gpio-pca953x.c, gpio-thunderx.c, gpio-ws16c48.c,
+>         gpio-xilinx.c
+> 
+> currently use an inefficient algorithm for their ->set_multiple
+> callback:  They iterate over every chip (or bank or gpio pin),
+> check if any bits are set in the mask for this particular chip,
+> and if so, update the affected GPIOs.  If the mask is sparsely
+> populated, you'll waste CPU time checking chips even though
+> they're not affected by the operation at all.
+> 
+> Iterating over the chips is backwards, it is more efficient to
+> iterate over the bits set in the mask, identify the corresponding
+> chip and update its affected GPIOs.  The gpio-max3191x.c driver
+> I posted yesterday contains an example for such an algorithm and
+> you may want to improve your ->set_mutiple implementation accordingly:
+> 
+> 
 
-This new structure will be used to group all fields related to interrupt
-handling in a GPIO chip. Doing so will properly namespace these fields
-and make it easier to distinguish which fields are used for IRQ support.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- include/linux/gpio/driver.h | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Do you have any profiling results that demonstrate significant 
+system-wide performance improvements by making such a change?
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index c97f8325e8bf..8a6407540514 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -19,6 +19,36 @@ struct module;
- 
- #ifdef CONFIG_GPIOLIB
- 
-+#ifdef CONFIG_GPIOLIB_IRQCHIP
-+/**
-+ * struct gpio_irq_chip - GPIO interrupt controller
-+ */
-+struct gpio_irq_chip {
-+	/**
-+	 * @domain_ops:
-+	 *
-+	 * Table of interrupt domain operations for this IRQ chip.
-+	 */
-+	const struct irq_domain_ops *domain_ops;
-+
-+	/**
-+	 * @parent_handler:
-+	 *
-+	 * The interrupt handler for the GPIO chip's parent interrupts, may be
-+	 * NULL if the parent interrupts are nested rather than cascaded.
-+	 */
-+	irq_flow_handler_t parent_handler;
-+
-+	/**
-+	 * @parent_handler_data:
-+	 *
-+	 * Data associated, and passed to, the handler for the parent
-+	 * interrupt.
-+	 */
-+	void *parent_handler_data;
-+};
-+#endif
-+
- /**
-  * struct gpio_chip - abstract a GPIO controller
-  * @label: a functional name for the GPIO device, such as a part
-@@ -173,6 +203,14 @@ struct gpio_chip {
- 	bool			irq_need_valid_mask;
- 	unsigned long		*irq_valid_mask;
- 	struct lock_class_key	*lock_key;
-+
-+	/**
-+	 * @irq:
-+	 *
-+	 * Integrates interrupt chip functionality with the GPIO chip. Can be
-+	 * used to handle IRQs for most practical cases.
-+	 */
-+	struct gpio_irq_chip irq;
- #endif
- 
- #if defined(CONFIG_OF_GPIO)
--- 
-2.14.1
+For the gpio-thunderx.c driver, the words in the bits/mask exactly match 
+the banks, so the number of iterations doesn't change with the approach 
+you suggest.
+
+In fact, an argument could be made in the other direction.  The 
+increased ICache pressure from code bloat and branch prediction misses 
+resulting from extra testing of the mask bits could easily make the 
+system slower using your suggestion.
+
+Thanks,
+David Daney
+
