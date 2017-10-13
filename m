@@ -1,108 +1,139 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
- serializer
-Date: Fri, 13 Oct 2017 15:12:41 -0700
-Message-ID: <86333441-4c2b-3e3d-853f-eddadf446956@caviumnetworks.com>
-References: <cover.1507797496.git.lukas@wunner.de>
- <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
- <20171013111124.GA12351@wunner.de>
- <797c3efc-c466-1371-bb3e-176915f81895@caviumnetworks.com>
- <20171013212907.GA25710@wunner.de>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 0/2] [v5] pinctrl: qcom: add support for sparse GPIOs
+Date: Fri, 13 Oct 2017 18:26:23 -0500
+Message-ID: <4f067c09-9ecf-9266-baa0-18575bca94eb@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <20170919070422.GI3349@codeaurora.org>
+ <CACRpkdZcdLac_wYW+XqtZ=-APo8VmvYL4B1oL-wZyLy8KEs9AA@mail.gmail.com>
+ <1ecdf6ee-5098-15d3-f85e-66b39a6c25f9@codeaurora.org>
+ <CACRpkdaUV1Mjh7U9bBAgZA5Zq1oqN0HBT=VH5NkvPnY4gHxDVw@mail.gmail.com>
+ <d53e67a2-4f69-752f-ba35-53872d9b9760@codeaurora.org>
+ <CACRpkdYfAcKrgbgybccurUKTyR0E+tHDyzp7sbXxXxKuyMOGhQ@mail.gmail.com>
+ <619f48d2-59c7-c090-4ace-9e8db9f92064@codeaurora.org>
+ <CACRpkdZFunwQ=tiQqsapap7Ozz42hr=df5vqbC0S5xy5Wn+ZWw@mail.gmail.com>
+ <255ad0dc-2d16-ae7f-0b45-500e23cff1a4@codeaurora.org>
+ <20171003220311.GU457@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0048.outbound.protection.outlook.com ([104.47.37.48]:37872
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752460AbdJMWMt (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 13 Oct 2017 18:12:49 -0400
-In-Reply-To: <20171013212907.GA25710@wunner.de>
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20171003220311.GU457@codeaurora.org>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>, Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
 
-On 10/13/2017 02:29 PM, Lukas Wunner wrote:
-> On Fri, Oct 13, 2017 at 09:53:06AM -0700, David Daney wrote:
->> On 10/13/2017 04:11 AM, Lukas Wunner wrote:
->>> The drivers
->>>
->>>         gpio-104-dio-48e.c, gpio-74x164.c, gpio-gpio-mm.c,
->>>         gpio-pca953x.c, gpio-thunderx.c, gpio-ws16c48.c,
->>>         gpio-xilinx.c
->>>
->>> currently use an inefficient algorithm for their ->set_multiple
->>> callback:  They iterate over every chip (or bank or gpio pin),
->>> check if any bits are set in the mask for this particular chip,
->>> and if so, update the affected GPIOs.  If the mask is sparsely
->>> populated, you'll waste CPU time checking chips even though
->>> they're not affected by the operation at all.
->>>
->>> Iterating over the chips is backwards, it is more efficient to
->>> iterate over the bits set in the mask, identify the corresponding
->>> chip and update its affected GPIOs.  The gpio-max3191x.c driver
->>> I posted yesterday contains an example for such an algorithm and
->>> you may want to improve your ->set_mutiple implementation accordingly:
->>
->> Do you have any profiling results that demonstrate significant system-wide
->> performance improvements by making such a change?
+On 10/03/2017 05:03 PM, Stephen Boyd wrote:
+> I don't see any value
+> beyond system wide debug in figuring out the default pin
+> configuration of a pin that doesn't have a consumer in Linux.
+
+I can agree with that.
+
+> Could we remove the pin direction finding part here in
+> gpiochip_add_pin_range() and lazily resolve the pin direction
+> when a pin is requested? We would need a similar check in the msm
+> specific debugfs code where we skip pins that aren't requested.
+> This is basically a revert of commit 72d320006177 ("gpio: set up
+> initial state from .get_direction()").
 > 
-> Sorry, no.
+> ACPI can still describe only the pin ranges that they care about
+> exposing, but from the devicetree side it's been working well
+> enough to not touch pins that aren't used by anything in Linux.
 > 
-> 
->> For the gpio-thunderx.c driver, the words in the bits/mask exactly match the
->> banks, so the number of iterations doesn't change with the approach you
->> suggest.
-> 
-> No, I was specifically referring to a sparsely populated mask above.
-> Let's say the mask consists of several 64-bit words and only the last
-> word has set bits.  With the existing algorithm you have as many
-> iterations as you have banks:
-> 
-> 	for (bank = 0; bank <= chip->ngpio / 64; bank++) {
-> 		set_bits = bits[bank] & mask[bank];
-> 		clear_bits = ~bits[bank] & mask[bank];
-> 		writeq(set_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_SET);
-> 		writeq(clear_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_CLR);
-> 	}
-> 
-> Whereas with the algorithm I'm proposing you only have a single iteration:
-> 
-> 	int bit = 0;
-> 	while ((bit = find_next_bit(mask, chip->ngpio, bit)) != chip->ngpio) {
-> 		unsigned int bank = bit / 64;
-> 		set_bits = bits[bank] & mask[bank];
-> 		clear_bits = ~bits[bank] & mask[bank];
-> 		writeq(set_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_SET);
-> 		writeq(clear_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_CLR);
-> 		bit = (bank + 1) * 64; /* continue search from next bank */
-> 	}
-> 
-> find_next_bit() uses the clz instruction on ARM, similar instructions
-> exist on most arches, so the search is very fast.
-> 
+> ---8<----
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index cd003b74512f..673028823bc5 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1210,16 +1210,7 @@ int gpiochip_add_data(struct gpio_chip *chip, void *data)
+>   		 * wrong direction in sysfs.
+>   		 */
+>   
+> -		if (chip->get_direction) {
+> -			/*
+> -			 * If we have .get_direction, set up the initial
+> -			 * direction flag from the hardware.
+> -			 */
+> -			int dir = chip->get_direction(chip, i);
+> -
+> -			if (!dir)
+> -				set_bit(FLAG_IS_OUT, &desc->flags);
+> -		} else if (!chip->direction_input) {
+> +		if (!chip->direction_input) {
+>   			/*
+>   			 * If the chip lacks the .direction_input callback
+>   			 * we logically assume all lines are outputs.
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 273badd92561..4a0aeceb42f1 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -24,7 +24,7 @@
+>   #include <linux/pinctrl/pinconf.h>
+>   #include <linux/pinctrl/pinconf-generic.h>
+>   #include <linux/slab.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/driver.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/spinlock.h>
+>   #include <linux/reboot.h>
+> @@ -494,6 +494,12 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+>   	};
+>   
+>   	g = &pctrl->soc->groups[offset];
+> +
+> +	if (!gpiochip_is_requested(chip, gpio)) {
+> +		seq_printf(s, " %-8s:", g->name);
+> +		return;
+> +	}
+> +
+>   	ctl_reg = readl(pctrl->regs + g->ctl_reg);
+>   
+>   	is_out = !!(ctl_reg & BIT(g->oe_bit));
 
-There are a maximum of two banks.
+In order for this to work, I had to add this function from patch #1:
 
-For some thunderx SoCs there is only a single bank, so my code has 
-exactly one iteration.  For the SoCs with two banks, my code has exactly 
-two iterations.  There are no function calls in the loop.
+static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
+{
+	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
+	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
 
-Your suggested code does a function call to the find_next_bit() function 
-for each iteration.  I assert that your method will be slower.
+	if (!g->npins)
+		return -ENODEV;
 
-Unless you can show an instruction trace where your code results in 
-fewer instructions being executed, I would NAK the patch.
+	return gpiochip_generic_request(chip, offset);
+}
 
-I can't believe I have spent so much time on this issue, for which no 
-matter what you do, will not impact system performance in any measurable 
-way.
+The problem with this is that none of the GPIOs are "requested", so it 
+displays an output like this:
 
+# cat /sys/kernel/debug/gpio
+gpiochip0: GPIOs 0-149, parent: platform/QCOM8002:00, QCOM8002:00:
+  (null)  :
+  (null)  :
+  (null)  :
+[... truncated ]]
+  (null)  :
+  (null)  :
+  (null)  :
+  (null)  :
+  gpio36  :
+  gpio37  :
+  gpio38  :
+  gpio39  :
+  (null)  :
+  (null)  :
 
-David.
+It can't differentiate between GPIOs that don't exist and GPIOs that 
+haven't been requested.  Plus, the "(null)" entries are what I've been 
+trying to avoid in the first place.
 
+So overall, this patch seems okay, although it needs a little work. 
+However, it doesn't address Bjorn's complaint that he doesn't want me to 
+use pin ranges at all.
 
-
-
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
