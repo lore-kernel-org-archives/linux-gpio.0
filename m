@@ -1,65 +1,98 @@
-From: David Daney <ddaney@caviumnetworks.com>
-Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
- serializer
-Date: Fri, 13 Oct 2017 09:53:06 -0700
-Message-ID: <797c3efc-c466-1371-bb3e-176915f81895@caviumnetworks.com>
-References: <cover.1507797496.git.lukas@wunner.de>
- <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
- <20171013111124.GA12351@wunner.de>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCHv3 1/2] Add device tree bindings for Altera FPGA Manager
+ GPIO
+Date: Fri, 13 Oct 2017 15:06:09 -0500
+Message-ID: <20171013200609.x6cjol7a57eypohl@rob-hp-laptop>
+References: <AM5PR0701MB2657FDDE2E0CE80D0EECB4B3E4770@AM5PR0701MB2657.eurprd07.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0061.outbound.protection.outlook.com ([104.47.37.61]:35392
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751057AbdJMQxL (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 13 Oct 2017 12:53:11 -0400
-In-Reply-To: <20171013111124.GA12351@wunner.de>
-Content-Language: en-US
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36445 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752984AbdJMUGL (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 16:06:11 -0400
+Content-Disposition: inline
+In-Reply-To: <AM5PR0701MB2657FDDE2E0CE80D0EECB4B3E4770@AM5PR0701MB2657.eurprd07.prod.outlook.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>, Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 10/13/2017 04:11 AM, Lukas Wunner wrote:
-> [cc += William Breathitt Gray, Geert Uytterhoeven, Phil Reid,
->         David Daney, Iban Rodriguez]
+On Sun, Oct 08, 2017 at 11:30:27AM +0000, Bernd Edlinger wrote:
+> These are the bindings for the gpio-altera-fpgamgr driver.
+
+Bindings are for h/w devices, not drivers.
+
 > 
-> The drivers
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+> ---
+>  .../bindings/gpio/gpio-altera-fpgamgr.txt          | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
 > 
->         gpio-104-dio-48e.c, gpio-74x164.c, gpio-gpio-mm.c,
->         gpio-pca953x.c, gpio-thunderx.c, gpio-ws16c48.c,
->         gpio-xilinx.c
-> 
-> currently use an inefficient algorithm for their ->set_multiple
-> callback:  They iterate over every chip (or bank or gpio pin),
-> check if any bits are set in the mask for this particular chip,
-> and if so, update the affected GPIOs.  If the mask is sparsely
-> populated, you'll waste CPU time checking chips even though
-> they're not affected by the operation at all.
-> 
-> Iterating over the chips is backwards, it is more efficient to
-> iterate over the bits set in the mask, identify the corresponding
-> chip and update its affected GPIOs.  The gpio-max3191x.c driver
-> I posted yesterday contains an example for such an algorithm and
-> you may want to improve your ->set_mutiple implementation accordingly:
-> 
-> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt b/Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
+> new file mode 100644
+> index 0000000..7e9434f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-altera-fpgamgr.txt
+> @@ -0,0 +1,45 @@
+> +Altera FPGA Manager GPIO controller bindings
+> +
+> +Required controller properties:
+> +- #address-cells : Should be 1
+> +- #size-cells : Should be 0
+> +- compatible:
+> +  - "altr,fpgamgr-gpio"
 
+Seems kind of generic. Only 1 implementation of h/w?
 
-Do you have any profiling results that demonstrate significant 
-system-wide performance improvements by making such a change?
+> +- reg: Physical base address and length of the controller's registers.
+> +- status : "okay" or "disabled".
 
-For the gpio-thunderx.c driver, the words in the bits/mask exactly match 
-the banks, so the number of iterations doesn't change with the approach 
-you suggest.
+No need to document status.
 
-In fact, an argument could be made in the other direction.  The 
-increased ICache pressure from code bloat and branch prediction misses 
-resulting from extra testing of the mask bits could easily make the 
-system slower using your suggestion.
+> +
+> +The FPGA Manager has two 32-bit ports, one for input and one for output.
 
-Thanks,
-David Daney
+This sounds more like a system control/status register to tie off all 
+the leftover signals than a GPIO block. Linus likely has some opinions 
+on that.
 
+> +
+> +Port properties:
+> +- compatible:
+> +  - "altr,fpgamgr-gpio-output"
+> +  - "altr,fpgamgr-gpio-input"
+> +- #gpio-cells : Should be 2
+> +  - The first cell is the gpio offset number.
+> +  - The second cell is reserved and is currently unused.
+> +- gpio-controller : Marks the device node as a GPIO controller.
+> +- reg : Port number, 0 for output, 1 for input.
+> +
+> +Example:
+> +
+> +gpio3: gpio@ff706010 {
+> +  #address-cells = <1>;
+> +  #size-cells = <0>;
+> +  compatible = "altr,fpgamgr-gpio";
+> +  reg = <0xff706010 0x8>;
+> +  status = "okay";
+> +
+> +  portd: gpio-controller@0 {
+> +    compatible = "altr,fpgamgr-gpio-output";
+> +    gpio-controller;
+> +    #gpio-cells = <2>;
+> +    reg = <0>;
+> +  };
+> +
+> +  porte: gpio-controller@1 {
+> +    compatible = "altr,fpgamgr-gpio-input";
+> +    gpio-controller;
+> +    #gpio-cells = <2>;
+> +    reg = <1>;
+> +  };
+
+These child nodes don't really add anything. Can't you just define the 
+controller has 64 lines with the 1st 32 being outputs.
+
+Rob
