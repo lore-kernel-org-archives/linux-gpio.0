@@ -1,35 +1,58 @@
-From: Bjorn Andersson <bjorn@kryo.se>
-Subject: Re: [PATCH] pinctrl: Do not depend in GPIOLIB, select it
-Date: Thu, 12 Oct 2017 15:20:14 -0700
-Message-ID: <CAJAp7OgS8+9vCq3iwBzsp-dKfp8w-NGVPVkUVyZgspow-aTmiQ@mail.gmail.com>
-References: <20171011100742.9912-1-linus.walleij@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+From: fenglinw@codeaurora.org
+Subject: [PATCH V1 1/2] pinctrl: qcom: spmi-gpio: Read REG_EN_CTL to get initial enable state
+Date: Fri, 13 Oct 2017 14:15:03 +0800
+Message-ID: <20171013061550.996-2-fenglinw@codeaurora.org>
+References: <20171013061550.996-1-fenglinw@codeaurora.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-ua0-f182.google.com ([209.85.217.182]:55433 "EHLO
-        mail-ua0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753127AbdJLWUP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 12 Oct 2017 18:20:15 -0400
-Received: by mail-ua0-f182.google.com with SMTP id b11so4062962uae.12
-        for <linux-gpio@vger.kernel.org>; Thu, 12 Oct 2017 15:20:15 -0700 (PDT)
-In-Reply-To: <20171011100742.9912-1-linus.walleij@linaro.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43112 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753403AbdJMGRA (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 02:17:00 -0400
+In-Reply-To: <20171013061550.996-1-fenglinw@codeaurora.org>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Phil Reid <preid@electromag.com.au>, Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Peter Rosin <peda@axentia.se>, Andrey Smirnov <andrew.smirnov@gmail.com>
+To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org, Fenglin Wu <fenglinw@codeaurora.org>
 
-On Wed, Oct 11, 2017 at 3:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Instead of depends on GPIOLIB and having to run around in
-> Kconfig menus looking for why your device is not available,
-> simply select it from the pin control drivers that need it.
->
-> The Kconfig for GPIOLIB is improved, selectable and this
-> should "just work".
->
+From: Fenglin Wu <fenglinw@codeaurora.org>
 
-It's generally frowned upon to select a user-selectable option, but as
-long as GPIOLIB doesn't "depends on" anything it should be fine.
+Get initial value of is_enabled flag by reading REG_EN_CTL register
+so that it can reflect the correct hardware enable state before
+setting pin config.
 
-Regards,
-Bjorn
+Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+---
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index a0edaa8..0a1e173 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -106,6 +106,7 @@
+ 
+ /* PMIC_GPIO_REG_EN_CTL */
+ #define PMIC_GPIO_REG_MASTER_EN_SHIFT		7
++#define PMIC_GPIO_REG_MASTER_EN			0x80
+ 
+ #define PMIC_GPIO_PHYSICAL_OFFSET		1
+ 
+@@ -914,8 +915,12 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
+ 		pad->atest = (val & PMIC_GPIO_LV_MV_ANA_MUX_SEL_MASK) + 1;
+ 	}
+ 
+-	/* Pin could be disabled with PIN_CONFIG_BIAS_HIGH_IMPEDANCE */
+-	pad->is_enabled = true;
++	val = pmic_gpio_read(state, pad, PMIC_GPIO_REG_EN_CTL);
++	if (val < 0)
++		return val;
++
++	pad->is_enabled = val & PMIC_GPIO_REG_MASTER_EN;
++
+ 	return 0;
+ }
+ 
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
+
