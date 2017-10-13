@@ -1,37 +1,40 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] dt-bindings: pinctrl: add support for RZ/A1M and
- RZ/A1L
-Date: Fri, 13 Oct 2017 08:40:51 -0500
-Message-ID: <20171013134051.woy6347khrhapkyh@rob-hp-laptop>
-References: <20171004210724.59797-1-chris.brandt@renesas.com>
- <20171004210724.59797-3-chris.brandt@renesas.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20171004210724.59797-3-chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
+From: Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] pinctrl: sh-pfc: r8a7745: Implement voltage switching for SDHI
+Date: Fri, 13 Oct 2017 15:49:15 +0100
+Message-ID: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:53034 "EHLO
+        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753231AbdJMOt4 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>);
+        Fri, 13 Oct 2017 10:49:56 -0400
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Chris Paterson <chris.paterson2@renesas.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
 
-On Wed, Oct 04, 2017 at 04:07:24PM -0500, Chris Brandt wrote:
-> Describe how to specify RZ/A1M and RZ/A1L devices.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
-> ---
-> v3:
->  * Reworded
->  * Added Reviewed-by
-> v2:
->  * Added description for RZ/A1M
-> ---
->  Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Voltage switching is the same as on the r8a7794.
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+This patch has been tested against sh-pfc-for-v-4.14 as well as
+Linux next tag next-20171012.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+index a0ed220..333a3470 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
+@@ -5097,6 +5097,7 @@ static int r8a7794_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
+ #ifdef CONFIG_PINCTRL_PFC_R8A7745
+ const struct sh_pfc_soc_info r8a7745_pinmux_info = {
+ 	.name = "r8a77450_pfc",
++	.ops = &r8a7794_pinmux_ops,
+ 	.unlock_reg = 0xe6060000, /* PMMR */
+ 
+ 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+-- 
+1.9.1
+
