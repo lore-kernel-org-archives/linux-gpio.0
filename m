@@ -1,83 +1,104 @@
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-Subject: [PATCH] gpio: mark expected switch fall-throughs
-Date: Fri, 13 Oct 2017 15:43:53 -0500
-Message-ID: <20171013204353.GA27362@embeddedor.com>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
+ serializer
+Date: Fri, 13 Oct 2017 23:29:07 +0200
+Message-ID: <20171013212907.GA25710@wunner.de>
+References: <cover.1507797496.git.lukas@wunner.de>
+ <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
+ <20171013111124.GA12351@wunner.de>
+ <797c3efc-c466-1371-bb3e-176915f81895@caviumnetworks.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:60135 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751081AbdJMV3J (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 17:29:09 -0400
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joel Stanley <joel@jms.id.au>, Linus Walleij <linus.walleij@linaro.org>, Alban Bedel <albeu@free.fr>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+In-Reply-To: <797c3efc-c466-1371-bb3e-176915f81895@caviumnetworks.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: David Daney <ddaney@caviumnetworks.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>, Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Fri, Oct 13, 2017 at 09:53:06AM -0700, David Daney wrote:
+> On 10/13/2017 04:11 AM, Lukas Wunner wrote:
+> > The drivers
+> >
+> >        gpio-104-dio-48e.c, gpio-74x164.c, gpio-gpio-mm.c,
+> >        gpio-pca953x.c, gpio-thunderx.c, gpio-ws16c48.c,
+> >        gpio-xilinx.c
+> >
+> > currently use an inefficient algorithm for their ->set_multiple
+> > callback:  They iterate over every chip (or bank or gpio pin),
+> > check if any bits are set in the mask for this particular chip,
+> > and if so, update the affected GPIOs.  If the mask is sparsely
+> > populated, you'll waste CPU time checking chips even though
+> > they're not affected by the operation at all.
+> > 
+> > Iterating over the chips is backwards, it is more efficient to
+> > iterate over the bits set in the mask, identify the corresponding
+> > chip and update its affected GPIOs.  The gpio-max3191x.c driver
+> > I posted yesterday contains an example for such an algorithm and
+> > you may want to improve your ->set_mutiple implementation accordingly:
+>
+> Do you have any profiling results that demonstrate significant system-wide
+> performance improvements by making such a change?
 
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
-This code was tested by compilation only (GCC 7.2.0 was used).
-Please, verify if the actual intention of the code is to fall through.
+Sorry, no.
 
- drivers/gpio/gpio-aspeed.c | 3 +++
- drivers/gpio/gpio-ath79.c  | 1 +
- drivers/gpio/gpio-stmpe.c  | 4 ++--
- 3 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index c269cc1..bdda32a 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -411,13 +411,16 @@ static int aspeed_gpio_set_type(struct irq_data *d, unsigned int type)
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_EDGE_BOTH:
- 		type2 |= bit;
-+		/* fall through */
- 	case IRQ_TYPE_EDGE_RISING:
- 		type0 |= bit;
-+		/* fall through */
- 	case IRQ_TYPE_EDGE_FALLING:
- 		handler = handle_edge_irq;
- 		break;
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		type0 |= bit;
-+		/* fall through */
- 	case IRQ_TYPE_LEVEL_LOW:
- 		type1 |= bit;
- 		handler = handle_level_irq;
-diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-index f33d4a5..02e56e0 100644
---- a/drivers/gpio/gpio-ath79.c
-+++ b/drivers/gpio/gpio-ath79.c
-@@ -132,6 +132,7 @@ static int ath79_gpio_irq_set_type(struct irq_data *data,
- 
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		polarity |= mask;
-+		/* fall through */
- 	case IRQ_TYPE_LEVEL_LOW:
- 		type |= mask;
- 		break;
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 16cbc57..001a89d 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -299,7 +299,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 			if (ret < 0)
- 				return;
- 			edge_det = !!(ret & mask);
--
-+			/* fall through */
- 		case STMPE1801:
- 			rise_reg = stmpe->regs[STMPE_IDX_GPRER_LSB + bank];
- 			fall_reg = stmpe->regs[STMPE_IDX_GPFER_LSB + bank];
-@@ -312,7 +312,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 			if (ret < 0)
- 				return;
- 			fall = !!(ret & mask);
--
-+			/* fall through */
- 		case STMPE801:
- 		case STMPE1600:
- 			irqen_reg = stmpe->regs[STMPE_IDX_IEGPIOR_LSB + bank];
--- 
-2.7.4
+> For the gpio-thunderx.c driver, the words in the bits/mask exactly match the
+> banks, so the number of iterations doesn't change with the approach you
+> suggest.
+
+No, I was specifically referring to a sparsely populated mask above.
+Let's say the mask consists of several 64-bit words and only the last
+word has set bits.  With the existing algorithm you have as many
+iterations as you have banks:
+
+	for (bank = 0; bank <= chip->ngpio / 64; bank++) {
+		set_bits = bits[bank] & mask[bank];
+		clear_bits = ~bits[bank] & mask[bank];
+		writeq(set_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_SET);
+		writeq(clear_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_CLR);
+	}
+
+Whereas with the algorithm I'm proposing you only have a single iteration:
+
+	int bit = 0;
+	while ((bit = find_next_bit(mask, chip->ngpio, bit)) != chip->ngpio) {
+		unsigned int bank = bit / 64;
+		set_bits = bits[bank] & mask[bank];
+		clear_bits = ~bits[bank] & mask[bank];
+		writeq(set_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_SET);
+		writeq(clear_bits, txgpio->register_base + (bank * GPIO_2ND_BANK) + GPIO_TX_CLR);
+		bit = (bank + 1) * 64; /* continue search from next bank */
+	}
+
+find_next_bit() uses the clz instruction on ARM, similar instructions
+exist on most arches, so the search is very fast.
+
+Or did you mean that find_next_bit() iterates over the words to find
+the first one with set bits?
+
+BTW, why isn't there a check in your code whether mask[bank] != 0,
+n which case the mmio writes can be skipped?
+
+
+> In fact, an argument could be made in the other direction.  The increased
+> ICache pressure from code bloat and branch prediction misses resulting from
+> extra testing of the mask bits could easily make the system slower using
+> your suggestion.
+
+I don't quite follow, where should the branch prediction misses come from,
+the number of branch instructions is the same with both algorithms, and
+fewer with the proposed algorithm on sparsely populated masks.
+
+Also, 2 additional LoC is hardly code bloat.
+
+Are you referring to the call to find_next_bit() specifically?
+
+Thanks,
+
+Lukas
