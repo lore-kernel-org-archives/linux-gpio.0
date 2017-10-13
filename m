@@ -1,100 +1,97 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
- serializer
-Date: Fri, 13 Oct 2017 13:11:24 +0200
-Message-ID: <20171013111124.GA12351@wunner.de>
-References: <cover.1507797496.git.lukas@wunner.de>
- <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
+From: Miquel RAYNAL <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH v2 04/16] serial: mvebu-uart: support probe of multiple
+ ports
+Date: Fri, 13 Oct 2017 13:17:11 +0200
+Message-ID: <20171013131711.4ef63ea0@xps13>
+References: <20171013090200.31034-1-miquel.raynal@free-electrons.com>
+        <20171013090200.31034-5-miquel.raynal@free-electrons.com>
+        <877evz9yi7.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:58407 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757911AbdJMLL0 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 07:11:26 -0400
-Content-Disposition: inline
-In-Reply-To: <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <877evz9yi7.fsf-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Allen Yan <yanwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
 
-[cc += William Breathitt Gray, Geert Uytterhoeven, Phil Reid,
-       David Daney, Iban Rodriguez]
+Hi Gregory,
 
-The drivers
+On Fri, 13 Oct 2017 11:40:32 +0200
+Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-       gpio-104-dio-48e.c, gpio-74x164.c, gpio-gpio-mm.c,
-       gpio-pca953x.c, gpio-thunderx.c, gpio-ws16c48.c,
-       gpio-xilinx.c
+> Hi Miquel,
+>  
+>  On ven., oct. 13 2017, Miquel Raynal
+> <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> 
+> > -	port = &mvebu_uart_ports[0];
+> > +	/* Assume that all UART ports have a DT alias or none has
+> > */
+> > +	id = of_alias_get_id(pdev->dev.of_node, "serial");  
+> 
+> You stil need to check the pdev->dev.of_node before calling
+> of_alias_get_id.
 
-currently use an inefficient algorithm for their ->set_multiple
-callback:  They iterate over every chip (or bank or gpio pin),
-check if any bits are set in the mask for this particular chip,
-and if so, update the affected GPIOs.  If the mask is sparsely
-populated, you'll waste CPU time checking chips even though
-they're not affected by the operation at all.
-
-Iterating over the chips is backwards, it is more efficient to
-iterate over the bits set in the mask, identify the corresponding
-chip and update its affected GPIOs.  The gpio-max3191x.c driver
-I posted yesterday contains an example for such an algorithm and
-you may want to improve your ->set_mutiple implementation accordingly:
-
-
-> +static int max3191x_get_multiple(struct gpio_chip *gpio, unsigned long *mask,
-> +				 unsigned long *bits)
-> +{
-> +	struct max3191x_chip *max3191x = gpiochip_get_data(gpio);
-> +	int ret, bit = 0, wordlen = max3191x_wordlen(max3191x);
-> +
-> +	mutex_lock(&max3191x->lock);
-> +	ret = max3191x_readout_locked(max3191x);
-> +	if (ret)
-> +		goto out_unlock;
-> +
-> +	while ((bit = find_next_bit(mask, gpio->ngpio, bit)) != gpio->ngpio) {
-> +		unsigned int chipnum = bit / MAX3191X_NGPIO;
-> +		unsigned long in, shift, index;
-> +
-> +		if (max3191x_chip_is_faulting(max3191x, chipnum)) {
-> +			ret = -EIO;
-> +			goto out_unlock;
-> +		}
-> +
-> +		in = ((u8 *)max3191x->xfer.rx_buf)[chipnum * wordlen];
-> +		shift = round_down(bit % BITS_PER_LONG, MAX3191X_NGPIO);
-> +		index = bit / BITS_PER_LONG;
-> +		bits[index] &= ~(mask[index] & (0xff << shift));
-> +		bits[index] |= mask[index] & (in << shift); /* copy bits */
-> +
-> +		bit = (chipnum + 1) * MAX3191X_NGPIO; /* go to next chip */
-> +	}
-> +
-> +out_unlock:
-> +	mutex_unlock(&max3191x->lock);
-> +	return ret;
-> +}
-
-
-I've used a while loop, obviously the same can be achieved with a
-for loop but I found that harder to read and it didn't save any LoC.
-
-This particular chip has 8 inputs (= MAX3191X_NGPIO) that can be read
-concurrently.
-
-The series containing this driver introduces a ->get_multiple callback.
-Since you've implemented a ->set_multiple callback, you may want to
-add a ->get_multiple callback to your driver as well.  (If supported
-by the hardware, which is not the case for output-only chips such as
-gpio-74x164.c.)
-
-You can find the full series here:
-https://www.spinics.net/lists/linux-gpio/msg25997.html
-
-If you want to fetch the series from a git repo, use this branch:
-https://github.com/RevolutionPi/linux/commits/revpi-4.9
+Thanks for your feedback but I don't think we still need to check it,
+because the of_alias_get_id() function will either return -ENOSYS if
+CONFIG_OF is not defined, or -ENODEV if the node is not found. As the
+function does not dereference pdev->dev.of_node at any moment but
+instead compares the value with another pointer, I think this call is
+safe like this.
 
 Thanks,
+Miquèl
 
-Lukas
+> 
+> Once it will be fixed, you can add:
+> 
+> Acked-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> 
+> Thanks,
+> 
+> Gregory
+> 
+> 
+> > +	if (!pdev->dev.of_node || id < 0)
+> > +		pdev->id = uart_num_counter++;
+> > +	else
+> > +		pdev->id = id;
+> > +
+> > +	if (pdev->id >= MVEBU_NR_UARTS) {
+> > +		dev_err(&pdev->dev, "cannot have more than %d UART
+> > ports\n",
+> > +			MVEBU_NR_UARTS);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	port = &mvebu_uart_ports[pdev->id];
+> >  
+> >  	spin_lock_init(&port->lock);
+> >  
+> > @@ -572,7 +588,7 @@ static int mvebu_uart_probe(struct
+> > platform_device *pdev) port->fifosize   = 32;
+> >  	port->iotype     = UPIO_MEM32;
+> >  	port->flags      = UPF_FIXED_PORT;
+> > -	port->line       = 0; /* single port: force line number
+> > to  0 */
+> > +	port->line       = pdev->id;
+> >  
+> >  	port->irq        = irq->start;
+> >  	port->irqflags   = 0;
+> > -- 
+> > 2.11.0
+> >  
+> 
+
+
+
+-- 
+Miquel Raynal, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
