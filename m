@@ -1,39 +1,124 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] gpio-rcar: use devm_ioremap_resource()
-Date: Fri, 13 Oct 2017 08:50:29 +0200
-Message-ID: <CAMuHMdXy=kz1tK_vdEN7cyjAACa6Cd_D8BFWcqotqcP5rEVnSg@mail.gmail.com>
-References: <20171012201537.102610518@cogentembedded.com>
+From: Miquel RAYNAL <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 16/16] arm64: dts: marvell: armada-3720-espressobin:
+ fill UART nodes
+Date: Fri, 13 Oct 2017 09:01:19 +0200
+Message-ID: <20171013090119.44e9a3c5@xps13>
+References: <20171006101344.15590-1-miquel.raynal@free-electrons.com>
+        <20171006101344.15590-17-miquel.raynal@free-electrons.com>
+        <87fuawe8gx.fsf@free-electrons.com>
+        <20171006151521.440418a2@windsurf.lan>
+        <20171009093025.78d45a9a@xps13>
+        <87zi8wbocl.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20171012201537.102610518@cogentembedded.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87zi8wbocl.fsf-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Wilson Ding <dingwei-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
 
-On Thu, Oct 12, 2017 at 10:15 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Using devm_ioremap_resource() has several advantages over devm_ioremap():
-> - it checks the passed resource's validity;
-> - it calls devm_request_mem_region() to check for the resource overlap;
-> - it prints an error message in case of error.
->
-> We can call devm_ioremap_resource() instead of devm_ioremap_nocache()
-> as ioremap() and ioremap_nocache()  are implemented identically on ARM.
-> Doing this saves 2 LoCs and 80 bytes (AArch64 gcc 4.8.5).
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hello Gregory,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, 12 Oct 2017 13:24:42 +0200
+Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
 
-Gr{oetje,eeting}s,
+> Hi Miquel,
+>  
+>  On lun., oct. 09 2017, Miquel RAYNAL
+> <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> 
+> > Hi Thomas, Gregory,
+> >
+> > On Fri, 6 Oct 2017 15:15:21 +0200
+> > Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
+> >  
+> >> Hello,
+> >> 
+> >> On Fri, 06 Oct 2017 15:01:18 +0200, Gregory CLEMENT wrote:
+> >>   
+> >> >  /*
+> >> >   * To enable the second UART on J17 (pins 24,26) refer to the
+> >> > uart1
+> >> >   * node from armada-3720-db.dts.
+> >> >   * Note that TX and RX signal are the ones coming directly from
+> >> > the SoC:
+> >> >   * 1.8V TTL.
+> >> >   */    
+> >> 
+> >> One issue with this comment (and Miquèl's version as well) is that
+> >> it does not explain why you don't enable this UART by default.
+> >> 
+> >> The real reason is in the commit log from Miquèl, and should
+> >> probably be part of the comment. Perhaps something like:
+> >> 
+> >> /*
+> >> 
+> >>  * Connector J17 (pins X, Y, Z) exposes a number of different
+> >>  * features:
+> >>  *  - UART1 (pins 24 = RX, pins 26 = TX), see armada-3720-db.dts
+> >> for an
+> >>  *    example on how to enable UART1. Beware that the signals are
+> >> 1.8V
+> >>  *    TTL.
+> >>  *  - SPIxyz
+> >>  *  - I2Cxyz
+> >>  */  
+> >
+> > Thanks for both your comments, there is my version, inspired from
+> > both comments:
+> >
+> > /*
+> >  * Connector J17 exposes a number of different features. Some pins
+> > are
+> >  * multiplexed. This is the case for the UART1 feature (pins 24 =
+> > RX,
+> >  * pins 26 = TX). See armada-3720-db.dts for an example of how to
+> > enable it.
+> >  * Beware that the signals are 1.8V TTL.
+> >  */  
+> 
+> Seems good for me however I prefer Thomas version, easier to read and
+> to extend latter with the description of other pins if needed.
 
-                        Geert
+Ok, I reused the 'dash' presentation to be later extended.
 
+See v2 coming soon.
+
+Thanks,
+Miquèl
+
+> 
+> Gregory
+> 
+> >
+> > Thanks,
+> > Miquèl
+> >  
+> >> 
+> >> Otherwise, it's not clear at all why you don't just enable UART1.
+> >> Or perhaps I misunderstood Miquèl's commit log ?
+> >> 
+> >> Best regards,
+> >> 
+> >> Thomas  
+> >
+> >
+> >
+> > -- 
+> > Miquel Raynal, Free Electrons
+> > Embedded Linux and Kernel engineering
+> > http://free-electrons.com  
+> 
+
+
+
+-- 
+Miquel Raynal, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
