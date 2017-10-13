@@ -1,50 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 0/5] GPIO driver for Maxim MAX3191x
-Date: Fri, 13 Oct 2017 14:48:43 +0200
-Message-ID: <CACRpkdbEeq3qeF41Mn1vE=DgdkrGJ1P91Yff4cAW98FhBJO-nw@mail.gmail.com>
-References: <cover.1507797496.git.lukas@wunner.de>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] dt-bindings: pinctrl: add support for RZ/A1M and
+ RZ/A1L
+Date: Fri, 13 Oct 2017 08:40:51 -0500
+Message-ID: <20171013134051.woy6347khrhapkyh@rob-hp-laptop>
+References: <20171004210724.59797-1-chris.brandt@renesas.com>
+ <20171004210724.59797-3-chris.brandt@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-it0-f43.google.com ([209.85.214.43]:53178 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758345AbdJMMsp (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 08:48:45 -0400
-Received: by mail-it0-f43.google.com with SMTP id j140so10454684itj.1
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2017 05:48:44 -0700 (PDT)
-In-Reply-To: <cover.1507797496.git.lukas@wunner.de>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20171004210724.59797-3-chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Jacopo Mondi <jacopo+renesas-AW8dsiIh9cEdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Rojhalat Ibrahim <imr@rtschenk.de>, Bart Van Assche <bart.vanassche@wdc.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Denys Vlasenko <dvlasenk@redhat.com>, linux-kernel@vger.kerne
 
-On Thu, Oct 12, 2017 at 12:40 PM, Lukas Wunner <lukas@wunner.de> wrote:
+On Wed, Oct 04, 2017 at 04:07:24PM -0500, Chris Brandt wrote:
+> Describe how to specify RZ/A1M and RZ/A1L devices.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+> ---
+> v3:
+>  * Reworded
+>  * Added Reviewed-by
+> v2:
+>  * Added description for RZ/A1M
+> ---
+>  Documentation/devicetree/bindings/pinctrl/renesas,rza1-pinctrl.txt | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-> - Patch [1/5]: Change the argument order of assign_bit() to reflect
->   traditional "dst = src" in C. (Peter Zijlstra)
->
-> - Patch [2/5]: Update documentation. (Linus Walleij)
->   Drop const qualifier from struct gpio_desc ** in all function
->   signatures to avoid a cast when passing a non-const array created
->   with gpiod_get_array(), which is likely the most common use case.
-
-Applied these two so we get the infrastructure in place so others
-can use it too.
-
-> - Patch [3/5]: Newly inserted patch to introduce common property for
->   number of daisy-chained devices.
->
-> - Patch [4/5]: Add vendor prefix to GPIO identifiers, use boolean
->   instead of integer to select mode, rename boolean to ignore
->   undervoltage alarms, separate compatible strings with newlines.
->   (Rob Herring)
->
-> - Patch [5/5]: Optimize algorithm in max3191x_get_multiple() to
->   iterate over the bits in the mask, instead of iterating over every
->   chip, thus implicitly skipping chips which are not selected at all
->   by the mask.
-
-These are pending device tree maintainer review.
-
-Yours,
-Linus Walleij
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
