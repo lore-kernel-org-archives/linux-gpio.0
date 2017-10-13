@@ -1,40 +1,126 @@
-From: Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a7745: Implement voltage switching for SDHI
-Date: Fri, 13 Oct 2017 15:49:15 +0100
-Message-ID: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v5 00/13] gpio: Tight IRQ chip integration
+Date: Fri, 13 Oct 2017 17:49:00 +0200
+Message-ID: <20171013154913.29448-1-thierry.reding@gmail.com>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:53034 "EHLO
-        relmlie4.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753231AbdJMOt4 (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 13 Oct 2017 10:49:56 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:55955 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757998AbdJMPtR (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 11:49:17 -0400
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Chris Paterson <chris.paterson2@renesas.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Voltage switching is the same as on the r8a7794.
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-This patch has been tested against sh-pfc-for-v-4.14 as well as
-Linux next tag next-20171012.
+Hi Linus,
 
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 1 +
- 1 file changed, 1 insertion(+)
+here's the latest series of patches that implement the tighter IRQ chip
+integration. I've dropped the banked infrastructure for now as per the
+discussion with Grygorii.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-index a0ed220..333a3470 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7794.c
-@@ -5097,6 +5097,7 @@ static int r8a7794_pin_to_pocctrl(struct sh_pfc *pfc, unsigned int pin, u32 *poc
- #ifdef CONFIG_PINCTRL_PFC_R8A7745
- const struct sh_pfc_soc_info r8a7745_pinmux_info = {
- 	.name = "r8a77450_pfc",
-+	.ops = &r8a7794_pinmux_ops,
- 	.unlock_reg = 0xe6060000, /* PMMR */
- 
- 	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
+The first couple of patches are mostly preparatory work in order to
+consolidate all IRQ chip related fields in a new structure and create
+the base functionality for adding IRQ chips.
+
+After that, I've added the Tegra186 GPIO support patch that makes use of
+the new tight integration.
+
+Changes in v5:
+- dropped the banked infrastructure patches for now (Grygorii)
+- allocate interrupts on demand, rather than upfront (Grygorii)
+- split up the first patch further as requested by Grygorii
+
+Not sure what happened in between here. Notes in commit logs indicate
+that this is actually version 5, but I can't find the cover letter for
+v3 and v4.
+
+Changes in v2:
+- rename pins to lines for consistent terminology
+- rename gpio_irq_chip_banked_handler() to
+  gpio_irq_chip_banked_chained_handler()
+
+Thierry
+
+Thierry Reding (13):
+  gpio: Introduce struct gpio_irq_chip
+  gpio: Move irqchip into struct gpio_irq_chip
+  gpio: Move irqdomain into struct gpio_irq_chip
+  gpio: Move irq_base to struct gpio_irq_chip
+  gpio: Move irq_handler to struct gpio_irq_chip
+  gpio: Move irq_default_type to struct gpio_irq_chip
+  gpio: Move irq_chained_parent to struct gpio_irq_chip
+  gpio: Move irq_nested into struct gpio_irq_chip
+  gpio: Move irq_valid_mask into struct gpio_irq_chip
+  gpio: Move lock_key into struct gpio_irq_chip
+  gpio: Implement tighter IRQ chip integration
+  gpio: Export gpiochip_irq_{map,unmap}()
+  gpio: Add Tegra186 support
+
+ Documentation/gpio/driver.txt               |   6 +-
+ drivers/bcma/driver_gpio.c                  |   2 +-
+ drivers/gpio/Kconfig                        |   9 +
+ drivers/gpio/Makefile                       |   1 +
+ drivers/gpio/gpio-104-dio-48e.c             |   2 +-
+ drivers/gpio/gpio-104-idi-48.c              |   2 +-
+ drivers/gpio/gpio-104-idio-16.c             |   2 +-
+ drivers/gpio/gpio-adnp.c                    |   2 +-
+ drivers/gpio/gpio-altera.c                  |   4 +-
+ drivers/gpio/gpio-aspeed.c                  |   6 +-
+ drivers/gpio/gpio-ath79.c                   |   2 +-
+ drivers/gpio/gpio-brcmstb.c                 |   2 +-
+ drivers/gpio/gpio-crystalcove.c             |   2 +-
+ drivers/gpio/gpio-dln2.c                    |   2 +-
+ drivers/gpio/gpio-ftgpio010.c               |   2 +-
+ drivers/gpio/gpio-ingenic.c                 |   2 +-
+ drivers/gpio/gpio-intel-mid.c               |   2 +-
+ drivers/gpio/gpio-lynxpoint.c               |   2 +-
+ drivers/gpio/gpio-max732x.c                 |   2 +-
+ drivers/gpio/gpio-merrifield.c              |   2 +-
+ drivers/gpio/gpio-omap.c                    |   2 +-
+ drivers/gpio/gpio-pca953x.c                 |   2 +-
+ drivers/gpio/gpio-pcf857x.c                 |   2 +-
+ drivers/gpio/gpio-pci-idio-16.c             |   2 +-
+ drivers/gpio/gpio-pl061.c                   |   2 +-
+ drivers/gpio/gpio-rcar.c                    |   2 +-
+ drivers/gpio/gpio-reg.c                     |   4 +-
+ drivers/gpio/gpio-stmpe.c                   |   6 +-
+ drivers/gpio/gpio-tc3589x.c                 |   2 +-
+ drivers/gpio/gpio-tegra186.c                | 624 ++++++++++++++++++++++++++++
+ drivers/gpio/gpio-vf610.c                   |   2 +-
+ drivers/gpio/gpio-wcove.c                   |   2 +-
+ drivers/gpio/gpio-ws16c48.c                 |   2 +-
+ drivers/gpio/gpio-xgene-sb.c                |   2 +-
+ drivers/gpio/gpio-xlp.c                     |   2 +-
+ drivers/gpio/gpio-zx.c                      |   2 +-
+ drivers/gpio/gpio-zynq.c                    |   2 +-
+ drivers/gpio/gpiolib.c                      | 215 ++++++++--
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c       |   5 +-
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    |   2 +-
+ drivers/pinctrl/intel/pinctrl-baytrail.c    |   6 +-
+ drivers/pinctrl/intel/pinctrl-cherryview.c  |   6 +-
+ drivers/pinctrl/intel/pinctrl-intel.c       |   2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |   4 +-
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c   |   4 +-
+ drivers/pinctrl/pinctrl-amd.c               |   2 +-
+ drivers/pinctrl/pinctrl-at91.c              |   2 +-
+ drivers/pinctrl/pinctrl-coh901.c            |   2 +-
+ drivers/pinctrl/pinctrl-mcp23s08.c          |   2 +-
+ drivers/pinctrl/pinctrl-oxnas.c             |   2 +-
+ drivers/pinctrl/pinctrl-pic32.c             |   2 +-
+ drivers/pinctrl/pinctrl-pistachio.c         |   2 +-
+ drivers/pinctrl/pinctrl-st.c                |   2 +-
+ drivers/pinctrl/pinctrl-sx150x.c            |   2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c          |   2 +-
+ drivers/pinctrl/sirf/pinctrl-atlas7.c       |   2 +-
+ drivers/pinctrl/sirf/pinctrl-sirf.c         |   2 +-
+ drivers/pinctrl/spear/pinctrl-plgpio.c      |   2 +-
+ drivers/platform/x86/intel_int0002_vgpio.c  |   6 +-
+ include/linux/gpio/driver.h                 | 164 ++++++--
+ 60 files changed, 1018 insertions(+), 140 deletions(-)
+ create mode 100644 drivers/gpio/gpio-tegra186.c
+
 -- 
-1.9.1
+2.14.1
 
