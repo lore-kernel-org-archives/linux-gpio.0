@@ -1,54 +1,50 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 2/5] gpio: Introduce ->get_multiple callback
-Date: Fri, 13 Oct 2017 14:46:48 +0200
-Message-ID: <CACRpkdZqcbp44ODnqTEO7c5s_xMnrYJtRCbaKZcyk+xhz4cPMA@mail.gmail.com>
-References: <cover.1507797496.git.lukas@wunner.de> <487b9e42a3c3f5f50f4e9e90cbce65cdbeef0a79.1507797496.git.lukas@wunner.de>
+Subject: Re: [PATCH v2 0/5] GPIO driver for Maxim MAX3191x
+Date: Fri, 13 Oct 2017 14:48:43 +0200
+Message-ID: <CACRpkdbEeq3qeF41Mn1vE=DgdkrGJ1P91Yff4cAW98FhBJO-nw@mail.gmail.com>
+References: <cover.1507797496.git.lukas@wunner.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-io0-f176.google.com ([209.85.223.176]:51253 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753258AbdJMMqt (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 08:46:49 -0400
-Received: by mail-io0-f176.google.com with SMTP id b186so8858427iof.8
-        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2017 05:46:49 -0700 (PDT)
-In-Reply-To: <487b9e42a3c3f5f50f4e9e90cbce65cdbeef0a79.1507797496.git.lukas@wunner.de>
+Received: from mail-it0-f43.google.com ([209.85.214.43]:53178 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758345AbdJMMsp (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Fri, 13 Oct 2017 08:48:45 -0400
+Received: by mail-it0-f43.google.com with SMTP id j140so10454684itj.1
+        for <linux-gpio@vger.kernel.org>; Fri, 13 Oct 2017 05:48:44 -0700 (PDT)
+In-Reply-To: <cover.1507797496.git.lukas@wunner.de>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: Lukas Wunner <lukas@wunner.de>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rojhalat Ibrahim <imr@rtschenk.de>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron <jic23@kernel.org>, Rojhalat Ibrahim <imr@rtschenk.de>, Bart Van Assche <bart.vanassche@wdc.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Neil Brown <neilb@suse.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Denys Vlasenko <dvlasenk@redhat.com>, linux-kernel@vger.kerne
 
 On Thu, Oct 12, 2017 at 12:40 PM, Lukas Wunner <lukas@wunner.de> wrote:
 
-> SPI-attached GPIO controllers typically read out all inputs in one go.
-> If callers desire the values of multipe inputs, ideally a single readout
-> should take place to return the desired values.  However the current
-> driver API only offers a ->get callback but no ->get_multiple (unlike
-> ->set_multiple, which is present).  Thus, to read multiple inputs, a
-> full readout needs to be performed for every single value (barring
-> driver-internal caching), which is inefficient.
+> - Patch [1/5]: Change the argument order of assign_bit() to reflect
+>   traditional "dst = src" in C. (Peter Zijlstra)
 >
-> In fact, the lack of a ->get_multiple callback has been bemoaned
-> repeatedly by the gpio subsystem maintainer:
-> http://www.spinics.net/lists/linux-gpio/msg10571.html
-> http://www.spinics.net/lists/devicetree/msg121734.html
+> - Patch [2/5]: Update documentation. (Linus Walleij)
+>   Drop const qualifier from struct gpio_desc ** in all function
+>   signatures to avoid a cast when passing a non-const array created
+>   with gpiod_get_array(), which is likely the most common use case.
+
+Applied these two so we get the infrastructure in place so others
+can use it too.
+
+> - Patch [3/5]: Newly inserted patch to introduce common property for
+>   number of daisy-chained devices.
 >
-> Introduce the missing callback.  Add corresponding consumer functions
-> such as gpiod_get_array_value().  Amend linehandle_ioctl() to take
-> advantage of the newly added infrastructure.  Update the documentation.
+> - Patch [4/5]: Add vendor prefix to GPIO identifiers, use boolean
+>   instead of integer to select mode, rename boolean to ignore
+>   undervoltage alarms, separate compatible strings with newlines.
+>   (Rob Herring)
 >
-> Cc: Rojhalat Ibrahim <imr@rtschenk.de>
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> ---
-> Changes v1 -> v2:
+> - Patch [5/5]: Optimize algorithm in max3191x_get_multiple() to
+>   iterate over the bits in the mask, instead of iterating over every
+>   chip, thus implicitly skipping chips which are not selected at all
+>   by the mask.
 
-Applied this v2 version.
-
-Good work! I'm happy :)
-
-We should take a sweep over existing drivers and see
-which in-tree drivers that can exploit this and send some
-patches for testing.
+These are pending device tree maintainer review.
 
 Yours,
 Linus Walleij
