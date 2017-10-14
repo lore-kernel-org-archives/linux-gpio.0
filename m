@@ -1,52 +1,49 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v2 5/5] gpio: Add driver for Maxim MAX3191x industrial
- serializer
-Date: Sat, 14 Oct 2017 13:24:46 +0200
-Message-ID: <20171014112446.GA23429@wunner.de>
-References: <cover.1507797496.git.lukas@wunner.de>
- <165c5061f7f309ecb7f1a3d32c8f7df5026f4a47.1507797496.git.lukas@wunner.de>
- <20171013111124.GA12351@wunner.de>
- <797c3efc-c466-1371-bb3e-176915f81895@caviumnetworks.com>
- <20171013212907.GA25710@wunner.de>
- <86333441-4c2b-3e3d-853f-eddadf446956@caviumnetworks.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: gemini: Add missing functions
+Date: Sat, 14 Oct 2017 17:13:03 +0200
+Message-ID: <20171014151303.17080-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mailout1.hostsharing.net ([83.223.95.204]:36549 "EHLO
-        mailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751818AbdJNLXX (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Oct 2017 07:23:23 -0400
-Content-Disposition: inline
-In-Reply-To: <86333441-4c2b-3e3d-853f-eddadf446956@caviumnetworks.com>
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:56915 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbdJNPNM (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Sat, 14 Oct 2017 11:13:12 -0400
+Received: by mail-lf0-f42.google.com with SMTP id 90so12551359lfs.13
+        for <linux-gpio@vger.kernel.org>; Sat, 14 Oct 2017 08:13:11 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: David Daney <ddaney@caviumnetworks.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, William Breathitt Gray <vilhelm.gray@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Phil Reid <preid@electromag.com.au>, David Daney <david.daney@cavium.com>, Iban Rodriguez <irodriguez@cemitec.com>, Mathias Duckeck <m.duckeck@kunbus.de>, Phil Elwell <phil@raspberrypi.org>, linux-gpio@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Oct 13, 2017 at 03:12:41PM -0700, David Daney wrote:
-> There are a maximum of two banks.
-> 
-> For some thunderx SoCs there is only a single bank, so my code has exactly
-> one iteration.  For the SoCs with two banks, my code has exactly two
-> iterations.  There are no function calls in the loop.
+Some two functions were missing from the Gemini pin control
+driver. Noticed when trying to use ethernet. Fix it up by
+adding them.
 
-Fair enough.  So as you've pointed out, if the number of GPIOs per bank
-is identical to the number of bits in an unsigned long, the iteration
-count is the same with both algorithms and just iterating over the
-banks results in simpler and less code.  Doubly so if there's just
-one or two banks.  Those are good points.
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/pinctrl-gemini.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The situation is different with e.g. gpio-max3191x.c and gpio-74x164.c
-where each bank has only 8 GPIOs.
+diff --git a/drivers/pinctrl/pinctrl-gemini.c b/drivers/pinctrl/pinctrl-gemini.c
+index 39e6221e7100..7ffd768c0e02 100644
+--- a/drivers/pinctrl/pinctrl-gemini.c
++++ b/drivers/pinctrl/pinctrl-gemini.c
+@@ -2074,6 +2074,16 @@ static const struct gemini_pmx_func gemini_pmx_functions[] = {
+ 		.num_groups = ARRAY_SIZE(satagrps),
+ 	},
+ 	{
++		.name = "usb",
++		.groups = usbgrps,
++		.num_groups = ARRAY_SIZE(usbgrps),
++	},
++	{
++		.name = "gmii",
++		.groups = gmiigrps,
++		.num_groups = ARRAY_SIZE(gmiigrps),
++	},
++	{
+ 		.name = "pci",
+ 		.groups = pcigrps,
+ 		.num_groups = ARRAY_SIZE(pcigrps),
+-- 
+2.13.6
 
-
-> I can't believe I have spent so much time on this issue, for which no matter
-> what you do, will not impact system performance in any measurable way.
-
-The use case that I'm referring to in the cover letter of this series
-are PLCs which poll all inputs and write all outputs in cycles of e.g.
-every 500 us to 10 ms, so optimizations pay off.
-
-Thanks,
-
-Lukas
