@@ -1,47 +1,37 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 00/13] gpio: Tight IRQ chip integration
-Date: Mon, 16 Oct 2017 19:09:08 +0100
-Message-ID: <f25cd66f-1382-8007-9744-0dbd72757163@nvidia.com>
-References: <20171013154913.29448-1-thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [gpio:devel 12/12] drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:630:27:
+ error: 'struct gpio_chip' has no member named 'irq_base'; did you mean 'base'?
+Date: Mon, 16 Oct 2017 23:15:57 +0200
+Message-ID: <CACRpkdYyq0vw=9H2xRg1W4LVvdyc_m1-Mayo=ZvtB+_BQTrhjQ@mail.gmail.com>
+References: <201710150916.Se4u1t6V%fengguang.wu@intel.com> <CACRpkdb5WcX8TRifAHX02=_u_xwiLdJ5b7KFLRAgeZHA-qE1sg@mail.gmail.com>
+ <20171016080502.GB17369@ulmo> <20171016080821.GC17369@ulmo>
+ <CACRpkdYuJeKQA+yyU1B0fvU2WoaFRNBHn3XVrGs1jgWXUOOmqg@mail.gmail.com>
+ <20171016124656.GA6539@ulmo> <87po9n6t5e.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20171013154913.29448-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f181.google.com ([209.85.223.181]:55258 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753554AbdJPVP7 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2017 17:15:59 -0400
+Received: by mail-io0-f181.google.com with SMTP id e89so9890065ioi.11
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Oct 2017 14:15:59 -0700 (PDT)
+In-Reply-To: <87po9n6t5e.fsf@free-electrons.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, kbuild test robot <fengguang.wu@intel.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus,
+On Mon, Oct 16, 2017 at 4:53 PM, Gregory CLEMENT
+<gregory.clement@free-electrons.com> wrote:
 
-On 13/10/17 16:49, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Hi Linus,
-> 
-> here's the latest series of patches that implement the tighter IRQ chip
-> integration. I've dropped the banked infrastructure for now as per the
-> discussion with Grygorii.
-> 
-> The first couple of patches are mostly preparatory work in order to
-> consolidate all IRQ chip related fields in a new structure and create
-> the base functionality for adding IRQ chips.
-> 
-> After that, I've added the Tegra186 GPIO support patch that makes use of
-> the new tight integration.
+> Thanks for adding me in CC I wonder why I was not in CC in the original
+> series whereas we properly fill the MAINTAINER file for this.
 
-I have reviewed this series and tested on Tegra, so for the series ...
+Because the change causing this was not touching any Armada
+files.
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+It is a fallout from the driver using gpiolib internals. (chip->irq_base).
 
-We would really like to get support for Tegra186 GPIO in v4.15, so
-please let us know if you think that this is do-able.
-
-Cheers
-Jon
-
--- 
-nvpublic
+Yours,
+Linus Walleij
