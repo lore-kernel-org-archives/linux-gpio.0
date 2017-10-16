@@ -1,117 +1,115 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
-Date: Mon, 16 Oct 2017 10:01:17 +0200
-Message-ID: <20171016080117.GA17369@ulmo>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <1504798409-32041-2-git-send-email-timur@codeaurora.org>
+Subject: Re: [gpio:devel 12/12]
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:630:27: error: 'struct
+ gpio_chip' has no member named 'irq_base'; did you mean 'base'?
+Date: Mon, 16 Oct 2017 10:05:02 +0200
+Message-ID: <20171016080502.GB17369@ulmo>
+References: <201710150916.Se4u1t6V%fengguang.wu@intel.com>
+ <CACRpkdb5WcX8TRifAHX02=_u_xwiLdJ5b7KFLRAgeZHA-qE1sg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+        protocol="application/pgp-signature"; boundary="0ntfKIWw70PvrIHh"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:55343 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751714AbdJPIBV (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2017 04:01:21 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:55163 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751356AbdJPIFF (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2017 04:05:05 -0400
+Received: by mail-qk0-f195.google.com with SMTP id n5so11773790qke.11
+        for <linux-gpio@vger.kernel.org>; Mon, 16 Oct 2017 01:05:05 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1504798409-32041-2-git-send-email-timur@codeaurora.org>
+In-Reply-To: <CACRpkdb5WcX8TRifAHX02=_u_xwiLdJ5b7KFLRAgeZHA-qE1sg@mail.gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, andy.gross@linaro.org, david.brown@linaro.org, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kbuild test robot <fengguang.wu@intel.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
 
---+HP7ph2BbKc20aGI
+--0ntfKIWw70PvrIHh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 07, 2017 at 10:33:28AM -0500, Timur Tabi wrote:
-[...]
->  	ret =3D gpiochip_add_data(&pctrl->chip, pctrl);
->  	if (ret) {
->  		dev_err(pctrl->dev, "Failed register gpiochip\n");
->  		return ret;
->  	}
-> =20
-> -	ret =3D gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0=
-, chip->ngpio);
-> +	/*
-> +	 * If irq_need_valid_mask is true, then gpiochip_add_data() will
-> +	 * initialize irq_valid_mask to all 1s.  We need to clear all the
-> +	 * GPIOs that are unavailable, and we need to find each block
-> +	 * of consecutive available GPIOs are add them as pin ranges.
-> +	 */
-> +	if (chip->irq_need_valid_mask) {
-> +		for (i =3D 0; i < ngpio; i++)
-> +			if (!groups[i].npins)
-> +				clear_bit(i, pctrl->chip.irq_valid_mask);
-> +
-> +		while ((count =3D msm_gpio_get_next_range(pctrl, &start))) {
-> +			ret =3D gpiochip_add_pin_range(&pctrl->chip,
-> +						     dev_name(pctrl->dev),
-> +						     start, start, count);
-> +			if (ret)
-> +				break;
-> +			start +=3D count;
-> +		}
-> +	} else {
-> +		ret =3D gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
-> +					     0, 0, ngpio);
-> +	}
+On Sun, Oct 15, 2017 at 04:21:14PM +0200, Linus Walleij wrote:
+> Grygorii, can you look at this?
+>=20
+> Linus
+>=20
+> On Sun, Oct 15, 2017 at 3:52 AM, kbuild test robot
+> <fengguang.wu@intel.com> wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gp=
+io.git devel
+> > head:   be58c675d634e0b91edc0f721c77303ac2afa809
+> > commit: be58c675d634e0b91edc0f721c77303ac2afa809 [12/12] gpiolib: drop =
+irq_base field from gpio_chip struct
+> > config: arm64-defconfig (attached as .config)
+> > compiler: aarch64-linux-gnu-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/s=
+bin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout be58c675d634e0b91edc0f721c77303ac2afa809
+> >         # save the attached .config to linux build tree
+> >         make.cross ARCH=3Darm64
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    drivers/pinctrl/mvebu/pinctrl-armada-37xx.c: In function 'armada_37x=
+x_irq_startup':
+> >>> drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:630:27: error: 'struct gp=
+io_chip' has no member named 'irq_base'; did you mean 'base'?
+> >      int irq =3D d->hwirq - chip->irq_base;
 
-This is the bit that I don't understand. If you only tell gpiolib about
-the GPIOs that exist, then it won't be initializing the .irq_valid_mask
-in a wrong way.
+This looks like something you'd get if you merge my struct
+gpio_irq_chip patches. However, the patch in my series will do the
+conversion of the pinctrl-armada-37xx driver:
 
-In other words, what I'm trying to say is that in your case, ngpio isn't
-equal to the sum of .npins over all groups. If instead you make the chip
-register only the lines that actually exist, .irq_valid_mask will only
-contain bits that do exist.
+--- >8 ---
+$ git log -p -- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+commit 96e359456c942969fc3f0faa277fb27d1a830692
+Author: Thierry Reding <treding@nvidia.com>
+Date:   Mon Apr 3 11:40:03 2017 +0200
 
-The reason I'm bringing this up is because we had the same discussion
-back in November last year (yes, that driver still isn't upstream...):
+    gpio: Move irq_base to struct gpio_irq_chip
 
-	https://lkml.org/lkml/2016/11/22/543
+    In order to consolidate the multiple ways to associate an IRQ chip with
+    a GPIO chip, move more fields into the new struct gpio_irq_chip.
 
-In a nutshell: the Tegra driver was assuming that each port had a fixed
-number (8) of lines, but when gpiolib changed to query the direction of
-GPIOs at driver probe time this broke badly because on of the instances
-of the GPIO controller is very strict about what it allows access to.
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-This seems to be similar to what you're experiencing. In our case we'd
-run into a hard hang trying to access a register for a non-existing
-GPIO. One of the possibilities discussed in the thread was to introduce
-something akin to what's being proposed here.
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/=
+mvebu/pinctrl-armada-37xx.c
+index c9851bd120b4..500238d898ea 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -627,7 +627,7 @@ static void armada_37xx_irq_handler(struct irq_desc *de=
+sc)
+ static unsigned int armada_37xx_irq_startup(struct irq_data *d)
+ {
+        struct gpio_chip *chip =3D irq_data_get_irq_chip_data(d);
+-       int irq =3D d->hwirq - chip->irq_base;
++       int irq =3D d->hwirq - chip->irq.first;
+        /*
+         * The mask field is a "precomputed bitmask for accessing the
+         * chip registers" which was introduced for the generic
 
-In the end it turned out to be easiest to just don't tell gpiolib about
-any non-existing GPIOs, because then you don't get to deal with any of
-these workarounds. The downside is that you need a little more code to
-find out exactly what GPIO you're talking about, or to determine how
-many you have. In the end I think it's all worth it by making it a lot
-easier in general to deal with. I think it's really confusing if you
-expose, say, 200 pins, and for 50 of them users will get -EACCES, or
--ENOENT or whatever if they try to use them.
-
-Thierry
-
---+HP7ph2BbKc20aGI
+--0ntfKIWw70PvrIHh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnkZ0oACgkQ3SOs138+
-s6EjgA//asi11NQzU3PpA6molHM85KBq7tpyMKK4OYzfEAeQy3NrVtPM2YVVSm4q
-zGL/uP47j6cWfR/0/RWFACZQp4bb5Aii7XcWPu3qzsnvIIdfffeVJN/kWrusWNxo
-vwJadX26u5Ab6ALXn4ZkeCJSQ75QphgxxejDQvejwym5lzzpyKxcEIW3gHAn6+0X
-gF8rGX+SBejdBMRMYv69mtVH6I3u9zqp6YgDBTxIRIW1yFWSoE0qDlXc7fpeO7r0
-YqVFc87nmiVD2kSXFL+37iRF/bsocCvkijN6Hyp/G/cSLNFh63Qs6Yz3+McZPp0B
-+l54bLQjfUCt5/3zUiie+aLeDK1lPOG6Uy1DBl93eBbWaI3YDY3eTAqr07CEc4Bq
-+H4yBzmQXvAN9exmOzFx36Tthjdno/56Z8+wcRjiwsVTlOsYHKF0NeV96XEtRbnZ
-FMJxUGvPFhwLh7Oizozdv4uIxuUcMQz8o4sPYPz9GkxRhuEftHZTB+rBCK6rln9j
-uSbqrp2WMMDBMAdudOciEoIVv1ScMPp6IFpeLquk7KHJhEHo5KiFJqViG09zS3pW
-5daMR23cx4GnH/T3K1J+n9khgYqNwYtMrUVH8t9A92O2bLtulO8Uk6lAhRDaPHj7
-zagOpT+87EgqdAFrinyeLac3DXEGYCMt6T5p6uDinUdrzYkXoqU=
-=Wsek
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlnkaC4ACgkQ3SOs138+
+s6F5mxAAmyADZw0SX9WmM5rhugFP8T4DJ6MeQWDhwgcg11aYgAP2w8n4lmWcrgSy
+VNvBDv52lkRDvJhzBFMmrDOeOpClCYI7pMbIgDBB9NQ66QlUb1Ws7+2Blz+RoapR
+VnXBDMuoxEd4AU1JQjRA7lF/G01r+W/ByFWG3pEl/sOfqbsIGOfdJ89UxHA/yORQ
+kvx9HJcwy8sVIvfT2i4Q50ttv8oecfBTqJloMsTrrgiPEGk1+OwXXq3mF8m+Es6Q
+zf7iZBQO04Mjr8QfBf4Ow7v3ThKdzQ7Bhv1O3hx/XwgyxjWwB6O+Y5wAgMZ5EtAU
+946r3GEutKp9E1N7DPch00dppWIb5HMOaWzsJP404Dw6tl4c4kbhdY5eZEDv0Vew
+TiYdaRcEEmE4eTv7A98KwKk2D+hssgb2L02C+qRjE3bZVNH3rRopRL+IJ9r5+CcK
+hwu4NTFEpjUKC5bZ3dYUZabh1Q0P4TZE+xc1Z4vi8Bmt1hNc1xNMLDbf2/RodxE0
+AmQzTR76tqeYhXMv6JHHFKEWh0J9w7rhuix5KrUt56MhwoSZwUpvq3JiBoep5jcg
+TExD+t/2NWebuh8g3F5D8tITDgwhFFyxWgNmz3hdXe1oRvtN4gnCanjwgN73Jm8v
+rIfsrk5C4Uu3NdtIC/BKFJ9zZvHbNz61MZr8Ue5kX/uDurQVlvE=
+=YVbU
 -----END PGP SIGNATURE-----
 
---+HP7ph2BbKc20aGI--
+--0ntfKIWw70PvrIHh--
