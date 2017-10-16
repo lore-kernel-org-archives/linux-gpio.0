@@ -1,99 +1,32 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
-Date: Mon, 16 Oct 2017 08:52:09 -0500
-Message-ID: <9c142b32-5f14-38c5-3611-884f2589d682@codeaurora.org>
-References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
- <1504798409-32041-2-git-send-email-timur@codeaurora.org>
- <20171016080117.GA17369@ulmo>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7745: Implement voltage switching for SDHI
+Date: Mon, 16 Oct 2017 16:36:57 +0200
+Message-ID: <CAMuHMdWY=1EBrdGgaBkDZqvScc=85shrqsWh27y=Yx5myrLjKA@mail.gmail.com>
+References: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:33186 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752431AbdJPNwP (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2017 09:52:15 -0400
-In-Reply-To: <20171016080117.GA17369@ulmo>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1507906155-9712-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Chris Paterson <chris.paterson2@renesas.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, andy.gross@linaro.org, david.brown@linaro.org, anjiandi@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 
-On 10/16/2017 03:01 AM, Thierry Reding wrote:
-> This is the bit that I don't understand. If you only tell gpiolib about
-> the GPIOs that exist, then it won't be initializing the .irq_valid_mask
-> in a wrong way.
+On Fri, Oct 13, 2017 at 4:49 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Voltage switching is the same as on the r8a7794.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-I know, and that's what my patches do.  I tell gpiolib that I need a 
-valid mask:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v4.15.
 
-/* If the GPIO map is sparse, then we need to disable specific IRQs */
-chip->irq_need_valid_mask = pctrl->soc->sparse;
+Gr{oetje,eeting}s,
 
-Then I proceed to provide the specific GPIOs that exist, one block at a 
-time:
+                        Geert
 
-	ret = gpiochip_add_pin_range(&pctrl->chip,
-				     dev_name(pctrl->dev),
-				     start, start, count);
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> In other words, what I'm trying to say is that in your case, ngpio isn't
-> equal to the sum of .npins over all groups.
-
-That's true.  I set it to the maximum number of GPIOs that exist on the 
-chip.  I could set it to the highest number of GPIOs that I register 
-(e.g. the highest value of "start + count"), but that's not necessary 
-for my patches to work.
-
-> If instead you make the chip
-> register only the lines that actually exist, .irq_valid_mask will only
-> contain bits that do exist.
-
-That's what I'm doing.
-
-> The reason I'm bringing this up is because we had the same discussion
-> back in November last year (yes, that driver still isn't upstream...):
-> 
-> 	https://lkml.org/lkml/2016/11/22/543
-> 
-> In a nutshell: the Tegra driver was assuming that each port had a fixed
-> number (8) of lines, but when gpiolib changed to query the direction of
-> GPIOs at driver probe time this broke badly because on of the instances
-> of the GPIO controller is very strict about what it allows access to.
-
-It appear we're re-hashing that same exact argument.
-
-> This seems to be similar to what you're experiencing. In our case we'd
-> run into a hard hang trying to access a register for a non-existing
-> GPIO. One of the possibilities discussed in the thread was to introduce
-> something akin to what's being proposed here.
-
-I guess great minds do think alike!
-
-> In the end it turned out to be easiest to just don't tell gpiolib about
-> any non-existing GPIOs, because then you don't get to deal with any of
-> these workarounds.
-
-I agree.
-
-> The downside is that you need a little more code to
-> find out exactly what GPIO you're talking about, or to determine how
-> many you have.
-
-In my case, the ACPI table provides an exact list that I use at probe() 
-time.
-
-> In the end I think it's all worth it by making it a lot
-> easier in general to deal with. I think it's really confusing if you
-> expose, say, 200 pins, and for 50 of them users will get -EACCES, or
-> -ENOENT or whatever if they try to use them.
-
-True, but /sys/kernel/debug/gpio is the only mechanism I found where the 
-user can get a list of valid GPIOs.  Maybe we need something similar in 
-/sys/class/gpio/.
-
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
