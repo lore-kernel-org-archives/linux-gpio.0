@@ -1,77 +1,139 @@
-From: Fenglin Wu <fenglinw@codeaurora.org>
-Subject: Re: [PATCH V1 2/2] pinctrl: qcom: spmi-gpio: Set is_enabled flag in
- set_mux()
-Date: Tue, 17 Oct 2017 12:36:09 +0800
-Message-ID: <78f23ed8-7e3e-ffc9-bdbe-e10622e0c757@codeaurora.org>
-References: <20171013061550.996-1-fenglinw@codeaurora.org>
- <20171013061550.996-3-fenglinw@codeaurora.org>
- <20171016222955.GQ1165@minitux>
+From: Dmitry Mastykin <mastichi@gmail.com>
+Subject: Re: pinctrl-mcp23s08: 1 changed pin -> multiple interrupts
+Date: Tue, 17 Oct 2017 11:12:14 +0300
+Message-ID: <CALieaeeCnKukPH+K9CiS-tr3XZ1bxj0R0+mXvsG+LHFJ=pLi3Q@mail.gmail.com>
+References: <CALieaeeBpmbr6f_zP7yUniSKODaWasybPoAGVKjWyTJ9+Vg3nA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171016222955.GQ1165@minitux>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:53144 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757849AbdJQIMQ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Tue, 17 Oct 2017 04:12:16 -0400
+Received: by mail-wr0-f195.google.com with SMTP id k62so710041wrc.9
+        for <linux-gpio@vger.kernel.org>; Tue, 17 Oct 2017 01:12:15 -0700 (PDT)
+In-Reply-To: <CALieaeeBpmbr6f_zP7yUniSKODaWasybPoAGVKjWyTJ9+Vg3nA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 
-On 10/17/2017 6:29 AM, Bjorn Andersson wrote:
-> On Thu 12 Oct 23:15 PDT 2017, fenglinw@codeaurora.org wrote:
-> 
->> From: Fenglin Wu <fenglinw@codeaurora.org>
->>
->> The initial value of is_enabled flag is read out from hardware in
->> pmic_gpio_populate(), and it will be set in pmic_gpio_config_set() if
->> pinconf is defined. For any GPIOs disabled initially in hardware which
->> only have pinmux defined, they won't be enabled in pmic_gpio_set_mux()
->> calling. So set is_enabled flag in set_mux() to ensure the GPIO module
->> could be enabled in above case.
->>
-> 
-> I'm still interested in knowing when it is valid to configure a pin with
-> only mux, no config.  I.e. in what cases does setting a alternative
-> function make the pinconfig not count.
-I agreed that any pins should be configured with pinmux as well as
-pinconf, but the driver doesn't prevent the case of only pinmux defined,
-right? I am not sure if this is valid case but it would happen: The
-hardware or the sw prior to linux kernel has the default setting of the
-function and config for one GPIO but we need to keep it disabled until
-the consumer request it, in this case, we just need to define the pinmux
-and ignore the pinconf definition in its device node.
+I'm sorry for very bad previous report, problem was more simple,
+cached_gpio was wrongly distorted in mcp23s08_get().
+Dmitry
 
-> 
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c
+b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 3e40d42..9c950bbf 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -407,10 +407,10 @@ static int mcp23s08_get(struct gpio_chip *chip,
+unsigned offset)
+  ret = mcp_read(mcp, MCP_GPIO, &status);
+  if (ret < 0)
+  status = 0;
+- else
++ else {
++ mcp->cached_gpio = status;
+  status = !!(status & (1 << offset));
+-
+- mcp->cached_gpio = status;
++ }
+
+  mutex_unlock(&mcp->lock);
+  return status;
+
+2017-10-16 18:19 GMT+03:00 Dmitry Mastykin <mastichi@gmail.com>:
+> Hello,
+> I had problems with pinctrl-mcp23s08 driver.
+> I use it with MCP23008 chip. Half of the chip is used by gpio-keys,
+> other half is eventually used via sysfs.
+> Pushing a key caused interrupts for all the 4 keys. In result - no
+> keyboard codes generated.
+> I found that problem was in mcp23s08_get() that being called by isr
+> for each changed pin clobbers the cached_gpio.
+> With following patch driver works for me.
+>
 > Regards,
-> Bjorn
-> 
->> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
->> ---
->>   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->> index 0a1e173..219c934 100644
->> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
->> @@ -312,6 +312,7 @@ static int pmic_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned function,
->>   	}
->>   
->>   	pad = pctldev->desc->pins[pin].drv_data;
->> +	pad->is_enabled = true;
->>   	/*
->>   	 * Non-LV/MV subtypes only support 2 special functions,
->>   	 * offsetting the dtestx function values by 2
->> -- 
->> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project.
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+> Dmitry
+>
+>
+> diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c
+> b/drivers/pinctrl/pinctrl-mcp23s08.c
+> index 3e40d42..27ce202 100644
+> --- a/drivers/pinctrl/pinctrl-mcp23s08.c
+> +++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+> @@ -63,6 +63,7 @@ struct mcp23s08 {
+>   int irq;
+>   bool irq_controller;
+>   int cached_gpio;
+> + int cached_gpinten;
+>   /* lock protects regmap access with bypass/cache flags */
+>   struct mutex lock;
+>
+> @@ -401,6 +402,9 @@ static int mcp23s08_get(struct gpio_chip *chip,
+> unsigned offset)
+>   struct mcp23s08 *mcp = gpiochip_get_data(chip);
+>   int status, ret;
+>
+> + if (mcp->cached_gpinten & (1 << offset))
+> + return !!(mcp->cached_gpio & (1 << offset));
+> +
+>   mutex_lock(&mcp->lock);
+>
+>   /* REVISIT reading this clears any IRQ ... */
+> @@ -486,15 +490,15 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+>   mcp->cached_gpio = gpio;
+>   mutex_unlock(&mcp->lock);
+>
+> + dev_dbg(mcp->chip.parent,
+> + "intcap 0x%04X intf 0x%04X gpio_orig 0x%04X gpio 0x%04X\n",
+> + intcap, intf, gpio_orig, gpio);
+> +
+>   if (intf == 0) {
+>   /* There is no interrupt pending */
+>   return IRQ_HANDLED;
+>   }
+>
+> - dev_dbg(mcp->chip.parent,
+> - "intcap 0x%04X intf 0x%04X gpio_orig 0x%04X gpio 0x%04X\n",
+> - intcap, intf, gpio_orig, gpio);
+> -
+>   for (i = 0; i < mcp->chip.ngpio; i++) {
+>   /* We must check all of the inputs on the chip,
+>   * otherwise we may not notice a change on >=2 pins.
+> @@ -514,6 +518,9 @@ static irqreturn_t mcp23s08_irq(int irq, void *data)
+>   * to see if the input has changed.
+>   */
+>
+> + if (!(mcp->cached_gpinten & BIT(i)))
+> + continue;
+> +
+>   intf_set = intf & BIT(i);
+>   if (i < 8 && intf_set)
+>   intcap_mask = 0x00FF;
+> @@ -552,6 +559,7 @@ static void mcp23s08_irq_mask(struct irq_data *data)
+>   unsigned int pos = data->hwirq;
+>
+>   mcp_set_bit(mcp, MCP_GPINTEN, pos, false);
+> + mcp->cached_gpinten &= ~BIT(pos);
+>  }
+>
+>  static void mcp23s08_irq_unmask(struct irq_data *data)
+> @@ -561,6 +569,7 @@ static void mcp23s08_irq_unmask(struct irq_data *data)
+>   unsigned int pos = data->hwirq;
+>
+>   mcp_set_bit(mcp, MCP_GPINTEN, pos, true);
+> + mcp->cached_gpinten |= BIT(pos);
+>  }
+>
+>  static int mcp23s08_irq_set_type(struct irq_data *data, unsigned int type)
+> @@ -891,6 +900,8 @@ static int mcp23s08_probe_one(struct mcp23s08
+> *mcp, struct device *dev,
+>   goto fail;
+>   }
+>
+> + mcp_read(mcp, MCP_GPIO, &mcp->cached_gpio);  // initial value
+> +
+>   ret = devm_gpiochip_add_data(dev, &mcp->chip, mcp);
+>   if (ret < 0)
+>   goto fail;
