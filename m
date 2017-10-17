@@ -1,100 +1,77 @@
-From: Doug Berger <opendmb@gmail.com>
-Subject: Re: [PATCH 6/7] gpio: brcmstb: consolidate interrupt domains
-Date: Mon, 16 Oct 2017 16:04:32 -0700
-Message-ID: <d1622149-58b8-ddca-2d09-649189fd9c4e@gmail.com>
-References: <20170930034057.15166-1-opendmb@gmail.com>
- <20170930034057.15166-7-opendmb@gmail.com>
- <CADtm3G5v6_BHwanRYvCq1y-8Hdmn7gxX3zoVHx2c7cOFL-pj+Q@mail.gmail.com>
- <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
+From: Fenglin Wu <fenglinw@codeaurora.org>
+Subject: Re: [PATCH V1 2/2] pinctrl: qcom: spmi-gpio: Set is_enabled flag in
+ set_mux()
+Date: Tue, 17 Oct 2017 12:36:09 +0800
+Message-ID: <78f23ed8-7e3e-ffc9-bdbe-e10622e0c757@codeaurora.org>
+References: <20171013061550.996-1-fenglinw@codeaurora.org>
+ <20171013061550.996-3-fenglinw@codeaurora.org>
+ <20171016222955.GQ1165@minitux>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:54245 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751859AbdJPXEf (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Mon, 16 Oct 2017 19:04:35 -0400
-In-Reply-To: <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171016222955.GQ1165@minitux>
 Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, collinsd@codeaurora.org, aghayal@codeaurora.org, wruan@codeaurora.org, subbaram@codeaurora.org, kgunda@codeaurora.org
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 10/04/2017 02:24 PM, Doug Berger wrote:
-> On 10/03/2017 08:03 PM, Gregory Fong wrote:
->> Hi Doug,
+On 10/17/2017 6:29 AM, Bjorn Andersson wrote:
+> On Thu 12 Oct 23:15 PDT 2017, fenglinw@codeaurora.org wrote:
+> 
+>> From: Fenglin Wu <fenglinw@codeaurora.org>
 >>
->> On Fri, Sep 29, 2017 at 8:40 PM, Doug Berger <opendmb@gmail.com> wrote:
->>> The GPIOLIB IRQ chip helpers were very appealing, but badly broke
->>> the 1:1 mapping between a GPIO controller's device_node and its
->>> interrupt domain.
->>
->> Out of curiosity, what sort of problems have you seen from this?
+>> The initial value of is_enabled flag is read out from hardware in
+>> pmic_gpio_populate(), and it will be set in pmic_gpio_config_set() if
+>> pinconf is defined. For any GPIOs disabled initially in hardware which
+>> only have pinmux defined, they won't be enabled in pmic_gpio_set_mux()
+>> calling. So set is_enabled flag in set_mux() to ensure the GPIO module
+>> could be enabled in above case.
 >>
 > 
-> As you know, the BRCMSTB devices conceptually distinguish between an
-> always-on GPIO device and a regular GPIO device that each can have many
-> more than 32 General Purpose I/Os. The driver supports these by dividing
-> the GPIO across a number of banks each of which is implemented as a
-> separate gpiochip as an implementation convenience. The main issue is
-> that each gpiochip that uses the GPIOLIB IRQ chip helpers creates its
-> own irq domain even though they are associated with the same device and
-> device-tree node.
+> I'm still interested in knowing when it is valid to configure a pin with
+> only mux, no config.  I.e. in what cases does setting a alternative
+> function make the pinconfig not count.
+I agreed that any pins should be configured with pinmux as well as
+pinconf, but the driver doesn't prevent the case of only pinmux defined,
+right? I am not sure if this is valid case but it would happen: The
+hardware or the sw prior to linux kernel has the default setting of the
+function and config for one GPIO but we need to keep it disabled until
+the consumer request it, in this case, we just need to define the pinmux
+and ignore the pinconf definition in its device node.
+
 > 
-> When another device-tree node references a GPIO device as its interrupt
-> parent, the irq_create_of_mapping() function looks for the irq domain of
-> the GPIO device and since all bank irq domains reference the same GPIO
-> device node it always resolves to the irq domain of the first bank
-> regardless of which bank the number of the GPIO should resolve. This
-> domain can only map hwirq numbers 0-31 so interrupts on GPIO above that
-> can't be mapped by the device-tree.
+> Regards,
+> Bjorn
 > 
->>>
->>> This commit consolidates the per bank irq domains to a version
->>> where we have one larger interrupt domain per GPIO controller
->>> instance spanning multiple GPIO banks.
+>> Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+>> ---
+>>   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
->> This works (and is reminiscent to my initially submitted
->> implementation at [1]), but I think it might make sense to keep as-is
->> (using the gpiolib irqchip helpers), and instead allocate an irqchip
->> fwnode per bank and use to_of_node() to set it as the of_node for the
->> gpiochip before calling gpiochip_irqchip_add().  OTOH, that capability
->> might go away...
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> index 0a1e173..219c934 100644
+>> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+>> @@ -312,6 +312,7 @@ static int pmic_gpio_set_mux(struct pinctrl_dev *pctldev, unsigned function,
+>>   	}
+>>   
+>>   	pad = pctldev->desc->pins[pin].drv_data;
+>> +	pad->is_enabled = true;
+>>   	/*
+>>   	 * Non-LV/MV subtypes only support 2 special functions,
+>>   	 * offsetting the dtestx function values by 2
+>> -- 
+>> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project.
 >>
->> Linus, can you comment on the FIXME in gpiochip_irqchip_add_key() that
->> says "get rid of this and use gpiochip->parent->of_node everywhere"?
->> It seems like it would still be beneficial to be able to override the
->> associated node for a gpiochip, since that's what's used for the
->> irqdomain, but if that's going away, obviously we don't want to start
->> using that now.
->>
-> 
-> Yes, this is effectively a reversion to an earlier implementation. I
-> produced an implementation based on the generic irqchip libraries, but
-> that was stripped from this submission when I discovered that no support
-> exists within the generic irqchip libraries for removal of domain
-> generic chips and we wanted to preserve the module support of this driver.
-> 
-> It is conceivable that the current GPIO device-tree nodes could be
-> broken down into separate devices per bank, but it is believed that this
-> would only confuse things for users of the device as the concept
-> diverges from the concept expressed in device documentation.
-> 
->> Thanks,
->> Gregory
->>
->> [1] https://patchwork.kernel.org/patch/6347811/
->>
-> 
-> Thanks for the review,
->     Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
 
-Gregory,
-
-Do you have any additional feedback on patches 6 and 7 before I submit a
-version 2?
-
-Thanks,
-    Doug
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
