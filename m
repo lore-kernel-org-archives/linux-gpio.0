@@ -1,60 +1,113 @@
 From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [gpio:devel 12/12] drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:630:27: error: 'struct gpio_chip' has no member named 'irq_base'; did you mean 'base'?
-Date: Thu, 19 Oct 2017 13:16:40 +0200
-Message-ID: <87zi8n5qw7.fsf@free-electrons.com>
-References: <201710150916.Se4u1t6V%fengguang.wu@intel.com>
-        <CACRpkdb5WcX8TRifAHX02=_u_xwiLdJ5b7KFLRAgeZHA-qE1sg@mail.gmail.com>
-        <20171016080502.GB17369@ulmo> <20171016080821.GC17369@ulmo>
-        <CACRpkdYuJeKQA+yyU1B0fvU2WoaFRNBHn3XVrGs1jgWXUOOmqg@mail.gmail.com>
-        <20171016124656.GA6539@ulmo> <87po9n6t5e.fsf@free-electrons.com>
-        <CACRpkdYyq0vw=9H2xRg1W4LVvdyc_m1-Mayo=ZvtB+_BQTrhjQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:46587 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752002AbdJSLQm (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 07:16:42 -0400
-In-Reply-To: <CACRpkdYyq0vw=9H2xRg1W4LVvdyc_m1-Mayo=ZvtB+_BQTrhjQ@mail.gmail.com>
-        (Linus Walleij's message of "Mon, 16 Oct 2017 23:15:57 +0200")
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
+Date: Thu, 19 Oct 2017 15:10:03 +0200
+Message-ID: <20171019131003.9684-1-gregory.clement@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: kbuild test robot <fengguang.wu@intel.com>, Grygorii Strashko <grygorii.strashko@ti.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-Hi Linus and Thierry,
+From: Ken Ma <make@marvell.com>
+
+Current edge both type gpio irqs which need to swap polarity in each
+interrupt are not supported, this patch adds edge both type gpio irq
+support.
+
+Signed-off-by: Ken Ma <make@marvell.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+---
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 64 +++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 71b944748304..4e8d836a8c6f 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -576,6 +576,19 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
+ 	case IRQ_TYPE_EDGE_FALLING:
+ 		val |= (BIT(d->hwirq % GPIO_PER_REG));
+ 		break;
++	case IRQ_TYPE_EDGE_BOTH: {
++		u32 in_val, in_reg = INPUT_VAL;
++
++		armada_37xx_irq_update_reg(&in_reg, d);
++		regmap_read(info->regmap, in_reg, &in_val);
++
++		/* Set initial polarity based on current input level. */
++		if (in_val & d->mask)
++			val |= d->mask;		/* falling */
++		else
++			val &= ~d->mask;	/* rising */
++		break;
++	}
+ 	default:
+ 		spin_unlock_irqrestore(&info->irq_lock, flags);
+ 		return -EINVAL;
+@@ -586,6 +599,40 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
+ 	return 0;
+ }
  
- On lun., oct. 16 2017, Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> On Mon, Oct 16, 2017 at 4:53 PM, Gregory CLEMENT
-> <gregory.clement@free-electrons.com> wrote:
->
->> Thanks for adding me in CC I wonder why I was not in CC in the original
->> series whereas we properly fill the MAINTAINER file for this.
->
-> Because the change causing this was not touching any Armada
-> files.
->
-> It is a fallout from the driver using gpiolib
-> internals. (chip->irq_base).
-
-OK I see.
-
-About the patch itself I tested it on the Armada 3720 DB and it's OK for
-me:
-
-Acked-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Thanks,
-
-Gregory
-
->
-> Yours,
-> Linus Walleij
-
++static int armada_37xx_edge_both_irq_swap_pol(struct armada_37xx_pinctrl *info,
++					     u32 pin_idx)
++{
++	u32 reg_idx = pin_idx / GPIO_PER_REG;
++	u32 bit_num = pin_idx % GPIO_PER_REG;
++	u32 p, l, ret;
++	unsigned long flags;
++
++	regmap_read(info->regmap, INPUT_VAL + 4*reg_idx, &l);
++
++	spin_lock_irqsave(&info->irq_lock, flags);
++	p = readl(info->base + IRQ_POL + 4 * reg_idx);
++	if ((p ^ l) & (1 << bit_num)) {
++		/*
++		 * For the gpios which are used for both-edge irqs, when their
++		 * interrupts happen, their input levels are changed,
++		 * yet their interrupt polarities are kept in old values, we
++		 * should synchronize their interrupt polarities; for example,
++		 * at first a gpio's input level is low and its interrupt
++		 * polarity control is "Detect rising edge", then the gpio has
++		 * a interrupt , its level turns to high, we should change its
++		 * polarity control to "Detect falling edge" correspondingly.
++		 */
++		p ^= 1 << bit_num;
++		writel(p, info->base + IRQ_POL + 4 * reg_idx);
++		ret = 0;
++	} else {
++		/* Spurious irq */
++		ret = -1;
++	}
++
++	spin_unlock_irqrestore(&info->irq_lock, flags);
++	return ret;
++}
+ 
+ static void armada_37xx_irq_handler(struct irq_desc *desc)
+ {
+@@ -609,6 +656,23 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
+ 			u32 hwirq = ffs(status) - 1;
+ 			u32 virq = irq_find_mapping(d, hwirq +
+ 						     i * GPIO_PER_REG);
++			u32 t = irq_get_trigger_type(virq);
++
++			if ((t & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH) {
++				/* Swap polarity (race with GPIO line) */
++				if (armada_37xx_edge_both_irq_swap_pol(info,
++					hwirq + i * GPIO_PER_REG)) {
++					/*
++					 * For spurious irq, which gpio level
++					 * is not as expected after incoming
++					 * edge, just ack the gpio irq.
++					 */
++					writel(1 << hwirq,
++					       info->base +
++					       IRQ_STATUS + 4 * i);
++					continue;
++				}
++			}
+ 
+ 			generic_handle_irq(virq);
+ 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+2.14.2
