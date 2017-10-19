@@ -1,33 +1,31 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
-Date: Thu, 19 Oct 2017 15:38:28 +0200
-Message-ID: <20171019133828.GC6615@lunn.ch>
-References: <20171019131003.9684-1-gregory.clement@free-electrons.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpiolib: clear irq handler and data in one go
+Date: Thu, 19 Oct 2017 16:32:23 +0200
+Message-ID: <CACRpkdaF7NNApzOEHP8PkLQD1BDEFgx6536tJJM+SeX1EOp0xA@mail.gmail.com>
+References: <1508344367-572-1-git-send-email-martin@kaiser.cx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171019131003.9684-1-gregory.clement@free-electrons.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:52067 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753711AbdJSOcZ (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 10:32:25 -0400
+Received: by mail-it0-f68.google.com with SMTP id o135so9972906itb.0
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Oct 2017 07:32:25 -0700 (PDT)
+In-Reply-To: <1508344367-572-1-git-send-email-martin@kaiser.cx>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Martin Kaiser <martin@kaiser.cx>
+Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Oct 19, 2017 at 03:10:03PM +0200, Gregory CLEMENT wrote:
-> From: Ken Ma <make@marvell.com>
-> 
-> Current edge both type gpio irqs which need to swap polarity in each
-> interrupt are not supported, this patch adds edge both type gpio irq
-> support.
+On Wed, Oct 18, 2017 at 6:32 PM, Martin Kaiser <martin@kaiser.cx> wrote:
 
-So is the assumption here that you can handle the interrupt and flip
-the edge, faster than it takes the signal to change?
+> Replace the two separate calls for clearing the irqchip's chained handler
+> and its data with a single irq_set_chained_handler_and_data() call.
+>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 
-If the software is too slow, you loose the following edge? And you
-might loose the edge after that as well, since the software will at
-some point handle the interrupt and reconfigure the edge, potentially
-for the wrong edge?
+Patch applied.
 
-Or am i missing something which makes this race free?
-
-   Andrew
+Yours,
+Linus Walleij
