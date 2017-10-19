@@ -1,251 +1,57 @@
-From: Doug Berger <opendmb@gmail.com>
-Subject: Re: [PATCH 7/7] gpio: brcmstb: implement suspend/resume/shutdown
-Date: Thu, 19 Oct 2017 11:39:16 -0700
-Message-ID: <aa8a2900-22a5-5ec5-2afc-038fc42ea940@gmail.com>
-References: <20170930034057.15166-1-opendmb@gmail.com>
- <20170930034057.15166-8-opendmb@gmail.com> <20171019090359.GB31645@kessel>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/5] dt-bindings: Document common property for
+ daisy-chained devices
+Date: Thu, 19 Oct 2017 22:35:21 +0200
+Message-ID: <CACRpkdYwnXN6iCOyij5EQcsJ49a-vx3-tdr52xVi=dTHyuY7+Q@mail.gmail.com>
+References: <cover.1507797496.git.lukas@wunner.de> <f0c3b0c5514f74717c5783360b60062dfe9b8c0f.1507797496.git.lukas@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:57044 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752497AbdJSSjU (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 14:39:20 -0400
-In-Reply-To: <20171019090359.GB31645@kessel>
-Content-Language: en-US
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <f0c3b0c5514f74717c5783360b60062dfe9b8c0f.1507797496.git.lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+Cc: Mathias Duckeck <m.duckeck-XB/JSsFECOqzQB+pC5nmwQ@public.gmane.org>, Phil Elwell <phil-FnsA7b+Nu9XbIbC87yuRow@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Gregory Fong <gregory.0xf0@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list@broadcom.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 10/19/2017 02:03 AM, Gregory Fong wrote:
-> Hi Doug,
-> 
-> Nice description of the problem with dealing with a pending disabled
-> wake interrupt and the solution.  A few remarks:
-> 
-> On Fri, Sep 29, 2017 at 08:40:57PM -0700, Doug Berger wrote:
->> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
->> index 752a46ce3589..c964ed71a68d 100644
->> --- a/drivers/gpio/gpio-brcmstb.c
->> +++ b/drivers/gpio/gpio-brcmstb.c
->> @@ -19,17 +19,29 @@
->>  #include <linux/irqdomain.h>
->>  #include <linux/irqchip/chained_irq.h>
->>  #include <linux/interrupt.h>
->> -#include <linux/reboot.h>
->> -
->> -#define GIO_BANK_SIZE           0x20
->> -#define GIO_ODEN(bank)          (((bank) * GIO_BANK_SIZE) + 0x00)
->> -#define GIO_DATA(bank)          (((bank) * GIO_BANK_SIZE) + 0x04)
->> -#define GIO_IODIR(bank)         (((bank) * GIO_BANK_SIZE) + 0x08)
->> -#define GIO_EC(bank)            (((bank) * GIO_BANK_SIZE) + 0x0c)
->> -#define GIO_EI(bank)            (((bank) * GIO_BANK_SIZE) + 0x10)
->> -#define GIO_MASK(bank)          (((bank) * GIO_BANK_SIZE) + 0x14)
->> -#define GIO_LEVEL(bank)         (((bank) * GIO_BANK_SIZE) + 0x18)
->> -#define GIO_STAT(bank)          (((bank) * GIO_BANK_SIZE) + 0x1c)
->> +
->> +enum gio_reg_index {
->> +	GIO_REG_ODEN = 0,
->> +	GIO_REG_DATA,
->> +	GIO_REG_IODIR,
->> +	GIO_REG_EC,
->> +	GIO_REG_EI,
->> +	GIO_REG_MASK,
->> +	GIO_REG_LEVEL,
->> +	GIO_REG_STAT,
->> +	GIO_REG_COUNT
-> 
-> Please change the name or add a comment to make it clear that this is
-> not for an actual register.
-> 
+On Thu, Oct 12, 2017 at 12:40 PM, Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org> wrote:
 
-Will do.
+> Many serially-attached GPIO and IIO devices are daisy-chainable.
+>
+>     Examples for GPIO devices are Maxim MAX3191x and TI SN65HVS88x:
+>     https://datasheets.maximintegrated.com/en/ds/MAX31913.pdf
+>     http://www.ti.com/lit/ds/symlink/sn65hvs880.pdf
+>
+>     Examples for IIO devices are TI DAC128S085 and TI DAC161S055:
+>     http://www.ti.com/lit/ds/symlink/dac128s085.pdf
+>     http://www.ti.com/lit/ds/symlink/dac161s055.pdf
+>
+> We already have drivers for daisy-chainable devices in the tree but
+> their devicetree bindings are somewhat inconsistent and ill-named:
+>
+>     The gpio-74x164.c driver uses "registers-number" to convey the
+>     number of devices in the daisy-chain.  (Sans vendor prefix,
+>     multiple vendors sell compatible versions of this chip.)
+>
+>     The gpio-pisosr.c driver takes a different approach and calculates
+>     the number of devices in the daisy-chain by dividing the common
+>     "ngpios" property (Documentation/devicetree/bindings/gpio/gpio.txt)
+>     by 8 (which assumes that each chip has 8 inputs).
+>
+> Let's standardize on a common "#daisy-chained-devices" property.
+> That name was chosen because it's the term most frequently used in
+> datasheets.  (A less frequently used synonym is "cascaded devices".)
+>
+> Signed-off-by: Lukas Wunner <lukas-JFq808J9C/izQB+pC5nmwQ@public.gmane.org>
+> ---
+> Changes v1 -> v2:
+>
+> - Newly inserted patch.
 
->> +};
->> +
->> [snip]
->> @@ -37,6 +49,8 @@ struct brcmstb_gpio_bank {
->>  	struct gpio_chip gc;
->>  	struct brcmstb_gpio_priv *parent_priv;
->>  	u32 width;
->> +	u32 wake_active;
->> +	u32 regs[GIO_REG_STAT]; /* Don't save and restore GIO_REG_STAT */
-> 
-> Consider naming to make it clearer that this is for save/restore, not
-> some kind of shadow reg implementation or anything like that.
-> 
+Patch applied with the ACKs.
 
-Will do.
-
->>  };
->>  
->>  struct brcmstb_gpio_priv {
->> @@ -49,7 +63,6 @@ struct brcmstb_gpio_priv {
->>  	int gpio_base;
->>  	int num_gpios;
->>  	int parent_wake_irq;
->> -	struct notifier_block reboot_notifier;
->>  };
->>  
->>  #define MAX_GPIO_PER_BANK       32
->> @@ -65,15 +78,22 @@ brcmstb_gpio_gc_to_priv(struct gpio_chip *gc)
->>  }
->>  
->>  static unsigned long
->> -brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
->> +__brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
->>  {
->>  	void __iomem *reg_base = bank->parent_priv->reg_base;
->> +
->> +	return bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
->> +	       bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
->> +}
->> +
->> +static unsigned long
->> +brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
->> +{
->>  	unsigned long status;
->>  	unsigned long flags;
->>  
->>  	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
->> -	status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
->> -		 bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
->> +	status = __brcmstb_gpio_get_active_irqs(bank);
->>  	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
->>  
->>  	return status;
->> @@ -209,11 +229,6 @@ static int brcmstb_gpio_priv_set_wake(struct brcmstb_gpio_priv *priv,
->>  {
->>  	int ret = 0;
->>  
->> -	/*
->> -	 * Only enable wake IRQ once for however many hwirqs can wake
->> -	 * since they all use the same wake IRQ.  Mask will be set
->> -	 * up appropriately thanks to IRQCHIP_MASK_ON_SUSPEND flag.
->> -	 */
->>  	if (enable)
->>  		ret = enable_irq_wake(priv->parent_wake_irq);
->>  	else
->> @@ -227,7 +242,17 @@ static int brcmstb_gpio_priv_set_wake(struct brcmstb_gpio_priv *priv,
->>  static int brcmstb_gpio_irq_set_wake(struct irq_data *d, unsigned int enable)
->>  {
->>  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> -	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
->> +	struct brcmstb_gpio_bank *bank = gpiochip_get_data(gc);
->> +	struct brcmstb_gpio_priv *priv = bank->parent_priv;
->> +	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(d->hwirq, bank));
->> +
->> +	/* Do not do anything specific for now, suspend/resume callbacks will
->> +	 * configure the interrupt mask appropriately
->> +	 */
-> 
-> Please fix comment format (this is the network subsystem style).
-> 
-
-Thanks, force of habit ;).
-
->>
->> [snip] 
->> @@ -508,6 +511,99 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
->> [...]
->> +static void brcmstb_gpio_shutdown(struct platform_device *pdev)
->> +{
->> +	/* Enable GPIO for S5 cold boot */
->> +	brcmstb_gpio_quiesce(&pdev->dev, 0);
-> 
-> nit: use false instead of 0 (it's a bool).
-> 
-
-Will do.
-
->> +}
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> [snip]
->> +static int brcmstb_gpio_resume(struct device *dev)
->> +{
->> +	struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
->> +	struct brcmstb_gpio_bank *bank;
->> +	u32 wake_mask = 0;
-> 
-> This isn't really being used as a mask, contrary to appearances.  It's
-> just tracking whether any active IRQs were seen.  Please change to use a
-> bool instead and adjust the name accordingly.
-> 
-
-I see your point, but I believe it is cleaner to use this to consolidate
-the bit masks returned by each __brcmstb_gpio_get_active_irqs() call.
-This allows a single test rather than a test per bank.
-
->> +
->> +	list_for_each_entry(bank, &priv->bank_list, node) {
->> +		wake_mask |= __brcmstb_gpio_get_active_irqs(bank);
->> +		brcmstb_gpio_bank_restore(priv, bank);
->> +	}
->> +
->> +	if (priv->parent_wake_irq && wake_mask)
->> +		pm_wakeup_event(dev, 0);
->> +
->> +	/* enable non-wake interrupt */
->> +	if (priv->parent_irq >= 0)
->> +		enable_irq(priv->parent_irq);
->> +
->> +	return 0;
->> +}
->> +
->> +#else
->> +#define brcmstb_gpio_suspend	NULL
->> +#define brcmstb_gpio_resume	NULL
->> +#endif /* CONFIG_PM_SLEEP */
->> +
->> +static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
->> +	.suspend_noirq	= brcmstb_gpio_suspend,
->> +	.resume_noirq = brcmstb_gpio_resume,
->> +};
->> +
->>  static int brcmstb_gpio_probe(struct platform_device *pdev)
->>  {
->>  	struct device *dev = &pdev->dev;
->> @@ -517,7 +613,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
->>  	struct resource *res;
->>  	struct property *prop;
->>  	const __be32 *p;
->> -	u32 bank_width;
->> +	u32 bank_width, wake_mask = 0;
-> 
-> Same comment on wake_mask as for brcmstb_gpio_resume() above.
-> 
-
-Same response.
-
->>  	int num_banks = 0;
->>  	int err;
->>  	static int gpio_base;
->> @@ -617,6 +713,7 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
->>  		 * Mask all interrupts by default, since wakeup interrupts may
->>  		 * be retained from S5 cold boot
->>  		 */
->> +		wake_mask |= __brcmstb_gpio_get_active_irqs(bank);
->>  		gc->write_reg(reg_base + GIO_MASK(bank->id), 0);
->>  
->>  		err = gpiochip_add_data(gc, bank);
->> @@ -646,6 +743,9 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
->>  	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
->>  			num_banks, priv->gpio_base, gpio_base - 1);
->>  
->> +	if (priv->parent_wake_irq && wake_mask)
->> +		pm_wakeup_event(dev, 0);
-> 
-> Why is this called in probe?
-> 
-
-This allows proper wakeup accounting when waking from S5.
-
-> Thanks,
-> Gregory
-> 
-
-Thanks again for the review.  I will try to get a v2 out next week.
-    Doug
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
