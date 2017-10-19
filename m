@@ -1,113 +1,34 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: [PATCH] pinctrl: armada-37xx: Add edge both type gpio irq support
-Date: Thu, 19 Oct 2017 15:10:03 +0200
-Message-ID: <20171019131003.9684-1-gregory.clement@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-arm-kernel@lists.infradead.org, Antoine Tenart <antoine.tenart@free-electrons.com>, =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@free-electrons.com>, Nadav Haklai <nadavh@marvell.com>, Victor Gu <xigu@marvell.com>, Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>, Hua Jing <jinghua@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>, Ken Ma <make@marvell.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [gpio:devel 12/12] drivers/pinctrl/mvebu/pinctrl-armada-37xx.c:630:27:
+ error: 'struct gpio_chip' has no member named 'irq_base'; did you mean 'base'?
+Date: Thu, 19 Oct 2017 15:17:25 +0200
+Message-ID: <CACRpkdaw6xzd9c=XBYDTwhUU52FRtMZbogGhi_uv4AK4Ztwx-w@mail.gmail.com>
+References: <201710150916.Se4u1t6V%fengguang.wu@intel.com> <CACRpkdb5WcX8TRifAHX02=_u_xwiLdJ5b7KFLRAgeZHA-qE1sg@mail.gmail.com>
+ <20171016080502.GB17369@ulmo> <20171016080821.GC17369@ulmo>
+ <CACRpkdYuJeKQA+yyU1B0fvU2WoaFRNBHn3XVrGs1jgWXUOOmqg@mail.gmail.com> <20171016124656.GA6539@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-io0-f195.google.com ([209.85.223.195]:43480 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751023AbdJSNR1 (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 09:17:27 -0400
+Received: by mail-io0-f195.google.com with SMTP id 134so9781335ioo.0
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Oct 2017 06:17:26 -0700 (PDT)
+In-Reply-To: <20171016124656.GA6539@ulmo>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: kbuild test robot <fengguang.wu@intel.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, "kbuild-all@01.org" <kbuild-all@01.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 
-From: Ken Ma <make@marvell.com>
+On Mon, Oct 16, 2017 at 2:46 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
 
-Current edge both type gpio irqs which need to swap polarity in each
-interrupt are not supported, this patch adds edge both type gpio irq
-support.
+> Something like the below should do. Cc += Gregory.
 
-Signed-off-by: Ken Ma <make@marvell.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
----
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 64 +++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+Thanks for helping fixing this!
 
-diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-index 71b944748304..4e8d836a8c6f 100644
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -576,6 +576,19 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
- 	case IRQ_TYPE_EDGE_FALLING:
- 		val |= (BIT(d->hwirq % GPIO_PER_REG));
- 		break;
-+	case IRQ_TYPE_EDGE_BOTH: {
-+		u32 in_val, in_reg = INPUT_VAL;
-+
-+		armada_37xx_irq_update_reg(&in_reg, d);
-+		regmap_read(info->regmap, in_reg, &in_val);
-+
-+		/* Set initial polarity based on current input level. */
-+		if (in_val & d->mask)
-+			val |= d->mask;		/* falling */
-+		else
-+			val &= ~d->mask;	/* rising */
-+		break;
-+	}
- 	default:
- 		spin_unlock_irqrestore(&info->irq_lock, flags);
- 		return -EINVAL;
-@@ -586,6 +599,40 @@ static int armada_37xx_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
- }
- 
-+static int armada_37xx_edge_both_irq_swap_pol(struct armada_37xx_pinctrl *info,
-+					     u32 pin_idx)
-+{
-+	u32 reg_idx = pin_idx / GPIO_PER_REG;
-+	u32 bit_num = pin_idx % GPIO_PER_REG;
-+	u32 p, l, ret;
-+	unsigned long flags;
-+
-+	regmap_read(info->regmap, INPUT_VAL + 4*reg_idx, &l);
-+
-+	spin_lock_irqsave(&info->irq_lock, flags);
-+	p = readl(info->base + IRQ_POL + 4 * reg_idx);
-+	if ((p ^ l) & (1 << bit_num)) {
-+		/*
-+		 * For the gpios which are used for both-edge irqs, when their
-+		 * interrupts happen, their input levels are changed,
-+		 * yet their interrupt polarities are kept in old values, we
-+		 * should synchronize their interrupt polarities; for example,
-+		 * at first a gpio's input level is low and its interrupt
-+		 * polarity control is "Detect rising edge", then the gpio has
-+		 * a interrupt , its level turns to high, we should change its
-+		 * polarity control to "Detect falling edge" correspondingly.
-+		 */
-+		p ^= 1 << bit_num;
-+		writel(p, info->base + IRQ_POL + 4 * reg_idx);
-+		ret = 0;
-+	} else {
-+		/* Spurious irq */
-+		ret = -1;
-+	}
-+
-+	spin_unlock_irqrestore(&info->irq_lock, flags);
-+	return ret;
-+}
- 
- static void armada_37xx_irq_handler(struct irq_desc *desc)
- {
-@@ -609,6 +656,23 @@ static void armada_37xx_irq_handler(struct irq_desc *desc)
- 			u32 hwirq = ffs(status) - 1;
- 			u32 virq = irq_find_mapping(d, hwirq +
- 						     i * GPIO_PER_REG);
-+			u32 t = irq_get_trigger_type(virq);
-+
-+			if ((t & IRQ_TYPE_SENSE_MASK) == IRQ_TYPE_EDGE_BOTH) {
-+				/* Swap polarity (race with GPIO line) */
-+				if (armada_37xx_edge_both_irq_swap_pol(info,
-+					hwirq + i * GPIO_PER_REG)) {
-+					/*
-+					 * For spurious irq, which gpio level
-+					 * is not as expected after incoming
-+					 * edge, just ack the gpio irq.
-+					 */
-+					writel(1 << hwirq,
-+					       info->base +
-+					       IRQ_STATUS + 4 * i);
-+					continue;
-+				}
-+			}
- 
- 			generic_handle_irq(virq);
- 
--- 
-2.14.2
+Patch applied with Gregory's review tag.
+
+Yours,
+Linus Walleij
