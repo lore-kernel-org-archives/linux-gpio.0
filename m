@@ -1,148 +1,197 @@
-From: Miquel RAYNAL <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v2 01/16] dt-bindings: mvebu-uart: update documentation
- with extended UART
-Date: Thu, 19 Oct 2017 09:36:42 +0200
-Message-ID: <20171019093642.6fd6d4d8@xps13>
-References: <20171013090200.31034-1-miquel.raynal@free-electrons.com>
-        <20171013090200.31034-2-miquel.raynal@free-electrons.com>
-        <20171017220022.kr2qiodln3qfkbwe@rob-hp-laptop>
-        <20171018082531.59a2e5d0@xps13>
-        <CAL_JsqJ3VkXHnh1H2NcBhgiFE+++WvXGA9Phdgj77X-4VGX3+w@mail.gmail.com>
+From: Gregory Fong <gregory.0xf0@gmail.com>
+Subject: Re: [PATCH 6/7] gpio: brcmstb: consolidate interrupt domains
+Date: Thu, 19 Oct 2017 00:57:43 -0700
+Message-ID: <20171019075743.GA31645@kessel>
+References: <20170930034057.15166-1-opendmb@gmail.com>
+ <20170930034057.15166-7-opendmb@gmail.com>
+ <CADtm3G5v6_BHwanRYvCq1y-8Hdmn7gxX3zoVHx2c7cOFL-pj+Q@mail.gmail.com>
+ <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL_JsqJ3VkXHnh1H2NcBhgiFE+++WvXGA9Phdgj77X-4VGX3+w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Nadav Haklai <nadavh@m>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:47577 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751642AbdJSH5r (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 03:57:47 -0400
+Content-Disposition: inline
+In-Reply-To: <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
+To: Doug Berger <opendmb@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Rob,
+Hi Doug,
 
-On Wed, 18 Oct 2017 08:29:07 -0500
-Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+On Wed, Oct 04, 2017 at 02:24:37PM -0700, Doug Berger wrote:
+> On 10/03/2017 08:03 PM, Gregory Fong wrote:
+> > On Fri, Sep 29, 2017 at 8:40 PM, Doug Berger <opendmb@gmail.com> wrote:
+> >> The GPIOLIB IRQ chip helpers were very appealing, but badly broke
+> >> the 1:1 mapping between a GPIO controller's device_node and its
+> >> interrupt domain.
+> > 
+> > Out of curiosity, what sort of problems have you seen from this?
+> > 
+> 
+> [snip]
+> 
+> When another device-tree node references a GPIO device as its interrupt
+> parent, the irq_create_of_mapping() function looks for the irq domain of
+> the GPIO device and since all bank irq domains reference the same GPIO
+> device node it always resolves to the irq domain of the first bank
+> regardless of which bank the number of the GPIO should resolve. This
+> domain can only map hwirq numbers 0-31 so interrupts on GPIO above that
+> can't be mapped by the device-tree.
 
-> On Wed, Oct 18, 2017 at 1:25 AM, Miquel RAYNAL
-> <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org> wrote:
-> > Hi Rob,
-> >
-> > On Tue, 17 Oct 2017 17:00:22 -0500
-> > Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> >  
-> >> On Fri, Oct 13, 2017 at 11:01:45AM +0200, Miquel Raynal wrote:  
-> >> > Update the Device Tree binding documentation for the Marvell EBU
-> >> > UART, in order to allow describing the extended UART IP block, in
-> >> > addition to the already supported standard UART IP. This requires
-> >> > adding a new compatible string, the introduction of a clocks
-> >> > property, and extensions to the interrupts property.
-> >> >
-> >> > Signed-off-by: Miquel Raynal <miquel.raynal-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> >> > Reviewed-by: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> >> > ---
-> >> >  .../devicetree/bindings/serial/mvebu-uart.txt      | 49
-> >> > +++++++++++++++++++--- 1 file changed, 44 insertions(+), 5
-> >> > deletions(-)
-> >> >
-> >> > diff --git
-> >> > a/Documentation/devicetree/bindings/serial/mvebu-uart.txt
-> >> > b/Documentation/devicetree/bindings/serial/mvebu-uart.txt index
-> >> > d37fabe17bd1..3df3a3fab4bb 100644 ---
-> >> > a/Documentation/devicetree/bindings/serial/mvebu-uart.txt +++
-> >> > b/Documentation/devicetree/bindings/serial/mvebu-uart.txt @@
-> >> > -1,13 +1,52 @@ -* Marvell UART : Non standard UART used in some
-> >> > of Marvell EBU SoCs (e.g., Armada-3700) +* Marvell UART : Non
-> >> > standard UART used in some of Marvell EBU SoCs
-> >> > +                 e.g., Armada-3700.
-> >> >
-> >> >  Required properties:
-> >> > -- compatible: "marvell,armada-3700-uart"
-> >> > +- compatible:
-> >> > +    - "marvell,armada-3700-uart" for the standard variant of the
-> >> > UART
-> >> > +      (32 bytes FIFO, no DMA, level interrupts, 8-bit access to
-> >> > the
-> >> > +      FIFO, baudrate limited to 230400).
-> >> > +    - "marvell,armada-3700-uart-ext" for the extended variant of
-> >> > the
-> >> > +      UART (128 bytes FIFO, DMA, front interrupts, 8-bit or
-> >> > 32-bit
-> >> > +      accesses to the FIFO, baudrate unlimited by the
-> >> > dividers).  
+Thanks for clarifying.  This would be great information to include in
+the commit message.
+
+> 
 > >>
-> >> What do you call the next extended version?
-> >> marvell,armada-3700-uart-ext-ext?  
-> >
-> > I don't know what you mean by "next extended version"?  
+> >> This commit consolidates the per bank irq domains to a version
+> >> where we have one larger interrupt domain per GPIO controller
+> >> instance spanning multiple GPIO banks.
+> > 
+> > This works (and is reminiscent to my initially submitted
+> > implementation at [1]), but I think it might make sense to keep as-is
+> > (using the gpiolib irqchip helpers), and instead allocate an irqchip
+> > fwnode per bank and use to_of_node() to set it as the of_node for the
+> > gpiochip before calling gpiochip_irqchip_add().  OTOH, that capability
+> > might go away...
+> > 
+> > Linus, can you comment on the FIXME in gpiochip_irqchip_add_key() that
+> > says "get rid of this and use gpiochip->parent->of_node everywhere"?
+> > It seems like it would still be beneficial to be able to override the
+> > associated node for a gpiochip, since that's what's used for the
+> > irqdomain, but if that's going away, obviously we don't want to start
+> > using that now.
+> > 
 > 
-> IP evolves on new chips with new features. Just trying to understand
-> how you are
+> Yes, this is effectively a reversion to an earlier implementation. I
+> produced an implementation based on the generic irqchip libraries, but
+> that was stripped from this submission when I discovered that no support
+> exists within the generic irqchip libraries for removal of domain
+> generic chips and we wanted to preserve the module support of this driver.
 
-I think I misunderstood your initial question.
-
-Indeed you are right, I did not think about the naming of a potential
-next extended version of the extended IP, but I don't know how to
-rename it otherwise than "-ext" to best fit what the "new" IP
-does.
-
-> 
-> >> This is different versions of UART on the same chip?  
-> >
-> > Today in mainline there is support for the A3700 UART IP.
-> > This series add support for another IP, based on the A3700, but with
-> > extended features (explaining the -ext suffix).
-> >
-> > Can you precise what is bothering you?  
-> 
-> Is this different versions of UART IP on 1 chip or a new version of
-> the UART IP on a new SoC? The latter should be a new compatible with
-> the new SoC. The former case does happen some, but is not common. I'm
-> just trying to understand which applies here.
-
-Actually, both IP are available since the first version of the
-Armada 3700 SoCs. There is no other implementation of these IPs yet. I
-think we fall in the former case.
+Considering this is heavily based on my initial implementation (several
+functions are exactly the same), it'd be nice to have some small
+attribution in the commit message. :-)
 
 > 
+> It is conceivable that the current GPIO device-tree nodes could be
+> broken down into separate devices per bank, but it is believed that this
+> would only confuse things for users of the device as the concept
+> diverges from the concept expressed in device documentation.
+
+OK, that sounds like a worse alternative.  And since these are all
+actually using the same parent IRQ, it does make sense to keep them all
+in the same IRQ domain.
+
+
+On Fri, Sep 29, 2017 at 08:40:56PM -0700, Doug Berger wrote:
+> [snip]
+> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+> index e2fff559c1ca..752a46ce3589 100644
+> --- a/drivers/gpio/gpio-brcmstb.c
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> [snip]
+> @@ -77,12 +79,18 @@ brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
+>  	return status;
+>  }
+>  
+> +static int brcmstb_gpio_hwirq_to_offset(irq_hw_number_t hwirq,
+> +					struct brcmstb_gpio_bank *bank)
+> +{
+> +	return hwirq - (bank->gc.base - bank->parent_priv->gpio_base);
+> +}
+> +
+>  static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
+>  		unsigned int offset, bool enable)
+>  {
+>  	struct gpio_chip *gc = &bank->gc;
+>  	struct brcmstb_gpio_priv *priv = bank->parent_priv;
+> -	u32 mask = gc->pin2mask(gc, offset);
+> +	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(offset, bank));
+
+Consider renaming "offset" to "hwirq".
+
+>  	u32 imask;
+>  	unsigned long flags;
+>  
+> @@ -96,6 +104,17 @@ static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
+>  	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+>  }
+>  
+> +static int brcmstb_gpio_to_irq(struct gpio_chip *gc, unsigned gc_offset)
+> +{
+> +	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
+> +	/* gc_offset is relative to this gpio_chip; want real offset */
+> +	int offset = gc_offset + (gc->base - priv->gpio_base);
+
+Consider renaming "gc_offset" to "offset" and "offset" to "hwirq" to
+keep things consistent.
+
+> +
+> +	if (offset >= priv->num_gpios)
+> +		return -ENXIO;
+> +	return irq_create_mapping(priv->irq_domain, offset);
+> +}
+> +
+>  
+> [snip]
+>
+> @@ -226,18 +245,19 @@ static irqreturn_t brcmstb_gpio_wake_irq_handler(int irq, void *data)
+>  static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+>  {
+>  	struct brcmstb_gpio_priv *priv = bank->parent_priv;
+> -	struct irq_domain *irq_domain = bank->gc.irqdomain;
+> +	struct irq_domain *domain = priv->irq_domain;
+> +	int hwbase = bank->gc.base - priv->gpio_base;
+>  	unsigned long status;
+> +	unsigned int irq;
+>  
+>  	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
+> -		int bit;
+> -
+> -		for_each_set_bit(bit, &status, 32) {
+> -			if (bit >= bank->width)
+> +		for_each_set_bit(irq, &status, 32) {
+> +			if (irq >= bank->width)
+>  				dev_warn(&priv->pdev->dev,
+>  					 "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
+> -					 bank->id, bit);
+> -			generic_handle_irq(irq_find_mapping(irq_domain, bit));
+> +					 bank->id, irq);
+> +			irq = irq_linear_revmap(domain, irq + hwbase);
+> +			generic_handle_irq(irq);
+
+I'm not a fan of the change to use "irq" to mean several different
+things in this function.  How about this instead?
+
+static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+{
+	struct brcmstb_gpio_priv *priv = bank->parent_priv;
+	struct irq_domain *domain = priv->irq_domain;
+	int hwbase = bank->gc.base - priv->gpio_base;
+	unsigned long status;
+
+	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
+		int offset;
+
+		for_each_set_bit(offset, &status, 32) {
+			if (offset >= bank->width)
+ 				dev_warn(&priv->pdev->dev,
+ 					 "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
+					 bank->id, offset);
+			generic_handle_irq(irq_linear_revmap(domain, offset + hwbase));
+
+
+>  		}
+>  	}
+>  }
+> [snip] 
 > 
-> >> >  - reg: offset and length of the register set for the device.
-> >> > -- interrupts: device interrupt
-> >> > +- clocks: UART reference clock used to derive the baudrate (only
-> >> > +      mandatory with "marvell,armada-3700-uart-ext"
-> >> > compatible).  
-> >>
-> >> How is this optional? The freq is fixed if not present? If so, what
-> >> frequency?  
-> >
-> > The "clocks" property should not be optional at all but that is how
-> > the bindings were handled before this series, so I can't tell now
-> > that this property is mandatory as it would break compatibility
-> > with older versions of the driver.  
-> 
-> Okay. I think it should be mandatory with a note how missing property
-> is handled.
 
-Sure.
+The rest looks good.
 
-> 
-> > When no clock is provided, the frequency is fixed by the bootloader
-> > and cannot be changed. There is no standard frequency for it but the
-> > one chosen by the bootloader often is 115200 as the UART is usually
-> > used as the serial console.
-> >
-> > Because the bootloader does only initialize the UART in use for the
-> > serial console, the clock is mandatory when using another port or it
-> > will not work at all.  
-
-Thank you,
-Miquèl
-
-
--- 
-Miquel Raynal, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Gregory
