@@ -1,118 +1,54 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2] gpio-mmio: Use the new .get_multiple() callback
-Date: Fri, 20 Oct 2017 00:33:43 +0200
-Message-ID: <20171019223343.13927-1-linus.walleij@linaro.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:47137 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754445AbdJSWfv (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 18:35:51 -0400
-Received: by mail-lf0-f66.google.com with SMTP id k40so11250226lfi.4
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Oct 2017 15:35:50 -0700 (PDT)
-Sender: linux-gpio-owner@vger.kernel.org
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 1/2] [v5] pinctrl: qcom: disable GPIO groups with no pins
+Date: Thu, 19 Oct 2017 17:44:59 -0500
+Message-ID: <819a0c67-3494-030d-3166-748081509c83@codeaurora.org>
+References: <1504798409-32041-1-git-send-email-timur@codeaurora.org>
+ <1504798409-32041-2-git-send-email-timur@codeaurora.org>
+ <20171002174414.GL1165@minitux>
+ <9f28c9dd-6277-6c75-1186-a834e15c5346@codeaurora.org>
+ <CACRpkdYYp5TSM1QV-f+FmbwzY_ittgW-4MuXiZ9NW694GoMwKQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYYp5TSM1QV-f+FmbwzY_ittgW-4MuXiZ9NW694GoMwKQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, anjiandi@codeaurora.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <anton@enomsg.org>, Lukas Wunner <lukas@wunner.de>
 
-It is possible to read all lines of a generic MMIO GPIO chip
-with a single register read so support this if we are in
-native endianness.
+On 10/07/2017 06:07 AM, Linus Walleij wrote:
+> I mean that you add
+> unsigned long *line_valid_mask;
+> to struct gpio_chip using the same type of logic
+> as .irq_valid_mask. The mask should be optional.
+> 
+> Then the operation gpiod_get[_index]() will FAIL if the
+> line is not valid.
+> 
+> There is no need to check on every operation, there should
+> be no way to get a handle on the pin any other way.
+> 
+> All new code should be using descriptors at this point so we
+> only need to design for that case.
 
-Add an especially quirky callback to read multiple lines for
-the variants that require you to read values from the
-output registers if and only if the line is set as output.
-We managed to do that with a maximum of two register reads,
-and just one read if the requested lines are all input or all
-output.
+I think I'm missing something, because I implemented what you're asking 
+for, but whenever I try to expose a GPIO from sysfs (e.g. echo 37 > 
+/sys/class/gpio/export), gpiod_get_index() is not called.  The only 
+thing preventing the GPIO from being exported is the ->request callback:
 
-Cc: Anton Vorontsov <anton@enomsg.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Only assign the functions for multiple get if we are in
-  native endianness. Else each bit needs to be processed
-  differently after read and it will be a mess. Likely
-  the old get functions are better in this case.
-- Directly write into *bits in both functions.
----
- drivers/gpio/gpio-mmio.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 47 insertions(+), 2 deletions(-)
+static int msm_gpio_request(struct gpio_chip *chip, unsigned int offset)
+{
+	struct msm_pinctrl *pctrl = gpiochip_get_data(chip);
+	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index f7da40e46c55..cdfe1192be1d 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -147,11 +147,49 @@ static int bgpio_get_set(struct gpio_chip *gc, unsigned int gpio)
- 		return !!(gc->read_reg(gc->reg_dat) & pinmask);
- }
- 
-+/*
-+ * This only works if the bits in the GPIO register are in native endianness.
-+ * We only assign it if we have that.
-+ */
-+static int bgpio_get_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-+				  unsigned long *bits)
-+{
-+	unsigned long get_mask = 0;
-+	unsigned long set_mask = 0;
-+	int bit = 0;
-+
-+	while ((bit = find_next_bit(mask, gc->ngpio, bit)) != gc->ngpio) {
-+		if (gc->bgpio_dir & BIT(bit))
-+			set_mask |= BIT(bit);
-+		else
-+			get_mask |= BIT(bit);
-+	}
-+
-+	if (set_mask)
-+		*bits |= gc->read_reg(gc->reg_set) & set_mask;
-+	if (get_mask)
-+		*bits |= gc->read_reg(gc->reg_dat) & get_mask;
-+
-+	return 0;
-+}
-+
- static int bgpio_get(struct gpio_chip *gc, unsigned int gpio)
- {
- 	return !!(gc->read_reg(gc->reg_dat) & gc->pin2mask(gc, gpio));
- }
- 
-+/*
-+ * This only works if the bits in the GPIO register are in native endianness.
-+ * We only assign it if we have that.
-+ */
-+static int bgpio_get_multiple(struct gpio_chip *gc, unsigned long *mask,
-+			      unsigned long *bits)
-+{
-+	*bits = gc->read_reg(gc->reg_dat) & *mask;
-+
-+	return 0;
-+}
-+
- static void bgpio_set_none(struct gpio_chip *gc, unsigned int gpio, int val)
- {
- }
-@@ -462,10 +500,17 @@ static int bgpio_setup_io(struct gpio_chip *gc,
- 	}
- 
- 	if (!(flags & BGPIOF_UNREADABLE_REG_SET) &&
--	    (flags & BGPIOF_READ_OUTPUT_REG_SET))
-+	    (flags & BGPIOF_READ_OUTPUT_REG_SET)) {
- 		gc->get = bgpio_get_set;
--	else
-+		/* If we are in native endianness we can use the quick multiple read */
-+		if (!(flags & BGPIOF_BIG_ENDIAN_BYTE_ORDER))
-+			gc->get_multiple = bgpio_get_set_multiple;
-+	} else {
- 		gc->get = bgpio_get;
-+		/* If we are in native endianness we can use the quick multiple read */
-+		if (!(flags & BGPIOF_BIG_ENDIAN_BYTE_ORDER))
-+			gc->get_multiple = bgpio_get_multiple;
-+	}
- 
- 	return 0;
- }
+	if (!g->npins)
+		return -ENODEV;
+
+What operation is supposed to trigger a call to gpiod_get_index?
+
 -- 
-2.13.6
-
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
