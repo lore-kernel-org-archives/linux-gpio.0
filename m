@@ -1,112 +1,153 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/2] pinctrl: adi2: Fix Kconfig build problem
-Date: Thu, 19 Oct 2017 15:18:26 +0200
-Message-ID: <20171019131826.28584-1-linus.walleij@linaro.org>
+Subject: [PATCH 2/2] blackfin: Fix local <asm/gpio.h> includes
+Date: Thu, 19 Oct 2017 15:18:36 +0200
+Message-ID: <20171019131836.28634-1-linus.walleij@linaro.org>
 Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46920 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752639AbdJSNSd (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 09:18:33 -0400
-Received: by mail-lf0-f68.google.com with SMTP id g70so9586673lfl.3
-        for <linux-gpio@vger.kernel.org>; Thu, 19 Oct 2017 06:18:32 -0700 (PDT)
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:52854 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752639AbdJSNSl (ORCPT
+        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 09:18:41 -0400
+Received: by mail-lf0-f65.google.com with SMTP id b190so9557670lfg.9
+        for <linux-gpio@vger.kernel.org>; Thu, 19 Oct 2017 06:18:41 -0700 (PDT)
 Sender: linux-gpio-owner@vger.kernel.org
 List-Id: linux-gpio@vger.kernel.org
 To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>, Steven Miao <realmz6@gmail.com>, Huanhuan Feng <huanhuan.feng@analog.com>
 
-The build robot is complaining on Blackfin:
+When making the pin control submenu globally visible, all kinds
+of oddities appear, in blackfin a few files were #including
+<linux/gpio.h> and relying on that to pull in <asm/gpio.h>.
 
-drivers/pinctrl/pinctrl-adi2.c: In function 'port_setup':
->> drivers/pinctrl/pinctrl-adi2.c:221:21: error: dereferencing
-   pointer to incomplete type 'struct gpio_port_t'
-      writew(readw(&regs->port_fer) & ~BIT(offset),
-                        ^~
-drivers/pinctrl/pinctrl-adi2.c: In function 'adi_gpio_ack_irq':
->> drivers/pinctrl/pinctrl-adi2.c:266:18: error: dereferencing
-pointer to incomplete type 'struct bfin_pint_regs'
-      if (readl(&regs->invert_set) & pintbit)
-                     ^~
-It seems the driver need to include <asm/gpio.h> and <asm/irq.h>
-to compile.
+This was not working when pin control but not GPIOLIB was
+selected resulting in a breakage in allmodconfig. The code these
+files were using was still there and defined in <asm/gpio.h>
+just not pulle in from just including <linux/gpio.h>
 
-The Blackfin architecture was re-defining the Kconfig
-PINCTRL symbol which is not OK, so replaced this with
-PINCTRL_BLACKFIN_ADI2 which selects PINCTRL and PINCTRL_ADI2
-just like most arches do.
+Simply add the required includes explicitly in the blackfin
+kernel core and everything compiles fine.
 
-Further, the old GPIO driver symbol GPIO_ADI was possible to
-select at the same time as selecting PINCTRL. This was not
-working because the arch-local <asm/gpio.h> header contains
-an explicit #ifndef PINCTRL clause making compilation break
-if you combine them. The same is true for DEBUG_MMRS.
+Delete the use of the incorrect <linux/gpio.h> where possible.
 
-Make sure the ADI2 pinctrl driver is not selected at the same
-time as the old GPIO implementation. (This should be converted
-to use gpiolib or pincontrol and move to drivers/...) Also make
-sure the old GPIO_ADI driver or DEBUG_MMRS is not selected at
-the same time as the new PINCTRL implementation, and only make
-PINCTRL_ADI2 selectable for the Blackfin families that actually
-have it.
-
-This way it is still possible to add e.g. I2C-based pin
-control expanders on the Blackfin.
+Add stubs to <asm/gpio.h> for the functions called from PM:
+these should probably also depend on !PINCTRL but since the
+global CONFIG_PM symbol is used to compile PM support,
+we need some more intrusive thing here, to be tested by
+Blackfin maintainers.
 
 Cc: Steven Miao <realmz6@gmail.com>
 Cc: Huanhuan Feng <huanhuan.feng@analog.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/blackfin/Kconfig       | 7 +++++--
- arch/blackfin/Kconfig.debug | 1 +
- drivers/pinctrl/Kconfig     | 3 ++-
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ arch/blackfin/include/asm/gpio.h          | 20 ++++++++++++++++++++
+ arch/blackfin/kernel/bfin_gpio.c          |  3 +++
+ arch/blackfin/kernel/debug-mmrs.c         |  2 +-
+ arch/blackfin/mach-common/ints-priority.c |  2 +-
+ arch/blackfin/mach-common/pm.c            |  2 +-
+ 5 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/arch/blackfin/Kconfig b/arch/blackfin/Kconfig
-index 89bdb8264305..6cd804e16a94 100644
---- a/arch/blackfin/Kconfig
-+++ b/arch/blackfin/Kconfig
-@@ -320,11 +320,14 @@ config BF53x
+diff --git a/arch/blackfin/include/asm/gpio.h b/arch/blackfin/include/asm/gpio.h
+index 99d338ca2ea4..a2579321c7f1 100644
+--- a/arch/blackfin/include/asm/gpio.h
++++ b/arch/blackfin/include/asm/gpio.h
+@@ -183,6 +183,26 @@ static inline int irq_to_gpio(unsigned irq)
+ {
+ 	return irq - GPIO_IRQ_BASE;
+ }
++
++#else /* CONFIG_PINCTRL */
++
++/*
++ * CONFIG_PM is not working with pin control and should probably
++ * avoid being selected when pin control is active, but so far,
++ * these stubs are here to make allyesconfig and allmodconfig
++ * compile properly. These functions are normally backed by the
++ * CONFIG_ADI_GPIO custom GPIO implementation.
++ */
++
++static inline int bfin_pm_standby_setup(void)
++{
++	return 0;
++}
++
++static inline void bfin_pm_standby_restore(void)
++{
++}
++
+ #endif /* CONFIG_PINCTRL */
  
- config GPIO_ADI
- 	def_bool y
-+	depends on !PINCTRL
- 	depends on (BF51x || BF52x || BF53x || BF538 || BF539 || BF561)
+ #include <asm/irq.h>
+diff --git a/arch/blackfin/kernel/bfin_gpio.c b/arch/blackfin/kernel/bfin_gpio.c
+index c5d31287de01..63da80bbadf6 100644
+--- a/arch/blackfin/kernel/bfin_gpio.c
++++ b/arch/blackfin/kernel/bfin_gpio.c
+@@ -15,6 +15,9 @@
+ /* FIXME: consumer API required for gpio_set_value() etc, get rid of this */
+ #include <linux/gpio.h>
+ #include <linux/irq.h>
++#include <asm/gpio.h>
++#include <asm/irq_handler.h>
++#include <asm/portmux.h>
  
--config PINCTRL
-+config PINCTRL_BLACKFIN_ADI2
- 	def_bool y
--	depends on BF54x || BF60x
-+	depends on (BF54x || BF60x)
-+	select PINCTRL
-+	select PINCTRL_ADI2
+ #if ANOMALY_05000311 || ANOMALY_05000323
+ enum {
+diff --git a/arch/blackfin/kernel/debug-mmrs.c b/arch/blackfin/kernel/debug-mmrs.c
+index f31ace221392..194773ce109e 100644
+--- a/arch/blackfin/kernel/debug-mmrs.c
++++ b/arch/blackfin/kernel/debug-mmrs.c
+@@ -10,7 +10,6 @@
+ #include <linux/fs.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/gpio.h>
  
- config MEM_MT48LC64M4A2FB_7E
- 	bool
-diff --git a/arch/blackfin/Kconfig.debug b/arch/blackfin/Kconfig.debug
-index f3337ee03621..a93cf06a4d6f 100644
---- a/arch/blackfin/Kconfig.debug
-+++ b/arch/blackfin/Kconfig.debug
-@@ -17,6 +17,7 @@ config DEBUG_VERBOSE
+ #include <asm/blackfin.h>
+ #include <asm/gptimers.h>
+@@ -20,6 +19,7 @@
+ #include <asm/bfin_serial.h>
+ #include <asm/bfin5xx_spi.h>
+ #include <asm/bfin_twi.h>
++#include <asm/gpio.h>
  
- config DEBUG_MMRS
- 	tristate "Generate Blackfin MMR tree"
-+	depends on !PINCTRL
- 	select DEBUG_FS
- 	help
- 	  Create a tree of Blackfin MMRs via the debugfs tree.  If
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index c0294958405d..5b4939e709ac 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -32,7 +32,8 @@ config DEBUG_PINCTRL
+ /* Common code defines PORT_MUX on us, so redirect the MMR back locally */
+ #ifdef BFIN_PORT_MUX
+diff --git a/arch/blackfin/mach-common/ints-priority.c b/arch/blackfin/mach-common/ints-priority.c
+index 13e94bf9d8ba..e81a5b7dabdc 100644
+--- a/arch/blackfin/mach-common/ints-priority.c
++++ b/arch/blackfin/mach-common/ints-priority.c
+@@ -18,7 +18,6 @@
+ #include <linux/sched.h>
+ #include <linux/sched/debug.h>
+ #include <linux/syscore_ops.h>
+-#include <linux/gpio.h>
+ #include <asm/delay.h>
+ #ifdef CONFIG_IPIPE
+ #include <linux/ipipe.h>
+@@ -28,6 +27,7 @@
+ #include <asm/irq_handler.h>
+ #include <asm/dpmc.h>
+ #include <asm/traps.h>
++#include <asm/gpio.h>
  
- config PINCTRL_ADI2
- 	bool "ADI pin controller driver"
--	depends on BLACKFIN
-+	depends on (BF54x || BF60x)
-+	depends on !GPIO_ADI
- 	select PINMUX
- 	select IRQ_DOMAIN
- 	help
+ /*
+  * NOTES:
+diff --git a/arch/blackfin/mach-common/pm.c b/arch/blackfin/mach-common/pm.c
+index 5ece38a5b758..f57b5fe5355e 100644
+--- a/arch/blackfin/mach-common/pm.c
++++ b/arch/blackfin/mach-common/pm.c
+@@ -15,12 +15,12 @@
+ #include <linux/io.h>
+ #include <linux/irq.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
+ 
+ #include <asm/cplb.h>
+ #include <asm/dma.h>
+ #include <asm/dpmc.h>
+ #include <asm/pm.h>
++#include <asm/gpio.h>
+ 
+ #ifdef CONFIG_BF60x
+ struct bfin_cpu_pm_fns *bfin_cpu_pm;
 -- 
 2.13.6
 
