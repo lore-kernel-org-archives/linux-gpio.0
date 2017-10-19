@@ -1,197 +1,27 @@
-From: Gregory Fong <gregory.0xf0@gmail.com>
-Subject: Re: [PATCH 6/7] gpio: brcmstb: consolidate interrupt domains
-Date: Thu, 19 Oct 2017 00:57:43 -0700
-Message-ID: <20171019075743.GA31645@kessel>
-References: <20170930034057.15166-1-opendmb@gmail.com>
- <20170930034057.15166-7-opendmb@gmail.com>
- <CADtm3G5v6_BHwanRYvCq1y-8Hdmn7gxX3zoVHx2c7cOFL-pj+Q@mail.gmail.com>
- <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] pinctrl: mcp23s08: fix interrupt handling regression
+Date: Thu, 19 Oct 2017 10:20:48 +0200
+Message-ID: <CACRpkdbEepSqNsP_5J1yVWqSXRybOj0Qfr-ZcZpOxMNaMgtfDQ@mail.gmail.com>
+References: <1508336462-9378-1-git-send-email-mastichi@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:47577 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751642AbdJSH5r (ORCPT
-        <rfc822;linux-gpio@vger.kernel.org>); Thu, 19 Oct 2017 03:57:47 -0400
-Content-Disposition: inline
-In-Reply-To: <61cb2c09-8078-d3ed-907b-64aff4553650@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1508336462-9378-1-git-send-email-mastichi@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Mastykin <mastichi@gmail.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>, Phil Reid <preid@electromag.com.au>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Doug Berger <opendmb@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Brian Norris <computersforpeace@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Doug,
+On Wed, Oct 18, 2017 at 4:21 PM, Dmitry Mastykin <mastichi@gmail.com> wrote:
 
-On Wed, Oct 04, 2017 at 02:24:37PM -0700, Doug Berger wrote:
-> On 10/03/2017 08:03 PM, Gregory Fong wrote:
-> > On Fri, Sep 29, 2017 at 8:40 PM, Doug Berger <opendmb@gmail.com> wrote:
-> >> The GPIOLIB IRQ chip helpers were very appealing, but badly broke
-> >> the 1:1 mapping between a GPIO controller's device_node and its
-> >> interrupt domain.
-> > 
-> > Out of curiosity, what sort of problems have you seen from this?
-> > 
-> 
-> [snip]
-> 
-> When another device-tree node references a GPIO device as its interrupt
-> parent, the irq_create_of_mapping() function looks for the irq domain of
-> the GPIO device and since all bank irq domains reference the same GPIO
-> device node it always resolves to the irq domain of the first bank
-> regardless of which bank the number of the GPIO should resolve. This
-> domain can only map hwirq numbers 0-31 so interrupts on GPIO above that
-> can't be mapped by the device-tree.
-
-Thanks for clarifying.  This would be great information to include in
-the commit message.
-
-> 
-> >>
-> >> This commit consolidates the per bank irq domains to a version
-> >> where we have one larger interrupt domain per GPIO controller
-> >> instance spanning multiple GPIO banks.
-> > 
-> > This works (and is reminiscent to my initially submitted
-> > implementation at [1]), but I think it might make sense to keep as-is
-> > (using the gpiolib irqchip helpers), and instead allocate an irqchip
-> > fwnode per bank and use to_of_node() to set it as the of_node for the
-> > gpiochip before calling gpiochip_irqchip_add().  OTOH, that capability
-> > might go away...
-> > 
-> > Linus, can you comment on the FIXME in gpiochip_irqchip_add_key() that
-> > says "get rid of this and use gpiochip->parent->of_node everywhere"?
-> > It seems like it would still be beneficial to be able to override the
-> > associated node for a gpiochip, since that's what's used for the
-> > irqdomain, but if that's going away, obviously we don't want to start
-> > using that now.
-> > 
-> 
-> Yes, this is effectively a reversion to an earlier implementation. I
-> produced an implementation based on the generic irqchip libraries, but
-> that was stripped from this submission when I discovered that no support
-> exists within the generic irqchip libraries for removal of domain
-> generic chips and we wanted to preserve the module support of this driver.
-
-Considering this is heavily based on my initial implementation (several
-functions are exactly the same), it'd be nice to have some small
-attribution in the commit message. :-)
-
-> 
-> It is conceivable that the current GPIO device-tree nodes could be
-> broken down into separate devices per bank, but it is believed that this
-> would only confuse things for users of the device as the concept
-> diverges from the concept expressed in device documentation.
-
-OK, that sounds like a worse alternative.  And since these are all
-actually using the same parent IRQ, it does make sense to keep them all
-in the same IRQ domain.
-
-
-On Fri, Sep 29, 2017 at 08:40:56PM -0700, Doug Berger wrote:
-> [snip]
-> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-> index e2fff559c1ca..752a46ce3589 100644
-> --- a/drivers/gpio/gpio-brcmstb.c
-> +++ b/drivers/gpio/gpio-brcmstb.c
-> [snip]
-> @@ -77,12 +79,18 @@ brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
->  	return status;
->  }
->  
-> +static int brcmstb_gpio_hwirq_to_offset(irq_hw_number_t hwirq,
-> +					struct brcmstb_gpio_bank *bank)
-> +{
-> +	return hwirq - (bank->gc.base - bank->parent_priv->gpio_base);
-> +}
-> +
->  static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
->  		unsigned int offset, bool enable)
->  {
->  	struct gpio_chip *gc = &bank->gc;
->  	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-> -	u32 mask = gc->pin2mask(gc, offset);
-> +	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(offset, bank));
-
-Consider renaming "offset" to "hwirq".
-
->  	u32 imask;
->  	unsigned long flags;
->  
-> @@ -96,6 +104,17 @@ static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
->  	spin_unlock_irqrestore(&gc->bgpio_lock, flags);
->  }
->  
-> +static int brcmstb_gpio_to_irq(struct gpio_chip *gc, unsigned gc_offset)
-> +{
-> +	struct brcmstb_gpio_priv *priv = brcmstb_gpio_gc_to_priv(gc);
-> +	/* gc_offset is relative to this gpio_chip; want real offset */
-> +	int offset = gc_offset + (gc->base - priv->gpio_base);
-
-Consider renaming "gc_offset" to "offset" and "offset" to "hwirq" to
-keep things consistent.
-
-> +
-> +	if (offset >= priv->num_gpios)
-> +		return -ENXIO;
-> +	return irq_create_mapping(priv->irq_domain, offset);
-> +}
-> +
->  
-> [snip]
+> interrupt handling was broken with conversion to using regmap caching.
+> cached_gpio value was updated by boolean status instead of gpio reading.
 >
-> @@ -226,18 +245,19 @@ static irqreturn_t brcmstb_gpio_wake_irq_handler(int irq, void *data)
->  static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
->  {
->  	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-> -	struct irq_domain *irq_domain = bank->gc.irqdomain;
-> +	struct irq_domain *domain = priv->irq_domain;
-> +	int hwbase = bank->gc.base - priv->gpio_base;
->  	unsigned long status;
-> +	unsigned int irq;
->  
->  	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
-> -		int bit;
-> -
-> -		for_each_set_bit(bit, &status, 32) {
-> -			if (bit >= bank->width)
-> +		for_each_set_bit(irq, &status, 32) {
-> +			if (irq >= bank->width)
->  				dev_warn(&priv->pdev->dev,
->  					 "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
-> -					 bank->id, bit);
-> -			generic_handle_irq(irq_find_mapping(irq_domain, bit));
-> +					 bank->id, irq);
-> +			irq = irq_linear_revmap(domain, irq + hwbase);
-> +			generic_handle_irq(irq);
+> Fixes: 8f38910ba4f6 ("pinctrl: mcp23s08: switch to regmap caching")
+> Tested-by: Phil Reid <preid@electromag.com.au>
+> Signed-off-by: Dmitry Mastykin <mastichi@gmail.com>
 
-I'm not a fan of the change to use "irq" to mean several different
-things in this function.  How about this instead?
+Patch applied for fixes, adding Sebastians review tag.
 
-static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
-{
-	struct brcmstb_gpio_priv *priv = bank->parent_priv;
-	struct irq_domain *domain = priv->irq_domain;
-	int hwbase = bank->gc.base - priv->gpio_base;
-	unsigned long status;
-
-	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
-		int offset;
-
-		for_each_set_bit(offset, &status, 32) {
-			if (offset >= bank->width)
- 				dev_warn(&priv->pdev->dev,
- 					 "IRQ for invalid GPIO (bank=%d, offset=%d)\n",
-					 bank->id, offset);
-			generic_handle_irq(irq_linear_revmap(domain, offset + hwbase));
-
-
->  		}
->  	}
->  }
-> [snip] 
-> 
-
-The rest looks good.
-
-Thanks,
-Gregory
+Yours,
+Linus Walleij
