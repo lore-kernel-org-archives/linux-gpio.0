@@ -1,46 +1,61 @@
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Subject: Re: [PATCHv4 2/2] Add a GPIO driver for Altera FPGA Manager Fabric
- I/O
-Date: Fri, 20 Oct 2017 17:48:11 +0000
-Message-ID: <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
-References: <AM5PR0701MB26576FCB30CDCA6F989C9B80E4420@AM5PR0701MB2657.eurprd07.prod.outlook.com>
- <CACRpkdaSQRuEEpUC2=Z8K80vrrqbSfoCU4YUNJR+9vBXUgWRyA@mail.gmail.com>
- <AM5PR0701MB26571DEDBDEA72B54DC1E7F6E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
- <CACRpkdZXaTk-+LMcV8bZTg0bZ9cPxORHpXNL7m+bwnvr57yJ9A@mail.gmail.com>
+From: Christian Lamparter <chunkeey-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv4 2/2] Add a GPIO driver for Altera FPGA Manager Fabric I/O
+Date: Fri, 20 Oct 2017 21:08:18 +0200
+Message-ID: <4519589.dXStasooJK@debian64>
+References: <AM5PR0701MB26576FCB30CDCA6F989C9B80E4420@AM5PR0701MB2657.eurprd07.prod.outlook.com> <CACRpkdZXaTk-+LMcV8bZTg0bZ9cPxORHpXNL7m+bwnvr57yJ9A@mail.gmail.com> <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430@AM5PR0701MB2657.eurprd07.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Received: from mail-oln040092067103.outbound.protection.outlook.com ([40.92.67.103]:45202
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753711AbdJTRsN (ORCPT <rfc822;linux-gpio@vger.kernel.org>);
-        Fri, 20 Oct 2017 13:48:13 -0400
-In-Reply-To: <CACRpkdZXaTk-+LMcV8bZTg0bZ9cPxORHpXNL7m+bwnvr57yJ9A@mail.gmail.com>
-Content-Language: en-US
-Content-ID: <F04C3BB3827B234CBD07887682CF8D31@eurprd07.prod.outlook.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <AM5PR0701MB26576FBB8EDEF83F3AA82B89E4430-drxRBzqxKr3KnPtvPVqCtTMcllmSiLMWnBOFsp37pqbUKgpGm//BTAC/G2K4zDHf@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bernd Edlinger <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-gpio@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-T24gMTAvMjAvMTcgMTg6NDUsIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+IE9uIEZyaSwgT2N0IDIw
-LCAyMDE3IGF0IDQ6NDAgUE0sIEJlcm5kIEVkbGluZ2VyDQo+IDxiZXJuZC5lZGxpbmdlckBob3Rt
-YWlsLmRlPiB3cm90ZToNCj4+IE9uIDEwLzIwLzE3IDEwOjEwLCBMaW51cyBXYWxsZWlqIHdyb3Rl
-Og0KPiANCj4+Pj4gKyAgICAgICBlcnIgPSBiZ3Bpb19pbml0KCZwb3J0LT5iZ2MsIGdwaW8tPmRl
-diwgNCwgZGF0LCBOVUxMLCBOVUxMLA0KPj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgTlVM
-TCwgTlVMTCwgMCk7DQo+Pj4NCj4+PiBCdXQgYWxsIHlvdSBhZGQgaXMgaW5wdXQtb25seSBHUElP
-IGNoaXBzLiBBbHNvIGZvciB0aGUgb3V0cHV0IHBvcnRzLg0KPj4+DQo+Pg0KPj4gV2VsbCBhY3R1
-YWxseSB0aGlzIGFsbG93cyBib3RoIGlucHV0IGFuZCBvdXRwdXQsDQo+PiBidXQgd2hpbGUgdGhl
-IGlucHV0IHBvcnQgY291bGQgYmUgd3JpdHRlbiBieSBhY2NpZGVudCwNCj4+IHRoZSBoYXJkd2Fy
-ZSBkb2VzIHRoZSByaWdodCB0aGluZyBhbmQgaWdub3JlcyB0aGUgd3JpdGUgY3ljbGUuDQo+Pg0K
-Pj4gVGhlIG90aGVyIHBhcmFtZXRlcnMgb2YgYmdwaW9faW5wdXQgYXJlIGZvciBkZXZpY2VzIHdp
-dGgNCj4+IGV4cGxpY2l0IHNldC0gYW5kIHJlc2V0LXNpZ25hbHMsIGFuZCBjb25maWd1cmFibGUN
-Cj4+IG91dHB1dC1kaXJlY3Rpb24gZXRjLCB3aGljaCBJIGRvbid0IGhhdmUuDQo+IA0KPiBBaCEg
-WW91J3JlIHJpZ2h0LiBXaXRoIGp1c3Qgb25lIHJlZ2lzdGVyIGl0IGJlY29tZXMgb25lIG9mIHRo
-ZXNlIHRoYXQNCj4gcmVhZCBhbmQgd3JpdGUgaW50byB0aGF0IHJlZ2lzdGVyLCBzaW1wbHkuIFNv
-cnJ5IGZvciBteSBpZ25vcmFuY2UuDQo+IA0KPiBJIHdvdWxkIHByZWZlciBpZiB5b3Ugc2V0IHRo
-ZSBmbGFnIEJHUElPRl9OT19PVVRQVVQgb24gdGhlIGlucHV0DQo+IG9ubHkgdmVyc2lvbiB0aG91
-Z2guIFNlbWFudGljcyBtYXkgbWF0dGVyIHRvIHRoZSBtbWlvIGdwaW8gY29yZS4NCj4gDQoNCkFo
-LCB0aGFua3MsIHRoYXQncyBhIGdvb2Qgc3VnZ2VzdGlvbi4NCg0KSSB3aWxsIGRvIHRoYXQgYW5k
-IHNlbmQgYW4gdXBkYXRlZCBwYXRjaC4NCg0KDQpCZXJuZC4NCg==
+On Friday, October 20, 2017 5:48:11 PM CEST Bernd Edlinger wrote:
+> On 10/20/17 18:45, Linus Walleij wrote:
+> > On Fri, Oct 20, 2017 at 4:40 PM, Bernd Edlinger
+> > <bernd.edlinger-PkbjNfxxIASELgA04lAiVw@public.gmane.org> wrote:
+> >> On 10/20/17 10:10, Linus Walleij wrote:
+> > 
+> >>>> +       err = bgpio_init(&port->bgc, gpio->dev, 4, dat, NULL, NULL,
+> >>>> +                        NULL, NULL, 0);
+> >>>
+> >>> But all you add is input-only GPIO chips. Also for the output ports.
+> >>>
+> >>
+> >> Well actually this allows both input and output,
+> >> but while the input port could be written by accident,
+> >> the hardware does the right thing and ignores the write cycle.
+> >>
+> >> The other parameters of bgpio_input are for devices with
+> >> explicit set- and reset-signals, and configurable
+> >> output-direction etc, which I don't have.
+> > 
+> > Ah! You're right. With just one register it becomes one of these that
+> > read and write into that register, simply. Sorry for my ignorance.
+> > 
+> > I would prefer if you set the flag BGPIOF_NO_OUTPUT on the input
+> > only version though. Semantics may matter to the mmio gpio core.
+> > 
+> 
+> Ah, thanks, that's a good suggestion.
+> 
+> I will do that and send an updated patch.
+Wait.
+
+I had the same comment about this earlier and a few more suggestions
+to move the driver to gpio-mmio's dt. Didn't you read the mail?
+
+<https://marc.info/?l=linux-gpio&m=150678737724132&w=2>
+
+It made it to the list archive, so I'm pretty sure this got delivered
+to you as well.
+
+Regards,
+Christian
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
